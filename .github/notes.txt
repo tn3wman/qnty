@@ -1,0 +1,11 @@
+# Initial Release
+poetry build
+poetry config pypi-token.pypi pypi-AgENdGVzdC5weXBpLm9yZwIk...
+poetry publish --build
+git tag v0.0.1
+git push origin v0.0.1
+
+# Packaging Notes
+poetry version patch
+git tag v#.#.#
+git push origin main --tags
