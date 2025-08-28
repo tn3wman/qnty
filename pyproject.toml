@@ -8,12 +8,6 @@ requires-python = ">=3.10"
 authors = [
     { name = "tn3wman" },
 ]
-
-[project.urls]
-Homepage = "https://github.com/tn3wman/qnty"
-Repository = "https://github.com/tn3wman/qnty"
-"Bug Tracker" = "https://github.com/tn3wman/qnty/issues"
-Documentation = "https://github.com/tn3wman/qnty#readme"
 keywords = ["units", "dimensional analysis", "engineering", "physics", "quantities", "measurements"]
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -33,6 +27,12 @@ classifiers = [
 dependencies = [
     "numpy>=2.3.2",
 ]
+
+[project.urls]
+Homepage = "https://github.com/tn3wman/qnty"
+Repository = "https://github.com/tn3wman/qnty"
+"Bug Tracker" = "https://github.com/tn3wman/qnty/issues"
+Documentation = "https://github.com/tn3wman/qnty#readme"
 
 [project.optional-dependencies]
 dev = [
