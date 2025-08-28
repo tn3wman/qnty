@@ -8,4 +8,4 @@ git push origin v0.0.1
 # Packaging Notes
 poetry version patch
 git tag v#.#.#
-git push origin main --tags
+git push origin v#.#.#
