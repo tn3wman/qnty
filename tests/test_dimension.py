@@ -5,23 +5,25 @@ Tests the dimensional analysis system including DimensionSignature class,
 BaseDimension enum, and all pre-defined dimensional constants.
 """
 
-import pytest
-import math
 import dataclasses
+import math
+
+import pytest
+
 from src.qnty.dimension import (
-    DimensionSignature,
-    BaseDimension,
+    ACCELERATION,
+    AREA,
     DIMENSIONLESS,
+    ENERGY,
+    FORCE,
     LENGTH,
     MASS,
-    TIME,
-    AREA,
-    VOLUME,
-    VELOCITY,
-    ACCELERATION,
-    FORCE,
     PRESSURE,
-    ENERGY,
+    TIME,
+    VELOCITY,
+    VOLUME,
+    BaseDimension,
+    DimensionSignature,
 )
 
 
@@ -119,19 +121,19 @@ class TestDimensionSignature:
         dim = DimensionSignature.create(length=length, mass=mass, time=time)
         # For positive integer powers, we can verify the signature calculation
         if length >= 0 and mass >= 0 and time >= 0:
-            expected_sig = (BaseDimension.LENGTH ** length * 
-                          BaseDimension.MASS ** mass * 
+            expected_sig = (BaseDimension.LENGTH ** length *
+                          BaseDimension.MASS ** mass *
                           BaseDimension.TIME ** time)
             assert dim._signature == expected_sig
     
     def test_create_with_all_dimensions(self):
         """Test creation with all base dimensions specified."""
         dim = DimensionSignature.create(
-            length=1, mass=1, time=1, current=1, 
+            length=1, mass=1, time=1, current=1,
             temp=1, amount=1, luminosity=1
         )
         expected = (BaseDimension.LENGTH * BaseDimension.MASS * BaseDimension.TIME *
-                   BaseDimension.CURRENT * BaseDimension.TEMPERATURE * 
+                   BaseDimension.CURRENT * BaseDimension.TEMPERATURE *
                    BaseDimension.AMOUNT * BaseDimension.LUMINOSITY)
         assert dim._signature == expected
     
@@ -289,7 +291,7 @@ class TestDimensionalConstants:
     def test_constant_signature_consistency(self, constant, name):
         """Test that all constants have consistent signatures."""
         assert isinstance(constant, DimensionSignature)
-        assert isinstance(constant._signature, (int, float))
+        assert isinstance(constant._signature, int | float)
         assert constant._signature > 0, f"{name} should have positive signature"
 
 
@@ -596,7 +598,7 @@ class TestDimensionalSignatureIntegration:
         length_squared = LENGTH * LENGTH
         assert length_squared.is_compatible(AREA)
         
-        area_times_length = AREA * LENGTH  
+        area_times_length = AREA * LENGTH
         assert area_times_length.is_compatible(VOLUME)
         
         # Test dimensionless operations

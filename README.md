@@ -2,7 +2,7 @@
 
 **High-performance unit system library for Python with dimensional safety and fast unit conversions for engineering calculations.**
 
-[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Development Status](https://img.shields.io/badge/status-beta-orange.svg)](https://pypi.org/project/qnty/)
 
@@ -12,7 +12,7 @@
 
 **📐 Accuracy Notice**: The authors are not responsible or liable for incorrect results, calculation errors, or any consequences arising from the use of this library. Always validate calculations independently using established engineering tools and practices.
 
-**🚀 Learn from History**: Remember, even NASA's Mars Climate Orbiter had a $327 million oops moment due to unit conversion errors between metric and imperial systems. Don't let your project become the next cautionary tale - double-check everything! 
+**🚀 Learn from History**: Remember, even NASA's Mars Climate Orbiter had a $327 million oops moment due to unit conversion errors between metric and imperial systems. Don't let your project become the next cautionary tale - double-check everything!
 
 *Use Qnty to help prevent unit errors, but always verify critical calculations through multiple methods.*
 
@@ -27,7 +27,8 @@ Qnty is designed around **type safety** and **performance optimization** using c
 - **⚡ Zero-Cost Abstractions**: Optimized operations with `__slots__` and caching
 - **🔗 Fluent API**: Intuitive method chaining for readable code
 - **🧮 Engineering-Focused**: Built for real-world engineering calculations
-- **📊 Comprehensive Testing**: 400+ tests with performance benchmarks
+- **🧬 Mathematical System**: Built-in equation solving and expression trees
+- **📊 Comprehensive Testing**: 457 tests with performance benchmarks
 
 ## 🚀 Quick Start
 
@@ -81,29 +82,62 @@ thickness = (pressure.quantity * diameter.quantity) / (2 * stress.quantity)
 print(f"Required thickness: {thickness}")  # Automatically in correct units
 ```
 
+### Mathematical Equations & Solving
+
+```python
+from qnty.variables import Length, Pressure, Dimensionless
+
+# Define engineering variables
+T = Length("Wall Thickness", is_known=False)  # Unknown to solve for
+T_bar = Length(0.147, "inches", "Nominal Wall Thickness")
+U_m = Dimensionless(0.125, "Mill Undertolerance")
+
+# Create equation using fluent API: T = T_bar * (1 - U_m)
+equation = T.equals(T_bar * (1 - U_m))
+
+# Solve automatically
+known_vars = {"T_bar": T_bar, "U_m": U_m}
+result = equation.solve_for("T", known_vars)
+print(f"Solved thickness: {result.quantity}")  # 0.128625 inches
+
+# Verify equation is satisfied
+assert equation.check_residual(known_vars) is True
+```
+
 ## 🏗️ Architecture
 
 ### Core Components
 
-**🔢 Dimensional System**
+### 🔢 Dimensional System
+
 - Prime number encoding for ultra-fast dimensional compatibility checks
 - Zero-cost dimensional analysis at compile time
 - Immutable dimension signatures for thread safety
 
-**⚙️ High-Performance Quantities**
+### ⚙️ High-Performance Quantities**
+
 - `FastQuantity`: Optimized for engineering calculations with `__slots__`
 - Cached SI factors and dimension signatures
 - Fast-path optimizations for same-unit operations
 
-**🎯 Type-Safe Variables**
+### 🎯 Type-Safe Variables**
+
 - `Length`, `Pressure`: Domain-specific variables with compile-time safety
 - Fluent API with specialized setters
 - Prevents dimensional errors at the type level
 
-**🔄 Smart Unit System**
+### 🔄 Smart Unit System**
+
 - Pre-computed conversion tables
 - Automatic unit resolution for calculations
 - Support for mixed-unit operations
+
+### 🧬 Mathematical System**
+
+- Built-in equation solving with symbolic manipulation
+- Expression trees for complex mathematical operations
+- Automatic residual checking and validation
+- Engineering equation support (ASME, pressure vessels, etc.)
 
 ## 📊 Performance
 
@@ -166,6 +200,30 @@ area = width.quantity * height.quantity
 perimeter = 2 * (width.quantity + height.quantity)
 ```
 
+### Equation Solving System
+
+```python
+from qnty.variables import Length, Pressure, Dimensionless
+
+# Multi-variable engineering equations
+P = Pressure(90, "psi", "P")  # Known
+D = Length(0.84, "inches", "D")  # Known
+t = Length("t", is_known=False)  # Unknown - solve for this
+S = Pressure(20000, "psi", "S")  # Known
+
+# ASME pressure vessel equation: P = (S * t) / ((D/2) + 0.6*t)
+# Rearranged to solve for t
+equation = t.equals((P * D) / (2 * S - 1.2 * P))
+
+# Solve automatically
+known_variables = {"P": P, "D": D, "S": S}
+thickness_result = equation.solve_for("t", known_variables)
+print(f"Required thickness: {thickness_result.quantity}")
+
+# Verify solution
+assert equation.check_residual(known_variables) is True
+```
+
 ## 🔧 Development
 
 ### Setup Development Environment
@@ -201,7 +259,9 @@ mypy src/qnty/
 
 - **`FastQuantity`**: High-performance quantity with value and unit
 - **`TypeSafeVariable`**: Base class for dimension-specific variables
-- **`Length`**, **`Pressure`**: Specialized variables with fluent setters
+- **`Length`**, **`Pressure`**, **`Dimensionless`**: Specialized variables with fluent setters
+- **`Equation`**: Mathematical equations with solving capabilities
+- **`Expression`**: Abstract base for mathematical expression trees
 - **`DimensionSignature`**: Immutable dimension encoding system
 - **`UnitConstant`**: Type-safe unit definitions
 

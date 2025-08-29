@@ -7,10 +7,12 @@ Shows speedup factors and validates calculation accuracy.
 """
 
 import time
+
 import pint
+
+from src.qnty.units import DimensionlessUnits, LengthUnits, PressureUnits
 from src.qnty.variable import FastQuantity
-from src.qnty.units import LengthUnits, PressureUnits, DimensionlessUnits
-from src.qnty.variables import Length, Pressure
+from src.qnty.variables import Length
 
 
 def benchmark_operation(operation, iterations=1000):
@@ -171,7 +173,7 @@ def test_benchmark_suite(capsys):
     # ========== TEST 4: Division ==========
     def qnty_division():
         pressure = FastQuantity(pressure_value, PressureUnits.psi)
-        area = FastQuantity(10.0, LengthUnits.millimeter)  
+        area = FastQuantity(10.0, LengthUnits.millimeter)
         return pressure / area
     
     def pint_division():
@@ -200,7 +202,7 @@ def test_benchmark_suite(capsys):
         E = 0.8
         W = 1.0
         Y = 0.4
-        return (P * D) / (2 * (S * E * W + P * Y))
+        return (P * D) / (2 * (S * E * W + P * Y)) # type: ignore
     
     qnty_result = benchmark_operation(qnty_complex, 1000)
     pint_result = benchmark_operation(pint_complex, 1000)
@@ -224,7 +226,7 @@ def test_benchmark_suite(capsys):
     # ========== TEST 7: Chained Operations ==========
     def qnty_chained():
         q1 = FastQuantity(50.0, LengthUnits.millimeter)
-        q2 = FastQuantity(2.0, LengthUnits.inch) 
+        q2 = FastQuantity(2.0, LengthUnits.inch)
         q3 = FastQuantity(0.5, LengthUnits.meter)
         result = (q1 + q2) * 2 + q3
         return result.to(LengthUnits.millimeter)
@@ -233,8 +235,8 @@ def test_benchmark_suite(capsys):
         q1 = ureg.Quantity(50.0, 'millimeter')
         q2 = ureg.Quantity(2.0, 'inch')
         q3 = ureg.Quantity(0.5, 'meter')
-        result = (q1 + q2) * 2 + q3
-        return result.to('millimeter')
+        result = (q1 + q2) * 2 + q3 # type: ignore
+        return result.to('millimeter') # type: ignore
     
     qnty_result = benchmark_operation(qnty_chained, 1000)
     pint_result = benchmark_operation(pint_chained, 1000)

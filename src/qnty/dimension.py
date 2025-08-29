@@ -5,14 +5,15 @@ Dimension System
 Compile-time dimensional analysis using type system for ultra-fast operations.
 """
 
-from typing import final
 from dataclasses import dataclass
 from enum import IntEnum
+from typing import final
+
 
 class BaseDimension(IntEnum):
     """Base dimensions as prime numbers for efficient bit operations."""
     LENGTH = 2
-    MASS = 3  
+    MASS = 3
     TIME = 5
     CURRENT = 7
     TEMPERATURE = 11
@@ -74,7 +75,7 @@ class DimensionSignature:
 # Pre-defined dimension constants
 DIMENSIONLESS = DimensionSignature.create()
 LENGTH = DimensionSignature.create(length=1)
-MASS = DimensionSignature.create(mass=1) 
+MASS = DimensionSignature.create(mass=1)
 TIME = DimensionSignature.create(time=1)
 AREA = DimensionSignature.create(length=2)
 VOLUME = DimensionSignature.create(length=3)

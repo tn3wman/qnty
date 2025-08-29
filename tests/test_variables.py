@@ -6,14 +6,17 @@ Focuses on engineering calculation safety, performance optimizations, and integr
 with the broader OptiUnit system.
 """
 
-import pytest
 import time
-from src.qnty.variables import Length, Pressure
-from src.qnty.variable import TypeSafeVariable, FastQuantity
-from src.qnty.dimension import LENGTH, PRESSURE, DIMENSIONLESS
-from src.qnty.units import LengthUnits, PressureUnits
+
+import pytest
+
+from src.qnty.dimension import DIMENSIONLESS, LENGTH, PRESSURE
 from src.qnty.setters import LengthSetter, PressureSetter, TypeSafeSetter
+from src.qnty.types import TypeSafeVariable
 from src.qnty.unit import UnitConstant
+from src.qnty.units import DimensionlessUnits, LengthUnits, PressureUnits
+from src.qnty.variable import FastQuantity
+from src.qnty.variables import Dimensionless, Length, Pressure
 
 
 class TestLengthVariableInitialization:
@@ -108,7 +111,7 @@ class TestPressureVariableInitialization:
         assert str(pressure_var) == "fluid_pressure: unset"
     
     @pytest.mark.parametrize("var_name", [
-        "pressure", "inlet_pressure", "outlet_pressure", "gauge_pressure", 
+        "pressure", "inlet_pressure", "outlet_pressure", "gauge_pressure",
         "absolute_pressure", "vacuum", "differential_pressure"
     ])
     def test_pressure_various_names(self, var_name):
@@ -994,7 +997,7 @@ class TestAdvancedFluentAPIPatterns:
         width.set(10.0).meters
         height.set(5.0).meters
         
-        # Use in calculations  
+        # Use in calculations
         assert width.quantity is not None and height.quantity is not None
         perimeter = (width.quantity + width.quantity + height.quantity + height.quantity)
         assert perimeter.value == 30.0  # 2*(10+5) = 30
@@ -1002,6 +1005,362 @@ class TestAdvancedFluentAPIPatterns:
         # Area calculation (current implementation behavior)
         area = width.quantity * height.quantity
         assert area.value == 50000.0  # 10*5 = 50 m^2 = 50,000 mm^2 in current cache
+
+
+class TestKnownUnknownVariables:
+    """Test the known/unknown variable functionality with fluent API."""
+    
+    def test_variable_defaults_to_known(self):
+        """Test that variables default to is_known=True."""
+        # Using original syntax
+        length = Length("test_length")
+        assert length.is_known is True
+        
+        # Using new syntax
+        pressure = Pressure(100, "psi", "test_pressure")
+        assert pressure.is_known is True
+        
+        dimensionless = Dimensionless(0.5, "test_factor")
+        assert dimensionless.is_known is True
+    
+    def test_variable_with_explicit_is_known(self):
+        """Test explicit is_known parameter in constructors."""
+        # Known variables
+        known_length = Length("known", is_known=True)
+        assert known_length.is_known is True
+        
+        known_pressure = Pressure(50, "bar", "known_pressure", is_known=True)
+        assert known_pressure.is_known is True
+        
+        # Unknown variables
+        unknown_length = Length("unknown", is_known=False)
+        assert unknown_length.is_known is False
+        
+        unknown_pressure = Pressure(0, "psi", "unknown_pressure", is_known=False)
+        assert unknown_pressure.is_known is False
+        
+        unknown_dim = Dimensionless(0, "unknown_factor", is_known=False)
+        assert unknown_dim.is_known is False
+    
+    def test_fluent_unknown_property(self):
+        """Test the fluent .unknown property to mark variables as unknown."""
+        # Original syntax with fluent unknown
+        length = Length("test").unknown
+        assert length.is_known is False
+        
+        # New syntax with fluent unknown
+        pressure = Pressure(100, "psi", "test").unknown
+        assert pressure.is_known is False
+        
+        dimensionless = Dimensionless(1.0, "test").unknown
+        assert dimensionless.is_known is False
+    
+    def test_fluent_known_property(self):
+        """Test the fluent .known property to mark variables as known."""
+        # Start with unknown, then mark as known
+        length = Length("test", is_known=False).known
+        assert length.is_known is True
+        
+        pressure = Pressure(50, "bar", "test", is_known=False).known
+        assert pressure.is_known is True
+        
+        dimensionless = Dimensionless(0.5, "test", is_known=False).known
+        assert dimensionless.is_known is True
+    
+    def test_fluent_api_chaining(self):
+        """Test that fluent API returns self for chaining."""
+        # Test chaining with unknown
+        length = Length("test")
+        result = length.unknown
+        assert result is length
+        assert length.is_known is False
+        
+        # Test chaining with known
+        result2 = length.known
+        assert result2 is length
+        assert length.is_known is True
+        
+        # Test complex chaining
+        pressure = Pressure(100, "psi", "test").unknown
+        assert pressure.is_known is False
+        assert pressure.quantity is not None
+        assert pressure.quantity.value == 100
+    
+    def test_toggling_known_unknown(self):
+        """Test toggling between known and unknown states."""
+        variable = Length("toggleable")
+        
+        # Start as known (default)
+        assert variable.is_known is True
+        
+        # Mark as unknown
+        variable.unknown
+        assert variable.is_known is False
+        
+        # Mark as known again
+        variable.known
+        assert variable.is_known is True
+        
+        # Toggle multiple times
+        variable.unknown.known.unknown
+        assert variable.is_known is False
+    
+    def test_known_unknown_with_value_setting(self):
+        """Test that known/unknown state is preserved when setting values."""
+        # Unknown variable with value
+        unknown_length = Length("test", is_known=False)
+        unknown_length.set(10).meters
+        assert unknown_length.is_known is False
+        assert unknown_length.quantity is not None
+        assert unknown_length.quantity.value == 10
+        
+        # Known variable with value
+        known_pressure = Pressure("test").known
+        known_pressure.set(50).psi
+        assert known_pressure.is_known is True
+        assert known_pressure.quantity is not None
+        assert known_pressure.quantity.value == 50
+    
+    def test_alternative_constructor_with_unknown(self):
+        """Test alternative constructors with is_known parameter and fluent API."""
+        # New syntax with is_known=False
+        Y = Dimensionless(0.4, "Y Coefficient", is_known=False)
+        assert Y.is_known is False
+        assert Y.quantity is not None
+        assert Y.quantity.value == 0.4
+        
+        # New syntax with fluent unknown
+        T = Length(0.0, "inches", "Wall Thickness").unknown
+        assert T.is_known is False
+        assert T.quantity is not None
+        
+        # New syntax with fluent known (after unknown)
+        P_max = Pressure(0.0, "psi", "Maximum Pressure", is_known=False).known
+        assert P_max.is_known is True
+    
+    def test_type_preservation_with_fluent_api(self):
+        """Test that fluent API preserves variable types."""
+        length = Length("test").unknown
+        assert isinstance(length, Length)
+        assert isinstance(length, TypeSafeVariable)
+        
+        pressure = Pressure("test").unknown.known
+        assert isinstance(pressure, Pressure)
+        assert isinstance(pressure, TypeSafeVariable)
+        
+        dimensionless = Dimensionless(1.0, "test").unknown
+        assert isinstance(dimensionless, Dimensionless)
+        assert isinstance(dimensionless, TypeSafeVariable)
+
+
+class TestAlternativeConstructorSyntax:
+    """Test the new alternative constructor syntax for direct initialization."""
+    
+    def test_dimensionless_alternative_constructor(self):
+        """Test Dimensionless(value, name) constructor syntax."""
+        # New syntax - direct initialization
+        U_m = Dimensionless(0.125, "Mill Undertolerance")
+        
+        assert U_m.name == "Mill Undertolerance"
+        assert U_m.expected_dimension == DIMENSIONLESS
+        assert U_m.quantity is not None
+        assert U_m.quantity.value == 0.125
+        assert U_m.quantity.unit == DimensionlessUnits.dimensionless
+        assert str(U_m) == "Mill Undertolerance: 0.125 "  # Dimensionless has empty symbol
+        
+        # Test with other values
+        E = Dimensionless(0.8, "Quality Factor")
+        assert E.name == "Quality Factor"
+        assert E.quantity is not None
+        assert E.quantity.value == 0.8
+        
+        W = Dimensionless(1, "Weld Joint Strength Reduction Factor")
+        assert W.name == "Weld Joint Strength Reduction Factor"
+        assert W.quantity is not None
+        assert W.quantity.value == 1.0
+    
+    def test_dimensionless_original_constructor(self):
+        """Test that original Dimensionless(name) syntax still works."""
+        # Original syntax
+        factor = Dimensionless("efficiency_factor")
+        
+        assert factor.name == "efficiency_factor"
+        assert factor.expected_dimension == DIMENSIONLESS
+        assert factor.quantity is None  # Not set yet
+        
+        # Set value using fluent API
+        factor.set(0.85).dimensionless
+        assert factor.quantity is not None
+        assert factor.quantity.value == 0.85
+        assert factor.quantity.unit == DimensionlessUnits.dimensionless
+    
+    def test_pressure_alternative_constructor(self):
+        """Test Pressure(value, unit, name) constructor syntax."""
+        # New syntax - direct initialization with psi
+        P = Pressure(90, "psi", "Design Pressure")
+        
+        assert P.name == "Design Pressure"
+        assert P.expected_dimension == PRESSURE
+        assert P.quantity is not None
+        assert P.quantity.value == 90.0
+        assert P.quantity.unit == PressureUnits.psi
+        assert str(P) == "Design Pressure: 90.0 psi"
+        
+        # Test with kPa
+        P_kPa = Pressure(620, "kPa", "Pressure in kPa")
+        assert P_kPa.quantity is not None
+        assert P_kPa.quantity.value == 620.0
+        assert P_kPa.quantity.unit == PressureUnits.kilopascal
+        
+        # Test with MPa
+        P_MPa = Pressure(10, "MPa", "Pressure in MPa")
+        assert P_MPa.quantity is not None
+        assert P_MPa.quantity.value == 10.0
+        assert P_MPa.quantity.unit == PressureUnits.megapascal
+        
+        # Test with bar
+        P_bar = Pressure(5, "bar", "Pressure in bar")
+        assert P_bar.quantity is not None
+        assert P_bar.quantity.value == 5.0
+        assert P_bar.quantity.unit == PressureUnits.bar
+    
+    def test_pressure_original_constructor(self):
+        """Test that original Pressure(name) syntax still works."""
+        # Original syntax
+        pressure = Pressure("test_pressure")
+        
+        assert pressure.name == "test_pressure"
+        assert pressure.expected_dimension == PRESSURE
+        assert pressure.quantity is None  # Not set yet
+        
+        # Set value using fluent API
+        pressure.set(100).psi
+        assert pressure.quantity is not None
+        assert pressure.quantity.value == 100.0
+        assert pressure.quantity.unit == PressureUnits.psi
+    
+    def test_length_alternative_constructor(self):
+        """Test Length(value, unit, name) constructor syntax."""
+        # New syntax - direct initialization with inches
+        D = Length(0.84, "inches", "Outside Diameter")
+        
+        assert D.name == "Outside Diameter"
+        assert D.expected_dimension == LENGTH
+        assert D.quantity is not None
+        assert D.quantity.value == 0.84
+        assert D.quantity.unit == LengthUnits.inch
+        assert str(D) == "Outside Diameter: 0.84 in"
+        
+        # Test with meters
+        L_m = Length(2.5, "meters", "Length in meters")
+        assert L_m.quantity is not None
+        assert L_m.quantity.value == 2.5
+        assert L_m.quantity.unit == LengthUnits.meter
+        
+        # Test with millimeters
+        L_mm = Length(100, "millimeters", "Length in millimeters")
+        assert L_mm.quantity is not None
+        assert L_mm.quantity.value == 100.0
+        assert L_mm.quantity.unit == LengthUnits.millimeter
+        
+        # Test with feet
+        L_ft = Length(6, "feet", "Length in feet")
+        assert L_ft.quantity is not None
+        assert L_ft.quantity.value == 6.0
+        assert L_ft.quantity.unit == LengthUnits.foot
+    
+    def test_length_original_constructor(self):
+        """Test that original Length(name) syntax still works."""
+        # Original syntax
+        length = Length("test_length")
+        
+        assert length.name == "test_length"
+        assert length.expected_dimension == LENGTH
+        assert length.quantity is None  # Not set yet
+        
+        # Set value using fluent API
+        length.set(10).meters
+        assert length.quantity is not None
+        assert length.quantity.value == 10.0
+        assert length.quantity.unit == LengthUnits.meter
+    
+    def test_invalid_constructor_arguments(self):
+        """Test that invalid constructor arguments raise appropriate errors."""
+        # Dimensionless with wrong number of arguments
+        with pytest.raises(ValueError, match="Dimensionless expects either 1 argument"):
+            Dimensionless(0.5, "name", "extra")
+        
+        # Pressure with wrong number of arguments
+        with pytest.raises(ValueError, match="Pressure expects either 1 argument"):
+            Pressure(100, "psi")  # Missing name
+        
+        # Length with wrong number of arguments
+        with pytest.raises(ValueError, match="Length expects either 1 argument"):
+            Length(10, "meters")  # Missing name
+    
+    def test_alternative_constructor_with_calculations(self):
+        """Test that variables created with alternative constructors work in calculations."""
+        # Create variables using new syntax
+        P1 = Pressure(100, "psi", "Inlet Pressure")
+        P2 = Pressure(50, "psi", "Outlet Pressure")
+        
+        # Should be able to perform calculations
+        assert P1.quantity is not None and P2.quantity is not None
+        pressure_drop = P1.quantity - P2.quantity
+        assert pressure_drop.value == 50.0
+        assert pressure_drop.unit == PressureUnits.psi
+        
+        # Length calculations
+        L1 = Length(10, "meters", "Width")
+        L2 = Length(5, "meters", "Height")
+        
+        assert L1.quantity is not None and L2.quantity is not None
+        total = L1.quantity + L2.quantity
+        assert total.value == 15.0
+        assert total.unit == LengthUnits.meter
+    
+    def test_alternative_constructor_type_preservation(self):
+        """Test that alternative constructors preserve variable types."""
+        # Variables should still be instances of their specialized classes
+        dim = Dimensionless(0.5, "factor")
+        pressure = Pressure(100, "psi", "pressure")
+        length = Length(10, "meters", "length")
+        
+        assert isinstance(dim, Dimensionless)
+        assert isinstance(dim, TypeSafeVariable)
+        assert isinstance(pressure, Pressure)
+        assert isinstance(pressure, TypeSafeVariable)
+        assert isinstance(length, Length)
+        assert isinstance(length, TypeSafeVariable)
+    
+    def test_alternative_constructor_edge_cases(self):
+        """Test edge cases with alternative constructors."""
+        # Zero values
+        dim_zero = Dimensionless(0, "zero_factor")
+        assert dim_zero.quantity is not None
+        assert dim_zero.quantity.value == 0.0
+        
+        # Negative values
+        pressure_negative = Pressure(-10, "psi", "vacuum")
+        assert pressure_negative.quantity is not None
+        assert pressure_negative.quantity.value == -10.0
+        
+        # Very small values
+        length_small = Length(1e-6, "millimeters", "tiny")
+        assert length_small.quantity is not None
+        assert length_small.quantity.value == 1e-6
+    
+    def test_alternative_constructor_unit_fallback(self):
+        """Test that unknown units fall back to defaults gracefully."""
+        # Length with unrecognized unit should default to meters
+        L = Length(10, "unknown_unit", "test")
+        assert L.quantity is not None
+        assert L.quantity.unit == LengthUnits.meter  # Falls back to meters
+        
+        # Pressure with unrecognized unit should default to psi
+        P = Pressure(50, "unknown_unit", "test")
+        assert P.quantity is not None
+        assert P.quantity.unit == PressureUnits.psi  # Falls back to psi
 
 
 @pytest.mark.parametrize("variable_class,dimension,setter_class", [

@@ -5,11 +5,12 @@ Tests cover UnitDefinition dataclass, UnitConstant class, HighPerformanceRegistr
 and all performance-critical functionality including pre-computed conversion tables.
 """
 
-import pytest
 import time
 
-from src.qnty.unit import UnitDefinition, UnitConstant, HighPerformanceRegistry, registry
-from src.qnty.dimension import DimensionSignature, LENGTH, MASS, TIME, PRESSURE, DIMENSIONLESS
+import pytest
+
+from src.qnty.dimension import DIMENSIONLESS, LENGTH, MASS, PRESSURE, TIME, DimensionSignature
+from src.qnty.unit import HighPerformanceRegistry, UnitConstant, UnitDefinition, registry
 from src.qnty.units import LengthUnits, PressureUnits
 
 
@@ -550,7 +551,7 @@ class TestRegistryMemoryEfficiency:
         
         # Each dimension should map to a list of unit definitions
         for dim_sig, unit_list in test_registry.dimensional_groups.items():
-            assert isinstance(dim_sig, (int, float))  # Dimension signature (can be float for negative exponents)
+            assert isinstance(dim_sig, int | float)  # Dimension signature (can be float for negative exponents)
             assert isinstance(unit_list, list)
             
             # All units in the group should have the same dimension

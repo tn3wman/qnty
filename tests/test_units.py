@@ -6,17 +6,18 @@ their individual unit constants, aliases, UnitConstant integration, dimensional 
 SI factor accuracy, conversion relationships, and performance characteristics.
 """
 
-import pytest
 import time
 
-from src.qnty.units import LengthUnits, PressureUnits, DimensionlessUnits
-from src.qnty.unit import UnitConstant, UnitDefinition, registry
+import pytest
+
 from src.qnty.dimension import (
-    DimensionSignature, 
-    LENGTH, 
-    PRESSURE, 
     DIMENSIONLESS,
+    LENGTH,
+    PRESSURE,
+    DimensionSignature,
 )
+from src.qnty.unit import UnitConstant, UnitDefinition, registry
+from src.qnty.units import DimensionlessUnits, LengthUnits, PressureUnits
 
 
 class TestLengthUnits:
@@ -88,7 +89,7 @@ class TestLengthUnits:
         assert abs(LengthUnits.mm.si_factor * 1000 - LengthUnits.m.si_factor) < 1e-10
         assert abs(LengthUnits.cm.si_factor * 100 - LengthUnits.m.si_factor) < 1e-10
         
-        # Imperial conversions  
+        # Imperial conversions
         assert abs(LengthUnits.inch.si_factor * 12 - LengthUnits.foot.si_factor) < 1e-10
         
         # Mixed conversions (engineering accuracy)
@@ -368,7 +369,7 @@ class TestUnitSystemCompleteness:
         # Test that SI symbol aliases exist for metric units
         metric_units = [
             (LengthUnits, 'meter', 'm'),
-            (LengthUnits, 'millimeter', 'mm'), 
+            (LengthUnits, 'millimeter', 'mm'),
             (LengthUnits, 'centimeter', 'cm'),
             (PressureUnits, 'pascal', 'Pa'),
             (PressureUnits, 'kilopascal', 'kPa'),
@@ -408,7 +409,7 @@ class TestUnitSystemCompleteness:
             
             # Unit constants should maintain their properties
             assert unit.name == original_name
-            assert unit.symbol == original_symbol  
+            assert unit.symbol == original_symbol
             assert unit.si_factor == original_si_factor
 
 
@@ -427,7 +428,7 @@ class TestPerformanceCharacteristics:
             _ = unit.si_factor  # Access a property
         length_time = time.perf_counter() - start_time
         
-        # Test pressure unit access  
+        # Test pressure unit access
         start_time = time.perf_counter()
         for _ in range(iterations):
             unit = PressureUnits.pascal
@@ -450,7 +451,7 @@ class TestPerformanceCharacteristics:
         
         start_time = time.perf_counter()
         for _ in range(iterations):
-            result = LengthUnits.meter == LengthUnits.millimeter  
+            result = LengthUnits.meter == LengthUnits.millimeter
             assert result is False
         different_unit_time = time.perf_counter() - start_time
         
@@ -533,7 +534,7 @@ class TestEdgeCasesAndRobustness:
         """Test string representations are meaningful and consistent."""
         test_cases = [
             (LengthUnits.meter, "m"),
-            (LengthUnits.millimeter, "mm"), 
+            (LengthUnits.millimeter, "mm"),
             (LengthUnits.inch, "in"),
             (PressureUnits.pascal, "Pa"),
             (PressureUnits.psi, "psi"),
