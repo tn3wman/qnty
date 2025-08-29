@@ -10,7 +10,7 @@ import pytest
 from src.qnty.dimension import AREA, DIMENSIONLESS, LENGTH, PRESSURE
 from src.qnty.variable import TypeSafeVariable, TypeSafeSetter 
 from src.qnty.unit import registry
-from src.qnty.quantities import DimensionlessUnits, LengthUnits, PressureUnits
+from src.qnty.units import DimensionlessUnits, LengthUnits, PressureUnits
 from src.qnty.variable import FastQuantity
 
 

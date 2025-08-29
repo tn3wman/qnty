@@ -12,10 +12,7 @@ from typing import TYPE_CHECKING
 
 from ..equation import Equation
 from ..expression import Expression, wrap_operand
-from ..variable import TypeSafeVariable
-
-if TYPE_CHECKING:
-    from ..variable import FastQuantity
+from ..variable import TypeSafeVariable, FastQuantity
 
 
 class ExpressionVariable(TypeSafeVariable):

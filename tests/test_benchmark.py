@@ -10,9 +10,9 @@ import time
 
 import pint
 
-from src.qnty.quantities import DimensionlessUnits, LengthUnits, PressureUnits
+from src.qnty.units import DimensionlessUnits, LengthUnits, PressureUnits
 from src.qnty.variable import FastQuantity
-from src.qnty.quantities import Length
+from src.qnty.variables import Length
 
 
 def benchmark_operation(operation, iterations=1000):

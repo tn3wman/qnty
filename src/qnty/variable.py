@@ -8,22 +8,11 @@ with dimensional safety.
 
 from __future__ import annotations
 
-from typing import Generic, Self, TypeVar, TYPE_CHECKING
+from typing import Generic, Self, TypeVar
 
 from .dimension import AREA, DIMENSIONLESS, ENERGY, FORCE, LENGTH, PRESSURE, VOLUME, DimensionSignature
 from .unit import UnitConstant, UnitDefinition, registry
-
-if TYPE_CHECKING:
-    from .quantities import DimensionlessUnits, LengthUnits, PressureUnits
-else:
-    # Use dynamic imports to avoid circular dependency
-    import importlib
-    def _get_units_module():
-        return importlib.import_module('.quantities', 'src.qnty')
-    
-    def _get_unit_class(name):
-        module = _get_units_module()
-        return getattr(module, name)
+from .units import DimensionlessUnits, LengthUnits, PressureUnits
 
 # TypeVar for generic dimensional types
 DimensionType = TypeVar('DimensionType', bound='FastQuantity')
@@ -139,28 +128,12 @@ class FastQuantity:
         
         # Initialize dimension cache if empty
         if not registry._dimension_cache:
-            if TYPE_CHECKING:
-                fallback_units = {
-                    DIMENSIONLESS._signature: DimensionlessUnits.dimensionless,
-                    LENGTH._signature: LengthUnits.millimeter,
-                    PRESSURE._signature: PressureUnits.Pa,
-                    AREA._signature: LengthUnits.millimeter,  # mm²
-                    VOLUME._signature: LengthUnits.millimeter,  # mm³
-                }
-            else:
-                DimensionlessUnits = _get_unit_class('DimensionlessUnits')
-                LengthUnits = _get_unit_class('LengthUnits')
-                PressureUnits = _get_unit_class('PressureUnits')
-                fallback_units = {
-                    DIMENSIONLESS._signature: DimensionlessUnits.dimensionless,
-                    LENGTH._signature: LengthUnits.millimeter,
-                    PRESSURE._signature: PressureUnits.Pa,
-                    AREA._signature: LengthUnits.millimeter,  # mm²
-                    VOLUME._signature: LengthUnits.millimeter,  # mm³
-                }
-            
             registry._dimension_cache = {
-                **fallback_units,
+                DIMENSIONLESS._signature: DimensionlessUnits.dimensionless,
+                LENGTH._signature: LengthUnits.millimeter,
+                PRESSURE._signature: PressureUnits.Pa,
+                AREA._signature: LengthUnits.millimeter,  # mm²
+                VOLUME._signature: LengthUnits.millimeter,  # mm³
                 FORCE._signature: UnitConstant(UnitDefinition("newton", "N", FORCE, 1.0)),
                 ENERGY._signature: UnitConstant(UnitDefinition("joule", "J", ENERGY, 1.0)),
             }

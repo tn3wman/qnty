@@ -17,7 +17,7 @@ from src.qnty.dimension import (
     DimensionSignature,
 )
 from src.qnty.unit import UnitConstant, UnitDefinition, registry
-from src.qnty.quantities import DimensionlessUnits, LengthUnits, PressureUnits
+from src.qnty.units import DimensionlessUnits, LengthUnits, PressureUnits
 
 
 class TestLengthUnits:

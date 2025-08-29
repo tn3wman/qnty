@@ -13,11 +13,11 @@ import pytest
 from src.qnty.dimension import DIMENSIONLESS, LENGTH, PRESSURE
 from src.qnty.variable import TypeSafeVariable
 from src.qnty.variable import TypeSafeSetter
-from src.qnty.quantities import LengthSetter, PressureSetter 
+from src.qnty.variables import LengthSetter, PressureSetter 
 from src.qnty.unit import UnitConstant
-from src.qnty.quantities import DimensionlessUnits, LengthUnits, PressureUnits
+from src.qnty.units import DimensionlessUnits, LengthUnits, PressureUnits
 from src.qnty.variable import FastQuantity
-from src.qnty.quantities import Dimensionless, Length, Pressure
+from src.qnty.variables import Dimensionless, Length, Pressure
 
 
 class TestLengthVariableInitialization:

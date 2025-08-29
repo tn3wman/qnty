@@ -10,9 +10,8 @@ from typing import TYPE_CHECKING, Type
 
 from .expression_variable import ExpressionVariable
 
-if TYPE_CHECKING:
-    from ..dimension import DimensionSignature
-    from ..variable import TypeSafeSetter
+from ..dimension import DimensionSignature
+from ..variable import TypeSafeSetter
 
 
 class TypedVariable(ExpressionVariable):
@@ -54,6 +53,10 @@ class TypedVariable(ExpressionVariable):
             
         elif len(args) == 3:
             # New syntax: Variable(value, "unit", "name")
+            # But Dimensionless doesn't support this pattern
+            if self.__class__.__name__ == 'Dimensionless':
+                raise ValueError(f"{self.__class__.__name__} expects either 1 argument (name) or 2 arguments (value, name), got {len(args)}")
+            
             value, unit, name = args
             super().__init__(name, self._expected_dimension, is_known=is_known)
             
@@ -81,5 +84,8 @@ class TypedVariable(ExpressionVariable):
                     getattr(setter, unit_properties[0])
                     
         else:
-            expected_args = "1 or 3" if self.__class__.__name__ != 'Dimensionless' else "1 or 2"
-            raise ValueError(f"{self.__class__.__name__} expects either {expected_args} arguments")
+            # More specific error messages matching test expectations
+            if self.__class__.__name__ == 'Dimensionless':
+                raise ValueError(f"{self.__class__.__name__} expects either 1 argument (name) or 2 arguments (value, name), got {len(args)}")
+            else:
+                raise ValueError(f"{self.__class__.__name__} expects either 1 argument (name) or 3 arguments (value, unit, name), got {len(args)}")

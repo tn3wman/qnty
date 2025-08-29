@@ -1,47 +1,19 @@
 """
-Length Quantity Module
-======================
+Length Variable Module
+=====================
 
-Complete length quantity system containing unit definitions, constants,
-variable class, and setter class in one integrated module.
+Type-safe length variables with specialized setter and fluent API.
 """
 
-from typing import TYPE_CHECKING, cast, List
+from typing import TYPE_CHECKING, cast
 
 from ..dimension import LENGTH
-from ..unit import UnitDefinition, UnitConstant
 from ..variable import FastQuantity, TypeSafeSetter
+from .base import VariableModule
 from .typed_variable import TypedVariable
-from .base import QuantityModule
 
-if TYPE_CHECKING:
-    pass
+from ..units import LengthUnits
 
-
-# =====================================================================
-# Unit Definitions and Constants
-# =====================================================================
-
-class LengthUnits:
-    """Type-safe length unit constants."""
-    # Explicit declarations for type checking
-    meter: 'UnitConstant'
-    millimeter: 'UnitConstant'
-    centimeter: 'UnitConstant'
-    inch: 'UnitConstant'
-    foot: 'UnitConstant'
-    
-    # Common aliases
-    m: 'UnitConstant'
-    mm: 'UnitConstant'
-    cm: 'UnitConstant'
-    in_: 'UnitConstant'
-    ft: 'UnitConstant'
-
-
-# =====================================================================
-# Variable Setter
-# =====================================================================
 
 class LengthSetter(TypeSafeSetter):
     """Length-specific setter with only length units."""
@@ -97,10 +69,6 @@ class LengthSetter(TypeSafeSetter):
         return self.feet
 
 
-# =====================================================================
-# Variable Class
-# =====================================================================
-
 class Length(TypedVariable):
     """Type-safe length variable with expression capabilities."""
     
@@ -113,22 +81,8 @@ class Length(TypedVariable):
         return LengthSetter(self, value)
 
 
-# =====================================================================
-# Quantity Module Definition
-# =====================================================================
-
-class LengthQuantityModule(QuantityModule):
-    """Complete length quantity module definition."""
-    
-    def get_unit_definitions(self) -> List[UnitDefinition]:
-        """Return all length unit definitions."""
-        return [
-            UnitDefinition("meter", "m", LENGTH, 1.0),
-            UnitDefinition("millimeter", "mm", LENGTH, 0.001),
-            UnitDefinition("centimeter", "cm", LENGTH, 0.01),
-            UnitDefinition("inch", "in", LENGTH, 0.0254),
-            UnitDefinition("foot", "ft", LENGTH, 0.3048),
-        ]
+class LengthModule(VariableModule):
+    """Length variable module definition."""
     
     def get_variable_class(self):
         return Length
@@ -136,12 +90,9 @@ class LengthQuantityModule(QuantityModule):
     def get_setter_class(self):
         return LengthSetter
     
-    def get_units_class(self):
-        return LengthUnits
-    
     def get_expected_dimension(self):
         return LENGTH
 
 
-# Register this quantity module for auto-discovery
-QUANTITY_MODULE = LengthQuantityModule()
+# Register this module for auto-discovery
+VARIABLE_MODULE = LengthModule()

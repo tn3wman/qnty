@@ -11,10 +11,10 @@ import pytest
 from src.qnty.dimension import LENGTH, PRESSURE
 from src.qnty.variable import TypeSafeVariable
 from src.qnty.variable import TypeSafeSetter
-from src.qnty.quantities import LengthSetter, PressureSetter 
-from src.qnty.quantities import LengthUnits, PressureUnits
+from src.qnty.variables import LengthSetter, PressureSetter 
+from src.qnty.units import LengthUnits, PressureUnits
 from src.qnty.variable import FastQuantity
-from src.qnty.quantities import Length, Pressure
+from src.qnty.variables import Length, Pressure
 
 
 class TestTypeSafeSetterInitialization:
