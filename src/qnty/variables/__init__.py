@@ -28,6 +28,10 @@ for importer, modname, ispkg in pkgutil.iter_modules(__path__):
 from .dimensionless import Dimensionless, DimensionlessSetter
 from .length import Length, LengthSetter
 from .pressure import Pressure, PressureSetter
+from .time import Time, TimeSetter
+from .absorbed_dose import AbsorbedDose, AbsorbedDoseSetter
+from .acceleration import Acceleration, AccelerationSetter
+from .angle import Angle, AngleSetter
 
 # Also import base classes for extensibility
 from .base import VariableModule, VariableRegistry
@@ -40,10 +44,18 @@ __all__ = [
     'Length',
     'Pressure', 
     'Dimensionless',
+    'Time',
+    'AbsorbedDose',
+    'Acceleration',
+    'Angle',
     # Setter classes
     'LengthSetter',
     'PressureSetter',
     'DimensionlessSetter',
+    'TimeSetter',
+    'AbsorbedDoseSetter',
+    'AccelerationSetter',
+    'AngleSetter',
     'TypeSafeSetter',  # For backward compatibility
     # Base classes for extensibility
     'VariableModule',

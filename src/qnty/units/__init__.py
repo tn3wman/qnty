@@ -26,5 +26,9 @@ registry.finalize_registration()
 from .length import LengthUnits
 from .pressure import PressureUnits  
 from .dimensionless import DimensionlessUnits
+from .time import TimeUnits
+from .absorbed_dose import AbsorbedDoseUnits
+from .acceleration import AccelerationUnits
+from .angle import AngleUnits
 
-__all__ = ['LengthUnits', 'PressureUnits', 'DimensionlessUnits']
+__all__ = ['LengthUnits', 'PressureUnits', 'DimensionlessUnits', 'TimeUnits', 'AbsorbedDoseUnits', 'AccelerationUnits', 'AngleUnits']

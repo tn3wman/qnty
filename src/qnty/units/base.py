@@ -6,7 +6,7 @@ Provides abstract base class for unit modules and registration functionality.
 """
 
 from abc import ABC, abstractmethod
-from typing import List
+from typing import List, Type, Any
 
 from ..unit import UnitDefinition, registry
 
@@ -20,7 +20,7 @@ class UnitModule(ABC):
         pass
     
     @abstractmethod
-    def get_units_class(self):
+    def get_units_class(self) -> Type[Any]:
         """Return the units class for this module."""
         pass
     
