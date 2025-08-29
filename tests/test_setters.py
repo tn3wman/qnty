@@ -7,12 +7,13 @@ with the broader OptiUnit system.
 """
 
 import pytest
-from src.qnty.setters import TypeSafeSetter, LengthSetter, PressureSetter
-from src.qnty.variables import Length, Pressure
-from src.qnty.variable import FastQuantity
+
 from src.qnty.dimension import LENGTH, PRESSURE
-from src.qnty.units import LengthUnits, PressureUnits
+from src.qnty.setters import LengthSetter, PressureSetter, TypeSafeSetter
 from src.qnty.types import TypeSafeVariable
+from src.qnty.units import LengthUnits, PressureUnits
+from src.qnty.variable import FastQuantity
+from src.qnty.variables import Length, Pressure
 
 
 class TestTypeSafeSetterInitialization:
@@ -414,7 +415,7 @@ class TestFluentAPIAndMethodChaining:
         foot_result = length_var.set(3.28).feet
         
         assert meter_result is length_var
-        assert mm_result is length_var  
+        assert mm_result is length_var
         assert inch_result is length_var
         assert foot_result is length_var
 
@@ -553,7 +554,7 @@ class TestSetterIntegration:
         assert length_var.quantity.unit == LengthUnits.meter
         
         # Second assignment should overwrite
-        length_var.set(2540.0).millimeters  
+        length_var.set(2540.0).millimeters
         assert length_var.quantity.value == 2540.0
         assert length_var.quantity.unit == LengthUnits.millimeter
         
@@ -606,7 +607,7 @@ class TestSetterComprehensiveCoverage:
     
     @pytest.mark.parametrize("length_value,length_unit_prop", [
         (0.001, "millimeters"),
-        (1.0, "meters"), 
+        (1.0, "meters"),
         (12.0, "inches"),
         (3.28084, "feet"),
         (1e-6, "millimeters"),

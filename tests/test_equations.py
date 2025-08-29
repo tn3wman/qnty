@@ -1,9 +1,11 @@
 """Tests for the qnty equation system."""
 
 import pytest
-from src.qnty.variables import Length, Pressure, Dimensionless
-from src.qnty.expression import Expression, VariableReference, Constant, BinaryOperation
+
 from src.qnty.equation import Equation
+from src.qnty.expression import BinaryOperation, Expression, VariableReference
+from src.qnty.types import TypeSafeVariable
+from src.qnty.variables import Dimensionless, Length, Pressure
 
 
 class TestEquationCreation:
@@ -12,7 +14,7 @@ class TestEquationCreation:
     def test_basic_equation_creation(self):
         """Test creating equations using the .equals() method."""
         T = Length("Wall Thickness", is_known=False)
-        T_bar = Length(0.147, "inches", "Nominal Wall Thickness") 
+        T_bar = Length(0.147, "inches", "Nominal Wall Thickness")
         U_m = Dimensionless(0.125, "Mill Undertolerance")
         
         # Create equation: T = T_bar * (1 - U_m)
@@ -37,8 +39,8 @@ class TestEquationCreation:
         t = Length("Pressure Design Thickness", is_known=False)
         t_eqn = t.equals((P * D) / (2 * (S * E * W + P * Y)))
         
-        expected_vars = {"Pressure Design Thickness", "Design Pressure", "Outside Diameter", 
-                        "Allowable Stress", "Quality Factor", "Weld Joint Strength Reduction Factor", 
+        expected_vars = {"Pressure Design Thickness", "Design Pressure", "Outside Diameter",
+                        "Allowable Stress", "Quality Factor", "Weld Joint Strength Reduction Factor",
                         "Y Coefficient"}
         assert t_eqn.get_all_variables() == expected_vars
     
@@ -87,7 +89,7 @@ class TestArithmeticOperations:
     def test_complex_expression(self):
         """Test complex arithmetic expressions."""
         P = Pressure(90, "psi", "P")
-        D = Length(0.84, "inches", "D") 
+        D = Length(0.84, "inches", "D")
         S = Pressure(20000, "psi", "S")
         E = Dimensionless(0.8, "E")
         
@@ -167,18 +169,19 @@ class TestEquationSolving:
         """Test checking if equations are satisfied."""
         # Set up variables with known values
         a = Length(5, "meters", "a")
-        b = Length(3, "meters", "b") 
+        b = Length(3, "meters", "b")
         c = Length(8, "meters", "c")  # 5 + 3 = 8
         
         # Create equation: c = a + b
         eqn = c.equals(a + b)
         
-        variables = {"a": a, "b": b, "c": c}
+        variables: dict[str, TypeSafeVariable] = {"a": a, "b": b, "c": c}
         
         # Should be satisfied
         assert eqn.check_residual(variables) is True
         
         # Change c to wrong value
+        assert c.quantity is not None
         c.quantity.value = 9  # Wrong value
         assert eqn.check_residual(variables) is False
     
@@ -229,7 +232,7 @@ class TestExpressionEvaluation:
         """Test expressions containing constants."""
         var = Pressure(100, "psi", "var")
         
-        # Only multiply to avoid unit incompatibility issues  
+        # Only multiply to avoid unit incompatibility issues
         expr = var * 2  # 100 * 2 = 200
         variables = {"var": var}
         
@@ -262,7 +265,7 @@ class TestEdgeCases:
         b = Length("b", is_known=False)
         
         eqn = b.equals(a * 2)
-        variables = {"a": a, "b": b}
+        variables: dict[str, TypeSafeVariable] = {"a": a, "b": b}
         
         with pytest.raises(ValueError, match="Variable 'nonexistent' not found"):
             eqn.solve_for("nonexistent", variables)

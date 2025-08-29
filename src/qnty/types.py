@@ -8,7 +8,7 @@ This module contains core type definitions used across the system.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Generic, TypeVar
+from typing import TYPE_CHECKING, Any, Generic, Self, TypeVar
 
 if TYPE_CHECKING:
     from .expression import Constant, Expression, VariableReference
@@ -96,13 +96,13 @@ class TypeSafeVariable(Generic[DimensionType]):
         return TypeSafeSetter(self, value)
     
     @property
-    def unknown(self) -> TypeSafeVariable:
+    def unknown(self) -> Self:
         """Mark this variable as unknown using fluent API."""
         self.is_known = False
         return self
     
     @property
-    def known(self) -> TypeSafeVariable:
+    def known(self) -> Self:
         """Mark this variable as known using fluent API."""
         self.is_known = True
         return self

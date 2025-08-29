@@ -186,7 +186,7 @@ class TestFastQuantityArithmetic:
         ("sub", lambda x, y: x - y),
     ])
     def test_fast_path_optimization(self, op_name, op_func):
-        f"""Test fast path optimizations for same-unit {op_name} operations."""
+        """Test fast path optimizations for same-unit operations."""
         qty1 = FastQuantity(100.0, LengthUnits.millimeter)
         qty2 = FastQuantity(50.0, LengthUnits.millimeter)
         
@@ -721,7 +721,7 @@ class TestIntegrationWithUnitSystem:
 
 
 @pytest.mark.parametrize("length_unit", [
-    LengthUnits.meter, LengthUnits.millimeter, LengthUnits.centimeter, 
+    LengthUnits.meter, LengthUnits.millimeter, LengthUnits.centimeter,
     LengthUnits.inch, LengthUnits.foot
 ])
 def test_parametrized_length_operations(length_unit):
