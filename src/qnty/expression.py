@@ -7,9 +7,19 @@ Mathematical expressions for building equation trees with qnty variables.
 
 import math
 from abc import ABC, abstractmethod
-from typing import Union, cast
+from typing import Union, cast, TYPE_CHECKING
 
-from .units import DimensionlessUnits
+if TYPE_CHECKING:
+    from .quantities import DimensionlessUnits
+
+def _get_dimensionless_unit():
+    """Get dimensionless unit constant, using dynamic import to avoid circular dependencies."""
+    if TYPE_CHECKING:
+        return DimensionlessUnits.dimensionless
+    else:
+        import importlib
+        module = importlib.import_module('.quantities', 'src.qnty')
+        return module.DimensionlessUnits.dimensionless
 
 # if TYPE_CHECKING:
 from .variable import FastQuantity, TypeSafeVariable
@@ -35,7 +45,7 @@ def wrap_operand(operand: Union['Expression', 'TypeSafeVariable', 'FastQuantity'
     elif isinstance(operand, int | float):
         # Numeric value - create dimensionless quantity
 
-        return Constant(FastQuantity(float(operand), DimensionlessUnits.dimensionless))
+        return Constant(FastQuantity(float(operand), _get_dimensionless_unit()))
     else:
         raise TypeError(f"Cannot convert {type(operand)} to Expression")
 
@@ -291,7 +301,7 @@ class ComparisonExpression(Expression):
         else:
             raise ValueError(f"Unknown comparison operator: {self.operator}")
         
-        return FastQuantity(1.0 if result else 0.0, DimensionlessUnits.dimensionless)
+        return FastQuantity(1.0 if result else 0.0, _get_dimensionless_unit())
     
     def get_variables(self) -> set[str]:
         return self.left.get_variables() | self.right.get_variables()
@@ -317,13 +327,13 @@ class UnaryFunction(Expression):
         if self.function_name == 'sin':
             # Assume input is in radians, result is dimensionless
             result_value = math.sin(operand_val.value)
-            return FastQuantity(result_value, DimensionlessUnits.dimensionless)
+            return FastQuantity(result_value, _get_dimensionless_unit())
         elif self.function_name == 'cos':
             result_value = math.cos(operand_val.value)
-            return FastQuantity(result_value, DimensionlessUnits.dimensionless)
+            return FastQuantity(result_value, _get_dimensionless_unit())
         elif self.function_name == 'tan':
             result_value = math.tan(operand_val.value)
-            return FastQuantity(result_value, DimensionlessUnits.dimensionless)
+            return FastQuantity(result_value, _get_dimensionless_unit())
         elif self.function_name == 'sqrt':
             # For sqrt, we need to handle units carefully
             result_value = math.sqrt(operand_val.value)
@@ -334,14 +344,14 @@ class UnaryFunction(Expression):
         elif self.function_name == 'ln':
             # Natural log - input should be dimensionless
             result_value = math.log(operand_val.value)
-            return FastQuantity(result_value, DimensionlessUnits.dimensionless)
+            return FastQuantity(result_value, _get_dimensionless_unit())
         elif self.function_name == 'log10':
             result_value = math.log10(operand_val.value)
-            return FastQuantity(result_value, DimensionlessUnits.dimensionless)
+            return FastQuantity(result_value, _get_dimensionless_unit())
         elif self.function_name == 'exp':
             # Exponential - input should be dimensionless
             result_value = math.exp(operand_val.value)
-            return FastQuantity(result_value, DimensionlessUnits.dimensionless)
+            return FastQuantity(result_value, _get_dimensionless_unit())
         else:
             raise ValueError(f"Unknown function: {self.function_name}")
     

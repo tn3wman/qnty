@@ -11,7 +11,7 @@ import pytest
 
 from src.qnty.dimension import DIMENSIONLESS, LENGTH, MASS, PRESSURE, TIME, DimensionSignature
 from src.qnty.unit import HighPerformanceRegistry, UnitConstant, UnitDefinition, registry
-from src.qnty.units import LengthUnits, PressureUnits
+from src.qnty.quantities import LengthUnits, PressureUnits
 
 
 class TestUnitDefinition:

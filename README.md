@@ -46,7 +46,7 @@ poetry add qnty
 ```python
 from qnty import Length, Pressure, Dimensionless
 from qnty.variable import FastQuantity
-from qnty.units import LengthUnits, PressureUnits
+from qnty.quantities import LengthUnits, PressureUnits
 
 # Type-safe variables with fluent API
 beam_length = Length("beam_length")

@@ -10,9 +10,9 @@ import time
 
 import pint
 
-from src.qnty.units import DimensionlessUnits, LengthUnits, PressureUnits
+from src.qnty.quantities import DimensionlessUnits, LengthUnits, PressureUnits
 from src.qnty.variable import FastQuantity
-from src.qnty.variables import Length
+from src.qnty.quantities import Length
 
 
 def benchmark_operation(operation, iterations=1000):
@@ -211,7 +211,7 @@ def test_benchmark_suite(capsys):
     # ========== TEST 6: Type-Safe Variables ==========
     def qnty_typesafe():
         length = Length("beam_length")
-        length.set(100.0).millimeters
+        length.set(100.0).mm
         return length.quantity.to(LengthUnits.meter)
     
     def pint_typesafe():
@@ -225,7 +225,7 @@ def test_benchmark_suite(capsys):
     
     # ========== TEST 7: Chained Operations ==========
     def qnty_chained():
-        q1 = FastQuantity(50.0, LengthUnits.millimeter)
+        q1 = FastQuantity(50.0, LengthUnits.mm)
         q2 = FastQuantity(2.0, LengthUnits.inch)
         q3 = FastQuantity(0.5, LengthUnits.meter)
         result = (q1 + q2) * 2 + q3

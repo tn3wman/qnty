@@ -5,7 +5,7 @@ import pytest
 from src.qnty.equation import Equation
 from src.qnty.expression import BinaryOperation, Expression, VariableReference
 from src.qnty.variable import TypeSafeVariable
-from src.qnty.variables import Dimensionless, Length, Pressure
+from src.qnty.quantities import Dimensionless, Length, Pressure
 
 
 class TestEquationCreation:
