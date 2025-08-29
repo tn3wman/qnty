@@ -5,11 +5,12 @@ Tests focus on high-performance optimizations, dimensional safety, and engineeri
 
 import pytest
 import time
-from src.qnty.variable import FastQuantity, TypeSafeVariable
+from src.qnty.variable import FastQuantity
 from src.qnty.units import LengthUnits, PressureUnits, DimensionlessUnits
 from src.qnty.dimension import LENGTH, PRESSURE, AREA, DIMENSIONLESS
 from src.qnty.unit import registry
 from src.qnty.setters import TypeSafeSetter
+from src.qnty.types import TypeSafeVariable
 
 
 class TestFastQuantityInitialization:

@@ -5,9 +5,9 @@ Unit System
 Unit definitions, constants and registry for the high-performance unit system.
 """
 
-from typing import Dict, Tuple, List
 from dataclasses import dataclass
-from .dimension import DimensionSignature, LENGTH, PRESSURE, DIMENSIONLESS
+
+from .dimension import DIMENSIONLESS, LENGTH, PRESSURE, DimensionSignature
 
 
 @dataclass(frozen=True)
@@ -46,11 +46,11 @@ class HighPerformanceRegistry:
     """Ultra-fast registry with pre-computed conversion tables."""
     
     def __init__(self):
-        self.units: Dict[str, UnitDefinition] = {}
-        self.conversion_table: Dict[Tuple[str, str], float] = {}  # (from_unit, to_unit) -> factor
-        self.dimensional_groups: Dict[int, List[UnitDefinition]] = {}
-        self._dimension_cache: Dict[int, UnitConstant] = {}  # Cache for common dimension mappings
-        
+        self.units: dict[str, UnitDefinition] = {}
+        self.conversion_table: dict[tuple[str, str], float] = {}  # (from_unit, to_unit) -> factor
+        self.dimensional_groups: dict[int, list[UnitDefinition]] = {}
+        self._dimension_cache: dict[int, UnitConstant] = {}  # Cache for common dimension mappings
+
         self._initialize_units()
         self._precompute_conversions()
     

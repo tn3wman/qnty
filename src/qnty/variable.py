@@ -2,21 +2,15 @@
 High-Performance Quantity and Variables
 ========================================
 
-FastQuantity class and type-safe variables optimized for engineering calculations 
+FastQuantity class and type-safe variables optimized for engineering calculations
 with dimensional safety.
 """
 
-from typing import Union, Optional, TypeVar, Generic, TYPE_CHECKING
-from .dimension import DimensionSignature, DIMENSIONLESS, LENGTH, PRESSURE, AREA, VOLUME, FORCE, ENERGY
+from __future__ import annotations
+
+from .dimension import AREA, DIMENSIONLESS, ENERGY, FORCE, LENGTH, PRESSURE, VOLUME, DimensionSignature
 from .unit import UnitConstant, UnitDefinition, registry
 from .units import DimensionlessUnits, LengthUnits, PressureUnits
-
-if TYPE_CHECKING:
-    from .setters import TypeSafeSetter, LengthSetter, PressureSetter
-
-
-DimensionType = TypeVar('DimensionType', bound='FastQuantity')
-SetterType = TypeVar('SetterType')
 
 
 class FastQuantity:
@@ -39,7 +33,7 @@ class FastQuantity:
         return f"FastQuantity({self.value}, {self.unit.name})"
     
     # Ultra-fast arithmetic with dimensional checking
-    def __add__(self, other: 'FastQuantity') -> 'FastQuantity':
+    def __add__(self, other: FastQuantity) -> FastQuantity:
         # Fast dimension compatibility check using cached signatures
         if self._dimension_sig != other._dimension_sig:
             raise ValueError(f"Cannot add {self.unit.name} and {other.unit.name}")
@@ -52,7 +46,7 @@ class FastQuantity:
         other_value = other.value * other._si_factor / self._si_factor
         return FastQuantity(self.value + other_value, self.unit)
     
-    def __sub__(self, other: 'FastQuantity') -> 'FastQuantity':
+    def __sub__(self, other: FastQuantity) -> FastQuantity:
         # Fast dimension compatibility check using cached signatures
         if self._dimension_sig != other._dimension_sig:
             raise ValueError(f"Cannot subtract {other.unit.name} from {self.unit.name}")
@@ -65,8 +59,8 @@ class FastQuantity:
         other_value = other.value * other._si_factor / self._si_factor
         return FastQuantity(self.value - other_value, self.unit)
     
-    def __mul__(self, other: Union['FastQuantity', float, int]) -> 'FastQuantity':
-        if isinstance(other, (int, float)):
+    def __mul__(self, other: FastQuantity | float | int) -> FastQuantity:
+        if isinstance(other, int | float):
             return FastQuantity(self.value * other, self.unit)
         
         # Fast dimensional analysis using cached signatures
@@ -83,14 +77,14 @@ class FastQuantity:
         
         return FastQuantity(result_value, result_unit)
     
-    def __rmul__(self, other: Union[float, int]) -> 'FastQuantity':
+    def __rmul__(self, other: float | int) -> FastQuantity:
         """Reverse multiplication for cases like 2 * quantity."""
-        if isinstance(other, (int, float)):
+        if isinstance(other, int | float):
             return FastQuantity(other * self.value, self.unit)
         return NotImplemented
     
-    def __truediv__(self, other: Union['FastQuantity', float, int]) -> 'FastQuantity':
-        if isinstance(other, (int, float)):
+    def __truediv__(self, other: FastQuantity | float | int) -> FastQuantity:
+        if isinstance(other, int | float):
             return FastQuantity(self.value / other, self.unit)
         
         # Fast dimensional analysis using cached signatures
@@ -107,8 +101,8 @@ class FastQuantity:
         
         return FastQuantity(result_value, result_unit)
     
-    def _find_result_unit_fast(self, result_dimension_sig: int, 
-                              left_qty: 'FastQuantity', right_qty: 'FastQuantity') -> UnitConstant:
+    def _find_result_unit_fast(self, result_dimension_sig: int,
+                              left_qty: FastQuantity, right_qty: FastQuantity) -> UnitConstant:
         """Ultra-fast unit finding using cached dimension signatures."""
         
         # Initialize dimension cache if empty
@@ -130,7 +124,7 @@ class FastQuantity:
         # For rare combined dimensions, create temporary unit
         temp_unit = UnitDefinition(
             name=f"combined_{result_dimension_sig}",
-            symbol="combined", 
+            symbol="combined",
             dimension=DimensionSignature(result_dimension_sig),
             si_factor=1.0
         )
@@ -140,13 +134,13 @@ class FastQuantity:
         registry._dimension_cache[result_dimension_sig] = result_unit
         return result_unit
     
-    def _find_result_unit(self, result_dimension: DimensionSignature, 
-                         left_qty: 'FastQuantity', right_qty: 'FastQuantity') -> UnitConstant:
+    def _find_result_unit(self, result_dimension: DimensionSignature,
+                         left_qty: FastQuantity, right_qty: FastQuantity) -> UnitConstant:
         """Legacy method - kept for compatibility."""
         return self._find_result_unit_fast(result_dimension._signature, left_qty, right_qty)
     
     # Ultra-fast comparisons
-    def __lt__(self, other: 'FastQuantity') -> bool:
+    def __lt__(self, other: FastQuantity) -> bool:
         if self._dimension_sig != other._dimension_sig:
             raise ValueError("Cannot compare incompatible dimensions")
         
@@ -172,7 +166,7 @@ class FastQuantity:
         other_value = other.value * other._si_factor / self._si_factor
         return abs(self.value - other_value) < 1e-10
     
-    def to(self, target_unit: UnitConstant) -> 'FastQuantity':
+    def to(self, target_unit: UnitConstant) -> FastQuantity:
         """Ultra-fast unit conversion."""
         if self.unit == target_unit:
             return FastQuantity(self.value, target_unit)
@@ -182,17 +176,3 @@ class FastQuantity:
         return FastQuantity(converted_value, target_unit)
 
 
-class TypeSafeVariable(Generic[DimensionType]):
-    """Type-safe variable with compile-time dimensional checking."""
-    
-    def __init__(self, name: str, expected_dimension: DimensionSignature):
-        self.name = name
-        self.expected_dimension = expected_dimension
-        self.quantity: Optional[FastQuantity] = None
-    
-    def set(self, value: float) -> Union['TypeSafeSetter', 'LengthSetter', 'PressureSetter']:
-        from .setters import TypeSafeSetter
-        return TypeSafeSetter(self, value)
-    
-    def __str__(self):
-        return f"{self.name}: {self.quantity}" if self.quantity else f"{self.name}: unset"

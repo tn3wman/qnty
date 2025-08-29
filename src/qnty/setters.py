@@ -6,13 +6,14 @@ Dimension-specific setters with fluent API and compile-time type safety.
 """
 
 from typing import TYPE_CHECKING
-from .variable import FastQuantity
-from .units import LengthUnits, PressureUnits
+
 from .unit import UnitConstant
+from .units import DimensionlessUnits, LengthUnits, PressureUnits
+from .variable import FastQuantity
 
 if TYPE_CHECKING:
-    from .variables import Length, Pressure
-    from .variable import TypeSafeVariable
+    from .types import TypeSafeVariable
+    from .variables import Dimensionless, Length, Pressure
 
 
 class TypeSafeSetter:
@@ -86,4 +87,24 @@ class PressureSetter:
     @property
     def bar(self) -> 'Pressure':
         self.variable.quantity = FastQuantity(self.value, PressureUnits.bar)
+        return self.variable
+
+
+class DimensionlessSetter:
+    """Dimensionless-specific setter with only dimensionless units."""
+    
+    def __init__(self, variable: 'Dimensionless', value: float):
+        self.variable = variable
+        self.value = value
+    
+    # Dimensionless units
+    @property
+    def dimensionless(self) -> 'Dimensionless':
+        self.variable.quantity = FastQuantity(self.value, DimensionlessUnits.dimensionless)
+        return self.variable
+    
+    # Common alias for no units
+    @property
+    def unitless(self) -> 'Dimensionless':
+        self.variable.quantity = FastQuantity(self.value, DimensionlessUnits.dimensionless)
         return self.variable

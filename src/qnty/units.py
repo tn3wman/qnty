@@ -7,7 +7,6 @@ Type-safe unit constants for common engineering units.
 
 from .unit import UnitConstant, registry
 
-
 # =====================================================================
 # Type-Safe Unit Constants (No More Strings!)
 # =====================================================================
@@ -31,7 +30,7 @@ class LengthUnits:
 class PressureUnits:
     """Type-safe pressure unit constants."""
     pascal = UnitConstant(registry.units["pascal"])
-    kilopascal = UnitConstant(registry.units["kilopascal"])  
+    kilopascal = UnitConstant(registry.units["kilopascal"])
     megapascal = UnitConstant(registry.units["megapascal"])
     psi = UnitConstant(registry.units["psi"])
     bar = UnitConstant(registry.units["bar"])
