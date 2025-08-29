@@ -9,8 +9,8 @@ with the broader OptiUnit system.
 import pytest
 
 from src.qnty.dimension import LENGTH, PRESSURE
-from src.qnty.setters import LengthSetter, PressureSetter, TypeSafeSetter
-from src.qnty.types import TypeSafeVariable
+from src.qnty.variable import TypeSafeVariable
+from src.qnty.variables import LengthSetter, PressureSetter, TypeSafeSetter
 from src.qnty.units import LengthUnits, PressureUnits
 from src.qnty.variable import FastQuantity
 from src.qnty.variables import Length, Pressure

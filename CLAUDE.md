@@ -18,7 +18,9 @@ Qnty (formerly OptiUnit) is a high-performance unit system library for Python th
 
 ### Code Quality
 
-- Lint code: Use `ruff` with line length of 200 characters (configured in pyproject.toml)
+- Lint code: `ruff check src/ tests/` (configured with line length of 200 characters in pyproject.toml)
+- Format code: `ruff format src/ tests/`  
+- Type checking: `mypy src/qnty/` (if mypy is installed)
 - The project uses Poetry for dependency management but also supports pip
 
 ### Package Management
@@ -26,8 +28,19 @@ Qnty (formerly OptiUnit) is a high-performance unit system library for Python th
 - Package name: `qnty` (renamed from optiunit)
 - Source code located in `src/qnty/`
 - Uses Poetry build system with `poetry-core>=1.0.0`
+- Supports Python 3.11+ (up to 3.13)
 
 ## Architecture Overview
+
+### Clean Dependency Hierarchy
+
+The codebase has been carefully structured to eliminate circular imports with a strict hierarchy:
+
+```python
+variable → variables → expression → equation
+```
+
+This ensures clean dependencies and enables proper type checking throughout the system.
 
 ### Core Components
 
@@ -43,23 +56,19 @@ Qnty (formerly OptiUnit) is a high-performance unit system library for Python th
 - `UnitConstant`: Type-safe unit constants that provide performance optimizations
 - `HighPerformanceRegistry`: Central registry with pre-computed conversion tables for fast unit conversions
 
-**Quantities (`variable.py`)**
+**Base Variables and Quantities (`variable.py`)**
 
 - `FastQuantity`: High-performance quantity class optimized for engineering calculations
+- `TypeSafeVariable`: Base class for dimension-specific variables with generic type safety
+- `TypeSafeSetter`: Generic setter with dimensional validation and fluent API
 - Uses `__slots__` for memory efficiency and caches commonly used values
 - Implements fast arithmetic operations with dimensional checking
 
 **Specialized Variables (`variables.py`)**
 
-- `Length`: Type-safe length variable with fluent API
-- `Pressure`: Type-safe pressure variable with fluent API
-- Extends `TypeSafeVariable` with domain-specific functionality
-
-**Setters (`setters.py`)**
-
-- `TypeSafeSetter`: Generic setter with dimensional validation
-- `LengthSetter`: Length-specific setter with unit properties (meters, millimeters, inches, feet)
-- `PressureSetter`: Pressure-specific setter with unit properties (psi, kPa, MPa, bar)
+- `Length`, `Pressure`, `Dimensionless`: Domain-specific variables with compile-time safety
+- `ExpressionVariable`: Extends `TypeSafeVariable` with mathematical operation capabilities
+- `LengthSetter`, `PressureSetter`, `DimensionlessSetter`: Specialized setters with unit-specific properties
 - Provides fluent API patterns for type-safe value setting
 
 **Unit Constants (`units.py`)**
@@ -68,21 +77,38 @@ Qnty (formerly OptiUnit) is a high-performance unit system library for Python th
 - Provides both full names and common aliases (e.g., `m`, `mm`, `Pa`, `kPa`)
 - No string-based unit handling - all type-safe constants
 
-**Type System (`types.py`)**
+**Mathematical Expression System (`expression.py`)**
 
-- `TypeSafeVariable`: Base class for dimension-specific variables with generic type safety
-- Factory patterns and duck typing utilities to avoid circular imports
-- Shared type definitions used across the system
+- `Expression`: Abstract base class for mathematical expression trees
+- `BinaryOperation`, `VariableReference`, `Constant`: Concrete expression implementations
+- `UnaryFunction`, `ComparisonExpression`, `ConditionalExpression`: Advanced expression types
+- `wrap_operand()`: Duck-typing utility to convert various types to expressions
+- Comprehensive mathematical function support (sin, cos, tan, sqrt, ln, exp, etc.)
 
-**Mathematical System (`equation.py` & `expression.py`)**
+**Equation System (`equation.py`)**
 
 - `Equation`: Represents mathematical equations (lhs = rhs) with solving capabilities
-- `Expression`: Abstract base class for mathematical expression trees
-- `BinaryOperation`, `VariableReference`, `Constant`: Expression implementations
+- `EquationSystem`: System of equations that can be solved together
 - Variables can participate in mathematical operations, returning expressions
 - Supports equation solving and residual checking for engineering calculations
 
 ### Key Architecture Patterns
+
+**Clean Import Strategy**: The codebase uses several techniques to avoid circular imports:
+
+- Strict dependency hierarchy: `variable → variables → expression → equation`
+- `TYPE_CHECKING` guards for type-only imports
+- Duck typing with `hasattr()` checks to avoid importing classes
+- Delayed imports where necessary
+- Strategic use of `cast()` for type safety without runtime dependencies
+
+**Public API Design**: The library exposes a minimal, focused public API:
+
+```python
+from qnty import Length, Pressure, Dimensionless
+```
+
+All other classes and functions are implementation details and should be imported from their specific modules only when needed.
 
 **Fluent API Design**: Variables use specialized setters that return the variable itself for method chaining:
 
@@ -122,9 +148,9 @@ equation.solve_for("T", known_variables)
 
 ### Key Dependencies
 
-- `numpy==2.3.2`: Numerical computations
-- `Pint==0.24.4`: Comparison/benchmarking against established unit library
-- `pytest==8.4.1`: Testing framework
+- `numpy>=2.3.2`: Numerical computations  
+- `pytest>=8.4.1`: Testing framework (dev dependency)
+- `Pint>=0.24.4`: Comparison/benchmarking against established unit library (benchmark dependency)
 
 ### Reference Data
 
@@ -148,4 +174,44 @@ The project includes comprehensive test coverage with **457 tests** across 8 tes
 - Always add `assert variable.quantity is not None` before accessing `.value`, `.unit`, `.dimension`, or `._dimension_sig` attributes
 - Use parametrized tests extensively for comprehensive coverage
 - Follow existing test patterns for consistency
-- Tests demonstrate significant performance advantages over established libraries
+- Tests demonstrate significant performance advantages (18-25x faster than Pint)
+
+## Development Guidelines
+
+### Import Strategy
+
+When working with this codebase, follow these import patterns:
+
+```python
+# Public API - preferred for user-facing code
+from qnty import Length, Pressure, Dimensionless
+
+# Internal development - when working on internals
+from .variable import FastQuantity, TypeSafeVariable, TypeSafeSetter
+from .expression import Expression, wrap_operand
+from .equation import Equation
+```
+
+### Type Safety Best Practices
+
+- Always check `variable.quantity is not None` before accessing quantity attributes
+- Use `cast()` with duck typing for type safety without circular imports
+- Prefer `TYPE_CHECKING` guards for type-only imports
+- Follow the established dependency hierarchy when adding new modules
+
+### Performance Considerations
+
+- The library achieves 18-25x performance improvements over established libraries
+- Maintain `__slots__` usage for memory efficiency
+- Cache frequently accessed values (SI factors, dimension signatures)
+- Use pre-computed lookup tables where possible
+- Optimize for the common case (same-unit operations, compatible dimensions)
+
+## important-instruction-reminders
+
+Do what has been asked; nothing more, nothing less.
+NEVER create files unless they're absolutely necessary for achieving your goal.
+ALWAYS prefer editing an existing file to creating a new one.
+NEVER proactively create documentation files (*.md) or README files. Only create documentation files if explicitly requested by the User.
+
+IMPORTANT: this context may or may not be relevant to your tasks. You should not respond to this context unless it is highly relevant to your task.

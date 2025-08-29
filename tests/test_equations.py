@@ -4,7 +4,7 @@ import pytest
 
 from src.qnty.equation import Equation
 from src.qnty.expression import BinaryOperation, Expression, VariableReference
-from src.qnty.types import TypeSafeVariable
+from src.qnty.variable import TypeSafeVariable
 from src.qnty.variables import Dimensionless, Length, Pressure
 
 

@@ -8,8 +8,8 @@ import time
 import pytest
 
 from src.qnty.dimension import AREA, DIMENSIONLESS, LENGTH, PRESSURE
-from src.qnty.setters import TypeSafeSetter
-from src.qnty.types import TypeSafeVariable
+from src.qnty.variable import TypeSafeVariable
+from src.qnty.variables import TypeSafeSetter
 from src.qnty.unit import registry
 from src.qnty.units import DimensionlessUnits, LengthUnits, PressureUnits
 from src.qnty.variable import FastQuantity
@@ -458,7 +458,7 @@ class TestTypeSafeVariable:
     
     def test_setter_creation(self):
         """Test that set() method returns appropriate setter."""
-        from src.qnty.setters import TypeSafeSetter
+        from src.qnty.variables import TypeSafeSetter
         
         length_var = TypeSafeVariable("length", LENGTH)
         
