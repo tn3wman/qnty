@@ -3,14 +3,16 @@ Comprehensive tests for variable.py module - FastQuantity and TypeSafeVariable.
 Tests focus on high-performance optimizations, dimensional safety, and engineering calculations.
 """
 
-import pytest
 import time
-from src.qnty.variable import FastQuantity
-from src.qnty.units import LengthUnits, PressureUnits, DimensionlessUnits
-from src.qnty.dimension import LENGTH, PRESSURE, AREA, DIMENSIONLESS
-from src.qnty.unit import registry
+
+import pytest
+
+from src.qnty.dimension import AREA, DIMENSIONLESS, LENGTH, PRESSURE
 from src.qnty.setters import TypeSafeSetter
 from src.qnty.types import TypeSafeVariable
+from src.qnty.unit import registry
+from src.qnty.units import DimensionlessUnits, LengthUnits, PressureUnits
+from src.qnty.variable import FastQuantity
 
 
 class TestFastQuantityInitialization:

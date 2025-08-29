@@ -6,15 +6,17 @@ Focuses on engineering calculation safety, performance optimizations, and integr
 with the broader OptiUnit system.
 """
 
-import pytest
 import time
-from src.qnty.variables import Length, Pressure, Dimensionless
-from src.qnty.variable import FastQuantity
-from src.qnty.dimension import LENGTH, PRESSURE, DIMENSIONLESS
-from src.qnty.units import LengthUnits, PressureUnits, DimensionlessUnits
-from src.qnty.setters import LengthSetter, PressureSetter, DimensionlessSetter, TypeSafeSetter
-from src.qnty.unit import UnitConstant
+
+import pytest
+
+from src.qnty.dimension import DIMENSIONLESS, LENGTH, PRESSURE
+from src.qnty.setters import LengthSetter, PressureSetter, TypeSafeSetter
 from src.qnty.types import TypeSafeVariable
+from src.qnty.unit import UnitConstant
+from src.qnty.units import DimensionlessUnits, LengthUnits, PressureUnits
+from src.qnty.variable import FastQuantity
+from src.qnty.variables import Dimensionless, Length, Pressure
 
 
 class TestLengthVariableInitialization:
@@ -109,7 +111,7 @@ class TestPressureVariableInitialization:
         assert str(pressure_var) == "fluid_pressure: unset"
     
     @pytest.mark.parametrize("var_name", [
-        "pressure", "inlet_pressure", "outlet_pressure", "gauge_pressure", 
+        "pressure", "inlet_pressure", "outlet_pressure", "gauge_pressure",
         "absolute_pressure", "vacuum", "differential_pressure"
     ])
     def test_pressure_various_names(self, var_name):
@@ -995,7 +997,7 @@ class TestAdvancedFluentAPIPatterns:
         width.set(10.0).meters
         height.set(5.0).meters
         
-        # Use in calculations  
+        # Use in calculations
         assert width.quantity is not None and height.quantity is not None
         perimeter = (width.quantity + width.quantity + height.quantity + height.quantity)
         assert perimeter.value == 30.0  # 2*(10+5) = 30
