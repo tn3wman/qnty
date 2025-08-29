@@ -7,12 +7,10 @@ Mathematical equations for qnty variables with solving capabilities.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from .types import TypeSafeVariable
+from typing import cast
 
 from .expression import Expression, VariableReference
+from .variable import TypeSafeVariable
 
 
 class Equation:
@@ -23,18 +21,21 @@ class Equation:
         
         # Convert Variable to VariableReference if needed
         # Use duck typing to avoid circular import
-        if hasattr(lhs, 'name') and hasattr(lhs, 'quantity'):
-            self.lhs = VariableReference(lhs)
+        if hasattr(lhs, 'name') and hasattr(lhs, 'quantity') and hasattr(lhs, 'is_known'):
+            # It's a TypeSafeVariable-like object
+            self.lhs = VariableReference(cast('TypeSafeVariable', lhs))
         else:
-            self.lhs = lhs
+            # It's already an Expression
+            self.lhs = cast(Expression, lhs)
             
         self.rhs = rhs
         self.variables = self.get_all_variables()
     
     def get_all_variables(self) -> set[str]:
         """Get all variable names used in this equation."""
-        lhs_vars = self.lhs.get_variables() if hasattr(self.lhs, 'get_variables') else set()
-        rhs_vars = self.rhs.get_variables() if hasattr(self.rhs, 'get_variables') else set()
+        # Both lhs and rhs should be Expressions after __init__ conversion
+        lhs_vars = self.lhs.get_variables()
+        rhs_vars = self.rhs.get_variables()
         return lhs_vars | rhs_vars
     
     def get_unknown_variables(self, known_vars: set[str]) -> set[str]:
@@ -100,6 +101,7 @@ class Equation:
         Returns True if |residual| < tolerance, accounting for units.
         """
         try:
+            # Both lhs and rhs should be Expressions after __init__ conversion
             lhs_value = self.lhs.evaluate(variable_values)
             rhs_value = self.rhs.evaluate(variable_values)
             
@@ -125,7 +127,7 @@ class Equation:
 class EquationSystem:
     """System of equations that can be solved together."""
     
-    def __init__(self, equations: list[Equation] = None):
+    def __init__(self, equations: list[Equation] | None = None):
         self.equations = equations or []
         self.variables = {}  # Dict[str, TypeSafeVariable]
     
@@ -166,7 +168,7 @@ class EquationSystem:
             for unknown_var in unknown_vars:
                 if equation.can_solve_for(unknown_var, known_vars):
                     # Solve for this variable
-                    result_var = equation.solve_for(unknown_var, self.variables)
+                    equation.solve_for(unknown_var, self.variables)
                     return True  # Progress made
         
         return False  # No progress possible

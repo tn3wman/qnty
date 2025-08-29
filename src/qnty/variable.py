@@ -8,9 +8,30 @@ with dimensional safety.
 
 from __future__ import annotations
 
+from typing import Generic, Self, TypeVar
+
 from .dimension import AREA, DIMENSIONLESS, ENERGY, FORCE, LENGTH, PRESSURE, VOLUME, DimensionSignature
 from .unit import UnitConstant, UnitDefinition, registry
 from .units import DimensionlessUnits, LengthUnits, PressureUnits
+
+# TypeVar for generic dimensional types
+DimensionType = TypeVar('DimensionType', bound='FastQuantity')
+
+
+class TypeSafeSetter:
+    """Basic type-safe setter that accepts compatible units."""
+    
+    def __init__(self, variable: TypeSafeVariable, value: float):
+        self.variable = variable
+        self.value = value
+    
+    def with_unit(self, unit: UnitConstant) -> TypeSafeVariable:
+        """Set with type-safe unit constant."""
+        if not self.variable.expected_dimension.is_compatible(unit.dimension):
+            raise TypeError(f"Unit {unit.name} incompatible with expected dimension")
+        
+        self.variable.quantity = FastQuantity(self.value, unit)
+        return self.variable
 
 
 class FastQuantity:
@@ -174,5 +195,43 @@ class FastQuantity:
         # Direct SI factor conversion - avoid registry lookup
         converted_value = self.value * self._si_factor / target_unit.si_factor
         return FastQuantity(converted_value, target_unit)
+
+
+class TypeSafeVariable(Generic[DimensionType]):
+    """
+    Base class for type-safe variables with dimensional checking.
+    
+    This is a simple data container without dependencies on expressions or equations.
+    Mathematical operations are added by subclasses or mixins.
+    """
+    
+    # Class attribute defining which setter to use - subclasses can override
+    _setter_class = TypeSafeSetter
+    
+    def __init__(self, name: str, expected_dimension, is_known: bool = True):
+        self.name = name
+        self.symbol: str | None = None  # Will be set by EngineeringProblem to attribute name
+        self.expected_dimension = expected_dimension
+        self.quantity: FastQuantity | None = None
+        self.is_known = is_known
+    
+    def set(self, value: float):
+        """Create a setter for this variable using the class-specific setter type."""
+        return self._setter_class(self, value)
+    
+    @property
+    def unknown(self) -> Self:
+        """Mark this variable as unknown using fluent API."""
+        self.is_known = False
+        return self
+    
+    @property
+    def known(self) -> Self:
+        """Mark this variable as known using fluent API."""
+        self.is_known = True
+        return self
+    
+    def __str__(self):
+        return f"{self.name}: {self.quantity}" if self.quantity else f"{self.name}: unset"
 
 

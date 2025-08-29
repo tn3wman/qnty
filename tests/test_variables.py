@@ -11,8 +11,8 @@ import time
 import pytest
 
 from src.qnty.dimension import DIMENSIONLESS, LENGTH, PRESSURE
-from src.qnty.setters import LengthSetter, PressureSetter, TypeSafeSetter
-from src.qnty.types import TypeSafeVariable
+from src.qnty.variable import TypeSafeVariable
+from src.qnty.variables import LengthSetter, PressureSetter, TypeSafeSetter
 from src.qnty.unit import UnitConstant
 from src.qnty.units import DimensionlessUnits, LengthUnits, PressureUnits
 from src.qnty.variable import FastQuantity

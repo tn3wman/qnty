@@ -5,15 +5,39 @@ Expression System
 Mathematical expressions for building equation trees with qnty variables.
 """
 
-from abc import ABC, abstractmethod
-from typing import Union, TYPE_CHECKING
 import math
+from abc import ABC, abstractmethod
+from typing import Union, cast
 
 from .units import DimensionlessUnits
-from .types import wrap_operand
 
-if TYPE_CHECKING:
-    from .variable import FastQuantity, TypeSafeVariable
+# if TYPE_CHECKING:
+from .variable import FastQuantity, TypeSafeVariable
+
+
+def wrap_operand(operand: Union['Expression', 'TypeSafeVariable', 'FastQuantity', int, float]) -> 'Expression':
+    """
+    Wrap non-Expression operands in appropriate Expression subclasses.
+    
+    This function handles type conversion without circular imports by using
+    duck typing and delayed imports where necessary.
+    """
+    # Type guard for Expression types
+    if hasattr(operand, 'evaluate') and hasattr(operand, 'get_variables'):
+        # Already an Expression
+        return cast('Expression', operand)
+    elif hasattr(operand, 'name') and hasattr(operand, 'quantity') and hasattr(operand, 'is_known'):
+        # TypeSafeVariable-like object
+        return VariableReference(cast('TypeSafeVariable', operand))
+    elif hasattr(operand, 'value') and hasattr(operand, 'unit') and hasattr(operand, '_dimension_sig'):
+        # FastQuantity-like object
+        return Constant(cast('FastQuantity', operand))
+    elif isinstance(operand, int | float):
+        # Numeric value - create dimensionless quantity
+
+        return Constant(FastQuantity(float(operand), DimensionlessUnits.dimensionless))
+    else:
+        raise TypeError(f"Cannot convert {type(operand)} to Expression")
 
 
 class Expression(ABC):
@@ -84,17 +108,7 @@ class Expression(ABC):
     @staticmethod
     def _wrap_operand(operand: Union['Expression', 'TypeSafeVariable', 'FastQuantity', int, float]) -> 'Expression':
         """Wrap non-Expression operands in appropriate Expression subclasses."""
-        if isinstance(operand, Expression):
-            return operand
-        elif isinstance(operand, 'TypeSafeVariable'):
-            return VariableReference(operand)
-        elif isinstance(operand, 'FastQuantity'):
-            return Constant(operand)
-        elif isinstance(operand, int | float):
-            from .units import DimensionlessUnits
-            return Constant(FastQuantity(float(operand), DimensionlessUnits.dimensionless))
-        else:
-            raise TypeError(f"Cannot convert {type(operand)} to Expression")
+        return wrap_operand(operand)
 
 
 class VariableReference(Expression):
@@ -124,12 +138,13 @@ class VariableReference(Expression):
                     return var.quantity
             elif self.variable.quantity is not None:
                 return self.variable.quantity
-            else:
-                available_vars = list(variable_values.keys()) if variable_values else []
-                raise ValueError(
-                    f"Cannot evaluate variable '{self.name}' without value. "
-                    f"Available variables: {available_vars}"
-                )
+            
+            # If we reach here, no valid quantity was found
+            available_vars = list(variable_values.keys()) if variable_values else []
+            raise ValueError(
+                f"Cannot evaluate variable '{self.name}' without value. "
+                f"Available variables: {available_vars}"
+            )
         except Exception as e:
             if isinstance(e, ValueError):
                 raise
@@ -220,7 +235,7 @@ class BinaryOperation(Expression):
             try:
                 result = BinaryOperation(self.operator, left_simplified, right_simplified).evaluate(dummy_vars)
                 return Constant(result)
-            except:
+            except (ValueError, TypeError, ArithmeticError):
                 pass
         
         return BinaryOperation(self.operator, left_simplified, right_simplified)
@@ -250,8 +265,6 @@ class ComparisonExpression(Expression):
     
     def evaluate(self, variable_values: dict[str, 'TypeSafeVariable']) -> 'FastQuantity':
         """Evaluate comparison and return dimensionless result (1.0 for True, 0.0 for False)."""
-        from .variable import FastQuantity
-        from .units import DimensionlessUnits
         
         left_val = self.left.evaluate(variable_values)
         right_val = self.right.evaluate(variable_values)
@@ -260,7 +273,7 @@ class ComparisonExpression(Expression):
         try:
             if left_val._dimension_sig == right_val._dimension_sig and left_val.unit != right_val.unit:
                 right_val = right_val.to(left_val.unit)
-        except:
+        except (ValueError, TypeError, AttributeError):
             pass
         
         if self.operator == '<':
@@ -343,7 +356,7 @@ class UnaryFunction(Expression):
                 dummy_vars = {}
                 result = UnaryFunction(self.function_name, simplified_operand).evaluate(dummy_vars)
                 return Constant(result)
-            except:
+            except (ValueError, TypeError, ArithmeticError):
                 pass
         return UnaryFunction(self.function_name, simplified_operand)
     
@@ -368,8 +381,8 @@ class ConditionalExpression(Expression):
             return self.false_expr.evaluate(variable_values)
     
     def get_variables(self) -> set[str]:
-        return (self.condition.get_variables() | 
-                self.true_expr.get_variables() | 
+        return (self.condition.get_variables() |
+                self.true_expr.get_variables() |
                 self.false_expr.get_variables())
     
     def simplify(self) -> Expression:
@@ -386,7 +399,7 @@ class ConditionalExpression(Expression):
                     return simplified_true
                 else:
                     return simplified_false
-            except:
+            except (ValueError, TypeError, ArithmeticError):
                 pass
         
         return ConditionalExpression(simplified_condition, simplified_true, simplified_false)
@@ -428,7 +441,7 @@ def exp(expr: Union[Expression, 'TypeSafeVariable', 'FastQuantity', int, float])
     """Exponential function."""
     return UnaryFunction('exp', Expression._wrap_operand(expr))
 
-def cond_expr(condition: Union[Expression, 'ComparisonExpression'], 
+def cond_expr(condition: Union[Expression, 'ComparisonExpression'],
               true_expr: Union[Expression, 'TypeSafeVariable', 'FastQuantity', int, float],
               false_expr: Union[Expression, 'TypeSafeVariable', 'FastQuantity', int, float]) -> ConditionalExpression:
     """Conditional expression: if condition then true_expr else false_expr."""

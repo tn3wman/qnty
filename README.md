@@ -29,6 +29,7 @@ Qnty is designed around **type safety** and **performance optimization** using c
 - **🧮 Engineering-Focused**: Built for real-world engineering calculations
 - **🧬 Mathematical System**: Built-in equation solving and expression trees
 - **📊 Comprehensive Testing**: 457 tests with performance benchmarks
+- **🏗️ Clean Architecture**: Circular import-free design with strict dependency hierarchy
 
 ## 🚀 Quick Start
 
@@ -43,7 +44,7 @@ poetry add qnty
 ### Basic Usage
 
 ```python
-from qnty.variables import Length, Pressure
+from qnty import Length, Pressure, Dimensionless
 from qnty.variable import FastQuantity
 from qnty.units import LengthUnits, PressureUnits
 
@@ -65,7 +66,7 @@ force = pressure * area  # Automatic dimensional analysis
 ### Engineering Example
 
 ```python
-from qnty.variables import Length, Pressure
+from qnty import Length, Pressure
 
 # ASME pressure vessel calculation with mixed units
 pressure = Pressure("internal_pressure")
@@ -85,7 +86,7 @@ print(f"Required thickness: {thickness}")  # Automatically in correct units
 ### Mathematical Equations & Solving
 
 ```python
-from qnty.variables import Length, Pressure, Dimensionless
+from qnty import Length, Pressure, Dimensionless
 
 # Define engineering variables
 T = Length("Wall Thickness", is_known=False)  # Unknown to solve for
@@ -106,6 +107,16 @@ assert equation.check_residual(known_vars) is True
 
 ## 🏗️ Architecture
 
+### Clean Dependency Design
+
+Qnty features a carefully designed architecture that eliminates circular imports through a strict dependency hierarchy:
+
+```python
+variable → variables → expression → equation
+```
+
+This ensures clean type checking, maintainable code, and optimal performance throughout the system.
+
 ### Core Components
 
 ### 🔢 Dimensional System
@@ -114,25 +125,25 @@ assert equation.check_residual(known_vars) is True
 - Zero-cost dimensional analysis at compile time
 - Immutable dimension signatures for thread safety
 
-### ⚙️ High-Performance Quantities**
+### ⚙️ High-Performance Quantities
 
 - `FastQuantity`: Optimized for engineering calculations with `__slots__`
 - Cached SI factors and dimension signatures
 - Fast-path optimizations for same-unit operations
 
-### 🎯 Type-Safe Variables**
+### 🎯 Type-Safe Variables
 
-- `Length`, `Pressure`: Domain-specific variables with compile-time safety
+- `Length`, `Pressure`, `Dimensionless`: Domain-specific variables with compile-time safety
 - Fluent API with specialized setters
 - Prevents dimensional errors at the type level
 
-### 🔄 Smart Unit System**
+### 🔄 Smart Unit System
 
 - Pre-computed conversion tables
 - Automatic unit resolution for calculations
 - Support for mixed-unit operations
 
-### 🧬 Mathematical System**
+### 🧬 Mathematical System
 
 - Built-in equation solving with symbolic manipulation
 - Expression trees for complex mathematical operations
@@ -141,21 +152,21 @@ assert equation.check_residual(known_vars) is True
 
 ## 📊 Performance
 
-Qnty significantly outperforms other unit libraries with **23.7x average speedup** over Pint:
+Qnty significantly outperforms other unit libraries with **18.9x average speedup** over Pint:
 
 ### Real Benchmark Results (μs per operation)
 
 | Operation | Qnty | Pint | **Speedup** |
 |-----------|------|------|-------------|
-| Unit Conversion (m → mm) | 0.60 | 14.03 | **23.5x** |
-| Mixed Unit Addition (mm + in) | 1.14 | 31.80 | **28.0x** |
-| Multiplication (m × m) | 0.91 | 14.13 | **15.5x** |
-| Division (psi ÷ mm) | 1.01 | 16.29 | **16.1x** |
-| Complex ASME Equation | 5.46 | 180.95 | **33.1x** 🚀 |
-| Type-Safe Variables | 1.08 | 24.80 | **23.0x** |
-| Chained Operations | 3.93 | 88.94 | **22.6x** |
-| Loop (10 additions) | 6.49 | 118.21 | **18.2x** |
-| **AVERAGE** | **2.58** | **61.14** | **23.7x** 🏆 |
+| Unit Conversion (m → mm) | 0.50 | 9.72 | **19.5x** |
+| Mixed Unit Addition (mm + in) | 0.76 | 17.52 | **23.1x** |
+| Multiplication (m × m) | 0.82 | 10.64 | **12.9x** |
+| Division (psi ÷ mm) | 0.87 | 11.23 | **12.9x** |
+| Complex ASME Equation | 4.07 | 106.17 | **26.1x** 🚀 |
+| Type-Safe Variables | 0.98 | 9.65 | **9.8x** |
+| Chained Operations | 1.83 | 42.22 | **23.1x** |
+| Loop (10 additions) | 5.32 | 79.48 | **14.9x** |
+| **AVERAGE** | **1.89** | **35.83** | **18.9x** 🏆 |
 
 *Benchmarks performed on typical engineering calculations. Run `pytest tests/test_benchmark.py -v -s` to verify on your system.*
 
@@ -203,7 +214,7 @@ perimeter = 2 * (width.quantity + height.quantity)
 ### Equation Solving System
 
 ```python
-from qnty.variables import Length, Pressure, Dimensionless
+from qnty import Length, Pressure, Dimensionless
 
 # Multi-variable engineering equations
 P = Pressure(90, "psi", "P")  # Known
@@ -222,6 +233,20 @@ print(f"Required thickness: {thickness_result.quantity}")
 
 # Verify solution
 assert equation.check_residual(known_variables) is True
+```
+
+### Import Strategy
+
+Qnty provides a clean, minimal public API:
+
+```python
+# Preferred import style - clean public API
+from qnty import Length, Pressure, Dimensionless
+
+# Internal imports when needed for advanced usage
+from qnty.variable import FastQuantity, TypeSafeVariable
+from qnty.expression import Expression
+from qnty.equation import Equation, EquationSystem
 ```
 
 ## 🔧 Development
@@ -248,6 +273,7 @@ python tests/test_benchmark.py
 ```bash
 # Linting with ruff (200 character line length)
 ruff check src/ tests/
+ruff format src/ tests/
 
 # Type checking
 mypy src/qnty/
