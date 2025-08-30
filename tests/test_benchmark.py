@@ -9,11 +9,14 @@ Shows speedup factors and validates calculation accuracy.
 import time
 
 import pint
+from sympy import Le
 import unyt
 
 from src.qnty.units import DimensionlessUnits, LengthUnits, PressureUnits
 from src.qnty.variable import FastQuantity
-from src.qnty.variables import Length
+# from src.qnty.variables import Length
+
+from src.qnty.optimized.core import Length, DIMENSIONLESS
 
 
 def benchmark_operation(operation, iterations=1000):
@@ -61,6 +64,7 @@ def print_comparison_table(results):
     
     total_qnty_time = 0
     total_pint_time = 0
+    total_unyt_time = 0
     valid_comparisons = 0
 
     for op_name, qnty_result, pint_result, unyt_result in results:
@@ -98,8 +102,8 @@ def print_comparison_table(results):
         print("-" * 75)
         print(f"{'AVERAGE':<30} {total_qnty_time/valid_comparisons:.2f} us      "
               f"{total_pint_time/valid_comparisons:.2f} us      "
-              f"{'=> ' + format_speedup(total_qnty_time/valid_comparisons, total_pint_time/valid_comparisons):<12}")
-        
+              f"{'=> ' + format_speedup(total_qnty_time/valid_comparisons, total_pint_time/valid_comparisons, total_unyt_time/valid_comparisons):<12}")
+
         print(f"\n[RESULT] Overall Performance: Qnty is {avg_speedup:.1f}x faster than Pint")
         
         # Performance tier message
