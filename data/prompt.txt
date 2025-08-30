@@ -1,3 +1,0 @@
-# Prompt
-
-Please create a unit and variable for angle, plane in C:\Projects\qnty\src\qnty\units and C:\Projects\qnty\src\qnty\variables respectively. All the data for angle, plane is here: C:\Projects\qnty\data\angle_plane.md
