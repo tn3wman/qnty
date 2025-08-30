@@ -7,7 +7,7 @@ Mathematical expressions for building equation trees with qnty variables.
 
 import math
 from abc import ABC, abstractmethod
-from typing import Union, cast
+from typing import Union, cast, TYPE_CHECKING
 
 from .units import DimensionlessUnits
 

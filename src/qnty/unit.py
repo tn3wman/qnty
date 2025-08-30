@@ -50,7 +50,9 @@ class HighPerformanceRegistry:
         self.conversion_table: dict[tuple[str, str], float] = {}  # (from_unit, to_unit) -> factor
         self.dimensional_groups: dict[int, list[UnitDefinition]] = {}
         self._dimension_cache: dict[int, UnitConstant] = {}  # Cache for common dimension mappings
+        self._finalized = False
 
+        # Keep legacy initialization for backward compatibility
         self._initialize_units()
         self._precompute_conversions()
     
@@ -85,8 +87,28 @@ class HighPerformanceRegistry:
                 self.dimensional_groups[dim_sig] = []
             self.dimensional_groups[dim_sig].append(unit_def)
     
+    def register_unit(self, unit_def: UnitDefinition):
+        """Register a single unit definition."""
+        if self._finalized:
+            raise RuntimeError("Cannot register units after registry is finalized")
+            
+        self.units[unit_def.name] = unit_def
+        
+        # Group by dimension
+        dim_sig = unit_def.dimension._signature
+        if dim_sig not in self.dimensional_groups:
+            self.dimensional_groups[dim_sig] = []
+        self.dimensional_groups[dim_sig].append(unit_def)
+    
+    def finalize_registration(self):
+        """Called after all units registered to precompute conversions."""
+        if not self._finalized:
+            self._precompute_conversions()
+            self._finalized = True
+
     def _precompute_conversions(self):
         """Pre-compute all unit conversions for maximum speed."""
+        self.conversion_table.clear()  # Clear existing conversions
         for group in self.dimensional_groups.values():
             for from_unit in group:
                 for to_unit in group:

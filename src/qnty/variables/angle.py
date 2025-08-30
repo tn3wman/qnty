@@ -1,0 +1,102 @@
+"""
+Angle Variable Module
+=====================
+
+Type-safe angle variables with specialized setter and fluent API.
+"""
+
+from typing import cast
+
+from ..dimension import DIMENSIONLESS
+from ..units import AnglePlaneUnits
+from ..variable import FastQuantity, TypeSafeSetter
+from .base import VariableModule
+from .typed_variable import TypedVariable
+
+
+class AngleSetter(TypeSafeSetter):
+    """Angle-specific setter with only angle units."""
+    
+    def __init__(self, variable: 'Angle', value: float):
+        super().__init__(variable, value)
+    
+    # Only angle units available - compile-time safe!
+    @property
+    def radians(self) -> 'Angle':
+        self.variable.quantity = FastQuantity(self.value, AnglePlaneUnits.radian)
+        return cast('Angle', self.variable)
+    
+    @property
+    def degrees(self) -> 'Angle':
+        self.variable.quantity = FastQuantity(self.value, AnglePlaneUnits.degree)
+        return cast('Angle', self.variable)
+    
+    @property
+    def gradians(self) -> 'Angle':
+        self.variable.quantity = FastQuantity(self.value, AnglePlaneUnits.gradian)
+        return cast('Angle', self.variable)
+    
+    @property
+    def turns(self) -> 'Angle':
+        self.variable.quantity = FastQuantity(self.value, AnglePlaneUnits.turn)
+        return cast('Angle', self.variable)
+    
+    @property
+    def arc_minutes(self) -> 'Angle':
+        self.variable.quantity = FastQuantity(self.value, AnglePlaneUnits.arc_minute)
+        return cast('Angle', self.variable)
+    
+    @property
+    def arc_seconds(self) -> 'Angle':
+        self.variable.quantity = FastQuantity(self.value, AnglePlaneUnits.arc_second)
+        return cast('Angle', self.variable)
+    
+    # Short aliases for convenience
+    @property
+    def rad(self) -> 'Angle':
+        return self.radians
+    
+    @property
+    def deg(self) -> 'Angle':
+        return self.degrees
+    
+    @property
+    def grad(self) -> 'Angle':
+        return self.gradians
+    
+    @property
+    def arcmin(self) -> 'Angle':
+        return self.arc_minutes
+    
+    @property
+    def arcsec(self) -> 'Angle':
+        return self.arc_seconds
+
+
+class Angle(TypedVariable):
+    """Type-safe angle variable with expression capabilities."""
+    
+    _setter_class = AngleSetter
+    _expected_dimension = DIMENSIONLESS
+    _default_unit_property = "radians"
+    
+    def set(self, value: float) -> AngleSetter:
+        """Create an angle setter for this variable with proper type annotation."""
+        return AngleSetter(self, value)
+
+
+class AngleModule(VariableModule):
+    """Angle variable module definition."""
+    
+    def get_variable_class(self):
+        return Angle
+    
+    def get_setter_class(self):
+        return AngleSetter
+    
+    def get_expected_dimension(self):
+        return DIMENSIONLESS
+
+
+# Register this module for auto-discovery
+VARIABLE_MODULE = AngleModule()

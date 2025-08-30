@@ -12,7 +12,8 @@ import pytest
 
 from src.qnty.dimension import DIMENSIONLESS, LENGTH, PRESSURE
 from src.qnty.variable import TypeSafeVariable
-from src.qnty.variables import LengthSetter, PressureSetter, TypeSafeSetter
+from src.qnty.variable import TypeSafeSetter
+from src.qnty.variables import LengthSetter, PressureSetter 
 from src.qnty.unit import UnitConstant
 from src.qnty.units import DimensionlessUnits, LengthUnits, PressureUnits
 from src.qnty.variable import FastQuantity
@@ -1357,10 +1358,10 @@ class TestAlternativeConstructorSyntax:
         assert L.quantity is not None
         assert L.quantity.unit == LengthUnits.meter  # Falls back to meters
         
-        # Pressure with unrecognized unit should default to psi
+        # Pressure with unrecognized unit should default to pascal (SI base unit)
         P = Pressure(50, "unknown_unit", "test")
         assert P.quantity is not None
-        assert P.quantity.unit == PressureUnits.psi  # Falls back to psi
+        assert P.quantity.unit == PressureUnits.pascal  # Falls back to pascal
 
 
 @pytest.mark.parametrize("variable_class,dimension,setter_class", [
