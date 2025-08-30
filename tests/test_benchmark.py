@@ -9,6 +9,7 @@ Shows speedup factors and validates calculation accuracy.
 import time
 
 import pint
+import unyt
 
 from src.qnty.units import DimensionlessUnits, LengthUnits, PressureUnits
 from src.qnty.variable import FastQuantity
@@ -39,12 +40,13 @@ def benchmark_operation(operation, iterations=1000):
     return avg_time_us, result
 
 
-def format_speedup(qnty_time, pint_time):
+def format_speedup(qnty_time, pint_time, unyt_time):
     """Format speedup comparison."""
-    if pint_time == float('inf') or qnty_time == float('inf'):
+    if pint_time == float('inf') or qnty_time == float('inf') or unyt_time == float('inf'):
         return "N/A"
-    speedup = pint_time / qnty_time
-    return f"{speedup:.1f}x"
+    pint_speedup = pint_time / qnty_time
+    unyt_speedup = unyt_time / qnty_time
+    return f"{pint_speedup:.1f}x | {unyt_speedup:.1f}x"
 
 
 def print_comparison_table(results):
@@ -60,23 +62,26 @@ def print_comparison_table(results):
     total_qnty_time = 0
     total_pint_time = 0
     valid_comparisons = 0
-    
-    for op_name, qnty_result, pint_result in results:
+
+    for op_name, qnty_result, pint_result, unyt_result in results:
         qnty_time, qnty_val = qnty_result
         pint_time, pint_val = pint_result
-        
+        unyt_time, unyt_val = unyt_result
+
         # Format times
         qnty_str = f"{qnty_time:.2f}" if qnty_time != float('inf') else "ERROR"
         pint_str = f"{pint_time:.2f}" if pint_time != float('inf') else "ERROR"
-        
+        unyt_str = f"{unyt_time:.2f}" if unyt_time != float('inf') else "ERROR"
+
         # Calculate speedup
-        speedup = format_speedup(qnty_time, pint_time)
-        
+        speedup = format_speedup(qnty_time, pint_time, unyt_time)
+
         # Check if both succeeded
-        if qnty_time != float('inf') and pint_time != float('inf'):
+        if qnty_time != float('inf') and pint_time != float('inf') and unyt_time != float('inf'):
             status = "OK"
             total_qnty_time += qnty_time
             total_pint_time += pint_time
+            total_unyt_time += unyt_time
             valid_comparisons += 1
             
             # Highlight significant speedups
@@ -84,9 +89,9 @@ def print_comparison_table(results):
                 speedup = f">> {speedup}"
         else:
             status = "ERR"
-        
-        print(f"{op_name:<30} {qnty_str:<15} {pint_str:<15} {speedup:<12} {status}")
-    
+
+        print(f"{op_name:<30} {qnty_str:<15} {pint_str:<15} {unyt_str:<15} {speedup:<12} {status}")
+
     # Summary
     if valid_comparisons > 0:
         avg_speedup = total_pint_time / total_qnty_time if total_qnty_time > 0 else 0
@@ -136,9 +141,14 @@ def test_benchmark_suite(capsys):
         q = ureg.Quantity(test_value, 'meter')
         return q.to('millimeter')
     
+    def unyt_conversion():
+        q = unyt.unyt_quantity(test_value, 'meter')
+        return q.to('millimeter')
+    
     qnty_result = benchmark_operation(qnty_conversion, 2000)
     pint_result = benchmark_operation(pint_conversion, 2000)
-    results.append(("Unit Conversion (m -> mm)", qnty_result, pint_result))
+    unyt_result = benchmark_operation(unyt_conversion, 2000)
+    results.append(("Unit Conversion (m -> mm)", qnty_result, pint_result, unyt_result))
     
     # ========== TEST 2: Mixed Unit Addition ==========
     def qnty_mixed_addition():
@@ -150,11 +160,17 @@ def test_benchmark_suite(capsys):
         q1 = ureg.Quantity(100.0, 'millimeter')
         q2 = ureg.Quantity(2.0, 'inch')
         return q1 + q2
-    
+
+    def unyt_mixed_addition():
+        q1 = unyt.unyt_quantity(100.0, 'millimeter')
+        q2 = unyt.unyt_quantity(2.0, 'inch')
+        return q1 + q2
+
     qnty_result = benchmark_operation(qnty_mixed_addition, 2000)
     pint_result = benchmark_operation(pint_mixed_addition, 2000)
-    results.append(("Mixed Addition (mm + in)", qnty_result, pint_result))
-    
+    unyt_result = benchmark_operation(unyt_mixed_addition, 2000)
+    results.append(("Mixed Addition (mm + in)", qnty_result, pint_result, unyt_result))
+
     # ========== TEST 3: Multiplication ==========
     def qnty_multiplication():
         length = FastQuantity(10.0, LengthUnits.meter)
@@ -165,11 +181,17 @@ def test_benchmark_suite(capsys):
         length = ureg.Quantity(10.0, 'meter')
         width = ureg.Quantity(5.0, 'meter')
         return length * width
-    
+
+    def unyt_multiplication():
+        length = unyt.unyt_quantity(10.0, 'meter')
+        width = unyt.unyt_quantity(5.0, 'meter')
+        return length * width
+
     qnty_result = benchmark_operation(qnty_multiplication, 2000)
     pint_result = benchmark_operation(pint_multiplication, 2000)
-    results.append(("Multiplication (m x m)", qnty_result, pint_result))
-    
+    unyt_result = benchmark_operation(unyt_multiplication, 2000)
+    results.append(("Multiplication (m x m)", qnty_result, pint_result, unyt_result))
+
     # ========== TEST 4: Division ==========
     def qnty_division():
         pressure = FastQuantity(pressure_value, PressureUnits.psi)
@@ -180,11 +202,17 @@ def test_benchmark_suite(capsys):
         pressure = ureg.Quantity(pressure_value, 'psi')
         area = ureg.Quantity(10.0, 'millimeter')
         return pressure / area
-    
+
+    def unyt_division():
+        pressure = unyt.unyt_quantity(pressure_value, 'psi')
+        area = unyt.unyt_quantity(10.0, 'millimeter')
+        return pressure / area
+
     qnty_result = benchmark_operation(qnty_division, 2000)
     pint_result = benchmark_operation(pint_division, 2000)
-    results.append(("Division (psi / mm)", qnty_result, pint_result))
-    
+    unyt_result = benchmark_operation(unyt_division, 2000)
+    results.append(("Division (psi / mm)", qnty_result, pint_result, unyt_result))
+
     # ========== TEST 5: Complex Engineering Calculation (ASME) ==========
     def qnty_complex():
         P = FastQuantity(pressure_value, PressureUnits.psi)
@@ -203,11 +231,21 @@ def test_benchmark_suite(capsys):
         W = 1.0
         Y = 0.4
         return (P * D) / (2 * (S * E * W + P * Y)) # type: ignore
-    
+
+    def unyt_complex():
+        P = unyt.unyt_quantity(pressure_value, 'psi')
+        D = unyt.unyt_quantity(length_value, 'mm')
+        S = unyt.unyt_quantity(137.895, 'MPa')
+        E = 0.8
+        W = 1.0
+        Y = 0.4
+        return (P * D) / (2 * (S * E * W + P * Y))
+
     qnty_result = benchmark_operation(qnty_complex, 1000)
     pint_result = benchmark_operation(pint_complex, 1000)
-    results.append(("Complex ASME Equation", qnty_result, pint_result))
-    
+    unyt_result = benchmark_operation(unyt_complex, 1000)
+    results.append(("Complex ASME Equation", qnty_result, pint_result, unyt_result))
+
     # ========== TEST 6: Type-Safe Variables ==========
     def qnty_typesafe():
         length = Length("beam_length")
@@ -218,11 +256,16 @@ def test_benchmark_suite(capsys):
         # Pint doesn't have type-safe variables, so we simulate
         length = ureg.Quantity(100.0, 'millimeter')
         return length.to('meter')
-    
+
+    def unyt_typesafe():
+        length = unyt.unyt_quantity(100.0, 'millimeter')
+        return length.to('meter')
+
     qnty_result = benchmark_operation(qnty_typesafe, 1500)
     pint_result = benchmark_operation(pint_typesafe, 1500)
-    results.append(("Type-Safe Variables", qnty_result, pint_result))
-    
+    unyt_result = benchmark_operation(unyt_typesafe, 1500)
+    results.append(("Type-Safe Variables", qnty_result, pint_result, unyt_result))
+
     # ========== TEST 7: Chained Operations ==========
     def qnty_chained():
         q1 = FastQuantity(50.0, LengthUnits.mm)
@@ -237,11 +280,19 @@ def test_benchmark_suite(capsys):
         q3 = ureg.Quantity(0.5, 'meter')
         result = (q1 + q2) * 2 + q3 # type: ignore
         return result.to('millimeter') # type: ignore
-    
+
+    def unyt_chained():
+        q1 = unyt.unyt_quantity(50.0, 'millimeter')
+        q2 = unyt.unyt_quantity(2.0, 'inch')
+        q3 = unyt.unyt_quantity(0.5, 'meter')
+        result = (q1 + q2) * 2 + q3
+        return result.to('millimeter')
+
     qnty_result = benchmark_operation(qnty_chained, 1000)
     pint_result = benchmark_operation(pint_chained, 1000)
-    results.append(("Chained Operations", qnty_result, pint_result))
-    
+    unyt_result = benchmark_operation(unyt_chained, 1000)
+    results.append(("Chained Operations", qnty_result, pint_result, unyt_result))
+
     # ========== TEST 8: Many Small Operations ==========
     def qnty_many_ops():
         total = FastQuantity(0, LengthUnits.millimeter)
@@ -254,11 +305,18 @@ def test_benchmark_suite(capsys):
         for i in range(10):
             total = total + ureg.Quantity(i, 'millimeter')
         return total
-    
+
+    def unyt_many_ops():
+        total = unyt.unyt_quantity(0, 'millimeter')
+        for i in range(10):
+            total = total + unyt.unyt_quantity(i, 'millimeter')
+        return total
+
     qnty_result = benchmark_operation(qnty_many_ops, 500)
     pint_result = benchmark_operation(pint_many_ops, 500)
-    results.append(("10 Additions Loop", qnty_result, pint_result))
-    
+    unyt_result = benchmark_operation(unyt_many_ops, 500)
+    results.append(("10 Additions Loop", qnty_result, pint_result, unyt_result))
+
     # Print results
     with capsys.disabled():
         print_comparison_table(results)

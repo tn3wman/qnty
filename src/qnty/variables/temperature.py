@@ -7,7 +7,7 @@ Type-safe temperature variables with specialized setter and fluent API.
 
 from typing import cast
 
-from ..dimension import TEMPERATURE
+from ..dimension import DIMENSIONLESS
 from ..units import TemperatureUnits
 from ..variable import FastQuantity, TypeSafeSetter
 from .base import VariableModule
@@ -43,17 +43,15 @@ class TemperatureSetter(TypeSafeSetter):
         return cast('Temperature', self.variable)
     
     # Short aliases for convenience
-    @property
-    def K(self) -> 'Temperature':
-        return self.kelvins
+    pass
 
 
 class Temperature(TypedVariable):
     """Type-safe temperature variable with expression capabilities."""
     
     _setter_class = TemperatureSetter
-    _expected_dimension = TEMPERATURE
-    _default_unit_property = "celsiuss"
+    _expected_dimension = DIMENSIONLESS
+    _default_unit_property = "kelvins"
     
     def set(self, value: float) -> TemperatureSetter:
         """Create a temperature setter for this variable with proper type annotation."""
@@ -70,7 +68,7 @@ class TemperatureModule(VariableModule):
         return TemperatureSetter
     
     def get_expected_dimension(self):
-        return TEMPERATURE
+        return DIMENSIONLESS
 
 
 # Register this module for auto-discovery

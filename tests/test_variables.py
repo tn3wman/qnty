@@ -1358,10 +1358,10 @@ class TestAlternativeConstructorSyntax:
         assert L.quantity is not None
         assert L.quantity.unit == LengthUnits.meter  # Falls back to meters
         
-        # Pressure with unrecognized unit should default to psi
+        # Pressure with unrecognized unit should default to pascal (SI base unit)
         P = Pressure(50, "unknown_unit", "test")
         assert P.quantity is not None
-        assert P.quantity.unit == PressureUnits.psi  # Falls back to psi
+        assert P.quantity.unit == PressureUnits.pascal  # Falls back to pascal
 
 
 @pytest.mark.parametrize("variable_class,dimension,setter_class", [

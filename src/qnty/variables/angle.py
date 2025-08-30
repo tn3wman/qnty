@@ -8,7 +8,7 @@ Type-safe angle variables with specialized setter and fluent API.
 from typing import cast
 
 from ..dimension import DIMENSIONLESS
-from ..units import AngleUnits
+from ..units import AnglePlaneUnits
 from ..variable import FastQuantity, TypeSafeSetter
 from .base import VariableModule
 from .typed_variable import TypedVariable
@@ -23,32 +23,32 @@ class AngleSetter(TypeSafeSetter):
     # Only angle units available - compile-time safe!
     @property
     def radians(self) -> 'Angle':
-        self.variable.quantity = FastQuantity(self.value, AngleUnits.radian)
+        self.variable.quantity = FastQuantity(self.value, AnglePlaneUnits.radian)
         return cast('Angle', self.variable)
     
     @property
     def degrees(self) -> 'Angle':
-        self.variable.quantity = FastQuantity(self.value, AngleUnits.degree)
+        self.variable.quantity = FastQuantity(self.value, AnglePlaneUnits.degree)
         return cast('Angle', self.variable)
     
     @property
     def gradians(self) -> 'Angle':
-        self.variable.quantity = FastQuantity(self.value, AngleUnits.gradian)
+        self.variable.quantity = FastQuantity(self.value, AnglePlaneUnits.gradian)
         return cast('Angle', self.variable)
     
     @property
     def turns(self) -> 'Angle':
-        self.variable.quantity = FastQuantity(self.value, AngleUnits.turn)
+        self.variable.quantity = FastQuantity(self.value, AnglePlaneUnits.turn)
         return cast('Angle', self.variable)
     
     @property
     def arc_minutes(self) -> 'Angle':
-        self.variable.quantity = FastQuantity(self.value, AngleUnits.arc_minute)
+        self.variable.quantity = FastQuantity(self.value, AnglePlaneUnits.arc_minute)
         return cast('Angle', self.variable)
     
     @property
     def arc_seconds(self) -> 'Angle':
-        self.variable.quantity = FastQuantity(self.value, AngleUnits.arc_second)
+        self.variable.quantity = FastQuantity(self.value, AnglePlaneUnits.arc_second)
         return cast('Angle', self.variable)
     
     # Short aliases for convenience

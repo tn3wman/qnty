@@ -65,7 +65,9 @@ class TypedVariable(ExpressionVariable):
             
             # Handle special unit aliases
             if unit == "in":  # Handle Python reserved word
-                unit = "inches"
+                unit = "inchs"  # Match the actual property name
+            elif unit == "inches":  # Handle common plural form
+                unit = "inchs"  # Match the actual property name
             
             # Try to find the unit property on the setter
             if hasattr(setter, unit):

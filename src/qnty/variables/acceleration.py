@@ -1,6 +1,6 @@
 """
 Acceleration Variable Module
-============================
+=============================
 
 Type-safe acceleration variables with specialized setter and fluent API.
 """
@@ -22,23 +22,16 @@ class AccelerationSetter(TypeSafeSetter):
     
     # Only acceleration units available - compile-time safe!
     @property
-    def meters_per_second_squared(self) -> 'Acceleration':
+    def foot_per_second_squareds(self) -> 'Acceleration':
+        self.variable.quantity = FastQuantity(self.value, AccelerationUnits.foot_per_second_squared)
+        return cast('Acceleration', self.variable)
+    @property
+    def meter_per_second_squareds(self) -> 'Acceleration':
         self.variable.quantity = FastQuantity(self.value, AccelerationUnits.meter_per_second_squared)
         return cast('Acceleration', self.variable)
     
-    @property
-    def feet_per_second_squared(self) -> 'Acceleration':
-        self.variable.quantity = FastQuantity(self.value, AccelerationUnits.foot_per_second_squared)
-        return cast('Acceleration', self.variable)
-    
     # Short aliases for convenience
-    @property
-    def mps2(self) -> 'Acceleration':
-        return self.meters_per_second_squared
-    
-    @property
-    def fps2(self) -> 'Acceleration':
-        return self.feet_per_second_squared
+    pass
 
 
 class Acceleration(TypedVariable):
@@ -46,10 +39,10 @@ class Acceleration(TypedVariable):
     
     _setter_class = AccelerationSetter
     _expected_dimension = ACCELERATION
-    _default_unit_property = "meters_per_second_squared"
+    _default_unit_property = "meter_per_second_squareds"
     
     def set(self, value: float) -> AccelerationSetter:
-        """Create an acceleration setter for this variable with proper type annotation."""
+        """Create a acceleration setter for this variable with proper type annotation."""
         return AccelerationSetter(self, value)
 
 

@@ -5,53 +5,62 @@ Time Units Module
 Complete time unit definitions and constants.
 """
 
-from typing import List
-
 from ..dimension import TIME
-from ..unit import UnitDefinition, UnitConstant
+from ..unit import UnitConstant, UnitDefinition
 from .base import UnitModule
 
 
 class TimeUnits:
     """Type-safe time unit constants."""
     # Explicit declarations for type checking
-    second: 'UnitConstant'
-    minute: 'UnitConstant'
-    hour: 'UnitConstant'
-    day: 'UnitConstant'
-    year: 'UnitConstant'
-    julian_year: 'UnitConstant'
+    blink: 'UnitConstant'
     century: 'UnitConstant'
-    millennium: 'UnitConstant'
+    chronon: 'UnitConstant'
+    gigan: 'UnitConstant'
+    hour: 'UnitConstant'
+    julian_year: 'UnitConstant'
+    mean_solar_day: 'UnitConstant'
+    millenium: 'UnitConstant'
+    minute: 'UnitConstant'
+    second: 'UnitConstant'
+    shake: 'UnitConstant'
+    sidereal_year_1900_ad: 'UnitConstant'
+    tropical_year: 'UnitConstant'
+    wink: 'UnitConstant'
+    year: 'UnitConstant'
+
     
-    # Common aliases
-    s: 'UnitConstant'
-    min: 'UnitConstant'
-    h: 'UnitConstant'
-    hr: 'UnitConstant'
-    d: 'UnitConstant'
-    yr: 'UnitConstant'
-    a: 'UnitConstant'
+    # Common aliases for test compatibility
+    pass
 
 
 class TimeUnitModule(UnitModule):
     """Time unit module definition."""
     
-    def get_unit_definitions(self) -> List[UnitDefinition]:
+    def get_unit_definitions(self) -> list[UnitDefinition]:
         """Return all time unit definitions."""
         return [
-            UnitDefinition("second", "s", TIME, 1.0),
-            UnitDefinition("minute", "min", TIME, 60.0),
-            UnitDefinition("hour", "h", TIME, 3600.0),
-            UnitDefinition("day", "d", TIME, 86400.0),
-            UnitDefinition("year", "yr", TIME, 3.1558e7),
-            UnitDefinition("julian_year", "a", TIME, 3.1557e7),
-            UnitDefinition("century", "century", TIME, 3.1558e9),
-            UnitDefinition("millennium", "millennium", TIME, 3.1558e10),
+            UnitDefinition("blink", "blink", TIME, 0.864),
+            UnitDefinition("century", "-", TIME, 3.1558e+09),
+            UnitDefinition("chronon", "-", TIME, 1.00e-23),
+            UnitDefinition("gigan", "Ga or eon", TIME, 3.1558e+16),
+            UnitDefinition("hour", "h or hr", TIME, 3600),
+            UnitDefinition("julian_year", "a (jul) or yr", TIME, 3.1557e+07),
+            UnitDefinition("mean_solar_day", "da or d", TIME, 86400),
+            UnitDefinition("millenium", "-", TIME, 3.1558e+10),
+            UnitDefinition("minute", "min", TIME, 60),
+            UnitDefinition("second", "s", TIME, 1),
+            UnitDefinition("shake", "shake", TIME, 1.0000e-08),
+            UnitDefinition("sidereal_year_1900_ad", "a (sider) or yr", TIME, 3.1552e+07),
+            UnitDefinition("tropical_year", "a (trop)", TIME, 3.1557e+07),
+            UnitDefinition("wink", "wink", TIME, 3.33333e-12),
+            UnitDefinition("year", "a or y or yr", TIME, 3.1558e+07),
+
         ]
     
     def get_units_class(self):
         return TimeUnits
+    
 
 
 # Register this module for auto-discovery

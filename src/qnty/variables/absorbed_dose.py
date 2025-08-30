@@ -53,7 +53,7 @@ class AbsorbedDose(TypedVariable):
     
     _setter_class = AbsorbedDoseSetter
     _expected_dimension = ABSORBED_DOSE
-    _default_unit_property = "grays"
+    _default_unit_property = "Gy"
     
     def set(self, value: float) -> AbsorbedDoseSetter:
         """Create an absorbed dose setter for this variable with proper type annotation."""
