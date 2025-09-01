@@ -9,14 +9,11 @@ Shows speedup factors and validates calculation accuracy.
 import time
 
 import pint
-from sympy import Le
 import unyt
 
-from src.qnty.units import DimensionlessUnits, LengthUnits, PressureUnits
-from src.qnty.variable import FastQuantity
-# from src.qnty.variables import Length
-
-from src.qnty.optimized.core import Length, DIMENSIONLESS
+from qnty.units import DimensionlessUnits, LengthUnits, PressureUnits
+from qnty.variable import FastQuantity
+from qnty.variables import Length
 
 
 def benchmark_operation(operation, iterations=1000):
@@ -68,9 +65,9 @@ def print_comparison_table(results):
     valid_comparisons = 0
 
     for op_name, qnty_result, pint_result, unyt_result in results:
-        qnty_time, qnty_val = qnty_result
-        pint_time, pint_val = pint_result
-        unyt_time, unyt_val = unyt_result
+        qnty_time, _ = qnty_result  # Values not used in display
+        pint_time, _ = pint_result
+        unyt_time, _ = unyt_result
 
         # Format times
         qnty_str = f"{qnty_time:.2f}" if qnty_time != float('inf') else "ERROR"
@@ -147,7 +144,7 @@ def test_benchmark_suite(capsys):
     
     def unyt_conversion():
         q = unyt.unyt_quantity(test_value, 'meter')
-        return q.to('millimeter')
+        return q.in_units('millimeter')  # type: ignore
     
     qnty_result = benchmark_operation(qnty_conversion, 2000)
     pint_result = benchmark_operation(pint_conversion, 2000)
@@ -253,7 +250,8 @@ def test_benchmark_suite(capsys):
     # ========== TEST 6: Type-Safe Variables ==========
     def qnty_typesafe():
         length = Length("beam_length")
-        length.set(100.0).mm
+        length.set(100.0).millimeters
+        assert length.quantity is not None
         return length.quantity.to(LengthUnits.meter)
     
     def pint_typesafe():
@@ -263,7 +261,7 @@ def test_benchmark_suite(capsys):
 
     def unyt_typesafe():
         length = unyt.unyt_quantity(100.0, 'millimeter')
-        return length.to('meter')
+        return length.in_units('meter')  # type: ignore
 
     qnty_result = benchmark_operation(qnty_typesafe, 1500)
     pint_result = benchmark_operation(pint_typesafe, 1500)
@@ -272,7 +270,7 @@ def test_benchmark_suite(capsys):
 
     # ========== TEST 7: Chained Operations ==========
     def qnty_chained():
-        q1 = FastQuantity(50.0, LengthUnits.mm)
+        q1 = FastQuantity(50.0, LengthUnits.millimeter)
         q2 = FastQuantity(2.0, LengthUnits.inch)
         q3 = FastQuantity(0.5, LengthUnits.meter)
         result = (q1 + q2) * 2 + q3
@@ -290,7 +288,7 @@ def test_benchmark_suite(capsys):
         q2 = unyt.unyt_quantity(2.0, 'inch')
         q3 = unyt.unyt_quantity(0.5, 'meter')
         result = (q1 + q2) * 2 + q3
-        return result.to('millimeter')
+        return result.in_units('millimeter')  # type: ignore
 
     qnty_result = benchmark_operation(qnty_chained, 1000)
     pint_result = benchmark_operation(pint_chained, 1000)
@@ -344,7 +342,7 @@ if __name__ == "__main__":
         def disabled(self):
             class Context:
                 def __enter__(self): pass
-                def __exit__(self, *args): pass
+                def __exit__(self, *_): pass
             return Context()
     
     test_benchmark_suite(DummyCapsys())
