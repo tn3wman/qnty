@@ -14,18 +14,16 @@ import json
 from pathlib import Path
 
 
-def load_parsed_units():
-    """Load parsed units data - same source used for consolidated units."""
-    units_path = Path(__file__).parent / "output" / "parsed_units.json"
-    with open(units_path) as f:
+def load_json_data(file_path: Path) -> dict:
+    """Load JSON data from file."""
+    with open(file_path, encoding='utf-8') as f:
         return json.load(f)
 
 
-def load_dimension_mapping():
-    """Load dimension mapping - same source used for consolidated units."""
-    mapping_path = Path(__file__).parent / "output" / "dimension_mapping.json"  
-    with open(mapping_path) as f:
-        return json.load(f)
+def save_text_file(content: str, file_path: Path) -> None:
+    """Save text content to file."""
+    with open(file_path, 'w', encoding='utf-8') as f:
+        f.write(content)
 
 
 def get_dimension_constant_name(field_name: str, dimension_mapping: dict):
@@ -37,35 +35,54 @@ def get_dimension_constant_name(field_name: str, dimension_mapping: dict):
 def convert_to_class_name(field_name: str) -> str:
     """Convert field name to PascalCase class name."""
     words = field_name.split('_')
-    class_name = ''.join(word.capitalize() for word in words)
-    
-    # Handle specific naming conventions
-    class_name_fixes = {
-        'MassFractionOfI': 'MassFractionOfI',
-        'MoleFractionOfI': 'MoleFractionOfI', 
-        'VolumeFractionOfI': 'VolumeFractionOfI',
-        'MolarityOfI': 'MolarityOfI',
-        'MolalityOfSoluteI': 'MolalityOfSoluteI',
-    }
-    
-    return class_name_fixes.get(class_name, class_name)
+    return ''.join(word.capitalize() for word in words)
 
 
 def convert_unit_name_to_property(unit_name: str) -> str:
-    """Convert unit name to property name, handling pluralization."""
-    special_plurals = {
-        'foot': 'feet',
-        'inch': 'inches',
-    }
+    """Convert unit name to property name without automatic pluralization."""
+    # Use unit name as-is for property name
+    # Replace any characters that are not valid Python identifiers
+    property_name = unit_name.replace('-', '_').replace(' ', '_').replace('.', '_')
     
-    if unit_name in special_plurals:
-        return special_plurals[unit_name]
+    # Handle Python reserved words and other edge cases
+    reserved_words = {'class', 'def', 'if', 'else', 'for', 'while', 'import', 'from', 'as', 'in'}
+    if property_name in reserved_words:
+        property_name = f"{property_name}_unit"
     
-    return f"{unit_name}s"
+    return property_name
 
 
 def generate_consolidated_variables(parsed_data: dict, dimension_mapping: dict) -> str:
     """Generate the variables.py content using exact same approach as consolidated units."""
+    
+    # Collect all dimension constants used in the file
+    dimension_constants = set()
+    sorted_fields = sorted(parsed_data.items())
+    fields_with_units = [(k, v) for k, v in sorted_fields if v.get('units')]
+    
+    for field_name, _ in fields_with_units:
+        dimension_constant = get_dimension_constant_name(field_name, dimension_mapping)
+        dimension_constants.add(dimension_constant)
+    
+    # Always include DIMENSIONLESS for the handcrafted Dimensionless class
+    dimension_constants.add('DIMENSIONLESS')
+    
+    # Generate explicit dimension imports
+    if dimension_constants:
+        sorted_constants = sorted(dimension_constants)
+        if len(sorted_constants) > 10:
+            import_lines = ['from .dimension import (']
+            for i, const in enumerate(sorted_constants):
+                if i == len(sorted_constants) - 1:
+                    import_lines.append(f'    {const}')  # No comma on last import
+                else:
+                    import_lines.append(f'    {const},')
+            import_lines.append(')')
+        else:
+            imports_str = ', '.join(sorted_constants)
+            import_lines = [f'from .dimension import {imports_str}']
+    else:
+        import_lines = ['from .dimension import DIMENSIONLESS']
     
     lines = [
         '"""',
@@ -77,23 +94,22 @@ def generate_consolidated_variables(parsed_data: dict, dimension_mapping: dict) 
         'Auto-generated from parsed_units.json and dimension_mapping.json.',
         '"""',
         '',
-        'from typing import Any, Dict, Type, cast',
-        '',
-        '# Import all dimensions using the same approach as consolidated units',
-        'from .dimension import *  # Import all dimension constants',
-        'from .dimension import DIMENSIONLESS  # Explicit import for clarity',
+        'from typing import Any, cast',
+        ''
+    ]
+    lines.extend(import_lines)
+    lines.extend([
         'from .unit import UnitConstant, UnitDefinition',
-        'from .units import DimensionlessUnits',
+        'from .units import DimensionlessUnits', 
         'from .variable import FastQuantity, TypeSafeSetter',
         'from .variable_types.typed_variable import TypedVariable',
         '',
         '# Consolidated variable definitions',
         'VARIABLE_DEFINITIONS = {'
-    ]
+    ])
     
     # Generate variable definitions for each field
-    sorted_fields = sorted(parsed_data.items())
-    fields_with_units = [(k, v) for k, v in sorted_fields if v.get('units')]
+    # (fields_with_units already computed above)
     
     for i, (field_name, field_data) in enumerate(fields_with_units):
         comma = ',' if i < len(fields_with_units) - 1 else ''
@@ -109,9 +125,17 @@ def generate_consolidated_variables(parsed_data: dict, dimension_mapping: dict) 
         def escape_string(s):
             return s.replace("\\", "\\\\").replace('"', '\\"')
         
-        # Choose a reasonable default unit - first unit in the list
-        first_unit = field_data['units'][0] if field_data['units'] else {}
-        default_property = convert_unit_name_to_property(first_unit.get('name', 'meters'))
+        # Choose the SI unit (conversion factor = 1.0) as default
+        si_unit = None
+        for unit in field_data['units']:
+            if unit.get('si_metric', {}).get('conversion_factor', 0) == 1.0:
+                si_unit = unit
+                break
+        
+        # Fallback to first unit if no SI unit found
+        default_unit = si_unit or (field_data['units'][0] if field_data['units'] else {})
+        default_unit_name = default_unit.get('name', 'dimensionless')
+        default_property = convert_unit_name_to_property(default_unit_name)
         escaped_default_property = escape_string(default_property)
         lines.append(f'        "default_unit": "{escaped_default_property}",')
         
@@ -126,7 +150,7 @@ def generate_consolidated_variables(parsed_data: dict, dimension_mapping: dict) 
             symbol = unit_data.get('si_metric', {}).get('unit', unit_name)
             
             escaped_unit_name = escape_string(unit_name)
-            escaped_property_name = escape_string(property_name)  
+            escaped_property_name = escape_string(property_name)
             escaped_symbol = escape_string(symbol)
             
             lines.append(f'            ("{escaped_unit_name}", "{escaped_property_name}", {si_factor}, "{escaped_symbol}"){unit_comma}')
@@ -179,7 +203,7 @@ def generate_consolidated_variables(parsed_data: dict, dimension_mapping: dict) 
     # Add the dynamic class creation functions
     lines.extend([
         '',
-        'def create_setter_class(class_name: str, variable_name: str, definition: Dict[str, Any]) -> Type:',
+        'def create_setter_class(class_name: str, variable_name: str, definition: dict[str, Any]) -> type:',
         '    """Dynamically create a setter class with unit properties."""',
         '    ',
         '    # Create base setter class',
@@ -215,7 +239,7 @@ def generate_consolidated_variables(parsed_data: dict, dimension_mapping: dict) 
         '    return setter_class',
         '',
         '',
-        'def create_variable_class(class_name: str, definition: Dict[str, Any], setter_class: Type) -> Type:',
+        'def create_variable_class(class_name: str, definition: dict[str, Any], setter_class: type) -> type:',
         '    """Dynamically create a variable class."""',
         '    ',
         '    # Create the variable class',
@@ -259,7 +283,7 @@ def generate_consolidated_variables(parsed_data: dict, dimension_mapping: dict) 
         '',
     ])
     
-    for field_name, field_data in fields_with_units:
+    for field_name, _ in fields_with_units:
         class_name = convert_to_class_name(field_name)
         setter_name = f"{class_name}Setter"
         lines.append(f'{setter_name} = globals()[\'{setter_name}\']')
@@ -294,7 +318,7 @@ def generate_consolidated_variables(parsed_data: dict, dimension_mapping: dict) 
     ])
     
     # Add all variable modules to the list
-    for i, (field_name, field_data) in enumerate(fields_with_units):
+    for i, (field_name, _) in enumerate(fields_with_units):
         class_name = convert_to_class_name(field_name)
         comma = ',' if i < len(fields_with_units) - 1 else ''
         lines.append(f'        ConsolidatedVariableModule("{class_name}"){comma}')
@@ -304,16 +328,26 @@ def generate_consolidated_variables(parsed_data: dict, dimension_mapping: dict) 
         ''
     ])
     
-    return '\n'.join(lines)
+    return '\n'.join(lines) + '\n'
 
 
 def main():
     """Main execution function."""
+    # Setup paths using pathlib
+    base_path = Path(__file__).parent.parent
+    scripts_input_path = Path(__file__).parent / "input"
+    scripts_output_path = Path(__file__).parent / "output"
+    src_path = base_path / "src" / "qnty"
+    
+    parsed_file = scripts_input_path / "parsed_units.json"
+    dimension_file = scripts_output_path / "dimension_mapping.json"
+    output_file = src_path / "variables.py"
+    
     print("Loading parsed units data (exact same source as consolidated units)...")
     
     # Load the exact same data sources used for consolidated units
-    parsed_data = load_parsed_units()
-    dimension_mapping = load_dimension_mapping()
+    parsed_data = load_json_data(parsed_file)
+    dimension_mapping = load_json_data(dimension_file)
     
     # Count fields with units
     fields_with_units = sum(1 for field_data in parsed_data.values() if field_data.get('units'))
@@ -324,25 +358,22 @@ def main():
     content = generate_consolidated_variables(parsed_data, dimension_mapping)
     
     # Write output file
-    output_path = Path(__file__).parent.parent / "src" / "qnty" / "variables.py"
-    with open(output_path, 'w') as f:
-        f.write(content)
-    
-    print(f"Generated consolidated file: {output_path}")
+    save_text_file(content, output_file)
+    print(f"Generated consolidated file: {output_file}")
     
     # Print statistics
     total_units = sum(len(field_data.get('units', [])) for field_data in parsed_data.values())
-    print(f"\nStatistics:")
+    print("\nStatistics:")
     print(f"  Total fields: {len(parsed_data)}")
     print(f"  Fields with units: {fields_with_units}")
     print(f"  Total units: {total_units}")
     
     # Show top variable types by unit count
-    fields_by_units = [(field_name, len(field_data.get('units', [])), field_data.get('field', '')) 
+    fields_by_units = [(field_name, len(field_data.get('units', [])), field_data.get('field', ''))
                        for field_name, field_data in parsed_data.items() if field_data.get('units')]
     fields_by_units.sort(key=lambda x: x[1], reverse=True)
     
-    print(f"\nTop variable types by unit count:")
+    print("\nTop variable types by unit count:")
     for field_name, unit_count, display_name in fields_by_units[:10]:
         class_name = convert_to_class_name(field_name)
         print(f"  {class_name:<25} : {unit_count:>3} units ({display_name})")

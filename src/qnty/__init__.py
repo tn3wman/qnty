@@ -6,17 +6,12 @@ A fast, type-safe unit system library for Python with dimensional safety
 and optimized unit conversions for engineering calculations.
 """
 
-# Core components for advanced usage
 from .dimension import BaseDimension, DimensionSignature
 from .equation import Equation
 from .expression import Expression
 from .unit import registry
-
-# Import and register all units from the consolidated system
 from .units import register_all_units
 from .variable import FastQuantity, TypeSafeSetter, TypeSafeVariable
-
-# Import all variable types from the consolidated system
 from .variables import (
     AbsorbedDose,
     Acceleration,
@@ -177,3 +172,4 @@ __all__ = [
     "VolumetricFlowRate", "VolumetricFlux", "VolumetricMassFlowRate",
     "Wavenumber",
 ]
+

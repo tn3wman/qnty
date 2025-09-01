@@ -250,7 +250,7 @@ def test_benchmark_suite(capsys):
     # ========== TEST 6: Type-Safe Variables ==========
     def qnty_typesafe():
         length = Length("beam_length")
-        length.set(100.0).millimeters
+        length.set(100.0).millimeter
         assert length.quantity is not None
         return length.quantity.to(LengthUnits.meter)
     

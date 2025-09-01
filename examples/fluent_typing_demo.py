@@ -16,11 +16,11 @@ def demo_fluent_typing():
     pressure = Pressure("working_pressure")
     
     # All these have full IDE autocomplete and type checking:
-    pressure.set(15).bars        # ✓ Pressure unit
-    pressure.set(101.325).kilogram_force_per_square_meters  # ✓ Pressure unit
-    pressure.set(14.7).bars            # ✓ Pressure unit
-    pressure.set(1.013).bars           # ✓ Pressure unit
-    pressure.set(760).torrs            # ✓ Pressure unit
+    pressure.set(15).bar        # ✓ Pressure unit
+    pressure.set(101.325).kilogram_force_per_square_meter  # ✓ Pressure unit
+    pressure.set(14.7).bar            # ✓ Pressure unit
+    pressure.set(1.013).bar           # ✓ Pressure unit
+    pressure.set(760).torr            # ✓ Pressure unit
     
     # The IDE will NOT suggest length or area units here - compile-time safety!
     # pressure.set(15).meters          # ✗ Would be a type error
@@ -34,12 +34,12 @@ def demo_fluent_typing():
     length = Length("beam_length")
     
     # All these have full IDE autocomplete and type checking:
-    length.set(100).meters      # ✓ Length unit
-    length.set(5.5).meters             # ✓ Length unit
-    length.set(12).inches              # ✓ Length unit (with alias support)
-    length.set(3).feet                 # ✓ Length unit
-    length.set(1000).kilometers        # ✓ Length unit
-    
+    length.set(100).meter      # ✓ Length unit
+    length.set(5.5).meter             # ✓ Length unit
+    length.set(12).inch              # ✓ Length unit (with alias support)
+    length.set(3).foot                 # ✓ Length unit
+    length.set(1000).kilometer        # ✓ Length unit
+
     print(f"Length: {length.quantity}")
     
     
@@ -48,10 +48,10 @@ def demo_fluent_typing():
     area = Area("surface_area")
     
     # All these have full IDE autocomplete and type checking:
-    area.set(50).square_meters         # ✓ Area unit
-    area.set(100).square_foots         # ✓ Area unit (note: auto-pluralized)
-    area.set(2.5).hectares             # ✓ Area unit
-    area.set(1000).square_millimeters  # ✓ Area unit
+    area.set(50).square_meter        # ✓ Area unit
+    area.set(100).square_foot         # ✓ Area unit (note: auto-pluralized)
+    area.set(2.5).hectare             # ✓ Area unit
+    area.set(1000).square_millimeter  # ✓ Area unit
     
     print(f"Area: {area.quantity}")
 
