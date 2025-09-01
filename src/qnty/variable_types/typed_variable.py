@@ -6,12 +6,9 @@ Base class that provides common constructor logic for all typed variables,
 handling both the original syntax and the new value/unit/name syntax.
 """
 
-from typing import TYPE_CHECKING, Type
-
-from .expression_variable import ExpressionVariable
-
 from ..dimension import DimensionSignature
 from ..variable import TypeSafeSetter
+from .expression_variable import ExpressionVariable
 
 
 class TypedVariable(ExpressionVariable):
@@ -24,9 +21,9 @@ class TypedVariable(ExpressionVariable):
     - _default_unit_property: The default unit property name for fallback
     """
     
-    _setter_class: Type['TypeSafeSetter'] = None
-    _expected_dimension: 'DimensionSignature' = None
-    _default_unit_property: str = None
+    _setter_class: type[TypeSafeSetter] | None = None
+    _expected_dimension: DimensionSignature | None = None
+    _default_unit_property: str | None = None
     
     def __init__(self, *args, is_known: bool = True):
         """
@@ -49,7 +46,9 @@ class TypedVariable(ExpressionVariable):
             value, name = args
             super().__init__(name, self._expected_dimension, is_known=is_known)
             setter = self._setter_class(self, value)
-            setter.dimensionless
+            # For DimensionlessSetter, use the dimensionless property
+            # Type ignore since we know DimensionlessSetter has this property
+            getattr(setter, 'dimensionless', None)  # type: ignore
             
         elif len(args) == 3:
             # New syntax: Variable(value, "unit", "name")
@@ -80,7 +79,7 @@ class TypedVariable(ExpressionVariable):
             else:
                 # Last resort - try to find any valid unit property
                 # This helps with forward compatibility
-                unit_properties = [attr for attr in dir(setter) 
+                unit_properties = [attr for attr in dir(setter)
                                  if not attr.startswith('_') and attr != 'value' and attr != 'variable']
                 if unit_properties:
                     getattr(setter, unit_properties[0])

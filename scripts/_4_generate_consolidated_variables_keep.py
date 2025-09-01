@@ -16,14 +16,14 @@ from pathlib import Path
 
 def load_parsed_units():
     """Load parsed units data - same source used for consolidated units."""
-    units_path = Path(__file__).parent.parent / "data" / "parsed_units.json"
+    units_path = Path(__file__).parent / "output" / "parsed_units.json"
     with open(units_path) as f:
         return json.load(f)
 
 
 def load_dimension_mapping():
     """Load dimension mapping - same source used for consolidated units."""
-    mapping_path = Path(__file__).parent.parent / "data" / "dimension_mapping.json"  
+    mapping_path = Path(__file__).parent / "output" / "dimension_mapping.json"  
     with open(mapping_path) as f:
         return json.load(f)
 
@@ -77,17 +77,15 @@ def generate_consolidated_variables(parsed_data: dict, dimension_mapping: dict) 
         'Auto-generated from parsed_units.json and dimension_mapping.json.',
         '"""',
         '',
-        'from typing import Dict, Any, Type, cast',
-        'from .dimension import DimensionSignature, DIMENSIONLESS',
+        'from typing import Any, Dict, Type, cast',
         '',
         '# Import all dimensions using the same approach as consolidated units',
         'from .dimension import *  # Import all dimension constants',
-        '',
-        '# Import consolidated unit definitions to create unit constants',
-        'from .units import UNIT_DEFINITIONS as UNIT_DEFS',
-        'from .variable import FastQuantity, TypeSafeSetter, UnitDefinition',
-        'from .variable_types.typed_variable import TypedVariable',
+        'from .dimension import DIMENSIONLESS  # Explicit import for clarity',
+        'from .unit import UnitConstant, UnitDefinition',
         'from .units import DimensionlessUnits',
+        'from .variable import FastQuantity, TypeSafeSetter',
+        'from .variable_types.typed_variable import TypedVariable',
         '',
         '# Consolidated variable definitions',
         'VARIABLE_DEFINITIONS = {'
@@ -199,15 +197,16 @@ def generate_consolidated_variables(parsed_data: dict, dimension_mapping: dict) 
         '        # Create a unit definition from the consolidated data',
         '        def make_property(unit_nm, si_fac, sym):',
         '            def getter(self):',
-        '                # Create unit definition directly from consolidated unit data',
+        '                # Create unit definition and constant from consolidated unit data',
         '                unit_def = UnitDefinition(',
         '                    name=unit_nm,',
         '                    symbol=sym,',
         '                    dimension=definition["dimension"],',
         '                    si_factor=si_fac',
         '                )',
-        '                self.variable.quantity = FastQuantity(self.value, unit_def)',
-        '                return cast(variable_name, self.variable)',
+        '                unit_const = UnitConstant(unit_def)',
+        '                self.variable.quantity = FastQuantity(self.value, unit_const)',
+        '                return self.variable  # type: ignore',
         '            return property(getter)',
         '        ',
         '        # Add the property to the class',

@@ -8,7 +8,7 @@ for the fluent API with dimension-specific unit properties for all
 Auto-generated from the same source of truth as consolidated_new.py.
 """
 
-from typing import Dict, Any, Type, List, Tuple
+from typing import Dict, Any, Type, List
 from .dimension import DimensionSignature
 from .variable import TypeSafeSetter
 from .variable_types.typed_variable import TypedVariable
@@ -32,9 +32,9 @@ class DimensionlessSetter(TypeSafeSetter):
 class Dimensionless(TypedVariable):
     """Type-safe dimensionless variable with expression capabilities."""
 
-    _setter_class: Type[DimensionlessSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -71,9 +71,9 @@ class AbsorbedDoseSetter(TypeSafeSetter):
 class AbsorbedDose(TypedVariable):
     """Type-safe absorbed radiation dose variable with expression capabilities."""
     
-    _setter_class: Type[AbsorbedDoseSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -106,9 +106,9 @@ class AccelerationSetter(TypeSafeSetter):
 class Acceleration(TypedVariable):
     """Type-safe acceleration variable with expression capabilities."""
     
-    _setter_class: Type[AccelerationSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -146,9 +146,9 @@ class ActivationEnergySetter(TypeSafeSetter):
 class ActivationEnergy(TypedVariable):
     """Type-safe activation energy variable with expression capabilities."""
     
-    _setter_class: Type[ActivationEnergySetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -183,9 +183,9 @@ class AmountOfSubstanceSetter(TypeSafeSetter):
 class AmountOfSubstance(TypedVariable):
     """Type-safe amount of substance variable with expression capabilities."""
     
-    _setter_class: Type[AmountOfSubstanceSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -244,9 +244,9 @@ class AnglePlaneSetter(TypeSafeSetter):
 class AnglePlane(TypedVariable):
     """Type-safe angle, plane variable with expression capabilities."""
     
-    _setter_class: Type[AnglePlaneSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -283,9 +283,9 @@ class AngleSolidSetter(TypeSafeSetter):
 class AngleSolid(TypedVariable):
     """Type-safe angle, solid variable with expression capabilities."""
     
-    _setter_class: Type[AngleSolidSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -320,9 +320,9 @@ class AngularAccelerationSetter(TypeSafeSetter):
 class AngularAcceleration(TypedVariable):
     """Type-safe angular acceleration variable with expression capabilities."""
     
-    _setter_class: Type[AngularAccelerationSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -357,9 +357,9 @@ class AngularMomentumSetter(TypeSafeSetter):
 class AngularMomentum(TypedVariable):
     """Type-safe angular momentum variable with expression capabilities."""
     
-    _setter_class: Type[AngularMomentumSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -440,9 +440,9 @@ class AreaSetter(TypeSafeSetter):
 class Area(TypedVariable):
     """Type-safe area variable with expression capabilities."""
     
-    _setter_class: Type[AreaSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -479,9 +479,9 @@ class AreaPerUnitVolumeSetter(TypeSafeSetter):
 class AreaPerUnitVolume(TypedVariable):
     """Type-safe area per unit volume variable with expression capabilities."""
     
-    _setter_class: Type[AreaPerUnitVolumeSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -518,9 +518,9 @@ class AtomicWeightSetter(TypeSafeSetter):
 class AtomicWeight(TypedVariable):
     """Type-safe atomic weight variable with expression capabilities."""
     
-    _setter_class: Type[AtomicWeightSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -553,9 +553,9 @@ class ConcentrationSetter(TypeSafeSetter):
 class Concentration(TypedVariable):
     """Type-safe concentration variable with expression capabilities."""
     
-    _setter_class: Type[ConcentrationSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -591,9 +591,9 @@ class DynamicFluiditySetter(TypeSafeSetter):
 class DynamicFluidity(TypedVariable):
     """Type-safe dynamic fluidity variable with expression capabilities."""
     
-    _setter_class: Type[DynamicFluiditySetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -636,9 +636,9 @@ class ElectricCapacitanceSetter(TypeSafeSetter):
 class ElectricCapacitance(TypedVariable):
     """Type-safe electric capacitance variable with expression capabilities."""
     
-    _setter_class: Type[ElectricCapacitanceSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -681,9 +681,9 @@ class ElectricChargeSetter(TypeSafeSetter):
 class ElectricCharge(TypedVariable):
     """Type-safe electric charge variable with expression capabilities."""
     
-    _setter_class: Type[ElectricChargeSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -726,9 +726,9 @@ class ElectricCurrentIntensitySetter(TypeSafeSetter):
 class ElectricCurrentIntensity(TypedVariable):
     """Type-safe electric current intensity variable with expression capabilities."""
     
-    _setter_class: Type[ElectricCurrentIntensitySetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -765,9 +765,9 @@ class ElectricDipoleMomentSetter(TypeSafeSetter):
 class ElectricDipoleMoment(TypedVariable):
     """Type-safe electric dipole moment variable with expression capabilities."""
     
-    _setter_class: Type[ElectricDipoleMomentSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -800,9 +800,9 @@ class ElectricFieldStrengthSetter(TypeSafeSetter):
 class ElectricFieldStrength(TypedVariable):
     """Type-safe electric field strength variable with expression capabilities."""
     
-    _setter_class: Type[ElectricFieldStrengthSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -844,9 +844,9 @@ class ElectricInductanceSetter(TypeSafeSetter):
 class ElectricInductance(TypedVariable):
     """Type-safe electric inductance variable with expression capabilities."""
     
-    _setter_class: Type[ElectricInductanceSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -887,9 +887,9 @@ class ElectricPotentialSetter(TypeSafeSetter):
 class ElectricPotential(TypedVariable):
     """Type-safe electric potential variable with expression capabilities."""
     
-    _setter_class: Type[ElectricPotentialSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -938,9 +938,9 @@ class ElectricResistanceSetter(TypeSafeSetter):
 class ElectricResistance(TypedVariable):
     """Type-safe electric resistance variable with expression capabilities."""
     
-    _setter_class: Type[ElectricResistanceSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -979,9 +979,9 @@ class ElectricalConductanceSetter(TypeSafeSetter):
 class ElectricalConductance(TypedVariable):
     """Type-safe electrical conductance variable with expression capabilities."""
     
-    _setter_class: Type[ElectricalConductanceSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -1012,9 +1012,9 @@ class ElectricalPermittivitySetter(TypeSafeSetter):
 class ElectricalPermittivity(TypedVariable):
     """Type-safe electrical permittivity variable with expression capabilities."""
     
-    _setter_class: Type[ElectricalPermittivitySetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -1051,9 +1051,9 @@ class ElectricalResistivitySetter(TypeSafeSetter):
 class ElectricalResistivity(TypedVariable):
     """Type-safe electrical resistivity variable with expression capabilities."""
     
-    _setter_class: Type[ElectricalResistivitySetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -1094,9 +1094,9 @@ class EnergyFluxSetter(TypeSafeSetter):
 class EnergyFlux(TypedVariable):
     """Type-safe energy flux variable with expression capabilities."""
     
-    _setter_class: Type[EnergyFluxSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -1205,9 +1205,9 @@ class EnergyHeatWorkSetter(TypeSafeSetter):
 class EnergyHeatWork(TypedVariable):
     """Type-safe energy, heat, work variable with expression capabilities."""
     
-    _setter_class: Type[EnergyHeatWorkSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -1242,9 +1242,9 @@ class EnergyPerUnitAreaSetter(TypeSafeSetter):
 class EnergyPerUnitArea(TypedVariable):
     """Type-safe energy per unit area variable with expression capabilities."""
     
-    _setter_class: Type[EnergyPerUnitAreaSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -1303,9 +1303,9 @@ class ForceSetter(TypeSafeSetter):
 class Force(TypedVariable):
     """Type-safe force variable with expression capabilities."""
     
-    _setter_class: Type[ForceSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -1348,9 +1348,9 @@ class ForceBodySetter(TypeSafeSetter):
 class ForceBody(TypedVariable):
     """Type-safe force (body) variable with expression capabilities."""
     
-    _setter_class: Type[ForceBodySetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -1389,9 +1389,9 @@ class ForcePerUnitMassSetter(TypeSafeSetter):
 class ForcePerUnitMass(TypedVariable):
     """Type-safe force per unit mass variable with expression capabilities."""
     
-    _setter_class: Type[ForcePerUnitMassSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -1426,9 +1426,9 @@ class FrequencyVoltageRatioSetter(TypeSafeSetter):
 class FrequencyVoltageRatio(TypedVariable):
     """Type-safe frequency voltage ratio variable with expression capabilities."""
     
-    _setter_class: Type[FrequencyVoltageRatioSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -1483,9 +1483,9 @@ class FuelConsumptionSetter(TypeSafeSetter):
 class FuelConsumption(TypedVariable):
     """Type-safe fuel consumption variable with expression capabilities."""
     
-    _setter_class: Type[FuelConsumptionSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -1522,9 +1522,9 @@ class HeatOfCombustionSetter(TypeSafeSetter):
 class HeatOfCombustion(TypedVariable):
     """Type-safe heat of combustion variable with expression capabilities."""
     
-    _setter_class: Type[HeatOfCombustionSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -1563,9 +1563,9 @@ class HeatOfFusionSetter(TypeSafeSetter):
 class HeatOfFusion(TypedVariable):
     """Type-safe heat of fusion variable with expression capabilities."""
     
-    _setter_class: Type[HeatOfFusionSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -1602,9 +1602,9 @@ class HeatOfVaporizationSetter(TypeSafeSetter):
 class HeatOfVaporization(TypedVariable):
     """Type-safe heat of vaporization variable with expression capabilities."""
     
-    _setter_class: Type[HeatOfVaporizationSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -1637,9 +1637,9 @@ class HeatTransferCoefficientSetter(TypeSafeSetter):
 class HeatTransferCoefficient(TypedVariable):
     """Type-safe heat transfer coefficient variable with expression capabilities."""
     
-    _setter_class: Type[HeatTransferCoefficientSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -1677,9 +1677,9 @@ class IlluminanceSetter(TypeSafeSetter):
 class Illuminance(TypedVariable):
     """Type-safe illuminance variable with expression capabilities."""
     
-    _setter_class: Type[IlluminanceSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -1712,9 +1712,9 @@ class KineticEnergyOfTurbulenceSetter(TypeSafeSetter):
 class KineticEnergyOfTurbulence(TypedVariable):
     """Type-safe kinetic energy of turbulence variable with expression capabilities."""
     
-    _setter_class: Type[KineticEnergyOfTurbulenceSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -1832,9 +1832,9 @@ class LengthSetter(TypeSafeSetter):
 class Length(TypedVariable):
     """Type-safe length variable with expression capabilities."""
     
-    _setter_class: Type[LengthSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -1879,9 +1879,9 @@ class LinearMassDensitySetter(TypeSafeSetter):
 class LinearMassDensity(TypedVariable):
     """Type-safe linear mass density variable with expression capabilities."""
     
-    _setter_class: Type[LinearMassDensitySetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -1920,9 +1920,9 @@ class LinearMomentumSetter(TypeSafeSetter):
 class LinearMomentum(TypedVariable):
     """Type-safe linear momentum variable with expression capabilities."""
     
-    _setter_class: Type[LinearMomentumSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -1969,9 +1969,9 @@ class LuminanceSelfSetter(TypeSafeSetter):
 class LuminanceSelf(TypedVariable):
     """Type-safe luminance (self) variable with expression capabilities."""
     
-    _setter_class: Type[LuminanceSelfSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -2004,9 +2004,9 @@ class LuminousFluxSetter(TypeSafeSetter):
 class LuminousFlux(TypedVariable):
     """Type-safe luminous flux variable with expression capabilities."""
     
-    _setter_class: Type[LuminousFluxSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -2042,9 +2042,9 @@ class LuminousIntensitySetter(TypeSafeSetter):
 class LuminousIntensity(TypedVariable):
     """Type-safe luminous intensity variable with expression capabilities."""
     
-    _setter_class: Type[LuminousIntensitySetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -2081,9 +2081,9 @@ class MagneticFieldSetter(TypeSafeSetter):
 class MagneticField(TypedVariable):
     """Type-safe magnetic field variable with expression capabilities."""
     
-    _setter_class: Type[MagneticFieldSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -2122,9 +2122,9 @@ class MagneticFluxSetter(TypeSafeSetter):
 class MagneticFlux(TypedVariable):
     """Type-safe magnetic flux variable with expression capabilities."""
     
-    _setter_class: Type[MagneticFluxSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -2167,9 +2167,9 @@ class MagneticInductionFieldStrengthSetter(TypeSafeSetter):
 class MagneticInductionFieldStrength(TypedVariable):
     """Type-safe magnetic induction field strength variable with expression capabilities."""
     
-    _setter_class: Type[MagneticInductionFieldStrengthSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -2204,9 +2204,9 @@ class MagneticMomentSetter(TypeSafeSetter):
 class MagneticMoment(TypedVariable):
     """Type-safe magnetic moment variable with expression capabilities."""
     
-    _setter_class: Type[MagneticMomentSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -2239,9 +2239,9 @@ class MagneticPermeabilitySetter(TypeSafeSetter):
 class MagneticPermeability(TypedVariable):
     """Type-safe magnetic permeability variable with expression capabilities."""
     
-    _setter_class: Type[MagneticPermeabilitySetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -2277,9 +2277,9 @@ class MagnetomotiveForceSetter(TypeSafeSetter):
 class MagnetomotiveForce(TypedVariable):
     """Type-safe magnetomotive force variable with expression capabilities."""
     
-    _setter_class: Type[MagnetomotiveForceSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -2376,9 +2376,9 @@ class MassSetter(TypeSafeSetter):
 class Mass(TypedVariable):
     """Type-safe mass variable with expression capabilities."""
     
-    _setter_class: Type[MassSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -2427,9 +2427,9 @@ class MassDensitySetter(TypeSafeSetter):
 class MassDensity(TypedVariable):
     """Type-safe mass density variable with expression capabilities."""
     
-    _setter_class: Type[MassDensitySetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -2484,9 +2484,9 @@ class MassFlowRateSetter(TypeSafeSetter):
 class MassFlowRate(TypedVariable):
     """Type-safe mass flow rate variable with expression capabilities."""
     
-    _setter_class: Type[MassFlowRateSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -2531,9 +2531,9 @@ class MassFluxSetter(TypeSafeSetter):
 class MassFlux(TypedVariable):
     """Type-safe mass flux variable with expression capabilities."""
     
-    _setter_class: Type[MassFluxSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -2570,9 +2570,9 @@ class MassFractionOfISetter(TypeSafeSetter):
 class MassFractionOfI(TypedVariable):
     """Type-safe mass fraction of "i" variable with expression capabilities."""
     
-    _setter_class: Type[MassFractionOfISetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -2611,9 +2611,9 @@ class MassTransferCoefficientSetter(TypeSafeSetter):
 class MassTransferCoefficient(TypedVariable):
     """Type-safe mass transfer coefficient variable with expression capabilities."""
     
-    _setter_class: Type[MassTransferCoefficientSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -2652,9 +2652,9 @@ class MolalityOfSoluteISetter(TypeSafeSetter):
 class MolalityOfSoluteI(TypedVariable):
     """Type-safe molality of solute "i" variable with expression capabilities."""
     
-    _setter_class: Type[MolalityOfSoluteISetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -2697,9 +2697,9 @@ class MolarConcentrationByMassSetter(TypeSafeSetter):
 class MolarConcentrationByMass(TypedVariable):
     """Type-safe molar concentration by mass variable with expression capabilities."""
     
-    _setter_class: Type[MolarConcentrationByMassSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -2752,9 +2752,9 @@ class MolarFlowRateSetter(TypeSafeSetter):
 class MolarFlowRate(TypedVariable):
     """Type-safe molar flow rate variable with expression capabilities."""
     
-    _setter_class: Type[MolarFlowRateSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -2799,9 +2799,9 @@ class MolarFluxSetter(TypeSafeSetter):
 class MolarFlux(TypedVariable):
     """Type-safe molar flux variable with expression capabilities."""
     
-    _setter_class: Type[MolarFluxSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -2836,9 +2836,9 @@ class MolarHeatCapacitySetter(TypeSafeSetter):
 class MolarHeatCapacity(TypedVariable):
     """Type-safe molar heat capacity variable with expression capabilities."""
     
-    _setter_class: Type[MolarHeatCapacitySetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -2879,9 +2879,9 @@ class MolarityOfISetter(TypeSafeSetter):
 class MolarityOfI(TypedVariable):
     """Type-safe molarity of "i" variable with expression capabilities."""
     
-    _setter_class: Type[MolarityOfISetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -2918,9 +2918,9 @@ class MoleFractionOfISetter(TypeSafeSetter):
 class MoleFractionOfI(TypedVariable):
     """Type-safe mole fraction of "i" variable with expression capabilities."""
     
-    _setter_class: Type[MoleFractionOfISetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -2969,9 +2969,9 @@ class MomentOfInertiaSetter(TypeSafeSetter):
 class MomentOfInertia(TypedVariable):
     """Type-safe moment of inertia variable with expression capabilities."""
     
-    _setter_class: Type[MomentOfInertiaSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -3010,9 +3010,9 @@ class MomentumFlowRateSetter(TypeSafeSetter):
 class MomentumFlowRate(TypedVariable):
     """Type-safe momentum flow rate variable with expression capabilities."""
     
-    _setter_class: Type[MomentumFlowRateSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -3051,9 +3051,9 @@ class MomentumFluxSetter(TypeSafeSetter):
 class MomentumFlux(TypedVariable):
     """Type-safe momentum flux variable with expression capabilities."""
     
-    _setter_class: Type[MomentumFluxSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -3090,9 +3090,9 @@ class NormalityOfSolutionSetter(TypeSafeSetter):
 class NormalityOfSolution(TypedVariable):
     """Type-safe normality of solution variable with expression capabilities."""
     
-    _setter_class: Type[NormalityOfSolutionSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -3133,9 +3133,9 @@ class ParticleDensitySetter(TypeSafeSetter):
 class ParticleDensity(TypedVariable):
     """Type-safe particle density variable with expression capabilities."""
     
-    _setter_class: Type[ParticleDensitySetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -3170,9 +3170,9 @@ class PermeabilitySetter(TypeSafeSetter):
 class Permeability(TypedVariable):
     """Type-safe permeability variable with expression capabilities."""
     
-    _setter_class: Type[PermeabilitySetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -3205,9 +3205,9 @@ class PhotonEmissionRateSetter(TypeSafeSetter):
 class PhotonEmissionRate(TypedVariable):
     """Type-safe photon emission rate variable with expression capabilities."""
     
-    _setter_class: Type[PhotonEmissionRateSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -3243,9 +3243,9 @@ class PowerPerUnitMassSetter(TypeSafeSetter):
 class PowerPerUnitMass(TypedVariable):
     """Type-safe power per unit mass or specific power variable with expression capabilities."""
     
-    _setter_class: Type[PowerPerUnitMassSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -3288,9 +3288,9 @@ class PowerPerUnitVolumeSetter(TypeSafeSetter):
 class PowerPerUnitVolume(TypedVariable):
     """Type-safe power per unit volume or power density variable with expression capabilities."""
     
-    _setter_class: Type[PowerPerUnitVolumeSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -3383,9 +3383,9 @@ class PowerThermalDutySetter(TypeSafeSetter):
 class PowerThermalDuty(TypedVariable):
     """Type-safe power, thermal duty variable with expression capabilities."""
     
-    _setter_class: Type[PowerThermalDutySetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -3466,9 +3466,9 @@ class PressureSetter(TypeSafeSetter):
 class Pressure(TypedVariable):
     """Type-safe pressure variable with expression capabilities."""
     
-    _setter_class: Type[PressureSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -3501,9 +3501,9 @@ class RadiationDoseEquivalentSetter(TypeSafeSetter):
 class RadiationDoseEquivalent(TypedVariable):
     """Type-safe radiation dose equivalent variable with expression capabilities."""
     
-    _setter_class: Type[RadiationDoseEquivalentSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -3539,9 +3539,9 @@ class RadiationExposureSetter(TypeSafeSetter):
 class RadiationExposure(TypedVariable):
     """Type-safe radiation exposure variable with expression capabilities."""
     
-    _setter_class: Type[RadiationExposureSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -3580,9 +3580,9 @@ class RadioactivitySetter(TypeSafeSetter):
 class Radioactivity(TypedVariable):
     """Type-safe radioactivity variable with expression capabilities."""
     
-    _setter_class: Type[RadioactivitySetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -3619,9 +3619,9 @@ class SecondMomentOfAreaSetter(TypeSafeSetter):
 class SecondMomentOfArea(TypedVariable):
     """Type-safe second moment of area variable with expression capabilities."""
     
-    _setter_class: Type[SecondMomentOfAreaSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -3652,9 +3652,9 @@ class SecondRadiationConstantPlanckSetter(TypeSafeSetter):
 class SecondRadiationConstantPlanck(TypedVariable):
     """Type-safe second radiation constant (planck) variable with expression capabilities."""
     
-    _setter_class: Type[SecondRadiationConstantPlanckSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -3693,9 +3693,9 @@ class SpecificEnthalpySetter(TypeSafeSetter):
 class SpecificEnthalpy(TypedVariable):
     """Type-safe specific enthalpy variable with expression capabilities."""
     
-    _setter_class: Type[SpecificEnthalpySetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -3726,9 +3726,9 @@ class SpecificGravitySetter(TypeSafeSetter):
 class SpecificGravity(TypedVariable):
     """Type-safe specific gravity variable with expression capabilities."""
     
-    _setter_class: Type[SpecificGravitySetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -3761,9 +3761,9 @@ class SpecificHeatCapacityConstantPressureSetter(TypeSafeSetter):
 class SpecificHeatCapacityConstantPressure(TypedVariable):
     """Type-safe specific heat capacity (constant pressure) variable with expression capabilities."""
     
-    _setter_class: Type[SpecificHeatCapacityConstantPressureSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -3804,9 +3804,9 @@ class SpecificLengthSetter(TypeSafeSetter):
 class SpecificLength(TypedVariable):
     """Type-safe specific length variable with expression capabilities."""
     
-    _setter_class: Type[SpecificLengthSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -3845,9 +3845,9 @@ class SpecificSurfaceSetter(TypeSafeSetter):
 class SpecificSurface(TypedVariable):
     """Type-safe specific surface variable with expression capabilities."""
     
-    _setter_class: Type[SpecificSurfaceSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -3884,9 +3884,9 @@ class SpecificVolumeSetter(TypeSafeSetter):
 class SpecificVolume(TypedVariable):
     """Type-safe specific volume variable with expression capabilities."""
     
-    _setter_class: Type[SpecificVolumeSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -3939,9 +3939,9 @@ class StressSetter(TypeSafeSetter):
 class Stress(TypedVariable):
     """Type-safe stress variable with expression capabilities."""
     
-    _setter_class: Type[StressSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -3980,9 +3980,9 @@ class SurfaceMassDensitySetter(TypeSafeSetter):
 class SurfaceMassDensity(TypedVariable):
     """Type-safe surface mass density variable with expression capabilities."""
     
-    _setter_class: Type[SurfaceMassDensitySetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -4021,9 +4021,9 @@ class SurfaceTensionSetter(TypeSafeSetter):
 class SurfaceTension(TypedVariable):
     """Type-safe surface tension variable with expression capabilities."""
     
-    _setter_class: Type[SurfaceTensionSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -4062,9 +4062,9 @@ class TemperatureSetter(TypeSafeSetter):
 class Temperature(TypedVariable):
     """Type-safe temperature variable with expression capabilities."""
     
-    _setter_class: Type[TemperatureSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -4107,9 +4107,9 @@ class ThermalConductivitySetter(TypeSafeSetter):
 class ThermalConductivity(TypedVariable):
     """Type-safe thermal conductivity variable with expression capabilities."""
     
-    _setter_class: Type[ThermalConductivitySetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -4168,9 +4168,9 @@ class TimeSetter(TypeSafeSetter):
 class Time(TypedVariable):
     """Type-safe time variable with expression capabilities."""
     
-    _setter_class: Type[TimeSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -4219,9 +4219,9 @@ class TorqueSetter(TypeSafeSetter):
 class Torque(TypedVariable):
     """Type-safe torque variable with expression capabilities."""
     
-    _setter_class: Type[TorqueSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -4254,9 +4254,9 @@ class TurbulenceEnergyDissipationRateSetter(TypeSafeSetter):
 class TurbulenceEnergyDissipationRate(TypedVariable):
     """Type-safe turbulence energy dissipation rate variable with expression capabilities."""
     
-    _setter_class: Type[TurbulenceEnergyDissipationRateSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -4300,9 +4300,9 @@ class VelocityAngularSetter(TypeSafeSetter):
 class VelocityAngular(TypedVariable):
     """Type-safe velocity, angular variable with expression capabilities."""
     
-    _setter_class: Type[VelocityAngularSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -4349,9 +4349,9 @@ class VelocityLinearSetter(TypeSafeSetter):
 class VelocityLinear(TypedVariable):
     """Type-safe velocity, linear variable with expression capabilities."""
     
-    _setter_class: Type[VelocityLinearSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -4398,9 +4398,9 @@ class ViscosityDynamicSetter(TypeSafeSetter):
 class ViscosityDynamic(TypedVariable):
     """Type-safe viscosity, dynamic variable with expression capabilities."""
     
-    _setter_class: Type[ViscosityDynamicSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -4443,9 +4443,9 @@ class ViscosityKinematicSetter(TypeSafeSetter):
 class ViscosityKinematic(TypedVariable):
     """Type-safe viscosity, kinematic variable with expression capabilities."""
     
-    _setter_class: Type[ViscosityKinematicSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -4556,9 +4556,9 @@ class VolumeSetter(TypeSafeSetter):
 class Volume(TypedVariable):
     """Type-safe volume variable with expression capabilities."""
     
-    _setter_class: Type[VolumeSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -4595,9 +4595,9 @@ class VolumeFractionOfISetter(TypeSafeSetter):
 class VolumeFractionOfI(TypedVariable):
     """Type-safe volume fraction of "i" variable with expression capabilities."""
     
-    _setter_class: Type[VolumeFractionOfISetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -4644,9 +4644,9 @@ class VolumetricCalorificHeatingValueSetter(TypeSafeSetter):
 class VolumetricCalorificHeatingValue(TypedVariable):
     """Type-safe volumetric calorific (heating) value variable with expression capabilities."""
     
-    _setter_class: Type[VolumetricCalorificHeatingValueSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -4683,9 +4683,9 @@ class VolumetricCoefficientOfExpansionSetter(TypeSafeSetter):
 class VolumetricCoefficientOfExpansion(TypedVariable):
     """Type-safe volumetric coefficient of expansion variable with expression capabilities."""
     
-    _setter_class: Type[VolumetricCoefficientOfExpansionSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -4746,9 +4746,9 @@ class VolumetricFlowRateSetter(TypeSafeSetter):
 class VolumetricFlowRate(TypedVariable):
     """Type-safe volumetric flow rate variable with expression capabilities."""
     
-    _setter_class: Type[VolumetricFlowRateSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -4809,9 +4809,9 @@ class VolumetricFluxSetter(TypeSafeSetter):
 class VolumetricFlux(TypedVariable):
     """Type-safe volumetric flux variable with expression capabilities."""
     
-    _setter_class: Type[VolumetricFluxSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -4854,9 +4854,9 @@ class VolumetricMassFlowRateSetter(TypeSafeSetter):
 class VolumetricMassFlowRate(TypedVariable):
     """Type-safe volumetric mass flow rate variable with expression capabilities."""
     
-    _setter_class: Type[VolumetricMassFlowRateSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     
@@ -4891,9 +4891,9 @@ class WavenumberSetter(TypeSafeSetter):
 class Wavenumber(TypedVariable):
     """Type-safe wavenumber variable with expression capabilities."""
     
-    _setter_class: Type[WavenumberSetter]
-    _expected_dimension: DimensionSignature
-    _default_unit_property: str
+    _setter_class: Type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
     
     def __init__(self, *args, is_known: bool = True) -> None: ...
     

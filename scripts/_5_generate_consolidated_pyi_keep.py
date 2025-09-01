@@ -15,14 +15,14 @@ from pathlib import Path
 
 def load_parsed_units():
     """Load parsed units data - same source used for consolidated variables."""
-    units_path = Path(__file__).parent.parent / "data" / "parsed_units.json"
+    units_path = Path(__file__).parent / "output" / "parsed_units.json"
     with open(units_path) as f:
         return json.load(f)
 
 
 def load_dimension_mapping():
     """Load dimension mapping - same source used for consolidated variables."""
-    mapping_path = Path(__file__).parent.parent / "data" / "dimension_mapping.json"  
+    mapping_path = Path(__file__).parent / "output" / "dimension_mapping.json"  
     with open(mapping_path) as f:
         return json.load(f)
 
@@ -88,7 +88,7 @@ def generate_consolidated_pyi(parsed_data: dict, dimension_mapping: dict) -> str
         'Auto-generated from the same source of truth as consolidated_new.py.',
         '"""',
         '',
-        'from typing import Dict, Any, Type, List, Tuple',
+        'from typing import Dict, Any, Type, List',
         'from .dimension import DimensionSignature',
         'from .variable import TypeSafeSetter',
         'from .variable_types.typed_variable import TypedVariable',
@@ -112,9 +112,9 @@ def generate_consolidated_pyi(parsed_data: dict, dimension_mapping: dict) -> str
         'class Dimensionless(TypedVariable):',
         '    """Type-safe dimensionless variable with expression capabilities."""',
         '',
-        '    _setter_class: Type[DimensionlessSetter]',
-        '    _expected_dimension: DimensionSignature',
-        '    _default_unit_property: str',
+        '    _setter_class: Type[TypeSafeSetter] | None',
+        '    _expected_dimension: DimensionSignature | None',
+        '    _default_unit_property: str | None',
         '    ',
         '    def __init__(self, *args, is_known: bool = True) -> None: ...',
         '    ',
@@ -175,9 +175,9 @@ def generate_consolidated_pyi(parsed_data: dict, dimension_mapping: dict) -> str
             f'class {class_name}(TypedVariable):',
             f'    """Type-safe {display_name.lower()} variable with expression capabilities."""',
             '    ',
-            f'    _setter_class: Type[{setter_name}]',
-            '    _expected_dimension: DimensionSignature',
-            '    _default_unit_property: str',
+            f'    _setter_class: Type[TypeSafeSetter] | None',
+            '    _expected_dimension: DimensionSignature | None',
+            '    _default_unit_property: str | None',
             '    ',
             '    def __init__(self, *args, is_known: bool = True) -> None: ...',
             '    ',

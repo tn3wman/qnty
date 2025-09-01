@@ -7,17 +7,15 @@ Uses the exact same source of truth and approach as consolidated units system.
 Auto-generated from parsed_units.json and dimension_mapping.json.
 """
 
-from typing import Dict, Any, Type, cast
-from .dimension import DimensionSignature, DIMENSIONLESS
+from typing import Any, Dict, Type, cast
 
 # Import all dimensions using the same approach as consolidated units
 from .dimension import *  # Import all dimension constants
-
-# Import consolidated unit definitions to create unit constants
-from .units import UNIT_DEFINITIONS as UNIT_DEFS
-from .variable import FastQuantity, TypeSafeSetter, UnitDefinition
-from .variable_types.typed_variable import TypedVariable
+from .dimension import DIMENSIONLESS  # Explicit import for clarity
+from .unit import UnitConstant, UnitDefinition
 from .units import DimensionlessUnits
+from .variable import FastQuantity, TypeSafeSetter
+from .variable_types.typed_variable import TypedVariable
 
 # Consolidated variable definitions
 VARIABLE_DEFINITIONS = {
@@ -1724,15 +1722,16 @@ def create_setter_class(class_name: str, variable_name: str, definition: Dict[st
         # Create a unit definition from the consolidated data
         def make_property(unit_nm, si_fac, sym):
             def getter(self):
-                # Create unit definition directly from consolidated unit data
+                # Create unit definition and constant from consolidated unit data
                 unit_def = UnitDefinition(
                     name=unit_nm,
                     symbol=sym,
                     dimension=definition["dimension"],
                     si_factor=si_fac
                 )
-                self.variable.quantity = FastQuantity(self.value, unit_def)
-                return cast(variable_name, self.variable)
+                unit_const = UnitConstant(unit_def)
+                self.variable.quantity = FastQuantity(self.value, unit_const)
+                return self.variable  # type: ignore
             return property(getter)
         
         # Add the property to the class

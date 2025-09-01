@@ -1,74 +1,179 @@
-# Import all variables from the consolidated system
-from .variables import *
-
-
-
 """
-Units Package with Auto-Discovery and Registration
-=================================================
+Qnty - High-Performance Unit System for Engineering
+====================================================
 
-Automatically discovers and registers all unit modules, then populates
-their unit constant classes.
+A fast, type-safe unit system library for Python with dimensional safety
+and optimized unit conversions for engineering calculations.
 """
 
-import importlib
-import pkgutil
-
+# Core components for advanced usage
+from .dimension import BaseDimension, DimensionSignature
+from .equation import Equation
+from .expression import Expression
 from .unit import registry
+
+# Import and register all units from the consolidated system
 from .units import register_all_units
+from .variable import FastQuantity, TypeSafeSetter, TypeSafeVariable
 
-# Register consolidated units first
+# Import all variable types from the consolidated system
+from .variables import (
+    AbsorbedDose,
+    Acceleration,
+    ActivationEnergy,
+    AmountOfSubstance,
+    AnglePlane,
+    AngleSolid,
+    AngularAcceleration,
+    AngularMomentum,
+    Area,
+    AreaPerUnitVolume,
+    AtomicWeight,
+    Concentration,
+    DynamicFluidity,
+    ElectricalConductance,
+    ElectricalPermittivity,
+    ElectricalResistivity,
+    ElectricCapacitance,
+    ElectricCharge,
+    ElectricCurrentIntensity,
+    ElectricDipoleMoment,
+    ElectricFieldStrength,
+    ElectricInductance,
+    ElectricPotential,
+    ElectricResistance,
+    EnergyFlux,
+    EnergyHeatWork,
+    EnergyPerUnitArea,
+    Force,
+    ForceBody,
+    ForcePerUnitMass,
+    FrequencyVoltageRatio,
+    FuelConsumption,
+    HeatOfCombustion,
+    HeatOfFusion,
+    HeatOfVaporization,
+    HeatTransferCoefficient,
+    Illuminance,
+    KineticEnergyOfTurbulence,
+    Length,
+    LinearMassDensity,
+    LinearMomentum,
+    LuminanceSelf,
+    LuminousFlux,
+    LuminousIntensity,
+    MagneticField,
+    MagneticFlux,
+    MagneticInductionFieldStrength,
+    MagneticMoment,
+    MagneticPermeability,
+    MagnetomotiveForce,
+    Mass,
+    MassDensity,
+    MassFlowRate,
+    MassFlux,
+    MassFractionOfI,
+    MassTransferCoefficient,
+    MolalityOfSoluteI,
+    MolarConcentrationByMass,
+    MolarFlowRate,
+    MolarFlux,
+    MolarHeatCapacity,
+    MolarityOfI,
+    MoleFractionOfI,
+    MomentOfInertia,
+    MomentumFlowRate,
+    MomentumFlux,
+    NormalityOfSolution,
+    ParticleDensity,
+    Permeability,
+    PhotonEmissionRate,
+    PowerPerUnitMass,
+    PowerPerUnitVolume,
+    PowerThermalDuty,
+    Pressure,
+    RadiationDoseEquivalent,
+    RadiationExposure,
+    Radioactivity,
+    SecondMomentOfArea,
+    SecondRadiationConstantPlanck,
+    SpecificEnthalpy,
+    SpecificGravity,
+    SpecificHeatCapacityConstantPressure,
+    SpecificLength,
+    SpecificSurface,
+    SpecificVolume,
+    Stress,
+    SurfaceMassDensity,
+    SurfaceTension,
+    Temperature,
+    ThermalConductivity,
+    Time,
+    Torque,
+    TurbulenceEnergyDissipationRate,
+    VelocityAngular,
+    VelocityLinear,
+    ViscosityDynamic,
+    ViscosityKinematic,
+    Volume,
+    VolumeFractionOfI,
+    VolumetricCalorificHeatingValue,
+    VolumetricCoefficientOfExpansion,
+    VolumetricFlowRate,
+    VolumetricFlux,
+    VolumetricMassFlowRate,
+    Wavenumber,
+)
+
+# Register all units to the global registry
 register_all_units(registry)
-
-# Auto-discover and register remaining unit modules
-for importer, modname, ispkg in pkgutil.iter_modules(__path__):
-    # Skip consolidated units and base modules
-    if modname not in ['__init__', 'base', 'consolidated', 'length', 'pressure', 'area']:
-        module = importlib.import_module(f'.{modname}', __name__)
-        
-        # Register definitions to global registry (modules may have pre-populated some)
-        if hasattr(module, 'UNIT_MODULE'):
-            module.UNIT_MODULE.register_to_registry(registry)
 
 # Finalize registry after all registrations
 registry.finalize_registration()
 
-"""
-Variables Package with Auto-Discovery and Registration
-======================================================
+# Version information
+__version__ = "0.0.3"
 
-Automatically discovers and registers all variable modules, providing
-a clean API for type-safe engineering variables.
-"""
-
-import importlib
-import pkgutil
-
-from .variable_types.base import VariableRegistry
-
-# Create global variable registry
-variable_registry = VariableRegistry()
-
-# Note: Consolidated variables are now in parent ../variables.py
-# This package contains implementation details for variable types
-
-# Auto-discover and register remaining variable modules
-for importer, modname, ispkg in pkgutil.iter_modules(__path__):
-    # Skip consolidated modules and base
-    if modname not in ['__init__', 'base', 'consolidated', 'consolidated_new', 'length', 'pressure', 'area']:
-        module = importlib.import_module(f'.{modname}', __name__)
-        
-        # Register variable module if it has the VARIABLE_MODULE attribute
-        if hasattr(module, 'VARIABLE_MODULE'):
-            var_module = module.VARIABLE_MODULE
-            var_module.register_to_registry(variable_registry)
-
-
-
-# For backward compatibility, provide common variables in __all__
+# Define public API
 __all__ = [
-    # Most commonly used variables
-    "Dimensionless", "Length", "Pressure", "Temperature", "Time", "Mass", "Volume", "Area", "Force", 
-    "EnergyHeatWork", "PowerThermalDuty", "VelocityLinear", "Acceleration", "MassDensity", "ViscosityDynamic",
-    # All 105 variable types are available via consolidated_new import above
+    # Core variable types (most commonly used)
+    "Length", "Pressure", "Temperature", "Time", "Mass", "Volume", "Area",
+    "Force", "EnergyHeatWork", "PowerThermalDuty",
+
+    # Core classes for advanced usage
+    "FastQuantity", "TypeSafeVariable", "TypeSafeSetter",
+    "DimensionSignature", "BaseDimension",
+    "Expression", "Equation",
+
+    # All other variable types (95 additional types)
+    "AbsorbedDose", "Acceleration", "ActivationEnergy", "AmountOfSubstance",
+    "AnglePlane", "AngleSolid", "AngularAcceleration", "AngularMomentum",
+    "AreaPerUnitVolume", "AtomicWeight", "Concentration", "DynamicFluidity",
+    "ElectricCapacitance", "ElectricCharge", "ElectricCurrentIntensity",
+    "ElectricDipoleMoment", "ElectricFieldStrength", "ElectricInductance",
+    "ElectricPotential", "ElectricResistance", "ElectricalConductance",
+    "ElectricalPermittivity", "ElectricalResistivity", "EnergyFlux",
+    "EnergyPerUnitArea", "ForceBody", "ForcePerUnitMass",
+    "FrequencyVoltageRatio", "FuelConsumption", "HeatOfCombustion",
+    "HeatOfFusion", "HeatOfVaporization", "HeatTransferCoefficient",
+    "Illuminance", "KineticEnergyOfTurbulence", "LinearMassDensity",
+    "LinearMomentum", "LuminanceSelf", "LuminousFlux", "LuminousIntensity",
+    "MagneticField", "MagneticFlux", "MagneticInductionFieldStrength",
+    "MagneticMoment", "MagneticPermeability", "MagnetomotiveForce",
+    "MassDensity", "MassFlowRate", "MassFlux", "MassFractionOfI",
+    "MassTransferCoefficient", "MolalityOfSoluteI", "MolarConcentrationByMass",
+    "MolarFlowRate", "MolarFlux", "MolarHeatCapacity", "MolarityOfI",
+    "MoleFractionOfI", "MomentOfInertia", "MomentumFlowRate", "MomentumFlux",
+    "NormalityOfSolution", "ParticleDensity", "Permeability",
+    "PhotonEmissionRate", "PowerPerUnitMass", "PowerPerUnitVolume",
+    "RadiationDoseEquivalent", "RadiationExposure", "Radioactivity",
+    "SecondMomentOfArea", "SecondRadiationConstantPlanck", "SpecificEnthalpy",
+    "SpecificGravity", "SpecificHeatCapacityConstantPressure",
+    "SpecificLength", "SpecificSurface", "SpecificVolume", "Stress",
+    "SurfaceMassDensity", "SurfaceTension", "ThermalConductivity", "Torque",
+    "TurbulenceEnergyDissipationRate", "VelocityAngular", "VelocityLinear",
+    "ViscosityDynamic", "ViscosityKinematic", "VolumeFractionOfI",
+    "VolumetricCalorificHeatingValue", "VolumetricCoefficientOfExpansion",
+    "VolumetricFlowRate", "VolumetricFlux", "VolumetricMassFlowRate",
+    "Wavenumber",
 ]
