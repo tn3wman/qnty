@@ -20,7 +20,7 @@ from src.qnty.dimension import (
     MASS,
     PRESSURE,
     TIME,
-    VELOCITY,
+    VELOCITY_LINEAR as VELOCITY,
     VOLUME,
     BaseDimension,
     DimensionSignature,
