@@ -1,3 +1,0 @@
-# Prompt to fix parsed_units.json
-
-The script to create parsed_units.json is still incorrectly parsing dimensions for various units especially those related to heat transfer, coefficient of expansion, conductivity, and others. I manually updated dimension_mapping.json at /Users/tyler/Projects/qnty/data/dimension_mapping.json to correct all dimension specifications. Pleas thoroughly review dimension_mapping.json and ensure that a script like /Users/tyler/Projects/qnty/scripts/parse_unit_definitions_keep.py actually workd correctly. Verify the parsed dimensions in parsed_units.json exactly matches dimension_mapping.json.
