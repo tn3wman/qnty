@@ -9,6 +9,12 @@ file with all 810+ units organized by dimension.
 import json
 import re
 from pathlib import Path
+import sys
+
+# Add src/qnty to the path to import prefix system
+sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
+
+from qnty.prefixes import StandardPrefixes, PREFIXABLE_UNITS
 
 # Configuration constants
 DIMENSION_NAME_MAP = {
@@ -150,6 +156,107 @@ def group_units_by_dimension(parsed_data: dict) -> dict[str, list]:
         groups[field_name] = [field_info]
     
     return groups
+
+
+def identify_base_units_needing_prefixes(parsed_data: dict) -> dict:
+    """Identify base SI units that should have prefixes generated."""
+    base_units = {}
+    
+    # Look through all units to find base SI units that are in PREFIXABLE_UNITS
+    for field_name, field_data in parsed_data.items():
+        for unit_data in field_data['units']:
+            unit_name = unit_data['normalized_name']
+            if unit_name in PREFIXABLE_UNITS:
+                # This is a base unit that should have prefixes
+                # Store all occurrences of the unit, not just the last one
+                if unit_name not in base_units:
+                    base_units[unit_name] = []
+                
+                base_units[unit_name].append({
+                    'unit_data': unit_data,
+                    'field_name': field_name,
+                    'prefixes': PREFIXABLE_UNITS[unit_name]
+                })
+    
+    return base_units
+
+
+def generate_prefixed_unit_data(base_unit_data: dict, prefix: StandardPrefixes) -> dict:
+    """Generate unit data for a prefixed variant of a base unit."""
+    prefix_def = prefix.value
+    
+    # Apply prefix to name and symbol
+    prefixed_name = prefix_def.apply_to_name(base_unit_data['normalized_name'])
+    prefixed_symbol = prefix_def.apply_to_symbol(base_unit_data.get('si_metric', {}).get('unit', base_unit_data.get('notation', '')))
+    
+    # Calculate new SI factor
+    base_factor = base_unit_data.get('si_metric', {}).get('conversion_factor', 1.0)
+    new_factor = base_factor * prefix_def.factor
+    
+    # Create new unit data
+    return {
+        'field': base_unit_data['field'],
+        'name': prefix_def.apply_to_name(base_unit_data['name']),
+        'normalized_name': prefixed_name,
+        'notation': prefixed_symbol,
+        'si_dimension': base_unit_data['si_dimension'],
+        'parsed_dimensions': base_unit_data['parsed_dimensions'],
+        'si_metric': {
+            'conversion_factor': new_factor,
+            'unit': base_unit_data.get('si_metric', {}).get('unit', base_unit_data.get('notation', ''))
+        },
+        'english_us': base_unit_data.get('english_us', {}),
+        'aliases': [],
+        'generated_from_prefix': True  # Mark as generated for identification
+    }
+
+
+def augment_parsed_data_with_prefixes(parsed_data: dict) -> dict:
+    """Add missing prefixed units to the parsed data."""
+    # Make a deep copy to avoid modifying the original
+    augmented_data = {}
+    for key, value in parsed_data.items():
+        augmented_data[key] = {
+            'field': value['field'],
+            'normalized_field': value['normalized_field'],
+            'dimensions': value.get('dimensions', {}),
+            'units': list(value['units'])  # Copy the units list
+        }
+    
+    # Find base units that need prefixes
+    base_units = identify_base_units_needing_prefixes(parsed_data)
+    
+    # Track existing unit names to avoid duplicates
+    existing_units = set()
+    for field_data in augmented_data.values():
+        for unit in field_data['units']:
+            existing_units.add(unit['normalized_name'])
+    
+    # Generate and add missing prefixed units
+    generated_count = 0
+    for unit_name, base_entries in base_units.items():
+        # Process each field where this unit appears
+        for base_info in base_entries:
+            base_unit = base_info['unit_data']
+            field_name = base_info['field_name']
+            prefixes = base_info['prefixes']
+            
+            for prefix in prefixes:
+                if prefix == StandardPrefixes.NONE:
+                    continue  # Skip NONE prefix
+                    
+                prefix_def = prefix.value
+                prefixed_name = prefix_def.apply_to_name(unit_name)
+                
+                # Only add if it doesn't already exist globally
+                if prefixed_name not in existing_units:
+                    prefixed_unit = generate_prefixed_unit_data(base_unit, prefix)
+                    augmented_data[field_name]['units'].append(prefixed_unit)
+                    existing_units.add(prefixed_name)
+                    generated_count += 1
+    
+    print(f"Generated {generated_count} missing prefixed units")
+    return augmented_data
 
 
 def generate_unit_definition(unit_data: dict) -> dict:
@@ -343,6 +450,7 @@ def generate_helper_functions() -> list[str]:
         'def create_unit_class(class_name: str, dimension_data: dict) -> type:',
         '    """Dynamically create a unit class with all unit constants as attributes."""',
         '    from .unit import UnitConstant, UnitDefinition',
+        '    from .prefixes import get_prefix_by_name',
         '    ',
         '    # Create a new class dynamically',
         '    unit_class = type(class_name, (), {})',
@@ -352,12 +460,33 @@ def generate_helper_functions() -> list[str]:
         '    ',
         '    # Create UnitDefinition and UnitConstant for each unit',
         '    for unit_data in dimension_data["units"]:',
+        '        # Check if this unit was generated from a prefix',
+        '        prefix = None',
+        '        base_unit_name = None',
+        '        if unit_data.get("generated_from_prefix", False):',
+        '            # Try to identify the prefix and base unit',
+        '            unit_name = unit_data["name"]',
+        '            for prefix_name in ["yotta", "zetta", "exa", "peta", "tera", "giga", "mega", "kilo", "hecto", "deca",',
+        '                               "deci", "centi", "milli", "micro", "nano", "pico", "femto", "atto", "zepto", "yocto"]:',
+        '                if unit_name.startswith(prefix_name):',
+        '                    potential_base = unit_name[len(prefix_name):]',
+        '                    # Check if this base unit exists in the same dimension',
+        '                    for other_unit in dimension_data["units"]:',
+        '                        if other_unit["name"] == potential_base and not other_unit.get("generated_from_prefix", False):',
+        '                            prefix = get_prefix_by_name(prefix_name)',
+        '                            base_unit_name = potential_base',
+        '                            break',
+        '                    if prefix:',
+        '                        break',
+        '        ',
         '        unit_def = UnitDefinition(',
         '            name=unit_data["name"],',
         '            symbol=unit_data["symbol"],',
         '            dimension=dimension,',
         '            si_factor=unit_data["si_factor"],',
-        '            si_offset=0.0',
+        '            si_offset=0.0,',
+        '            base_unit_name=base_unit_name,',
+        '            prefix=prefix',
         '        )',
         '        unit_constant = UnitConstant(unit_def)',
         '        ',
@@ -373,13 +502,28 @@ def generate_helper_functions() -> list[str]:
         '',
         '',
         'def register_all_units(registry):',
-        '    """Register all unit definitions to the given registry."""',
+        '    """Register all unit definitions to the given registry with prefix support."""',
         '    from .unit import UnitDefinition',
+        '    from .prefixes import get_prefix_by_name, StandardPrefixes, PREFIXABLE_UNITS',
         '    ',
+        '    # First pass: register base units with prefixes where applicable',
         '    for dimension_data in UNIT_DEFINITIONS.values():',
         '        dimension = dimension_data["dimension"]',
         '        ',
+        '        # Collect base units that need prefix registration',
+        '        base_units_to_register = {}',
+        '        regular_units = []',
+        '        ',
         '        for unit_data in dimension_data["units"]:',
+        '            unit_name = unit_data["name"]',
+        '            if unit_name in PREFIXABLE_UNITS and not unit_data.get("generated_from_prefix", False):',
+        '                # This is a base unit that should be registered with prefixes',
+        '                base_units_to_register[unit_name] = unit_data',
+        '            else:',
+        '                regular_units.append(unit_data)',
+        '        ',
+        '        # Register base units with automatic prefix generation',
+        '        for unit_name, unit_data in base_units_to_register.items():',
         '            unit_def = UnitDefinition(',
         '                name=unit_data["name"],',
         '                symbol=unit_data["symbol"],',
@@ -389,7 +533,27 @@ def generate_helper_functions() -> list[str]:
         '            )',
         '            ',
         '            if unit_def.name not in registry.units:',
-        '                registry.register_unit(unit_def)',
+        '                # Get the prefixes for this unit',
+        '                prefixes = PREFIXABLE_UNITS.get(unit_name, [])',
+        '                registry.register_with_prefixes(unit_def, prefixes)',
+        '        ',
+        '        # Register regular units (non-prefixable or already prefixed)',
+        '        for unit_data in regular_units:',
+        '            if not unit_data.get("generated_from_prefix", False):',
+        '                # Only register if not generated (since prefixed variants are auto-generated above)',
+        '                unit_def = UnitDefinition(',
+        '                    name=unit_data["name"],',
+        '                    symbol=unit_data["symbol"],',
+        '                    dimension=dimension,',
+        '                    si_factor=unit_data["si_factor"],',
+        '                    si_offset=0.0',
+        '                )',
+        '                ',
+        '                if unit_def.name not in registry.units:',
+        '                    registry.register_unit(unit_def)',
+        '    ',
+        '    # Finalize the registry to compute conversions',
+        '    registry.finalize_registration()',
         '',
         ''
     ]
@@ -512,21 +676,28 @@ def main():
     print(f"Loaded {len(parsed_data)} fields with units")
     print(f"Loaded {len(dimension_mapping)} dimension mappings")
     
+    # Augment data with missing prefixed units
+    print("\nAugmenting data with missing prefixed units...")
+    augmented_data = augment_parsed_data_with_prefixes(parsed_data)
+    
     # Generate the consolidated file
-    print("\nGenerating comprehensive consolidated.py...")
-    content = generate_consolidated_file(parsed_data, dimension_mapping)
+    print("\nGenerating comprehensive consolidated.py with prefix support...")
+    content = generate_consolidated_file(augmented_data, dimension_mapping)
     
     # Write the file
     save_text_file(content, output_file)
     print(f"Generated units file: {output_file}")
     
     # Statistics
-    total_units = sum(len(field_data['units']) for field_data in parsed_data.values())
-    grouped_units = group_units_by_dimension(parsed_data)
+    original_total = sum(len(field_data['units']) for field_data in parsed_data.values())
+    augmented_total = sum(len(field_data['units']) for field_data in augmented_data.values())
+    grouped_units = group_units_by_dimension(augmented_data)
     
     print("\nStatistics:")
-    print(f"  Total units: {total_units}")
-    print(f"  Total fields: {len(parsed_data)}")
+    print(f"  Original units: {original_total}")
+    print(f"  Total units (with prefixes): {augmented_total}")
+    print(f"  Generated prefixed units: {augmented_total - original_total}")
+    print(f"  Total fields: {len(augmented_data)}")
     print(f"  Dimensional groups: {len(grouped_units)}")
     
     print("\nTop dimensional groups by unit count:")
