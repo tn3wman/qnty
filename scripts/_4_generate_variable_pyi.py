@@ -13,42 +13,29 @@ import json
 from pathlib import Path
 
 
-def load_parsed_units():
-    """Load parsed units data - same source used for consolidated variables."""
-    units_path = Path(__file__).parent / "output" / "parsed_units.json"
-    with open(units_path) as f:
+def load_json_data(file_path: Path) -> dict:
+    """Load JSON data from file."""
+    with open(file_path, encoding='utf-8') as f:
         return json.load(f)
 
 
-def load_dimension_mapping():
-    """Load dimension mapping - same source used for consolidated variables."""
-    mapping_path = Path(__file__).parent / "output" / "dimension_mapping.json"  
-    with open(mapping_path) as f:
-        return json.load(f)
+def save_text_file(content: str, file_path: Path) -> None:
+    """Save text content to file."""
+    with open(file_path, 'w', encoding='utf-8') as f:
+        f.write(content)
 
 
 def convert_to_class_name(field_name: str) -> str:
     """Convert field name to PascalCase class name."""
     words = field_name.split('_')
-    class_name = ''.join(word.capitalize() for word in words)
-    
-    # Handle specific naming conventions
-    class_name_fixes = {
-        'MassFractionOfI': 'MassFractionOfI',
-        'MoleFractionOfI': 'MoleFractionOfI', 
-        'VolumeFractionOfI': 'VolumeFractionOfI',
-        'MolarityOfI': 'MolarityOfI',
-        'MolalityOfSoluteI': 'MolalityOfSoluteI',
-    }
-    
-    return class_name_fixes.get(class_name, class_name)
+    return ''.join(word.capitalize() for word in words)
 
 
 def convert_unit_name_to_property(unit_name: str) -> str:
-    """Convert unit name to property name, handling pluralization and Python identifiers."""
+    """Convert unit name to property name without automatic pluralization."""
     import re
     
-    # Replace spaces and invalid characters with underscores
+    # Replace any characters that are not valid Python identifiers with underscores
     property_name = re.sub(r'[^a-zA-Z0-9_]', '_', unit_name)
     
     # Remove leading/trailing underscores and collapse multiple underscores
@@ -59,19 +46,16 @@ def convert_unit_name_to_property(unit_name: str) -> str:
     if property_name and property_name[0].isdigit():
         property_name = f"_{property_name}"
     
-    # Handle special pluralization cases for common units
-    special_plurals = {
-        'foot': 'feet',
-        'inch': 'inches',
-    }
+    # Handle empty property names
+    if not property_name:
+        property_name = "unit"
     
-    if property_name in special_plurals:
-        return special_plurals[property_name]
+    # Handle Python reserved words
+    reserved_words = {'class', 'def', 'if', 'else', 'for', 'while', 'import', 'from', 'as', 'in'}
+    if property_name in reserved_words:
+        property_name = f"{property_name}_unit"
     
-    # Default pluralization (but ensure we don't add 's' if it already ends with 's')
-    if property_name.endswith('s'):
-        return property_name
-    return f"{property_name}s"
+    return property_name
 
 
 def generate_consolidated_pyi(parsed_data: dict, dimension_mapping: dict) -> str:
@@ -88,7 +72,7 @@ def generate_consolidated_pyi(parsed_data: dict, dimension_mapping: dict) -> str
         'Auto-generated from the same source of truth as consolidated_new.py.',
         '"""',
         '',
-        'from typing import Dict, Any, Type, List',
+        'from typing import Any',
         'from .dimension import DimensionSignature',
         'from .variable import TypeSafeSetter',
         'from .variable_types.typed_variable import TypedVariable',
@@ -100,19 +84,19 @@ def generate_consolidated_pyi(parsed_data: dict, dimension_mapping: dict) -> str
         'class DimensionlessSetter(TypeSafeSetter):',
         '    """Dimensionless-specific setter with only dimensionless units."""',
         '    ',
-        '    def __init__(self, variable: \'Dimensionless\', value: float) -> None: ...',
+        '    def __init__(self, variable: Dimensionless, value: float) -> None: ...',
         '    ',
         '    @property',
-        '    def dimensionless(self) -> \'Dimensionless\': ...',
+        '    def dimensionless(self) -> Dimensionless: ...',
         '    ',
         '    @property',
-        '    def unitless(self) -> \'Dimensionless\': ...',
+        '    def unitless(self) -> Dimensionless: ...',
         '',
         '',
         'class Dimensionless(TypedVariable):',
         '    """Type-safe dimensionless variable with expression capabilities."""',
         '',
-        '    _setter_class: Type[TypeSafeSetter] | None',
+        '    _setter_class: type[TypeSafeSetter] | None',
         '    _expected_dimension: DimensionSignature | None',
         '    _default_unit_property: str | None',
         '    ',
@@ -153,7 +137,7 @@ def generate_consolidated_pyi(parsed_data: dict, dimension_mapping: dict) -> str
             f'class {setter_name}(TypeSafeSetter):',
             f'    """{display_name}-specific setter with only {display_name.lower()} unit properties."""',
             '    ',
-            f'    def __init__(self, variable: \'{class_name}\', value: float) -> None: ...',
+            f'    def __init__(self, variable: {class_name}, value: float) -> None: ...',
             '    ',
             f'    # All {display_name.lower()} unit properties - provides fluent API with full type hints'
         ])
@@ -165,7 +149,7 @@ def generate_consolidated_pyi(parsed_data: dict, dimension_mapping: dict) -> str
             
             lines.extend([
                 '    @property',
-                f'    def {property_name}(self) -> \'{class_name}\': ...'
+                f'    def {property_name}(self) -> {class_name}: ...'
             ])
         
         lines.append('')
@@ -175,7 +159,7 @@ def generate_consolidated_pyi(parsed_data: dict, dimension_mapping: dict) -> str
             f'class {class_name}(TypedVariable):',
             f'    """Type-safe {display_name.lower()} variable with expression capabilities."""',
             '    ',
-            f'    _setter_class: Type[TypeSafeSetter] | None',
+            '    _setter_class: type[TypeSafeSetter] | None',
             '    _expected_dimension: DimensionSignature | None',
             '    _default_unit_property: str | None',
             '    ',
@@ -206,29 +190,39 @@ def generate_consolidated_pyi(parsed_data: dict, dimension_mapping: dict) -> str
         '# Module-level definitions',
         '# ' + '=' * 76,
         '',
-        'VARIABLE_DEFINITIONS: Dict[str, Dict[str, Any]]',
+        'VARIABLE_DEFINITIONS: dict[str, dict[str, Any]]',
         '',
-        'def create_setter_class(class_name: str, variable_name: str, definition: Dict[str, Any]) -> Type: ...',
+        'def create_setter_class(class_name: str, variable_name: str, definition: dict[str, Any]) -> type: ...',
         '',
-        'def create_variable_class(class_name: str, definition: Dict[str, Any], setter_class: Type) -> Type: ...',
+        'def create_variable_class(class_name: str, definition: dict[str, Any], setter_class: type) -> type: ...',
         '',
-        'def get_consolidated_variable_modules() -> List[Any]: ...',
+        'def get_consolidated_variable_modules() -> list[Any]: ...',
         '',
         '# All classes are defined above - no additional exports needed in type stubs',
     ])
     
     lines.append('')
     
-    return '\n'.join(lines)
+    return '\n'.join(lines) + '\n'
 
 
 def main():
     """Main execution function."""
+    # Setup paths using pathlib
+    base_path = Path(__file__).parent.parent
+    scripts_input_path = Path(__file__).parent / "input"
+    scripts_output_path = Path(__file__).parent / "output"
+    src_path = base_path / "src" / "qnty"
+    
+    parsed_file = scripts_input_path / "parsed_units.json"
+    dimension_file = scripts_output_path / "dimension_mapping.json"
+    output_file = src_path / "variables.pyi"
+    
     print("Loading parsed units data for type stub generation...")
     
     # Load the same data sources used for consolidated variables
-    parsed_data = load_parsed_units()
-    dimension_mapping = load_dimension_mapping()
+    parsed_data = load_json_data(parsed_file)
+    dimension_mapping = load_json_data(dimension_file)
     
     # Count fields with units
     fields_with_units = sum(1 for field_data in parsed_data.values() if field_data.get('units'))
@@ -242,30 +236,27 @@ def main():
     content = generate_consolidated_pyi(parsed_data, dimension_mapping)
     
     # Write output file
-    output_path = Path(__file__).parent.parent / "src" / "qnty" / "variables.pyi"
-    with open(output_path, 'w') as f:
-        f.write(content)
-    
-    print(f"Generated type stub file: {output_path}")
+    save_text_file(content, output_file)
+    print(f"Generated type stub file: {output_file}")
     
     # Print statistics
     lines_count = len(content.splitlines())
-    print(f"\nStatistics:")
+    print("\nStatistics:")
     print(f"  Total variable types: {fields_with_units}")
     print(f"  Total units: {total_units}")
     print(f"  Generated lines: {lines_count:,}")
     
     # Show top variable types by unit count
-    fields_by_units = [(field_name, len(field_data.get('units', [])), field_data.get('field', '')) 
+    fields_by_units = [(field_name, len(field_data.get('units', [])), field_data.get('field', ''))
                        for field_name, field_data in parsed_data.items() if field_data.get('units')]
     fields_by_units.sort(key=lambda x: x[1], reverse=True)
     
-    print(f"\nTop variable types by unit property count:")
+    print("\nTop variable types by unit property count:")
     for field_name, unit_count, display_name in fields_by_units[:10]:
         class_name = convert_to_class_name(field_name)
         print(f"  {class_name:<25} : {unit_count:>3} properties ({display_name})")
     
-    print(f"\n✅ Complete type stub generated with full IDE support!")
+    print("\n✅ Complete type stub generated with full IDE support!")
 
 
 if __name__ == "__main__":

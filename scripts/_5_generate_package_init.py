@@ -15,7 +15,7 @@ from pathlib import Path
 
 def load_parsed_units():
     """Load parsed units data - same source used for consolidated variables."""
-    units_path = Path(__file__).parent / "output" / "parsed_units.json"
+    units_path = Path(__file__).parent / "input" / "parsed_units.json"
     with open(units_path) as f:
         return json.load(f)
 
@@ -23,18 +23,7 @@ def load_parsed_units():
 def convert_to_class_name(field_name: str) -> str:
     """Convert field name to PascalCase class name."""
     words = field_name.split('_')
-    class_name = ''.join(word.capitalize() for word in words)
-    
-    # Handle specific naming conventions
-    class_name_fixes = {
-        'MassFractionOfI': 'MassFractionOfI',
-        'MoleFractionOfI': 'MoleFractionOfI', 
-        'VolumeFractionOfI': 'VolumeFractionOfI',
-        'MolarityOfI': 'MolarityOfI',
-        'MolalityOfSoluteI': 'MolalityOfSoluteI',
-    }
-    
-    return class_name_fixes.get(class_name, class_name)
+    return ''.join(word.capitalize() for word in words)
 
 
 def generate_init_file(parsed_data: dict) -> str:
@@ -65,34 +54,21 @@ def generate_init_file(parsed_data: dict) -> str:
         'and optimized unit conversions for engineering calculations.',
         '"""',
         '',
-        '# Core components for advanced usage',
         'from .dimension import BaseDimension, DimensionSignature',
         'from .equation import Equation',
         'from .expression import Expression',
         'from .unit import registry',
-        'from .variable import FastQuantity, TypeSafeSetter, TypeSafeVariable',
-        '',
-        '# Import and register all units from the consolidated system',
         'from .units import register_all_units',
-        '',
-        '# Import all variable types from the consolidated system',
+        'from .variable import FastQuantity, TypeSafeSetter, TypeSafeVariable',
     ]
     
-    # Generate explicit variable imports - 4 per line for readability
+    # Generate explicit variable imports
     lines.append('from .variables import (')
-    current_line = '    '
     for i, var_name in enumerate(variable_names):
-        current_line += var_name
-        if i < len(variable_names) - 1:
-            current_line += ', '
-            if (i + 1) % 4 == 0:
-                lines.append(current_line.rstrip())  # Remove trailing spaces
-                current_line = '    '
-    
-    # Add the last line if it has content
-    if current_line.strip() != '':
-        lines.append(current_line.rstrip())  # Remove trailing spaces
-    
+        if i == len(variable_names) - 1:
+            lines.append(f'    {var_name}')  # No comma on last item
+        else:
+            lines.append(f'    {var_name},')
     lines.append(')')
     lines.append('')
     
@@ -148,7 +124,7 @@ def generate_init_file(parsed_data: dict) -> str:
     lines.append(']')
     lines.append('')
     
-    return '\n'.join(lines)
+    return '\n'.join(lines) + '\n'
 
 
 def main():

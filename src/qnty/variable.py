@@ -10,7 +10,8 @@ from __future__ import annotations
 
 from typing import Generic, Self, TypeVar
 
-from .dimension import AREA, DIMENSIONLESS, ENERGY_HEAT_WORK as ENERGY, FORCE, LENGTH, PRESSURE, VOLUME, DimensionSignature
+from .dimension import AREA, DIMENSIONLESS, FORCE, LENGTH, PRESSURE, VOLUME, DimensionSignature
+from .dimension import ENERGY_HEAT_WORK as ENERGY
 from .unit import UnitConstant, UnitDefinition, registry
 from .units import DimensionlessUnits, LengthUnits, PressureUnits
 
