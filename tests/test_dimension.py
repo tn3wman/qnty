@@ -14,7 +14,7 @@ from src.qnty.dimension import (
     ACCELERATION,
     AREA,
     DIMENSIONLESS,
-    ENERGY,
+    ENERGY_HEAT_WORK as ENERGY,
     FORCE,
     LENGTH,
     MASS,
