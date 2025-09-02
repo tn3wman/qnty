@@ -154,7 +154,10 @@ PREFIXABLE_UNITS = {
     'second': COMMON_TIME_PREFIXES,
     'ampere': COMMON_ELECTRIC_PREFIXES,
     'kelvin': [],  # Temperature usually doesn't use prefixes
-    'mole': [StandardPrefixes.MILLI, StandardPrefixes.MICRO],
+    'mole': [
+        StandardPrefixes.MILLI,
+        StandardPrefixes.MICRO
+    ],
     'candela': [],  # Luminous intensity rarely uses prefixes
     
     # Derived SI units
@@ -163,19 +166,64 @@ PREFIXABLE_UNITS = {
     'watt': COMMON_POWER_PREFIXES,
     'coulomb': COMMON_ELECTRIC_PREFIXES,
     'volt': COMMON_ELECTRIC_PREFIXES,
-    'farad': [StandardPrefixes.MILLI, StandardPrefixes.MICRO, StandardPrefixes.NANO, StandardPrefixes.PICO],
-    'ohm': [StandardPrefixes.KILO, StandardPrefixes.MEGA, StandardPrefixes.MILLI],
-    'siemens': [StandardPrefixes.MILLI, StandardPrefixes.MICRO],
-    'weber': [StandardPrefixes.MILLI, StandardPrefixes.MICRO],
-    'tesla': [StandardPrefixes.MILLI, StandardPrefixes.MICRO, StandardPrefixes.NANO],
-    'henry': [StandardPrefixes.MILLI, StandardPrefixes.MICRO, StandardPrefixes.NANO],
+    'farad': [
+        StandardPrefixes.MILLI,
+        StandardPrefixes.MICRO,
+        StandardPrefixes.NANO,
+        StandardPrefixes.PICO
+    ],
+    'ohm': [
+        StandardPrefixes.KILO,
+        StandardPrefixes.MEGA,
+        StandardPrefixes.MILLI
+    ],
+    'siemens': [
+        StandardPrefixes.MILLI,
+        StandardPrefixes.MICRO
+    ],
+    'weber': [
+        StandardPrefixes.MILLI,
+        StandardPrefixes.MICRO
+    ],
+    'tesla': [
+        StandardPrefixes.MILLI,
+        StandardPrefixes.MICRO,
+        StandardPrefixes.NANO
+    ],
+    'henry': [
+        StandardPrefixes.MILLI,
+        StandardPrefixes.MICRO,
+        StandardPrefixes.NANO
+    ],
     'lumen': [],
     'lux': [],
-    'becquerel': [StandardPrefixes.KILO, StandardPrefixes.MEGA, StandardPrefixes.GIGA],
-    'gray': [StandardPrefixes.MILLI, StandardPrefixes.MICRO],
-    'sievert': [StandardPrefixes.MILLI, StandardPrefixes.MICRO],
-    'hertz': [StandardPrefixes.KILO, StandardPrefixes.MEGA, StandardPrefixes.GIGA],
-    'newton': [StandardPrefixes.KILO, StandardPrefixes.MILLI],
-    'bar': [StandardPrefixes.MILLI],  # Common non-SI unit
-    'liter': [StandardPrefixes.MILLI, StandardPrefixes.MICRO],  # Common non-SI unit
+    'becquerel': [
+        StandardPrefixes.KILO,
+        StandardPrefixes.MEGA,
+        StandardPrefixes.GIGA
+    ],
+    'gray': [
+        StandardPrefixes.MILLI,
+        StandardPrefixes.MICRO
+    ],
+    'sievert': [
+        StandardPrefixes.MILLI,
+        StandardPrefixes.MICRO
+    ],
+    'hertz': [
+        StandardPrefixes.KILO,
+        StandardPrefixes.MEGA,
+        StandardPrefixes.GIGA
+    ],
+    'newton': [
+        StandardPrefixes.KILO,
+        StandardPrefixes.MILLI
+    ],
+    'bar': [
+        StandardPrefixes.MILLI
+    ],  # Common non-SI unit
+    'liter': [
+        StandardPrefixes.MILLI,
+        StandardPrefixes.MICRO
+    ],  # Common non-SI unit
 }

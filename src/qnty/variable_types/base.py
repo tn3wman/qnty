@@ -6,19 +6,19 @@ Provides abstract base class for variable modules and registration functionality
 """
 
 from abc import ABC, abstractmethod
-from typing import Type, Any
+from typing import Any
 
 
 class VariableModule(ABC):
     """Abstract base class for variable modules."""
     
     @abstractmethod
-    def get_variable_class(self) -> Type[Any]:
+    def get_variable_class(self) -> type[Any]:
         """Return the variable class for this module."""
         pass
     
     @abstractmethod
-    def get_setter_class(self) -> Type[Any]:
+    def get_setter_class(self) -> type[Any]:
         """Return the setter class for this module."""
         pass
     

@@ -6,21 +6,21 @@ Provides abstract base class for unit modules and registration functionality.
 """
 
 from abc import ABC, abstractmethod
-from typing import List, Type, Any
+from typing import Any
 
-from ..unit import UnitDefinition, registry
+from ..unit import UnitDefinition
 
 
 class UnitModule(ABC):
     """Abstract base class for unit modules."""
     
     @abstractmethod
-    def get_unit_definitions(self) -> List[UnitDefinition]:
+    def get_unit_definitions(self) -> list[UnitDefinition]:
         """Return list of unit definitions for this module."""
         pass
     
     @abstractmethod
-    def get_units_class(self) -> Type[Any]:
+    def get_units_class(self) -> type[Any]:
         """Return the units class for this module."""
         pass
     
@@ -44,4 +44,4 @@ class UnitModule(ABC):
             
             # Special case for inch - add in_ alias since 'in' is a Python keyword
             if unit_def.name == "inch":
-                setattr(units_class, "in_", unit_constant)
+                units_class.in_ = unit_constant

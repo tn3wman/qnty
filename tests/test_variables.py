@@ -11,13 +11,10 @@ import time
 import pytest
 
 from src.qnty.dimension import DIMENSIONLESS, LENGTH, PRESSURE
-from src.qnty.variable import TypeSafeVariable
-from src.qnty.variable import TypeSafeSetter
-from src.qnty.variables import LengthSetter, PressureSetter 
 from src.qnty.unit import UnitConstant
 from src.qnty.units import DimensionlessUnits, LengthUnits, PressureUnits
-from src.qnty.variable import FastQuantity
-from src.qnty.variables import Dimensionless, Length, Pressure
+from src.qnty.variable import FastQuantity, TypeSafeSetter, TypeSafeVariable
+from src.qnty.variables import Dimensionless, Length, LengthSetter, Pressure, PressureSetter
 
 
 class TestLengthVariableInitialization:
@@ -140,7 +137,7 @@ class TestLengthSetterIntegration:
         """Test LengthSetter.meters property for fluent API."""
         length_var = Length("beam_length")
         
-        result = length_var.set(5.0).meters
+        result = length_var.set(5.0).meter
         
         assert result == length_var
         assert length_var.quantity is not None
@@ -152,7 +149,7 @@ class TestLengthSetterIntegration:
         """Test LengthSetter.millimeters property for fluent API."""
         length_var = Length("thickness")
         
-        result = length_var.set(25.4).millimeters
+        result = length_var.set(25.4).millimeter
         
         assert result == length_var
         assert length_var.quantity is not None
@@ -164,7 +161,7 @@ class TestLengthSetterIntegration:
         """Test LengthSetter.inches property for fluent API."""
         length_var = Length("pipe_diameter")
         
-        result = length_var.set(2.0).inches
+        result = length_var.set(2.0).inch
         
         assert result == length_var
         assert length_var.quantity is not None
@@ -176,7 +173,7 @@ class TestLengthSetterIntegration:
         """Test LengthSetter.feet property for fluent API."""
         length_var = Length("room_width")
         
-        result = length_var.set(12.0).feet
+        result = length_var.set(12.0).foot
         
         assert result == length_var
         assert length_var.quantity is not None
@@ -190,7 +187,7 @@ class TestLengthSetterIntegration:
         length_var = Length("cable_length")
         
         # This should work in one fluent chain
-        final_var = length_var.set(1000.0).millimeters
+        final_var = length_var.set(1000.0).millimeter
         
         assert final_var == length_var
         assert length_var.quantity is not None
@@ -234,7 +231,7 @@ class TestPressureSetterIntegration:
         """Test PressureSetter.psi property for fluent API."""
         pressure_var = Pressure("tire_pressure")
         
-        result = pressure_var.set(32.0).psi
+        result = pressure_var.set(32.0).pound_force_per_square_inch
         
         assert result == pressure_var
         assert pressure_var.quantity is not None
@@ -246,7 +243,7 @@ class TestPressureSetterIntegration:
         """Test PressureSetter.kPa property for fluent API."""
         pressure_var = Pressure("gauge_pressure")
         
-        result = pressure_var.set(200.0).kPa
+        result = pressure_var.set(200.0).pascal
         
         assert result == pressure_var
         assert pressure_var.quantity is not None
@@ -257,9 +254,9 @@ class TestPressureSetterIntegration:
     def test_pressure_setter_MPa_property(self):
         """Test PressureSetter.MPa property for fluent API."""
         pressure_var = Pressure("hydraulic_pressure")
-        
-        result = pressure_var.set(15.0).MPa
-        
+
+        result = pressure_var.set(15.0).megapascal
+
         assert result == pressure_var
         assert pressure_var.quantity is not None
         assert pressure_var.quantity.value == 15.0
@@ -283,7 +280,7 @@ class TestPressureSetterIntegration:
         pressure_var = Pressure("working_pressure")
         
         # This should work in one fluent chain
-        final_var = pressure_var.set(100.0).psi
+        final_var = pressure_var.set(100.0).pound_force_per_square_inch
         
         assert final_var == pressure_var
         assert pressure_var.quantity is not None
@@ -318,7 +315,7 @@ class TestTypeSafetyAndDimensionalValidation:
         length_var = Length("test_length")
         
         # Should accept length units through specialized setter
-        length_var.set(100.0).meters
+        length_var.set(100.0).meter
         assert length_var.quantity is not None
         assert length_var.quantity.dimension == LENGTH
         
@@ -341,7 +338,7 @@ class TestTypeSafetyAndDimensionalValidation:
         pressure_var = Pressure("test_pressure")
         
         # Should accept pressure units through specialized setter
-        pressure_var.set(50.0).psi
+        pressure_var.set(50.0).pound_force_per_square_inch
         assert pressure_var.quantity is not None
         assert pressure_var.quantity.dimension == PRESSURE
         
@@ -385,9 +382,9 @@ class TestTypeSafetyAndDimensionalValidation:
         pressure_var = Pressure("test_pressure")
         
         # Set values
-        length_var.set(10.0).meters
-        pressure_var.set(100.0).psi
-        
+        length_var.set(10.0).meter
+        pressure_var.set(100.0).pound_force_per_square_inch
+
         # Check that dimensional signatures match expected values
         assert length_var.quantity is not None and pressure_var.quantity is not None
         assert length_var.quantity._dimension_sig == LENGTH._signature
@@ -404,10 +401,10 @@ class TestSpecializedVariableOperations:
         """Test arithmetic operations with Length variables."""
         length1 = Length("width")
         length2 = Length("height")
-        
-        length1.set(10.0).meters
-        length2.set(5.0).meters
-        
+
+        length1.set(10.0).meter
+        length2.set(5.0).meter
+
         # Should be able to add compatible length quantities
         assert length1.quantity is not None and length2.quantity is not None
         total_length = length1.quantity + length2.quantity
@@ -427,10 +424,10 @@ class TestSpecializedVariableOperations:
         """Test arithmetic operations with Pressure variables."""
         pressure1 = Pressure("inlet")
         pressure2 = Pressure("outlet")
-        
-        pressure1.set(150.0).psi
-        pressure2.set(50.0).psi
-        
+
+        pressure1.set(150.0).pound_force_per_square_inch
+        pressure2.set(50.0).pound_force_per_square_inch
+
         # Should be able to add compatible pressure quantities
         assert pressure1.quantity is not None and pressure2.quantity is not None
         total_pressure = pressure1.quantity + pressure2.quantity
@@ -450,7 +447,7 @@ class TestSpecializedVariableOperations:
     def test_unit_conversion_with_variables(self):
         """Test unit conversions with specialized variables."""
         length_var = Length("measurement")
-        length_var.set(1.0).meters
+        length_var.set(1.0).meter
         
         # Convert to different length units
         assert length_var.quantity is not None
@@ -469,8 +466,8 @@ class TestSpecializedVariableOperations:
         length1 = Length("part1")
         length2 = Length("part2")
         
-        length1.set(100.0).millimeters  # 0.1 m
-        length2.set(2.0).inches         # 0.0508 m
+        length1.set(100.0).millimeter  # 0.1 m
+        length2.set(2.0).inch         # 0.0508 m
         
         # Addition should handle unit conversion automatically
         assert length1.quantity is not None and length2.quantity is not None
@@ -482,10 +479,10 @@ class TestSpecializedVariableOperations:
         """Test comparison operations with specialized variables."""
         pressure1 = Pressure("p1")
         pressure2 = Pressure("p2")
-        
-        pressure1.set(100.0).psi
-        pressure2.set(200.0).psi
-        
+
+        pressure1.set(100.0).pound_force_per_square_inch
+        pressure2.set(200.0).pound_force_per_square_inch
+
         # Comparisons should work
         assert pressure1.quantity is not None and pressure2.quantity is not None
         assert pressure1.quantity < pressure2.quantity
@@ -493,8 +490,8 @@ class TestSpecializedVariableOperations:
         
         # Equality with different but equivalent units
         pressure3 = Pressure("p3")
-        pressure3.set(689.4757).kPa  # Approximately 100 psi (more precise)
-        
+        pressure3.set(689.4757).pascal  # Approximately 100 psi (more precise)
+
         # Should be approximately equal (within tolerance)
         assert pressure1.quantity == pressure3.quantity
 
@@ -508,9 +505,9 @@ class TestEngineeringCalculationAccuracy:
         length2 = Length("tolerance")
         
         # Test typical machining tolerances
-        length1.set(25.000).millimeters
-        length2.set(0.025).millimeters  # �0.025mm tolerance
-        
+        length1.set(25.000).millimeter
+        length2.set(0.025).millimeter  # ±0.025mm tolerance
+
         assert length1.quantity is not None and length2.quantity is not None
         upper_limit = length1.quantity + length2.quantity
         lower_limit = length1.quantity - length2.quantity
@@ -528,9 +525,9 @@ class TestEngineeringCalculationAccuracy:
         pressure2 = Pressure("pressure_drop")
         
         # Test typical hydraulic system pressures
-        pressure1.set(3000.0).psi      # High-pressure hydraulic system
-        pressure2.set(150.0).psi       # Pressure drop across component
-        
+        pressure1.set(3000.0).pound_force_per_square_inch  # High-pressure hydraulic system
+        pressure2.set(150.0).pound_force_per_square_inch       # Pressure drop across component
+
         assert pressure1.quantity is not None and pressure2.quantity is not None
         outlet_pressure = pressure1.quantity - pressure2.quantity
         assert outlet_pressure.value == 2850.0
@@ -547,14 +544,14 @@ class TestEngineeringCalculationAccuracy:
         length_var = Length("pipe_diameter")
         
         # 1 inch = 25.4 mm exactly
-        length_var.set(1.0).inches
+        length_var.set(1.0).inch
         assert length_var.quantity is not None
         mm_result = length_var.quantity.to(LengthUnits.millimeter)
         assert mm_result.value == pytest.approx(25.4, abs=1e-10)
         
         # Test pressure conversion: 1 psi = 6894.757 Pa
         pressure_var = Pressure("gauge_pressure")
-        pressure_var.set(1.0).psi
+        pressure_var.set(1.0).pound_force_per_square_inch
         assert pressure_var.quantity is not None
         pa_result = pressure_var.quantity.to(PressureUnits.pascal)
         assert pa_result.value == pytest.approx(6894.757, abs=0.001)
@@ -565,7 +562,7 @@ class TestEngineeringCalculationAccuracy:
         length_var = Length("test_length")
         original_value = 42.195  # Arbitrary precision value
         
-        length_var.set(original_value).inches
+        length_var.set(original_value).inch
         assert length_var.quantity is not None
         converted = length_var.quantity.to(LengthUnits.millimeter).to(LengthUnits.inch)
         
@@ -592,7 +589,7 @@ class TestPerformanceOptimizations:
         # Specialized setter should be fast
         start_time = time.time()
         for i in range(1000):
-            length_var.set(float(i)).meters
+            length_var.set(float(i)).meter
         elapsed = time.time() - start_time
         
         # Should complete quickly (smoke test)
@@ -609,7 +606,7 @@ class TestPerformanceOptimizations:
         
         start_time = time.time()
         for i, var in enumerate(pressure_vars):
-            var.set(float(i * 10)).psi
+            var.set(float(i * 10)).pound_force_per_square_inch
         elapsed = time.time() - start_time
         
         # Should handle many variables quickly
@@ -629,10 +626,10 @@ class TestPerformanceOptimizations:
         for i in range(100):
             length_var = Length(f"length_{i}")
             pressure_var = Pressure(f"pressure_{i}")
-            
-            length_var.set(float(i)).millimeters
-            pressure_var.set(float(i * 10)).kPa
-            
+
+            length_var.set(float(i)).millimeter
+            pressure_var.set(float(i * 10)).pascal
+
             variables.extend([length_var, pressure_var])
         
         # All variables should be properly initialized
@@ -651,7 +648,7 @@ class TestPerformanceOptimizations:
         # Set all variables - should use cached dimension signatures
         start_time = time.time()
         for i, var in enumerate(length_vars):
-            var.set(float(i)).meters
+            var.set(float(i)).meter
         elapsed = time.time() - start_time
         
         # Should be fast due to caching
@@ -687,16 +684,16 @@ class TestErrorHandlingAndEdgeCases:
         pressure_var = Pressure("test_pressure")
         
         # Zero values should work
-        length_var.set(0.0).meters
+        length_var.set(0.0).meter
         assert length_var.quantity is not None
         assert length_var.quantity.value == 0.0
         
         # Negative values should work (could represent coordinates, gauge pressure)
-        length_var.set(-5.0).millimeters
+        length_var.set(-5.0).millimeter
         assert length_var.quantity is not None
         assert length_var.quantity.value == -5.0
-        
-        pressure_var.set(-10.0).psi  # Vacuum/gauge pressure
+
+        pressure_var.set(-10.0).pound_force_per_square_inch  # Vacuum/gauge pressure
         assert pressure_var.quantity is not None
         assert pressure_var.quantity.value == -10.0
     
@@ -706,12 +703,12 @@ class TestErrorHandlingAndEdgeCases:
         pressure_var = Pressure("extreme_pressure")
         
         # Very large values
-        length_var.set(1e12).millimeters
+        length_var.set(1e12).millimeter
         assert length_var.quantity is not None
         assert length_var.quantity.value == 1e12
         
         # Very small values
-        pressure_var.set(1e-6).psi
+        pressure_var.set(1e-6).pound_force_per_square_inch
         assert pressure_var.quantity is not None
         assert pressure_var.quantity.value == 1e-6
         
@@ -741,17 +738,17 @@ class TestErrorHandlingAndEdgeCases:
         length_var = Length("edge_case")
         
         # Infinity
-        length_var.set(float('inf')).meters
+        length_var.set(float('inf')).meter
         assert length_var.quantity is not None
         assert length_var.quantity.value == float('inf')
         
         # Negative infinity
-        length_var.set(float('-inf')).millimeters
+        length_var.set(float('-inf')).millimeter
         assert length_var.quantity is not None
         assert length_var.quantity.value == float('-inf')
         
         # NaN
-        length_var.set(float('nan')).inches
+        length_var.set(float('nan')).inch
         assert length_var.quantity is not None
         assert str(length_var.quantity.value) == 'nan'
     
@@ -766,7 +763,7 @@ class TestErrorHandlingAndEdgeCases:
         assert length_var.quantity is None
         
         # Only after completing the chain should it be set
-        setter.meters
+        setter.meter
         assert length_var.quantity is not None
         assert length_var.quantity.value == 100.0
 
@@ -779,7 +776,7 @@ class TestIntegrationWithUnitSystem:
         from src.qnty.unit import registry
         
         length_var = Length("registry_test")
-        length_var.set(100.0).millimeters
+        length_var.set(100.0).millimeter
         
         # Should be able to convert using registry
         assert length_var.quantity is not None
@@ -794,8 +791,8 @@ class TestIntegrationWithUnitSystem:
     def test_unit_constant_integration(self):
         """Test integration with UnitConstant system."""
         pressure_var = Pressure("unit_constant_test")
-        pressure_var.set(100.0).psi
-        
+        pressure_var.set(100.0).pound_force_per_square_inch
+
         # Should have proper UnitConstant properties
         assert pressure_var.quantity is not None
         unit = pressure_var.quantity.unit
@@ -809,7 +806,7 @@ class TestIntegrationWithUnitSystem:
         length_var = Length("dimension_test")
         pressure_var = Pressure("dimension_test")
         
-        length_var.set(10.0).meters
+        length_var.set(10.0).meter
         pressure_var.set(50.0).bar
         
         # Should have correct dimension signatures
@@ -829,7 +826,7 @@ class TestIntegrationWithUnitSystem:
     def test_fast_quantity_integration(self):
         """Test that specialized variables create proper FastQuantity objects."""
         length_var = Length("fastquantity_test")
-        length_var.set(75.0).inches
+        length_var.set(75.0).inch
         
         # Should create FastQuantity with all expected attributes
         assert length_var.quantity is not None
@@ -857,10 +854,10 @@ class TestStringRepresentationsAndDebugging:
         assert str(unset_length) == "beam_length: unset"
         
         # Set variable with different units
-        unset_length.set(10.5).meters
+        unset_length.set(10.5).meter
         assert str(unset_length) == "beam_length: 10.5 m"
         
-        unset_length.set(25.4).millimeters
+        unset_length.set(25.4).millimeter
         assert str(unset_length) == "beam_length: 25.4 mm"
     
     def test_pressure_variable_representations(self):
@@ -870,7 +867,7 @@ class TestStringRepresentationsAndDebugging:
         assert str(unset_pressure) == "system_pressure: unset"
         
         # Set variable with different units
-        unset_pressure.set(150.0).psi
+        unset_pressure.set(150.0).pound_force_per_square_inch
         assert str(unset_pressure) == "system_pressure: 150.0 psi"
         
         unset_pressure.set(10.0).bar
@@ -879,7 +876,7 @@ class TestStringRepresentationsAndDebugging:
     def test_debugging_information(self):
         """Test that variables provide useful debugging information."""
         length_var = Length("debug_test")
-        length_var.set(100.0).millimeters
+        length_var.set(100.0).millimeter
         
         # Should be able to access all relevant debugging info
         assert length_var.quantity is not None
@@ -901,10 +898,10 @@ class TestStringRepresentationsAndDebugging:
         """Test variable comparison for debugging purposes."""
         length1 = Length("length1")
         length2 = Length("length2")
-        
-        length1.set(100.0).millimeters
-        length2.set(0.1).meters  # Same value, different units
-        
+
+        length1.set(100.0).millimeter
+        length2.set(0.1).meter  # Same value, different units
+
         # Variables themselves should be different objects
         assert length1 is not length2
         assert length1.name != length2.name
@@ -946,7 +943,7 @@ class TestAdvancedFluentAPIPatterns:
         length_var = Length("chain_test")
         
         # The setter should return the variable for chaining
-        result = length_var.set(100.0).meters
+        result = length_var.set(100.0).meter
         
         # Should return the original variable
         assert result is length_var
@@ -958,13 +955,13 @@ class TestAdvancedFluentAPIPatterns:
         pressure_var = Pressure("multi_set")
         
         # First setting
-        pressure_var.set(100.0).psi
+        pressure_var.set(100.0).pound_force_per_square_inch
         assert pressure_var.quantity is not None
         assert pressure_var.quantity.value == 100.0
-        assert pressure_var.quantity.unit == PressureUnits.psi
-        
+        assert pressure_var.quantity.unit == PressureUnits.pound_force_per_square_inch
+
         # Second setting should overwrite
-        pressure_var.set(200.0).kPa
+        pressure_var.set(200.0).pascal
         assert pressure_var.quantity is not None
         assert pressure_var.quantity.value == 200.0
         assert pressure_var.quantity.unit == PressureUnits.kilopascal
@@ -977,14 +974,14 @@ class TestAdvancedFluentAPIPatterns:
         setter = length_var.set(50.0)
         
         # First use
-        setter.meters
+        setter.meter
         assert length_var.quantity is not None
         assert length_var.quantity.value == 50.0
         assert length_var.quantity.unit == LengthUnits.meter
         
         # Create new setter for different value
         setter2 = length_var.set(25.0)
-        setter2.millimeters
+        setter2.millimeter
         assert length_var.quantity is not None
         assert length_var.quantity.value == 25.0
         assert length_var.quantity.unit == LengthUnits.millimeter
@@ -995,8 +992,8 @@ class TestAdvancedFluentAPIPatterns:
         height = Length("height")
         
         # Set values using fluent API
-        width.set(10.0).meters
-        height.set(5.0).meters
+        width.set(10.0).meter
+        height.set(5.0).meter
         
         # Use in calculations
         assert width.quantity is not None and height.quantity is not None
@@ -1110,14 +1107,14 @@ class TestKnownUnknownVariables:
         """Test that known/unknown state is preserved when setting values."""
         # Unknown variable with value
         unknown_length = Length("test", is_known=False)
-        unknown_length.set(10).meters
+        unknown_length.set(10).meter
         assert unknown_length.is_known is False
         assert unknown_length.quantity is not None
         assert unknown_length.quantity.value == 10
         
         # Known variable with value
         known_pressure = Pressure("test").known
-        known_pressure.set(50).psi
+        known_pressure.set(50).pound_force_per_square_inch
         assert known_pressure.is_known is True
         assert known_pressure.quantity is not None
         assert known_pressure.quantity.value == 50
@@ -1235,11 +1232,11 @@ class TestAlternativeConstructorSyntax:
         assert pressure.quantity is None  # Not set yet
         
         # Set value using fluent API
-        pressure.set(100).psi
+        pressure.set(100).pound_force_per_square_inch
         assert pressure.quantity is not None
         assert pressure.quantity.value == 100.0
-        assert pressure.quantity.unit == PressureUnits.psi
-    
+        assert pressure.quantity.unit == PressureUnits.pound_force_per_square_inch
+
     def test_length_alternative_constructor(self):
         """Test Length(value, unit, name) constructor syntax."""
         # New syntax - direct initialization with inches
@@ -1280,7 +1277,7 @@ class TestAlternativeConstructorSyntax:
         assert length.quantity is None  # Not set yet
         
         # Set value using fluent API
-        length.set(10).meters
+        length.set(10).meter
         assert length.quantity is not None
         assert length.quantity.value == 10.0
         assert length.quantity.unit == LengthUnits.meter

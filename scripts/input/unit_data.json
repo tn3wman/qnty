@@ -20,7 +20,9 @@
           "conversion_factor": 0.01,
           "unit": "rad"
         },
-        "aliases": []
+        "aliases": [
+          "erg_per_g"
+        ]
       },
       {
         "name": "gram-rad",
@@ -34,7 +36,9 @@
           "conversion_factor": 1.0,
           "unit": "rad"
         },
-        "aliases": []
+        "aliases": [
+          "g_rad"
+        ]
       },
       {
         "name": "gray",
@@ -64,9 +68,7 @@
           "conversion_factor": 1.0,
           "unit": "rad"
         },
-        "aliases": [
-          "rad"
-        ]
+        "aliases": []
       }
     ]
   },
@@ -80,6 +82,22 @@
     },
     "units": [
       {
+        "name": "meter per second squared",
+        "normalized_name": "meter_per_second_squared",
+        "notation": "$\\mathrm{m} / \\mathrm{s}^{2}$",
+        "si_metric": {
+          "conversion_factor": 1.0,
+          "unit": "$\\mathrm{m} / \\mathrm{s}^{2}$"
+        },
+        "english_us": {
+          "conversion_factor": 3.28084,
+          "unit": "$\\mathrm{ft} / \\mathrm{s}^{2}$"
+        },
+        "aliases": [
+          "m_per_s2"
+        ]
+      },
+      {
         "name": "foot per second squared",
         "normalized_name": "foot_per_second_squared",
         "notation": "$\\mathrm{ft} / \\mathrm{s}^{2}$ or $\\mathrm{ft} / \\mathrm{sec}^{2}$",
@@ -92,23 +110,9 @@
           "unit": "$\\mathrm{ft} / \\mathrm{s}^{2}$"
         },
         "aliases": [
-          "ft / s^{2",
-          "ft / sec^{2"
+          "ft_per_s2",
+          "fps2"
         ]
-      },
-      {
-        "name": "meter per second squared",
-        "normalized_name": "meter_per_second_squared",
-        "notation": "$\\mathrm{m} / \\mathrm{s}^{2}$",
-        "si_metric": {
-          "conversion_factor": 1.0,
-          "unit": "$\\mathrm{m} / \\mathrm{s}^{2}$"
-        },
-        "english_us": {
-          "conversion_factor": 3.28084,
-          "unit": "$\\mathrm{ft} / \\mathrm{s}^{2}$"
-        },
-        "aliases": []
       }
     ]
   },
@@ -134,11 +138,13 @@
           "conversion_factor": 1.0,
           "unit": "Btu/lb-mol"
         },
-        "aliases": []
+        "aliases": [
+          "btu_per_lbmol"
+        ]
       },
       {
         "name": "calorie (mean) per gram mole",
-        "normalized_name": "calorie_mean",
+        "normalized_name": "calorie_mean_per_gram_mole",
         "notation": "cal/mol",
         "si_metric": {
           "conversion_factor": 4.18675,
@@ -148,7 +154,9 @@
           "conversion_factor": 0.0018,
           "unit": "Btu/lb-mol"
         },
-        "aliases": []
+        "aliases": [
+          "cal_mean_per_gmol"
+        ]
       },
       {
         "name": "joule per gram mole",
@@ -9389,7 +9397,6 @@
           "unit": "$\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{in}^{2}$"
         },
         "aliases": [
-          "PSF",
           "psf"
         ]
       },
@@ -9406,7 +9413,6 @@
           "unit": "$\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{in}^{2}$"
         },
         "aliases": [
-          "PSI",
           "psi"
         ]
       },

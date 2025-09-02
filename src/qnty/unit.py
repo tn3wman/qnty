@@ -6,7 +6,6 @@ Unit definitions, constants and registry for the high-performance unit system.
 """
 
 from dataclasses import dataclass
-from typing import Optional
 
 from .dimension import DIMENSIONLESS, LENGTH, PRESSURE, DimensionSignature
 from .prefixes import SIPrefix, StandardPrefixes
@@ -20,8 +19,8 @@ class UnitDefinition:
     dimension: DimensionSignature
     si_factor: float
     si_offset: float = 0.0
-    base_unit_name: Optional[str] = None  # Base unit without prefix
-    prefix: Optional[SIPrefix] = None      # SI prefix if applicable
+    base_unit_name: str | None = None  # Base unit without prefix
+    prefix: SIPrefix | None = None      # SI prefix if applicable
     
     @classmethod
     def with_prefix(cls, base_def: 'UnitDefinition', prefix: SIPrefix) -> 'UnitDefinition':
@@ -119,8 +118,11 @@ class HighPerformanceRegistry:
             self.dimensional_groups[dim_sig] = []
         self.dimensional_groups[dim_sig].append(unit_def)
     
-    def register_with_prefixes(self, unit_def: UnitDefinition, 
-                              prefixes: Optional[list[StandardPrefixes]] = None):
+    def register_with_prefixes(
+            self,
+            unit_def: UnitDefinition,
+            prefixes: list[StandardPrefixes] | None = None
+        ):
         """
         Register a unit and automatically generate prefixed variants.
         

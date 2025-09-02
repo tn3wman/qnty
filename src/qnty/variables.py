@@ -140,8 +140,8 @@ VARIABLE_DEFINITIONS = {
         "dimension": ACCELERATION,
         "default_unit": "meter_per_second_squared",
         "units": [
-            ("foot per second squared", "foot_per_second_squared", 0.3048, "$\\mathrm{m} / \\mathrm{s}^{2}$"),
-            ("meter per second squared", "meter_per_second_squared", 1.0, "$\\mathrm{m} / \\mathrm{s}^{2}$")
+            ("meter per second squared", "meter_per_second_squared", 1.0, "$\\mathrm{m} / \\mathrm{s}^{2}$"),
+            ("foot per second squared", "foot_per_second_squared", 0.3048, "$\\mathrm{m} / \\mathrm{s}^{2}$")
         ],
         "field_name": "acceleration",
         "display_name": "Acceleration",

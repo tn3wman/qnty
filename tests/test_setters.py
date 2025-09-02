@@ -9,12 +9,9 @@ with the broader OptiUnit system.
 import pytest
 
 from src.qnty.dimension import LENGTH, PRESSURE
-from src.qnty.variable import TypeSafeVariable
-from src.qnty.variable import TypeSafeSetter
-from src.qnty.variables import LengthSetter, PressureSetter 
 from src.qnty.units import LengthUnits, PressureUnits
-from src.qnty.variable import FastQuantity
-from src.qnty.variables import Length, Pressure
+from src.qnty.variable import FastQuantity, TypeSafeSetter, TypeSafeVariable
+from src.qnty.variables import Length, LengthSetter, Pressure, PressureSetter
 
 
 class TestTypeSafeSetterInitialization:
@@ -73,8 +70,8 @@ class TestTypeSafeSetterWithUnit:
         setter = TypeSafeSetter(length_var, 50.0)
         
         # Should raise TypeError for incompatible unit
-        with pytest.raises(TypeError, match="Unit psi incompatible with expected dimension"):
-            setter.with_unit(PressureUnits.psi)
+        with pytest.raises(TypeError, match="Unit .* incompatible with expected dimension"):
+            setter.with_unit(PressureUnits.pound_force_per_square_inch)
     
     @pytest.mark.parametrize("length_unit", [
         LengthUnits.meter,
@@ -100,7 +97,7 @@ class TestTypeSafeSetterWithUnit:
         PressureUnits.pascal,
         PressureUnits.kilopascal,
         PressureUnits.megapascal,
-        PressureUnits.psi,
+        PressureUnits.pound_force_per_square_inch,
         PressureUnits.bar
     ])
     def test_with_unit_all_pressure_units(self, pressure_unit):
@@ -169,7 +166,7 @@ class TestLengthSetterProperties:
         length_var = Length("test_length")
         setter = LengthSetter(length_var, 5.0)
         
-        result = setter.meters
+        result = setter.meter
         
         assert result is length_var
         assert length_var.quantity is not None
@@ -181,7 +178,7 @@ class TestLengthSetterProperties:
         length_var = Length("test_length")
         setter = LengthSetter(length_var, 1500.0)
         
-        result = setter.millimeters
+        result = setter.millimeter
         
         assert result is length_var
         assert length_var.quantity is not None
@@ -193,7 +190,7 @@ class TestLengthSetterProperties:
         length_var = Length("test_length")
         setter = LengthSetter(length_var, 12.0)
         
-        result = setter.inches
+        result = setter.inch
         
         assert result is length_var
         assert length_var.quantity is not None
@@ -205,7 +202,7 @@ class TestLengthSetterProperties:
         length_var = Length("test_length")
         setter = LengthSetter(length_var, 3.5)
         
-        result = setter.feet
+        result = setter.foot
         
         assert result is length_var
         assert length_var.quantity is not None
@@ -213,10 +210,10 @@ class TestLengthSetterProperties:
         assert length_var.quantity.unit == LengthUnits.foot
     
     @pytest.mark.parametrize("property_name,expected_unit", [
-        ("meters", LengthUnits.meter),
-        ("millimeters", LengthUnits.millimeter),
-        ("inches", LengthUnits.inch),
-        ("feet", LengthUnits.foot)
+        ("meter", LengthUnits.meter),
+        ("millimeter", LengthUnits.millimeter),
+        ("inch", LengthUnits.inch),
+        ("foot", LengthUnits.foot)
     ])
     def test_all_length_properties(self, property_name, expected_unit):
         """Test all length properties with parametrization."""
@@ -269,31 +266,31 @@ class TestPressureSetterProperties:
         pressure_var = Pressure("test_pressure")
         setter = PressureSetter(pressure_var, 14.7)
         
-        result = setter.psi
+        result = setter.pound_force_per_square_inch
         
         assert result is pressure_var
         assert pressure_var.quantity is not None
         assert pressure_var.quantity.value == 14.7
-        assert pressure_var.quantity.unit == PressureUnits.psi
+        assert pressure_var.quantity.unit.name == "pound force per square inch"
     
     def test_kPa_property(self):
         """Test kPa property sets unit correctly."""
         pressure_var = Pressure("test_pressure")
         setter = PressureSetter(pressure_var, 101.325)
         
-        result = setter.kPa
+        result = setter.newton_per_square_meter
         
         assert result is pressure_var
         assert pressure_var.quantity is not None
         assert pressure_var.quantity.value == 101.325
-        assert pressure_var.quantity.unit == PressureUnits.kilopascal
+        assert pressure_var.quantity.unit.name == "newton per square meter"
     
     def test_MPa_property(self):
         """Test MPa property sets unit correctly."""
         pressure_var = Pressure("test_pressure")
         setter = PressureSetter(pressure_var, 1.5)
         
-        result = setter.MPa
+        result = setter.megapascal
         
         assert result is pressure_var
         assert pressure_var.quantity is not None
@@ -312,13 +309,13 @@ class TestPressureSetterProperties:
         assert pressure_var.quantity.value == 2.0
         assert pressure_var.quantity.unit == PressureUnits.bar
     
-    @pytest.mark.parametrize("property_name,expected_unit", [
-        ("psi", PressureUnits.psi),
-        ("kPa", PressureUnits.kilopascal),
-        ("MPa", PressureUnits.megapascal),
-        ("bar", PressureUnits.bar)
+    @pytest.mark.parametrize("property_name,expected_unit_name", [
+        ("pound_force_per_square_inch", "pound force per square inch"),
+        ("newton_per_square_meter", "newton per square meter"),
+        ("megapascal", "megapascal"),
+        ("bar", "bar")
     ])
-    def test_all_pressure_properties(self, property_name, expected_unit):
+    def test_all_pressure_properties(self, property_name, expected_unit_name):
         """Test all pressure properties with parametrization."""
         pressure_var = Pressure("parametrized_test")
         setter = PressureSetter(pressure_var, 500.0)
@@ -328,7 +325,7 @@ class TestPressureSetterProperties:
         assert result is pressure_var
         assert pressure_var.quantity is not None
         assert pressure_var.quantity.value == 500.0
-        assert pressure_var.quantity.unit == expected_unit
+        assert pressure_var.quantity.unit.name == expected_unit_name
         assert pressure_var.quantity.dimension == PRESSURE
 
 
@@ -343,10 +340,10 @@ class TestFluentAPIAndMethodChaining:
         depth = Length("depth")
         
         # Set values using fluent API
-        width_result = width.set(100.0).millimeters
-        height_result = height.set(50.0).inches
-        depth_result = depth.set(2.5).feet
-        
+        width_result = width.set(100.0).millimeter
+        height_result = height.set(50.0).inch
+        depth_result = depth.set(2.5).foot
+
         assert width_result is width
         assert height_result is height
         assert depth_result is depth
@@ -368,10 +365,10 @@ class TestFluentAPIAndMethodChaining:
         system = Pressure("system_pressure")
         
         # Set values using fluent API
-        inlet_result = inlet.set(150.0).psi
-        outlet_result = outlet.set(200.0).kPa
-        system_result = system.set(2.5).MPa
-        
+        inlet_result = inlet.set(150.0).pound_force_per_square_inch
+        outlet_result = outlet.set(200.0).newton_per_square_meter
+        system_result = system.set(2.5).megapascal
+
         assert inlet_result is inlet
         assert outlet_result is outlet
         assert system_result is system
@@ -379,9 +376,9 @@ class TestFluentAPIAndMethodChaining:
         # Verify all quantities are set correctly
         assert inlet.quantity is not None and outlet.quantity is not None and system.quantity is not None
         assert inlet.quantity.value == 150.0
-        assert inlet.quantity.unit == PressureUnits.psi
+        assert inlet.quantity.unit.name == "pound force per square inch"
         assert outlet.quantity.value == 200.0
-        assert outlet.quantity.unit == PressureUnits.kilopascal
+        assert outlet.quantity.unit.name == "newton per square meter"
         assert system.quantity.value == 2.5
         assert system.quantity.unit == PressureUnits.megapascal
     
@@ -391,9 +388,9 @@ class TestFluentAPIAndMethodChaining:
         pressure_var = Pressure("test_pressure")
         
         # Use specialized setters
-        length_var.set(100.0).meters
-        pressure_var.set(14.7).psi
-        
+        length_var.set(100.0).meter
+        pressure_var.set(14.7).pound_force_per_square_inch
+
         # Use type-safe setter
         TypeSafeSetter(length_var, 200.0).with_unit(LengthUnits.millimeter)
         TypeSafeSetter(pressure_var, 101.325).with_unit(PressureUnits.kilopascal)
@@ -403,18 +400,18 @@ class TestFluentAPIAndMethodChaining:
         assert length_var.quantity.value == 200.0  # Last set wins
         assert length_var.quantity.unit == LengthUnits.millimeter
         assert pressure_var.quantity.value == 101.325  # Last set wins
-        assert pressure_var.quantity.unit == PressureUnits.kilopascal
+        assert pressure_var.quantity.unit.name == "kilopascal"
     
     def test_setter_return_consistency(self):
         """Test that all setters return the correct variable instance."""
         length_var = Length("consistency_test")
         
         # All setter methods should return the same variable instance
-        meter_result = length_var.set(1.0).meters
-        mm_result = length_var.set(1000.0).millimeters
-        inch_result = length_var.set(39.37).inches
-        foot_result = length_var.set(3.28).feet
-        
+        meter_result = length_var.set(1.0).meter
+        mm_result = length_var.set(1000.0).millimeter
+        inch_result = length_var.set(39.37).inch
+        foot_result = length_var.set(3.28).foot
+
         assert meter_result is length_var
         assert mm_result is length_var
         assert inch_result is length_var
@@ -431,9 +428,9 @@ class TestSetterErrorHandling:
         
         # Should provide clear error message for incompatible unit
         with pytest.raises(TypeError) as exc_info:
-            setter.with_unit(PressureUnits.psi)
+            setter.with_unit(PressureUnits.pound_force_per_square_inch)
         
-        assert "psi incompatible with expected dimension" in str(exc_info.value)
+        assert "incompatible with expected dimension" in str(exc_info.value)
     
     def test_dimensional_compatibility_edge_cases(self):
         """Test dimensional compatibility with edge cases."""
@@ -459,7 +456,7 @@ class TestSetterErrorHandling:
         length_var = Length("special_test")
         setter = LengthSetter(length_var, invalid_value)
         
-        result = setter.meters
+        result = setter.meter
         
         # Should handle special values without crashing
         assert result is length_var
@@ -473,12 +470,12 @@ class TestSetterErrorHandling:
         pressure_var = Pressure("negative_test")
         
         # Zero values should work
-        zero_result = LengthSetter(length_var, 0.0).meters
+        zero_result = LengthSetter(length_var, 0.0).meter
         assert zero_result.quantity is not None
         assert zero_result.quantity.value == 0.0
         
         # Negative values should work (physics may allow negative measurements)
-        negative_result = PressureSetter(pressure_var, -10.0).psi
+        negative_result = PressureSetter(pressure_var, -10.0).pound_force_per_square_inch
         assert negative_result.quantity is not None
         assert negative_result.quantity.value == -10.0
 
@@ -491,7 +488,7 @@ class TestSetterIntegration:
         length_var = Length("integration_test")
         setter = LengthSetter(length_var, 123.45)
         
-        result = setter.millimeters
+        result = setter.millimeter
         
         # Should create a proper FastQuantity
         assert result.quantity is not None
@@ -506,13 +503,13 @@ class TestSetterIntegration:
         pressure_var = Pressure("dimension_test")
         setter = PressureSetter(pressure_var, 200.0)
         
-        result = setter.kPa
+        result = setter.newton_per_square_meter
         
         # FastQuantity should have correct dimension signature
         assert result.quantity is not None
         assert result.quantity.dimension == PRESSURE
         assert result.quantity._dimension_sig == PRESSURE._signature
-        assert result.quantity.dimension.is_compatible(PressureUnits.kilopascal.dimension)
+        assert result.quantity.dimension.is_compatible(PressureUnits.newton_per_square_meter.dimension)
     
     def test_setter_variable_state_changes(self):
         """Test that setters properly change variable state."""
@@ -523,7 +520,7 @@ class TestSetterIntegration:
         assert "unset" in str(length_var)
         
         # After setting should have quantity
-        length_var.set(500.0).millimeters
+        length_var.set(500.0).millimeter
         assert length_var.quantity is not None
         assert "unset" not in str(length_var)
         assert str(length_var.quantity) in str(length_var)
@@ -536,26 +533,26 @@ class TestSetterIntegration:
         
         # TypeSafeSetter should work with polymorphic variables
         TypeSafeSetter(length_var, 100.0).with_unit(LengthUnits.meter)
-        TypeSafeSetter(pressure_var, 200.0).with_unit(PressureUnits.psi)
+        TypeSafeSetter(pressure_var, 200.0).with_unit(PressureUnits.pound_force_per_square_inch)
         
         assert length_var.quantity is not None and pressure_var.quantity is not None
         assert length_var.quantity.value == 100.0
         assert length_var.quantity.unit == LengthUnits.meter
         assert pressure_var.quantity.value == 200.0
-        assert pressure_var.quantity.unit == PressureUnits.psi
+        assert pressure_var.quantity.unit.name == "pound_force_per_square_inch"
     
     def test_multiple_assignments_to_same_variable(self):
         """Test multiple assignments to the same variable."""
         length_var = Length("multi_assign_test")
         
         # Multiple assignments should update the variable
-        length_var.set(100.0).meters
+        length_var.set(100.0).meter
         assert length_var.quantity is not None
         assert length_var.quantity.value == 100.0
         assert length_var.quantity.unit == LengthUnits.meter
         
         # Second assignment should overwrite
-        length_var.set(2540.0).millimeters
+        length_var.set(2540.0).millimeter
         assert length_var.quantity.value == 2540.0
         assert length_var.quantity.unit == LengthUnits.millimeter
         
@@ -578,7 +575,7 @@ class TestSetterPerformanceCharacteristics:
         
         for _ in range(1000):
             setter = LengthSetter(length_var, 100.0)
-            setter.meters
+            setter.meter
         
         end_time = time.time()
         duration = end_time - start_time
@@ -592,7 +589,7 @@ class TestSetterPerformanceCharacteristics:
         setter = LengthSetter(length_var, 100.0)
         
         # Set value and check caching
-        result = setter.millimeters
+        result = setter.millimeter
         assert result.quantity is not None
         quantity = result.quantity
         
@@ -607,12 +604,12 @@ class TestSetterComprehensiveCoverage:
     """Comprehensive edge case coverage for complete testing."""
     
     @pytest.mark.parametrize("length_value,length_unit_prop", [
-        (0.001, "millimeters"),
-        (1.0, "meters"),
-        (12.0, "inches"),
-        (3.28084, "feet"),
-        (1e-6, "millimeters"),
-        (1e6, "meters")
+        (0.001, "millimeter"),
+        (1.0, "meter"),
+        (12.0, "inch"),
+        (3.28084, "foot"),
+        (1e-6, "millimeter"),
+        (1e6, "meter")
     ])
     def test_length_comprehensive_values_and_units(self, length_value, length_unit_prop):
         """Comprehensive test of length values and units."""
@@ -627,12 +624,12 @@ class TestSetterComprehensiveCoverage:
         assert result.quantity.dimension == LENGTH
     
     @pytest.mark.parametrize("pressure_value,pressure_unit_prop", [
-        (14.7, "psi"),
-        (101.325, "kPa"),
-        (0.101325, "MPa"),
+        (14.7, "pound_force_per_square_inch"),
+        (101.325, "newton_per_square_meter"),
+        (0.101325, "megapascal"),
         (1.01325, "bar"),
-        (1e-3, "kPa"),
-        (1e3, "MPa")
+        (1e-3, "newton_per_square_meter"),
+        (1e3, "megapascal")
     ])
     def test_pressure_comprehensive_values_and_units(self, pressure_value, pressure_unit_prop):
         """Comprehensive test of pressure values and units."""
@@ -653,10 +650,10 @@ class TestSetterComprehensiveCoverage:
         
         # All length setter properties should return Length
         length_returns = [
-            LengthSetter(length_var, 1.0).meters,
-            LengthSetter(length_var, 1.0).millimeters,
-            LengthSetter(length_var, 1.0).inches,
-            LengthSetter(length_var, 1.0).feet
+            LengthSetter(length_var, 1.0).meter,
+            LengthSetter(length_var, 1.0).millimeter,
+            LengthSetter(length_var, 1.0).inch,
+            LengthSetter(length_var, 1.0).foot
         ]
         
         for returned_var in length_returns:
@@ -665,9 +662,9 @@ class TestSetterComprehensiveCoverage:
         
         # All pressure setter properties should return Pressure
         pressure_returns = [
-            PressureSetter(pressure_var, 1.0).psi,
-            PressureSetter(pressure_var, 1.0).kPa,
-            PressureSetter(pressure_var, 1.0).MPa,
+            PressureSetter(pressure_var, 1.0).pound_force_per_square_inch,
+            PressureSetter(pressure_var, 1.0).newton_per_square_meter,
+            PressureSetter(pressure_var, 1.0).megapascal,
             PressureSetter(pressure_var, 1.0).bar
         ]
         
@@ -678,7 +675,7 @@ class TestSetterComprehensiveCoverage:
         # TypeSafeSetter should return the variable
         typesafe_returns = [
             TypeSafeSetter(length_var, 1.0).with_unit(LengthUnits.meter),
-            TypeSafeSetter(pressure_var, 1.0).with_unit(PressureUnits.psi)
+            TypeSafeSetter(pressure_var, 1.0).with_unit(PressureUnits.pound_force_per_square_inch)
         ]
         
         assert typesafe_returns[0] is length_var

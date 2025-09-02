@@ -210,7 +210,7 @@ class TestExpressionEvaluation:
         b = Length(3, "meters", "b")
         
         expr = a + b
-        variables = {"a": a, "b": b}
+        variables: dict[str, TypeSafeVariable] = {"a": a, "b": b}
         
         result = expr.evaluate(variables)
         assert result.value == 8.0  # 5 + 3
@@ -222,7 +222,7 @@ class TestExpressionEvaluation:
         D = Length(1, "inches", "D")  # Simplified for easier math
         
         expr = P * D * 2  # 90 * 1 * 2 = 180
-        variables = {"P": P, "D": D}
+        variables: dict[str, TypeSafeVariable] = {"P": P, "D": D}
         
         result = expr.evaluate(variables)
         # Result will be in some combined unit, just check it evaluates
@@ -234,7 +234,7 @@ class TestExpressionEvaluation:
         
         # Only multiply to avoid unit incompatibility issues
         expr = var * 2  # 100 * 2 = 200
-        variables = {"var": var}
+        variables: dict[str, TypeSafeVariable] = {"var": var}
         
         result = expr.evaluate(variables)
         # The actual value depends on unit conversions, but should be computable
