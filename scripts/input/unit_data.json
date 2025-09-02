@@ -10362,9 +10362,7 @@
           "unit": "$\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{in}^{2}$"
         },
         "aliases": [
-          "PSI",
-          "psi",
-          "lb_{f / in^{2"
+          "psi"
         ]
       }
     ]

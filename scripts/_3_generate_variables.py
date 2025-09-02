@@ -100,7 +100,7 @@ def generate_consolidated_variables(parsed_data: dict, dimension_mapping: dict) 
     lines.extend(import_lines)
     lines.extend([
         'from .unit import UnitConstant, UnitDefinition',
-        'from .units import DimensionlessUnits', 
+        'from .units import DimensionlessUnits',
         'from .variable import FastQuantity, TypeSafeSetter',
         'from .variable_types.typed_variable import TypedVariable',
         '',
@@ -148,12 +148,14 @@ def generate_consolidated_variables(parsed_data: dict, dimension_mapping: dict) 
             property_name = convert_unit_name_to_property(unit_name)
             si_factor = unit_data.get('si_metric', {}).get('conversion_factor', 1.0)
             symbol = unit_data.get('si_metric', {}).get('unit', unit_name)
+            aliases = unit_data.get('aliases', [])
             
             escaped_unit_name = escape_string(unit_name)
             escaped_property_name = escape_string(property_name)
             escaped_symbol = escape_string(symbol)
+            escaped_aliases = [escape_string(alias) for alias in aliases]
             
-            lines.append(f'            ("{escaped_unit_name}", "{escaped_property_name}", {si_factor}, "{escaped_symbol}"){unit_comma}')
+            lines.append(f'            ("{escaped_unit_name}", "{escaped_property_name}", {si_factor}, "{escaped_symbol}", {escaped_aliases}){unit_comma}')
         
         lines.append('        ],')
         lines.append(f'        "field_name": "{field_name}",')
@@ -200,8 +202,22 @@ def generate_consolidated_variables(parsed_data: dict, dimension_mapping: dict) 
         '',
     ])
     
-    # Add the dynamic class creation functions
+    # Add the utility function needed for dynamic alias creation
     lines.extend([
+        '',
+        'def convert_unit_name_to_property(unit_name: str) -> str:',
+        '    """Convert unit name to property name without automatic pluralization."""',
+        '    # Use unit name as-is for property name',
+        '    # Replace any characters that are not valid Python identifiers',
+        '    property_name = unit_name.replace(\'-\', \'_\').replace(\' \', \'_\').replace(\'.\', \'_\')',
+        '    ',
+        '    # Handle Python reserved words and other edge cases',
+        '    reserved_words = {\'class\', \'def\', \'if\', \'else\', \'for\', \'while\', \'import\', \'from\', \'as\', \'in\'}',
+        '    if property_name in reserved_words:',
+        '        property_name = f"{property_name}_unit"',
+        '    ',
+        '    return property_name',
+        '',
         '',
         'def create_setter_class(class_name: str, variable_name: str, definition: dict[str, Any]) -> type:',
         '    """Dynamically create a setter class with unit properties."""',
@@ -217,7 +233,7 @@ def generate_consolidated_variables(parsed_data: dict, dimension_mapping: dict) 
         '    )',
         '    ',
         '    # Add properties for each unit using unit data directly',
-        '    for unit_name, property_name, si_factor, symbol in definition["units"]:',
+        '    for unit_name, property_name, si_factor, symbol, aliases in definition["units"]:',
         '        # Create a unit definition from the consolidated data',
         '        def make_property(unit_nm, si_fac, sym):',
         '            def getter(self):',
@@ -233,8 +249,16 @@ def generate_consolidated_variables(parsed_data: dict, dimension_mapping: dict) 
         '                return self.variable  # type: ignore',
         '            return property(getter)',
         '        ',
-        '        # Add the property to the class',
+        '        # Add the primary property to the class',
         '        setattr(setter_class, property_name, make_property(unit_name, si_factor, symbol))',
+        '        ',
+        '        # Add alias properties',
+        '        for alias in aliases:',
+        '            # Convert alias to valid property name',
+        '            alias_property = convert_unit_name_to_property(alias)',
+        '            # Only add if it\'s different from the main property and doesn\'t already exist',
+        '            if alias_property != property_name and not hasattr(setter_class, alias_property):',
+        '                setattr(setter_class, alias_property, make_property(unit_name, si_factor, symbol))',
         '    ',
         '    return setter_class',
         '',

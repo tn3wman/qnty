@@ -125,7 +125,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.0001,
                 "full_name": "erg per gram",
                 "notation": "erg/g",
-                "aliases": ['erg/g', 'erg_per_g'],
+                "aliases": ['erg_per_g'],
             },
             {
                 "name": "gram_rad",
@@ -133,7 +133,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.01,
                 "full_name": "gram-rad",
                 "notation": "g-rad",
-                "aliases": ['g_rad', 'g-rad'],
+                "aliases": ['g_rad'],
             },
             {
                 "name": "gray",
@@ -149,7 +149,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1e-06,
                 "full_name": "microgray",
                 "notation": "μGy",
-                "aliases": ['μGy'],
+                "aliases": [],
             },
             {
                 "name": "milligray",
@@ -157,7 +157,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.001,
                 "full_name": "milligray",
                 "notation": "mGy",
-                "aliases": ['mGy'],
+                "aliases": [],
             },
             {
                 "name": "rad",
@@ -181,7 +181,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.3048,
                 "full_name": "foot per second squared",
                 "notation": "$\\mathrm{ft} / \\mathrm{s}^{2}$ or $\\mathrm{ft} / \\mathrm{sec}^{2}$",
-                "aliases": ['or', 'fps2', 'ft_per_s2'],
+                "aliases": ['ft_per_s2', 'fps2'],
             },
             {
                 "name": "meter_per_second_squared",
@@ -205,7 +205,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 2326.0,
                 "full_name": "Btu per pound mole",
                 "notation": "Btu/lb-mol",
-                "aliases": ['Btu/lb-mol', 'btu_per_lbmol'],
+                "aliases": ['btu_per_lbmol'],
             },
             {
                 "name": "calorie_mean_per_gram_mole",
@@ -213,7 +213,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 4.18675,
                 "full_name": "calorie (mean) per gram mole",
                 "notation": "cal/mol",
-                "aliases": ['cal_mean_per_gmol', 'cal/mol'],
+                "aliases": ['cal_mean_per_gmol'],
             },
             {
                 "name": "joule_per_gram_mole",
@@ -221,7 +221,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.0,
                 "full_name": "joule per gram mole",
                 "notation": "J/mol",
-                "aliases": ['J/mol'],
+                "aliases": [],
             },
             {
                 "name": "joule_per_kilogram_mole",
@@ -229,7 +229,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1000.0,
                 "full_name": "joule per kilogram mole",
                 "notation": "J/kmol",
-                "aliases": ['J/kmol'],
+                "aliases": [],
             },
             {
                 "name": "kilocalorie_per_kilogram_mole",
@@ -237,7 +237,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 4.18675,
                 "full_name": "kilocalorie per kilogram mole",
                 "notation": "kcal/kmol",
-                "aliases": ['kcal/kmol'],
+                "aliases": [],
             }
         ],
         "aliases": {}
@@ -261,7 +261,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1e-06,
                 "full_name": "micromole (gram)",
                 "notation": "μmol",
-                "aliases": ['μmol'],
+                "aliases": [],
             },
             {
                 "name": "millimole",
@@ -269,7 +269,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.001,
                 "full_name": "millimole (gram)",
                 "notation": "mmol",
-                "aliases": ['mmol'],
+                "aliases": [],
             },
             {
                 "name": "mole",
@@ -285,7 +285,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 453.6,
                 "full_name": "pound-mole",
                 "notation": "lb-mol or mole",
-                "aliases": ['mole', 'lb-mol', 'lb-mol or mole'],
+                "aliases": ['lb-mol', 'mole'],
             }
         ],
         "aliases": {}
@@ -309,7 +309,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.015708,
                 "full_name": "gon",
                 "notation": "g or gon",
-                "aliases": ['g', 'g or gon'],
+                "aliases": ['g'],
             },
             {
                 "name": "grade",
@@ -317,7 +317,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.015708,
                 "full_name": "grade",
                 "notation": "g or grad",
-                "aliases": ['g', 'g or grad', 'grad'],
+                "aliases": ['g', 'grad'],
             },
             {
                 "name": "minute_new",
@@ -349,7 +349,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 3.141593,
                 "full_name": "plane angle",
                 "notation": "-",
-                "aliases": ['-'],
+                "aliases": [],
             },
             {
                 "name": "quadrant",
@@ -357,7 +357,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.570796,
                 "full_name": "quadrant",
                 "notation": "quadr",
-                "aliases": ['quadr'],
+                "aliases": [],
             },
             {
                 "name": "radian",
@@ -381,7 +381,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 6.283185,
                 "full_name": "round",
                 "notation": "tr or r",
-                "aliases": ['r', 'tr or r', 'tr'],
+                "aliases": ['tr', 'r'],
             },
             {
                 "name": "second_new",
@@ -405,7 +405,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.0015708,
                 "full_name": "thousandth (US)",
                 "notation": "\\% (US)",
-                "aliases": ['US'],
+                "aliases": [],
             },
             {
                 "name": "turn",
@@ -413,7 +413,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 6.283185,
                 "full_name": "turn",
                 "notation": "turn or rev",
-                "aliases": ['rev', 'turn or rev'],
+                "aliases": ['rev'],
             }
         ],
         "aliases": {}
@@ -445,7 +445,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.00024674,
                 "full_name": "square gon",
                 "notation": "(g) ${ }^{2}$",
-                "aliases": ['g'],
+                "aliases": [],
             },
             {
                 "name": "steradian",
@@ -485,7 +485,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.001745,
                 "full_name": "rpm (or revolution per minute) per minute",
                 "notation": "$\\mathrm{rev} / \\mathrm{min}^{2}$ or rpm/min",
-                "aliases": ['or rpm/min', 'rev / min^{2', 'rpm/min'],
+                "aliases": ['rev / min^{2', 'rpm/min'],
             }
         ],
         "aliases": {}
@@ -517,7 +517,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.04214,
                 "full_name": "pound force square foot per second",
                 "notation": "lb ft ${ }^{2} / \\mathrm{sec}$",
-                "aliases": ['lb ft'],
+                "aliases": [],
             }
         ],
         "aliases": {}
@@ -605,7 +605,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 929.03,
                 "full_name": "square chain (Ramsden)",
                 "notation": "sq ch (Rams)",
-                "aliases": ['sq ch Rams'],
+                "aliases": [],
             },
             {
                 "name": "square_chain_survey_gunters",
@@ -613,7 +613,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 404.6856,
                 "full_name": "square chain (Survey, Gunter's)",
                 "notation": "sq ch (surv)",
-                "aliases": ['sq ch surv'],
+                "aliases": [],
             },
             {
                 "name": "square_decimeter",
@@ -637,7 +637,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.092903,
                 "full_name": "square foot",
                 "notation": "sq ft or ft ${ }^{2}$",
-                "aliases": ['sq ft', 'sq ft or ft', 'ft { ^{2'],
+                "aliases": ['sq ft', 'ft { ^{2'],
             },
             {
                 "name": "square_hectometer",
@@ -653,7 +653,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.00064516,
                 "full_name": "square inch",
                 "notation": "sq in or in ${ }^{2}$",
-                "aliases": ['sq in', 'sq in or in', 'in { ^{2'],
+                "aliases": ['sq in', 'in { ^{2'],
             },
             {
                 "name": "square_kilometer",
@@ -669,7 +669,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 23310000.0,
                 "full_name": "square league (statute)",
                 "notation": "sq lg (stat)",
-                "aliases": ['sq lg stat'],
+                "aliases": [],
             },
             {
                 "name": "square_meter",
@@ -685,7 +685,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1e-12,
                 "full_name": "square micron",
                 "notation": "$\\mu \\mathrm{m}^{2}$ or $\\mu^{2}$",
-                "aliases": ['mu m^{2', 'or', 'mu^{2'],
+                "aliases": ['mu m^{2', 'mu^{2'],
             },
             {
                 "name": "square_mile_statute",
@@ -693,7 +693,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 2590000.0,
                 "full_name": "square mile (statute)",
                 "notation": "sq mi (stat)",
-                "aliases": ['sq mi stat'],
+                "aliases": [],
             },
             {
                 "name": "square_mile_us_survey",
@@ -701,7 +701,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 2590000.0,
                 "full_name": "square mile (US survey)",
                 "notation": "sq mi (US Surv)",
-                "aliases": ['sq mi US Surv'],
+                "aliases": [],
             },
             {
                 "name": "square_millimeter",
@@ -725,7 +725,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.836131,
                 "full_name": "square yard",
                 "notation": "sq yd",
-                "aliases": ['sq yd'],
+                "aliases": [],
             },
             {
                 "name": "township_us",
@@ -733,7 +733,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 93240000.0,
                 "full_name": "township (US)",
                 "notation": "twshp",
-                "aliases": ['twshp'],
+                "aliases": [],
             }
         ],
         "aliases": {}
@@ -757,7 +757,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 3.2808,
                 "full_name": "square foot per cubic foot",
                 "notation": "$\\mathrm{ft}^{2} / \\mathrm{ft}^{3}$ or sqft/cft",
-                "aliases": ['ft^{2 / ft^{3', 'or sqft/cft', 'sqft/cft'],
+                "aliases": ['ft^{2 / ft^{3', 'sqft/cft'],
             },
             {
                 "name": "square_inch_per_cubic_inch",
@@ -765,7 +765,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.0,
                 "full_name": "square inch per cubic inch",
                 "notation": "$\\mathrm{in}^{2} / \\mathrm{in}^{3}$ or sq.in./cu. in.",
-                "aliases": ['or sq.in./cu. in.', 'sq.in./cu. in.', 'in^{2 / in^{3'],
+                "aliases": ['in^{2 / in^{3', 'sq.in./cu. in.'],
             },
             {
                 "name": "square_meter_per_cubic_meter",
@@ -773,7 +773,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.0,
                 "full_name": "square meter per cubic meter",
                 "notation": "$\\mathrm{m}^{2} / \\mathrm{m}^{3}$ or $1 / \\mathrm{m}^{3}$",
-                "aliases": ['or', '1 / m^{3', 'm^{2 / m^{3'],
+                "aliases": ['m^{2 / m^{3', '1 / m^{3'],
             }
         ],
         "aliases": {}
@@ -797,7 +797,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.0,
                 "full_name": "grams per mole",
                 "notation": "g/mol",
-                "aliases": ['g/mol'],
+                "aliases": [],
             },
             {
                 "name": "kilograms_per_kilomole",
@@ -805,7 +805,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.0,
                 "full_name": "kilograms per kilomole",
                 "notation": "kg/kmol",
-                "aliases": ['kg/kmol'],
+                "aliases": [],
             },
             {
                 "name": "pounds_per_pound_mole",
@@ -813,7 +813,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.0,
                 "full_name": "pounds per pound mole",
                 "notation": "$\\mathrm{lb} / \\mathrm{lb}-$ mol or $\\mathrm{lb} /$ mole",
-                "aliases": ['lb / mole', 'lb / lb- mol', 'mol or  mole'],
+                "aliases": ['lb / lb- mol', 'lb / mole'],
             }
         ],
         "aliases": {}
@@ -829,7 +829,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.002288,
                 "full_name": "grains of \"i\" per cubic foot",
                 "notation": "$\\mathrm{gr} / \\mathrm{ft}^{3}$ or gr/cft",
-                "aliases": ['or gr/cft', 'gr/cft', 'gr / ft^{3'],
+                "aliases": ['gr / ft^{3', 'gr/cft'],
             },
             {
                 "name": "grains_of_i_per_gallon_us",
@@ -837,7 +837,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.017115,
                 "full_name": "grains of \"i\" per gallon (US)",
                 "notation": "gr/gal",
-                "aliases": ['gr/gal'],
+                "aliases": [],
             }
         ],
         "aliases": {}
@@ -853,7 +853,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.0,
                 "full_name": "meter-seconds per kilogram",
                 "notation": "m s/kg",
-                "aliases": ['m s/kg'],
+                "aliases": [],
             },
             {
                 "name": "rhe",
@@ -869,7 +869,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.002086,
                 "full_name": "square foot per pound second",
                 "notation": "$\\mathrm{ft}^{2}$ /(lb sec)",
-                "aliases": ['/lb sec'],
+                "aliases": [],
             },
             {
                 "name": "square_meters_per_newton_per_second",
@@ -893,7 +893,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1000000000.0,
                 "full_name": "abfarad",
                 "notation": "emu cgs",
-                "aliases": ['emu cgs'],
+                "aliases": [],
             },
             {
                 "name": "cm",
@@ -901,7 +901,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.1111e-12,
                 "full_name": "\"cm\"",
                 "notation": "\"cm\"",
-                "aliases": ['cm'],
+                "aliases": [],
             },
             {
                 "name": "farad",
@@ -917,7 +917,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.99951,
                 "full_name": "farad (intl)",
                 "notation": "F (int)",
-                "aliases": ['F int'],
+                "aliases": [],
             },
             {
                 "name": "jar",
@@ -933,7 +933,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1e-06,
                 "full_name": "microfarad",
                 "notation": "μF",
-                "aliases": ['μF'],
+                "aliases": [],
             },
             {
                 "name": "millifarad",
@@ -941,7 +941,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.001,
                 "full_name": "millifarad",
                 "notation": "mF",
-                "aliases": ['mF'],
+                "aliases": [],
             },
             {
                 "name": "nanofarad",
@@ -949,7 +949,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1e-09,
                 "full_name": "nanofarad",
                 "notation": "nF",
-                "aliases": ['nF'],
+                "aliases": [],
             },
             {
                 "name": "picofarad",
@@ -957,7 +957,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1e-12,
                 "full_name": "picofarad",
                 "notation": "pF",
-                "aliases": ['pF'],
+                "aliases": [],
             },
             {
                 "name": "puff",
@@ -973,7 +973,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.113e-12,
                 "full_name": "statfarad",
                 "notation": "esu cgs",
-                "aliases": ['esu cgs'],
+                "aliases": [],
             }
         ],
         "aliases": {}
@@ -989,7 +989,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.000103643,
                 "full_name": "abcoulomb",
                 "notation": "emu cgs",
-                "aliases": ['emu cgs'],
+                "aliases": [],
             },
             {
                 "name": "ampere_hour",
@@ -1029,7 +1029,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.010364000000000002,
                 "full_name": "kilocoulomb",
                 "notation": "kF",
-                "aliases": ['kF'],
+                "aliases": [],
             },
             {
                 "name": "microcoulomb",
@@ -1037,7 +1037,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.0364e-11,
                 "full_name": "microcoulomb",
                 "notation": "μF",
-                "aliases": ['μF'],
+                "aliases": [],
             },
             {
                 "name": "millicoulomb",
@@ -1045,7 +1045,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.0364000000000001e-08,
                 "full_name": "millicoulomb",
                 "notation": "mF",
-                "aliases": ['mF'],
+                "aliases": [],
             },
             {
                 "name": "nanocoulomb",
@@ -1053,7 +1053,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.0364000000000002e-14,
                 "full_name": "nanocoulomb",
                 "notation": "nF",
-                "aliases": ['nF'],
+                "aliases": [],
             },
             {
                 "name": "picocoulomb",
@@ -1061,7 +1061,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.0364000000000001e-17,
                 "full_name": "picocoulomb",
                 "notation": "pF",
-                "aliases": ['pF'],
+                "aliases": [],
             },
             {
                 "name": "statcoulomb",
@@ -1069,7 +1069,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 3.45715e-15,
                 "full_name": "statcoulomb",
                 "notation": "esu cgs",
-                "aliases": ['esu cgs'],
+                "aliases": [],
             },
             {
                 "name": "u_a_charge",
@@ -1077,7 +1077,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.66054e-24,
                 "full_name": "u.a. charge",
                 "notation": "u.a.",
-                "aliases": ['u.a.'],
+                "aliases": [],
             }
         ],
         "aliases": {}
@@ -1093,7 +1093,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 10.0,
                 "full_name": "abampere",
                 "notation": "emu cgs",
-                "aliases": ['emu cgs'],
+                "aliases": [],
             },
             {
                 "name": "ampere_intl_mean",
@@ -1101,7 +1101,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.99985,
                 "full_name": "ampere (intl mean)",
                 "notation": "A (int mean)",
-                "aliases": ['A int mean'],
+                "aliases": [],
             },
             {
                 "name": "ampere_intl_us",
@@ -1109,7 +1109,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.999835,
                 "full_name": "ampere (intl US)",
                 "notation": "A (int US)",
-                "aliases": ['A int US'],
+                "aliases": [],
             },
             {
                 "name": "ampere_or_amp",
@@ -1133,7 +1133,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 3.33564e-10,
                 "full_name": "statampere",
                 "notation": "esu cgs",
-                "aliases": ['esu cgs'],
+                "aliases": [],
             },
             {
                 "name": "u_a_or_current",
@@ -1141,7 +1141,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.00662362,
                 "full_name": "u.a. or current",
                 "notation": "u.a.",
-                "aliases": ['u.a.'],
+                "aliases": [],
             }
         ],
         "aliases": {}
@@ -1157,7 +1157,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.0,
                 "full_name": "ampere meter second",
                 "notation": "A m s",
-                "aliases": ['A m s'],
+                "aliases": [],
             },
             {
                 "name": "coulomb_meter",
@@ -1165,7 +1165,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.0,
                 "full_name": "coulomb meter",
                 "notation": "C m",
-                "aliases": ['C m'],
+                "aliases": [],
             },
             {
                 "name": "debye",
@@ -1181,7 +1181,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.6022e-19,
                 "full_name": "electron meter",
                 "notation": "e m",
-                "aliases": ['e m'],
+                "aliases": [],
             }
         ],
         "aliases": {}
@@ -1197,7 +1197,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 100.0,
                 "full_name": "volt per centimeter",
                 "notation": "V/cm",
-                "aliases": ['V/cm'],
+                "aliases": [],
             },
             {
                 "name": "volt_per_meter",
@@ -1205,7 +1205,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.0,
                 "full_name": "volt per meter",
                 "notation": "V/m",
-                "aliases": ['V/m'],
+                "aliases": [],
             }
         ],
         "aliases": {}
@@ -1221,7 +1221,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1e-09,
                 "full_name": "abhenry",
                 "notation": "emu cgs",
-                "aliases": ['emu cgs'],
+                "aliases": [],
             },
             {
                 "name": "cm",
@@ -1245,7 +1245,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.00049,
                 "full_name": "henry (intl mean)",
                 "notation": "H (int mean)",
-                "aliases": ['H int mean'],
+                "aliases": [],
             },
             {
                 "name": "henry_intl_us",
@@ -1253,7 +1253,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.000495,
                 "full_name": "henry (intl US)",
                 "notation": "H (int US)",
-                "aliases": ['H int US'],
+                "aliases": [],
             },
             {
                 "name": "mic",
@@ -1269,7 +1269,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1e-06,
                 "full_name": "microhenry",
                 "notation": "μH",
-                "aliases": ['μH'],
+                "aliases": [],
             },
             {
                 "name": "millihenry",
@@ -1277,7 +1277,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.001,
                 "full_name": "millihenry",
                 "notation": "mH",
-                "aliases": ['mH'],
+                "aliases": [],
             },
             {
                 "name": "nanohenry",
@@ -1285,7 +1285,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1e-09,
                 "full_name": "nanohenry",
                 "notation": "nH",
-                "aliases": ['nH'],
+                "aliases": [],
             },
             {
                 "name": "stathenry",
@@ -1293,7 +1293,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 898760000000.0,
                 "full_name": "stathenry",
                 "notation": "esu cgs",
-                "aliases": ['esu cgs'],
+                "aliases": [],
             }
         ],
         "aliases": {}
@@ -1309,7 +1309,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1e-08,
                 "full_name": "abvolt",
                 "notation": "emu cgs",
-                "aliases": ['emu cgs'],
+                "aliases": [],
             },
             {
                 "name": "kilovolt",
@@ -1317,7 +1317,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1000.0,
                 "full_name": "kilovolt",
                 "notation": "kV",
-                "aliases": ['kV'],
+                "aliases": [],
             },
             {
                 "name": "microvolt",
@@ -1325,7 +1325,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1e-06,
                 "full_name": "microvolt",
                 "notation": "μV",
-                "aliases": ['μV'],
+                "aliases": [],
             },
             {
                 "name": "millivolt",
@@ -1333,7 +1333,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.001,
                 "full_name": "millivolt",
                 "notation": "mV",
-                "aliases": ['mV'],
+                "aliases": [],
             },
             {
                 "name": "nanovolt",
@@ -1341,7 +1341,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1e-09,
                 "full_name": "nanovolt",
                 "notation": "nV",
-                "aliases": ['nV'],
+                "aliases": [],
             },
             {
                 "name": "picovolt",
@@ -1349,7 +1349,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1e-12,
                 "full_name": "picovolt",
                 "notation": "pV",
-                "aliases": ['pV'],
+                "aliases": [],
             },
             {
                 "name": "statvolt",
@@ -1357,7 +1357,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 299.792,
                 "full_name": "statvolt",
                 "notation": "esu cgs",
-                "aliases": ['esu cgs'],
+                "aliases": [],
             },
             {
                 "name": "u_a_potential",
@@ -1365,7 +1365,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 27.2114,
                 "full_name": "u.a. potential",
                 "notation": "u.a.",
-                "aliases": ['u.a.'],
+                "aliases": [],
             },
             {
                 "name": "volt",
@@ -1381,7 +1381,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.00034,
                 "full_name": "volt (intl mean)",
                 "notation": "V (int mean)",
-                "aliases": ['V int mean'],
+                "aliases": [],
             },
             {
                 "name": "volt_us",
@@ -1389,7 +1389,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.00033,
                 "full_name": "volt (US)",
                 "notation": "V (int US)",
-                "aliases": ['V int US'],
+                "aliases": [],
             }
         ],
         "aliases": {}
@@ -1405,7 +1405,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1e-09,
                 "full_name": "abohm",
                 "notation": "emu cgs",
-                "aliases": ['emu cgs'],
+                "aliases": [],
             },
             {
                 "name": "jacobi",
@@ -1413,7 +1413,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.64,
                 "full_name": "jacobi",
                 "notation": "-",
-                "aliases": ['-'],
+                "aliases": [],
             },
             {
                 "name": "kiloohm",
@@ -1421,7 +1421,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1000.0,
                 "full_name": "kiloohm",
                 "notation": "k$\\Omega$",
-                "aliases": ['k'],
+                "aliases": [],
             },
             {
                 "name": "lenz",
@@ -1429,7 +1429,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 80000.0,
                 "full_name": "lenz",
                 "notation": "Metric",
-                "aliases": ['Metric'],
+                "aliases": [],
             },
             {
                 "name": "megaohm",
@@ -1437,7 +1437,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1000000.0,
                 "full_name": "megaohm",
                 "notation": "M$\\Omega$",
-                "aliases": ['M'],
+                "aliases": [],
             },
             {
                 "name": "milliohm",
@@ -1445,7 +1445,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.001,
                 "full_name": "milliohm",
                 "notation": "m$\\Omega$",
-                "aliases": ['m'],
+                "aliases": [],
             },
             {
                 "name": "ohm",
@@ -1461,7 +1461,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.00049,
                 "full_name": "ohm (intl mean)",
                 "notation": "$\\Omega$ (int mean)",
-                "aliases": ['int mean'],
+                "aliases": [],
             },
             {
                 "name": "ohm_intl_us",
@@ -1469,7 +1469,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.000495,
                 "full_name": "ohm (intl US)",
                 "notation": "$\\Omega$ (int US)",
-                "aliases": ['int US'],
+                "aliases": [],
             },
             {
                 "name": "ohm_legal",
@@ -1477,7 +1477,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.9972,
                 "full_name": "ohm (legal)",
                 "notation": "$\\Omega$ (legal)",
-                "aliases": ['legal'],
+                "aliases": [],
             },
             {
                 "name": "preece",
@@ -1493,7 +1493,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 8.987552,
                 "full_name": "statohm",
                 "notation": "csu cgs",
-                "aliases": ['csu cgs'],
+                "aliases": [],
             },
             {
                 "name": "wheatstone",
@@ -1501,7 +1501,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.0025,
                 "full_name": "wheatstone",
                 "notation": "-",
-                "aliases": ['-'],
+                "aliases": [],
             }
         ],
         "aliases": {}
@@ -1517,7 +1517,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1000000000.0,
                 "full_name": "emu cgs",
                 "notation": "abmho",
-                "aliases": ['abmho'],
+                "aliases": [],
             },
             {
                 "name": "esu_cgs",
@@ -1525,7 +1525,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.1127e-12,
                 "full_name": "esu cgs",
                 "notation": "statmho",
-                "aliases": ['statmho'],
+                "aliases": [],
             },
             {
                 "name": "mho",
@@ -1549,7 +1549,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.001,
                 "full_name": "millisiemens",
                 "notation": "mS",
-                "aliases": ['mS'],
+                "aliases": [],
             },
             {
                 "name": "siemens",
@@ -1573,7 +1573,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.0,
                 "full_name": "farad per meter",
                 "notation": "F/m",
-                "aliases": ['F/m'],
+                "aliases": [],
             }
         ],
         "aliases": {}
@@ -1589,7 +1589,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.6624000000000002e-09,
                 "full_name": "circular mil-ohm per foot",
                 "notation": "circmil $\\Omega / \\mathrm{ft}$",
-                "aliases": ['circmil'],
+                "aliases": [],
             },
             {
                 "name": "emu_cgs",
@@ -1597,7 +1597,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1e-11,
                 "full_name": "emu cgs",
                 "notation": "abohm cm",
-                "aliases": ['abohm cm'],
+                "aliases": [],
             },
             {
                 "name": "microhm_inch",
@@ -1605,7 +1605,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 2.5400000000000002e-08,
                 "full_name": "microhm-inch",
                 "notation": "$\\mu \\Omega$ in",
-                "aliases": ['in'],
+                "aliases": [],
             },
             {
                 "name": "ohm_centimeter",
@@ -1645,7 +1645,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 41868.0,
                 "full_name": "calorie per square centimeter per second",
                 "notation": "$\\mathrm{cal} / \\mathrm{cm}^{2} / \\mathrm{s}$ or $\\mathrm{cal} /$ ( $\\mathrm{cm}^{2} \\mathrm{~s}$ )",
-                "aliases": ['or', 'cal / cm^{2 / s', 'cal / ( cm^{2 ~s )'],
+                "aliases": ['cal / cm^{2 / s', 'cal / ( cm^{2 ~s )'],
             },
             {
                 "name": "celsius_heat_units_chu",
@@ -1693,7 +1693,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 6120000000.0,
                 "full_name": "barrel oil equivalent or equivalent barrel",
                 "notation": "bboe or boe",
-                "aliases": ['boe', 'bboe', 'bboe or boe'],
+                "aliases": ['bboe', 'boe'],
             },
             {
                 "name": "billion_electronvolt",
@@ -1709,7 +1709,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1059.67,
                 "full_name": "British thermal unit ( $4^{\\circ} \\mathrm{C}$ )",
                 "notation": "Btu ( $39.2{ }^{\\circ} \\mathrm{F}$ )",
-                "aliases": ['Btu'],
+                "aliases": [],
             },
             {
                 "name": "british_thermal_unit_60circ_mathrmf",
@@ -1717,7 +1717,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1054.678,
                 "full_name": "British thermal unit ( $60^{\\circ} \\mathrm{F}$ )",
                 "notation": "Btu ( $60{ }^{\\circ} \\mathrm{F}$ )",
-                "aliases": ['Btu'],
+                "aliases": [],
             },
             {
                 "name": "british_thermal_unit_international_steam_tables",
@@ -1725,7 +1725,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1055.055853,
                 "full_name": "British thermal unit (international steam tables)",
                 "notation": "Btu (IT)",
-                "aliases": ['Btu IT'],
+                "aliases": [],
             },
             {
                 "name": "british_thermal_unit_isotc_12",
@@ -1733,7 +1733,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1055.06,
                 "full_name": "British thermal unit (ISO/TC 12)",
                 "notation": "Btu (ISO)",
-                "aliases": ['Btu ISO'],
+                "aliases": [],
             },
             {
                 "name": "british_thermal_unit_mean",
@@ -1741,7 +1741,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1055.87,
                 "full_name": "British thermal unit (mean)",
                 "notation": "Btu (mean) or Btu",
-                "aliases": ['Btu mean or Btu', 'Btu (mean)', 'Btu'],
+                "aliases": ['Btu (mean)', 'Btu'],
             },
             {
                 "name": "british_thermal_unit_thermochemical",
@@ -1749,7 +1749,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1054.35,
                 "full_name": "British thermal unit (thermochemical)",
                 "notation": "Btu (therm)",
-                "aliases": ['Btu therm'],
+                "aliases": [],
             },
             {
                 "name": "calorie_20circ_mathrmc",
@@ -1757,7 +1757,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 4.1819,
                 "full_name": "calorie ( $20^{\\circ} \\mathrm{C}$ )",
                 "notation": "cal ( $20^{\\circ} \\mathrm{C}$ )",
-                "aliases": ['cal'],
+                "aliases": [],
             },
             {
                 "name": "calorie_4circ_mathrmc",
@@ -1765,7 +1765,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 4.2045,
                 "full_name": "calorie ( $4^{\\circ} \\mathrm{C}$ )",
                 "notation": "cal ( $4^{\\circ} \\mathrm{C}$ )",
-                "aliases": ['cal'],
+                "aliases": [],
             },
             {
                 "name": "calorie_international_steam_tables",
@@ -1773,7 +1773,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 4.18674,
                 "full_name": "calorie (international steam tables)",
                 "notation": "cal (IT)",
-                "aliases": ['cal IT'],
+                "aliases": [],
             },
             {
                 "name": "calorie_mean",
@@ -1781,7 +1781,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 4.19002,
                 "full_name": "calorie (mean)",
                 "notation": "cal (mean)",
-                "aliases": ['cal mean'],
+                "aliases": [],
             },
             {
                 "name": "calorie_nutritional",
@@ -1789,7 +1789,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 4184.0,
                 "full_name": "Calorie (nutritional)",
                 "notation": "Cal (nutr)",
-                "aliases": ['Cal nutr'],
+                "aliases": [],
             },
             {
                 "name": "calorie_thermochemical",
@@ -1797,7 +1797,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 4.184,
                 "full_name": "calorie (thermochemical)",
                 "notation": "cal (therm)",
-                "aliases": ['cal therm'],
+                "aliases": [],
             },
             {
                 "name": "celsius_heat_unit",
@@ -1813,7 +1813,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1899.1,
                 "full_name": "Celsius heat unit ( $15{ }^{\\circ} \\mathrm{C}$ )",
                 "notation": "Chu ( $15{ }^{\\circ} \\mathrm{C}$ )",
-                "aliases": ['Chu'],
+                "aliases": [],
             },
             {
                 "name": "electron_volt",
@@ -1837,7 +1837,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.355818,
                 "full_name": "foot pound force (duty)",
                 "notation": "ft $\\mathrm{lb}_{\\mathrm{f}}$",
-                "aliases": ['ft'],
+                "aliases": [],
             },
             {
                 "name": "foot_poundal",
@@ -1845,7 +1845,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.04214,
                 "full_name": "foot-poundal",
                 "notation": "ft pdl",
-                "aliases": ['ft pdl'],
+                "aliases": [],
             },
             {
                 "name": "frigorie",
@@ -1861,7 +1861,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1000000000.0,
                 "full_name": "gigajoule",
                 "notation": "GJ",
-                "aliases": ['GJ'],
+                "aliases": [],
             },
             {
                 "name": "hartree_atomic_unit_of_energy",
@@ -1869,7 +1869,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 4.359700000000001e-18,
                 "full_name": "hartree (atomic unit of energy)",
                 "notation": "$\\mathrm{E}_{\\mathrm{H}}$ a.u.",
-                "aliases": ['a.u.'],
+                "aliases": [],
             },
             {
                 "name": "joule",
@@ -1885,7 +1885,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.000165,
                 "full_name": "joule (international)",
                 "notation": "J (intl)",
-                "aliases": ['J intl'],
+                "aliases": [],
             },
             {
                 "name": "kilocalorie_thermal",
@@ -1893,7 +1893,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 4184.0,
                 "full_name": "kilocalorie (thermal)",
                 "notation": "kcal (therm)",
-                "aliases": ['kcal therm'],
+                "aliases": [],
             },
             {
                 "name": "kilogram_force_meter",
@@ -1901,7 +1901,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 9.80665,
                 "full_name": "kilogram force meter",
                 "notation": "$\\mathrm{kg}_{\\mathrm{f}}$ m",
-                "aliases": ['m'],
+                "aliases": [],
             },
             {
                 "name": "kilojoule",
@@ -1909,7 +1909,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1000.0,
                 "full_name": "kilojoule",
                 "notation": "kJ",
-                "aliases": ['kJ'],
+                "aliases": [],
             },
             {
                 "name": "kiloton_tnt",
@@ -1917,7 +1917,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 4.1799999999999995e+18,
                 "full_name": "kiloton (TNT)",
                 "notation": "kt (TNT)",
-                "aliases": ['kt TNT'],
+                "aliases": [],
             },
             {
                 "name": "kilowatt_hour",
@@ -1933,7 +1933,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 101.325,
                 "full_name": "liter atmosphere",
                 "notation": "L atm",
-                "aliases": ['L atm'],
+                "aliases": [],
             },
             {
                 "name": "megajoule",
@@ -1941,7 +1941,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1000000.0,
                 "full_name": "megajoule",
                 "notation": "MJ",
-                "aliases": ['MJ'],
+                "aliases": [],
             },
             {
                 "name": "megaton_tnt",
@@ -1949,7 +1949,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 4.1799999999999995e+21,
                 "full_name": "megaton (TNT)",
                 "notation": "Mt (TNT)",
-                "aliases": ['Mt TNT'],
+                "aliases": [],
             },
             {
                 "name": "pound_centigrade_unit_15circ_mathrmc",
@@ -1957,7 +1957,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1899.1,
                 "full_name": "pound centigrade unit ( $15^{\\circ} \\mathrm{C}$ )",
                 "notation": "pcu ( $15{ }^{\\circ} \\mathrm{C}$ )",
-                "aliases": ['pcu'],
+                "aliases": [],
             },
             {
                 "name": "prout",
@@ -1997,7 +1997,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 105510000.0,
                 "full_name": "therm (EEG)",
                 "notation": "therm (EEG)",
-                "aliases": ['therm EEG'],
+                "aliases": [],
             },
             {
                 "name": "therm_refineries",
@@ -2005,7 +2005,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1055900000.0000001,
                 "full_name": "therm (refineries)",
                 "notation": "therm (refy) or therm",
-                "aliases": ['therm refy or therm', 'therm', 'therm (refy)'],
+                "aliases": ['therm (refy)', 'therm'],
             },
             {
                 "name": "therm_us",
@@ -2013,7 +2013,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 105480000.0,
                 "full_name": "therm (US)",
                 "notation": "therm (US) or therm",
-                "aliases": ['therm US or therm', 'therm'],
+                "aliases": ['therm'],
             },
             {
                 "name": "ton_coal_equivalent",
@@ -2021,7 +2021,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 292900000.0,
                 "full_name": "ton coal equivalent",
                 "notation": "tce (tec)",
-                "aliases": ['tce tec'],
+                "aliases": [],
             },
             {
                 "name": "ton_oil_equivalent",
@@ -2029,7 +2029,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 418700000.0,
                 "full_name": "ton oil equivalent",
                 "notation": "toe (tep)",
-                "aliases": ['toe tep'],
+                "aliases": [],
             }
         ],
         "aliases": {}
@@ -2045,7 +2045,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 11354.0,
                 "full_name": "British thermal unit per square foot",
                 "notation": "$\\mathrm{Btu} / \\mathrm{ft}^{2}$ or Btu/sq ft",
-                "aliases": ['or Btu/sq ft', 'Btu/sq ft', 'Btu / ft^{2'],
+                "aliases": ['Btu / ft^{2', 'Btu/sq ft'],
             },
             {
                 "name": "joule_per_square_meter",
@@ -2109,7 +2109,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1000.0,
                 "full_name": "kilonewton",
                 "notation": "kN",
-                "aliases": ['kN'],
+                "aliases": [],
             },
             {
                 "name": "kip_force",
@@ -2125,7 +2125,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.001,
                 "full_name": "millinewton",
                 "notation": "mN",
-                "aliases": ['mN'],
+                "aliases": [],
             },
             {
                 "name": "newton",
@@ -2141,7 +2141,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.27801385,
                 "full_name": "ounce force",
                 "notation": "$\\mathrm{oz}_{\\mathrm{f}}$ or oz",
-                "aliases": ['or oz', 'oz', 'oz_{f'],
+                "aliases": ['oz_{f', 'oz'],
             },
             {
                 "name": "pond",
@@ -2157,7 +2157,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 4.4482216,
                 "full_name": "pound force",
                 "notation": "$\\mathrm{lb}_{\\mathrm{f}}$ or lb",
-                "aliases": ['or lb', 'lb_{f', 'lb'],
+                "aliases": ['lb_{f', 'lb'],
             },
             {
                 "name": "poundal",
@@ -2221,7 +2221,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 10.0,
                 "full_name": "dyne per cubic centimeter",
                 "notation": "dyn/cc or dyn/ $\\mathrm{cm}^{3}$",
-                "aliases": ['dyn/ cm^{3', 'dyn/cc or dyn/', 'dyn/cc'],
+                "aliases": ['dyn/cc', 'dyn/ cm^{3'],
             },
             {
                 "name": "kilogram_force_per_cubic_centimeter",
@@ -2261,7 +2261,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 271450.0,
                 "full_name": "pound force per cubic inch",
                 "notation": "$\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{cu} . \\mathrm{in}$.",
-                "aliases": ['.'],
+                "aliases": [],
             },
             {
                 "name": "ton_force_per_cubic_foot",
@@ -2269,7 +2269,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 351880.0,
                 "full_name": "ton force per cubic foot",
                 "notation": "ton $_{\\mathrm{f}} / \\mathrm{cft}$",
-                "aliases": ['ton'],
+                "aliases": [],
             }
         ],
         "aliases": {}
@@ -2285,7 +2285,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.01,
                 "full_name": "dyne per gram",
                 "notation": "dyn/g",
-                "aliases": ['dyn/g'],
+                "aliases": [],
             },
             {
                 "name": "kilogram_force_per_kilogram",
@@ -2301,7 +2301,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.0,
                 "full_name": "newton per kilogram",
                 "notation": "N/kg",
-                "aliases": ['N/kg'],
+                "aliases": [],
             },
             {
                 "name": "pound_force_per_pound_mass",
@@ -2309,7 +2309,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 9.80665,
                 "full_name": "pound force per pound mass",
                 "notation": "$\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{lb}$ or $\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{lb}_{\\mathrm{m}}$",
-                "aliases": ['or', 'lb_{f / lb_{m', 'lb_{f / lb'],
+                "aliases": ['lb_{f / lb', 'lb_{f / lb_{m'],
             },
             {
                 "name": "pound_force_per_slug",
@@ -2317,7 +2317,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.3048,
                 "full_name": "pound force per slug",
                 "notation": "$\\mathrm{lb}_{\\mathrm{f}} /$ slug",
-                "aliases": ['slug'],
+                "aliases": [],
             }
         ],
         "aliases": {}
@@ -2333,7 +2333,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.0,
                 "full_name": "cycles per second per volt",
                 "notation": "cycle/(sec V)",
-                "aliases": ['cycle/sec V'],
+                "aliases": [],
             },
             {
                 "name": "hertz_per_volt",
@@ -2341,7 +2341,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.0,
                 "full_name": "hertz per volt",
                 "notation": "Hz/V",
-                "aliases": ['Hz/V'],
+                "aliases": [],
             },
             {
                 "name": "terahertz_per_volt",
@@ -2349,7 +2349,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1000000000000.0,
                 "full_name": "terahertz per volt",
                 "notation": "THz/V",
-                "aliases": ['THz/V'],
+                "aliases": [],
             }
         ],
         "aliases": {}
@@ -2373,7 +2373,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 35.4,
                 "full_name": "gallons (UK) per 100 miles",
                 "notation": "gal (UK)/ 100 mi",
-                "aliases": ['gal UK/ 100 mi'],
+                "aliases": [],
             },
             {
                 "name": "gallons_us",
@@ -2381,7 +2381,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 42.51,
                 "full_name": "gallons (US) per 100 miles",
                 "notation": "gal (US)/ 100 mi",
-                "aliases": ['gal US/ 100 mi'],
+                "aliases": [],
             },
             {
                 "name": "kilometers_per_gallon_uk",
@@ -2389,7 +2389,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.21997,
                 "full_name": "kilometers per gallon (UK)",
                 "notation": "km/gal (UK)",
-                "aliases": ['km/gal UK'],
+                "aliases": [],
             },
             {
                 "name": "kilometers_per_gallon_us",
@@ -2397,7 +2397,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.26417,
                 "full_name": "kilometers per gallon (US)",
                 "notation": "km/gal(US)",
-                "aliases": ['km/galUS'],
+                "aliases": [],
             },
             {
                 "name": "kilometers_per_liter",
@@ -2405,7 +2405,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.0,
                 "full_name": "kilometers per liter",
                 "notation": "km/l",
-                "aliases": ['km/l'],
+                "aliases": [],
             },
             {
                 "name": "liters_per_100_km",
@@ -2421,7 +2421,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.0,
                 "full_name": "liters per kilometer",
                 "notation": "1/km",
-                "aliases": ['1/km'],
+                "aliases": [],
             },
             {
                 "name": "meters_per_gallon_uk",
@@ -2429,7 +2429,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.00021997,
                 "full_name": "meters per gallon (UK)",
                 "notation": "m/gal (UK)",
-                "aliases": ['m/gal UK'],
+                "aliases": [],
             },
             {
                 "name": "meters_per_gallon_us",
@@ -2437,7 +2437,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.00022642000000000004,
                 "full_name": "meters per gallon (US)",
                 "notation": "1/gal (US)",
-                "aliases": ['1/gal US'],
+                "aliases": [],
             },
             {
                 "name": "miles_per_gallon_uk",
@@ -2445,7 +2445,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.35401,
                 "full_name": "miles per gallon (UK)",
                 "notation": "mi/gal (UK) or mpg (UK)",
-                "aliases": ['mi/gal (UK)', 'mpg (UK)', 'mi/gal UK or mpg UK'],
+                "aliases": ['mi/gal (UK)', 'mpg (UK)'],
             },
             {
                 "name": "miles_per_gallon_us",
@@ -2453,7 +2453,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.42514,
                 "full_name": "miles per gallon (US)",
                 "notation": "mi/gal (US) or mpg (US)",
-                "aliases": ['mpg (US)', 'mi/gal US or mpg US', 'mi/gal (US)'],
+                "aliases": ['mi/gal (US)', 'mpg (US)'],
             },
             {
                 "name": "miles_per_liter",
@@ -2461,7 +2461,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.6093,
                 "full_name": "miles per liter",
                 "notation": "mi/l",
-                "aliases": ['mi/l'],
+                "aliases": [],
             }
         ],
         "aliases": {}
@@ -2477,7 +2477,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 2326.0,
                 "full_name": "British thermal unit per pound",
                 "notation": "Btu/lb",
-                "aliases": ['Btu/lb'],
+                "aliases": [],
             },
             {
                 "name": "calorie_per_gram",
@@ -2493,7 +2493,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 4186.8,
                 "full_name": "Chu per pound",
                 "notation": "Chu/lb",
-                "aliases": ['Chu/lb'],
+                "aliases": [],
             },
             {
                 "name": "joule_per_kilogram",
@@ -2501,7 +2501,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.0,
                 "full_name": "joule per kilogram",
                 "notation": "J/kg",
-                "aliases": ['J/kg'],
+                "aliases": [],
             }
         ],
         "aliases": {}
@@ -2517,7 +2517,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 2327.79,
                 "full_name": "British thermal unit (mean) per pound",
                 "notation": "Btu (mean)/lb",
-                "aliases": ['Btu mean/lb'],
+                "aliases": [],
             },
             {
                 "name": "british_thermal_unit_per_pound",
@@ -2525,7 +2525,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 2326.0,
                 "full_name": "British thermal unit per pound",
                 "notation": "Btu/lb",
-                "aliases": ['Btu/lb'],
+                "aliases": [],
             },
             {
                 "name": "calorie_per_gram",
@@ -2541,7 +2541,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 4186.8,
                 "full_name": "Chu per pound",
                 "notation": "Chu/lb",
-                "aliases": ['Chu/lb'],
+                "aliases": [],
             },
             {
                 "name": "joule_per_kilogram",
@@ -2549,7 +2549,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.0,
                 "full_name": "joule per kilogram",
                 "notation": "J/kg",
-                "aliases": ['J/kg'],
+                "aliases": [],
             }
         ],
         "aliases": {}
@@ -2565,7 +2565,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 2326.0,
                 "full_name": "British thermal unit per pound",
                 "notation": "Btu/lb",
-                "aliases": ['Btu/lb'],
+                "aliases": [],
             },
             {
                 "name": "calorie_per_gram",
@@ -2581,7 +2581,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 4186.8,
                 "full_name": "Chu per pound",
                 "notation": "Chu/lb",
-                "aliases": ['Chu/lb'],
+                "aliases": [],
             },
             {
                 "name": "joule_per_kilogram",
@@ -2589,7 +2589,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.0,
                 "full_name": "joule per kilogram",
                 "notation": "J/kg",
-                "aliases": ['J/kg'],
+                "aliases": [],
             }
         ],
         "aliases": {}
@@ -2629,7 +2629,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 10.76391,
                 "full_name": "foot-candle",
                 "notation": "$\\mathrm{ft}-\\mathrm{C}$ or $\\mathrm{ft}-\\mathrm{Cd}$",
-                "aliases": ['ft-Cd', 'ft-C', 'or'],
+                "aliases": ['ft-C', 'ft-Cd'],
             },
             {
                 "name": "lux",
@@ -2677,7 +2677,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.0929,
                 "full_name": "square foot per second squared",
                 "notation": "$\\mathrm{ft}^{2} / \\mathrm{s}^{2}$ or sqft/sec ${ }^{2}$",
-                "aliases": ['ft^{2 / s^{2', 'or sqft/sec', 'sqft/sec { ^{2'],
+                "aliases": ['ft^{2 / s^{2', 'sqft/sec { ^{2'],
             },
             {
                 "name": "square_meters_per_second_squared",
@@ -2741,7 +2741,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 30.48,
                 "full_name": "chain (Engr's or Ramsden)",
                 "notation": "ch (eng or Rams)",
-                "aliases": ['ch (eng', 'Rams)', 'ch eng or Rams'],
+                "aliases": ['ch (eng', 'Rams)'],
             },
             {
                 "name": "chain_gunters",
@@ -2749,7 +2749,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 20.1168,
                 "full_name": "chain (Gunter's)",
                 "notation": "ch (Gunt)",
-                "aliases": ['ch Gunt'],
+                "aliases": [],
             },
             {
                 "name": "chain_surveyors",
@@ -2757,7 +2757,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 20.1168,
                 "full_name": "chain (surveyors)",
                 "notation": "ch (surv)",
-                "aliases": ['ch surv'],
+                "aliases": [],
             },
             {
                 "name": "cubit_uk",
@@ -2765,7 +2765,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.4572,
                 "full_name": "cubit (UK)",
                 "notation": "cu (UK)",
-                "aliases": ['cu UK'],
+                "aliases": [],
             },
             {
                 "name": "ell",
@@ -2837,7 +2837,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 4828.0,
                 "full_name": "league (US, statute)",
                 "notation": "lg (US, stat)",
-                "aliases": ['lg US stat'],
+                "aliases": [],
             },
             {
                 "name": "lieue_metric",
@@ -2845,7 +2845,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 4000.0,
                 "full_name": "lieue (metric)",
                 "notation": "lieue (metric)",
-                "aliases": ['lieue metric'],
+                "aliases": [],
             },
             {
                 "name": "ligne_metric",
@@ -2853,7 +2853,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.0023,
                 "full_name": "ligne (metric)",
                 "notation": "ligne (metric)",
-                "aliases": ['ligne metric'],
+                "aliases": [],
             },
             {
                 "name": "line_us",
@@ -2861,7 +2861,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.000635,
                 "full_name": "line (US)",
                 "notation": "li (US)",
-                "aliases": ['li US'],
+                "aliases": [],
             },
             {
                 "name": "link_surveyors",
@@ -2869,7 +2869,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.201168,
                 "full_name": "link (surveyors)",
                 "notation": "li (surv)",
-                "aliases": ['li surv'],
+                "aliases": [],
             },
             {
                 "name": "meter",
@@ -2917,7 +2917,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1853.2,
                 "full_name": "mile (US, nautical)",
                 "notation": "mi (US, naut)",
-                "aliases": ['mi US naut'],
+                "aliases": [],
             },
             {
                 "name": "mile_us_statute",
@@ -2933,7 +2933,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1609.3,
                 "full_name": "mile (US, survey)",
                 "notation": "mi (US, surv)",
-                "aliases": ['mi US surv'],
+                "aliases": [],
             },
             {
                 "name": "millimeter",
@@ -2957,7 +2957,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1e-09,
                 "full_name": "nanometer",
                 "notation": "nm",
-                "aliases": ['nm'],
+                "aliases": [],
             },
             {
                 "name": "nanometer_or_nanon",
@@ -3005,7 +3005,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.00037597,
                 "full_name": "point (Didot)",
                 "notation": "pt (Didot)",
-                "aliases": ['pt Didot'],
+                "aliases": [],
             },
             {
                 "name": "point_us",
@@ -3013,7 +3013,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.00035146,
                 "full_name": "point (US)",
                 "notation": "pt (US)",
-                "aliases": ['pt US'],
+                "aliases": [],
             },
             {
                 "name": "rod_or_pole",
@@ -3045,7 +3045,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 2.0,
                 "full_name": "toise (metric)",
                 "notation": "toise (metric)",
-                "aliases": ['toise metric'],
+                "aliases": [],
             },
             {
                 "name": "yard",
@@ -3085,7 +3085,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 100.0,
                 "full_name": "kilogram per centimeter",
                 "notation": "kg/cm",
-                "aliases": ['kg/cm'],
+                "aliases": [],
             },
             {
                 "name": "kilogram_per_meter",
@@ -3093,7 +3093,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.0,
                 "full_name": "kilogram per meter",
                 "notation": "kg/m",
-                "aliases": ['kg/m'],
+                "aliases": [],
             },
             {
                 "name": "pound_per_foot",
@@ -3101,7 +3101,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.488,
                 "full_name": "pound per foot",
                 "notation": "lb/ft",
-                "aliases": ['lb/ft'],
+                "aliases": [],
             },
             {
                 "name": "pound_per_inch",
@@ -3109,7 +3109,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 17.858,
                 "full_name": "pound per inch",
                 "notation": "lb/in",
-                "aliases": ['lb/in'],
+                "aliases": [],
             },
             {
                 "name": "pound_per_yard",
@@ -3117,7 +3117,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.49606,
                 "full_name": "pound per yard",
                 "notation": "lb/yd",
-                "aliases": ['lb/yd'],
+                "aliases": [],
             },
             {
                 "name": "ton_metric",
@@ -3125,7 +3125,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.0,
                 "full_name": "ton (metric) per kilometer",
                 "notation": "t/km or MT/km",
-                "aliases": ['t/km or MT/km', 't/km', 'MT/km'],
+                "aliases": ['t/km', 'MT/km'],
             }
         ],
         "aliases": {}
@@ -3141,7 +3141,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 3.8400000000000005e-05,
                 "full_name": "foot pounds force per hour",
                 "notation": "${\\mathrm{ft} \\mathrm{lb}_{\\mathrm{f}}}^{/} \\mathrm{h}$ or $\\mathrm{ft}-\\mathrm{lb} / \\mathrm{hr}$",
-                "aliases": ['{ft lb_{f^{/ h', 'or', 'ft-lb / hr'],
+                "aliases": ['{ft lb_{f^{/ h', 'ft-lb / hr'],
             },
             {
                 "name": "foot_pounds_force_per_minute",
@@ -3149,7 +3149,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.0023042,
                 "full_name": "foot pounds force per minute",
                 "notation": "$\\mathrm{ft} \\mathrm{lb}_{\\mathrm{f}} / \\min$ or $\\mathrm{ft}-\\mathrm{lb} /$ min",
-                "aliases": ['ft lb_{f / min', 'ft-lb / min', 'or  min'],
+                "aliases": ['ft lb_{f / min', 'ft-lb / min'],
             },
             {
                 "name": "foot_pounds_force_per_second",
@@ -3157,7 +3157,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.13825,
                 "full_name": "foot pounds force per second",
                 "notation": "$\\mathrm{ft} \\mathrm{lb}_{\\mathrm{f}} / \\mathrm{s}$ or ft-lb/sec",
-                "aliases": ['ft lb_{f / s', 'or ft-lb/sec', 'ft-lb/sec'],
+                "aliases": ['ft lb_{f / s', 'ft-lb/sec'],
             },
             {
                 "name": "gram_centimeters_per_second",
@@ -3197,7 +3197,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.31831,
                 "full_name": "blondel",
                 "notation": "B1",
-                "aliases": ['B1'],
+                "aliases": [],
             },
             {
                 "name": "candela_per_square_meter",
@@ -3213,7 +3213,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 3.426259,
                 "full_name": "foot-lambert",
                 "notation": "ft-L",
-                "aliases": ['ft-L'],
+                "aliases": [],
             },
             {
                 "name": "lambert",
@@ -3253,7 +3253,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 10000.0,
                 "full_name": "troland",
                 "notation": "luxon",
-                "aliases": ['luxon'],
+                "aliases": [],
             }
         ],
         "aliases": {}
@@ -3269,7 +3269,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.0,
                 "full_name": "candela steradian",
                 "notation": "cd sr",
-                "aliases": ['cd sr'],
+                "aliases": [],
             },
             {
                 "name": "lumen",
@@ -3301,7 +3301,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.01937,
                 "full_name": "candle (international)",
                 "notation": "Cd (int)",
-                "aliases": ['Cd int'],
+                "aliases": [],
             },
             {
                 "name": "carcel",
@@ -3333,7 +3333,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.0,
                 "full_name": "ampere per meter",
                 "notation": "A/m",
-                "aliases": ['A/m'],
+                "aliases": [],
             },
             {
                 "name": "lenz",
@@ -3357,7 +3357,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 11459.08,
                 "full_name": "praoersted",
                 "notation": "-",
-                "aliases": ['-'],
+                "aliases": [],
             }
         ],
         "aliases": {}
@@ -3373,7 +3373,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 6.000000000000001e-05,
                 "full_name": "kapp line",
                 "notation": "-",
-                "aliases": ['-'],
+                "aliases": [],
             },
             {
                 "name": "line",
@@ -3397,7 +3397,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1e-06,
                 "full_name": "microweber",
                 "notation": "μWb",
-                "aliases": ['μWb'],
+                "aliases": [],
             },
             {
                 "name": "milliweber",
@@ -3405,7 +3405,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.001,
                 "full_name": "milliweber",
                 "notation": "mWb",
-                "aliases": ['mWb'],
+                "aliases": [],
             },
             {
                 "name": "unit_pole",
@@ -3453,7 +3453,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.0001,
                 "full_name": "line per square centimeter",
                 "notation": "line $/ \\mathrm{cm}^{2}$",
-                "aliases": ['line'],
+                "aliases": [],
             },
             {
                 "name": "maxwell_per_square_centimeter",
@@ -3469,7 +3469,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1e-06,
                 "full_name": "microtesla",
                 "notation": "μT",
-                "aliases": ['μT'],
+                "aliases": [],
             },
             {
                 "name": "millitesla",
@@ -3477,7 +3477,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.001,
                 "full_name": "millitesla",
                 "notation": "mT",
-                "aliases": ['mT'],
+                "aliases": [],
             },
             {
                 "name": "nanotesla",
@@ -3485,7 +3485,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1e-09,
                 "full_name": "nanotesla",
                 "notation": "nT",
-                "aliases": ['nT'],
+                "aliases": [],
             },
             {
                 "name": "tesla",
@@ -3533,7 +3533,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.0,
                 "full_name": "joule per tesla",
                 "notation": "J/T",
-                "aliases": ['J/T'],
+                "aliases": [],
             },
             {
                 "name": "nuclear_magneton",
@@ -3541,7 +3541,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 5.0508e-27,
                 "full_name": "nuclear magneton",
                 "notation": "nucl. Magneton",
-                "aliases": ['nucl. Magneton'],
+                "aliases": [],
             }
         ],
         "aliases": {}
@@ -3557,7 +3557,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.0,
                 "full_name": "henrys per meter",
                 "notation": "H/m",
-                "aliases": ['H/m'],
+                "aliases": [],
             },
             {
                 "name": "newton_per_square_ampere",
@@ -3565,7 +3565,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.0,
                 "full_name": "newton per square ampere",
                 "notation": "N/A ${ }^{2}$",
-                "aliases": ['N/A'],
+                "aliases": [],
             }
         ],
         "aliases": {}
@@ -3581,7 +3581,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 10.0,
                 "full_name": "abampere-turn",
                 "notation": "emu cgs",
-                "aliases": ['emu cgs'],
+                "aliases": [],
             },
             {
                 "name": "ampere",
@@ -3597,7 +3597,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 2864.77,
                 "full_name": "ampere-turn",
                 "notation": "A-turn",
-                "aliases": ['A-turn'],
+                "aliases": [],
             },
             {
                 "name": "gilbert",
@@ -3613,7 +3613,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1000.0,
                 "full_name": "kiloampere",
                 "notation": "kA",
-                "aliases": ['kA'],
+                "aliases": [],
             },
             {
                 "name": "microampere",
@@ -3621,7 +3621,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1e-06,
                 "full_name": "microampere",
                 "notation": "μA",
-                "aliases": ['μA'],
+                "aliases": [],
             },
             {
                 "name": "milliampere",
@@ -3629,7 +3629,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.001,
                 "full_name": "milliampere",
                 "notation": "mA",
-                "aliases": ['mA'],
+                "aliases": [],
             },
             {
                 "name": "nanoampere",
@@ -3637,7 +3637,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1e-09,
                 "full_name": "nanoampere",
                 "notation": "nA",
-                "aliases": ['nA'],
+                "aliases": [],
             },
             {
                 "name": "picoampere",
@@ -3645,7 +3645,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1e-12,
                 "full_name": "picoampere",
                 "notation": "pA",
-                "aliases": ['pA'],
+                "aliases": [],
             }
         ],
         "aliases": {}
@@ -3661,7 +3661,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.6605000000000002e-27,
                 "full_name": "atomic mass unit ( ${ }^{12} \\mathrm{C}$ )",
                 "notation": "$\\mathrm{u}\\left({ }^{12} \\mathrm{C}\\right)$ or amu",
-                "aliases": ['or amu', 'uleft({ ^{12 Cright)', 'amu'],
+                "aliases": ['uleft({ ^{12 Cright)', 'amu'],
             },
             {
                 "name": "carat_metric",
@@ -3677,7 +3677,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 45.359,
                 "full_name": "cental",
                 "notation": "sh cwt, cH",
-                "aliases": ['sh cwt cH'],
+                "aliases": [],
             },
             {
                 "name": "centigram",
@@ -3701,7 +3701,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.0038879,
                 "full_name": "drachm (apothecary)",
                 "notation": "dr (ap)",
-                "aliases": ['dr ap'],
+                "aliases": [],
             },
             {
                 "name": "dram_avoirdupois",
@@ -3709,7 +3709,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.0017718,
                 "full_name": "dram (avoirdupois)",
                 "notation": "dr (av)",
-                "aliases": ['dr av'],
+                "aliases": [],
             },
             {
                 "name": "dram_troy",
@@ -3717,7 +3717,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.0038879,
                 "full_name": "dram (troy)",
                 "notation": "dr (troy)",
-                "aliases": ['dr troy'],
+                "aliases": [],
             },
             {
                 "name": "grain",
@@ -3741,7 +3741,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 50.802,
                 "full_name": "hundredweight, long or gross",
                 "notation": "cwt, lg cwt",
-                "aliases": ['cwt lg cwt'],
+                "aliases": [],
             },
             {
                 "name": "hundredweight_short_or_net",
@@ -3749,7 +3749,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 45.359,
                 "full_name": "hundredweight, short or net",
                 "notation": "sh cwt",
-                "aliases": ['sh cwt'],
+                "aliases": [],
             },
             {
                 "name": "kilogram",
@@ -3789,7 +3789,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.031103,
                 "full_name": "ounce (apothecary)",
                 "notation": "oz (ap)",
-                "aliases": ['oz ap'],
+                "aliases": [],
             },
             {
                 "name": "ounce_avoirdupois",
@@ -3805,7 +3805,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.031103,
                 "full_name": "ounce (troy)",
                 "notation": "oz (troy)",
-                "aliases": ['oz troy'],
+                "aliases": [],
             },
             {
                 "name": "pennyweight_troy",
@@ -3813,7 +3813,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.0015552,
                 "full_name": "pennyweight (troy)",
                 "notation": "dwt (troy)",
-                "aliases": ['dwt troy'],
+                "aliases": [],
             },
             {
                 "name": "pood_russia",
@@ -3829,7 +3829,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.37324,
                 "full_name": "pound (apothecary)",
                 "notation": "lb (ap)",
-                "aliases": ['lb ap'],
+                "aliases": [],
             },
             {
                 "name": "pound_avoirdupois",
@@ -3837,7 +3837,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.45359,
                 "full_name": "pound (avoirdupois)",
                 "notation": "lb (av)",
-                "aliases": ['lb av'],
+                "aliases": [],
             },
             {
                 "name": "pound_mass",
@@ -3853,7 +3853,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.37324,
                 "full_name": "pound (troy)",
                 "notation": "lb (troy)",
-                "aliases": ['lb troy'],
+                "aliases": [],
             },
             {
                 "name": "quarter_uk",
@@ -3869,7 +3869,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 100.0,
                 "full_name": "quintal, metric",
                 "notation": "q, dt",
-                "aliases": ['q dt'],
+                "aliases": [],
             },
             {
                 "name": "quital_us",
@@ -3877,7 +3877,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 45.359,
                 "full_name": "quital, US",
                 "notation": "quint (US)",
-                "aliases": ['quint US'],
+                "aliases": [],
             },
             {
                 "name": "scruple_avoirdupois",
@@ -3917,7 +3917,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1016.0,
                 "full_name": "ton, US, long",
                 "notation": "lg ton",
-                "aliases": ['lg ton'],
+                "aliases": [],
             },
             {
                 "name": "ton_us_short",
@@ -3925,7 +3925,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 907.18,
                 "full_name": "ton, US, short",
                 "notation": "sh ton",
-                "aliases": ['sh ton'],
+                "aliases": [],
             }
         ],
         "aliases": {}
@@ -3941,7 +3941,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1000.0,
                 "full_name": "gram per cubic centimeter",
                 "notation": "g/cc or g/ml",
-                "aliases": ['g/ml', 'g/cc', 'g/cc or g/ml'],
+                "aliases": ['g/cc', 'g/ml'],
             },
             {
                 "name": "gram_per_cubic_decimeter",
@@ -3965,7 +3965,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.0,
                 "full_name": "gram per liter",
                 "notation": "$\\mathrm{g} / \\mathrm{l}$ or g/L",
-                "aliases": ['g / l', 'or g/L', 'g/L'],
+                "aliases": ['g / l', 'g/L'],
             },
             {
                 "name": "kilogram_per_cubic_meter",
@@ -3981,7 +3981,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 7.489152,
                 "full_name": "ounce (avdp) per US gallon",
                 "notation": "oz/gal",
-                "aliases": ['oz/gal'],
+                "aliases": [],
             },
             {
                 "name": "pound_avdp",
@@ -3989,7 +3989,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 16.01846,
                 "full_name": "pound (avdp) per cubic foot",
                 "notation": "$\\mathrm{lb} / \\mathrm{cu} \\mathrm{ft}$ or lb/ft ${ }^{3}$",
-                "aliases": ['lb/ft { ^{3', 'or lb/ft', 'lb / cu ft'],
+                "aliases": ['lb / cu ft', 'lb/ft { ^{3'],
             },
             {
                 "name": "pound_mass",
@@ -3997,7 +3997,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.000276799,
                 "full_name": "pound (mass) per cubic inch",
                 "notation": "$\\mathrm{lb} / \\mathrm{cu}$ in or $\\mathrm{lb} / \\mathrm{in}^{3}$",
-                "aliases": ['in or', 'lb / in^{3', 'lb / cu in'],
+                "aliases": ['lb / cu in', 'lb / in^{3'],
             },
             {
                 "name": "ton_metric",
@@ -4005,7 +4005,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1000.0,
                 "full_name": "ton (metric) per cubic meter",
                 "notation": "$\\mathrm{t} / \\mathrm{m}^{3}$ or MT $/ \\mathrm{m}^{3}$",
-                "aliases": ['or MT', 't / m^{3', 'MT / m^{3'],
+                "aliases": ['t / m^{3', 'MT / m^{3'],
             }
         ],
         "aliases": {}
@@ -4021,7 +4021,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.1574000000000001e-05,
                 "full_name": "kilograms per day",
                 "notation": "kg/d",
-                "aliases": ['kg/d'],
+                "aliases": [],
             },
             {
                 "name": "kilograms_per_hour",
@@ -4029,7 +4029,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.00027778,
                 "full_name": "kilograms per hour",
                 "notation": "kg/h",
-                "aliases": ['kg/h'],
+                "aliases": [],
             },
             {
                 "name": "kilograms_per_minute",
@@ -4037,7 +4037,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.016667,
                 "full_name": "kilograms per minute",
                 "notation": "kg/min",
-                "aliases": ['kg/min'],
+                "aliases": [],
             },
             {
                 "name": "kilograms_per_second",
@@ -4045,7 +4045,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.0,
                 "full_name": "kilograms per second",
                 "notation": "kg/s",
-                "aliases": ['kg/s'],
+                "aliases": [],
             },
             {
                 "name": "metric_tons_per_day",
@@ -4053,7 +4053,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.01157,
                 "full_name": "metric tons per day",
                 "notation": "MT/d or MTD",
-                "aliases": ['MT/d', 'MTD', 'MT/d or MTD'],
+                "aliases": ['MT/d', 'MTD'],
             },
             {
                 "name": "metric_tons_per_hour",
@@ -4061,7 +4061,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.2778,
                 "full_name": "metric tons per hour",
                 "notation": "MT/h or MTD",
-                "aliases": ['MTD', 'MT/h or MTD', 'MT/h'],
+                "aliases": ['MT/h', 'MTD'],
             },
             {
                 "name": "metric_tons_per_minute",
@@ -4069,7 +4069,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 16.67,
                 "full_name": "metric tons per minute",
                 "notation": "MT/h",
-                "aliases": ['MT/h'],
+                "aliases": [],
             },
             {
                 "name": "metric_tons_per_second",
@@ -4077,7 +4077,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1000.0,
                 "full_name": "metric tons per second",
                 "notation": "MT/s",
-                "aliases": ['MT/s'],
+                "aliases": [],
             },
             {
                 "name": "metric_tons_per_year_365_d",
@@ -4085,7 +4085,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 3.171e-05,
                 "full_name": "metric tons per year (365 d)",
                 "notation": "MT/yr or MTY",
-                "aliases": ['MT/yr or MTY', 'MT/yr', 'MTY'],
+                "aliases": ['MT/yr', 'MTY'],
             },
             {
                 "name": "pounds_per_day",
@@ -4093,7 +4093,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 5.248999999999999e-06,
                 "full_name": "pounds per day",
                 "notation": "$\\mathrm{lb} / \\mathrm{d}$ or $\\mathrm{lb} / \\mathrm{da}$ or PPD",
-                "aliases": ['lb / da', 'lb / d', 'PPD', 'or  or PPD'],
+                "aliases": ['lb / d', 'lb / da', 'PPD'],
             },
             {
                 "name": "pounds_per_hour",
@@ -4101,7 +4101,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.00012598,
                 "full_name": "pounds per hour",
                 "notation": "$\\mathrm{lb} / \\mathrm{h}$ or lb/hr or PPH",
-                "aliases": ['PPH', 'lb/hr', 'or lb/hr or PPH', 'lb / h'],
+                "aliases": ['lb / h', 'lb/hr', 'PPH'],
             },
             {
                 "name": "pounds_per_minute",
@@ -4109,7 +4109,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.0075586,
                 "full_name": "pounds per minute",
                 "notation": "$\\mathrm{lb} / \\mathrm{min}$ or PPM",
-                "aliases": ['lb / min', 'PPM', 'or PPM'],
+                "aliases": ['lb / min', 'PPM'],
             },
             {
                 "name": "pounds_per_second",
@@ -4117,7 +4117,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.45351,
                 "full_name": "pounds per second",
                 "notation": "$\\mathrm{lb} / \\mathrm{s}$ or lb/sec or PPS",
-                "aliases": ['or lb/sec or PPS', 'PPS', 'lb/sec', 'lb / s'],
+                "aliases": ['lb / s', 'lb/sec', 'PPS'],
             }
         ],
         "aliases": {}
@@ -4165,7 +4165,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 5.6478000000000004e-05,
                 "full_name": "pound per square foot per day",
                 "notation": "$\\mathrm{lb} /\\left(\\mathrm{ft}^{2} \\mathrm{~d}\\right)$ or lb/sqft/ da",
-                "aliases": ['lb/sqft/ da', 'lb /left(ft^{2 ~dright)', 'or lb/sqft/ da'],
+                "aliases": ['lb /left(ft^{2 ~dright)', 'lb/sqft/ da'],
             },
             {
                 "name": "pound_per_square_foot_per_hour",
@@ -4173,7 +4173,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.0013555,
                 "full_name": "pound per square foot per hour",
                 "notation": "$\\mathrm{lb} /\\left(\\mathrm{ft}^{2} \\mathrm{~h}\\right)$ or lb/sqft/ hr",
-                "aliases": ['or lb/sqft/ hr', 'lb /left(ft^{2 ~hright)', 'lb/sqft/ hr'],
+                "aliases": ['lb /left(ft^{2 ~hright)', 'lb/sqft/ hr'],
             },
             {
                 "name": "pound_per_square_foot_per_minute",
@@ -4181,7 +4181,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.081329,
                 "full_name": "pound per square foot per minute",
                 "notation": "$\\mathrm{lb} /\\left(\\mathrm{ft}^{2} \\min \\right)$ or lb/ sqft/min",
-                "aliases": ['lb/ sqft/min', 'lb /left(ft^{2 min right)', 'or lb/ sqft/min'],
+                "aliases": ['lb /left(ft^{2 min right)', 'lb/ sqft/min'],
             },
             {
                 "name": "pound_per_square_foot_per_second",
@@ -4189,7 +4189,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 4.8797,
                 "full_name": "pound per square foot per second",
                 "notation": "$\\mathrm{lb} /\\left(\\mathrm{ft}^{2} \\mathrm{~s}\\right)$ or lb/sqft/ sec",
-                "aliases": ['or lb/sqft/ sec', 'lb /left(ft^{2 ~sright)', 'lb/sqft/ sec'],
+                "aliases": ['lb /left(ft^{2 ~sright)', 'lb/sqft/ sec'],
             }
         ],
         "aliases": {}
@@ -4261,7 +4261,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 15.709,
                 "full_name": "pounds force per cubic foot per hour",
                 "notation": "$\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{ft}^{3} / \\mathrm{h}$ or $\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{cft} / \\mathrm{hr}$",
-                "aliases": ['lb_{f / cft / hr', 'or', 'lb_{f / ft^{3 / h'],
+                "aliases": ['lb_{f / ft^{3 / h', 'lb_{f / cft / hr'],
             },
             {
                 "name": "pounds_mass_per_square_foot_per_hour",
@@ -4269,7 +4269,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.00013562,
                 "full_name": "pounds mass per square foot per hour",
                 "notation": "lb/(ft ${ }^{2} \\mathrm{hr}$ ) or lb/sqft/ hr",
-                "aliases": ['lb/(ft { ^{2 hr )', 'lb/ft   or lb/sqft/ hr', 'lb/sqft/ hr'],
+                "aliases": ['lb/(ft { ^{2 hr )', 'lb/sqft/ hr'],
             },
             {
                 "name": "pounds_mass_per_square_foot_per_second",
@@ -4277,7 +4277,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.48824,
                 "full_name": "pounds mass per square foot per second",
                 "notation": "$\\mathrm{lb} /\\left(\\mathrm{ft}^{2} \\mathrm{~s}\\right)$ or lb/sqft/ sec",
-                "aliases": ['or lb/sqft/ sec', 'lb /left(ft^{2 ~sright)', 'lb/sqft/ sec'],
+                "aliases": ['lb /left(ft^{2 ~sright)', 'lb/sqft/ sec'],
             }
         ],
         "aliases": {}
@@ -4325,7 +4325,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1000.0,
                 "full_name": "pound moles of \"i\" per pound mass",
                 "notation": "mole $_{\\mathrm{i}} / \\mathrm{lb}$ (mass)",
-                "aliases": ['mole  mass'],
+                "aliases": [],
             }
         ],
         "aliases": {}
@@ -4341,7 +4341,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.0,
                 "full_name": "gram mole or mole per gram",
                 "notation": "mol/g",
-                "aliases": ['mol/g'],
+                "aliases": [],
             },
             {
                 "name": "gram_mole_or_mole_per_kilogram",
@@ -4349,7 +4349,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.001,
                 "full_name": "gram mole or mole per kilogram",
                 "notation": "mol/kg",
-                "aliases": ['mol/kg'],
+                "aliases": [],
             },
             {
                 "name": "kilogram_mole_or_kmol_per_kilogram",
@@ -4357,7 +4357,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.0,
                 "full_name": "kilogram mole or kmol per kilogram",
                 "notation": "kmol/kg",
-                "aliases": ['kmol/kg'],
+                "aliases": [],
             },
             {
                 "name": "micromole_per_gram",
@@ -4373,7 +4373,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.001,
                 "full_name": "millimole per gram",
                 "notation": "mmol/g",
-                "aliases": ['mmol/g'],
+                "aliases": [],
             },
             {
                 "name": "picomole_per_gram",
@@ -4381,7 +4381,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1e-12,
                 "full_name": "picomole per gram",
                 "notation": "pmol/g",
-                "aliases": ['pmol/g'],
+                "aliases": [],
             },
             {
                 "name": "pound_mole_per_pound",
@@ -4389,7 +4389,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.0,
                 "full_name": "pound mole per pound",
                 "notation": "$\\mathrm{lb}-\\mathrm{mol} / \\mathrm{lb}$ or mole/lb",
-                "aliases": ['mole/lb', 'lb-mol / lb', 'or mole/lb'],
+                "aliases": ['lb-mol / lb', 'mole/lb'],
             }
         ],
         "aliases": {}
@@ -4405,7 +4405,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 4.167e-05,
                 "full_name": "gram mole per day",
                 "notation": "mol/d",
-                "aliases": ['mol/d'],
+                "aliases": [],
             },
             {
                 "name": "gram_mole_per_hour",
@@ -4413,7 +4413,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.001,
                 "full_name": "gram mole per hour",
                 "notation": "mol/h",
-                "aliases": ['mol/h'],
+                "aliases": [],
             },
             {
                 "name": "gram_mole_per_minute",
@@ -4421,7 +4421,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.06,
                 "full_name": "gram mole per minute",
                 "notation": "mol/min",
-                "aliases": ['mol/min'],
+                "aliases": [],
             },
             {
                 "name": "gram_mole_per_second",
@@ -4429,7 +4429,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 3.6,
                 "full_name": "gram mole per second",
                 "notation": "mol/s",
-                "aliases": ['mol/s'],
+                "aliases": [],
             },
             {
                 "name": "kilogram_mole_or_kmol_per_day",
@@ -4437,7 +4437,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.04167,
                 "full_name": "kilogram mole or kmol per day",
                 "notation": "kmol/d",
-                "aliases": ['kmol/d'],
+                "aliases": [],
             },
             {
                 "name": "kilogram_mole_or_kmol_per_hour",
@@ -4445,7 +4445,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.0,
                 "full_name": "kilogram mole or kmol per hour",
                 "notation": "kmol/h",
-                "aliases": ['kmol/h'],
+                "aliases": [],
             },
             {
                 "name": "kilogram_mole_or_kmol_per_minute",
@@ -4453,7 +4453,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 60.0,
                 "full_name": "kilogram mole or kmol per minute",
                 "notation": "kmol/min",
-                "aliases": ['kmol/min'],
+                "aliases": [],
             },
             {
                 "name": "kilogram_mole_or_kmol_per_second",
@@ -4461,7 +4461,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 3600.0,
                 "full_name": "kilogram mole or kmol per second",
                 "notation": "kmol/s",
-                "aliases": ['kmol/s'],
+                "aliases": [],
             },
             {
                 "name": "pound_mole_or_lb_mol_per_day",
@@ -4469,7 +4469,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.0189,
                 "full_name": "pound mole or lb-mol per day",
                 "notation": "lb-mol/d or mole/da",
-                "aliases": ['lb-mol/d', 'mole/da', 'lb-mol/d or mole/da'],
+                "aliases": ['lb-mol/d', 'mole/da'],
             },
             {
                 "name": "pound_mole_or_lb_mol_per_hour",
@@ -4477,7 +4477,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.4535,
                 "full_name": "pound mole or lb-mol per hour",
                 "notation": "lb-mol/h or mole/hr",
-                "aliases": ['mole/hr', 'lb-mol/h or mole/hr', 'lb-mol/h'],
+                "aliases": ['lb-mol/h', 'mole/hr'],
             },
             {
                 "name": "pound_mole_or_lb_mol_per_minute",
@@ -4485,7 +4485,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 27.21,
                 "full_name": "pound mole or lb-mol per minute",
                 "notation": "lb-mol/min or mole/ min",
-                "aliases": ['mole/ min', 'lb-mol/min', 'lb-mol/min or mole/ min'],
+                "aliases": ['lb-mol/min', 'mole/ min'],
             },
             {
                 "name": "pound_mole_or_lb_mol_per_second",
@@ -4493,7 +4493,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1633.0,
                 "full_name": "pound mole or lb-mol per second",
                 "notation": "$\\mathrm{lb}-\\mathrm{mol} / \\mathrm{s}$ or mole/sec",
-                "aliases": ['or mole/sec', 'mole/sec', 'lb-mol / s'],
+                "aliases": ['lb-mol / s', 'mole/sec'],
             }
         ],
         "aliases": {}
@@ -4525,7 +4525,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.016667,
                 "full_name": "kmol per square meter per minute",
                 "notation": "$\\mathrm{kmol} /\\left(\\mathrm{m}^{2}\\right.$ amin $)$",
-                "aliases": ['amin'],
+                "aliases": [],
             },
             {
                 "name": "kmol_per_square_meter_per_second",
@@ -4541,7 +4541,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 5.6478000000000004e-05,
                 "full_name": "pound mole per square foot per day",
                 "notation": "$\\mathrm{lb}-\\mathrm{mol} /\\left(\\mathrm{ft}^{2} \\mathrm{~d}\\right)$ or mole/sqft/da",
-                "aliases": ['or mole/sqft/da', 'lb-mol /left(ft^{2 ~dright)', 'mole/sqft/da'],
+                "aliases": ['lb-mol /left(ft^{2 ~dright)', 'mole/sqft/da'],
             },
             {
                 "name": "pound_mole_per_square_foot_per_hour",
@@ -4549,7 +4549,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.0013555,
                 "full_name": "pound mole per square foot per hour",
                 "notation": "$\\mathrm{lb}-\\mathrm{mol} /\\left(\\mathrm{ft}^{2} \\mathrm{~h}\\right)$ or mole/sqft/hr",
-                "aliases": ['lb-mol /left(ft^{2 ~hright)', 'mole/sqft/hr', 'or mole/sqft/hr'],
+                "aliases": ['lb-mol /left(ft^{2 ~hright)', 'mole/sqft/hr'],
             },
             {
                 "name": "pound_mole_per_square_foot_per_minute",
@@ -4557,7 +4557,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.081329,
                 "full_name": "pound mole per square foot per minute",
                 "notation": "$\\mathrm{lb}-\\mathrm{mol} /\\left(\\mathrm{ft}^{2} \\mathrm{~min}\\right)$ or mole/sqft/min",
-                "aliases": ['mole/sqft/min', 'or mole/sqft/min', 'lb-mol /left(ft^{2 ~minright)'],
+                "aliases": ['lb-mol /left(ft^{2 ~minright)', 'mole/sqft/min'],
             },
             {
                 "name": "pound_mole_per_square_foot_per_second",
@@ -4565,7 +4565,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 4.8797,
                 "full_name": "pound mole per square foot per second",
                 "notation": "$\\mathrm{lb}-\\mathrm{mol} /\\left(\\mathrm{ft}^{2} \\mathrm{~s}\\right)$ or mole/sqft/sec",
-                "aliases": ['lb-mol /left(ft^{2 ~sright)', 'mole/sqft/sec', 'or mole/sqft/sec'],
+                "aliases": ['lb-mol /left(ft^{2 ~sright)', 'mole/sqft/sec'],
             }
         ],
         "aliases": {}
@@ -4581,7 +4581,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 4.1868,
                 "full_name": "Btu per pound mole per degree Fahrenheit (or degree Rankine)",
                 "notation": "Btu/lb-mol/ ${ }^{\\circ} \\mathrm{F}$",
-                "aliases": ['Btu/lb-mol/'],
+                "aliases": [],
             },
             {
                 "name": "calories_per_gram_mole_per_kelvin_or_degree_celsius",
@@ -4589,7 +4589,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 4.1868,
                 "full_name": "calories per gram mole per kelvin (or degree Celsius)",
                 "notation": "cal/(mol K)",
-                "aliases": ['cal/mol K'],
+                "aliases": [],
             },
             {
                 "name": "joule_per_gram_mole_per_kelvin_or_degree_celsius",
@@ -4597,7 +4597,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.0,
                 "full_name": "joule per gram mole per kelvin (or degree Celsius)",
                 "notation": "J/(mol K)",
-                "aliases": ['J/mol K'],
+                "aliases": [],
             }
         ],
         "aliases": {}
@@ -4613,7 +4613,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.0,
                 "full_name": "gram moles of \"i\" per cubic meter",
                 "notation": "$\\mathrm{mol}_{\\mathrm{i}} / \\mathrm{m}^{3}$ or $\\mathrm{c}_{\\mathrm{i}}$",
-                "aliases": ['or', 'mol_{i / m^{3', 'c_{i'],
+                "aliases": ['mol_{i / m^{3', 'c_{i'],
             },
             {
                 "name": "gram_moles_of_i_per_liter",
@@ -4645,7 +4645,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 77844.0,
                 "full_name": "pound moles of \"i\" per cubic foot",
                 "notation": "lb $\\mathrm{mol}_{\\mathrm{i}} / \\mathrm{ft}^{3}$ or $\\mathrm{mole}_{\\mathrm{i}} /$ cft",
-                "aliases": ['mole_{i / cft', 'lb  or  cft', 'lb mol_{i / ft^{3'],
+                "aliases": ['lb mol_{i / ft^{3', 'mole_{i / cft'],
             },
             {
                 "name": "pound_moles_of_i_per_gallon_us",
@@ -4653,7 +4653,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 10406.0,
                 "full_name": "pound moles of \" $i$ \" per gallon (US)",
                 "notation": "lb $\\mathrm{mol}_{\\mathrm{i}} / \\mathrm{gal}$ or $\\mathrm{mole}_{\\mathrm{i}} /$ gal",
-                "aliases": ['lb  or  gal', 'lb mol_{i / gal', 'mole_{i / gal'],
+                "aliases": ['lb mol_{i / gal', 'mole_{i / gal'],
             }
         ],
         "aliases": {}
@@ -4693,7 +4693,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.0,
                 "full_name": "pound mole of \"i\" per pound mole total",
                 "notation": "lb $\\mathrm{mol}_{\\mathrm{i}} / \\mathrm{lb} \\mathrm{mol}$",
-                "aliases": ['lb'],
+                "aliases": [],
             }
         ],
         "aliases": {}
@@ -4757,7 +4757,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.0070616,
                 "full_name": "ounce force inch square second",
                 "notation": "$\\mathrm{oz}_{\\mathrm{f}}$ in $\\mathrm{s}^{2}$",
-                "aliases": ['in'],
+                "aliases": [],
             },
             {
                 "name": "ounce_mass_square_inch",
@@ -4765,7 +4765,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.8290000000000003e-05,
                 "full_name": "ounce mass square inch",
                 "notation": "oz in ${ }^{2}$",
-                "aliases": ['oz in'],
+                "aliases": [],
             },
             {
                 "name": "pound_mass_square_foot",
@@ -4773,7 +4773,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.04214,
                 "full_name": "pound mass square foot",
                 "notation": "lb ft ${ }^{2}$ or lb sq ft",
-                "aliases": ['lb sq ft', 'lb ft  or lb sq ft', 'lb ft { ^{2'],
+                "aliases": ['lb ft { ^{2', 'lb sq ft'],
             },
             {
                 "name": "pound_mass_square_inch",
@@ -4797,7 +4797,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.0671e-08,
                 "full_name": "foot pounds per square hour",
                 "notation": "$\\mathrm{ft} \\mathrm{lb} / \\mathrm{h}^{2}$ or $\\mathrm{ft} \\mathrm{lb} / \\mathrm{hr}^{2}$",
-                "aliases": ['or', 'ft lb / h^{2', 'ft lb / hr^{2'],
+                "aliases": ['ft lb / h^{2', 'ft lb / hr^{2'],
             },
             {
                 "name": "foot_pounds_per_square_minute",
@@ -4813,7 +4813,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.1383,
                 "full_name": "foot pounds per square second",
                 "notation": "$\\mathrm{ft} \\mathrm{lb} / \\mathrm{s}^{2}$ or ft lb/sec ${ }^{2}$",
-                "aliases": ['ft lb / s^{2', 'ft lb/sec { ^{2', 'or ft lb/sec'],
+                "aliases": ['ft lb / s^{2', 'ft lb/sec { ^{2'],
             },
             {
                 "name": "gram_centimeters_per_square_second",
@@ -4845,7 +4845,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 10.0,
                 "full_name": "dyne per square centimeter",
                 "notation": "dyn/ $\\mathrm{cm}^{2}$",
-                "aliases": ['dyn/'],
+                "aliases": [],
             },
             {
                 "name": "gram_per_centimeter_per_square_second",
@@ -4877,7 +4877,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 14.882,
                 "full_name": "pound mass per foot per square second",
                 "notation": "$\\mathrm{lb}_{\\mathrm{m}} / \\mathrm{ft} / \\mathrm{s}^{2}$ or $\\mathrm{lb} / \\mathrm{ft} / \\mathrm{sec}^{2}$",
-                "aliases": ['or', 'lb / ft / sec^{2', 'lb_{m / ft / s^{2'],
+                "aliases": ['lb_{m / ft / s^{2', 'lb / ft / sec^{2'],
             }
         ],
         "aliases": {}
@@ -4901,7 +4901,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1000.0,
                 "full_name": "gram equivalents per liter",
                 "notation": "eq/l",
-                "aliases": ['eq/l'],
+                "aliases": [],
             },
             {
                 "name": "pound_equivalents_per_cubic_foot",
@@ -4909,7 +4909,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 77844.0,
                 "full_name": "pound equivalents per cubic foot",
                 "notation": "$\\mathrm{lb} \\mathrm{eq} / \\mathrm{ft}^{3}$ or lb eq/cft",
-                "aliases": ['lb eq/cft', 'or lb eq/cft', 'lb eq / ft^{3'],
+                "aliases": ['lb eq / ft^{3', 'lb eq/cft'],
             },
             {
                 "name": "pound_equivalents_per_gallon",
@@ -4917,7 +4917,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 10406.0,
                 "full_name": "pound equivalents per gallon",
                 "notation": "lb eq/gal (US)",
-                "aliases": ['lb eq/gal US'],
+                "aliases": [],
             }
         ],
         "aliases": {}
@@ -4933,7 +4933,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 10000.0,
                 "full_name": "particles per cubic centimeter",
                 "notation": "part/cm ${ }^{3}$ or part/cc",
-                "aliases": ['part/cm  or part/cc', 'part/cc', 'part/cm { ^{3'],
+                "aliases": ['part/cm { ^{3', 'part/cc'],
             },
             {
                 "name": "particles_per_cubic_foot",
@@ -4941,7 +4941,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 35.31,
                 "full_name": "particles per cubic foot",
                 "notation": "part/ $\\mathrm{ft}^{3}$ or part/cft",
-                "aliases": ['part/ ft^{3', 'part/  or part/cft', 'part/cft'],
+                "aliases": ['part/ ft^{3', 'part/cft'],
             },
             {
                 "name": "particles_per_cubic_meter",
@@ -4949,7 +4949,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.0,
                 "full_name": "particles per cubic meter",
                 "notation": "part $/ \\mathrm{m}^{3}$",
-                "aliases": ['part'],
+                "aliases": [],
             },
             {
                 "name": "particles_per_gallon_us",
@@ -4957,7 +4957,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 264.14,
                 "full_name": "particles per gallon (US)",
                 "notation": "part/gal",
-                "aliases": ['part/gal'],
+                "aliases": [],
             },
             {
                 "name": "particles_per_liter",
@@ -4965,7 +4965,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1000.0,
                 "full_name": "particles per liter",
                 "notation": "part/l",
-                "aliases": ['part/l'],
+                "aliases": [],
             },
             {
                 "name": "particles_per_milliliter",
@@ -4973,7 +4973,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 10000.0,
                 "full_name": "particles per milliliter",
                 "notation": "part/ml",
-                "aliases": ['part/ml'],
+                "aliases": [],
             }
         ],
         "aliases": {}
@@ -4997,7 +4997,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.0929,
                 "full_name": "square feet",
                 "notation": "$\\mathrm{ft}^{2}$ or sq ft",
-                "aliases": ['or sq ft', 'sq ft', 'ft^{2'],
+                "aliases": ['ft^{2', 'sq ft'],
             },
             {
                 "name": "square_meters",
@@ -5045,7 +5045,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.64612,
                 "full_name": "British thermal unit per hour per pound mass",
                 "notation": "Btu/h/lb or Btu/ (lb hr)",
-                "aliases": ['Btu/ (lb hr)', 'Btu/h/lb or Btu/ lb hr', 'Btu/h/lb'],
+                "aliases": ['Btu/h/lb', 'Btu/ (lb hr)'],
             },
             {
                 "name": "calorie_per_second_per_gram",
@@ -5053,7 +5053,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 4186.8,
                 "full_name": "calorie per second per gram",
                 "notation": "cal/s/g or cal/(g sec)",
-                "aliases": ['cal/s/g or cal/g sec', 'cal/s/g', 'cal/(g sec)'],
+                "aliases": ['cal/s/g', 'cal/(g sec)'],
             },
             {
                 "name": "kilocalorie_per_hour_per_kilogram",
@@ -5061,7 +5061,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.163,
                 "full_name": "kilocalorie per hour per kilogram",
                 "notation": "kcal/h/kg or kcal/ (kg hr)",
-                "aliases": ['kcal/h/kg or kcal/ kg hr', 'kcal/h/kg', 'kcal/ (kg hr)'],
+                "aliases": ['kcal/h/kg', 'kcal/ (kg hr)'],
             },
             {
                 "name": "watt_per_kilogram",
@@ -5069,7 +5069,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.0,
                 "full_name": "watt per kilogram",
                 "notation": "W/kg",
-                "aliases": ['W/kg'],
+                "aliases": [],
             }
         ],
         "aliases": {}
@@ -5085,7 +5085,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 10.35,
                 "full_name": "British thermal unit per hour per cubic foot",
                 "notation": "$\\mathrm{Btu} / \\mathrm{h} / \\mathrm{ft}^{3}$ or $\\mathrm{Btu} / \\mathrm{hr} /$ cft",
-                "aliases": ['Btu / h / ft^{3', 'or  cft', 'Btu / hr / cft'],
+                "aliases": ['Btu / h / ft^{3', 'Btu / hr / cft'],
             },
             {
                 "name": "calorie_per_second_per_cubic_centimeter",
@@ -5093,7 +5093,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 4186800.0,
                 "full_name": "calorie per second per cubic centimeter",
                 "notation": "$\\mathrm{cal} / \\mathrm{s} / \\mathrm{cm}^{3}$ or $\\mathrm{cal} / \\mathrm{s} / \\mathrm{cc}$",
-                "aliases": ['or', 'cal / s / cm^{3', 'cal / s / cc'],
+                "aliases": ['cal / s / cm^{3', 'cal / s / cc'],
             },
             {
                 "name": "chu_per_hour_per_cubic_foot",
@@ -5101,7 +5101,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 18.63,
                 "full_name": "Chu per hour per cubic foot",
                 "notation": "Chu/h/ft3 or Chu/hr/ cft",
-                "aliases": ['Chu/h/ft3', 'Chu/hr/ cft', 'Chu/h/ft3 or Chu/hr/ cft'],
+                "aliases": ['Chu/h/ft3', 'Chu/hr/ cft'],
             },
             {
                 "name": "kilocalorie_per_hour_per_cubic_centimeter",
@@ -5109,7 +5109,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.163,
                 "full_name": "kilocalorie per hour per cubic centimeter",
                 "notation": "$\\mathrm{kcal} / \\mathrm{h} / \\mathrm{cm}^{3}$ or $\\mathrm{kcal} /$ hr/cc",
-                "aliases": ['kcal / hr/cc', 'or  hr/cc', 'kcal / h / cm^{3'],
+                "aliases": ['kcal / h / cm^{3', 'kcal / hr/cc'],
             },
             {
                 "name": "kilocalorie_per_hour_per_cubic_foot",
@@ -5117,7 +5117,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 41.071,
                 "full_name": "kilocalorie per hour per cubic foot",
                 "notation": "$\\mathrm{kcal} / \\mathrm{h} / \\mathrm{ft}^{3}$ or $\\mathrm{kcal} / \\mathrm{hr} /$ cft",
-                "aliases": ['or  cft', 'kcal / h / ft^{3', 'kcal / hr / cft'],
+                "aliases": ['kcal / h / ft^{3', 'kcal / hr / cft'],
             },
             {
                 "name": "kilocalorie_per_second_per_cubic_centimeter",
@@ -5125,7 +5125,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 4186800000.0,
                 "full_name": "kilocalorie per second per cubic centimeter",
                 "notation": "kcal/s/cm ${ }^{3}$ or kcal/s/ cc",
-                "aliases": ['kcal/s/cm  or kcal/s/ cc', 'kcal/s/cm { ^{3', 'kcal/s/ cc'],
+                "aliases": ['kcal/s/cm { ^{3', 'kcal/s/ cc'],
             },
             {
                 "name": "watt_per_cubic_meter",
@@ -5157,7 +5157,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 9809.5,
                 "full_name": "boiler horsepower",
                 "notation": "HP (boiler)",
-                "aliases": ['HP boiler'],
+                "aliases": [],
             },
             {
                 "name": "british_thermal_unit_mean",
@@ -5165,7 +5165,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.293297,
                 "full_name": "British thermal unit (mean) per hour",
                 "notation": "Btu (mean)/hr or Btu/hr",
-                "aliases": ['Btu mean/hr or Btu/hr', 'Btu (mean)/hr', 'Btu/hr'],
+                "aliases": ['Btu (mean)/hr', 'Btu/hr'],
             },
             {
                 "name": "british_thermal_unit_thermochemical",
@@ -5173,7 +5173,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.292875,
                 "full_name": "British thermal unit (thermochemical) per hour",
                 "notation": "Btu (therm)/hr or Btu/hr",
-                "aliases": ['Btu therm/hr or Btu/hr', 'Btu (therm)/hr', 'Btu/hr'],
+                "aliases": ['Btu (therm)/hr', 'Btu/hr'],
             },
             {
                 "name": "calorie_mean",
@@ -5181,7 +5181,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.00116389,
                 "full_name": "calorie (mean) per hour",
                 "notation": "cal (mean)/hr",
-                "aliases": ['cal mean/hr'],
+                "aliases": [],
             },
             {
                 "name": "calorie_thermochemical",
@@ -5189,7 +5189,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.00116222,
                 "full_name": "calorie (thermochemical) per hour",
                 "notation": "cal (therm)/hr",
-                "aliases": ['cal therm/hr'],
+                "aliases": [],
             },
             {
                 "name": "donkey",
@@ -5205,7 +5205,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1e-07,
                 "full_name": "erg per second",
                 "notation": "erg/s",
-                "aliases": ['erg/s'],
+                "aliases": [],
             },
             {
                 "name": "foot_pondal_per_second",
@@ -5213,7 +5213,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.04214,
                 "full_name": "foot pondal per second",
                 "notation": "ft pdl/s",
-                "aliases": ['ft pdl/s'],
+                "aliases": [],
             },
             {
                 "name": "foot_pound_force_per_hour",
@@ -5245,7 +5245,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1000000000.0,
                 "full_name": "gigawatt",
                 "notation": "GW",
-                "aliases": ['GW'],
+                "aliases": [],
             },
             {
                 "name": "horsepower_550_mathrmft_mathrmlb_mathrmf_mathrms",
@@ -5261,7 +5261,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 746.0,
                 "full_name": "horsepower (electric)",
                 "notation": "HP (elect)",
-                "aliases": ['HP elect'],
+                "aliases": [],
             },
             {
                 "name": "horsepower_uk",
@@ -5269,7 +5269,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 745.7,
                 "full_name": "horsepower (UK)",
                 "notation": "HP (UK)",
-                "aliases": ['HP UK'],
+                "aliases": [],
             },
             {
                 "name": "kcal_per_hour",
@@ -5277,7 +5277,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.16389,
                 "full_name": "kcal per hour",
                 "notation": "kcal/hr",
-                "aliases": ['kcal/hr'],
+                "aliases": [],
             },
             {
                 "name": "kilogram_force_meter_per_second",
@@ -5309,7 +5309,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 735.499,
                 "full_name": "metric horsepower",
                 "notation": "HP (metric)",
-                "aliases": ['HP metric'],
+                "aliases": [],
             },
             {
                 "name": "microwatt",
@@ -5317,7 +5317,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1e-06,
                 "full_name": "microwatt",
                 "notation": "μW",
-                "aliases": ['μW'],
+                "aliases": [],
             },
             {
                 "name": "million_british_thermal_units_per_hour_petroleum",
@@ -5325,7 +5325,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 293297.0,
                 "full_name": "million British thermal units per hour (petroleum)",
                 "notation": "MMBtu/hr",
-                "aliases": ['MMBtu/hr'],
+                "aliases": [],
             },
             {
                 "name": "million_kilocalorie_per_hour",
@@ -5333,7 +5333,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1163890.0,
                 "full_name": "million kilocalorie per hour",
                 "notation": "MM kcal/hr",
-                "aliases": ['MM kcal/hr'],
+                "aliases": [],
             },
             {
                 "name": "milliwatt",
@@ -5341,7 +5341,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.001,
                 "full_name": "milliwatt",
                 "notation": "mW",
-                "aliases": ['mW'],
+                "aliases": [],
             },
             {
                 "name": "prony",
@@ -5357,7 +5357,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 3516.8,
                 "full_name": "ton of refrigeration (US)",
                 "notation": "CTR (US)",
-                "aliases": ['CTR US'],
+                "aliases": [],
             },
             {
                 "name": "ton_or_refrigeration_uk",
@@ -5365,7 +5365,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 3922.7,
                 "full_name": "ton or refrigeration (UK)",
                 "notation": "CTR (UK)",
-                "aliases": ['CTR UK'],
+                "aliases": [],
             },
             {
                 "name": "volt_ampere",
@@ -5381,7 +5381,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 746.043,
                 "full_name": "water horsepower",
                 "notation": "HP (water)",
-                "aliases": ['HP water'],
+                "aliases": [],
             },
             {
                 "name": "watt",
@@ -5397,7 +5397,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.00019,
                 "full_name": "watt (international, mean)",
                 "notation": "W (int, mean)",
-                "aliases": ['W int mean'],
+                "aliases": [],
             },
             {
                 "name": "watt_international_us",
@@ -5405,7 +5405,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.000165,
                 "full_name": "watt (international, US)",
                 "notation": "watt (int, US)",
-                "aliases": ['watt int US'],
+                "aliases": [],
             }
         ],
         "aliases": {}
@@ -5445,7 +5445,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.1,
                 "full_name": "dyne per square centimeter",
                 "notation": "dyn $/ \\mathrm{cm}^{2}$",
-                "aliases": ['dyn'],
+                "aliases": [],
             },
             {
                 "name": "foot_of_mercury_60_circ_mathrmf",
@@ -5453,7 +5453,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 40526.0,
                 "full_name": "foot of mercury ( $60{ }^{\\circ} \\mathrm{F}$ )",
                 "notation": "ft Hg ( $60{ }^{\\circ} \\mathrm{F}$ )",
-                "aliases": ['ft Hg'],
+                "aliases": [],
             },
             {
                 "name": "foot_of_water_60_circ_mathrmf",
@@ -5461,7 +5461,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 2989.0,
                 "full_name": "foot of water ( $60{ }^{\\circ} \\mathrm{F}$ )",
                 "notation": "ft $\\mathrm{H}_{2} \\mathrm{O}\\left(60^{\\circ} \\mathrm{F}\\right)$",
-                "aliases": ['ft'],
+                "aliases": [],
             },
             {
                 "name": "gigapascal",
@@ -5485,7 +5485,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 3386.4,
                 "full_name": "inch of mercury ( $60{ }^{\\circ} \\mathrm{F}$ )",
                 "notation": "in $\\mathrm{Hg}\\left(60{ }^{\\circ} \\mathrm{F}\\right)$",
-                "aliases": ['in'],
+                "aliases": [],
             },
             {
                 "name": "inch_of_water_60_circ_mathrmf",
@@ -5493,7 +5493,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 248.845,
                 "full_name": "inch of water ( $60{ }^{\\circ} \\mathrm{F}$ )",
                 "notation": "in $\\mathrm{H}_{2} \\mathrm{O}\\left(60^{\\circ} \\mathrm{F}\\right)$",
-                "aliases": ['in'],
+                "aliases": [],
             },
             {
                 "name": "kilogram_force_per_square_centimeter",
@@ -5501,7 +5501,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 98067.0,
                 "full_name": "kilogram force per square centimeter",
                 "notation": "at or $\\mathrm{kg}_{\\mathrm{f}} / \\mathrm{cm}^{2}$",
-                "aliases": ['at', 'kg_{f / cm^{2', 'at or'],
+                "aliases": ['at', 'kg_{f / cm^{2'],
             },
             {
                 "name": "kilogram_force_per_square_meter",
@@ -5517,7 +5517,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1000.0,
                 "full_name": "kilopascal",
                 "notation": "kPa",
-                "aliases": ['kPa'],
+                "aliases": [],
             },
             {
                 "name": "kip_force_per_square_inch",
@@ -5525,7 +5525,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 6894800.0,
                 "full_name": "kip force per square inch",
                 "notation": "KSI or ksi or kip ${ }_{f} / \\mathrm{in}^{2}$",
-                "aliases": ['KSI', 'ksi', 'KSI or ksi or kip', 'kip { _{f / in^{2'],
+                "aliases": ['KSI', 'ksi', 'kip { _{f / in^{2'],
             },
             {
                 "name": "megapascal",
@@ -5589,7 +5589,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 430.922,
                 "full_name": "ounce force per square inch",
                 "notation": "OSI or osi or $\\mathrm{oz}_{\\mathrm{f}} / \\mathrm{in}^{2}$",
-                "aliases": ['OSI or osi or', 'OSI', 'osi'],
+                "aliases": ['OSI', 'osi'],
             },
             {
                 "name": "pascal",
@@ -5613,7 +5613,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 47.880259,
                 "full_name": "pound force per square foot",
                 "notation": "PSF or psf or $\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{ft}^{2}$",
-                "aliases": ['PSF or psf or', 'psf'],
+                "aliases": ['psf'],
             },
             {
                 "name": "pound_force_per_square_inch",
@@ -5621,7 +5621,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 6894.8,
                 "full_name": "pound force per square inch",
                 "notation": "PSI or psi or $\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{in}^{2}$",
-                "aliases": ['PSI or psi or', 'psi'],
+                "aliases": ['psi'],
             },
             {
                 "name": "torr",
@@ -5629,7 +5629,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 133.322,
                 "full_name": "torr",
                 "notation": "torr or mm Hg ( $0{ }^{\\circ}$ C)",
-                "aliases": ['torr or mm Hg   C', 'mm Hg ( 0{ ^{circ C)'],
+                "aliases": ['mm Hg ( 0{ ^{circ C)'],
             }
         ],
         "aliases": {}
@@ -5645,7 +5645,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1e-06,
                 "full_name": "microsievert",
                 "notation": "μSv",
-                "aliases": ['μSv'],
+                "aliases": [],
             },
             {
                 "name": "millisievert",
@@ -5653,7 +5653,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.001,
                 "full_name": "millisievert",
                 "notation": "mSv",
-                "aliases": ['mSv'],
+                "aliases": [],
             },
             {
                 "name": "rem",
@@ -5685,7 +5685,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.0,
                 "full_name": "coulomb per kilogram",
                 "notation": "C/kg",
-                "aliases": ['C/kg'],
+                "aliases": [],
             },
             {
                 "name": "d_unit",
@@ -5701,7 +5701,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.129,
                 "full_name": "pastille dose (B unit)",
                 "notation": "B unit",
-                "aliases": ['B unit'],
+                "aliases": [],
             },
             {
                 "name": "röentgen",
@@ -5741,7 +5741,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1000000000.0,
                 "full_name": "gigabecquerel",
                 "notation": "GBq",
-                "aliases": ['GBq'],
+                "aliases": [],
             },
             {
                 "name": "kilobecquerel",
@@ -5749,7 +5749,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1000.0,
                 "full_name": "kilobecquerel",
                 "notation": "kBq",
-                "aliases": ['kBq'],
+                "aliases": [],
             },
             {
                 "name": "mache_unit",
@@ -5757,7 +5757,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 13.32,
                 "full_name": "Mache unit",
                 "notation": "Mache",
-                "aliases": ['Mache'],
+                "aliases": [],
             },
             {
                 "name": "megabecquerel",
@@ -5765,7 +5765,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1000000.0,
                 "full_name": "megabecquerel",
                 "notation": "MBq",
-                "aliases": ['MBq'],
+                "aliases": [],
             },
             {
                 "name": "rutherford",
@@ -5813,7 +5813,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 4.1623e-07,
                 "full_name": "inch quadrupled",
                 "notation": "in ${ }^{4}$",
-                "aliases": ['in'],
+                "aliases": [],
             },
             {
                 "name": "meter_quadrupled",
@@ -5837,7 +5837,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.0,
                 "full_name": "meter kelvin",
                 "notation": "m K",
-                "aliases": ['m K'],
+                "aliases": [],
             }
         ],
         "aliases": {}
@@ -5853,7 +5853,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 2327.8,
                 "full_name": "British thermal unit (mean) per pound",
                 "notation": "Btu (mean)/lb",
-                "aliases": ['Btu mean/lb'],
+                "aliases": [],
             },
             {
                 "name": "british_thermal_unit_per_pound",
@@ -5861,7 +5861,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 2324.4,
                 "full_name": "British thermal unit per pound",
                 "notation": "Btu/lb",
-                "aliases": ['Btu/lb'],
+                "aliases": [],
             },
             {
                 "name": "calorie_per_gram",
@@ -5877,7 +5877,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 4186.8,
                 "full_name": "Chu per pound",
                 "notation": "Chu/lb",
-                "aliases": ['Chu/lb'],
+                "aliases": [],
             },
             {
                 "name": "joule_per_kilogram",
@@ -5885,7 +5885,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.0,
                 "full_name": "joule per kilogram",
                 "notation": "J/kg",
-                "aliases": ['J/kg'],
+                "aliases": [],
             },
             {
                 "name": "kilojoule_per_kilogram",
@@ -5893,7 +5893,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1000.0,
                 "full_name": "kilojoule per kilogram",
                 "notation": "kJ/kg",
-                "aliases": ['kJ/kg'],
+                "aliases": [],
             }
         ],
         "aliases": {}
@@ -5925,7 +5925,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 4186.8,
                 "full_name": "Btu per pound per degree Fahrenheit (or degree Rankine)",
                 "notation": "Btu/(lb ${ }^{\\circ} \\mathrm{F}$ )",
-                "aliases": ['Btu/lb'],
+                "aliases": [],
             },
             {
                 "name": "calories_per_gram_per_kelvin_or_degree_celsius",
@@ -5933,7 +5933,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 4186.8,
                 "full_name": "calories per gram per kelvin (or degree Celsius)",
                 "notation": "cal/(g K)",
-                "aliases": ['cal/g K'],
+                "aliases": [],
             },
             {
                 "name": "joules_per_kilogram_per_kelvin_or_degree_celsius",
@@ -5941,7 +5941,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.0,
                 "full_name": "joules per kilogram per kelvin (or degree Celsius)",
                 "notation": "J/(kg K)",
-                "aliases": ['J/kg K'],
+                "aliases": [],
             }
         ],
         "aliases": {}
@@ -5957,7 +5957,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 10.0,
                 "full_name": "centimeter per gram",
                 "notation": "cm/g",
-                "aliases": ['cm/g'],
+                "aliases": [],
             },
             {
                 "name": "cotton_count",
@@ -5973,7 +5973,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.67192,
                 "full_name": "ft per pound",
                 "notation": "ft/lb",
-                "aliases": ['ft/lb'],
+                "aliases": [],
             },
             {
                 "name": "meters_per_kilogram",
@@ -5981,7 +5981,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.0,
                 "full_name": "meters per kilogram",
                 "notation": "m/kg",
-                "aliases": ['m/kg'],
+                "aliases": [],
             },
             {
                 "name": "newton_meter",
@@ -6021,7 +6021,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.092903,
                 "full_name": "square foot per kilogram",
                 "notation": "$\\mathrm{ft}^{2} / \\mathrm{kg}$ or sq ft/kg",
-                "aliases": ['ft^{2 / kg', 'sq ft/kg', 'or sq ft/kg'],
+                "aliases": ['ft^{2 / kg', 'sq ft/kg'],
             },
             {
                 "name": "square_foot_per_pound",
@@ -6029,7 +6029,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.20482,
                 "full_name": "square foot per pound",
                 "notation": "$\\mathrm{ft}^{2} / \\mathrm{lb}$ or sq ft/lb",
-                "aliases": ['sq ft/lb', 'ft^{2 / lb', 'or sq ft/lb'],
+                "aliases": ['ft^{2 / lb', 'sq ft/lb'],
             },
             {
                 "name": "square_meter_per_gram",
@@ -6061,7 +6061,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.001,
                 "full_name": "cubic centimeter per gram",
                 "notation": "$\\mathrm{cm}^{3} / \\mathrm{g}$ or $\\mathrm{cc} / \\mathrm{g}$",
-                "aliases": ['or', 'cc / g', 'cm^{3 / g'],
+                "aliases": ['cm^{3 / g', 'cc / g'],
             },
             {
                 "name": "cubic_foot_per_kilogram",
@@ -6069,7 +6069,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.028317,
                 "full_name": "cubic foot per kilogram",
                 "notation": "$\\mathrm{ft}^{3} / \\mathrm{kg}$ or $\\mathrm{cft} / \\mathrm{kg}$",
-                "aliases": ['or', 'cft / kg', 'ft^{3 / kg'],
+                "aliases": ['ft^{3 / kg', 'cft / kg'],
             },
             {
                 "name": "cubic_foot_per_pound",
@@ -6077,7 +6077,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.062428,
                 "full_name": "cubic foot per pound",
                 "notation": "$\\mathrm{ft}^{3} / \\mathrm{lb}$ or $\\mathrm{cft} / \\mathrm{lb}$",
-                "aliases": ['cft / lb', 'or', 'ft^{3 / lb'],
+                "aliases": ['ft^{3 / lb', 'cft / lb'],
             },
             {
                 "name": "cubic_meter_per_kilogram",
@@ -6101,7 +6101,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.1,
                 "full_name": "dyne per square centimeter",
                 "notation": "dyn/ $\\mathrm{cm}^{2}$",
-                "aliases": ['dyn/'],
+                "aliases": [],
             },
             {
                 "name": "gigapascal",
@@ -6125,7 +6125,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 98067.0,
                 "full_name": "kilogram force per square centimeter",
                 "notation": "at or $\\mathrm{kg}_{\\mathrm{f}} / \\mathrm{cm}^{2}$",
-                "aliases": ['at', 'kg_{f / cm^{2', 'at or'],
+                "aliases": ['at', 'kg_{f / cm^{2'],
             },
             {
                 "name": "kilogram_force_per_square_meter",
@@ -6141,7 +6141,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 6894800.0,
                 "full_name": "kip force per square inch",
                 "notation": "KSI or ksi or kip ${ }_{f} / \\mathrm{in}^{2}$",
-                "aliases": ['KSI', 'ksi', 'KSI or ksi or kip', 'kip { _{f / in^{2'],
+                "aliases": ['KSI', 'ksi', 'kip { _{f / in^{2'],
             },
             {
                 "name": "megapascal",
@@ -6165,7 +6165,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 430.922,
                 "full_name": "ounce force per square inch",
                 "notation": "OSI or osi or $\\mathrm{oz}_{\\mathrm{f}} / \\mathrm{in}^{2}$",
-                "aliases": ['OSI or osi or', 'OSI', 'oz_{f / in^{2', 'osi'],
+                "aliases": ['OSI', 'osi', 'oz_{f / in^{2'],
             },
             {
                 "name": "pascal",
@@ -6181,7 +6181,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 47.880259,
                 "full_name": "pound force per square foot",
                 "notation": "PSF or psf or $\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{ft}^{2}$",
-                "aliases": ['PSF or psf or', 'lb_{f / ft^{2', 'psf', 'PSF'],
+                "aliases": ['PSF', 'psf', 'lb_{f / ft^{2'],
             },
             {
                 "name": "pound_force_per_square_inch",
@@ -6189,7 +6189,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 6894.8,
                 "full_name": "pound force per square inch",
                 "notation": "PSI or psi or $\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{in}^{2}$",
-                "aliases": ['lb_{f / in^{2', 'PSI', 'PSI or psi or', 'psi'],
+                "aliases": ['PSI', 'psi', 'lb_{f / in^{2'],
             }
         ],
         "aliases": {}
@@ -6245,7 +6245,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.001,
                 "full_name": "dyne per centimeter",
                 "notation": "dyn/cm",
-                "aliases": ['dyn/cm'],
+                "aliases": [],
             },
             {
                 "name": "gram_force_per_centimeter",
@@ -6261,7 +6261,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.0,
                 "full_name": "newton per meter",
                 "notation": "N/m",
-                "aliases": ['N/m'],
+                "aliases": [],
             },
             {
                 "name": "pound_force_per_foot",
@@ -6309,7 +6309,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.25,
                 "full_name": "degree Réaumur (unit size)",
                 "notation": "Ré ${ }^{\\circ}$",
-                "aliases": ['Ré'],
+                "aliases": [],
             },
             {
                 "name": "kelvin_absolute_scale",
@@ -6341,7 +6341,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.207688,
                 "full_name": "Btu (IT) per inch per hour per degree Fahrenheit",
                 "notation": "Btu (IT)/(in hr ${ }^{\\circ} \\mathrm{F}$ )",
-                "aliases": ['Btu IT/in hr'],
+                "aliases": [],
             },
             {
                 "name": "btu_therm",
@@ -6365,7 +6365,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.01,
                 "full_name": "joule per second per centimeter per kelvin",
                 "notation": "J/(cm s K)",
-                "aliases": ['J/cm s K'],
+                "aliases": [],
             },
             {
                 "name": "watt_per_centimeter_per_kelvin",
@@ -6373,7 +6373,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.0,
                 "full_name": "watt per centimeter per kelvin",
                 "notation": "W/(cm K)",
-                "aliases": ['W/cm K'],
+                "aliases": [],
             },
             {
                 "name": "watt_per_meter_per_kelvin",
@@ -6381,7 +6381,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.01,
                 "full_name": "watt per meter per kelvin",
                 "notation": "W/(m K)",
-                "aliases": ['W/m K'],
+                "aliases": [],
             }
         ],
         "aliases": {}
@@ -6405,7 +6405,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 3155800000.0,
                 "full_name": "century",
                 "notation": "-",
-                "aliases": ['-'],
+                "aliases": [],
             },
             {
                 "name": "chronon_or_tempon",
@@ -6413,7 +6413,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1e-23,
                 "full_name": "chronon or tempon",
                 "notation": "-",
-                "aliases": ['-'],
+                "aliases": [],
             },
             {
                 "name": "gigan_or_eon",
@@ -6421,7 +6421,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 3.1558e+16,
                 "full_name": "gigan or eon",
                 "notation": "Ga or eon",
-                "aliases": ['eon', 'Ga or eon', 'Ga'],
+                "aliases": ['Ga', 'eon'],
             },
             {
                 "name": "hour",
@@ -6429,7 +6429,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 3600.0,
                 "full_name": "hour",
                 "notation": "h or hr",
-                "aliases": ['h or hr', 'hr', 'h'],
+                "aliases": ['h', 'hr'],
             },
             {
                 "name": "julian_year",
@@ -6437,7 +6437,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 31557000.0,
                 "full_name": "Julian year",
                 "notation": "a (jul) or yr",
-                "aliases": ['yr', 'a jul or yr', 'a (jul)'],
+                "aliases": ['a (jul)', 'yr'],
             },
             {
                 "name": "mean_solar_day",
@@ -6445,7 +6445,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 86400.0,
                 "full_name": "mean solar day",
                 "notation": "da or d",
-                "aliases": ['da or d', 'da', 'd'],
+                "aliases": ['da', 'd'],
             },
             {
                 "name": "microsecond",
@@ -6453,7 +6453,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1e-06,
                 "full_name": "microsecond",
                 "notation": "μs",
-                "aliases": ['μs'],
+                "aliases": [],
             },
             {
                 "name": "millenium",
@@ -6461,7 +6461,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 31558000000.0,
                 "full_name": "millenium",
                 "notation": "-",
-                "aliases": ['-'],
+                "aliases": [],
             },
             {
                 "name": "millisecond",
@@ -6469,7 +6469,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.001,
                 "full_name": "millisecond",
                 "notation": "ms",
-                "aliases": ['ms'],
+                "aliases": [],
             },
             {
                 "name": "minute",
@@ -6485,7 +6485,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1e-09,
                 "full_name": "nanosecond",
                 "notation": "ns",
-                "aliases": ['ns'],
+                "aliases": [],
             },
             {
                 "name": "picosecond",
@@ -6493,7 +6493,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1e-12,
                 "full_name": "picosecond",
                 "notation": "ps",
-                "aliases": ['ps'],
+                "aliases": [],
             },
             {
                 "name": "second",
@@ -6517,7 +6517,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 31551999.999999996,
                 "full_name": "sidereal year (1900 AD)",
                 "notation": "a (sider) or yr",
-                "aliases": ['yr', 'a sider or yr', 'a (sider)'],
+                "aliases": ['a (sider)', 'yr'],
             },
             {
                 "name": "tropical_year",
@@ -6525,7 +6525,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 31557000.0,
                 "full_name": "tropical year",
                 "notation": "a (trop)",
-                "aliases": ['a trop'],
+                "aliases": [],
             },
             {
                 "name": "wink",
@@ -6541,7 +6541,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 31558000.0,
                 "full_name": "year",
                 "notation": "a or y or yr",
-                "aliases": ['yr', 'a', 'a or y or yr', 'y'],
+                "aliases": ['a', 'y', 'yr'],
             }
         ],
         "aliases": {}
@@ -6557,7 +6557,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.098067,
                 "full_name": "centimeter kilogram force",
                 "notation": "cm kg ${ }_{\\mathrm{f}}$",
-                "aliases": ['cm kg'],
+                "aliases": [],
             },
             {
                 "name": "dyne_centimeter",
@@ -6565,7 +6565,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1e-07,
                 "full_name": "dyne centimeter",
                 "notation": "dyn cm",
-                "aliases": ['dyn cm'],
+                "aliases": [],
             },
             {
                 "name": "foot_kilogram_force",
@@ -6589,7 +6589,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.04214,
                 "full_name": "foot poundal",
                 "notation": "ft pdl",
-                "aliases": ['ft pdl'],
+                "aliases": [],
             },
             {
                 "name": "in_pound_force",
@@ -6597,7 +6597,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.11298,
                 "full_name": "in pound force",
                 "notation": "in $\\mathrm{lb}_{\\mathrm{f}}$",
-                "aliases": ['in'],
+                "aliases": [],
             },
             {
                 "name": "inch_ounce_force",
@@ -6605,7 +6605,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.0070616,
                 "full_name": "inch ounce force",
                 "notation": "in $\\mathrm{OZ}_{\\mathrm{f}}$",
-                "aliases": ['in'],
+                "aliases": [],
             },
             {
                 "name": "meter_kilogram_force",
@@ -6621,7 +6621,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.01,
                 "full_name": "newton centimeter",
                 "notation": "N cm",
-                "aliases": ['N cm'],
+                "aliases": [],
             },
             {
                 "name": "newton_meter",
@@ -6629,7 +6629,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.0,
                 "full_name": "newton meter",
                 "notation": "N m",
-                "aliases": ['N m'],
+                "aliases": [],
             }
         ],
         "aliases": {}
@@ -6645,7 +6645,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.0929,
                 "full_name": "square foot per cubic second",
                 "notation": "$\\mathrm{ft}^{2} / \\mathrm{s}^{3}$ or sq ft/sec ${ }^{3}$",
-                "aliases": ['ft^{2 / s^{3', 'sq ft/sec { ^{3', 'or sq ft/sec'],
+                "aliases": ['ft^{2 / s^{3', 'sq ft/sec { ^{3'],
             },
             {
                 "name": "square_meter_per_cubic_second",
@@ -6669,7 +6669,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.000290888,
                 "full_name": "degree per minute",
                 "notation": "deg/min or ${ }^{\\circ} / \\mathrm{min}$",
-                "aliases": ['deg/min or', '{ ^{circ / min', 'deg/min'],
+                "aliases": ['deg/min', '{ ^{circ / min'],
             },
             {
                 "name": "degree_per_second",
@@ -6677,7 +6677,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.0174533,
                 "full_name": "degree per second",
                 "notation": "deg/s or ${ }^{\\circ}$ /s",
-                "aliases": ['{ ^{circ /s', 'deg/s', 'deg/s or  /s'],
+                "aliases": ['deg/s', '{ ^{circ /s'],
             },
             {
                 "name": "grade_per_minute",
@@ -6685,7 +6685,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.000261799,
                 "full_name": "grade per minute",
                 "notation": "gon/min or grad/min",
-                "aliases": ['grad/min', 'gon/min or grad/min', 'gon/min'],
+                "aliases": ['gon/min', 'grad/min'],
             },
             {
                 "name": "radian_per_minute",
@@ -6709,7 +6709,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.010472,
                 "full_name": "revolution per minute",
                 "notation": "rev/m or rpm",
-                "aliases": ['rev/m or rpm', 'rev/m', 'rpm'],
+                "aliases": ['rev/m', 'rpm'],
             },
             {
                 "name": "revolution_per_second",
@@ -6717,7 +6717,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 6.283185,
                 "full_name": "revolution per second",
                 "notation": "rev/s or rps",
-                "aliases": ['rev/s or rps', 'rps', 'rev/s'],
+                "aliases": ['rev/s', 'rps'],
             },
             {
                 "name": "turn_per_minute",
@@ -6725,7 +6725,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.010472,
                 "full_name": "turn per minute",
                 "notation": "tr/min",
-                "aliases": ['tr/min'],
+                "aliases": [],
             }
         ],
         "aliases": {}
@@ -6741,7 +6741,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 8.4667e-05,
                 "full_name": "foot per hour",
                 "notation": "ft/h or ft/hr or fph",
-                "aliases": ['ft/h or ft/hr or fph', 'ft/hr', 'ft/h', 'fph'],
+                "aliases": ['ft/h', 'ft/hr', 'fph'],
             },
             {
                 "name": "foot_per_minute",
@@ -6749,7 +6749,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.00508,
                 "full_name": "foot per minute",
                 "notation": "ft/min or fpm",
-                "aliases": ['ft/min', 'fpm', 'ft/min or fpm'],
+                "aliases": ['ft/min', 'fpm'],
             },
             {
                 "name": "foot_per_second",
@@ -6757,7 +6757,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.3048,
                 "full_name": "foot per second",
                 "notation": "ft/s or fps",
-                "aliases": ['fps', 'ft/s or fps', 'ft/s'],
+                "aliases": ['ft/s', 'fps'],
             },
             {
                 "name": "inch_per_second",
@@ -6765,7 +6765,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.0254,
                 "full_name": "inch per second",
                 "notation": "in/s or ips",
-                "aliases": ['in/s or ips', 'in/s', 'ips'],
+                "aliases": ['in/s', 'ips'],
             },
             {
                 "name": "international_knot",
@@ -6781,7 +6781,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.027778,
                 "full_name": "kilometer per hour",
                 "notation": "km/h ot kph",
-                "aliases": ['km/h ot kph'],
+                "aliases": [],
             },
             {
                 "name": "kilometer_per_second",
@@ -6789,7 +6789,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1000.0,
                 "full_name": "kilometer per second",
                 "notation": "km/s",
-                "aliases": ['km/s'],
+                "aliases": [],
             },
             {
                 "name": "meter_per_second",
@@ -6805,7 +6805,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.0444704,
                 "full_name": "mile per hour",
                 "notation": "$\\mathrm{mi} / \\mathrm{h}$ or $\\mathrm{mi} / \\mathrm{hr}$ or mph",
-                "aliases": ['or  or mph', 'mi / hr', 'mph', 'mi / h'],
+                "aliases": ['mi / h', 'mi / hr', 'mph'],
             }
         ],
         "aliases": {}
@@ -6821,7 +6821,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.01,
                 "full_name": "centipoise",
                 "notation": "cP or cPo",
-                "aliases": ['cP or cPo', 'cP', 'cPo'],
+                "aliases": ['cP', 'cPo'],
             },
             {
                 "name": "dyne_second_per_square_centimeter",
@@ -6829,7 +6829,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.0,
                 "full_name": "dyne second per square centimeter",
                 "notation": "dyn s/ $\\mathrm{cm}^{2}$",
-                "aliases": ['dyn s/'],
+                "aliases": [],
             },
             {
                 "name": "kilopound_second_per_square_meter",
@@ -6837,7 +6837,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 98.0665,
                 "full_name": "kilopound second per square meter",
                 "notation": "kip $\\mathrm{s} / \\mathrm{m}^{2}$",
-                "aliases": ['kip'],
+                "aliases": [],
             },
             {
                 "name": "millipoise",
@@ -6845,7 +6845,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.001,
                 "full_name": "millipoise",
                 "notation": "mP or mPo",
-                "aliases": ['mP', 'mP or mPo', 'mPo'],
+                "aliases": ['mP', 'mPo'],
             },
             {
                 "name": "newton_second_per_square_meter",
@@ -6861,7 +6861,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 10.0,
                 "full_name": "pascal second",
                 "notation": "Pa s or PI",
-                "aliases": ['PI', 'Pa s or PI', 'Pa s'],
+                "aliases": ['Pa s', 'PI'],
             },
             {
                 "name": "poise",
@@ -6869,7 +6869,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.0,
                 "full_name": "poise",
                 "notation": "P or Po",
-                "aliases": ['P or Po', 'P', 'Po'],
+                "aliases": ['P', 'Po'],
             },
             {
                 "name": "pound_force_hour_per_square_foot",
@@ -6877,7 +6877,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1723690.0,
                 "full_name": "pound force hour per square foot",
                 "notation": "$\\mathrm{lb}_{\\mathrm{f}} \\mathrm{h} / \\mathrm{ft}^{2}$ or $\\mathrm{lb} \\mathrm{hr} / \\mathrm{sq}$ ft",
-                "aliases": ['lb_{f h / ft^{2', 'or  ft', 'lb hr / sq ft'],
+                "aliases": ['lb_{f h / ft^{2', 'lb hr / sq ft'],
             },
             {
                 "name": "pound_force_second_per_square_foot",
@@ -6885,7 +6885,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 478.803,
                 "full_name": "pound force second per square foot",
                 "notation": "$\\mathrm{lb}_{\\mathrm{f}} \\mathrm{s} / \\mathrm{ft}^{2}$ or $\\mathrm{lb} \\mathrm{sec} / \\mathrm{sq}$ ft",
-                "aliases": ['lb sec / sq ft', 'lb_{f s / ft^{2', 'or  ft'],
+                "aliases": ['lb_{f s / ft^{2', 'lb sec / sq ft'],
             }
         ],
         "aliases": {}
@@ -6925,7 +6925,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 2.58064e-05,
                 "full_name": "square foot per hour",
                 "notation": "$\\mathrm{ft}^{2} / \\mathrm{h}$ or $\\mathrm{ft}^{2} / \\mathrm{hr}$",
-                "aliases": ['ft^{2 / h', 'or', 'ft^{2 / hr'],
+                "aliases": ['ft^{2 / h', 'ft^{2 / hr'],
             },
             {
                 "name": "square_foot_per_second",
@@ -6965,7 +6965,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1233.48,
                 "full_name": "acre foot",
                 "notation": "ac-ft",
-                "aliases": ['ac-ft'],
+                "aliases": [],
             },
             {
                 "name": "acre_inch",
@@ -6973,7 +6973,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 102.79,
                 "full_name": "acre inch",
                 "notation": "ac-in",
-                "aliases": ['ac-in'],
+                "aliases": [],
             },
             {
                 "name": "barrel_us_liquid",
@@ -6981,7 +6981,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.1192405,
                 "full_name": "barrel (US Liquid)",
                 "notation": "bbl (US liq)",
-                "aliases": ['bbl US liq'],
+                "aliases": [],
             },
             {
                 "name": "barrel_us_petro",
@@ -6997,7 +6997,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.00235974,
                 "full_name": "board foot measure",
                 "notation": "BM or fbm",
-                "aliases": ['BM', 'BM or fbm', 'fbm'],
+                "aliases": ['BM', 'fbm'],
             },
             {
                 "name": "bushel_us_dry",
@@ -7005,7 +7005,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.0352391,
                 "full_name": "bushel (US Dry)",
                 "notation": "bu (US dry)",
-                "aliases": ['bu US dry'],
+                "aliases": [],
             },
             {
                 "name": "centiliter",
@@ -7013,7 +7013,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1e-05,
                 "full_name": "centiliter",
                 "notation": "cl or cL",
-                "aliases": ['cL', 'cl or cL', 'cl'],
+                "aliases": ['cl', 'cL'],
             },
             {
                 "name": "cord",
@@ -7021,7 +7021,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 3.62456,
                 "full_name": "cord",
                 "notation": "cord or cd",
-                "aliases": ['cord or cd', 'cd'],
+                "aliases": ['cd'],
             },
             {
                 "name": "cord_foot",
@@ -7029,7 +7029,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.4530695,
                 "full_name": "cord foot",
                 "notation": "cord-ft",
-                "aliases": ['cord-ft'],
+                "aliases": [],
             },
             {
                 "name": "cubic_centimeter",
@@ -7037,7 +7037,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1e-06,
                 "full_name": "cubic centimeter",
                 "notation": "$\\mathrm{cm}^{3}$ or cc",
-                "aliases": ['cc', 'cm^{3', 'or cc'],
+                "aliases": ['cm^{3', 'cc'],
             },
             {
                 "name": "cubic_decameter",
@@ -7045,7 +7045,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1000.0,
                 "full_name": "cubic decameter",
                 "notation": "dam ${ }^{3}$",
-                "aliases": ['dam'],
+                "aliases": [],
             },
             {
                 "name": "cubic_decimeter",
@@ -7061,7 +7061,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.0283168,
                 "full_name": "cubic foot",
                 "notation": "cu ft or ft ${ }^{3}$",
-                "aliases": ['cu ft', 'ft { ^{3', 'cu ft or ft'],
+                "aliases": ['cu ft', 'ft { ^{3'],
             },
             {
                 "name": "cubic_inch",
@@ -7069,7 +7069,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.63871e-05,
                 "full_name": "cubic inch",
                 "notation": "cu in or $\\mathrm{in}^{3}$",
-                "aliases": ['cu in', 'cu in or', 'in^{3'],
+                "aliases": ['cu in', 'in^{3'],
             },
             {
                 "name": "cubic_kilometer",
@@ -7101,7 +7101,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 4168180000.0000005,
                 "full_name": "cubic mile (US, Intl)",
                 "notation": "cu mi",
-                "aliases": ['cu mi'],
+                "aliases": [],
             },
             {
                 "name": "cubic_millimeter",
@@ -7117,7 +7117,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.7645549,
                 "full_name": "cubic yard",
                 "notation": "cu yd or $\\mathrm{yd}^{3}$",
-                "aliases": ['cu yd or', 'cu yd', 'yd^{3'],
+                "aliases": ['cu yd', 'yd^{3'],
             },
             {
                 "name": "decastére",
@@ -7133,7 +7133,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.0001,
                 "full_name": "deciliter",
                 "notation": "dl or dL",
-                "aliases": ['dL', 'dl', 'dl or dL'],
+                "aliases": ['dl', 'dL'],
             },
             {
                 "name": "fluid_drachm_uk",
@@ -7141,7 +7141,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 3.5516299999999996e-06,
                 "full_name": "fluid drachm (UK)",
                 "notation": "fl dr (UK)",
-                "aliases": ['fl dr UK'],
+                "aliases": [],
             },
             {
                 "name": "fluid_dram_us",
@@ -7149,7 +7149,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 3.69669e-06,
                 "full_name": "fluid dram (US)",
                 "notation": "fl dr (US liq)",
-                "aliases": ['fl dr US liq'],
+                "aliases": [],
             },
             {
                 "name": "fluid_ounce_us",
@@ -7157,7 +7157,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 2.95735e-05,
                 "full_name": "fluid ounce (US)",
                 "notation": "fl oz",
-                "aliases": ['fl oz'],
+                "aliases": [],
             },
             {
                 "name": "gallon_imperial_uk",
@@ -7165,7 +7165,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.00454609,
                 "full_name": "gallon (Imperial UK)",
                 "notation": "gal (UK) or Imp gal",
-                "aliases": ['gal (UK)', 'gal UK or Imp gal', 'Imp gal'],
+                "aliases": ['gal (UK)', 'Imp gal'],
             },
             {
                 "name": "gallon_us_dry",
@@ -7173,7 +7173,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.004404884,
                 "full_name": "gallon (US Dry)",
                 "notation": "gal (US dry)",
-                "aliases": ['gal US dry'],
+                "aliases": [],
             },
             {
                 "name": "gallon_us_liquid",
@@ -7197,7 +7197,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.001,
                 "full_name": "liter",
                 "notation": "1 or L",
-                "aliases": ['1', 'L', '1 or L'],
+                "aliases": ['1', 'L'],
             },
             {
                 "name": "microliter",
@@ -7205,7 +7205,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1e-09,
                 "full_name": "microliter",
                 "notation": "$\\mu \\mathrm{l}$ or $\\mu \\mathrm{L}$",
-                "aliases": ['or', 'mu L', 'mu l'],
+                "aliases": ['mu l', 'mu L'],
             },
             {
                 "name": "milliliter",
@@ -7229,7 +7229,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.000568262,
                 "full_name": "pint (UK)",
                 "notation": "pt (UK)",
-                "aliases": ['pt UK'],
+                "aliases": [],
             },
             {
                 "name": "pint_us_dry",
@@ -7237,7 +7237,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.000550611,
                 "full_name": "pint (US Dry)",
                 "notation": "pt (US dry)",
-                "aliases": ['pt US dry'],
+                "aliases": [],
             },
             {
                 "name": "pint_us_liquid",
@@ -7253,7 +7253,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.00110122,
                 "full_name": "quart (US Dry)",
                 "notation": "qt (US dry)",
-                "aliases": ['qt US dry'],
+                "aliases": [],
             },
             {
                 "name": "stére",
@@ -7269,7 +7269,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.5000000000000002e-05,
                 "full_name": "tablespoon (Metric)",
                 "notation": "tbsp (Metric)",
-                "aliases": ['tbsp Metric'],
+                "aliases": [],
             },
             {
                 "name": "tablespoon_us",
@@ -7301,7 +7301,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.0001,
                 "full_name": "cubic centimeters of \"i\" per cubic meter total",
                 "notation": "$\\mathrm{cm}_{\\mathrm{i}}^{3} / \\mathrm{m}^{3}$ or $\\mathrm{cc}_{\\mathrm{i}} / \\mathrm{m}^{3}$",
-                "aliases": ['or', 'cm_{i^{3 / m^{3', 'cc_{i / m^{3'],
+                "aliases": ['cm_{i^{3 / m^{3', 'cc_{i / m^{3'],
             },
             {
                 "name": "cubic_foot_of_i_per_cubic_foot_total",
@@ -7309,7 +7309,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.0,
                 "full_name": "cubic foot of \"i\" per cubic foot total",
                 "notation": "$\\mathrm{ft}_{\\mathrm{i}}^{3} / \\mathrm{ft}^{3}$ or $\\mathrm{cft}_{\\mathrm{i}} / \\mathrm{cft}$",
-                "aliases": ['or', 'cft_{i / cft', 'ft_{i^{3 / ft^{3'],
+                "aliases": ['ft_{i^{3 / ft^{3', 'cft_{i / cft'],
             },
             {
                 "name": "cubic_meters_of_i_per_cubic_meter_total",
@@ -7341,7 +7341,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 37260.0,
                 "full_name": "British thermal unit per cubic foot",
                 "notation": "$\\mathrm{Btu} / \\mathrm{ft}^{3}$ or Btu/cft",
-                "aliases": ['Btu/cft', 'Btu / ft^{3', 'or Btu/cft'],
+                "aliases": ['Btu / ft^{3', 'Btu/cft'],
             },
             {
                 "name": "british_thermal_unit_per_gallon_uk",
@@ -7349,7 +7349,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 232090.0,
                 "full_name": "British thermal unit per gallon (UK)",
                 "notation": "Btu/gal (UK)",
-                "aliases": ['Btu/gal UK'],
+                "aliases": [],
             },
             {
                 "name": "british_thermal_unit_per_gallon_us",
@@ -7357,7 +7357,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 193260.0,
                 "full_name": "British thermal unit per gallon (US)",
                 "notation": "Btu/gal (US)",
-                "aliases": ['Btu/gal US'],
+                "aliases": [],
             },
             {
                 "name": "calorie_per_cubic_centimeter",
@@ -7365,7 +7365,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 4186800.0,
                 "full_name": "calorie per cubic centimeter",
                 "notation": "$\\mathrm{cal} / \\mathrm{cm}^{3}$ or $\\mathrm{cal} / \\mathrm{cc}$",
-                "aliases": ['or', 'cal / cm^{3', 'cal / cc'],
+                "aliases": ['cal / cm^{3', 'cal / cc'],
             },
             {
                 "name": "chu_per_cubic_foot",
@@ -7373,7 +7373,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 67067.0,
                 "full_name": "Chu per cubic foot",
                 "notation": "$\\mathrm{Chu} / \\mathrm{ft}^{3}$ or $\\mathrm{Chu} / \\mathrm{cft}$",
-                "aliases": ['or', 'Chu / ft^{3', 'Chu / cft'],
+                "aliases": ['Chu / ft^{3', 'Chu / cft'],
             },
             {
                 "name": "joule_per_cubic_meter",
@@ -7389,7 +7389,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 147860.0,
                 "full_name": "kilocalorie per cubic foot",
                 "notation": "$\\mathrm{kcal} / \\mathrm{ft}^{3}$ or $\\mathrm{kcal} / \\mathrm{cft}$",
-                "aliases": ['or', 'kcal / ft^{3', 'kcal / cft'],
+                "aliases": ['kcal / ft^{3', 'kcal / cft'],
             },
             {
                 "name": "kilocalorie_per_cubic_meter",
@@ -7405,7 +7405,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 3726000000.0,
                 "full_name": "therm ( 100 K Btu ) per cubic foot",
                 "notation": "thm/cft",
-                "aliases": ['thm/cft'],
+                "aliases": [],
             }
         ],
         "aliases": {}
@@ -7421,7 +7421,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1000.0,
                 "full_name": "gram per cubic centimeter per kelvin (or degree Celsius)",
                 "notation": "$\\mathrm{g} / \\mathrm{cm}^{3} / \\mathrm{K}$ or g/cc/ ${ }^{\\circ} \\mathrm{C}$",
-                "aliases": ['g/cc/ { ^{circ C', 'g / cm^{3 / K', 'or g/cc/'],
+                "aliases": ['g / cm^{3 / K', 'g/cc/ { ^{circ C'],
             },
             {
                 "name": "kilogram_per_cubic_meter_per_kelvin_or_degree_celsius",
@@ -7429,7 +7429,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.0,
                 "full_name": "kilogram per cubic meter per kelvin (or degree Celsius)",
                 "notation": "$\\mathrm{kg} / \\mathrm{m}^{3} / \\mathrm{K}$ or $\\mathrm{kg} / \\mathrm{m}^{3} /{ }^{\\circ}$ C",
-                "aliases": ['kg / m^{3 / K', 'or  C', 'kg / m^{3 /{ ^{circ C'],
+                "aliases": ['kg / m^{3 / K', 'kg / m^{3 /{ ^{circ C'],
             },
             {
                 "name": "pound_per_cubic_foot_per_degree_fahrenheit_or_degree_rankine",
@@ -7437,7 +7437,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 28.833,
                 "full_name": "pound per cubic foot per degree Fahrenheit (or degree Rankine)",
                 "notation": "$\\mathrm{lb} / \\mathrm{ft}^{3} /{ }^{\\circ} \\mathrm{R}$ or $\\mathrm{lb} / \\mathrm{cft} /{ }^{\\circ} \\mathrm{F}$",
-                "aliases": ['or', 'lb / cft /{ ^{circ F', 'lb / ft^{3 /{ ^{circ R'],
+                "aliases": ['lb / ft^{3 /{ ^{circ R', 'lb / cft /{ ^{circ F'],
             },
             {
                 "name": "pound_per_cubic_foot_per_kelvin_or_degree_celsius",
@@ -7445,7 +7445,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 16.018,
                 "full_name": "pound per cubic foot per kelvin (or degree Celsius)",
                 "notation": "$\\mathrm{lb} / \\mathrm{ft}^{3} / \\mathrm{K}$ or $\\mathrm{lb} / \\mathrm{cft} /{ }^{\\circ} \\mathrm{C}$",
-                "aliases": ['or', 'lb / cft /{ ^{circ C', 'lb / ft^{3 / K'],
+                "aliases": ['lb / ft^{3 / K', 'lb / cft /{ ^{circ C'],
             }
         ],
         "aliases": {}
@@ -7461,7 +7461,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 3.2778e-07,
                 "full_name": "cubic feet per day",
                 "notation": "$\\mathrm{ft}^{3} / \\mathrm{d}$ or $\\mathrm{cft} / \\mathrm{da}$ or cfd",
-                "aliases": ['cfd', 'cft / da', 'or  or cfd', 'ft^{3 / d'],
+                "aliases": ['ft^{3 / d', 'cft / da', 'cfd'],
             },
             {
                 "name": "cubic_feet_per_hour",
@@ -7469,7 +7469,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 7.866699999999999e-06,
                 "full_name": "cubic feet per hour",
                 "notation": "$\\mathrm{ft}^{3} / \\mathrm{h}$ or $\\mathrm{cft} / \\mathrm{hr}$ or cfh",
-                "aliases": ['cfh', 'ft^{3 / h', 'or  or cfh', 'cft / hr'],
+                "aliases": ['ft^{3 / h', 'cft / hr', 'cfh'],
             },
             {
                 "name": "cubic_feet_per_minute",
@@ -7477,7 +7477,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.000472,
                 "full_name": "cubic feet per minute",
                 "notation": "$\\mathrm{ft}^{3} / \\mathrm{min}$ or $\\mathrm{cft} / \\mathrm{min}$ or cfm",
-                "aliases": ['ft^{3 / min', 'cfm', 'or  or cfm', 'cft / min'],
+                "aliases": ['ft^{3 / min', 'cft / min', 'cfm'],
             },
             {
                 "name": "cubic_feet_per_second",
@@ -7485,7 +7485,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.02832,
                 "full_name": "cubic feet per second",
                 "notation": "$\\mathrm{ft}^{3} / \\mathrm{s}$ or cft/sec or cfs",
-                "aliases": ['cft/sec', 'cfs', 'ft^{3 / s', 'or cft/sec or cfs'],
+                "aliases": ['ft^{3 / s', 'cft/sec', 'cfs'],
             },
             {
                 "name": "cubic_meters_per_day",
@@ -7525,7 +7525,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.002628,
                 "full_name": "gallons per day",
                 "notation": "gal/d or gpd or gal/ da",
-                "aliases": ['gal/d or gpd or gal/ da', 'gal/ da', 'gal/d', 'gpd'],
+                "aliases": ['gal/d', 'gpd', 'gal/ da'],
             },
             {
                 "name": "gallons_per_hour",
@@ -7533,7 +7533,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.06308,
                 "full_name": "gallons per hour",
                 "notation": "gal/h or gph or gal/ hr",
-                "aliases": ['gal/ hr', 'gal/h or gph or gal/ hr', 'gal/h', 'gph'],
+                "aliases": ['gal/h', 'gph', 'gal/ hr'],
             },
             {
                 "name": "gallons_per_minute",
@@ -7541,7 +7541,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 3.785,
                 "full_name": "gallons per minute",
                 "notation": "gal/min or gpm",
-                "aliases": ['gpm', 'gal/min or gpm', 'gal/min'],
+                "aliases": ['gal/min', 'gpm'],
             },
             {
                 "name": "gallons_per_second",
@@ -7549,7 +7549,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 227.1,
                 "full_name": "gallons per second",
                 "notation": "gal/s or gps or gal/ sec",
-                "aliases": ['gal/s', 'gal/ sec', 'gps', 'gal/s or gps or gal/ sec'],
+                "aliases": ['gal/s', 'gps', 'gal/ sec'],
             },
             {
                 "name": "liters_per_day",
@@ -7557,7 +7557,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.00069444,
                 "full_name": "liters per day",
                 "notation": "1/d",
-                "aliases": ['1/d'],
+                "aliases": [],
             },
             {
                 "name": "liters_per_hour",
@@ -7565,7 +7565,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.016667,
                 "full_name": "liters per hour",
                 "notation": "1/h",
-                "aliases": ['1/h'],
+                "aliases": [],
             },
             {
                 "name": "liters_per_minute",
@@ -7581,7 +7581,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 60.0,
                 "full_name": "liters per second",
                 "notation": "1/s",
-                "aliases": ['1/s'],
+                "aliases": [],
             }
         ],
         "aliases": {}
@@ -7597,7 +7597,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 3.5276e-06,
                 "full_name": "cubic feet per square foot per day",
                 "notation": "$\\mathrm{ft}^{3} /\\left(\\mathrm{ft}^{2} \\mathrm{~d}\\right)$ or $\\mathrm{cft} / \\mathrm{sqft} /$ da",
-                "aliases": ['cft / sqft / da', 'or  da', 'ft^{3 /left(ft^{2 ~dright)'],
+                "aliases": ['ft^{3 /left(ft^{2 ~dright)', 'cft / sqft / da'],
             },
             {
                 "name": "cubic_feet_per_square_foot_per_hour",
@@ -7605,7 +7605,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 8.466300000000001e-05,
                 "full_name": "cubic feet per square foot per hour",
                 "notation": "$\\mathrm{ft}^{3} /\\left(\\mathrm{ft}^{2} \\mathrm{~h}\\right)$ or $\\mathrm{cft} / \\mathrm{sqft} /$ hr",
-                "aliases": ['or  hr', 'ft^{3 /left(ft^{2 ~hright)', 'cft / sqft / hr'],
+                "aliases": ['ft^{3 /left(ft^{2 ~hright)', 'cft / sqft / hr'],
             },
             {
                 "name": "cubic_feet_per_square_foot_per_minute",
@@ -7613,7 +7613,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.0050798,
                 "full_name": "cubic feet per square foot per minute",
                 "notation": "$\\mathrm{ft}^{3} /\\left(\\mathrm{ft}^{2} \\min \\right)$ or $\\mathrm{cft} /$ sqft/min",
-                "aliases": ['or  sqft/min', 'cft / sqft/min', 'ft^{3 /left(ft^{2 min right)'],
+                "aliases": ['ft^{3 /left(ft^{2 min right)', 'cft / sqft/min'],
             },
             {
                 "name": "cubic_feet_per_square_foot_per_second",
@@ -7621,7 +7621,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.30479,
                 "full_name": "cubic feet per square foot per second",
                 "notation": "$\\mathrm{ft}^{3} /\\left(\\mathrm{ft}^{2} \\mathrm{~s}\\right)$ or cft/sqft/ sec",
-                "aliases": ['or cft/sqft/ sec', 'cft/sqft/ sec', 'ft^{3 /left(ft^{2 ~sright)'],
+                "aliases": ['ft^{3 /left(ft^{2 ~sright)', 'cft/sqft/ sec'],
             },
             {
                 "name": "cubic_meters_per_square_meter_per_day",
@@ -7661,7 +7661,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.00047138000000000003,
                 "full_name": "gallons per square foot per day",
                 "notation": "$\\mathrm{gal} /\\left(\\mathrm{ft}^{2} \\mathrm{~d}\\right)$ or gal/ sqft/da",
-                "aliases": ['or gal/ sqft/da', 'gal/ sqft/da', 'gal /left(ft^{2 ~dright)'],
+                "aliases": ['gal /left(ft^{2 ~dright)', 'gal/ sqft/da'],
             },
             {
                 "name": "gallons_per_square_foot_per_hour",
@@ -7669,7 +7669,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.011313,
                 "full_name": "gallons per square foot per hour",
                 "notation": "$\\mathrm{gal} /\\left(\\mathrm{ft}^{2} \\mathrm{~h}\\right)$ or gal/ sqft/hr",
-                "aliases": ['gal/ sqft/hr', 'gal /left(ft^{2 ~hright)', 'or gal/ sqft/hr'],
+                "aliases": ['gal /left(ft^{2 ~hright)', 'gal/ sqft/hr'],
             },
             {
                 "name": "gallons_per_square_foot_per_minute",
@@ -7677,7 +7677,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.67878,
                 "full_name": "gallons per square foot per minute",
                 "notation": "$\\mathrm{gal} /\\left(\\mathrm{ft}^{2} \\mathrm{~min}\\right)$ or gal/ sqft/min or gpm/sqft",
-                "aliases": ['or gal/ sqft/min or gpm/sqft', 'gal/ sqft/min', 'gal /left(ft^{2 ~minright)', 'gpm/sqft'],
+                "aliases": ['gal /left(ft^{2 ~minright)', 'gal/ sqft/min', 'gpm/sqft'],
             },
             {
                 "name": "gallons_per_square_foot_per_second",
@@ -7685,7 +7685,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 40.727,
                 "full_name": "gallons per square foot per second",
                 "notation": "$\\mathrm{gal} /\\left(\\mathrm{ft}^{2} \\mathrm{~s}\\right)$ or gal/ $\\mathrm{sqft} / \\mathrm{sec}$",
-                "aliases": ['or gal/', 'gal /left(ft^{2 ~sright)', 'gal/ sqft / sec'],
+                "aliases": ['gal /left(ft^{2 ~sright)', 'gal/ sqft / sec'],
             },
             {
                 "name": "liters_per_square_meter_per_day",
@@ -7733,7 +7733,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1000.0,
                 "full_name": "gram per second per cubic centimeter",
                 "notation": "$\\mathrm{g} /\\left(\\mathrm{s} \\mathrm{cm}^{3}\\right)$ or g/s/cc or $\\mathrm{g} / \\mathrm{cc} / \\mathrm{sec}$",
-                "aliases": ['g /left(s cm^{3right)', 'g / cc / sec', 'or g/s/cc or', 'g/s/cc'],
+                "aliases": ['g /left(s cm^{3right)', 'g/s/cc', 'g / cc / sec'],
             },
             {
                 "name": "kilogram_per_hour_per_cubic_foot",
@@ -7741,7 +7741,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.0098096,
                 "full_name": "kilogram per hour per cubic foot",
                 "notation": "kg/(h ft ${ }^{3}$ ) or kg/hr/ cft",
-                "aliases": ['kg/h ft   or kg/hr/ cft', 'kg/hr/ cft', 'kg/(h ft { ^{3 )'],
+                "aliases": ['kg/(h ft { ^{3 )', 'kg/hr/ cft'],
             },
             {
                 "name": "kilogram_per_hour_per_cubic_meter",
@@ -7749,7 +7749,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.00027778000000000004,
                 "full_name": "kilogram per hour per cubic meter",
                 "notation": "kg/(h m3) or kg/hr/ cu.m",
-                "aliases": ['kg/h m3 or kg/hr/ cu.m', 'kg/(h m3)', 'kg/hr/ cu.m'],
+                "aliases": ['kg/(h m3)', 'kg/hr/ cu.m'],
             },
             {
                 "name": "kilogram_per_second_per_cubic_meter",
@@ -7757,7 +7757,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.0,
                 "full_name": "kilogram per second per cubic meter",
                 "notation": "$\\mathrm{kg} /\\left(\\mathrm{s} \\mathrm{m}^{3}\\right)$ or kg/sec/ cu.m",
-                "aliases": ['kg/sec/ cu.m', 'kg /left(s m^{3right)', 'or kg/sec/ cu.m'],
+                "aliases": ['kg /left(s m^{3right)', 'kg/sec/ cu.m'],
             },
             {
                 "name": "pound_per_hour_per_cubic_foot",
@@ -7765,7 +7765,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.0044496,
                 "full_name": "pound per hour per cubic foot",
                 "notation": "$\\mathrm{lb} /\\left(\\mathrm{h} \\mathrm{ft}^{3}\\right)$ or $\\mathrm{lb} / \\mathrm{hr} / \\mathrm{cft}$ or PPH/cft",
-                "aliases": ['PPH/cft', 'lb /left(h ft^{3right)', 'lb / hr / cft', 'or  or PPH/cft'],
+                "aliases": ['lb /left(h ft^{3right)', 'lb / hr / cft', 'PPH/cft'],
             },
             {
                 "name": "pound_per_minute_per_cubic_foot",
@@ -7773,7 +7773,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.26697,
                 "full_name": "pound per minute per cubic foot",
                 "notation": "lb/(min $\\mathrm{ft}^{3}$ ) or lb/ $\\mathrm{min} / \\mathrm{cft}$",
-                "aliases": ['lb/(min ft^{3 )', 'lb/min   or lb/', 'lb/ min / cft'],
+                "aliases": ['lb/(min ft^{3 )', 'lb/ min / cft'],
             },
             {
                 "name": "pound_per_second_per_cubic_foot",
@@ -7781,7 +7781,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 16.018,
                 "full_name": "pound per second per cubic foot",
                 "notation": "b/(s ft ${ }^{3}$ ) or lb/sec/cft",
-                "aliases": ['lb/sec/cft', 'b/s ft   or lb/sec/cft', 'b/(s ft { ^{3 )'],
+                "aliases": ['b/(s ft { ^{3 )', 'lb/sec/cft'],
             }
         ],
         "aliases": {}
@@ -7813,7 +7813,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 1.0,
                 "full_name": "reciprocal meter",
                 "notation": "1/m",
-                "aliases": ['1/m'],
+                "aliases": [],
             }
         ],
         "aliases": {}

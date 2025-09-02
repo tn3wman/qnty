@@ -8,13 +8,13 @@ file with all 810+ units organized by dimension.
 
 import json
 import re
-from pathlib import Path
 import sys
+from pathlib import Path
 
 # Add src/qnty to the path to import prefix system
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-from qnty.prefixes import StandardPrefixes, PREFIXABLE_UNITS
+from qnty.prefixes import PREFIXABLE_UNITS, StandardPrefixes
 
 # Configuration constants
 DIMENSION_NAME_MAP = {
@@ -258,24 +258,14 @@ def augment_parsed_data_with_prefixes(parsed_data: dict) -> dict:
 
 def generate_unit_definition(unit_data: dict) -> dict:
     """Generate a unit definition dictionary."""
-    # Extract aliases from notation and other sources
-    aliases = set(unit_data.get('aliases', []))
-    
-    # Add symbol as alias if different from name
-    if unit_data.get('notation'):
-        notation = unit_data['notation']
-        # Clean notation for alias
-        clean_notation = re.sub(r'\$.*?\$', '', notation)  # Remove LaTeX
-        clean_notation = re.sub(r'[^\w\s/\-\.]', '', clean_notation)  # Keep basic chars
-        clean_notation = clean_notation.strip()
-        if clean_notation and clean_notation != unit_data['name']:
-            aliases.add(clean_notation)
+    # Use only the aliases from the JSON data, don't try to extract from notation
+    aliases = unit_data.get('aliases', [])
     
     return {
         "name": unit_data['normalized_name'],
         "symbol": unit_data.get('si_metric', {}).get('unit', unit_data.get('notation', '')),
         "si_factor": unit_data.get('si_metric', {}).get('conversion_factor', 1.0),
-        "aliases": list(aliases),
+        "aliases": aliases,  # Use aliases as-is from the JSON
         "full_name": unit_data['name'],
         "notation": unit_data.get('notation', ''),
         "english_us": unit_data.get('english_us', {}),
