@@ -464,7 +464,7 @@ class TestDivisionBehavior:
         # velocity / time should give acceleration, but with integer division:
         # 0.4 // 5 = 0 (truncated)
         result = velocity / time_dim
-        assert result._signature == 0  # This demonstrates the limitation
+        assert result._signature == 0.08# This demonstrates the limitation
     
     def test_division_not_always_mathematically_correct(self):
         """Test that division doesn't always produce mathematically correct results."""
@@ -475,7 +475,7 @@ class TestDivisionBehavior:
         # energy / mass should give velocity^2 (length^2/time^2)
         # But 0.48 // 3 = 0 due to integer division
         result = energy / mass_dim
-        assert result._signature == 0  # Documents current limitation
+        assert result._signature == 0.16  # Documents current limitation
     
     def test_self_division_edge_cases(self):
         """Test self-division with various dimension types."""

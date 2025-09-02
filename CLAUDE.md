@@ -30,6 +30,12 @@ Qnty (formerly OptiUnit) is a high-performance unit system library for Python th
 - Uses Poetry build system with `poetry-core>=1.0.0`
 - Supports Python 3.11+ (up to 3.13)
 
+### Release Management
+
+- **Automated Release**: `python release.py` - Increments patch version, creates git tag, and pushes to origin
+- **Version Control**: Uses semantic versioning with Poetry version management
+- **Current Version**: 0.0.6 (as of latest update)
+
 ## Architecture Overview
 
 ### Clean Dependency Hierarchy
@@ -146,15 +152,51 @@ equation.solve_for("T", known_variables)
 - `__slots__` usage for memory efficiency
 - Fast path optimizations for same-unit operations
 
+### Code Generation System
+
+The project uses a sophisticated code generation pipeline located in `scripts/`:
+
+- **`_1_generate_dimensions.py`**: Generates `dimension.py` with dimensional constants from parsed unit data
+- **`_2_generate_units.py`**: Generates `units.py` with comprehensive unit class definitions  
+- **`_3_generate_variables.py`**: Generates `variables.py` with type-safe variable classes
+- **`_4_generate_variable_pyi.py`**: Generates type stubs for better IDE support
+- **`_5_generate_package_init.py`**: Generates package initialization files
+- **`generate_all.py`**: Orchestrates the entire generation pipeline
+
+**Key Generation Features:**
+- Uses `scripts/input/unit_data.json` as the single source of truth for 800+ engineering units
+- Automatically generates prefixed units (milli-, kilo-, etc.) for applicable base units
+- Maintains dimensional consistency across all generated code
+- Supports both manual edits and regeneration without conflicts
+
+**Running Generation Scripts:**
+```bash
+python scripts/_1_generate_dimensions.py  # Update dimensions
+python scripts/_2_generate_units.py       # Update units  
+python scripts/_3_generate_variables.py   # Update variables
+python scripts/generate_all.py            # Regenerate everything
+```
+
+### Critical Type System Updates
+
+Recent architectural improvements include enhanced dimensional signature handling:
+
+- **Mixed Type Signatures**: Dimensional signatures now support `int | float` types for precision in operations like `(Length * Pressure) / Length`
+- **True Division Fix**: Dimensional division now uses `/` instead of `//` to prevent precision loss in compound unit operations
+- **Registry Compatibility**: Updated `HighPerformanceRegistry` to handle mixed-type dimensional signatures
+
 ### Key Dependencies
 
 - `numpy>=2.3.2`: Numerical computations  
 - `pytest>=8.4.1`: Testing framework (dev dependency)
+- `ruff>=0.1.0`: Code formatting and linting (dev dependency)
 - `Pint>=0.24.4`: Comparison/benchmarking against established unit library (benchmark dependency)
 
 ### Reference Data
 
 - `data/`: Contains comprehensive unit definition reference data for validation and testing
+- `scripts/input/unit_data.json`: Single source of truth for all unit definitions
+- `scripts/output/`: Generated mapping files for code generation pipeline
 
 ## Testing and Benchmarking
 
@@ -206,6 +248,27 @@ from .equation import Equation
 - Cache frequently accessed values (SI factors, dimension signatures)
 - Use pre-computed lookup tables where possible
 - Optimize for the common case (same-unit operations, compatible dimensions)
+
+### Critical Development Patterns
+
+**Variable Symbol Management**: Variables need proper symbol assignment for equation solving:
+```python
+# Correct: Set symbols explicitly for equation system
+t = Length(0.0, "inch", "Pressure Design Thickness", is_known=False)
+t.symbol = "t"  # Required for equation.solve_for("t", variables)
+```
+
+**Dimensional Signature Precision**: When working with dimensional operations, ensure proper division handling:
+- Always use `/` (true division) for dimensional signatures, never `//` (floor division)
+- Mixed `int | float` dimensional signatures are supported for precision in compound operations
+
+**Expression String Representation**: The `BinaryOperation.__str__()` method handles operator precedence carefully:
+- Right-associative operations need parentheses when precedence is equal and operator is left-associative (`-`, `/`)
+- This ensures expressions like `(P * D) / (2 * (S * E * W + P * Y))` maintain mathematical correctness
+
+**Unit Registry Type Safety**: When modifying the registry system:
+- `_dimension_cache` and `dimensional_groups` must support `dict[int | float, ...]` types
+- This accommodates the mixed-type dimensional signatures from precision fixes
 
 ## important-instruction-reminders
 
