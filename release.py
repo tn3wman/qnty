@@ -9,9 +9,10 @@ This script:
 4. Pushes the tag to origin
 """
 
+import re
 import subprocess
 import sys
-import re
+
 
 def run_command(cmd, description):
     """Run a command and return the output, or exit on failure."""
@@ -55,10 +56,10 @@ def main():
     print(f"\n⬆️  Step 4: Pushing tag {tag_name} to origin...")
     run_command(f"git push origin {tag_name}", "pushing tag to origin")
     
-    print(f"\n✅ Release process completed successfully!")
+    print("\n✅ Release process completed successfully!")
     print(f"   Version: {new_version}")
     print(f"   Tag: {tag_name}")
-    print(f"   Tag pushed to origin")
+    print("   Tag pushed to origin")
 
 if __name__ == "__main__":
     main()
