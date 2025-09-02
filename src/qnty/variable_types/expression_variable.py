@@ -2,17 +2,15 @@
 Expression Variable Base Class
 ==============================
 
-Base class that extends TypeSafeVariable with mathematical expression 
+Base class that extends TypeSafeVariable with mathematical expression
 and equation capabilities.
 """
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
 from ..equation import Equation
 from ..expression import Expression, wrap_operand
-from ..variable import TypeSafeVariable, FastQuantity
+from ..variable import FastQuantity, TypeSafeVariable
 
 
 class ExpressionVariable(TypeSafeVariable):

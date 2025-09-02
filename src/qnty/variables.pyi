@@ -99,9 +99,9 @@ class AccelerationSetter(TypeSafeSetter):
     
     # All acceleration unit properties - provides fluent API with full type hints
     @property
-    def foot_per_second_squared(self) -> Acceleration: ...
-    @property
     def meter_per_second_squared(self) -> Acceleration: ...
+    @property
+    def foot_per_second_squared(self) -> Acceleration: ...
 
 class Acceleration(TypedVariable):
     """Type-safe acceleration variable with expression capabilities."""
@@ -117,8 +117,8 @@ class Acceleration(TypedVariable):
         Create a acceleration setter for fluent unit assignment.
         
         Example:
-            acceleration.set(100).foot_per_second_squared
             acceleration.set(100).meter_per_second_squared
+            acceleration.set(100).foot_per_second_squared
         """
         ...
 

@@ -1,6 +1,5 @@
 # THIS IS JUST A MANUAL PERSONAL TEST FOR TYPE HINTING
 
-import pytest
 from pytest import CaptureFixture
 
 from qnty.variables import Area, Length, Pressure
@@ -8,15 +7,15 @@ from qnty.variables import Area, Length, Pressure
 
 def test_area_type_hinting(capsys: CaptureFixture[str]):
     a = Area("Area")
-    a.set(5).square_meters
+    a.set(5).square_meter
 
-    l = Length("Length")
-    l.set(10).picas
+    length = Length("Length")
+    length.set(10).pica
 
     p = Pressure("Pressure")
-    p.set(15).gigapascals
+    p.set(15).gigapascal
 
     with capsys.disabled():
         print(a)
-        print(l)
+        print(length)
         print(p)
