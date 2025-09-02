@@ -3,51 +3,16 @@ Type stubs for consolidated variables module - Complete Edition.
 
 Provides complete type hints for IDE autocomplete and type checking
 for the fluent API with dimension-specific unit properties for all
-105 variable types with 864 total units.
+107 variable types with 871 total units.
 
 Auto-generated from the same source of truth as consolidated_new.py.
 """
 
 from typing import Any
+
 from .dimension import DimensionSignature
 from .variable import TypeSafeSetter
 from .variable_types.typed_variable import TypedVariable
-
-# ============================================================================
-# SPECIAL DIMENSIONLESS VARIABLE
-# ============================================================================
-
-class DimensionlessSetter(TypeSafeSetter):
-    """Dimensionless-specific setter with only dimensionless units."""
-    
-    def __init__(self, variable: Dimensionless, value: float) -> None: ...
-    
-    @property
-    def dimensionless(self) -> Dimensionless: ...
-    
-    @property
-    def unitless(self) -> Dimensionless: ...
-
-
-class Dimensionless(TypedVariable):
-    """Type-safe dimensionless variable with expression capabilities."""
-
-    _setter_class: type[TypeSafeSetter] | None
-    _expected_dimension: DimensionSignature | None
-    _default_unit_property: str | None
-    
-    def __init__(self, *args, is_known: bool = True) -> None: ...
-    
-    def set(self, value: float) -> DimensionlessSetter:
-        """
-        Create a dimensionless setter for fluent unit assignment.
-        
-        Example:
-            dimensionless.set(1.0).dimensionless
-            dimensionless.set(2.5).unitless
-        """
-        ...
-
 
 # ============================================================================
 # ABSORBED RADIATION DOSE
@@ -674,6 +639,49 @@ class Concentration(TypedVariable):
         Example:
             concentration.set(100).grains_of_i_per_cubic_foot
             concentration.set(100).grains_of_i_per_gallon_US
+        """
+        ...
+
+# ============================================================================
+# DIMENSIONLESS
+# ============================================================================
+
+class DimensionlessSetter(TypeSafeSetter):
+    """Dimensionless-specific setter with only dimensionless unit properties."""
+    
+    def __init__(self, variable: Dimensionless, value: float) -> None: ...
+    
+    # All dimensionless unit properties - provides fluent API with full type hints
+    @property
+    def dimensionless(self) -> Dimensionless: ...
+    @property
+    def ratio(self) -> Dimensionless: ...
+    @property
+    def parts_per_million(self) -> Dimensionless: ...
+    @property
+    def ppm(self) -> Dimensionless: ...
+    @property
+    def parts_per_billion(self) -> Dimensionless: ...
+    @property
+    def ppb(self) -> Dimensionless: ...
+
+class Dimensionless(TypedVariable):
+    """Type-safe dimensionless variable with expression capabilities."""
+    
+    _setter_class: type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
+    
+    def __init__(self, *args, is_known: bool = True) -> None: ...
+    
+    def set(self, value: float) -> DimensionlessSetter:
+        """
+        Create a dimensionless setter for fluent unit assignment.
+        
+        Example:
+            dimensionless.set(100).dimensionless
+            dimensionless.set(100).ratio
+            dimensionless.set(100).parts_per_million
         """
         ...
 
@@ -3779,6 +3787,49 @@ class ParticleDensity(TypedVariable):
             particledensity.set(100).particles_per_cubic_centimeter
             particledensity.set(100).particles_per_cubic_foot
             particledensity.set(100).particles_per_cubic_meter
+        """
+        ...
+
+# ============================================================================
+# PERCENT
+# ============================================================================
+
+class PercentSetter(TypeSafeSetter):
+    """Percent-specific setter with only percent unit properties."""
+    
+    def __init__(self, variable: Percent, value: float) -> None: ...
+    
+    # All percent unit properties - provides fluent API with full type hints
+    @property
+    def percent(self) -> Percent: ...
+    @property
+    def unit(self) -> Percent: ...
+    @property
+    def per_mille(self) -> Percent: ...
+    @property
+    def basis_point(self) -> Percent: ...
+    @property
+    def bp(self) -> Percent: ...
+    @property
+    def bps(self) -> Percent: ...
+
+class Percent(TypedVariable):
+    """Type-safe percent variable with expression capabilities."""
+    
+    _setter_class: type[TypeSafeSetter] | None
+    _expected_dimension: DimensionSignature | None
+    _default_unit_property: str | None
+    
+    def __init__(self, *args, is_known: bool = True) -> None: ...
+    
+    def set(self, value: float) -> PercentSetter:
+        """
+        Create a percent setter for fluent unit assignment.
+        
+        Example:
+            percent.set(100).percent
+            percent.set(100).per_mille
+            percent.set(100).basis_point
         """
         ...
 

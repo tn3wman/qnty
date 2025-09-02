@@ -55,7 +55,8 @@ def save_text_file(content: str, file_path: Path) -> None:
 def format_dimension_signature(dims: dict[str, int]) -> str:
     """Format dimension dictionary as DimensionSignature.create() call."""
     if not dims:
-        return "DimensionSignature.create()"
+        # Special case for dimensionless - use its own prime number
+        return "DimensionSignature(BaseDimension.DIMENSIONLESS)"
     
     params = []
     for dim_name, power in sorted(dims.items()):
@@ -129,6 +130,7 @@ def generate_file_header() -> list[str]:
         '    TEMPERATURE = 11',
         '    AMOUNT = 13',
         '    LUMINOSITY = 17',
+        '    DIMENSIONLESS = 1  # Must be 1 to act as multiplicative identity',
         '',
         '',
         '@final',

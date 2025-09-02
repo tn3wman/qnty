@@ -836,6 +836,82 @@
       }
     ]
   },
+  "dimensionless": {
+    "field": "Dimensionless",
+    "normalized_field": "dimensionless",
+    "si_dimension": "1",
+    "dimensions": {},
+    "si_base_unit": "",
+    "imperial_base_unit": "",
+    "units": [
+      {
+        "name": "dimensionless",
+        "normalized_name": "dimensionless",
+        "notation": "",
+        "si_conversion": 1.0,
+        "imperial_conversion": 1.0,
+        "aliases": []
+      },
+      {
+        "name": "ratio",
+        "normalized_name": "ratio",
+        "notation": "ratio",
+        "si_conversion": 1.0,
+        "imperial_conversion": 1.0,
+        "aliases": []
+      },
+      {
+        "name": "parts per million",
+        "normalized_name": "parts_per_million",
+        "notation": "ppm",
+        "si_conversion": 1e-6,
+        "imperial_conversion": 1e-6,
+        "aliases": ["ppm"]
+      },
+      {
+        "name": "parts per billion",
+        "normalized_name": "parts_per_billion", 
+        "notation": "ppb",
+        "si_conversion": 1e-9,
+        "imperial_conversion": 1e-9,
+        "aliases": ["ppb"]
+      }
+    ]
+  },
+  "percent": {
+    "field": "Percent",
+    "normalized_field": "percent",
+    "si_dimension": "1", 
+    "dimensions": {},
+    "si_base_unit": "%",
+    "imperial_base_unit": "%",
+    "units": [
+      {
+        "name": "percent",
+        "normalized_name": "percent",
+        "notation": "%",
+        "si_conversion": 0.01,
+        "imperial_conversion": 0.01,
+        "aliases": ["%"]
+      },
+      {
+        "name": "per mille",
+        "normalized_name": "per_mille",
+        "notation": "‰",
+        "si_conversion": 0.001,
+        "imperial_conversion": 0.001,
+        "aliases": ["‰"]
+      },
+      {
+        "name": "basis point",
+        "normalized_name": "basis_point",
+        "notation": "bp",
+        "si_conversion": 0.0001,
+        "imperial_conversion": 0.0001,
+        "aliases": ["bp", "bps"]
+      }
+    ]
+  },
   "dynamic_fluidity": {
     "field": "Dynamic Fluidity",
     "normalized_field": "dynamic_fluidity",
@@ -6113,8 +6189,8 @@
       {
         "name": "pound force per square inch",
         "normalized_name": "pound_force_per_square_inch",
-        "notation": "PSI or psi or $\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{in}^{2}$",
-        "si_conversion": 6894.8,
+        "notation": "psi",
+        "si_conversion": 6894.757,
         "imperial_conversion": 1.0,
         "aliases": [
           "psi"
@@ -6762,8 +6838,8 @@
       {
         "name": "pound force per square inch",
         "normalized_name": "pound_force_per_square_inch",
-        "notation": "PSI or psi or $\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{in}^{2}$",
-        "si_conversion": 6894.8,
+        "notation": "psi",
+        "si_conversion": 6894.757,
         "imperial_conversion": 1.0,
         "aliases": [
           "psi"

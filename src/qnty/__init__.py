@@ -25,6 +25,7 @@ from .variables import (
     AreaPerUnitVolume,
     AtomicWeight,
     Concentration,
+    Dimensionless,
     DynamicFluidity,
     ElectricCapacitance,
     ElectricCharge,
@@ -81,6 +82,7 @@ from .variables import (
     MomentumFlux,
     NormalityOfSolution,
     ParticleDensity,
+    Percent,
     Permeability,
     PhotonEmissionRate,
     PowerPerUnitMass,
@@ -129,15 +131,15 @@ registry.finalize_registration()
 # Define public API
 __all__ = [
     # Core variable types (most commonly used)
-    "Length", "Pressure", "Temperature", "Time", "Mass", "Volume", "Area",
-    "Force", "EnergyHeatWork", "PowerThermalDuty",
+    "Dimensionless", "Length", "Pressure", "Temperature", "Time", "Mass",
+    "Volume", "Area", "Force", "EnergyHeatWork", "PowerThermalDuty",
 
     # Core classes for advanced usage
     "FastQuantity", "TypeSafeVariable", "TypeSafeSetter",
     "DimensionSignature", "BaseDimension",
     "Expression", "Equation",
 
-    # All other variable types (95 additional types)
+    # All other variable types (96 additional types)
     "AbsorbedDose", "Acceleration", "ActivationEnergy", "AmountOfSubstance",
     "AnglePlane", "AngleSolid", "AngularAcceleration", "AngularMomentum",
     "AreaPerUnitVolume", "AtomicWeight", "Concentration", "DynamicFluidity",
@@ -156,7 +158,7 @@ __all__ = [
     "MassTransferCoefficient", "MolalityOfSoluteI", "MolarConcentrationByMass",
     "MolarFlowRate", "MolarFlux", "MolarHeatCapacity", "MolarityOfI",
     "MoleFractionOfI", "MomentOfInertia", "MomentumFlowRate", "MomentumFlux",
-    "NormalityOfSolution", "ParticleDensity", "Permeability",
+    "NormalityOfSolution", "ParticleDensity", "Percent", "Permeability",
     "PhotonEmissionRate", "PowerPerUnitMass", "PowerPerUnitVolume",
     "RadiationDoseEquivalent", "RadiationExposure", "Radioactivity",
     "SecondMomentOfArea", "SecondRadiationConstantPlanck", "SpecificEnthalpy",

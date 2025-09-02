@@ -38,13 +38,13 @@
   "angle_plane": {
     "field": "Angle, Plane",
     "dimensions": {},
-    "signature": "DimensionSignature.create()",
+    "signature": "DimensionSignature(BaseDimension.DIMENSIONLESS)",
     "constant_name": "ANGLE_PLANE"
   },
   "angle_solid": {
     "field": "Angle, Solid",
     "dimensions": {},
-    "signature": "DimensionSignature.create()",
+    "signature": "DimensionSignature(BaseDimension.DIMENSIONLESS)",
     "constant_name": "ANGLE_SOLID"
   },
   "angular_acceleration": {
@@ -98,6 +98,18 @@
     },
     "signature": "DimensionSignature.create(length=-3, mass=1)",
     "constant_name": "CONCENTRATION"
+  },
+  "dimensionless": {
+    "field": "Dimensionless",
+    "dimensions": {},
+    "signature": "DimensionSignature(BaseDimension.DIMENSIONLESS)",
+    "constant_name": "DIMENSIONLESS"
+  },
+  "percent": {
+    "field": "Percent",
+    "dimensions": {},
+    "signature": "DimensionSignature(BaseDimension.DIMENSIONLESS)",
+    "constant_name": "PERCENT"
   },
   "dynamic_fluidity": {
     "field": "Dynamic Fluidity",
@@ -505,7 +517,7 @@
   "mass_fraction_of_i": {
     "field": "Mass Fraction of \"i\"",
     "dimensions": {},
-    "signature": "DimensionSignature.create()",
+    "signature": "DimensionSignature(BaseDimension.DIMENSIONLESS)",
     "constant_name": "MASS_FRACTION_OF_I"
   },
   "mass_transfer_coefficient": {
@@ -577,7 +589,7 @@
   "mole_fraction_of_i": {
     "field": "Mole Fraction of \"i\"",
     "dimensions": {},
-    "signature": "DimensionSignature.create()",
+    "signature": "DimensionSignature(BaseDimension.DIMENSIONLESS)",
     "constant_name": "MOLE_FRACTION_OF_I"
   },
   "moment_of_inertia": {
@@ -738,7 +750,7 @@
   "specific_gravity": {
     "field": "Specific Gravity",
     "dimensions": {},
-    "signature": "DimensionSignature.create()",
+    "signature": "DimensionSignature(BaseDimension.DIMENSIONLESS)",
     "constant_name": "SPECIFIC_GRAVITY"
   },
   "specific_heat_capacity_constant_pressure": {
@@ -900,7 +912,7 @@
   "volume_fraction_of_i": {
     "field": "Volume Fraction of \"i\"",
     "dimensions": {},
-    "signature": "DimensionSignature.create()",
+    "signature": "DimensionSignature(BaseDimension.DIMENSIONLESS)",
     "constant_name": "VOLUME_FRACTION_OF_I"
   },
   "volumetric_calorific_heating_value": {

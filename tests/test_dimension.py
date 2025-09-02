@@ -51,7 +51,11 @@ class TestBaseDimension:
             return True
         
         for dimension in BaseDimension:
-            assert is_prime(dimension.value), f"{dimension.name} = {dimension.value} is not prime"
+            if dimension == BaseDimension.DIMENSIONLESS:
+                # DIMENSIONLESS must be 1 to act as multiplicative identity
+                assert dimension.value == 1, f"DIMENSIONLESS must be 1, got {dimension.value}"
+            else:
+                assert is_prime(dimension.value), f"{dimension.name} = {dimension.value} is not prime"
     
     def test_base_dimensions_are_unique(self):
         """Test that all base dimensions have unique values."""

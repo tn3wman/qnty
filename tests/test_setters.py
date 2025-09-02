@@ -161,8 +161,8 @@ class TestLengthSetterInitialization:
 class TestLengthSetterProperties:
     """Test LengthSetter unit properties."""
     
-    def test_meters_property(self):
-        """Test meters property sets unit correctly."""
+    def test_meter_property(self):
+        """Test meter property sets unit correctly."""
         length_var = Length("test_length")
         setter = LengthSetter(length_var, 5.0)
         
@@ -173,8 +173,8 @@ class TestLengthSetterProperties:
         assert length_var.quantity.value == 5.0
         assert length_var.quantity.unit == LengthUnits.meter
     
-    def test_millimeters_property(self):
-        """Test millimeters property sets unit correctly."""
+    def test_millimeter_property(self):
+        """Test millimeter property sets unit correctly."""
         length_var = Length("test_length")
         setter = LengthSetter(length_var, 1500.0)
         
@@ -185,8 +185,8 @@ class TestLengthSetterProperties:
         assert length_var.quantity.value == 1500.0
         assert length_var.quantity.unit == LengthUnits.millimeter
     
-    def test_inches_property(self):
-        """Test inches property sets unit correctly."""
+    def test_inch_property(self):
+        """Test inch property sets unit correctly."""
         length_var = Length("test_length")
         setter = LengthSetter(length_var, 12.0)
         
@@ -197,8 +197,8 @@ class TestLengthSetterProperties:
         assert length_var.quantity.value == 12.0
         assert length_var.quantity.unit == LengthUnits.inch
     
-    def test_feet_property(self):
-        """Test feet property sets unit correctly."""
+    def test_foot_property(self):
+        """Test foot property sets unit correctly."""
         length_var = Length("test_length")
         setter = LengthSetter(length_var, 3.5)
         

@@ -17,6 +17,8 @@ from pathlib import Path
 # Add src/qnty to the path to import prefix system
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
+# Import prefixes directly to avoid circular import
+sys.path.insert(0, str(Path(__file__).parent.parent / "src" / "qnty"))
 from qnty.prefixes import PREFIXABLE_UNITS, StandardPrefixes
 
 
@@ -175,10 +177,7 @@ def generate_consolidated_variables(parsed_data: dict, dimension_mapping: dict) 
         if len(sorted_constants) > 10:
             import_lines = ['from .dimension import (']
             for i, const in enumerate(sorted_constants):
-                if i == len(sorted_constants) - 1:
-                    import_lines.append(f'    {const}')  # No comma on last import
-                else:
-                    import_lines.append(f'    {const},')
+                import_lines.append(f'    {const},')  # Always add comma, even on last import
             import_lines.append(')')
         else:
             imports_str = ', '.join(sorted_constants)
@@ -196,13 +195,13 @@ def generate_consolidated_variables(parsed_data: dict, dimension_mapping: dict) 
         'Auto-generated from unit_data.json and dimension_mapping.json.',
         '"""',
         '',
-        'from typing import Any, cast',
+        'from typing import Any',
         ''
     ]
     lines.extend(import_lines)
     lines.extend([
+        'from . import units',
         'from .unit import UnitConstant, UnitDefinition',
-        'from .units import DimensionlessUnits',
         'from .variable import FastQuantity, TypeSafeSetter',
         'from .variable_types.typed_variable import TypedVariable',
         '',
@@ -268,42 +267,6 @@ def generate_consolidated_variables(parsed_data: dict, dimension_mapping: dict) 
     lines.append('}')
     lines.append('')
     
-    # Add special Dimensionless variable first (not auto-generated)
-    lines.extend([
-        '# Special Dimensionless variable - handcrafted for proper behavior',
-        'class DimensionlessSetter(TypeSafeSetter):',
-        '    """Dimensionless-specific setter with only dimensionless units."""',
-        '    ',
-        '    def __init__(self, variable: \'Dimensionless\', value: float):',
-        '        super().__init__(variable, value)',
-        '    ',
-        '    # Dimensionless units',
-        '    @property',
-        '    def dimensionless(self) -> \'Dimensionless\':',
-        '        self.variable.quantity = FastQuantity(self.value, DimensionlessUnits.dimensionless)',
-        '        return cast(\'Dimensionless\', self.variable)',
-        '    ',
-        '    # Common alias for no units',
-        '    @property',
-        '    def unitless(self) -> \'Dimensionless\':',
-        '        self.variable.quantity = FastQuantity(self.value, DimensionlessUnits.dimensionless)',
-        '        return cast(\'Dimensionless\', self.variable)',
-        '',
-        '',
-        'class Dimensionless(TypedVariable):',
-        '    """Type-safe dimensionless variable with expression capabilities."""',
-        '',
-        '    _setter_class = DimensionlessSetter',
-        '    _expected_dimension = DIMENSIONLESS',
-        '    _default_unit_property = "dimensionless"',
-        '    ',
-        '    def set(self, value: float) -> DimensionlessSetter:',
-        '        """Create a dimensionless setter for this variable with proper type annotation."""',
-        '        return DimensionlessSetter(self, value)',
-        '',
-        '',
-    ])
-    
     # Add the utility function needed for dynamic alias creation
     lines.extend([
         '',
@@ -334,25 +297,24 @@ def generate_consolidated_variables(parsed_data: dict, dimension_mapping: dict) 
         '        }',
         '    )',
         '    ',
+        '    # Store reference to the unit class at class level',
+        '    # Remove "Setter" from class_name to get the base variable name',
+        '    base_class_name = class_name.replace("Setter", "")',
+        '    units_class = getattr(units, f"{base_class_name}Units")',
+        '    ',
         '    # Add properties for each unit using unit data directly',
         '    for unit_name, property_name, si_factor, symbol, aliases in definition["units"]:',
         '        # Create a unit definition from the consolidated data',
-        '        def make_property(unit_nm, si_fac, sym):',
+        '        def make_property(prop_nm, units_cls):',
         '            def getter(self):',
-        '                # Create unit definition and constant from consolidated unit data',
-        '                unit_def = UnitDefinition(',
-        '                    name=unit_nm,',
-        '                    symbol=sym,',
-        '                    dimension=definition["dimension"],',
-        '                    si_factor=si_fac',
-        '                )',
-        '                unit_const = UnitConstant(unit_def)',
+        '                # Use existing unit constant from units module',
+        '                unit_const = getattr(units_cls, prop_nm)',
         '                self.variable.quantity = FastQuantity(self.value, unit_const)',
         '                return self.variable  # type: ignore',
         '            return property(getter)',
         '        ',
         '        # Add the primary property to the class',
-        '        setattr(setter_class, property_name, make_property(unit_name, si_factor, symbol))',
+        '        setattr(setter_class, property_name, make_property(property_name, units_class))',
         '        ',
         '        # Add alias properties',
         '        for alias in aliases:',
@@ -360,7 +322,7 @@ def generate_consolidated_variables(parsed_data: dict, dimension_mapping: dict) 
         '            alias_property = convert_unit_name_to_property(alias)',
         '            # Only add if it\'s different from the main property and doesn\'t already exist',
         '            if alias_property != property_name and not hasattr(setter_class, alias_property):',
-        '                setattr(setter_class, alias_property, make_property(unit_name, si_factor, symbol))',
+        '                setattr(setter_class, alias_property, make_property(property_name, units_class))',
         '    ',
         '    return setter_class',
         '',
@@ -388,7 +350,7 @@ def generate_consolidated_variables(parsed_data: dict, dimension_mapping: dict) 
         '',
         '',
         '# Create all variable and setter classes dynamically',
-        'for var_name, var_def in VARIABLE_DEFINITIONS.items():',
+        'for var_name, var_def in VARIABLE_DEFINITIONS.items():'
         '    # Create setter class',
         '    setter_name = f"{var_name}Setter"',
         '    setter_class = create_setter_class(setter_name, var_name, var_def)',
@@ -405,7 +367,6 @@ def generate_consolidated_variables(parsed_data: dict, dimension_mapping: dict) 
     # Generate individual exports for easier access
     lines.extend([
         '# Individual exports for easier import',
-        '# Special Dimensionless class is already defined above',
         '',
     ])
     
@@ -492,6 +453,15 @@ def main():
     # Write output file
     save_text_file(content, output_file)
     print(f"Generated consolidated file: {output_file}")
+    
+    # Auto-fix imports with ruff after generation
+    import subprocess
+    try:
+        subprocess.run(['ruff', 'check', '--fix', str(output_file)], 
+                      capture_output=True, check=False)
+        print("Auto-applied ruff import fixes")
+    except FileNotFoundError:
+        print("Note: ruff not found - imports may need manual fixing")
     
     # Print statistics
     original_total = sum(len(field_data.get('units', [])) for field_data in parsed_data.values())
