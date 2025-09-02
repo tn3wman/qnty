@@ -80,9 +80,6 @@ def generate_init_file(parsed_data: dict) -> str:
         '# Finalize registry after all registrations',
         'registry.finalize_registration()',
         '',
-        '# Version information',
-        '__version__ = "0.0.3"',
-        '',
     ])
     
     # Generate __all__ with common variables first, then all others

@@ -126,9 +126,6 @@ register_all_units(registry)
 # Finalize registry after all registrations
 registry.finalize_registration()
 
-# Version information
-__version__ = "0.0.3"
-
 # Define public API
 __all__ = [
     # Core variable types (most commonly used)
