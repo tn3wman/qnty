@@ -246,11 +246,23 @@ class BinaryOperation(Expression):
         left_str = str(self.left)
         right_str = str(self.right)
         
-        # Add parentheses only when needed based on precedence
+        # Add parentheses for left side when precedence is strictly lower
         if isinstance(self.left, BinaryOperation) and precedence.get(self.left.operator, 0) < precedence.get(self.operator, 0):
             left_str = f"({left_str})"
-        if isinstance(self.right, BinaryOperation) and precedence.get(self.right.operator, 0) < precedence.get(self.operator, 0):
-            right_str = f"({right_str})"
+        
+        # CRITICAL FIX: For right side, add parentheses when:
+        # 1. Precedence is strictly lower, OR
+        # 2. Precedence is equal AND operation is left-associative (-, /)
+        if isinstance(self.right, BinaryOperation):
+            right_prec = precedence.get(self.right.operator, 0)
+            curr_prec = precedence.get(self.operator, 0)
+            
+            # Need parentheses if:
+            # - Right has lower precedence, OR
+            # - Same precedence and current operator is left-associative (- or /)
+            if (right_prec < curr_prec or 
+                (right_prec == curr_prec and self.operator in ['-', '/'])):
+                right_str = f"({right_str})"
             
         return f"{left_str} {self.operator} {right_str}"
 
