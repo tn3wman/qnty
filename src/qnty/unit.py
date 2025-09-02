@@ -64,8 +64,8 @@ class HighPerformanceRegistry:
     def __init__(self):
         self.units: dict[str, UnitDefinition] = {}
         self.conversion_table: dict[tuple[str, str], float] = {}  # (from_unit, to_unit) -> factor
-        self.dimensional_groups: dict[int, list[UnitDefinition]] = {}
-        self._dimension_cache: dict[int, UnitConstant] = {}  # Cache for common dimension mappings
+        self.dimensional_groups: dict[int | float, list[UnitDefinition]] = {}
+        self._dimension_cache: dict[int | float, UnitConstant] = {}  # Cache for common dimension mappings
         self._finalized = False
         self.base_units: dict[str, UnitDefinition] = {}  # Track base units for prefix generation
         self.prefixable_units: set[str] = set()  # Track which units can have prefixes

@@ -22,6 +22,9 @@ from .dimension import (
     CONCENTRATION,
     DIMENSIONLESS,
     DYNAMIC_FLUIDITY,
+    ELECTRICAL_CONDUCTANCE,
+    ELECTRICAL_PERMITTIVITY,
+    ELECTRICAL_RESISTIVITY,
     ELECTRIC_CAPACITANCE,
     ELECTRIC_CHARGE,
     ELECTRIC_CURRENT_INTENSITY,
@@ -30,9 +33,6 @@ from .dimension import (
     ELECTRIC_INDUCTANCE,
     ELECTRIC_POTENTIAL,
     ELECTRIC_RESISTANCE,
-    ELECTRICAL_CONDUCTANCE,
-    ELECTRICAL_PERMITTIVITY,
-    ELECTRICAL_RESISTIVITY,
     ENERGY_FLUX,
     ENERGY_HEAT_WORK,
     ENERGY_PER_UNIT_AREA,
@@ -65,14 +65,14 @@ from .dimension import (
     MASS_FLUX,
     MASS_TRANSFER_COEFFICIENT,
     MOLALITY_OF_SOLUTE_I,
+    MOLARITY_OF_I,
     MOLAR_CONCENTRATION_BY_MASS,
     MOLAR_FLOW_RATE,
     MOLAR_FLUX,
     MOLAR_HEAT_CAPACITY,
-    MOLARITY_OF_I,
-    MOMENT_OF_INERTIA,
     MOMENTUM_FLOW_RATE,
     MOMENTUM_FLUX,
+    MOMENT_OF_INERTIA,
     NORMALITY_OF_SOLUTION,
     PARTICLE_DENSITY,
     PERMEABILITY,
@@ -109,7 +109,7 @@ from .dimension import (
     VOLUMETRIC_FLOW_RATE,
     VOLUMETRIC_FLUX,
     VOLUMETRIC_MASS_FLOW_RATE,
-    WAVENUMBER,
+    WAVENUMBER
 )
 
 # Comprehensive unit definitions organized by dimensional signature
@@ -7896,8 +7896,8 @@ UNIT_DEFINITIONS = {
 
 def create_unit_class(class_name: str, dimension_data: dict) -> type:
     """Dynamically create a unit class with all unit constants as attributes."""
-    from .prefixes import get_prefix_by_name
     from .unit import UnitConstant, UnitDefinition
+    from .prefixes import get_prefix_by_name
     
     # Create a new class dynamically
     unit_class = type(class_name, (), {})
@@ -7950,8 +7950,8 @@ def create_unit_class(class_name: str, dimension_data: dict) -> type:
 
 def register_all_units(registry):
     """Register all unit definitions to the given registry with prefix support."""
-    from .prefixes import PREFIXABLE_UNITS
     from .unit import UnitDefinition
+    from .prefixes import get_prefix_by_name, StandardPrefixes, PREFIXABLE_UNITS
     
     # First pass: register base units with prefixes where applicable
     for dimension_data in UNIT_DEFINITIONS.values():

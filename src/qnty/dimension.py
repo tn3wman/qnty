@@ -28,7 +28,7 @@ class DimensionSignature:
     """Immutable dimension signature for zero-cost dimensional analysis."""
     
     # Store as bit pattern for ultra-fast comparison
-    _signature: int = 1
+    _signature: int | float = 1
     
     @classmethod
     def create(cls, length=0, mass=0, time=0, current=0, temp=0, amount=0, luminosity=0):
@@ -55,7 +55,7 @@ class DimensionSignature:
         return DimensionSignature(self._signature * other._signature)
     
     def __truediv__(self, other):
-        return DimensionSignature(self._signature // other._signature)
+        return DimensionSignature(self._signature / other._signature)
     
     def __pow__(self, power):
         return DimensionSignature(self._signature ** power)

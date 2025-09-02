@@ -9,7 +9,6 @@ Auto-generated from unit_data.json and dimension_mapping.json.
 
 from typing import Any
 
-from . import units
 from .dimension import (
     ABSORBED_DOSE,
     ACCELERATION,
@@ -25,6 +24,9 @@ from .dimension import (
     CONCENTRATION,
     DIMENSIONLESS,
     DYNAMIC_FLUIDITY,
+    ELECTRICAL_CONDUCTANCE,
+    ELECTRICAL_PERMITTIVITY,
+    ELECTRICAL_RESISTIVITY,
     ELECTRIC_CAPACITANCE,
     ELECTRIC_CHARGE,
     ELECTRIC_CURRENT_INTENSITY,
@@ -33,9 +35,6 @@ from .dimension import (
     ELECTRIC_INDUCTANCE,
     ELECTRIC_POTENTIAL,
     ELECTRIC_RESISTANCE,
-    ELECTRICAL_CONDUCTANCE,
-    ELECTRICAL_PERMITTIVITY,
-    ELECTRICAL_RESISTIVITY,
     ENERGY_FLUX,
     ENERGY_HEAT_WORK,
     ENERGY_PER_UNIT_AREA,
@@ -69,15 +68,15 @@ from .dimension import (
     MASS_FRACTION_OF_I,
     MASS_TRANSFER_COEFFICIENT,
     MOLALITY_OF_SOLUTE_I,
+    MOLARITY_OF_I,
     MOLAR_CONCENTRATION_BY_MASS,
     MOLAR_FLOW_RATE,
     MOLAR_FLUX,
     MOLAR_HEAT_CAPACITY,
-    MOLARITY_OF_I,
     MOLE_FRACTION_OF_I,
-    MOMENT_OF_INERTIA,
     MOMENTUM_FLOW_RATE,
     MOMENTUM_FLUX,
+    MOMENT_OF_INERTIA,
     NORMALITY_OF_SOLUTION,
     PARTICLE_DENSITY,
     PERCENT,
@@ -111,14 +110,16 @@ from .dimension import (
     VISCOSITY_DYNAMIC,
     VISCOSITY_KINEMATIC,
     VOLUME,
-    VOLUME_FRACTION_OF_I,
     VOLUMETRIC_CALORIFIC_HEATING_VALUE,
     VOLUMETRIC_COEFFICIENT_OF_EXPANSION,
     VOLUMETRIC_FLOW_RATE,
     VOLUMETRIC_FLUX,
     VOLUMETRIC_MASS_FLOW_RATE,
+    VOLUME_FRACTION_OF_I,
     WAVENUMBER,
 )
+from . import units
+from .unit import UnitConstant, UnitDefinition
 from .variable import FastQuantity, TypeSafeSetter
 from .variable_types.typed_variable import TypedVariable
 

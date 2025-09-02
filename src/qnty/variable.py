@@ -115,7 +115,7 @@ class FastQuantity:
             return FastQuantity(self.value / other, self.unit)
         
         # Fast dimensional analysis using cached signatures
-        result_dimension_sig = self._dimension_sig // other._dimension_sig
+        result_dimension_sig = self._dimension_sig / other._dimension_sig
         
         # Use cached SI factors for conversion
         self_si_value = self.value * self._si_factor
@@ -128,7 +128,7 @@ class FastQuantity:
         
         return FastQuantity(result_value, result_unit)
     
-    def _find_result_unit_fast(self, result_dimension_sig: int,
+    def _find_result_unit_fast(self, result_dimension_sig: int | float,
                               left_qty: FastQuantity, right_qty: FastQuantity) -> UnitConstant:
         """Ultra-fast unit finding using cached dimension signatures."""
         

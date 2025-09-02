@@ -271,7 +271,7 @@ class TestPressureSetterProperties:
         assert result is pressure_var
         assert pressure_var.quantity is not None
         assert pressure_var.quantity.value == 14.7
-        assert pressure_var.quantity.unit.name == "pound force per square inch"
+        assert pressure_var.quantity.unit.name == "pound_force_per_square_inch"
     
     def test_kPa_property(self):
         """Test kPa property sets unit correctly."""
@@ -283,7 +283,7 @@ class TestPressureSetterProperties:
         assert result is pressure_var
         assert pressure_var.quantity is not None
         assert pressure_var.quantity.value == 101.325
-        assert pressure_var.quantity.unit.name == "newton per square meter"
+        assert pressure_var.quantity.unit.name == "newton_per_square_meter"
     
     def test_MPa_property(self):
         """Test MPa property sets unit correctly."""
@@ -310,8 +310,8 @@ class TestPressureSetterProperties:
         assert pressure_var.quantity.unit == PressureUnits.bar
     
     @pytest.mark.parametrize("property_name,expected_unit_name", [
-        ("pound_force_per_square_inch", "pound force per square inch"),
-        ("newton_per_square_meter", "newton per square meter"),
+        ("pound_force_per_square_inch", "pound_force_per_square_inch"),
+        ("newton_per_square_meter", "newton_per_square_meter"),
         ("megapascal", "megapascal"),
         ("bar", "bar")
     ])
@@ -376,9 +376,9 @@ class TestFluentAPIAndMethodChaining:
         # Verify all quantities are set correctly
         assert inlet.quantity is not None and outlet.quantity is not None and system.quantity is not None
         assert inlet.quantity.value == 150.0
-        assert inlet.quantity.unit.name == "pound force per square inch"
+        assert inlet.quantity.unit.name == "pound_force_per_square_inch"
         assert outlet.quantity.value == 200.0
-        assert outlet.quantity.unit.name == "newton per square meter"
+        assert outlet.quantity.unit.name == "newton_per_square_meter"
         assert system.quantity.value == 2.5
         assert system.quantity.unit == PressureUnits.megapascal
     
