@@ -6189,7 +6189,7 @@ UNIT_DEFINITIONS = {
                 "si_factor": 6894.8,
                 "full_name": "pound force per square inch",
                 "notation": "PSI or psi or $\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{in}^{2}$",
-                "aliases": ['PSI', 'psi', 'lb_{f / in^{2'],
+                "aliases": ['psi'],
             }
         ],
         "aliases": {}

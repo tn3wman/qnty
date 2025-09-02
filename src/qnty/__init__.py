@@ -26,9 +26,6 @@ from .variables import (
     AtomicWeight,
     Concentration,
     DynamicFluidity,
-    ElectricalConductance,
-    ElectricalPermittivity,
-    ElectricalResistivity,
     ElectricCapacitance,
     ElectricCharge,
     ElectricCurrentIntensity,
@@ -37,6 +34,9 @@ from .variables import (
     ElectricInductance,
     ElectricPotential,
     ElectricResistance,
+    ElectricalConductance,
+    ElectricalPermittivity,
+    ElectricalResistivity,
     EnergyFlux,
     EnergyHeatWork,
     EnergyPerUnitArea,
@@ -117,7 +117,7 @@ from .variables import (
     VolumetricFlowRate,
     VolumetricFlux,
     VolumetricMassFlowRate,
-    Wavenumber,
+    Wavenumber
 )
 
 # Register all units to the global registry

@@ -10,7 +10,13 @@ Uses the same source of truth as the consolidated variables system.
 """
 
 import json
+import sys
 from pathlib import Path
+
+# Add src/qnty to the path to import prefix system
+sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
+
+from qnty.prefixes import PREFIXABLE_UNITS, StandardPrefixes
 
 
 def load_json_data(file_path: Path) -> dict:
@@ -56,6 +62,104 @@ def convert_unit_name_to_property(unit_name: str) -> str:
         property_name = f"{property_name}_unit"
     
     return property_name
+
+
+def identify_base_units_needing_prefixes(parsed_data: dict) -> dict:
+    """Identify base SI units that should have prefixes generated."""
+    base_units = {}
+    
+    # Look through all units to find base SI units that are in PREFIXABLE_UNITS
+    for field_name, field_data in parsed_data.items():
+        for unit_data in field_data['units']:
+            unit_name = unit_data['normalized_name']
+            if unit_name in PREFIXABLE_UNITS:
+                # This is a base unit that should have prefixes
+                # Store all occurrences of the unit, not just the last one
+                if unit_name not in base_units:
+                    base_units[unit_name] = []
+                
+                base_units[unit_name].append({
+                    'unit_data': unit_data,
+                    'field_name': field_name,
+                    'prefixes': PREFIXABLE_UNITS[unit_name]
+                })
+    
+    return base_units
+
+
+def generate_prefixed_unit_data(base_unit_data: dict, prefix: StandardPrefixes, field_name: str, field_data: dict) -> dict:
+    """Generate unit data for a prefixed variant of a base unit."""
+    prefix_def = prefix.value
+    
+    # Apply prefix to name and symbol
+    prefixed_name = prefix_def.apply_to_name(base_unit_data['normalized_name'])
+    prefixed_symbol = prefix_def.apply_to_symbol(base_unit_data.get('si_metric', {}).get('unit', base_unit_data.get('notation', '')))
+    
+    # Calculate new SI factor
+    base_factor = base_unit_data.get('si_metric', {}).get('conversion_factor', 1.0)
+    new_factor = base_factor * prefix_def.factor
+    
+    # Create new unit data
+    return {
+        'name': prefix_def.apply_to_name(base_unit_data['name']),
+        'normalized_name': prefixed_name,
+        'notation': prefixed_symbol,
+        'si_metric': {
+            'conversion_factor': new_factor,
+            'unit': base_unit_data.get('si_metric', {}).get('unit', base_unit_data.get('notation', ''))
+        },
+        'english_us': base_unit_data.get('english_us', {}),
+        'aliases': [prefixed_symbol] if prefixed_symbol else [],
+        'generated_from_prefix': True  # Mark as generated for identification
+    }
+
+
+def augment_parsed_data_with_prefixes(parsed_data: dict) -> dict:
+    """Add missing prefixed units to the parsed data."""
+    # Make a deep copy to avoid modifying the original
+    augmented_data = {}
+    for key, value in parsed_data.items():
+        augmented_data[key] = {
+            'field': value['field'],
+            'normalized_field': value['normalized_field'],
+            'dimensions': value.get('dimensions', {}),
+            'units': list(value['units'])  # Copy the units list
+        }
+    
+    # Find base units that need prefixes
+    base_units = identify_base_units_needing_prefixes(parsed_data)
+    
+    # Track existing unit names to avoid duplicates
+    existing_units = set()
+    for field_data in augmented_data.values():
+        for unit in field_data['units']:
+            existing_units.add(unit['normalized_name'])
+    
+    # Generate and add missing prefixed units
+    generated_count = 0
+    for unit_name, base_entries in base_units.items():
+        # Process each field where this unit appears
+        for base_info in base_entries:
+            base_unit = base_info['unit_data']
+            field_name = base_info['field_name']
+            prefixes = base_info['prefixes']
+            
+            for prefix in prefixes:
+                if prefix == StandardPrefixes.NONE:
+                    continue  # Skip NONE prefix
+                    
+                prefix_def = prefix.value
+                prefixed_name = prefix_def.apply_to_name(unit_name)
+                
+                # Only add if it doesn't already exist globally
+                if prefixed_name not in existing_units:
+                    prefixed_unit = generate_prefixed_unit_data(base_unit, prefix, field_name, augmented_data[field_name])
+                    augmented_data[field_name]['units'].append(prefixed_unit)
+                    existing_units.add(prefixed_name)
+                    generated_count += 1
+    
+    print(f"Generated {generated_count} missing prefixed units for type stubs")
+    return augmented_data
 
 
 def generate_consolidated_pyi(parsed_data: dict, dimension_mapping: dict) -> str:
@@ -241,16 +345,25 @@ def main():
     parsed_data = load_json_data(parsed_file)
     dimension_mapping = load_json_data(dimension_file)
     
-    # Count fields with units
-    fields_with_units = sum(1 for field_data in parsed_data.values() if field_data.get('units'))
-    total_units = sum(len(field_data.get('units', [])) for field_data in parsed_data.values())
+    print(f"Loaded {len(parsed_data)} fields with units")
     
-    print(f"Found {len(parsed_data)} total fields, {fields_with_units} fields with units")
-    print(f"Total units: {total_units}")
+    # Augment data with missing prefixed units (same as variables generation)
+    print("\nAugmenting data with missing prefixed units...")
+    augmented_data = augment_parsed_data_with_prefixes(parsed_data)
+    
+    # Count fields with units
+    fields_with_units = sum(1 for field_data in augmented_data.values() if field_data.get('units'))
+    original_total = sum(len(field_data.get('units', [])) for field_data in parsed_data.values())
+    total_units = sum(len(field_data.get('units', [])) for field_data in augmented_data.values())
+    
+    print(f"Found {len(augmented_data)} total fields, {fields_with_units} fields with units")
+    print(f"Original units: {original_total}")
+    print(f"Total units (with prefixes): {total_units}")
+    print(f"Generated prefixed units: {total_units - original_total}")
     
     # Generate type stub file
     print("Generating variables.pyi...")
-    content = generate_consolidated_pyi(parsed_data, dimension_mapping)
+    content = generate_consolidated_pyi(augmented_data, dimension_mapping)
     
     # Write output file
     save_text_file(content, output_file)
