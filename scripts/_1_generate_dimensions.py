@@ -264,7 +264,7 @@ def main():
     scripts_input_path = Path(__file__).parent / "input"
     scripts_output_path = Path(__file__).parent / "output"
     
-    parsed_file = scripts_input_path / "parsed_units.json"
+    parsed_file = scripts_input_path / "unit_data.json"
     dimension_file = src_path / "dimension.py"
     mapping_file = scripts_output_path / "dimension_mapping.json"
     
