@@ -19,6 +19,7 @@ class BaseDimension(IntEnum):
     TEMPERATURE = 11
     AMOUNT = 13
     LUMINOSITY = 17
+    DIMENSIONLESS = 1  # Must be 1 to act as multiplicative identity
 
 
 @final
@@ -78,8 +79,8 @@ ACCELERATION = DimensionSignature.create(length=1, time=-2)  # L T^-2
 ACTIVATION_ENERGY = DimensionSignature.create(amount=-1, length=2, time=-2)  # N^-1 L^2 T^-2
 AMOUNT = DimensionSignature.create(amount=1)  # N
 AMOUNT_OF_SUBSTANCE = DimensionSignature.create(amount=1)  # N
-ANGLE_PLANE = DimensionSignature.create()  # Dimensionless
-ANGLE_SOLID = DimensionSignature.create()  # Dimensionless
+ANGLE_PLANE = DimensionSignature(BaseDimension.DIMENSIONLESS)  # Dimensionless
+ANGLE_SOLID = DimensionSignature(BaseDimension.DIMENSIONLESS)  # Dimensionless
 ANGULAR_ACCELERATION = DimensionSignature.create(time=-2)  # T^-2
 ANGULAR_MOMENTUM = DimensionSignature.create(length=2, mass=1, time=-1)  # L^2 M T^-1
 AREA = DimensionSignature.create(length=2)  # L^2
@@ -87,7 +88,7 @@ AREA_PER_UNIT_VOLUME = DimensionSignature.create(length=-1)  # L^-1
 ATOMIC_WEIGHT = DimensionSignature.create(amount=-1, mass=1)  # N^-1 M
 CONCENTRATION = DimensionSignature.create(length=-3, mass=1)  # L^-3 M
 CURRENT = DimensionSignature.create(current=1)  # A
-DIMENSIONLESS = DimensionSignature.create()  # Dimensionless
+DIMENSIONLESS = DimensionSignature(BaseDimension.DIMENSIONLESS)  # Dimensionless
 DYNAMIC_FLUIDITY = DimensionSignature.create(length=1, mass=-1, time=1)  # L M^-1 T
 ELECTRICAL_CONDUCTANCE = DimensionSignature.create(current=2, length=-2, mass=-1, time=3)  # A^2 L^-2 M^-1 T^3
 ELECTRICAL_PERMITTIVITY = DimensionSignature.create(current=2, length=-3, mass=-1, time=4)  # A^2 L^-3 M^-1 T^4
@@ -131,7 +132,7 @@ MASS = DimensionSignature.create(mass=1)  # M
 MASS_DENSITY = DimensionSignature.create(length=-3, mass=1)  # L^-3 M
 MASS_FLOW_RATE = DimensionSignature.create(mass=1, time=-1)  # M T^-1
 MASS_FLUX = DimensionSignature.create(length=-2, mass=1, time=-1)  # L^-2 M T^-1
-MASS_FRACTION_OF_I = DimensionSignature.create()  # Dimensionless
+MASS_FRACTION_OF_I = DimensionSignature(BaseDimension.DIMENSIONLESS)  # Dimensionless
 MASS_TRANSFER_COEFFICIENT = DimensionSignature.create(length=-2, mass=1, time=-1)  # L^-2 M T^-1
 MOLALITY_OF_SOLUTE_I = DimensionSignature.create(amount=1, mass=-1)  # N M^-1
 MOLARITY_OF_I = DimensionSignature.create(amount=1, length=-3)  # N L^-3
@@ -139,12 +140,13 @@ MOLAR_CONCENTRATION_BY_MASS = DimensionSignature.create(amount=1)  # N
 MOLAR_FLOW_RATE = DimensionSignature.create(amount=1, time=-1)  # N T^-1
 MOLAR_FLUX = DimensionSignature.create(amount=1, length=-2, time=-1)  # N L^-2 T^-1
 MOLAR_HEAT_CAPACITY = DimensionSignature.create(amount=-1, length=2, temp=-1, time=-2)  # N^-1 L^2 Θ^-1 T^-2
-MOLE_FRACTION_OF_I = DimensionSignature.create()  # Dimensionless
+MOLE_FRACTION_OF_I = DimensionSignature(BaseDimension.DIMENSIONLESS)  # Dimensionless
 MOMENTUM_FLOW_RATE = DimensionSignature.create(length=1, mass=1, time=-2)  # L M T^-2
 MOMENTUM_FLUX = DimensionSignature.create(length=-1, mass=1, time=-2)  # L^-1 M T^-2
 MOMENT_OF_INERTIA = DimensionSignature.create(length=2, mass=1)  # L^2 M
 NORMALITY_OF_SOLUTION = DimensionSignature.create(amount=1, length=-3)  # N L^-3
 PARTICLE_DENSITY = DimensionSignature.create(length=-3)  # L^-3
+PERCENT = DimensionSignature(BaseDimension.DIMENSIONLESS)  # Dimensionless
 PERMEABILITY = DimensionSignature.create(length=2)  # L^2
 PHOTON_EMISSION_RATE = DimensionSignature.create(length=-2, time=-1)  # L^-2 T^-1
 POWER_PER_UNIT_MASS = DimensionSignature.create(length=2, time=-3)  # L^2 T^-3
@@ -157,7 +159,7 @@ RADIOACTIVITY = DimensionSignature.create(time=-1)  # T^-1
 SECOND_MOMENT_OF_AREA = DimensionSignature.create(length=4)  # L^4
 SECOND_RADIATION_CONSTANT_PLANCK = DimensionSignature.create(length=1, temp=1)  # L Θ
 SPECIFIC_ENTHALPY = DimensionSignature.create(length=2, time=-2)  # L^2 T^-2
-SPECIFIC_GRAVITY = DimensionSignature.create()  # Dimensionless
+SPECIFIC_GRAVITY = DimensionSignature(BaseDimension.DIMENSIONLESS)  # Dimensionless
 SPECIFIC_HEAT_CAPACITY_CONSTANT_PRESSURE = DimensionSignature.create(length=2, mass=1, temp=-1, time=-2)  # L^2 M Θ^-1 T^-2
 SPECIFIC_LENGTH = DimensionSignature.create(length=1, mass=-1)  # L M^-1
 SPECIFIC_SURFACE = DimensionSignature.create(length=2, mass=-1)  # L^2 M^-1
@@ -180,5 +182,5 @@ VOLUMETRIC_COEFFICIENT_OF_EXPANSION = DimensionSignature.create(length=-3, mass=
 VOLUMETRIC_FLOW_RATE = DimensionSignature.create(length=3, time=-1)  # L^3 T^-1
 VOLUMETRIC_FLUX = DimensionSignature.create(length=1, time=-1)  # L T^-1
 VOLUMETRIC_MASS_FLOW_RATE = DimensionSignature.create(length=-3, mass=1, time=-1)  # L^-3 M T^-1
-VOLUME_FRACTION_OF_I = DimensionSignature.create()  # Dimensionless
+VOLUME_FRACTION_OF_I = DimensionSignature(BaseDimension.DIMENSIONLESS)  # Dimensionless
 WAVENUMBER = DimensionSignature.create(length=-1)  # L^-1

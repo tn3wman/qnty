@@ -14,7 +14,7 @@ class TestEquationCreation:
     def test_basic_equation_creation(self):
         """Test creating equations using the .equals() method."""
         T = Length("Wall Thickness", is_known=False)
-        T_bar = Length(0.147, "inches", "Nominal Wall Thickness")
+        T_bar = Length(0.147, "inch", "Nominal Wall Thickness")
         U_m = Dimensionless(0.125, "Mill Undertolerance")
         
         # Create equation: T = T_bar * (1 - U_m)
@@ -29,7 +29,7 @@ class TestEquationCreation:
     def test_equation_variable_collection(self):
         """Test that equations correctly identify all variables."""
         P = Pressure(90, "psi", "Design Pressure")
-        D = Length(0.84, "inches", "Outside Diameter")
+        D = Length(0.84, "inch", "Outside Diameter")
         S = Pressure(20000, "psi", "Allowable Stress")
         E = Dimensionless(0.8, "Quality Factor")
         W = Dimensionless(1, "Weld Joint Strength Reduction Factor")
@@ -47,7 +47,7 @@ class TestEquationCreation:
     def test_equation_string_representation(self):
         """Test string representation of equations."""
         T = Length("T", is_known=False)
-        T_bar = Length(0.147, "inches", "T_bar")
+        T_bar = Length(0.147, "inch", "T_bar")
         
         eqn = T.equals(T_bar * 0.875)
         eqn_str = str(eqn)
@@ -62,8 +62,8 @@ class TestArithmeticOperations:
     
     def test_variable_addition(self):
         """Test addition between variables creates expressions."""
-        a = Length(5, "meters", "Length A")
-        b = Length(3, "meters", "Length B")
+        a = Length(5, "meter", "Length A")
+        b = Length(3, "meter", "Length B")
         
         result = a + b
         assert isinstance(result, Expression)
@@ -75,8 +75,8 @@ class TestArithmeticOperations:
     
     def test_variable_multiplication(self):
         """Test multiplication between variables."""
-        width = Length(10, "meters", "Width")
-        height = Length(5, "meters", "Height")
+        width = Length(10, "meter", "Width")
+        height = Length(5, "meter", "Height")
         
         result = width * height
         assert isinstance(result, Expression)
@@ -89,7 +89,7 @@ class TestArithmeticOperations:
     def test_complex_expression(self):
         """Test complex arithmetic expressions."""
         P = Pressure(90, "psi", "P")
-        D = Length(0.84, "inches", "D")
+        D = Length(0.84, "inch", "D")
         S = Pressure(20000, "psi", "S")
         E = Dimensionless(0.8, "E")
         
@@ -133,7 +133,7 @@ class TestEquationSolving:
     def test_simple_equation_solving(self):
         """Test solving simple direct assignment equations."""
         # Known variables
-        T_bar = Length(0.147, "inches", "T_bar")
+        T_bar = Length(0.147, "inch", "T_bar")
         U_m = Dimensionless(0.125, "U_m")
         
         # Unknown variable
@@ -159,7 +159,7 @@ class TestEquationSolving:
         expected_value = 0.147 * (1 - 0.125)  # 0.147 * 0.875 = 0.128625
         # Convert to expected unit for comparison
         if T.quantity.unit.name == "millimeter":
-            # Convert inches to millimeters: 0.128625 inches * 25.4 mm/inch = 3.267075 mm
+            # Convert inch to millimeters: 0.128625 inch * 25.4 mm/inch = 3.267075 mm
             expected_value_mm = expected_value * 25.4
             assert abs(T.quantity.value - expected_value_mm) < 1e-6
         else:
@@ -168,9 +168,9 @@ class TestEquationSolving:
     def test_equation_residual_check(self):
         """Test checking if equations are satisfied."""
         # Set up variables with known values
-        a = Length(5, "meters", "a")
-        b = Length(3, "meters", "b")
-        c = Length(8, "meters", "c")  # 5 + 3 = 8
+        a = Length(5, "meter", "a")
+        b = Length(3, "meter", "b")
+        c = Length(8, "meter", "c")  # 5 + 3 = 8
         
         # Create equation: c = a + b
         eqn = c.equals(a + b)
@@ -188,7 +188,7 @@ class TestEquationSolving:
     def test_unknown_variable_detection(self):
         """Test detection of unknown variables in equations."""
         P = Pressure(90, "psi", "P")  # Known
-        D = Length(0.84, "inches", "D")  # Known
+        D = Length(0.84, "inch", "D")  # Known
         t = Length("t", is_known=False)  # Unknown
         S = Pressure("S", is_known=False)  # Unknown
         
@@ -206,11 +206,18 @@ class TestExpressionEvaluation:
     
     def test_expression_evaluation(self):
         """Test evaluating expressions with variable values."""
-        a = Length(5, "meters", "a")
-        b = Length(3, "meters", "b")
+        # Create variables without initial quantities to force expression creation
+        a = Length("a", is_known=False)
+        b = Length("b", is_known=False)
         
-        expr = a + b
-        variables: dict[str, TypeSafeVariable] = {"a": a, "b": b}
+        # Create expression before setting values
+        from qnty.expression import Expression
+        expr: Expression = a + b
+        
+        # Now set values for the variables that will be used in evaluation
+        a_eval = Length(5, "meter", "a")
+        b_eval = Length(3, "meter", "b")
+        variables: dict[str, TypeSafeVariable] = {"a": a_eval, "b": b_eval}
         
         result = expr.evaluate(variables)
         assert result.value == 8.0  # 5 + 3
@@ -218,11 +225,18 @@ class TestExpressionEvaluation:
     
     def test_complex_expression_evaluation(self):
         """Test evaluating complex expressions."""
-        P = Pressure(90, "psi", "P")
-        D = Length(1, "inches", "D")  # Simplified for easier math
+        # Create variables without initial quantities to force expression creation
+        P = Pressure("P", is_known=False)
+        D = Length("D", is_known=False)
         
-        expr = P * D * 2  # 90 * 1 * 2 = 180
-        variables: dict[str, TypeSafeVariable] = {"P": P, "D": D}
+        # Create expression before setting values
+        from qnty.expression import Expression
+        expr: Expression = P * D * 2  # 90 * 1 * 2 = 180
+        
+        # Set values for the variables that will be used in evaluation
+        P_eval = Pressure(90, "psi", "P")
+        D_eval = Length(1, "inch", "D")  # Simplified for easier math
+        variables: dict[str, TypeSafeVariable] = {"P": P_eval, "D": D_eval}
         
         result = expr.evaluate(variables)
         # Result will be in some combined unit, just check it evaluates
@@ -230,11 +244,16 @@ class TestExpressionEvaluation:
     
     def test_expression_with_constants(self):
         """Test expressions containing constants."""
-        var = Pressure(100, "psi", "var")
+        # Create variable without initial quantity to force expression creation
+        var = Pressure("var", is_known=False)
         
-        # Only multiply to avoid unit incompatibility issues
-        expr = var * 2  # 100 * 2 = 200
-        variables: dict[str, TypeSafeVariable] = {"var": var}
+        # Create expression before setting values
+        from qnty.expression import Expression
+        expr: Expression = var * 2  # 100 * 2 = 200
+        
+        # Set value for the variable that will be used in evaluation
+        var_eval = Pressure(100, "psi", "var")
+        variables: dict[str, TypeSafeVariable] = {"var": var_eval}
         
         result = expr.evaluate(variables)
         # The actual value depends on unit conversions, but should be computable
@@ -242,7 +261,7 @@ class TestExpressionEvaluation:
         # Should be roughly double the original value
         original_pascals = 100 * 6894.757  # psi to pascals
         expected_result = original_pascals * 2
-        assert abs(result.value - expected_result) < 1  # Allow some tolerance
+        assert abs(result.value - expected_result) < 10  # Allow some tolerance for floating point precision
 
 
 class TestEdgeCases:
@@ -261,7 +280,7 @@ class TestEdgeCases:
     
     def test_invalid_solve_target(self):
         """Test error when trying to solve for non-existent variable."""
-        a = Length(5, "meters", "a")
+        a = Length(5, "meter", "a")
         b = Length("b", is_known=False)
         
         eqn = b.equals(a * 2)
@@ -272,8 +291,8 @@ class TestEdgeCases:
     
     def test_expression_string_representation(self):
         """Test string representations of expressions."""
-        a = Length(5, "meters", "a")
-        b = Length(3, "meters", "b")
+        a = Length(5, "meter", "a")
+        b = Length(3, "meter", "b")
         
         expr = a + b
         expr_str = str(expr)

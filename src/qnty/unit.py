@@ -7,7 +7,7 @@ Unit definitions, constants and registry for the high-performance unit system.
 
 from dataclasses import dataclass
 
-from .dimension import DIMENSIONLESS, LENGTH, PRESSURE, DimensionSignature
+from .dimension import DimensionSignature
 from .prefixes import SIPrefix, StandardPrefixes
 
 
@@ -70,40 +70,8 @@ class HighPerformanceRegistry:
         self.base_units: dict[str, UnitDefinition] = {}  # Track base units for prefix generation
         self.prefixable_units: set[str] = set()  # Track which units can have prefixes
 
-        # Keep legacy initialization for backward compatibility
-        self._initialize_units()
-        self._precompute_conversions()
+        # Registry starts empty - units are registered via register_all_units() in __init__.py
     
-    def _initialize_units(self):
-        """Initialize with engineering units."""
-        
-        # Length units
-        meter = UnitDefinition("meter", "m", LENGTH, 1.0)
-        millimeter = UnitDefinition("millimeter", "mm", LENGTH, 0.001)
-        centimeter = UnitDefinition("centimeter", "cm", LENGTH, 0.01)
-        inch = UnitDefinition("inch", "in", LENGTH, 0.0254)
-        foot = UnitDefinition("foot", "ft", LENGTH, 0.3048)
-        
-        # Pressure units
-        pascal = UnitDefinition("pascal", "Pa", PRESSURE, 1.0)
-        kilopascal = UnitDefinition("kilopascal", "kPa", PRESSURE, 1000.0)
-        megapascal = UnitDefinition("megapascal", "MPa", PRESSURE, 1e6)
-        psi = UnitDefinition("psi", "psi", PRESSURE, 6894.757)
-        bar = UnitDefinition("bar", "bar", PRESSURE, 100000.0)
-        
-        # Dimensionless units
-        dimensionless = UnitDefinition("dimensionless", "", DIMENSIONLESS, 1.0)
-        
-        # Register all units
-        for unit_def in [meter, millimeter, centimeter, inch, foot,
-                        pascal, kilopascal, megapascal, psi, bar, dimensionless]:
-            self.units[unit_def.name] = unit_def
-            
-            # Group by dimension
-            dim_sig = unit_def.dimension._signature
-            if dim_sig not in self.dimensional_groups:
-                self.dimensional_groups[dim_sig] = []
-            self.dimensional_groups[dim_sig].append(unit_def)
     
     def register_unit(self, unit_def: UnitDefinition):
         """Register a single unit definition."""

@@ -62,27 +62,22 @@ class TypedVariable(ExpressionVariable):
             # Auto-set the value with the specified unit
             setter = self._setter_class(self, value)
             
-            # Handle special unit aliases
-            if unit == "in":  # Handle Python reserved word
-                unit = "inchs"  # Match the actual property name
-            elif unit == "inches":  # Handle common plural form
-                unit = "inchs"  # Match the actual property name
-            
             # Try to find the unit property on the setter
             if hasattr(setter, unit):
                 getattr(setter, unit)
             elif hasattr(setter, unit + 's'):  # Handle singular/plural
                 getattr(setter, unit + 's')
-            elif self._default_unit_property and hasattr(setter, self._default_unit_property):
-                # Fall back to default unit
-                getattr(setter, self._default_unit_property)
+            elif unit.endswith('s') and hasattr(setter, unit[:-1]):  # Handle plural to singular
+                getattr(setter, unit[:-1])
             else:
-                # Last resort - try to find any valid unit property
-                # This helps with forward compatibility
+                # Unit not found - provide helpful error with available units
                 unit_properties = [attr for attr in dir(setter)
                                  if not attr.startswith('_') and attr != 'value' and attr != 'variable']
-                if unit_properties:
-                    getattr(setter, unit_properties[0])
+                available_units = ', '.join(sorted(unit_properties[:10]))  # Show first 10 units
+                if len(unit_properties) > 10:
+                    available_units += f' ... and {len(unit_properties) - 10} more'
+                raise ValueError(f"Unit '{unit}' not found for {self.__class__.__name__}. "
+                               f"Available units: {available_units}")
                     
         else:
             # More specific error messages matching test expectations

@@ -85,6 +85,11 @@ class FastQuantity:
         if isinstance(other, int | float):
             return FastQuantity(self.value * other, self.unit)
         
+        # Handle TypeSafeVariable objects by using their quantity
+        from .variable_types.typed_variable import TypedVariable  # Avoid circular imports
+        if isinstance(other, TypedVariable) and other.quantity is not None:
+            other = other.quantity
+        
         # Fast dimensional analysis using cached signatures
         result_dimension_sig = self._dimension_sig * other._dimension_sig
         
@@ -129,6 +134,7 @@ class FastQuantity:
         
         # Initialize dimension cache if empty
         if not registry._dimension_cache:
+            from .dimension import ENERGY_PER_UNIT_AREA, SURFACE_TENSION
             registry._dimension_cache = {
                 DIMENSIONLESS._signature: DimensionlessUnits.dimensionless,
                 LENGTH._signature: LengthUnits.millimeter,
@@ -137,17 +143,25 @@ class FastQuantity:
                 VOLUME._signature: LengthUnits.millimeter,  # mm³
                 FORCE._signature: UnitConstant(UnitDefinition("newton", "N", FORCE, 1.0)),
                 ENERGY._signature: UnitConstant(UnitDefinition("joule", "J", ENERGY, 1.0)),
+                SURFACE_TENSION._signature: UnitConstant(UnitDefinition("newton_per_meter", "N/m", SURFACE_TENSION, 1.0)),
+                ENERGY_PER_UNIT_AREA._signature: UnitConstant(UnitDefinition("joule_per_square_meter", "J/m²", ENERGY_PER_UNIT_AREA, 1.0)),
             }
         
         # O(1) lookup for common dimensions
         if result_dimension_sig in registry._dimension_cache:
             return registry._dimension_cache[result_dimension_sig]
         
-        # For rare combined dimensions, create temporary unit
+        # For rare combined dimensions, create SI base unit with descriptive name
+        result_dimension = DimensionSignature(result_dimension_sig)
+        
+        # Create descriptive name based on dimensional analysis
+        si_name = self._create_si_unit_name(result_dimension)
+        si_symbol = self._create_si_unit_symbol(result_dimension)
+        
         temp_unit = UnitDefinition(
-            name=f"combined_{result_dimension_sig}",
-            symbol="combined",
-            dimension=DimensionSignature(result_dimension_sig),
+            name=si_name,
+            symbol=si_symbol,
+            dimension=result_dimension,
             si_factor=1.0
         )
         result_unit = UnitConstant(temp_unit)
@@ -155,6 +169,17 @@ class FastQuantity:
         # Cache for future use
         registry._dimension_cache[result_dimension_sig] = result_unit
         return result_unit
+    
+    def _create_si_unit_name(self, dimension: DimensionSignature) -> str:
+        """Create descriptive SI unit name based on dimensional analysis."""
+        # For now, return a generic SI unit name. In the future, this could be enhanced
+        # to parse the dimension signature and create descriptive names like "newton_per_meter"
+        return f"si_derived_unit_{abs(hash(dimension._signature)) % 10000}"
+    
+    def _create_si_unit_symbol(self, _dimension: DimensionSignature) -> str:
+        """Create SI unit symbol based on dimensional analysis."""
+        # For complex units, return descriptive symbol based on common engineering units
+        return "SI_unit"
     
     def _find_result_unit(self, result_dimension: DimensionSignature,
                          left_qty: FastQuantity, right_qty: FastQuantity) -> UnitConstant:

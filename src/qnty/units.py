@@ -3,8 +3,8 @@ Comprehensive Consolidated Units Module
 =======================================
 
 Auto-generated consolidated unit definitions for all engineering units.
-Contains 864 units
-across 105 fields organized into 105 dimensional groups.
+Contains 871 units
+across 107 fields organized into 107 dimensional groups.
 
 Generated from the complete NIST unit tables and engineering references.
 """
@@ -22,9 +22,6 @@ from .dimension import (
     CONCENTRATION,
     DIMENSIONLESS,
     DYNAMIC_FLUIDITY,
-    ELECTRICAL_CONDUCTANCE,
-    ELECTRICAL_PERMITTIVITY,
-    ELECTRICAL_RESISTIVITY,
     ELECTRIC_CAPACITANCE,
     ELECTRIC_CHARGE,
     ELECTRIC_CURRENT_INTENSITY,
@@ -33,6 +30,9 @@ from .dimension import (
     ELECTRIC_INDUCTANCE,
     ELECTRIC_POTENTIAL,
     ELECTRIC_RESISTANCE,
+    ELECTRICAL_CONDUCTANCE,
+    ELECTRICAL_PERMITTIVITY,
+    ELECTRICAL_RESISTIVITY,
     ENERGY_FLUX,
     ENERGY_HEAT_WORK,
     ENERGY_PER_UNIT_AREA,
@@ -65,14 +65,14 @@ from .dimension import (
     MASS_FLUX,
     MASS_TRANSFER_COEFFICIENT,
     MOLALITY_OF_SOLUTE_I,
-    MOLARITY_OF_I,
     MOLAR_CONCENTRATION_BY_MASS,
     MOLAR_FLOW_RATE,
     MOLAR_FLUX,
     MOLAR_HEAT_CAPACITY,
+    MOLARITY_OF_I,
+    MOMENT_OF_INERTIA,
     MOMENTUM_FLOW_RATE,
     MOMENTUM_FLUX,
-    MOMENT_OF_INERTIA,
     NORMALITY_OF_SOLUTION,
     PARTICLE_DENSITY,
     PERMEABILITY,
@@ -109,7 +109,7 @@ from .dimension import (
     VOLUMETRIC_FLOW_RATE,
     VOLUMETRIC_FLUX,
     VOLUMETRIC_MASS_FLOW_RATE,
-    WAVENUMBER
+    WAVENUMBER,
 )
 
 # Comprehensive unit definitions organized by dimensional signature
@@ -837,6 +837,46 @@ UNIT_DEFINITIONS = {
                 "si_factor": 0.017115,
                 "full_name": "grains of \"i\" per gallon (US)",
                 "notation": "gr/gal",
+                "aliases": [],
+            }
+        ],
+        "aliases": {}
+    },
+
+    "dimensionless": {
+        # Dimensionless - Dimensionless
+        "dimension": DIMENSIONLESS,
+        "units": [
+            {
+                "name": "dimensionless",
+                "symbol": "",
+                "si_factor": 1.0,
+                "full_name": "dimensionless",
+                "notation": "",
+                "aliases": [],
+            },
+            {
+                "name": "parts_per_billion",
+                "symbol": "ppb",
+                "si_factor": 1e-09,
+                "full_name": "parts per billion",
+                "notation": "ppb",
+                "aliases": ['ppb'],
+            },
+            {
+                "name": "parts_per_million",
+                "symbol": "ppm",
+                "si_factor": 1e-06,
+                "full_name": "parts per million",
+                "notation": "ppm",
+                "aliases": ['ppm'],
+            },
+            {
+                "name": "ratio",
+                "symbol": "ratio",
+                "si_factor": 1.0,
+                "full_name": "ratio",
+                "notation": "ratio",
                 "aliases": [],
             }
         ],
@@ -4979,6 +5019,38 @@ UNIT_DEFINITIONS = {
         "aliases": {}
     },
 
+    "percent": {
+        # Percent - Dimensionless
+        "dimension": DIMENSIONLESS,
+        "units": [
+            {
+                "name": "basis_point",
+                "symbol": "bp",
+                "si_factor": 0.0001,
+                "full_name": "basis point",
+                "notation": "bp",
+                "aliases": ['bp', 'bps'],
+            },
+            {
+                "name": "per_mille",
+                "symbol": "‰",
+                "si_factor": 0.001,
+                "full_name": "per mille",
+                "notation": "‰",
+                "aliases": ['‰'],
+            },
+            {
+                "name": "percent",
+                "symbol": "%",
+                "si_factor": 0.01,
+                "full_name": "percent",
+                "notation": "%",
+                "aliases": ['%'],
+            }
+        ],
+        "aliases": {}
+    },
+
     "permeability": {
         # Permeability - LENGTH^2
         "dimension": PERMEABILITY,
@@ -5617,10 +5689,10 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pound_force_per_square_inch",
-                "symbol": "PSI or psi or $\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{in}^{2}$",
-                "si_factor": 6894.8,
+                "symbol": "psi",
+                "si_factor": 6894.757,
                 "full_name": "pound force per square inch",
-                "notation": "PSI or psi or $\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{in}^{2}$",
+                "notation": "psi",
                 "aliases": ['psi'],
             },
             {
@@ -6185,10 +6257,10 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pound_force_per_square_inch",
-                "symbol": "PSI or psi or $\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{in}^{2}$",
-                "si_factor": 6894.8,
+                "symbol": "psi",
+                "si_factor": 6894.757,
                 "full_name": "pound force per square inch",
-                "notation": "PSI or psi or $\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{in}^{2}$",
+                "notation": "psi",
                 "aliases": ['psi'],
             }
         ],
@@ -7824,8 +7896,8 @@ UNIT_DEFINITIONS = {
 
 def create_unit_class(class_name: str, dimension_data: dict) -> type:
     """Dynamically create a unit class with all unit constants as attributes."""
-    from .unit import UnitConstant, UnitDefinition
     from .prefixes import get_prefix_by_name
+    from .unit import UnitConstant, UnitDefinition
     
     # Create a new class dynamically
     unit_class = type(class_name, (), {})
@@ -7878,8 +7950,8 @@ def create_unit_class(class_name: str, dimension_data: dict) -> type:
 
 def register_all_units(registry):
     """Register all unit definitions to the given registry with prefix support."""
+    from .prefixes import PREFIXABLE_UNITS
     from .unit import UnitDefinition
-    from .prefixes import get_prefix_by_name, StandardPrefixes, PREFIXABLE_UNITS
     
     # First pass: register base units with prefixes where applicable
     for dimension_data in UNIT_DEFINITIONS.values():
@@ -7944,6 +8016,8 @@ AreaUnits = create_unit_class("AreaUnits", UNIT_DEFINITIONS["area"])
 AreaPerUnitVolumeUnits = create_unit_class("AreaPerUnitVolumeUnits", UNIT_DEFINITIONS["area_per_unit_volume"])
 AtomicWeightUnits = create_unit_class("AtomicWeightUnits", UNIT_DEFINITIONS["atomic_weight"])
 ConcentrationUnits = create_unit_class("ConcentrationUnits", UNIT_DEFINITIONS["concentration"])
+DimensionlessUnits = create_unit_class("DimensionlessUnits", UNIT_DEFINITIONS["dimensionless"])
+PercentUnits = create_unit_class("PercentUnits", UNIT_DEFINITIONS["percent"])
 DynamicFluidityUnits = create_unit_class("DynamicFluidityUnits", UNIT_DEFINITIONS["dynamic_fluidity"])
 ElectricCapacitanceUnits = create_unit_class("ElectricCapacitanceUnits", UNIT_DEFINITIONS["electric_capacitance"])
 ElectricChargeUnits = create_unit_class("ElectricChargeUnits", UNIT_DEFINITIONS["electric_charge"])
@@ -8037,56 +8111,3 @@ VolumetricFlowRateUnits = create_unit_class("VolumetricFlowRateUnits", UNIT_DEFI
 VolumetricFluxUnits = create_unit_class("VolumetricFluxUnits", UNIT_DEFINITIONS["volumetric_flux"])
 VolumetricMassFlowRateUnits = create_unit_class("VolumetricMassFlowRateUnits", UNIT_DEFINITIONS["volumetric_mass_flow_rate"])
 WavenumberUnits = create_unit_class("WavenumberUnits", UNIT_DEFINITIONS["wavenumber"])
-
-# Create standalone DimensionlessUnits class for backward compatibility
-class DimensionlessUnits:
-    """Standalone dimensionless units class."""
-    from .unit import UnitConstant, UnitDefinition
-    
-    # Standard dimensionless unit
-    dimensionless_def = UnitDefinition(
-        name="dimensionless",
-        symbol="",
-        dimension=DIMENSIONLESS,
-        si_factor=1.0,
-        si_offset=0.0
-    )
-    dimensionless = UnitConstant(dimensionless_def)
-
-
-# Module-level function for compatibility with existing code
-def get_consolidated_modules():
-    """Return a list of module-like objects for consolidated units."""
-    class ConsolidatedModule:
-        """Mock module object for compatibility with existing registration system."""
-        
-        def __init__(self, dimension_type: str):
-            self.dimension_type = dimension_type
-            self.dimension_data = UNIT_DEFINITIONS[dimension_type]
-        
-        def register_to_registry(self, registry):
-            """Register units for this dimension to the registry."""
-            from .unit import UnitDefinition
-            dimension = self.dimension_data["dimension"]
-            
-            for unit_data in self.dimension_data["units"]:
-                unit_def = UnitDefinition(
-                    name=unit_data["name"],
-                    symbol=unit_data["symbol"],
-                    dimension=dimension,
-                    si_factor=unit_data["si_factor"],
-                    si_offset=unit_data.get("si_offset", 0.0)
-                )
-                
-                if unit_def.name not in registry.units:
-                    registry.register_unit(unit_def)
-    
-    return [
-        ConsolidatedModule(dimension_name) for dimension_name in UNIT_DEFINITIONS
-    ]
-
-
-# Statistics
-TOTAL_UNITS = 864
-TOTAL_FIELDS = 105
-TOTAL_DIMENSIONS = 105

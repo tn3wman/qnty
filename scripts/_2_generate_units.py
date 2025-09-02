@@ -637,7 +637,8 @@ def generate_consolidated_file(parsed_data: dict, dimension_mapping: dict) -> st
     lines.append('')
     lines.extend(generate_helper_functions())
     lines.extend(generate_unit_classes(grouped_units))
-    lines.extend(generate_compatibility_section(parsed_data, grouped_units))
+    # Note: Removed generate_compatibility_section to avoid duplicate DimensionlessUnits class
+    # since dimensionless units are now properly generated from unit_data.json
     
     return '\n'.join(lines) + '\n'
 
@@ -672,6 +673,15 @@ def main():
     # Write the file
     save_text_file(content, output_file)
     print(f"Generated units file: {output_file}")
+    
+    # Auto-fix imports with ruff after generation
+    import subprocess
+    try:
+        subprocess.run(['ruff', 'check', '--fix', str(output_file)], 
+                      capture_output=True, check=False)
+        print("Auto-applied ruff import fixes")
+    except FileNotFoundError:
+        print("Note: ruff not found - imports may need manual fixing")
     
     # Statistics
     original_total = sum(len(field_data['units']) for field_data in parsed_data.values())

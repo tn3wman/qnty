@@ -7,8 +7,9 @@ Uses the exact same source of truth and approach as consolidated units system.
 Auto-generated from unit_data.json and dimension_mapping.json.
 """
 
-from typing import Any, cast
+from typing import Any
 
+from . import units
 from .dimension import (
     ABSORBED_DOSE,
     ACCELERATION,
@@ -24,9 +25,6 @@ from .dimension import (
     CONCENTRATION,
     DIMENSIONLESS,
     DYNAMIC_FLUIDITY,
-    ELECTRICAL_CONDUCTANCE,
-    ELECTRICAL_PERMITTIVITY,
-    ELECTRICAL_RESISTIVITY,
     ELECTRIC_CAPACITANCE,
     ELECTRIC_CHARGE,
     ELECTRIC_CURRENT_INTENSITY,
@@ -35,6 +33,9 @@ from .dimension import (
     ELECTRIC_INDUCTANCE,
     ELECTRIC_POTENTIAL,
     ELECTRIC_RESISTANCE,
+    ELECTRICAL_CONDUCTANCE,
+    ELECTRICAL_PERMITTIVITY,
+    ELECTRICAL_RESISTIVITY,
     ENERGY_FLUX,
     ENERGY_HEAT_WORK,
     ENERGY_PER_UNIT_AREA,
@@ -68,17 +69,18 @@ from .dimension import (
     MASS_FRACTION_OF_I,
     MASS_TRANSFER_COEFFICIENT,
     MOLALITY_OF_SOLUTE_I,
-    MOLARITY_OF_I,
     MOLAR_CONCENTRATION_BY_MASS,
     MOLAR_FLOW_RATE,
     MOLAR_FLUX,
     MOLAR_HEAT_CAPACITY,
+    MOLARITY_OF_I,
     MOLE_FRACTION_OF_I,
+    MOMENT_OF_INERTIA,
     MOMENTUM_FLOW_RATE,
     MOMENTUM_FLUX,
-    MOMENT_OF_INERTIA,
     NORMALITY_OF_SOLUTION,
     PARTICLE_DENSITY,
+    PERCENT,
     PERMEABILITY,
     PHOTON_EMISSION_RATE,
     POWER_PER_UNIT_MASS,
@@ -109,16 +111,14 @@ from .dimension import (
     VISCOSITY_DYNAMIC,
     VISCOSITY_KINEMATIC,
     VOLUME,
+    VOLUME_FRACTION_OF_I,
     VOLUMETRIC_CALORIFIC_HEATING_VALUE,
     VOLUMETRIC_COEFFICIENT_OF_EXPANSION,
     VOLUMETRIC_FLOW_RATE,
     VOLUMETRIC_FLUX,
     VOLUMETRIC_MASS_FLOW_RATE,
-    VOLUME_FRACTION_OF_I,
-    WAVENUMBER
+    WAVENUMBER,
 )
-from .unit import UnitConstant, UnitDefinition
-from .units import DimensionlessUnits
 from .variable import FastQuantity, TypeSafeSetter
 from .variable_types.typed_variable import TypedVariable
 
@@ -298,6 +298,18 @@ VARIABLE_DEFINITIONS = {
         ],
         "field_name": "concentration",
         "display_name": "Concentration",
+    },
+    "Dimensionless": {
+        "dimension": DIMENSIONLESS,
+        "default_unit": "dimensionless",
+        "units": [
+            ("dimensionless", "dimensionless", 1.0, "", []),
+            ("ratio", "ratio", 1.0, "ratio", []),
+            ("parts per million", "parts_per_million", 1e-06, "ppm", ['ppm']),
+            ("parts per billion", "parts_per_billion", 1e-09, "ppb", ['ppb'])
+        ],
+        "field_name": "dimensionless",
+        "display_name": "Dimensionless",
     },
     "DynamicFluidity": {
         "dimension": DYNAMIC_FLUIDITY,
@@ -1210,6 +1222,17 @@ VARIABLE_DEFINITIONS = {
         "field_name": "particle_density",
         "display_name": "Particle Density",
     },
+    "Percent": {
+        "dimension": PERCENT,
+        "default_unit": "percent",
+        "units": [
+            ("percent", "percent", 0.01, "%", ['%']),
+            ("per mille", "per_mille", 0.001, "‰", ['‰']),
+            ("basis point", "basis_point", 0.0001, "bp", ['bp', 'bps'])
+        ],
+        "field_name": "percent",
+        "display_name": "Percent",
+    },
     "Permeability": {
         "dimension": PERMEABILITY,
         "default_unit": "square_meters",
@@ -1329,7 +1352,7 @@ VARIABLE_DEFINITIONS = {
             ("pascal", "pascal", 1.0, "Pa", ['Pa']),
             ("pièze", "pièze", 1000.0, "pz", ['pz']),
             ("pound force per square foot", "pound_force_per_square_foot", 47.880259, "PSF or psf or $\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{ft}^{2}$", ['psf']),
-            ("pound force per square inch", "pound_force_per_square_inch", 6894.8, "PSI or psi or $\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{in}^{2}$", ['psi']),
+            ("pound force per square inch", "pound_force_per_square_inch", 6894.757, "psi", ['psi']),
             ("torr", "torr", 133.322, "torr or mm Hg ( $0{ }^{\\circ}$ C)", ['mm Hg ( 0{ ^{circ C)']),
             ("kilopascal", "kilopascal", 1000.0, "kPa", ['kPa'])
         ],
@@ -1485,7 +1508,7 @@ VARIABLE_DEFINITIONS = {
             ("ounce force per square inch", "ounce_force_per_square_inch", 430.922, "OSI or osi or $\\mathrm{oz}_{\\mathrm{f}} / \\mathrm{in}^{2}$", ['OSI', 'osi', 'oz_{f / in^{2']),
             ("pascal", "pascal", 1.0, "Pa", ['Pa']),
             ("pound force per square foot", "pound_force_per_square_foot", 47.880259, "PSF or psf or $\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{ft}^{2}$", ['PSF', 'psf', 'lb_{f / ft^{2']),
-            ("pound force per square inch", "pound_force_per_square_inch", 6894.8, "PSI or psi or $\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{in}^{2}$", ['psi'])
+            ("pound force per square inch", "pound_force_per_square_inch", 6894.757, "psi", ['psi'])
         ],
         "field_name": "stress",
         "display_name": "Stress",
@@ -1830,38 +1853,6 @@ VARIABLE_DEFINITIONS = {
     }
 }
 
-# Special Dimensionless variable - handcrafted for proper behavior
-class DimensionlessSetter(TypeSafeSetter):
-    """Dimensionless-specific setter with only dimensionless units."""
-    
-    def __init__(self, variable: 'Dimensionless', value: float):
-        super().__init__(variable, value)
-    
-    # Dimensionless units
-    @property
-    def dimensionless(self) -> 'Dimensionless':
-        self.variable.quantity = FastQuantity(self.value, DimensionlessUnits.dimensionless)
-        return cast('Dimensionless', self.variable)
-    
-    # Common alias for no units
-    @property
-    def unitless(self) -> 'Dimensionless':
-        self.variable.quantity = FastQuantity(self.value, DimensionlessUnits.dimensionless)
-        return cast('Dimensionless', self.variable)
-
-
-class Dimensionless(TypedVariable):
-    """Type-safe dimensionless variable with expression capabilities."""
-
-    _setter_class = DimensionlessSetter
-    _expected_dimension = DIMENSIONLESS
-    _default_unit_property = "dimensionless"
-    
-    def set(self, value: float) -> DimensionlessSetter:
-        """Create a dimensionless setter for this variable with proper type annotation."""
-        return DimensionlessSetter(self, value)
-
-
 
 def convert_unit_name_to_property(unit_name: str) -> str:
     """Convert unit name to property name without automatic pluralization."""
@@ -1890,25 +1881,24 @@ def create_setter_class(class_name: str, variable_name: str, definition: dict[st
         }
     )
     
+    # Store reference to the unit class at class level
+    # Remove "Setter" from class_name to get the base variable name
+    base_class_name = class_name.replace("Setter", "")
+    units_class = getattr(units, f"{base_class_name}Units")
+    
     # Add properties for each unit using unit data directly
     for unit_name, property_name, si_factor, symbol, aliases in definition["units"]:
         # Create a unit definition from the consolidated data
-        def make_property(unit_nm, si_fac, sym):
+        def make_property(prop_nm, units_cls):
             def getter(self):
-                # Create unit definition and constant from consolidated unit data
-                unit_def = UnitDefinition(
-                    name=unit_nm,
-                    symbol=sym,
-                    dimension=definition["dimension"],
-                    si_factor=si_fac
-                )
-                unit_const = UnitConstant(unit_def)
+                # Use existing unit constant from units module
+                unit_const = getattr(units_cls, prop_nm)
                 self.variable.quantity = FastQuantity(self.value, unit_const)
                 return self.variable  # type: ignore
             return property(getter)
         
         # Add the primary property to the class
-        setattr(setter_class, property_name, make_property(unit_name, si_factor, symbol))
+        setattr(setter_class, property_name, make_property(property_name, units_class))
         
         # Add alias properties
         for alias in aliases:
@@ -1916,7 +1906,7 @@ def create_setter_class(class_name: str, variable_name: str, definition: dict[st
             alias_property = convert_unit_name_to_property(alias)
             # Only add if it's different from the main property and doesn't already exist
             if alias_property != property_name and not hasattr(setter_class, alias_property):
-                setattr(setter_class, alias_property, make_property(unit_name, si_factor, symbol))
+                setattr(setter_class, alias_property, make_property(property_name, units_class))
     
     return setter_class
 
@@ -1944,8 +1934,7 @@ def create_variable_class(class_name: str, definition: dict[str, Any], setter_cl
 
 
 # Create all variable and setter classes dynamically
-for var_name, var_def in VARIABLE_DEFINITIONS.items():
-    # Create setter class
+for var_name, var_def in VARIABLE_DEFINITIONS.items():    # Create setter class
     setter_name = f"{var_name}Setter"
     setter_class = create_setter_class(setter_name, var_name, var_def)
     
@@ -1957,7 +1946,6 @@ for var_name, var_def in VARIABLE_DEFINITIONS.items():
     globals()[var_name] = variable_class
 
 # Individual exports for easier import
-# Special Dimensionless class is already defined above
 
 AbsorbedDoseSetter = globals()['AbsorbedDoseSetter']
 AbsorbedDose = globals()['AbsorbedDose']
@@ -1983,6 +1971,8 @@ AtomicWeightSetter = globals()['AtomicWeightSetter']
 AtomicWeight = globals()['AtomicWeight']
 ConcentrationSetter = globals()['ConcentrationSetter']
 Concentration = globals()['Concentration']
+DimensionlessSetter = globals()['DimensionlessSetter']
+Dimensionless = globals()['Dimensionless']
 DynamicFluiditySetter = globals()['DynamicFluiditySetter']
 DynamicFluidity = globals()['DynamicFluidity']
 ElectricCapacitanceSetter = globals()['ElectricCapacitanceSetter']
@@ -2095,6 +2085,8 @@ NormalityOfSolutionSetter = globals()['NormalityOfSolutionSetter']
 NormalityOfSolution = globals()['NormalityOfSolution']
 ParticleDensitySetter = globals()['ParticleDensitySetter']
 ParticleDensity = globals()['ParticleDensity']
+PercentSetter = globals()['PercentSetter']
+Percent = globals()['Percent']
 PermeabilitySetter = globals()['PermeabilitySetter']
 Permeability = globals()['Permeability']
 PhotonEmissionRateSetter = globals()['PhotonEmissionRateSetter']
@@ -2206,6 +2198,7 @@ def get_consolidated_variable_modules():
         ConsolidatedVariableModule("AreaPerUnitVolume"),
         ConsolidatedVariableModule("AtomicWeight"),
         ConsolidatedVariableModule("Concentration"),
+        ConsolidatedVariableModule("Dimensionless"),
         ConsolidatedVariableModule("DynamicFluidity"),
         ConsolidatedVariableModule("ElectricCapacitance"),
         ConsolidatedVariableModule("ElectricCharge"),
@@ -2262,6 +2255,7 @@ def get_consolidated_variable_modules():
         ConsolidatedVariableModule("MomentumFlux"),
         ConsolidatedVariableModule("NormalityOfSolution"),
         ConsolidatedVariableModule("ParticleDensity"),
+        ConsolidatedVariableModule("Percent"),
         ConsolidatedVariableModule("Permeability"),
         ConsolidatedVariableModule("PhotonEmissionRate"),
         ConsolidatedVariableModule("PowerPerUnitMass"),
