@@ -3,7 +3,7 @@
 Script to generate comprehensive variables.py for all variables.
 
 This script uses the exact same source of truth and approach as the consolidated units system:
-- parsed_units.json for unit data
+- unit_data.json for unit data
 - dimension_mapping.json for dimension constants
 - Same import strategy as consolidated_complete.py
 
@@ -91,7 +91,7 @@ def generate_consolidated_variables(parsed_data: dict, dimension_mapping: dict) 
         '',
         'Consolidated variable definitions for all variable types.',
         'Uses the exact same source of truth and approach as consolidated units system.',
-        'Auto-generated from parsed_units.json and dimension_mapping.json.',
+        'Auto-generated from unit_data.json and dimension_mapping.json.',
         '"""',
         '',
         'from typing import Any, cast',
@@ -339,7 +339,7 @@ def main():
     scripts_output_path = Path(__file__).parent / "output"
     src_path = base_path / "src" / "qnty"
     
-    parsed_file = scripts_input_path / "parsed_units.json"
+    parsed_file = scripts_input_path / "unit_data.json"
     dimension_file = scripts_output_path / "dimension_mapping.json"
     output_file = src_path / "variables.py"
     

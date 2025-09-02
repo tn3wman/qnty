@@ -9,7 +9,6 @@ Auto-generated from the same source of truth as consolidated_new.py.
 """
 
 from typing import Any
-
 from .dimension import DimensionSignature
 from .variable import TypeSafeSetter
 from .variable_types.typed_variable import TypedVariable

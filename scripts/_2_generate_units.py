@@ -181,7 +181,7 @@ def identify_base_units_needing_prefixes(parsed_data: dict) -> dict:
     return base_units
 
 
-def generate_prefixed_unit_data(base_unit_data: dict, prefix: StandardPrefixes) -> dict:
+def generate_prefixed_unit_data(base_unit_data: dict, prefix: StandardPrefixes, field_name: str, field_data: dict) -> dict:
     """Generate unit data for a prefixed variant of a base unit."""
     prefix_def = prefix.value
     
@@ -195,12 +195,9 @@ def generate_prefixed_unit_data(base_unit_data: dict, prefix: StandardPrefixes) 
     
     # Create new unit data
     return {
-        'field': base_unit_data['field'],
         'name': prefix_def.apply_to_name(base_unit_data['name']),
         'normalized_name': prefixed_name,
         'notation': prefixed_symbol,
-        'si_dimension': base_unit_data['si_dimension'],
-        'parsed_dimensions': base_unit_data['parsed_dimensions'],
         'si_metric': {
             'conversion_factor': new_factor,
             'unit': base_unit_data.get('si_metric', {}).get('unit', base_unit_data.get('notation', ''))
@@ -250,7 +247,7 @@ def augment_parsed_data_with_prefixes(parsed_data: dict) -> dict:
                 
                 # Only add if it doesn't already exist globally
                 if prefixed_name not in existing_units:
-                    prefixed_unit = generate_prefixed_unit_data(base_unit, prefix)
+                    prefixed_unit = generate_prefixed_unit_data(base_unit, prefix, field_name, augmented_data[field_name])
                     augmented_data[field_name]['units'].append(prefixed_unit)
                     existing_units.add(prefixed_name)
                     generated_count += 1
@@ -665,7 +662,7 @@ def main():
     scripts_output_path = Path(__file__).parent / "output"
     src_path = base_path / "src" / "qnty"
     
-    parsed_file = scripts_input_path / "parsed_units.json"
+    parsed_file = scripts_input_path / "unit_data.json"
     dimension_file = scripts_output_path / "dimension_mapping.json"
     output_file = src_path / "units.py"
     

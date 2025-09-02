@@ -214,7 +214,7 @@ def main():
     scripts_output_path = Path(__file__).parent / "output"
     src_path = base_path / "src" / "qnty"
     
-    parsed_file = scripts_input_path / "parsed_units.json"
+    parsed_file = scripts_input_path / "unit_data.json"
     dimension_file = scripts_output_path / "dimension_mapping.json"
     output_file = src_path / "variables.pyi"
     

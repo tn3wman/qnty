@@ -15,7 +15,7 @@ from pathlib import Path
 
 def load_parsed_units():
     """Load parsed units data - same source used for consolidated variables."""
-    units_path = Path(__file__).parent / "input" / "parsed_units.json"
+    units_path = Path(__file__).parent / "input" / "unit_data.json"
     with open(units_path) as f:
         return json.load(f)
 
