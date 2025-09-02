@@ -121,7 +121,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "erg_per_gram",
-                "symbol": "Gy",
+                "symbol": "erg/g",
                 "si_factor": 0.0001,
                 "full_name": "erg per gram",
                 "notation": "erg/g",
@@ -129,7 +129,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "gram_rad",
-                "symbol": "Gy",
+                "symbol": "g-rad",
                 "si_factor": 0.01,
                 "full_name": "gram-rad",
                 "notation": "g-rad",
@@ -145,7 +145,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "microgray",
-                "symbol": "Gy",
+                "symbol": "μGy",
                 "si_factor": 1e-06,
                 "full_name": "microgray",
                 "notation": "μGy",
@@ -153,7 +153,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "milligray",
-                "symbol": "Gy",
+                "symbol": "mGy",
                 "si_factor": 0.001,
                 "full_name": "milligray",
                 "notation": "mGy",
@@ -161,7 +161,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "rad",
-                "symbol": "Gy",
+                "symbol": "rad",
                 "si_factor": 0.01,
                 "full_name": "rad",
                 "notation": "rad",
@@ -177,7 +177,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "foot_per_second_squared",
-                "symbol": "$\\mathrm{m} / \\mathrm{s}^{2}$",
+                "symbol": "$\\mathrm{ft} / \\mathrm{s}^{2}$ or $\\mathrm{ft} / \\mathrm{sec}^{2}$",
                 "si_factor": 0.3048,
                 "full_name": "foot per second squared",
                 "notation": "$\\mathrm{ft} / \\mathrm{s}^{2}$ or $\\mathrm{ft} / \\mathrm{sec}^{2}$",
@@ -201,7 +201,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "btu_per_pound_mole",
-                "symbol": "J/mol",
+                "symbol": "Btu/lb-mol",
                 "si_factor": 2326.0,
                 "full_name": "Btu per pound mole",
                 "notation": "Btu/lb-mol",
@@ -209,7 +209,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "calorie_mean_per_gram_mole",
-                "symbol": "J/mol",
+                "symbol": "cal/mol",
                 "si_factor": 4.18675,
                 "full_name": "calorie (mean) per gram mole",
                 "notation": "cal/mol",
@@ -225,7 +225,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "joule_per_kilogram_mole",
-                "symbol": "J/mol",
+                "symbol": "J/kmol",
                 "si_factor": 1000.0,
                 "full_name": "joule per kilogram mole",
                 "notation": "J/kmol",
@@ -233,7 +233,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kilocalorie_per_kilogram_mole",
-                "symbol": "J/mol",
+                "symbol": "kcal/kmol",
                 "si_factor": 4.18675,
                 "full_name": "kilocalorie per kilogram mole",
                 "notation": "kcal/kmol",
@@ -249,7 +249,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "kilogram_mol",
-                "symbol": "mol",
+                "symbol": "kmol",
                 "si_factor": 1000.0,
                 "full_name": "kilogram mol or kmol",
                 "notation": "kmol",
@@ -257,7 +257,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "micromole",
-                "symbol": "mol",
+                "symbol": "μmol",
                 "si_factor": 1e-06,
                 "full_name": "micromole (gram)",
                 "notation": "μmol",
@@ -265,7 +265,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "millimole",
-                "symbol": "mol",
+                "symbol": "mmol",
                 "si_factor": 0.001,
                 "full_name": "millimole (gram)",
                 "notation": "mmol",
@@ -281,7 +281,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pound_mole",
-                "symbol": "mol",
+                "symbol": "lb-mol or mole",
                 "si_factor": 453.6,
                 "full_name": "pound-mole",
                 "notation": "lb-mol or mole",
@@ -297,7 +297,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "degree",
-                "symbol": "rad",
+                "symbol": "${ }^{\\circ}$",
                 "si_factor": 0.0174533,
                 "full_name": "degree",
                 "notation": "${ }^{\\circ}$",
@@ -305,7 +305,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "gon",
-                "symbol": "rad",
+                "symbol": "g or gon",
                 "si_factor": 0.015708,
                 "full_name": "gon",
                 "notation": "g or gon",
@@ -313,7 +313,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "grade",
-                "symbol": "rad",
+                "symbol": "g or grad",
                 "si_factor": 0.015708,
                 "full_name": "grade",
                 "notation": "g or grad",
@@ -321,7 +321,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "minute_new",
-                "symbol": "rad",
+                "symbol": "c",
                 "si_factor": 0.00015708,
                 "full_name": "minute (new)",
                 "notation": "c",
@@ -329,7 +329,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "minute_of_angle",
-                "symbol": "rad",
+                "symbol": "'",
                 "si_factor": 0.000290888,
                 "full_name": "minute of angle",
                 "notation": "'",
@@ -337,7 +337,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "percent",
-                "symbol": "rad",
+                "symbol": "\\%",
                 "si_factor": 0.062832,
                 "full_name": "percent",
                 "notation": "\\%",
@@ -345,7 +345,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "plane_angle",
-                "symbol": "rad",
+                "symbol": "-",
                 "si_factor": 3.141593,
                 "full_name": "plane angle",
                 "notation": "-",
@@ -353,7 +353,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "quadrant",
-                "symbol": "rad",
+                "symbol": "quadr",
                 "si_factor": 1.570796,
                 "full_name": "quadrant",
                 "notation": "quadr",
@@ -369,7 +369,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "right_angle",
-                "symbol": "rad",
+                "symbol": "$\\perp$",
                 "si_factor": 1.570796,
                 "full_name": "right angle",
                 "notation": "$\\perp$",
@@ -377,7 +377,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "round",
-                "symbol": "rad",
+                "symbol": "tr or r",
                 "si_factor": 6.283185,
                 "full_name": "round",
                 "notation": "tr or r",
@@ -385,7 +385,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "second_new",
-                "symbol": "rad",
+                "symbol": "cc",
                 "si_factor": 1.5707999999999999e-06,
                 "full_name": "second (new)",
                 "notation": "cc",
@@ -393,7 +393,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "second_of_angle",
-                "symbol": "rad",
+                "symbol": "\"",
                 "si_factor": 4.848099999999999e-06,
                 "full_name": "second of angle",
                 "notation": "\"",
@@ -401,7 +401,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "thousandth_us",
-                "symbol": "rad",
+                "symbol": "\\% (US)",
                 "si_factor": 0.0015708,
                 "full_name": "thousandth (US)",
                 "notation": "\\% (US)",
@@ -409,7 +409,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "turn",
-                "symbol": "rad",
+                "symbol": "turn or rev",
                 "si_factor": 6.283185,
                 "full_name": "turn",
                 "notation": "turn or rev",
@@ -425,7 +425,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "spat",
-                "symbol": "sr",
+                "symbol": "spat",
                 "si_factor": 12.5663,
                 "full_name": "spat",
                 "notation": "spat",
@@ -433,7 +433,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "square_degree",
-                "symbol": "sr",
+                "symbol": "$\\left({ }^{\\circ}\\right)^{2}$",
                 "si_factor": 0.000304617,
                 "full_name": "square degree",
                 "notation": "$\\left({ }^{\\circ}\\right)^{2}$",
@@ -441,7 +441,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "square_gon",
-                "symbol": "sr",
+                "symbol": "(g) ${ }^{2}$",
                 "si_factor": 0.00024674,
                 "full_name": "square gon",
                 "notation": "(g) ${ }^{2}$",
@@ -473,7 +473,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "revolution_per_second_squared",
-                "symbol": "$\\mathrm{rad} / \\mathrm{s}^{2}$",
+                "symbol": "$\\mathrm{rev} / \\mathrm{sec}^{2}$",
                 "si_factor": 6.2832,
                 "full_name": "revolution per second squared",
                 "notation": "$\\mathrm{rev} / \\mathrm{sec}^{2}$",
@@ -481,7 +481,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "rpm_or_revolution_per_minute",
-                "symbol": "$\\mathrm{rad} / \\mathrm{s}^{2}$",
+                "symbol": "$\\mathrm{rev} / \\mathrm{min}^{2}$ or rpm/min",
                 "si_factor": 0.001745,
                 "full_name": "rpm (or revolution per minute) per minute",
                 "notation": "$\\mathrm{rev} / \\mathrm{min}^{2}$ or rpm/min",
@@ -497,7 +497,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "gram_centimeter_squared_per_second",
-                "symbol": "$\\mathrm{kg} \\mathrm{m}^{2} / \\mathrm{s}$",
+                "symbol": "$\\mathrm{g} \\mathrm{cm}^{2} / \\mathrm{s}$",
                 "si_factor": 1e-07,
                 "full_name": "gram centimeter squared per second",
                 "notation": "$\\mathrm{g} \\mathrm{cm}^{2} / \\mathrm{s}$",
@@ -513,7 +513,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pound_force_square_foot_per_second",
-                "symbol": "$\\mathrm{kg} \\mathrm{m}^{2} / \\mathrm{s}$",
+                "symbol": "lb ft ${ }^{2} / \\mathrm{sec}$",
                 "si_factor": 0.04214,
                 "full_name": "pound force square foot per second",
                 "notation": "lb ft ${ }^{2} / \\mathrm{sec}$",
@@ -529,7 +529,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "acre_general",
-                "symbol": "$\\mathrm{m}^{2}$",
+                "symbol": "ac",
                 "si_factor": 4046.856,
                 "full_name": "acre (general)",
                 "notation": "ac",
@@ -537,7 +537,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "are",
-                "symbol": "$\\mathrm{m}^{2}$",
+                "symbol": "a",
                 "si_factor": 100.0,
                 "full_name": "are",
                 "notation": "a",
@@ -545,7 +545,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "arpent_quebec",
-                "symbol": "$\\mathrm{m}^{2}$",
+                "symbol": "arp",
                 "si_factor": 3418.89,
                 "full_name": "arpent (Quebec)",
                 "notation": "arp",
@@ -553,7 +553,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "barn",
-                "symbol": "$\\mathrm{m}^{2}$",
+                "symbol": "b",
                 "si_factor": 1e-28,
                 "full_name": "barn",
                 "notation": "b",
@@ -561,7 +561,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "circular_inch",
-                "symbol": "$\\mathrm{m}^{2}$",
+                "symbol": "cin",
                 "si_factor": 0.000506707,
                 "full_name": "circular inch",
                 "notation": "cin",
@@ -569,7 +569,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "circular_mil",
-                "symbol": "$\\mathrm{m}^{2}$",
+                "symbol": "cmil",
                 "si_factor": 5.07e-10,
                 "full_name": "circular mil",
                 "notation": "cmil",
@@ -577,7 +577,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "hectare",
-                "symbol": "$\\mathrm{m}^{2}$",
+                "symbol": "ha",
                 "si_factor": 10000.0,
                 "full_name": "hectare",
                 "notation": "ha",
@@ -585,7 +585,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "shed",
-                "symbol": "$\\mathrm{m}^{2}$",
+                "symbol": "shed",
                 "si_factor": 1e-52,
                 "full_name": "shed",
                 "notation": "shed",
@@ -593,7 +593,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "square_centimeter",
-                "symbol": "$\\mathrm{m}^{2}$",
+                "symbol": "$\\mathrm{cm}^{2}$",
                 "si_factor": 0.0001,
                 "full_name": "square centimeter",
                 "notation": "$\\mathrm{cm}^{2}$",
@@ -601,7 +601,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "square_chain_ramsden",
-                "symbol": "$\\mathrm{m}^{2}$",
+                "symbol": "sq ch (Rams)",
                 "si_factor": 929.03,
                 "full_name": "square chain (Ramsden)",
                 "notation": "sq ch (Rams)",
@@ -609,7 +609,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "square_chain_survey_gunters",
-                "symbol": "$\\mathrm{m}^{2}$",
+                "symbol": "sq ch (surv)",
                 "si_factor": 404.6856,
                 "full_name": "square chain (Survey, Gunter's)",
                 "notation": "sq ch (surv)",
@@ -617,7 +617,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "square_decimeter",
-                "symbol": "$\\mathrm{m}^{2}$",
+                "symbol": "$\\mathrm{dm}^{2}$",
                 "si_factor": 0.01,
                 "full_name": "square decimeter",
                 "notation": "$\\mathrm{dm}^{2}$",
@@ -625,7 +625,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "square_fermi",
-                "symbol": "$\\mathrm{m}^{2}$",
+                "symbol": "$\\mathrm{F}^{2}$",
                 "si_factor": 1e-30,
                 "full_name": "square fermi",
                 "notation": "$\\mathrm{F}^{2}$",
@@ -633,7 +633,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "square_foot",
-                "symbol": "$\\mathrm{m}^{2}$",
+                "symbol": "sq ft or ft ${ }^{2}$",
                 "si_factor": 0.092903,
                 "full_name": "square foot",
                 "notation": "sq ft or ft ${ }^{2}$",
@@ -641,7 +641,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "square_hectometer",
-                "symbol": "$\\mathrm{m}^{2}$",
+                "symbol": "$\\mathrm{hm}^{2}$",
                 "si_factor": 10000.0,
                 "full_name": "square hectometer",
                 "notation": "$\\mathrm{hm}^{2}$",
@@ -649,7 +649,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "square_inch",
-                "symbol": "$\\mathrm{m}^{2}$",
+                "symbol": "sq in or in ${ }^{2}$",
                 "si_factor": 0.00064516,
                 "full_name": "square inch",
                 "notation": "sq in or in ${ }^{2}$",
@@ -657,7 +657,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "square_kilometer",
-                "symbol": "$\\mathrm{m}^{2}$",
+                "symbol": "$\\mathrm{km}^{2}$",
                 "si_factor": 1000000.0,
                 "full_name": "square kilometer",
                 "notation": "$\\mathrm{km}^{2}$",
@@ -665,7 +665,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "square_league_statute",
-                "symbol": "$\\mathrm{m}^{2}$",
+                "symbol": "sq lg (stat)",
                 "si_factor": 23310000.0,
                 "full_name": "square league (statute)",
                 "notation": "sq lg (stat)",
@@ -681,7 +681,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "square_micron",
-                "symbol": "$\\mathrm{m}^{2}$",
+                "symbol": "$\\mu \\mathrm{m}^{2}$ or $\\mu^{2}$",
                 "si_factor": 1e-12,
                 "full_name": "square micron",
                 "notation": "$\\mu \\mathrm{m}^{2}$ or $\\mu^{2}$",
@@ -689,7 +689,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "square_mile_statute",
-                "symbol": "$\\mathrm{m}^{2}$",
+                "symbol": "sq mi (stat)",
                 "si_factor": 2590000.0,
                 "full_name": "square mile (statute)",
                 "notation": "sq mi (stat)",
@@ -697,7 +697,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "square_mile_us_survey",
-                "symbol": "$\\mathrm{m}^{2}$",
+                "symbol": "sq mi (US Surv)",
                 "si_factor": 2590000.0,
                 "full_name": "square mile (US survey)",
                 "notation": "sq mi (US Surv)",
@@ -705,7 +705,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "square_millimeter",
-                "symbol": "$\\mathrm{m}^{2}$",
+                "symbol": "$\\mathrm{mm}^{2}$",
                 "si_factor": 1e-06,
                 "full_name": "square millimeter",
                 "notation": "$\\mathrm{mm}^{2}$",
@@ -713,7 +713,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "square_nanometer",
-                "symbol": "$\\mathrm{m}^{2}$",
+                "symbol": "$\\mathrm{nm}^{2}$",
                 "si_factor": 1e-18,
                 "full_name": "square nanometer",
                 "notation": "$\\mathrm{nm}^{2}$",
@@ -721,7 +721,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "square_yard",
-                "symbol": "$\\mathrm{m}^{2}$",
+                "symbol": "sq yd",
                 "si_factor": 0.836131,
                 "full_name": "square yard",
                 "notation": "sq yd",
@@ -729,7 +729,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "township_us",
-                "symbol": "$\\mathrm{m}^{2}$",
+                "symbol": "twshp",
                 "si_factor": 93240000.0,
                 "full_name": "township (US)",
                 "notation": "twshp",
@@ -745,7 +745,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "square_centimeter_per_cubic_centimeter",
-                "symbol": "$\\mathrm{m}^{2} / \\mathrm{m}^{3}$",
+                "symbol": "$\\mathrm{cm}^{2} / \\mathrm{cc}$",
                 "si_factor": 100.0,
                 "full_name": "square centimeter per cubic centimeter",
                 "notation": "$\\mathrm{cm}^{2} / \\mathrm{cc}$",
@@ -753,7 +753,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "square_foot_per_cubic_foot",
-                "symbol": "$\\mathrm{m}^{2} / \\mathrm{m}^{3}$",
+                "symbol": "$\\mathrm{ft}^{2} / \\mathrm{ft}^{3}$ or sqft/cft",
                 "si_factor": 3.2808,
                 "full_name": "square foot per cubic foot",
                 "notation": "$\\mathrm{ft}^{2} / \\mathrm{ft}^{3}$ or sqft/cft",
@@ -761,7 +761,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "square_inch_per_cubic_inch",
-                "symbol": "$\\mathrm{m}^{2} / \\mathrm{m}^{3}$",
+                "symbol": "$\\mathrm{in}^{2} / \\mathrm{in}^{3}$ or sq.in./cu. in.",
                 "si_factor": 1.0,
                 "full_name": "square inch per cubic inch",
                 "notation": "$\\mathrm{in}^{2} / \\mathrm{in}^{3}$ or sq.in./cu. in.",
@@ -769,7 +769,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "square_meter_per_cubic_meter",
-                "symbol": "$\\mathrm{m}^{2} / \\mathrm{m}^{3}$",
+                "symbol": "$\\mathrm{m}^{2} / \\mathrm{m}^{3}$ or $1 / \\mathrm{m}^{3}$",
                 "si_factor": 1.0,
                 "full_name": "square meter per cubic meter",
                 "notation": "$\\mathrm{m}^{2} / \\mathrm{m}^{3}$ or $1 / \\mathrm{m}^{3}$",
@@ -785,7 +785,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "atomic_mass_unit_12c",
-                "symbol": "g/mol",
+                "symbol": "amu",
                 "si_factor": 1.0,
                 "full_name": "atomic mass unit (12C)",
                 "notation": "amu",
@@ -801,7 +801,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kilograms_per_kilomole",
-                "symbol": "g/mol",
+                "symbol": "kg/kmol",
                 "si_factor": 1.0,
                 "full_name": "kilograms per kilomole",
                 "notation": "kg/kmol",
@@ -809,7 +809,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pounds_per_pound_mole",
-                "symbol": "g/mol",
+                "symbol": "$\\mathrm{lb} / \\mathrm{lb}-$ mol or $\\mathrm{lb} /$ mole",
                 "si_factor": 1.0,
                 "full_name": "pounds per pound mole",
                 "notation": "$\\mathrm{lb} / \\mathrm{lb}-$ mol or $\\mathrm{lb} /$ mole",
@@ -825,7 +825,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "grains_of_i_per_cubic_foot",
-                "symbol": "$\\mathrm{kg} / \\mathrm{m}^{3}$",
+                "symbol": "$\\mathrm{gr} / \\mathrm{ft}^{3}$ or gr/cft",
                 "si_factor": 0.002288,
                 "full_name": "grains of \"i\" per cubic foot",
                 "notation": "$\\mathrm{gr} / \\mathrm{ft}^{3}$ or gr/cft",
@@ -833,7 +833,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "grains_of_i_per_gallon_us",
-                "symbol": "$\\mathrm{kg} / \\mathrm{m}^{3}$",
+                "symbol": "gr/gal",
                 "si_factor": 0.017115,
                 "full_name": "grains of \"i\" per gallon (US)",
                 "notation": "gr/gal",
@@ -849,7 +849,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "meter_seconds_per_kilogram",
-                "symbol": "",
+                "symbol": "m s/kg",
                 "si_factor": 1.0,
                 "full_name": "meter-seconds per kilogram",
                 "notation": "m s/kg",
@@ -857,7 +857,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "rhe",
-                "symbol": "$\\mathrm{m}^{2} /(\\mathrm{N} \\mathrm{s})$",
+                "symbol": "rhe",
                 "si_factor": 1.0,
                 "full_name": "rhe",
                 "notation": "rhe",
@@ -865,7 +865,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "square_foot_per_pound_second",
-                "symbol": "$\\mathrm{m}^{2} /(\\mathrm{N} \\mathrm{s})$",
+                "symbol": "$\\mathrm{ft}^{2}$ /(lb sec)",
                 "si_factor": 0.002086,
                 "full_name": "square foot per pound second",
                 "notation": "$\\mathrm{ft}^{2}$ /(lb sec)",
@@ -889,7 +889,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "abfarad",
-                "symbol": "F",
+                "symbol": "emu cgs",
                 "si_factor": 1000000000.0,
                 "full_name": "abfarad",
                 "notation": "emu cgs",
@@ -897,7 +897,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "cm",
-                "symbol": "F",
+                "symbol": "\"cm\"",
                 "si_factor": 1.1111e-12,
                 "full_name": "\"cm\"",
                 "notation": "\"cm\"",
@@ -913,7 +913,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "farad_intl",
-                "symbol": "F",
+                "symbol": "F (int)",
                 "si_factor": 0.99951,
                 "full_name": "farad (intl)",
                 "notation": "F (int)",
@@ -921,7 +921,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "jar",
-                "symbol": "F",
+                "symbol": "jar",
                 "si_factor": 1.1111e-09,
                 "full_name": "jar",
                 "notation": "jar",
@@ -929,7 +929,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "microfarad",
-                "symbol": "F",
+                "symbol": "μF",
                 "si_factor": 1e-06,
                 "full_name": "microfarad",
                 "notation": "μF",
@@ -937,7 +937,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "millifarad",
-                "symbol": "F",
+                "symbol": "mF",
                 "si_factor": 0.001,
                 "full_name": "millifarad",
                 "notation": "mF",
@@ -945,7 +945,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "nanofarad",
-                "symbol": "F",
+                "symbol": "nF",
                 "si_factor": 1e-09,
                 "full_name": "nanofarad",
                 "notation": "nF",
@@ -953,7 +953,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "picofarad",
-                "symbol": "F",
+                "symbol": "pF",
                 "si_factor": 1e-12,
                 "full_name": "picofarad",
                 "notation": "pF",
@@ -961,7 +961,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "puff",
-                "symbol": "F",
+                "symbol": "puff",
                 "si_factor": 1e-12,
                 "full_name": "puff",
                 "notation": "puff",
@@ -969,7 +969,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "statfarad",
-                "symbol": "F",
+                "symbol": "esu cgs",
                 "si_factor": 1.113e-12,
                 "full_name": "statfarad",
                 "notation": "esu cgs",
@@ -985,7 +985,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "abcoulomb",
-                "symbol": "F",
+                "symbol": "emu cgs",
                 "si_factor": 0.000103643,
                 "full_name": "abcoulomb",
                 "notation": "emu cgs",
@@ -993,7 +993,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "ampere_hour",
-                "symbol": "F",
+                "symbol": "Ah",
                 "si_factor": 0.03731138,
                 "full_name": "ampere-hour",
                 "notation": "Ah",
@@ -1001,7 +1001,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "coulomb",
-                "symbol": "F",
+                "symbol": "C",
                 "si_factor": 1.0364000000000001e-05,
                 "full_name": "coulomb",
                 "notation": "C",
@@ -1017,7 +1017,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "franklin",
-                "symbol": "F",
+                "symbol": "Fr",
                 "si_factor": 3.45715e-15,
                 "full_name": "franklin",
                 "notation": "Fr",
@@ -1025,47 +1025,47 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kilocoulomb",
-                "symbol": "F",
+                "symbol": "kC",
                 "si_factor": 0.010364000000000002,
                 "full_name": "kilocoulomb",
-                "notation": "kF",
+                "notation": "kC",
                 "aliases": [],
             },
             {
                 "name": "microcoulomb",
-                "symbol": "F",
+                "symbol": "μC",
                 "si_factor": 1.0364e-11,
                 "full_name": "microcoulomb",
-                "notation": "μF",
+                "notation": "μC",
                 "aliases": [],
             },
             {
                 "name": "millicoulomb",
-                "symbol": "F",
+                "symbol": "mC",
                 "si_factor": 1.0364000000000001e-08,
                 "full_name": "millicoulomb",
-                "notation": "mF",
+                "notation": "mC",
                 "aliases": [],
             },
             {
                 "name": "nanocoulomb",
-                "symbol": "F",
+                "symbol": "nC",
                 "si_factor": 1.0364000000000002e-14,
                 "full_name": "nanocoulomb",
-                "notation": "nF",
+                "notation": "nC",
                 "aliases": [],
             },
             {
                 "name": "picocoulomb",
-                "symbol": "F",
+                "symbol": "pC",
                 "si_factor": 1.0364000000000001e-17,
                 "full_name": "picocoulomb",
-                "notation": "pF",
+                "notation": "pC",
                 "aliases": [],
             },
             {
                 "name": "statcoulomb",
-                "symbol": "F",
+                "symbol": "esu cgs",
                 "si_factor": 3.45715e-15,
                 "full_name": "statcoulomb",
                 "notation": "esu cgs",
@@ -1073,7 +1073,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "u_a_charge",
-                "symbol": "F",
+                "symbol": "u.a.",
                 "si_factor": 1.66054e-24,
                 "full_name": "u.a. charge",
                 "notation": "u.a.",
@@ -1089,7 +1089,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "abampere",
-                "symbol": "A",
+                "symbol": "emu cgs",
                 "si_factor": 10.0,
                 "full_name": "abampere",
                 "notation": "emu cgs",
@@ -1097,7 +1097,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "ampere_intl_mean",
-                "symbol": "A",
+                "symbol": "A (int mean)",
                 "si_factor": 0.99985,
                 "full_name": "ampere (intl mean)",
                 "notation": "A (int mean)",
@@ -1105,7 +1105,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "ampere_intl_us",
-                "symbol": "A",
+                "symbol": "A (int US)",
                 "si_factor": 0.999835,
                 "full_name": "ampere (intl US)",
                 "notation": "A (int US)",
@@ -1121,7 +1121,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "biot",
-                "symbol": "A",
+                "symbol": "biot",
                 "si_factor": 10.0,
                 "full_name": "biot",
                 "notation": "biot",
@@ -1129,7 +1129,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "statampere",
-                "symbol": "A",
+                "symbol": "esu cgs",
                 "si_factor": 3.33564e-10,
                 "full_name": "statampere",
                 "notation": "esu cgs",
@@ -1137,7 +1137,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "u_a_or_current",
-                "symbol": "A",
+                "symbol": "u.a.",
                 "si_factor": 0.00662362,
                 "full_name": "u.a. or current",
                 "notation": "u.a.",
@@ -1161,7 +1161,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "coulomb_meter",
-                "symbol": "A m s",
+                "symbol": "C m",
                 "si_factor": 1.0,
                 "full_name": "coulomb meter",
                 "notation": "C m",
@@ -1169,7 +1169,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "debye",
-                "symbol": "A m s",
+                "symbol": "D",
                 "si_factor": 3.3356e-30,
                 "full_name": "debye",
                 "notation": "D",
@@ -1177,7 +1177,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "electron_meter",
-                "symbol": "A m s",
+                "symbol": "e m",
                 "si_factor": 1.6022e-19,
                 "full_name": "electron meter",
                 "notation": "e m",
@@ -1193,7 +1193,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "volt_per_centimeter",
-                "symbol": "V/m",
+                "symbol": "V/cm",
                 "si_factor": 100.0,
                 "full_name": "volt per centimeter",
                 "notation": "V/cm",
@@ -1217,7 +1217,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "abhenry",
-                "symbol": "H",
+                "symbol": "emu cgs",
                 "si_factor": 1e-09,
                 "full_name": "abhenry",
                 "notation": "emu cgs",
@@ -1225,7 +1225,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "cm",
-                "symbol": "H",
+                "symbol": "cm",
                 "si_factor": 1e-09,
                 "full_name": "cm",
                 "notation": "cm",
@@ -1241,7 +1241,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "henry_intl_mean",
-                "symbol": "H",
+                "symbol": "H (int mean)",
                 "si_factor": 1.00049,
                 "full_name": "henry (intl mean)",
                 "notation": "H (int mean)",
@@ -1249,7 +1249,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "henry_intl_us",
-                "symbol": "H",
+                "symbol": "H (int US)",
                 "si_factor": 1.000495,
                 "full_name": "henry (intl US)",
                 "notation": "H (int US)",
@@ -1257,7 +1257,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "mic",
-                "symbol": "H",
+                "symbol": "mic",
                 "si_factor": 1e-06,
                 "full_name": "mic",
                 "notation": "mic",
@@ -1265,7 +1265,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "microhenry",
-                "symbol": "H",
+                "symbol": "μH",
                 "si_factor": 1e-06,
                 "full_name": "microhenry",
                 "notation": "μH",
@@ -1273,7 +1273,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "millihenry",
-                "symbol": "H",
+                "symbol": "mH",
                 "si_factor": 0.001,
                 "full_name": "millihenry",
                 "notation": "mH",
@@ -1281,7 +1281,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "nanohenry",
-                "symbol": "H",
+                "symbol": "nH",
                 "si_factor": 1e-09,
                 "full_name": "nanohenry",
                 "notation": "nH",
@@ -1289,7 +1289,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "stathenry",
-                "symbol": "H",
+                "symbol": "esu cgs",
                 "si_factor": 898760000000.0,
                 "full_name": "stathenry",
                 "notation": "esu cgs",
@@ -1305,7 +1305,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "abvolt",
-                "symbol": "V",
+                "symbol": "emu cgs",
                 "si_factor": 1e-08,
                 "full_name": "abvolt",
                 "notation": "emu cgs",
@@ -1313,7 +1313,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kilovolt",
-                "symbol": "V",
+                "symbol": "kV",
                 "si_factor": 1000.0,
                 "full_name": "kilovolt",
                 "notation": "kV",
@@ -1321,7 +1321,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "microvolt",
-                "symbol": "V",
+                "symbol": "μV",
                 "si_factor": 1e-06,
                 "full_name": "microvolt",
                 "notation": "μV",
@@ -1329,7 +1329,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "millivolt",
-                "symbol": "V",
+                "symbol": "mV",
                 "si_factor": 0.001,
                 "full_name": "millivolt",
                 "notation": "mV",
@@ -1337,7 +1337,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "nanovolt",
-                "symbol": "V",
+                "symbol": "nV",
                 "si_factor": 1e-09,
                 "full_name": "nanovolt",
                 "notation": "nV",
@@ -1345,7 +1345,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "picovolt",
-                "symbol": "V",
+                "symbol": "pV",
                 "si_factor": 1e-12,
                 "full_name": "picovolt",
                 "notation": "pV",
@@ -1353,7 +1353,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "statvolt",
-                "symbol": "V",
+                "symbol": "esu cgs",
                 "si_factor": 299.792,
                 "full_name": "statvolt",
                 "notation": "esu cgs",
@@ -1361,7 +1361,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "u_a_potential",
-                "symbol": "V",
+                "symbol": "u.a.",
                 "si_factor": 27.2114,
                 "full_name": "u.a. potential",
                 "notation": "u.a.",
@@ -1377,7 +1377,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "volt_intl_mean",
-                "symbol": "V",
+                "symbol": "V (int mean)",
                 "si_factor": 1.00034,
                 "full_name": "volt (intl mean)",
                 "notation": "V (int mean)",
@@ -1385,7 +1385,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "volt_us",
-                "symbol": "V",
+                "symbol": "V (int US)",
                 "si_factor": 1.00033,
                 "full_name": "volt (US)",
                 "notation": "V (int US)",
@@ -1401,7 +1401,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "abohm",
-                "symbol": "$\\Omega$",
+                "symbol": "emu cgs",
                 "si_factor": 1e-09,
                 "full_name": "abohm",
                 "notation": "emu cgs",
@@ -1409,7 +1409,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "jacobi",
-                "symbol": "$\\Omega$",
+                "symbol": "-",
                 "si_factor": 0.64,
                 "full_name": "jacobi",
                 "notation": "-",
@@ -1417,7 +1417,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kiloohm",
-                "symbol": "$\\Omega$",
+                "symbol": "k$\\Omega$",
                 "si_factor": 1000.0,
                 "full_name": "kiloohm",
                 "notation": "k$\\Omega$",
@@ -1425,7 +1425,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "lenz",
-                "symbol": "$\\Omega$",
+                "symbol": "Metric",
                 "si_factor": 80000.0,
                 "full_name": "lenz",
                 "notation": "Metric",
@@ -1433,7 +1433,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "megaohm",
-                "symbol": "$\\Omega$",
+                "symbol": "M$\\Omega$",
                 "si_factor": 1000000.0,
                 "full_name": "megaohm",
                 "notation": "M$\\Omega$",
@@ -1441,7 +1441,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "milliohm",
-                "symbol": "$\\Omega$",
+                "symbol": "m$\\Omega$",
                 "si_factor": 0.001,
                 "full_name": "milliohm",
                 "notation": "m$\\Omega$",
@@ -1457,7 +1457,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "ohm_intl_mean",
-                "symbol": "$\\Omega$",
+                "symbol": "$\\Omega$ (int mean)",
                 "si_factor": 1.00049,
                 "full_name": "ohm (intl mean)",
                 "notation": "$\\Omega$ (int mean)",
@@ -1465,7 +1465,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "ohm_intl_us",
-                "symbol": "$\\Omega$",
+                "symbol": "$\\Omega$ (int US)",
                 "si_factor": 1.000495,
                 "full_name": "ohm (intl US)",
                 "notation": "$\\Omega$ (int US)",
@@ -1473,7 +1473,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "ohm_legal",
-                "symbol": "$\\Omega$",
+                "symbol": "$\\Omega$ (legal)",
                 "si_factor": 0.9972,
                 "full_name": "ohm (legal)",
                 "notation": "$\\Omega$ (legal)",
@@ -1481,7 +1481,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "preece",
-                "symbol": "$\\Omega$",
+                "symbol": "preece",
                 "si_factor": 1000000.0,
                 "full_name": "preece",
                 "notation": "preece",
@@ -1489,7 +1489,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "statohm",
-                "symbol": "$\\Omega$",
+                "symbol": "csu cgs",
                 "si_factor": 8.987552,
                 "full_name": "statohm",
                 "notation": "csu cgs",
@@ -1497,7 +1497,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "wheatstone",
-                "symbol": "$\\Omega$",
+                "symbol": "-",
                 "si_factor": 0.0025,
                 "full_name": "wheatstone",
                 "notation": "-",
@@ -1513,7 +1513,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "emu_cgs",
-                "symbol": "S",
+                "symbol": "abmho",
                 "si_factor": 1000000000.0,
                 "full_name": "emu cgs",
                 "notation": "abmho",
@@ -1521,7 +1521,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "esu_cgs",
-                "symbol": "S",
+                "symbol": "statmho",
                 "si_factor": 1.1127e-12,
                 "full_name": "esu cgs",
                 "notation": "statmho",
@@ -1529,7 +1529,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "mho",
-                "symbol": "S",
+                "symbol": "mho",
                 "si_factor": 1.0,
                 "full_name": "mho",
                 "notation": "mho",
@@ -1537,7 +1537,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "microsiemens",
-                "symbol": "S",
+                "symbol": "$\\mu \\mathrm{S}$",
                 "si_factor": 1e-06,
                 "full_name": "microsiemens",
                 "notation": "$\\mu \\mathrm{S}$",
@@ -1545,7 +1545,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "millisiemens",
-                "symbol": "S",
+                "symbol": "mS",
                 "si_factor": 0.001,
                 "full_name": "millisiemens",
                 "notation": "mS",
@@ -1585,7 +1585,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "circular_mil_ohm_per_foot",
-                "symbol": "$\\Omega \\mathrm{m}$",
+                "symbol": "circmil $\\Omega / \\mathrm{ft}$",
                 "si_factor": 1.6624000000000002e-09,
                 "full_name": "circular mil-ohm per foot",
                 "notation": "circmil $\\Omega / \\mathrm{ft}$",
@@ -1593,7 +1593,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "emu_cgs",
-                "symbol": "$\\boldsymbol{\\Omega} \\mathrm{m}$",
+                "symbol": "abohm cm",
                 "si_factor": 1e-11,
                 "full_name": "emu cgs",
                 "notation": "abohm cm",
@@ -1601,7 +1601,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "microhm_inch",
-                "symbol": "$\\Omega \\mathrm{m}$",
+                "symbol": "$\\mu \\Omega$ in",
                 "si_factor": 2.5400000000000002e-08,
                 "full_name": "microhm-inch",
                 "notation": "$\\mu \\Omega$ in",
@@ -1609,7 +1609,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "ohm_centimeter",
-                "symbol": "$\\Omega \\mathrm{m}$",
+                "symbol": "$\\boldsymbol{\\Omega} \\mathbf{c m}$",
                 "si_factor": 0.01,
                 "full_name": "ohm-centimeter",
                 "notation": "$\\boldsymbol{\\Omega} \\mathbf{c m}$",
@@ -1633,7 +1633,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "btu_per_square_foot_per_hour",
-                "symbol": "$\\mathrm{W} / \\mathrm{m}^{2}$",
+                "symbol": "$\\mathrm{Btu} / \\mathrm{ft}^{2} / \\mathrm{hr}$",
                 "si_factor": 3.1546,
                 "full_name": "Btu per square foot per hour",
                 "notation": "$\\mathrm{Btu} / \\mathrm{ft}^{2} / \\mathrm{hr}$",
@@ -1641,7 +1641,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "calorie_per_square_centimeter_per_second",
-                "symbol": "$\\mathrm{W} / \\mathrm{m}^{2}$",
+                "symbol": "$\\mathrm{cal} / \\mathrm{cm}^{2} / \\mathrm{s}$ or $\\mathrm{cal} /$ ( $\\mathrm{cm}^{2} \\mathrm{~s}$ )",
                 "si_factor": 41868.0,
                 "full_name": "calorie per square centimeter per second",
                 "notation": "$\\mathrm{cal} / \\mathrm{cm}^{2} / \\mathrm{s}$ or $\\mathrm{cal} /$ ( $\\mathrm{cm}^{2} \\mathrm{~s}$ )",
@@ -1649,7 +1649,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "celsius_heat_units_chu",
-                "symbol": "$\\mathrm{W} / \\mathrm{m}^{2}$",
+                "symbol": "$\\mathrm{Chu} / \\mathrm{ft}^{2} / \\mathrm{hr}$",
                 "si_factor": 5.6784,
                 "full_name": "Celsius heat units (Chu) per square foot per hour",
                 "notation": "$\\mathrm{Chu} / \\mathrm{ft}^{2} / \\mathrm{hr}$",
@@ -1657,7 +1657,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kilocalorie_per_square_foot_per_hour",
-                "symbol": "$\\mathrm{W} / \\mathrm{m}^{2}$",
+                "symbol": "$\\mathrm{kcal} /\\left(\\mathrm{ft}^{2} \\mathrm{hr}\\right)$",
                 "si_factor": 12.518,
                 "full_name": "kilocalorie per square foot per hour",
                 "notation": "$\\mathrm{kcal} /\\left(\\mathrm{ft}^{2} \\mathrm{hr}\\right)$",
@@ -1665,7 +1665,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kilocalorie_per_square_meter_per_hour",
-                "symbol": "$\\mathrm{W} / \\mathrm{m}^{2}$",
+                "symbol": "$\\mathrm{kcal} /\\left(\\mathrm{m}^{2} \\mathrm{hr}\\right)$",
                 "si_factor": 1.163,
                 "full_name": "kilocalorie per square meter per hour",
                 "notation": "$\\mathrm{kcal} /\\left(\\mathrm{m}^{2} \\mathrm{hr}\\right)$",
@@ -1689,7 +1689,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "barrel_oil_equivalent_or_equivalent_barrel",
-                "symbol": "J",
+                "symbol": "bboe or boe",
                 "si_factor": 6120000000.0,
                 "full_name": "barrel oil equivalent or equivalent barrel",
                 "notation": "bboe or boe",
@@ -1697,7 +1697,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "billion_electronvolt",
-                "symbol": "J",
+                "symbol": "BeV",
                 "si_factor": 1.6022000000000002e-10,
                 "full_name": "billion electronvolt",
                 "notation": "BeV",
@@ -1705,7 +1705,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "british_thermal_unit_4circ_mathrmc",
-                "symbol": "J",
+                "symbol": "Btu ( $39.2{ }^{\\circ} \\mathrm{F}$ )",
                 "si_factor": 1059.67,
                 "full_name": "British thermal unit ( $4^{\\circ} \\mathrm{C}$ )",
                 "notation": "Btu ( $39.2{ }^{\\circ} \\mathrm{F}$ )",
@@ -1713,7 +1713,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "british_thermal_unit_60circ_mathrmf",
-                "symbol": "J",
+                "symbol": "Btu ( $60{ }^{\\circ} \\mathrm{F}$ )",
                 "si_factor": 1054.678,
                 "full_name": "British thermal unit ( $60^{\\circ} \\mathrm{F}$ )",
                 "notation": "Btu ( $60{ }^{\\circ} \\mathrm{F}$ )",
@@ -1721,7 +1721,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "british_thermal_unit_international_steam_tables",
-                "symbol": "J",
+                "symbol": "Btu (IT)",
                 "si_factor": 1055.055853,
                 "full_name": "British thermal unit (international steam tables)",
                 "notation": "Btu (IT)",
@@ -1729,7 +1729,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "british_thermal_unit_isotc_12",
-                "symbol": "J",
+                "symbol": "Btu (ISO)",
                 "si_factor": 1055.06,
                 "full_name": "British thermal unit (ISO/TC 12)",
                 "notation": "Btu (ISO)",
@@ -1737,7 +1737,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "british_thermal_unit_mean",
-                "symbol": "J",
+                "symbol": "Btu (mean) or Btu",
                 "si_factor": 1055.87,
                 "full_name": "British thermal unit (mean)",
                 "notation": "Btu (mean) or Btu",
@@ -1745,7 +1745,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "british_thermal_unit_thermochemical",
-                "symbol": "J",
+                "symbol": "Btu (therm)",
                 "si_factor": 1054.35,
                 "full_name": "British thermal unit (thermochemical)",
                 "notation": "Btu (therm)",
@@ -1753,7 +1753,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "calorie_20circ_mathrmc",
-                "symbol": "J",
+                "symbol": "cal ( $20^{\\circ} \\mathrm{C}$ )",
                 "si_factor": 4.1819,
                 "full_name": "calorie ( $20^{\\circ} \\mathrm{C}$ )",
                 "notation": "cal ( $20^{\\circ} \\mathrm{C}$ )",
@@ -1761,7 +1761,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "calorie_4circ_mathrmc",
-                "symbol": "J",
+                "symbol": "cal ( $4^{\\circ} \\mathrm{C}$ )",
                 "si_factor": 4.2045,
                 "full_name": "calorie ( $4^{\\circ} \\mathrm{C}$ )",
                 "notation": "cal ( $4^{\\circ} \\mathrm{C}$ )",
@@ -1769,7 +1769,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "calorie_international_steam_tables",
-                "symbol": "J",
+                "symbol": "cal (IT)",
                 "si_factor": 4.18674,
                 "full_name": "calorie (international steam tables)",
                 "notation": "cal (IT)",
@@ -1777,7 +1777,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "calorie_mean",
-                "symbol": "J",
+                "symbol": "cal (mean)",
                 "si_factor": 4.19002,
                 "full_name": "calorie (mean)",
                 "notation": "cal (mean)",
@@ -1785,7 +1785,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "calorie_nutritional",
-                "symbol": "J",
+                "symbol": "Cal (nutr)",
                 "si_factor": 4184.0,
                 "full_name": "Calorie (nutritional)",
                 "notation": "Cal (nutr)",
@@ -1793,7 +1793,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "calorie_thermochemical",
-                "symbol": "J",
+                "symbol": "cal (therm)",
                 "si_factor": 4.184,
                 "full_name": "calorie (thermochemical)",
                 "notation": "cal (therm)",
@@ -1801,7 +1801,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "celsius_heat_unit",
-                "symbol": "J",
+                "symbol": "Chu",
                 "si_factor": 1899.18,
                 "full_name": "Celsius heat unit",
                 "notation": "Chu",
@@ -1809,7 +1809,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "celsius_heat_unit_15_circ_mathrmc",
-                "symbol": "J",
+                "symbol": "Chu ( $15{ }^{\\circ} \\mathrm{C}$ )",
                 "si_factor": 1899.1,
                 "full_name": "Celsius heat unit ( $15{ }^{\\circ} \\mathrm{C}$ )",
                 "notation": "Chu ( $15{ }^{\\circ} \\mathrm{C}$ )",
@@ -1817,7 +1817,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "electron_volt",
-                "symbol": "J",
+                "symbol": "eV",
                 "si_factor": 1.6022e-19,
                 "full_name": "electron volt",
                 "notation": "eV",
@@ -1825,7 +1825,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "erg",
-                "symbol": "J",
+                "symbol": "erg",
                 "si_factor": 1e-07,
                 "full_name": "erg",
                 "notation": "erg",
@@ -1833,7 +1833,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "foot_pound_force_duty",
-                "symbol": "J",
+                "symbol": "ft $\\mathrm{lb}_{\\mathrm{f}}$",
                 "si_factor": 1.355818,
                 "full_name": "foot pound force (duty)",
                 "notation": "ft $\\mathrm{lb}_{\\mathrm{f}}$",
@@ -1841,7 +1841,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "foot_poundal",
-                "symbol": "J",
+                "symbol": "ft pdl",
                 "si_factor": 0.04214,
                 "full_name": "foot-poundal",
                 "notation": "ft pdl",
@@ -1849,7 +1849,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "frigorie",
-                "symbol": "J",
+                "symbol": "fg",
                 "si_factor": 4190.0,
                 "full_name": "frigorie",
                 "notation": "fg",
@@ -1857,7 +1857,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "gigajoule",
-                "symbol": "J",
+                "symbol": "GJ",
                 "si_factor": 1000000000.0,
                 "full_name": "gigajoule",
                 "notation": "GJ",
@@ -1865,7 +1865,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "hartree_atomic_unit_of_energy",
-                "symbol": "J",
+                "symbol": "$\\mathrm{E}_{\\mathrm{H}}$ a.u.",
                 "si_factor": 4.359700000000001e-18,
                 "full_name": "hartree (atomic unit of energy)",
                 "notation": "$\\mathrm{E}_{\\mathrm{H}}$ a.u.",
@@ -1881,7 +1881,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "joule_international",
-                "symbol": "J",
+                "symbol": "J (intl)",
                 "si_factor": 1.000165,
                 "full_name": "joule (international)",
                 "notation": "J (intl)",
@@ -1889,7 +1889,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kilocalorie_thermal",
-                "symbol": "J",
+                "symbol": "kcal (therm)",
                 "si_factor": 4184.0,
                 "full_name": "kilocalorie (thermal)",
                 "notation": "kcal (therm)",
@@ -1897,7 +1897,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kilogram_force_meter",
-                "symbol": "J",
+                "symbol": "$\\mathrm{kg}_{\\mathrm{f}}$ m",
                 "si_factor": 9.80665,
                 "full_name": "kilogram force meter",
                 "notation": "$\\mathrm{kg}_{\\mathrm{f}}$ m",
@@ -1905,7 +1905,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kilojoule",
-                "symbol": "J",
+                "symbol": "kJ",
                 "si_factor": 1000.0,
                 "full_name": "kilojoule",
                 "notation": "kJ",
@@ -1913,7 +1913,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kiloton_tnt",
-                "symbol": "J",
+                "symbol": "kt (TNT)",
                 "si_factor": 4.1799999999999995e+18,
                 "full_name": "kiloton (TNT)",
                 "notation": "kt (TNT)",
@@ -1921,7 +1921,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kilowatt_hour",
-                "symbol": "J",
+                "symbol": "kWh",
                 "si_factor": 3600000.0,
                 "full_name": "kilowatt hour",
                 "notation": "kWh",
@@ -1929,7 +1929,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "liter_atmosphere",
-                "symbol": "J",
+                "symbol": "L atm",
                 "si_factor": 101.325,
                 "full_name": "liter atmosphere",
                 "notation": "L atm",
@@ -1937,7 +1937,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "megajoule",
-                "symbol": "J",
+                "symbol": "MJ",
                 "si_factor": 1000000.0,
                 "full_name": "megajoule",
                 "notation": "MJ",
@@ -1945,7 +1945,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "megaton_tnt",
-                "symbol": "J",
+                "symbol": "Mt (TNT)",
                 "si_factor": 4.1799999999999995e+21,
                 "full_name": "megaton (TNT)",
                 "notation": "Mt (TNT)",
@@ -1953,7 +1953,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pound_centigrade_unit_15circ_mathrmc",
-                "symbol": "J",
+                "symbol": "pcu ( $15{ }^{\\circ} \\mathrm{C}$ )",
                 "si_factor": 1899.1,
                 "full_name": "pound centigrade unit ( $15^{\\circ} \\mathrm{C}$ )",
                 "notation": "pcu ( $15{ }^{\\circ} \\mathrm{C}$ )",
@@ -1961,7 +1961,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "prout",
-                "symbol": "J",
+                "symbol": "prout",
                 "si_factor": 2.9638e-14,
                 "full_name": "prout",
                 "notation": "prout",
@@ -1969,7 +1969,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "q_unit",
-                "symbol": "J",
+                "symbol": "Q",
                 "si_factor": 1.055e+21,
                 "full_name": "Q unit",
                 "notation": "Q",
@@ -1977,7 +1977,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "quad_quadrillion_btu",
-                "symbol": "J",
+                "symbol": "quad",
                 "si_factor": 1.0550999999999999e+18,
                 "full_name": "quad (quadrillion Btu)",
                 "notation": "quad",
@@ -1985,7 +1985,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "rydberg",
-                "symbol": "J",
+                "symbol": "Ry",
                 "si_factor": 2.1799000000000002e-18,
                 "full_name": "rydberg",
                 "notation": "Ry",
@@ -1993,7 +1993,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "therm_eeg",
-                "symbol": "J",
+                "symbol": "therm (EEG)",
                 "si_factor": 105510000.0,
                 "full_name": "therm (EEG)",
                 "notation": "therm (EEG)",
@@ -2001,7 +2001,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "therm_refineries",
-                "symbol": "J",
+                "symbol": "therm (refy) or therm",
                 "si_factor": 1055900000.0000001,
                 "full_name": "therm (refineries)",
                 "notation": "therm (refy) or therm",
@@ -2009,7 +2009,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "therm_us",
-                "symbol": "J",
+                "symbol": "therm (US) or therm",
                 "si_factor": 105480000.0,
                 "full_name": "therm (US)",
                 "notation": "therm (US) or therm",
@@ -2017,7 +2017,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "ton_coal_equivalent",
-                "symbol": "J",
+                "symbol": "tce (tec)",
                 "si_factor": 292900000.0,
                 "full_name": "ton coal equivalent",
                 "notation": "tce (tec)",
@@ -2025,7 +2025,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "ton_oil_equivalent",
-                "symbol": "J",
+                "symbol": "toe (tep)",
                 "si_factor": 418700000.0,
                 "full_name": "ton oil equivalent",
                 "notation": "toe (tep)",
@@ -2041,7 +2041,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "british_thermal_unit_per_square_foot",
-                "symbol": "$\\mathrm{J} / \\mathrm{m}^{2}$",
+                "symbol": "$\\mathrm{Btu} / \\mathrm{ft}^{2}$ or Btu/sq ft",
                 "si_factor": 11354.0,
                 "full_name": "British thermal unit per square foot",
                 "notation": "$\\mathrm{Btu} / \\mathrm{ft}^{2}$ or Btu/sq ft",
@@ -2057,7 +2057,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "langley",
-                "symbol": "$\\mathrm{J} / \\mathrm{m}^{2}$",
+                "symbol": "Ly",
                 "si_factor": 41840.0,
                 "full_name": "Langley",
                 "notation": "Ly",
@@ -2073,7 +2073,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "crinal",
-                "symbol": "N",
+                "symbol": "crinal",
                 "si_factor": 0.1,
                 "full_name": "crinal",
                 "notation": "crinal",
@@ -2081,7 +2081,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "dyne",
-                "symbol": "N",
+                "symbol": "dyn",
                 "si_factor": 1e-05,
                 "full_name": "dyne",
                 "notation": "dyn",
@@ -2089,7 +2089,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "funal",
-                "symbol": "N",
+                "symbol": "funal",
                 "si_factor": 1000.0,
                 "full_name": "funal",
                 "notation": "funal",
@@ -2097,7 +2097,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kilogram_force",
-                "symbol": "N",
+                "symbol": "$\\mathrm{kg}_{\\mathrm{f}}$",
                 "si_factor": 9.80665,
                 "full_name": "kilogram force",
                 "notation": "$\\mathrm{kg}_{\\mathrm{f}}$",
@@ -2105,7 +2105,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kilonewton",
-                "symbol": "N",
+                "symbol": "kN",
                 "si_factor": 1000.0,
                 "full_name": "kilonewton",
                 "notation": "kN",
@@ -2113,7 +2113,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kip_force",
-                "symbol": "N",
+                "symbol": "$\\operatorname{kip}_{\\mathrm{f}}$",
                 "si_factor": 4448.22,
                 "full_name": "kip force",
                 "notation": "$\\operatorname{kip}_{\\mathrm{f}}$",
@@ -2121,7 +2121,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "millinewton",
-                "symbol": "N",
+                "symbol": "mN",
                 "si_factor": 0.001,
                 "full_name": "millinewton",
                 "notation": "mN",
@@ -2137,7 +2137,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "ounce_force",
-                "symbol": "N",
+                "symbol": "$\\mathrm{oz}_{\\mathrm{f}}$ or oz",
                 "si_factor": 0.27801385,
                 "full_name": "ounce force",
                 "notation": "$\\mathrm{oz}_{\\mathrm{f}}$ or oz",
@@ -2145,7 +2145,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pond",
-                "symbol": "N",
+                "symbol": "p",
                 "si_factor": 0.0098066,
                 "full_name": "pond",
                 "notation": "p",
@@ -2153,7 +2153,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pound_force",
-                "symbol": "N",
+                "symbol": "$\\mathrm{lb}_{\\mathrm{f}}$ or lb",
                 "si_factor": 4.4482216,
                 "full_name": "pound force",
                 "notation": "$\\mathrm{lb}_{\\mathrm{f}}$ or lb",
@@ -2161,7 +2161,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "poundal",
-                "symbol": "N",
+                "symbol": "pdl",
                 "si_factor": 0.13825495,
                 "full_name": "poundal",
                 "notation": "pdl",
@@ -2169,7 +2169,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "slug_force",
-                "symbol": "N",
+                "symbol": "$\\operatorname{slug}_{f}$",
                 "si_factor": 143.117,
                 "full_name": "slug force",
                 "notation": "$\\operatorname{slug}_{f}$",
@@ -2177,7 +2177,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "sthène",
-                "symbol": "N",
+                "symbol": "sn",
                 "si_factor": 1000.0,
                 "full_name": "sthène",
                 "notation": "sn",
@@ -2185,7 +2185,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "ton_force_long",
-                "symbol": "N",
+                "symbol": "LT",
                 "si_factor": 9964.016,
                 "full_name": "ton (force, long)",
                 "notation": "LT",
@@ -2193,7 +2193,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "ton_force_metric",
-                "symbol": "N",
+                "symbol": "MT",
                 "si_factor": 9806.65,
                 "full_name": "ton (force, metric)",
                 "notation": "MT",
@@ -2201,7 +2201,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "ton_force_short",
-                "symbol": "N",
+                "symbol": "T",
                 "si_factor": 8896.44,
                 "full_name": "ton (force, short)",
                 "notation": "T",
@@ -2217,7 +2217,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "dyne_per_cubic_centimeter",
-                "symbol": "$\\mathrm{N} / \\mathrm{m}^{3}$",
+                "symbol": "dyn/cc or dyn/ $\\mathrm{cm}^{3}$",
                 "si_factor": 10.0,
                 "full_name": "dyne per cubic centimeter",
                 "notation": "dyn/cc or dyn/ $\\mathrm{cm}^{3}$",
@@ -2225,7 +2225,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kilogram_force_per_cubic_centimeter",
-                "symbol": "$\\mathrm{N} / \\mathrm{m}^{3}$",
+                "symbol": "$\\mathrm{kg}_{\\mathrm{f}} / \\mathrm{cm}^{3}$",
                 "si_factor": 9806700.0,
                 "full_name": "kilogram force per cubic centimeter",
                 "notation": "$\\mathrm{kg}_{\\mathrm{f}} / \\mathrm{cm}^{3}$",
@@ -2233,7 +2233,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kilogram_force_per_cubic_meter",
-                "symbol": "$\\mathrm{N} / \\mathrm{m}^{3}$",
+                "symbol": "$\\mathrm{kg}_{\\mathrm{f}} / \\mathrm{m}^{3}$",
                 "si_factor": 9.80665,
                 "full_name": "kilogram force per cubic meter",
                 "notation": "$\\mathrm{kg}_{\\mathrm{f}} / \\mathrm{m}^{3}$",
@@ -2249,7 +2249,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pound_force_per_cubic_foot",
-                "symbol": "$\\mathrm{N} / \\mathrm{m}^{3}$",
+                "symbol": "$\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{cft}$",
                 "si_factor": 157.087,
                 "full_name": "pound force per cubic foot",
                 "notation": "$\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{cft}$",
@@ -2257,7 +2257,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pound_force_per_cubic_inch",
-                "symbol": "$\\mathrm{N} / \\mathrm{m}^{3}$",
+                "symbol": "$\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{cu} . \\mathrm{in}$.",
                 "si_factor": 271450.0,
                 "full_name": "pound force per cubic inch",
                 "notation": "$\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{cu} . \\mathrm{in}$.",
@@ -2265,7 +2265,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "ton_force_per_cubic_foot",
-                "symbol": "$\\mathrm{N} / \\mathrm{m}^{3}$",
+                "symbol": "ton $_{\\mathrm{f}} / \\mathrm{cft}$",
                 "si_factor": 351880.0,
                 "full_name": "ton force per cubic foot",
                 "notation": "ton $_{\\mathrm{f}} / \\mathrm{cft}$",
@@ -2281,7 +2281,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "dyne_per_gram",
-                "symbol": "N/kg",
+                "symbol": "dyn/g",
                 "si_factor": 0.01,
                 "full_name": "dyne per gram",
                 "notation": "dyn/g",
@@ -2289,7 +2289,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kilogram_force_per_kilogram",
-                "symbol": "N/kg",
+                "symbol": "$\\mathrm{kg}_{\\mathrm{f}} / \\mathrm{kg}$",
                 "si_factor": 9.80665,
                 "full_name": "kilogram force per kilogram",
                 "notation": "$\\mathrm{kg}_{\\mathrm{f}} / \\mathrm{kg}$",
@@ -2305,7 +2305,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pound_force_per_pound_mass",
-                "symbol": "N/kg",
+                "symbol": "$\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{lb}$ or $\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{lb}_{\\mathrm{m}}$",
                 "si_factor": 9.80665,
                 "full_name": "pound force per pound mass",
                 "notation": "$\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{lb}$ or $\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{lb}_{\\mathrm{m}}$",
@@ -2313,7 +2313,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pound_force_per_slug",
-                "symbol": "N/kg",
+                "symbol": "$\\mathrm{lb}_{\\mathrm{f}} /$ slug",
                 "si_factor": 0.3048,
                 "full_name": "pound force per slug",
                 "notation": "$\\mathrm{lb}_{\\mathrm{f}} /$ slug",
@@ -2329,7 +2329,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "cycles_per_second_per_volt",
-                "symbol": "Hz/V",
+                "symbol": "cycle/(sec V)",
                 "si_factor": 1.0,
                 "full_name": "cycles per second per volt",
                 "notation": "cycle/(sec V)",
@@ -2345,7 +2345,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "terahertz_per_volt",
-                "symbol": "Hz/V",
+                "symbol": "THz/V",
                 "si_factor": 1000000000000.0,
                 "full_name": "terahertz per volt",
                 "notation": "THz/V",
@@ -2361,7 +2361,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "100_km_per_liter",
-                "symbol": "km/l",
+                "symbol": "$100 \\mathrm{~km} / \\mathrm{l}$",
                 "si_factor": 100.0,
                 "full_name": "100 km per liter",
                 "notation": "$100 \\mathrm{~km} / \\mathrm{l}$",
@@ -2369,7 +2369,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "gallons_uk",
-                "symbol": "km/l",
+                "symbol": "gal (UK)/ 100 mi",
                 "si_factor": 35.4,
                 "full_name": "gallons (UK) per 100 miles",
                 "notation": "gal (UK)/ 100 mi",
@@ -2377,7 +2377,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "gallons_us",
-                "symbol": "km/l",
+                "symbol": "gal (US)/ 100 mi",
                 "si_factor": 42.51,
                 "full_name": "gallons (US) per 100 miles",
                 "notation": "gal (US)/ 100 mi",
@@ -2385,7 +2385,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kilometers_per_gallon_uk",
-                "symbol": "km/l",
+                "symbol": "km/gal (UK)",
                 "si_factor": 0.21997,
                 "full_name": "kilometers per gallon (UK)",
                 "notation": "km/gal (UK)",
@@ -2393,7 +2393,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kilometers_per_gallon_us",
-                "symbol": "km/l",
+                "symbol": "km/gal(US)",
                 "si_factor": 0.26417,
                 "full_name": "kilometers per gallon (US)",
                 "notation": "km/gal(US)",
@@ -2409,7 +2409,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "liters_per_100_km",
-                "symbol": "km/l",
+                "symbol": "$1 / 100 \\mathrm{~km}$",
                 "si_factor": 100.0,
                 "full_name": "liters per 100 km",
                 "notation": "$1 / 100 \\mathrm{~km}$",
@@ -2417,7 +2417,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "liters_per_kilometer",
-                "symbol": "km/l",
+                "symbol": "1/km",
                 "si_factor": 1.0,
                 "full_name": "liters per kilometer",
                 "notation": "1/km",
@@ -2425,7 +2425,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "meters_per_gallon_uk",
-                "symbol": "km/l",
+                "symbol": "m/gal (UK)",
                 "si_factor": 0.00021997,
                 "full_name": "meters per gallon (UK)",
                 "notation": "m/gal (UK)",
@@ -2433,7 +2433,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "meters_per_gallon_us",
-                "symbol": "km/l",
+                "symbol": "1/gal (US)",
                 "si_factor": 0.00022642000000000004,
                 "full_name": "meters per gallon (US)",
                 "notation": "1/gal (US)",
@@ -2441,7 +2441,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "miles_per_gallon_uk",
-                "symbol": "km/l",
+                "symbol": "mi/gal (UK) or mpg (UK)",
                 "si_factor": 0.35401,
                 "full_name": "miles per gallon (UK)",
                 "notation": "mi/gal (UK) or mpg (UK)",
@@ -2449,7 +2449,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "miles_per_gallon_us",
-                "symbol": "km/l",
+                "symbol": "mi/gal (US) or mpg (US)",
                 "si_factor": 0.42514,
                 "full_name": "miles per gallon (US)",
                 "notation": "mi/gal (US) or mpg (US)",
@@ -2457,7 +2457,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "miles_per_liter",
-                "symbol": "km/l",
+                "symbol": "mi/l",
                 "si_factor": 1.6093,
                 "full_name": "miles per liter",
                 "notation": "mi/l",
@@ -2473,7 +2473,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "british_thermal_unit_per_pound",
-                "symbol": "J/kg",
+                "symbol": "Btu/lb",
                 "si_factor": 2326.0,
                 "full_name": "British thermal unit per pound",
                 "notation": "Btu/lb",
@@ -2481,7 +2481,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "calorie_per_gram",
-                "symbol": "J/kg",
+                "symbol": "$\\mathrm{cal} / \\mathrm{g}$",
                 "si_factor": 4186.0,
                 "full_name": "calorie per gram",
                 "notation": "$\\mathrm{cal} / \\mathrm{g}$",
@@ -2489,7 +2489,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "chu_per_pound",
-                "symbol": "J/kg",
+                "symbol": "Chu/lb",
                 "si_factor": 4186.8,
                 "full_name": "Chu per pound",
                 "notation": "Chu/lb",
@@ -2513,7 +2513,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "british_thermal_unit_mean",
-                "symbol": "J/kg",
+                "symbol": "Btu (mean)/lb",
                 "si_factor": 2327.79,
                 "full_name": "British thermal unit (mean) per pound",
                 "notation": "Btu (mean)/lb",
@@ -2521,7 +2521,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "british_thermal_unit_per_pound",
-                "symbol": "J/kg",
+                "symbol": "Btu/lb",
                 "si_factor": 2326.0,
                 "full_name": "British thermal unit per pound",
                 "notation": "Btu/lb",
@@ -2529,7 +2529,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "calorie_per_gram",
-                "symbol": "J/kg",
+                "symbol": "$\\mathrm{cal} / \\mathrm{g}$",
                 "si_factor": 4186.0,
                 "full_name": "calorie per gram",
                 "notation": "$\\mathrm{cal} / \\mathrm{g}$",
@@ -2537,7 +2537,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "chu_per_pound",
-                "symbol": "J/kg",
+                "symbol": "Chu/lb",
                 "si_factor": 4186.8,
                 "full_name": "Chu per pound",
                 "notation": "Chu/lb",
@@ -2561,7 +2561,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "british_thermal_unit_per_pound",
-                "symbol": "J/kg",
+                "symbol": "Btu/lb",
                 "si_factor": 2326.0,
                 "full_name": "British thermal unit per pound",
                 "notation": "Btu/lb",
@@ -2569,7 +2569,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "calorie_per_gram",
-                "symbol": "J/kg",
+                "symbol": "$\\mathrm{cal} / \\mathrm{g}$",
                 "si_factor": 4186.0,
                 "full_name": "calorie per gram",
                 "notation": "$\\mathrm{cal} / \\mathrm{g}$",
@@ -2577,7 +2577,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "chu_per_pound",
-                "symbol": "J/kg",
+                "symbol": "Chu/lb",
                 "si_factor": 4186.8,
                 "full_name": "Chu per pound",
                 "notation": "Chu/lb",
@@ -2601,7 +2601,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "btu_per_square_foot_per_hour_per_degree_fahrenheit_or_rankine",
-                "symbol": "W/ ( $\\mathrm{m}^{2}{ }^{\\circ} \\mathrm{C}$ )",
+                "symbol": "$\\mathrm{Btu} /\\left(\\mathrm{ft}^{2} \\mathrm{~h}{ }^{\\circ} \\mathrm{F}\\right)$",
                 "si_factor": 5.679,
                 "full_name": "Btu per square foot per hour per degree Fahrenheit (or Rankine)",
                 "notation": "$\\mathrm{Btu} /\\left(\\mathrm{ft}^{2} \\mathrm{~h}{ }^{\\circ} \\mathrm{F}\\right)$",
@@ -2609,7 +2609,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "watt_per_square_meter_per_degree_celsius_or_kelvin",
-                "symbol": "W/ ( $\\mathrm{m}^{2}{ }^{\\circ} \\mathrm{C}$ )",
+                "symbol": "$\\mathrm{W} /\\left(\\mathrm{m}^{2}{ }^{\\circ} \\mathrm{C}\\right)$",
                 "si_factor": 1.0,
                 "full_name": "watt per square meter per degree Celsius (or kelvin)",
                 "notation": "$\\mathrm{W} /\\left(\\mathrm{m}^{2}{ }^{\\circ} \\mathrm{C}\\right)$",
@@ -2625,7 +2625,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "foot_candle",
-                "symbol": "1x",
+                "symbol": "$\\mathrm{ft}-\\mathrm{C}$ or $\\mathrm{ft}-\\mathrm{Cd}$",
                 "si_factor": 10.76391,
                 "full_name": "foot-candle",
                 "notation": "$\\mathrm{ft}-\\mathrm{C}$ or $\\mathrm{ft}-\\mathrm{Cd}$",
@@ -2641,7 +2641,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "nox",
-                "symbol": "1x",
+                "symbol": "nox",
                 "si_factor": 0.001,
                 "full_name": "nox",
                 "notation": "nox",
@@ -2649,7 +2649,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "phot",
-                "symbol": "lx",
+                "symbol": "ph",
                 "si_factor": 10000.0,
                 "full_name": "phot",
                 "notation": "ph",
@@ -2657,7 +2657,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "skot",
-                "symbol": "lx",
+                "symbol": "skot",
                 "si_factor": 0.001,
                 "full_name": "skot",
                 "notation": "skot",
@@ -2673,7 +2673,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "square_foot_per_second_squared",
-                "symbol": "$\\mathrm{m}^{2} / \\mathrm{s}^{2}$",
+                "symbol": "$\\mathrm{ft}^{2} / \\mathrm{s}^{2}$ or sqft/sec ${ }^{2}$",
                 "si_factor": 0.0929,
                 "full_name": "square foot per second squared",
                 "notation": "$\\mathrm{ft}^{2} / \\mathrm{s}^{2}$ or sqft/sec ${ }^{2}$",
@@ -2697,7 +2697,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "arpent_quebec",
-                "symbol": "m",
+                "symbol": "arp",
                 "si_factor": 58.47,
                 "full_name": "arpent (Quebec)",
                 "notation": "arp",
@@ -2705,7 +2705,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "astronomic_unit",
-                "symbol": "m",
+                "symbol": "AU",
                 "si_factor": 149600000000.0,
                 "full_name": "astronomic unit",
                 "notation": "AU",
@@ -2713,7 +2713,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "attometer",
-                "symbol": "m",
+                "symbol": "am",
                 "si_factor": 1e-18,
                 "full_name": "attometer",
                 "notation": "am",
@@ -2721,7 +2721,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "calibre_centinch",
-                "symbol": "m",
+                "symbol": "cin",
                 "si_factor": 0.000254,
                 "full_name": "calibre (centinch)",
                 "notation": "cin",
@@ -2729,7 +2729,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "centimeter",
-                "symbol": "m",
+                "symbol": "cm",
                 "si_factor": 0.01,
                 "full_name": "centimeter",
                 "notation": "cm",
@@ -2737,7 +2737,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "chain_engrs_or_ramsden",
-                "symbol": "m",
+                "symbol": "ch (eng or Rams)",
                 "si_factor": 30.48,
                 "full_name": "chain (Engr's or Ramsden)",
                 "notation": "ch (eng or Rams)",
@@ -2745,7 +2745,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "chain_gunters",
-                "symbol": "m",
+                "symbol": "ch (Gunt)",
                 "si_factor": 20.1168,
                 "full_name": "chain (Gunter's)",
                 "notation": "ch (Gunt)",
@@ -2753,7 +2753,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "chain_surveyors",
-                "symbol": "m",
+                "symbol": "ch (surv)",
                 "si_factor": 20.1168,
                 "full_name": "chain (surveyors)",
                 "notation": "ch (surv)",
@@ -2761,7 +2761,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "cubit_uk",
-                "symbol": "m",
+                "symbol": "cu (UK)",
                 "si_factor": 0.4572,
                 "full_name": "cubit (UK)",
                 "notation": "cu (UK)",
@@ -2769,7 +2769,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "ell",
-                "symbol": "m",
+                "symbol": "ell",
                 "si_factor": 1.143,
                 "full_name": "ell",
                 "notation": "ell",
@@ -2777,7 +2777,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "fathom",
-                "symbol": "m",
+                "symbol": "fath",
                 "si_factor": 1.8288,
                 "full_name": "fathom",
                 "notation": "fath",
@@ -2785,7 +2785,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "femtometre",
-                "symbol": "m",
+                "symbol": "fm",
                 "si_factor": 1e-15,
                 "full_name": "femtometre",
                 "notation": "fm",
@@ -2793,7 +2793,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "fermi",
-                "symbol": "m",
+                "symbol": "F",
                 "si_factor": 1e-15,
                 "full_name": "fermi",
                 "notation": "F",
@@ -2801,7 +2801,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "foot",
-                "symbol": "m",
+                "symbol": "ft",
                 "si_factor": 0.3048,
                 "full_name": "foot",
                 "notation": "ft",
@@ -2809,7 +2809,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "furlong_uk_and_us",
-                "symbol": "m",
+                "symbol": "fur",
                 "si_factor": 201.168,
                 "full_name": "furlong (UK and US)",
                 "notation": "fur",
@@ -2817,7 +2817,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "inch",
-                "symbol": "m",
+                "symbol": "in",
                 "si_factor": 0.0254,
                 "full_name": "inch",
                 "notation": "in",
@@ -2825,7 +2825,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kilometer",
-                "symbol": "m",
+                "symbol": "km",
                 "si_factor": 1000.0,
                 "full_name": "kilometer",
                 "notation": "km",
@@ -2833,7 +2833,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "league_us_statute",
-                "symbol": "m",
+                "symbol": "lg (US, stat)",
                 "si_factor": 4828.0,
                 "full_name": "league (US, statute)",
                 "notation": "lg (US, stat)",
@@ -2841,7 +2841,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "lieue_metric",
-                "symbol": "m",
+                "symbol": "lieue (metric)",
                 "si_factor": 4000.0,
                 "full_name": "lieue (metric)",
                 "notation": "lieue (metric)",
@@ -2849,7 +2849,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "ligne_metric",
-                "symbol": "m",
+                "symbol": "ligne (metric)",
                 "si_factor": 0.0023,
                 "full_name": "ligne (metric)",
                 "notation": "ligne (metric)",
@@ -2857,7 +2857,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "line_us",
-                "symbol": "m",
+                "symbol": "li (US)",
                 "si_factor": 0.000635,
                 "full_name": "line (US)",
                 "notation": "li (US)",
@@ -2865,7 +2865,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "link_surveyors",
-                "symbol": "m",
+                "symbol": "li (surv)",
                 "si_factor": 0.201168,
                 "full_name": "link (surveyors)",
                 "notation": "li (surv)",
@@ -2881,7 +2881,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "micrometer",
-                "symbol": "m",
+                "symbol": "$\\mu \\mathrm{m}$",
                 "si_factor": 1e-06,
                 "full_name": "micrometer",
                 "notation": "$\\mu \\mathrm{m}$",
@@ -2889,7 +2889,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "micron",
-                "symbol": "m",
+                "symbol": "$\\mu$",
                 "si_factor": 1e-06,
                 "full_name": "micron",
                 "notation": "$\\mu$",
@@ -2897,7 +2897,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "mil",
-                "symbol": "m",
+                "symbol": "mil",
                 "si_factor": 2.54e-05,
                 "full_name": "mil",
                 "notation": "mil",
@@ -2905,7 +2905,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "mile_geographical",
-                "symbol": "m",
+                "symbol": "mi",
                 "si_factor": 7421.59,
                 "full_name": "mile (geographical)",
                 "notation": "mi",
@@ -2913,7 +2913,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "mile_us_nautical",
-                "symbol": "m",
+                "symbol": "mi (US, naut)",
                 "si_factor": 1853.2,
                 "full_name": "mile (US, nautical)",
                 "notation": "mi (US, naut)",
@@ -2921,7 +2921,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "mile_us_statute",
-                "symbol": "m",
+                "symbol": "mi",
                 "si_factor": 1609.344,
                 "full_name": "mile (US, statute)",
                 "notation": "mi",
@@ -2929,7 +2929,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "mile_us_survey",
-                "symbol": "m",
+                "symbol": "mi (US, surv)",
                 "si_factor": 1609.3,
                 "full_name": "mile (US, survey)",
                 "notation": "mi (US, surv)",
@@ -2937,7 +2937,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "millimeter",
-                "symbol": "m",
+                "symbol": "mm",
                 "si_factor": 0.001,
                 "full_name": "millimeter",
                 "notation": "mm",
@@ -2945,7 +2945,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "millimicron",
-                "symbol": "m",
+                "symbol": "$\\mathrm{m} \\mu$",
                 "si_factor": 1e-09,
                 "full_name": "millimicron",
                 "notation": "$\\mathrm{m} \\mu$",
@@ -2953,7 +2953,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "nanometer",
-                "symbol": "m",
+                "symbol": "nm",
                 "si_factor": 1e-09,
                 "full_name": "nanometer",
                 "notation": "nm",
@@ -2961,7 +2961,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "nanometer_or_nanon",
-                "symbol": "m",
+                "symbol": "nm",
                 "si_factor": 1e-09,
                 "full_name": "nanometer or nanon",
                 "notation": "nm",
@@ -2969,7 +2969,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "parsec",
-                "symbol": "m",
+                "symbol": "pc",
                 "si_factor": 3.086e+16,
                 "full_name": "parsec",
                 "notation": "pc",
@@ -2977,7 +2977,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "perche",
-                "symbol": "m",
+                "symbol": "rod",
                 "si_factor": 5.0292,
                 "full_name": "perche",
                 "notation": "rod",
@@ -2985,7 +2985,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pica",
-                "symbol": "m",
+                "symbol": "pica",
                 "si_factor": 0.0042175,
                 "full_name": "pica",
                 "notation": "pica",
@@ -2993,7 +2993,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "picometer",
-                "symbol": "m",
+                "symbol": "pm",
                 "si_factor": 1e-12,
                 "full_name": "picometer",
                 "notation": "pm",
@@ -3001,7 +3001,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "point_didot",
-                "symbol": "m",
+                "symbol": "pt (Didot)",
                 "si_factor": 0.00037597,
                 "full_name": "point (Didot)",
                 "notation": "pt (Didot)",
@@ -3009,7 +3009,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "point_us",
-                "symbol": "m",
+                "symbol": "pt (US)",
                 "si_factor": 0.00035146,
                 "full_name": "point (US)",
                 "notation": "pt (US)",
@@ -3017,7 +3017,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "rod_or_pole",
-                "symbol": "m",
+                "symbol": "rod",
                 "si_factor": 5.0292,
                 "full_name": "rod or pole",
                 "notation": "rod",
@@ -3025,7 +3025,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "span",
-                "symbol": "m",
+                "symbol": "span",
                 "si_factor": 0.2286,
                 "full_name": "span",
                 "notation": "span",
@@ -3033,7 +3033,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "thou_millinch",
-                "symbol": "m",
+                "symbol": "thou",
                 "si_factor": 2.54e-05,
                 "full_name": "thou (millinch)",
                 "notation": "thou",
@@ -3041,7 +3041,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "toise_metric",
-                "symbol": "m",
+                "symbol": "toise (metric)",
                 "si_factor": 2.0,
                 "full_name": "toise (metric)",
                 "notation": "toise (metric)",
@@ -3049,7 +3049,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "yard",
-                "symbol": "m",
+                "symbol": "yd",
                 "si_factor": 0.9144,
                 "full_name": "yard",
                 "notation": "yd",
@@ -3057,7 +3057,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "ångström",
-                "symbol": "m",
+                "symbol": "$\\AA$",
                 "si_factor": 1e-10,
                 "full_name": "ångström",
                 "notation": "$\\AA$",
@@ -3073,7 +3073,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "denier",
-                "symbol": "kg/m",
+                "symbol": "denier",
                 "si_factor": 1.111e-07,
                 "full_name": "denier",
                 "notation": "denier",
@@ -3081,7 +3081,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kilogram_per_centimeter",
-                "symbol": "kg/m",
+                "symbol": "kg/cm",
                 "si_factor": 100.0,
                 "full_name": "kilogram per centimeter",
                 "notation": "kg/cm",
@@ -3097,7 +3097,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pound_per_foot",
-                "symbol": "kg/m",
+                "symbol": "lb/ft",
                 "si_factor": 1.488,
                 "full_name": "pound per foot",
                 "notation": "lb/ft",
@@ -3105,7 +3105,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pound_per_inch",
-                "symbol": "kg/m",
+                "symbol": "lb/in",
                 "si_factor": 17.858,
                 "full_name": "pound per inch",
                 "notation": "lb/in",
@@ -3113,7 +3113,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pound_per_yard",
-                "symbol": "kg/m",
+                "symbol": "lb/yd",
                 "si_factor": 0.49606,
                 "full_name": "pound per yard",
                 "notation": "lb/yd",
@@ -3121,7 +3121,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "ton_metric",
-                "symbol": "kg/m",
+                "symbol": "t/km or MT/km",
                 "si_factor": 1.0,
                 "full_name": "ton (metric) per kilometer",
                 "notation": "t/km or MT/km",
@@ -3137,7 +3137,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "foot_pounds_force_per_hour",
-                "symbol": "$\\mathrm{kg} \\mathrm{m} / \\mathrm{s}$",
+                "symbol": "${\\mathrm{ft} \\mathrm{lb}_{\\mathrm{f}}}^{/} \\mathrm{h}$ or $\\mathrm{ft}-\\mathrm{lb} / \\mathrm{hr}$",
                 "si_factor": 3.8400000000000005e-05,
                 "full_name": "foot pounds force per hour",
                 "notation": "${\\mathrm{ft} \\mathrm{lb}_{\\mathrm{f}}}^{/} \\mathrm{h}$ or $\\mathrm{ft}-\\mathrm{lb} / \\mathrm{hr}$",
@@ -3145,7 +3145,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "foot_pounds_force_per_minute",
-                "symbol": "$\\mathrm{kg} \\mathrm{m} / \\mathrm{s}$",
+                "symbol": "$\\mathrm{ft} \\mathrm{lb}_{\\mathrm{f}} / \\min$ or $\\mathrm{ft}-\\mathrm{lb} /$ min",
                 "si_factor": 0.0023042,
                 "full_name": "foot pounds force per minute",
                 "notation": "$\\mathrm{ft} \\mathrm{lb}_{\\mathrm{f}} / \\min$ or $\\mathrm{ft}-\\mathrm{lb} /$ min",
@@ -3153,7 +3153,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "foot_pounds_force_per_second",
-                "symbol": "$\\mathrm{kg} \\mathrm{m} / \\mathrm{s}$",
+                "symbol": "$\\mathrm{ft} \\mathrm{lb}_{\\mathrm{f}} / \\mathrm{s}$ or ft-lb/sec",
                 "si_factor": 0.13825,
                 "full_name": "foot pounds force per second",
                 "notation": "$\\mathrm{ft} \\mathrm{lb}_{\\mathrm{f}} / \\mathrm{s}$ or ft-lb/sec",
@@ -3161,7 +3161,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "gram_centimeters_per_second",
-                "symbol": "$\\mathrm{kg} \\mathrm{m} / \\mathrm{s}$",
+                "symbol": "$\\mathrm{g} \\mathrm{cm} / \\mathrm{s}$",
                 "si_factor": 1e-05,
                 "full_name": "gram centimeters per second",
                 "notation": "$\\mathrm{g} \\mathrm{cm} / \\mathrm{s}$",
@@ -3185,7 +3185,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "apostilb",
-                "symbol": "$\\mathrm{cd} / \\mathrm{m}^{2}$",
+                "symbol": "asb",
                 "si_factor": 0.31831,
                 "full_name": "apostilb",
                 "notation": "asb",
@@ -3193,7 +3193,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "blondel",
-                "symbol": "$\\mathrm{cd} / \\mathrm{m}^{2}$",
+                "symbol": "B1",
                 "si_factor": 0.31831,
                 "full_name": "blondel",
                 "notation": "B1",
@@ -3209,7 +3209,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "foot_lambert",
-                "symbol": "$\\mathrm{cd} / \\mathrm{m}^{2}$",
+                "symbol": "ft-L",
                 "si_factor": 3.426259,
                 "full_name": "foot-lambert",
                 "notation": "ft-L",
@@ -3217,7 +3217,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "lambert",
-                "symbol": "$\\mathrm{cd} / \\mathrm{m}^{2}$",
+                "symbol": "L",
                 "si_factor": 3183.1,
                 "full_name": "lambert",
                 "notation": "L",
@@ -3225,7 +3225,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "luxon",
-                "symbol": "$\\mathrm{cd} / \\mathrm{m}^{2}$",
+                "symbol": "luxon",
                 "si_factor": 10000.0,
                 "full_name": "luxon",
                 "notation": "luxon",
@@ -3233,7 +3233,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "nit",
-                "symbol": "$\\mathrm{cd} / \\mathrm{m}^{2}$",
+                "symbol": "nit",
                 "si_factor": 1.0,
                 "full_name": "nit",
                 "notation": "nit",
@@ -3241,7 +3241,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "stilb",
-                "symbol": "$\\mathrm{cd} / \\mathrm{m}^{2}$",
+                "symbol": "sb",
                 "si_factor": 10000.0,
                 "full_name": "stilb",
                 "notation": "sb",
@@ -3249,7 +3249,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "troland",
-                "symbol": "$\\mathrm{cd} / \\mathrm{m}^{2}$",
+                "symbol": "luxon",
                 "si_factor": 10000.0,
                 "full_name": "troland",
                 "notation": "luxon",
@@ -3265,7 +3265,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "candela_steradian",
-                "symbol": "lumen",
+                "symbol": "cd sr",
                 "si_factor": 1.0,
                 "full_name": "candela steradian",
                 "notation": "cd sr",
@@ -3297,7 +3297,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "candle_international",
-                "symbol": "cd",
+                "symbol": "Cd (int)",
                 "si_factor": 1.01937,
                 "full_name": "candle (international)",
                 "notation": "Cd (int)",
@@ -3305,7 +3305,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "carcel",
-                "symbol": "cd",
+                "symbol": "carcel",
                 "si_factor": 10.0,
                 "full_name": "carcel",
                 "notation": "carcel",
@@ -3313,7 +3313,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "hefner_unit",
-                "symbol": "cd",
+                "symbol": "HK",
                 "si_factor": 0.903,
                 "full_name": "Hefner unit",
                 "notation": "HK",
@@ -3337,7 +3337,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "lenz",
-                "symbol": "A/m",
+                "symbol": "lenz",
                 "si_factor": 1.0,
                 "full_name": "lenz",
                 "notation": "lenz",
@@ -3345,7 +3345,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "oersted",
-                "symbol": "A/m",
+                "symbol": "Oe",
                 "si_factor": 79.57747,
                 "full_name": "oersted",
                 "notation": "Oe",
@@ -3353,7 +3353,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "praoersted",
-                "symbol": "A/m",
+                "symbol": "-",
                 "si_factor": 11459.08,
                 "full_name": "praoersted",
                 "notation": "-",
@@ -3369,7 +3369,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "kapp_line",
-                "symbol": "Wb",
+                "symbol": "-",
                 "si_factor": 6.000000000000001e-05,
                 "full_name": "kapp line",
                 "notation": "-",
@@ -3377,7 +3377,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "line",
-                "symbol": "Wb",
+                "symbol": "line",
                 "si_factor": 1e-08,
                 "full_name": "line",
                 "notation": "line",
@@ -3385,7 +3385,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "maxwell",
-                "symbol": "Wb",
+                "symbol": "Mx",
                 "si_factor": 1e-08,
                 "full_name": "maxwell",
                 "notation": "Mx",
@@ -3393,7 +3393,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "microweber",
-                "symbol": "Wb",
+                "symbol": "μWb",
                 "si_factor": 1e-06,
                 "full_name": "microweber",
                 "notation": "μWb",
@@ -3401,7 +3401,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "milliweber",
-                "symbol": "Wb",
+                "symbol": "mWb",
                 "si_factor": 0.001,
                 "full_name": "milliweber",
                 "notation": "mWb",
@@ -3409,7 +3409,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "unit_pole",
-                "symbol": "Wb",
+                "symbol": "unit pole",
                 "si_factor": 1.2565999999999998e-07,
                 "full_name": "unit pole",
                 "notation": "unit pole",
@@ -3433,7 +3433,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "gamma",
-                "symbol": "T",
+                "symbol": "$\\gamma$",
                 "si_factor": 1e-09,
                 "full_name": "gamma",
                 "notation": "$\\gamma$",
@@ -3441,7 +3441,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "gauss",
-                "symbol": "T",
+                "symbol": "G",
                 "si_factor": 0.0001,
                 "full_name": "gauss",
                 "notation": "G",
@@ -3449,7 +3449,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "line_per_square_centimeter",
-                "symbol": "T",
+                "symbol": "line $/ \\mathrm{cm}^{2}$",
                 "si_factor": 0.0001,
                 "full_name": "line per square centimeter",
                 "notation": "line $/ \\mathrm{cm}^{2}$",
@@ -3457,7 +3457,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "maxwell_per_square_centimeter",
-                "symbol": "T",
+                "symbol": "$\\mathrm{Mx} / \\mathrm{cm}^{2}$",
                 "si_factor": 0.0001,
                 "full_name": "maxwell per square centimeter",
                 "notation": "$\\mathrm{Mx} / \\mathrm{cm}^{2}$",
@@ -3465,7 +3465,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "microtesla",
-                "symbol": "T",
+                "symbol": "μT",
                 "si_factor": 1e-06,
                 "full_name": "microtesla",
                 "notation": "μT",
@@ -3473,7 +3473,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "millitesla",
-                "symbol": "T",
+                "symbol": "mT",
                 "si_factor": 0.001,
                 "full_name": "millitesla",
                 "notation": "mT",
@@ -3481,7 +3481,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "nanotesla",
-                "symbol": "T",
+                "symbol": "nT",
                 "si_factor": 1e-09,
                 "full_name": "nanotesla",
                 "notation": "nT",
@@ -3497,7 +3497,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "u_a",
-                "symbol": "T",
+                "symbol": "u.a.",
                 "si_factor": 2350520000000000.0,
                 "full_name": "u.a.",
                 "notation": "u.a.",
@@ -3505,7 +3505,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "weber_per_square_meter",
-                "symbol": "T",
+                "symbol": "$\\mathrm{Wb} / \\mathrm{m}^{2}$",
                 "si_factor": 1.0,
                 "full_name": "weber per square meter",
                 "notation": "$\\mathrm{Wb} / \\mathrm{m}^{2}$",
@@ -3521,7 +3521,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "bohr_magneton",
-                "symbol": "J/T",
+                "symbol": "Bohr magneton",
                 "si_factor": 9.273999999999999e-24,
                 "full_name": "Bohr magneton",
                 "notation": "Bohr magneton",
@@ -3537,7 +3537,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "nuclear_magneton",
-                "symbol": "J/T",
+                "symbol": "nucl. Magneton",
                 "si_factor": 5.0508e-27,
                 "full_name": "nuclear magneton",
                 "notation": "nucl. Magneton",
@@ -3561,7 +3561,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "newton_per_square_ampere",
-                "symbol": "H/m",
+                "symbol": "N/A ${ }^{2}$",
                 "si_factor": 1.0,
                 "full_name": "newton per square ampere",
                 "notation": "N/A ${ }^{2}$",
@@ -3577,7 +3577,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "abampere_turn",
-                "symbol": "A",
+                "symbol": "emu cgs",
                 "si_factor": 10.0,
                 "full_name": "abampere-turn",
                 "notation": "emu cgs",
@@ -3593,7 +3593,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "ampere_turn",
-                "symbol": "A",
+                "symbol": "A-turn",
                 "si_factor": 2864.77,
                 "full_name": "ampere-turn",
                 "notation": "A-turn",
@@ -3601,7 +3601,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "gilbert",
-                "symbol": "A",
+                "symbol": "Gb",
                 "si_factor": 0.79577,
                 "full_name": "gilbert",
                 "notation": "Gb",
@@ -3609,7 +3609,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kiloampere",
-                "symbol": "A",
+                "symbol": "kA",
                 "si_factor": 1000.0,
                 "full_name": "kiloampere",
                 "notation": "kA",
@@ -3617,7 +3617,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "microampere",
-                "symbol": "A",
+                "symbol": "μA",
                 "si_factor": 1e-06,
                 "full_name": "microampere",
                 "notation": "μA",
@@ -3625,7 +3625,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "milliampere",
-                "symbol": "A",
+                "symbol": "mA",
                 "si_factor": 0.001,
                 "full_name": "milliampere",
                 "notation": "mA",
@@ -3633,7 +3633,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "nanoampere",
-                "symbol": "A",
+                "symbol": "nA",
                 "si_factor": 1e-09,
                 "full_name": "nanoampere",
                 "notation": "nA",
@@ -3641,7 +3641,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "picoampere",
-                "symbol": "A",
+                "symbol": "pA",
                 "si_factor": 1e-12,
                 "full_name": "picoampere",
                 "notation": "pA",
@@ -3657,7 +3657,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "atomic_mass_unit_12_mathrmc",
-                "symbol": "kg",
+                "symbol": "$\\mathrm{u}\\left({ }^{12} \\mathrm{C}\\right)$ or amu",
                 "si_factor": 1.6605000000000002e-27,
                 "full_name": "atomic mass unit ( ${ }^{12} \\mathrm{C}$ )",
                 "notation": "$\\mathrm{u}\\left({ }^{12} \\mathrm{C}\\right)$ or amu",
@@ -3665,7 +3665,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "carat_metric",
-                "symbol": "kg",
+                "symbol": "ct",
                 "si_factor": 0.0002,
                 "full_name": "carat (metric)",
                 "notation": "ct",
@@ -3673,7 +3673,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "cental",
-                "symbol": "kg",
+                "symbol": "sh cwt, cH",
                 "si_factor": 45.359,
                 "full_name": "cental",
                 "notation": "sh cwt, cH",
@@ -3681,7 +3681,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "centigram",
-                "symbol": "kg",
+                "symbol": "cg",
                 "si_factor": 1e-05,
                 "full_name": "centigram",
                 "notation": "cg",
@@ -3689,7 +3689,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "clove_uk",
-                "symbol": "kg",
+                "symbol": "cl",
                 "si_factor": 3.6287,
                 "full_name": "clove (UK)",
                 "notation": "cl",
@@ -3697,7 +3697,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "drachm_apothecary",
-                "symbol": "kg",
+                "symbol": "dr (ap)",
                 "si_factor": 0.0038879,
                 "full_name": "drachm (apothecary)",
                 "notation": "dr (ap)",
@@ -3705,7 +3705,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "dram_avoirdupois",
-                "symbol": "kg",
+                "symbol": "dr (av)",
                 "si_factor": 0.0017718,
                 "full_name": "dram (avoirdupois)",
                 "notation": "dr (av)",
@@ -3713,7 +3713,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "dram_troy",
-                "symbol": "kg",
+                "symbol": "dr (troy)",
                 "si_factor": 0.0038879,
                 "full_name": "dram (troy)",
                 "notation": "dr (troy)",
@@ -3721,7 +3721,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "grain",
-                "symbol": "kg",
+                "symbol": "gr",
                 "si_factor": 6.4799e-05,
                 "full_name": "grain",
                 "notation": "gr",
@@ -3729,7 +3729,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "gram",
-                "symbol": "kg",
+                "symbol": "g",
                 "si_factor": 0.001,
                 "full_name": "gram",
                 "notation": "g",
@@ -3737,7 +3737,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "hundredweight_long_or_gross",
-                "symbol": "kg",
+                "symbol": "cwt, lg cwt",
                 "si_factor": 50.802,
                 "full_name": "hundredweight, long or gross",
                 "notation": "cwt, lg cwt",
@@ -3745,7 +3745,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "hundredweight_short_or_net",
-                "symbol": "kg",
+                "symbol": "sh cwt",
                 "si_factor": 45.359,
                 "full_name": "hundredweight, short or net",
                 "notation": "sh cwt",
@@ -3761,7 +3761,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kip",
-                "symbol": "kg",
+                "symbol": "kip",
                 "si_factor": 453.59,
                 "full_name": "kip",
                 "notation": "kip",
@@ -3769,7 +3769,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "microgram",
-                "symbol": "kg",
+                "symbol": "$\\mu \\mathrm{g}$",
                 "si_factor": 1e-09,
                 "full_name": "microgram",
                 "notation": "$\\mu \\mathrm{g}$",
@@ -3777,7 +3777,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "milligram",
-                "symbol": "kg",
+                "symbol": "mg",
                 "si_factor": 1e-06,
                 "full_name": "milligram",
                 "notation": "mg",
@@ -3785,7 +3785,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "ounce_apothecary",
-                "symbol": "kg",
+                "symbol": "oz (ap)",
                 "si_factor": 0.031103,
                 "full_name": "ounce (apothecary)",
                 "notation": "oz (ap)",
@@ -3793,7 +3793,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "ounce_avoirdupois",
-                "symbol": "kg",
+                "symbol": "oz",
                 "si_factor": 0.02835,
                 "full_name": "ounce (avoirdupois)",
                 "notation": "oz",
@@ -3801,7 +3801,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "ounce_troy",
-                "symbol": "kg",
+                "symbol": "oz (troy)",
                 "si_factor": 0.031103,
                 "full_name": "ounce (troy)",
                 "notation": "oz (troy)",
@@ -3809,7 +3809,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pennyweight_troy",
-                "symbol": "kg",
+                "symbol": "dwt (troy)",
                 "si_factor": 0.0015552,
                 "full_name": "pennyweight (troy)",
                 "notation": "dwt (troy)",
@@ -3817,7 +3817,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pood_russia",
-                "symbol": "kg",
+                "symbol": "pood",
                 "si_factor": 16.38,
                 "full_name": "pood, (Russia)",
                 "notation": "pood",
@@ -3825,7 +3825,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pound_apothecary",
-                "symbol": "kg",
+                "symbol": "lb (ap)",
                 "si_factor": 0.37324,
                 "full_name": "pound (apothecary)",
                 "notation": "lb (ap)",
@@ -3833,7 +3833,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pound_avoirdupois",
-                "symbol": "kg",
+                "symbol": "lb (av)",
                 "si_factor": 0.45359,
                 "full_name": "pound (avoirdupois)",
                 "notation": "lb (av)",
@@ -3841,7 +3841,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pound_mass",
-                "symbol": "kg",
+                "symbol": "$\\mathrm{lb}_{\\mathrm{m}}$",
                 "si_factor": 0.45359,
                 "full_name": "pound mass",
                 "notation": "$\\mathrm{lb}_{\\mathrm{m}}$",
@@ -3849,7 +3849,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pound_troy",
-                "symbol": "kg",
+                "symbol": "lb (troy)",
                 "si_factor": 0.37324,
                 "full_name": "pound (troy)",
                 "notation": "lb (troy)",
@@ -3857,7 +3857,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "quarter_uk",
-                "symbol": "kg",
+                "symbol": "qt",
                 "si_factor": 12.7,
                 "full_name": "quarter (UK)",
                 "notation": "qt",
@@ -3865,7 +3865,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "quintal_metric",
-                "symbol": "kg",
+                "symbol": "q, dt",
                 "si_factor": 100.0,
                 "full_name": "quintal, metric",
                 "notation": "q, dt",
@@ -3873,7 +3873,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "quital_us",
-                "symbol": "kg",
+                "symbol": "quint (US)",
                 "si_factor": 45.359,
                 "full_name": "quital, US",
                 "notation": "quint (US)",
@@ -3881,7 +3881,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "scruple_avoirdupois",
-                "symbol": "kg",
+                "symbol": "scf",
                 "si_factor": 0.001575,
                 "full_name": "scruple (avoirdupois)",
                 "notation": "scf",
@@ -3889,7 +3889,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "slug",
-                "symbol": "kg",
+                "symbol": "sl",
                 "si_factor": 14.594,
                 "full_name": "slug",
                 "notation": "sl",
@@ -3897,7 +3897,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "stone_uk",
-                "symbol": "kg",
+                "symbol": "st",
                 "si_factor": 6.3503,
                 "full_name": "stone (UK)",
                 "notation": "st",
@@ -3905,7 +3905,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "ton_metric",
-                "symbol": "kg",
+                "symbol": "t",
                 "si_factor": 1000.0,
                 "full_name": "ton, metric",
                 "notation": "t",
@@ -3913,7 +3913,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "ton_us_long",
-                "symbol": "kg",
+                "symbol": "lg ton",
                 "si_factor": 1016.0,
                 "full_name": "ton, US, long",
                 "notation": "lg ton",
@@ -3921,7 +3921,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "ton_us_short",
-                "symbol": "kg",
+                "symbol": "sh ton",
                 "si_factor": 907.18,
                 "full_name": "ton, US, short",
                 "notation": "sh ton",
@@ -3937,7 +3937,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "gram_per_cubic_centimeter",
-                "symbol": "$\\mathrm{kg} / \\mathrm{m}^{3}$",
+                "symbol": "g/cc or g/ml",
                 "si_factor": 1000.0,
                 "full_name": "gram per cubic centimeter",
                 "notation": "g/cc or g/ml",
@@ -3945,7 +3945,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "gram_per_cubic_decimeter",
-                "symbol": "$\\mathrm{kg} / \\mathrm{m}^{3}$",
+                "symbol": "$\\mathrm{g} / \\mathrm{dm}^{3}$",
                 "si_factor": 1.0,
                 "full_name": "gram per cubic decimeter",
                 "notation": "$\\mathrm{g} / \\mathrm{dm}^{3}$",
@@ -3953,7 +3953,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "gram_per_cubic_meter",
-                "symbol": "$\\mathrm{kg} / \\mathrm{m}^{3}$",
+                "symbol": "$\\mathrm{g} / \\mathrm{m}^{3}$",
                 "si_factor": 0.001,
                 "full_name": "gram per cubic meter",
                 "notation": "$\\mathrm{g} / \\mathrm{m}^{3}$",
@@ -3961,7 +3961,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "gram_per_liter",
-                "symbol": "$\\mathrm{kg} / \\mathrm{m}^{3}$",
+                "symbol": "$\\mathrm{g} / \\mathrm{l}$ or g/L",
                 "si_factor": 1.0,
                 "full_name": "gram per liter",
                 "notation": "$\\mathrm{g} / \\mathrm{l}$ or g/L",
@@ -3977,7 +3977,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "ounce_avdp",
-                "symbol": "$\\mathrm{kg} / \\mathrm{m}^{3}$",
+                "symbol": "oz/gal",
                 "si_factor": 7.489152,
                 "full_name": "ounce (avdp) per US gallon",
                 "notation": "oz/gal",
@@ -3985,7 +3985,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pound_avdp",
-                "symbol": "$\\mathrm{kg} / \\mathrm{m}^{3}$",
+                "symbol": "$\\mathrm{lb} / \\mathrm{cu} \\mathrm{ft}$ or lb/ft ${ }^{3}$",
                 "si_factor": 16.01846,
                 "full_name": "pound (avdp) per cubic foot",
                 "notation": "$\\mathrm{lb} / \\mathrm{cu} \\mathrm{ft}$ or lb/ft ${ }^{3}$",
@@ -3993,7 +3993,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pound_mass",
-                "symbol": "$\\mathrm{kg} / \\mathrm{m}^{3}$",
+                "symbol": "$\\mathrm{lb} / \\mathrm{cu}$ in or $\\mathrm{lb} / \\mathrm{in}^{3}$",
                 "si_factor": 0.000276799,
                 "full_name": "pound (mass) per cubic inch",
                 "notation": "$\\mathrm{lb} / \\mathrm{cu}$ in or $\\mathrm{lb} / \\mathrm{in}^{3}$",
@@ -4001,7 +4001,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "ton_metric",
-                "symbol": "$\\mathrm{kg} / \\mathrm{m}^{3}$",
+                "symbol": "$\\mathrm{t} / \\mathrm{m}^{3}$ or MT $/ \\mathrm{m}^{3}$",
                 "si_factor": 1000.0,
                 "full_name": "ton (metric) per cubic meter",
                 "notation": "$\\mathrm{t} / \\mathrm{m}^{3}$ or MT $/ \\mathrm{m}^{3}$",
@@ -4017,7 +4017,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "kilograms_per_day",
-                "symbol": "kg/s",
+                "symbol": "kg/d",
                 "si_factor": 1.1574000000000001e-05,
                 "full_name": "kilograms per day",
                 "notation": "kg/d",
@@ -4025,7 +4025,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kilograms_per_hour",
-                "symbol": "kg/s",
+                "symbol": "kg/h",
                 "si_factor": 0.00027778,
                 "full_name": "kilograms per hour",
                 "notation": "kg/h",
@@ -4033,7 +4033,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kilograms_per_minute",
-                "symbol": "kg/s",
+                "symbol": "kg/min",
                 "si_factor": 0.016667,
                 "full_name": "kilograms per minute",
                 "notation": "kg/min",
@@ -4049,7 +4049,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "metric_tons_per_day",
-                "symbol": "kg/s",
+                "symbol": "MT/d or MTD",
                 "si_factor": 0.01157,
                 "full_name": "metric tons per day",
                 "notation": "MT/d or MTD",
@@ -4057,7 +4057,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "metric_tons_per_hour",
-                "symbol": "kg/s",
+                "symbol": "MT/h or MTD",
                 "si_factor": 0.2778,
                 "full_name": "metric tons per hour",
                 "notation": "MT/h or MTD",
@@ -4065,7 +4065,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "metric_tons_per_minute",
-                "symbol": "kg/s",
+                "symbol": "MT/h",
                 "si_factor": 16.67,
                 "full_name": "metric tons per minute",
                 "notation": "MT/h",
@@ -4073,7 +4073,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "metric_tons_per_second",
-                "symbol": "kg/s",
+                "symbol": "MT/s",
                 "si_factor": 1000.0,
                 "full_name": "metric tons per second",
                 "notation": "MT/s",
@@ -4081,7 +4081,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "metric_tons_per_year_365_d",
-                "symbol": "kg/s",
+                "symbol": "MT/yr or MTY",
                 "si_factor": 3.171e-05,
                 "full_name": "metric tons per year (365 d)",
                 "notation": "MT/yr or MTY",
@@ -4089,7 +4089,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pounds_per_day",
-                "symbol": "kg/s",
+                "symbol": "$\\mathrm{lb} / \\mathrm{d}$ or $\\mathrm{lb} / \\mathrm{da}$ or PPD",
                 "si_factor": 5.248999999999999e-06,
                 "full_name": "pounds per day",
                 "notation": "$\\mathrm{lb} / \\mathrm{d}$ or $\\mathrm{lb} / \\mathrm{da}$ or PPD",
@@ -4097,7 +4097,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pounds_per_hour",
-                "symbol": "kg/s",
+                "symbol": "$\\mathrm{lb} / \\mathrm{h}$ or lb/hr or PPH",
                 "si_factor": 0.00012598,
                 "full_name": "pounds per hour",
                 "notation": "$\\mathrm{lb} / \\mathrm{h}$ or lb/hr or PPH",
@@ -4105,7 +4105,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pounds_per_minute",
-                "symbol": "kg/s",
+                "symbol": "$\\mathrm{lb} / \\mathrm{min}$ or PPM",
                 "si_factor": 0.0075586,
                 "full_name": "pounds per minute",
                 "notation": "$\\mathrm{lb} / \\mathrm{min}$ or PPM",
@@ -4113,7 +4113,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pounds_per_second",
-                "symbol": "kg/s",
+                "symbol": "$\\mathrm{lb} / \\mathrm{s}$ or lb/sec or PPS",
                 "si_factor": 0.45351,
                 "full_name": "pounds per second",
                 "notation": "$\\mathrm{lb} / \\mathrm{s}$ or lb/sec or PPS",
@@ -4129,7 +4129,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "kilogram_per_square_meter_per_day",
-                "symbol": "kg/ ( $\\mathrm{m}^{2} \\mathrm{~s}$ )",
+                "symbol": "$\\mathrm{kg} /\\left(\\mathrm{m}^{2} \\mathrm{~d}\\right)$",
                 "si_factor": 1.1574000000000001e-05,
                 "full_name": "kilogram per square meter per day",
                 "notation": "$\\mathrm{kg} /\\left(\\mathrm{m}^{2} \\mathrm{~d}\\right)$",
@@ -4137,7 +4137,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kilogram_per_square_meter_per_hour",
-                "symbol": "kg/ ( $\\mathrm{m}^{2} \\mathrm{~s}$ )",
+                "symbol": "$\\mathrm{kg} /\\left(\\mathrm{m}^{2} \\mathrm{~h}\\right)$",
                 "si_factor": 0.00027778000000000004,
                 "full_name": "kilogram per square meter per hour",
                 "notation": "$\\mathrm{kg} /\\left(\\mathrm{m}^{2} \\mathrm{~h}\\right)$",
@@ -4145,7 +4145,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kilogram_per_square_meter_per_minute",
-                "symbol": "kg/ ( $\\mathrm{m}^{2} \\mathrm{~s}$ )",
+                "symbol": "$\\mathrm{kg} /\\left(\\mathrm{m}^{2} \\mathrm{~min}\\right)$",
                 "si_factor": 0.016667,
                 "full_name": "kilogram per square meter per minute",
                 "notation": "$\\mathrm{kg} /\\left(\\mathrm{m}^{2} \\mathrm{~min}\\right)$",
@@ -4153,7 +4153,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kilogram_per_square_meter_per_second",
-                "symbol": "kg/ ( $\\mathrm{m}^{2} \\mathrm{~s}$ )",
+                "symbol": "$\\mathrm{kg} /\\left(\\mathrm{m}^{2} \\mathrm{~s}\\right)$",
                 "si_factor": 1.0,
                 "full_name": "kilogram per square meter per second",
                 "notation": "$\\mathrm{kg} /\\left(\\mathrm{m}^{2} \\mathrm{~s}\\right)$",
@@ -4161,7 +4161,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pound_per_square_foot_per_day",
-                "symbol": "kg/ ( $\\mathrm{m}^{2} \\mathrm{~s}$ )",
+                "symbol": "$\\mathrm{lb} /\\left(\\mathrm{ft}^{2} \\mathrm{~d}\\right)$ or lb/sqft/ da",
                 "si_factor": 5.6478000000000004e-05,
                 "full_name": "pound per square foot per day",
                 "notation": "$\\mathrm{lb} /\\left(\\mathrm{ft}^{2} \\mathrm{~d}\\right)$ or lb/sqft/ da",
@@ -4169,7 +4169,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pound_per_square_foot_per_hour",
-                "symbol": "kg/ ( $\\mathrm{m}^{2} \\mathrm{~s}$ )",
+                "symbol": "$\\mathrm{lb} /\\left(\\mathrm{ft}^{2} \\mathrm{~h}\\right)$ or lb/sqft/ hr",
                 "si_factor": 0.0013555,
                 "full_name": "pound per square foot per hour",
                 "notation": "$\\mathrm{lb} /\\left(\\mathrm{ft}^{2} \\mathrm{~h}\\right)$ or lb/sqft/ hr",
@@ -4177,7 +4177,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pound_per_square_foot_per_minute",
-                "symbol": "kg/ ( $\\mathrm{m}^{2} \\mathrm{~s}$ )",
+                "symbol": "$\\mathrm{lb} /\\left(\\mathrm{ft}^{2} \\min \\right)$ or lb/ sqft/min",
                 "si_factor": 0.081329,
                 "full_name": "pound per square foot per minute",
                 "notation": "$\\mathrm{lb} /\\left(\\mathrm{ft}^{2} \\min \\right)$ or lb/ sqft/min",
@@ -4185,7 +4185,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pound_per_square_foot_per_second",
-                "symbol": "kg/ ( $\\mathrm{m}^{2} \\mathrm{~s}$ )",
+                "symbol": "$\\mathrm{lb} /\\left(\\mathrm{ft}^{2} \\mathrm{~s}\\right)$ or lb/sqft/ sec",
                 "si_factor": 4.8797,
                 "full_name": "pound per square foot per second",
                 "notation": "$\\mathrm{lb} /\\left(\\mathrm{ft}^{2} \\mathrm{~s}\\right)$ or lb/sqft/ sec",
@@ -4201,7 +4201,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "grains_of_i_per_pound_total",
-                "symbol": "$\\mathrm{kg}_{\\mathrm{i}} / \\mathrm{kg}$",
+                "symbol": "$\\mathrm{gr}_{\\mathrm{i}} / \\mathrm{lb}$",
                 "si_factor": 0.00014286,
                 "full_name": "grains of \"i\" per pound total",
                 "notation": "$\\mathrm{gr}_{\\mathrm{i}} / \\mathrm{lb}$",
@@ -4209,7 +4209,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "gram_of_i_per_kilogram_total",
-                "symbol": "$\\mathrm{kg}_{\\mathrm{i}} / \\mathrm{kg}$",
+                "symbol": "$\\mathrm{g}_{\\mathrm{i}} / \\mathrm{kg}$",
                 "si_factor": 0.001,
                 "full_name": "gram of \"i\" per kilogram total",
                 "notation": "$\\mathrm{g}_{\\mathrm{i}} / \\mathrm{kg}$",
@@ -4225,7 +4225,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pound_of_i_per_pound_total",
-                "symbol": "$\\mathrm{kg}_{\\mathrm{i}} / \\mathrm{kg}$",
+                "symbol": "$\\mathrm{lb}_{\\mathrm{i}} / \\mathrm{lb}$",
                 "si_factor": 1.0,
                 "full_name": "pound of \"i\" per pound total",
                 "notation": "$\\mathrm{lb}_{\\mathrm{i}} / \\mathrm{lb}$",
@@ -4241,7 +4241,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "gram_per_square_centimeter_per_second",
-                "symbol": "$\\mathrm{kg} / \\mathrm{m}^{2} / \\mathrm{s}$",
+                "symbol": "$\\mathrm{g} / \\mathrm{cm}^{2} / \\mathrm{s}$",
                 "si_factor": 0.1,
                 "full_name": "gram per square centimeter per second",
                 "notation": "$\\mathrm{g} / \\mathrm{cm}^{2} / \\mathrm{s}$",
@@ -4257,7 +4257,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pounds_force_per_cubic_foot_per_hour",
-                "symbol": "$\\mathrm{kg} / \\mathrm{m}^{2} / \\mathrm{s}$",
+                "symbol": "$\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{ft}^{3} / \\mathrm{h}$ or $\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{cft} / \\mathrm{hr}$",
                 "si_factor": 15.709,
                 "full_name": "pounds force per cubic foot per hour",
                 "notation": "$\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{ft}^{3} / \\mathrm{h}$ or $\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{cft} / \\mathrm{hr}$",
@@ -4265,7 +4265,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pounds_mass_per_square_foot_per_hour",
-                "symbol": "$\\mathrm{kg} / \\mathrm{m}^{2} / \\mathrm{s}$",
+                "symbol": "lb/(ft ${ }^{2} \\mathrm{hr}$ ) or lb/sqft/ hr",
                 "si_factor": 0.00013562,
                 "full_name": "pounds mass per square foot per hour",
                 "notation": "lb/(ft ${ }^{2} \\mathrm{hr}$ ) or lb/sqft/ hr",
@@ -4273,7 +4273,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pounds_mass_per_square_foot_per_second",
-                "symbol": "$\\mathrm{kg} / \\mathrm{m}^{2} / \\mathrm{s}$",
+                "symbol": "$\\mathrm{lb} /\\left(\\mathrm{ft}^{2} \\mathrm{~s}\\right)$ or lb/sqft/ sec",
                 "si_factor": 0.48824,
                 "full_name": "pounds mass per square foot per second",
                 "notation": "$\\mathrm{lb} /\\left(\\mathrm{ft}^{2} \\mathrm{~s}\\right)$ or lb/sqft/ sec",
@@ -4297,7 +4297,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kilogram_mols_of_i_per_kilogram",
-                "symbol": "$\\mathrm{mol}_{\\mathrm{i}} / \\mathrm{kg}$",
+                "symbol": "$\\mathrm{kmol}_{\\mathrm{i}} / \\mathrm{kg}$",
                 "si_factor": 1000.0,
                 "full_name": "kilogram mols of \"i\" per kilogram",
                 "notation": "$\\mathrm{kmol}_{\\mathrm{i}} / \\mathrm{kg}$",
@@ -4305,7 +4305,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kmols_of_i_per_kilogram",
-                "symbol": "$\\mathrm{mol}_{\\mathrm{i}} / \\mathrm{kg}$",
+                "symbol": "$\\mathrm{kmol}_{\\mathrm{i}} / \\mathrm{kg}$",
                 "si_factor": 1000.0,
                 "full_name": "kmols of \"i\" per kilogram",
                 "notation": "$\\mathrm{kmol}_{\\mathrm{i}} / \\mathrm{kg}$",
@@ -4313,7 +4313,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "mols_of_i_per_gram",
-                "symbol": "$\\mathrm{mol}_{\\mathrm{i}} / \\mathrm{kg}$",
+                "symbol": "$\\mathrm{mol}_{\\mathrm{i}} / \\mathrm{g}$",
                 "si_factor": 1000.0,
                 "full_name": "mols of \"i\" per gram",
                 "notation": "$\\mathrm{mol}_{\\mathrm{i}} / \\mathrm{g}$",
@@ -4321,7 +4321,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pound_moles_of_i_per_pound_mass",
-                "symbol": "$\\mathrm{mol}_{\\mathrm{i}} / \\mathrm{kg}$",
+                "symbol": "mole $_{\\mathrm{i}} / \\mathrm{lb}$ (mass)",
                 "si_factor": 1000.0,
                 "full_name": "pound moles of \"i\" per pound mass",
                 "notation": "mole $_{\\mathrm{i}} / \\mathrm{lb}$ (mass)",
@@ -4337,7 +4337,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "gram_mole_or_mole_per_gram",
-                "symbol": "kmol/kg",
+                "symbol": "mol/g",
                 "si_factor": 1.0,
                 "full_name": "gram mole or mole per gram",
                 "notation": "mol/g",
@@ -4345,7 +4345,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "gram_mole_or_mole_per_kilogram",
-                "symbol": "kmol/kg",
+                "symbol": "mol/kg",
                 "si_factor": 0.001,
                 "full_name": "gram mole or mole per kilogram",
                 "notation": "mol/kg",
@@ -4361,7 +4361,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "micromole_per_gram",
-                "symbol": "kmol/kg",
+                "symbol": "$\\mu \\mathrm{mol} / \\mathrm{g}$",
                 "si_factor": 1e-06,
                 "full_name": "micromole per gram",
                 "notation": "$\\mu \\mathrm{mol} / \\mathrm{g}$",
@@ -4369,7 +4369,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "millimole_per_gram",
-                "symbol": "kmol/kg",
+                "symbol": "mmol/g",
                 "si_factor": 0.001,
                 "full_name": "millimole per gram",
                 "notation": "mmol/g",
@@ -4377,7 +4377,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "picomole_per_gram",
-                "symbol": "kmol/kg",
+                "symbol": "pmol/g",
                 "si_factor": 1e-12,
                 "full_name": "picomole per gram",
                 "notation": "pmol/g",
@@ -4385,7 +4385,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pound_mole_per_pound",
-                "symbol": "kmol/kg",
+                "symbol": "$\\mathrm{lb}-\\mathrm{mol} / \\mathrm{lb}$ or mole/lb",
                 "si_factor": 1.0,
                 "full_name": "pound mole per pound",
                 "notation": "$\\mathrm{lb}-\\mathrm{mol} / \\mathrm{lb}$ or mole/lb",
@@ -4401,7 +4401,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "gram_mole_per_day",
-                "symbol": "kmol/h",
+                "symbol": "mol/d",
                 "si_factor": 4.167e-05,
                 "full_name": "gram mole per day",
                 "notation": "mol/d",
@@ -4409,7 +4409,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "gram_mole_per_hour",
-                "symbol": "kmol/h",
+                "symbol": "mol/h",
                 "si_factor": 0.001,
                 "full_name": "gram mole per hour",
                 "notation": "mol/h",
@@ -4417,7 +4417,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "gram_mole_per_minute",
-                "symbol": "kmol/h",
+                "symbol": "mol/min",
                 "si_factor": 0.06,
                 "full_name": "gram mole per minute",
                 "notation": "mol/min",
@@ -4425,7 +4425,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "gram_mole_per_second",
-                "symbol": "kmol/h",
+                "symbol": "mol/s",
                 "si_factor": 3.6,
                 "full_name": "gram mole per second",
                 "notation": "mol/s",
@@ -4433,7 +4433,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kilogram_mole_or_kmol_per_day",
-                "symbol": "kmol/h",
+                "symbol": "kmol/d",
                 "si_factor": 0.04167,
                 "full_name": "kilogram mole or kmol per day",
                 "notation": "kmol/d",
@@ -4449,7 +4449,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kilogram_mole_or_kmol_per_minute",
-                "symbol": "kmol/h",
+                "symbol": "kmol/min",
                 "si_factor": 60.0,
                 "full_name": "kilogram mole or kmol per minute",
                 "notation": "kmol/min",
@@ -4457,7 +4457,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kilogram_mole_or_kmol_per_second",
-                "symbol": "kmol/h",
+                "symbol": "kmol/s",
                 "si_factor": 3600.0,
                 "full_name": "kilogram mole or kmol per second",
                 "notation": "kmol/s",
@@ -4465,7 +4465,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pound_mole_or_lb_mol_per_day",
-                "symbol": "kmol/h",
+                "symbol": "lb-mol/d or mole/da",
                 "si_factor": 0.0189,
                 "full_name": "pound mole or lb-mol per day",
                 "notation": "lb-mol/d or mole/da",
@@ -4473,7 +4473,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pound_mole_or_lb_mol_per_hour",
-                "symbol": "kmol/h",
+                "symbol": "lb-mol/h or mole/hr",
                 "si_factor": 0.4535,
                 "full_name": "pound mole or lb-mol per hour",
                 "notation": "lb-mol/h or mole/hr",
@@ -4481,7 +4481,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pound_mole_or_lb_mol_per_minute",
-                "symbol": "kmol/h",
+                "symbol": "lb-mol/min or mole/ min",
                 "si_factor": 27.21,
                 "full_name": "pound mole or lb-mol per minute",
                 "notation": "lb-mol/min or mole/ min",
@@ -4489,7 +4489,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pound_mole_or_lb_mol_per_second",
-                "symbol": "kmol/h",
+                "symbol": "$\\mathrm{lb}-\\mathrm{mol} / \\mathrm{s}$ or mole/sec",
                 "si_factor": 1633.0,
                 "full_name": "pound mole or lb-mol per second",
                 "notation": "$\\mathrm{lb}-\\mathrm{mol} / \\mathrm{s}$ or mole/sec",
@@ -4505,7 +4505,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "kmol_per_square_meter_per_day",
-                "symbol": "kmol/ ( $\\mathrm{m}^{2} \\mathrm{~s}$ )",
+                "symbol": "$\\mathrm{kmol} /\\left(\\mathrm{m}^{2} \\mathrm{~d}\\right)$",
                 "si_factor": 1.1574000000000001e-05,
                 "full_name": "kmol per square meter per day",
                 "notation": "$\\mathrm{kmol} /\\left(\\mathrm{m}^{2} \\mathrm{~d}\\right)$",
@@ -4513,7 +4513,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kmol_per_square_meter_per_hour",
-                "symbol": "kmol/ ( $\\mathrm{m}^{2} \\mathrm{~s}$ )",
+                "symbol": "$\\mathrm{kmol} /\\left(\\mathrm{m}^{2} \\mathrm{~h}\\right)$",
                 "si_factor": 0.00027778000000000004,
                 "full_name": "kmol per square meter per hour",
                 "notation": "$\\mathrm{kmol} /\\left(\\mathrm{m}^{2} \\mathrm{~h}\\right)$",
@@ -4521,7 +4521,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kmol_per_square_meter_per_minute",
-                "symbol": "kmol/ ( $\\mathrm{m}^{2} \\mathrm{~s}$ )",
+                "symbol": "$\\mathrm{kmol} /\\left(\\mathrm{m}^{2}\\right.$ amin $)$",
                 "si_factor": 0.016667,
                 "full_name": "kmol per square meter per minute",
                 "notation": "$\\mathrm{kmol} /\\left(\\mathrm{m}^{2}\\right.$ amin $)$",
@@ -4529,7 +4529,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kmol_per_square_meter_per_second",
-                "symbol": "kmol/ ( $\\mathrm{m}^{2} \\mathrm{~s}$ )",
+                "symbol": "$\\mathrm{kmol} /\\left(\\mathrm{m}^{2} \\mathrm{~s}\\right)$",
                 "si_factor": 1.0,
                 "full_name": "kmol per square meter per second",
                 "notation": "$\\mathrm{kmol} /\\left(\\mathrm{m}^{2} \\mathrm{~s}\\right)$",
@@ -4537,7 +4537,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pound_mole_per_square_foot_per_day",
-                "symbol": "kmol/ ( $\\mathrm{m}^{2} \\mathrm{~s}$ )",
+                "symbol": "$\\mathrm{lb}-\\mathrm{mol} /\\left(\\mathrm{ft}^{2} \\mathrm{~d}\\right)$ or mole/sqft/da",
                 "si_factor": 5.6478000000000004e-05,
                 "full_name": "pound mole per square foot per day",
                 "notation": "$\\mathrm{lb}-\\mathrm{mol} /\\left(\\mathrm{ft}^{2} \\mathrm{~d}\\right)$ or mole/sqft/da",
@@ -4545,7 +4545,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pound_mole_per_square_foot_per_hour",
-                "symbol": "kmol/ ( $\\mathrm{m}^{2} \\mathrm{~s}$ )",
+                "symbol": "$\\mathrm{lb}-\\mathrm{mol} /\\left(\\mathrm{ft}^{2} \\mathrm{~h}\\right)$ or mole/sqft/hr",
                 "si_factor": 0.0013555,
                 "full_name": "pound mole per square foot per hour",
                 "notation": "$\\mathrm{lb}-\\mathrm{mol} /\\left(\\mathrm{ft}^{2} \\mathrm{~h}\\right)$ or mole/sqft/hr",
@@ -4553,7 +4553,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pound_mole_per_square_foot_per_minute",
-                "symbol": "kmol/ ( $\\mathrm{m}^{2} \\mathrm{~s}$ )",
+                "symbol": "$\\mathrm{lb}-\\mathrm{mol} /\\left(\\mathrm{ft}^{2} \\mathrm{~min}\\right)$ or mole/sqft/min",
                 "si_factor": 0.081329,
                 "full_name": "pound mole per square foot per minute",
                 "notation": "$\\mathrm{lb}-\\mathrm{mol} /\\left(\\mathrm{ft}^{2} \\mathrm{~min}\\right)$ or mole/sqft/min",
@@ -4561,7 +4561,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pound_mole_per_square_foot_per_second",
-                "symbol": "kmol/ ( $\\mathrm{m}^{2} \\mathrm{~s}$ )",
+                "symbol": "$\\mathrm{lb}-\\mathrm{mol} /\\left(\\mathrm{ft}^{2} \\mathrm{~s}\\right)$ or mole/sqft/sec",
                 "si_factor": 4.8797,
                 "full_name": "pound mole per square foot per second",
                 "notation": "$\\mathrm{lb}-\\mathrm{mol} /\\left(\\mathrm{ft}^{2} \\mathrm{~s}\\right)$ or mole/sqft/sec",
@@ -4577,7 +4577,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "btu_per_pound_mole_per_degree_fahrenheit_or_degree_rankine",
-                "symbol": "J/ (mol K)",
+                "symbol": "Btu/lb-mol/ ${ }^{\\circ} \\mathrm{F}$",
                 "si_factor": 4.1868,
                 "full_name": "Btu per pound mole per degree Fahrenheit (or degree Rankine)",
                 "notation": "Btu/lb-mol/ ${ }^{\\circ} \\mathrm{F}$",
@@ -4585,7 +4585,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "calories_per_gram_mole_per_kelvin_or_degree_celsius",
-                "symbol": "J/ (mol K)",
+                "symbol": "cal/(mol K)",
                 "si_factor": 4.1868,
                 "full_name": "calories per gram mole per kelvin (or degree Celsius)",
                 "notation": "cal/(mol K)",
@@ -4593,7 +4593,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "joule_per_gram_mole_per_kelvin_or_degree_celsius",
-                "symbol": "J/ (mol K)",
+                "symbol": "J/(mol K)",
                 "si_factor": 1.0,
                 "full_name": "joule per gram mole per kelvin (or degree Celsius)",
                 "notation": "J/(mol K)",
@@ -4609,7 +4609,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "gram_moles_of_i_per_cubic_meter",
-                "symbol": "$\\mathrm{mol} / \\mathrm{m}^{3}$",
+                "symbol": "$\\mathrm{mol}_{\\mathrm{i}} / \\mathrm{m}^{3}$ or $\\mathrm{c}_{\\mathrm{i}}$",
                 "si_factor": 1.0,
                 "full_name": "gram moles of \"i\" per cubic meter",
                 "notation": "$\\mathrm{mol}_{\\mathrm{i}} / \\mathrm{m}^{3}$ or $\\mathrm{c}_{\\mathrm{i}}$",
@@ -4617,7 +4617,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "gram_moles_of_i_per_liter",
-                "symbol": "$\\mathrm{mol} / \\mathrm{m}^{3}$",
+                "symbol": "$\\mathrm{mol}_{\\mathrm{i}} / \\mathrm{l}$",
                 "si_factor": 1000.0,
                 "full_name": "gram moles of \"i\" per liter",
                 "notation": "$\\mathrm{mol}_{\\mathrm{i}} / \\mathrm{l}$",
@@ -4625,7 +4625,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kilogram_moles_of_i_per_cubic_meter",
-                "symbol": "$\\mathrm{mol} / \\mathrm{m}^{3}$",
+                "symbol": "$\\mathrm{kmol}_{\\mathrm{i}} / \\mathrm{m}^{3}$",
                 "si_factor": 1000.0,
                 "full_name": "kilogram moles of \"i\" per cubic meter",
                 "notation": "$\\mathrm{kmol}_{\\mathrm{i}} / \\mathrm{m}^{3}$",
@@ -4633,7 +4633,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kilogram_moles_of_i_per_liter",
-                "symbol": "$\\mathrm{mol} / \\mathrm{m}^{3}$",
+                "symbol": "$\\mathrm{kmol}_{\\mathrm{i}} / \\mathrm{l}$",
                 "si_factor": 1000000.0,
                 "full_name": "kilogram moles of \"i\" per liter",
                 "notation": "$\\mathrm{kmol}_{\\mathrm{i}} / \\mathrm{l}$",
@@ -4641,7 +4641,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pound_moles_of_i_per_cubic_foot",
-                "symbol": "$\\mathrm{mol} / \\mathrm{m}^{3}$",
+                "symbol": "lb $\\mathrm{mol}_{\\mathrm{i}} / \\mathrm{ft}^{3}$ or $\\mathrm{mole}_{\\mathrm{i}} /$ cft",
                 "si_factor": 77844.0,
                 "full_name": "pound moles of \"i\" per cubic foot",
                 "notation": "lb $\\mathrm{mol}_{\\mathrm{i}} / \\mathrm{ft}^{3}$ or $\\mathrm{mole}_{\\mathrm{i}} /$ cft",
@@ -4649,7 +4649,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pound_moles_of_i_per_gallon_us",
-                "symbol": "$\\mathrm{mol} / \\mathrm{m}^{3}$",
+                "symbol": "lb $\\mathrm{mol}_{\\mathrm{i}} / \\mathrm{gal}$ or $\\mathrm{mole}_{\\mathrm{i}} /$ gal",
                 "si_factor": 10406.0,
                 "full_name": "pound moles of \" $i$ \" per gallon (US)",
                 "notation": "lb $\\mathrm{mol}_{\\mathrm{i}} / \\mathrm{gal}$ or $\\mathrm{mole}_{\\mathrm{i}} /$ gal",
@@ -4665,7 +4665,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "gram_mole_of_i_per_gram_mole_total",
-                "symbol": "$\\mathrm{mol}_{\\mathrm{i}} /$ mol",
+                "symbol": "$\\mathrm{mol}_{\\mathrm{i}} / \\mathrm{mol}$",
                 "si_factor": 1.0,
                 "full_name": "gram mole of \"i\" per gram mole total",
                 "notation": "$\\mathrm{mol}_{\\mathrm{i}} / \\mathrm{mol}$",
@@ -4673,7 +4673,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kilogram_mole_of_i_per_kilogram_mole_total",
-                "symbol": "$\\mathrm{mol}_{\\mathrm{i}} /$ mol",
+                "symbol": "$\\mathrm{kmol}_{\\mathrm{i}} / \\mathrm{kmol}$",
                 "si_factor": 1.0,
                 "full_name": "kilogram mole of \"i\" per kilogram mole total",
                 "notation": "$\\mathrm{kmol}_{\\mathrm{i}} / \\mathrm{kmol}$",
@@ -4681,7 +4681,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kilomole_of_i_per_kilomole_total",
-                "symbol": "$\\mathrm{mol}_{\\mathrm{i}} /$ mol",
+                "symbol": "$\\mathrm{kmol}_{\\mathrm{i}} / \\mathrm{kmol}$",
                 "si_factor": 1.0,
                 "full_name": "kilomole of \"i\" per kilomole total",
                 "notation": "$\\mathrm{kmol}_{\\mathrm{i}} / \\mathrm{kmol}$",
@@ -4689,7 +4689,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pound_mole_of_i_per_pound_mole_total",
-                "symbol": "$\\mathrm{mol}_{\\mathrm{i}} /$ mol",
+                "symbol": "lb $\\mathrm{mol}_{\\mathrm{i}} / \\mathrm{lb} \\mathrm{mol}$",
                 "si_factor": 1.0,
                 "full_name": "pound mole of \"i\" per pound mole total",
                 "notation": "lb $\\mathrm{mol}_{\\mathrm{i}} / \\mathrm{lb} \\mathrm{mol}$",
@@ -4705,7 +4705,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "gram_force_centimeter_square_second",
-                "symbol": "$\\mathrm{kg} \\mathrm{m}^{2}$",
+                "symbol": "$\\mathrm{g}_{\\mathrm{f}} \\mathrm{cm} \\mathrm{s}^{2}$",
                 "si_factor": 9.8067e-05,
                 "full_name": "gram force centimeter square second",
                 "notation": "$\\mathrm{g}_{\\mathrm{f}} \\mathrm{cm} \\mathrm{s}^{2}$",
@@ -4713,7 +4713,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "gram_square_centimeter",
-                "symbol": "$\\mathrm{kg} \\mathrm{m}^{2}$",
+                "symbol": "$\\mathrm{g} \\mathrm{cm}^{2}$",
                 "si_factor": 1e-07,
                 "full_name": "gram square centimeter",
                 "notation": "$\\mathrm{g} \\mathrm{cm}^{2}$",
@@ -4721,7 +4721,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kilogram_force_centimeter_square_second",
-                "symbol": "$\\mathrm{kg} \\mathrm{m}^{2}$",
+                "symbol": "$\\mathrm{kg}_{\\mathrm{f}} \\mathrm{cm} \\mathrm{s}{ }^{2}$",
                 "si_factor": 0.098067,
                 "full_name": "kilogram force centimeter square second",
                 "notation": "$\\mathrm{kg}_{\\mathrm{f}} \\mathrm{cm} \\mathrm{s}{ }^{2}$",
@@ -4729,7 +4729,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kilogram_force_meter_square_second",
-                "symbol": "$\\mathrm{kg} \\mathrm{m}^{2}$",
+                "symbol": "$\\mathrm{kg}_{\\mathrm{f}} \\mathrm{m} \\mathrm{s}^{2}$",
                 "si_factor": 9.8067,
                 "full_name": "kilogram force meter square second",
                 "notation": "$\\mathrm{kg}_{\\mathrm{f}} \\mathrm{m} \\mathrm{s}^{2}$",
@@ -4737,7 +4737,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kilogram_square_centimeter",
-                "symbol": "$\\mathrm{kg} \\mathrm{m}^{2}$",
+                "symbol": "$\\mathrm{kg} \\mathrm{cm}^{2}$",
                 "si_factor": 0.0001,
                 "full_name": "kilogram square centimeter",
                 "notation": "$\\mathrm{kg} \\mathrm{cm}^{2}$",
@@ -4753,7 +4753,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "ounce_force_inch_square_second",
-                "symbol": "$\\mathrm{kg} \\mathrm{m}^{2}$",
+                "symbol": "$\\mathrm{oz}_{\\mathrm{f}}$ in $\\mathrm{s}^{2}$",
                 "si_factor": 0.0070616,
                 "full_name": "ounce force inch square second",
                 "notation": "$\\mathrm{oz}_{\\mathrm{f}}$ in $\\mathrm{s}^{2}$",
@@ -4761,7 +4761,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "ounce_mass_square_inch",
-                "symbol": "$\\mathrm{kg} \\mathrm{m}^{2}$",
+                "symbol": "oz in ${ }^{2}$",
                 "si_factor": 1.8290000000000003e-05,
                 "full_name": "ounce mass square inch",
                 "notation": "oz in ${ }^{2}$",
@@ -4769,7 +4769,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pound_mass_square_foot",
-                "symbol": "$\\mathrm{kg} \\mathrm{m}^{2}$",
+                "symbol": "lb ft ${ }^{2}$ or lb sq ft",
                 "si_factor": 0.04214,
                 "full_name": "pound mass square foot",
                 "notation": "lb ft ${ }^{2}$ or lb sq ft",
@@ -4777,7 +4777,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pound_mass_square_inch",
-                "symbol": "$\\mathrm{kg} \\mathrm{m}^{2}$",
+                "symbol": "$\\mathrm{lb} \\mathrm{in}^{2}$",
                 "si_factor": 0.00029264000000000004,
                 "full_name": "pound mass square inch",
                 "notation": "$\\mathrm{lb} \\mathrm{in}^{2}$",
@@ -4793,7 +4793,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "foot_pounds_per_square_hour",
-                "symbol": "$\\mathrm{kg} \\mathrm{m} / \\mathrm{s}^{2}$",
+                "symbol": "$\\mathrm{ft} \\mathrm{lb} / \\mathrm{h}^{2}$ or $\\mathrm{ft} \\mathrm{lb} / \\mathrm{hr}^{2}$",
                 "si_factor": 1.0671e-08,
                 "full_name": "foot pounds per square hour",
                 "notation": "$\\mathrm{ft} \\mathrm{lb} / \\mathrm{h}^{2}$ or $\\mathrm{ft} \\mathrm{lb} / \\mathrm{hr}^{2}$",
@@ -4801,7 +4801,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "foot_pounds_per_square_minute",
-                "symbol": "$\\mathrm{kg} \\mathrm{m} / \\mathrm{s}^{2}$",
+                "symbol": "$\\mathrm{ft} \\mathrm{lb} / \\mathrm{min}^{2}$",
                 "si_factor": 3.8417e-05,
                 "full_name": "foot pounds per square minute",
                 "notation": "$\\mathrm{ft} \\mathrm{lb} / \\mathrm{min}^{2}$",
@@ -4809,7 +4809,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "foot_pounds_per_square_second",
-                "symbol": "$\\mathrm{kg} \\mathrm{m} / \\mathrm{s}^{2}$",
+                "symbol": "$\\mathrm{ft} \\mathrm{lb} / \\mathrm{s}^{2}$ or ft lb/sec ${ }^{2}$",
                 "si_factor": 0.1383,
                 "full_name": "foot pounds per square second",
                 "notation": "$\\mathrm{ft} \\mathrm{lb} / \\mathrm{s}^{2}$ or ft lb/sec ${ }^{2}$",
@@ -4817,7 +4817,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "gram_centimeters_per_square_second",
-                "symbol": "$\\mathrm{kg} \\mathrm{m} / \\mathrm{s}^{2}$",
+                "symbol": "$\\mathrm{g} \\mathrm{cm} / \\mathrm{s}^{2}$",
                 "si_factor": 1e-05,
                 "full_name": "gram centimeters per square second",
                 "notation": "$\\mathrm{g} \\mathrm{cm} / \\mathrm{s}^{2}$",
@@ -4841,7 +4841,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "dyne_per_square_centimeter",
-                "symbol": "$\\mathrm{N} / \\mathrm{m}^{2}$",
+                "symbol": "dyn/ $\\mathrm{cm}^{2}$",
                 "si_factor": 10.0,
                 "full_name": "dyne per square centimeter",
                 "notation": "dyn/ $\\mathrm{cm}^{2}$",
@@ -4849,7 +4849,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "gram_per_centimeter_per_square_second",
-                "symbol": "$\\mathrm{N} / \\mathrm{m}^{2}$",
+                "symbol": "$\\mathrm{g} / \\mathrm{cm} / \\mathrm{s}^{2}$",
                 "si_factor": 10.0,
                 "full_name": "gram per centimeter per square second",
                 "notation": "$\\mathrm{g} / \\mathrm{cm} / \\mathrm{s}^{2}$",
@@ -4865,7 +4865,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pound_force_per_square_foot",
-                "symbol": "$\\mathrm{N} / \\mathrm{m}^{2}$",
+                "symbol": "$\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{sq} \\mathrm{ft}$",
                 "si_factor": 478.8,
                 "full_name": "pound force per square foot",
                 "notation": "$\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{sq} \\mathrm{ft}$",
@@ -4873,7 +4873,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pound_mass_per_foot_per_square_second",
-                "symbol": "$\\mathrm{N} / \\mathrm{m}^{2}$",
+                "symbol": "$\\mathrm{lb}_{\\mathrm{m}} / \\mathrm{ft} / \\mathrm{s}^{2}$ or $\\mathrm{lb} / \\mathrm{ft} / \\mathrm{sec}^{2}$",
                 "si_factor": 14.882,
                 "full_name": "pound mass per foot per square second",
                 "notation": "$\\mathrm{lb}_{\\mathrm{m}} / \\mathrm{ft} / \\mathrm{s}^{2}$ or $\\mathrm{lb} / \\mathrm{ft} / \\mathrm{sec}^{2}$",
@@ -4889,7 +4889,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "gram_equivalents_per_cubic_meter",
-                "symbol": "$\\mathrm{eq}_{\\mathrm{i}} / \\mathrm{m}^{3}$",
+                "symbol": "$\\mathrm{eq} / \\mathrm{m}^{3}$",
                 "si_factor": 1.0,
                 "full_name": "gram equivalents per cubic meter",
                 "notation": "$\\mathrm{eq} / \\mathrm{m}^{3}$",
@@ -4897,7 +4897,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "gram_equivalents_per_liter",
-                "symbol": "$\\mathrm{eq}_{\\mathrm{i}} / \\mathrm{m}^{3}$",
+                "symbol": "eq/l",
                 "si_factor": 1000.0,
                 "full_name": "gram equivalents per liter",
                 "notation": "eq/l",
@@ -4905,7 +4905,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pound_equivalents_per_cubic_foot",
-                "symbol": "$\\mathrm{eq}_{\\mathrm{i}} / \\mathrm{m}^{3}$",
+                "symbol": "$\\mathrm{lb} \\mathrm{eq} / \\mathrm{ft}^{3}$ or lb eq/cft",
                 "si_factor": 77844.0,
                 "full_name": "pound equivalents per cubic foot",
                 "notation": "$\\mathrm{lb} \\mathrm{eq} / \\mathrm{ft}^{3}$ or lb eq/cft",
@@ -4913,7 +4913,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pound_equivalents_per_gallon",
-                "symbol": "$\\mathrm{eq}_{\\mathrm{i}} / \\mathrm{m}^{3}$",
+                "symbol": "lb eq/gal (US)",
                 "si_factor": 10406.0,
                 "full_name": "pound equivalents per gallon",
                 "notation": "lb eq/gal (US)",
@@ -4929,7 +4929,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "particles_per_cubic_centimeter",
-                "symbol": "part $/ \\mathrm{m}^{3}$",
+                "symbol": "part/cm ${ }^{3}$ or part/cc",
                 "si_factor": 10000.0,
                 "full_name": "particles per cubic centimeter",
                 "notation": "part/cm ${ }^{3}$ or part/cc",
@@ -4937,7 +4937,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "particles_per_cubic_foot",
-                "symbol": "part $/ \\mathrm{m}^{3}$",
+                "symbol": "part/ $\\mathrm{ft}^{3}$ or part/cft",
                 "si_factor": 35.31,
                 "full_name": "particles per cubic foot",
                 "notation": "part/ $\\mathrm{ft}^{3}$ or part/cft",
@@ -4953,7 +4953,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "particles_per_gallon_us",
-                "symbol": "part $/ \\mathrm{m}^{3}$",
+                "symbol": "part/gal",
                 "si_factor": 264.14,
                 "full_name": "particles per gallon (US)",
                 "notation": "part/gal",
@@ -4961,7 +4961,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "particles_per_liter",
-                "symbol": "part $/ \\mathrm{m}^{3}$",
+                "symbol": "part/l",
                 "si_factor": 1000.0,
                 "full_name": "particles per liter",
                 "notation": "part/l",
@@ -4969,7 +4969,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "particles_per_milliliter",
-                "symbol": "part $/ \\mathrm{m}^{3}$",
+                "symbol": "part/ml",
                 "si_factor": 10000.0,
                 "full_name": "particles per milliliter",
                 "notation": "part/ml",
@@ -4985,7 +4985,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "darcy",
-                "symbol": "m2",
+                "symbol": "darcy",
                 "si_factor": 9.8692e-13,
                 "full_name": "darcy",
                 "notation": "darcy",
@@ -4993,7 +4993,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "square_feet",
-                "symbol": "m2",
+                "symbol": "$\\mathrm{ft}^{2}$ or sq ft",
                 "si_factor": 0.0929,
                 "full_name": "square feet",
                 "notation": "$\\mathrm{ft}^{2}$ or sq ft",
@@ -5001,7 +5001,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "square_meters",
-                "symbol": "m2",
+                "symbol": "$\\mathrm{m}^{2}$",
                 "si_factor": 1.0,
                 "full_name": "square meters",
                 "notation": "$\\mathrm{m}^{2}$",
@@ -5017,7 +5017,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "rayleigh",
-                "symbol": "1/ ( $\\mathrm{m}^{2} \\mathrm{sec}$ )",
+                "symbol": "R",
                 "si_factor": 10000000000.0,
                 "full_name": "rayleigh",
                 "notation": "R",
@@ -5025,7 +5025,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "reciprocal_square_meter_second",
-                "symbol": "1/ ( $\\mathrm{m}^{2} \\mathrm{sec}$ )",
+                "symbol": "$1 /\\left(\\mathrm{m}^{2} \\mathrm{sec}\\right)$",
                 "si_factor": 1.0,
                 "full_name": "reciprocal square meter second",
                 "notation": "$1 /\\left(\\mathrm{m}^{2} \\mathrm{sec}\\right)$",
@@ -5041,7 +5041,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "british_thermal_unit_per_hour_per_pound_mass",
-                "symbol": "W/kg",
+                "symbol": "Btu/h/lb or Btu/ (lb hr)",
                 "si_factor": 0.64612,
                 "full_name": "British thermal unit per hour per pound mass",
                 "notation": "Btu/h/lb or Btu/ (lb hr)",
@@ -5049,7 +5049,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "calorie_per_second_per_gram",
-                "symbol": "W/kg",
+                "symbol": "cal/s/g or cal/(g sec)",
                 "si_factor": 4186.8,
                 "full_name": "calorie per second per gram",
                 "notation": "cal/s/g or cal/(g sec)",
@@ -5057,7 +5057,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kilocalorie_per_hour_per_kilogram",
-                "symbol": "W/kg",
+                "symbol": "kcal/h/kg or kcal/ (kg hr)",
                 "si_factor": 1.163,
                 "full_name": "kilocalorie per hour per kilogram",
                 "notation": "kcal/h/kg or kcal/ (kg hr)",
@@ -5081,7 +5081,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "british_thermal_unit_per_hour_per_cubic_foot",
-                "symbol": "$\\mathrm{W} / \\mathrm{m}^{3}$",
+                "symbol": "$\\mathrm{Btu} / \\mathrm{h} / \\mathrm{ft}^{3}$ or $\\mathrm{Btu} / \\mathrm{hr} /$ cft",
                 "si_factor": 10.35,
                 "full_name": "British thermal unit per hour per cubic foot",
                 "notation": "$\\mathrm{Btu} / \\mathrm{h} / \\mathrm{ft}^{3}$ or $\\mathrm{Btu} / \\mathrm{hr} /$ cft",
@@ -5089,7 +5089,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "calorie_per_second_per_cubic_centimeter",
-                "symbol": "$\\mathrm{W} / \\mathrm{m}^{3}$",
+                "symbol": "$\\mathrm{cal} / \\mathrm{s} / \\mathrm{cm}^{3}$ or $\\mathrm{cal} / \\mathrm{s} / \\mathrm{cc}$",
                 "si_factor": 4186800.0,
                 "full_name": "calorie per second per cubic centimeter",
                 "notation": "$\\mathrm{cal} / \\mathrm{s} / \\mathrm{cm}^{3}$ or $\\mathrm{cal} / \\mathrm{s} / \\mathrm{cc}$",
@@ -5097,7 +5097,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "chu_per_hour_per_cubic_foot",
-                "symbol": "$\\mathrm{W} / \\mathrm{m}^{3}$",
+                "symbol": "Chu/h/ft3 or Chu/hr/ cft",
                 "si_factor": 18.63,
                 "full_name": "Chu per hour per cubic foot",
                 "notation": "Chu/h/ft3 or Chu/hr/ cft",
@@ -5105,7 +5105,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kilocalorie_per_hour_per_cubic_centimeter",
-                "symbol": "$\\mathrm{W} / \\mathrm{m}^{3}$",
+                "symbol": "$\\mathrm{kcal} / \\mathrm{h} / \\mathrm{cm}^{3}$ or $\\mathrm{kcal} /$ hr/cc",
                 "si_factor": 1.163,
                 "full_name": "kilocalorie per hour per cubic centimeter",
                 "notation": "$\\mathrm{kcal} / \\mathrm{h} / \\mathrm{cm}^{3}$ or $\\mathrm{kcal} /$ hr/cc",
@@ -5113,7 +5113,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kilocalorie_per_hour_per_cubic_foot",
-                "symbol": "$\\mathrm{W} / \\mathrm{m}^{3}$",
+                "symbol": "$\\mathrm{kcal} / \\mathrm{h} / \\mathrm{ft}^{3}$ or $\\mathrm{kcal} / \\mathrm{hr} /$ cft",
                 "si_factor": 41.071,
                 "full_name": "kilocalorie per hour per cubic foot",
                 "notation": "$\\mathrm{kcal} / \\mathrm{h} / \\mathrm{ft}^{3}$ or $\\mathrm{kcal} / \\mathrm{hr} /$ cft",
@@ -5121,7 +5121,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kilocalorie_per_second_per_cubic_centimeter",
-                "symbol": "$\\mathrm{W} / \\mathrm{m}^{3}$",
+                "symbol": "kcal/s/cm ${ }^{3}$ or kcal/s/ cc",
                 "si_factor": 4186800000.0,
                 "full_name": "kilocalorie per second per cubic centimeter",
                 "notation": "kcal/s/cm ${ }^{3}$ or kcal/s/ cc",
@@ -5145,7 +5145,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "abwatt_emu_of_power",
-                "symbol": "W",
+                "symbol": "emu",
                 "si_factor": 1e-08,
                 "full_name": "abwatt (emu of power)",
                 "notation": "emu",
@@ -5153,7 +5153,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "boiler_horsepower",
-                "symbol": "W",
+                "symbol": "HP (boiler)",
                 "si_factor": 9809.5,
                 "full_name": "boiler horsepower",
                 "notation": "HP (boiler)",
@@ -5161,7 +5161,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "british_thermal_unit_mean",
-                "symbol": "W",
+                "symbol": "Btu (mean)/hr or Btu/hr",
                 "si_factor": 0.293297,
                 "full_name": "British thermal unit (mean) per hour",
                 "notation": "Btu (mean)/hr or Btu/hr",
@@ -5169,7 +5169,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "british_thermal_unit_thermochemical",
-                "symbol": "W",
+                "symbol": "Btu (therm)/hr or Btu/hr",
                 "si_factor": 0.292875,
                 "full_name": "British thermal unit (thermochemical) per hour",
                 "notation": "Btu (therm)/hr or Btu/hr",
@@ -5177,7 +5177,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "calorie_mean",
-                "symbol": "W",
+                "symbol": "cal (mean)/hr",
                 "si_factor": 0.00116389,
                 "full_name": "calorie (mean) per hour",
                 "notation": "cal (mean)/hr",
@@ -5185,7 +5185,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "calorie_thermochemical",
-                "symbol": "W",
+                "symbol": "cal (therm)/hr",
                 "si_factor": 0.00116222,
                 "full_name": "calorie (thermochemical) per hour",
                 "notation": "cal (therm)/hr",
@@ -5193,7 +5193,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "donkey",
-                "symbol": "W",
+                "symbol": "donkey",
                 "si_factor": 250.0,
                 "full_name": "donkey",
                 "notation": "donkey",
@@ -5201,7 +5201,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "erg_per_second",
-                "symbol": "W",
+                "symbol": "erg/s",
                 "si_factor": 1e-07,
                 "full_name": "erg per second",
                 "notation": "erg/s",
@@ -5209,7 +5209,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "foot_pondal_per_second",
-                "symbol": "W",
+                "symbol": "ft pdl/s",
                 "si_factor": 0.04214,
                 "full_name": "foot pondal per second",
                 "notation": "ft pdl/s",
@@ -5217,7 +5217,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "foot_pound_force_per_hour",
-                "symbol": "W",
+                "symbol": "$\\mathrm{ft} \\mathrm{lb}_{\\mathrm{f}} / \\mathrm{hr}$",
                 "si_factor": 0.00037044000000000004,
                 "full_name": "foot pound force per hour",
                 "notation": "$\\mathrm{ft} \\mathrm{lb}_{\\mathrm{f}} / \\mathrm{hr}$",
@@ -5225,7 +5225,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "foot_pound_force_per_minute",
-                "symbol": "W",
+                "symbol": "$\\mathrm{ft} \\mathrm{lb}_{\\mathrm{f}} / \\min$",
                 "si_factor": 0.022597,
                 "full_name": "foot pound force per minute",
                 "notation": "$\\mathrm{ft} \\mathrm{lb}_{\\mathrm{f}} / \\min$",
@@ -5233,7 +5233,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "foot_pound_force_per_second",
-                "symbol": "W",
+                "symbol": "$\\mathrm{ft} \\mathrm{lb}_{\\mathrm{f}} / \\mathrm{s}$",
                 "si_factor": 1.355818,
                 "full_name": "foot pound force per second",
                 "notation": "$\\mathrm{ft} \\mathrm{lb}_{\\mathrm{f}} / \\mathrm{s}$",
@@ -5241,7 +5241,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "gigawatt",
-                "symbol": "W",
+                "symbol": "GW",
                 "si_factor": 1000000000.0,
                 "full_name": "gigawatt",
                 "notation": "GW",
@@ -5249,7 +5249,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "horsepower_550_mathrmft_mathrmlb_mathrmf_mathrms",
-                "symbol": "W",
+                "symbol": "HP",
                 "si_factor": 745.7,
                 "full_name": "horsepower ( $550 \\mathrm{ft} \\mathrm{lb}_{\\mathrm{f}} / \\mathrm{s}$ )",
                 "notation": "HP",
@@ -5257,7 +5257,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "horsepower_electric",
-                "symbol": "W",
+                "symbol": "HP (elect)",
                 "si_factor": 746.0,
                 "full_name": "horsepower (electric)",
                 "notation": "HP (elect)",
@@ -5265,7 +5265,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "horsepower_uk",
-                "symbol": "W",
+                "symbol": "HP (UK)",
                 "si_factor": 745.7,
                 "full_name": "horsepower (UK)",
                 "notation": "HP (UK)",
@@ -5273,7 +5273,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kcal_per_hour",
-                "symbol": "W",
+                "symbol": "kcal/hr",
                 "si_factor": 1.16389,
                 "full_name": "kcal per hour",
                 "notation": "kcal/hr",
@@ -5281,7 +5281,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kilogram_force_meter_per_second",
-                "symbol": "W",
+                "symbol": "$\\mathrm{kg}_{\\mathrm{f}} \\mathrm{m} / \\mathrm{s}$",
                 "si_factor": 9.80665,
                 "full_name": "kilogram force meter per second",
                 "notation": "$\\mathrm{kg}_{\\mathrm{f}} \\mathrm{m} / \\mathrm{s}$",
@@ -5289,7 +5289,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kilowatt",
-                "symbol": "W",
+                "symbol": "kW",
                 "si_factor": 1000.0,
                 "full_name": "kilowatt",
                 "notation": "kW",
@@ -5297,7 +5297,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "megawatt",
-                "symbol": "W",
+                "symbol": "MW",
                 "si_factor": 1000000.0,
                 "full_name": "megawatt",
                 "notation": "MW",
@@ -5305,7 +5305,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "metric_horsepower",
-                "symbol": "W",
+                "symbol": "HP (metric)",
                 "si_factor": 735.499,
                 "full_name": "metric horsepower",
                 "notation": "HP (metric)",
@@ -5313,7 +5313,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "microwatt",
-                "symbol": "W",
+                "symbol": "μW",
                 "si_factor": 1e-06,
                 "full_name": "microwatt",
                 "notation": "μW",
@@ -5321,7 +5321,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "million_british_thermal_units_per_hour_petroleum",
-                "symbol": "W",
+                "symbol": "MMBtu/hr",
                 "si_factor": 293297.0,
                 "full_name": "million British thermal units per hour (petroleum)",
                 "notation": "MMBtu/hr",
@@ -5329,7 +5329,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "million_kilocalorie_per_hour",
-                "symbol": "W",
+                "symbol": "MM kcal/hr",
                 "si_factor": 1163890.0,
                 "full_name": "million kilocalorie per hour",
                 "notation": "MM kcal/hr",
@@ -5337,7 +5337,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "milliwatt",
-                "symbol": "W",
+                "symbol": "mW",
                 "si_factor": 0.001,
                 "full_name": "milliwatt",
                 "notation": "mW",
@@ -5345,7 +5345,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "prony",
-                "symbol": "W",
+                "symbol": "prony",
                 "si_factor": 98.0665,
                 "full_name": "prony",
                 "notation": "prony",
@@ -5353,7 +5353,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "ton_of_refrigeration_us",
-                "symbol": "W",
+                "symbol": "CTR (US)",
                 "si_factor": 3516.8,
                 "full_name": "ton of refrigeration (US)",
                 "notation": "CTR (US)",
@@ -5361,7 +5361,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "ton_or_refrigeration_uk",
-                "symbol": "W",
+                "symbol": "CTR (UK)",
                 "si_factor": 3922.7,
                 "full_name": "ton or refrigeration (UK)",
                 "notation": "CTR (UK)",
@@ -5369,7 +5369,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "volt_ampere",
-                "symbol": "W",
+                "symbol": "VA",
                 "si_factor": 1.0,
                 "full_name": "volt-ampere",
                 "notation": "VA",
@@ -5377,7 +5377,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "water_horsepower",
-                "symbol": "W",
+                "symbol": "HP (water)",
                 "si_factor": 746.043,
                 "full_name": "water horsepower",
                 "notation": "HP (water)",
@@ -5393,7 +5393,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "watt_international_mean",
-                "symbol": "W",
+                "symbol": "W (int, mean)",
                 "si_factor": 1.00019,
                 "full_name": "watt (international, mean)",
                 "notation": "W (int, mean)",
@@ -5401,7 +5401,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "watt_international_us",
-                "symbol": "W",
+                "symbol": "watt (int, US)",
                 "si_factor": 1.000165,
                 "full_name": "watt (international, US)",
                 "notation": "watt (int, US)",
@@ -5417,7 +5417,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "atmosphere_standard",
-                "symbol": "Pa",
+                "symbol": "atm",
                 "si_factor": 101325.0,
                 "full_name": "atmosphere, standard",
                 "notation": "atm",
@@ -5425,7 +5425,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "bar",
-                "symbol": "Pa",
+                "symbol": "bar",
                 "si_factor": 100000.0,
                 "full_name": "bar",
                 "notation": "bar",
@@ -5433,7 +5433,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "barye",
-                "symbol": "Pa",
+                "symbol": "barye",
                 "si_factor": 0.1,
                 "full_name": "barye",
                 "notation": "barye",
@@ -5441,7 +5441,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "dyne_per_square_centimeter",
-                "symbol": "Pa",
+                "symbol": "dyn $/ \\mathrm{cm}^{2}$",
                 "si_factor": 0.1,
                 "full_name": "dyne per square centimeter",
                 "notation": "dyn $/ \\mathrm{cm}^{2}$",
@@ -5449,7 +5449,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "foot_of_mercury_60_circ_mathrmf",
-                "symbol": "Pa",
+                "symbol": "ft Hg ( $60{ }^{\\circ} \\mathrm{F}$ )",
                 "si_factor": 40526.0,
                 "full_name": "foot of mercury ( $60{ }^{\\circ} \\mathrm{F}$ )",
                 "notation": "ft Hg ( $60{ }^{\\circ} \\mathrm{F}$ )",
@@ -5457,7 +5457,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "foot_of_water_60_circ_mathrmf",
-                "symbol": "Pa",
+                "symbol": "ft $\\mathrm{H}_{2} \\mathrm{O}\\left(60^{\\circ} \\mathrm{F}\\right)$",
                 "si_factor": 2989.0,
                 "full_name": "foot of water ( $60{ }^{\\circ} \\mathrm{F}$ )",
                 "notation": "ft $\\mathrm{H}_{2} \\mathrm{O}\\left(60^{\\circ} \\mathrm{F}\\right)$",
@@ -5465,7 +5465,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "gigapascal",
-                "symbol": "Pa",
+                "symbol": "GPa",
                 "si_factor": 1000000000.0,
                 "full_name": "gigapascal",
                 "notation": "GPa",
@@ -5473,7 +5473,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "hectopascal",
-                "symbol": "Pa",
+                "symbol": "hPa",
                 "si_factor": 100.0,
                 "full_name": "hectopascal",
                 "notation": "hPa",
@@ -5481,7 +5481,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "inch_of_mercury_60_circ_mathrmf",
-                "symbol": "Pa",
+                "symbol": "in $\\mathrm{Hg}\\left(60{ }^{\\circ} \\mathrm{F}\\right)$",
                 "si_factor": 3386.4,
                 "full_name": "inch of mercury ( $60{ }^{\\circ} \\mathrm{F}$ )",
                 "notation": "in $\\mathrm{Hg}\\left(60{ }^{\\circ} \\mathrm{F}\\right)$",
@@ -5489,7 +5489,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "inch_of_water_60_circ_mathrmf",
-                "symbol": "Pa",
+                "symbol": "in $\\mathrm{H}_{2} \\mathrm{O}\\left(60^{\\circ} \\mathrm{F}\\right)$",
                 "si_factor": 248.845,
                 "full_name": "inch of water ( $60{ }^{\\circ} \\mathrm{F}$ )",
                 "notation": "in $\\mathrm{H}_{2} \\mathrm{O}\\left(60^{\\circ} \\mathrm{F}\\right)$",
@@ -5497,7 +5497,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kilogram_force_per_square_centimeter",
-                "symbol": "Pa",
+                "symbol": "at or $\\mathrm{kg}_{\\mathrm{f}} / \\mathrm{cm}^{2}$",
                 "si_factor": 98067.0,
                 "full_name": "kilogram force per square centimeter",
                 "notation": "at or $\\mathrm{kg}_{\\mathrm{f}} / \\mathrm{cm}^{2}$",
@@ -5505,7 +5505,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kilogram_force_per_square_meter",
-                "symbol": "Pa",
+                "symbol": "$\\mathrm{kg}_{\\mathrm{f}} / \\mathrm{m}^{2}$",
                 "si_factor": 9.80665,
                 "full_name": "kilogram force per square meter",
                 "notation": "$\\mathrm{kg}_{\\mathrm{f}} / \\mathrm{m}^{2}$",
@@ -5513,7 +5513,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kilopascal",
-                "symbol": "Pa",
+                "symbol": "kPa",
                 "si_factor": 1000.0,
                 "full_name": "kilopascal",
                 "notation": "kPa",
@@ -5521,7 +5521,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kip_force_per_square_inch",
-                "symbol": "Pa",
+                "symbol": "KSI or ksi or kip ${ }_{f} / \\mathrm{in}^{2}$",
                 "si_factor": 6894800.0,
                 "full_name": "kip force per square inch",
                 "notation": "KSI or ksi or kip ${ }_{f} / \\mathrm{in}^{2}$",
@@ -5529,7 +5529,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "megapascal",
-                "symbol": "Pa",
+                "symbol": "MPa",
                 "si_factor": 1000000.0,
                 "full_name": "megapascal",
                 "notation": "MPa",
@@ -5537,7 +5537,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "meter_of_water_4circ_mathrmc",
-                "symbol": "Pa",
+                "symbol": "$\\mathrm{m} \\mathrm{H}_{2} \\mathrm{O}\\left(4^{\\circ} \\mathrm{C}\\right)$",
                 "si_factor": 9806.4,
                 "full_name": "meter of water ( $4^{\\circ} \\mathrm{C}$ )",
                 "notation": "$\\mathrm{m} \\mathrm{H}_{2} \\mathrm{O}\\left(4^{\\circ} \\mathrm{C}\\right)$",
@@ -5545,7 +5545,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "microbar",
-                "symbol": "Pa",
+                "symbol": "$\\mu \\mathrm{bar}$",
                 "si_factor": 0.1,
                 "full_name": "microbar",
                 "notation": "$\\mu \\mathrm{bar}$",
@@ -5553,7 +5553,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "millibar",
-                "symbol": "Pa",
+                "symbol": "mbar",
                 "si_factor": 100.0,
                 "full_name": "millibar",
                 "notation": "mbar",
@@ -5561,7 +5561,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "millimeter_of_mercury_4circ_mathrmc",
-                "symbol": "Pa",
+                "symbol": "$\\mathrm{mm} \\mathrm{Hg}\\left(4^{\\circ} \\mathrm{C}\\right)$",
                 "si_factor": 133.322,
                 "full_name": "millimeter of mercury ( $4^{\\circ} \\mathrm{C}$ )",
                 "notation": "$\\mathrm{mm} \\mathrm{Hg}\\left(4^{\\circ} \\mathrm{C}\\right)$",
@@ -5569,7 +5569,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "millimeter_of_water_4circ_mathrmc",
-                "symbol": "Pa",
+                "symbol": "$\\mathrm{mm} \\mathrm{H}_{2} \\mathrm{O}\\left(4^{\\circ} \\mathrm{C}\\right)$",
                 "si_factor": 9.806375,
                 "full_name": "millimeter of water ( $4^{\\circ} \\mathrm{C}$ )",
                 "notation": "$\\mathrm{mm} \\mathrm{H}_{2} \\mathrm{O}\\left(4^{\\circ} \\mathrm{C}\\right)$",
@@ -5577,7 +5577,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "newton_per_square_meter",
-                "symbol": "Pa",
+                "symbol": "$\\mathrm{N} / \\mathrm{m}^{2}$",
                 "si_factor": 1.0,
                 "full_name": "newton per square meter",
                 "notation": "$\\mathrm{N} / \\mathrm{m}^{2}$",
@@ -5585,7 +5585,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "ounce_force_per_square_inch",
-                "symbol": "Pa",
+                "symbol": "OSI or osi or $\\mathrm{oz}_{\\mathrm{f}} / \\mathrm{in}^{2}$",
                 "si_factor": 430.922,
                 "full_name": "ounce force per square inch",
                 "notation": "OSI or osi or $\\mathrm{oz}_{\\mathrm{f}} / \\mathrm{in}^{2}$",
@@ -5601,7 +5601,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pièze",
-                "symbol": "Pa",
+                "symbol": "pz",
                 "si_factor": 1000.0,
                 "full_name": "pièze",
                 "notation": "pz",
@@ -5609,7 +5609,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pound_force_per_square_foot",
-                "symbol": "Pa",
+                "symbol": "PSF or psf or $\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{ft}^{2}$",
                 "si_factor": 47.880259,
                 "full_name": "pound force per square foot",
                 "notation": "PSF or psf or $\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{ft}^{2}$",
@@ -5617,7 +5617,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pound_force_per_square_inch",
-                "symbol": "Pa",
+                "symbol": "PSI or psi or $\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{in}^{2}$",
                 "si_factor": 6894.8,
                 "full_name": "pound force per square inch",
                 "notation": "PSI or psi or $\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{in}^{2}$",
@@ -5625,7 +5625,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "torr",
-                "symbol": "Pa",
+                "symbol": "torr or mm Hg ( $0{ }^{\\circ}$ C)",
                 "si_factor": 133.322,
                 "full_name": "torr",
                 "notation": "torr or mm Hg ( $0{ }^{\\circ}$ C)",
@@ -5641,7 +5641,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "microsievert",
-                "symbol": "Sv",
+                "symbol": "μSv",
                 "si_factor": 1e-06,
                 "full_name": "microsievert",
                 "notation": "μSv",
@@ -5649,7 +5649,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "millisievert",
-                "symbol": "Sv",
+                "symbol": "mSv",
                 "si_factor": 0.001,
                 "full_name": "millisievert",
                 "notation": "mSv",
@@ -5657,7 +5657,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "rem",
-                "symbol": "Sv",
+                "symbol": "rem",
                 "si_factor": 0.01,
                 "full_name": "rem",
                 "notation": "rem",
@@ -5689,7 +5689,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "d_unit",
-                "symbol": "C/kg",
+                "symbol": "D unit",
                 "si_factor": 0.0258,
                 "full_name": "D unit",
                 "notation": "D unit",
@@ -5697,7 +5697,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pastille_dose_b_unit",
-                "symbol": "C/kg",
+                "symbol": "B unit",
                 "si_factor": 0.129,
                 "full_name": "pastille dose (B unit)",
                 "notation": "B unit",
@@ -5705,7 +5705,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "röentgen",
-                "symbol": "C/kg",
+                "symbol": "R",
                 "si_factor": 0.000258,
                 "full_name": "röentgen",
                 "notation": "R",
@@ -5729,7 +5729,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "curie",
-                "symbol": "Bq",
+                "symbol": "Ci",
                 "si_factor": 37000000000.0,
                 "full_name": "curie",
                 "notation": "Ci",
@@ -5737,7 +5737,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "gigabecquerel",
-                "symbol": "Bq",
+                "symbol": "GBq",
                 "si_factor": 1000000000.0,
                 "full_name": "gigabecquerel",
                 "notation": "GBq",
@@ -5745,7 +5745,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kilobecquerel",
-                "symbol": "Bq",
+                "symbol": "kBq",
                 "si_factor": 1000.0,
                 "full_name": "kilobecquerel",
                 "notation": "kBq",
@@ -5753,7 +5753,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "mache_unit",
-                "symbol": "Bq",
+                "symbol": "Mache",
                 "si_factor": 13.32,
                 "full_name": "Mache unit",
                 "notation": "Mache",
@@ -5761,7 +5761,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "megabecquerel",
-                "symbol": "Bq",
+                "symbol": "MBq",
                 "si_factor": 1000000.0,
                 "full_name": "megabecquerel",
                 "notation": "MBq",
@@ -5769,7 +5769,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "rutherford",
-                "symbol": "Bq",
+                "symbol": "Rd",
                 "si_factor": 1000000.0,
                 "full_name": "rutherford",
                 "notation": "Rd",
@@ -5777,7 +5777,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "stat",
-                "symbol": "Bq",
+                "symbol": "stat",
                 "si_factor": 1.34e-16,
                 "full_name": "stat",
                 "notation": "stat",
@@ -5793,7 +5793,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "centimeter_quadrupled",
-                "symbol": "$\\mathrm{m}^{4}$",
+                "symbol": "$\\mathrm{cm}^{4}$",
                 "si_factor": 1e-08,
                 "full_name": "centimeter quadrupled",
                 "notation": "$\\mathrm{cm}^{4}$",
@@ -5801,7 +5801,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "foot_quadrupled",
-                "symbol": "$\\mathrm{m}^{4}$",
+                "symbol": "$\\mathrm{ft}^{4}$",
                 "si_factor": 0.008631,
                 "full_name": "foot quadrupled",
                 "notation": "$\\mathrm{ft}^{4}$",
@@ -5809,7 +5809,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "inch_quadrupled",
-                "symbol": "$\\mathrm{m}^{4}$",
+                "symbol": "in ${ }^{4}$",
                 "si_factor": 4.1623e-07,
                 "full_name": "inch quadrupled",
                 "notation": "in ${ }^{4}$",
@@ -5849,7 +5849,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "british_thermal_unit_mean",
-                "symbol": "J/kg",
+                "symbol": "Btu (mean)/lb",
                 "si_factor": 2327.8,
                 "full_name": "British thermal unit (mean) per pound",
                 "notation": "Btu (mean)/lb",
@@ -5857,7 +5857,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "british_thermal_unit_per_pound",
-                "symbol": "J/kg",
+                "symbol": "Btu/lb",
                 "si_factor": 2324.4,
                 "full_name": "British thermal unit per pound",
                 "notation": "Btu/lb",
@@ -5865,7 +5865,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "calorie_per_gram",
-                "symbol": "J/kg",
+                "symbol": "$\\mathrm{cal} / \\mathrm{g}$",
                 "si_factor": 4186.8,
                 "full_name": "calorie per gram",
                 "notation": "$\\mathrm{cal} / \\mathrm{g}$",
@@ -5873,7 +5873,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "chu_per_pound",
-                "symbol": "J/kg",
+                "symbol": "Chu/lb",
                 "si_factor": 4186.8,
                 "full_name": "Chu per pound",
                 "notation": "Chu/lb",
@@ -5889,7 +5889,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kilojoule_per_kilogram",
-                "symbol": "J/kg",
+                "symbol": "kJ/kg",
                 "si_factor": 1000.0,
                 "full_name": "kilojoule per kilogram",
                 "notation": "kJ/kg",
@@ -5921,7 +5921,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "btu_per_pound_per_degree_fahrenheit_or_degree_rankine",
-                "symbol": "J/(kg K)",
+                "symbol": "Btu/(lb ${ }^{\\circ} \\mathrm{F}$ )",
                 "si_factor": 4186.8,
                 "full_name": "Btu per pound per degree Fahrenheit (or degree Rankine)",
                 "notation": "Btu/(lb ${ }^{\\circ} \\mathrm{F}$ )",
@@ -5929,7 +5929,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "calories_per_gram_per_kelvin_or_degree_celsius",
-                "symbol": "J/(kg K)",
+                "symbol": "cal/(g K)",
                 "si_factor": 4186.8,
                 "full_name": "calories per gram per kelvin (or degree Celsius)",
                 "notation": "cal/(g K)",
@@ -5953,7 +5953,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "centimeter_per_gram",
-                "symbol": "m/kg",
+                "symbol": "cm/g",
                 "si_factor": 10.0,
                 "full_name": "centimeter per gram",
                 "notation": "cm/g",
@@ -5961,7 +5961,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "cotton_count",
-                "symbol": "m/kg",
+                "symbol": "cc",
                 "si_factor": 590500000.0,
                 "full_name": "cotton count",
                 "notation": "cc",
@@ -5969,7 +5969,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "ft_per_pound",
-                "symbol": "m/kg",
+                "symbol": "ft/lb",
                 "si_factor": 0.67192,
                 "full_name": "ft per pound",
                 "notation": "ft/lb",
@@ -5985,7 +5985,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "newton_meter",
-                "symbol": "m/kg",
+                "symbol": "Nm",
                 "si_factor": 1000.0,
                 "full_name": "newton meter",
                 "notation": "Nm",
@@ -5993,7 +5993,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "worsted",
-                "symbol": "m/kg",
+                "symbol": "worsted",
                 "si_factor": 888679999.9999999,
                 "full_name": "worsted",
                 "notation": "worsted",
@@ -6009,7 +6009,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "square_centimeter_per_gram",
-                "symbol": "$\\mathrm{m}^{2} / \\mathrm{kg}$",
+                "symbol": "$\\mathrm{cm}^{2} / \\mathrm{g}$",
                 "si_factor": 0.1,
                 "full_name": "square centimeter per gram",
                 "notation": "$\\mathrm{cm}^{2} / \\mathrm{g}$",
@@ -6017,7 +6017,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "square_foot_per_kilogram",
-                "symbol": "$\\mathrm{m}^{2} / \\mathrm{kg}$",
+                "symbol": "$\\mathrm{ft}^{2} / \\mathrm{kg}$ or sq ft/kg",
                 "si_factor": 0.092903,
                 "full_name": "square foot per kilogram",
                 "notation": "$\\mathrm{ft}^{2} / \\mathrm{kg}$ or sq ft/kg",
@@ -6025,7 +6025,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "square_foot_per_pound",
-                "symbol": "$\\mathrm{m}^{2} / \\mathrm{kg}$",
+                "symbol": "$\\mathrm{ft}^{2} / \\mathrm{lb}$ or sq ft/lb",
                 "si_factor": 0.20482,
                 "full_name": "square foot per pound",
                 "notation": "$\\mathrm{ft}^{2} / \\mathrm{lb}$ or sq ft/lb",
@@ -6033,7 +6033,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "square_meter_per_gram",
-                "symbol": "$\\mathrm{m}^{2} / \\mathrm{kg}$",
+                "symbol": "$\\mathrm{m}^{2} / \\mathrm{g}$",
                 "si_factor": 1000.0,
                 "full_name": "square meter per gram",
                 "notation": "$\\mathrm{m}^{2} / \\mathrm{g}$",
@@ -6057,7 +6057,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "cubic_centimeter_per_gram",
-                "symbol": "$\\mathrm{m}^{3} / \\mathrm{kg}$",
+                "symbol": "$\\mathrm{cm}^{3} / \\mathrm{g}$ or $\\mathrm{cc} / \\mathrm{g}$",
                 "si_factor": 0.001,
                 "full_name": "cubic centimeter per gram",
                 "notation": "$\\mathrm{cm}^{3} / \\mathrm{g}$ or $\\mathrm{cc} / \\mathrm{g}$",
@@ -6065,7 +6065,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "cubic_foot_per_kilogram",
-                "symbol": "$\\mathrm{m}^{3} / \\mathrm{kg}$",
+                "symbol": "$\\mathrm{ft}^{3} / \\mathrm{kg}$ or $\\mathrm{cft} / \\mathrm{kg}$",
                 "si_factor": 0.028317,
                 "full_name": "cubic foot per kilogram",
                 "notation": "$\\mathrm{ft}^{3} / \\mathrm{kg}$ or $\\mathrm{cft} / \\mathrm{kg}$",
@@ -6073,7 +6073,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "cubic_foot_per_pound",
-                "symbol": "$\\mathrm{m}^{3} / \\mathrm{kg}$",
+                "symbol": "$\\mathrm{ft}^{3} / \\mathrm{lb}$ or $\\mathrm{cft} / \\mathrm{lb}$",
                 "si_factor": 0.062428,
                 "full_name": "cubic foot per pound",
                 "notation": "$\\mathrm{ft}^{3} / \\mathrm{lb}$ or $\\mathrm{cft} / \\mathrm{lb}$",
@@ -6097,7 +6097,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "dyne_per_square_centimeter",
-                "symbol": "Pa",
+                "symbol": "dyn/ $\\mathrm{cm}^{2}$",
                 "si_factor": 0.1,
                 "full_name": "dyne per square centimeter",
                 "notation": "dyn/ $\\mathrm{cm}^{2}$",
@@ -6105,7 +6105,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "gigapascal",
-                "symbol": "Pa",
+                "symbol": "GPa",
                 "si_factor": 1000000000.0,
                 "full_name": "gigapascal",
                 "notation": "GPa",
@@ -6113,7 +6113,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "hectopascal",
-                "symbol": "Pa",
+                "symbol": "hPa",
                 "si_factor": 100.0,
                 "full_name": "hectopascal",
                 "notation": "hPa",
@@ -6121,7 +6121,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kilogram_force_per_square_centimeter",
-                "symbol": "Pa",
+                "symbol": "at or $\\mathrm{kg}_{\\mathrm{f}} / \\mathrm{cm}^{2}$",
                 "si_factor": 98067.0,
                 "full_name": "kilogram force per square centimeter",
                 "notation": "at or $\\mathrm{kg}_{\\mathrm{f}} / \\mathrm{cm}^{2}$",
@@ -6129,7 +6129,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kilogram_force_per_square_meter",
-                "symbol": "Pa",
+                "symbol": "$\\mathrm{kg}_{\\mathrm{f}} / \\mathrm{m}^{2}$",
                 "si_factor": 9.80665,
                 "full_name": "kilogram force per square meter",
                 "notation": "$\\mathrm{kg}_{\\mathrm{f}} / \\mathrm{m}^{2}$",
@@ -6137,7 +6137,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kip_force_per_square_inch",
-                "symbol": "Pa",
+                "symbol": "KSI or ksi or kip ${ }_{f} / \\mathrm{in}^{2}$",
                 "si_factor": 6894800.0,
                 "full_name": "kip force per square inch",
                 "notation": "KSI or ksi or kip ${ }_{f} / \\mathrm{in}^{2}$",
@@ -6145,7 +6145,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "megapascal",
-                "symbol": "Pa",
+                "symbol": "MPa",
                 "si_factor": 1000000.0,
                 "full_name": "megapascal",
                 "notation": "MPa",
@@ -6153,7 +6153,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "newton_per_square_meter",
-                "symbol": "Pa",
+                "symbol": "$\\mathrm{N} / \\mathrm{m}^{2}$",
                 "si_factor": 1.0,
                 "full_name": "newton per square meter",
                 "notation": "$\\mathrm{N} / \\mathrm{m}^{2}$",
@@ -6161,7 +6161,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "ounce_force_per_square_inch",
-                "symbol": "Pa",
+                "symbol": "OSI or osi or $\\mathrm{oz}_{\\mathrm{f}} / \\mathrm{in}^{2}$",
                 "si_factor": 430.922,
                 "full_name": "ounce force per square inch",
                 "notation": "OSI or osi or $\\mathrm{oz}_{\\mathrm{f}} / \\mathrm{in}^{2}$",
@@ -6177,7 +6177,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pound_force_per_square_foot",
-                "symbol": "Pa",
+                "symbol": "PSF or psf or $\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{ft}^{2}$",
                 "si_factor": 47.880259,
                 "full_name": "pound force per square foot",
                 "notation": "PSF or psf or $\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{ft}^{2}$",
@@ -6185,7 +6185,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pound_force_per_square_inch",
-                "symbol": "Pa",
+                "symbol": "PSI or psi or $\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{in}^{2}$",
                 "si_factor": 6894.8,
                 "full_name": "pound force per square inch",
                 "notation": "PSI or psi or $\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{in}^{2}$",
@@ -6201,7 +6201,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "gram_per_square_centimeter",
-                "symbol": "$\\mathrm{kg} / \\mathrm{m}^{2}$",
+                "symbol": "$\\mathrm{kg} / \\mathrm{cm}^{2}$",
                 "si_factor": 10.0,
                 "full_name": "gram per square centimeter",
                 "notation": "$\\mathrm{kg} / \\mathrm{cm}^{2}$",
@@ -6209,7 +6209,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "gram_per_square_meter",
-                "symbol": "$\\mathrm{kg} / \\mathrm{m}^{2}$",
+                "symbol": "$\\mathrm{g} / \\mathrm{m}^{2}$",
                 "si_factor": 0.001,
                 "full_name": "gram per square meter",
                 "notation": "$\\mathrm{g} / \\mathrm{m}^{2}$",
@@ -6225,7 +6225,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pound_mass",
-                "symbol": "$\\mathrm{kg} / \\mathrm{m}^{2}$",
+                "symbol": "$\\mathrm{lb} / \\mathrm{ft}^{2}$",
                 "si_factor": 4.882427,
                 "full_name": "pound (mass) per square foot",
                 "notation": "$\\mathrm{lb} / \\mathrm{ft}^{2}$",
@@ -6241,7 +6241,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "dyne_per_centimeter",
-                "symbol": "N/m",
+                "symbol": "dyn/cm",
                 "si_factor": 0.001,
                 "full_name": "dyne per centimeter",
                 "notation": "dyn/cm",
@@ -6249,7 +6249,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "gram_force_per_centimeter",
-                "symbol": "N/m",
+                "symbol": "$\\mathrm{g}_{\\mathrm{f}} / \\mathrm{cm}$",
                 "si_factor": 0.0102,
                 "full_name": "gram force per centimeter",
                 "notation": "$\\mathrm{g}_{\\mathrm{f}} / \\mathrm{cm}$",
@@ -6265,7 +6265,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pound_force_per_foot",
-                "symbol": "N/m",
+                "symbol": "$\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{ft}$",
                 "si_factor": 14.594,
                 "full_name": "pound force per foot",
                 "notation": "$\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{ft}$",
@@ -6273,7 +6273,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pound_force_per_inch",
-                "symbol": "N/m",
+                "symbol": "$\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{in}$",
                 "si_factor": 175.13,
                 "full_name": "pound force per inch",
                 "notation": "$\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{in}$",
@@ -6289,7 +6289,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "degree_celsius_unit_size",
-                "symbol": "K",
+                "symbol": "$\\mathrm{C}^{\\circ}$",
                 "si_factor": 1.0,
                 "full_name": "degree Celsius (unit size)",
                 "notation": "$\\mathrm{C}^{\\circ}$",
@@ -6297,7 +6297,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "degree_fahrenheit_unit_size",
-                "symbol": "K",
+                "symbol": "$\\mathrm{F}^{\\circ}$",
                 "si_factor": 0.555556,
                 "full_name": "degree Fahrenheit (unit size)",
                 "notation": "$\\mathrm{F}^{\\circ}$",
@@ -6305,7 +6305,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "degree_réaumur_unit_size",
-                "symbol": "K",
+                "symbol": "Ré ${ }^{\\circ}$",
                 "si_factor": 1.25,
                 "full_name": "degree Réaumur (unit size)",
                 "notation": "Ré ${ }^{\\circ}$",
@@ -6321,7 +6321,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "rankine_absolute_scale",
-                "symbol": "K",
+                "symbol": "${ }^{\\circ} \\mathrm{R}$",
                 "si_factor": 0.555556,
                 "full_name": "Rankine (absolute scale)",
                 "notation": "${ }^{\\circ} \\mathrm{R}$",
@@ -6337,7 +6337,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "btu_it",
-                "symbol": "W/ (cm K)",
+                "symbol": "Btu (IT)/(in hr ${ }^{\\circ} \\mathrm{F}$ )",
                 "si_factor": 0.207688,
                 "full_name": "Btu (IT) per inch per hour per degree Fahrenheit",
                 "notation": "Btu (IT)/(in hr ${ }^{\\circ} \\mathrm{F}$ )",
@@ -6345,7 +6345,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "btu_therm",
-                "symbol": "W/ (cm K)",
+                "symbol": "$\\mathrm{Btu} /\\left(\\mathrm{ft} \\mathrm{hr}{ }^{\\circ} \\mathrm{F}\\right)$",
                 "si_factor": 0.017296,
                 "full_name": "Btu (therm) per foot per hour per degree Fahrenheit",
                 "notation": "$\\mathrm{Btu} /\\left(\\mathrm{ft} \\mathrm{hr}{ }^{\\circ} \\mathrm{F}\\right)$",
@@ -6353,7 +6353,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "calorie_therm",
-                "symbol": "W/ (cm K)",
+                "symbol": "$\\operatorname{cal}(\\mathrm{IT}) /\\left(\\mathrm{cm} \\mathrm{s}^{\\circ} \\mathrm{C}\\right)$",
                 "si_factor": 4.184,
                 "full_name": "calorie (therm) per centimeter per second per degree Celsius",
                 "notation": "$\\operatorname{cal}(\\mathrm{IT}) /\\left(\\mathrm{cm} \\mathrm{s}^{\\circ} \\mathrm{C}\\right)$",
@@ -6361,7 +6361,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "joule_per_second_per_centimeter_per_kelvin",
-                "symbol": "W/ (cm K)",
+                "symbol": "J/(cm s K)",
                 "si_factor": 0.01,
                 "full_name": "joule per second per centimeter per kelvin",
                 "notation": "J/(cm s K)",
@@ -6369,7 +6369,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "watt_per_centimeter_per_kelvin",
-                "symbol": "W/ (cm K)",
+                "symbol": "W/(cm K)",
                 "si_factor": 1.0,
                 "full_name": "watt per centimeter per kelvin",
                 "notation": "W/(cm K)",
@@ -6377,7 +6377,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "watt_per_meter_per_kelvin",
-                "symbol": "W/ (cm K)",
+                "symbol": "W/(m K)",
                 "si_factor": 0.01,
                 "full_name": "watt per meter per kelvin",
                 "notation": "W/(m K)",
@@ -6393,7 +6393,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "blink",
-                "symbol": "s",
+                "symbol": "blink",
                 "si_factor": 0.864,
                 "full_name": "blink",
                 "notation": "blink",
@@ -6401,7 +6401,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "century",
-                "symbol": "s",
+                "symbol": "-",
                 "si_factor": 3155800000.0,
                 "full_name": "century",
                 "notation": "-",
@@ -6409,7 +6409,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "chronon_or_tempon",
-                "symbol": "s",
+                "symbol": "-",
                 "si_factor": 1e-23,
                 "full_name": "chronon or tempon",
                 "notation": "-",
@@ -6417,7 +6417,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "gigan_or_eon",
-                "symbol": "s",
+                "symbol": "Ga or eon",
                 "si_factor": 3.1558e+16,
                 "full_name": "gigan or eon",
                 "notation": "Ga or eon",
@@ -6425,7 +6425,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "hour",
-                "symbol": "s",
+                "symbol": "h or hr",
                 "si_factor": 3600.0,
                 "full_name": "hour",
                 "notation": "h or hr",
@@ -6433,7 +6433,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "julian_year",
-                "symbol": "s",
+                "symbol": "a (jul) or yr",
                 "si_factor": 31557000.0,
                 "full_name": "Julian year",
                 "notation": "a (jul) or yr",
@@ -6441,7 +6441,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "mean_solar_day",
-                "symbol": "s",
+                "symbol": "da or d",
                 "si_factor": 86400.0,
                 "full_name": "mean solar day",
                 "notation": "da or d",
@@ -6449,7 +6449,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "microsecond",
-                "symbol": "s",
+                "symbol": "μs",
                 "si_factor": 1e-06,
                 "full_name": "microsecond",
                 "notation": "μs",
@@ -6457,7 +6457,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "millenium",
-                "symbol": "s",
+                "symbol": "-",
                 "si_factor": 31558000000.0,
                 "full_name": "millenium",
                 "notation": "-",
@@ -6465,7 +6465,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "millisecond",
-                "symbol": "s",
+                "symbol": "ms",
                 "si_factor": 0.001,
                 "full_name": "millisecond",
                 "notation": "ms",
@@ -6473,7 +6473,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "minute",
-                "symbol": "s",
+                "symbol": "min",
                 "si_factor": 60.0,
                 "full_name": "minute",
                 "notation": "min",
@@ -6481,7 +6481,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "nanosecond",
-                "symbol": "s",
+                "symbol": "ns",
                 "si_factor": 1e-09,
                 "full_name": "nanosecond",
                 "notation": "ns",
@@ -6489,7 +6489,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "picosecond",
-                "symbol": "s",
+                "symbol": "ps",
                 "si_factor": 1e-12,
                 "full_name": "picosecond",
                 "notation": "ps",
@@ -6505,7 +6505,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "shake",
-                "symbol": "s",
+                "symbol": "shake",
                 "si_factor": 1e-08,
                 "full_name": "shake",
                 "notation": "shake",
@@ -6513,7 +6513,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "sidereal_year_1900_ad",
-                "symbol": "s",
+                "symbol": "a (sider) or yr",
                 "si_factor": 31551999.999999996,
                 "full_name": "sidereal year (1900 AD)",
                 "notation": "a (sider) or yr",
@@ -6521,7 +6521,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "tropical_year",
-                "symbol": "s",
+                "symbol": "a (trop)",
                 "si_factor": 31557000.0,
                 "full_name": "tropical year",
                 "notation": "a (trop)",
@@ -6529,7 +6529,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "wink",
-                "symbol": "s",
+                "symbol": "wink",
                 "si_factor": 3.33333e-12,
                 "full_name": "wink",
                 "notation": "wink",
@@ -6537,7 +6537,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "year",
-                "symbol": "s",
+                "symbol": "a or y or yr",
                 "si_factor": 31558000.0,
                 "full_name": "year",
                 "notation": "a or y or yr",
@@ -6553,7 +6553,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "centimeter_kilogram_force",
-                "symbol": "N m",
+                "symbol": "cm kg ${ }_{\\mathrm{f}}$",
                 "si_factor": 0.098067,
                 "full_name": "centimeter kilogram force",
                 "notation": "cm kg ${ }_{\\mathrm{f}}$",
@@ -6561,7 +6561,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "dyne_centimeter",
-                "symbol": "N m",
+                "symbol": "dyn cm",
                 "si_factor": 1e-07,
                 "full_name": "dyne centimeter",
                 "notation": "dyn cm",
@@ -6569,7 +6569,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "foot_kilogram_force",
-                "symbol": "N m",
+                "symbol": "$\\mathrm{ft} \\mathrm{kg}_{\\mathrm{f}}$",
                 "si_factor": 2.9891,
                 "full_name": "foot kilogram force",
                 "notation": "$\\mathrm{ft} \\mathrm{kg}_{\\mathrm{f}}$",
@@ -6577,7 +6577,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "foot_pound_force",
-                "symbol": "N m",
+                "symbol": "$\\mathrm{ft} \\mathrm{lb}_{\\mathrm{f}}$",
                 "si_factor": 1.3558,
                 "full_name": "foot pound force",
                 "notation": "$\\mathrm{ft} \\mathrm{lb}_{\\mathrm{f}}$",
@@ -6585,7 +6585,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "foot_poundal",
-                "symbol": "N m",
+                "symbol": "ft pdl",
                 "si_factor": 0.04214,
                 "full_name": "foot poundal",
                 "notation": "ft pdl",
@@ -6593,7 +6593,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "in_pound_force",
-                "symbol": "N m",
+                "symbol": "in $\\mathrm{lb}_{\\mathrm{f}}$",
                 "si_factor": 0.11298,
                 "full_name": "in pound force",
                 "notation": "in $\\mathrm{lb}_{\\mathrm{f}}$",
@@ -6601,7 +6601,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "inch_ounce_force",
-                "symbol": "N m",
+                "symbol": "in $\\mathrm{OZ}_{\\mathrm{f}}$",
                 "si_factor": 0.0070616,
                 "full_name": "inch ounce force",
                 "notation": "in $\\mathrm{OZ}_{\\mathrm{f}}$",
@@ -6609,7 +6609,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "meter_kilogram_force",
-                "symbol": "Nm",
+                "symbol": "$\\mathrm{m} \\mathrm{kg}_{\\mathrm{f}}$",
                 "si_factor": 9.8067,
                 "full_name": "meter kilogram force",
                 "notation": "$\\mathrm{m} \\mathrm{kg}_{\\mathrm{f}}$",
@@ -6617,7 +6617,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "newton_centimeter",
-                "symbol": "N m",
+                "symbol": "N cm",
                 "si_factor": 0.01,
                 "full_name": "newton centimeter",
                 "notation": "N cm",
@@ -6641,7 +6641,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "square_foot_per_cubic_second",
-                "symbol": "$\\mathrm{m}^{2} / \\mathrm{s}^{3}$",
+                "symbol": "$\\mathrm{ft}^{2} / \\mathrm{s}^{3}$ or sq ft/sec ${ }^{3}$",
                 "si_factor": 0.0929,
                 "full_name": "square foot per cubic second",
                 "notation": "$\\mathrm{ft}^{2} / \\mathrm{s}^{3}$ or sq ft/sec ${ }^{3}$",
@@ -6665,7 +6665,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "degree_per_minute",
-                "symbol": "$\\mathrm{rad} / \\mathrm{s}$",
+                "symbol": "deg/min or ${ }^{\\circ} / \\mathrm{min}$",
                 "si_factor": 0.000290888,
                 "full_name": "degree per minute",
                 "notation": "deg/min or ${ }^{\\circ} / \\mathrm{min}$",
@@ -6673,7 +6673,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "degree_per_second",
-                "symbol": "$\\mathrm{rad} / \\mathrm{s}$",
+                "symbol": "deg/s or ${ }^{\\circ}$ /s",
                 "si_factor": 0.0174533,
                 "full_name": "degree per second",
                 "notation": "deg/s or ${ }^{\\circ}$ /s",
@@ -6681,7 +6681,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "grade_per_minute",
-                "symbol": "$\\mathrm{rad} / \\mathrm{s}$",
+                "symbol": "gon/min or grad/min",
                 "si_factor": 0.000261799,
                 "full_name": "grade per minute",
                 "notation": "gon/min or grad/min",
@@ -6689,7 +6689,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "radian_per_minute",
-                "symbol": "$\\mathrm{rad} / \\mathrm{s}$",
+                "symbol": "$\\mathrm{rad} / \\mathrm{min}$",
                 "si_factor": 0.016667,
                 "full_name": "radian per minute",
                 "notation": "$\\mathrm{rad} / \\mathrm{min}$",
@@ -6705,7 +6705,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "revolution_per_minute",
-                "symbol": "$\\mathrm{rad} / \\mathrm{s}$",
+                "symbol": "rev/m or rpm",
                 "si_factor": 0.010472,
                 "full_name": "revolution per minute",
                 "notation": "rev/m or rpm",
@@ -6713,7 +6713,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "revolution_per_second",
-                "symbol": "$\\mathrm{rad} / \\mathrm{s}$",
+                "symbol": "rev/s or rps",
                 "si_factor": 6.283185,
                 "full_name": "revolution per second",
                 "notation": "rev/s or rps",
@@ -6721,7 +6721,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "turn_per_minute",
-                "symbol": "$\\mathrm{rad} / \\mathrm{s}$",
+                "symbol": "tr/min",
                 "si_factor": 0.010472,
                 "full_name": "turn per minute",
                 "notation": "tr/min",
@@ -6737,7 +6737,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "foot_per_hour",
-                "symbol": "$\\mathrm{m} / \\mathrm{s}$",
+                "symbol": "ft/h or ft/hr or fph",
                 "si_factor": 8.4667e-05,
                 "full_name": "foot per hour",
                 "notation": "ft/h or ft/hr or fph",
@@ -6745,7 +6745,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "foot_per_minute",
-                "symbol": "$\\mathrm{m} / \\mathrm{s}$",
+                "symbol": "ft/min or fpm",
                 "si_factor": 0.00508,
                 "full_name": "foot per minute",
                 "notation": "ft/min or fpm",
@@ -6753,7 +6753,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "foot_per_second",
-                "symbol": "$\\mathrm{m} / \\mathrm{s}$",
+                "symbol": "ft/s or fps",
                 "si_factor": 0.3048,
                 "full_name": "foot per second",
                 "notation": "ft/s or fps",
@@ -6761,7 +6761,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "inch_per_second",
-                "symbol": "$\\mathrm{m} / \\mathrm{s}$",
+                "symbol": "in/s or ips",
                 "si_factor": 0.0254,
                 "full_name": "inch per second",
                 "notation": "in/s or ips",
@@ -6769,7 +6769,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "international_knot",
-                "symbol": "$\\mathrm{m} / \\mathrm{s}$",
+                "symbol": "knot",
                 "si_factor": 0.0514444,
                 "full_name": "international knot",
                 "notation": "knot",
@@ -6777,7 +6777,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kilometer_per_hour",
-                "symbol": "$\\mathrm{m} / \\mathrm{s}$",
+                "symbol": "km/h ot kph",
                 "si_factor": 0.027778,
                 "full_name": "kilometer per hour",
                 "notation": "km/h ot kph",
@@ -6785,7 +6785,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kilometer_per_second",
-                "symbol": "$\\mathrm{m} / \\mathrm{s}$",
+                "symbol": "km/s",
                 "si_factor": 1000.0,
                 "full_name": "kilometer per second",
                 "notation": "km/s",
@@ -6801,7 +6801,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "mile_per_hour",
-                "symbol": "$\\mathrm{m} / \\mathrm{s}$",
+                "symbol": "$\\mathrm{mi} / \\mathrm{h}$ or $\\mathrm{mi} / \\mathrm{hr}$ or mph",
                 "si_factor": 0.0444704,
                 "full_name": "mile per hour",
                 "notation": "$\\mathrm{mi} / \\mathrm{h}$ or $\\mathrm{mi} / \\mathrm{hr}$ or mph",
@@ -6817,7 +6817,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "centipoise",
-                "symbol": "P",
+                "symbol": "cP or cPo",
                 "si_factor": 0.01,
                 "full_name": "centipoise",
                 "notation": "cP or cPo",
@@ -6825,7 +6825,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "dyne_second_per_square_centimeter",
-                "symbol": "P",
+                "symbol": "dyn s/ $\\mathrm{cm}^{2}$",
                 "si_factor": 1.0,
                 "full_name": "dyne second per square centimeter",
                 "notation": "dyn s/ $\\mathrm{cm}^{2}$",
@@ -6833,7 +6833,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kilopound_second_per_square_meter",
-                "symbol": "P",
+                "symbol": "kip $\\mathrm{s} / \\mathrm{m}^{2}$",
                 "si_factor": 98.0665,
                 "full_name": "kilopound second per square meter",
                 "notation": "kip $\\mathrm{s} / \\mathrm{m}^{2}$",
@@ -6841,7 +6841,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "millipoise",
-                "symbol": "P",
+                "symbol": "mP or mPo",
                 "si_factor": 0.001,
                 "full_name": "millipoise",
                 "notation": "mP or mPo",
@@ -6849,7 +6849,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "newton_second_per_square_meter",
-                "symbol": "P",
+                "symbol": "$\\mathrm{N} \\mathrm{s} / \\mathrm{m}^{2}$",
                 "si_factor": 10.0,
                 "full_name": "newton second per square meter",
                 "notation": "$\\mathrm{N} \\mathrm{s} / \\mathrm{m}^{2}$",
@@ -6857,7 +6857,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pascal_second",
-                "symbol": "P",
+                "symbol": "Pa s or PI",
                 "si_factor": 10.0,
                 "full_name": "pascal second",
                 "notation": "Pa s or PI",
@@ -6865,7 +6865,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "poise",
-                "symbol": "P",
+                "symbol": "P or Po",
                 "si_factor": 1.0,
                 "full_name": "poise",
                 "notation": "P or Po",
@@ -6873,7 +6873,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pound_force_hour_per_square_foot",
-                "symbol": "P",
+                "symbol": "$\\mathrm{lb}_{\\mathrm{f}} \\mathrm{h} / \\mathrm{ft}^{2}$ or $\\mathrm{lb} \\mathrm{hr} / \\mathrm{sq}$ ft",
                 "si_factor": 1723690.0,
                 "full_name": "pound force hour per square foot",
                 "notation": "$\\mathrm{lb}_{\\mathrm{f}} \\mathrm{h} / \\mathrm{ft}^{2}$ or $\\mathrm{lb} \\mathrm{hr} / \\mathrm{sq}$ ft",
@@ -6881,7 +6881,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pound_force_second_per_square_foot",
-                "symbol": "P",
+                "symbol": "$\\mathrm{lb}_{\\mathrm{f}} \\mathrm{s} / \\mathrm{ft}^{2}$ or $\\mathrm{lb} \\mathrm{sec} / \\mathrm{sq}$ ft",
                 "si_factor": 478.803,
                 "full_name": "pound force second per square foot",
                 "notation": "$\\mathrm{lb}_{\\mathrm{f}} \\mathrm{s} / \\mathrm{ft}^{2}$ or $\\mathrm{lb} \\mathrm{sec} / \\mathrm{sq}$ ft",
@@ -6897,7 +6897,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "centistokes",
-                "symbol": "$\\mathrm{m}^{2} / \\mathrm{s}$",
+                "symbol": "cSt",
                 "si_factor": 1e-06,
                 "full_name": "centistokes",
                 "notation": "cSt",
@@ -6905,7 +6905,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "millistokes",
-                "symbol": "$\\mathrm{m}^{2} / \\mathrm{s}$",
+                "symbol": "mSt",
                 "si_factor": 1e-07,
                 "full_name": "millistokes",
                 "notation": "mSt",
@@ -6913,7 +6913,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "square_centimeter_per_second",
-                "symbol": "$\\mathrm{m}^{2} / \\mathrm{s}$",
+                "symbol": "$\\mathrm{cm}^{2} / \\mathrm{s}$",
                 "si_factor": 0.0001,
                 "full_name": "square centimeter per second",
                 "notation": "$\\mathrm{cm}^{2} / \\mathrm{s}$",
@@ -6921,7 +6921,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "square_foot_per_hour",
-                "symbol": "$\\mathrm{m}^{2} / \\mathrm{s}$",
+                "symbol": "$\\mathrm{ft}^{2} / \\mathrm{h}$ or $\\mathrm{ft}^{2} / \\mathrm{hr}$",
                 "si_factor": 2.58064e-05,
                 "full_name": "square foot per hour",
                 "notation": "$\\mathrm{ft}^{2} / \\mathrm{h}$ or $\\mathrm{ft}^{2} / \\mathrm{hr}$",
@@ -6929,7 +6929,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "square_foot_per_second",
-                "symbol": "$\\mathrm{m}^{2} / \\mathrm{s}$",
+                "symbol": "$\\mathrm{ft}^{2} / \\mathrm{s}$",
                 "si_factor": 0.092903,
                 "full_name": "square foot per second",
                 "notation": "$\\mathrm{ft}^{2} / \\mathrm{s}$",
@@ -6945,7 +6945,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "stokes",
-                "symbol": "$\\mathrm{m}^{2} / \\mathrm{s}$",
+                "symbol": "St",
                 "si_factor": 0.0001,
                 "full_name": "stokes",
                 "notation": "St",
@@ -6961,7 +6961,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "acre_foot",
-                "symbol": "$\\mathrm{m}^{3}$",
+                "symbol": "ac-ft",
                 "si_factor": 1233.48,
                 "full_name": "acre foot",
                 "notation": "ac-ft",
@@ -6969,7 +6969,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "acre_inch",
-                "symbol": "$\\mathrm{m}^{3}$",
+                "symbol": "ac-in",
                 "si_factor": 102.79,
                 "full_name": "acre inch",
                 "notation": "ac-in",
@@ -6977,7 +6977,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "barrel_us_liquid",
-                "symbol": "$\\mathrm{m}^{3}$",
+                "symbol": "bbl (US liq)",
                 "si_factor": 0.1192405,
                 "full_name": "barrel (US Liquid)",
                 "notation": "bbl (US liq)",
@@ -6985,7 +6985,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "barrel_us_petro",
-                "symbol": "$\\mathrm{m}^{3}$",
+                "symbol": "bbl",
                 "si_factor": 0.158987,
                 "full_name": "barrel (US, Petro)",
                 "notation": "bbl",
@@ -6993,7 +6993,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "board_foot_measure",
-                "symbol": "$\\mathrm{m}^{3}$",
+                "symbol": "BM or fbm",
                 "si_factor": 0.00235974,
                 "full_name": "board foot measure",
                 "notation": "BM or fbm",
@@ -7001,7 +7001,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "bushel_us_dry",
-                "symbol": "$\\mathrm{m}^{3}$",
+                "symbol": "bu (US dry)",
                 "si_factor": 0.0352391,
                 "full_name": "bushel (US Dry)",
                 "notation": "bu (US dry)",
@@ -7009,7 +7009,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "centiliter",
-                "symbol": "$\\mathrm{m}^{3}$",
+                "symbol": "cl or cL",
                 "si_factor": 1e-05,
                 "full_name": "centiliter",
                 "notation": "cl or cL",
@@ -7017,7 +7017,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "cord",
-                "symbol": "$\\mathrm{m}^{3}$",
+                "symbol": "cord or cd",
                 "si_factor": 3.62456,
                 "full_name": "cord",
                 "notation": "cord or cd",
@@ -7025,7 +7025,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "cord_foot",
-                "symbol": "$\\mathrm{m}^{3}$",
+                "symbol": "cord-ft",
                 "si_factor": 0.4530695,
                 "full_name": "cord foot",
                 "notation": "cord-ft",
@@ -7033,7 +7033,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "cubic_centimeter",
-                "symbol": "$\\mathrm{m}^{3}$",
+                "symbol": "$\\mathrm{cm}^{3}$ or cc",
                 "si_factor": 1e-06,
                 "full_name": "cubic centimeter",
                 "notation": "$\\mathrm{cm}^{3}$ or cc",
@@ -7041,7 +7041,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "cubic_decameter",
-                "symbol": "$\\mathrm{m}^{3}$",
+                "symbol": "dam ${ }^{3}$",
                 "si_factor": 1000.0,
                 "full_name": "cubic decameter",
                 "notation": "dam ${ }^{3}$",
@@ -7049,7 +7049,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "cubic_decimeter",
-                "symbol": "$\\mathrm{m}^{3}$",
+                "symbol": "$\\mathrm{dm}^{3}$",
                 "si_factor": 0.001,
                 "full_name": "cubic decimeter",
                 "notation": "$\\mathrm{dm}^{3}$",
@@ -7057,7 +7057,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "cubic_foot",
-                "symbol": "$\\mathrm{m}^{3}$",
+                "symbol": "cu ft or ft ${ }^{3}$",
                 "si_factor": 0.0283168,
                 "full_name": "cubic foot",
                 "notation": "cu ft or ft ${ }^{3}$",
@@ -7065,7 +7065,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "cubic_inch",
-                "symbol": "$\\mathrm{m}^{3}$",
+                "symbol": "cu in or $\\mathrm{in}^{3}$",
                 "si_factor": 1.63871e-05,
                 "full_name": "cubic inch",
                 "notation": "cu in or $\\mathrm{in}^{3}$",
@@ -7073,7 +7073,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "cubic_kilometer",
-                "symbol": "$\\mathrm{m}^{3}$",
+                "symbol": "$\\mathrm{km}^{3}$",
                 "si_factor": 1000000000.0,
                 "full_name": "cubic kilometer",
                 "notation": "$\\mathrm{km}^{3}$",
@@ -7089,7 +7089,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "cubic_micrometer",
-                "symbol": "$\\mathrm{m}^{3}$",
+                "symbol": "$\\mu \\mathrm{m}^{3}$",
                 "si_factor": 1e-18,
                 "full_name": "cubic micrometer",
                 "notation": "$\\mu \\mathrm{m}^{3}$",
@@ -7097,7 +7097,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "cubic_mile_us_intl",
-                "symbol": "$\\mathrm{m}^{3}$",
+                "symbol": "cu mi",
                 "si_factor": 4168180000.0000005,
                 "full_name": "cubic mile (US, Intl)",
                 "notation": "cu mi",
@@ -7105,7 +7105,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "cubic_millimeter",
-                "symbol": "$\\mathrm{m}^{3}$",
+                "symbol": "$\\mathrm{mm}^{3}$",
                 "si_factor": 1e-09,
                 "full_name": "cubic millimeter",
                 "notation": "$\\mathrm{mm}^{3}$",
@@ -7113,7 +7113,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "cubic_yard",
-                "symbol": "$\\mathrm{m}^{3}$",
+                "symbol": "cu yd or $\\mathrm{yd}^{3}$",
                 "si_factor": 0.7645549,
                 "full_name": "cubic yard",
                 "notation": "cu yd or $\\mathrm{yd}^{3}$",
@@ -7121,7 +7121,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "decastére",
-                "symbol": "$\\mathrm{m}^{3}$",
+                "symbol": "dast",
                 "si_factor": 10.0,
                 "full_name": "decastére",
                 "notation": "dast",
@@ -7129,7 +7129,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "deciliter",
-                "symbol": "$\\mathrm{m}^{3}$",
+                "symbol": "dl or dL",
                 "si_factor": 0.0001,
                 "full_name": "deciliter",
                 "notation": "dl or dL",
@@ -7137,7 +7137,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "fluid_drachm_uk",
-                "symbol": "$\\mathrm{m}^{3}$",
+                "symbol": "fl dr (UK)",
                 "si_factor": 3.5516299999999996e-06,
                 "full_name": "fluid drachm (UK)",
                 "notation": "fl dr (UK)",
@@ -7145,7 +7145,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "fluid_dram_us",
-                "symbol": "$\\mathrm{m}^{3}$",
+                "symbol": "fl dr (US liq)",
                 "si_factor": 3.69669e-06,
                 "full_name": "fluid dram (US)",
                 "notation": "fl dr (US liq)",
@@ -7153,7 +7153,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "fluid_ounce_us",
-                "symbol": "$\\mathrm{m}^{3}$",
+                "symbol": "fl oz",
                 "si_factor": 2.95735e-05,
                 "full_name": "fluid ounce (US)",
                 "notation": "fl oz",
@@ -7161,7 +7161,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "gallon_imperial_uk",
-                "symbol": "$\\mathrm{m}^{3}$",
+                "symbol": "gal (UK) or Imp gal",
                 "si_factor": 0.00454609,
                 "full_name": "gallon (Imperial UK)",
                 "notation": "gal (UK) or Imp gal",
@@ -7169,7 +7169,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "gallon_us_dry",
-                "symbol": "$\\mathrm{m}^{3}$",
+                "symbol": "gal (US dry)",
                 "si_factor": 0.004404884,
                 "full_name": "gallon (US Dry)",
                 "notation": "gal (US dry)",
@@ -7177,7 +7177,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "gallon_us_liquid",
-                "symbol": "$\\mathrm{m}^{3}$",
+                "symbol": "gal",
                 "si_factor": 0.003785412,
                 "full_name": "gallon (US Liquid)",
                 "notation": "gal",
@@ -7185,7 +7185,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "last",
-                "symbol": "$\\mathrm{m}^{3}$",
+                "symbol": "last",
                 "si_factor": 2.9095,
                 "full_name": "last",
                 "notation": "last",
@@ -7193,7 +7193,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "liter",
-                "symbol": "$\\mathrm{m}^{3}$",
+                "symbol": "1 or L",
                 "si_factor": 0.001,
                 "full_name": "liter",
                 "notation": "1 or L",
@@ -7201,7 +7201,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "microliter",
-                "symbol": "$\\mathrm{m}^{3}$",
+                "symbol": "$\\mu \\mathrm{l}$ or $\\mu \\mathrm{L}$",
                 "si_factor": 1e-09,
                 "full_name": "microliter",
                 "notation": "$\\mu \\mathrm{l}$ or $\\mu \\mathrm{L}$",
@@ -7209,7 +7209,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "milliliter",
-                "symbol": "$\\mathrm{m}^{3}$",
+                "symbol": "ml",
                 "si_factor": 1e-06,
                 "full_name": "milliliter",
                 "notation": "ml",
@@ -7217,7 +7217,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "mohr_centicube",
-                "symbol": "$\\mathrm{m}^{3}$",
+                "symbol": "cc",
                 "si_factor": 1.00238e-06,
                 "full_name": "Mohr centicube",
                 "notation": "cc",
@@ -7225,7 +7225,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pint_uk",
-                "symbol": "$\\mathrm{m}^{3}$",
+                "symbol": "pt (UK)",
                 "si_factor": 0.000568262,
                 "full_name": "pint (UK)",
                 "notation": "pt (UK)",
@@ -7233,7 +7233,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pint_us_dry",
-                "symbol": "$\\mathrm{m}^{3}$",
+                "symbol": "pt (US dry)",
                 "si_factor": 0.000550611,
                 "full_name": "pint (US Dry)",
                 "notation": "pt (US dry)",
@@ -7241,7 +7241,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pint_us_liquid",
-                "symbol": "$\\mathrm{m}^{3}$",
+                "symbol": "pt",
                 "si_factor": 0.000473176,
                 "full_name": "pint (US Liquid)",
                 "notation": "pt",
@@ -7249,7 +7249,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "quart_us_dry",
-                "symbol": "$\\mathrm{m}^{3}$",
+                "symbol": "qt (US dry)",
                 "si_factor": 0.00110122,
                 "full_name": "quart (US Dry)",
                 "notation": "qt (US dry)",
@@ -7257,7 +7257,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "stére",
-                "symbol": "$\\mathrm{m}^{3}$",
+                "symbol": "st",
                 "si_factor": 1.0,
                 "full_name": "stére",
                 "notation": "st",
@@ -7265,7 +7265,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "tablespoon_metric",
-                "symbol": "$\\mathrm{m}^{3}$",
+                "symbol": "tbsp (Metric)",
                 "si_factor": 1.5000000000000002e-05,
                 "full_name": "tablespoon (Metric)",
                 "notation": "tbsp (Metric)",
@@ -7273,7 +7273,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "tablespoon_us",
-                "symbol": "$\\mathrm{m}^{3}$",
+                "symbol": "tbsp",
                 "si_factor": 1.47868e-05,
                 "full_name": "tablespoon (US)",
                 "notation": "tbsp",
@@ -7281,7 +7281,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "teaspoon_us",
-                "symbol": "$\\mathrm{m}^{3}$",
+                "symbol": "tsp",
                 "si_factor": 4.928919999999999e-06,
                 "full_name": "teaspoon (US)",
                 "notation": "tsp",
@@ -7297,7 +7297,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "cubic_centimeters_of_i_per_cubic_meter_total",
-                "symbol": "$\\mathrm{m}_{\\mathrm{i}}^{3} / \\mathrm{m}^{3}$",
+                "symbol": "$\\mathrm{cm}_{\\mathrm{i}}^{3} / \\mathrm{m}^{3}$ or $\\mathrm{cc}_{\\mathrm{i}} / \\mathrm{m}^{3}$",
                 "si_factor": 0.0001,
                 "full_name": "cubic centimeters of \"i\" per cubic meter total",
                 "notation": "$\\mathrm{cm}_{\\mathrm{i}}^{3} / \\mathrm{m}^{3}$ or $\\mathrm{cc}_{\\mathrm{i}} / \\mathrm{m}^{3}$",
@@ -7305,7 +7305,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "cubic_foot_of_i_per_cubic_foot_total",
-                "symbol": "$\\mathrm{m}_{\\mathrm{i}}^{3} / \\mathrm{m}^{3}$",
+                "symbol": "$\\mathrm{ft}_{\\mathrm{i}}^{3} / \\mathrm{ft}^{3}$ or $\\mathrm{cft}_{\\mathrm{i}} / \\mathrm{cft}$",
                 "si_factor": 1.0,
                 "full_name": "cubic foot of \"i\" per cubic foot total",
                 "notation": "$\\mathrm{ft}_{\\mathrm{i}}^{3} / \\mathrm{ft}^{3}$ or $\\mathrm{cft}_{\\mathrm{i}} / \\mathrm{cft}$",
@@ -7313,7 +7313,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "cubic_meters_of_i_per_cubic_meter_total",
-                "symbol": "$\\mathrm{m}_{\\mathrm{i}}^{3} / \\mathrm{m}^{3}$",
+                "symbol": "$\\mathrm{m}_{\\mathrm{i}}{ }^{3} / \\mathrm{m}^{3}$",
                 "si_factor": 1.0,
                 "full_name": "cubic meters of \" i \" per cubic meter total",
                 "notation": "$\\mathrm{m}_{\\mathrm{i}}{ }^{3} / \\mathrm{m}^{3}$",
@@ -7321,7 +7321,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "gallons_of_i_per_gallon_total",
-                "symbol": "$\\mathrm{m}_{\\mathrm{i}}^{3} / \\mathrm{m}^{3}$",
+                "symbol": "$\\mathrm{gal}_{\\mathrm{i}} / \\mathrm{gal}$",
                 "si_factor": 1.0,
                 "full_name": "gallons of \"i\" per gallon total",
                 "notation": "$\\mathrm{gal}_{\\mathrm{i}} / \\mathrm{gal}$",
@@ -7337,7 +7337,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "british_thermal_unit_per_cubic_foot",
-                "symbol": "$\\mathrm{J} / \\mathrm{m}^{3}$",
+                "symbol": "$\\mathrm{Btu} / \\mathrm{ft}^{3}$ or Btu/cft",
                 "si_factor": 37260.0,
                 "full_name": "British thermal unit per cubic foot",
                 "notation": "$\\mathrm{Btu} / \\mathrm{ft}^{3}$ or Btu/cft",
@@ -7345,7 +7345,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "british_thermal_unit_per_gallon_uk",
-                "symbol": "$\\mathrm{J} / \\mathrm{m}^{3}$",
+                "symbol": "Btu/gal (UK)",
                 "si_factor": 232090.0,
                 "full_name": "British thermal unit per gallon (UK)",
                 "notation": "Btu/gal (UK)",
@@ -7353,7 +7353,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "british_thermal_unit_per_gallon_us",
-                "symbol": "$\\mathrm{J} / \\mathrm{m}^{3}$",
+                "symbol": "Btu/gal (US)",
                 "si_factor": 193260.0,
                 "full_name": "British thermal unit per gallon (US)",
                 "notation": "Btu/gal (US)",
@@ -7361,7 +7361,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "calorie_per_cubic_centimeter",
-                "symbol": "$\\mathrm{J} / \\mathrm{m}^{3}$",
+                "symbol": "$\\mathrm{cal} / \\mathrm{cm}^{3}$ or $\\mathrm{cal} / \\mathrm{cc}$",
                 "si_factor": 4186800.0,
                 "full_name": "calorie per cubic centimeter",
                 "notation": "$\\mathrm{cal} / \\mathrm{cm}^{3}$ or $\\mathrm{cal} / \\mathrm{cc}$",
@@ -7369,7 +7369,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "chu_per_cubic_foot",
-                "symbol": "$\\mathrm{J} / \\mathrm{m}^{3}$",
+                "symbol": "$\\mathrm{Chu} / \\mathrm{ft}^{3}$ or $\\mathrm{Chu} / \\mathrm{cft}$",
                 "si_factor": 67067.0,
                 "full_name": "Chu per cubic foot",
                 "notation": "$\\mathrm{Chu} / \\mathrm{ft}^{3}$ or $\\mathrm{Chu} / \\mathrm{cft}$",
@@ -7385,7 +7385,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kilocalorie_per_cubic_foot",
-                "symbol": "$\\mathrm{J} / \\mathrm{m}^{3}$",
+                "symbol": "$\\mathrm{kcal} / \\mathrm{ft}^{3}$ or $\\mathrm{kcal} / \\mathrm{cft}$",
                 "si_factor": 147860.0,
                 "full_name": "kilocalorie per cubic foot",
                 "notation": "$\\mathrm{kcal} / \\mathrm{ft}^{3}$ or $\\mathrm{kcal} / \\mathrm{cft}$",
@@ -7393,7 +7393,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kilocalorie_per_cubic_meter",
-                "symbol": "$\\mathrm{J} / \\mathrm{m}^{3}$",
+                "symbol": "$\\mathrm{kcal} / \\mathrm{m}^{3}$",
                 "si_factor": 4186.8,
                 "full_name": "kilocalorie per cubic meter",
                 "notation": "$\\mathrm{kcal} / \\mathrm{m}^{3}$",
@@ -7401,7 +7401,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "therm_100_k_btu",
-                "symbol": "$\\mathrm{J} / \\mathrm{m}^{3}$",
+                "symbol": "thm/cft",
                 "si_factor": 3726000000.0,
                 "full_name": "therm ( 100 K Btu ) per cubic foot",
                 "notation": "thm/cft",
@@ -7417,7 +7417,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "gram_per_cubic_centimeter_per_kelvin_or_degree_celsius",
-                "symbol": "$\\mathrm{kg} / \\mathrm{m}^{3} / \\mathrm{K}$",
+                "symbol": "$\\mathrm{g} / \\mathrm{cm}^{3} / \\mathrm{K}$ or g/cc/ ${ }^{\\circ} \\mathrm{C}$",
                 "si_factor": 1000.0,
                 "full_name": "gram per cubic centimeter per kelvin (or degree Celsius)",
                 "notation": "$\\mathrm{g} / \\mathrm{cm}^{3} / \\mathrm{K}$ or g/cc/ ${ }^{\\circ} \\mathrm{C}$",
@@ -7425,7 +7425,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kilogram_per_cubic_meter_per_kelvin_or_degree_celsius",
-                "symbol": "kg/m ${ }^{3}$ /K",
+                "symbol": "$\\mathrm{kg} / \\mathrm{m}^{3} / \\mathrm{K}$ or $\\mathrm{kg} / \\mathrm{m}^{3} /{ }^{\\circ}$ C",
                 "si_factor": 1.0,
                 "full_name": "kilogram per cubic meter per kelvin (or degree Celsius)",
                 "notation": "$\\mathrm{kg} / \\mathrm{m}^{3} / \\mathrm{K}$ or $\\mathrm{kg} / \\mathrm{m}^{3} /{ }^{\\circ}$ C",
@@ -7433,7 +7433,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pound_per_cubic_foot_per_degree_fahrenheit_or_degree_rankine",
-                "symbol": "$\\mathrm{kg} / \\mathrm{m}^{3} / \\mathrm{K}$",
+                "symbol": "$\\mathrm{lb} / \\mathrm{ft}^{3} /{ }^{\\circ} \\mathrm{R}$ or $\\mathrm{lb} / \\mathrm{cft} /{ }^{\\circ} \\mathrm{F}$",
                 "si_factor": 28.833,
                 "full_name": "pound per cubic foot per degree Fahrenheit (or degree Rankine)",
                 "notation": "$\\mathrm{lb} / \\mathrm{ft}^{3} /{ }^{\\circ} \\mathrm{R}$ or $\\mathrm{lb} / \\mathrm{cft} /{ }^{\\circ} \\mathrm{F}$",
@@ -7441,7 +7441,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pound_per_cubic_foot_per_kelvin_or_degree_celsius",
-                "symbol": "$\\mathrm{kg} / \\mathrm{m}^{3} / \\mathrm{K}$",
+                "symbol": "$\\mathrm{lb} / \\mathrm{ft}^{3} / \\mathrm{K}$ or $\\mathrm{lb} / \\mathrm{cft} /{ }^{\\circ} \\mathrm{C}$",
                 "si_factor": 16.018,
                 "full_name": "pound per cubic foot per kelvin (or degree Celsius)",
                 "notation": "$\\mathrm{lb} / \\mathrm{ft}^{3} / \\mathrm{K}$ or $\\mathrm{lb} / \\mathrm{cft} /{ }^{\\circ} \\mathrm{C}$",
@@ -7457,7 +7457,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "cubic_feet_per_day",
-                "symbol": "$\\mathrm{m}^{3} / \\mathrm{s}$",
+                "symbol": "$\\mathrm{ft}^{3} / \\mathrm{d}$ or $\\mathrm{cft} / \\mathrm{da}$ or cfd",
                 "si_factor": 3.2778e-07,
                 "full_name": "cubic feet per day",
                 "notation": "$\\mathrm{ft}^{3} / \\mathrm{d}$ or $\\mathrm{cft} / \\mathrm{da}$ or cfd",
@@ -7465,7 +7465,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "cubic_feet_per_hour",
-                "symbol": "$\\mathrm{m}^{3} / \\mathrm{s}$",
+                "symbol": "$\\mathrm{ft}^{3} / \\mathrm{h}$ or $\\mathrm{cft} / \\mathrm{hr}$ or cfh",
                 "si_factor": 7.866699999999999e-06,
                 "full_name": "cubic feet per hour",
                 "notation": "$\\mathrm{ft}^{3} / \\mathrm{h}$ or $\\mathrm{cft} / \\mathrm{hr}$ or cfh",
@@ -7473,7 +7473,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "cubic_feet_per_minute",
-                "symbol": "$\\mathrm{m}^{3} / \\mathrm{s}$",
+                "symbol": "$\\mathrm{ft}^{3} / \\mathrm{min}$ or $\\mathrm{cft} / \\mathrm{min}$ or cfm",
                 "si_factor": 0.000472,
                 "full_name": "cubic feet per minute",
                 "notation": "$\\mathrm{ft}^{3} / \\mathrm{min}$ or $\\mathrm{cft} / \\mathrm{min}$ or cfm",
@@ -7481,7 +7481,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "cubic_feet_per_second",
-                "symbol": "$\\mathrm{m}^{3} / \\mathrm{s}$",
+                "symbol": "$\\mathrm{ft}^{3} / \\mathrm{s}$ or cft/sec or cfs",
                 "si_factor": 0.02832,
                 "full_name": "cubic feet per second",
                 "notation": "$\\mathrm{ft}^{3} / \\mathrm{s}$ or cft/sec or cfs",
@@ -7489,7 +7489,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "cubic_meters_per_day",
-                "symbol": "$\\mathrm{m}^{3} / \\mathrm{s}$",
+                "symbol": "$\\mathrm{m}^{3} / \\mathrm{d}$",
                 "si_factor": 1.1574000000000001e-05,
                 "full_name": "cubic meters per day",
                 "notation": "$\\mathrm{m}^{3} / \\mathrm{d}$",
@@ -7497,7 +7497,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "cubic_meters_per_hour",
-                "symbol": "$\\mathrm{m}^{3} / \\mathrm{s}$",
+                "symbol": "$\\mathrm{m}^{3} / \\mathrm{h}$",
                 "si_factor": 0.00027778,
                 "full_name": "cubic meters per hour",
                 "notation": "$\\mathrm{m}^{3} / \\mathrm{h}$",
@@ -7505,7 +7505,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "cubic_meters_per_minute",
-                "symbol": "$\\mathrm{m}^{3} / \\mathrm{s}$",
+                "symbol": "$\\mathrm{m}^{3} / \\min$",
                 "si_factor": 0.016667,
                 "full_name": "cubic meters per minute",
                 "notation": "$\\mathrm{m}^{3} / \\min$",
@@ -7521,7 +7521,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "gallons_per_day",
-                "symbol": "$1 / \\mathrm{min}$",
+                "symbol": "gal/d or gpd or gal/ da",
                 "si_factor": 0.002628,
                 "full_name": "gallons per day",
                 "notation": "gal/d or gpd or gal/ da",
@@ -7529,7 +7529,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "gallons_per_hour",
-                "symbol": "$1 / \\min$",
+                "symbol": "gal/h or gph or gal/ hr",
                 "si_factor": 0.06308,
                 "full_name": "gallons per hour",
                 "notation": "gal/h or gph or gal/ hr",
@@ -7537,7 +7537,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "gallons_per_minute",
-                "symbol": "$1 / \\mathrm{min}$",
+                "symbol": "gal/min or gpm",
                 "si_factor": 3.785,
                 "full_name": "gallons per minute",
                 "notation": "gal/min or gpm",
@@ -7545,7 +7545,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "gallons_per_second",
-                "symbol": "$1 / \\mathrm{min}$",
+                "symbol": "gal/s or gps or gal/ sec",
                 "si_factor": 227.1,
                 "full_name": "gallons per second",
                 "notation": "gal/s or gps or gal/ sec",
@@ -7553,7 +7553,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "liters_per_day",
-                "symbol": "$1 / \\mathrm{min}$",
+                "symbol": "1/d",
                 "si_factor": 0.00069444,
                 "full_name": "liters per day",
                 "notation": "1/d",
@@ -7561,7 +7561,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "liters_per_hour",
-                "symbol": "$1 / \\mathrm{min}$",
+                "symbol": "1/h",
                 "si_factor": 0.016667,
                 "full_name": "liters per hour",
                 "notation": "1/h",
@@ -7577,7 +7577,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "liters_per_second",
-                "symbol": "$1 / \\mathrm{min}$",
+                "symbol": "1/s",
                 "si_factor": 60.0,
                 "full_name": "liters per second",
                 "notation": "1/s",
@@ -7593,7 +7593,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "cubic_feet_per_square_foot_per_day",
-                "symbol": "$\\mathrm{m}^{3}$ / ( $\\mathrm{m}^{2} \\mathrm{~s}$ )",
+                "symbol": "$\\mathrm{ft}^{3} /\\left(\\mathrm{ft}^{2} \\mathrm{~d}\\right)$ or $\\mathrm{cft} / \\mathrm{sqft} /$ da",
                 "si_factor": 3.5276e-06,
                 "full_name": "cubic feet per square foot per day",
                 "notation": "$\\mathrm{ft}^{3} /\\left(\\mathrm{ft}^{2} \\mathrm{~d}\\right)$ or $\\mathrm{cft} / \\mathrm{sqft} /$ da",
@@ -7601,7 +7601,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "cubic_feet_per_square_foot_per_hour",
-                "symbol": "$\\mathrm{m}^{3}$ / ( $\\mathrm{m}^{2} \\mathrm{~s}$ )",
+                "symbol": "$\\mathrm{ft}^{3} /\\left(\\mathrm{ft}^{2} \\mathrm{~h}\\right)$ or $\\mathrm{cft} / \\mathrm{sqft} /$ hr",
                 "si_factor": 8.466300000000001e-05,
                 "full_name": "cubic feet per square foot per hour",
                 "notation": "$\\mathrm{ft}^{3} /\\left(\\mathrm{ft}^{2} \\mathrm{~h}\\right)$ or $\\mathrm{cft} / \\mathrm{sqft} /$ hr",
@@ -7609,7 +7609,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "cubic_feet_per_square_foot_per_minute",
-                "symbol": "$\\mathrm{m}^{3}$ / ( $\\mathrm{m}^{2} \\mathrm{~s}$ )",
+                "symbol": "$\\mathrm{ft}^{3} /\\left(\\mathrm{ft}^{2} \\min \\right)$ or $\\mathrm{cft} /$ sqft/min",
                 "si_factor": 0.0050798,
                 "full_name": "cubic feet per square foot per minute",
                 "notation": "$\\mathrm{ft}^{3} /\\left(\\mathrm{ft}^{2} \\min \\right)$ or $\\mathrm{cft} /$ sqft/min",
@@ -7617,7 +7617,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "cubic_feet_per_square_foot_per_second",
-                "symbol": "$\\mathrm{m}^{3}$ / ( $\\mathrm{m}^{2} \\mathrm{~s}$ )",
+                "symbol": "$\\mathrm{ft}^{3} /\\left(\\mathrm{ft}^{2} \\mathrm{~s}\\right)$ or cft/sqft/ sec",
                 "si_factor": 0.30479,
                 "full_name": "cubic feet per square foot per second",
                 "notation": "$\\mathrm{ft}^{3} /\\left(\\mathrm{ft}^{2} \\mathrm{~s}\\right)$ or cft/sqft/ sec",
@@ -7625,7 +7625,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "cubic_meters_per_square_meter_per_day",
-                "symbol": "$\\mathrm{m}^{3}$ / ( $\\mathrm{m}^{2} \\mathrm{~s}$ )",
+                "symbol": "$\\mathrm{m}^{3} /\\left(\\mathrm{m}^{2} \\mathrm{~d}\\right)$",
                 "si_factor": 1.1574000000000001e-05,
                 "full_name": "cubic meters per square meter per day",
                 "notation": "$\\mathrm{m}^{3} /\\left(\\mathrm{m}^{2} \\mathrm{~d}\\right)$",
@@ -7633,7 +7633,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "cubic_meters_per_square_meter_per_hour",
-                "symbol": "$\\mathrm{m}^{3}$ / ( $\\mathrm{m}^{2} \\mathrm{~s}$ )",
+                "symbol": "$\\mathrm{m}^{3} /\\left(\\mathrm{m}^{2} \\mathrm{~h}\\right)$",
                 "si_factor": 0.00027778,
                 "full_name": "cubic meters per square meter per hour",
                 "notation": "$\\mathrm{m}^{3} /\\left(\\mathrm{m}^{2} \\mathrm{~h}\\right)$",
@@ -7641,7 +7641,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "cubic_meters_per_square_meter_per_minute",
-                "symbol": "$\\mathrm{m}^{3}$ / ( $\\mathrm{m}^{2} \\mathrm{~s}$ )",
+                "symbol": "$\\mathrm{m}^{3} /\\left(\\mathrm{m}^{2} \\mathrm{~min}\\right)$",
                 "si_factor": 0.016667,
                 "full_name": "cubic meters per square meter per minute",
                 "notation": "$\\mathrm{m}^{3} /\\left(\\mathrm{m}^{2} \\mathrm{~min}\\right)$",
@@ -7649,7 +7649,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "cubic_meters_per_square_meter_per_second",
-                "symbol": "$\\mathrm{m}^{3}$ / ( $\\mathrm{m}^{2} \\mathrm{~s}$ )",
+                "symbol": "$\\mathrm{m}^{3} /\\left(\\mathrm{m}^{2} \\mathrm{~s}\\right)$",
                 "si_factor": 1.0,
                 "full_name": "cubic meters per square meter per second",
                 "notation": "$\\mathrm{m}^{3} /\\left(\\mathrm{m}^{2} \\mathrm{~s}\\right)$",
@@ -7657,7 +7657,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "gallons_per_square_foot_per_day",
-                "symbol": "1/( $\\mathrm{m}^{2} \\mathrm{~s}$ )",
+                "symbol": "$\\mathrm{gal} /\\left(\\mathrm{ft}^{2} \\mathrm{~d}\\right)$ or gal/ sqft/da",
                 "si_factor": 0.00047138000000000003,
                 "full_name": "gallons per square foot per day",
                 "notation": "$\\mathrm{gal} /\\left(\\mathrm{ft}^{2} \\mathrm{~d}\\right)$ or gal/ sqft/da",
@@ -7665,7 +7665,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "gallons_per_square_foot_per_hour",
-                "symbol": "1/( $\\mathrm{m}^{2} \\mathrm{~s}$ )",
+                "symbol": "$\\mathrm{gal} /\\left(\\mathrm{ft}^{2} \\mathrm{~h}\\right)$ or gal/ sqft/hr",
                 "si_factor": 0.011313,
                 "full_name": "gallons per square foot per hour",
                 "notation": "$\\mathrm{gal} /\\left(\\mathrm{ft}^{2} \\mathrm{~h}\\right)$ or gal/ sqft/hr",
@@ -7673,7 +7673,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "gallons_per_square_foot_per_minute",
-                "symbol": "1/( $\\mathrm{m}^{2} \\mathrm{~s}$ )",
+                "symbol": "$\\mathrm{gal} /\\left(\\mathrm{ft}^{2} \\mathrm{~min}\\right)$ or gal/ sqft/min or gpm/sqft",
                 "si_factor": 0.67878,
                 "full_name": "gallons per square foot per minute",
                 "notation": "$\\mathrm{gal} /\\left(\\mathrm{ft}^{2} \\mathrm{~min}\\right)$ or gal/ sqft/min or gpm/sqft",
@@ -7681,7 +7681,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "gallons_per_square_foot_per_second",
-                "symbol": "1/( $\\mathrm{m}^{2} \\mathrm{~s}$ )",
+                "symbol": "$\\mathrm{gal} /\\left(\\mathrm{ft}^{2} \\mathrm{~s}\\right)$ or gal/ $\\mathrm{sqft} / \\mathrm{sec}$",
                 "si_factor": 40.727,
                 "full_name": "gallons per square foot per second",
                 "notation": "$\\mathrm{gal} /\\left(\\mathrm{ft}^{2} \\mathrm{~s}\\right)$ or gal/ $\\mathrm{sqft} / \\mathrm{sec}$",
@@ -7689,7 +7689,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "liters_per_square_meter_per_day",
-                "symbol": "$1 /\\left(\\mathrm{m}^{2} \\mathrm{~s}\\right)$",
+                "symbol": "$1 /\\left(\\mathrm{m}^{2} \\mathrm{~d}\\right)$",
                 "si_factor": 1.1574000000000001e-05,
                 "full_name": "liters per square meter per day",
                 "notation": "$1 /\\left(\\mathrm{m}^{2} \\mathrm{~d}\\right)$",
@@ -7697,7 +7697,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "liters_per_square_meter_per_hour",
-                "symbol": "1/( $\\mathrm{m}^{2} \\mathrm{~s}$ )",
+                "symbol": "$1 /\\left(\\mathrm{m}^{2} \\mathrm{~h}\\right)$",
                 "si_factor": 0.00027778,
                 "full_name": "liters per square meter per hour",
                 "notation": "$1 /\\left(\\mathrm{m}^{2} \\mathrm{~h}\\right)$",
@@ -7705,7 +7705,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "liters_per_square_meter_per_minute",
-                "symbol": "1/( $\\mathrm{m}^{2} \\mathrm{~s}$ )",
+                "symbol": "$1 /\\left(\\mathrm{m}^{2} \\mathrm{~min}\\right)$",
                 "si_factor": 0.016667,
                 "full_name": "liters per square meter per minute",
                 "notation": "$1 /\\left(\\mathrm{m}^{2} \\mathrm{~min}\\right)$",
@@ -7729,7 +7729,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "gram_per_second_per_cubic_centimeter",
-                "symbol": "kg/ ( $\\mathrm{s} \\mathrm{m}^{3}$ )",
+                "symbol": "$\\mathrm{g} /\\left(\\mathrm{s} \\mathrm{cm}^{3}\\right)$ or g/s/cc or $\\mathrm{g} / \\mathrm{cc} / \\mathrm{sec}$",
                 "si_factor": 1000.0,
                 "full_name": "gram per second per cubic centimeter",
                 "notation": "$\\mathrm{g} /\\left(\\mathrm{s} \\mathrm{cm}^{3}\\right)$ or g/s/cc or $\\mathrm{g} / \\mathrm{cc} / \\mathrm{sec}$",
@@ -7737,7 +7737,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kilogram_per_hour_per_cubic_foot",
-                "symbol": "kg/ ( $\\mathrm{s} \\mathrm{m}^{3}$ )",
+                "symbol": "kg/(h ft ${ }^{3}$ ) or kg/hr/ cft",
                 "si_factor": 0.0098096,
                 "full_name": "kilogram per hour per cubic foot",
                 "notation": "kg/(h ft ${ }^{3}$ ) or kg/hr/ cft",
@@ -7745,7 +7745,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kilogram_per_hour_per_cubic_meter",
-                "symbol": "kg/ ( $\\mathrm{s} \\mathrm{m}^{3}$ )",
+                "symbol": "kg/(h m3) or kg/hr/ cu.m",
                 "si_factor": 0.00027778000000000004,
                 "full_name": "kilogram per hour per cubic meter",
                 "notation": "kg/(h m3) or kg/hr/ cu.m",
@@ -7753,7 +7753,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kilogram_per_second_per_cubic_meter",
-                "symbol": "kg/ ( $\\mathrm{s} \\mathrm{m}^{3}$ )",
+                "symbol": "$\\mathrm{kg} /\\left(\\mathrm{s} \\mathrm{m}^{3}\\right)$ or kg/sec/ cu.m",
                 "si_factor": 1.0,
                 "full_name": "kilogram per second per cubic meter",
                 "notation": "$\\mathrm{kg} /\\left(\\mathrm{s} \\mathrm{m}^{3}\\right)$ or kg/sec/ cu.m",
@@ -7761,7 +7761,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pound_per_hour_per_cubic_foot",
-                "symbol": "kg/ ( $\\mathrm{s} \\mathrm{m}^{3}$ )",
+                "symbol": "$\\mathrm{lb} /\\left(\\mathrm{h} \\mathrm{ft}^{3}\\right)$ or $\\mathrm{lb} / \\mathrm{hr} / \\mathrm{cft}$ or PPH/cft",
                 "si_factor": 0.0044496,
                 "full_name": "pound per hour per cubic foot",
                 "notation": "$\\mathrm{lb} /\\left(\\mathrm{h} \\mathrm{ft}^{3}\\right)$ or $\\mathrm{lb} / \\mathrm{hr} / \\mathrm{cft}$ or PPH/cft",
@@ -7769,7 +7769,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pound_per_minute_per_cubic_foot",
-                "symbol": "kg/ ( $\\mathrm{s} \\mathrm{m}^{3}$ )",
+                "symbol": "lb/(min $\\mathrm{ft}^{3}$ ) or lb/ $\\mathrm{min} / \\mathrm{cft}$",
                 "si_factor": 0.26697,
                 "full_name": "pound per minute per cubic foot",
                 "notation": "lb/(min $\\mathrm{ft}^{3}$ ) or lb/ $\\mathrm{min} / \\mathrm{cft}$",
@@ -7777,7 +7777,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "pound_per_second_per_cubic_foot",
-                "symbol": "kg/ ( $\\mathrm{s} \\mathrm{m}^{3}$ )",
+                "symbol": "b/(s ft ${ }^{3}$ ) or lb/sec/cft",
                 "si_factor": 16.018,
                 "full_name": "pound per second per cubic foot",
                 "notation": "b/(s ft ${ }^{3}$ ) or lb/sec/cft",
@@ -7793,7 +7793,7 @@ UNIT_DEFINITIONS = {
         "units": [
             {
                 "name": "diopter",
-                "symbol": "$1 / \\mathrm{m}$",
+                "symbol": "D",
                 "si_factor": 1.0,
                 "full_name": "diopter",
                 "notation": "D",
@@ -7801,7 +7801,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "kayser",
-                "symbol": "$1 / \\mathrm{m}$",
+                "symbol": "K",
                 "si_factor": 100.0,
                 "full_name": "kayser",
                 "notation": "K",
@@ -7809,7 +7809,7 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "reciprocal_meter",
-                "symbol": "$1 / \\mathrm{m}$",
+                "symbol": "1/m",
                 "si_factor": 1.0,
                 "full_name": "reciprocal meter",
                 "notation": "1/m",

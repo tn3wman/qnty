@@ -187,22 +187,20 @@ def generate_prefixed_unit_data(base_unit_data: dict, prefix: StandardPrefixes, 
     
     # Apply prefix to name and symbol
     prefixed_name = prefix_def.apply_to_name(base_unit_data['normalized_name'])
-    prefixed_symbol = prefix_def.apply_to_symbol(base_unit_data.get('si_metric', {}).get('unit', base_unit_data.get('notation', '')))
+    # Use the field's si_base_unit instead of unit-level data
+    prefixed_symbol = prefix_def.apply_to_symbol(field_data.get('si_base_unit', base_unit_data.get('notation', '')))
     
     # Calculate new SI factor
-    base_factor = base_unit_data.get('si_metric', {}).get('conversion_factor', 1.0)
+    base_factor = base_unit_data.get('si_conversion', 1.0)
     new_factor = base_factor * prefix_def.factor
     
-    # Create new unit data
+    # Create new unit data using new structure
     return {
         'name': prefix_def.apply_to_name(base_unit_data['name']),
         'normalized_name': prefixed_name,
         'notation': prefixed_symbol,
-        'si_metric': {
-            'conversion_factor': new_factor,
-            'unit': base_unit_data.get('si_metric', {}).get('unit', base_unit_data.get('notation', ''))
-        },
-        'english_us': base_unit_data.get('english_us', {}),
+        'si_conversion': new_factor,
+        'imperial_conversion': base_unit_data.get('imperial_conversion', 1.0),
         'aliases': [],
         'generated_from_prefix': True  # Mark as generated for identification
     }
@@ -256,19 +254,19 @@ def augment_parsed_data_with_prefixes(parsed_data: dict) -> dict:
     return augmented_data
 
 
-def generate_unit_definition(unit_data: dict) -> dict:
-    """Generate a unit definition dictionary."""
+def generate_unit_definition(unit_data: dict, field_data: dict) -> dict:
+    """Generate a unit definition dictionary using new restructured format."""
     # Use only the aliases from the JSON data, don't try to extract from notation
     aliases = unit_data.get('aliases', [])
     
     return {
         "name": unit_data['normalized_name'],
-        "symbol": unit_data.get('si_metric', {}).get('unit', unit_data.get('notation', '')),
-        "si_factor": unit_data.get('si_metric', {}).get('conversion_factor', 1.0),
+        "symbol": field_data.get('si_base_unit', unit_data.get('notation', '')),
+        "si_factor": unit_data.get('si_conversion', 1.0),
         "aliases": aliases,  # Use aliases as-is from the JSON
         "full_name": unit_data['name'],
         "notation": unit_data.get('notation', ''),
-        "english_us": unit_data.get('english_us', {}),
+        "english_us": {"conversion_factor": unit_data.get('imperial_conversion', 1.0), "unit": field_data.get('imperial_base_unit', '')},
     }
 
 
@@ -364,7 +362,7 @@ def generate_unit_entries(field_list: list) -> list[str]:
     all_units = []
     for field_info in field_list:
         for unit_data in field_info['units']:
-            unit_def = generate_unit_definition(unit_data)
+            unit_def = generate_unit_definition(unit_data, field_info)
             all_units.append(unit_def)
     
     # Sort units by name for consistency
