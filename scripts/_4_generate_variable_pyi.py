@@ -143,14 +143,31 @@ def generate_consolidated_pyi(parsed_data: dict, dimension_mapping: dict) -> str
         ])
         
         # Add property stubs for each unit
+        added_properties = set()  # Track properties already added to avoid duplicates
+        
         for unit_data in field_data['units']:
             unit_name = unit_data['name']
             property_name = convert_unit_name_to_property(unit_name)
+            aliases = unit_data.get('aliases', [])
             
-            lines.extend([
-                '    @property',
-                f'    def {property_name}(self) -> {class_name}: ...'
-            ])
+            # Add the primary property if not already added
+            if property_name not in added_properties:
+                lines.extend([
+                    '    @property',
+                    f'    def {property_name}(self) -> {class_name}: ...'
+                ])
+                added_properties.add(property_name)
+            
+            # Add alias properties
+            for alias in aliases:
+                alias_property = convert_unit_name_to_property(alias)
+                # Only add if it's different from the main property and not already added
+                if alias_property != property_name and alias_property not in added_properties:
+                    lines.extend([
+                        '    @property',
+                        f'    def {alias_property}(self) -> {class_name}: ...'
+                    ])
+                    added_properties.add(alias_property)
         
         lines.append('')
         

@@ -92,7 +92,7 @@ def generate_init_file(parsed_data: dict) -> str:
     # Common variables section
     lines.append('    # Core variable types (most commonly used)')
     common_line = '    '
-    for i, var_name in enumerate(common_variables):
+    for _i, var_name in enumerate(common_variables):
         if var_name in variable_names:  # Only include if it exists
             if len(common_line) + len(f'"{var_name}", ') > 80:
                 lines.append(common_line.rstrip())
@@ -113,7 +113,7 @@ def generate_init_file(parsed_data: dict) -> str:
     if other_variables:
         lines.append(f'    # All other variable types ({len(other_variables)} additional types)')
         other_line = '    '
-        for i, var_name in enumerate(other_variables):
+        for _i, var_name in enumerate(other_variables):
             if len(other_line) + len(f'"{var_name}", ') > 80:
                 lines.append(other_line.rstrip())
                 other_line = '    '
@@ -152,11 +152,11 @@ def main():
     
     # Print statistics
     lines_count = len(content.splitlines())
-    print(f"\nStatistics:")
+    print("\nStatistics:")
     print(f"  Total variable types: {fields_with_units}")
     print(f"  Generated lines: {lines_count}")
     
-    print(f"\n✅ Clean __init__.py generated with explicit imports!")
+    print("\n✅ Clean __init__.py generated with explicit imports!")
 
 
 if __name__ == "__main__":

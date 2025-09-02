@@ -50,7 +50,7 @@ def run_script(script_path: Path, description: str) -> bool:
     except subprocess.CalledProcessError as e:
         elapsed = time.time() - start_time
         print(f"❌ {script_path.name} failed after {elapsed:.2f}s")
-        print(f"Error output:")
+        print("Error output:")
         if e.stderr:
             print(e.stderr)
         if e.stdout:

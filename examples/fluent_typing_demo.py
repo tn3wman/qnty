@@ -16,7 +16,7 @@ def demo_fluent_typing():
     pressure = Pressure("working_pressure")
     
     # All these have full IDE autocomplete and type checking:
-    pressure.set(15).pascal        # ✓ Pressure unit
+    pressure.set(15).psi      # ✓ Pressure unit
     pressure.set(101.325).kilogram_force_per_square_meter  # ✓ Pressure unit
     pressure.set(14.7).bar            # ✓ Pressure unit
     pressure.set(1.013).bar           # ✓ Pressure unit
