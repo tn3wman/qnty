@@ -8,24 +8,135 @@ Shows speedup factors and validates calculation accuracy.
 
 import time
 
+import astropy.units as u
 import pint
 import unyt
+from astropy.units import imperial
 
 from qnty.units import DimensionlessUnits, LengthUnits, PressureUnits
 from qnty.variable import FastQuantity
 from qnty.variables import Length
 
+# Pre-define all variables to exclude initialization from performance measurements
+ASTROPY_AVAILABLE = True
+
+# Test values
+TEST_VALUE = 100.0
+PRESSURE_VALUE = 2900.75
+LENGTH_VALUE = 168.275
+
+# Initialize unit registries once
+ureg = pint.UnitRegistry()
+
+# Pre-create all Qnty quantities
+qnty_meter = FastQuantity(TEST_VALUE, LengthUnits.meter)
+qnty_mm_100 = FastQuantity(100.0, LengthUnits.millimeter)
+qnty_inch_2 = FastQuantity(2.0, LengthUnits.inch)
+qnty_length_10 = FastQuantity(10.0, LengthUnits.meter)
+qnty_width_5 = FastQuantity(5.0, LengthUnits.meter)
+qnty_pressure = FastQuantity(PRESSURE_VALUE, PressureUnits.psi)
+qnty_area_10mm = FastQuantity(10.0, LengthUnits.millimeter)
+qnty_P = FastQuantity(PRESSURE_VALUE, PressureUnits.psi)
+qnty_D = FastQuantity(LENGTH_VALUE, LengthUnits.millimeter)
+qnty_S = FastQuantity(137.895, PressureUnits.MPa)
+qnty_E = FastQuantity(0.8, DimensionlessUnits.dimensionless)
+qnty_W = FastQuantity(1.0, DimensionlessUnits.dimensionless)
+qnty_Y = FastQuantity(0.4, DimensionlessUnits.dimensionless)
+qnty_length_var = Length("beam_length")
+qnty_length_var.set(100.0).millimeter
+qnty_q1_50mm = FastQuantity(50.0, LengthUnits.millimeter)
+qnty_q2_2in = FastQuantity(2.0, LengthUnits.inch)
+qnty_q3_05m = FastQuantity(0.5, LengthUnits.meter)
+qnty_zero_mm = FastQuantity(0, LengthUnits.millimeter)
+
+# Pre-create all Pint quantities
+pint_meter = ureg.Quantity(TEST_VALUE, "meter")
+pint_mm_100 = ureg.Quantity(100.0, "millimeter")
+pint_inch_2 = ureg.Quantity(2.0, "inch")
+pint_length_10 = ureg.Quantity(10.0, "meter")
+pint_width_5 = ureg.Quantity(5.0, "meter")
+pint_pressure = ureg.Quantity(PRESSURE_VALUE, "psi")
+pint_area_10mm = ureg.Quantity(10.0, "millimeter")
+pint_P = ureg.Quantity(PRESSURE_VALUE, "psi")
+pint_D = ureg.Quantity(LENGTH_VALUE, "mm")
+pint_S = ureg.Quantity(137.895, "MPa")
+pint_length_100mm = ureg.Quantity(100.0, "millimeter")
+pint_q1_50mm = ureg.Quantity(50.0, "millimeter")
+pint_q2_2in = ureg.Quantity(2.0, "inch")
+pint_q3_05m = ureg.Quantity(0.5, "meter")
+pint_zero_mm = ureg.Quantity(0, "millimeter")
+
+# Pre-create all Unyt quantities
+unyt_meter = unyt.unyt_quantity(TEST_VALUE, "meter")
+unyt_mm_100 = unyt.unyt_quantity(100.0, "millimeter")
+unyt_inch_2 = unyt.unyt_quantity(2.0, "inch")
+unyt_length_10 = unyt.unyt_quantity(10.0, "meter")
+unyt_width_5 = unyt.unyt_quantity(5.0, "meter")
+unyt_pressure = unyt.unyt_quantity(PRESSURE_VALUE, "psi")
+unyt_area_10mm = unyt.unyt_quantity(10.0, "millimeter")
+unyt_P = unyt.unyt_quantity(PRESSURE_VALUE, "psi")
+unyt_D = unyt.unyt_quantity(LENGTH_VALUE, "mm")
+unyt_S = unyt.unyt_quantity(137.895, "MPa")
+unyt_length_100mm = unyt.unyt_quantity(100.0, "millimeter")
+unyt_q1_50mm = unyt.unyt_quantity(50.0, "millimeter")
+unyt_q2_2in = unyt.unyt_quantity(2.0, "inch")
+unyt_q3_05m = unyt.unyt_quantity(0.5, "meter")
+unyt_zero_mm = unyt.unyt_quantity(0, "millimeter")
+
+# Pre-create all Astropy quantities
+astropy_meter = TEST_VALUE * u.m  # type: ignore
+astropy_mm_100 = 100.0 * u.mm  # type: ignore
+astropy_inch_2 = 2.0 * imperial.inch  # type: ignore
+astropy_length_10 = 10.0 * u.m  # type: ignore
+astropy_width_5 = 5.0 * u.m  # type: ignore
+astropy_pressure = PRESSURE_VALUE * imperial.psi  # type: ignore
+astropy_area_10mm = 10.0 * u.mm  # type: ignore
+astropy_P = PRESSURE_VALUE * imperial.psi  # type: ignore
+astropy_D = LENGTH_VALUE * u.mm  # type: ignore
+astropy_S = 137.895 * u.MPa  # type: ignore
+astropy_length_100mm = 100.0 * u.mm  # type: ignore
+astropy_q1_50mm = 50.0 * u.mm  # type: ignore
+astropy_q2_2in = 2.0 * imperial.inch  # type: ignore
+astropy_q3_05m = 0.5 * u.m  # type: ignore
+astropy_zero_mm = 0 * u.mm  # type: ignore
+
+# Fluid dynamics pre-created quantities
+qnty_P1 = FastQuantity(PRESSURE_VALUE, PressureUnits.psi)
+qnty_P2 = FastQuantity(1800.0, PressureUnits.psi)
+qnty_D_fluid = FastQuantity(LENGTH_VALUE, LengthUnits.millimeter)
+qnty_L = FastQuantity(100.0, LengthUnits.meter)
+qnty_rho = FastQuantity(850.0, DimensionlessUnits.dimensionless)
+qnty_pi = FastQuantity(3.14159, DimensionlessUnits.dimensionless)
+qnty_2 = FastQuantity(2, DimensionlessUnits.dimensionless)
+qnty_4 = FastQuantity(4.0, DimensionlessUnits.dimensionless)
+
+pint_P1 = ureg.Quantity(PRESSURE_VALUE, "psi")
+pint_P2 = ureg.Quantity(1800.0, "psi")
+pint_D_fluid = ureg.Quantity(LENGTH_VALUE, "mm")
+pint_L = ureg.Quantity(100.0, "m")
+pint_rho = ureg.Quantity(850.0, "kg/m^3")
+
+unyt_P1 = unyt.unyt_quantity(PRESSURE_VALUE, "psi")
+unyt_P2 = unyt.unyt_quantity(1800.0, "psi")
+unyt_D_fluid = unyt.unyt_quantity(LENGTH_VALUE, "mm")
+unyt_L = unyt.unyt_quantity(100.0, "m")
+
+astropy_P1 = PRESSURE_VALUE * imperial.psi  # type: ignore
+astropy_P2 = 1800.0 * imperial.psi  # type: ignore
+astropy_D_fluid = LENGTH_VALUE * u.mm  # type: ignore
+astropy_L = 100.0 * u.m  # type: ignore
+
 
 def benchmark_operation(operation, iterations=1000):
     """Benchmark an operation with warmup."""
-    
+
     # Warmup
     for _ in range(10):
         try:
             operation()
         except Exception:
             pass
-    
+
     # Time it
     start = time.perf_counter()
     result = None
@@ -33,296 +144,390 @@ def benchmark_operation(operation, iterations=1000):
         try:
             result = operation()
         except Exception as e:
-            return float('inf'), f"ERROR: {e}"
+            return float("inf"), f"ERROR: {e}"
     end = time.perf_counter()
-    
+
     avg_time_us = (end - start) / iterations * 1_000_000
     return avg_time_us, result
 
 
-def format_speedup(qnty_time, pint_time, unyt_time):
+def format_speedup(qnty_time, pint_time, unyt_time, astropy_time=None):
     """Format speedup comparison."""
-    if pint_time == float('inf') or qnty_time == float('inf') or unyt_time == float('inf'):
+    if pint_time == float("inf") or qnty_time == float("inf") or unyt_time == float("inf"):
         return "N/A"
     pint_speedup = pint_time / qnty_time
     unyt_speedup = unyt_time / qnty_time
-    return f"{pint_speedup:.1f}x | {unyt_speedup:.1f}x"
+
+    if astropy_time is not None and astropy_time != float("inf"):
+        astropy_speedup = astropy_time / qnty_time
+        return f"Pint:{pint_speedup:.1f}x|Unyt:{unyt_speedup:.1f}x|Astropy:{astropy_speedup:.1f}x"
+    else:
+        return f"Pint:{pint_speedup:.1f}x|Unyt:{unyt_speedup:.1f}x|Astropy:N/A"
 
 
 def print_comparison_table(results):
     """Print a nice comparison table with speedup factors."""
-    print("\n" + "=" * 80)
-    print("PERFORMANCE COMPARISON: Qnty vs Pint")
-    print("=" * 80)
-    
+    print("\n" + "=" * 120)
+    print("PERFORMANCE COMPARISON: Qnty vs Pint vs Unyt vs Astropy")
+    print("=" * 120)
+
     # Header
-    print(f"\n{'Operation':<30} {'Qnty (us)':<15} {'Pint (us)':<15} {'Speedup':<12} {'Status'}")
-    print("-" * 75)
-    
+    print(f"\n{'Operation':<30} {'Qnty (μs)':<12} {'Pint (μs)':<12} {'Unyt (μs)':<12} {'Astropy (μs)':<14} {'Speedup vs Qnty':<40} {'Status'}")
+    print("-" * 120)
+
     total_qnty_time = 0
     total_pint_time = 0
     total_unyt_time = 0
+    total_astropy_time = 0
     valid_comparisons = 0
 
-    for op_name, qnty_result, pint_result, unyt_result in results:
+    for result_tuple in results:
+        if len(result_tuple) == 4:
+            op_name, qnty_result, pint_result, unyt_result = result_tuple
+            astropy_result = (float("inf"), "N/A")
+        else:
+            op_name, qnty_result, pint_result, unyt_result, astropy_result = result_tuple
+
         qnty_time, _ = qnty_result  # Values not used in display
         pint_time, _ = pint_result
         unyt_time, _ = unyt_result
+        astropy_time, _ = astropy_result
 
         # Format times
-        qnty_str = f"{qnty_time:.2f}" if qnty_time != float('inf') else "ERROR"
-        pint_str = f"{pint_time:.2f}" if pint_time != float('inf') else "ERROR"
-        unyt_str = f"{unyt_time:.2f}" if unyt_time != float('inf') else "ERROR"
+        qnty_str = f"{qnty_time:.2f}" if qnty_time != float("inf") else "ERROR"
+        pint_str = f"{pint_time:.2f}" if pint_time != float("inf") else "ERROR"
+        unyt_str = f"{unyt_time:.2f}" if unyt_time != float("inf") else "ERROR"
+        astropy_str = f"{astropy_time:.2f}" if astropy_time != float("inf") else "N/A"
 
         # Calculate speedup
-        speedup = format_speedup(qnty_time, pint_time, unyt_time)
+        speedup = format_speedup(qnty_time, pint_time, unyt_time, astropy_time)
 
-        # Check if both succeeded
-        if qnty_time != float('inf') and pint_time != float('inf') and unyt_time != float('inf'):
+        # Check if at least qnty succeeded
+        if qnty_time != float("inf"):
             status = "OK"
             total_qnty_time += qnty_time
-            total_pint_time += pint_time
-            total_unyt_time += unyt_time
+            if pint_time != float("inf"):
+                total_pint_time += pint_time
+            if unyt_time != float("inf"):
+                total_unyt_time += unyt_time
+            if astropy_time != float("inf"):
+                total_astropy_time += astropy_time
             valid_comparisons += 1
-            
-            # Highlight significant speedups
-            if pint_time / qnty_time >= 10:
-                speedup = f">> {speedup}"
         else:
             status = "ERR"
 
-        print(f"{op_name:<30} {qnty_str:<15} {pint_str:<15} {unyt_str:<15} {speedup:<12} {status}")
+        print(f"{op_name:<30} {qnty_str:<12} {pint_str:<12} {unyt_str:<12} {astropy_str:<14} {speedup:<40} {status}")
 
     # Summary
     if valid_comparisons > 0:
-        avg_speedup = total_pint_time / total_qnty_time if total_qnty_time > 0 else 0
-        print("-" * 75)
-        print(f"{'AVERAGE':<30} {total_qnty_time/valid_comparisons:.2f} us      "
-              f"{total_pint_time/valid_comparisons:.2f} us      "
-              f"{'=> ' + format_speedup(total_qnty_time/valid_comparisons, total_pint_time/valid_comparisons, total_unyt_time/valid_comparisons):<12}")
+        avg_qnty_time = total_qnty_time / valid_comparisons
+        avg_pint_time = total_pint_time / valid_comparisons if total_pint_time > 0 else 0
+        avg_unyt_time = total_unyt_time / valid_comparisons if total_unyt_time > 0 else 0
+        avg_astropy_time = total_astropy_time / valid_comparisons if total_astropy_time > 0 else 0
 
-        print(f"\n[RESULT] Overall Performance: Qnty is {avg_speedup:.1f}x faster than Pint")
-        
-        # Performance tier message
-        if avg_speedup >= 20:
-            print("[TIER] BLAZING FAST: Over 20x speedup!")
-        elif avg_speedup >= 10:
-            print("[TIER] EXCELLENT: 10-20x speedup!")
-        elif avg_speedup >= 5:
-            print("[TIER] GREAT: 5-10x speedup!")
-        elif avg_speedup >= 2:
-            print("[TIER] GOOD: 2-5x speedup!")
+        print("-" * 120)
+        print(
+            f"{'AVERAGE':<30} {avg_qnty_time:.2f}      {avg_pint_time:.2f}      {avg_unyt_time:.2f}      {avg_astropy_time:.2f}        "
+            f"{format_speedup(avg_qnty_time, avg_pint_time, avg_unyt_time, avg_astropy_time):<40}"
+        )
+
+        if avg_pint_time > 0:
+            pint_speedup = avg_pint_time / avg_qnty_time
+            print(f"\n[RESULT] Overall Performance: Qnty is {pint_speedup:.1f}x faster than Pint")
+
+            # Performance tier message
+            if pint_speedup >= 20:
+                print("[TIER] BLAZING FAST: Over 20x speedup!")
+            elif pint_speedup >= 10:
+                print("[TIER] EXCELLENT: 10-20x speedup!")
+            elif pint_speedup >= 5:
+                print("[TIER] GREAT: 5-10x speedup!")
+            elif pint_speedup >= 2:
+                print("[TIER] GOOD: 2-5x speedup!")
 
 
 def test_benchmark_suite(capsys):
     """Comprehensive benchmark suite comparing Qnty and Pint."""
-    
+
     print("\n" + "=" * 80)
     print("QNTY PERFORMANCE BENCHMARKS")
     print("=" * 80)
     print("\nComparing Qnty (high-performance) vs Pint (established library)")
     print("Testing real-world engineering calculations...")
-    
-    # Initialize libraries
-    ureg = pint.UnitRegistry()
-    
-    # Test data
-    test_value = 100.0
-    pressure_value = 2900.75
-    length_value = 168.275
-    
+
     results = []
-    
+
     # ========== TEST 1: Simple Unit Conversion ==========
     def qnty_conversion():
-        q = FastQuantity(test_value, LengthUnits.meter)
-        return q.to(LengthUnits.millimeter)
-    
+        return qnty_meter.to(LengthUnits.millimeter)
+
     def pint_conversion():
-        q = ureg.Quantity(test_value, 'meter')
-        return q.to('millimeter')
-    
+        return pint_meter.to("millimeter")
+
     def unyt_conversion():
-        q = unyt.unyt_quantity(test_value, 'meter')
-        return q.in_units('millimeter')  # type: ignore
-    
+        return unyt_meter.in_units("millimeter")  # type: ignore
+
+    def astropy_conversion():
+        return astropy_meter.to(u.mm)  # type: ignore
+
     qnty_result = benchmark_operation(qnty_conversion, 2000)
     pint_result = benchmark_operation(pint_conversion, 2000)
     unyt_result = benchmark_operation(unyt_conversion, 2000)
-    results.append(("Unit Conversion (m -> mm)", qnty_result, pint_result, unyt_result))
-    
+    astropy_result = benchmark_operation(astropy_conversion, 2000)
+    results.append(("Unit Conversion (m -> mm)", qnty_result, pint_result, unyt_result, astropy_result))
+
     # ========== TEST 2: Mixed Unit Addition ==========
     def qnty_mixed_addition():
-        q1 = FastQuantity(100.0, LengthUnits.millimeter)
-        q2 = FastQuantity(2.0, LengthUnits.inch)
-        return q1 + q2
-    
+        return qnty_mm_100 + qnty_inch_2
+
     def pint_mixed_addition():
-        q1 = ureg.Quantity(100.0, 'millimeter')
-        q2 = ureg.Quantity(2.0, 'inch')
-        return q1 + q2
+        return pint_mm_100 + pint_inch_2
 
     def unyt_mixed_addition():
-        q1 = unyt.unyt_quantity(100.0, 'millimeter')
-        q2 = unyt.unyt_quantity(2.0, 'inch')
-        return q1 + q2
+        return unyt_mm_100 + unyt_inch_2
+
+    def astropy_mixed_addition():
+        return astropy_mm_100 + astropy_inch_2
 
     qnty_result = benchmark_operation(qnty_mixed_addition, 2000)
     pint_result = benchmark_operation(pint_mixed_addition, 2000)
     unyt_result = benchmark_operation(unyt_mixed_addition, 2000)
-    results.append(("Mixed Addition (mm + in)", qnty_result, pint_result, unyt_result))
+    astropy_result = benchmark_operation(astropy_mixed_addition, 2000) if ASTROPY_AVAILABLE else (float("inf"), "N/A")
+    results.append(("Mixed Addition (mm + in)", qnty_result, pint_result, unyt_result, astropy_result))
 
     # ========== TEST 3: Multiplication ==========
     def qnty_multiplication():
-        length = FastQuantity(10.0, LengthUnits.meter)
-        width = FastQuantity(5.0, LengthUnits.meter)
-        return length * width
-    
+        return qnty_length_10 * qnty_width_5
+
     def pint_multiplication():
-        length = ureg.Quantity(10.0, 'meter')
-        width = ureg.Quantity(5.0, 'meter')
-        return length * width
+        return pint_length_10 * pint_width_5
 
     def unyt_multiplication():
-        length = unyt.unyt_quantity(10.0, 'meter')
-        width = unyt.unyt_quantity(5.0, 'meter')
-        return length * width
+        return unyt_length_10 * unyt_width_5
+
+    def astropy_multiplication():
+        return astropy_length_10 * astropy_width_5
 
     qnty_result = benchmark_operation(qnty_multiplication, 2000)
     pint_result = benchmark_operation(pint_multiplication, 2000)
     unyt_result = benchmark_operation(unyt_multiplication, 2000)
-    results.append(("Multiplication (m x m)", qnty_result, pint_result, unyt_result))
+    astropy_result = benchmark_operation(astropy_multiplication, 2000) if ASTROPY_AVAILABLE else (float("inf"), "N/A")
+    results.append(("Multiplication (m x m)", qnty_result, pint_result, unyt_result, astropy_result))
 
     # ========== TEST 4: Division ==========
     def qnty_division():
-        pressure = FastQuantity(pressure_value, PressureUnits.psi)
-        area = FastQuantity(10.0, LengthUnits.millimeter)
-        return pressure / area
-    
+        return qnty_pressure / qnty_area_10mm
+
     def pint_division():
-        pressure = ureg.Quantity(pressure_value, 'psi')
-        area = ureg.Quantity(10.0, 'millimeter')
-        return pressure / area
+        return pint_pressure / pint_area_10mm
 
     def unyt_division():
-        pressure = unyt.unyt_quantity(pressure_value, 'psi')
-        area = unyt.unyt_quantity(10.0, 'millimeter')
-        return pressure / area
+        return unyt_pressure / unyt_area_10mm
+
+    def astropy_division():
+        return astropy_pressure / astropy_area_10mm
 
     qnty_result = benchmark_operation(qnty_division, 2000)
     pint_result = benchmark_operation(pint_division, 2000)
     unyt_result = benchmark_operation(unyt_division, 2000)
-    results.append(("Division (psi / mm)", qnty_result, pint_result, unyt_result))
+    astropy_result = benchmark_operation(astropy_division, 2000) if ASTROPY_AVAILABLE else (float("inf"), "N/A")
+    results.append(("Division (psi / mm)", qnty_result, pint_result, unyt_result, astropy_result))
 
     # ========== TEST 5: Complex Engineering Calculation (ASME) ==========
     def qnty_complex():
-        P = FastQuantity(pressure_value, PressureUnits.psi)
-        D = FastQuantity(length_value, LengthUnits.millimeter)
-        S = FastQuantity(137.895, PressureUnits.MPa)
-        E = FastQuantity(0.8, DimensionlessUnits.dimensionless)
-        W = FastQuantity(1.0, DimensionlessUnits.dimensionless)
-        Y = FastQuantity(0.4, DimensionlessUnits.dimensionless)
-        return (P * D) / (2 * (S * E * W + P * Y))
-    
+        return (qnty_P * qnty_D) / (2 * (qnty_S * qnty_E * qnty_W + qnty_P * qnty_Y))
+
     def pint_complex():
-        P = ureg.Quantity(pressure_value, 'psi')
-        D = ureg.Quantity(length_value, 'mm')
-        S = ureg.Quantity(137.895, 'MPa')
         E = 0.8
         W = 1.0
         Y = 0.4
-        return (P * D) / (2 * (S * E * W + P * Y)) # type: ignore
+        return (pint_P * pint_D) / (2 * (pint_S * E * W + pint_P * Y))  # type: ignore
 
     def unyt_complex():
-        P = unyt.unyt_quantity(pressure_value, 'psi')
-        D = unyt.unyt_quantity(length_value, 'mm')
-        S = unyt.unyt_quantity(137.895, 'MPa')
         E = 0.8
         W = 1.0
         Y = 0.4
-        return (P * D) / (2 * (S * E * W + P * Y))
+        return (unyt_P * unyt_D) / (2 * (unyt_S * E * W + unyt_P * Y))
+
+    def astropy_complex():
+        E = 0.8
+        W = 1.0
+        Y = 0.4
+        return (astropy_P * astropy_D) / (2 * (astropy_S * E * W + astropy_P * Y))
 
     qnty_result = benchmark_operation(qnty_complex, 1000)
     pint_result = benchmark_operation(pint_complex, 1000)
     unyt_result = benchmark_operation(unyt_complex, 1000)
-    results.append(("Complex ASME Equation", qnty_result, pint_result, unyt_result))
+    astropy_result = benchmark_operation(astropy_complex, 1000) if ASTROPY_AVAILABLE else (float("inf"), "N/A")
+    results.append(("Complex ASME Equation", qnty_result, pint_result, unyt_result, astropy_result))
 
     # ========== TEST 6: Type-Safe Variables ==========
     def qnty_typesafe():
-        length = Length("beam_length")
-        length.set(100.0).millimeter
-        assert length.quantity is not None
-        return length.quantity.to(LengthUnits.meter)
-    
+        assert qnty_length_var.quantity is not None
+        return qnty_length_var.quantity.to(LengthUnits.meter)
+
     def pint_typesafe():
         # Pint doesn't have type-safe variables, so we simulate
-        length = ureg.Quantity(100.0, 'millimeter')
-        return length.to('meter')
+        return pint_length_100mm.to("meter")
 
     def unyt_typesafe():
-        length = unyt.unyt_quantity(100.0, 'millimeter')
-        return length.in_units('meter')  # type: ignore
+        return unyt_length_100mm.in_units("meter")  # type: ignore
+
+    def astropy_typesafe():
+        return astropy_length_100mm.to(u.m)  # type: ignore
 
     qnty_result = benchmark_operation(qnty_typesafe, 1500)
     pint_result = benchmark_operation(pint_typesafe, 1500)
     unyt_result = benchmark_operation(unyt_typesafe, 1500)
-    results.append(("Type-Safe Variables", qnty_result, pint_result, unyt_result))
+    astropy_result = benchmark_operation(astropy_typesafe, 1500) if ASTROPY_AVAILABLE else (float("inf"), "N/A")
+    results.append(("Type-Safe Variables", qnty_result, pint_result, unyt_result, astropy_result))
 
     # ========== TEST 7: Chained Operations ==========
     def qnty_chained():
-        q1 = FastQuantity(50.0, LengthUnits.millimeter)
-        q2 = FastQuantity(2.0, LengthUnits.inch)
-        q3 = FastQuantity(0.5, LengthUnits.meter)
-        result = (q1 + q2) * 2 + q3
+        result = (qnty_q1_50mm + qnty_q2_2in) * 2 + qnty_q3_05m
         return result.to(LengthUnits.millimeter)
-    
+
     def pint_chained():
-        q1 = ureg.Quantity(50.0, 'millimeter')
-        q2 = ureg.Quantity(2.0, 'inch')
-        q3 = ureg.Quantity(0.5, 'meter')
-        result = (q1 + q2) * 2 + q3 # type: ignore
-        return result.to('millimeter') # type: ignore
+        result = (pint_q1_50mm + pint_q2_2in) * 2 + pint_q3_05m  # type: ignore
+        return result.to("millimeter")  # type: ignore
 
     def unyt_chained():
-        q1 = unyt.unyt_quantity(50.0, 'millimeter')
-        q2 = unyt.unyt_quantity(2.0, 'inch')
-        q3 = unyt.unyt_quantity(0.5, 'meter')
-        result = (q1 + q2) * 2 + q3
-        return result.in_units('millimeter')  # type: ignore
+        result = (unyt_q1_50mm + unyt_q2_2in) * 2 + unyt_q3_05m
+        return result.in_units("millimeter")  # type: ignore
+
+    def astropy_chained():
+        result = (astropy_q1_50mm + astropy_q2_2in) * 2 + astropy_q3_05m
+        return result.to(u.mm)  # type: ignore
 
     qnty_result = benchmark_operation(qnty_chained, 1000)
     pint_result = benchmark_operation(pint_chained, 1000)
     unyt_result = benchmark_operation(unyt_chained, 1000)
-    results.append(("Chained Operations", qnty_result, pint_result, unyt_result))
+    astropy_result = benchmark_operation(astropy_chained, 1000) if ASTROPY_AVAILABLE else (float("inf"), "N/A")
+    results.append(("Chained Operations", qnty_result, pint_result, unyt_result, astropy_result))
 
     # ========== TEST 8: Many Small Operations ==========
     def qnty_many_ops():
-        total = FastQuantity(0, LengthUnits.millimeter)
+        total = qnty_zero_mm
         for i in range(10):
             total = total + FastQuantity(i, LengthUnits.millimeter)
         return total
-    
+
     def pint_many_ops():
-        total = ureg.Quantity(0, 'millimeter')
+        total = pint_zero_mm
         for i in range(10):
-            total = total + ureg.Quantity(i, 'millimeter')
+            total = total + ureg.Quantity(i, "millimeter")
         return total
 
     def unyt_many_ops():
-        total = unyt.unyt_quantity(0, 'millimeter')
+        total = unyt_zero_mm
         for i in range(10):
-            total = total + unyt.unyt_quantity(i, 'millimeter')
+            total = total + unyt.unyt_quantity(i, "millimeter")
+        return total
+
+    def astropy_many_ops():
+        total = astropy_zero_mm
+        for i in range(10):
+            total = total + i * u.mm  # type: ignore
         return total
 
     qnty_result = benchmark_operation(qnty_many_ops, 500)
     pint_result = benchmark_operation(pint_many_ops, 500)
     unyt_result = benchmark_operation(unyt_many_ops, 500)
-    results.append(("10 Additions Loop", qnty_result, pint_result, unyt_result))
+    astropy_result = benchmark_operation(astropy_many_ops, 500) if ASTROPY_AVAILABLE else (float("inf"), "N/A")
+    results.append(("10 Additions Loop", qnty_result, pint_result, unyt_result, astropy_result))
+
+    # ========== TEST 9: Complex Fluid Dynamics Equation ==========
+    # Simplified engineering calculation with multiple unit conversions and operations
+    def qnty_fluid_dynamics():
+        # Convert pressure drop to consistent units
+        dP = qnty_P1 - qnty_P2
+        dP_Pa = dP.to(PressureUnits.Pa)
+
+        # Diameter in meters for calculation
+        D_m = qnty_D_fluid.to(LengthUnits.meter)
+
+        # Flow calculation with unit-aware operations
+        area = qnty_pi * D_m * D_m / qnty_4
+
+        # Simplified velocity calculation (unit-aware pressure-driven flow)
+        velocity_factor = (dP_Pa * area) / (qnty_rho * qnty_L)
+
+        # Return a complex engineering result with unit scaling
+        result = velocity_factor * FastQuantity(1000, DimensionlessUnits.dimensionless)
+        return result
+
+    def pint_fluid_dynamics():
+        # Convert pressure drop to consistent units
+        dP = pint_P1 - pint_P2
+        dP_Pa = dP.to("Pa")
+
+        # Diameter in meters for calculation
+        D_m = pint_D_fluid.to("m")
+
+        # Flow calculation with unit-aware operations
+        pi = ureg.Quantity(3.14159, "dimensionless")
+        four = ureg.Quantity(4.0, "dimensionless")
+        area = pi * D_m * D_m / four
+
+        # Simplified velocity calculation (unit-aware pressure-driven flow)
+        velocity_factor = (dP_Pa * area) / (pint_rho * pint_L)
+
+        # Return a complex engineering result with unit scaling
+        result = velocity_factor * ureg.Quantity(1000, "dimensionless")
+        return result
+
+    def unyt_fluid_dynamics():
+        # Convert pressure drop to consistent units
+        dP = unyt_P1 - unyt_P2
+        dP_Pa = dP.in_units("Pa")  # type: ignore
+
+        # Diameter in meters for calculation
+        D_m = unyt_D_fluid.in_units("m")  # type: ignore
+
+        # Flow calculation with unit-aware operations
+        pi = unyt.unyt_quantity(3.14159, "dimensionless")
+        four = unyt.unyt_quantity(4.0, "dimensionless")
+        rho = unyt.unyt_quantity(850.0, "kg/m**3")
+        area = pi * D_m * D_m / four
+
+        # Simplified velocity calculation (unit-aware pressure-driven flow)
+        velocity_factor = (dP_Pa * area) / (rho * unyt_L)
+
+        # Return a complex engineering result with unit scaling
+        result = velocity_factor * unyt.unyt_quantity(1000, "dimensionless")
+        return result
+
+    def astropy_fluid_dynamics():
+        # Convert pressure drop to consistent units
+        dP = astropy_P1 - astropy_P2
+        dP_Pa = dP.to(u.Pa)  # type: ignore
+
+        # Diameter in meters for calculation
+        D_m = astropy_D_fluid.to(u.m)  # type: ignore
+
+        # Flow calculation with unit-aware operations
+        pi = 3.14159 * u.dimensionless_unscaled  # type: ignore
+        four = 4.0 * u.dimensionless_unscaled  # type: ignore
+        rho = 850.0 * (u.kg / u.m**3)  # type: ignore  # density
+        area = pi * D_m * D_m / four
+
+        # Simplified velocity calculation (unit-aware pressure-driven flow)
+        velocity_factor = (dP_Pa * area) / (rho * astropy_L)
+
+        # Return a complex engineering result with unit scaling
+        result = velocity_factor * (1000 * u.dimensionless_unscaled)  # type: ignore
+        return result
+
+    qnty_result = benchmark_operation(qnty_fluid_dynamics, 200)
+    pint_result = benchmark_operation(pint_fluid_dynamics, 200)
+    unyt_result = benchmark_operation(unyt_fluid_dynamics, 200)
+    astropy_result = benchmark_operation(astropy_fluid_dynamics, 200)
+    results.append(("Complex Fluid Dynamics", qnty_result, pint_result, unyt_result, astropy_result))
 
     # Print results
     with capsys.disabled():
         print_comparison_table(results)
-        
+
         # Additional insights
         print("\n" + "=" * 80)
         print("KEY INSIGHTS:")
@@ -339,10 +544,15 @@ if __name__ == "__main__":
     # Run the benchmark when executed directly
     class DummyCapsys:
         """Dummy capsys for direct execution."""
+
         def disabled(self):
             class Context:
-                def __enter__(self): pass
-                def __exit__(self, *_): pass
+                def __enter__(self):
+                    pass
+
+                def __exit__(self, *_):
+                    pass
+
             return Context()
-    
+
     test_benchmark_suite(DummyCapsys())
