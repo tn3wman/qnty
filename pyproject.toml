@@ -1,6 +1,6 @@
 [project]
 name = "qnty"
-version = "0.0.3"
+version = "0.0.5"
 description = "High-performance unit system library for Python with dimensional safety and fast unit conversions"
 readme = "README.md"
 license = { text = "Apache-2.0" }
