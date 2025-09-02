@@ -131,7 +131,9 @@ VARIABLE_DEFINITIONS = {
             ("erg per gram", "erg_per_gram", 0.0001, "Gy", ['erg_per_g']),
             ("gram-rad", "gram_rad", 0.01, "Gy", ['g_rad']),
             ("gray", "gray", 1.0, "Gy", ['Gy']),
-            ("rad", "rad", 0.01, "Gy", [])
+            ("rad", "rad", 0.01, "Gy", []),
+            ("milligray", "milligray", 0.001, "Gy", ['mGy']),
+            ("microgray", "microgray", 1e-06, "Gy", ['μGy'])
         ],
         "field_name": "absorbed_dose",
         "display_name": "Absorbed Radiation Dose",
@@ -165,7 +167,9 @@ VARIABLE_DEFINITIONS = {
         "units": [
             ("kilogram mol or kmol", "kilogram_mol_or_kmol", 1000.0, "mol", ['kmol']),
             ("mole (gram)", "mole_(gram)", 1.0, "mol", ['mol']),
-            ("pound-mole", "pound_mole", 453.6, "mol", ['lb-mol', 'mole'])
+            ("pound-mole", "pound_mole", 453.6, "mol", ['lb-mol', 'mole']),
+            ("millimole (gram)", "millimole_(gram)", 0.001, "mol", ['mmol']),
+            ("micromole (gram)", "micromole_(gram)", 1e-06, "mol", ['μmol'])
         ],
         "field_name": "amount_of_substance",
         "display_name": "Amount of Substance",
@@ -317,7 +321,11 @@ VARIABLE_DEFINITIONS = {
             ("farad (intl)", "farad_(intl)", 0.99951, "F", []),
             ("jar", "jar", 1.1111e-09, "F", ['jar']),
             ("puff", "puff", 1e-12, "F", ['puff']),
-            ("statfarad", "statfarad", 1.113e-12, "F", [])
+            ("statfarad", "statfarad", 1.113e-12, "F", []),
+            ("millifarad", "millifarad", 0.001, "F", ['mF']),
+            ("microfarad", "microfarad", 1e-06, "F", ['μF']),
+            ("nanofarad", "nanofarad", 1e-09, "F", ['nF']),
+            ("picofarad", "picofarad", 1e-12, "F", ['pF'])
         ],
         "field_name": "electric_capacitance",
         "display_name": "Electric Capacitance",
@@ -332,7 +340,12 @@ VARIABLE_DEFINITIONS = {
             ("faraday (C12)", "faraday_(C12)", 1.0, "F", ['F']),
             ("franklin", "franklin", 3.45715e-15, "F", ['Fr']),
             ("statcoulomb", "statcoulomb", 3.45715e-15, "F", []),
-            ("u.a. charge", "u_a__charge", 1.66054e-24, "F", [])
+            ("u.a. charge", "u_a__charge", 1.66054e-24, "F", []),
+            ("kilocoulomb", "kilocoulomb", 0.010364000000000002, "F", ['kF']),
+            ("millicoulomb", "millicoulomb", 1.0364000000000001e-08, "F", ['mF']),
+            ("microcoulomb", "microcoulomb", 1.0364e-11, "F", ['μF']),
+            ("nanocoulomb", "nanocoulomb", 1.0364000000000002e-14, "F", ['nF']),
+            ("picocoulomb", "picocoulomb", 1.0364000000000001e-17, "F", ['pF'])
         ],
         "field_name": "electric_charge",
         "display_name": "Electric Charge",
@@ -384,7 +397,10 @@ VARIABLE_DEFINITIONS = {
             ("henry (intl mean)", "henry_(intl_mean)", 1.00049, "H", []),
             ("henry (intl US)", "henry_(intl_US)", 1.000495, "H", []),
             ("mic", "mic", 1e-06, "H", ['mic']),
-            ("stathenry", "stathenry", 898760000000.0, "H", [])
+            ("stathenry", "stathenry", 898760000000.0, "H", []),
+            ("millihenry", "millihenry", 0.001, "H", ['mH']),
+            ("microhenry", "microhenry", 1e-06, "H", ['μH']),
+            ("nanohenry", "nanohenry", 1e-09, "H", ['nH'])
         ],
         "field_name": "electric_inductance",
         "display_name": "Electric Inductance",
@@ -398,7 +414,12 @@ VARIABLE_DEFINITIONS = {
             ("u.a. potential", "u_a__potential", 27.2114, "V", []),
             ("volt", "volt", 1.0, "V", ['V']),
             ("volt (intl mean)", "volt_(intl_mean)", 1.00034, "V", []),
-            ("volt (US)", "volt_(US)", 1.00033, "V", [])
+            ("volt (US)", "volt_(US)", 1.00033, "V", []),
+            ("kilovolt", "kilovolt", 1000.0, "V", ['kV']),
+            ("millivolt", "millivolt", 0.001, "V", ['mV']),
+            ("microvolt", "microvolt", 1e-06, "V", ['μV']),
+            ("nanovolt", "nanovolt", 1e-09, "V", ['nV']),
+            ("picovolt", "picovolt", 1e-12, "V", ['pV'])
         ],
         "field_name": "electric_potential",
         "display_name": "Electric Potential",
@@ -416,7 +437,10 @@ VARIABLE_DEFINITIONS = {
             ("ohm (legal)", "ohm_(legal)", 0.9972, "$\\Omega$", []),
             ("preece", "preece", 1000000.0, "$\\Omega$", []),
             ("statohm", "statohm", 8.987552, "$\\Omega$", []),
-            ("wheatstone", "wheatstone", 0.0025, "$\\Omega$", [])
+            ("wheatstone", "wheatstone", 0.0025, "$\\Omega$", []),
+            ("kiloohm", "kiloohm", 1000.0, "$\\Omega$", ['k$\\\\Omega$']),
+            ("megaohm", "megaohm", 1000000.0, "$\\Omega$", ['M$\\\\Omega$']),
+            ("milliohm", "milliohm", 0.001, "$\\Omega$", ['m$\\\\Omega$'])
         ],
         "field_name": "electric_resistance",
         "display_name": "Electric Resistance",
@@ -429,7 +453,8 @@ VARIABLE_DEFINITIONS = {
             ("esu cgs", "esu_cgs", 1.1127e-12, "S", []),
             ("mho", "mho", 1.0, "S", ['mho']),
             ("microsiemens", "microsiemens", 1e-06, "S", []),
-            ("siemens", "siemens", 1.0, "S", ['S'])
+            ("siemens", "siemens", 1.0, "S", ['S']),
+            ("millisiemens", "millisiemens", 0.001, "S", ['mS'])
         ],
         "field_name": "electrical_conductance",
         "display_name": "Electrical Conductance",
@@ -513,7 +538,10 @@ VARIABLE_DEFINITIONS = {
             ("therm (refineries)", "therm_(refineries)", 1055900000.0000001, "J", ['therm (refy)', 'therm']),
             ("therm (US)", "therm_(US)", 105480000.0, "J", ['therm']),
             ("ton coal equivalent", "ton_coal_equivalent", 292900000.0, "J", []),
-            ("ton oil equivalent", "ton_oil_equivalent", 418700000.0, "J", [])
+            ("ton oil equivalent", "ton_oil_equivalent", 418700000.0, "J", []),
+            ("kilojoule", "kilojoule", 1000.0, "J", ['kJ']),
+            ("megajoule", "megajoule", 1000000.0, "J", ['MJ']),
+            ("gigajoule", "gigajoule", 1000000000.0, "J", ['GJ'])
         ],
         "field_name": "energy_heat_work",
         "display_name": "Energy, Heat, Work",
@@ -547,7 +575,9 @@ VARIABLE_DEFINITIONS = {
             ("sthène", "sthène", 1000.0, "N", ['sn']),
             ("ton (force, long)", "ton_(force,_long)", 9964.016, "N", ['LT']),
             ("ton (force, metric)", "ton_(force,_metric)", 9806.65, "N", ['MT']),
-            ("ton (force, short)", "ton_(force,_short)", 8896.44, "N", ['T'])
+            ("ton (force, short)", "ton_(force,_short)", 8896.44, "N", ['T']),
+            ("kilonewton", "kilonewton", 1000.0, "N", ['kN']),
+            ("millinewton", "millinewton", 0.001, "N", ['mN'])
         ],
         "field_name": "force",
         "display_name": "Force",
@@ -730,7 +760,8 @@ VARIABLE_DEFINITIONS = {
             ("span", "span", 0.2286, "m", ['span']),
             ("thou (millinch)", "thou_(millinch)", 2.54e-05, "m", ['thou']),
             ("toise (metric)", "toise_(metric)", 2.0, "m", []),
-            ("yard", "yard", 0.9144, "m", ['yd'])
+            ("yard", "yard", 0.9144, "m", ['yd']),
+            ("nanometer", "nanometer", 1e-09, "m", ['nm'])
         ],
         "field_name": "length",
         "display_name": "Length",
@@ -823,7 +854,9 @@ VARIABLE_DEFINITIONS = {
             ("line", "line", 1e-08, "Wb", ['line']),
             ("maxwell", "maxwell", 1e-08, "Wb", ['Mx']),
             ("unit pole", "unit_pole", 1.2565999999999998e-07, "Wb", []),
-            ("weber", "weber", 1.0, "Wb", ['Wb'])
+            ("weber", "weber", 1.0, "Wb", ['Wb']),
+            ("milliweber", "milliweber", 0.001, "Wb", ['mWb']),
+            ("microweber", "microweber", 1e-06, "Wb", ['μWb'])
         ],
         "field_name": "magnetic_flux",
         "display_name": "Magnetic Flux",
@@ -838,7 +871,10 @@ VARIABLE_DEFINITIONS = {
             ("maxwell per square centimeter", "maxwell_per_square_centimeter", 0.0001, "T", []),
             ("tesla", "tesla", 1.0, "T", ['T']),
             ("u.a.", "u_a_", 2350520000000000.0, "T", []),
-            ("weber per square meter", "weber_per_square_meter", 1.0, "T", [])
+            ("weber per square meter", "weber_per_square_meter", 1.0, "T", []),
+            ("millitesla", "millitesla", 0.001, "T", ['mT']),
+            ("microtesla", "microtesla", 1e-06, "T", ['μT']),
+            ("nanotesla", "nanotesla", 1e-09, "T", ['nT'])
         ],
         "field_name": "magnetic_induction_field_strength",
         "display_name": "Magnetic Induction Field Strength",
@@ -871,7 +907,12 @@ VARIABLE_DEFINITIONS = {
             ("abampere-turn", "abampere_turn", 10.0, "A", []),
             ("ampere", "ampere", 1.0, "A", ['A']),
             ("ampere-turn", "ampere_turn", 2864.77, "A", []),
-            ("gilbert", "gilbert", 0.79577, "A", ['Gb'])
+            ("gilbert", "gilbert", 0.79577, "A", ['Gb']),
+            ("kiloampere", "kiloampere", 1000.0, "A", ['kA']),
+            ("milliampere", "milliampere", 0.001, "A", ['mA']),
+            ("microampere", "microampere", 1e-06, "A", ['μA']),
+            ("nanoampere", "nanoampere", 1e-09, "A", ['nA']),
+            ("picoampere", "picoampere", 1e-12, "A", ['pA'])
         ],
         "field_name": "magnetomotive_force",
         "display_name": "Magnetomotive Force",
@@ -1252,7 +1293,10 @@ VARIABLE_DEFINITIONS = {
             ("water horsepower", "water_horsepower", 746.043, "W", []),
             ("watt", "watt", 1.0, "W", ['W']),
             ("watt (international, mean)", "watt_(international,_mean)", 1.00019, "W", []),
-            ("watt (international, US)", "watt_(international,_US)", 1.000165, "W", [])
+            ("watt (international, US)", "watt_(international,_US)", 1.000165, "W", []),
+            ("gigawatt", "gigawatt", 1000000000.0, "W", ['GW']),
+            ("milliwatt", "milliwatt", 0.001, "W", ['mW']),
+            ("microwatt", "microwatt", 1e-06, "W", ['μW'])
         ],
         "field_name": "power_thermal_duty",
         "display_name": "Power, Thermal Duty",
@@ -1286,7 +1330,8 @@ VARIABLE_DEFINITIONS = {
             ("pièze", "pièze", 1000.0, "Pa", ['pz']),
             ("pound force per square foot", "pound_force_per_square_foot", 47.880259, "Pa", ['psf']),
             ("pound force per square inch", "pound_force_per_square_inch", 6894.8, "Pa", ['psi']),
-            ("torr", "torr", 133.322, "Pa", ['mm Hg ( 0{ ^{circ C)'])
+            ("torr", "torr", 133.322, "Pa", ['mm Hg ( 0{ ^{circ C)']),
+            ("kilopascal", "kilopascal", 1000.0, "Pa", ['kPa'])
         ],
         "field_name": "pressure",
         "display_name": "Pressure",
@@ -1296,7 +1341,9 @@ VARIABLE_DEFINITIONS = {
         "default_unit": "sievert",
         "units": [
             ("rem", "rem", 0.01, "Sv", ['rem']),
-            ("sievert", "sievert", 1.0, "Sv", ['Sv'])
+            ("sievert", "sievert", 1.0, "Sv", ['Sv']),
+            ("millisievert", "millisievert", 0.001, "Sv", ['mSv']),
+            ("microsievert", "microsievert", 1e-06, "Sv", ['μSv'])
         ],
         "field_name": "radiation_dose_equivalent",
         "display_name": "Radiation Dose Equivalent",
@@ -1321,7 +1368,10 @@ VARIABLE_DEFINITIONS = {
             ("curie", "curie", 37000000000.0, "Bq", ['Ci']),
             ("Mache unit", "Mache_unit", 13.32, "Bq", []),
             ("rutherford", "rutherford", 1000000.0, "Bq", ['Rd']),
-            ("stat", "stat", 1.34e-16, "Bq", ['stat'])
+            ("stat", "stat", 1.34e-16, "Bq", ['stat']),
+            ("kilobecquerel", "kilobecquerel", 1000.0, "Bq", ['kBq']),
+            ("megabecquerel", "megabecquerel", 1000000.0, "Bq", ['MBq']),
+            ("gigabecquerel", "gigabecquerel", 1000000000.0, "Bq", ['GBq'])
         ],
         "field_name": "radioactivity",
         "display_name": "Radioactivity",
@@ -1512,7 +1562,11 @@ VARIABLE_DEFINITIONS = {
             ("sidereal year (1900 AD)", "sidereal_year_(1900_AD)", 31551999.999999996, "s", ['a (sider)', 'yr']),
             ("tropical year", "tropical_year", 31557000.0, "s", []),
             ("wink", "wink", 3.33333e-12, "s", ['wink']),
-            ("year", "year", 31558000.0, "s", ['a', 'y', 'yr'])
+            ("year", "year", 31558000.0, "s", ['a', 'y', 'yr']),
+            ("millisecond", "millisecond", 0.001, "s", ['ms']),
+            ("microsecond", "microsecond", 1e-06, "s", ['μs']),
+            ("nanosecond", "nanosecond", 1e-09, "s", ['ns']),
+            ("picosecond", "picosecond", 1e-12, "s", ['ps'])
         ],
         "field_name": "time",
         "display_name": "Time",
