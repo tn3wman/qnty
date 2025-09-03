@@ -4,7 +4,7 @@ import pytest
 
 from src.qnty.equation import Equation
 from src.qnty.expression import BinaryOperation, Expression, VariableReference
-from src.qnty.variable import TypeSafeVariable
+from src.qnty.variable import FastQuantity, TypeSafeVariable
 from src.qnty.variables import Dimensionless, Length, Pressure
 
 
@@ -168,9 +168,9 @@ class TestEquationSolving:
         # Should be satisfied
         assert eqn.check_residual(variables) is True
         
-        # Change c to wrong value
+        # Change c to wrong value by creating new quantity
         assert c.quantity is not None
-        c.quantity.value = 9  # Wrong value
+        c.quantity = FastQuantity(9, c.quantity.unit)  # Wrong value
         assert eqn.check_residual(variables) is False
     
     def test_unknown_variable_detection(self):

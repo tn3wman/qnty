@@ -8,7 +8,7 @@ Provides abstract base class for unit modules and registration functionality.
 from abc import ABC, abstractmethod
 from typing import Any
 
-from ..unit import UnitDefinition
+from ..unit import UnitConstant, UnitDefinition
 
 
 class UnitModule(ABC):
@@ -26,19 +26,26 @@ class UnitModule(ABC):
     
     def register_to_registry(self, unit_registry):
         """Register all unit definitions to the given registry."""
-        from ..unit import UnitConstant
         
-        for unit_def in self.get_unit_definitions():
+        unit_definitions = self.get_unit_definitions()
+        units_class = self.get_units_class()
+        
+        # Phase 1: Register all units first (batch operation)
+        for unit_def in unit_definitions:
             if unit_def.name not in unit_registry.units:
                 unit_registry.register_unit(unit_def)
         
-        # Populate the units class with constants from registry
-        units_class = self.get_units_class()
-        for unit_def in self.get_unit_definitions():
-            unit_constant = UnitConstant(unit_registry.units[unit_def.name])
+        # Phase 2: Batch create unit constants with caching
+        unit_constants = {}
+        for unit_def in unit_definitions:
+            unit_constants[unit_def.name] = UnitConstant(unit_registry.units[unit_def.name])
+        
+        # Phase 3: Batch set all attributes
+        for unit_def in unit_definitions:
+            unit_constant = unit_constants[unit_def.name]
             setattr(units_class, unit_def.name, unit_constant)
             
-            # Add any aliases
+            # Add symbol alias if different from name
             if unit_def.symbol and unit_def.symbol != unit_def.name:
                 setattr(units_class, unit_def.symbol, unit_constant)
             

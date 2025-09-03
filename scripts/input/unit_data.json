@@ -204,22 +204,21 @@
       {
         "name": "gon",
         "normalized_name": "gon",
-        "notation": "g or gon",
+        "notation": "gon",
         "si_conversion": 0.015708,
         "imperial_conversion": 0.9,
         "aliases": [
-          "g"
+          "gon"
         ]
       },
       {
         "name": "grade",
         "normalized_name": "grade",
-        "notation": "g or grad",
+        "notation": "grade",
         "si_conversion": 0.015708,
         "imperial_conversion": 0.9,
         "aliases": [
-          "g",
-          "grad"
+          "grade"
         ]
       },
       {

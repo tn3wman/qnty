@@ -19,7 +19,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 # Import prefixes directly to avoid circular import
 sys.path.insert(0, str(Path(__file__).parent.parent / "src" / "qnty"))
-from qnty.prefixes import PREFIXABLE_UNITS, StandardPrefixes
+from qnty.unit_types.prefixes import PREFIXABLE_UNITS, StandardPrefixes
 
 
 def load_json_data(file_path: Path) -> dict:
@@ -146,18 +146,60 @@ def convert_unit_name_to_property(unit_name: str) -> str:
     """Convert unit name to property name without automatic pluralization."""
     # Use unit name as-is for property name
     # Replace any characters that are not valid Python identifiers
-    property_name = unit_name.replace('-', '_').replace(' ', '_').replace('.', '_')
+    property_name = (unit_name.replace('-', '_')
+                              .replace(' ', '_')
+                              .replace('.', '_')
+                              .replace('(', '_')
+                              .replace(')', '_')
+                              .replace(',', '_')
+                              .replace("'", '_')
+                              .replace('"', '_')
+                              .replace('/', '_')
+                              .replace('\\', '_')
+                              .replace('°', '_degree_')
+                              .replace('²', '_square_')
+                              .replace('³', '_cubic_')
+                              .replace('μ', 'u')
+                              .replace('Ω', 'ohm')
+                              .replace('$', '_')
+                              .replace('{', '_')
+                              .replace('}', '_')
+                              .replace('[', '_')
+                              .replace(']', '_')
+                              .replace('=', '_eq_')
+                              .replace('+', '_plus_')
+                              .replace('*', '_star_')
+                              .replace('&', '_and_')
+                              .replace('%', '_percent_')
+                              .replace('#', '_hash_')
+                              .replace('@', '_at_')
+                              .replace('!', '_excl_')
+                              .replace('?', '_quest_')
+                              .replace('<', '_lt_')
+                              .replace('>', '_gt_')
+                              .replace('^', '_power_')
+                              .replace('~', '_tilde_')
+                              .replace('`', '_backtick_')
+                              .replace('|', '_pipe_'))
+    
+    # Remove consecutive underscores and leading/trailing underscores
+    import re
+    property_name = re.sub(r'_+', '_', property_name).strip('_')
     
     # Handle Python reserved words and other edge cases
-    reserved_words = {'class', 'def', 'if', 'else', 'for', 'while', 'import', 'from', 'as', 'in'}
+    reserved_words = {'class', 'def', 'if', 'else', 'for', 'while', 'import', 'from', 'as', 'in', 'or', 'and', 'not'}
     if property_name in reserved_words:
         property_name = f"{property_name}_unit"
+    
+    # Ensure it starts with letter or underscore (valid Python identifier)
+    if property_name and not (property_name[0].isalpha() or property_name[0] == '_'):
+        property_name = f"unit_{property_name}"
     
     return property_name
 
 
 def generate_consolidated_variables(parsed_data: dict, dimension_mapping: dict) -> str:
-    """Generate the variables.py content using exact same approach as consolidated units."""
+    """Generate the variables.py content with static class definitions for performance."""
     
     # Collect all dimension constants used in the file
     dimension_constants = set()
@@ -176,7 +218,7 @@ def generate_consolidated_variables(parsed_data: dict, dimension_mapping: dict) 
         sorted_constants = sorted(dimension_constants)
         if len(sorted_constants) > 10:
             import_lines = ['from .dimension import (']
-            for i, const in enumerate(sorted_constants):
+            for const in sorted_constants:
                 import_lines.append(f'    {const},')  # Always add comma, even on last import
             import_lines.append(')')
         else:
@@ -187,232 +229,159 @@ def generate_consolidated_variables(parsed_data: dict, dimension_mapping: dict) 
     
     lines = [
         '"""',
-        'Consolidated Variables Module - Complete Edition',
-        '===============================================',
+        'Optimized Variables Module - Static Class Edition',
+        '================================================',
         '',
-        'Consolidated variable definitions for all variable types.',
-        'Uses the exact same source of truth and approach as consolidated units system.',
+        'Static variable class definitions for maximum import performance.',
+        'Uses static class generation instead of dynamic type() calls.',
         'Auto-generated from unit_data.json and dimension_mapping.json.',
         '"""',
         '',
-        'from typing import Any',
+        'from typing import TYPE_CHECKING',
         ''
     ]
     lines.extend(import_lines)
     lines.extend([
         'from . import units',
-        'from .unit import UnitConstant, UnitDefinition',
         'from .variable import FastQuantity, TypeSafeSetter',
         'from .variable_types.typed_variable import TypedVariable',
         '',
-        '# Consolidated variable definitions',
-        'VARIABLE_DEFINITIONS = {'
+        'if TYPE_CHECKING:',
+        '    pass',
+        '',
+        ''
     ])
+    # Generate static setter and variable classes for maximum performance
     
-    # Generate variable definitions for each field
-    # (fields_with_units already computed above)
+    # Helper function to escape strings properly for Python
+    def escape_string(s):
+        return s.replace("\\", "\\\\").replace('"', '\\"')
     
-    for i, (field_name, field_data) in enumerate(fields_with_units):
-        comma = ',' if i < len(fields_with_units) - 1 else ''
-        
-        class_name = convert_to_class_name(field_name)
-        dimension_constant = get_dimension_constant_name(field_name, dimension_mapping)
-        display_name = field_data.get('field', class_name)
-        
-        lines.append(f'    "{class_name}": {{')
-        lines.append(f'        "dimension": {dimension_constant},')
-        
-        # Helper function to escape strings properly for Python
-        def escape_string(s):
-            return s.replace("\\", "\\\\").replace('"', '\\"')
-        
-        # Choose the SI unit (conversion factor = 1.0) as default
-        si_unit = None
-        for unit in field_data['units']:
-            if unit.get('si_conversion', 0) == 1.0:
-                si_unit = unit
-                break
-        
-        # Fallback to first unit if no SI unit found
-        default_unit = si_unit or (field_data['units'][0] if field_data['units'] else {})
-        default_unit_name = default_unit.get('name', 'dimensionless')
-        default_property = convert_unit_name_to_property(default_unit_name)
-        escaped_default_property = escape_string(default_property)
-        lines.append(f'        "default_unit": "{escaped_default_property}",')
-        
-        lines.append('        "units": [')
-        
-        # Add all units for this field
-        for j, unit_data in enumerate(field_data['units']):
-            unit_comma = ',' if j < len(field_data['units']) - 1 else ''
-            unit_name = unit_data['name']
-            property_name = convert_unit_name_to_property(unit_name)
-            si_factor = unit_data.get('si_conversion', 1.0)
-            symbol = field_data.get('si_base_unit', unit_data.get('notation', ''))
-            aliases = unit_data.get('aliases', [])
-            
-            escaped_unit_name = escape_string(unit_name)
-            escaped_property_name = escape_string(property_name)
-            escaped_symbol = escape_string(symbol)
-            escaped_aliases = [escape_string(alias) for alias in aliases]
-            
-            lines.append(f'            ("{escaped_unit_name}", "{escaped_property_name}", {si_factor}, "{escaped_symbol}", {escaped_aliases}){unit_comma}')
-        
-        lines.append('        ],')
-        lines.append(f'        "field_name": "{field_name}",')
-        escaped_display_name = escape_string(display_name)
-        lines.append(f'        "display_name": "{escaped_display_name}",')
-        lines.append(f'    }}{comma}')
-    
-    lines.append('}')
+    # Generate all setter classes first
+    lines.append('# ===== SETTER CLASSES =====')
+    lines.append('# Static setter class definitions with __slots__ optimization')
     lines.append('')
     
-    # Add the utility function needed for dynamic alias creation
+    for field_name, field_data in fields_with_units:
+        class_name = convert_to_class_name(field_name)
+        setter_class_name = f"{class_name}Setter"
+        dimension_constant = get_dimension_constant_name(field_name, dimension_mapping)
+        units_class_name = f"{class_name}Units"
+        
+        lines.append(f'class {setter_class_name}(TypeSafeSetter):')
+        lines.append(f'    """{class_name}-specific setter with optimized unit properties."""')
+        lines.append(f'    __slots__ = ()')
+        lines.append(f'    ')
+        
+        # Generate property for each unit, avoiding duplicates
+        generated_properties = set()
+        
+        for unit_data in field_data['units']:
+            unit_name = unit_data['name']
+            property_name = convert_unit_name_to_property(unit_name)
+            
+            # Skip if this property name was already generated
+            if property_name in generated_properties:
+                continue
+            
+            generated_properties.add(property_name)
+            
+            lines.append(f'    @property')
+            lines.append(f'    def {property_name}(self):')
+            lines.append(f'        """Set value using {unit_name} units."""')
+            lines.append(f'        unit_const = units.{units_class_name}.{property_name}')
+            lines.append(f'        self.variable.quantity = FastQuantity(self.value, unit_const)')
+            lines.append(f'        return self.variable')
+            lines.append(f'    ')
+            
+            # Add alias properties, checking for duplicates
+            aliases = unit_data.get('aliases', [])
+            for alias in aliases:
+                alias_property = convert_unit_name_to_property(alias)
+                # Only add if different from main property, doesn't conflict, and not already generated
+                if (alias_property != property_name and 
+                    alias_property.isidentifier() and 
+                    alias_property not in generated_properties):
+                    generated_properties.add(alias_property)
+                    lines.append(f'    @property')
+                    lines.append(f'    def {alias_property}(self):')
+                    lines.append(f'        """Set value using {alias} units (alias for {unit_name})."""')
+                    lines.append(f'        return self.{property_name}')
+                    lines.append(f'    ')
+        
+        lines.append('')
+    
+    # Generate all variable classes
+    lines.append('# ===== VARIABLE CLASSES =====')  
+    lines.append('# Static variable class definitions with __slots__ optimization')
+    lines.append('')
+    
+    for field_name, field_data in fields_with_units:
+        class_name = convert_to_class_name(field_name)
+        setter_class_name = f"{class_name}Setter"
+        dimension_constant = get_dimension_constant_name(field_name, dimension_mapping)
+        
+        lines.append(f'class {class_name}(TypedVariable):')
+        lines.append(f'    """Type-safe {class_name.lower()} variable with expression capabilities."""')
+        lines.append(f'    __slots__ = ()')
+        lines.append(f'    _setter_class = {setter_class_name}')
+        lines.append(f'    _expected_dimension = {dimension_constant}')
+        lines.append(f'    ')
+        lines.append(f'    def set(self, value: float) -> {setter_class_name}:')
+        lines.append(f'        """Create a setter for this variable."""')
+        lines.append(f'        return {setter_class_name}(self, value)')
+        lines.append(f'    ')
+        lines.append('')
+    
+    # Add utility function for completeness
     lines.extend([
-        '',
+        '# Utility functions',
         'def convert_unit_name_to_property(unit_name: str) -> str:',
         '    """Convert unit name to property name without automatic pluralization."""',
-        '    # Use unit name as-is for property name',
-        '    # Replace any characters that are not valid Python identifiers',
-        '    property_name = unit_name.replace(\'-\', \'_\').replace(\' \', \'_\').replace(\'.\', \'_\')',
-        '    ',
-        '    # Handle Python reserved words and other edge cases',
-        '    reserved_words = {\'class\', \'def\', \'if\', \'else\', \'for\', \'while\', \'import\', \'from\', \'as\', \'in\'}',
+        '    import re',
+        '    property_name = (unit_name.replace("-", "_")',
+        '                              .replace(" ", "_")',
+        '                              .replace(".", "_")',
+        '                              .replace("(", "_")',
+        '                              .replace(")", "_")',
+        '                              .replace(",", "_")',
+        '                              .replace("\'", "_")',
+        '                              .replace("\\\"", "_")',
+        '                              .replace("/", "_")',
+        '                              .replace("\\\\", "_")',
+        '                              .replace("°", "_degree_")',
+        '                              .replace("²", "_square_")',
+        '                              .replace("³", "_cubic_")',
+        '                              .replace("μ", "u")',
+        '                              .replace("Ω", "ohm")',
+        '                              .replace("$", "_")',
+        '                              .replace("{", "_")',
+        '                              .replace("}", "_")',
+        '                              .replace("[", "_")',
+        '                              .replace("]", "_")',
+        '                              .replace("=", "_eq_")',
+        '                              .replace("+", "_plus_")',
+        '                              .replace("*", "_star_")',
+        '                              .replace("&", "_and_")',
+        '                              .replace("%", "_percent_")',
+        '                              .replace("#", "_hash_")',
+        '                              .replace("@", "_at_")',
+        '                              .replace("!", "_excl_")',
+        '                              .replace("?", "_quest_")',
+        '                              .replace("<", "_lt_")',
+        '                              .replace(">", "_gt_")',
+        '                              .replace("^", "_power_")',
+        '                              .replace("~", "_tilde_")',
+        '                              .replace("`", "_backtick_")',
+        '                              .replace("|", "_pipe_"))',
+        '    property_name = re.sub(r"_+", "_", property_name).strip("_")',
+        '    reserved_words = {"class", "def", "if", "else", "for", "while", "import", "from", "as", "in", "or", "and", "not"}',
         '    if property_name in reserved_words:',
         '        property_name = f"{property_name}_unit"',
-        '    ',
+        '    if property_name and not (property_name[0].isalpha() or property_name[0] == "_"):',
+        '        property_name = f"unit_{property_name}"',
         '    return property_name',
         '',
-        '',
-        'def create_setter_class(class_name: str, variable_name: str, definition: dict[str, Any]) -> type:',
-        '    """Dynamically create a setter class with unit properties."""',
-        '    ',
-        '    # Create base setter class',
-        '    setter_class = type(',
-        '        class_name,',
-        '        (TypeSafeSetter,),',
-        '        {',
-        '            \'__init__\': lambda self, variable, value: TypeSafeSetter.__init__(self, variable, value),',
-        '            \'__doc__\': f"{variable_name}-specific setter with only {variable_name.lower()} units."',
-        '        }',
-        '    )',
-        '    ',
-        '    # Store reference to the unit class at class level',
-        '    # Remove "Setter" from class_name to get the base variable name',
-        '    base_class_name = class_name.replace("Setter", "")',
-        '    units_class = getattr(units, f"{base_class_name}Units")',
-        '    ',
-        '    # Add properties for each unit using unit data directly',
-        '    for unit_name, property_name, si_factor, symbol, aliases in definition["units"]:',
-        '        # Create a unit definition from the consolidated data',
-        '        def make_property(prop_nm, units_cls):',
-        '            def getter(self):',
-        '                # Use existing unit constant from units module',
-        '                unit_const = getattr(units_cls, prop_nm)',
-        '                self.variable.quantity = FastQuantity(self.value, unit_const)',
-        '                return self.variable  # type: ignore',
-        '            return property(getter)',
-        '        ',
-        '        # Add the primary property to the class',
-        '        setattr(setter_class, property_name, make_property(property_name, units_class))',
-        '        ',
-        '        # Add alias properties',
-        '        for alias in aliases:',
-        '            # Convert alias to valid property name',
-        '            alias_property = convert_unit_name_to_property(alias)',
-        '            # Only add if it\'s different from the main property and doesn\'t already exist',
-        '            if alias_property != property_name and not hasattr(setter_class, alias_property):',
-        '                setattr(setter_class, alias_property, make_property(property_name, units_class))',
-        '    ',
-        '    return setter_class',
-        '',
-        '',
-        'def create_variable_class(class_name: str, definition: dict[str, Any], setter_class: type) -> type:',
-        '    """Dynamically create a variable class."""',
-        '    ',
-        '    # Create the variable class',
-        '    variable_class = type(',
-        '        class_name,',
-        '        (TypedVariable,),',
-        '        {',
-        '            \'_setter_class\': setter_class,',
-        '            \'_expected_dimension\': definition["dimension"],',
-        '            \'_default_unit_property\': definition["default_unit"],',
-        '            \'__doc__\': f"Type-safe {class_name.lower()} variable with expression capabilities.",',
-        '            \'set\': lambda self, value: setter_class(self, value)',
-        '        }',
-        '    )',
-        '    ',
-        '    # Add type hint for set method',
-        '    variable_class.set.__annotations__ = {\'value\': float, \'return\': setter_class}',
-        '    ',
-        '    return variable_class',
-        '',
-        '',
-        '# Create all variable and setter classes dynamically',
-        'for var_name, var_def in VARIABLE_DEFINITIONS.items():'
-        '    # Create setter class',
-        '    setter_name = f"{var_name}Setter"',
-        '    setter_class = create_setter_class(setter_name, var_name, var_def)',
-        '    ',
-        '    # Create variable class',
-        '    variable_class = create_variable_class(var_name, var_def, setter_class)',
-        '    ',
-        '    # Export them to module namespace',
-        '    globals()[setter_name] = setter_class',
-        '    globals()[var_name] = variable_class',
-        '',
-    ])
-    
-    # Generate individual exports for easier access
-    lines.extend([
-        '# Individual exports for easier import',
-        '',
-    ])
-    
-    for field_name, _ in fields_with_units:
-        class_name = convert_to_class_name(field_name)
-        setter_name = f"{class_name}Setter"
-        lines.append(f'{setter_name} = globals()[\'{setter_name}\']')
-        lines.append(f'{class_name} = globals()[\'{class_name}\']')
-    
-    lines.extend([
-        '',
-        '',
-        '# Module registration compatibility',
-        'def get_consolidated_variable_modules():',
-        '    """Return module-like objects for consolidated variables."""',
-        '    ',
-        '    class ConsolidatedVariableModule:',
-        '        """Mock module object for compatibility with existing registration system."""',
-        '        ',
-        '        def __init__(self, var_name: str):',
-        '            self.var_name = var_name',
-        '            self.definition = VARIABLE_DEFINITIONS[var_name]',
-        '            self.variable_class = globals()[var_name]',
-        '            self.setter_class = globals()[f"{var_name}Setter"]',
-        '        ',
-        '        def get_variable_class(self):',
-        '            return self.variable_class',
-        '        ',
-        '        def get_setter_class(self):',
-        '            return self.setter_class',
-        '        ',
-        '        def get_expected_dimension(self):',
-        '            return self.definition["dimension"]',
-        '    ',
-        '    return ['
-    ])
-    
-    # Add all variable modules to the list
-    for i, (field_name, _) in enumerate(fields_with_units):
-        class_name = convert_to_class_name(field_name)
-        comma = ',' if i < len(fields_with_units) - 1 else ''
-        lines.append(f'        ConsolidatedVariableModule("{class_name}"){comma}')
-    
-    lines.extend([
-        '    ]',
-        ''
     ])
     
     return '\n'.join(lines) + '\n'

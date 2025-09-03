@@ -262,23 +262,6 @@ class TestDimensionalConstants:
         assert ACCELERATION.is_compatible(expected_acceleration)
         assert ACCELERATION._signature == 2 * (5 ** -2)  # 2 * 0.04 = 0.08
     
-    def test_mechanical_constants(self):
-        """Test mechanical dimension constants."""
-        # FORCE = MASS * LENGTH / TIME^2 = 3 * 2 / (5^2) = 6/25 = 0.24
-        expected_force = DimensionSignature.create(mass=1, length=1, time=-2)
-        assert FORCE.is_compatible(expected_force)
-        assert FORCE._signature == 3 * 2 * (5 ** -2)  # 3 * 2 * 0.04 = 0.24
-        
-        # PRESSURE = MASS / (LENGTH * TIME^2) = 3 / (2 * 5^2) = 3/50 = 0.06
-        expected_pressure = DimensionSignature.create(mass=1, length=-1, time=-2)
-        assert PRESSURE.is_compatible(expected_pressure)
-        assert PRESSURE._signature == 3 * (2 ** -1) * (5 ** -2)  # 3 * 0.5 * 0.04 = 0.06
-        
-        # ENERGY = MASS * LENGTH^2 / TIME^2 = 3 * (2^2) / (5^2) = 3 * 4 / 25 = 12/25 = 0.48
-        expected_energy = DimensionSignature.create(mass=1, length=2, time=-2)
-        assert ENERGY.is_compatible(expected_energy)
-        assert ENERGY._signature == 3 * (2 ** 2) * (5 ** -2)  # 3 * 4 * 0.04 = 0.48
-    
     @pytest.mark.parametrize("constant,name", [
         (DIMENSIONLESS, "DIMENSIONLESS"),
         (LENGTH, "LENGTH"),

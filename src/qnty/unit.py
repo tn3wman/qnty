@@ -8,10 +8,10 @@ Unit definitions, constants and registry for the high-performance unit system.
 from dataclasses import dataclass
 
 from .dimension import DimensionSignature
-from .prefixes import SIPrefix, StandardPrefixes
+from .unit_types.prefixes import SIPrefix, StandardPrefixes
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, slots=True)
 class UnitDefinition:
     """Immutable unit definition optimized for performance."""
     name: str
@@ -39,58 +39,70 @@ class UnitDefinition:
 class UnitConstant:
     """Unit constant that provides type safety and performance."""
     
+    __slots__ = ('definition', 'name', 'symbol', 'dimension', 'si_factor', '_hash_cache')
+    
     def __init__(self, definition: UnitDefinition):
         self.definition = definition
         self.name = definition.name
         self.symbol = definition.symbol
         self.dimension = definition.dimension
         self.si_factor = definition.si_factor
+        # Cache expensive hash operation
+        self._hash_cache = hash(self.name)
     
     def __str__(self):
         return self.symbol
     
-    def __eq__(self, other):
-        """Fast equality check for unit constants."""
-        return isinstance(other, UnitConstant) and self.name == other.name
+    def __eq__(self, other) -> bool:
+        """Ultra-fast equality check for unit constants."""
+        # Fast path: check type first without isinstance() overhead
+        return type(other) is UnitConstant and self.name == other.name
     
-    def __hash__(self):
-        """Enable unit constants as dictionary keys."""
-        return hash(self.name)
+    def __hash__(self) -> int:
+        """Enable unit constants as dictionary keys with cached hash."""
+        return self._hash_cache
 
 
 class HighPerformanceRegistry:
     """Ultra-fast registry with pre-computed conversion tables."""
     
+    __slots__ = ('units', 'conversion_table', 'dimensional_groups', '_finalized', 
+                 'base_units', 'prefixable_units', '_conversion_cache', '_dimension_cache')
+    
     def __init__(self):
         self.units: dict[str, UnitDefinition] = {}
         self.conversion_table: dict[tuple[str, str], float] = {}  # (from_unit, to_unit) -> factor
         self.dimensional_groups: dict[int | float, list[UnitDefinition]] = {}
-        self._dimension_cache: dict[int | float, UnitConstant] = {}  # Cache for common dimension mappings
         self._finalized = False
         self.base_units: dict[str, UnitDefinition] = {}  # Track base units for prefix generation
         self.prefixable_units: set[str] = set()  # Track which units can have prefixes
+        # Small cache for frequently used conversions to reduce table lookups
+        self._conversion_cache: dict[tuple[str, str], float] = {}
+        # Cache for common dimension mappings (used by variable.py)
+        self._dimension_cache: dict[int | float, 'UnitConstant'] = {}
 
         # Registry starts empty - units are registered via register_all_units() in __init__.py
     
     
-    def register_unit(self, unit_def: UnitDefinition):
+    def register_unit(self, unit_def: UnitDefinition) -> None:
         """Register a single unit definition."""
         if self._finalized:
             raise RuntimeError("Cannot register units after registry is finalized")
             
         self.units[unit_def.name] = unit_def
         
-        # Group by dimension
+        # Group by dimension - optimized to avoid repeated signature access
         dim_sig = unit_def.dimension._signature
-        if dim_sig not in self.dimensional_groups:
-            self.dimensional_groups[dim_sig] = []
-        self.dimensional_groups[dim_sig].append(unit_def)
+        try:
+            self.dimensional_groups[dim_sig].append(unit_def)
+        except KeyError:
+            self.dimensional_groups[dim_sig] = [unit_def]
     
     def register_with_prefixes(
             self,
             unit_def: UnitDefinition,
             prefixes: list[StandardPrefixes] | None = None
-        ):
+        ) -> None:
         """
         Register a unit and automatically generate prefixed variants.
         
@@ -114,35 +126,64 @@ class HighPerformanceRegistry:
                     prefixed_unit = UnitDefinition.with_prefix(unit_def, prefix)
                     self.register_unit(prefixed_unit)
     
-    def finalize_registration(self):
+    def finalize_registration(self) -> None:
         """Called after all units registered to precompute conversions."""
         if not self._finalized:
             self._precompute_conversions()
             self._finalized = True
 
-    def _precompute_conversions(self):
-        """Pre-compute all unit conversions for maximum speed."""
+    def _precompute_conversions(self) -> None:
+        """Pre-compute all unit conversions for maximum speed with optimized algorithms."""
         self.conversion_table.clear()  # Clear existing conversions
+        self._conversion_cache.clear()  # Clear cache
+        
         for group in self.dimensional_groups.values():
-            for from_unit in group:
-                for to_unit in group:
-                    if from_unit != to_unit:
-                        factor = from_unit.si_factor / to_unit.si_factor
-                        key = (from_unit.name, to_unit.name)
-                        self.conversion_table[key] = factor
+            group_size = len(group)
+            if group_size <= 1:
+                continue  # Skip groups with single units
+            
+            # Ultra-optimized: pre-compute all factors and names in single pass
+            unit_data = [(unit.name, unit.si_factor) for unit in group]
+            
+            # Vectorized approach: compute all combinations efficiently
+            for i in range(group_size):
+                from_name, from_si = unit_data[i]
+                for j in range(group_size):
+                    if i != j:  # Skip same unit conversion
+                        to_name, to_si = unit_data[j]
+                        # Pre-compute factor - avoid repeated division
+                        factor = from_si / to_si
+                        self.conversion_table[(from_name, to_name)] = factor
     
     def convert(self, value: float, from_unit: UnitConstant, to_unit: UnitConstant) -> float:
-        """Ultra-fast conversion using pre-computed table."""
-        if from_unit == to_unit:
+        """Ultra-fast conversion with optimized equality check and caching."""
+        # Ultra-fast path: avoid expensive equality check by comparing names directly
+        if from_unit.name == to_unit.name:
             return value
         
-        # O(1) lookup for pre-computed conversions
         key = (from_unit.name, to_unit.name)
-        if key in self.conversion_table:
-            return value * self.conversion_table[key]
+        
+        # Check small cache first for frequently used conversions  
+        try:
+            return value * self._conversion_cache[key]
+        except KeyError:
+            pass
+        
+        # O(1) lookup for pre-computed conversions
+        try:
+            factor = self.conversion_table[key]
+            # Cache frequently used conversions (keep cache small)
+            if len(self._conversion_cache) < 50:
+                self._conversion_cache[key] = factor
+            return value * factor
+        except KeyError:
+            pass
         
         # Fallback (shouldn't happen for registered units)
-        return value * from_unit.si_factor / to_unit.si_factor
+        factor = from_unit.si_factor / to_unit.si_factor
+        if len(self._conversion_cache) < 50:
+            self._conversion_cache[key] = factor
+        return value * factor
 
 
 # Global high-performance registry

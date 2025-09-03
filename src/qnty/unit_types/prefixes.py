@@ -10,7 +10,7 @@ from dataclasses import dataclass
 from enum import Enum
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, slots=True)
 class SIPrefix:
     """
     Standard SI prefix definition.
@@ -25,16 +25,12 @@ class SIPrefix:
     factor: float
     
     def apply_to_name(self, base_name: str) -> str:
-        """Apply prefix to a base unit name."""
-        if not self.name:
-            return base_name
-        return f"{self.name}{base_name}"
+        """Apply prefix to a base unit name. Optimized for performance."""
+        return base_name if not self.name else self.name + base_name
     
     def apply_to_symbol(self, base_symbol: str) -> str:
-        """Apply prefix to a base unit symbol."""
-        if not self.symbol:
-            return base_symbol
-        return f"{self.symbol}{base_symbol}"
+        """Apply prefix to a base unit symbol. Optimized for performance."""
+        return base_symbol if not self.symbol else self.symbol + base_symbol
 
 
 class StandardPrefixes(Enum):
@@ -71,8 +67,8 @@ class StandardPrefixes(Enum):
     YOCTO = SIPrefix("yocto", "y", 1e-24)
 
 
-# Common prefix groups for different unit types
-COMMON_LENGTH_PREFIXES = [
+# Common prefix groups for different unit types - type annotated for better IDE support
+COMMON_LENGTH_PREFIXES: list[StandardPrefixes] = [
     StandardPrefixes.KILO,
     StandardPrefixes.CENTI,
     StandardPrefixes.MILLI,
@@ -80,20 +76,20 @@ COMMON_LENGTH_PREFIXES = [
     StandardPrefixes.NANO,
 ]
 
-COMMON_MASS_PREFIXES = [
+COMMON_MASS_PREFIXES: list[StandardPrefixes] = [
     StandardPrefixes.KILO,  # Note: kilogram is the SI base unit
     StandardPrefixes.MILLI,
     StandardPrefixes.MICRO,
 ]
 
-COMMON_TIME_PREFIXES = [
+COMMON_TIME_PREFIXES: list[StandardPrefixes] = [
     StandardPrefixes.MILLI,
     StandardPrefixes.MICRO,
     StandardPrefixes.NANO,
     StandardPrefixes.PICO,
 ]
 
-COMMON_ELECTRIC_PREFIXES = [
+COMMON_ELECTRIC_PREFIXES: list[StandardPrefixes] = [
     StandardPrefixes.KILO,
     StandardPrefixes.MILLI,
     StandardPrefixes.MICRO,
@@ -101,13 +97,13 @@ COMMON_ELECTRIC_PREFIXES = [
     StandardPrefixes.PICO,
 ]
 
-COMMON_ENERGY_PREFIXES = [
+COMMON_ENERGY_PREFIXES: list[StandardPrefixes] = [
     StandardPrefixes.KILO,
     StandardPrefixes.MEGA,
     StandardPrefixes.GIGA,
 ]
 
-COMMON_POWER_PREFIXES = [
+COMMON_POWER_PREFIXES: list[StandardPrefixes] = [
     StandardPrefixes.KILO,
     StandardPrefixes.MEGA,
     StandardPrefixes.GIGA,
@@ -115,39 +111,61 @@ COMMON_POWER_PREFIXES = [
     StandardPrefixes.MICRO,
 ]
 
-COMMON_PRESSURE_PREFIXES = [
+COMMON_PRESSURE_PREFIXES: list[StandardPrefixes] = [
     StandardPrefixes.KILO,
     StandardPrefixes.MEGA,
     StandardPrefixes.GIGA,
 ]
 
+
+# Performance optimization: Pre-computed lookup dictionaries
+_NAME_TO_PREFIX: dict[str, SIPrefix] = {}
+_SYMBOL_TO_PREFIX: dict[str, SIPrefix] = {}
+_FACTOR_TO_PREFIX: dict[float, SIPrefix] = {}
+
+def _initialize_lookup_caches():
+    """Initialize lookup caches for O(1) prefix lookups."""
+    for prefix_enum in StandardPrefixes:
+        prefix = prefix_enum.value
+        _NAME_TO_PREFIX[prefix.name] = prefix
+        _SYMBOL_TO_PREFIX[prefix.symbol] = prefix
+        _FACTOR_TO_PREFIX[prefix.factor] = prefix
 
 def get_prefix_by_name(name: str) -> SIPrefix | None:
-    """Get a prefix by its name (e.g., 'kilo', 'milli')."""
-    for prefix_enum in StandardPrefixes:
-        if prefix_enum.value.name == name:
-            return prefix_enum.value
-    return None
+    """Get a prefix by its name (e.g., 'kilo', 'milli'). O(1) lookup."""
+    return _NAME_TO_PREFIX.get(name)
 
 
 def get_prefix_by_symbol(symbol: str) -> SIPrefix | None:
-    """Get a prefix by its symbol (e.g., 'k', 'm')."""
-    for prefix_enum in StandardPrefixes:
-        if prefix_enum.value.symbol == symbol:
-            return prefix_enum.value
-    return None
+    """Get a prefix by its symbol (e.g., 'k', 'm'). O(1) lookup."""
+    return _SYMBOL_TO_PREFIX.get(symbol)
 
 
 def get_prefix_by_factor(factor: float, tolerance: float = 1e-10) -> SIPrefix | None:
-    """Get a prefix by its multiplication factor."""
-    for prefix_enum in StandardPrefixes:
-        if abs(prefix_enum.value.factor - factor) < tolerance:
-            return prefix_enum.value
+    """Get a prefix by its multiplication factor. O(1) lookup for exact matches, optimized tolerance search."""
+    # Fast path for exact matches
+    if factor in _FACTOR_TO_PREFIX:
+        return _FACTOR_TO_PREFIX[factor]
+    
+    # Optimized tolerance path - only search if tolerance is meaningful
+    if tolerance > 1e-15:  # Avoid expensive search for tiny tolerances
+        # Use items() view for better performance than .items()
+        for cached_factor, prefix in _FACTOR_TO_PREFIX.items():
+            if abs(cached_factor - factor) < tolerance:
+                return prefix
     return None
 
 
-# Define which units should get automatic prefixes
-PREFIXABLE_UNITS = {
+def extract_prefix_values(prefix_enums: list[StandardPrefixes]) -> list[SIPrefix]:
+    """Extract SIPrefix values from StandardPrefixes enums efficiently.
+    
+    This is optimized for bulk operations that need to convert enum lists to value lists.
+    """
+    return [prefix_enum.value for prefix_enum in prefix_enums]
+
+
+# Define which units should get automatic prefixes - using more descriptive type annotation
+PREFIXABLE_UNITS: dict[str, list[StandardPrefixes]] = {
     # Base SI units
     'meter': COMMON_LENGTH_PREFIXES,
     'gram': COMMON_MASS_PREFIXES,
@@ -227,3 +245,6 @@ PREFIXABLE_UNITS = {
         StandardPrefixes.MICRO
     ],  # Common non-SI unit
 }
+
+# Initialize lookup caches on module load for optimal performance
+_initialize_lookup_caches()

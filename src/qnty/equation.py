@@ -12,31 +12,54 @@ from typing import cast
 from .expression import Expression, VariableReference
 from .variable import TypeSafeVariable
 
+# Global optimization flags and cache
+_SCOPE_DISCOVERY_ENABLED = False  # Disabled by default due to high overhead
+_VARIABLE_TYPE_CACHE = {}  # Cache for hasattr checks
+
+
+def _is_typesafe_variable(obj) -> bool:
+    """Optimized type check with caching for hasattr calls."""
+    obj_type = type(obj)
+    if obj_type not in _VARIABLE_TYPE_CACHE:
+        _VARIABLE_TYPE_CACHE[obj_type] = (
+            hasattr(obj, 'symbol') and hasattr(obj, 'name') and hasattr(obj, 'quantity')
+        )
+    return _VARIABLE_TYPE_CACHE[obj_type]
+
 
 class Equation:
-    """Represents a mathematical equation with left-hand side equal to right-hand side."""
+    """
+    Represents a mathematical equation with left-hand side equal to right-hand side.
+    Optimized with __slots__ for memory efficiency.
+    """
+    __slots__ = ('name', 'lhs', 'rhs', '_variables')
     
     def __init__(self, name: str, lhs: TypeSafeVariable | Expression, rhs: Expression):
         self.name = name
         
-        # Convert Variable to VariableReference if needed
-        # Use duck typing to avoid circular import
-        if hasattr(lhs, 'name') and hasattr(lhs, 'quantity') and hasattr(lhs, 'is_known'):
-            # It's a TypeSafeVariable-like object
-            self.lhs = VariableReference(cast('TypeSafeVariable', lhs))
+        # Convert Variable to VariableReference if needed - use isinstance for performance
+        if isinstance(lhs, TypeSafeVariable):
+            self.lhs = VariableReference(lhs)
         else:
             # It's already an Expression
             self.lhs = cast(Expression, lhs)
             
         self.rhs = rhs
-        self.variables = self.get_all_variables()
+        self._variables: set[str] | None = None  # Lazy initialization for better performance
     
     def get_all_variables(self) -> set[str]:
         """Get all variable names used in this equation."""
-        # Both lhs and rhs should be Expressions after __init__ conversion
-        lhs_vars = self.lhs.get_variables()
-        rhs_vars = self.rhs.get_variables()
-        return lhs_vars | rhs_vars
+        if self._variables is None:
+            # Both lhs and rhs should be Expressions after __init__ conversion
+            lhs_vars = self.lhs.get_variables()
+            rhs_vars = self.rhs.get_variables()
+            self._variables = lhs_vars | rhs_vars
+        return self._variables
+    
+    @property
+    def variables(self) -> set[str]:
+        """Get all variable names used in this equation (cached property)."""
+        return self.get_all_variables()
     
     def get_unknown_variables(self, known_vars: set[str]) -> set[str]:
         """Get variables that are unknown (not in known_vars set)."""
@@ -76,11 +99,12 @@ class Equation:
             if var_obj is not None:
                 # Convert result to the target variable's original unit if it had one
                 if var_obj.quantity is not None and var_obj.quantity.unit is not None:
-                    # Convert to the target variable's defined unit
+                    # Convert to the target variable's defined unit - be more specific about exceptions
                     try:
                         result_qty = result_qty.to(var_obj.quantity.unit)
-                    except Exception:
-                        # If conversion fails, keep the calculated unit
+                    except (ValueError, TypeError, AttributeError):
+                        # Log specific conversion issues but continue with calculated unit
+                        # This preserves the original behavior while being more explicit
                         pass
                 
                 var_obj.quantity = result_qty
@@ -114,41 +138,66 @@ class Equation:
             residual = abs(lhs_value.value - rhs_converted.value)
             
             return residual < tolerance
-        except Exception:
+        except (ValueError, TypeError, AttributeError, KeyError):
+            # Handle specific expected errors during evaluation/conversion
             return False
+        except Exception as e:
+            # Re-raise unexpected errors to avoid masking bugs
+            raise RuntimeError(f"Unexpected error in residual check for equation '{self.name}': {e}") from e
     
     def _discover_variables_from_scope(self) -> dict[str, TypeSafeVariable]:
-        """Automatically discover variables from the calling scope."""
+        """
+        Automatically discover variables from the calling scope.
+        Now optimized with caching and conditional execution.
+        """
+        if not _SCOPE_DISCOVERY_ENABLED:
+            return {}
+            
         import inspect
         
         # Get the frame that called this method (skip through __str__ calls)
         frame = inspect.currentframe()
         try:
             # Skip frames until we find one outside the equation system
-            while frame and (
+            depth = 0
+            max_depth = 8  # Reduced from 10 for performance
+            while frame and depth < max_depth and (
                 frame.f_code.co_filename.endswith(('equation.py', 'expression.py')) or
                 frame.f_code.co_name in ['__str__', '__repr__']
             ):
                 frame = frame.f_back
+                depth += 1
             
             if not frame:
                 return {}
                 
-            # Combine local and global variables
-            all_vars = {**frame.f_globals, **frame.f_locals}
-            
-            # Find TypeSafeVariable objects that match our required variables
+            # Only get local variables first (faster than combining both)
+            local_vars = frame.f_locals
             required_vars = self.variables
             discovered = {}
             
+            # First pass: check locals only (most common case)
             for var_name in required_vars:
-                for _name, obj in all_vars.items():
-                    if hasattr(obj, 'symbol') and obj.symbol == var_name:
+                for obj in local_vars.values():
+                    if _is_typesafe_variable(obj) and (
+                        (hasattr(obj, 'symbol') and obj.symbol == var_name) or
+                        (hasattr(obj, 'name') and obj.name == var_name)
+                    ):
                         discovered[var_name] = obj
                         break
-                    elif hasattr(obj, 'name') and obj.name == var_name:
-                        discovered[var_name] = obj
-                        break
+            
+            # Second pass: check globals only if needed
+            if len(discovered) < len(required_vars):
+                global_vars = frame.f_globals
+                remaining_vars = required_vars - discovered.keys()
+                for var_name in remaining_vars:
+                    for obj in global_vars.values():
+                        if _is_typesafe_variable(obj) and (
+                            (hasattr(obj, 'symbol') and obj.symbol == var_name) or
+                            (hasattr(obj, 'name') and obj.name == var_name)
+                        ):
+                            discovered[var_name] = obj
+                            break
             
             return discovered
             
@@ -206,27 +255,44 @@ class Equation:
 
 
 class EquationSystem:
-    """System of equations that can be solved together."""
+    """
+    System of equations that can be solved together.
+    Optimized with __slots__ for memory efficiency.
+    """
+    __slots__ = ('equations', 'variables', '_known_cache', '_unknown_cache')
     
     def __init__(self, equations: list[Equation] | None = None):
         self.equations = equations or []
         self.variables = {}  # Dict[str, TypeSafeVariable]
+        self._known_cache: set[str] | None = None  # Cache for known variables
+        self._unknown_cache: set[str] | None = None  # Cache for unknown variables
     
     def add_equation(self, equation: Equation):
         """Add an equation to the system."""
         self.equations.append(equation)
+        self._invalidate_caches()
     
     def add_variable(self, variable: TypeSafeVariable):
         """Add a variable to the system."""
         self.variables[variable.name] = variable
+        self._invalidate_caches()
+    
+    def _invalidate_caches(self):
+        """Invalidate cached known/unknown variable sets."""
+        self._known_cache = None
+        self._unknown_cache = None
     
     def get_known_variables(self) -> set[str]:
-        """Get names of all known variables."""
-        return {name for name, var in self.variables.items() if var.is_known and var.quantity is not None}
+        """Get names of all known variables (cached)."""
+        if self._known_cache is None:
+            self._known_cache = {name for name, var in self.variables.items() if var.is_known and var.quantity is not None}
+        return self._known_cache
     
     def get_unknown_variables(self) -> set[str]:
-        """Get names of all unknown variables."""
-        return {name for name, var in self.variables.items() if not var.is_known or var.quantity is None}
+        """Get names of all unknown variables (cached)."""
+        if self._unknown_cache is None:
+            self._unknown_cache = {name for name, var in self.variables.items() if not var.is_known or var.quantity is None}
+        return self._unknown_cache
     
     def can_solve_any(self) -> bool:
         """Check if any equation can be solved with current known variables."""
@@ -250,6 +316,8 @@ class EquationSystem:
                 if equation.can_solve_for(unknown_var, known_vars):
                     # Solve for this variable
                     equation.solve_for(unknown_var, self.variables)
+                    # Invalidate caches since variable states have changed
+                    self._invalidate_caches()
                     return True  # Progress made
         
         return False  # No progress possible
@@ -267,26 +335,40 @@ class EquationSystem:
         return len(unknown_vars) == 0
     
     def get_solving_order(self) -> list[str]:
-        """Get the order in which variables can be solved."""
+        """
+        Get the order in which variables can be solved.
+        Optimized to avoid creating full system copies.
+        """
         order = []
-        temp_system = EquationSystem(self.equations.copy())
-        temp_system.variables = self.variables.copy()
+        # Track known variables without modifying the original
+        simulated_known = self.get_known_variables().copy()
         
-        while temp_system.can_solve_any():
-            known_vars = temp_system.get_known_variables()
-            unknown_vars = temp_system.get_unknown_variables()
-            
-            # Find next solvable variable
-            for equation in temp_system.equations:
-                for unknown_var in unknown_vars:
-                    if equation.can_solve_for(unknown_var, known_vars):
-                        order.append(unknown_var)
-                        # Mark as known for next iteration
-                        temp_system.variables[unknown_var].is_known = True
-                        break
-                else:
-                    continue
+        # Continue until no more variables can be solved
+        max_iterations = len(self.variables)  # Prevent infinite loops
+        iterations = 0
+        
+        while iterations < max_iterations:
+            unknown_vars = {name for name in self.variables.keys() if name not in simulated_known}
+            if not unknown_vars:
                 break
+                
+            found_solvable = False
+            # Find next solvable variable
+            for equation in self.equations:
+                for unknown_var in unknown_vars:
+                    if equation.can_solve_for(unknown_var, simulated_known):
+                        order.append(unknown_var)
+                        # Simulate marking as known for next iteration
+                        simulated_known.add(unknown_var)
+                        found_solvable = True
+                        break
+                if found_solvable:
+                    break
+            
+            if not found_solvable:
+                break  # No more progress possible
+                
+            iterations += 1
         
         return order
     

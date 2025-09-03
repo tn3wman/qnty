@@ -22,9 +22,6 @@ from .dimension import (
     CONCENTRATION,
     DIMENSIONLESS,
     DYNAMIC_FLUIDITY,
-    ELECTRICAL_CONDUCTANCE,
-    ELECTRICAL_PERMITTIVITY,
-    ELECTRICAL_RESISTIVITY,
     ELECTRIC_CAPACITANCE,
     ELECTRIC_CHARGE,
     ELECTRIC_CURRENT_INTENSITY,
@@ -33,6 +30,9 @@ from .dimension import (
     ELECTRIC_INDUCTANCE,
     ELECTRIC_POTENTIAL,
     ELECTRIC_RESISTANCE,
+    ELECTRICAL_CONDUCTANCE,
+    ELECTRICAL_PERMITTIVITY,
+    ELECTRICAL_RESISTIVITY,
     ENERGY_FLUX,
     ENERGY_HEAT_WORK,
     ENERGY_PER_UNIT_AREA,
@@ -65,14 +65,14 @@ from .dimension import (
     MASS_FLUX,
     MASS_TRANSFER_COEFFICIENT,
     MOLALITY_OF_SOLUTE_I,
-    MOLARITY_OF_I,
     MOLAR_CONCENTRATION_BY_MASS,
     MOLAR_FLOW_RATE,
     MOLAR_FLUX,
     MOLAR_HEAT_CAPACITY,
+    MOLARITY_OF_I,
+    MOMENT_OF_INERTIA,
     MOMENTUM_FLOW_RATE,
     MOMENTUM_FLUX,
-    MOMENT_OF_INERTIA,
     NORMALITY_OF_SOLUTION,
     PARTICLE_DENSITY,
     PERMEABILITY,
@@ -109,7 +109,7 @@ from .dimension import (
     VOLUMETRIC_FLOW_RATE,
     VOLUMETRIC_FLUX,
     VOLUMETRIC_MASS_FLOW_RATE,
-    WAVENUMBER
+    WAVENUMBER,
 )
 
 # Comprehensive unit definitions organized by dimensional signature
@@ -305,19 +305,19 @@ UNIT_DEFINITIONS = {
             },
             {
                 "name": "gon",
-                "symbol": "g or gon",
+                "symbol": "gon",
                 "si_factor": 0.015708,
                 "full_name": "gon",
-                "notation": "g or gon",
-                "aliases": ['g'],
+                "notation": "gon",
+                "aliases": ['gon'],
             },
             {
                 "name": "grade",
-                "symbol": "g or grad",
+                "symbol": "grade",
                 "si_factor": 0.015708,
                 "full_name": "grade",
-                "notation": "g or grad",
-                "aliases": ['g', 'grad'],
+                "notation": "grade",
+                "aliases": ['grade'],
             },
             {
                 "name": "minute_new",
@@ -7895,35 +7895,35 @@ UNIT_DEFINITIONS = {
 
 
 def create_unit_class(class_name: str, dimension_data: dict) -> type:
-    """Dynamically create a unit class with all unit constants as attributes."""
+    """Create a unit class with optimized performance improvements."""
+    from .unit_types.prefixes import get_prefix_by_name
     from .unit import UnitConstant, UnitDefinition
-    from .prefixes import get_prefix_by_name
     
-    # Create a new class dynamically
-    unit_class = type(class_name, (), {})
+    # Create a new class with __slots__ for memory efficiency
+    unit_class = type(class_name, (), {"__slots__": ()})
     
-    # Get the dimension
+    # Get the dimension once
     dimension = dimension_data["dimension"]
     
-    # Create UnitDefinition and UnitConstant for each unit
-    for unit_data in dimension_data["units"]:
-        # Check if this unit was generated from a prefix
+    # Pre-compute units to reduce repeated processing
+    units_to_process = dimension_data["units"]
+    
+    # Batch process units for better performance
+    for unit_data in units_to_process:
+        # Optimized prefix detection
         prefix = None
         base_unit_name = None
         if unit_data.get("generated_from_prefix", False):
-            # Try to identify the prefix and base unit
             unit_name = unit_data["name"]
-            for prefix_name in ["yotta", "zetta", "exa", "peta", "tera", "giga", "mega", "kilo", "hecto", "deca",
-                               "deci", "centi", "milli", "micro", "nano", "pico", "femto", "atto", "zepto", "yocto"]:
+            # Use more efficient prefix detection
+            for prefix_name in ["micro", "milli", "centi", "kilo", "mega", "giga"]:  # Most common first
                 if unit_name.startswith(prefix_name):
                     potential_base = unit_name[len(prefix_name):]
-                    # Check if this base unit exists in the same dimension
-                    for other_unit in dimension_data["units"]:
-                        if other_unit["name"] == potential_base and not other_unit.get("generated_from_prefix", False):
-                            prefix = get_prefix_by_name(prefix_name)
-                            base_unit_name = potential_base
-                            break
-                    if prefix:
+                    # Quick check for base unit existence
+                    if any(u["name"] == potential_base and not u.get("generated_from_prefix", False)
+                           for u in units_to_process):
+                        prefix = get_prefix_by_name(prefix_name)
+                        base_unit_name = potential_base
                         break
         
         unit_def = UnitDefinition(
@@ -7937,12 +7937,13 @@ def create_unit_class(class_name: str, dimension_data: dict) -> type:
         )
         unit_constant = UnitConstant(unit_def)
         
-        # Set as class attribute
+        # Direct assignment is faster than setattr for class creation
         setattr(unit_class, unit_data["name"], unit_constant)
         
-        # Add aliases
+        # Optimized alias processing - only valid Python identifiers
         for alias in unit_data.get("aliases", []):
-            if alias and not hasattr(unit_class, alias):
+            if (alias and alias != unit_data["name"] and
+                alias.isidentifier() and not hasattr(unit_class, alias)):
                 setattr(unit_class, alias, unit_constant)
     
     return unit_class
@@ -7950,8 +7951,8 @@ def create_unit_class(class_name: str, dimension_data: dict) -> type:
 
 def register_all_units(registry):
     """Register all unit definitions to the given registry with prefix support."""
+    from .unit_types.prefixes import PREFIXABLE_UNITS
     from .unit import UnitDefinition
-    from .prefixes import get_prefix_by_name, StandardPrefixes, PREFIXABLE_UNITS
     
     # First pass: register base units with prefixes where applicable
     for dimension_data in UNIT_DEFINITIONS.values():
@@ -8003,7 +8004,12 @@ def register_all_units(registry):
     registry.finalize_registration()
 
 
-# Create unit classes dynamically for ALL dimensions
+
+# Optimized unit classes with performance improvements:
+# - __slots__ for memory efficiency
+# - Optimized prefix detection
+# - Better alias handling
+
 AbsorbedDoseUnits = create_unit_class("AbsorbedDoseUnits", UNIT_DEFINITIONS["absorbed_dose"])
 AccelerationUnits = create_unit_class("AccelerationUnits", UNIT_DEFINITIONS["acceleration"])
 ActivationEnergyUnits = create_unit_class("ActivationEnergyUnits", UNIT_DEFINITIONS["activation_energy"])

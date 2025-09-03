@@ -5,7 +5,7 @@
       "length": 2,
       "time": -2
     },
-    "signature": "DimensionSignature.create(length=2, time=-2)",
+    "signature": "DimensionSignature(0.16)",
     "constant_name": "ABSORBED_DOSE"
   },
   "acceleration": {
@@ -14,7 +14,7 @@
       "length": 1,
       "time": -2
     },
-    "signature": "DimensionSignature.create(length=1, time=-2)",
+    "signature": "DimensionSignature(0.08)",
     "constant_name": "ACCELERATION"
   },
   "activation_energy": {
@@ -24,7 +24,7 @@
       "amount": -1,
       "time": -2
     },
-    "signature": "DimensionSignature.create(amount=-1, length=2, time=-2)",
+    "signature": "DimensionSignature(0.01230769230769231)",
     "constant_name": "ACTIVATION_ENERGY"
   },
   "amount_of_substance": {
@@ -32,7 +32,7 @@
     "dimensions": {
       "amount": 1
     },
-    "signature": "DimensionSignature.create(amount=1)",
+    "signature": "DimensionSignature(13)",
     "constant_name": "AMOUNT_OF_SUBSTANCE"
   },
   "angle_plane": {
@@ -52,7 +52,7 @@
     "dimensions": {
       "time": -2
     },
-    "signature": "DimensionSignature.create(time=-2)",
+    "signature": "DimensionSignature(0.04)",
     "constant_name": "ANGULAR_ACCELERATION"
   },
   "angular_momentum": {
@@ -62,7 +62,7 @@
       "length": 2,
       "time": -1
     },
-    "signature": "DimensionSignature.create(length=2, mass=1, time=-1)",
+    "signature": "DimensionSignature(2.4000000000000004)",
     "constant_name": "ANGULAR_MOMENTUM"
   },
   "area": {
@@ -70,7 +70,7 @@
     "dimensions": {
       "length": 2
     },
-    "signature": "DimensionSignature.create(length=2)",
+    "signature": "DimensionSignature(4)",
     "constant_name": "AREA"
   },
   "area_per_unit_volume": {
@@ -78,7 +78,7 @@
     "dimensions": {
       "length": -1
     },
-    "signature": "DimensionSignature.create(length=-1)",
+    "signature": "DimensionSignature(0.5)",
     "constant_name": "AREA_PER_UNIT_VOLUME"
   },
   "atomic_weight": {
@@ -87,7 +87,7 @@
       "mass": 1,
       "amount": -1
     },
-    "signature": "DimensionSignature.create(amount=-1, mass=1)",
+    "signature": "DimensionSignature(0.23076923076923078)",
     "constant_name": "ATOMIC_WEIGHT"
   },
   "concentration": {
@@ -96,7 +96,7 @@
       "mass": 1,
       "length": -3
     },
-    "signature": "DimensionSignature.create(length=-3, mass=1)",
+    "signature": "DimensionSignature(0.375)",
     "constant_name": "CONCENTRATION"
   },
   "dimensionless": {
@@ -118,7 +118,7 @@
       "length": 1,
       "mass": -1
     },
-    "signature": "DimensionSignature.create(length=1, mass=-1, time=1)",
+    "signature": "DimensionSignature(3.333333333333333)",
     "constant_name": "DYNAMIC_FLUIDITY"
   },
   "electric_capacitance": {
@@ -129,7 +129,7 @@
       "length": -2,
       "mass": -1
     },
-    "signature": "DimensionSignature.create(current=2, length=-2, mass=-1, time=4)",
+    "signature": "DimensionSignature(2552.083333333333)",
     "constant_name": "ELECTRIC_CAPACITANCE"
   },
   "electric_charge": {
@@ -139,7 +139,7 @@
       "current": 1,
       "amount": -1
     },
-    "signature": "DimensionSignature.create(amount=-1, current=1, time=1)",
+    "signature": "DimensionSignature(2.6923076923076925)",
     "constant_name": "ELECTRIC_CHARGE"
   },
   "electric_current_intensity": {
@@ -147,7 +147,7 @@
     "dimensions": {
       "current": 1
     },
-    "signature": "DimensionSignature.create(current=1)",
+    "signature": "DimensionSignature(7)",
     "constant_name": "ELECTRIC_CURRENT_INTENSITY"
   },
   "electric_dipole_moment": {
@@ -157,7 +157,7 @@
       "length": 1,
       "time": 1
     },
-    "signature": "DimensionSignature.create(current=1, length=1, time=1)",
+    "signature": "DimensionSignature(70)",
     "constant_name": "ELECTRIC_DIPOLE_MOMENT"
   },
   "electric_field_strength": {
@@ -168,7 +168,7 @@
       "time": -3,
       "current": -1
     },
-    "signature": "DimensionSignature.create(current=-1, length=1, mass=1, time=-3)",
+    "signature": "DimensionSignature(0.006857142857142857)",
     "constant_name": "ELECTRIC_FIELD_STRENGTH"
   },
   "electric_inductance": {
@@ -179,7 +179,7 @@
       "time": -2,
       "current": -2
     },
-    "signature": "DimensionSignature.create(current=-2, length=2, mass=1, time=-2)",
+    "signature": "DimensionSignature(0.009795918367346938)",
     "constant_name": "ELECTRIC_INDUCTANCE"
   },
   "electric_potential": {
@@ -190,7 +190,7 @@
       "time": -3,
       "current": -1
     },
-    "signature": "DimensionSignature.create(current=-1, length=2, mass=1, time=-3)",
+    "signature": "DimensionSignature(0.013714285714285714)",
     "constant_name": "ELECTRIC_POTENTIAL"
   },
   "electric_resistance": {
@@ -201,7 +201,7 @@
       "time": -3,
       "current": -2
     },
-    "signature": "DimensionSignature.create(current=-2, length=2, mass=1, time=-3)",
+    "signature": "DimensionSignature(0.0019591836734693877)",
     "constant_name": "ELECTRIC_RESISTANCE"
   },
   "electrical_conductance": {
@@ -212,7 +212,7 @@
       "mass": -1,
       "length": -2
     },
-    "signature": "DimensionSignature.create(current=2, length=-2, mass=-1, time=3)",
+    "signature": "DimensionSignature(510.41666666666663)",
     "constant_name": "ELECTRICAL_CONDUCTANCE"
   },
   "electrical_permittivity": {
@@ -223,7 +223,7 @@
       "mass": -1,
       "length": -3
     },
-    "signature": "DimensionSignature.create(current=2, length=-3, mass=-1, time=4)",
+    "signature": "DimensionSignature(1276.0416666666665)",
     "constant_name": "ELECTRICAL_PERMITTIVITY"
   },
   "electrical_resistivity": {
@@ -234,7 +234,7 @@
       "time": -3,
       "current": -2
     },
-    "signature": "DimensionSignature.create(current=-2, length=3, mass=1, time=-3)",
+    "signature": "DimensionSignature(0.003918367346938775)",
     "constant_name": "ELECTRICAL_RESISTIVITY"
   },
   "energy_flux": {
@@ -243,7 +243,7 @@
       "mass": 1,
       "time": -3
     },
-    "signature": "DimensionSignature.create(mass=1, time=-3)",
+    "signature": "DimensionSignature(0.024)",
     "constant_name": "ENERGY_FLUX"
   },
   "energy_heat_work": {
@@ -253,7 +253,7 @@
       "length": 2,
       "time": -2
     },
-    "signature": "DimensionSignature.create(length=2, mass=1, time=-2)",
+    "signature": "DimensionSignature(0.48)",
     "constant_name": "ENERGY_HEAT_WORK"
   },
   "energy_per_unit_area": {
@@ -262,7 +262,7 @@
       "mass": 1,
       "time": -2
     },
-    "signature": "DimensionSignature.create(mass=1, time=-2)",
+    "signature": "DimensionSignature(0.12)",
     "constant_name": "ENERGY_PER_UNIT_AREA"
   },
   "force": {
@@ -272,7 +272,7 @@
       "length": 1,
       "time": -2
     },
-    "signature": "DimensionSignature.create(length=1, mass=1, time=-2)",
+    "signature": "DimensionSignature(0.24)",
     "constant_name": "FORCE"
   },
   "force_body": {
@@ -282,7 +282,7 @@
       "length": -2,
       "time": -2
     },
-    "signature": "DimensionSignature.create(length=-2, mass=1, time=-2)",
+    "signature": "DimensionSignature(0.03)",
     "constant_name": "FORCE_BODY"
   },
   "force_per_unit_mass": {
@@ -291,7 +291,7 @@
       "length": 1,
       "time": -2
     },
-    "signature": "DimensionSignature.create(length=1, time=-2)",
+    "signature": "DimensionSignature(0.08)",
     "constant_name": "FORCE_PER_UNIT_MASS"
   },
   "frequency_voltage_ratio": {
@@ -302,7 +302,7 @@
       "mass": -1,
       "length": -2
     },
-    "signature": "DimensionSignature.create(current=1, length=-2, mass=-1, time=3)",
+    "signature": "DimensionSignature(72.91666666666666)",
     "constant_name": "FREQUENCY_VOLTAGE_RATIO"
   },
   "fuel_consumption": {
@@ -310,7 +310,7 @@
     "dimensions": {
       "length": -2
     },
-    "signature": "DimensionSignature.create(length=-2)",
+    "signature": "DimensionSignature(0.25)",
     "constant_name": "FUEL_CONSUMPTION"
   },
   "heat_of_combustion": {
@@ -319,7 +319,7 @@
       "length": 2,
       "time": -2
     },
-    "signature": "DimensionSignature.create(length=2, time=-2)",
+    "signature": "DimensionSignature(0.16)",
     "constant_name": "HEAT_OF_COMBUSTION"
   },
   "heat_of_fusion": {
@@ -328,7 +328,7 @@
       "length": 2,
       "time": -2
     },
-    "signature": "DimensionSignature.create(length=2, time=-2)",
+    "signature": "DimensionSignature(0.16)",
     "constant_name": "HEAT_OF_FUSION"
   },
   "heat_of_vaporization": {
@@ -337,7 +337,7 @@
       "length": 2,
       "time": -2
     },
-    "signature": "DimensionSignature.create(length=2, time=-2)",
+    "signature": "DimensionSignature(0.16)",
     "constant_name": "HEAT_OF_VAPORIZATION"
   },
   "heat_transfer_coefficient": {
@@ -347,7 +347,7 @@
       "time": -3,
       "temp": -1
     },
-    "signature": "DimensionSignature.create(mass=1, temp=-1, time=-3)",
+    "signature": "DimensionSignature(0.002181818181818182)",
     "constant_name": "HEAT_TRANSFER_COEFFICIENT"
   },
   "illuminance": {
@@ -356,7 +356,7 @@
       "luminous_intensity": 1,
       "length": -2
     },
-    "signature": "DimensionSignature.create(length=-2, luminosity=1)",
+    "signature": "DimensionSignature(4.25)",
     "constant_name": "ILLUMINANCE"
   },
   "kinetic_energy_of_turbulence": {
@@ -365,7 +365,7 @@
       "length": 2,
       "time": -2
     },
-    "signature": "DimensionSignature.create(length=2, time=-2)",
+    "signature": "DimensionSignature(0.16)",
     "constant_name": "KINETIC_ENERGY_OF_TURBULENCE"
   },
   "length": {
@@ -373,7 +373,7 @@
     "dimensions": {
       "length": 1
     },
-    "signature": "DimensionSignature.create(length=1)",
+    "signature": "DimensionSignature(2)",
     "constant_name": "LENGTH"
   },
   "linear_mass_density": {
@@ -382,7 +382,7 @@
       "mass": 1,
       "length": -1
     },
-    "signature": "DimensionSignature.create(length=-1, mass=1)",
+    "signature": "DimensionSignature(1.5)",
     "constant_name": "LINEAR_MASS_DENSITY"
   },
   "linear_momentum": {
@@ -392,7 +392,7 @@
       "length": 1,
       "time": -1
     },
-    "signature": "DimensionSignature.create(length=1, mass=1, time=-1)",
+    "signature": "DimensionSignature(1.2000000000000002)",
     "constant_name": "LINEAR_MOMENTUM"
   },
   "luminance_self": {
@@ -401,7 +401,7 @@
       "luminous_intensity": 1,
       "length": -2
     },
-    "signature": "DimensionSignature.create(length=-2, luminosity=1)",
+    "signature": "DimensionSignature(4.25)",
     "constant_name": "LUMINANCE_SELF"
   },
   "luminous_flux": {
@@ -409,7 +409,7 @@
     "dimensions": {
       "luminous_intensity": 1
     },
-    "signature": "DimensionSignature.create(luminosity=1)",
+    "signature": "DimensionSignature(17)",
     "constant_name": "LUMINOUS_FLUX"
   },
   "luminous_intensity": {
@@ -417,7 +417,7 @@
     "dimensions": {
       "luminous_intensity": 1
     },
-    "signature": "DimensionSignature.create(luminosity=1)",
+    "signature": "DimensionSignature(17)",
     "constant_name": "LUMINOUS_INTENSITY"
   },
   "magnetic_field": {
@@ -426,7 +426,7 @@
       "current": 1,
       "length": -1
     },
-    "signature": "DimensionSignature.create(current=1, length=-1)",
+    "signature": "DimensionSignature(3.5)",
     "constant_name": "MAGNETIC_FIELD"
   },
   "magnetic_flux": {
@@ -437,7 +437,7 @@
       "time": -2,
       "current": -1
     },
-    "signature": "DimensionSignature.create(current=-1, length=2, mass=1, time=-2)",
+    "signature": "DimensionSignature(0.06857142857142856)",
     "constant_name": "MAGNETIC_FLUX"
   },
   "magnetic_induction_field_strength": {
@@ -447,7 +447,7 @@
       "time": -2,
       "current": -1
     },
-    "signature": "DimensionSignature.create(current=-1, mass=1, time=-2)",
+    "signature": "DimensionSignature(0.01714285714285714)",
     "constant_name": "MAGNETIC_INDUCTION_FIELD_STRENGTH"
   },
   "magnetic_moment": {
@@ -456,7 +456,7 @@
       "length": 2,
       "current": 1
     },
-    "signature": "DimensionSignature.create(current=1, length=2)",
+    "signature": "DimensionSignature(28)",
     "constant_name": "MAGNETIC_MOMENT"
   },
   "magnetic_permeability": {
@@ -467,7 +467,7 @@
       "time": -2,
       "current": -2
     },
-    "signature": "DimensionSignature.create(current=-2, length=2, mass=1, time=-2)",
+    "signature": "DimensionSignature(0.009795918367346938)",
     "constant_name": "MAGNETIC_PERMEABILITY"
   },
   "magnetomotive_force": {
@@ -475,7 +475,7 @@
     "dimensions": {
       "current": 1
     },
-    "signature": "DimensionSignature.create(current=1)",
+    "signature": "DimensionSignature(7)",
     "constant_name": "MAGNETOMOTIVE_FORCE"
   },
   "mass": {
@@ -483,7 +483,7 @@
     "dimensions": {
       "mass": 1
     },
-    "signature": "DimensionSignature.create(mass=1)",
+    "signature": "DimensionSignature(3)",
     "constant_name": "MASS"
   },
   "mass_density": {
@@ -492,7 +492,7 @@
       "mass": 1,
       "length": -3
     },
-    "signature": "DimensionSignature.create(length=-3, mass=1)",
+    "signature": "DimensionSignature(0.375)",
     "constant_name": "MASS_DENSITY"
   },
   "mass_flow_rate": {
@@ -501,7 +501,7 @@
       "mass": 1,
       "time": -1
     },
-    "signature": "DimensionSignature.create(mass=1, time=-1)",
+    "signature": "DimensionSignature(0.6000000000000001)",
     "constant_name": "MASS_FLOW_RATE"
   },
   "mass_flux": {
@@ -511,7 +511,7 @@
       "length": -2,
       "time": -1
     },
-    "signature": "DimensionSignature.create(length=-2, mass=1, time=-1)",
+    "signature": "DimensionSignature(0.15000000000000002)",
     "constant_name": "MASS_FLUX"
   },
   "mass_fraction_of_i": {
@@ -527,7 +527,7 @@
       "length": -2,
       "time": -1
     },
-    "signature": "DimensionSignature.create(length=-2, mass=1, time=-1)",
+    "signature": "DimensionSignature(0.15000000000000002)",
     "constant_name": "MASS_TRANSFER_COEFFICIENT"
   },
   "molality_of_solute_i": {
@@ -536,7 +536,7 @@
       "amount": 1,
       "mass": -1
     },
-    "signature": "DimensionSignature.create(amount=1, mass=-1)",
+    "signature": "DimensionSignature(4.333333333333333)",
     "constant_name": "MOLALITY_OF_SOLUTE_I"
   },
   "molar_concentration_by_mass": {
@@ -544,7 +544,7 @@
     "dimensions": {
       "amount": 1
     },
-    "signature": "DimensionSignature.create(amount=1)",
+    "signature": "DimensionSignature(13)",
     "constant_name": "MOLAR_CONCENTRATION_BY_MASS"
   },
   "molar_flow_rate": {
@@ -553,7 +553,7 @@
       "amount": 1,
       "time": -1
     },
-    "signature": "DimensionSignature.create(amount=1, time=-1)",
+    "signature": "DimensionSignature(2.6)",
     "constant_name": "MOLAR_FLOW_RATE"
   },
   "molar_flux": {
@@ -563,7 +563,7 @@
       "length": -2,
       "time": -1
     },
-    "signature": "DimensionSignature.create(amount=1, length=-2, time=-1)",
+    "signature": "DimensionSignature(0.65)",
     "constant_name": "MOLAR_FLUX"
   },
   "molar_heat_capacity": {
@@ -574,7 +574,7 @@
       "time": -2,
       "temp": -1
     },
-    "signature": "DimensionSignature.create(amount=-1, length=2, temp=-1, time=-2)",
+    "signature": "DimensionSignature(0.001118881118881119)",
     "constant_name": "MOLAR_HEAT_CAPACITY"
   },
   "molarity_of_i": {
@@ -583,7 +583,7 @@
       "amount": 1,
       "length": -3
     },
-    "signature": "DimensionSignature.create(amount=1, length=-3)",
+    "signature": "DimensionSignature(1.625)",
     "constant_name": "MOLARITY_OF_I"
   },
   "mole_fraction_of_i": {
@@ -598,7 +598,7 @@
       "mass": 1,
       "length": 2
     },
-    "signature": "DimensionSignature.create(length=2, mass=1)",
+    "signature": "DimensionSignature(12)",
     "constant_name": "MOMENT_OF_INERTIA"
   },
   "momentum_flow_rate": {
@@ -608,7 +608,7 @@
       "length": 1,
       "time": -2
     },
-    "signature": "DimensionSignature.create(length=1, mass=1, time=-2)",
+    "signature": "DimensionSignature(0.24)",
     "constant_name": "MOMENTUM_FLOW_RATE"
   },
   "momentum_flux": {
@@ -618,7 +618,7 @@
       "length": -1,
       "time": -2
     },
-    "signature": "DimensionSignature.create(length=-1, mass=1, time=-2)",
+    "signature": "DimensionSignature(0.06)",
     "constant_name": "MOMENTUM_FLUX"
   },
   "normality_of_solution": {
@@ -627,7 +627,7 @@
       "amount": 1,
       "length": -3
     },
-    "signature": "DimensionSignature.create(amount=1, length=-3)",
+    "signature": "DimensionSignature(1.625)",
     "constant_name": "NORMALITY_OF_SOLUTION"
   },
   "particle_density": {
@@ -635,7 +635,7 @@
     "dimensions": {
       "length": -3
     },
-    "signature": "DimensionSignature.create(length=-3)",
+    "signature": "DimensionSignature(0.125)",
     "constant_name": "PARTICLE_DENSITY"
   },
   "permeability": {
@@ -643,7 +643,7 @@
     "dimensions": {
       "length": 2
     },
-    "signature": "DimensionSignature.create(length=2)",
+    "signature": "DimensionSignature(4)",
     "constant_name": "PERMEABILITY"
   },
   "photon_emission_rate": {
@@ -652,7 +652,7 @@
       "length": -2,
       "time": -1
     },
-    "signature": "DimensionSignature.create(length=-2, time=-1)",
+    "signature": "DimensionSignature(0.05)",
     "constant_name": "PHOTON_EMISSION_RATE"
   },
   "power_per_unit_mass": {
@@ -661,7 +661,7 @@
       "length": 2,
       "time": -3
     },
-    "signature": "DimensionSignature.create(length=2, time=-3)",
+    "signature": "DimensionSignature(0.032)",
     "constant_name": "POWER_PER_UNIT_MASS"
   },
   "power_per_unit_volume": {
@@ -671,7 +671,7 @@
       "length": -1,
       "time": -3
     },
-    "signature": "DimensionSignature.create(length=-1, mass=1, time=-3)",
+    "signature": "DimensionSignature(0.012)",
     "constant_name": "POWER_PER_UNIT_VOLUME"
   },
   "power_thermal_duty": {
@@ -681,7 +681,7 @@
       "length": 2,
       "time": -3
     },
-    "signature": "DimensionSignature.create(length=2, mass=1, time=-3)",
+    "signature": "DimensionSignature(0.096)",
     "constant_name": "POWER_THERMAL_DUTY"
   },
   "pressure": {
@@ -691,7 +691,7 @@
       "length": -1,
       "time": -2
     },
-    "signature": "DimensionSignature.create(length=-1, mass=1, time=-2)",
+    "signature": "DimensionSignature(0.06)",
     "constant_name": "PRESSURE"
   },
   "radiation_dose_equivalent": {
@@ -700,7 +700,7 @@
       "length": 2,
       "time": -2
     },
-    "signature": "DimensionSignature.create(length=2, time=-2)",
+    "signature": "DimensionSignature(0.16)",
     "constant_name": "RADIATION_DOSE_EQUIVALENT"
   },
   "radiation_exposure": {
@@ -710,7 +710,7 @@
       "time": 1,
       "mass": -1
     },
-    "signature": "DimensionSignature.create(current=1, mass=-1, time=1)",
+    "signature": "DimensionSignature(11.666666666666666)",
     "constant_name": "RADIATION_EXPOSURE"
   },
   "radioactivity": {
@@ -718,7 +718,7 @@
     "dimensions": {
       "time": -1
     },
-    "signature": "DimensionSignature.create(time=-1)",
+    "signature": "DimensionSignature(0.2)",
     "constant_name": "RADIOACTIVITY"
   },
   "second_moment_of_area": {
@@ -726,7 +726,7 @@
     "dimensions": {
       "length": 4
     },
-    "signature": "DimensionSignature.create(length=4)",
+    "signature": "DimensionSignature(16)",
     "constant_name": "SECOND_MOMENT_OF_AREA"
   },
   "second_radiation_constant_planck": {
@@ -735,7 +735,7 @@
       "length": 1,
       "temp": 1
     },
-    "signature": "DimensionSignature.create(length=1, temp=1)",
+    "signature": "DimensionSignature(22)",
     "constant_name": "SECOND_RADIATION_CONSTANT_PLANCK"
   },
   "specific_enthalpy": {
@@ -744,7 +744,7 @@
       "length": 2,
       "time": -2
     },
-    "signature": "DimensionSignature.create(length=2, time=-2)",
+    "signature": "DimensionSignature(0.16)",
     "constant_name": "SPECIFIC_ENTHALPY"
   },
   "specific_gravity": {
@@ -761,7 +761,7 @@
       "time": -2,
       "temp": -1
     },
-    "signature": "DimensionSignature.create(length=2, mass=1, temp=-1, time=-2)",
+    "signature": "DimensionSignature(0.04363636363636363)",
     "constant_name": "SPECIFIC_HEAT_CAPACITY_CONSTANT_PRESSURE"
   },
   "specific_length": {
@@ -770,7 +770,7 @@
       "length": 1,
       "mass": -1
     },
-    "signature": "DimensionSignature.create(length=1, mass=-1)",
+    "signature": "DimensionSignature(0.6666666666666666)",
     "constant_name": "SPECIFIC_LENGTH"
   },
   "specific_surface": {
@@ -779,7 +779,7 @@
       "length": 2,
       "mass": -1
     },
-    "signature": "DimensionSignature.create(length=2, mass=-1)",
+    "signature": "DimensionSignature(1.3333333333333333)",
     "constant_name": "SPECIFIC_SURFACE"
   },
   "specific_volume": {
@@ -788,7 +788,7 @@
       "length": 3,
       "mass": -1
     },
-    "signature": "DimensionSignature.create(length=3, mass=-1)",
+    "signature": "DimensionSignature(2.6666666666666665)",
     "constant_name": "SPECIFIC_VOLUME"
   },
   "stress": {
@@ -798,7 +798,7 @@
       "length": -1,
       "time": -2
     },
-    "signature": "DimensionSignature.create(length=-1, mass=1, time=-2)",
+    "signature": "DimensionSignature(0.06)",
     "constant_name": "STRESS"
   },
   "surface_mass_density": {
@@ -807,7 +807,7 @@
       "mass": 1,
       "length": -2
     },
-    "signature": "DimensionSignature.create(length=-2, mass=1)",
+    "signature": "DimensionSignature(0.75)",
     "constant_name": "SURFACE_MASS_DENSITY"
   },
   "surface_tension": {
@@ -816,7 +816,7 @@
       "mass": 1,
       "time": -2
     },
-    "signature": "DimensionSignature.create(mass=1, time=-2)",
+    "signature": "DimensionSignature(0.12)",
     "constant_name": "SURFACE_TENSION"
   },
   "temperature": {
@@ -824,7 +824,7 @@
     "dimensions": {
       "temp": 1
     },
-    "signature": "DimensionSignature.create(temp=1)",
+    "signature": "DimensionSignature(11)",
     "constant_name": "TEMPERATURE"
   },
   "thermal_conductivity": {
@@ -835,7 +835,7 @@
       "time": -3,
       "temp": 1
     },
-    "signature": "DimensionSignature.create(length=1, mass=1, temp=1, time=-3)",
+    "signature": "DimensionSignature(0.528)",
     "constant_name": "THERMAL_CONDUCTIVITY"
   },
   "time": {
@@ -843,7 +843,7 @@
     "dimensions": {
       "time": 1
     },
-    "signature": "DimensionSignature.create(time=1)",
+    "signature": "DimensionSignature(5)",
     "constant_name": "TIME"
   },
   "torque": {
@@ -853,7 +853,7 @@
       "length": 2,
       "time": -2
     },
-    "signature": "DimensionSignature.create(length=2, mass=1, time=-2)",
+    "signature": "DimensionSignature(0.48)",
     "constant_name": "TORQUE"
   },
   "turbulence_energy_dissipation_rate": {
@@ -862,7 +862,7 @@
       "length": 2,
       "time": -3
     },
-    "signature": "DimensionSignature.create(length=2, time=-3)",
+    "signature": "DimensionSignature(0.032)",
     "constant_name": "TURBULENCE_ENERGY_DISSIPATION_RATE"
   },
   "velocity_angular": {
@@ -870,7 +870,7 @@
     "dimensions": {
       "time": -1
     },
-    "signature": "DimensionSignature.create(time=-1)",
+    "signature": "DimensionSignature(0.2)",
     "constant_name": "VELOCITY_ANGULAR"
   },
   "velocity_linear": {
@@ -879,7 +879,7 @@
       "length": 1,
       "time": -1
     },
-    "signature": "DimensionSignature.create(length=1, time=-1)",
+    "signature": "DimensionSignature(0.4)",
     "constant_name": "VELOCITY_LINEAR"
   },
   "viscosity_dynamic": {
@@ -889,7 +889,7 @@
       "length": -1,
       "time": -1
     },
-    "signature": "DimensionSignature.create(length=-1, mass=1, time=-1)",
+    "signature": "DimensionSignature(0.30000000000000004)",
     "constant_name": "VISCOSITY_DYNAMIC"
   },
   "viscosity_kinematic": {
@@ -898,7 +898,7 @@
       "length": 2,
       "time": -1
     },
-    "signature": "DimensionSignature.create(length=2, time=-1)",
+    "signature": "DimensionSignature(0.8)",
     "constant_name": "VISCOSITY_KINEMATIC"
   },
   "volume": {
@@ -906,7 +906,7 @@
     "dimensions": {
       "length": 3
     },
-    "signature": "DimensionSignature.create(length=3)",
+    "signature": "DimensionSignature(8)",
     "constant_name": "VOLUME"
   },
   "volume_fraction_of_i": {
@@ -922,7 +922,7 @@
       "length": -1,
       "time": -2
     },
-    "signature": "DimensionSignature.create(length=-1, mass=1, time=-2)",
+    "signature": "DimensionSignature(0.06)",
     "constant_name": "VOLUMETRIC_CALORIFIC_HEATING_VALUE"
   },
   "volumetric_coefficient_of_expansion": {
@@ -932,7 +932,7 @@
       "length": -3,
       "temp": -1
     },
-    "signature": "DimensionSignature.create(length=-3, mass=1, temp=-1)",
+    "signature": "DimensionSignature(0.03409090909090909)",
     "constant_name": "VOLUMETRIC_COEFFICIENT_OF_EXPANSION"
   },
   "volumetric_flow_rate": {
@@ -941,7 +941,7 @@
       "length": 3,
       "time": -1
     },
-    "signature": "DimensionSignature.create(length=3, time=-1)",
+    "signature": "DimensionSignature(1.6)",
     "constant_name": "VOLUMETRIC_FLOW_RATE"
   },
   "volumetric_flux": {
@@ -950,7 +950,7 @@
       "length": 1,
       "time": -1
     },
-    "signature": "DimensionSignature.create(length=1, time=-1)",
+    "signature": "DimensionSignature(0.4)",
     "constant_name": "VOLUMETRIC_FLUX"
   },
   "volumetric_mass_flow_rate": {
@@ -960,7 +960,7 @@
       "length": -3,
       "time": -1
     },
-    "signature": "DimensionSignature.create(length=-3, mass=1, time=-1)",
+    "signature": "DimensionSignature(0.07500000000000001)",
     "constant_name": "VOLUMETRIC_MASS_FLOW_RATE"
   },
   "wavenumber": {
@@ -968,7 +968,7 @@
     "dimensions": {
       "length": -1
     },
-    "signature": "DimensionSignature.create(length=-1)",
+    "signature": "DimensionSignature(0.5)",
     "constant_name": "WAVENUMBER"
   }
 }
