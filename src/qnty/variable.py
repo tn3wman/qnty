@@ -257,6 +257,43 @@ class TypeSafeVariable(Generic[DimensionType]):
         self.is_known = True
         return self
     
+    def update(self, value=None, unit=None, quantity=None, is_known=None):
+        """Update variable properties flexibly."""
+        if quantity is not None:
+            self.quantity = quantity
+        elif value is not None:
+            # Create setter and call the appropriate unit property
+            setter = self.set(value)
+            if unit is not None:
+                # Try to find the unit property on the setter
+                if hasattr(setter, unit):
+                    getattr(setter, unit)
+                elif hasattr(setter, unit + 's'):  # Handle singular/plural
+                    getattr(setter, unit + 's')
+                elif unit.endswith('s') and hasattr(setter, unit[:-1]):  # Handle plural to singular
+                    getattr(setter, unit[:-1])
+                else:
+                    raise ValueError(f"Unit '{unit}' not found for {self.__class__.__name__}")
+            else:
+                # If no unit specified, we can't automatically choose a unit
+                # The caller should specify either a unit or a quantity
+                raise ValueError("Must specify either 'unit' with 'value' or provide 'quantity' directly")
+        if is_known is not None:
+            self.is_known = is_known
+        return self  # For method chaining
+    
+    def mark_known(self, quantity=None):
+        """Mark variable as known, optionally updating its value."""
+        self.is_known = True
+        if quantity is not None:
+            self.quantity = quantity
+        return self  # For method chaining
+    
+    def mark_unknown(self):
+        """Mark variable as unknown."""
+        self.is_known = False
+        return self  # For method chaining
+    
     def __str__(self):
         return f"{self.name}: {self.quantity}" if self.quantity else f"{self.name}: unset"
 
