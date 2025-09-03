@@ -66,3 +66,41 @@ class ExpressionVariable(TypeSafeVariable):
     def __rpow__(self, other: FastQuantity | int | float) -> Expression:
         """Reverse power for this variable."""
         return wrap_operand(other) ** wrap_operand(self)
+    
+    # Comparison methods
+    def lt(self, other: TypeSafeVariable | FastQuantity | int | float) -> Expression:
+        """Less than comparison (<)."""
+        from ..expression import BinaryOperation
+        return BinaryOperation('<', wrap_operand(self), wrap_operand(other))
+    
+    def leq(self, other: TypeSafeVariable | FastQuantity | int | float) -> Expression:
+        """Less than or equal comparison (<=)."""
+        from ..expression import BinaryOperation
+        return BinaryOperation('<=', wrap_operand(self), wrap_operand(other))
+    
+    def geq(self, other: TypeSafeVariable | FastQuantity | int | float) -> Expression:
+        """Greater than or equal comparison (>=)."""
+        from ..expression import BinaryOperation
+        return BinaryOperation('>=', wrap_operand(self), wrap_operand(other))
+    
+    def gt(self, other: TypeSafeVariable | FastQuantity | int | float) -> Expression:
+        """Greater than comparison (>)."""
+        from ..expression import BinaryOperation
+        return BinaryOperation('>', wrap_operand(self), wrap_operand(other))
+    
+    # Python comparison operators
+    def __lt__(self, other: TypeSafeVariable | FastQuantity | int | float) -> Expression:
+        """Less than comparison (<) operator."""
+        return self.lt(other)
+    
+    def __le__(self, other: TypeSafeVariable | FastQuantity | int | float) -> Expression:
+        """Less than or equal comparison (<=) operator."""
+        return self.leq(other)
+    
+    def __gt__(self, other: TypeSafeVariable | FastQuantity | int | float) -> Expression:
+        """Greater than comparison (>) operator."""
+        return self.gt(other)
+    
+    def __ge__(self, other: TypeSafeVariable | FastQuantity | int | float) -> Expression:
+        """Greater than or equal comparison (>=) operator."""
+        return self.geq(other)
