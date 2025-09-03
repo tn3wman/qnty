@@ -10,7 +10,7 @@ import re
 from typing import Dict, List, Set, Optional, Any, Pattern, Union
 from logging import Logger
 
-from qnty.equation_system.equation import Equation
+from qnty.equation import Equation
 from qnty.variable_system import TypeSafeVariable as Variable
 from qnty.variable_system import FastQuantity as Qty
 from qnty.expression import (

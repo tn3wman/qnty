@@ -74,7 +74,7 @@ def test_straight_pipe_internal():
     print(f"  T_eqn value: {StraightPipeInternal.T_eqn}")
     
     # Debug: Test isinstance check directly
-    from qnty.equation_system.equation import Equation
+    from qnty.equation import Equation
     print(f"  isinstance check: {isinstance(StraightPipeInternal.T_eqn, Equation)}")
     
     # Debug: Check all class attributes with their types

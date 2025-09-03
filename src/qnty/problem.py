@@ -10,7 +10,7 @@ from __future__ import annotations
 from collections.abc import Callable
 from typing import Any, Dict, List, Optional, Set
 
-from qnty.equation_system.equation import Equation, EquationSystem
+from qnty.equation import Equation, EquationSystem
 from qnty.logging_system import get_logger
 from qnty.problem_system.dependency_graph import DependencyGraph
 from qnty.problem_system.equation_reconstruction import EquationReconstructor

@@ -1,6 +1,6 @@
 from collections import defaultdict, deque
 from typing import List, Set, Dict, Optional, Tuple, Any
-from qnty.equation_system.equation import Equation
+from qnty.equation import Equation
 from qnty.variable_system import TypeSafeVariable as Variable
 
 

@@ -2,7 +2,7 @@ from typing import Dict, List, Set, Any, Optional, Tuple
 import numpy as np
 from .base import BaseSolver, SolveResult
 from qnty.variable_system import TypeSafeVariable as Variable
-from qnty.equation_system.equation import Equation
+from qnty.equation import Equation
 from qnty.variable_system import FastQuantity as Qty
 from qnty.problem_system.dependency_graph import DependencyGraph
 

@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from typing import Dict, List, Set, Any, Optional
 from qnty.variable_system import TypeSafeVariable as Variable
-from qnty.equation_system.equation import Equation
+from qnty.equation import Equation
 from qnty.problem_system.dependency_graph import DependencyGraph
 
 

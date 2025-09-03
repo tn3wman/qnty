@@ -8,7 +8,7 @@ and equation capabilities.
 
 from __future__ import annotations
 
-from ..equation_system.equation import Equation
+from ..equation import Equation
 from ..expression import BinaryOperation, Expression, wrap_operand
 from .core import FastQuantity, TypeSafeVariable
 
