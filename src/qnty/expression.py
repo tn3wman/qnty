@@ -167,17 +167,17 @@ class Expression(ABC):
         return BinaryOperation('**', wrap_operand(other), self)
     
     # Comparison operators for conditional expressions
-    def __lt__(self, other: Union['Expression', 'TypeSafeVariable', 'FastQuantity', int, float]) -> 'ComparisonExpression':
-        return ComparisonExpression('<', self, self._wrap_operand(other))
+    def __lt__(self, other: Union['Expression', 'TypeSafeVariable', 'FastQuantity', int, float]) -> 'BinaryOperation':
+        return BinaryOperation('<', self, self._wrap_operand(other))
 
-    def __le__(self, other: Union['Expression', 'TypeSafeVariable', 'FastQuantity', int, float]) -> 'ComparisonExpression':
-        return ComparisonExpression('<=', self, self._wrap_operand(other))
+    def __le__(self, other: Union['Expression', 'TypeSafeVariable', 'FastQuantity', int, float]) -> 'BinaryOperation':
+        return BinaryOperation('<=', self, self._wrap_operand(other))
     
-    def __gt__(self, other: Union['Expression', 'TypeSafeVariable', 'FastQuantity', int, float]) -> 'ComparisonExpression':
-        return ComparisonExpression('>', self, self._wrap_operand(other))
+    def __gt__(self, other: Union['Expression', 'TypeSafeVariable', 'FastQuantity', int, float]) -> 'BinaryOperation':
+        return BinaryOperation('>', self, self._wrap_operand(other))
     
-    def __ge__(self, other: Union['Expression', 'TypeSafeVariable', 'FastQuantity', int, float]) -> 'ComparisonExpression':
-        return ComparisonExpression('>=', self, self._wrap_operand(other))
+    def __ge__(self, other: Union['Expression', 'TypeSafeVariable', 'FastQuantity', int, float]) -> 'BinaryOperation':
+        return BinaryOperation('>=', self, self._wrap_operand(other))
     
     @staticmethod
     def _wrap_operand(operand: Union['Expression', 'TypeSafeVariable', 'FastQuantity', int, float]) -> 'Expression':
@@ -241,6 +241,7 @@ class Constant(Expression):
         self.value = value
     
     def evaluate(self, variable_values: dict[str, 'TypeSafeVariable']) -> 'FastQuantity':
+        del variable_values  # Suppress unused variable warning
         return self.value
     
     def get_variables(self) -> set[str]:
@@ -288,6 +289,30 @@ class BinaryOperation(Expression):
                     return FastQuantity(result_value, left_val.unit)
                 else:
                     raise ValueError("Exponent must be dimensionless number")
+            elif self.operator in ['<', '<=', '>', '>=', '==', '!=']:
+                # Comparison operations - return dimensionless 1.0 or 0.0
+                # Convert to same units for comparison if possible
+                try:
+                    if left_val._dimension_sig == right_val._dimension_sig and left_val.unit != right_val.unit:
+                        right_val = right_val.to(left_val.unit)
+                except (ValueError, TypeError, AttributeError):
+                    pass
+                
+                result = False  # Initialize result
+                if self.operator == '<':
+                    result = left_val.value < right_val.value
+                elif self.operator == '<=':
+                    result = left_val.value <= right_val.value
+                elif self.operator == '>':
+                    result = left_val.value > right_val.value
+                elif self.operator == '>=':
+                    result = left_val.value >= right_val.value
+                elif self.operator == '==':
+                    result = abs(left_val.value - right_val.value) < 1e-10
+                elif self.operator == '!=':
+                    result = abs(left_val.value - right_val.value) >= 1e-10
+                
+                return FastQuantity(1.0 if result else 0.0, DimensionlessUnits.dimensionless)
             else:
                 raise ValueError(f"Unknown operator: {self.operator}")
         except Exception as e:
@@ -325,7 +350,7 @@ class BinaryOperation(Expression):
                 pass  # Fall back to symbolic representation
         
         # Handle operator precedence for cleaner string representation
-        precedence = {'+': 1, '-': 1, '*': 2, '/': 2, '**': 3}
+        precedence = {'+': 1, '-': 1, '*': 2, '/': 2, '**': 3, '<': 0, '<=': 0, '>': 0, '>=': 0, '==': 0, '!=': 0}
         left_str = str(self.left)
         right_str = str(self.right)
         
@@ -343,59 +368,12 @@ class BinaryOperation(Expression):
             # Need parentheses if:
             # - Right has lower precedence, OR
             # - Same precedence and current operator is left-associative (- or /)
-            if (right_prec < curr_prec or 
+            if (right_prec < curr_prec or
                 (right_prec == curr_prec and self.operator in ['-', '/'])):
                 right_str = f"({right_str})"
             
         return f"{left_str} {self.operator} {right_str}"
 
-
-class ComparisonExpression(Expression):
-    """Comparison expression for conditional logic."""
-    
-    def __init__(self, operator: str, left: Expression, right: Expression):
-        self.operator = operator
-        self.left = left
-        self.right = right
-    
-    def evaluate(self, variable_values: dict[str, 'TypeSafeVariable']) -> 'FastQuantity':
-        """Evaluate comparison and return dimensionless result (1.0 for True, 0.0 for False)."""
-        
-        left_val = self.left.evaluate(variable_values)
-        right_val = self.right.evaluate(variable_values)
-        
-        # Convert to same units for comparison if possible
-        try:
-            if left_val._dimension_sig == right_val._dimension_sig and left_val.unit != right_val.unit:
-                right_val = right_val.to(left_val.unit)
-        except (ValueError, TypeError, AttributeError):
-            pass
-        
-        if self.operator == '<':
-            result = left_val.value < right_val.value
-        elif self.operator == '<=':
-            result = left_val.value <= right_val.value
-        elif self.operator == '>':
-            result = left_val.value > right_val.value
-        elif self.operator == '>=':
-            result = left_val.value >= right_val.value
-        elif self.operator == '==':
-            result = abs(left_val.value - right_val.value) < 1e-10
-        elif self.operator == '!=':
-            result = abs(left_val.value - right_val.value) >= 1e-10
-        else:
-            raise ValueError(f"Unknown comparison operator: {self.operator}")
-        
-        return FastQuantity(1.0 if result else 0.0, DimensionlessUnits.dimensionless)
-    
-    def get_variables(self) -> set[str]:
-        return self.left.get_variables() | self.right.get_variables()
-    
-    def simplify(self) -> Expression:
-        return ComparisonExpression(self.operator, self.left.simplify(), self.right.simplify())
-    
-    def __str__(self) -> str:
-        return f"({self.left} {self.operator} {self.right})"
 
 
 class UnaryFunction(Expression):
@@ -536,7 +514,7 @@ def exp(expr: Union[Expression, 'TypeSafeVariable', 'FastQuantity', int, float])
     """Exponential function."""
     return UnaryFunction('exp', Expression._wrap_operand(expr))
 
-def cond_expr(condition: Union[Expression, 'ComparisonExpression'],
+def cond_expr(condition: Union[Expression, 'BinaryOperation'],
               true_expr: Union[Expression, 'TypeSafeVariable', 'FastQuantity', int, float],
               false_expr: Union[Expression, 'TypeSafeVariable', 'FastQuantity', int, float]) -> ConditionalExpression:
     """Conditional expression: if condition then true_expr else false_expr."""
