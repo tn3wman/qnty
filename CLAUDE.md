@@ -6,6 +6,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Qnty (formerly OptiUnit) is a high-performance unit system library for Python that provides dimensional safety and fast unit conversions for engineering calculations. The library is designed around type safety and performance optimization using compile-time dimensional analysis.
 
+### User-Focused API
+
+The qnty library provides a simple, focused API for users:
+
+1. **100+ Variable Types** (from `variables.py`): Length, Pressure, Temperature, Mass, Volume, Area, Force, etc.
+2. **Problem Class** (from `problem.py`): Engineering problem container with automatic equation solving
+3. **Validation System** (`add_check` from `qnty.problem_system.checks`): Code compliance and engineering checks
+4. **Expression Methods**: Built into variables for mathematical operations (e.g., `pressure.geq(limit)`, `length * width`)
+
+All other modules and classes are internal implementation details that users should not access directly.
+
 ## Common Development Commands
 
 ### Dependencies and Environment
@@ -43,7 +54,7 @@ Qnty (formerly OptiUnit) is a high-performance unit system library for Python th
 The codebase has been carefully structured to eliminate circular imports with a strict hierarchy:
 
 ```python
-variable → variable_types/expression_variable → variables → expression → equation
+dimension → unit_system/core → variable_system/core → variables → expression → equation
 ```
 
 This ensures clean dependencies and enables proper type checking throughout the system.
@@ -52,8 +63,9 @@ This ensures clean dependencies and enables proper type checking throughout the 
 
 The system uses a layered approach with separate concerns:
 
-- **Core Layer** (`variable.py`, `dimension.py`, `unit.py`): Core quantity and dimensional system
-- **Variable Types Layer** (`variable_types/`): Base classes for expression and typed variables  
+- **Core Layer** (`dimension.py`): Dimensional analysis system using prime number encoding
+- **Unit System Layer** (`unit_system/`): Unit definitions, registry, and constants
+- **Variable System Layer** (`variable_system/`): Base classes for quantities and typed variables  
 - **Generated Layer** (`variables.py`, `units.py`): Auto-generated domain-specific classes
 - **Expression Layer** (`expression.py`, `equation.py`): Mathematical expression and equation system
 
@@ -65,28 +77,30 @@ The system uses a layered approach with separate concerns:
 - `BaseDimension`: Enum of base dimensions (LENGTH, MASS, TIME, etc.) as prime numbers for efficient bit operations
 - Enables zero-cost dimensional analysis at compile time
 
-**Unit System (`unit.py`)**
+**Unit System (`unit_system/`)**
 
-- `UnitDefinition`: Immutable dataclass for unit definitions with SI conversion factors
-- `UnitConstant`: Type-safe unit constants that provide performance optimizations
-- `HighPerformanceRegistry`: Central registry with pre-computed conversion tables for fast unit conversions
+- `UnitDefinition` (`unit_system/core.py`): Immutable dataclass for unit definitions with SI conversion factors
+- `UnitConstant` (`unit_system/core.py`): Type-safe unit constants that provide performance optimizations
+- `HighPerformanceRegistry` (`unit_system/core.py`): Central registry with pre-computed conversion tables for fast unit conversions
+- `SIPrefix` (`unit_system/prefixes.py`): Comprehensive SI prefix system for automatic unit generation
 
-**Base Variables and Quantities (`variable.py`)**
+**Base Variables and Quantities (`variable_system/`)**
 
-- `FastQuantity`: High-performance quantity class optimized for engineering calculations
-- `TypeSafeVariable`: Base class for dimension-specific variables with generic type safety
-- `TypeSafeSetter`: Generic setter with dimensional validation and fluent API
+- `FastQuantity` (`variable_system/core.py`): High-performance quantity class optimized for engineering calculations
+- `TypeSafeVariable` (`variable_system/core.py`): Base class for dimension-specific variables with generic type safety
+- `TypeSafeSetter` (`variable_system/core.py`): Generic setter with dimensional validation and fluent API
+- `ExpressionVariable` (`variable_system/expression_variable.py`): Extended variable class with mathematical operations
 - Uses `__slots__` for memory efficiency and caches commonly used values  
 - Implements fast arithmetic operations with dimensional checking
 - **Variable Management Methods**: `update()`, `mark_known()`, `mark_unknown()` for flexible variable state management
 
 **Specialized Variables (`variables.py`)**
 
-- `Length`, `Pressure`, `Dimensionless`: Domain-specific variables with compile-time safety
-- `ExpressionVariable`: Extends `TypeSafeVariable` with mathematical operation capabilities and comparison methods
-- `LengthSetter`, `PressureSetter`, `DimensionlessSetter`: Specialized setters with unit-specific properties
-- Provides fluent API patterns for type-safe value setting
+- 100+ domain-specific variable types including `Length`, `Pressure`, `Temperature`, `Mass`, `Volume`, etc.
+- All extend `ExpressionVariable` with mathematical operation capabilities and comparison methods
+- Provides fluent API patterns for type-safe value setting with specialized setters
 - **Comparison Methods**: `lt()`, `leq()`, `geq()`, `gt()` methods and Python operators (`<`, `<=`, `>`, `>=`) for conditional logic
+- Auto-generated from comprehensive unit database with consistent patterns
 
 **Unit Constants (`units.py`)**
 
@@ -116,19 +130,30 @@ The system uses a layered approach with separate concerns:
 
 **Clean Import Strategy**: The codebase uses several techniques to avoid circular imports:
 
-- Strict dependency hierarchy: `variable → variables → expression → equation`
+- Strict dependency hierarchy: `dimension → unit_system → variable_system → variables → expression → equation`
 - `TYPE_CHECKING` guards for type-only imports
 - Duck typing with `hasattr()` checks to avoid importing classes
 - Delayed imports where necessary
 - Strategic use of `cast()` for type safety without runtime dependencies
 
-**Public API Design**: The library exposes a minimal, focused public API:
+**Public API Design**: The library exposes a focused public API for users:
 
 ```python
-from qnty import Length, Pressure, Dimensionless
+# Core variable types (100+ available)
+from qnty import Length, Pressure, Temperature, Mass, Volume, Area, Force, etc.
+
+# Engineering problem system
+from qnty import Problem
+from qnty.problem_system.checks import add_check
 ```
 
-All other classes and functions are implementation details and should be imported from their specific modules only when needed.
+**Restricted User Access**: Users should ONLY access these public components:
+- **All variables from `variables.py`**: Length, Pressure, Temperature, etc. (100+ engineering variable types)
+- **Problem class from `problem.py`**: Main container for engineering problems with solving capabilities
+- **`add_check` function from `qnty.problem_system.checks`**: Validation and compliance checking system
+- **Expression methods**: Available through variables (e.g., `length * width`, `pressure.geq(limit)`)
+
+All other classes, modules, and functions are internal implementation details and should not be used directly by users.
 
 **Fluent API Design**: Variables use specialized setters that return the variable itself for method chaining:
 
@@ -247,15 +272,13 @@ Recent architectural improvements include enhanced dimensional signature handlin
 
 ## Testing and Benchmarking
 
-The project includes comprehensive test coverage with **217 tests** across 7 test files:
+The project includes comprehensive test coverage with **234 tests** across 6 test files:
 
-- **Dimension tests**: `test_dimension.py` - 80 tests covering dimensional analysis
-- **Unit tests**: `test_unit.py` - 48 tests covering unit definitions and registry
-- **Variable tests**: `test_variable.py` - 81 tests covering FastQuantity and TypeSafeVariable
-- **Specialized variable tests**: `test_variables.py` - 111 tests covering Length and Pressure variables
-- **Setter tests**: `test_setters.py` - 78 tests covering fluent API and type safety
-- **Unit constant tests**: `test_units.py` - 42 tests covering unit constants
-- **Equation tests**: `test_equations.py` - 17 tests covering mathematical equations and expressions
+- **Dimension tests**: `test_dimension.py` - Dimensional analysis and signature operations
+- **Equation tests**: `test_equations.py` - Mathematical equations, expressions, and auto-solving
+- **Setter tests**: `test_setters.py` - Fluent API and type safety for variable setters
+- **Prefix tests**: `test_prefixes.py` - SI prefix system and unit generation
+- **Type hinting tests**: `test_type_hinting.py` - Type safety and generic type validation
 - **Benchmarks**: `test_benchmark.py` - Performance comparisons against Pint library
 
 ### Important Testing Notes
@@ -269,17 +292,29 @@ The project includes comprehensive test coverage with **217 tests** across 7 tes
 
 ### Import Strategy
 
-When working with this codebase, follow these import patterns:
+**User-facing imports** (what users should use):
 
 ```python
-# Public API - preferred for user-facing code
-from qnty import Length, Pressure, Dimensionless
+# All variable types
+from qnty import Length, Pressure, Temperature, Mass, Volume, Area, Force
+# ... and 90+ other variable types
 
-# Internal development - when working on internals
-from .variable import FastQuantity, TypeSafeVariable, TypeSafeSetter
-from .expression import Expression, wrap_operand
-from .equation import Equation
+# Engineering problem system
+from qnty import Problem
+from qnty.problem_system.checks import add_check
 ```
+
+**Internal development** (for library development only):
+
+```python
+# Internal systems - users should NOT import these
+from .variable_system.core import FastQuantity, TypeSafeVariable, TypeSafeSetter
+from .unit_system.core import UnitDefinition, UnitConstant, registry
+from .expression_system.expression import Expression, wrap_operand
+from .equation_system.equation import Equation
+```
+
+**User API Boundaries**: The public API is intentionally minimal to ensure users only need to learn and use the essential components. All other modules contain implementation details that should remain hidden from users.
 
 ### Type Safety Best Practices
 

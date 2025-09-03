@@ -19,7 +19,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 # Import prefixes directly to avoid circular import
 sys.path.insert(0, str(Path(__file__).parent.parent / "src" / "qnty"))
-from qnty.unit_types.prefixes import PREFIXABLE_UNITS, StandardPrefixes
+from qnty.unit_system.prefixes import PREFIXABLE_UNITS, StandardPrefixes
 
 
 def load_json_data(file_path: Path) -> dict:

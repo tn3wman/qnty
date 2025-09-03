@@ -9,7 +9,7 @@ across 107 fields organized into 107 dimensional groups.
 Generated from the complete NIST unit tables and engineering references.
 """
 
-from .dimension import (
+from .unit_system.dimension import (
     ABSORBED_DOSE,
     ACCELERATION,
     ACTIVATION_ENERGY,
@@ -7896,8 +7896,8 @@ UNIT_DEFINITIONS = {
 
 def create_unit_class(class_name: str, dimension_data: dict) -> type:
     """Create a unit class with optimized performance improvements."""
-    from .unit_types.prefixes import get_prefix_by_name
-    from .unit import UnitConstant, UnitDefinition
+    from .unit_system.prefixes import get_prefix_by_name
+    from .unit_system.core import UnitConstant, UnitDefinition
     
     # Create a new class with __slots__ for memory efficiency
     unit_class = type(class_name, (), {"__slots__": ()})
@@ -7951,8 +7951,8 @@ def create_unit_class(class_name: str, dimension_data: dict) -> type:
 
 def register_all_units(registry):
     """Register all unit definitions to the given registry with prefix support."""
-    from .unit_types.prefixes import PREFIXABLE_UNITS
-    from .unit import UnitDefinition
+    from .unit_system.prefixes import PREFIXABLE_UNITS
+    from .unit_system.core import UnitDefinition
     
     # First pass: register base units with prefixes where applicable
     for dimension_data in UNIT_DEFINITIONS.values():

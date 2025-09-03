@@ -8,7 +8,7 @@ Unit definitions, constants and registry for the high-performance unit system.
 from dataclasses import dataclass
 
 from .dimension import DimensionSignature
-from .unit_types.prefixes import SIPrefix, StandardPrefixes
+from .prefixes import SIPrefix, StandardPrefixes
 
 
 @dataclass(frozen=True, slots=True)

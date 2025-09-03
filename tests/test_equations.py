@@ -2,9 +2,9 @@
 
 import pytest
 
-from src.qnty.equation import Equation
-from src.qnty.expression import BinaryOperation, Expression, VariableReference
-from src.qnty.variable import FastQuantity, TypeSafeVariable
+from qnty.equation_system.equation import Equation
+from qnty.expression import BinaryOperation, Expression, VariableReference
+from qnty.variable_system.core import FastQuantity, TypeSafeVariable
 from src.qnty.variables import Dimensionless, Length, Pressure
 
 

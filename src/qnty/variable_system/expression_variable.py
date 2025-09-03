@@ -8,9 +8,9 @@ and equation capabilities.
 
 from __future__ import annotations
 
-from ..equation import Equation
+from ..equation_system.equation import Equation
 from ..expression import BinaryOperation, Expression, wrap_operand
-from ..variable import FastQuantity, TypeSafeVariable
+from .core import FastQuantity, TypeSafeVariable
 
 # Type alias for cleaner method signatures
 Operand = TypeSafeVariable | FastQuantity | int | float | Expression

@@ -10,7 +10,7 @@ import math
 
 import pytest
 
-from src.qnty.dimension import (
+from qnty.unit_system.dimension import (
     ACCELERATION,
     AREA,
     DIMENSIONLESS,

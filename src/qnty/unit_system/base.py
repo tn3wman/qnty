@@ -8,7 +8,7 @@ Provides abstract base class for unit modules and registration functionality.
 from abc import ABC, abstractmethod
 from typing import Any
 
-from ..unit import UnitConstant, UnitDefinition
+from .core import UnitConstant, UnitDefinition
 
 
 class UnitModule(ABC):

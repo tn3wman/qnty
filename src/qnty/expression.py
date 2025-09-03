@@ -10,7 +10,7 @@ from abc import ABC, abstractmethod
 from typing import Union
 
 from .units import DimensionlessUnits
-from .variable import FastQuantity, TypeSafeVariable
+from .variable_system.core import FastQuantity, TypeSafeVariable
 
 # Cache for common types to avoid repeated type checks
 _NUMERIC_TYPES = (int, float)

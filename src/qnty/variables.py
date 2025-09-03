@@ -10,7 +10,7 @@ Auto-generated from unit_data.json and dimension_mapping.json.
 from typing import TYPE_CHECKING
 
 from . import units
-from .dimension import (
+from .unit_system.dimension import (
     ABSORBED_DOSE,
     ACCELERATION,
     ACTIVATION_ENERGY,
@@ -119,8 +119,8 @@ from .dimension import (
     VOLUMETRIC_MASS_FLOW_RATE,
     WAVENUMBER,
 )
-from .variable import FastQuantity, TypeSafeSetter
-from .variable_types.typed_variable import TypedVariable
+from .variable_system.core import FastQuantity, TypeSafeSetter
+from .variable_system.typed_variable import TypedVariable
 
 if TYPE_CHECKING:
     pass

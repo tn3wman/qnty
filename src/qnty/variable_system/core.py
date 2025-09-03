@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Generic, Self, TypeVar
 
-from .dimension import (
+from ..unit_system.dimension import (
     AREA,
     DIMENSIONLESS,
     ENERGY_PER_UNIT_AREA,
@@ -21,11 +21,11 @@ from .dimension import (
     VOLUME,
     DimensionSignature,
 )
-from .dimension import (
+from ..unit_system.dimension import (
     ENERGY_HEAT_WORK as ENERGY,
 )
-from .unit import UnitConstant, UnitDefinition, registry
-from .units import AreaUnits, DimensionlessUnits, LengthUnits, PressureUnits, VolumeUnits
+from ..unit_system.core import UnitConstant, UnitDefinition, registry
+from ..units import AreaUnits, DimensionlessUnits, LengthUnits, PressureUnits, VolumeUnits
 
 if TYPE_CHECKING:
     pass

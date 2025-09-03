@@ -6,8 +6,8 @@ Base class that provides common constructor logic for all typed variables,
 handling both the original syntax and the new value/unit/name syntax.
 """
 
-from ..dimension import DimensionSignature
-from ..variable import TypeSafeSetter
+from ..unit_system.dimension import DimensionSignature
+from .core import TypeSafeSetter
 from .expression_variable import ExpressionVariable
 
 

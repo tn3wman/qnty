@@ -14,7 +14,7 @@ import unyt
 from astropy.units import imperial
 
 from qnty.units import DimensionlessUnits, LengthUnits, PressureUnits
-from qnty.variable import FastQuantity
+from qnty.variable_system.core import FastQuantity
 from qnty.variables import Length
 
 # Pre-define all variables to exclude initialization from performance measurements
