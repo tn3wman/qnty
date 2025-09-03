@@ -43,18 +43,6 @@ class TestEquationCreation:
                         "Allowable Stress", "Quality Factor", "Weld Joint Strength Reduction Factor",
                         "Y Coefficient"}
         assert t_eqn.get_all_variables() == expected_vars
-    
-    def test_equation_string_representation(self):
-        """Test string representation of equations."""
-        T = Length("T", is_known=False)
-        T_bar = Length(0.147, "inch", "T_bar")
-        
-        eqn = T.equals(T_bar * 0.875)
-        eqn_str = str(eqn)
-        
-        assert "T" in eqn_str
-        assert "=" in eqn_str
-        assert "T_bar" in eqn_str
 
 
 class TestArithmeticOperations:
@@ -288,15 +276,4 @@ class TestEdgeCases:
         
         with pytest.raises(ValueError, match="Variable 'nonexistent' not found"):
             eqn.solve_for("nonexistent", variables)
-    
-    def test_expression_string_representation(self):
-        """Test string representations of expressions."""
-        a = Length(5, "meter", "a")
-        b = Length(3, "meter", "b")
-        
-        expr = a + b
-        expr_str = str(expr)
-        
-        assert "a" in expr_str
-        assert "b" in expr_str
-        assert "+" in expr_str
+

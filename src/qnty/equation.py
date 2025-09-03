@@ -117,7 +117,88 @@ class Equation:
         except Exception:
             return False
     
+    def _discover_variables_from_scope(self) -> dict[str, TypeSafeVariable]:
+        """Automatically discover variables from the calling scope."""
+        import inspect
+        
+        # Get the frame that called this method (skip through __str__ calls)
+        frame = inspect.currentframe()
+        try:
+            # Skip frames until we find one outside the equation system
+            while frame and (
+                frame.f_code.co_filename.endswith(('equation.py', 'expression.py')) or
+                frame.f_code.co_name in ['__str__', '__repr__']
+            ):
+                frame = frame.f_back
+            
+            if not frame:
+                return {}
+                
+            # Combine local and global variables
+            all_vars = {**frame.f_globals, **frame.f_locals}
+            
+            # Find TypeSafeVariable objects that match our required variables
+            required_vars = self.variables
+            discovered = {}
+            
+            for var_name in required_vars:
+                for name, obj in all_vars.items():
+                    if hasattr(obj, 'symbol') and obj.symbol == var_name:
+                        discovered[var_name] = obj
+                        break
+                    elif hasattr(obj, 'name') and obj.name == var_name:
+                        discovered[var_name] = obj
+                        break
+            
+            return discovered
+            
+        finally:
+            del frame
+    
+    def _can_auto_solve(self) -> tuple[bool, str, dict[str, TypeSafeVariable]]:
+        """Check if equation can be auto-solved from scope."""
+        try:
+            discovered = self._discover_variables_from_scope()
+            
+            # Check if this is a simple assignment equation (one unknown)
+            unknowns = []
+            knowns = []
+            
+            for var_name in self.variables:
+                if var_name in discovered:
+                    var = discovered[var_name]
+                    if hasattr(var, 'is_known') and not var.is_known:
+                        unknowns.append(var_name)
+                    elif hasattr(var, 'quantity') and var.quantity is not None:
+                        knowns.append(var_name)
+                    else:
+                        unknowns.append(var_name)  # Assume unknown if no quantity
+                else:
+                    return False, "", {}  # Missing variable
+            
+            # Can only auto-solve if there's exactly one unknown
+            if len(unknowns) == 1:
+                return True, unknowns[0], discovered
+            
+            return False, "", {}
+            
+        except Exception:
+            return False, "", {}
+    
+    def _try_auto_solve(self) -> bool:
+        """Try to automatically solve the equation if possible."""
+        try:
+            can_solve, target_var, variables = self._can_auto_solve()
+            if can_solve:
+                self.solve_for(target_var, variables)
+                return True
+            return False
+        except Exception:
+            return False
+    
     def __str__(self) -> str:
+        # Try to auto-solve if possible before displaying
+        self._try_auto_solve()
         return f"{self.lhs} = {self.rhs}"
     
     def __repr__(self) -> str:

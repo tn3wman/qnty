@@ -62,6 +62,80 @@ class Expression(ABC):
     def __str__(self) -> str:
         pass
     
+    def _discover_variables_from_scope(self) -> dict[str, 'TypeSafeVariable']:
+        """Automatically discover variables from the calling scope."""
+        import inspect
+        
+        # Get the frame that called this method (skip through __str__ calls)
+        frame = inspect.currentframe()
+        try:
+            # Skip frames until we find one outside the expression system
+            while frame and (
+                frame.f_code.co_filename.endswith('expression.py') or
+                frame.f_code.co_name in ['__str__', '__repr__']
+            ):
+                frame = frame.f_back
+            
+            if not frame:
+                return {}
+                
+            # Combine local and global variables
+            all_vars = {**frame.f_globals, **frame.f_locals}
+            
+            # Find TypeSafeVariable objects that match our required variables
+            required_vars = self.get_variables()
+            discovered = {}
+            
+            for var_name in required_vars:
+                for name, obj in all_vars.items():
+                    # Check if this is a TypeSafeVariable with matching symbol/name
+                    if hasattr(obj, 'symbol') and obj.symbol == var_name:
+                        discovered[var_name] = obj
+                        break
+                    elif hasattr(obj, 'name') and obj.name == var_name:
+                        discovered[var_name] = obj
+                        break
+                    # Check if this is an Expression that can be evaluated to get the variable
+                    elif hasattr(obj, 'get_variables') and name == var_name:
+                        # This is an expression named after our variable - try to evaluate it
+                        try:
+                            if hasattr(obj, '_can_auto_evaluate'):
+                                can_eval, expr_vars = obj._can_auto_evaluate()
+                                if can_eval:
+                                    result = obj.evaluate(expr_vars)
+                                    # Create a temporary variable to hold the result
+                                    from .variables import Length  # Import here to avoid circular import
+                                    temp_var = Length(result.value, result.unit.symbol, f"temp_{var_name}")
+                                    temp_var.symbol = var_name
+                                    discovered[var_name] = temp_var
+                                    break
+                        except Exception:
+                            pass
+            
+            return discovered
+            
+        finally:
+            del frame
+    
+    def _can_auto_evaluate(self) -> tuple[bool, dict[str, 'TypeSafeVariable']]:
+        """Check if expression can be auto-evaluated from scope."""
+        try:
+            discovered = self._discover_variables_from_scope()
+            required_vars = self.get_variables()
+            
+            # Check if all required variables are available and have values
+            for var_name in required_vars:
+                if var_name not in discovered:
+                    return False, {}
+                var = discovered[var_name]
+                if not hasattr(var, 'quantity') or var.quantity is None:
+                    return False, {}
+            
+            return True, discovered
+            
+        except Exception:
+            return False, {}
+    
     def __add__(self, other: Union['Expression', 'TypeSafeVariable', 'FastQuantity', int, float]) -> 'Expression':
         return BinaryOperation('+', self, wrap_operand(other))
     
@@ -241,6 +315,15 @@ class BinaryOperation(Expression):
         return BinaryOperation(self.operator, left_simplified, right_simplified)
     
     def __str__(self) -> str:
+        # Try to auto-evaluate if all variables are available
+        can_eval, variables = self._can_auto_evaluate()
+        if can_eval:
+            try:
+                result = self.evaluate(variables)
+                return str(result)
+            except Exception:
+                pass  # Fall back to symbolic representation
+        
         # Handle operator precedence for cleaner string representation
         precedence = {'+': 1, '-': 1, '*': 2, '/': 2, '**': 3}
         left_str = str(self.left)
