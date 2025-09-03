@@ -34,7 +34,7 @@ Qnty (formerly OptiUnit) is a high-performance unit system library for Python th
 
 - **Automated Release**: `python release.py` - Increments patch version, creates git tag, and pushes to origin
 - **Version Control**: Uses semantic versioning with Poetry version management
-- **Current Version**: 0.0.6 (as of latest update)
+- **Current Version**: 0.0.8 (as of latest update)
 
 ## Architecture Overview
 
@@ -43,10 +43,19 @@ Qnty (formerly OptiUnit) is a high-performance unit system library for Python th
 The codebase has been carefully structured to eliminate circular imports with a strict hierarchy:
 
 ```python
-variable → variables → expression → equation
+variable → variable_types/expression_variable → variables → expression → equation
 ```
 
 This ensures clean dependencies and enables proper type checking throughout the system.
+
+### Modular Architecture
+
+The system uses a layered approach with separate concerns:
+
+- **Core Layer** (`variable.py`, `dimension.py`, `unit.py`): Core quantity and dimensional system
+- **Variable Types Layer** (`variable_types/`): Base classes for expression and typed variables  
+- **Generated Layer** (`variables.py`, `units.py`): Auto-generated domain-specific classes
+- **Expression Layer** (`expression.py`, `equation.py`): Mathematical expression and equation system
 
 ### Core Components
 
@@ -67,15 +76,17 @@ This ensures clean dependencies and enables proper type checking throughout the 
 - `FastQuantity`: High-performance quantity class optimized for engineering calculations
 - `TypeSafeVariable`: Base class for dimension-specific variables with generic type safety
 - `TypeSafeSetter`: Generic setter with dimensional validation and fluent API
-- Uses `__slots__` for memory efficiency and caches commonly used values
+- Uses `__slots__` for memory efficiency and caches commonly used values  
 - Implements fast arithmetic operations with dimensional checking
+- **Variable Management Methods**: `update()`, `mark_known()`, `mark_unknown()` for flexible variable state management
 
 **Specialized Variables (`variables.py`)**
 
 - `Length`, `Pressure`, `Dimensionless`: Domain-specific variables with compile-time safety
-- `ExpressionVariable`: Extends `TypeSafeVariable` with mathematical operation capabilities
+- `ExpressionVariable`: Extends `TypeSafeVariable` with mathematical operation capabilities and comparison methods
 - `LengthSetter`, `PressureSetter`, `DimensionlessSetter`: Specialized setters with unit-specific properties
 - Provides fluent API patterns for type-safe value setting
+- **Comparison Methods**: `lt()`, `leq()`, `geq()`, `gt()` methods and Python operators (`<`, `<=`, `>`, `>=`) for conditional logic
 
 **Unit Constants (`units.py`)**
 
@@ -86,10 +97,12 @@ This ensures clean dependencies and enables proper type checking throughout the 
 **Mathematical Expression System (`expression.py`)**
 
 - `Expression`: Abstract base class for mathematical expression trees
-- `BinaryOperation`, `VariableReference`, `Constant`: Concrete expression implementations
-- `UnaryFunction`, `ComparisonExpression`, `ConditionalExpression`: Advanced expression types
+- `BinaryOperation`: Unified operation class handling arithmetic (`+`, `-`, `*`, `/`, `**`) and comparison (`<`, `<=`, `>`, `>=`, `==`, `!=`) operators
+- `VariableReference`, `Constant`: Core expression implementations
+- `UnaryFunction`, `ConditionalExpression`: Advanced expression types
 - `wrap_operand()`: Duck-typing utility to convert various types to expressions
 - Comprehensive mathematical function support (sin, cos, tan, sqrt, ln, exp, etc.)
+- **Auto-evaluation**: Expressions automatically evaluate and display results when all variables have known values
 
 **Equation System (`equation.py`)**
 
@@ -97,6 +110,7 @@ This ensures clean dependencies and enables proper type checking throughout the 
 - `EquationSystem`: System of equations that can be solved together
 - Variables can participate in mathematical operations, returning expressions
 - Supports equation solving and residual checking for engineering calculations
+- **Auto-solving**: Equations automatically solve and display results when printed and only one unknown variable exists
 
 ### Key Architecture Patterns
 
@@ -123,7 +137,7 @@ length_var = Length("beam_length")
 length_var.set(100.0).millimeters  # Returns Length instance
 ```
 
-**Mathematical Expression Building**: Variables support arithmetic operations that return expressions:
+**Mathematical Expression Building**: Variables support arithmetic and comparison operations that return expressions:
 
 ```python
 # Variables can be combined in mathematical expressions
@@ -134,8 +148,41 @@ U_m = Dimensionless(0.125, "Mill Undertolerance")
 # Create equation: T = T_bar * (1 - U_m)
 equation = T.equals(T_bar * (1 - U_m))
 
-# Solve equations and check residuals
-equation.solve_for("T", known_variables)
+# Auto-solving: equations solve automatically when printed
+print(equation)  # Automatically solves for T and displays result
+
+# Comparison expressions for conditional logic
+constraint = T.geq(minimum_thickness)  # T >= minimum_thickness
+print(constraint)  # Automatically evaluates when variables are known
+```
+
+**Auto-Evaluation System**: The library includes sophisticated auto-evaluation capabilities:
+
+```python
+# Expressions auto-evaluate when all variables have known values
+length = Length(10, "mm", "beam_length") 
+width = Length(5, "mm", "beam_width")
+area_expr = length * width
+print(area_expr)  # Displays: 50.0 mm²
+
+# Equations auto-solve when exactly one variable is unknown
+thickness = Length("t", is_known=False)
+equation = thickness.equals(area_expr / width)
+print(equation)  # Automatically solves and displays: t = 10.0 mm
+```
+
+**Variable Management**: The system provides flexible variable state management:
+
+```python
+# Update variable properties flexibly  
+pressure = Pressure("p")
+pressure.update(value=100, unit="Pa")  # Set value with unit
+pressure.update(is_known=False)        # Mark as unknown
+pressure.update(quantity=other_var.quantity)  # Copy quantity
+
+# Mark variables as known/unknown
+pressure.mark_known()     # Mark as known
+pressure.mark_unknown()   # Mark as unknown
 ```
 
 **Type Safety**: The system prevents dimensional errors at the type level:
@@ -200,7 +247,7 @@ Recent architectural improvements include enhanced dimensional signature handlin
 
 ## Testing and Benchmarking
 
-The project includes comprehensive test coverage with **457 tests** across 8 test files:
+The project includes comprehensive test coverage with **217 tests** across 7 test files:
 
 - **Dimension tests**: `test_dimension.py` - 80 tests covering dimensional analysis
 - **Unit tests**: `test_unit.py` - 48 tests covering unit definitions and registry
@@ -269,6 +316,21 @@ t.symbol = "t"  # Required for equation.solve_for("t", variables)
 **Unit Registry Type Safety**: When modifying the registry system:
 - `_dimension_cache` and `dimensional_groups` must support `dict[int | float, ...]` types
 - This accommodates the mixed-type dimensional signatures from precision fixes
+
+**Auto-Evaluation System**: The expression and equation systems use Python's `inspect` module for automatic evaluation:
+- Expressions auto-evaluate when all referenced variables are available in the calling scope
+- Equations auto-solve when exactly one unknown variable exists
+- This eliminates the need for manual variable dictionary creation in most cases
+
+**Comparison Operations**: All comparison operators are handled by `BinaryOperation` instead of a separate class:
+- Comparisons return dimensionless quantities (1.0 for True, 0.0 for False)  
+- Unit conversion is automatic for same-dimension comparisons
+- Both method calls (`var.lt(other)`) and operators (`var < other`) are supported
+
+**Variable State Management**: New methods enable flexible variable property updates:
+- `update(value=..., unit=..., quantity=..., is_known=...)` for flexible updates
+- `mark_known()` and `mark_unknown()` for state changes
+- All methods support method chaining and return the variable instance
 
 ## important-instruction-reminders
 

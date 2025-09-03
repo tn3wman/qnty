@@ -142,7 +142,7 @@ class Equation:
             discovered = {}
             
             for var_name in required_vars:
-                for name, obj in all_vars.items():
+                for _name, obj in all_vars.items():
                     if hasattr(obj, 'symbol') and obj.symbol == var_name:
                         discovered[var_name] = obj
                         break
