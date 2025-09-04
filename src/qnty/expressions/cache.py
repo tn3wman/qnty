@@ -5,7 +5,7 @@ Expression Caching System
 Caching infrastructure for optimized expression evaluation and type checking.
 """
 
-from typing import Union, TYPE_CHECKING
+from typing import TYPE_CHECKING, Union
 
 if TYPE_CHECKING:
     from ..quantities.quantity import Quantity, TypeSafeVariable
@@ -65,7 +65,7 @@ def wrap_operand(operand: Union['Expression', 'TypeSafeVariable', 'Quantity', in
     This function uses cached type checks for maximum performance.
     """
     # Import Expression classes to avoid circular imports
-    from .nodes import Expression, Constant, VariableReference
+    from .nodes import Constant, Expression, VariableReference
     
     # Fast path: check most common cases first using cached type check
     if _is_numeric_type(operand):
@@ -85,8 +85,10 @@ def wrap_operand(operand: Union['Expression', 'TypeSafeVariable', 'Quantity', in
         return VariableReference(operand)
     
     # Check for ConfigurableVariable (from composition system)
-    if hasattr(operand, '_variable') and hasattr(operand, '_variable') and isinstance(operand._variable, TypeSafeVariable):
-        return VariableReference(operand._variable)
+    if hasattr(operand, '_variable'):
+        var = getattr(operand, '_variable', None)
+        if isinstance(var, TypeSafeVariable):
+            return VariableReference(var)
     
     # No duck typing - fail fast for unknown types
     raise TypeError(f"Cannot convert {type(operand)} to Expression")

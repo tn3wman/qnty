@@ -40,7 +40,7 @@ This refactoring plan addresses these issues through a 4-phase approach over 6 w
 
 ## Proposed Target Architecture
 
-```
+```python
 qnty/
 [ ]├── __init__.py                 # Curated public API facade
 [ ]├── api.py                      # Optional explicit export mapping
@@ -105,7 +105,7 @@ qnty/
 
 ### Phase 1: Foundation & Expression System (Week 1-2)
 
-**Priority: High - Establishes clean foundation**
+#### Priority: High - Establishes clean foundation**
 
 #### 1.1 Split `expression.py` into Modular System
 
@@ -188,7 +188,7 @@ qnty/
 
 ### Phase 2: Problem Domain Decomposition (Week 3-4)
 
-**Priority: High - Breaks apart the monolith**
+#### Priority: High - Breaks apart the monolith
 
 #### 2.1 Decompose `problem.py` Monolith
 
@@ -202,7 +202,7 @@ qnty/
 
 1. **Create Problem Module Structure:**
 
-   ```
+   ```python
    problem/
    ├── __init__.py          # Reassemble Problem class
    ├── base.py             # Core state, initialization, caching
@@ -284,7 +284,7 @@ qnty/
 
 1. **Create new `solving/` directory structure:**
 
-   ```
+   ```python
    solving/
    ├── __init__.py
    ├── dependency_graph.py  # From engines/problem/
@@ -311,7 +311,7 @@ qnty/
 
 ### Phase 3: Validation & API Cleanup (Week 5)
 
-**Priority: Medium - API consistency and user experience**
+#### Priority: Medium - API consistency and user experience**
 
 #### 3.1 Create Proper Validation System
 
@@ -325,7 +325,7 @@ qnty/
 
 1. **Create `validation/` directory:**
 
-   ```
+   ```python
    validation/
    ├── __init__.py          # Export rule factory, Validation class
    ├── rules.py            # Validation dataclass (renamed)
@@ -401,7 +401,7 @@ qnty/
 
 ### Phase 4: Code Generation Restructure (Week 6)
 
-**Priority: Low - Developer experience improvement**
+#### Priority: Low - Developer experience improvement**
 
 #### 4.1 Restructure Generation System
 
@@ -415,7 +415,7 @@ qnty/
 
 1. **Create `codegen/` directory structure:**
 
-   ```
+   ```python
    codegen/
    ├── __init__.py
    ├── cli.py              # Unified command-line interface

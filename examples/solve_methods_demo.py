@@ -9,7 +9,7 @@ import sys
 
 sys.path.insert(0, "src")
 
-from qnty import Length, Pressure, Dimensionless
+from qnty import Dimensionless, Length, Pressure
 
 
 def test_solve_from_method():

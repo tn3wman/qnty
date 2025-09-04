@@ -6,7 +6,7 @@ A fast, type-safe unit system library for Python with dimensional safety
 and optimized unit conversions for engineering calculations.
 """
 
-from . import (quantity, expressions)
+# from . import (quantity, expressions)
 
 from .expressions import cond_expr
 from .problem import Problem
@@ -122,7 +122,6 @@ from .generated.quantities import (
 
 # Define public API
 __all__ = [
-    'quantity',
     'expressions',
     'Problem'
 ]

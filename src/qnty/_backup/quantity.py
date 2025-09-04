@@ -28,7 +28,7 @@ __generated_module: Any | None = None
 def _load():
     global __generated_module
     if __generated_module is None:
-        from .generated import quantities  # local import for speed on cold start
+        from ..generated import quantities  # local import for speed on cold start
         __generated_module = quantities
     return __generated_module
 
@@ -51,7 +51,7 @@ def __dir__():
 
 # Static type checking: directly import symbols so type checkers see them.
 if TYPE_CHECKING:  # pragma: no cover
-    from .generated.quantities import (
+    from ..generated.quantities import (
         AbsorbedDose,
         Area,
         Force,

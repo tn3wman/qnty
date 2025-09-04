@@ -11,7 +11,7 @@ Qnty (formerly OptiUnit) is a high-performance unit system library for Python th
 The qnty library provides a simple, focused API for users:
 
 1. **100+ Variable Types** (from `variables.py`): Length, Pressure, Temperature, Mass, Volume, Area, Force, etc.
-2. **Problem Class** (from `problem.py`): Engineering problem container with automatic equation solving
+2. **Problem Class** (from `problem/`): Engineering problem container with automatic equation solving
 3. **Validation System** (`validate` from `validation.py`): Code compliance and engineering checks
 4. **Expression Methods**: Built into variables for mathematical operations (e.g., `pressure.geq(limit)`, `length * width`)
 
@@ -68,7 +68,7 @@ The system uses a layered approach with separate concerns:
 - **Units Layer** (`units/`): Unit definitions, registry, and constants
 - **Generated Layer** (`generated/`): Auto-generated domain-specific classes for variables and units
 - **Expression Layer** (`expression.py`, `equation.py`): Mathematical expression and equation system
-- **Problem Solving Layer** (`problem.py`): Main engineering problem container
+- **Problem Solving Layer** (`problem/`): Modular problem system with focused components
 - **Engines Layer** (`engines/`): Problem solving engines including solvers and dependency management
 
 ### Core Components
@@ -136,6 +136,20 @@ The system uses a layered approach with separate concerns:
 - Supports equation solving and residual checking for engineering calculations
 - **Auto-solving**: Equations automatically solve and display results when printed and only one unknown variable exists
 
+**Problem System Architecture (`problem/`)**
+
+The Problem system has been decomposed into focused modules using multiple inheritance:
+
+- **`base.py`** (139 lines): Core Problem state, initialization, caching, and utility methods
+- **`variables.py`** (215 lines): Variable lifecycle management, adding/getting variables, known/unknown state
+- **`equations.py`** (400 lines): Equation processing pipeline, validation, missing variable handling
+- **`solving.py`** (156 lines): High-level solve orchestration, dependency graphs, solution verification
+- **`validation.py`** (57 lines): Problem-validation integration and check management
+- **`composition_mixin.py`** (336 lines): Sub-problem composition, namespacing, and composite equation creation
+- **`__init__.py`** (90 lines): Reassembled Problem class using multiple inheritance with `ProblemMeta` metaclass
+
+The Problem class combines all mixins: `Problem(ProblemBase, VariablesMixin, EquationsMixin, SolvingMixin, ValidationMixin, CompositionMixin, metaclass=ProblemMeta)`
+
 ### Key Architecture Patterns
 
 **Clean Import Strategy**: The codebase uses several techniques to avoid circular imports:
@@ -160,7 +174,7 @@ from qnty.validation import validate
 **Restricted User Access**: Users should ONLY access these public components:
 
 - **All variables from `generated/variables.py`**: Length, Pressure, Temperature, etc. (100+ engineering variable types)
-- **Problem class from `problem.py`**: Main container for engineering problems with solving capabilities
+- **Problem class from `problem/`**: Main container for engineering problems with solving capabilities
 - **`validate` function from `validation.py`**: Validation and compliance checking system
 - **Expression methods**: Available through variables (e.g., `length * width`, `pressure.geq(limit)`)
 
@@ -285,7 +299,7 @@ Recent architectural improvements include enhanced dimensional signature handlin
 
 ## Testing and Benchmarking
 
-The project includes comprehensive test coverage with **234 tests** across 6 test files:
+The project includes comprehensive test coverage with **187 tests** across 6 test files:
 
 - **Dimension tests**: `test_dimension.py` - Dimensional analysis and signature operations
 - **Equation tests**: `test_equations.py` - Mathematical equations, expressions, and auto-solving
@@ -390,6 +404,14 @@ t.symbol = "t"  # Required for equation.solve_for("t", variables)
 - `update(value=..., unit=..., quantity=..., is_known=...)` for flexible updates
 - `mark_known()` and `mark_unknown()` for state changes
 - All methods support method chaining and return the variable instance
+
+**Problem System Composition**: The refactored Problem system supports complex sub-problem composition:
+
+- **Variable Namespacing**: Sub-problem variables are automatically namespaced (e.g., `header.P` becomes `header_P`)
+- **Expression Namespacing**: All expression types (BinaryOperation, ConditionalExpression, VariableReference) are properly namespaced
+- **ConfigurableVariable**: Proxy variables with arithmetic delegation for composed problems
+- **Type Preservation**: Variable cloning preserves original types using `type(variable)(variable.name)` pattern
+- **Automatic Composite Equations**: Common patterns like `P = min(header.P, branch.P)` are auto-generated
 
 ## important-instruction-reminders
 

@@ -15,7 +15,7 @@ from astropy.units import imperial
 
 from qnty.generated.units import DimensionlessUnits, LengthUnits, PressureUnits
 from qnty.quantities.quantity import Quantity
-from qnty.quantity import Length
+from qnty.generated.quantities import Length
 
 # Pre-define all variables to exclude initialization from performance measurements
 ASTROPY_AVAILABLE = True

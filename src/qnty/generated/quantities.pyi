@@ -10,9 +10,9 @@ Auto-generated from the same source of truth as consolidated_new.py.
 
 from typing import Any
 
-from .generated.dimensions import DimensionSignature
-from .quantities.quantity import TypeSafeSetter
-from .quantities.typed_quantity import TypedQuantity
+from .dimensions import DimensionSignature
+from ..quantities.quantity import TypeSafeSetter
+from ..quantities.typed_quantity import TypedQuantity
 
 # ============================================================================
 # ABSORBED RADIATION DOSE
