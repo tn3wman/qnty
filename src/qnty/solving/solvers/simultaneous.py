@@ -2,9 +2,9 @@ from typing import Any
 
 import numpy as np
 
-from qnty.engines.problem.dependency_graph import DependencyGraph
-from qnty.equation import Equation
-from qnty.quantities import FastQuantity as Qty
+from qnty.solving.order import Order
+from qnty.equations.equation import Equation
+from qnty.quantities import Quantity as Qty
 from qnty.quantities import TypeSafeVariable as Variable
 
 from .base import BaseSolver, SolveResult
@@ -45,7 +45,7 @@ class SimultaneousEquationSolver(BaseSolver):
     SPARSE_THRESHOLD = 0.1  # Use sparse matrices if density < 10%
 
     def can_handle(self, equations: list[Equation], unknowns: set[str],
-                   dependency_graph: DependencyGraph | None = None,
+                   dependency_graph: Order | None = None,
                    analysis: dict[str, Any] | None = None) -> bool:
         """
         Determine if this solver can handle the given system.
@@ -82,7 +82,7 @@ class SimultaneousEquationSolver(BaseSolver):
         self,
         equations: list[Equation],
         variables: dict[str, Variable],
-        dependency_graph: DependencyGraph | None = None,
+        dependency_graph: Order | None = None,
         max_iterations: int = 100,
         tolerance: float = DEFAULT_TOLERANCE
     ) -> SolveResult:

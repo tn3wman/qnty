@@ -32,7 +32,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from ...validation import Validation
+from ..validation import Validation
 from .composition import SubProblemProxy
 
 # Constants for better maintainability
@@ -244,7 +244,7 @@ class ProxiedNamespace(dict):
         """
         # Import Variable here to avoid circular imports
         try:
-            from qnty.quantities.core import TypeSafeVariable as Variable
+            from qnty.quantities.quantity import TypeSafeVariable as Variable
             return isinstance(value, Variable) and value.symbol == "<auto>"
         except ImportError:
             return False

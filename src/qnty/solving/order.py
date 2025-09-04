@@ -1,10 +1,10 @@
 from collections import defaultdict, deque
 from typing import Any
 
-from qnty.equation import Equation
+from qnty.equations.equation import Equation
 
 
-class DependencyGraph:
+class Order:
     """
     Manages dependencies between variables in a system of equations.
     Uses topological sorting to determine the correct solving order.

@@ -7,7 +7,7 @@ from reusable sub-problems with clean syntax and automatic integration.
 
 from qnty.expressions import BinaryOperation, max_expr, min_expr, sin
 from qnty.generated.quantities import Dimensionless
-from qnty.quantities.core import TypeSafeVariable as Variable
+from qnty.quantities.quantity import TypeSafeVariable as Variable
 
 
 class DelayedEquation:

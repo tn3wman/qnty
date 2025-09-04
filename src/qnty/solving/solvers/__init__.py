@@ -7,7 +7,7 @@ of engineering equations.
 
 from .base import BaseSolver, SolveError, SolveResult
 from .iterative import IterativeSolver
-from .manager import SolverManager
+from ..manager import SolverManager
 from .simultaneous import SimultaneousEquationSolver
 
 __all__ = [

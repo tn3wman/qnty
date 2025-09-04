@@ -11,8 +11,8 @@ Auto-generated from the same source of truth as consolidated_new.py.
 from typing import Any
 
 from .generated.dimensions import DimensionSignature
-from .quantities.core import TypeSafeSetter
-from .quantities.typed_variable import TypedVariable
+from .quantities.quantity import TypeSafeSetter
+from .quantities.typed_quantity import TypedQuantity
 
 # ============================================================================
 # ABSORBED RADIATION DOSE
@@ -45,7 +45,7 @@ class AbsorbedDoseSetter(TypeSafeSetter):
     @property
     def microgray(self) -> AbsorbedDose: ...
 
-class AbsorbedDose(TypedVariable):
+class AbsorbedDose(TypedQuantity):
     """Type-safe absorbed radiation dose variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -86,7 +86,7 @@ class AccelerationSetter(TypeSafeSetter):
     @property
     def fps2(self) -> Acceleration: ...
 
-class Acceleration(TypedVariable):
+class Acceleration(TypedQuantity):
     """Type-safe acceleration variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -130,7 +130,7 @@ class ActivationEnergySetter(TypeSafeSetter):
     @property
     def kilocalorie_per_kilogram_mole(self) -> ActivationEnergy: ...
 
-class ActivationEnergy(TypedVariable):
+class ActivationEnergy(TypedQuantity):
     """Type-safe activation energy variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -181,7 +181,7 @@ class AmountOfSubstanceSetter(TypeSafeSetter):
     @property
     def micromole_gram(self) -> AmountOfSubstance: ...
 
-class AmountOfSubstance(TypedVariable):
+class AmountOfSubstance(TypedQuantity):
     """Type-safe amount of substance variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -256,7 +256,7 @@ class AnglePlaneSetter(TypeSafeSetter):
     @property
     def rev(self) -> AnglePlane: ...
 
-class AnglePlane(TypedVariable):
+class AnglePlane(TypedQuantity):
     """Type-safe angle, plane variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -297,7 +297,7 @@ class AngleSolidSetter(TypeSafeSetter):
     @property
     def sr(self) -> AngleSolid: ...
 
-class AngleSolid(TypedVariable):
+class AngleSolid(TypedQuantity):
     """Type-safe angle, solid variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -338,7 +338,7 @@ class AngularAccelerationSetter(TypeSafeSetter):
     @property
     def rpm_min(self) -> AngularAcceleration: ...
 
-class AngularAcceleration(TypedVariable):
+class AngularAcceleration(TypedQuantity):
     """Type-safe angular acceleration variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -375,7 +375,7 @@ class AngularMomentumSetter(TypeSafeSetter):
     @property
     def pound_force_square_foot_per_second(self) -> AngularMomentum: ...
 
-class AngularMomentum(TypedVariable):
+class AngularMomentum(TypedQuantity):
     """Type-safe angular momentum variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -484,7 +484,7 @@ class AreaSetter(TypeSafeSetter):
     @property
     def township_US(self) -> Area: ...
 
-class Area(TypedVariable):
+class Area(TypedQuantity):
     """Type-safe area variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -535,7 +535,7 @@ class AreaPerUnitVolumeSetter(TypeSafeSetter):
     @property
     def _1_m_3(self) -> AreaPerUnitVolume: ...
 
-class AreaPerUnitVolume(TypedVariable):
+class AreaPerUnitVolume(TypedQuantity):
     """Type-safe area per unit volume variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -580,7 +580,7 @@ class AtomicWeightSetter(TypeSafeSetter):
     @property
     def lb_mole(self) -> AtomicWeight: ...
 
-class AtomicWeight(TypedVariable):
+class AtomicWeight(TypedQuantity):
     """Type-safe atomic weight variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -619,7 +619,7 @@ class ConcentrationSetter(TypeSafeSetter):
     @property
     def grains_of_i_per_gallon_US(self) -> Concentration: ...
 
-class Concentration(TypedVariable):
+class Concentration(TypedQuantity):
     """Type-safe concentration variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -661,7 +661,7 @@ class DimensionlessSetter(TypeSafeSetter):
     @property
     def ppb(self) -> Dimensionless: ...
 
-class Dimensionless(TypedVariable):
+class Dimensionless(TypedQuantity):
     """Type-safe dimensionless variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -700,7 +700,7 @@ class DynamicFluiditySetter(TypeSafeSetter):
     @property
     def square_meters_per_newton_per_second(self) -> DynamicFluidity: ...
 
-class DynamicFluidity(TypedVariable):
+class DynamicFluidity(TypedQuantity):
     """Type-safe dynamic fluidity variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -761,7 +761,7 @@ class ElectricCapacitanceSetter(TypeSafeSetter):
     @property
     def pF(self) -> ElectricCapacitance: ...
 
-class ElectricCapacitance(TypedVariable):
+class ElectricCapacitance(TypedQuantity):
     """Type-safe electric capacitance variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -832,7 +832,7 @@ class ElectricChargeSetter(TypeSafeSetter):
     @property
     def pC(self) -> ElectricCharge: ...
 
-class ElectricCharge(TypedVariable):
+class ElectricCharge(TypedQuantity):
     """Type-safe electric charge variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -879,7 +879,7 @@ class ElectricCurrentIntensitySetter(TypeSafeSetter):
     @property
     def u_a_or_current(self) -> ElectricCurrentIntensity: ...
 
-class ElectricCurrentIntensity(TypedVariable):
+class ElectricCurrentIntensity(TypedQuantity):
     """Type-safe electric current intensity variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -920,7 +920,7 @@ class ElectricDipoleMomentSetter(TypeSafeSetter):
     @property
     def electron_meter(self) -> ElectricDipoleMoment: ...
 
-class ElectricDipoleMoment(TypedVariable):
+class ElectricDipoleMoment(TypedQuantity):
     """Type-safe electric dipole moment variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -955,7 +955,7 @@ class ElectricFieldStrengthSetter(TypeSafeSetter):
     @property
     def volt_per_meter(self) -> ElectricFieldStrength: ...
 
-class ElectricFieldStrength(TypedVariable):
+class ElectricFieldStrength(TypedQuantity):
     """Type-safe electric field strength variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -1011,7 +1011,7 @@ class ElectricInductanceSetter(TypeSafeSetter):
     @property
     def nH(self) -> ElectricInductance: ...
 
-class ElectricInductance(TypedVariable):
+class ElectricInductance(TypedQuantity):
     """Type-safe electric inductance variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -1074,7 +1074,7 @@ class ElectricPotentialSetter(TypeSafeSetter):
     @property
     def pV(self) -> ElectricPotential: ...
 
-class ElectricPotential(TypedVariable):
+class ElectricPotential(TypedQuantity):
     """Type-safe electric potential variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -1137,7 +1137,7 @@ class ElectricResistanceSetter(TypeSafeSetter):
     @property
     def m_Omega(self) -> ElectricResistance: ...
 
-class ElectricResistance(TypedVariable):
+class ElectricResistance(TypedQuantity):
     """Type-safe electric resistance variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -1184,7 +1184,7 @@ class ElectricalConductanceSetter(TypeSafeSetter):
     @property
     def mS(self) -> ElectricalConductance: ...
 
-class ElectricalConductance(TypedVariable):
+class ElectricalConductance(TypedQuantity):
     """Type-safe electrical conductance variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -1217,7 +1217,7 @@ class ElectricalPermittivitySetter(TypeSafeSetter):
     @property
     def farad_per_meter(self) -> ElectricalPermittivity: ...
 
-class ElectricalPermittivity(TypedVariable):
+class ElectricalPermittivity(TypedQuantity):
     """Type-safe electrical permittivity variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -1256,7 +1256,7 @@ class ElectricalResistivitySetter(TypeSafeSetter):
     @property
     def ohm_meter(self) -> ElectricalResistivity: ...
 
-class ElectricalResistivity(TypedVariable):
+class ElectricalResistivity(TypedQuantity):
     """Type-safe electrical resistivity variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -1301,7 +1301,7 @@ class EnergyFluxSetter(TypeSafeSetter):
     @property
     def watt_per_square_meter(self) -> EnergyFlux: ...
 
-class EnergyFlux(TypedVariable):
+class EnergyFlux(TypedQuantity):
     """Type-safe energy flux variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -1454,7 +1454,7 @@ class EnergyHeatWorkSetter(TypeSafeSetter):
     @property
     def GJ(self) -> EnergyHeatWork: ...
 
-class EnergyHeatWork(TypedVariable):
+class EnergyHeatWork(TypedQuantity):
     """Type-safe energy, heat, work variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -1497,7 +1497,7 @@ class EnergyPerUnitAreaSetter(TypeSafeSetter):
     @property
     def Ly(self) -> EnergyPerUnitArea: ...
 
-class EnergyPerUnitArea(TypedVariable):
+class EnergyPerUnitArea(TypedQuantity):
     """Type-safe energy per unit area variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -1590,7 +1590,7 @@ class ForceSetter(TypeSafeSetter):
     @property
     def mN(self) -> Force: ...
 
-class Force(TypedVariable):
+class Force(TypedQuantity):
     """Type-safe force variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -1639,7 +1639,7 @@ class ForceBodySetter(TypeSafeSetter):
     @property
     def ton_force_per_cubic_foot(self) -> ForceBody: ...
 
-class ForceBody(TypedVariable):
+class ForceBody(TypedQuantity):
     """Type-safe force (body) variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -1684,7 +1684,7 @@ class ForcePerUnitMassSetter(TypeSafeSetter):
     @property
     def pound_force_per_slug(self) -> ForcePerUnitMass: ...
 
-class ForcePerUnitMass(TypedVariable):
+class ForcePerUnitMass(TypedQuantity):
     """Type-safe force per unit mass variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -1721,7 +1721,7 @@ class FrequencyVoltageRatioSetter(TypeSafeSetter):
     @property
     def terahertz_per_volt(self) -> FrequencyVoltageRatio: ...
 
-class FrequencyVoltageRatio(TypedVariable):
+class FrequencyVoltageRatio(TypedQuantity):
     """Type-safe frequency voltage ratio variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -1786,7 +1786,7 @@ class FuelConsumptionSetter(TypeSafeSetter):
     @property
     def miles_per_liter(self) -> FuelConsumption: ...
 
-class FuelConsumption(TypedVariable):
+class FuelConsumption(TypedQuantity):
     """Type-safe fuel consumption variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -1825,7 +1825,7 @@ class HeatOfCombustionSetter(TypeSafeSetter):
     @property
     def joule_per_kilogram(self) -> HeatOfCombustion: ...
 
-class HeatOfCombustion(TypedVariable):
+class HeatOfCombustion(TypedQuantity):
     """Type-safe heat of combustion variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -1866,7 +1866,7 @@ class HeatOfFusionSetter(TypeSafeSetter):
     @property
     def joule_per_kilogram(self) -> HeatOfFusion: ...
 
-class HeatOfFusion(TypedVariable):
+class HeatOfFusion(TypedQuantity):
     """Type-safe heat of fusion variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -1905,7 +1905,7 @@ class HeatOfVaporizationSetter(TypeSafeSetter):
     @property
     def joule_per_kilogram(self) -> HeatOfVaporization: ...
 
-class HeatOfVaporization(TypedVariable):
+class HeatOfVaporization(TypedQuantity):
     """Type-safe heat of vaporization variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -1940,7 +1940,7 @@ class HeatTransferCoefficientSetter(TypeSafeSetter):
     @property
     def watt_per_square_meter_per_degree_Celsius_or_kelvin(self) -> HeatTransferCoefficient: ...
 
-class HeatTransferCoefficient(TypedVariable):
+class HeatTransferCoefficient(TypedQuantity):
     """Type-safe heat transfer coefficient variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -1988,7 +1988,7 @@ class IlluminanceSetter(TypeSafeSetter):
     @property
     def skot(self) -> Illuminance: ...
 
-class Illuminance(TypedVariable):
+class Illuminance(TypedQuantity):
     """Type-safe illuminance variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -2027,7 +2027,7 @@ class KineticEnergyOfTurbulenceSetter(TypeSafeSetter):
     @property
     def square_meters_per_second_squared(self) -> KineticEnergyOfTurbulence: ...
 
-class KineticEnergyOfTurbulence(TypedVariable):
+class KineticEnergyOfTurbulence(TypedQuantity):
     """Type-safe kinetic energy of turbulence variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -2199,7 +2199,7 @@ class LengthSetter(TypeSafeSetter):
     @property
     def nanometer(self) -> Length: ...
 
-class Length(TypedVariable):
+class Length(TypedQuantity):
     """Type-safe length variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -2254,7 +2254,7 @@ class LinearMassDensitySetter(TypeSafeSetter):
     @property
     def MT_m(self) -> LinearMassDensity: ...
 
-class LinearMassDensity(TypedVariable):
+class LinearMassDensity(TypedQuantity):
     """Type-safe linear mass density variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -2307,7 +2307,7 @@ class LinearMomentumSetter(TypeSafeSetter):
     @property
     def kilogram_meters_per_second(self) -> LinearMomentum: ...
 
-class LinearMomentum(TypedVariable):
+class LinearMomentum(TypedQuantity):
     """Type-safe linear momentum variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -2362,7 +2362,7 @@ class LuminanceSelfSetter(TypeSafeSetter):
     @property
     def troland(self) -> LuminanceSelf: ...
 
-class LuminanceSelf(TypedVariable):
+class LuminanceSelf(TypedQuantity):
     """Type-safe luminance (self) variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -2397,7 +2397,7 @@ class LuminousFluxSetter(TypeSafeSetter):
     @property
     def lumen(self) -> LuminousFlux: ...
 
-class LuminousFlux(TypedVariable):
+class LuminousFlux(TypedQuantity):
     """Type-safe luminous flux variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -2439,7 +2439,7 @@ class LuminousIntensitySetter(TypeSafeSetter):
     @property
     def HK(self) -> LuminousIntensity: ...
 
-class LuminousIntensity(TypedVariable):
+class LuminousIntensity(TypedQuantity):
     """Type-safe luminous intensity variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -2480,7 +2480,7 @@ class MagneticFieldSetter(TypeSafeSetter):
     @property
     def praoersted(self) -> MagneticField: ...
 
-class MagneticField(TypedVariable):
+class MagneticField(TypedQuantity):
     """Type-safe magnetic field variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -2531,7 +2531,7 @@ class MagneticFluxSetter(TypeSafeSetter):
     @property
     def microweber(self) -> MagneticFlux: ...
 
-class MagneticFlux(TypedVariable):
+class MagneticFlux(TypedQuantity):
     """Type-safe magnetic flux variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -2590,7 +2590,7 @@ class MagneticInductionFieldStrengthSetter(TypeSafeSetter):
     @property
     def nT(self) -> MagneticInductionFieldStrength: ...
 
-class MagneticInductionFieldStrength(TypedVariable):
+class MagneticInductionFieldStrength(TypedQuantity):
     """Type-safe magnetic induction field strength variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -2627,7 +2627,7 @@ class MagneticMomentSetter(TypeSafeSetter):
     @property
     def nuclear_magneton(self) -> MagneticMoment: ...
 
-class MagneticMoment(TypedVariable):
+class MagneticMoment(TypedQuantity):
     """Type-safe magnetic moment variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -2662,7 +2662,7 @@ class MagneticPermeabilitySetter(TypeSafeSetter):
     @property
     def newton_per_square_ampere(self) -> MagneticPermeability: ...
 
-class MagneticPermeability(TypedVariable):
+class MagneticPermeability(TypedQuantity):
     """Type-safe magnetic permeability variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -2722,7 +2722,7 @@ class MagnetomotiveForceSetter(TypeSafeSetter):
     @property
     def pA(self) -> MagnetomotiveForce: ...
 
-class MagnetomotiveForce(TypedVariable):
+class MagnetomotiveForce(TypedQuantity):
     """Type-safe magnetomotive force variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -2853,7 +2853,7 @@ class MassSetter(TypeSafeSetter):
     @property
     def ton_US_short(self) -> Mass: ...
 
-class Mass(TypedVariable):
+class Mass(TypedQuantity):
     """Type-safe mass variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -2924,7 +2924,7 @@ class MassDensitySetter(TypeSafeSetter):
     @property
     def MT_m_3(self) -> MassDensity: ...
 
-class MassDensity(TypedVariable):
+class MassDensity(TypedQuantity):
     """Type-safe mass density variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -3013,7 +3013,7 @@ class MassFlowRateSetter(TypeSafeSetter):
     @property
     def PPS(self) -> MassFlowRate: ...
 
-class MassFlowRate(TypedVariable):
+class MassFlowRate(TypedQuantity):
     """Type-safe mass flow rate variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -3076,7 +3076,7 @@ class MassFluxSetter(TypeSafeSetter):
     @property
     def lb_sqft_sec(self) -> MassFlux: ...
 
-class MassFlux(TypedVariable):
+class MassFlux(TypedQuantity):
     """Type-safe mass flux variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -3115,7 +3115,7 @@ class MassFractionOfISetter(TypeSafeSetter):
     @property
     def pound_of_i_per_pound_total(self) -> MassFractionOfI: ...
 
-class MassFractionOfI(TypedVariable):
+class MassFractionOfI(TypedQuantity):
     """Type-safe mass fraction of "i" variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -3168,7 +3168,7 @@ class MassTransferCoefficientSetter(TypeSafeSetter):
     @property
     def lb_sqft_sec(self) -> MassTransferCoefficient: ...
 
-class MassTransferCoefficient(TypedVariable):
+class MassTransferCoefficient(TypedQuantity):
     """Type-safe mass transfer coefficient variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -3209,7 +3209,7 @@ class MolalityOfSoluteISetter(TypeSafeSetter):
     @property
     def pound_moles_of_i_per_pound_mass(self) -> MolalityOfSoluteI: ...
 
-class MolalityOfSoluteI(TypedVariable):
+class MolalityOfSoluteI(TypedQuantity):
     """Type-safe molality of solute "i" variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -3258,7 +3258,7 @@ class MolarConcentrationByMassSetter(TypeSafeSetter):
     @property
     def mole_lb(self) -> MolarConcentrationByMass: ...
 
-class MolarConcentrationByMass(TypedVariable):
+class MolarConcentrationByMass(TypedQuantity):
     """Type-safe molar concentration by mass variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -3329,7 +3329,7 @@ class MolarFlowRateSetter(TypeSafeSetter):
     @property
     def mole_sec(self) -> MolarFlowRate: ...
 
-class MolarFlowRate(TypedVariable):
+class MolarFlowRate(TypedQuantity):
     """Type-safe molar flow rate variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -3392,7 +3392,7 @@ class MolarFluxSetter(TypeSafeSetter):
     @property
     def mole_sqft_sec(self) -> MolarFlux: ...
 
-class MolarFlux(TypedVariable):
+class MolarFlux(TypedQuantity):
     """Type-safe molar flux variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -3429,7 +3429,7 @@ class MolarHeatCapacitySetter(TypeSafeSetter):
     @property
     def joule_per_gram_mole_per_kelvin_or_degree_Celsius(self) -> MolarHeatCapacity: ...
 
-class MolarHeatCapacity(TypedVariable):
+class MolarHeatCapacity(TypedQuantity):
     """Type-safe molar heat capacity variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -3484,7 +3484,7 @@ class MolarityOfISetter(TypeSafeSetter):
     @property
     def mole_i_gal(self) -> MolarityOfI: ...
 
-class MolarityOfI(TypedVariable):
+class MolarityOfI(TypedQuantity):
     """Type-safe molarity of "i" variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -3523,7 +3523,7 @@ class MoleFractionOfISetter(TypeSafeSetter):
     @property
     def pound_mole_of_i_per_pound_mole_total(self) -> MoleFractionOfI: ...
 
-class MoleFractionOfI(TypedVariable):
+class MoleFractionOfI(TypedQuantity):
     """Type-safe mole fraction of "i" variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -3578,7 +3578,7 @@ class MomentOfInertiaSetter(TypeSafeSetter):
     @property
     def pound_mass_square_inch(self) -> MomentOfInertia: ...
 
-class MomentOfInertia(TypedVariable):
+class MomentOfInertia(TypedQuantity):
     """Type-safe moment of inertia variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -3627,7 +3627,7 @@ class MomentumFlowRateSetter(TypeSafeSetter):
     @property
     def kilogram_meters_per_square_second(self) -> MomentumFlowRate: ...
 
-class MomentumFlowRate(TypedVariable):
+class MomentumFlowRate(TypedQuantity):
     """Type-safe momentum flow rate variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -3672,7 +3672,7 @@ class MomentumFluxSetter(TypeSafeSetter):
     @property
     def lb_ft_sec_2(self) -> MomentumFlux: ...
 
-class MomentumFlux(TypedVariable):
+class MomentumFlux(TypedQuantity):
     """Type-safe momentum flux variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -3715,7 +3715,7 @@ class NormalityOfSolutionSetter(TypeSafeSetter):
     @property
     def pound_equivalents_per_gallon(self) -> NormalityOfSolution: ...
 
-class NormalityOfSolution(TypedVariable):
+class NormalityOfSolution(TypedQuantity):
     """Type-safe normality of solution variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -3766,7 +3766,7 @@ class ParticleDensitySetter(TypeSafeSetter):
     @property
     def particles_per_milliliter(self) -> ParticleDensity: ...
 
-class ParticleDensity(TypedVariable):
+class ParticleDensity(TypedQuantity):
     """Type-safe particle density variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -3809,7 +3809,7 @@ class PercentSetter(TypeSafeSetter):
     @property
     def bps(self) -> Percent: ...
 
-class Percent(TypedVariable):
+class Percent(TypedQuantity):
     """Type-safe percent variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -3850,7 +3850,7 @@ class PermeabilitySetter(TypeSafeSetter):
     @property
     def square_meters(self) -> Permeability: ...
 
-class Permeability(TypedVariable):
+class Permeability(TypedQuantity):
     """Type-safe permeability variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -3887,7 +3887,7 @@ class PhotonEmissionRateSetter(TypeSafeSetter):
     @property
     def reciprocal_square_meter_second(self) -> PhotonEmissionRate: ...
 
-class PhotonEmissionRate(TypedVariable):
+class PhotonEmissionRate(TypedQuantity):
     """Type-safe photon emission rate variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -3937,7 +3937,7 @@ class PowerPerUnitMassSetter(TypeSafeSetter):
     @property
     def watt_per_kilogram(self) -> PowerPerUnitMass: ...
 
-class PowerPerUnitMass(TypedVariable):
+class PowerPerUnitMass(TypedQuantity):
     """Type-safe power per unit mass or specific power variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -4006,7 +4006,7 @@ class PowerPerUnitVolumeSetter(TypeSafeSetter):
     @property
     def watt_per_cubic_meter(self) -> PowerPerUnitVolume: ...
 
-class PowerPerUnitVolume(TypedVariable):
+class PowerPerUnitVolume(TypedQuantity):
     """Type-safe power per unit volume or power density variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -4135,7 +4135,7 @@ class PowerThermalDutySetter(TypeSafeSetter):
     @property
     def microwatt(self) -> PowerThermalDuty: ...
 
-class PowerThermalDuty(TypedVariable):
+class PowerThermalDuty(TypedQuantity):
     """Type-safe power, thermal duty variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -4256,7 +4256,7 @@ class PressureSetter(TypeSafeSetter):
     @property
     def kPa(self) -> Pressure: ...
 
-class Pressure(TypedVariable):
+class Pressure(TypedQuantity):
     """Type-safe pressure variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -4299,7 +4299,7 @@ class RadiationDoseEquivalentSetter(TypeSafeSetter):
     @property
     def microsievert(self) -> RadiationDoseEquivalent: ...
 
-class RadiationDoseEquivalent(TypedVariable):
+class RadiationDoseEquivalent(TypedQuantity):
     """Type-safe radiation dose equivalent variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -4340,7 +4340,7 @@ class RadiationExposureSetter(TypeSafeSetter):
     @property
     def R(self) -> RadiationExposure: ...
 
-class RadiationExposure(TypedVariable):
+class RadiationExposure(TypedQuantity):
     """Type-safe radiation exposure variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -4399,7 +4399,7 @@ class RadioactivitySetter(TypeSafeSetter):
     @property
     def GBq(self) -> Radioactivity: ...
 
-class Radioactivity(TypedVariable):
+class Radioactivity(TypedQuantity):
     """Type-safe radioactivity variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -4438,7 +4438,7 @@ class SecondMomentOfAreaSetter(TypeSafeSetter):
     @property
     def meter_quadrupled(self) -> SecondMomentOfArea: ...
 
-class SecondMomentOfArea(TypedVariable):
+class SecondMomentOfArea(TypedQuantity):
     """Type-safe second moment of area variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -4471,7 +4471,7 @@ class SecondRadiationConstantPlanckSetter(TypeSafeSetter):
     @property
     def meter_kelvin(self) -> SecondRadiationConstantPlanck: ...
 
-class SecondRadiationConstantPlanck(TypedVariable):
+class SecondRadiationConstantPlanck(TypedQuantity):
     """Type-safe second radiation constant (planck) variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -4512,7 +4512,7 @@ class SpecificEnthalpySetter(TypeSafeSetter):
     @property
     def kilojoule_per_kilogram(self) -> SpecificEnthalpy: ...
 
-class SpecificEnthalpy(TypedVariable):
+class SpecificEnthalpy(TypedQuantity):
     """Type-safe specific enthalpy variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -4547,7 +4547,7 @@ class SpecificGravitySetter(TypeSafeSetter):
     @property
     def Dmls(self) -> SpecificGravity: ...
 
-class SpecificGravity(TypedVariable):
+class SpecificGravity(TypedQuantity):
     """Type-safe specific gravity variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -4582,7 +4582,7 @@ class SpecificHeatCapacityConstantPressureSetter(TypeSafeSetter):
     @property
     def joules_per_kilogram_per_kelvin_or_degree_Celsius(self) -> SpecificHeatCapacityConstantPressure: ...
 
-class SpecificHeatCapacityConstantPressure(TypedVariable):
+class SpecificHeatCapacityConstantPressure(TypedQuantity):
     """Type-safe specific heat capacity (constant pressure) variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -4629,7 +4629,7 @@ class SpecificLengthSetter(TypeSafeSetter):
     @property
     def worsted(self) -> SpecificLength: ...
 
-class SpecificLength(TypedVariable):
+class SpecificLength(TypedQuantity):
     """Type-safe specific length variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -4678,7 +4678,7 @@ class SpecificSurfaceSetter(TypeSafeSetter):
     @property
     def square_meter_per_kilogram(self) -> SpecificSurface: ...
 
-class SpecificSurface(TypedVariable):
+class SpecificSurface(TypedQuantity):
     """Type-safe specific surface variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -4729,7 +4729,7 @@ class SpecificVolumeSetter(TypeSafeSetter):
     @property
     def cubic_meter_per_kilogram(self) -> SpecificVolume: ...
 
-class SpecificVolume(TypedVariable):
+class SpecificVolume(TypedQuantity):
     """Type-safe specific volume variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -4816,7 +4816,7 @@ class StressSetter(TypeSafeSetter):
     @property
     def psi(self) -> Stress: ...
 
-class Stress(TypedVariable):
+class Stress(TypedQuantity):
     """Type-safe stress variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -4857,7 +4857,7 @@ class SurfaceMassDensitySetter(TypeSafeSetter):
     @property
     def pound_mass_per_square_inch(self) -> SurfaceMassDensity: ...
 
-class SurfaceMassDensity(TypedVariable):
+class SurfaceMassDensity(TypedQuantity):
     """Type-safe surface mass density variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -4898,7 +4898,7 @@ class SurfaceTensionSetter(TypeSafeSetter):
     @property
     def pound_force_per_inch(self) -> SurfaceTension: ...
 
-class SurfaceTension(TypedVariable):
+class SurfaceTension(TypedQuantity):
     """Type-safe surface tension variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -4941,7 +4941,7 @@ class TemperatureSetter(TypeSafeSetter):
     @property
     def Rankine_absolute_scale(self) -> Temperature: ...
 
-class Temperature(TypedVariable):
+class Temperature(TypedQuantity):
     """Type-safe temperature variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -4986,7 +4986,7 @@ class ThermalConductivitySetter(TypeSafeSetter):
     @property
     def watt_per_meter_per_kelvin(self) -> ThermalConductivity: ...
 
-class ThermalConductivity(TypedVariable):
+class ThermalConductivity(TypedQuantity):
     """Type-safe thermal conductivity variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -5087,7 +5087,7 @@ class TimeSetter(TypeSafeSetter):
     @property
     def ps(self) -> Time: ...
 
-class Time(TypedVariable):
+class Time(TypedQuantity):
     """Type-safe time variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -5138,7 +5138,7 @@ class TorqueSetter(TypeSafeSetter):
     @property
     def newton_meter(self) -> Torque: ...
 
-class Torque(TypedVariable):
+class Torque(TypedQuantity):
     """Type-safe torque variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -5177,7 +5177,7 @@ class TurbulenceEnergyDissipationRateSetter(TypeSafeSetter):
     @property
     def square_meter_per_cubic_second(self) -> TurbulenceEnergyDissipationRate: ...
 
-class TurbulenceEnergyDissipationRate(TypedVariable):
+class TurbulenceEnergyDissipationRate(TypedQuantity):
     """Type-safe turbulence energy dissipation rate variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -5243,7 +5243,7 @@ class VelocityAngularSetter(TypeSafeSetter):
     @property
     def turn_per_minute(self) -> VelocityAngular: ...
 
-class VelocityAngular(TypedVariable):
+class VelocityAngular(TypedQuantity):
     """Type-safe velocity, angular variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -5318,7 +5318,7 @@ class VelocityLinearSetter(TypeSafeSetter):
     @property
     def mph(self) -> VelocityLinear: ...
 
-class VelocityLinear(TypedVariable):
+class VelocityLinear(TypedQuantity):
     """Type-safe velocity, linear variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -5391,7 +5391,7 @@ class ViscosityDynamicSetter(TypeSafeSetter):
     @property
     def lb_sec_sq_ft(self) -> ViscosityDynamic: ...
 
-class ViscosityDynamic(TypedVariable):
+class ViscosityDynamic(TypedQuantity):
     """Type-safe viscosity, dynamic variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -5446,7 +5446,7 @@ class ViscosityKinematicSetter(TypeSafeSetter):
     @property
     def St(self) -> ViscosityKinematic: ...
 
-class ViscosityKinematic(TypedVariable):
+class ViscosityKinematic(TypedQuantity):
     """Type-safe viscosity, kinematic variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -5617,7 +5617,7 @@ class VolumeSetter(TypeSafeSetter):
     @property
     def tsp(self) -> Volume: ...
 
-class Volume(TypedVariable):
+class Volume(TypedQuantity):
     """Type-safe volume variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -5664,7 +5664,7 @@ class VolumeFractionOfISetter(TypeSafeSetter):
     @property
     def gallons_of_i_per_gallon_total(self) -> VolumeFractionOfI: ...
 
-class VolumeFractionOfI(TypedVariable):
+class VolumeFractionOfI(TypedQuantity):
     """Type-safe volume fraction of "i" variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -5729,7 +5729,7 @@ class VolumetricCalorificHeatingValueSetter(TypeSafeSetter):
     @property
     def therm_100_K_Btu_per_cubic_foot(self) -> VolumetricCalorificHeatingValue: ...
 
-class VolumetricCalorificHeatingValue(TypedVariable):
+class VolumetricCalorificHeatingValue(TypedQuantity):
     """Type-safe volumetric calorific (heating) value variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -5784,7 +5784,7 @@ class VolumetricCoefficientOfExpansionSetter(TypeSafeSetter):
     @property
     def lb_cft_circ_C(self) -> VolumetricCoefficientOfExpansion: ...
 
-class VolumetricCoefficientOfExpansion(TypedVariable):
+class VolumetricCoefficientOfExpansion(TypedQuantity):
     """Type-safe volumetric coefficient of expansion variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -5893,7 +5893,7 @@ class VolumetricFlowRateSetter(TypeSafeSetter):
     @property
     def liters_per_second(self) -> VolumetricFlowRate: ...
 
-class VolumetricFlowRate(TypedVariable):
+class VolumetricFlowRate(TypedQuantity):
     """Type-safe volumetric flow rate variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -5990,7 +5990,7 @@ class VolumetricFluxSetter(TypeSafeSetter):
     @property
     def liters_per_square_meter_per_second(self) -> VolumetricFlux: ...
 
-class VolumetricFlux(TypedVariable):
+class VolumetricFlux(TypedQuantity):
     """Type-safe volumetric flux variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -6067,7 +6067,7 @@ class VolumetricMassFlowRateSetter(TypeSafeSetter):
     @property
     def lb_sec_cft(self) -> VolumetricMassFlowRate: ...
 
-class VolumetricMassFlowRate(TypedVariable):
+class VolumetricMassFlowRate(TypedQuantity):
     """Type-safe volumetric mass flow rate variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None
@@ -6108,7 +6108,7 @@ class WavenumberSetter(TypeSafeSetter):
     @property
     def reciprocal_meter(self) -> Wavenumber: ...
 
-class Wavenumber(TypedVariable):
+class Wavenumber(TypedQuantity):
     """Type-safe wavenumber variable with expression capabilities."""
     
     _setter_class: type[TypeSafeSetter] | None

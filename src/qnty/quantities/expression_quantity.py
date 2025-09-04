@@ -8,13 +8,13 @@ and equation capabilities.
 
 from __future__ import annotations
 
-from ..equation import Equation
+from ..equations.equation import Equation
 from ..expressions import BinaryOperation, Expression, wrap_operand
-from .core import FastQuantity, TypeSafeVariable
+from .quantity import Quantity, TypeSafeVariable
 
 # Type alias for cleaner method signatures
-Operand = TypeSafeVariable | FastQuantity | int | float | Expression
-ReverseOperand = FastQuantity | int | float
+Operand = TypeSafeVariable | Quantity | int | float | Expression
+ReverseOperand = Quantity | int | float
 
 # Cache for commonly used wrapped constants to avoid repeated wrap_operand calls
 _CONSTANT_CACHE = {}
@@ -29,7 +29,7 @@ def _initialize_constant_cache():
 _initialize_constant_cache()
 
 
-class ExpressionVariable(TypeSafeVariable):
+class ExpressionQuantity(TypeSafeVariable):
     """
     TypeSafeVariable extended with expression and equation capabilities.
     

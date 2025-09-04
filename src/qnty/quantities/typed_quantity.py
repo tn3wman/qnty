@@ -7,11 +7,11 @@ handling both the original syntax and the new value/unit/name syntax.
 """
 
 from ..generated.dimensions import DimensionSignature
-from .core import TypeSafeSetter
-from .expression_variable import ExpressionVariable
+from .quantity import TypeSafeSetter
+from .expression_quantity import ExpressionQuantity
 
 
-class TypedVariable(ExpressionVariable):
+class TypedQuantity(ExpressionQuantity):
     """
     Base class for typed variables with common constructor logic.
     
@@ -159,7 +159,7 @@ class TypedVariable(ExpressionVariable):
         """
         instance = cls.__new__(cls)
         # Direct initialization without checks
-        ExpressionVariable.__init__(instance, name, instance._expected_dimension, is_known=is_known)
+        ExpressionQuantity.__init__(instance, name, instance._expected_dimension, is_known=is_known)
         
         # Fast path for setting value using shared lookup logic
         if instance._setter_class is None:
@@ -203,7 +203,7 @@ class TypedVariable(ExpressionVariable):
         if unit in cls._unit_mappings and cls._setter_class is not None:
             # Ultra-fast path: direct property access
             instance = cls.__new__(cls)
-            ExpressionVariable.__init__(instance, name, cls._expected_dimension, is_known=is_known)
+            ExpressionQuantity.__init__(instance, name, cls._expected_dimension, is_known=is_known)
             
             setter = cls._setter_class(instance, value)
             unit_prop = cls._unit_mappings[unit]

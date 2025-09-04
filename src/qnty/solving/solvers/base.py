@@ -4,8 +4,8 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from typing import Any
 
-from qnty.engines.problem.dependency_graph import DependencyGraph
-from qnty.equation import Equation
+from qnty.solving.order import Order
+from qnty.equations.equation import Equation
 from qnty.quantities import TypeSafeVariable as Variable
 
 
@@ -34,7 +34,7 @@ class BaseSolver(ABC):
     
     @abstractmethod
     def can_handle(self, equations: list[Equation], unknowns: set[str],
-                   dependency_graph: DependencyGraph | None = None,
+                   dependency_graph: Order | None = None,
                    analysis: dict[str, Any] | None = None) -> bool:
         """
         Check if this solver can handle the given problem.
@@ -52,7 +52,7 @@ class BaseSolver(ABC):
     
     @abstractmethod
     def solve(self, equations: list[Equation], variables: dict[str, Variable],
-              dependency_graph: DependencyGraph | None = None,
+              dependency_graph: Order | None = None,
               max_iterations: int = 100, tolerance: float = 1e-10) -> SolveResult:
         """
         Solve the system of equations.

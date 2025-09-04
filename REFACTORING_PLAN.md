@@ -42,62 +42,63 @@ This refactoring plan addresses these issues through a 4-phase approach over 6 w
 
 ```
 qnty/
-├── __init__.py                 # Curated public API facade
-├── api.py                      # Optional explicit export mapping
-├── expressions/                # Decomposed expression system
-│   ├── __init__.py
-│   ├── nodes.py               # Core AST classes
-│   ├── functions.py           # Math helper functions
-│   └── cache.py              # Expression caching
-├── equations/                  # Clean equation system
-│   ├── __init__.py
-│   ├── equation.py           # Single equation logic
-│   └── system.py            # Multi-equation orchestration
-├── quantities/                 # Consolidated quantities
-│   ├── __init__.py           # Lazy facade replacing quantity.py
-│   ├── fast_quantity.py      # FastQuantity core
-│   ├── variable.py           # TypeSafeVariable
-│   └── typed_variable.py     # Domain-specific variables
-├── units/                     # Units system (existing structure maintained)
-├── problem/                   # Decomposed problem domain
-│   ├── __init__.py
-│   ├── base.py              # Core Problem state/init
-│   ├── variables.py         # Variable lifecycle management
-│   ├── equations.py         # Equation processing
-│   ├── solving.py           # High-level solve orchestration
-│   ├── composition.py       # Sub-problem integration
-│   ├── metaclass.py         # Class-level magic
-│   ├── reconstruction.py    # Equation reconstruction
-│   └── validation.py        # Problem-validation integration
-├── solving/                   # Renamed from engines
-│   ├── __init__.py
-│   ├── dependency_graph.py  # Dependency analysis
-│   ├── manager.py           # Solver strategy selection
-│   └── solvers/
-│       ├── __init__.py
-│       ├── base.py         # Abstract solver interface
-│       ├── iterative.py    # Iterative solver
-│       └── simultaneous.py # Simultaneous solver
-├── validation/                # Proper validation system
-│   ├── __init__.py
-│   ├── rules.py            # Validation dataclass
-│   └── registry.py         # Future extensibility
-├── generated/                 # All auto-generated artifacts
-│   ├── dimensions.py
-│   ├── units.py
-│   ├── quantities.py
-│   └── setters.py
-├── codegen/                   # Structured code generation
-│   ├── __init__.py
-│   ├── cli.py              # Unified command-line interface
-│   └── generators/
-│       ├── dimensions.py
-│       ├── units.py
-│       ├── variables.py
-│       └── stubs.py
-└── utils/
-    ├── __init__.py
-    └── logging.py
+[ ]├── __init__.py                 # Curated public API facade
+[ ]├── api.py                      # Optional explicit export mapping
+[x]├── expressions/                # Decomposed expression system
+[x]│   ├── __init__.py
+[x]│   ├── nodes.py               # Core AST classes
+[x]│   ├── functions.py           # Math helper functions
+[x]│   └── cache.py              # Expression caching
+[x]├── equations/                  # Clean equation system
+[x]│   ├── __init__.py
+[x]│   ├── equation.py           # Single equation logic
+[x]│   └── system.py            # Multi-equation orchestration
+[x]├── quantities/                 # Consolidated quantities
+[x]│   ├── __init__.py           # Lazy facade replacing quantity.py
+[x]│   ├── quantity.py      # FastQuantity core
+[x]│   ├── expression_quantity.py           # TypeSafeVariable
+[x]│   └── typed_quantity.py     # Domain-specific variables
+[x]├── units/                     # Units system (existing structure maintained)
+[x]├── problem/                   # Decomposed problem domain
+[x]│   ├── __init__.py
+[ ]│   ├── base.py              # Core Problem state/init
+[ ]│   ├── variables.py         # Variable lifecycle management
+[ ]│   ├── equations.py         # Equation processing
+[ ]│   ├── solving.py           # High-level solve orchestration
+[x]│   ├── composition.py       # Sub-problem integration
+[x]│   ├── metaclass.py         # Class-level magic
+[x]│   ├── reconstruction.py    # Equation reconstruction
+[ ]│   └── validation.py        # Problem-validation integration
+[x]├── solving/                   # Renamed from engines
+[x]│   ├── __init__.py
+[x]│   ├── order.py  # Dependency analysis
+[x]│   ├── manager.py           # Solver strategy selection
+[x]│   └── solvers/
+[x]│       ├── __init__.py
+[x]│       ├── base.py         # Abstract solver interface
+[x]│       ├── iterative.py    # Iterative solver
+[x]│       └── simultaneous.py # Simultaneous solver
+[ ]├── validation/                # Proper validation system
+[ ]│   ├── __init__.py
+[ ]│   ├── rules.py            # Validation dataclass
+[ ]│   └── registry.py         # Future extensibility
+[ ]├── generated/                 # All auto-generated artifacts
+[ ]│   ├── dimensions.py
+[ ]│   ├── units.py
+[ ]│   ├── quantities.py
+[ ]│   └── setters.py
+[x]├── codegen/                   # Structured code generation
+[x]│   ├── __init__.py
+[ ]│   ├── cli.py              # Unified command-line interface
+[x]│   └── generators/
+[x]│       ├── dimensions.py
+[x]│       ├── units.py
+[x]│       ├── setters.py
+[x]│       ├── quantities.py
+[x]│       └── stubs.py
+[ ]└── utils/
+[ ]    ├── __init__.py
+[ ]    └── logging.py
 ```
 
 ## Implementation Plan
@@ -629,7 +630,7 @@ qnty/
 ### Week 1-2: Foundation & Expression System
 
 - [x] Split `expression.py` into modular `expressions/` package
-- [ ] Create clean `equations/` system
+- [x] Create clean `equations/` system
 - [ ] Consolidate `quantities/` with lazy loading
 - [ ] Comprehensive testing of decomposed expression system
 

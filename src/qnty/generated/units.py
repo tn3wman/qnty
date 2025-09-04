@@ -7896,7 +7896,7 @@ UNIT_DEFINITIONS = {
 
 def create_unit_class(class_name: str, dimension_data: dict) -> type:
     """Create a unit class with optimized performance improvements."""
-    from ..units.core import UnitConstant, UnitDefinition
+    from ..units.registry import UnitConstant, UnitDefinition
     from ..units.prefixes import get_prefix_by_name
     
     # Create a new class with __slots__ for memory efficiency
@@ -7951,7 +7951,7 @@ def create_unit_class(class_name: str, dimension_data: dict) -> type:
 
 def register_all_units(registry):
     """Register all unit definitions to the given registry with prefix support."""
-    from ..units.core import UnitDefinition
+    from ..units.registry import UnitDefinition
     from ..units.prefixes import PREFIXABLE_UNITS
     
     # First pass: register base units with prefixes where applicable

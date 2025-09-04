@@ -11,10 +11,10 @@ from logging import Logger
 from re import Pattern
 from typing import Any
 
-from qnty.equation import Equation
+from qnty.equations.equation import Equation
 from qnty.expressions import BinaryOperation, Constant, UnaryFunction, VariableReference, cos, sin
-from qnty.quantities.core import FastQuantity as Qty
-from qnty.quantities.expression_variable import ExpressionVariable as Variable
+from qnty.quantities.quantity import Quantity as Qty
+from qnty.quantities.expression_quantity import ExpressionQuantity as Variable
 
 # No BinaryFunction in qnty - operations are handled by BinaryOperation or specific functions
 

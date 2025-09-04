@@ -8,12 +8,12 @@ Caching infrastructure for optimized expression evaluation and type checking.
 from typing import Union, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from ..quantities.core import FastQuantity, TypeSafeVariable
+    from ..quantities.quantity import Quantity, TypeSafeVariable
     from .nodes import Expression
 
 # Import here to avoid circular imports - delayed imports
 from ..generated.units import DimensionlessUnits
-from ..quantities.core import FastQuantity, TypeSafeVariable
+from ..quantities.quantity import Quantity, TypeSafeVariable
 
 # Cache for common types to avoid repeated type checks
 _NUMERIC_TYPES = (int, float)
@@ -35,19 +35,19 @@ def _get_cached_dimensionless():
     return _DIMENSIONLESS_CONSTANT
 
 
-def _get_dimensionless_quantity(value: float) -> 'FastQuantity':
+def _get_dimensionless_quantity(value: float) -> 'Quantity':
     """Get cached dimensionless quantity for common numeric values."""
     if value in _CACHED_DIMENSIONLESS_QUANTITIES:
         return _CACHED_DIMENSIONLESS_QUANTITIES[value]
     
     # Cache common values with size limit
     if len(_CACHED_DIMENSIONLESS_QUANTITIES) < _MAX_CACHE_SIZE and -10 <= value <= 10:
-        qty = FastQuantity(value, _get_cached_dimensionless())
+        qty = Quantity(value, _get_cached_dimensionless())
         _CACHED_DIMENSIONLESS_QUANTITIES[value] = qty
         return qty
     
     # Don't cache uncommon values
-    return FastQuantity(value, _get_cached_dimensionless())
+    return Quantity(value, _get_cached_dimensionless())
 
 
 def _is_numeric_type(obj) -> bool:
@@ -58,7 +58,7 @@ def _is_numeric_type(obj) -> bool:
     return _TYPE_CHECK_CACHE[obj_type]
 
 
-def wrap_operand(operand: Union['Expression', 'TypeSafeVariable', 'FastQuantity', int, float]) -> 'Expression':
+def wrap_operand(operand: Union['Expression', 'TypeSafeVariable', 'Quantity', int, float]) -> 'Expression':
     """
     Optimized operand wrapping with cached type checks.
     
@@ -77,7 +77,7 @@ def wrap_operand(operand: Union['Expression', 'TypeSafeVariable', 'FastQuantity'
         return operand
     
     # Check for FastQuantity
-    if isinstance(operand, FastQuantity):
+    if isinstance(operand, Quantity):
         return Constant(operand)
     
     # Check for TypeSafeVariable

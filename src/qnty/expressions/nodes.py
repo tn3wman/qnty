@@ -10,10 +10,10 @@ from abc import ABC, abstractmethod
 from typing import Union, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from ..quantities.core import FastQuantity, TypeSafeVariable
+    from ..quantities.quantity import Quantity, TypeSafeVariable
 
 from ..generated.units import DimensionlessUnits
-from ..quantities.core import FastQuantity, TypeSafeVariable
+from ..quantities.quantity import Quantity, TypeSafeVariable
 from .cache import wrap_operand, _EXPRESSION_RESULT_CACHE, _MAX_EXPRESSION_CACHE_SIZE
 
 
@@ -26,7 +26,7 @@ class Expression(ABC):
     _max_scope_cache_size = 100  # Limit scope cache size
     
     @abstractmethod
-    def evaluate(self, variable_values: dict[str, 'TypeSafeVariable']) -> 'FastQuantity':
+    def evaluate(self, variable_values: dict[str, 'TypeSafeVariable']) -> 'Quantity':
         """Evaluate the expression given variable values."""
         pass
     
@@ -130,34 +130,34 @@ class Expression(ABC):
         except Exception:
             return False, {}
     
-    def __add__(self, other: Union['Expression', 'TypeSafeVariable', 'FastQuantity', int, float]) -> 'Expression':
+    def __add__(self, other: Union['Expression', 'TypeSafeVariable', 'Quantity', int, float]) -> 'Expression':
         return BinaryOperation('+', self, wrap_operand(other))
     
-    def __radd__(self, other: Union['TypeSafeVariable', 'FastQuantity', int, float]) -> 'Expression':
+    def __radd__(self, other: Union['TypeSafeVariable', 'Quantity', int, float]) -> 'Expression':
         return BinaryOperation('+', wrap_operand(other), self)
     
-    def __sub__(self, other: Union['Expression', 'TypeSafeVariable', 'FastQuantity', int, float]) -> 'Expression':
+    def __sub__(self, other: Union['Expression', 'TypeSafeVariable', 'Quantity', int, float]) -> 'Expression':
         return BinaryOperation('-', self, wrap_operand(other))
     
-    def __rsub__(self, other: Union['TypeSafeVariable', 'FastQuantity', int, float]) -> 'Expression':
+    def __rsub__(self, other: Union['TypeSafeVariable', 'Quantity', int, float]) -> 'Expression':
         return BinaryOperation('-', wrap_operand(other), self)
     
-    def __mul__(self, other: Union['Expression', 'TypeSafeVariable', 'FastQuantity', int, float]) -> 'Expression':
+    def __mul__(self, other: Union['Expression', 'TypeSafeVariable', 'Quantity', int, float]) -> 'Expression':
         return BinaryOperation('*', self, wrap_operand(other))
     
-    def __rmul__(self, other: Union['TypeSafeVariable', 'FastQuantity', int, float]) -> 'Expression':
+    def __rmul__(self, other: Union['TypeSafeVariable', 'Quantity', int, float]) -> 'Expression':
         return BinaryOperation('*', wrap_operand(other), self)
     
-    def __truediv__(self, other: Union['Expression', 'TypeSafeVariable', 'FastQuantity', int, float]) -> 'Expression':
+    def __truediv__(self, other: Union['Expression', 'TypeSafeVariable', 'Quantity', int, float]) -> 'Expression':
         return BinaryOperation('/', self, wrap_operand(other))
     
-    def __rtruediv__(self, other: Union['TypeSafeVariable', 'FastQuantity', int, float]) -> 'Expression':
+    def __rtruediv__(self, other: Union['TypeSafeVariable', 'Quantity', int, float]) -> 'Expression':
         return BinaryOperation('/', wrap_operand(other), self)
     
-    def __pow__(self, other: Union['Expression', 'TypeSafeVariable', 'FastQuantity', int, float]) -> 'Expression':
+    def __pow__(self, other: Union['Expression', 'TypeSafeVariable', 'Quantity', int, float]) -> 'Expression':
         return BinaryOperation('**', self, wrap_operand(other))
     
-    def __rpow__(self, other: Union['TypeSafeVariable', 'FastQuantity', int, float]) -> 'Expression':
+    def __rpow__(self, other: Union['TypeSafeVariable', 'Quantity', int, float]) -> 'Expression':
         return BinaryOperation('**', wrap_operand(other), self)
     
     def __abs__(self) -> 'Expression':
@@ -169,20 +169,20 @@ class Expression(ABC):
         """Helper method to create comparison operations."""
         return BinaryOperation(operator, self, wrap_operand(other))
     
-    def __lt__(self, other: Union['Expression', 'TypeSafeVariable', 'FastQuantity', int, float]) -> 'BinaryOperation':
+    def __lt__(self, other: Union['Expression', 'TypeSafeVariable', 'Quantity', int, float]) -> 'BinaryOperation':
         return self._make_comparison('<', other)
 
-    def __le__(self, other: Union['Expression', 'TypeSafeVariable', 'FastQuantity', int, float]) -> 'BinaryOperation':
+    def __le__(self, other: Union['Expression', 'TypeSafeVariable', 'Quantity', int, float]) -> 'BinaryOperation':
         return self._make_comparison('<=', other)
     
-    def __gt__(self, other: Union['Expression', 'TypeSafeVariable', 'FastQuantity', int, float]) -> 'BinaryOperation':
+    def __gt__(self, other: Union['Expression', 'TypeSafeVariable', 'Quantity', int, float]) -> 'BinaryOperation':
         return self._make_comparison('>', other)
     
-    def __ge__(self, other: Union['Expression', 'TypeSafeVariable', 'FastQuantity', int, float]) -> 'BinaryOperation':
+    def __ge__(self, other: Union['Expression', 'TypeSafeVariable', 'Quantity', int, float]) -> 'BinaryOperation':
         return self._make_comparison('>=', other)
     
     @staticmethod
-    def _wrap_operand(operand: Union['Expression', 'TypeSafeVariable', 'FastQuantity', int, float]) -> 'Expression':
+    def _wrap_operand(operand: Union['Expression', 'TypeSafeVariable', 'Quantity', int, float]) -> 'Expression':
         """Wrap non-Expression operands in appropriate Expression subclasses."""
         return wrap_operand(operand)
 
@@ -207,7 +207,7 @@ class VariableReference(Expression):
             self._last_symbol = current_symbol
         return self._cached_name
 
-    def evaluate(self, variable_values: dict[str, 'TypeSafeVariable']) -> 'FastQuantity':
+    def evaluate(self, variable_values: dict[str, 'TypeSafeVariable']) -> 'Quantity':
         try:
             if self.name in variable_values:
                 var = variable_values[self.name]
@@ -241,10 +241,10 @@ class Constant(Expression):
     """Constant value in an expression."""
     __slots__ = ('value',)
     
-    def __init__(self, value: 'FastQuantity'):
+    def __init__(self, value: 'Quantity'):
         self.value = value
     
-    def evaluate(self, variable_values: dict[str, 'TypeSafeVariable']) -> 'FastQuantity':
+    def evaluate(self, variable_values: dict[str, 'TypeSafeVariable']) -> 'Quantity':
         del variable_values  # Suppress unused variable warning
         return self.value
     
@@ -271,7 +271,7 @@ class BinaryOperation(Expression):
         self.left = left
         self.right = right
 
-    def evaluate(self, variable_values: dict[str, 'TypeSafeVariable']) -> 'FastQuantity':
+    def evaluate(self, variable_values: dict[str, 'TypeSafeVariable']) -> 'Quantity':
         try:
             # Fast path for constant expressions (both sides are constants)
             if isinstance(self.left, Constant) and isinstance(self.right, Constant):
@@ -306,7 +306,7 @@ class BinaryOperation(Expression):
                 raise
             raise ValueError(f"Error evaluating binary operation '{self}': {e}") from e
     
-    def _evaluate_arithmetic(self, left_val: 'FastQuantity', right_val: 'FastQuantity') -> 'FastQuantity':
+    def _evaluate_arithmetic(self, left_val: 'Quantity', right_val: 'Quantity') -> 'Quantity':
         """Evaluate arithmetic operations with fast paths."""
         # Fast path optimizations for common cases
         if self.operator == '*':
@@ -317,7 +317,7 @@ class BinaryOperation(Expression):
                 return right_val
             # Fast path for multiplication by 0
             elif right_val.value == 0.0 or left_val.value == 0.0:
-                return FastQuantity(0.0, left_val.unit if right_val.value == 0.0 else right_val.unit)
+                return Quantity(0.0, left_val.unit if right_val.value == 0.0 else right_val.unit)
             return left_val * right_val
         elif self.operator == '+':
             # Fast path for addition with 0
@@ -346,7 +346,7 @@ class BinaryOperation(Expression):
                 if right_val.value == 1.0:
                     return left_val
                 elif right_val.value == 0.0:
-                    return FastQuantity(1.0, DimensionlessUnits.dimensionless)
+                    return Quantity(1.0, DimensionlessUnits.dimensionless)
                 elif right_val.value == 2.0:
                     return left_val * left_val  # Use multiplication for squaring
                 
@@ -355,14 +355,14 @@ class BinaryOperation(Expression):
                 result_value = left_val.value ** right_val.value
                 # For power operations, we need to handle units carefully
                 # This is a simplified implementation
-                return FastQuantity(result_value, left_val.unit)
+                return Quantity(result_value, left_val.unit)
             else:
                 raise ValueError("Exponent must be dimensionless number")
         else:
             # Unknown operator - should not happen
             raise ValueError(f"Unknown arithmetic operator: {self.operator}")
     
-    def _evaluate_comparison(self, left_val: 'FastQuantity', right_val: 'FastQuantity') -> 'FastQuantity':
+    def _evaluate_comparison(self, left_val: 'Quantity', right_val: 'Quantity') -> 'Quantity':
         """Evaluate comparison operations."""
         # Convert to same units for comparison if possible
         try:
@@ -382,7 +382,7 @@ class BinaryOperation(Expression):
         }
         
         result = ops[self.operator](left_val.value, right_val.value)
-        return FastQuantity(1.0 if result else 0.0, DimensionlessUnits.dimensionless)
+        return Quantity(1.0 if result else 0.0, DimensionlessUnits.dimensionless)
     
     def get_variables(self) -> set[str]:
         return self.left.get_variables() | self.right.get_variables()
@@ -447,38 +447,38 @@ class UnaryFunction(Expression):
         self.function_name = function_name
         self.operand = operand
     
-    def evaluate(self, variable_values: dict[str, 'TypeSafeVariable']) -> 'FastQuantity':
+    def evaluate(self, variable_values: dict[str, 'TypeSafeVariable']) -> 'Quantity':
         
         operand_val = self.operand.evaluate(variable_values)
         
         if self.function_name == 'sin':
             # Assume input is in radians, result is dimensionless
             result_value = math.sin(operand_val.value)
-            return FastQuantity(result_value, DimensionlessUnits.dimensionless)
+            return Quantity(result_value, DimensionlessUnits.dimensionless)
         elif self.function_name == 'cos':
             result_value = math.cos(operand_val.value)
-            return FastQuantity(result_value, DimensionlessUnits.dimensionless)
+            return Quantity(result_value, DimensionlessUnits.dimensionless)
         elif self.function_name == 'tan':
             result_value = math.tan(operand_val.value)
-            return FastQuantity(result_value, DimensionlessUnits.dimensionless)
+            return Quantity(result_value, DimensionlessUnits.dimensionless)
         elif self.function_name == 'sqrt':
             # For sqrt, we need to handle units carefully
             result_value = math.sqrt(operand_val.value)
             # This is simplified - proper unit handling would need dimensional analysis
-            return FastQuantity(result_value, operand_val.unit)
+            return Quantity(result_value, operand_val.unit)
         elif self.function_name == 'abs':
-            return FastQuantity(abs(operand_val.value), operand_val.unit)
+            return Quantity(abs(operand_val.value), operand_val.unit)
         elif self.function_name == 'ln':
             # Natural log - input should be dimensionless
             result_value = math.log(operand_val.value)
-            return FastQuantity(result_value, DimensionlessUnits.dimensionless)
+            return Quantity(result_value, DimensionlessUnits.dimensionless)
         elif self.function_name == 'log10':
             result_value = math.log10(operand_val.value)
-            return FastQuantity(result_value, DimensionlessUnits.dimensionless)
+            return Quantity(result_value, DimensionlessUnits.dimensionless)
         elif self.function_name == 'exp':
             # Exponential - input should be dimensionless
             result_value = math.exp(operand_val.value)
-            return FastQuantity(result_value, DimensionlessUnits.dimensionless)
+            return Quantity(result_value, DimensionlessUnits.dimensionless)
         else:
             raise ValueError(f"Unknown function: {self.function_name}")
     
@@ -510,7 +510,7 @@ class ConditionalExpression(Expression):
         self.true_expr = true_expr
         self.false_expr = false_expr
     
-    def evaluate(self, variable_values: dict[str, 'TypeSafeVariable']) -> 'FastQuantity':
+    def evaluate(self, variable_values: dict[str, 'TypeSafeVariable']) -> 'Quantity':
         condition_val = self.condition.evaluate(variable_values)
         # Consider non-zero as True
         if abs(condition_val.value) > 1e-10:

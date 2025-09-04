@@ -1,6 +1,6 @@
-from .core import FastQuantity, TypeSafeVariable
+from .quantity import Quantity, TypeSafeVariable
 
 __all__ = [
-    "FastQuantity",
+    "Quantity",
     "TypeSafeVariable"
     ]

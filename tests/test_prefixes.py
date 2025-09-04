@@ -7,7 +7,7 @@ Tests the prefix system including definition, application, and registration.
 
 import pytest
 from qnty.generated.dimensions import LENGTH, PRESSURE, ENERGY_HEAT_WORK
-from qnty.units.core import UnitDefinition, HighPerformanceRegistry
+from qnty.units.registry import UnitDefinition, Registry
 from qnty.units.prefixes import (
     SIPrefix, StandardPrefixes, 
     get_prefix_by_name, get_prefix_by_symbol, get_prefix_by_factor,
@@ -139,7 +139,7 @@ class TestRegistryWithPrefixes:
     
     def test_register_with_prefixes(self):
         """Test registering a unit with automatic prefix generation."""
-        registry = HighPerformanceRegistry()
+        registry = Registry()
         
         # Create a new base unit (joule for energy)
         joule = UnitDefinition("joule", "J", ENERGY_HEAT_WORK, 1.0)
@@ -168,7 +168,7 @@ class TestRegistryWithPrefixes:
     
     def test_conversion_with_prefixed_units(self):
         """Test that conversions work correctly with prefixed units."""
-        registry = HighPerformanceRegistry()
+        registry = Registry()
         
         # Register meter with common prefixes
         meter = UnitDefinition("meter", "m", LENGTH, 1.0)
@@ -192,7 +192,7 @@ class TestRegistryWithPrefixes:
     
     def test_dimensional_grouping_with_prefixes(self):
         """Test that prefixed units are correctly grouped by dimension."""
-        registry = HighPerformanceRegistry()
+        registry = Registry()
         
         # Register pascal with prefixes
         pascal = UnitDefinition("pascal", "Pa", PRESSURE, 1.0)
@@ -228,7 +228,7 @@ class TestPrefixIntegration:
     
     def test_no_prefix_enum(self):
         """Test that NONE prefix doesn't create a new unit."""
-        registry = HighPerformanceRegistry()
+        registry = Registry()
         
         # Use a unique unit name not in the default registry
         testmeter = UnitDefinition("testmeter", "tm", LENGTH, 1.0)

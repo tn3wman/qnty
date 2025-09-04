@@ -1,11 +1,11 @@
 
-from qnty.engines.problem.dependency_graph import DependencyGraph
-from qnty.equation import Equation
+from qnty.solving.order import Order
+from qnty.equations.equation import Equation
 from qnty.quantities import TypeSafeVariable as Variable
 
-from .base import BaseSolver, SolveResult
-from .iterative import IterativeSolver
-from .simultaneous import SimultaneousEquationSolver
+from .solvers.base import BaseSolver, SolveResult
+from .solvers.iterative import IterativeSolver
+from .solvers.simultaneous import SimultaneousEquationSolver
 
 
 class SolverManager:
@@ -21,7 +21,7 @@ class SolverManager:
         ]
     
     def solve(self, equations: list[Equation], variables: dict[str, Variable],
-              dependency_graph: DependencyGraph | None = None,
+              dependency_graph: Order | None = None,
               max_iterations: int = 100, tolerance: float = 1e-10) -> SolveResult:
         """
         Solve the system using the best available solver.

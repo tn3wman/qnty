@@ -1,7 +1,7 @@
 from typing import Any
 
-from qnty.engines.problem.dependency_graph import DependencyGraph
-from qnty.equation import Equation
+from qnty.solving.order import Order
+from qnty.equations.equation import Equation
 from qnty.expressions import VariableReference
 from qnty.quantities import TypeSafeVariable as Variable
 
@@ -24,7 +24,7 @@ class IterativeSolver(BaseSolver):
     """
     
     def can_handle(self, equations: list[Equation], unknowns: set[str],
-                   dependency_graph: DependencyGraph | None = None,
+                   dependency_graph: Order | None = None,
                    analysis: dict[str, Any] | None = None) -> bool:
         """
         Can handle any system that doesn't have cycles and has at least one unknown.
@@ -44,7 +44,7 @@ class IterativeSolver(BaseSolver):
         return len(unknowns) > 0
     
     def solve(self, equations: list[Equation], variables: dict[str, Variable],
-              dependency_graph: DependencyGraph | None = None,
+              dependency_graph: Order | None = None,
               max_iterations: int = 100, tolerance: float = 1e-10) -> SolveResult:
         """
         Solve the system iteratively using dependency graph.

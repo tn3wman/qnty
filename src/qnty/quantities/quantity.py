@@ -25,18 +25,18 @@ from ..generated.dimensions import (
     ENERGY_HEAT_WORK as ENERGY,
 )
 from ..generated.units import AreaUnits, DimensionlessUnits, LengthUnits, PressureUnits, VolumeUnits
-from ..units.core import UnitConstant, UnitDefinition, registry
+from ..units.registry import UnitConstant, UnitDefinition, registry
 
 if TYPE_CHECKING:
     pass
 
 # TypeVar for generic dimensional types
-DimensionType = TypeVar("DimensionType", bound="FastQuantity")
+DimensionType = TypeVar("DimensionType", bound="Quantity")
 
 
 # Removed object pool system - benchmarking showed it was counter-productive
 # Simple cache for small integer values only (most common case)
-_SMALL_INTEGER_CACHE: dict[tuple[int, str], FastQuantity] = {}
+_SMALL_INTEGER_CACHE: dict[tuple[int, str], Quantity] = {}
 
 # Pre-computed error message templates to eliminate f-string overhead
 ERROR_TEMPLATES = {
@@ -114,11 +114,11 @@ class TypeSafeSetter:
         if not self.variable.expected_dimension.is_compatible(unit.dimension):
             raise TypeError(ERROR_TEMPLATES["incompatible_dimension"].format(unit.name))
 
-        self.variable.quantity = FastQuantity(self.value, unit)
+        self.variable.quantity = Quantity(self.value, unit)
         return self.variable
 
 
-class FastQuantity:
+class Quantity:
     """High-performance quantity optimized for engineering calculations."""
 
     __slots__ = ("value", "unit", "dimension", "_si_factor", "_dimension_sig")
@@ -158,7 +158,7 @@ class FastQuantity:
         return f"FastQuantity({self.value}, {self.unit.name})"
 
     # Ultra-fast arithmetic with dimensional checking
-    def __add__(self, other: FastQuantity) -> FastQuantity:
+    def __add__(self, other: Quantity) -> Quantity:
         # Optimized addition with early exit and bulk operations
         self_sig, other_sig = self._dimension_sig, other._dimension_sig
         if self_sig != other_sig:
@@ -166,14 +166,14 @@ class FastQuantity:
 
         # Ultra-fast path: compare unit names directly
         if self.unit.name == other.unit.name:
-            return FastQuantity(self.value + other.value, self.unit)
+            return Quantity(self.value + other.value, self.unit)
 
         # Convert using cached SI factors (avoid repeated attribute access)
         self_si, other_si = self._si_factor, other._si_factor
         other_value = other.value * other_si / self_si
-        return FastQuantity(self.value + other_value, self.unit)
+        return Quantity(self.value + other_value, self.unit)
 
-    def __sub__(self, other: FastQuantity) -> FastQuantity:
+    def __sub__(self, other: Quantity) -> Quantity:
         # Optimized subtraction with early exit and bulk operations
         self_sig, other_sig = self._dimension_sig, other._dimension_sig
         if self_sig != other_sig:
@@ -181,17 +181,17 @@ class FastQuantity:
 
         # Ultra-fast path: compare unit names directly
         if self.unit.name == other.unit.name:
-            return FastQuantity(self.value - other.value, self.unit)
+            return Quantity(self.value - other.value, self.unit)
 
         # Convert using cached SI factors (avoid repeated attribute access)
         self_si, other_si = self._si_factor, other._si_factor
         other_value = other.value * other_si / self_si
-        return FastQuantity(self.value - other_value, self.unit)
+        return Quantity(self.value - other_value, self.unit)
 
-    def __mul__(self, other: FastQuantity | float | int | TypeSafeVariable) -> FastQuantity:
+    def __mul__(self, other: Quantity | float | int | TypeSafeVariable) -> Quantity:
         # Fast path for numeric types - use type() for speed
         if isinstance(other, int | float):
-            return FastQuantity(self.value * other, self.unit)
+            return Quantity(self.value * other, self.unit)
 
         # Handle TypeSafeVariable objects by using their quantity
         # Check for quantity attribute without importing (duck typing)
@@ -199,7 +199,7 @@ class FastQuantity:
             other = other.quantity  # type: ignore
 
         # Type narrowing: at this point other should be FastQuantity
-        if not isinstance(other, FastQuantity):
+        if not isinstance(other, Quantity):
             raise TypeError(f"Expected FastQuantity, got {type(other)}")
 
         # Check multiplication cache first
@@ -208,7 +208,7 @@ class FastQuantity:
             result_unit = _MULTIPLICATION_CACHE[cache_key]
             # Fast computation with cached unit
             result_si_value = (self.value * self._si_factor) * (other.value * other._si_factor)
-            return FastQuantity(result_si_value / result_unit.si_factor, result_unit)
+            return Quantity(result_si_value / result_unit.si_factor, result_unit)
 
         # Fast dimensional analysis using cached signatures
         result_dimension_sig = self._dimension_sig * other._dimension_sig
@@ -225,25 +225,25 @@ class FastQuantity:
         if len(_MULTIPLICATION_CACHE) < 100:
             _MULTIPLICATION_CACHE[cache_key] = result_unit
 
-        return FastQuantity(result_value, result_unit)
+        return Quantity(result_value, result_unit)
 
-    def __rmul__(self, other: float | int) -> FastQuantity:
+    def __rmul__(self, other: float | int) -> Quantity:
         """Reverse multiplication for cases like 2 * quantity."""
         if isinstance(other, int | float):
-            return FastQuantity(other * self.value, self.unit)
+            return Quantity(other * self.value, self.unit)
         return NotImplemented
 
-    def __truediv__(self, other: FastQuantity | float | int | TypeSafeVariable) -> FastQuantity:
+    def __truediv__(self, other: Quantity | float | int | TypeSafeVariable) -> Quantity:
         # Fast path for numeric types - use type() for speed
         if isinstance(other, int | float):
-            return FastQuantity(self.value / other, self.unit)
+            return Quantity(self.value / other, self.unit)
 
         # Handle TypeSafeVariable objects by using their quantity
         if hasattr(other, "quantity") and getattr(other, "quantity", None) is not None:
             other = other.quantity  # type: ignore
 
         # Type narrowing: at this point other should be FastQuantity
-        if not isinstance(other, FastQuantity):
+        if not isinstance(other, Quantity):
             raise TypeError(f"Expected FastQuantity, got {type(other)}")
 
         # Check division cache first
@@ -252,7 +252,7 @@ class FastQuantity:
             result_unit = _DIVISION_CACHE[cache_key]
             # Fast computation with cached unit
             result_si_value = (self.value * self._si_factor) / (other.value * other._si_factor)
-            return FastQuantity(result_si_value / result_unit.si_factor, result_unit)
+            return Quantity(result_si_value / result_unit.si_factor, result_unit)
 
         # Fast dimensional analysis using cached signatures
         result_dimension_sig = self._dimension_sig / other._dimension_sig
@@ -269,7 +269,7 @@ class FastQuantity:
         if len(_DIVISION_CACHE) < 100:
             _DIVISION_CACHE[cache_key] = result_unit
 
-        return FastQuantity(result_value, result_unit)
+        return Quantity(result_value, result_unit)
 
     def _find_result_unit_fast(self, result_dimension_sig: int | float) -> UnitConstant:
         """Ultra-fast unit finding using pre-cached dimension signatures."""
@@ -309,7 +309,7 @@ class FastQuantity:
         return self._find_result_unit_fast(result_dimension._signature)
 
     # Ultra-fast comparisons
-    def __lt__(self, other: FastQuantity) -> bool:
+    def __lt__(self, other: Quantity) -> bool:
         # Optimized comparison with bulk operations
         if self._dimension_sig != other._dimension_sig:
             raise ValueError(ERROR_TEMPLATES["incompatible_comparison"])
@@ -323,7 +323,7 @@ class FastQuantity:
         return self.value < (other.value * other_si / self_si)
 
     def __eq__(self, other) -> bool:
-        if not isinstance(other, FastQuantity):
+        if not isinstance(other, Quantity):
             return False
         if self._dimension_sig != other._dimension_sig:
             return False
@@ -336,15 +336,15 @@ class FastQuantity:
         self_si, other_si = self._si_factor, other._si_factor
         return abs(self.value - (other.value * other_si / self_si)) < 1e-10
 
-    def to(self, target_unit: UnitConstant) -> FastQuantity:
+    def to(self, target_unit: UnitConstant) -> Quantity:
         """Ultra-fast unit conversion with optimized same-unit check."""
         # Ultra-fast same unit check using name comparison
         if self.unit.name == target_unit.name:
-            return FastQuantity(self.value, target_unit)
+            return Quantity(self.value, target_unit)
 
         # Direct SI factor conversion - avoid registry lookup
         converted_value = self.value * self._si_factor / target_unit.si_factor
-        return FastQuantity(converted_value, target_unit)
+        return Quantity(converted_value, target_unit)
 
 
 class TypeSafeVariable(Generic[DimensionType]):
@@ -362,7 +362,7 @@ class TypeSafeVariable(Generic[DimensionType]):
         self.name = name
         self.symbol: str | None = None  # Will be set by EngineeringProblem to attribute name
         self.expected_dimension = expected_dimension
-        self.quantity: FastQuantity | None = None
+        self.quantity: Quantity | None = None
         self.is_known = is_known
 
     def set(self, value: float):

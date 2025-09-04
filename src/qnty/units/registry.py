@@ -63,7 +63,7 @@ class UnitConstant:
         return self._hash_cache
 
 
-class HighPerformanceRegistry:
+class Registry:
     """Ultra-fast registry with pre-computed conversion tables."""
     
     __slots__ = ('units', 'conversion_table', 'dimensional_groups', '_finalized',
@@ -187,4 +187,4 @@ class HighPerformanceRegistry:
 
 
 # Global high-performance registry
-registry = HighPerformanceRegistry()
+registry = Registry()

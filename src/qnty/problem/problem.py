@@ -10,16 +10,16 @@ from __future__ import annotations
 from collections.abc import Callable
 from typing import TYPE_CHECKING, Any
 
-from qnty.equation import Equation, EquationSystem
+from qnty.equations import Equation, EquationSystem
 
 if TYPE_CHECKING:
     from qnty.expressions import BinaryOperation, Constant, VariableReference
 from qnty.utils.logging import get_logger
-from qnty.engines.problem.dependency_graph import DependencyGraph
-from qnty.engines.problem.equation_reconstruction import EquationReconstructor
-from qnty.engines.problem.metaclass import ProblemMeta
-from qnty.engines.solver import SolverManager
-from qnty.quantities import FastQuantity as Qty
+from qnty.solving.order import Order
+from qnty.problem.reconstruction import EquationReconstructor
+from qnty.problem.metaclass import ProblemMeta
+from qnty.solving.solvers import SolverManager
+from qnty.quantities import Quantity as Qty
 from qnty.quantities import TypeSafeVariable as Variable
 from qnty.generated.units import DimensionlessUnits
 
@@ -100,7 +100,7 @@ class Problem(metaclass=ProblemMeta):
         
         # Internal systems
         self.equation_system = EquationSystem()
-        self.dependency_graph = DependencyGraph()
+        self.dependency_graph = Order()
         
         # Solving state
         self.is_solved = False
@@ -1028,7 +1028,7 @@ class Problem(metaclass=ProblemMeta):
     def _build_dependency_graph(self):
         """Build the dependency graph for solving order determination."""
         # Reset the dependency graph
-        self.dependency_graph = DependencyGraph()
+        self.dependency_graph = Order()
         
         # Get known variables
         known_vars = self.get_known_symbols()

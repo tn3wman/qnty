@@ -1,6 +1,6 @@
 from qnty import Dimensionless, Length, Pressure
 from qnty.expressions import cond_expr
-from qnty.problem import Problem
+from qnty.problem.problem import Problem
 from qnty.validation import validate
 
  
@@ -74,7 +74,7 @@ def test_straight_pipe_internal():
     print(f"  T_eqn value: {StraightPipeInternal.T_eqn}")
     
     # Debug: Test isinstance check directly
-    from qnty.equation import Equation
+    from qnty.equations.equation import Equation
     print(f"  isinstance check: {isinstance(StraightPipeInternal.T_eqn, Equation)}")
     
     # Debug: Check all class attributes with their types
