@@ -12,7 +12,7 @@ The qnty library provides a simple, focused API for users:
 
 1. **100+ Variable Types** (from `variables.py`): Length, Pressure, Temperature, Mass, Volume, Area, Force, etc.
 2. **Problem Class** (from `problem.py`): Engineering problem container with automatic equation solving
-3. **Validation System** (`add_check` from `qnty.problem_system.checks`): Code compliance and engineering checks
+3. **Validation System** (`validate` from `validation.py`): Code compliance and engineering checks
 4. **Expression Methods**: Built into variables for mathematical operations (e.g., `pressure.geq(limit)`, `length * width`)
 
 All other modules and classes are internal implementation details that users should not access directly.
@@ -64,10 +64,12 @@ This ensures clean dependencies and enables proper type checking throughout the 
 The system uses a layered approach with separate concerns:
 
 - **Core Layer** (`dimension.py`): Dimensional analysis system using prime number encoding
-- **Unit System Layer** (`unit_system/`): Unit definitions, registry, and constants
-- **Variable System Layer** (`variable_system/`): Base classes for quantities and typed variables  
-- **Generated Layer** (`variables.py`, `units.py`): Auto-generated domain-specific classes
+- **Quantities Layer** (`quantities/`): Base classes for quantities and typed variables  
+- **Units Layer** (`units/`): Unit definitions, registry, and constants
+- **Generated Layer** (`generated/`): Auto-generated domain-specific classes for variables and units
 - **Expression Layer** (`expression.py`, `equation.py`): Mathematical expression and equation system
+- **Problem Solving Layer** (`problem.py`): Main engineering problem container
+- **Engines Layer** (`engines/`): Problem solving engines including solvers and dependency management
 
 ### Core Components
 
@@ -77,36 +79,44 @@ The system uses a layered approach with separate concerns:
 - `BaseDimension`: Enum of base dimensions (LENGTH, MASS, TIME, etc.) as prime numbers for efficient bit operations
 - Enables zero-cost dimensional analysis at compile time
 
-**Unit System (`unit_system/`)**
+**Units System (`units/`)**
 
-- `UnitDefinition` (`unit_system/core.py`): Immutable dataclass for unit definitions with SI conversion factors
-- `UnitConstant` (`unit_system/core.py`): Type-safe unit constants that provide performance optimizations
-- `HighPerformanceRegistry` (`unit_system/core.py`): Central registry with pre-computed conversion tables for fast unit conversions
-- `SIPrefix` (`unit_system/prefixes.py`): Comprehensive SI prefix system for automatic unit generation
+- `UnitDefinition` (`units/core.py`): Immutable dataclass for unit definitions with SI conversion factors
+- `UnitConstant` (`units/core.py`): Type-safe unit constants that provide performance optimizations
+- `HighPerformanceRegistry` (`units/core.py`): Central registry with pre-computed conversion tables for fast unit conversions
+- `SIPrefix` (`units/prefixes.py`): Comprehensive SI prefix system for automatic unit generation
 
-**Base Variables and Quantities (`variable_system/`)**
+**Base Variables and Quantities (`quantities/`)**
 
-- `FastQuantity` (`variable_system/core.py`): High-performance quantity class optimized for engineering calculations
-- `TypeSafeVariable` (`variable_system/core.py`): Base class for dimension-specific variables with generic type safety
-- `TypeSafeSetter` (`variable_system/core.py`): Generic setter with dimensional validation and fluent API
-- `ExpressionVariable` (`variable_system/expression_variable.py`): Extended variable class with mathematical operations
+- `FastQuantity` (`quantities/core.py`): High-performance quantity class optimized for engineering calculations
+- `TypeSafeVariable` (`quantities/core.py`): Base class for dimension-specific variables with generic type safety
+- `TypeSafeSetter` (`quantities/core.py`): Generic setter with dimensional validation and fluent API
+- `ExpressionVariable` (`quantities/expression_variable.py`): Extended variable class with mathematical operations
 - Uses `__slots__` for memory efficiency and caches commonly used values  
 - Implements fast arithmetic operations with dimensional checking
 - **Variable Management Methods**: `update()`, `mark_known()`, `mark_unknown()` for flexible variable state management
 
-**Specialized Variables (`variables.py`)**
+**Generated Variables and Units (`generated/`)**
 
-- 100+ domain-specific variable types including `Length`, `Pressure`, `Temperature`, `Mass`, `Volume`, etc.
+- `variables.py`: 100+ domain-specific variable types including `Length`, `Pressure`, `Temperature`, `Mass`, `Volume`, etc.
 - All extend `ExpressionVariable` with mathematical operation capabilities and comparison methods
 - Provides fluent API patterns for type-safe value setting with specialized setters
 - **Comparison Methods**: `lt()`, `leq()`, `geq()`, `gt()` methods and Python operators (`<`, `<=`, `>`, `>=`) for conditional logic
 - Auto-generated from comprehensive unit database with consistent patterns
 
-**Unit Constants (`units.py`)**
+**Unit Constants (`generated/units.py`)**
 
 - Type-safe unit constant classes: `LengthUnits`, `PressureUnits`, `DimensionlessUnits`
 - Provides both full names and common aliases (e.g., `m`, `mm`, `Pa`, `kPa`)
 - No string-based unit handling - all type-safe constants
+
+**Problem Solving Engines (`engines/`)**
+
+- **Problem Management** (`engines/problem/`): Dependency graph analysis, equation reconstruction, metaclass magic, and problem composition
+- **Solver System** (`engines/solver/`): Multiple solver implementations including iterative and simultaneous equation solvers
+- `SolverManager` (`engines/solver/manager.py`): Automatically selects the best solver for a given system of equations
+- `DependencyGraph` (`engines/problem/dependency_graph.py`): Analyzes variable dependencies and equation cycles
+- `EquationReconstructor` (`engines/problem/equation_reconstruction.py`): Reconstructs equations with proper variable references
 
 **Mathematical Expression System (`expression.py`)**
 
@@ -130,11 +140,11 @@ The system uses a layered approach with separate concerns:
 
 **Clean Import Strategy**: The codebase uses several techniques to avoid circular imports:
 
-- Strict dependency hierarchy: `dimension → unit_system → variable_system → variables → expression → equation`
+- Strict dependency hierarchy: `dimension → units → quantities → generated → expression → equation → problem → engines`
 - `TYPE_CHECKING` guards for type-only imports
-- Duck typing with `hasattr()` checks to avoid importing classes
+- Duck typing with `hasattr()` and `getattr()` checks to avoid importing classes
 - Delayed imports where necessary
-- Strategic use of `cast()` for type safety without runtime dependencies
+- Strategic use of try/except blocks for safe attribute access
 
 **Public API Design**: The library exposes a focused public API for users:
 
@@ -144,13 +154,14 @@ from qnty import Length, Pressure, Temperature, Mass, Volume, Area, Force, etc.
 
 # Engineering problem system
 from qnty import Problem
-from qnty.problem_system.checks import add_check
+from qnty.validation import validate
 ```
 
 **Restricted User Access**: Users should ONLY access these public components:
-- **All variables from `variables.py`**: Length, Pressure, Temperature, etc. (100+ engineering variable types)
+
+- **All variables from `generated/variables.py`**: Length, Pressure, Temperature, etc. (100+ engineering variable types)
 - **Problem class from `problem.py`**: Main container for engineering problems with solving capabilities
-- **`add_check` function from `qnty.problem_system.checks`**: Validation and compliance checking system
+- **`validate` function from `validation.py`**: Validation and compliance checking system
 - **Expression methods**: Available through variables (e.g., `length * width`, `pressure.geq(limit)`)
 
 All other classes, modules, and functions are internal implementation details and should not be used directly by users.
@@ -236,12 +247,14 @@ The project uses a sophisticated code generation pipeline located in `scripts/`:
 - **`generate_all.py`**: Orchestrates the entire generation pipeline
 
 **Key Generation Features:**
+
 - Uses `scripts/input/unit_data.json` as the single source of truth for 800+ engineering units
 - Automatically generates prefixed units (milli-, kilo-, etc.) for applicable base units
 - Maintains dimensional consistency across all generated code
 - Supports both manual edits and regeneration without conflicts
 
 **Running Generation Scripts:**
+
 ```bash
 python scripts/_1_generate_dimensions.py  # Update dimensions
 python scripts/_2_generate_units.py       # Update units  
@@ -308,10 +321,12 @@ from qnty.problem_system.checks import add_check
 
 ```python
 # Internal systems - users should NOT import these
-from .variable_system.core import FastQuantity, TypeSafeVariable, TypeSafeSetter
-from .unit_system.core import UnitDefinition, UnitConstant, registry
-from .expression_system.expression import Expression, wrap_operand
-from .equation_system.equation import Equation
+from .quantities.core import FastQuantity, TypeSafeVariable, TypeSafeSetter
+from .units.core import UnitDefinition, UnitConstant, registry
+from .expression import Expression, wrap_operand
+from .equation import Equation
+from .engines.solver import SolverManager
+from .engines.problem import DependencyGraph
 ```
 
 **User API Boundaries**: The public API is intentionally minimal to ensure users only need to learn and use the essential components. All other modules contain implementation details that should remain hidden from users.
@@ -319,9 +334,11 @@ from .equation_system.equation import Equation
 ### Type Safety Best Practices
 
 - Always check `variable.quantity is not None` before accessing quantity attributes
-- Use `cast()` with duck typing for type safety without circular imports
+- Use `getattr(obj, 'attr', default)` for safe attribute access on dynamic objects
+- Use try/except blocks with `setattr()` for safe dynamic attribute assignment
 - Prefer `TYPE_CHECKING` guards for type-only imports
 - Follow the established dependency hierarchy when adding new modules
+- Use `hasattr()` checks before accessing potentially missing attributes
 
 ### Performance Considerations
 
@@ -334,6 +351,7 @@ from .equation_system.equation import Equation
 ### Critical Development Patterns
 
 **Variable Symbol Management**: Variables need proper symbol assignment for equation solving:
+
 ```python
 # Correct: Set symbols explicitly for equation system
 t = Length(0.0, "inch", "Pressure Design Thickness", is_known=False)
@@ -341,28 +359,34 @@ t.symbol = "t"  # Required for equation.solve_for("t", variables)
 ```
 
 **Dimensional Signature Precision**: When working with dimensional operations, ensure proper division handling:
+
 - Always use `/` (true division) for dimensional signatures, never `//` (floor division)
 - Mixed `int | float` dimensional signatures are supported for precision in compound operations
 
 **Expression String Representation**: The `BinaryOperation.__str__()` method handles operator precedence carefully:
+
 - Right-associative operations need parentheses when precedence is equal and operator is left-associative (`-`, `/`)
 - This ensures expressions like `(P * D) / (2 * (S * E * W + P * Y))` maintain mathematical correctness
 
 **Unit Registry Type Safety**: When modifying the registry system:
+
 - `_dimension_cache` and `dimensional_groups` must support `dict[int | float, ...]` types
 - This accommodates the mixed-type dimensional signatures from precision fixes
 
 **Auto-Evaluation System**: The expression and equation systems use Python's `inspect` module for automatic evaluation:
+
 - Expressions auto-evaluate when all referenced variables are available in the calling scope
 - Equations auto-solve when exactly one unknown variable exists
 - This eliminates the need for manual variable dictionary creation in most cases
 
 **Comparison Operations**: All comparison operators are handled by `BinaryOperation` instead of a separate class:
+
 - Comparisons return dimensionless quantities (1.0 for True, 0.0 for False)  
 - Unit conversion is automatic for same-dimension comparisons
 - Both method calls (`var.lt(other)`) and operators (`var < other`) are supported
 
 **Variable State Management**: New methods enable flexible variable property updates:
+
 - `update(value=..., unit=..., quantity=..., is_known=...)` for flexible updates
 - `mark_known()` and `mark_unknown()` for state changes
 - All methods support method chaining and return the variable instance

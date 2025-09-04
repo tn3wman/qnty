@@ -6,10 +6,10 @@ A fast, type-safe unit system library for Python with dimensional safety
 and optimized unit conversions for engineering calculations.
 """
 
-from . import (variables, expression)
+from . import (quantity, expressions)
 
-from .expression import cond_expr
-from .variables import (
+from .expressions import cond_expr
+from .generated.quantities import (
     AbsorbedDose,
     Acceleration,
     ActivationEnergy,
@@ -121,7 +121,7 @@ from .variables import (
 
 # Define public API
 __all__ = [
-    'variables',
-    'expression'
+    'quantity',
+    'expressions'
 ]
 

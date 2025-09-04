@@ -6,9 +6,9 @@ Tests the prefix system including definition, application, and registration.
 """
 
 import pytest
-from qnty.unit_system.dimension import LENGTH, PRESSURE, ENERGY_HEAT_WORK
-from qnty.unit_system.core import UnitDefinition, HighPerformanceRegistry
-from qnty.unit_system.prefixes import (
+from qnty.generated.dimensions import LENGTH, PRESSURE, ENERGY_HEAT_WORK
+from qnty.units.core import UnitDefinition, HighPerformanceRegistry
+from qnty.units.prefixes import (
     SIPrefix, StandardPrefixes, 
     get_prefix_by_name, get_prefix_by_symbol, get_prefix_by_factor,
     COMMON_LENGTH_PREFIXES, COMMON_PRESSURE_PREFIXES

@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python:*)",
+      "Read(/C:\\Projects\\qnty\\src\\qnty\\engines\\problem/**)",
+      "Read(/C:\\Projects\\qnty\\src\\qnty/**)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

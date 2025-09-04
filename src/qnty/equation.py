@@ -9,8 +9,8 @@ from __future__ import annotations
 
 from typing import cast
 
-from .expression import Expression, VariableReference
-from .variable_system.core import TypeSafeVariable
+from .expressions import Expression, VariableReference
+from .quantities.core import TypeSafeVariable
 
 # Global optimization flags and cache
 _SCOPE_DISCOVERY_ENABLED = False  # Disabled by default due to high overhead

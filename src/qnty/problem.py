@@ -8,16 +8,20 @@ all aspects of engineering problem definition, solving, and analysis.
 from __future__ import annotations
 
 from collections.abc import Callable
-from typing import Any, Dict, List, Optional, Set
+from typing import TYPE_CHECKING, Any
 
 from qnty.equation import Equation, EquationSystem
-from qnty.logging_system import get_logger
-from qnty.problem_system.dependency_graph import DependencyGraph
-from qnty.problem_system.equation_reconstruction import EquationReconstructor
-from qnty.problem_system.metaclass import ProblemMeta
-from qnty.solver_system import SolverManager
-from qnty.variable_system import FastQuantity as Qty
-from qnty.variable_system import TypeSafeVariable as Variable
+
+if TYPE_CHECKING:
+    from qnty.expressions import BinaryOperation, Constant, VariableReference
+from qnty.utils.logging import get_logger
+from qnty.engines.problem.dependency_graph import DependencyGraph
+from qnty.engines.problem.equation_reconstruction import EquationReconstructor
+from qnty.engines.problem.metaclass import ProblemMeta
+from qnty.engines.solver import SolverManager
+from qnty.quantities import FastQuantity as Qty
+from qnty.quantities import TypeSafeVariable as Variable
+from qnty.generated.units import DimensionlessUnits
 
 # Constants
 MAX_ITERATIONS_DEFAULT = 100
@@ -78,21 +82,21 @@ class Problem(metaclass=ProblemMeta):
     Attributes:
         name (str): Human-readable name for the problem
         description (str): Detailed description of the problem
-        variables (Dict[str, Variable]): All variables in the problem
-        equations (List[Equation]): All equations in the problem
+        variables (dict[str, Variable]): All variables in the problem
+        equations (list[Equation]): All equations in the problem
         is_solved (bool): Whether the problem has been successfully solved
-        solution (Dict[str, Variable]): Solved variable values
-        sub_problems (Dict[str, EngineeringProblem]): Integrated sub-problems
+        solution (dict[str, Variable]): Solved variable values
+        sub_problems (dict[str, EngineeringProblem]): Integrated sub-problems
     """
     
-    def __init__(self, name: Optional[str] = None, description: str = ""):
+    def __init__(self, name: str | None = None, description: str = ""):
         # Handle subclass mode (class-level name/description) vs explicit name
         self.name = name or getattr(self.__class__, 'name', self.__class__.__name__)
         self.description = description or getattr(self.__class__, 'description', "")
         
         # Core storage
-        self.variables: Dict[str, Variable] = {}
-        self.equations: List[Equation] = []
+        self.variables: dict[str, Variable] = {}
+        self.equations: list[Equation] = []
         
         # Internal systems
         self.equation_system = EquationSystem()
@@ -100,24 +104,24 @@ class Problem(metaclass=ProblemMeta):
         
         # Solving state
         self.is_solved = False
-        self.solution: Dict[str, Variable] = {}
-        self.solving_history: List[Dict[str, Any]] = []
+        self.solution: dict[str, Variable] = {}
+        self.solving_history: list[dict[str, Any]] = []
         
         # Performance optimization caches
-        self._known_variables_cache: Optional[Dict[str, Variable]] = None
-        self._unknown_variables_cache: Optional[Dict[str, Variable]] = None
+        self._known_variables_cache: dict[str, Variable] | None = None
+        self._unknown_variables_cache: dict[str, Variable] | None = None
         self._cache_dirty = True
         
         # Validation and warning system
-        self.warnings: List[Dict[str, Any]] = []
-        self.validation_checks: List[Callable] = []
+        self.warnings: list[dict[str, Any]] = []
+        self.validation_checks: list[Callable] = []
         
         self.logger = get_logger()
         self.solver_manager = SolverManager(self.logger)
         
         # Sub-problem composition support
-        self.sub_problems: Dict[str, 'Problem'] = {}
-        self.variable_aliases: Dict[str, str] = {}  # Maps alias -> original variable symbol
+        self.sub_problems: dict[str, Problem] = {}
+        self.variable_aliases: dict[str, str] = {}  # Maps alias -> original variable symbol
         
         # Initialize equation reconstructor
         self.equation_reconstructor = EquationReconstructor(self)
@@ -176,13 +180,13 @@ class Problem(metaclass=ProblemMeta):
                 # Still set the original equation as attribute
                 setattr(self, attr_name, equation)
 
-    def _get_class_attributes(self) -> List[tuple[str, Any]]:
+    def _get_class_attributes(self) -> list[tuple[str, Any]]:
         """Get all non-private class attributes efficiently."""
-        return [(attr_name, getattr(self.__class__, attr_name)) 
-                for attr_name in dir(self.__class__) 
+        return [(attr_name, getattr(self.__class__, attr_name))
+                for attr_name in dir(self.__class__)
                 if not attr_name.startswith('_')]
 
-    def _collect_class_equations(self) -> List[tuple[str, Equation]]:
+    def _collect_class_equations(self) -> list[tuple[str, Equation]]:
         """Collect all equation objects from class attributes."""
         equations_to_process = []
         for attr_name, attr_value in self._get_class_attributes():
@@ -191,11 +195,8 @@ class Problem(metaclass=ProblemMeta):
         return equations_to_process
 
     def _process_equation(self, attr_name: str, equation: Equation) -> bool:
-        """Debug version to trace equation processing."""
-        print(f"Debug: Processing equation {attr_name}: {equation}")
-        result = self._process_equation_impl(attr_name, equation)
-        print(f"Debug: Equation {attr_name} processing result: {result}")
-        return result
+        """Process a single equation and add it to the problem if valid."""
+        return self._process_equation_impl(attr_name, equation)
     
     def _process_equation_impl(self, attr_name: str, equation: Equation) -> bool:
         """
@@ -204,38 +205,33 @@ class Problem(metaclass=ProblemMeta):
         """
         # First, update variable references to use symbols instead of names
         updated_equation = self._update_equation_variable_references(equation)
-        print(f"Debug: Updated equation {attr_name}: {updated_equation}")
         
         # Check if this equation contains delayed expressions
         try:
             has_delayed = self.equation_reconstructor.contains_delayed_expressions(updated_equation)
-            print(f"Debug: {attr_name} has delayed expressions: {has_delayed}")
             if has_delayed:
                 return self._handle_delayed_equation(attr_name, updated_equation)
         except Exception as e:
-            print(f"Debug: Error checking delayed expressions for {attr_name}: {e}")
+            self.logger.debug(f"Error checking delayed expressions for {attr_name}: {e}")
         
         # Check if this equation has invalid self-references
         try:
             has_self_ref = self._has_invalid_self_references(updated_equation)
-            print(f"Debug: {attr_name} has invalid self-references: {has_self_ref}")
             if has_self_ref:
                 self.logger.debug(f"Skipping invalid self-referencing equation {attr_name}: {updated_equation}")
                 return False
         except Exception as e:
-            print(f"Debug: Error checking self-references for {attr_name}: {e}")
+            self.logger.debug(f"Error checking self-references for {attr_name}: {e}")
         
         # Check if equation references non-existent variables
         try:
             has_missing = self._equation_has_missing_variables(updated_equation)
-            print(f"Debug: {attr_name} has missing variables: {has_missing}")
             if has_missing:
                 return self._handle_equation_with_missing_variables(attr_name, updated_equation)
         except Exception as e:
-            print(f"Debug: Error checking missing variables for {attr_name}: {e}")
+            self.logger.debug(f"Error checking missing variables for {attr_name}: {e}")
         
         # Process valid equation
-        print(f"Debug: Adding equation {attr_name} to problem")
         self.add_equation(updated_equation)
         return True
 
@@ -268,52 +264,41 @@ class Problem(metaclass=ProblemMeta):
         """Handle conditional equations with missing variables."""
         missing_vars = equation.get_all_variables() - set(self.variables.keys())
         
-        print(f"DEBUG: _handle_conditional_equation called for {attr_name}")
-        print(f"DEBUG: missing_vars = {missing_vars}")
         
         # Skip conditional equations from sub-problems in composed systems
         if self.sub_problems and self._is_conditional_equation_from_subproblem(equation, attr_name):
             self.logger.debug(f"Skipping conditional equation {attr_name} from sub-problem in composed system")
-            print(f"DEBUG: Skipping {attr_name} because it's from subproblem")
             return False
         
         # Check for composite expressions that might be reconstructable
-        unresolvable_vars = [var for var in missing_vars 
+        unresolvable_vars = [var for var in missing_vars
                            if any(op in var for op in MATHEMATICAL_OPERATORS)]
-        print(f"DEBUG: unresolvable_vars = {unresolvable_vars}")
-        print(f"DEBUG: has sub_problems = {bool(self.sub_problems)}")
         
         if self.sub_problems and unresolvable_vars:
             # Before skipping, try to reconstruct conditional equations with composite expressions
-            print(f"DEBUG: Attempting reconstruction for {attr_name}")
             self.logger.debug(f"Attempting to reconstruct conditional equation {attr_name} with composite variables: {unresolvable_vars}")
             reconstructed_equation = self.equation_reconstructor.reconstruct_composite_expressions_generically(equation)
             if reconstructed_equation:
-                print(f"DEBUG: Successfully reconstructed {attr_name}")
                 self.logger.debug(f"Successfully reconstructed conditional equation {attr_name}: {reconstructed_equation}")
                 self.add_equation(reconstructed_equation)
                 setattr(self, attr_name, reconstructed_equation)
                 return True
             else:
-                print(f"DEBUG: Failed to reconstruct {attr_name}, trying simple substitution")
                 self.logger.debug(f"Failed to reconstruct conditional equation {attr_name}, trying simple substitution")
                 # Try simple substitution for basic arithmetic expressions
                 reconstructed_equation = self._try_simple_substitution(equation, missing_vars)
                 if reconstructed_equation:
-                    print(f"DEBUG: Simple substitution worked for {attr_name}")
                     self.add_equation(reconstructed_equation)
                     return True
                 else:
-                    print(f"DEBUG: Simple substitution failed, adding original equation")
                     self.add_equation(equation)
                     return True
         else:
             # Try to add the conditional equation even with missing simple variables
-            print(f"DEBUG: Adding {attr_name} without reconstruction")
             self.add_equation(equation)
             return True
 
-    def _try_simple_substitution(self, equation: Equation, missing_vars: Set[str]) -> Optional[Equation]:
+    def _try_simple_substitution(self, _equation: Equation, _missing_vars: set[str]) -> Equation | None:
         """
         Try simple substitution for basic arithmetic expressions in conditional equations.
         
@@ -333,7 +318,7 @@ class Problem(metaclass=ProblemMeta):
             # Fix the RHS expression
             fixed_rhs = self._fix_expression_variables(equation.rhs)
             
-            # Create new equation with fixed RHS (LHS should already be correct)  
+            # Create new equation with fixed RHS (LHS should already be correct)
             return Equation(equation.name, equation.lhs, fixed_rhs)
             
         except Exception as e:
@@ -344,12 +329,12 @@ class Problem(metaclass=ProblemMeta):
         """
         Recursively fix VariableReferences in an expression tree to point to correct Variables.
         """
-        from qnty.expression import VariableReference, BinaryOperation, UnaryOperation, BinaryFunction, Constant
         
         if isinstance(expr, VariableReference):
             # Check if this VariableReference points to the wrong Variable
-            if expr.symbol in self.variables:
-                correct_var = self.variables[expr.symbol]
+            symbol = getattr(expr, 'symbol', None)
+            if symbol and symbol in self.variables:
+                correct_var = self.variables[symbol]
                 if expr.variable is not correct_var:
                     # Create new VariableReference pointing to correct Variable
                     return VariableReference(correct_var)
@@ -361,16 +346,16 @@ class Problem(metaclass=ProblemMeta):
             fixed_right = self._fix_expression_variables(expr.right)
             return BinaryOperation(expr.operator, fixed_left, fixed_right)
             
-        elif isinstance(expr, UnaryOperation):
+        elif hasattr(expr, 'operand'):
             # Recursively fix operand
             fixed_operand = self._fix_expression_variables(expr.operand)
-            return UnaryOperation(expr.operator, fixed_operand)
+            return type(expr)(expr.operator, fixed_operand)
             
-        elif isinstance(expr, BinaryFunction):
+        elif hasattr(expr, 'function_name'):
             # Recursively fix left and right operands
             fixed_left = self._fix_expression_variables(expr.left)
             fixed_right = self._fix_expression_variables(expr.right)
-            return BinaryFunction(expr.function_name, fixed_left, fixed_right)
+            return type(expr)(expr.function_name, fixed_left, fixed_right)
             
         elif isinstance(expr, Constant):
             return expr
@@ -394,7 +379,7 @@ class Problem(metaclass=ProblemMeta):
             self.logger.debug(f"Failed to reconstruct equation {attr_name}: {equation}")
             return False
     
-    def _integrate_sub_problem(self, sub_problem: 'Problem', namespace: str) -> None:
+    def _integrate_sub_problem(self, sub_problem: Problem, namespace: str) -> None:
         """
         Integrate a sub-problem by flattening its variables with namespace prefixes.
         Creates a simple dotted access pattern: self.header.P becomes self.header_P
@@ -413,7 +398,8 @@ class Problem(metaclass=ProblemMeta):
             self.add_variable(namespaced_var)
             
             # Set both namespaced access (self.header_P) and dotted access (self.header.P)
-            super().__setattr__(namespaced_var.symbol, namespaced_var)
+            if namespaced_var.symbol is not None:
+                super().__setattr__(namespaced_var.symbol, namespaced_var)
             setattr(namespace_obj, var_symbol, namespaced_var)
         
         # Set the namespace object for dotted access
@@ -432,7 +418,7 @@ class Problem(metaclass=ProblemMeta):
             except Exception as e:
                 self.logger.debug(f"Failed to namespace equation from {namespace}: {e}")
 
-    def _create_namespaced_variable(self, var: Variable, var_symbol: str, namespace: str, proxy_configs: Dict) -> Variable:
+    def _create_namespaced_variable(self, var: Variable, var_symbol: str, namespace: str, proxy_configs: dict) -> Variable:
         """Create a namespaced variable with proper configuration."""
         namespaced_symbol = f"{namespace}_{var_symbol}"
         namespaced_var = self._clone_variable(var)
@@ -447,7 +433,7 @@ class Problem(metaclass=ProblemMeta):
         
         return namespaced_var
 
-    def _namespace_equation(self, equation: Equation, namespace: str) -> Optional[Equation]:
+    def _namespace_equation(self, equation: Equation, namespace: str) -> Equation | None:
         """
         Create a namespaced version of an equation by prefixing all variable references.
         """
@@ -471,8 +457,10 @@ class Problem(metaclass=ProblemMeta):
             namespaced_lhs = self._namespace_expression_for_lhs(equation.lhs, symbol_mapping)
             namespaced_rhs = self._namespace_expression(equation.rhs, symbol_mapping)
             
-            if namespaced_lhs and namespaced_rhs and hasattr(namespaced_lhs, 'equals'):
-                return namespaced_lhs.equals(namespaced_rhs)
+            if namespaced_lhs and namespaced_rhs:
+                equals_method = getattr(namespaced_lhs, 'equals', None)
+                if equals_method:
+                    return equals_method(namespaced_rhs)
             
             return None
             
@@ -493,9 +481,9 @@ class Problem(metaclass=ProblemMeta):
         # Handle operations
         elif isinstance(expr, BinaryOperation):
             return self._namespace_binary_operation(expr, symbol_mapping)
-        elif isinstance(expr, UnaryOperation):
+        elif hasattr(expr, 'operand'):
             return self._namespace_unary_operation(expr, symbol_mapping)
-        elif isinstance(expr, BinaryFunction):
+        elif hasattr(expr, 'function_name'):
             return self._namespace_binary_function(expr, symbol_mapping)
         elif isinstance(expr, Constant):
             return expr
@@ -525,15 +513,15 @@ class Problem(metaclass=ProblemMeta):
         return BinaryOperation(expr.operator, namespaced_left, namespaced_right)
 
     def _namespace_unary_operation(self, expr, symbol_mapping):
-        """Namespace a UnaryOperation."""
+        """Namespace a UnaryFunction."""
         namespaced_operand = self._namespace_expression(expr.operand, symbol_mapping)
-        return UnaryOperation(expr.operator, namespaced_operand)
+        return type(expr)(expr.operator, namespaced_operand)
 
     def _namespace_binary_function(self, expr, symbol_mapping):
         """Namespace a BinaryFunction."""
         namespaced_left = self._namespace_expression(expr.left, symbol_mapping)
         namespaced_right = self._namespace_expression(expr.right, symbol_mapping)
-        return BinaryFunction(expr.function_name, namespaced_left, namespaced_right)
+        return type(expr)(expr.function_name, namespaced_left, namespaced_right)
 
     def _namespace_expression_for_lhs(self, expr, symbol_mapping):
         """
@@ -541,8 +529,9 @@ class Problem(metaclass=ProblemMeta):
         """
         
         if isinstance(expr, VariableReference):
-            if expr.symbol in symbol_mapping:
-                namespaced_symbol = symbol_mapping[expr.symbol]
+            symbol = getattr(expr, 'symbol', None)
+            if symbol and symbol in symbol_mapping:
+                namespaced_symbol = symbol_mapping[symbol]
                 if namespaced_symbol in self.variables:
                     return self.variables[namespaced_symbol]
             # If we can't find a mapping, return None since VariableReference doesn't have .equals()
@@ -557,11 +546,20 @@ class Problem(metaclass=ProblemMeta):
             return expr
 
     def _clone_variable(self, variable: Variable) -> Variable:
-        """Create a deep copy of a variable to avoid shared state."""
-        from copy import deepcopy
-        cloned = deepcopy(variable)
-        # Ensure the cloned variable has fresh validation checks if they exist
-        if hasattr(cloned, 'validation_checks'):
+        """Create a copy of a variable to avoid shared state without corrupting global units."""
+        # Create a new Variable with the same properties but avoid deepcopy
+        # which can corrupt global unit objects
+        cloned = Variable(
+            name=variable.name,
+            expected_dimension=variable.expected_dimension,
+            is_known=variable.is_known
+        )
+        # Set attributes that are not part of constructor
+        cloned.symbol = variable.symbol
+        cloned.quantity = variable.quantity  # Keep reference to same quantity - units must not be copied
+        
+        # Ensure the cloned variable has fresh validation checks
+        if hasattr(variable, 'validation_checks'):
             try:
                 setattr(cloned, 'validation_checks', [])
             except (AttributeError, TypeError):
@@ -613,18 +611,19 @@ class Problem(metaclass=ProblemMeta):
                     
                 # Auto-create composite equation
                 try:
-                    from qnty.expression import min_expr
+                    from qnty.expressions import min_expr
                     composite_var = self.variables[var_name]
                     if not composite_var.is_known:  # Only for unknown variables
                         composite_expr = min_expr(*sub_problem_vars)
-                        if hasattr(composite_var, 'equals'):
-                            composite_eq = composite_var.equals(composite_expr)
+                        equals_method = getattr(composite_var, 'equals', None)
+                        if equals_method:
+                            composite_eq = equals_method(composite_expr)
                             self.add_equation(composite_eq)
                             setattr(self, f"{var_name}_eqn", composite_eq)
                 except Exception as e:
                     self.logger.debug(f"Failed to create composite equation for {var_name}: {e}")
 
-    def _get_equation_lhs_symbol(self, equation: Equation) -> Optional[str]:
+    def _get_equation_lhs_symbol(self, equation: Equation) -> str | None:
         """Safely extract the symbol from equation's left-hand side."""
         return getattr(equation.lhs, 'symbol', None)
 
@@ -674,7 +673,7 @@ class Problem(metaclass=ProblemMeta):
             return False
 
 
-    def _is_conditional_equation_from_subproblem(self, equation: Equation, equation_name: str) -> bool:  # noqa: ARG002
+    def _is_conditional_equation_from_subproblem(self, equation: Equation, _equation_name: str) -> bool:
         """
         Check if a conditional equation comes from a sub-problem and should be skipped in composed systems.
         
@@ -754,11 +753,17 @@ class Problem(metaclass=ProblemMeta):
         if variable.symbol in self.variables:
             self.logger.warning(f"Variable {variable.symbol} already exists. Replacing.")
         
-        self.variables[variable.symbol] = variable
+        if variable.symbol is not None:
+            self.variables[variable.symbol] = variable
         # Set parent problem reference for dependency invalidation
-        variable._parent_problem = self
+        try:
+            setattr(variable, '_parent_problem', self)
+        except (AttributeError, TypeError):
+            # _parent_problem might not be settable
+            pass
         # Also set as instance attribute for dot notation access
-        setattr(self, variable.symbol, variable)
+        if variable.symbol is not None:
+            setattr(self, variable.symbol, variable)
         self.is_solved = False
         self._invalidate_caches()
 
@@ -773,42 +778,42 @@ class Problem(metaclass=ProblemMeta):
             raise VariableNotFoundError(f"Variable '{symbol}' not found in problem '{self.name}'.")
         return self.variables[symbol]
     
-    def get_known_variables(self) -> Dict[str, Variable]:
+    def get_known_variables(self) -> dict[str, Variable]:
         """Get all known variables."""
         if self._cache_dirty or self._known_variables_cache is None:
             self._update_variable_caches()
         return self._known_variables_cache.copy() if self._known_variables_cache else {}
 
-    def get_unknown_variables(self) -> Dict[str, Variable]:
+    def get_unknown_variables(self) -> dict[str, Variable]:
         """Get all unknown variables."""
         if self._cache_dirty or self._unknown_variables_cache is None:
             self._update_variable_caches()
         return self._unknown_variables_cache.copy() if self._unknown_variables_cache else {}
 
-    def get_known_symbols(self) -> Set[str]:
+    def get_known_symbols(self) -> set[str]:
         """Get symbols of all known variables."""
         return {symbol for symbol, var in self.variables.items() if var.is_known}
 
-    def get_unknown_symbols(self) -> Set[str]:
+    def get_unknown_symbols(self) -> set[str]:
         """Get symbols of all unknown variables."""
         return {symbol for symbol, var in self.variables.items() if not var.is_known}
     
-    def get_known_variable_symbols(self) -> Set[str]:
+    def get_known_variable_symbols(self) -> set[str]:
         """Alias for get_known_symbols for compatibility."""
         return self.get_known_symbols()
     
-    def get_unknown_variable_symbols(self) -> Set[str]:
+    def get_unknown_variable_symbols(self) -> set[str]:
         """Alias for get_unknown_symbols for compatibility."""
         return self.get_unknown_symbols()
     
     # Properties for compatibility
     @property
-    def known_variables(self) -> Dict[str, Variable]:
+    def known_variables(self) -> dict[str, Variable]:
         """Get all variables marked as known."""
         return self.get_known_variables()
     
     @property
-    def unknown_variables(self) -> Dict[str, Variable]:
+    def unknown_variables(self) -> dict[str, Variable]:
         """Get all variables marked as unknown."""
         return self.get_unknown_variables()
 
@@ -864,7 +869,7 @@ class Problem(metaclass=ProblemMeta):
         self._invalidate_caches()
 
     # =============================================================================
-    # EQUATION MANAGEMENT METHODS  
+    # EQUATION MANAGEMENT METHODS
     # =============================================================================
 
     def add_equation(self, equation: Equation) -> None:
@@ -911,7 +916,7 @@ class Problem(metaclass=ProblemMeta):
         self.equation_system.add_equation(equation)
         self.is_solved = False
 
-    def _handle_missing_variables(self, missing_vars: List[str]) -> None:
+    def _handle_missing_variables(self, missing_vars: list[str]) -> None:
         """Handle missing variables by creating placeholders for simple symbols."""
         for missing_var in missing_vars:
             if self._is_simple_variable_symbol(missing_var):
@@ -919,7 +924,7 @@ class Problem(metaclass=ProblemMeta):
 
     def _is_simple_variable_symbol(self, symbol: str) -> bool:
         """Check if a symbol looks like a simple variable identifier."""
-        return (symbol.isidentifier() and 
+        return (symbol.isidentifier() and
                 not any(char in symbol for char in ['(', ')', '+', '-', '*', '/', ' ']))
 
     def _create_placeholder_variable(self, symbol: str) -> None:
@@ -927,10 +932,11 @@ class Problem(metaclass=ProblemMeta):
         
         placeholder_var = Variable(
             name=f"Auto-created: {symbol}",
-            symbol=symbol,
-            quantity=Qty(0.0, dimensionless),
+            expected_dimension=DimensionlessUnits.dimensionless.dimension,
             is_known=False
         )
+        placeholder_var.symbol = symbol
+        placeholder_var.quantity = Qty(0.0, DimensionlessUnits.dimensionless)
         self.add_variable(placeholder_var)
         self.logger.debug(f"Auto-created placeholder variable: {symbol}")
 
@@ -944,7 +950,7 @@ class Problem(metaclass=ProblemMeta):
     # PROBLEM SOLVING METHODS
     # =============================================================================
 
-    def solve(self, max_iterations: int = MAX_ITERATIONS_DEFAULT, tolerance: float = TOLERANCE_DEFAULT) -> Dict[str, Variable]:
+    def solve(self, max_iterations: int = MAX_ITERATIONS_DEFAULT, tolerance: float = TOLERANCE_DEFAULT) -> dict[str, Variable]:
         """
         Solve the engineering problem by finding values for all unknown variables.
         
@@ -960,7 +966,7 @@ class Problem(metaclass=ProblemMeta):
             tolerance: Numerical tolerance for convergence (default: 1e-10)
             
         Returns:
-            Dict mapping variable symbols to solved Variable objects
+            dict mapping variable symbols to solved Variable objects
             
         Raises:
             SolverError: If solving fails or times out
@@ -1071,7 +1077,7 @@ class Problem(metaclass=ProblemMeta):
     # SYSTEM ANALYSIS METHODS
     # =============================================================================
 
-    def analyze_system(self) -> Dict[str, Any]:
+    def analyze_system(self) -> dict[str, Any]:
         """Analyze the equation system for solvability, cycles, etc."""
         try:
             self._build_dependency_graph()
@@ -1130,7 +1136,7 @@ class Problem(metaclass=ProblemMeta):
         """Add a validation check function."""
         self.validation_checks.append(check_function)
 
-    def validate(self) -> List[Dict[str, Any]]:
+    def validate(self) -> list[dict[str, Any]]:
         """Run all validation checks and return any warnings."""
         validation_warnings = []
         
@@ -1144,7 +1150,7 @@ class Problem(metaclass=ProblemMeta):
         
         return validation_warnings
 
-    def get_warnings(self) -> List[Dict[str, Any]]:
+    def get_warnings(self) -> list[dict[str, Any]]:
         """Get all warnings from the problem."""
         warnings = self.warnings.copy()
         warnings.extend(self.validate())
@@ -1198,7 +1204,7 @@ class Problem(metaclass=ProblemMeta):
     
     def _update_equation_variable_references(self, equation: Equation) -> Equation:
         """Update VariableReference objects in equation to use symbols instead of names."""
-        from qnty.expression import VariableReference
+        from qnty.expressions import VariableReference
         
         # Update LHS if it's a VariableReference
         updated_lhs = equation.lhs
@@ -1221,7 +1227,7 @@ class Problem(metaclass=ProblemMeta):
     
     def _update_expression_variable_references(self, expr):
         """Recursively update VariableReference objects in expression tree."""
-        from qnty.expression import VariableReference, BinaryOperation, Constant
+        from qnty.expressions import VariableReference, BinaryOperation, Constant
         
         if isinstance(expr, VariableReference):
             # Find the variable by name and update to use symbol
