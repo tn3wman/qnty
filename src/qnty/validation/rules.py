@@ -14,7 +14,7 @@ from qnty.expressions import Expression as QntyExpression
 
 
 @dataclass
-class Validation:
+class Rules:
     """
     Represents an engineering problem check (code compliance, validation, etc.).
     
@@ -115,13 +115,13 @@ class Validation:
             raise e
 
 
-def validate(
+def add_rule(
     condition: QntyExpression,
     message: str,
     warning_type: str = "VALIDATION",
     severity: Literal["INFO", "WARNING", "ERROR"] = "WARNING",
     name: str | None = None
-) -> Validation:
+) -> Rules:
     """
     Create a new engineering problem check.
     
@@ -154,7 +154,7 @@ def validate(
                 severity="WARNING"
             )
     """
-    return Validation(
+    return Rules(
         condition=condition,
         message=message,
         warning_type=warning_type,
@@ -163,5 +163,5 @@ def validate(
     )
 
 __all__ = [
-    "validate"
+    "add_rule"
 ]

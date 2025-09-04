@@ -61,14 +61,14 @@ qnty/
 [x]├── units/                     # Units system (existing structure maintained)
 [x]├── problem/                   # Decomposed problem domain
 [x]│   ├── __init__.py
-[ ]│   ├── base.py              # Core Problem state/init
-[ ]│   ├── variables.py         # Variable lifecycle management
-[ ]│   ├── equations.py         # Equation processing
-[ ]│   ├── solving.py           # High-level solve orchestration
+[x]│   ├── base.py              # Core Problem state/init
+[x]│   ├── variables.py         # Variable lifecycle management
+[x]│   ├── equations.py         # Equation processing
+[x]│   ├── solving.py           # High-level solve orchestration
 [x]│   ├── composition.py       # Sub-problem integration
 [x]│   ├── metaclass.py         # Class-level magic
 [x]│   ├── reconstruction.py    # Equation reconstruction
-[ ]│   └── validation.py        # Problem-validation integration
+[x]│   └── validation.py        # Problem-validation integration
 [x]├── solving/                   # Renamed from engines
 [x]│   ├── __init__.py
 [x]│   ├── order.py  # Dependency analysis
@@ -78,27 +78,27 @@ qnty/
 [x]│       ├── base.py         # Abstract solver interface
 [x]│       ├── iterative.py    # Iterative solver
 [x]│       └── simultaneous.py # Simultaneous solver
-[ ]├── validation/                # Proper validation system
-[ ]│   ├── __init__.py
-[ ]│   ├── rules.py            # Validation dataclass
-[ ]│   └── registry.py         # Future extensibility
-[ ]├── generated/                 # All auto-generated artifacts
-[ ]│   ├── dimensions.py
-[ ]│   ├── units.py
-[ ]│   ├── quantities.py
-[ ]│   └── setters.py
+[x]├── validation/                # Proper validation system
+[x]│   ├── __init__.py
+[x]│   ├── rules.py            # Validation dataclass
+[x]│   └── registry.py         # Future extensibility
+[x]├── generated/                 # All auto-generated artifacts
+[x]│   ├── dimensions.py
+[x]│   ├── units.py
+[x]│   ├── quantities.py
+[x]│   └── setters.py
 [x]├── codegen/                   # Structured code generation
 [x]│   ├── __init__.py
-[ ]│   ├── cli.py              # Unified command-line interface
+[x]│   ├── cli.py              # Unified command-line interface
 [x]│   └── generators/
 [x]│       ├── dimensions.py
 [x]│       ├── units.py
 [x]│       ├── setters.py
 [x]│       ├── quantities.py
 [x]│       └── stubs.py
-[ ]└── utils/
-[ ]    ├── __init__.py
-[ ]    └── logging.py
+[x]└── utils/
+[x]    ├── __init__.py
+[x]    └── logging.py
 ```
 
 ## Implementation Plan
@@ -631,15 +631,15 @@ qnty/
 
 - [x] Split `expression.py` into modular `expressions/` package
 - [x] Create clean `equations/` system
-- [ ] Consolidate `quantities/` with lazy loading
+- [x] Consolidate `quantities/` with lazy loading
 - [ ] Comprehensive testing of decomposed expression system
 
 ### Week 3-4: Problem Domain Decomposition
 
-- [ ] Decompose 1,251-line `problem.py` into focused modules
-- [ ] Rename `engines/` to `solving/` system
-- [ ] Reassemble Problem class with identical interface
-- [ ] Migration testing and performance validation
+- [x] Decompose 1,251-line `problem.py` into focused modules
+- [x] Rename `engines/` to `solving/` system
+- [x] Reassemble Problem class with identical interface
+- [x] Migration testing and performance validation
 
 ### Week 5: Validation & API Cleanup
 

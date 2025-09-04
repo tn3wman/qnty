@@ -84,5 +84,9 @@ def wrap_operand(operand: Union['Expression', 'TypeSafeVariable', 'Quantity', in
     if isinstance(operand, TypeSafeVariable):
         return VariableReference(operand)
     
+    # Check for ConfigurableVariable (from composition system)
+    if hasattr(operand, '_variable') and hasattr(operand, '_variable') and isinstance(operand._variable, TypeSafeVariable):
+        return VariableReference(operand._variable)
+    
     # No duck typing - fail fast for unknown types
     raise TypeError(f"Cannot convert {type(operand)} to Expression")

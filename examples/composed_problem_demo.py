@@ -1,9 +1,9 @@
 from qnty import Dimensionless, Length, Pressure
-from qnty.expressions import cond_expr
+from qnty.expressions import cond_expr, min_expr, max_expr
 from qnty.problem import Problem
 from qnty.validation.rules import add_rule
 
- 
+
 class StraightPipeInternal(Problem):
     name = "Pressure Design of a Straight Pipe Under Internal Pressure"
     description = "Calculate the minimum wall thickness of a straight pipe under internal pressure."
@@ -65,51 +65,57 @@ class StraightPipeInternal(Problem):
 def create_straight_pipe_internal():
     return StraightPipeInternal()
 
-def test_simple_problem():
-    problem = create_straight_pipe_internal()
-    
-    # Debug: Check equation types at class level
-    print("Class-level equations:")
-    print(f"  T_eqn type: {type(StraightPipeInternal.T_eqn)}")
-    print(f"  T_eqn value: {StraightPipeInternal.T_eqn}")
-    
-    # Debug: Test isinstance check directly
-    from qnty.equations.equation import Equation
-    print(f"  isinstance check: {isinstance(StraightPipeInternal.T_eqn, Equation)}")
-    
-    # Debug: Check all class attributes with their types
-    print("\nAll class attributes:")
-    for attr_name in dir(StraightPipeInternal):
-        if not attr_name.startswith('_'):
-            attr_value = getattr(StraightPipeInternal, attr_name)
-            print(f"  {attr_name}: {type(attr_value)} = {attr_value}")
-    
-    # Debug: Print variable info
-    print("\nVariables:")
-    for name, var in problem.variables.items():
-        print(f"  {name} (symbol: {var.symbol}): known={var.is_known}, value={var.quantity}")
-    
-    print(f"\nEquations: {len(problem.equations)}")
-    for eq in problem.equations:
-        print(f"  {eq}")
-    
-    try:
-        problem.solve()
-        print("\nSolving successful!")
-        print(f"P_max: {problem.P_max}")
-        
-        # Test the validation system
-        warnings = problem.validate()
-        print(f"\nValidation warnings: {len(warnings)}")
-        for warning in warnings:
-            print(f"  {warning}")
-        
-    except Exception as e:
-        print(f"\nSolving failed: {e}")
-        # Still print some results for debugging
-        print("Final variable states:")
-        for _name, var in problem.variables.items():
-            print(f"  {var.symbol}: known={var.is_known}, value={var.quantity}")
+class PipeBends(Problem):
+    s = create_straight_pipe_internal()
+
+    s.Y.set(0.4).dimensionless
+
+    R_1 = Length(5, "inch", "Bend Radius")
+    I_i = Dimensionless(1.0, "Intrados Correction Factor", is_known=False)
+    I_e = Dimensionless(1.0, "Extrados Correction Factor", is_known=False)
+    t_i = Length(1.0, "inch", "Design Thickness, Inside Bend", is_known=False)
+    t_e = Length(1.0, "inch", "Design Thickness, Outside Bend", is_known=False)
+    t_m_i = Length(1.0, "inch", "Minimum Required Thickness, Inside Bend", is_known=False)
+    t_m_e = Length(1.0, "inch", "Minimum Required Thickness, Outside Bend", is_known=False)
+    P_max_i = Pressure(1.0, "psi", "Maximum Pressure, Inside Bend", is_known=False)
+    P_max_e = Pressure(1.0, "psi", "Maximum Pressure, Outside Bend", is_known=False)
+    P_max = Pressure(1.0, "psi", "Maximum Allowable Pressure", is_known=False)
+
+    # Equations
+    I_i_eqn = I_i.equals((4*(R_1/s.D) - 1)/(4*(R_1/s.D) - 2))
+    I_e_eqn = I_e.equals((4*(R_1/s.D) + 1)/(4*(R_1/s.D) + 2))
+
+    t_i_eqn = t_i.equals(
+        (s.P * s.D) / (2 * ((s.S * s.E * s.W/I_i) + s.P * s.Y))
+    )
+    t_e_eqn = t_e.equals(
+        (s.P * s.D) / (2 * ((s.S * s.E * s.W/I_e) + s.P * s.Y))
+    )
+
+    t_m_i_eqn = t_m_i.equals(t_i + s.c)
+    t_m_e_eqn = t_m_e.equals(t_e + s.c)
+
+    P_max_i_eqn = P_max_i.equals(
+        2*s.E*s.S*s.W*s.T/(I_i*(s.D - 2*s.Y*s.T))
+    )
+
+    P_max_e_eqn = P_max_e.equals(
+        2*s.E*s.S*s.W*s.T/(I_e*(s.D - 2*s.Y*s.T))
+    )
+
+    P_max_eqn = P_max.equals(min_expr(P_max_i, P_max_e, s.P_max))
+
+def create_pipe_bends():
+    return PipeBends()
+
+
+def test_composed_problem():
+    problem = create_pipe_bends()
+
+    problem.solve()
+
+    print(problem.P_max)
+
 
 if __name__ == "__main__":
-    test_simple_problem()
+    test_composed_problem()

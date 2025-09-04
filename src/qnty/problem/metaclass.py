@@ -32,7 +32,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from ..validation import Validation
+from ..validation.rules import Rules
 from .composition import SubProblemProxy
 
 # Constants for better maintainability
@@ -141,7 +141,7 @@ class ProblemMeta(type):
             # Collect Check objects from class attributes
             checks = {}
             for attr_name, attr_value in namespace.items():
-                if isinstance(attr_value, Validation):
+                if isinstance(attr_value, Rules):
                     checks[attr_name] = attr_value
             
             cls._class_checks = checks

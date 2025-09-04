@@ -104,7 +104,7 @@ class ConfigurableVariable:
         # Store the actual variable (we'll delegate to it)
         # Create a variable of the appropriate type based on the original
         # For now, we'll create a Dimensionless variable and update it
-        self._variable = Dimensionless(0, "", name)
+        self._variable = Dimensionless(name)
         
         # Set the properties
         self._variable.symbol = symbol
@@ -118,6 +118,56 @@ class ConfigurableVariable:
     def __getattr__(self, name):
         """Delegate all other attributes to the wrapped variable."""
         return getattr(self._variable, name)
+    
+    # Delegate arithmetic operations to the wrapped variable
+    def __add__(self, other):
+        return self._variable.__add__(other)
+    
+    def __radd__(self, other):
+        return self._variable.__radd__(other)
+    
+    def __sub__(self, other):
+        return self._variable.__sub__(other)
+    
+    def __rsub__(self, other):
+        return self._variable.__rsub__(other)
+    
+    def __mul__(self, other):
+        return self._variable.__mul__(other)
+    
+    def __rmul__(self, other):
+        return self._variable.__rmul__(other)
+    
+    def __truediv__(self, other):
+        return self._variable.__truediv__(other)
+    
+    def __rtruediv__(self, other):
+        return self._variable.__rtruediv__(other)
+    
+    def __pow__(self, other):
+        return self._variable.__pow__(other)
+    
+    def __neg__(self):
+        return self._variable.__neg__()
+    
+    # Comparison operations
+    def __lt__(self, other):
+        return self._variable.__lt__(other)
+    
+    def __le__(self, other):
+        return self._variable.__le__(other)
+    
+    def __gt__(self, other):
+        return self._variable.__gt__(other)
+    
+    def __ge__(self, other):
+        return self._variable.__ge__(other)
+    
+    def __eq__(self, other):
+        return self._variable.__eq__(other)
+    
+    def __ne__(self, other):
+        return self._variable.__ne__(other)
     
     def __setattr__(self, name, value):
         """Delegate attribute setting to the wrapped variable when appropriate."""
