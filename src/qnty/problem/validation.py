@@ -7,7 +7,8 @@ integrated with the Problem system.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Callable
+from collections.abc import Callable
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     pass
@@ -15,6 +16,11 @@ if TYPE_CHECKING:
 
 class ValidationMixin:
     """Mixin class providing validation functionality."""
+    
+    # These attributes will be provided by other mixins in the final Problem class
+    logger: Any
+    warnings: list[dict[str, Any]]
+    validation_checks: list[Callable]
 
     def add_validation_check(self, check_function: Callable) -> None:
         """Add a validation check function."""

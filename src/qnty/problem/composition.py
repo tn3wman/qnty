@@ -148,7 +148,8 @@ class ConfigurableVariable:
         return self._variable.__pow__(other)
     
     def __neg__(self):
-        return self._variable.__neg__()
+        # Implement negation as multiplication by -1, consistent with other arithmetic operations
+        return self._variable * (-1)
     
     # Comparison operations
     def __lt__(self, other):

@@ -7,12 +7,10 @@ namespace handling, and composite equation creation.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from qnty.quantities import TypeSafeVariable as Variable
-    from qnty.equations import Equation
-    from qnty.expressions import BinaryOperation, VariableReference
 
 # Constants for composition
 MATHEMATICAL_OPERATORS = ['+', '-', '*', '/', ' / ', ' * ', ' + ', ' - ']
@@ -21,12 +19,45 @@ COMMON_COMPOSITE_VARIABLES = ['P', 'c', 'S', 'E', 'W', 'Y']
 
 class CompositionMixin:
     """Mixin class providing sub-problem composition functionality."""
+    
+    # These attributes/methods will be provided by other mixins in the final Problem class
+    variables: dict[str, Variable]
+    sub_problems: dict[str, Any]
+    logger: Any
+    
+    def add_variable(self, _variable: Variable) -> None:
+        """Will be provided by VariablesMixin."""
+        ...
+    
+    def add_equation(self, _equation: Any) -> None:
+        """Will be provided by EquationsMixin."""
+        ...
+    
+    def _clone_variable(self, _variable: Variable) -> Variable:
+        """Will be provided by VariablesMixin."""
+        ...
+    
+    def _process_equation(self, _attr_name: str, _equation: Any) -> bool:
+        """Will be provided by EquationsMixin."""
+        ...
+    
+    def _recreate_validation_checks(self) -> None:
+        """Will be provided by ValidationMixin."""
+        ...
+    
+    def _is_conditional_equation(self, _equation: Any) -> bool:
+        """Will be provided by EquationsMixin."""
+        ...
+    
+    def _get_equation_lhs_symbol(self, _equation: Any) -> str | None:
+        """Will be provided by EquationsMixin."""
+        ...
 
     def _extract_from_class_variables(self):
         """Extract variables, equations, and sub-problems from class-level definitions."""
         self._extract_sub_problems()
         self._extract_direct_variables()
-        self._recreate_validation_checks()
+        self._recreate_validation_checks()  # type: ignore[attr-defined]
         self._create_composite_equations()
         self._extract_equations()
 
@@ -63,7 +94,6 @@ class CompositionMixin:
 
     def _extract_equations(self):
         """Extract and process equations from class-level definitions."""
-        from qnty.equations import Equation
         
         equations_to_process = self._collect_class_equations()
         
@@ -77,13 +107,13 @@ class CompositionMixin:
                 # Still set the original equation as attribute
                 setattr(self, attr_name, equation)
 
-    def _get_class_attributes(self) -> list[tuple[str, any]]:
+    def _get_class_attributes(self) -> list[tuple[str, Any]]:
         """Get all non-private class attributes efficiently."""
         return [(attr_name, getattr(self.__class__, attr_name))
                 for attr_name in dir(self.__class__)
                 if not attr_name.startswith('_')]
 
-    def _collect_class_equations(self) -> list[tuple[str, any]]:
+    def _collect_class_equations(self) -> list[tuple[str, Any]]:
         """Collect all equation objects from class attributes."""
         from qnty.equations import Equation
         
@@ -185,7 +215,7 @@ class CompositionMixin:
         """
         Create a namespaced version of an expression by replacing variable references.
         """
-        from qnty.expressions import VariableReference, BinaryOperation, Constant, ConditionalExpression
+        from qnty.expressions import BinaryOperation, ConditionalExpression, Constant, VariableReference
         
         # Handle variable references
         if isinstance(expr, VariableReference):

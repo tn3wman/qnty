@@ -7,14 +7,15 @@ getting, managing known/unknown state, and variable caching.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
-    from qnty.quantities import TypeSafeVariable as Variable, Quantity as Qty
+    from qnty.quantities import Quantity as Qty
+    from qnty.quantities import TypeSafeVariable as Variable
 
-from qnty.quantities import TypeSafeVariable as Variable
-from qnty.quantities import Quantity as Qty
 from qnty.generated.units import DimensionlessUnits
+from qnty.quantities import Quantity as Qty
+from qnty.quantities import TypeSafeVariable as Variable
 
 
 # Custom Exceptions
@@ -25,6 +26,25 @@ class VariableNotFoundError(KeyError):
 
 class VariablesMixin:
     """Mixin class providing variable management functionality."""
+    
+    # These attributes/methods will be provided by other mixins in the final Problem class
+    variables: dict[str, Variable]
+    name: str
+    logger: Any
+    is_solved: bool
+    sub_problems: dict[str, Any]
+    dependency_graph: Any
+    _known_variables_cache: dict[str, Variable] | None
+    _unknown_variables_cache: dict[str, Variable] | None
+    _cache_dirty: bool
+    
+    def _invalidate_caches(self) -> None:
+        """Will be provided by ProblemBase."""
+        ...
+    
+    def _update_variable_caches(self) -> None:
+        """Will be provided by ProblemBase."""
+        ...
 
     def add_variable(self, variable: Variable) -> None:
         """
@@ -176,10 +196,15 @@ class VariablesMixin:
         """Create a copy of a variable to avoid shared state without corrupting global units."""
         # Create a new variable of the same exact type to preserve .equals() method
         # This ensures domain-specific variables (Length, Pressure, etc.) keep their type
-        cloned = type(variable)(variable.name)
+        variable_type = type(variable)
         
-        # Set attributes that are not part of constructor
+        # Use __new__ to avoid constructor parameter issues
+        cloned = variable_type.__new__(variable_type)
+        
+        # Initialize manually with the same attributes as the original
+        cloned.name = variable.name
         cloned.symbol = variable.symbol
+        cloned.expected_dimension = variable.expected_dimension
         cloned.quantity = variable.quantity  # Keep reference to same quantity - units must not be copied
         cloned.is_known = variable.is_known
         

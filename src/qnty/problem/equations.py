@@ -7,11 +7,11 @@ processing equation validation, handling missing variables, and equation reconst
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from qnty.equations import Equation
-    from qnty.expressions import BinaryOperation, Constant, VariableReference
+    from qnty.quantities import TypeSafeVariable as Variable
 
 from qnty.equations import Equation
 
@@ -28,6 +28,18 @@ class EquationValidationError(ValueError):
 
 class EquationsMixin:
     """Mixin class providing equation management functionality."""
+    
+    # These attributes/methods will be provided by other mixins in the final Problem class
+    variables: dict[str, Variable]
+    equations: list[Equation]
+    equation_system: Any
+    sub_problems: dict[str, Any]
+    logger: Any
+    equation_reconstructor: Any
+    
+    def _create_placeholder_variable(self, _symbol: str) -> None:
+        """Will be provided by VariablesMixin."""
+        ...
 
     def add_equation(self, equation: Equation) -> None:
         """
@@ -316,7 +328,7 @@ class EquationsMixin:
         """
         Recursively fix VariableReferences in an expression tree to point to correct Variables.
         """
-        from qnty.expressions import VariableReference, BinaryOperation, Constant
+        from qnty.expressions import BinaryOperation, Constant, VariableReference
         
         if isinstance(expr, VariableReference):
             # Check if this VariableReference points to the wrong Variable
@@ -377,7 +389,7 @@ class EquationsMixin:
     
     def _update_expression_variable_references(self, expr):
         """Recursively update VariableReference objects in expression tree."""
-        from qnty.expressions import VariableReference, BinaryOperation, Constant
+        from qnty.expressions import BinaryOperation, Constant, VariableReference
         
         if isinstance(expr, VariableReference):
             # Find the variable by name and update to use symbol

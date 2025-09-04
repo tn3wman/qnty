@@ -75,22 +75,23 @@ class ProblemMeta(type):
     _class_checks: dict[str, Any]
     
     @classmethod
-    def __prepare__(mcs, name: str, bases: tuple[type, ...], **kwds: Any) -> ProxiedNamespace:
+    def __prepare__(mcs, *args, **kwargs) -> ProxiedNamespace:
         """
         Called before the class body is evaluated.
         Returns a custom namespace that proxies sub-problems.
         
         Args:
-            name: Name of the class being created
-            bases: Base classes
-            **kwds: Additional keyword arguments
+            *args: Positional arguments (name, bases) - unused but required by protocol
+            **kwargs: Additional keyword arguments - unused but required by protocol
             
         Returns:
             ProxiedNamespace that will handle sub-problem proxying
         """
+        # Parameters are required by metaclass protocol but not used in this implementation
+        del args, kwargs  # Explicitly acknowledge unused parameters
         return ProxiedNamespace()
     
-    def __new__(mcs, name: str, bases: tuple[type, ...], namespace: ProxiedNamespace, **kwds: Any) -> type:
+    def __new__(mcs, name: str, bases: tuple[type, ...], namespace: ProxiedNamespace, **kwargs) -> type:
         """
         Create the new class with properly integrated sub-problems.
         
@@ -98,7 +99,7 @@ class ProblemMeta(type):
             name: Name of the class being created
             bases: Base classes
             namespace: The ProxiedNamespace containing proxied sub-problems
-            **kwds: Additional keyword arguments
+            **kwargs: Additional keyword arguments - unused but required by protocol
             
         Returns:
             The newly created class with metaclass attributes
@@ -106,6 +107,8 @@ class ProblemMeta(type):
         Raises:
             MetaclassError: If class creation fails due to metaclass issues
         """
+        # kwargs is required by metaclass protocol but not used in this implementation
+        del kwargs  # Explicitly acknowledge unused parameter
         try:
             # Validate the namespace
             if not isinstance(namespace, ProxiedNamespace):

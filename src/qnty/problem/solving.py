@@ -10,7 +10,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
-    pass
+    from qnty.equations import Equation
+    from qnty.quantities import TypeSafeVariable as Variable
 
 # Constants
 MAX_ITERATIONS_DEFAULT = 100
@@ -25,6 +26,28 @@ class SolverError(RuntimeError):
 
 class SolvingMixin:
     """Mixin class providing solving orchestration functionality."""
+    
+    # These attributes/methods will be provided by other mixins in the final Problem class
+    name: str
+    logger: Any
+    equations: list[Equation]
+    solver_manager: Any
+    
+    def get_known_symbols(self) -> set[str]:
+        """Will be provided by VariablesMixin."""
+        ...
+    
+    def get_known_variables(self) -> dict[str, Variable]:
+        """Will be provided by VariablesMixin."""
+        ...
+    
+    def get_unknown_variables(self) -> dict[str, Variable]:
+        """Will be provided by VariablesMixin."""
+        ...
+    
+    def _sync_variables_to_instance_attributes(self) -> None:
+        """Will be provided by VariablesMixin."""
+        ...
 
     def solve(self, max_iterations: int = MAX_ITERATIONS_DEFAULT, tolerance: float = TOLERANCE_DEFAULT) -> dict[str, Any]:
         """

@@ -13,10 +13,10 @@ if TYPE_CHECKING:
     from qnty.quantities import TypeSafeVariable as Variable
 
 from qnty.equations import EquationSystem
-from qnty.utils.logging import get_logger
-from qnty.solving.order import Order
 from qnty.problem.reconstruction import EquationReconstructor
+from qnty.solving.order import Order
 from qnty.solving.solvers import SolverManager
+from qnty.utils.logging import get_logger
 
 
 class ProblemBase:
@@ -123,7 +123,8 @@ class ProblemBase:
     def __getitem__(self, key: str):
         """Allow dict-like access to variables."""
         from .variables import VariablesMixin
-        return VariablesMixin.get_variable(self, key)
+        # Type ignore: self will have VariablesMixin via multiple inheritance
+        return VariablesMixin.get_variable(self, key)  # type: ignore[arg-type]
 
     def __setitem__(self, key: str, value) -> None:
         """Allow dict-like assignment of variables."""
@@ -135,6 +136,7 @@ class ProblemBase:
                 if value.symbol != key:
                     value.symbol = key
                 from .variables import VariablesMixin
-                VariablesMixin.add_variable(self, value)
+                # Type ignore: self will have VariablesMixin via multiple inheritance
+                VariablesMixin.add_variable(self, value)  # type: ignore[arg-type]
         except ImportError:
             pass
