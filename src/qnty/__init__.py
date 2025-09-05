@@ -7,7 +7,7 @@ A fast, type-safe unit system library for Python with dimensional safety and opt
 
 # from . import (quantity, expressions)
 
-from .expressions import (
+from .domain.expressions import (
     abs_expr,
     cond_expr,
     cos,
@@ -20,7 +20,7 @@ from .expressions import (
     sqrt,
     tan,
 )
-from .factories import (
+from .factories.variable import (
     VariableFactory,
     DimensionlessFactory,
     make_length,
@@ -29,7 +29,7 @@ from .factories import (
     make_unknown,
     from_spec,
 )
-from .variable_spec import (
+from .specifications.variable import (
     VariableSpec,
     VariableSpecBatch,
     spec,
@@ -37,7 +37,7 @@ from .variable_spec import (
     unknown_spec,
     dimensionless_spec,
 )
-from .cache_manager import (
+from .infrastructure.caching.manager import (
     get_cache_manager,
     clear_all_caches,
     get_cache_statistics,
@@ -152,7 +152,7 @@ from .generated.quantities import (
     VolumetricMassFlowRate,
     Wavenumber,
 )
-from .problem import Problem
+from .domain.problems import Problem
 
 # Define public API
 __all__ = [

@@ -2,9 +2,9 @@ from typing import Any
 
 import numpy as np
 
-from qnty.equations.equation import Equation
-from qnty.quantities import Quantity as Qty
-from qnty.quantities.unified_variable import UnifiedVariable as Variable
+from qnty.domain.equations.equation import Equation
+from qnty.core.quantities import Quantity as Qty
+from qnty.core.quantities.unified_variable import UnifiedVariable as Variable
 from qnty.solving.order import Order
 
 from .base import BaseSolver, SolveResult

@@ -7,8 +7,8 @@ Tests the prefix system including definition, application, and registration.
 
 import pytest
 from qnty.generated.dimensions import LENGTH, PRESSURE, ENERGY_HEAT_WORK
-from qnty.units.registry import UnitDefinition, Registry
-from qnty.units.prefixes import (
+from qnty.core.units.registry import UnitDefinition, Registry
+from qnty.core.units.prefixes import (
     SIPrefix, StandardPrefixes, 
     get_prefix_by_name, get_prefix_by_symbol, get_prefix_by_factor,
     COMMON_LENGTH_PREFIXES, COMMON_PRESSURE_PREFIXES

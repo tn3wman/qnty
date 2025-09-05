@@ -9,7 +9,7 @@ import re
 from typing import Set
 from logging import Logger
 
-from qnty.quantities.unified_variable import UnifiedVariable as Variable
+from qnty.core.quantities.unified_variable import UnifiedVariable as Variable
 
 # Type aliases
 VariableDict = dict[str, Variable]

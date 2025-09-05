@@ -10,9 +10,9 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
-    from qnty.quantities.unified_variable import UnifiedVariable as Variable
+    from qnty.core.quantities.unified_variable import UnifiedVariable as Variable
 
-from qnty.equations import EquationSystem
+from qnty.domain.equations import EquationSystem
 from qnty.problem.reconstruction import EquationReconstructor
 from qnty.solving.order import Order
 from qnty.solving.solvers import SolverManager
@@ -112,7 +112,7 @@ class ProblemBase:
 
         # Import here to avoid circular imports
         try:
-            from qnty.quantities.unified_variable import UnifiedVariable as Variable
+            from qnty.core.quantities.unified_variable import UnifiedVariable as Variable
 
             # If setting a variable that exists in our variables dict, update both
             if isinstance(value, Variable) and name in self.variables:
@@ -133,7 +133,7 @@ class ProblemBase:
         """Allow dict-like assignment of variables."""
         # Import here to avoid circular imports
         try:
-            from qnty.quantities.unified_variable import UnifiedVariable as Variable
+            from qnty.core.quantities.unified_variable import UnifiedVariable as Variable
 
             if isinstance(value, Variable):
                 # Update the symbol to match the key if they differ

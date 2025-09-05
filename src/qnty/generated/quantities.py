@@ -7,7 +7,7 @@ Uses static class generation instead of dynamic type() calls.
 Auto-generated from unit_data.json.
 """
 
-from ..quantities.unified_variable import UnifiedVariable
+from ..core.quantities.unified_variable import UnifiedVariable
 from . import dimensions as dim
 from . import setters as ts
 

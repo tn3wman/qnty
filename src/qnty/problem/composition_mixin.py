@@ -10,7 +10,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
-    from qnty.quantities.unified_variable import UnifiedVariable as Variable
+    from qnty.core.quantities.unified_variable import UnifiedVariable as Variable
 
 # Constants for composition
 MATHEMATICAL_OPERATORS = ["+", "-", "*", "/", " / ", " * ", " + ", " - "]
@@ -70,7 +70,7 @@ class CompositionMixin:
 
     def _extract_direct_variables(self):
         """Extract direct variables from class-level definitions."""
-        from qnty.quantities.unified_variable import UnifiedVariable as Variable
+        from qnty.core.quantities.unified_variable import UnifiedVariable as Variable
 
         processed_symbols = set()
 
@@ -113,7 +113,7 @@ class CompositionMixin:
 
     def _collect_class_equations(self) -> list[tuple[str, Any]]:
         """Collect all equation objects from class attributes."""
-        from qnty.equations import Equation
+        from qnty.domain.equations import Equation
 
         equations_to_process = []
         for attr_name, attr_value in self._get_class_attributes():

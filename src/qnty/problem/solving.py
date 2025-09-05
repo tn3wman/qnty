@@ -12,8 +12,8 @@ from typing import TYPE_CHECKING, Any
 from ..constants import SOLVER_DEFAULT_MAX_ITERATIONS, SOLVER_DEFAULT_TOLERANCE
 
 if TYPE_CHECKING:
-    from qnty.equations import Equation
-    from qnty.quantities.unified_variable import UnifiedVariable as Variable
+    from qnty.domain.equations import Equation
+    from qnty.core.quantities.unified_variable import UnifiedVariable as Variable
 
 # Constants
 MAX_ITERATIONS_DEFAULT = SOLVER_DEFAULT_MAX_ITERATIONS

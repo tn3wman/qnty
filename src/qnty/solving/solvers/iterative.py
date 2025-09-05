@@ -1,8 +1,8 @@
 from typing import Any
 
-from qnty.equations.equation import Equation
-from qnty.expressions import VariableReference
-from qnty.quantities.unified_variable import UnifiedVariable as Variable
+from qnty.domain.equations.equation import Equation
+from qnty.domain.expressions import VariableReference
+from qnty.core.quantities.unified_variable import UnifiedVariable as Variable
 from qnty.solving.order import Order
 
 from .base import BaseSolver, SolveResult

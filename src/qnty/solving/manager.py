@@ -1,5 +1,5 @@
-from qnty.equations.equation import Equation
-from qnty.quantities.unified_variable import UnifiedVariable as Variable
+from qnty.domain.equations.equation import Equation
+from qnty.core.quantities.unified_variable import UnifiedVariable as Variable
 from qnty.solving.order import Order
 
 from .solvers.base import BaseSolver, SolveResult

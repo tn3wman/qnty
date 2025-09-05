@@ -7,7 +7,7 @@ Provides fluent API unit properties for all variable types.
 Auto-generated from unit_data.json.
 """
 
-from ..quantities.quantity import Quantity, TypeSafeSetter
+from ..core.quantities.quantity import Quantity, TypeSafeSetter
 from . import units
 
 # ===== SETTER CLASSES =====

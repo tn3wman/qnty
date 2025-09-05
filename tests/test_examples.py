@@ -19,8 +19,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from qnty import Dimensionless, Length, Pressure, Area, Temperature, Problem
-from qnty.expressions import cond_expr, min_expr
-from qnty.validation.rules import add_rule
+from qnty.domain.expressions import cond_expr, min_expr
+from qnty.infrastructure.validation.rules import add_rule
 
 
 class TestSimpleProblemDemo:

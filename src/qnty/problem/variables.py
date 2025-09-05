@@ -10,12 +10,12 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
-    from qnty.quantities import Quantity as Qty
-    from qnty.quantities.unified_variable import UnifiedVariable as Variable
+    from qnty.core.quantities import Quantity as Qty
+    from qnty.core.quantities.unified_variable import UnifiedVariable as Variable
 
 from qnty.generated.units import DimensionlessUnits
-from qnty.quantities import Quantity as Qty
-from qnty.quantities.unified_variable import UnifiedVariable as Variable
+from qnty.core.quantities import Quantity as Qty
+from qnty.core.quantities.unified_variable import UnifiedVariable as Variable
 
 
 # Custom Exceptions

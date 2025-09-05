@@ -1,7 +1,7 @@
 from qnty import Dimensionless, Length, Pressure
-from qnty.expressions import cond_expr, min_expr
-from qnty.problem import Problem
-from qnty.validation.rules import add_rule
+from qnty import cond_expr, min_expr
+from qnty import Problem
+from qnty.infrastructure.validation.rules import add_rule
 
 
 class StraightPipeInternal(Problem):

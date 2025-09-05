@@ -10,8 +10,8 @@ import pytest
 
 from qnty.generated.dimensions import LENGTH, PRESSURE
 from qnty.generated.units import LengthUnits, PressureUnits
-from qnty.quantities.quantity import Quantity, TypeSafeSetter
-from qnty.quantities.unified_variable import UnifiedVariable
+from qnty.core.quantities.quantity import Quantity, TypeSafeSetter
+from qnty.core.quantities.unified_variable import UnifiedVariable
 from qnty.generated.quantities import Length, Pressure
 from qnty.generated.setters import LengthSetter, PressureSetter
 

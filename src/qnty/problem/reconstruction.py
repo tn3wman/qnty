@@ -10,7 +10,7 @@ from logging import Logger
 from typing import Any
 
 from qnty.equations.equation import Equation
-from qnty.quantities.unified_variable import UnifiedVariable as Variable
+from qnty.core.quantities.unified_variable import UnifiedVariable as Variable
 from .expression_parser import ExpressionParser
 from .namespace_mapper import NamespaceMapper
 from .delayed_expression_resolver import DelayedExpressionResolver

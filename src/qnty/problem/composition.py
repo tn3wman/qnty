@@ -7,7 +7,7 @@ from reusable sub-problems with clean syntax and automatic integration.
 
 from qnty.expressions import BinaryOperation, max_expr, min_expr, sin
 from qnty.generated.quantities import Dimensionless
-from qnty.quantities.unified_variable import UnifiedVariable as Variable
+from qnty.core.quantities.unified_variable import UnifiedVariable as Variable
 
 
 class DelayedEquation:
