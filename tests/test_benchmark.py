@@ -172,7 +172,7 @@ def print_comparison_table(results):
     print("=" * 120)
 
     # Header
-    print(f"\n{'Operation':<30} {'Qnty (μs)':<12} {'Pint (μs)':<12} {'Unyt (μs)':<12} {'Astropy (μs)':<14} {'Speedup vs Qnty':<40} {'Status'}")
+    print(f"\n{'Operation':<30} {'Qnty (us)':<12} {'Pint (us)':<12} {'Unyt (us)':<12} {'Astropy (us)':<14} {'Speedup vs Qnty':<40} {'Status'}")
     print("-" * 120)
 
     total_qnty_time = 0
