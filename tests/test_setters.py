@@ -11,7 +11,8 @@ import pytest
 from qnty.generated.dimensions import LENGTH, PRESSURE
 from qnty.generated.units import LengthUnits, PressureUnits
 from qnty.quantities.quantity import Quantity, TypeSafeSetter, TypeSafeVariable
-from qnty.generated.quantities import Length, LengthSetter, Pressure, PressureSetter
+from qnty.generated.quantities import Length, Pressure
+from qnty.generated.setters import LengthSetter, PressureSetter
 
 
 class TestTypeSafeSetterInitialization:
