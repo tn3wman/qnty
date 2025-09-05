@@ -9,7 +9,7 @@ from typing import Any
 from logging import Logger
 
 from qnty.expressions import BinaryOperation, Constant, UnaryFunction, VariableReference, cos, sin
-from qnty.quantities.expression_quantity import ExpressionQuantity as Variable
+from qnty.quantities.unified_variable import UnifiedVariable as Variable
 
 # Type aliases
 VariableDict = dict[str, Variable]

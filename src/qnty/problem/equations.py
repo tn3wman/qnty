@@ -11,7 +11,7 @@ from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from qnty.equations import Equation
-    from qnty.quantities import TypeSafeVariable as Variable
+    from qnty.quantities.unified_variable import UnifiedVariable as Variable
 
 from qnty.equations import Equation
 

@@ -11,7 +11,7 @@ import logging
 from typing import TYPE_CHECKING, Optional, Any
 
 if TYPE_CHECKING:
-    from ..quantities.quantity import TypeSafeVariable
+    from ..quantities.unified_variable import UnifiedVariable
     from .nodes import Expression
 
 # Setup logging for better debugging
@@ -33,7 +33,7 @@ class ScopeDiscoveryService:
     _max_search_depth = 8
     
     @classmethod
-    def discover_variables(cls, required_vars: set[str], enable_caching: bool = True) -> dict[str, "TypeSafeVariable"]:
+    def discover_variables(cls, required_vars: set[str], enable_caching: bool = True) -> dict[str, "UnifiedVariable"]:
         """
         Discover variables from the calling scope.
         
@@ -42,7 +42,7 @@ class ScopeDiscoveryService:
             enable_caching: Whether to use caching for performance
             
         Returns:
-            Dictionary mapping variable names to TypeSafeVariable instances
+            Dictionary mapping variable names to UnifiedVariable instances
         """
         if not required_vars:
             return {}
@@ -86,7 +86,7 @@ class ScopeDiscoveryService:
             del frame
     
     @classmethod 
-    def can_auto_evaluate(cls, expression: "Expression") -> tuple[bool, dict[str, "TypeSafeVariable"]]:
+    def can_auto_evaluate(cls, expression: "Expression") -> tuple[bool, dict[str, "UnifiedVariable"]]:
         """
         Check if expression can be auto-evaluated from scope.
         
@@ -94,7 +94,7 @@ class ScopeDiscoveryService:
             expression: Expression to check for auto-evaluation
             
         Returns:
-            Tuple of (can_evaluate, discovered_variables)
+            Tuple of (can_evaluate, discovered_variables with UnifiedVariable instances)
         """
         try:
             required_vars = expression.get_variables()
@@ -122,15 +122,15 @@ class ScopeDiscoveryService:
             return False, {}
     
     @classmethod
-    def find_variables_in_scope(cls, filter_func=None) -> dict[str, "TypeSafeVariable"]:
+    def find_variables_in_scope(cls, filter_func=None) -> dict[str, "UnifiedVariable"]:
         """
-        Find all TypeSafeVariable instances in the calling scope.
+        Find all UnifiedVariable instances in the calling scope.
         
         Args:
             filter_func: Optional function to filter variables (var) -> bool
             
         Returns:
-            Dictionary mapping variable names/symbols to TypeSafeVariable instances
+            Dictionary mapping variable names/symbols to UnifiedVariable instances
         """
         frame = inspect.currentframe()
         if frame is None:
@@ -146,7 +146,7 @@ class ScopeDiscoveryService:
             
             # Search locals first
             for obj in frame.f_locals.values():
-                if cls._is_typesafe_variable(obj):
+                if cls._is_unified_variable(obj):
                     if filter_func is None or filter_func(obj):
                         var_name = cls._get_variable_name(obj)
                         if var_name:
@@ -154,7 +154,7 @@ class ScopeDiscoveryService:
                             
             # Search globals for remaining variables
             for obj in frame.f_globals.values():
-                if cls._is_typesafe_variable(obj):
+                if cls._is_unified_variable(obj):
                     if filter_func is None or filter_func(obj):
                         var_name = cls._get_variable_name(obj)
                         if var_name and var_name not in discovered:
@@ -204,7 +204,7 @@ class ScopeDiscoveryService:
         return None
     
     @classmethod
-    def _search_frame_for_variables(cls, frame: Any, required_vars: set[str]) -> dict[str, "TypeSafeVariable"]:
+    def _search_frame_for_variables(cls, frame: Any, required_vars: set[str]) -> dict[str, "UnifiedVariable"]:
         """
         Search a specific frame for required variables.
         
@@ -223,7 +223,7 @@ class ScopeDiscoveryService:
             # Direct lookup first (fastest)
             if var_name in local_vars:
                 obj = local_vars[var_name]
-                if cls._is_typesafe_variable(obj):
+                if cls._is_unified_variable(obj):
                     discovered[var_name] = obj
                     continue
                     
@@ -236,7 +236,7 @@ class ScopeDiscoveryService:
             for var_name in remaining_vars:
                 if var_name in global_vars:
                     obj = global_vars[var_name]
-                    if cls._is_typesafe_variable(obj):
+                    if cls._is_unified_variable(obj):
                         discovered[var_name] = obj
                         
         # Additional search for variables by symbol/name if direct lookup failed
@@ -245,7 +245,7 @@ class ScopeDiscoveryService:
             
             # Search locals by symbol/name
             for obj in local_vars.values():
-                if cls._is_typesafe_variable(obj):
+                if cls._is_unified_variable(obj):
                     obj_name = cls._get_variable_name(obj)
                     if obj_name in remaining_vars:
                         discovered[obj_name] = obj
@@ -256,7 +256,7 @@ class ScopeDiscoveryService:
             # Search globals by symbol/name if still needed
             if remaining_vars:
                 for obj in global_vars.values():
-                    if cls._is_typesafe_variable(obj):
+                    if cls._is_unified_variable(obj):
                         obj_name = cls._get_variable_name(obj)
                         if obj_name in remaining_vars:
                             discovered[obj_name] = obj
@@ -268,23 +268,23 @@ class ScopeDiscoveryService:
         return discovered
     
     @classmethod
-    def _is_typesafe_variable(cls, obj) -> bool:
+    def _is_unified_variable(cls, obj) -> bool:
         """
-        Check if object is a TypeSafeVariable with caching for performance.
+        Check if object is a UnifiedVariable with caching for performance.
         
         Args:
             obj: Object to check
             
         Returns:
-            True if object is a TypeSafeVariable
+            True if object is a UnifiedVariable
         """
         obj_type = type(obj)
         if obj_type not in cls._variable_type_cache:
             # Import here to avoid circular imports
-            from ..quantities.quantity import TypeSafeVariable
+            from ..quantities.unified_variable import UnifiedVariable
             
             is_variable = (
-                isinstance(obj, TypeSafeVariable) and
+                isinstance(obj, UnifiedVariable) and
                 hasattr(obj, "symbol") and 
                 hasattr(obj, "name") and 
                 hasattr(obj, "quantity")
@@ -299,7 +299,7 @@ class ScopeDiscoveryService:
         Get the name/symbol to use for a variable.
         
         Args:
-            var: TypeSafeVariable instance
+            var: UnifiedVariable instance
             
         Returns:
             Variable name/symbol or None if not available
@@ -338,7 +338,7 @@ class ScopeDiscoveryService:
 
 
 # Convenience function for backward compatibility
-def discover_variables_from_scope(required_vars: set[str]) -> dict[str, "TypeSafeVariable"]:
+def discover_variables_from_scope(required_vars: set[str]) -> dict[str, "UnifiedVariable"]:
     """
     Convenience function to discover variables from scope.
     
@@ -346,6 +346,6 @@ def discover_variables_from_scope(required_vars: set[str]) -> dict[str, "TypeSaf
         required_vars: Set of variable names to find
         
     Returns:
-        Dictionary mapping variable names to TypeSafeVariable instances
+        Dictionary mapping variable names to UnifiedVariable instances
     """
     return ScopeDiscoveryService.discover_variables(required_vars)

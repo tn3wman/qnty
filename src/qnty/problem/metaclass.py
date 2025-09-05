@@ -250,7 +250,7 @@ class ProxiedNamespace(dict):
         """
         # Import Variable here to avoid circular imports
         try:
-            from qnty.quantities.quantity import TypeSafeVariable as Variable
+            from qnty.quantities.unified_variable import UnifiedVariable as Variable
 
             return isinstance(value, Variable) and value.symbol == "<auto>"
         except ImportError:

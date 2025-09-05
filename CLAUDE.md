@@ -59,14 +59,31 @@ generated/dimensions → units → quantities → generated → expressions → 
 
 This ensures clean dependencies and enables proper type checking throughout the system.
 
+### Simplified Variable Architecture
+
+The system uses a clean 2-level hierarchy with mixin-based composition:
+
+```
+UnifiedVariable (Base with mixins)
+└── Domain Variables (Length, Pressure, etc.) - 100+ classes
+
+Mixins:
+├── QuantityManagementMixin
+├── FlexibleConstructorMixin  
+├── UnifiedArithmeticMixin
+├── ExpressionMixin
+├── SetterCompatibilityMixin
+└── ErrorHandlerMixin
+```
+
 ### Modular Architecture
 
 The system uses a layered approach with separate concerns:
 
 - **Core Layer** (`generated/dimensions.py`): Dimensional analysis system using prime number encoding
-- **Quantities Layer** (`quantities/`): Base classes for quantities and typed variables  
+- **Quantities Layer** (`quantities/`): Unified variable system with mixin composition
 - **Units Layer** (`units/`): Unit definitions, registry, and constants
-- **Generated Layer** (`generated/`): Auto-generated domain-specific classes for variables and units
+- **Generated Layer** (`generated/`): Auto-generated domain-specific variable classes
 - **Expression Layer** (`expressions/`): Mathematical expression system with nodes and functions
 - **Equation Layer** (`equations/`): Equation handling and system solving
 - **Problem Solving Layer** (`problem/`): Modular problem system with focused components
@@ -87,20 +104,20 @@ The system uses a layered approach with separate concerns:
 - `registry` (`units/registry.py`): Central registry with pre-computed conversion tables for fast unit conversions
 - Comprehensive SI prefix system for automatic unit generation
 
-**Base Variables and Quantities (`quantities/`)**
+**Unified Variable System (`quantities/`)**
 
-- `Quantity` (`quantities/quantity.py`): High-performance quantity class optimized for engineering calculations (formerly FastQuantity)
-- `TypedQuantity` (`quantities/typed_quantity.py`): Base class for dimension-specific variables with generic type safety
-- `ExpressionQuantity` (`quantities/expression_quantity.py`): Extended variable class with mathematical operations
-- Uses `__slots__` for memory efficiency and caches commonly used values  
-- Implements fast arithmetic operations with dimensional checking
+- `Quantity` (`quantities/quantity.py`): High-performance quantity class optimized for engineering calculations
+- `UnifiedVariable` (`quantities/unified_variable.py`): Unified base class combining all variable capabilities through focused mixins
+- Uses mixin composition for clean separation of concerns and reduced inheritance complexity
 - **Variable Management Methods**: `update()`, `mark_known()`, `mark_unknown()` for flexible variable state management
+- **Arithmetic Mode Control**: `set_arithmetic_mode('quantity'|'expression'|'auto')` for user-controlled return types
 
 **Generated Variables and Units (`generated/`)**
 
 - `quantities.py`: 100+ domain-specific variable types including `Length`, `Pressure`, `Temperature`, `Mass`, `Volume`, etc.
-- All extend `ExpressionQuantity` with mathematical operation capabilities and comparison methods
+- All extend `UnifiedVariable` with complete mathematical operation and expression capabilities
 - Provides fluent API patterns for type-safe value setting with specialized setters
+- **Arithmetic Mode Support**: Each variable supports quantity, expression, and auto arithmetic modes
 - **Comparison Methods**: `lt()`, `leq()`, `geq()`, `gt()` methods and Python operators (`<`, `<=`, `>`, `>=`) for conditional logic
 - Auto-generated from comprehensive unit database with consistent patterns
 

@@ -1,3 +1,4 @@
-from .quantity import Quantity, TypeSafeVariable
+from .quantity import Quantity
+from .unified_variable import UnifiedVariable
 
-__all__ = ["Quantity", "TypeSafeVariable"]
+__all__ = ["Quantity", "UnifiedVariable"]

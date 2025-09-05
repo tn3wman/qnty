@@ -10,7 +10,8 @@ from typing import TYPE_CHECKING
 from .strategies import get_operation_manager
 
 if TYPE_CHECKING:
-    from .quantities.quantity import Quantity, TypeSafeVariable
+    from .quantities.quantity import Quantity
+    from .quantities.unified_variable import UnifiedVariable
 
 
 class BinaryOperationRefactoredExample:
@@ -26,7 +27,7 @@ class BinaryOperationRefactoredExample:
         self.left = left
         self.right = right
     
-    def evaluate_before_refactoring(self, variable_values: dict[str, "TypeSafeVariable"]) -> "Quantity":
+    def evaluate_before_refactoring(self, variable_values: dict[str, "UnifiedVariable"]) -> "Quantity":
         """
         BEFORE: Original complex evaluation method (simplified for example).
         
@@ -68,7 +69,7 @@ class BinaryOperationRefactoredExample:
         else:
             raise ValueError(f"Unknown operator: {self.operator}")
     
-    def evaluate_after_refactoring(self, variable_values: dict[str, "TypeSafeVariable"]) -> "Quantity":
+    def evaluate_after_refactoring(self, variable_values: dict[str, "UnifiedVariable"]) -> "Quantity":
         """
         AFTER: Clean evaluation method using strategy pattern.
         
@@ -96,7 +97,7 @@ class EquationRefactoredExample:
     AFTER: Delegated to strategy manager for clean extensibility
     """
     
-    def solve_for_before_refactoring(self, target_var: str, variable_values: dict) -> "TypeSafeVariable":
+    def solve_for_before_refactoring(self, target_var: str, variable_values: dict) -> "UnifiedVariable":
         """
         BEFORE: Original complex solving method.
         
@@ -129,7 +130,7 @@ class EquationRefactoredExample:
             # More complex solving would go here...
             raise NotImplementedError("Only direct assignment supported")
     
-    def solve_for_after_refactoring(self, target_var: str, variable_values: dict) -> "TypeSafeVariable":
+    def solve_for_after_refactoring(self, target_var: str, variable_values: dict) -> "UnifiedVariable":
         """
         AFTER: Clean solving method using strategy pattern.
         

@@ -9,7 +9,7 @@ from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
 from .quantities.quantity import Quantity
-from .quantities.quantity import TypeSafeVariable
+from .quantities.unified_variable import UnifiedVariable
 from .constants import DIVISION_BY_ZERO_THRESHOLD
 from .generated.units import DimensionlessUnits
 
@@ -201,12 +201,12 @@ class EquationSolvingStrategy(ABC):
     """Abstract base class for equation solving strategies."""
     
     @abstractmethod
-    def can_solve(self, equation: "Equation", target_var: str, variable_values: dict[str, TypeSafeVariable]) -> bool:
+    def can_solve(self, equation: "Equation", target_var: str, variable_values: dict[str, UnifiedVariable]) -> bool:
         """Check if this strategy can solve the equation for the target variable."""
         pass
     
     @abstractmethod
-    def solve(self, equation: "Equation", target_var: str, variable_values: dict[str, TypeSafeVariable]) -> TypeSafeVariable:
+    def solve(self, equation: "Equation", target_var: str, variable_values: dict[str, UnifiedVariable]) -> UnifiedVariable:
         """Solve the equation for the target variable using this strategy."""
         pass
 
@@ -214,7 +214,7 @@ class EquationSolvingStrategy(ABC):
 class DirectAssignmentSolvingStrategy(EquationSolvingStrategy):
     """Strategy for solving direct assignment equations (var = expression)."""
     
-    def can_solve(self, equation: "Equation", target_var: str, variable_values: dict[str, TypeSafeVariable]) -> bool:
+    def can_solve(self, equation: "Equation", target_var: str, variable_values: dict[str, UnifiedVariable]) -> bool:
         """Check if this is a direct assignment equation."""
         from .expressions import VariableReference
         
@@ -222,7 +222,7 @@ class DirectAssignmentSolvingStrategy(EquationSolvingStrategy):
         return (isinstance(equation.lhs, VariableReference) and 
                 equation.lhs.name == target_var)
     
-    def solve(self, equation: "Equation", target_var: str, variable_values: dict[str, TypeSafeVariable]) -> TypeSafeVariable:
+    def solve(self, equation: "Equation", target_var: str, variable_values: dict[str, UnifiedVariable]) -> UnifiedVariable:
         """Solve direct assignment equation."""
         # Direct assignment: target_var = rhs
         result_qty = equation.rhs.evaluate(variable_values)
@@ -249,13 +249,13 @@ class DirectAssignmentSolvingStrategy(EquationSolvingStrategy):
 class AlgebraicSolvingStrategy(EquationSolvingStrategy):
     """Strategy for solving equations that require algebraic manipulation."""
     
-    def can_solve(self, equation: "Equation", target_var: str, variable_values: dict[str, TypeSafeVariable]) -> bool:
+    def can_solve(self, equation: "Equation", target_var: str, variable_values: dict[str, UnifiedVariable]) -> bool:
         """Check if equation can be solved algebraically."""
         # For now, we only support direct assignment
         # Future: add support for simple algebraic manipulation
         return False
     
-    def solve(self, equation: "Equation", target_var: str, variable_values: dict[str, TypeSafeVariable]) -> TypeSafeVariable:
+    def solve(self, equation: "Equation", target_var: str, variable_values: dict[str, UnifiedVariable]) -> UnifiedVariable:
         """Solve equation using algebraic manipulation."""
         raise NotImplementedError("Algebraic solving not yet implemented")
 
@@ -279,7 +279,7 @@ class EquationSolvingManager:
         """Register a new equation solving strategy."""
         self._strategies.append(strategy)
     
-    def solve_equation(self, equation: "Equation", target_var: str, variable_values: dict[str, TypeSafeVariable]) -> TypeSafeVariable:
+    def solve_equation(self, equation: "Equation", target_var: str, variable_values: dict[str, UnifiedVariable]) -> UnifiedVariable:
         """
         Solve an equation using the appropriate strategy.
         

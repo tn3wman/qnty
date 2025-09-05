@@ -11,12 +11,13 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, TypeVar
 
 if TYPE_CHECKING:
-    from .quantities.quantity import Quantity, TypeSafeVariable
+    from .quantities.quantity import Quantity
+    from .quantities.unified_variable import UnifiedVariable
     from .units.registry import UnitConstant
     from .variable_spec import VariableSpec
 
 # TypeVar for factory return types
-VariableType = TypeVar('VariableType', bound='TypeSafeVariable')
+VariableType = TypeVar('VariableType', bound='UnifiedVariable')
 
 
 class VariableFactory:

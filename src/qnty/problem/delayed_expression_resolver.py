@@ -10,7 +10,7 @@ from logging import Logger
 
 from qnty.equations.equation import Equation
 from qnty.expressions import VariableReference
-from qnty.quantities.expression_quantity import ExpressionQuantity as Variable
+from qnty.quantities.unified_variable import UnifiedVariable as Variable
 
 # Type aliases
 VariableDict = dict[str, Variable]

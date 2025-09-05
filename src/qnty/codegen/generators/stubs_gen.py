@@ -43,7 +43,7 @@ def generate_quantities_pyi(parsed_data: dict, dimension_mapping: dict) -> str:
         "",
         "from typing import Any",
         "",
-        "from ..quantities.typed_quantity import TypedQuantity",
+        "from ..quantities.unified_variable import UnifiedVariable",
         "from . import dimensions as dim",
         "from . import setters as ts",
         "",
@@ -64,12 +64,12 @@ def generate_quantities_pyi(parsed_data: dict, dimension_mapping: dict) -> str:
         is_dimensionless = class_name == "Dimensionless"
 
         # Generate quantity class stub
-        lines.append(f"class {class_name}(TypedQuantity):")
+        lines.append(f"class {class_name}(UnifiedVariable):")
         lines.extend(generate_class_docstring(class_name, display_name, units, is_dimensionless))
         # Class attributes
         lines.append("    __slots__ = ()")
         lines.append(f"    _setter_class = ts.{setter_name}")
-        lines.append(f"    _expected_dimension = dim.{dimension_constant}")
+        lines.append(f"    _dimension = dim.{dimension_constant}")
         lines.append("    ")
 
         # Generate __init__ method
@@ -78,6 +78,10 @@ def generate_quantities_pyi(parsed_data: dict, dimension_mapping: dict) -> str:
         # Generate set method
         lines.append("    ")
         lines.extend(generate_set_method(setter_name, display_name, stub_only=True))
+        
+        # Add arithmetic mode control methods
+        lines.append("    ")
+        lines.append("    def set_arithmetic_mode(self, mode: str) -> Any: ...")
         lines.append("    ")
         lines.append("")
 

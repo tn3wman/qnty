@@ -148,7 +148,7 @@ class ArithmeticOperations:
         if isinstance(other, int | float):
             return Quantity(quantity.value * other, quantity.unit)
 
-        # Handle TypeSafeVariable objects by using their quantity
+        # Handle UnifiedVariable objects by using their quantity
         # Check for quantity attribute without importing (duck typing)
         if hasattr(other, "quantity") and getattr(other, "quantity", None) is not None:
             other = other.quantity  # type: ignore
@@ -189,7 +189,7 @@ class ArithmeticOperations:
         if isinstance(other, int | float):
             return Quantity(quantity.value / other, quantity.unit)
 
-        # Handle TypeSafeVariable objects by using their quantity
+        # Handle UnifiedVariable objects by using their quantity
         if hasattr(other, "quantity") and getattr(other, "quantity", None) is not None:
             other = other.quantity  # type: ignore
 
@@ -335,11 +335,11 @@ class UnitResolution:
 class TypeSafeSetter:
     """Basic type-safe setter that accepts compatible units."""
 
-    def __init__(self, variable: TypeSafeVariable, value: float):
+    def __init__(self, variable, value: float):
         self.variable = variable
         self.value = value
 
-    def with_unit(self, unit: UnitConstant) -> TypeSafeVariable:
+    def with_unit(self, unit: UnitConstant):
         """Set with type-safe unit constant."""
         if not self.variable.expected_dimension.is_compatible(unit.dimension):
             raise TypeError(ERROR_TEMPLATES["incompatible_dimension"].format(unit.name))
@@ -393,7 +393,7 @@ class Quantity:
     def __sub__(self, other: Quantity) -> Quantity:
         return ArithmeticOperations.subtract(self, other)
 
-    def __mul__(self, other: Quantity | float | int | TypeSafeVariable) -> Quantity:
+    def __mul__(self, other: Quantity | float | int) -> Quantity:
         return ArithmeticOperations.multiply(self, other)
 
     def __rmul__(self, other: float | int) -> Quantity:
@@ -402,7 +402,7 @@ class Quantity:
             return Quantity(other * self.value, self.unit)
         return NotImplemented
 
-    def __truediv__(self, other: Quantity | float | int | TypeSafeVariable) -> Quantity:
+    def __truediv__(self, other: Quantity | float | int) -> Quantity:
         return ArithmeticOperations.divide(self, other)
 
     def _find_result_unit_fast(self, result_dimension_sig: int | float) -> UnitConstant:
@@ -433,81 +433,6 @@ class Quantity:
         return UnitConversions.to(self, target_unit)
 
 
-class TypeSafeVariable(Generic[DimensionType]):
-    """
-    Base class for type-safe variables with dimensional checking.
-
-    This is a simple data container without dependencies on expressions or equations.
-    Mathematical operations are added by subclasses or mixins.
-    """
-
-    # Class attribute defining which setter to use - subclasses can override
-    _setter_class = TypeSafeSetter
-
-    def __init__(self, name: str, expected_dimension, is_known: bool = True):
-        self.name = name
-        self.symbol: str | None = None  # Will be set by EngineeringProblem to attribute name
-        self.expected_dimension = expected_dimension
-        self.quantity: Quantity | None = None
-        self.is_known = is_known
-        self._parent_problem: VariablesMixin | None = None  # Set by EngineeringProblem when added
-        self.validation_checks: list = []  # List for validation checks
-
-    def set(self, value: float):
-        """Create a setter for this variable using the class-specific setter type."""
-        return self._setter_class(self, value)
-
-    @property
-    def unknown(self) -> Self:
-        """Mark this variable as unknown using fluent API."""
-        self.is_known = False
-        return self
-
-    @property
-    def known(self) -> Self:
-        """Mark this variable as known using fluent API."""
-        self.is_known = True
-        return self
-
-    def update(self, value=None, unit=None, quantity=None, is_known=None):
-        """Update variable properties flexibly."""
-        if quantity is not None:
-            self.quantity = quantity
-        elif value is not None:
-            # Create setter and call the appropriate unit property
-            setter = self.set(value)
-            if unit is not None:
-                # Try to find the unit property on the setter
-                if hasattr(setter, unit):
-                    getattr(setter, unit)
-                elif hasattr(setter, unit + "s"):  # Handle singular/plural
-                    getattr(setter, unit + "s")
-                elif unit.endswith("s") and hasattr(setter, unit[:-1]):  # Handle plural to singular
-                    getattr(setter, unit[:-1])
-                else:
-                    raise ValueError(f"Unit '{unit}' not found for {self.__class__.__name__}")
-            else:
-                # If no unit specified, we can't automatically choose a unit
-                # The caller should specify either a unit or a quantity
-                raise ValueError("Must specify either 'unit' with 'value' or provide 'quantity' directly")
-        if is_known is not None:
-            self.is_known = is_known
-        return self  # For method chaining
-
-    def mark_known(self, quantity=None):
-        """Mark variable as known, optionally updating its value."""
-        self.is_known = True
-        if quantity is not None:
-            self.quantity = quantity
-        return self  # For method chaining
-
-    def mark_unknown(self):
-        """Mark variable as unknown."""
-        self.is_known = False
-        return self  # For method chaining
-
-    def __str__(self):
-        return f"{self.name}: {self.quantity}" if self.quantity else f"{self.name}: unset"
 
 
 # Initialize dimension cache at module load for performance

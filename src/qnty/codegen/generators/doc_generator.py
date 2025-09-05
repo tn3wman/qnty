@@ -88,6 +88,7 @@ def generate_init_method(class_name: str, display_name: str, is_dimensionless: b
                     "        else:",
                     "            # Two arguments: value and name (known variable)",
                     "            super().__init__(name_or_value, name, is_known=is_known)",
+                    "        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility",
                 ]
             )
         else:
@@ -114,6 +115,7 @@ def generate_init_method(class_name: str, display_name: str, is_dimensionless: b
                     "            super().__init__(name_or_value, unit, name, is_known=is_known)",
                     "        else:",
                     '            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")',
+                    "        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility",
                 ]
             )
         else:

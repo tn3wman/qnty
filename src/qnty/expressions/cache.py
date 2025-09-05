@@ -8,13 +8,15 @@ Caching infrastructure for optimized expression evaluation and type checking.
 from typing import TYPE_CHECKING, Union
 
 if TYPE_CHECKING:
-    from ..quantities.quantity import Quantity, TypeSafeVariable
+    from ..quantities.quantity import Quantity
+    from ..quantities.unified_variable import UnifiedVariable
     from .nodes import Expression
 
 # Import here to avoid circular imports - delayed imports
 from ..cache_manager import get_cache_manager
 from ..generated.units import DimensionlessUnits
-from ..quantities.quantity import Quantity, TypeSafeVariable
+from ..quantities.quantity import Quantity
+from ..quantities.unified_variable import UnifiedVariable
 
 # Cache for common types to avoid repeated type checks
 _NUMERIC_TYPES = (int, float)
@@ -63,7 +65,7 @@ def _is_numeric_type(obj) -> bool:
     return result
 
 
-def wrap_operand(operand: Union["Expression", "TypeSafeVariable", "Quantity", int, float]) -> "Expression":
+def wrap_operand(operand: Union["Expression", "UnifiedVariable", "Quantity", int, float]) -> "Expression":
     """
     Optimized operand wrapping with cached type checks.
 
@@ -85,14 +87,14 @@ def wrap_operand(operand: Union["Expression", "TypeSafeVariable", "Quantity", in
     if isinstance(operand, Quantity):
         return Constant(operand)
 
-    # Check for TypeSafeVariable
-    if isinstance(operand, TypeSafeVariable):
+    # Check for UnifiedVariable 
+    if isinstance(operand, UnifiedVariable):
         return VariableReference(operand)
 
     # Check for ConfigurableVariable (from composition system)
     if hasattr(operand, "_variable"):
         var = getattr(operand, "_variable", None)
-        if isinstance(var, TypeSafeVariable):
+        if isinstance(var, UnifiedVariable):
             return VariableReference(var)
 
     # No duck typing - fail fast for unknown types

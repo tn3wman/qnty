@@ -54,7 +54,7 @@ def generate_quantities(parsed_data: dict, dimension_mapping: dict) -> str:
         "Auto-generated from unit_data.json.",
         '"""',
         "",
-        "from ..quantities.typed_quantity import TypedQuantity",
+        "from ..quantities.unified_variable import UnifiedVariable",
         "from . import dimensions as dim",
         "from . import setters as ts",
         "",
@@ -74,12 +74,12 @@ def generate_quantities(parsed_data: dict, dimension_mapping: dict) -> str:
         is_dimensionless = class_name == "Dimensionless"
 
         # Generate class declaration and docstring
-        lines.append(f"class {class_name}(TypedQuantity):")
+        lines.append(f"class {class_name}(UnifiedVariable):")
         lines.extend(generate_class_docstring(class_name, display_name, units, is_dimensionless))
         # Class attributes
         lines.append("    __slots__ = ()")
         lines.append(f"    _setter_class = ts.{setter_class_name}")
-        lines.append(f"    _expected_dimension = dim.{dimension_constant}")
+        lines.append(f"    _dimension = dim.{dimension_constant}")
         lines.append("    ")
 
         # Generate __init__ method

@@ -10,7 +10,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
-    from qnty.quantities import TypeSafeVariable as Variable
+    from qnty.quantities.unified_variable import UnifiedVariable as Variable
 
 # Constants for composition
 MATHEMATICAL_OPERATORS = ["+", "-", "*", "/", " / ", " * ", " + ", " - "]
@@ -70,7 +70,7 @@ class CompositionMixin:
 
     def _extract_direct_variables(self):
         """Extract direct variables from class-level definitions."""
-        from qnty.quantities import TypeSafeVariable as Variable
+        from qnty.quantities.unified_variable import UnifiedVariable as Variable
 
         processed_symbols = set()
 

@@ -10,7 +10,8 @@ import pytest
 
 from qnty.generated.dimensions import LENGTH, PRESSURE
 from qnty.generated.units import LengthUnits, PressureUnits
-from qnty.quantities.quantity import Quantity, TypeSafeSetter, TypeSafeVariable
+from qnty.quantities.quantity import Quantity, TypeSafeSetter
+from qnty.quantities.unified_variable import UnifiedVariable
 from qnty.generated.quantities import Length, Pressure
 from qnty.generated.setters import LengthSetter, PressureSetter
 
@@ -25,7 +26,7 @@ class TestTypeSafeSetterInitialization:
         
         assert setter.variable == length_var
         assert setter.value == 100.0
-        assert isinstance(setter.variable, TypeSafeVariable)
+        assert isinstance(setter.variable, UnifiedVariable)
     
     def test_typesafe_setter_with_different_types(self):
         """Test TypeSafeSetter with different variable types."""
@@ -528,9 +529,9 @@ class TestSetterIntegration:
     
     def test_setter_with_variable_polymorphism(self):
         """Test setters work with variable polymorphism."""
-        # Create variables as base TypeSafeVariable references
-        length_var: TypeSafeVariable = Length("poly_length")
-        pressure_var: TypeSafeVariable = Pressure("poly_pressure")
+        # Create variables as base UnifiedVariable references
+        length_var: UnifiedVariable = Length("poly_length")
+        pressure_var: UnifiedVariable = Pressure("poly_pressure")
         
         # TypeSafeSetter should work with polymorphic variables
         TypeSafeSetter(length_var, 100.0).with_unit(LengthUnits.meter)

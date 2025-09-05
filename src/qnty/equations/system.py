@@ -1,4 +1,4 @@
-from ..quantities.quantity import TypeSafeVariable
+from ..quantities.unified_variable import UnifiedVariable
 from .equation import Equation
 
 
@@ -12,7 +12,7 @@ class EquationSystem:
 
     def __init__(self, equations: list[Equation] | None = None):
         self.equations = equations or []
-        self.variables = {}  # Dict[str, TypeSafeVariable]
+        self.variables = {}  # Dict[str, UnifiedVariable]
         self._known_cache: set[str] | None = None  # Cache for known variables
         self._unknown_cache: set[str] | None = None  # Cache for unknown variables
 
@@ -21,7 +21,7 @@ class EquationSystem:
         self.equations.append(equation)
         self._invalidate_caches()
 
-    def add_variable(self, variable: TypeSafeVariable):
+    def add_variable(self, variable: UnifiedVariable):
         """Add a variable to the system."""
         self.variables[variable.name] = variable
         self._invalidate_caches()
