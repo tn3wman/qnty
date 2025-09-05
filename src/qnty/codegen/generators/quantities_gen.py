@@ -6,40 +6,39 @@ This script generates static quantity class definitions without setter classes.
 The setter classes are generated separately in setters_gen.py.
 """
 
-import json
-import sys
 from pathlib import Path
 
 try:
     from .data_processor import (
-        setup_import_path,
-        load_unit_data,
         augment_with_prefixed_units,
+        calculate_statistics,
         convert_to_class_name,
         get_dimension_constant_name,
-        calculate_statistics,
-        save_metadata,
-        get_unit_names_and_aliases,
+        load_unit_data,
         save_text_file,
-        escape_string
+        setup_import_path,
     )
+    from .doc_generator import generate_class_docstring, generate_init_method, generate_set_method
 except ImportError:
-    from unit_data_processor import (
-        setup_import_path,
-        load_unit_data,
+    # Handle standalone execution
+    import sys
+    from pathlib import Path
+    sys.path.insert(0, str(Path(__file__).parent))
+    from .data_processor import (
         augment_with_prefixed_units,
+        calculate_statistics,
         convert_to_class_name,
         get_dimension_constant_name,
-        calculate_statistics,
-        save_metadata,
-        get_unit_names_and_aliases,
+        load_unit_data,
         save_text_file,
-        escape_string
+        setup_import_path,
     )
+    from .doc_generator import generate_class_docstring, generate_init_method, generate_set_method
 
 
 def generate_quantities(parsed_data: dict, dimension_mapping: dict) -> str:
     """Generate the quantities.py content with static class definitions for performance."""
+    del dimension_mapping  # Unused but kept for API compatibility
     
     sorted_fields = sorted(parsed_data.items())
     fields_with_units = [(k, v) for k, v in sorted_fields if v.get('units')]
@@ -57,7 +56,6 @@ def generate_quantities(parsed_data: dict, dimension_mapping: dict) -> str:
         'from ..quantities.typed_quantity import TypedQuantity',
         'from . import dimensions as dim',
         'from . import setters as ts',
-        '',
         ''
     ]
     
@@ -70,17 +68,26 @@ def generate_quantities(parsed_data: dict, dimension_mapping: dict) -> str:
         class_name = convert_to_class_name(field_name)
         setter_class_name = f"{class_name}Setter"
         dimension_constant = get_dimension_constant_name(field_name)
+        display_name = field_data.get('field', class_name).lower()
+        units = field_data.get('units', [])
+        is_dimensionless = class_name == 'Dimensionless'
         
+        # Generate class declaration and docstring
         lines.append(f'class {class_name}(TypedQuantity):')
-        lines.append(f'    """Type-safe {class_name.lower()} quantity with expression capabilities."""')
-        lines.append(f'    __slots__ = ()')
+        lines.extend(generate_class_docstring(class_name, display_name, units, is_dimensionless))
+        # Class attributes
+        lines.append('    __slots__ = ()')
         lines.append(f'    _setter_class = ts.{setter_class_name}')
         lines.append(f'    _expected_dimension = dim.{dimension_constant}')
-        lines.append(f'    ')
-        lines.append(f'    def set(self, value: float) -> ts.{setter_class_name}:')
-        lines.append(f'        """Create a setter for this quantity."""')
-        lines.append(f'        return ts.{setter_class_name}(self, value)')
-        lines.append(f'    ')
+        lines.append('    ')
+        
+        # Generate __init__ method
+        lines.extend(generate_init_method(class_name, display_name, is_dimensionless, stub_only=False))
+        
+        # Generate set method
+        lines.append('    ')
+        lines.extend(generate_set_method(setter_class_name, display_name, stub_only=False))
+        lines.append('    ')
         lines.append('')
     
     return '\n'.join(lines) + '\n'

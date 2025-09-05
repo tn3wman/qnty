@@ -7,14 +7,14 @@ Core abstract syntax tree nodes for mathematical expressions.
 
 import math
 from abc import ABC, abstractmethod
-from typing import Union, TYPE_CHECKING
+from typing import TYPE_CHECKING, Union
 
 if TYPE_CHECKING:
     from ..quantities.quantity import Quantity, TypeSafeVariable
 
 from ..generated.units import DimensionlessUnits
 from ..quantities.quantity import Quantity, TypeSafeVariable
-from .cache import wrap_operand, _EXPRESSION_RESULT_CACHE, _MAX_EXPRESSION_CACHE_SIZE
+from .cache import _EXPRESSION_RESULT_CACHE, _MAX_EXPRESSION_CACHE_SIZE, wrap_operand
 
 
 class Expression(ABC):

@@ -68,7 +68,7 @@ class VariablesMixin:
             self.variables[variable.symbol] = variable
         # Set parent problem reference for dependency invalidation
         try:
-            setattr(variable, '_parent_problem', self)
+            variable._parent_problem = self
         except (AttributeError, TypeError):
             # _parent_problem might not be settable
             pass
@@ -211,7 +211,7 @@ class VariablesMixin:
         # Ensure the cloned variable has fresh validation checks
         if hasattr(variable, 'validation_checks'):
             try:
-                setattr(cloned, 'validation_checks', [])
+                cloned.validation_checks = []
             except (AttributeError, TypeError):
                 # validation_checks might be read-only or not settable
                 pass

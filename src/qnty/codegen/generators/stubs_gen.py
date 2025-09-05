@@ -9,32 +9,22 @@ support for the fluent API with dimension-specific unit properties.
 Uses the same source of truth as the consolidated variables system.
 """
 
-import json
-import sys
 from pathlib import Path
 
 try:
     from .data_processor import (
-        setup_import_path,
-        get_unit_names_and_aliases,
-        load_json_data,
-        save_text_file,
+        augment_with_prefixed_units,
+        calculate_statistics,
         convert_to_class_name,
         get_dimension_constant_name,
-        calculate_statistics,
-        augment_with_prefixed_units
+        load_json_data,
+        save_text_file,
+        setup_import_path,
     )
+    from .doc_generator import generate_class_docstring, generate_init_method, generate_set_method
 except ImportError:
-    from .data_processor import (
-        setup_import_path,
-        get_unit_names_and_aliases,
-        load_json_data,
-        save_text_file,
-        convert_to_class_name,
-        get_dimension_constant_name,
-        calculate_statistics,
-        augment_with_prefixed_units
-    )
+    from .data_processor import augment_with_prefixed_units, calculate_statistics, convert_to_class_name, get_dimension_constant_name, load_json_data, save_text_file, setup_import_path
+    from .doc_generator import generate_class_docstring, generate_init_method, generate_set_method
 
 
 
@@ -74,23 +64,28 @@ def generate_quantities_pyi(parsed_data: dict, dimension_mapping: dict) -> str:
     for field_name, field_data in fields_with_units:
         class_name = convert_to_class_name(field_name)
         setter_name = f"{class_name}Setter"
-        display_name = field_data.get('field', class_name)
+        display_name = field_data.get('field', class_name).lower()
         dimension_constant = get_dimension_constant_name(field_name)
+        units = field_data.get('units', [])
+        is_dimensionless = class_name == 'Dimensionless'
         
         # Generate quantity class stub
-        lines.extend([
-            f'class {class_name}(TypedQuantity):',
-            f'    """Type-safe {display_name.lower()} quantity with expression capabilities."""',
-            '    __slots__ = ()',
-            f'    _setter_class = ts.{setter_name}',
-            f'    _expected_dimension = dim.{dimension_constant}',
-            '    ',
-            f'    def set(self, value: float) -> ts.{setter_name}:',
-            f'        """Create a setter for this quantity."""',
-            '        ...',
-            '    ',
-            ''
-        ])
+        lines.append(f'class {class_name}(TypedQuantity):')
+        lines.extend(generate_class_docstring(class_name, display_name, units, is_dimensionless))
+        # Class attributes
+        lines.append('    __slots__ = ()')
+        lines.append(f'    _setter_class = ts.{setter_name}')
+        lines.append(f'    _expected_dimension = dim.{dimension_constant}')
+        lines.append('    ')
+        
+        # Generate __init__ method
+        lines.extend(generate_init_method(class_name, display_name, is_dimensionless, stub_only=True))
+        
+        # Generate set method
+        lines.append('    ')
+        lines.extend(generate_set_method(setter_name, display_name, stub_only=True))
+        lines.append('    ')
+        lines.append('')
     
     lines.extend([
         '# All quantity classes are defined above',
@@ -104,7 +99,6 @@ def main():
     """Main execution function."""
     # Setup import path and import prefixes
     setup_import_path()
-    from qnty.units.prefixes import PREFIXABLE_UNITS, StandardPrefixes
     
     # Setup paths using pathlib
     base_path = Path(__file__).parents[4]  # Go up to qnty root

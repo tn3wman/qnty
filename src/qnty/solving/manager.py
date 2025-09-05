@@ -1,7 +1,7 @@
 
-from qnty.solving.order import Order
 from qnty.equations.equation import Equation
 from qnty.quantities import TypeSafeVariable as Variable
+from qnty.solving.order import Order
 
 from .solvers.base import BaseSolver, SolveResult
 from .solvers.iterative import IterativeSolver

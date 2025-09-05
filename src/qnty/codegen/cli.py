@@ -15,13 +15,12 @@ Can be run from IDE or command line:
 - From IDE: Run this file directly
 """
 
-import sys
 import subprocess
+import sys
 from pathlib import Path
-from typing import List, Tuple
 
 
-def run_generator(generator_name: str, script_path: Path) -> Tuple[bool, str]:
+def run_generator(generator_name: str, script_path: Path) -> tuple[bool, str]:
     """Run a single generator script and return success status with output."""
     try:
         print(f"\n{'='*60}")
@@ -67,7 +66,7 @@ def main() -> int:
     script_dir = Path(__file__).parent / "generators"
     
     # Define generators in dependency order
-    generators: List[Tuple[str, str]] = [
+    generators: list[tuple[str, str]] = [
         ("Dimensions Generator", "dimensions_gen.py"),
         ("Units Generator", "units_gen.py"),
         ("Setters Generator", "setters_gen.py"),

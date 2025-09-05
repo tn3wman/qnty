@@ -1,5 +1,5 @@
-from .equation import Equation
 from ..quantities.quantity import TypeSafeVariable
+from .equation import Equation
 
 
 class EquationSystem:

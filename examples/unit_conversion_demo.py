@@ -1,7 +1,11 @@
 import qnty as qt
 
+# Demonstrate unit conversion and manipulation
+# TODO: Not implemented yet
+L = qt.Length(5, "m", "Length")
+A = qt.Area(1, "square_meter", "Area", is_known=False)
 
+A.solve_from(L**2)
 
-L = qt.Length(1, "inch", "Length")
-
-L_mm = L.to_unit.mm
+print(f"L = {L}")
+print(f"A = {A}")

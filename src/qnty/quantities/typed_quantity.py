@@ -7,8 +7,8 @@ handling both the original syntax and the new value/unit/name syntax.
 """
 
 from ..generated.dimensions import DimensionSignature
-from .quantity import TypeSafeSetter
 from .expression_quantity import ExpressionQuantity
+from .quantity import TypeSafeSetter
 
 
 class TypedQuantity(ExpressionQuantity):

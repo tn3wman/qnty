@@ -4,9 +4,9 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from typing import Any
 
-from qnty.solving.order import Order
 from qnty.equations.equation import Equation
 from qnty.quantities import TypeSafeVariable as Variable
+from qnty.solving.order import Order
 
 
 class SolveError(Exception):

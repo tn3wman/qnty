@@ -13,8 +13,8 @@ from typing import Any
 
 from qnty.equations.equation import Equation
 from qnty.expressions import BinaryOperation, Constant, UnaryFunction, VariableReference, cos, sin
-from qnty.quantities.quantity import Quantity as Qty
 from qnty.quantities.expression_quantity import ExpressionQuantity as Variable
+from qnty.quantities.quantity import Quantity as Qty
 
 # No BinaryFunction in qnty - operations are handled by BinaryOperation or specific functions
 

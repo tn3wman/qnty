@@ -10,7 +10,7 @@ Handles prefix augmentation, data normalization, and statistics calculation.
 import json
 import sys
 from pathlib import Path
-from typing import Any, Dict, Tuple
+from typing import Any
 
 
 def setup_import_path() -> None:
@@ -26,7 +26,7 @@ def load_unit_data(data_path: Path) -> dict[str, Any]:
         return json.load(f)
 
 
-def augment_with_prefixed_units(raw_data: dict[str, Any]) -> Tuple[dict[str, Any], int]:
+def augment_with_prefixed_units(raw_data: dict[str, Any]) -> tuple[dict[str, Any], int]:
     """
     Add missing prefixed units to the data consistently.
     
@@ -60,7 +60,7 @@ def augment_with_prefixed_units(raw_data: dict[str, Any]) -> Tuple[dict[str, Any
     generated_count = 0
     
     # Process each field to find prefixable base units
-    for field_name, field_data in augmented_data.items():
+    for field_data in augmented_data.values():
         # Copy list since we'll modify it during iteration
         original_units = list(field_data['units'])
         
@@ -131,12 +131,12 @@ def calculate_statistics(unit_data: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-def get_unit_names_and_aliases(unit_data: dict[str, Any]) -> Tuple[str, list[str]]:
+def get_unit_names_and_aliases(unit_data: dict[str, Any]) -> tuple[str, list[str]]:
     """
     Extract the primary unit name and aliases consistently for all generators.
     
-    Uses normalized_name as the primary identifier, with notation and aliases 
-    as additional identifiers. Does NOT use the full 'name' field to avoid 
+    Uses normalized_name as the primary identifier, with notation and aliases
+    as additional identifiers. Does NOT use the full 'name' field to avoid
     inconsistencies between generators.
     
     Returns:
@@ -214,7 +214,7 @@ def escape_string(s: str) -> str:
 def is_valid_python_identifier(name: str) -> bool:
     """Check if a string is a valid Python identifier."""
     import keyword
-    return name and name.isidentifier() and not keyword.iskeyword(name)
+    return bool(name and name.isidentifier() and not keyword.iskeyword(name))
 
 
 def sanitize_python_name(name: str) -> str:
@@ -239,7 +239,7 @@ def get_standard_generator_paths(generator_file: Path) -> dict[str, Path]:
     return {
         'generator_dir': generator_dir,
         'data_path': generator_dir / 'data' / 'unit_data.json',
-        'output_dir': generator_dir / 'out', 
+        'output_dir': generator_dir / 'out',
         'generated_dir': generator_dir.parent.parent / 'generated',
         'src_dir': generator_dir.parent.parent
     }
@@ -270,7 +270,7 @@ def identify_base_units_needing_prefixes(parsed_data: dict[str, Any]) -> dict[st
     return base_units
 
 
-def generate_prefixed_unit_data(base_unit_data: dict[str, Any], prefix, field_name: str, field_data: dict[str, Any]) -> dict[str, Any]:
+def generate_prefixed_unit_data(base_unit_data: dict[str, Any], prefix, field_data: dict[str, Any]) -> dict[str, Any]:
     """Generate unit data for a prefixed variant of a base unit."""
     prefix_def = prefix.value
     
@@ -336,7 +336,7 @@ def augment_parsed_data_with_prefixes(parsed_data: dict[str, Any]) -> dict[str, 
                 
                 # Only add if it doesn't already exist globally
                 if prefixed_name not in existing_units:
-                    prefixed_unit = generate_prefixed_unit_data(base_unit, prefix, field_name, augmented_data[field_name])
+                    prefixed_unit = generate_prefixed_unit_data(base_unit, prefix, augmented_data[field_name])
                     augmented_data[field_name]['units'].append(prefixed_unit)
                     existing_units.add(prefixed_name)
                     generated_count += 1

@@ -5,13 +5,13 @@ Expression Helper Functions
 Convenience functions for creating mathematical expressions.
 """
 
-from typing import Union, TYPE_CHECKING
+from typing import TYPE_CHECKING, Union
 
 if TYPE_CHECKING:
     from ..quantities.quantity import Quantity, TypeSafeVariable
-    from .nodes import Expression, BinaryOperation
+    from .nodes import BinaryOperation, Expression
 
-from .nodes import Expression, UnaryFunction, ConditionalExpression
+from .nodes import ConditionalExpression, Expression, UnaryFunction
 
 
 # Convenience functions for mathematical operations

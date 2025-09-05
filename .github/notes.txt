@@ -1,11 +1,19 @@
-# Initial Release
+# Notes
+
+## Poetry Packaging
+
 poetry build
 poetry config pypi-token.pypi pypi-AgENdGVzdC5weXBpLm9yZwIk...
 poetry publish --build
 git tag v0.0.1
 git push origin v0.0.1
 
-# Packaging Notes
+## GitHub Releases
+
 poetry version patch
 git tag v#.#.#
 git push origin v#.#.#
+
+## Tools
+
+ide - getDiagnostics(uri: "file:{path}")

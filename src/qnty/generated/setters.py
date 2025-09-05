@@ -9,116 +9,6 @@ Auto-generated from unit_data.json.
 
 from ..quantities.quantity import Quantity, TypeSafeSetter
 from . import units
-from .dimensions import (
-    ABSORBED_DOSE,
-    ACCELERATION,
-    ACTIVATION_ENERGY,
-    AMOUNT_OF_SUBSTANCE,
-    ANGLE_PLANE,
-    ANGLE_SOLID,
-    ANGULAR_ACCELERATION,
-    ANGULAR_MOMENTUM,
-    AREA,
-    AREA_PER_UNIT_VOLUME,
-    ATOMIC_WEIGHT,
-    CONCENTRATION,
-    DIMENSIONLESS,
-    DYNAMIC_FLUIDITY,
-    ELECTRICAL_CONDUCTANCE,
-    ELECTRICAL_PERMITTIVITY,
-    ELECTRICAL_RESISTIVITY,
-    ELECTRIC_CAPACITANCE,
-    ELECTRIC_CHARGE,
-    ELECTRIC_CURRENT_INTENSITY,
-    ELECTRIC_DIPOLE_MOMENT,
-    ELECTRIC_FIELD_STRENGTH,
-    ELECTRIC_INDUCTANCE,
-    ELECTRIC_POTENTIAL,
-    ELECTRIC_RESISTANCE,
-    ENERGY_FLUX,
-    ENERGY_HEAT_WORK,
-    ENERGY_PER_UNIT_AREA,
-    FORCE,
-    FORCE_BODY,
-    FORCE_PER_UNIT_MASS,
-    FREQUENCY_VOLTAGE_RATIO,
-    FUEL_CONSUMPTION,
-    HEAT_OF_COMBUSTION,
-    HEAT_OF_FUSION,
-    HEAT_OF_VAPORIZATION,
-    HEAT_TRANSFER_COEFFICIENT,
-    ILLUMINANCE,
-    KINETIC_ENERGY_OF_TURBULENCE,
-    LENGTH,
-    LINEAR_MASS_DENSITY,
-    LINEAR_MOMENTUM,
-    LUMINANCE_SELF,
-    LUMINOUS_FLUX,
-    LUMINOUS_INTENSITY,
-    MAGNETIC_FIELD,
-    MAGNETIC_FLUX,
-    MAGNETIC_INDUCTION_FIELD_STRENGTH,
-    MAGNETIC_MOMENT,
-    MAGNETIC_PERMEABILITY,
-    MAGNETOMOTIVE_FORCE,
-    MASS,
-    MASS_DENSITY,
-    MASS_FLOW_RATE,
-    MASS_FLUX,
-    MASS_FRACTION_OF_I,
-    MASS_TRANSFER_COEFFICIENT,
-    MOLALITY_OF_SOLUTE_I,
-    MOLARITY_OF_I,
-    MOLAR_CONCENTRATION_BY_MASS,
-    MOLAR_FLOW_RATE,
-    MOLAR_FLUX,
-    MOLAR_HEAT_CAPACITY,
-    MOLE_FRACTION_OF_I,
-    MOMENTUM_FLOW_RATE,
-    MOMENTUM_FLUX,
-    MOMENT_OF_INERTIA,
-    NORMALITY_OF_SOLUTION,
-    PARTICLE_DENSITY,
-    PERCENT,
-    PERMEABILITY,
-    PHOTON_EMISSION_RATE,
-    POWER_PER_UNIT_MASS,
-    POWER_PER_UNIT_VOLUME,
-    POWER_THERMAL_DUTY,
-    PRESSURE,
-    RADIATION_DOSE_EQUIVALENT,
-    RADIATION_EXPOSURE,
-    RADIOACTIVITY,
-    SECOND_MOMENT_OF_AREA,
-    SECOND_RADIATION_CONSTANT_PLANCK,
-    SPECIFIC_ENTHALPY,
-    SPECIFIC_GRAVITY,
-    SPECIFIC_HEAT_CAPACITY_CONSTANT_PRESSURE,
-    SPECIFIC_LENGTH,
-    SPECIFIC_SURFACE,
-    SPECIFIC_VOLUME,
-    STRESS,
-    SURFACE_MASS_DENSITY,
-    SURFACE_TENSION,
-    TEMPERATURE,
-    THERMAL_CONDUCTIVITY,
-    TIME,
-    TORQUE,
-    TURBULENCE_ENERGY_DISSIPATION_RATE,
-    VELOCITY_ANGULAR,
-    VELOCITY_LINEAR,
-    VISCOSITY_DYNAMIC,
-    VISCOSITY_KINEMATIC,
-    VOLUME,
-    VOLUMETRIC_CALORIFIC_HEATING_VALUE,
-    VOLUMETRIC_COEFFICIENT_OF_EXPANSION,
-    VOLUMETRIC_FLOW_RATE,
-    VOLUMETRIC_FLUX,
-    VOLUMETRIC_MASS_FLOW_RATE,
-    VOLUME_FRACTION_OF_I,
-    WAVENUMBER,
-)
-
 
 # ===== SETTER CLASSES =====
 # Static setter class definitions with __slots__ optimization
@@ -2408,7 +2298,7 @@ class EnergyHeatWorkSetter(TypeSafeSetter):
     
     @property
     def british_thermal_unit_4circ_mathrmc(self):
-        """Set value using British thermal unit ( $4^{\circ} \mathrm{C}$ ) units."""
+        """Set value using British thermal unit ( $4^{\\circ} \\mathrm{C}$ ) units."""
         unit_const = units.EnergyHeatWorkUnits.british_thermal_unit_4circ_mathrmc
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
@@ -2420,7 +2310,7 @@ class EnergyHeatWorkSetter(TypeSafeSetter):
     
     @property
     def british_thermal_unit_60circ_mathrmf(self):
-        """Set value using British thermal unit ( $60^{\circ} \mathrm{F}$ ) units."""
+        """Set value using British thermal unit ( $60^{\\circ} \\mathrm{F}$ ) units."""
         unit_const = units.EnergyHeatWorkUnits.british_thermal_unit_60circ_mathrmf
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
@@ -2490,7 +2380,7 @@ class EnergyHeatWorkSetter(TypeSafeSetter):
     
     @property
     def calorie_20circ_mathrmc(self):
-        """Set value using calorie ( $20^{\circ} \mathrm{C}$ ) units."""
+        """Set value using calorie ( $20^{\\circ} \\mathrm{C}$ ) units."""
         unit_const = units.EnergyHeatWorkUnits.calorie_20circ_mathrmc
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
@@ -2502,7 +2392,7 @@ class EnergyHeatWorkSetter(TypeSafeSetter):
     
     @property
     def calorie_4circ_mathrmc(self):
-        """Set value using calorie ( $4^{\circ} \mathrm{C}$ ) units."""
+        """Set value using calorie ( $4^{\\circ} \\mathrm{C}$ ) units."""
         unit_const = units.EnergyHeatWorkUnits.calorie_4circ_mathrmc
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
@@ -2574,7 +2464,7 @@ class EnergyHeatWorkSetter(TypeSafeSetter):
     
     @property
     def celsius_heat_unit_15_circ_mathrmc(self):
-        """Set value using Celsius heat unit ( $15{ }^{\circ} \mathrm{C}$ ) units."""
+        """Set value using Celsius heat unit ( $15{ }^{\\circ} \\mathrm{C}$ ) units."""
         unit_const = units.EnergyHeatWorkUnits.celsius_heat_unit_15_circ_mathrmc
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
@@ -2749,7 +2639,7 @@ class EnergyHeatWorkSetter(TypeSafeSetter):
     
     @property
     def pound_centigrade_unit_15circ_mathrmc(self):
-        """Set value using pound centigrade unit ( $15^{\circ} \mathrm{C}$ ) units."""
+        """Set value using pound centigrade unit ( $15^{\\circ} \\mathrm{C}$ ) units."""
         unit_const = units.EnergyHeatWorkUnits.pound_centigrade_unit_15circ_mathrmc
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
@@ -5173,7 +5063,7 @@ class MassSetter(TypeSafeSetter):
     
     @property
     def atomic_mass_unit_12_mathrmc(self):
-        """Set value using atomic mass unit ( ${ }^{12} \mathrm{C}$ ) units."""
+        """Set value using atomic mass unit ( ${ }^{12} \\mathrm{C}$ ) units."""
         unit_const = units.MassUnits.atomic_mass_unit_12_mathrmc
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
@@ -7904,7 +7794,7 @@ class PowerThermalDutySetter(TypeSafeSetter):
     
     @property
     def horsepower_550_mathrmft_mathrmlb_mathrmf_mathrms(self):
-        """Set value using horsepower ( $550 \mathrm{ft} \mathrm{lb}_{\mathrm{f}} / \mathrm{s}$ ) units."""
+        """Set value using horsepower ( $550 \\mathrm{ft} \\mathrm{lb}_{\\mathrm{f}} / \\mathrm{s}$ ) units."""
         unit_const = units.PowerThermalDutyUnits.horsepower_550_mathrmft_mathrmlb_mathrmf_mathrms
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
@@ -8189,7 +8079,7 @@ class PressureSetter(TypeSafeSetter):
     
     @property
     def foot_of_mercury_60_circ_mathrmf(self):
-        """Set value using foot of mercury ( $60{ }^{\circ} \mathrm{F}$ ) units."""
+        """Set value using foot of mercury ( $60{ }^{\\circ} \\mathrm{F}$ ) units."""
         unit_const = units.PressureUnits.foot_of_mercury_60_circ_mathrmf
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
@@ -8201,7 +8091,7 @@ class PressureSetter(TypeSafeSetter):
     
     @property
     def foot_of_water_60_circ_mathrmf(self):
-        """Set value using foot of water ( $60{ }^{\circ} \mathrm{F}$ ) units."""
+        """Set value using foot of water ( $60{ }^{\\circ} \\mathrm{F}$ ) units."""
         unit_const = units.PressureUnits.foot_of_water_60_circ_mathrmf
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
@@ -8237,7 +8127,7 @@ class PressureSetter(TypeSafeSetter):
     
     @property
     def inch_of_mercury_60_circ_mathrmf(self):
-        """Set value using inch of mercury ( $60{ }^{\circ} \mathrm{F}$ ) units."""
+        """Set value using inch of mercury ( $60{ }^{\\circ} \\mathrm{F}$ ) units."""
         unit_const = units.PressureUnits.inch_of_mercury_60_circ_mathrmf
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
@@ -8249,7 +8139,7 @@ class PressureSetter(TypeSafeSetter):
     
     @property
     def inch_of_water_60_circ_mathrmf(self):
-        """Set value using inch of water ( $60{ }^{\circ} \mathrm{F}$ ) units."""
+        """Set value using inch of water ( $60{ }^{\\circ} \\mathrm{F}$ ) units."""
         unit_const = units.PressureUnits.inch_of_water_60_circ_mathrmf
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
@@ -8334,7 +8224,7 @@ class PressureSetter(TypeSafeSetter):
     
     @property
     def meter_of_water_4circ_mathrmc(self):
-        """Set value using meter of water ( $4^{\circ} \mathrm{C}$ ) units."""
+        """Set value using meter of water ( $4^{\\circ} \\mathrm{C}$ ) units."""
         unit_const = units.PressureUnits.meter_of_water_4circ_mathrmc
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
@@ -8370,7 +8260,7 @@ class PressureSetter(TypeSafeSetter):
     
     @property
     def millimeter_of_mercury_4circ_mathrmc(self):
-        """Set value using millimeter of mercury ( $4^{\circ} \mathrm{C}$ ) units."""
+        """Set value using millimeter of mercury ( $4^{\\circ} \\mathrm{C}$ ) units."""
         unit_const = units.PressureUnits.millimeter_of_mercury_4circ_mathrmc
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
@@ -8382,7 +8272,7 @@ class PressureSetter(TypeSafeSetter):
     
     @property
     def millimeter_of_water_4circ_mathrmc(self):
-        """Set value using millimeter of water ( $4^{\circ} \mathrm{C}$ ) units."""
+        """Set value using millimeter of water ( $4^{\\circ} \\mathrm{C}$ ) units."""
         unit_const = units.PressureUnits.millimeter_of_water_4circ_mathrmc
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable

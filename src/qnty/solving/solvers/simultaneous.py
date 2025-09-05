@@ -2,10 +2,10 @@ from typing import Any
 
 import numpy as np
 
-from qnty.solving.order import Order
 from qnty.equations.equation import Equation
 from qnty.quantities import Quantity as Qty
 from qnty.quantities import TypeSafeVariable as Variable
+from qnty.solving.order import Order
 
 from .base import BaseSolver, SolveResult
 
