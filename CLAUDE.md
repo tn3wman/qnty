@@ -54,7 +54,7 @@ All other modules and classes are internal implementation details that users sho
 The codebase has been carefully structured to eliminate circular imports with a strict hierarchy:
 
 ```python
-dimension → unit_system/core → variable_system/core → variables → expression → equation
+generated/dimensions → units → quantities → generated → expressions → equations → problem
 ```
 
 This ensures clean dependencies and enables proper type checking throughout the system.
@@ -63,17 +63,18 @@ This ensures clean dependencies and enables proper type checking throughout the 
 
 The system uses a layered approach with separate concerns:
 
-- **Core Layer** (`dimension.py`): Dimensional analysis system using prime number encoding
+- **Core Layer** (`generated/dimensions.py`): Dimensional analysis system using prime number encoding
 - **Quantities Layer** (`quantities/`): Base classes for quantities and typed variables  
 - **Units Layer** (`units/`): Unit definitions, registry, and constants
 - **Generated Layer** (`generated/`): Auto-generated domain-specific classes for variables and units
-- **Expression Layer** (`expression.py`, `equation.py`): Mathematical expression and equation system
+- **Expression Layer** (`expressions/`): Mathematical expression system with nodes and functions
+- **Equation Layer** (`equations/`): Equation handling and system solving
 - **Problem Solving Layer** (`problem/`): Modular problem system with focused components
-- **Engines Layer** (`engines/`): Problem solving engines including solvers and dependency management
+- **Code Generation** (`codegen/`): Automated code generation system for all generated files
 
 ### Core Components
 
-**Dimensional System (`dimension.py`)**
+**Dimensional System (`generated/dimensions.py`)**
 
 - `DimensionSignature`: Immutable dimension signatures using prime number encoding for ultra-fast dimensional compatibility checks
 - `BaseDimension`: Enum of base dimensions (LENGTH, MASS, TIME, etc.) as prime numbers for efficient bit operations
@@ -81,25 +82,24 @@ The system uses a layered approach with separate concerns:
 
 **Units System (`units/`)**
 
-- `UnitDefinition` (`units/core.py`): Immutable dataclass for unit definitions with SI conversion factors
-- `UnitConstant` (`units/core.py`): Type-safe unit constants that provide performance optimizations
-- `HighPerformanceRegistry` (`units/core.py`): Central registry with pre-computed conversion tables for fast unit conversions
-- `SIPrefix` (`units/prefixes.py`): Comprehensive SI prefix system for automatic unit generation
+- `UnitDefinition` (`units/registry.py`): Immutable dataclass for unit definitions with SI conversion factors
+- `UnitConstant` (`units/registry.py`): Type-safe unit constants that provide performance optimizations
+- `registry` (`units/registry.py`): Central registry with pre-computed conversion tables for fast unit conversions
+- Comprehensive SI prefix system for automatic unit generation
 
 **Base Variables and Quantities (`quantities/`)**
 
-- `FastQuantity` (`quantities/core.py`): High-performance quantity class optimized for engineering calculations
-- `TypeSafeVariable` (`quantities/core.py`): Base class for dimension-specific variables with generic type safety
-- `TypeSafeSetter` (`quantities/core.py`): Generic setter with dimensional validation and fluent API
-- `ExpressionVariable` (`quantities/expression_variable.py`): Extended variable class with mathematical operations
+- `Quantity` (`quantities/quantity.py`): High-performance quantity class optimized for engineering calculations (formerly FastQuantity)
+- `TypedQuantity` (`quantities/typed_quantity.py`): Base class for dimension-specific variables with generic type safety
+- `ExpressionQuantity` (`quantities/expression_quantity.py`): Extended variable class with mathematical operations
 - Uses `__slots__` for memory efficiency and caches commonly used values  
 - Implements fast arithmetic operations with dimensional checking
 - **Variable Management Methods**: `update()`, `mark_known()`, `mark_unknown()` for flexible variable state management
 
 **Generated Variables and Units (`generated/`)**
 
-- `variables.py`: 100+ domain-specific variable types including `Length`, `Pressure`, `Temperature`, `Mass`, `Volume`, etc.
-- All extend `ExpressionVariable` with mathematical operation capabilities and comparison methods
+- `quantities.py`: 100+ domain-specific variable types including `Length`, `Pressure`, `Temperature`, `Mass`, `Volume`, etc.
+- All extend `ExpressionQuantity` with mathematical operation capabilities and comparison methods
 - Provides fluent API patterns for type-safe value setting with specialized setters
 - **Comparison Methods**: `lt()`, `leq()`, `geq()`, `gt()` methods and Python operators (`<`, `<=`, `>`, `>=`) for conditional logic
 - Auto-generated from comprehensive unit database with consistent patterns
@@ -110,15 +110,7 @@ The system uses a layered approach with separate concerns:
 - Provides both full names and common aliases (e.g., `m`, `mm`, `Pa`, `kPa`)
 - No string-based unit handling - all type-safe constants
 
-**Problem Solving Engines (`engines/`)**
-
-- **Problem Management** (`engines/problem/`): Dependency graph analysis, equation reconstruction, metaclass magic, and problem composition
-- **Solver System** (`engines/solver/`): Multiple solver implementations including iterative and simultaneous equation solvers
-- `SolverManager` (`engines/solver/manager.py`): Automatically selects the best solver for a given system of equations
-- `DependencyGraph` (`engines/problem/dependency_graph.py`): Analyzes variable dependencies and equation cycles
-- `EquationReconstructor` (`engines/problem/equation_reconstruction.py`): Reconstructs equations with proper variable references
-
-**Mathematical Expression System (`expression.py`)**
+**Mathematical Expression System (`expressions/`)**
 
 - `Expression`: Abstract base class for mathematical expression trees
 - `BinaryOperation`: Unified operation class handling arithmetic (`+`, `-`, `*`, `/`, `**`) and comparison (`<`, `<=`, `>`, `>=`, `==`, `!=`) operators
@@ -128,7 +120,7 @@ The system uses a layered approach with separate concerns:
 - Comprehensive mathematical function support (sin, cos, tan, sqrt, ln, exp, etc.)
 - **Auto-evaluation**: Expressions automatically evaluate and display results when all variables have known values
 
-**Equation System (`equation.py`)**
+**Equation System (`equations/`)**
 
 - `Equation`: Represents mathematical equations (lhs = rhs) with solving capabilities
 - `EquationSystem`: System of equations that can be solved together
@@ -140,13 +132,16 @@ The system uses a layered approach with separate concerns:
 
 The Problem system has been decomposed into focused modules using multiple inheritance:
 
-- **`base.py`** (139 lines): Core Problem state, initialization, caching, and utility methods
-- **`variables.py`** (215 lines): Variable lifecycle management, adding/getting variables, known/unknown state
-- **`equations.py`** (400 lines): Equation processing pipeline, validation, missing variable handling
-- **`solving.py`** (156 lines): High-level solve orchestration, dependency graphs, solution verification
-- **`validation.py`** (57 lines): Problem-validation integration and check management
-- **`composition_mixin.py`** (336 lines): Sub-problem composition, namespacing, and composite equation creation
-- **`__init__.py`** (90 lines): Reassembled Problem class using multiple inheritance with `ProblemMeta` metaclass
+- **`base.py`**: Core Problem state, initialization, caching, and utility methods
+- **`variables.py`**: Variable lifecycle management, adding/getting variables, known/unknown state
+- **`equations.py`**: Equation processing pipeline, validation, missing variable handling
+- **`solving.py`**: High-level solve orchestration, dependency graphs, solution verification
+- **`validation.py`**: Problem-validation integration and check management
+- **`composition_mixin.py`**: Sub-problem composition, namespacing, and composite equation creation
+- **`composition.py`**: Additional composition utilities and helpers
+- **`reconstruction.py`**: Equation reconstruction and variable reference management
+- **`metaclass.py`**: Problem metaclass for class-level variable and equation processing
+- **`__init__.py`**: Reassembled Problem class using multiple inheritance with `ProblemMeta` metaclass
 
 The Problem class combines all mixins: `Problem(ProblemBase, VariablesMixin, EquationsMixin, SolvingMixin, ValidationMixin, CompositionMixin, metaclass=ProblemMeta)`
 
@@ -154,7 +149,7 @@ The Problem class combines all mixins: `Problem(ProblemBase, VariablesMixin, Equ
 
 **Clean Import Strategy**: The codebase uses several techniques to avoid circular imports:
 
-- Strict dependency hierarchy: `dimension → units → quantities → generated → expression → equation → problem → engines`
+- Strict dependency hierarchy: `generated/dimensions → units → quantities → generated → expressions → equations → problem`
 - `TYPE_CHECKING` guards for type-only imports
 - Duck typing with `hasattr()` and `getattr()` checks to avoid importing classes
 - Delayed imports where necessary
@@ -173,7 +168,7 @@ from qnty.validation import validate
 
 **Restricted User Access**: Users should ONLY access these public components:
 
-- **All variables from `generated/variables.py`**: Length, Pressure, Temperature, etc. (100+ engineering variable types)
+- **All variables from `generated/quantities.py`**: Length, Pressure, Temperature, etc. (100+ engineering variable types)
 - **Problem class from `problem/`**: Main container for engineering problems with solving capabilities
 - **`validate` function from `validation.py`**: Validation and compliance checking system
 - **Expression methods**: Available through variables (e.g., `length * width`, `pressure.geq(limit)`)
@@ -251,18 +246,18 @@ pressure.mark_unknown()   # Mark as unknown
 
 ### Code Generation System
 
-The project uses a sophisticated code generation pipeline located in `scripts/`:
+The project uses a sophisticated code generation pipeline located in `src/qnty/codegen/`:
 
-- **`_1_generate_dimensions.py`**: Generates `dimension.py` with dimensional constants from parsed unit data
-- **`_2_generate_units.py`**: Generates `units.py` with comprehensive unit class definitions  
-- **`_3_generate_variables.py`**: Generates `variables.py` with type-safe variable classes
-- **`_4_generate_variable_pyi.py`**: Generates type stubs for better IDE support
-- **`_5_generate_package_init.py`**: Generates package initialization files
-- **`generate_all.py`**: Orchestrates the entire generation pipeline
+- **`dimensions_gen.py`**: Generates `dimensions.py` with dimensional constants from parsed unit data
+- **`units_gen.py`**: Generates `units.py` with comprehensive unit class definitions  
+- **`quantities_gen.py`**: Generates `quantities.py` with type-safe variable classes
+- **`setters_gen.py`**: Generates setter classes with unit properties
+- **`stubs_gen.py`**: Generates type stubs for better IDE support
+- **`cli.py`**: Command-line interface that orchestrates the entire generation pipeline
 
 **Key Generation Features:**
 
-- Uses `scripts/input/unit_data.json` as the single source of truth for 800+ engineering units
+- Uses `codegen/generators/data/unit_data.json` as the single source of truth for 800+ engineering units
 - Automatically generates prefixed units (milli-, kilo-, etc.) for applicable base units
 - Maintains dimensional consistency across all generated code
 - Supports both manual edits and regeneration without conflicts
@@ -270,10 +265,10 @@ The project uses a sophisticated code generation pipeline located in `scripts/`:
 **Running Generation Scripts:**
 
 ```bash
-python scripts/_1_generate_dimensions.py  # Update dimensions
-python scripts/_2_generate_units.py       # Update units  
-python scripts/_3_generate_variables.py   # Update variables
-python scripts/generate_all.py            # Regenerate everything
+python -m qnty.codegen.cli                # Generate everything
+python -m qnty.codegen.generators.dimensions_gen  # Update dimensions only
+python -m qnty.codegen.generators.units_gen       # Update units only
+python -m qnty.codegen.generators.quantities_gen  # Update quantities only
 ```
 
 ### Critical Type System Updates
@@ -293,9 +288,9 @@ Recent architectural improvements include enhanced dimensional signature handlin
 
 ### Reference Data
 
-- `data/`: Contains comprehensive unit definition reference data for validation and testing
-- `scripts/input/unit_data.json`: Single source of truth for all unit definitions
-- `scripts/output/`: Generated mapping files for code generation pipeline
+- `codegen/generators/data/`: Contains comprehensive unit definition reference data for validation and testing
+- `codegen/generators/data/unit_data.json`: Single source of truth for all unit definitions
+- `codegen/generators/out/`: Generated mapping files for code generation pipeline
 
 ## Testing and Benchmarking
 
@@ -335,12 +330,12 @@ from qnty.problem_system.checks import add_check
 
 ```python
 # Internal systems - users should NOT import these
-from .quantities.core import FastQuantity, TypeSafeVariable, TypeSafeSetter
-from .units.core import UnitDefinition, UnitConstant, registry
-from .expression import Expression, wrap_operand
-from .equation import Equation
-from .engines.solver import SolverManager
-from .engines.problem import DependencyGraph
+from .quantities.quantity import Quantity
+from .quantities.typed_quantity import TypedQuantity
+from .units.registry import UnitDefinition, UnitConstant, registry
+from .expressions.nodes import Expression, wrap_operand
+from .equations.equation import Equation
+from .problem.solving import SolverManager
 ```
 
 **User API Boundaries**: The public API is intentionally minimal to ensure users only need to learn and use the essential components. All other modules contain implementation details that should remain hidden from users.
@@ -353,6 +348,8 @@ from .engines.problem import DependencyGraph
 - Prefer `TYPE_CHECKING` guards for type-only imports
 - Follow the established dependency hierarchy when adding new modules
 - Use `hasattr()` checks before accessing potentially missing attributes
+- The core quantity class is now `Quantity` (formerly `FastQuantity`)
+- Variable types now extend `TypedQuantity` and `ExpressionQuantity`
 
 ### Performance Considerations
 

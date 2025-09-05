@@ -11,7 +11,6 @@ from ..quantities.typed_quantity import TypedQuantity
 from . import dimensions as dim
 from . import setters as ts
 
-
 # ===== QUANTITY CLASSES =====
 # Static quantity class definitions with __slots__ optimization
 

@@ -10,20 +10,17 @@ and optimized unit conversions for engineering calculations.
 
 from .expressions import (
     abs_expr,
-    min_expr,
-    max_expr,
     cond_expr,
-    sin,
     cos,
-    tan,
-    sqrt,
+    exp,
     ln,
     log10,
-    exp,
+    max_expr,
+    min_expr,
+    sin,
+    sqrt,
+    tan,
 )
-
-
-from .problem import Problem
 from .generated.quantities import (
     AbsorbedDose,
     Acceleration,
@@ -133,6 +130,7 @@ from .generated.quantities import (
     VolumetricMassFlowRate,
     Wavenumber,
 )
+from .problem import Problem
 
 # Define public API
 __all__ = [

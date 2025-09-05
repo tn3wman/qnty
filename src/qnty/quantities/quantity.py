@@ -28,7 +28,7 @@ from ..generated.units import AreaUnits, DimensionlessUnits, LengthUnits, Pressu
 from ..units.registry import UnitConstant, UnitDefinition, registry
 
 if TYPE_CHECKING:
-    pass
+    from ..problem.variables import VariablesMixin
 
 # TypeVar for generic dimensional types
 DimensionType = TypeVar("DimensionType", bound="Quantity")
@@ -364,6 +364,8 @@ class TypeSafeVariable(Generic[DimensionType]):
         self.expected_dimension = expected_dimension
         self.quantity: Quantity | None = None
         self.is_known = is_known
+        self._parent_problem: VariablesMixin | None = None  # Set by EngineeringProblem when added
+        self.validation_checks: list = []  # List for validation checks
 
     def set(self, value: float):
         """Create a setter for this variable using the class-specific setter type."""

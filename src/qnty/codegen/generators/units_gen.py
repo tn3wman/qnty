@@ -7,38 +7,30 @@ comprehensive unit definitions organized by dimensional groups.
 """
 
 import json
-import keyword
-import re
 from pathlib import Path
 from typing import Any
 
 try:
     from .data_processor import (
-        setup_import_path,
-        load_unit_data,
         augment_with_prefixed_units,
         convert_to_class_name,
-        get_dimension_constant_name,
-        calculate_statistics,
-        save_metadata,
-        get_unit_names_and_aliases,
         escape_string,
+        get_dimension_constant_name,
+        get_unit_names_and_aliases,
         is_valid_python_identifier,
-        sanitize_python_name
+        load_unit_data,
+        setup_import_path,
     )
 except ImportError:
-    from unit_data_processor import (
-        setup_import_path,
-        load_unit_data,
+    from .data_processor import (
         augment_with_prefixed_units,
         convert_to_class_name,
-        get_dimension_constant_name,
-        calculate_statistics,
-        save_metadata,
-        get_unit_names_and_aliases,
         escape_string,
+        get_dimension_constant_name,
+        get_unit_names_and_aliases,
         is_valid_python_identifier,
-        sanitize_python_name
+        load_unit_data,
+        setup_import_path,
     )
 
 
@@ -94,13 +86,11 @@ class UnitsGenerator:
             'DO NOT EDIT MANUALLY - changes will be overwritten.',
             '"""',
             '',
-            'from typing import Any',
-            '',
         ]
         
         lines.extend([
-            'from . import dimensions as dim',
             'from ..units.registry import UnitConstant, UnitDefinition',
+            'from . import dimensions as dim',
             '',
             '',
         ])
@@ -174,7 +164,7 @@ class UnitsGenerator:
             '        for attr_name in dir(unit_class):',
             '            if not attr_name.startswith("_"):',
             '                unit_constant = getattr(unit_class, attr_name, None)',
-            '                if hasattr(unit_constant, "definition"):',
+            '                if unit_constant is not None and hasattr(unit_constant, "definition"):',
             '                    unit_def = unit_constant.definition',
             '                    if unit_def.name not in registry.units:',
             '                        registry.register_unit(unit_def)',
@@ -239,7 +229,7 @@ class UnitsGenerator:
     def generate(self) -> None:
         """Generate the complete units.py file."""
         # First pass: collect all dimension constants
-        for field_name, field_data in self.unit_data.items():
+        for field_name in self.unit_data.keys():
             self.get_dimension_constant_name(field_name)
             self.get_class_name(field_name)
         
