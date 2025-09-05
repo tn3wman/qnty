@@ -24,6 +24,11 @@ try:
         calculate_statistics,
         augment_with_prefixed_units
     )
+    from .doc_generator import (
+        generate_class_docstring,
+        generate_init_method,
+        generate_set_method
+    )
 except ImportError:
     from .data_processor import (
         setup_import_path,
@@ -34,6 +39,11 @@ except ImportError:
         get_dimension_constant_name,
         calculate_statistics,
         augment_with_prefixed_units
+    )
+    from doc_generator import (
+        generate_class_docstring,
+        generate_init_method,
+        generate_set_method
     )
 
 
@@ -74,23 +84,28 @@ def generate_quantities_pyi(parsed_data: dict, dimension_mapping: dict) -> str:
     for field_name, field_data in fields_with_units:
         class_name = convert_to_class_name(field_name)
         setter_name = f"{class_name}Setter"
-        display_name = field_data.get('field', class_name)
+        display_name = field_data.get('field', class_name).lower()
         dimension_constant = get_dimension_constant_name(field_name)
+        units = field_data.get('units', [])
+        is_dimensionless = class_name == 'Dimensionless'
         
         # Generate quantity class stub
-        lines.extend([
-            f'class {class_name}(TypedQuantity):',
-            f'    """Type-safe {display_name.lower()} quantity with expression capabilities."""',
-            '    __slots__ = ()',
-            f'    _setter_class = ts.{setter_name}',
-            f'    _expected_dimension = dim.{dimension_constant}',
-            '    ',
-            f'    def set(self, value: float) -> ts.{setter_name}:',
-            f'        """Create a setter for this quantity."""',
-            '        ...',
-            '    ',
-            ''
-        ])
+        lines.append(f'class {class_name}(TypedQuantity):')
+        lines.extend(generate_class_docstring(class_name, display_name, units, is_dimensionless))
+        # Class attributes
+        lines.append(f'    __slots__ = ()')
+        lines.append(f'    _setter_class = ts.{setter_name}')
+        lines.append(f'    _expected_dimension = dim.{dimension_constant}')
+        lines.append(f'    ')
+        
+        # Generate __init__ method
+        lines.extend(generate_init_method(class_name, display_name, is_dimensionless, stub_only=True))
+        
+        # Generate set method
+        lines.append(f'    ')
+        lines.extend(generate_set_method(setter_name, display_name, stub_only=True))
+        lines.append(f'    ')
+        lines.append('')
     
     lines.extend([
         '# All quantity classes are defined above',

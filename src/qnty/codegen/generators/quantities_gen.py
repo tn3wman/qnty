@@ -23,6 +23,11 @@ try:
         save_text_file,
         escape_string
     )
+    from .doc_generator import (
+        generate_class_docstring,
+        generate_init_method,
+        generate_set_method
+    )
 except ImportError:
     from unit_data_processor import (
         setup_import_path,
@@ -35,6 +40,11 @@ except ImportError:
         get_unit_names_and_aliases,
         save_text_file,
         escape_string
+    )
+    from doc_generator import (
+        generate_class_docstring,
+        generate_init_method,
+        generate_set_method
     )
 
 
@@ -70,16 +80,25 @@ def generate_quantities(parsed_data: dict, dimension_mapping: dict) -> str:
         class_name = convert_to_class_name(field_name)
         setter_class_name = f"{class_name}Setter"
         dimension_constant = get_dimension_constant_name(field_name)
+        display_name = field_data.get('field', class_name).lower()
+        units = field_data.get('units', [])
+        is_dimensionless = class_name == 'Dimensionless'
         
+        # Generate class declaration and docstring
         lines.append(f'class {class_name}(TypedQuantity):')
-        lines.append(f'    """Type-safe {class_name.lower()} quantity with expression capabilities."""')
+        lines.extend(generate_class_docstring(class_name, display_name, units, is_dimensionless))
+        # Class attributes
         lines.append(f'    __slots__ = ()')
         lines.append(f'    _setter_class = ts.{setter_class_name}')
         lines.append(f'    _expected_dimension = dim.{dimension_constant}')
         lines.append(f'    ')
-        lines.append(f'    def set(self, value: float) -> ts.{setter_class_name}:')
-        lines.append(f'        """Create a setter for this quantity."""')
-        lines.append(f'        return ts.{setter_class_name}(self, value)')
+        
+        # Generate __init__ method
+        lines.extend(generate_init_method(class_name, display_name, is_dimensionless, stub_only=False))
+        
+        # Generate set method
+        lines.append(f'    ')
+        lines.extend(generate_set_method(setter_class_name, display_name, stub_only=False))
         lines.append(f'    ')
         lines.append('')
     
