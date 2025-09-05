@@ -2,8 +2,7 @@
 Qnty - High-Performance Unit System for Engineering
 ====================================================
 
-A fast, type-safe unit system library for Python with dimensional safety
-and optimized unit conversions for engineering calculations.
+A fast, type-safe unit system library for Python with dimensional safety and optimized unit conversions for engineering calculations.
 """
 
 # from . import (quantity, expressions)
