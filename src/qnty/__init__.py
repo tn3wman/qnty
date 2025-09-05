@@ -20,6 +20,29 @@ from .expressions import (
     sqrt,
     tan,
 )
+from .factories import (
+    VariableFactory,
+    DimensionlessFactory,
+    make_length,
+    make_pressure,
+    make_temperature,
+    make_unknown,
+    from_spec,
+)
+from .variable_spec import (
+    VariableSpec,
+    VariableSpecBatch,
+    spec,
+    known_spec,
+    unknown_spec,
+    dimensionless_spec,
+)
+from .cache_manager import (
+    get_cache_manager,
+    clear_all_caches,
+    get_cache_statistics,
+    get_memory_usage,
+)
 from .generated.quantities import (
     AbsorbedDose,
     Acceleration,
@@ -253,4 +276,3 @@ __all__ = [
     "VolumetricMassFlowRate",
     "Wavenumber",
 ]
-

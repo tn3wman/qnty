@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 
 class ValidationMixin:
     """Mixin class providing validation functionality."""
-    
+
     # These attributes will be provided by other mixins in the final Problem class
     logger: Any
     warnings: list[dict[str, Any]]
@@ -29,7 +29,7 @@ class ValidationMixin:
     def validate(self) -> list[dict[str, Any]]:
         """Run all validation checks and return any warnings."""
         validation_warnings = []
-        
+
         for check in self.validation_checks:
             try:
                 result = check(self)
@@ -37,7 +37,7 @@ class ValidationMixin:
                     validation_warnings.append(result)
             except Exception as e:
                 self.logger.debug(f"Validation check failed: {e}")
-        
+
         return validation_warnings
 
     def get_warnings(self) -> list[dict[str, Any]]:
@@ -50,15 +50,16 @@ class ValidationMixin:
         """Collect and integrate validation checks from class-level Check objects."""
         # Clear existing checks
         self.validation_checks = []
-        
+
         # Collect Check objects from metaclass
-        class_checks = getattr(self.__class__, '_class_checks', {})
-        
+        class_checks = getattr(self.__class__, "_class_checks", {})
+
         for check in class_checks.values():
             # Create a validation function from the Check object
             def make_check_function(check_obj):
                 def check_function(problem_instance):
                     return check_obj.evaluate(problem_instance.variables)
+
                 return check_function
-            
+
             self.validation_checks.append(make_check_function(check))

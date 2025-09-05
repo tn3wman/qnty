@@ -44,9 +44,7 @@ class SimultaneousEquationSolver(BaseSolver):
     LARGE_SYSTEM_THRESHOLD = 100  # Switch to optimized algorithms for n > 100
     SPARSE_THRESHOLD = 0.1  # Use sparse matrices if density < 10%
 
-    def can_handle(self, equations: list[Equation], unknowns: set[str],
-                   dependency_graph: Order | None = None,
-                   analysis: dict[str, Any] | None = None) -> bool:
+    def can_handle(self, equations: list[Equation], unknowns: set[str], dependency_graph: Order | None = None, analysis: dict[str, Any] | None = None) -> bool:
         """
         Determine if this solver can handle the given system.
 
@@ -64,7 +62,7 @@ class SimultaneousEquationSolver(BaseSolver):
         """
         # dependency_graph parameter unused but required for interface compatibility
         _ = dependency_graph
-        
+
         system_size = len(equations)
         num_unknowns = len(unknowns)
 
@@ -75,17 +73,10 @@ class SimultaneousEquationSolver(BaseSolver):
         # Only handle systems with cycles (mutual dependencies)
         if analysis is None:
             return False
-        has_cycles = analysis.get('has_cycles', False)
+        has_cycles = analysis.get("has_cycles", False)
         return bool(has_cycles)
 
-    def solve(
-        self,
-        equations: list[Equation],
-        variables: dict[str, Variable],
-        dependency_graph: Order | None = None,
-        max_iterations: int = 100,
-        tolerance: float = DEFAULT_TOLERANCE
-    ) -> SolveResult:
+    def solve(self, equations: list[Equation], variables: dict[str, Variable], dependency_graph: Order | None = None, max_iterations: int = 100, tolerance: float = DEFAULT_TOLERANCE) -> SolveResult:
         """
         Solve the n×n simultaneous system using matrix operations.
 
@@ -116,49 +107,24 @@ class SimultaneousEquationSolver(BaseSolver):
 
         # Step 2: Extract and solve matrix system
         try:
-            solution_vector = self._solve_matrix_system(
-                equations, unknown_variable_names, working_variables
-            )
+            solution_vector = self._solve_matrix_system(equations, unknown_variable_names, working_variables)
             if solution_vector is None:
-                return SolveResult(
-                    variables=working_variables,
-                    steps=self.steps,
-                    success=False,
-                    message="Failed to solve matrix system",
-                    method="SimultaneousEquationSolver"
-                )
+                return SolveResult(variables=working_variables, steps=self.steps, success=False, message="Failed to solve matrix system", method="SimultaneousEquationSolver")
 
             # Step 3: Update variables with solutions
-            self._apply_solution_to_variables(
-                unknown_variable_names, solution_vector, working_variables
-            )
+            self._apply_solution_to_variables(unknown_variable_names, solution_vector, working_variables)
 
             # Step 4: Verify solution quality
-            verification_result = self._verify_solution_quality(
-                equations, working_variables, tolerance
-            )
+            verification_result = self._verify_solution_quality(equations, working_variables, tolerance)
 
             return SolveResult(
-                variables=working_variables,
-                steps=self.steps,
-                success=verification_result.success,
-                message=verification_result.message,
-                method="SimultaneousEquationSolver",
-                iterations=1
+                variables=working_variables, steps=self.steps, success=verification_result.success, message=verification_result.message, method="SimultaneousEquationSolver", iterations=1
             )
 
         except Exception as general_error:
-            return SolveResult(
-                variables=working_variables,
-                steps=self.steps,
-                success=False,
-                message=f"Simultaneous solving failed: {general_error}",
-                method="SimultaneousEquationSolver"
-            )
+            return SolveResult(variables=working_variables, steps=self.steps, success=False, message=f"Simultaneous solving failed: {general_error}", method="SimultaneousEquationSolver")
 
-    def _validate_system(
-        self, equations: list[Equation], variables: dict[str, Variable]
-    ) -> SolveResult:
+    def _validate_system(self, equations: list[Equation], variables: dict[str, Variable]) -> SolveResult:
         """
         Validate that the system meets requirements for simultaneous solving.
 
@@ -176,24 +142,15 @@ class SimultaneousEquationSolver(BaseSolver):
                 steps=self.steps,
                 success=False,
                 message=f"Simultaneous solver requires n×n system (got {num_equations} equations, {num_unknowns} unknowns)",
-                method="SimultaneousEquationSolver"
+                method="SimultaneousEquationSolver",
             )
 
         if self.logger:
-            self.logger.debug(
-                f"Attempting {num_unknowns}×{num_unknowns} simultaneous solution for {unknown_variable_names}"
-            )
+            self.logger.debug(f"Attempting {num_unknowns}×{num_unknowns} simultaneous solution for {unknown_variable_names}")
 
-        return SolveResult(
-            variables=variables,
-            steps=self.steps,
-            success=True,
-            message="System validation passed",
-            method="SimultaneousEquationSolver"
-        )
+        return SolveResult(variables=variables, steps=self.steps, success=True, message="System validation passed", method="SimultaneousEquationSolver")
 
-    def _solve_matrix_system(self, equations: list[Equation], unknown_variables: list[str],
-                           working_variables: dict[str, Variable]) -> np.ndarray | None:
+    def _solve_matrix_system(self, equations: list[Equation], unknown_variables: list[str], working_variables: dict[str, Variable]) -> np.ndarray | None:
         """
         Extract coefficient matrix and solve the linear system.
 
@@ -230,8 +187,7 @@ class SimultaneousEquationSolver(BaseSolver):
                 self.logger.error(f"Linear algebra error: {linear_algebra_error}")
             return None
 
-    def _solve_optimized_system(self, coefficient_matrix: np.ndarray, constant_vector: np.ndarray,
-                              system_size: int) -> np.ndarray:
+    def _solve_optimized_system(self, coefficient_matrix: np.ndarray, constant_vector: np.ndarray, system_size: int) -> np.ndarray:
         """
         Solve the matrix system using optimized algorithms based on system characteristics.
 
@@ -291,17 +247,13 @@ class SimultaneousEquationSolver(BaseSolver):
         try:
             # Try importing scipy for better performance on large systems
             from scipy.linalg import solve  # type: ignore[import-untyped]
-            return solve(coefficient_matrix, constant_vector, assume_a='gen')
+
+            return solve(coefficient_matrix, constant_vector, assume_a="gen")
         except ImportError:
             # Fallback to NumPy if scipy is not available
             return np.linalg.solve(coefficient_matrix, constant_vector)
 
-    def _apply_solution_to_variables(
-        self,
-        unknown_variables: list[str],
-        solution_vector: np.ndarray,
-        working_variables: dict[str, Variable]
-    ):
+    def _apply_solution_to_variables(self, unknown_variables: list[str], solution_vector: np.ndarray, working_variables: dict[str, Variable]):
         """
         Apply solution values to variables and record solving steps.
         """
@@ -309,12 +261,7 @@ class SimultaneousEquationSolver(BaseSolver):
             solution_value = float(solution_vector[i])
             self._update_variable_with_solution(variable_name, solution_value, working_variables)
 
-    def _verify_solution_quality(
-        self,
-        equations: list[Equation],
-        working_variables: dict[str, Variable],
-        tolerance: float
-    ) -> SolveResult:
+    def _verify_solution_quality(self, equations: list[Equation], working_variables: dict[str, Variable], tolerance: float) -> SolveResult:
         """
         Verify solution quality by checking equation residuals.
 
@@ -340,16 +287,9 @@ class SimultaneousEquationSolver(BaseSolver):
             variable_solutions = {var: f"{working_variables[var].quantity}" for var in working_variables if not working_variables[var].is_known}
             self.logger.debug(f"Solved {num_unknowns}×{num_unknowns} system: {variable_solutions}")
 
-        return SolveResult(
-            variables=working_variables,
-            steps=[],
-            success=is_successful,
-            message=success_message,
-            method="SimultaneousEquationSolver"
-        )
+        return SolveResult(variables=working_variables, steps=[], success=is_successful, message=success_message, method="SimultaneousEquationSolver")
 
-    def _extract_matrix_system(self, equations: list[Equation], unknown_variables: list[str],
-                             variables: dict[str, Variable]) -> tuple[np.ndarray | None, np.ndarray | None]:
+    def _extract_matrix_system(self, equations: list[Equation], unknown_variables: list[str], variables: dict[str, Variable]) -> tuple[np.ndarray | None, np.ndarray | None]:
         """
         Extract coefficient matrix A and constant vector b from the system of equations.
 
@@ -379,24 +319,21 @@ class SimultaneousEquationSolver(BaseSolver):
 
             # Process equations in batches for large systems to reduce memory pressure
             for equation_index, equation in enumerate(equations):
-                coefficient_list = self._extract_linear_coefficients_vector(
-                    equation, unknown_variables, variables
-                )
+                coefficient_list = self._extract_linear_coefficients_vector(equation, unknown_variables, variables)
                 if coefficient_list is None:
                     return None, None
 
                 # coefficient_list contains [a1, a2, ..., an, constant]
                 # where equation is a1*x1 + a2*x2 + ... + an*xn = constant
                 coefficient_matrix[equation_index, :] = coefficient_list[:-1]  # Coefficients
-                constant_vector[equation_index] = coefficient_list[-1]      # Constant term
+                constant_vector[equation_index] = coefficient_list[-1]  # Constant term
 
             return coefficient_matrix, constant_vector
 
         except Exception:
             return None, None
 
-    def _extract_linear_coefficients_vector(self, equation: Equation, unknown_variables: list[str],
-                                          variables: dict[str, Variable]) -> list[float] | None:
+    def _extract_linear_coefficients_vector(self, equation: Equation, unknown_variables: list[str], variables: dict[str, Variable]) -> list[float] | None:
         """
         Extract linear coefficients from equation using numerical differentiation.
 
@@ -433,11 +370,7 @@ class SimultaneousEquationSolver(BaseSolver):
                     original_var = test_vars[var_name]
                     if original_var.quantity is None:
                         raise ValueError(f"Variable {var_name} has no quantity")
-                    test_var = Variable(
-                        name=f"test_{var_name}",
-                        expected_dimension=original_var.quantity.dimension,
-                        is_known=True
-                    )
+                    test_var = Variable(name=f"test_{var_name}", expected_dimension=original_var.quantity.dimension, is_known=True)
                     test_var.quantity = Qty(test_value, original_var.quantity.unit)
                     test_var.symbol = var_name
                     test_vars[var_name] = test_var
@@ -453,11 +386,7 @@ class SimultaneousEquationSolver(BaseSolver):
                 original_var = test_vars[var_name]
                 if original_var.quantity is None:
                     raise ValueError(f"Variable {var_name} has no quantity")
-                test_var = Variable(
-                    name=f"test_{var_name}",
-                    expected_dimension=original_var.quantity.dimension,
-                    is_known=True
-                )
+                test_var = Variable(name=f"test_{var_name}", expected_dimension=original_var.quantity.dimension, is_known=True)
                 test_var.quantity = Qty(0.0, original_var.quantity.unit)
                 test_var.symbol = var_name
                 test_vars[var_name] = test_var
@@ -498,20 +427,19 @@ class SimultaneousEquationSolver(BaseSolver):
             residual = left_hand_side - right_hand_side
 
             # Return the magnitude of the residual
-            if hasattr(residual, 'value'):
+            if hasattr(residual, "value"):
                 return residual.value
             elif isinstance(residual, int | float):
                 return float(residual)
             else:
                 # If it's a Qty object without .value, try to convert
-                return float(residual.value) if hasattr(residual, 'value') else 0.0
+                return float(residual.value) if hasattr(residual, "value") else 0.0
 
         except Exception:
             # Fallback for cases where evaluation fails
-            return float('inf')
+            return float("inf")
 
-    def _update_variable_with_solution(self, variable_symbol: str, solution_value: float,
-                                     variables: dict[str, Variable]):
+    def _update_variable_with_solution(self, variable_symbol: str, solution_value: float, variables: dict[str, Variable]):
         """
         Update a variable with its solved value and record the solving step.
 
@@ -528,11 +456,7 @@ class SimultaneousEquationSolver(BaseSolver):
 
         # Preserve the original variable name and create solved variable
         original_name = original_variable.name
-        solved_variable = Variable(
-            name=original_name,
-            expected_dimension=solution_quantity.dimension,
-            is_known=True
-        )
+        solved_variable = Variable(name=original_name, expected_dimension=solution_quantity.dimension, is_known=True)
         solved_variable.quantity = solution_quantity
         solved_variable.symbol = variable_symbol
         variables[variable_symbol] = solved_variable
@@ -541,7 +465,7 @@ class SimultaneousEquationSolver(BaseSolver):
         self._log_step(
             1,  # iteration number
             variable_symbol,
-            'simultaneous_system',
+            "simultaneous_system",
             str(solution_quantity),
-            'simultaneous'
+            "simultaneous",
         )

@@ -21,12 +21,13 @@ from qnty.quantities import TypeSafeVariable as Variable
 # Custom Exceptions
 class VariableNotFoundError(KeyError):
     """Raised when trying to access a variable that doesn't exist."""
+
     pass
 
 
 class VariablesMixin:
     """Mixin class providing variable management functionality."""
-    
+
     # These attributes/methods will be provided by other mixins in the final Problem class
     variables: dict[str, Variable]
     name: str
@@ -37,11 +38,11 @@ class VariablesMixin:
     _known_variables_cache: dict[str, Variable] | None
     _unknown_variables_cache: dict[str, Variable] | None
     _cache_dirty: bool
-    
+
     def _invalidate_caches(self) -> None:
         """Will be provided by ProblemBase."""
         ...
-    
+
     def _update_variable_caches(self) -> None:
         """Will be provided by ProblemBase."""
         ...
@@ -49,21 +50,21 @@ class VariablesMixin:
     def add_variable(self, variable: Variable) -> None:
         """
         Add a variable to the problem.
-        
+
         The variable will be available for use in equations and can be accessed
         via both dictionary notation (problem['symbol']) and attribute notation
         (problem.symbol).
-        
+
         Args:
             variable: Variable object to add to the problem
-            
+
         Note:
             If a variable with the same symbol already exists, it will be replaced
             and a warning will be logged.
         """
         if variable.symbol in self.variables:
             self.logger.warning(f"Variable {variable.symbol} already exists. Replacing.")
-        
+
         if variable.symbol is not None:
             self.variables[variable.symbol] = variable
         # Set parent problem reference for dependency invalidation
@@ -88,7 +89,7 @@ class VariablesMixin:
         if symbol not in self.variables:
             raise VariableNotFoundError(f"Variable '{symbol}' not found in problem '{self.name}'.")
         return self.variables[symbol]
-    
+
     def get_known_variables(self) -> dict[str, Variable]:
         """Get all known variables."""
         if self._cache_dirty or self._known_variables_cache is None:
@@ -108,21 +109,21 @@ class VariablesMixin:
     def get_unknown_symbols(self) -> set[str]:
         """Get symbols of all unknown variables."""
         return {symbol for symbol, var in self.variables.items() if not var.is_known}
-    
+
     def get_known_variable_symbols(self) -> set[str]:
         """Alias for get_known_symbols for compatibility."""
         return self.get_known_symbols()
-    
+
     def get_unknown_variable_symbols(self) -> set[str]:
         """Alias for get_unknown_symbols for compatibility."""
         return self.get_unknown_symbols()
-    
+
     # Properties for compatibility
     @property
     def known_variables(self) -> dict[str, Variable]:
         """Get all variables marked as known."""
         return self.get_known_variables()
-    
+
     @property
     def unknown_variables(self) -> dict[str, Variable]:
         """Get all variables marked as unknown."""
@@ -138,7 +139,7 @@ class VariablesMixin:
         self.is_solved = False
         self._invalidate_caches()
         return self
-    
+
     def mark_known(self, **symbol_values: Qty):
         """Mark variables as known and set their values."""
         for symbol, quantity in symbol_values.items():
@@ -154,17 +155,17 @@ class VariablesMixin:
         """
         Mark all variables that depend on the changed variable as unknown.
         This ensures they get recalculated when the problem is re-solved.
-        
+
         Args:
             changed_variable_symbol: Symbol of the variable whose value changed
         """
-        if not hasattr(self, 'dependency_graph') or not self.dependency_graph:
+        if not hasattr(self, "dependency_graph") or not self.dependency_graph:
             # If dependency graph hasn't been built yet, we can't invalidate
             return
-            
+
         # Get all variables that depend on the changed variable
         dependent_vars = self.dependency_graph.graph.get(changed_variable_symbol, [])
-        
+
         # Mark each dependent variable as unknown
         for dependent_symbol in dependent_vars:
             if dependent_symbol in self.variables:
@@ -174,19 +175,15 @@ class VariablesMixin:
                     var.mark_unknown()
                     # Recursively invalidate variables that depend on this one
                     self.invalidate_dependents(dependent_symbol)
-        
+
         # Mark problem as needing re-solving
         self.is_solved = False
         self._invalidate_caches()
 
     def _create_placeholder_variable(self, symbol: str) -> None:
         """Create a placeholder variable for a missing symbol."""
-        
-        placeholder_var = Variable(
-            name=f"Auto-created: {symbol}",
-            expected_dimension=DimensionlessUnits.dimensionless.dimension,
-            is_known=False
-        )
+
+        placeholder_var = Variable(name=f"Auto-created: {symbol}", expected_dimension=DimensionlessUnits.dimensionless.dimension, is_known=False)
         placeholder_var.symbol = symbol
         placeholder_var.quantity = Qty(0.0, DimensionlessUnits.dimensionless)
         self.add_variable(placeholder_var)
@@ -197,19 +194,19 @@ class VariablesMixin:
         # Create a new variable of the same exact type to preserve .equals() method
         # This ensures domain-specific variables (Length, Pressure, etc.) keep their type
         variable_type = type(variable)
-        
+
         # Use __new__ to avoid constructor parameter issues
         cloned = variable_type.__new__(variable_type)
-        
+
         # Initialize manually with the same attributes as the original
         cloned.name = variable.name
         cloned.symbol = variable.symbol
         cloned.expected_dimension = variable.expected_dimension
         cloned.quantity = variable.quantity  # Keep reference to same quantity - units must not be copied
         cloned.is_known = variable.is_known
-        
+
         # Ensure the cloned variable has fresh validation checks
-        if hasattr(variable, 'validation_checks'):
+        if hasattr(variable, "validation_checks"):
             try:
                 cloned.validation_checks = []
             except (AttributeError, TypeError):
@@ -228,7 +225,7 @@ class VariablesMixin:
             if hasattr(self, var_symbol):
                 # Variables preserve their dimensional types during solving
                 setattr(self, var_symbol, var)
-        
+
         # Also update sub-problem namespace objects
         for namespace, sub_problem in self.sub_problems.items():
             if hasattr(self, namespace):

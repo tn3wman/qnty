@@ -10,6 +10,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Generic, Self, TypeVar
 
+from ..constants import FLOAT_EQUALITY_TOLERANCE
 from ..generated.dimensions import (
     AREA,
     DIMENSIONLESS,
@@ -102,6 +103,235 @@ def _initialize_dimension_cache():
     }
 
 
+# Component classes for separation of concerns
+class ArithmeticOperations:
+    """Handles arithmetic operations for quantities."""
+    
+    @staticmethod
+    def add(quantity, other):
+        """Add two quantities with dimensional checking."""
+        # Optimized addition with early exit and bulk operations
+        self_sig, other_sig = quantity._dimension_sig, other._dimension_sig
+        if self_sig != other_sig:
+            raise ValueError(ERROR_TEMPLATES["incompatible_add"].format(quantity.unit.name, other.unit.name))
+
+        # Ultra-fast path: compare unit names directly
+        if quantity.unit.name == other.unit.name:
+            return Quantity(quantity.value + other.value, quantity.unit)
+
+        # Convert using cached SI factors (avoid repeated attribute access)
+        self_si, other_si = quantity._si_factor, other._si_factor
+        other_value = other.value * other_si / self_si
+        return Quantity(quantity.value + other_value, quantity.unit)
+    
+    @staticmethod
+    def subtract(quantity, other):
+        """Subtract two quantities with dimensional checking."""
+        # Optimized subtraction with early exit and bulk operations
+        self_sig, other_sig = quantity._dimension_sig, other._dimension_sig
+        if self_sig != other_sig:
+            raise ValueError(ERROR_TEMPLATES["incompatible_subtract"].format(other.unit.name, quantity.unit.name))
+
+        # Ultra-fast path: compare unit names directly
+        if quantity.unit.name == other.unit.name:
+            return Quantity(quantity.value - other.value, quantity.unit)
+
+        # Convert using cached SI factors (avoid repeated attribute access)
+        self_si, other_si = quantity._si_factor, other._si_factor
+        other_value = other.value * other_si / self_si
+        return Quantity(quantity.value - other_value, quantity.unit)
+    
+    @staticmethod
+    def multiply(quantity, other):
+        """Multiply quantity by another quantity or scalar."""
+        # Fast path for numeric types - use type() for speed
+        if isinstance(other, int | float):
+            return Quantity(quantity.value * other, quantity.unit)
+
+        # Handle TypeSafeVariable objects by using their quantity
+        # Check for quantity attribute without importing (duck typing)
+        if hasattr(other, "quantity") and getattr(other, "quantity", None) is not None:
+            other = other.quantity  # type: ignore
+
+        # Type narrowing: at this point other should be Quantity
+        if not isinstance(other, Quantity):
+            raise TypeError(f"Expected Quantity, got {type(other)}")
+
+        # Check multiplication cache first
+        cache_key = (quantity._dimension_sig, other._dimension_sig)
+        if cache_key in _MULTIPLICATION_CACHE:
+            result_unit = _MULTIPLICATION_CACHE[cache_key]
+            # Fast computation with cached unit
+            result_si_value = (quantity.value * quantity._si_factor) * (other.value * other._si_factor)
+            return Quantity(result_si_value / result_unit.si_factor, result_unit)
+
+        # Fast dimensional analysis using cached signatures
+        result_dimension_sig = quantity._dimension_sig * other._dimension_sig
+
+        # Use cached SI factors for conversion (bulk operations)
+        self_si, other_si = quantity._si_factor, other._si_factor
+        result_si_value = (quantity.value * self_si) * (other.value * other_si)
+
+        # Fast path for common dimension combinations
+        result_unit = UnitResolution.find_result_unit_fast(quantity, result_dimension_sig)
+        result_value = result_si_value / result_unit.si_factor
+
+        # Cache the result for future use (limit cache size)
+        if len(_MULTIPLICATION_CACHE) < 100:
+            _MULTIPLICATION_CACHE[cache_key] = result_unit
+
+        return Quantity(result_value, result_unit)
+    
+    @staticmethod
+    def divide(quantity, other):
+        """Divide quantity by another quantity or scalar."""
+        # Fast path for numeric types - use type() for speed
+        if isinstance(other, int | float):
+            return Quantity(quantity.value / other, quantity.unit)
+
+        # Handle TypeSafeVariable objects by using their quantity
+        if hasattr(other, "quantity") and getattr(other, "quantity", None) is not None:
+            other = other.quantity  # type: ignore
+
+        # Type narrowing: at this point other should be Quantity
+        if not isinstance(other, Quantity):
+            raise TypeError(f"Expected Quantity, got {type(other)}")
+
+        # Check division cache first
+        cache_key = (quantity._dimension_sig, other._dimension_sig)
+        if cache_key in _DIVISION_CACHE:
+            result_unit = _DIVISION_CACHE[cache_key]
+            # Fast computation with cached unit
+            result_si_value = (quantity.value * quantity._si_factor) / (other.value * other._si_factor)
+            return Quantity(result_si_value / result_unit.si_factor, result_unit)
+
+        # Fast dimensional analysis using cached signatures
+        result_dimension_sig = quantity._dimension_sig / other._dimension_sig
+
+        # Use cached SI factors for conversion (bulk operations)
+        self_si, other_si = quantity._si_factor, other._si_factor
+        result_si_value = (quantity.value * self_si) / (other.value * other_si)
+
+        # Fast path for common dimension combinations
+        result_unit = UnitResolution.find_result_unit_fast(quantity, result_dimension_sig)
+        result_value = result_si_value / result_unit.si_factor
+
+        # Cache the result for future use (limit cache size)
+        if len(_DIVISION_CACHE) < 100:
+            _DIVISION_CACHE[cache_key] = result_unit
+
+        return Quantity(result_value, result_unit)
+
+
+class ComparisonOperations:
+    """Handles comparison operations for quantities."""
+    
+    @staticmethod
+    def less_than(quantity, other):
+        """Compare if this quantity is less than another."""
+        # Optimized comparison with bulk operations
+        if quantity._dimension_sig != other._dimension_sig:
+            raise ValueError(ERROR_TEMPLATES["incompatible_comparison"])
+
+        # Fast path for same units (use name comparison for speed)
+        if quantity.unit.name == other.unit.name:
+            return quantity.value < other.value
+
+        # Convert using cached SI factors (bulk assignment)
+        self_si, other_si = quantity._si_factor, other._si_factor
+        return quantity.value < (other.value * other_si / self_si)
+    
+    @staticmethod
+    def equals(quantity, other):
+        """Check equality between quantities."""
+        if not isinstance(other, Quantity):
+            return False
+        if quantity._dimension_sig != other._dimension_sig:
+            return False
+
+        # Fast path for same units (use name comparison)
+        if quantity.unit.name == other.unit.name:
+            return abs(quantity.value - other.value) < FLOAT_EQUALITY_TOLERANCE
+
+        # Convert using cached SI factors (bulk assignment)
+        self_si, other_si = quantity._si_factor, other._si_factor
+        return abs(quantity.value - (other.value * other_si / self_si)) < FLOAT_EQUALITY_TOLERANCE
+
+
+class UnitConversions:
+    """Handles unit conversion operations."""
+    
+    @staticmethod
+    def to(quantity, target_unit):
+        """Convert quantity to target unit."""
+        # Ultra-fast same unit check using name comparison
+        if quantity.unit.name == target_unit.name:
+            return Quantity(quantity.value, target_unit)
+
+        # Direct SI factor conversion - avoid registry lookup
+        converted_value = quantity.value * quantity._si_factor / target_unit.si_factor
+        return Quantity(converted_value, target_unit)
+
+
+class QuantityFormatting:
+    """Handles string formatting for quantities."""
+    
+    @staticmethod
+    def to_string(quantity):
+        """String representation of the quantity."""
+        # Optimized string representation (caching removed for simplicity)
+        return f"{quantity.value} {quantity.unit.symbol}"
+    
+    @staticmethod
+    def to_repr(quantity):
+        """Detailed representation of the quantity."""
+        return f"Quantity({quantity.value}, {quantity.unit.name})"
+
+
+class UnitResolution:
+    """Handles unit resolution for dimensional operations."""
+    
+    @staticmethod
+    def find_result_unit_fast(quantity, result_dimension_sig: int | float) -> UnitConstant:
+        """Ultra-fast unit finding using pre-cached dimension signatures."""
+        # O(1) lookup for common dimensions (cache initialized at module load)
+        if result_dimension_sig in registry._dimension_cache:
+            return registry._dimension_cache[result_dimension_sig]
+
+        # For rare combined dimensions, create SI base unit with descriptive name
+        result_dimension = DimensionSignature(result_dimension_sig)
+
+        # Create descriptive name based on dimensional analysis
+        si_name = UnitResolution.create_si_unit_name(quantity, result_dimension)
+        si_symbol = UnitResolution.create_si_unit_symbol(quantity, result_dimension)
+
+        temp_unit = UnitDefinition(name=si_name, symbol=si_symbol, dimension=result_dimension, si_factor=1.0)
+        result_unit = UnitConstant(temp_unit)
+
+        # Cache for future use
+        registry._dimension_cache[result_dimension_sig] = result_unit
+        return result_unit
+    
+    @staticmethod
+    def create_si_unit_name(_quantity, dimension: DimensionSignature) -> str:
+        """Create descriptive SI unit name based on dimensional analysis."""
+        # For now, return a generic SI unit name. In the future, this could be enhanced
+        # to parse the dimension signature and create descriptive names like "newton_per_meter"
+        return f"si_derived_unit_{abs(hash(dimension._signature)) % 10000}"
+    
+    @staticmethod
+    def create_si_unit_symbol(_quantity, dimension: DimensionSignature) -> str:
+        """Create SI unit symbol based on dimensional analysis."""
+        # For complex units, return descriptive symbol based on common engineering units
+        # Use dimension signature for unique symbol generation
+        return f"SI_{abs(hash(dimension._signature)) % 1000}"
+    
+    @staticmethod
+    def find_result_unit(quantity, result_dimension: DimensionSignature) -> UnitConstant:
+        """Legacy method - kept for compatibility."""
+        return UnitResolution.find_result_unit_fast(quantity, result_dimension._signature)
+
+
 class TypeSafeSetter:
     """Basic type-safe setter that accepts compatible units."""
 
@@ -140,92 +370,31 @@ class Quantity:
             cache_key = (int(value), unit.name)
             if cache_key in _SMALL_INTEGER_CACHE:
                 return _SMALL_INTEGER_CACHE[cache_key]
-            
+
             # Create and cache if under limit
             if len(_SMALL_INTEGER_CACHE) < 100:  # Small cache limit
                 obj = cls(float(value), unit)
                 _SMALL_INTEGER_CACHE[cache_key] = obj
                 return obj
-        
+
         # Regular creation for everything else
         return cls(value, unit)
 
     def __str__(self) -> str:
-        # Optimized string representation (caching removed for simplicity)
-        return f"{self.value} {self.unit.symbol}"
+        return QuantityFormatting.to_string(self)
 
     def __repr__(self) -> str:
-        return f"FastQuantity({self.value}, {self.unit.name})"
+        return QuantityFormatting.to_repr(self)
 
     # Ultra-fast arithmetic with dimensional checking
     def __add__(self, other: Quantity) -> Quantity:
-        # Optimized addition with early exit and bulk operations
-        self_sig, other_sig = self._dimension_sig, other._dimension_sig
-        if self_sig != other_sig:
-            raise ValueError(ERROR_TEMPLATES["incompatible_add"].format(self.unit.name, other.unit.name))
-
-        # Ultra-fast path: compare unit names directly
-        if self.unit.name == other.unit.name:
-            return Quantity(self.value + other.value, self.unit)
-
-        # Convert using cached SI factors (avoid repeated attribute access)
-        self_si, other_si = self._si_factor, other._si_factor
-        other_value = other.value * other_si / self_si
-        return Quantity(self.value + other_value, self.unit)
+        return ArithmeticOperations.add(self, other)
 
     def __sub__(self, other: Quantity) -> Quantity:
-        # Optimized subtraction with early exit and bulk operations
-        self_sig, other_sig = self._dimension_sig, other._dimension_sig
-        if self_sig != other_sig:
-            raise ValueError(ERROR_TEMPLATES["incompatible_subtract"].format(other.unit.name, self.unit.name))
-
-        # Ultra-fast path: compare unit names directly
-        if self.unit.name == other.unit.name:
-            return Quantity(self.value - other.value, self.unit)
-
-        # Convert using cached SI factors (avoid repeated attribute access)
-        self_si, other_si = self._si_factor, other._si_factor
-        other_value = other.value * other_si / self_si
-        return Quantity(self.value - other_value, self.unit)
+        return ArithmeticOperations.subtract(self, other)
 
     def __mul__(self, other: Quantity | float | int | TypeSafeVariable) -> Quantity:
-        # Fast path for numeric types - use type() for speed
-        if isinstance(other, int | float):
-            return Quantity(self.value * other, self.unit)
-
-        # Handle TypeSafeVariable objects by using their quantity
-        # Check for quantity attribute without importing (duck typing)
-        if hasattr(other, "quantity") and getattr(other, "quantity", None) is not None:
-            other = other.quantity  # type: ignore
-
-        # Type narrowing: at this point other should be FastQuantity
-        if not isinstance(other, Quantity):
-            raise TypeError(f"Expected FastQuantity, got {type(other)}")
-
-        # Check multiplication cache first
-        cache_key = (self._dimension_sig, other._dimension_sig)
-        if cache_key in _MULTIPLICATION_CACHE:
-            result_unit = _MULTIPLICATION_CACHE[cache_key]
-            # Fast computation with cached unit
-            result_si_value = (self.value * self._si_factor) * (other.value * other._si_factor)
-            return Quantity(result_si_value / result_unit.si_factor, result_unit)
-
-        # Fast dimensional analysis using cached signatures
-        result_dimension_sig = self._dimension_sig * other._dimension_sig
-
-        # Use cached SI factors for conversion (bulk operations)
-        self_si, other_si = self._si_factor, other._si_factor
-        result_si_value = (self.value * self_si) * (other.value * other_si)
-
-        # Fast path for common dimension combinations
-        result_unit = self._find_result_unit_fast(result_dimension_sig)
-        result_value = result_si_value / result_unit.si_factor
-
-        # Cache the result for future use (limit cache size)
-        if len(_MULTIPLICATION_CACHE) < 100:
-            _MULTIPLICATION_CACHE[cache_key] = result_unit
-
-        return Quantity(result_value, result_unit)
+        return ArithmeticOperations.multiply(self, other)
 
     def __rmul__(self, other: float | int) -> Quantity:
         """Reverse multiplication for cases like 2 * quantity."""
@@ -234,117 +403,34 @@ class Quantity:
         return NotImplemented
 
     def __truediv__(self, other: Quantity | float | int | TypeSafeVariable) -> Quantity:
-        # Fast path for numeric types - use type() for speed
-        if isinstance(other, int | float):
-            return Quantity(self.value / other, self.unit)
-
-        # Handle TypeSafeVariable objects by using their quantity
-        if hasattr(other, "quantity") and getattr(other, "quantity", None) is not None:
-            other = other.quantity  # type: ignore
-
-        # Type narrowing: at this point other should be FastQuantity
-        if not isinstance(other, Quantity):
-            raise TypeError(f"Expected FastQuantity, got {type(other)}")
-
-        # Check division cache first
-        cache_key = (self._dimension_sig, other._dimension_sig)
-        if cache_key in _DIVISION_CACHE:
-            result_unit = _DIVISION_CACHE[cache_key]
-            # Fast computation with cached unit
-            result_si_value = (self.value * self._si_factor) / (other.value * other._si_factor)
-            return Quantity(result_si_value / result_unit.si_factor, result_unit)
-
-        # Fast dimensional analysis using cached signatures
-        result_dimension_sig = self._dimension_sig / other._dimension_sig
-
-        # Use cached SI factors for conversion (bulk operations)
-        self_si, other_si = self._si_factor, other._si_factor
-        result_si_value = (self.value * self_si) / (other.value * other_si)
-
-        # Fast path for common dimension combinations
-        result_unit = self._find_result_unit_fast(result_dimension_sig)
-        result_value = result_si_value / result_unit.si_factor
-
-        # Cache the result for future use (limit cache size)
-        if len(_DIVISION_CACHE) < 100:
-            _DIVISION_CACHE[cache_key] = result_unit
-
-        return Quantity(result_value, result_unit)
+        return ArithmeticOperations.divide(self, other)
 
     def _find_result_unit_fast(self, result_dimension_sig: int | float) -> UnitConstant:
-        """Ultra-fast unit finding using pre-cached dimension signatures."""
-
-        # O(1) lookup for common dimensions (cache initialized at module load)
-        if result_dimension_sig in registry._dimension_cache:
-            return registry._dimension_cache[result_dimension_sig]
-
-        # For rare combined dimensions, create SI base unit with descriptive name
-        result_dimension = DimensionSignature(result_dimension_sig)
-
-        # Create descriptive name based on dimensional analysis
-        si_name = self._create_si_unit_name(result_dimension)
-        si_symbol = self._create_si_unit_symbol(result_dimension)
-
-        temp_unit = UnitDefinition(name=si_name, symbol=si_symbol, dimension=result_dimension, si_factor=1.0)
-        result_unit = UnitConstant(temp_unit)
-
-        # Cache for future use
-        registry._dimension_cache[result_dimension_sig] = result_unit
-        return result_unit
-
+        """Delegate to unit resolution component."""
+        return UnitResolution.find_result_unit_fast(self, result_dimension_sig)
+    
     def _create_si_unit_name(self, dimension: DimensionSignature) -> str:
-        """Create descriptive SI unit name based on dimensional analysis."""
-        # For now, return a generic SI unit name. In the future, this could be enhanced
-        # to parse the dimension signature and create descriptive names like "newton_per_meter"
-        return f"si_derived_unit_{abs(hash(dimension._signature)) % 10000}"
-
+        """Delegate to unit resolution component."""
+        return UnitResolution.create_si_unit_name(self, dimension)
+    
     def _create_si_unit_symbol(self, dimension: DimensionSignature) -> str:
-        """Create SI unit symbol based on dimensional analysis."""
-        # For complex units, return descriptive symbol based on common engineering units
-        # Use dimension signature for unique symbol generation
-        return f"SI_{abs(hash(dimension._signature)) % 1000}"
-
+        """Delegate to unit resolution component."""
+        return UnitResolution.create_si_unit_symbol(self, dimension)
+    
     def _find_result_unit(self, result_dimension: DimensionSignature) -> UnitConstant:
         """Legacy method - kept for compatibility."""
-        return self._find_result_unit_fast(result_dimension._signature)
+        return UnitResolution.find_result_unit(self, result_dimension)
 
     # Ultra-fast comparisons
     def __lt__(self, other: Quantity) -> bool:
-        # Optimized comparison with bulk operations
-        if self._dimension_sig != other._dimension_sig:
-            raise ValueError(ERROR_TEMPLATES["incompatible_comparison"])
-
-        # Fast path for same units (use name comparison for speed)
-        if self.unit.name == other.unit.name:
-            return self.value < other.value
-
-        # Convert using cached SI factors (bulk assignment)
-        self_si, other_si = self._si_factor, other._si_factor
-        return self.value < (other.value * other_si / self_si)
+        return ComparisonOperations.less_than(self, other)
 
     def __eq__(self, other) -> bool:
-        if not isinstance(other, Quantity):
-            return False
-        if self._dimension_sig != other._dimension_sig:
-            return False
-
-        # Fast path for same units (use name comparison)
-        if self.unit.name == other.unit.name:
-            return abs(self.value - other.value) < 1e-10
-
-        # Convert using cached SI factors (bulk assignment)
-        self_si, other_si = self._si_factor, other._si_factor
-        return abs(self.value - (other.value * other_si / self_si)) < 1e-10
+        return ComparisonOperations.equals(self, other)
 
     def to(self, target_unit: UnitConstant) -> Quantity:
         """Ultra-fast unit conversion with optimized same-unit check."""
-        # Ultra-fast same unit check using name comparison
-        if self.unit.name == target_unit.name:
-            return Quantity(self.value, target_unit)
-
-        # Direct SI factor conversion - avoid registry lookup
-        converted_value = self.value * self._si_factor / target_unit.si_factor
-        return Quantity(converted_value, target_unit)
+        return UnitConversions.to(self, target_unit)
 
 
 class TypeSafeVariable(Generic[DimensionType]):

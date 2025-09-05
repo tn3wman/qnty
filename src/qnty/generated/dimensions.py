@@ -15,6 +15,7 @@ from typing import ClassVar, final
 
 class BaseDimension(IntEnum):
     """Base dimensions as prime numbers for efficient bit operations."""
+
     LENGTH = 2
     MASS = 3
     TIME = 5
@@ -29,10 +30,10 @@ class BaseDimension(IntEnum):
 @dataclass(frozen=True, slots=True)
 class DimensionSignature:
     """Immutable dimension signature for zero-cost dimensional analysis."""
-    
+
     # Store as bit pattern for ultra-fast comparison
     _signature: int | float = 1
-    
+
     # Pre-computed signature cache for common dimensions
     _COMMON_SIGNATURES: ClassVar[dict[tuple[int, ...], int | float]] = {
         (0, 0, 0, 0, 0, 0, 0): 1,  # Dimensionless
@@ -86,23 +87,23 @@ class DimensionSignature:
         (3, -1, 0, 0, 0, 0, 0): 2.666666667,  # L^3 M^-1
         (3, 0, -1, 0, 0, 0, 0): 1.6,  # L^3 T^-1
     }
-    
+
     # Instance cache for interning common dimensions
     _INSTANCE_CACHE: ClassVar[dict[int | float, "DimensionSignature"]] = {}
-    
+
     def __new__(cls, signature: int | float = 1):
         """Optimized constructor with instance interning."""
         if signature in cls._INSTANCE_CACHE:
             return cls._INSTANCE_CACHE[signature]
-        
+
         instance = object.__new__(cls)
-        
+
         # Cache common signatures
         if len(cls._INSTANCE_CACHE) < 100:  # Limit cache size
             cls._INSTANCE_CACHE[signature] = instance
-        
+
         return instance
-    
+
     @classmethod
     def create(cls, length=0, mass=0, time=0, current=0, temp=0, amount=0, luminosity=0):
         """Create dimension from exponents with optimized lookup."""
@@ -110,56 +111,56 @@ class DimensionSignature:
         key = (length, mass, time, current, temp, amount, luminosity)
         if key in cls._COMMON_SIGNATURES:
             return cls(cls._COMMON_SIGNATURES[key])
-        
+
         # Fast path for dimensionless
         if not any([length, mass, time, current, temp, amount, luminosity]):
             return cls(1)
-        
+
         # Compute signature
         signature = 1
         if length != 0:
-            signature *= BaseDimension.LENGTH ** length
+            signature *= BaseDimension.LENGTH**length
         if mass != 0:
-            signature *= BaseDimension.MASS ** mass
+            signature *= BaseDimension.MASS**mass
         if time != 0:
-            signature *= BaseDimension.TIME ** time
+            signature *= BaseDimension.TIME**time
         if current != 0:
-            signature *= BaseDimension.CURRENT ** current
+            signature *= BaseDimension.CURRENT**current
         if temp != 0:
-            signature *= BaseDimension.TEMPERATURE ** temp
+            signature *= BaseDimension.TEMPERATURE**temp
         if amount != 0:
-            signature *= BaseDimension.AMOUNT ** amount
+            signature *= BaseDimension.AMOUNT**amount
         if luminosity != 0:
-            signature *= BaseDimension.LUMINOSITY ** luminosity
-        
+            signature *= BaseDimension.LUMINOSITY**luminosity
+
         return cls(signature)
-    
+
     def __mul__(self, other):
         """Multiply dimensions."""
         return DimensionSignature(self._signature * other._signature)
-    
+
     def __truediv__(self, other):
         """Divide dimensions."""
         return DimensionSignature(self._signature / other._signature)
-    
+
     def __pow__(self, power):
         """Raise dimension to a power."""
         if power == 1:
             return self
         if power == 0:
             return DimensionSignature(1)
-        return DimensionSignature(self._signature ** power)
-    
+        return DimensionSignature(self._signature**power)
+
     def is_compatible(self, other):
         """Check dimensional compatibility."""
         return self._signature == other._signature
-    
+
     def __eq__(self, other):
         """Check equality."""
         if self is other:
             return True
         return isinstance(other, DimensionSignature) and self._signature == other._signature
-    
+
     def __hash__(self):
         """Hash based on signature."""
         return hash(self._signature)
@@ -282,6 +283,7 @@ _DIMENSION_SIGNATURES = {
 # Lazy loading cache
 _dimension_cache: dict[str, DimensionSignature] = {}
 
+
 def __getattr__(name: str) -> DimensionSignature:
     """Lazy load dimension constants."""
     if name in _DIMENSION_SIGNATURES:
@@ -289,6 +291,7 @@ def __getattr__(name: str) -> DimensionSignature:
             _dimension_cache[name] = DimensionSignature(_DIMENSION_SIGNATURES[name])
         return _dimension_cache[name]
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+
 
 # All dimension constants generated from unit data
 ABSORBED_DOSE = DimensionSignature(0.16)  # L^2 T^-2
@@ -511,4 +514,3 @@ __all__ = [
     "VOLUMETRIC_MASS_FLOW_RATE",
     "WAVENUMBER",
 ]
-

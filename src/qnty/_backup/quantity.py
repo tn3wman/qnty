@@ -29,6 +29,7 @@ def _load():
     global __generated_module
     if __generated_module is None:
         from ..generated import quantities  # local import for speed on cold start
+
         __generated_module = quantities
     return __generated_module
 
