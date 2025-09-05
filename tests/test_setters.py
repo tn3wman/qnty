@@ -8,10 +8,11 @@ with the broader OptiUnit system.
 
 import pytest
 
-from src.qnty.dimension import LENGTH, PRESSURE
-from src.qnty.units import LengthUnits, PressureUnits
-from src.qnty.variable import FastQuantity, TypeSafeSetter, TypeSafeVariable
-from src.qnty.variables import Length, LengthSetter, Pressure, PressureSetter
+from qnty.generated.dimensions import LENGTH, PRESSURE
+from qnty.generated.units import LengthUnits, PressureUnits
+from qnty.quantities.quantity import Quantity, TypeSafeSetter, TypeSafeVariable
+from qnty.generated.quantities import Length, Pressure
+from qnty.generated.setters import LengthSetter, PressureSetter
 
 
 class TestTypeSafeSetterInitialization:
@@ -60,7 +61,7 @@ class TestTypeSafeSetterWithUnit:
         
         assert result is length_var  # Should return the same variable
         assert length_var.quantity is not None
-        assert isinstance(length_var.quantity, FastQuantity)
+        assert isinstance(length_var.quantity, Quantity)
         assert length_var.quantity.value == 100.0
         assert length_var.quantity.unit == LengthUnits.millimeter
     
@@ -492,7 +493,7 @@ class TestSetterIntegration:
         
         # Should create a proper FastQuantity
         assert result.quantity is not None
-        assert isinstance(result.quantity, FastQuantity)
+        assert isinstance(result.quantity, Quantity)
         assert result.quantity.value == 123.45
         assert result.quantity.unit == LengthUnits.millimeter
         assert result.quantity._si_factor == LengthUnits.millimeter.si_factor

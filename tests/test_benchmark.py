@@ -13,9 +13,9 @@ import pint
 import unyt
 from astropy.units import imperial
 
-from qnty.units import DimensionlessUnits, LengthUnits, PressureUnits
-from qnty.variable import FastQuantity
-from qnty.variables import Length
+from qnty.generated.units import DimensionlessUnits, LengthUnits, PressureUnits
+from qnty.quantities.quantity import Quantity
+from qnty.generated.quantities import Length
 
 # Pre-define all variables to exclude initialization from performance measurements
 ASTROPY_AVAILABLE = True
@@ -29,25 +29,25 @@ LENGTH_VALUE = 168.275
 ureg = pint.UnitRegistry()
 
 # Pre-create all Qnty quantities
-qnty_meter = FastQuantity(TEST_VALUE, LengthUnits.meter)
-qnty_mm_100 = FastQuantity(100.0, LengthUnits.millimeter)
-qnty_inch_2 = FastQuantity(2.0, LengthUnits.inch)
-qnty_length_10 = FastQuantity(10.0, LengthUnits.meter)
-qnty_width_5 = FastQuantity(5.0, LengthUnits.meter)
-qnty_pressure = FastQuantity(PRESSURE_VALUE, PressureUnits.psi)
-qnty_area_10mm = FastQuantity(10.0, LengthUnits.millimeter)
-qnty_P = FastQuantity(PRESSURE_VALUE, PressureUnits.psi)
-qnty_D = FastQuantity(LENGTH_VALUE, LengthUnits.millimeter)
-qnty_S = FastQuantity(137.895, PressureUnits.MPa)
-qnty_E = FastQuantity(0.8, DimensionlessUnits.dimensionless)
-qnty_W = FastQuantity(1.0, DimensionlessUnits.dimensionless)
-qnty_Y = FastQuantity(0.4, DimensionlessUnits.dimensionless)
+qnty_meter = Quantity(TEST_VALUE, LengthUnits.meter)
+qnty_mm_100 = Quantity(100.0, LengthUnits.millimeter)
+qnty_inch_2 = Quantity(2.0, LengthUnits.inch)
+qnty_length_10 = Quantity(10.0, LengthUnits.meter)
+qnty_width_5 = Quantity(5.0, LengthUnits.meter)
+qnty_pressure = Quantity(PRESSURE_VALUE, PressureUnits.psi)
+qnty_area_10mm = Quantity(10.0, LengthUnits.millimeter)
+qnty_P = Quantity(PRESSURE_VALUE, PressureUnits.psi)
+qnty_D = Quantity(LENGTH_VALUE, LengthUnits.millimeter)
+qnty_S = Quantity(137.895, PressureUnits.MPa)
+qnty_E = Quantity(0.8, DimensionlessUnits.dimensionless)
+qnty_W = Quantity(1.0, DimensionlessUnits.dimensionless)
+qnty_Y = Quantity(0.4, DimensionlessUnits.dimensionless)
 qnty_length_var = Length("beam_length")
 qnty_length_var.set(100.0).millimeter
-qnty_q1_50mm = FastQuantity(50.0, LengthUnits.millimeter)
-qnty_q2_2in = FastQuantity(2.0, LengthUnits.inch)
-qnty_q3_05m = FastQuantity(0.5, LengthUnits.meter)
-qnty_zero_mm = FastQuantity(0, LengthUnits.millimeter)
+qnty_q1_50mm = Quantity(50.0, LengthUnits.millimeter)
+qnty_q2_2in = Quantity(2.0, LengthUnits.inch)
+qnty_q3_05m = Quantity(0.5, LengthUnits.meter)
+qnty_zero_mm = Quantity(0, LengthUnits.millimeter)
 
 # Pre-create all Pint quantities
 pint_meter = ureg.Quantity(TEST_VALUE, "meter")
@@ -101,14 +101,14 @@ astropy_q3_05m = 0.5 * u.m  # type: ignore
 astropy_zero_mm = 0 * u.mm  # type: ignore
 
 # Fluid dynamics pre-created quantities
-qnty_P1 = FastQuantity(PRESSURE_VALUE, PressureUnits.psi)
-qnty_P2 = FastQuantity(1800.0, PressureUnits.psi)
-qnty_D_fluid = FastQuantity(LENGTH_VALUE, LengthUnits.millimeter)
-qnty_L = FastQuantity(100.0, LengthUnits.meter)
-qnty_rho = FastQuantity(850.0, DimensionlessUnits.dimensionless)
-qnty_pi = FastQuantity(3.14159, DimensionlessUnits.dimensionless)
-qnty_2 = FastQuantity(2, DimensionlessUnits.dimensionless)
-qnty_4 = FastQuantity(4.0, DimensionlessUnits.dimensionless)
+qnty_P1 = Quantity(PRESSURE_VALUE, PressureUnits.psi)
+qnty_P2 = Quantity(1800.0, PressureUnits.psi)
+qnty_D_fluid = Quantity(LENGTH_VALUE, LengthUnits.millimeter)
+qnty_L = Quantity(100.0, LengthUnits.meter)
+qnty_rho = Quantity(850.0, DimensionlessUnits.dimensionless)
+qnty_pi = Quantity(3.14159, DimensionlessUnits.dimensionless)
+qnty_2 = Quantity(2, DimensionlessUnits.dimensionless)
+qnty_4 = Quantity(4.0, DimensionlessUnits.dimensionless)
 
 pint_P1 = ureg.Quantity(PRESSURE_VALUE, "psi")
 pint_P2 = ureg.Quantity(1800.0, "psi")
@@ -409,7 +409,7 @@ def test_benchmark_suite(capsys):
     def qnty_many_ops():
         total = qnty_zero_mm
         for i in range(10):
-            total = total + FastQuantity(i, LengthUnits.millimeter)
+            total = total + Quantity(i, LengthUnits.millimeter)
         return total
 
     def pint_many_ops():
@@ -453,7 +453,7 @@ def test_benchmark_suite(capsys):
         velocity_factor = (dP_Pa * area) / (qnty_rho * qnty_L)
 
         # Return a complex engineering result with unit scaling
-        result = velocity_factor * FastQuantity(1000, DimensionlessUnits.dimensionless)
+        result = velocity_factor * Quantity(1000, DimensionlessUnits.dimensionless)
         return result
 
     def pint_fluid_dynamics():

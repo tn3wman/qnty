@@ -2,10 +2,10 @@
 
 import pytest
 
-from src.qnty.equation import Equation
-from src.qnty.expression import BinaryOperation, Expression, VariableReference
-from src.qnty.variable import TypeSafeVariable
-from src.qnty.variables import Dimensionless, Length, Pressure
+from qnty.equations.equation import Equation
+from qnty.expressions import BinaryOperation, Expression, VariableReference
+from qnty.quantities.quantity import Quantity, TypeSafeVariable
+from qnty.generated.quantities import Dimensionless, Length, Pressure
 
 
 class TestEquationCreation:
@@ -168,9 +168,9 @@ class TestEquationSolving:
         # Should be satisfied
         assert eqn.check_residual(variables) is True
         
-        # Change c to wrong value
+        # Change c to wrong value by creating new quantity
         assert c.quantity is not None
-        c.quantity.value = 9  # Wrong value
+        c.quantity = Quantity(9, c.quantity.unit)  # Wrong value
         assert eqn.check_residual(variables) is False
     
     def test_unknown_variable_detection(self):
@@ -199,7 +199,7 @@ class TestExpressionEvaluation:
         b = Length("b", is_known=False)
         
         # Create expression before setting values
-        from qnty.expression import Expression
+        from qnty.expressions import Expression
         expr: Expression = a + b
         
         # Now set values for the variables that will be used in evaluation
@@ -218,7 +218,7 @@ class TestExpressionEvaluation:
         D = Length("D", is_known=False)
         
         # Create expression before setting values
-        from qnty.expression import Expression
+        from qnty.expressions import Expression
         expr: Expression = P * D * 2  # 90 * 1 * 2 = 180
         
         # Set values for the variables that will be used in evaluation
@@ -236,7 +236,7 @@ class TestExpressionEvaluation:
         var = Pressure("var", is_known=False)
         
         # Create expression before setting values
-        from qnty.expression import Expression
+        from qnty.expressions import Expression
         expr: Expression = var * 2  # 100 * 2 = 200
         
         # Set value for the variable that will be used in evaluation
