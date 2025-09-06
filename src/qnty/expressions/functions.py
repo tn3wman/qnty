@@ -11,48 +11,48 @@ if TYPE_CHECKING:
     from ..quantities import FieldQnty, Quantity
     from .nodes import BinaryOperation, Expression
 
-from .nodes import ConditionalExpression, Expression, UnaryFunction
+from .nodes import ConditionalExpression, Expression, UnaryFunction, wrap_operand
 
 
 # Convenience functions for mathematical operations
 def sin(expr: Union["Expression", "FieldQnty", "Quantity", int, float]) -> UnaryFunction:
     """Sine function."""
-    return UnaryFunction("sin", Expression._wrap_operand(expr))
+    return UnaryFunction("sin", wrap_operand(expr))
 
 
 def cos(expr: Union["Expression", "FieldQnty", "Quantity", int, float]) -> UnaryFunction:
     """Cosine function."""
-    return UnaryFunction("cos", Expression._wrap_operand(expr))
+    return UnaryFunction("cos", wrap_operand(expr))
 
 
 def tan(expr: Union["Expression", "FieldQnty", "Quantity", int, float]) -> UnaryFunction:
     """Tangent function."""
-    return UnaryFunction("tan", Expression._wrap_operand(expr))
+    return UnaryFunction("tan", wrap_operand(expr))
 
 
 def sqrt(expr: Union["Expression", "FieldQnty", "Quantity", int, float]) -> UnaryFunction:
     """Square root function."""
-    return UnaryFunction("sqrt", Expression._wrap_operand(expr))
+    return UnaryFunction("sqrt", wrap_operand(expr))
 
 
 def abs_expr(expr: Union["Expression", "FieldQnty", "Quantity", int, float]) -> UnaryFunction:
     """Absolute value function."""
-    return UnaryFunction("abs", Expression._wrap_operand(expr))
+    return UnaryFunction("abs", wrap_operand(expr))
 
 
 def ln(expr: Union["Expression", "FieldQnty", "Quantity", int, float]) -> UnaryFunction:
     """Natural logarithm function."""
-    return UnaryFunction("ln", Expression._wrap_operand(expr))
+    return UnaryFunction("ln", wrap_operand(expr))
 
 
 def log10(expr: Union["Expression", "FieldQnty", "Quantity", int, float]) -> UnaryFunction:
     """Base-10 logarithm function."""
-    return UnaryFunction("log10", Expression._wrap_operand(expr))
+    return UnaryFunction("log10", wrap_operand(expr))
 
 
 def exp(expr: Union["Expression", "FieldQnty", "Quantity", int, float]) -> UnaryFunction:
     """Exponential function."""
-    return UnaryFunction("exp", Expression._wrap_operand(expr))
+    return UnaryFunction("exp", wrap_operand(expr))
 
 
 def cond_expr(
@@ -61,7 +61,7 @@ def cond_expr(
     false_expr: Union["Expression", "FieldQnty", "Quantity", int, float],
 ) -> ConditionalExpression:
     """Conditional expression: if condition then true_expr else false_expr."""
-    return ConditionalExpression(condition if isinstance(condition, Expression) else condition, Expression._wrap_operand(true_expr), Expression._wrap_operand(false_expr))
+    return ConditionalExpression(condition if isinstance(condition, Expression) else condition, wrap_operand(true_expr), wrap_operand(false_expr))
 
 
 def min_expr(*expressions: Union["Expression", "FieldQnty", "Quantity", int, float]) -> "Expression":
@@ -69,7 +69,7 @@ def min_expr(*expressions: Union["Expression", "FieldQnty", "Quantity", int, flo
     if len(expressions) < 2:
         raise ValueError("min_expr requires at least 2 arguments")
 
-    wrapped_expressions = [Expression._wrap_operand(expr) for expr in expressions]
+    wrapped_expressions = [wrap_operand(expr) for expr in expressions]
     result = wrapped_expressions[0]
 
     for expr in wrapped_expressions[1:]:
@@ -84,7 +84,7 @@ def max_expr(*expressions: Union["Expression", "FieldQnty", "Quantity", int, flo
     if len(expressions) < 2:
         raise ValueError("max_expr requires at least 2 arguments")
 
-    wrapped_expressions = [Expression._wrap_operand(expr) for expr in expressions]
+    wrapped_expressions = [wrap_operand(expr) for expr in expressions]
     result = wrapped_expressions[0]
 
     for expr in wrapped_expressions[1:]:

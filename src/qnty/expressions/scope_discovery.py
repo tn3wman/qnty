@@ -8,7 +8,7 @@ Consolidates all scope inspection logic used across expressions, equations, and 
 
 import inspect
 import logging
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from ..quantities import FieldQnty

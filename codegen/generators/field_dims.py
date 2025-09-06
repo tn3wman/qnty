@@ -10,7 +10,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from qnty.core.dimensions import BASE_DIMENSIONS, DIMENSION_SYMBOLS, PRIME_MAP
+from qnty.dimensions import BASE_DIMENSIONS, DIMENSION_SYMBOLS, PRIME_MAP
 
 
 class DimensionGenerator:
@@ -235,8 +235,6 @@ def main() -> None:
 
     print("\nDimension generation complete!")
     print(f"  - Total dimensions: {len(generator.all_dimensions)}")
-    print("  - Cached signatures: 0 (imported from core)")
-
 
 if __name__ == "__main__":
     main()

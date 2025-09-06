@@ -63,6 +63,9 @@ class UnifiedCacheManager:
     DIMENSIONLESS_CACHE_SIZE = 50
     DIMENSION_SIGNATURE_CACHE_SIZE = 500
     VALIDATION_CACHE_SIZE = 150
+    SMALL_INTEGER_CACHE_SIZE = 100
+    MULTIPLICATION_CACHE_SIZE = 100
+    DIVISION_CACHE_SIZE = 100
     
     def __init__(self):
         # Core caches with different policies
@@ -72,6 +75,12 @@ class UnifiedCacheManager:
         self._type_check_cache: Dict[type, bool] = {}
         self._dimensionless_cache: Dict[float, Any] = {}
         self._validation_cache: Dict[Tuple[type, str], bool] = {}
+        
+        # Quantity-specific caches
+        self._small_integer_cache: Dict[Tuple[int, str], Any] = {}
+        self._multiplication_cache: Dict[Tuple[Any, Any], Any] = {}
+        self._division_cache: Dict[Tuple[Any, Any], Any] = {}
+        self._dimension_cache: Dict[Any, Any] = {}
         
         # Weak reference caches for object-based keys
         self._dimension_signature_cache: WeakValueDictionary = WeakValueDictionary()
@@ -84,6 +93,10 @@ class UnifiedCacheManager:
             'type_check': CacheStats('Type Check'),
             'dimensionless': CacheStats('Dimensionless'),
             'validation': CacheStats('Validation'),
+            'small_integer': CacheStats('Small Integer'),
+            'multiplication': CacheStats('Multiplication'),
+            'division': CacheStats('Division'),
+            'dimension': CacheStats('Dimension'),
         }
         
     # Unit Property Cache Operations
@@ -195,6 +208,86 @@ class UnifiedCacheManager:
         if len(self._expression_result_cache) > self.EXPRESSION_CACHE_SIZE:
             self._evict_oldest('expression_result', self._expression_result_cache, self.EXPRESSION_CACHE_SIZE // 4)
     
+    # Quantity-specific Cache Operations
+    def get_cached_quantity(self, value: int | float, unit_name: str) -> Optional[Any]:
+        """Get cached quantity for small integers."""
+        if isinstance(value, (int, float)) and -10 <= value <= 10 and value == int(value):
+            key = (int(value), unit_name)
+            if key in self._small_integer_cache:
+                self._stats['small_integer'].hit()
+                return self._small_integer_cache[key]
+        
+        self._stats['small_integer'].miss()
+        return None
+    
+    def cache_quantity(self, value: int | float, unit_name: str, quantity: Any) -> None:
+        """Cache quantity if it's a small integer."""
+        if isinstance(value, (int, float)) and -10 <= value <= 10 and value == int(value):
+            key = (int(value), unit_name)
+            self._small_integer_cache[key] = quantity
+            
+            if len(self._small_integer_cache) > self.SMALL_INTEGER_CACHE_SIZE:
+                self._evict_oldest('small_integer', self._small_integer_cache, self.SMALL_INTEGER_CACHE_SIZE // 4)
+    
+    def get_multiplication_result(self, left_sig: Any, right_sig: Any) -> Optional[Any]:
+        """Get cached multiplication result."""
+        key = (left_sig, right_sig)
+        if key in self._multiplication_cache:
+            self._stats['multiplication'].hit()
+            return self._multiplication_cache[key]
+        
+        self._stats['multiplication'].miss()
+        return None
+    
+    def cache_multiplication_result(self, left_sig: Any, right_sig: Any, result_unit: Any) -> None:
+        """Cache multiplication result."""
+        key = (left_sig, right_sig)
+        self._multiplication_cache[key] = result_unit
+        
+        if len(self._multiplication_cache) > self.MULTIPLICATION_CACHE_SIZE:
+            self._evict_oldest('multiplication', self._multiplication_cache, self.MULTIPLICATION_CACHE_SIZE // 4)
+    
+    def get_division_result(self, left_sig: Any, right_sig: Any) -> Optional[Any]:
+        """Get cached division result."""
+        key = (left_sig, right_sig)
+        if key in self._division_cache:
+            self._stats['division'].hit()
+            return self._division_cache[key]
+        
+        self._stats['division'].miss()
+        return None
+    
+    def cache_division_result(self, left_sig: Any, right_sig: Any, result_unit: Any) -> None:
+        """Cache division result."""
+        key = (left_sig, right_sig)
+        self._division_cache[key] = result_unit
+        
+        if len(self._division_cache) > self.DIVISION_CACHE_SIZE:
+            self._evict_oldest('division', self._division_cache, self.DIVISION_CACHE_SIZE // 4)
+    
+    def get_dimension_unit(self, dimension_sig: Any) -> Optional[Any]:
+        """Get cached unit for dimension signature."""
+        if dimension_sig in self._dimension_cache:
+            self._stats['dimension'].hit()
+            return self._dimension_cache[dimension_sig]
+        
+        self._stats['dimension'].miss()
+        return None
+    
+    def cache_dimension_unit(self, dimension_sig: Any, unit: Any) -> None:
+        """Cache unit for dimension signature."""
+        self._dimension_cache[dimension_sig] = unit
+    
+    def initialize_dimension_cache(self, initial_mappings: Dict[Any, Any]) -> None:
+        """Initialize dimension cache with common mappings."""
+        self._dimension_cache.update(initial_mappings)
+    
+    def initialize_operation_caches(self, multiplication_mappings: Dict[Tuple[Any, Any], Any],
+                                   division_mappings: Dict[Tuple[Any, Any], Any]) -> None:
+        """Initialize multiplication and division caches with common operations."""
+        self._multiplication_cache.update(multiplication_mappings)
+        self._division_cache.update(division_mappings)
+    
     # Cache Management Operations
     def _evict_oldest(self, cache_name: str, cache_dict: Dict, evict_count: int) -> None:
         """Evict oldest entries from cache."""
@@ -215,6 +308,10 @@ class UnifiedCacheManager:
             self._dimensionless_cache.clear()
             self._validation_cache.clear()
             self._dimension_signature_cache.clear()
+            self._small_integer_cache.clear()
+            self._multiplication_cache.clear()
+            self._division_cache.clear()
+            self._dimension_cache.clear()
         else:
             # Clear specific cache
             cache_map = {
@@ -224,6 +321,10 @@ class UnifiedCacheManager:
                 'type_check': self._type_check_cache,
                 'dimensionless': self._dimensionless_cache,
                 'validation': self._validation_cache,
+                'small_integer': self._small_integer_cache,
+                'multiplication': self._multiplication_cache,
+                'division': self._division_cache,
+                'dimension': self._dimension_cache,
             }
             if cache_name in cache_map:
                 cache_map[cache_name].clear()
@@ -242,6 +343,10 @@ class UnifiedCacheManager:
             'dimensionless': len(self._dimensionless_cache),
             'validation': len(self._validation_cache),
             'dimension_signature': len(self._dimension_signature_cache),
+            'small_integer': len(self._small_integer_cache),
+            'multiplication': len(self._multiplication_cache),
+            'division': len(self._division_cache),
+            'dimension': len(self._dimension_cache),
         }
     
     def get_memory_usage_estimate(self) -> int:
@@ -254,6 +359,10 @@ class UnifiedCacheManager:
             'type_check': len(self._type_check_cache) * 100,  # type keys + bool values
             'dimensionless': len(self._dimensionless_cache) * 150,  # float keys + quantity values
             'validation': len(self._validation_cache) * 150,  # tuple keys + bool values
+            'small_integer': len(self._small_integer_cache) * 200,  # tuple keys + quantity values
+            'multiplication': len(self._multiplication_cache) * 250,  # tuple keys + unit values
+            'division': len(self._division_cache) * 250,  # tuple keys + unit values
+            'dimension': len(self._dimension_cache) * 200,  # signature keys + unit values
         }
         return sum(estimates.values())
 

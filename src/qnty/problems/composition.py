@@ -15,8 +15,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
-    from ..quantities import FieldQnty
     from ..equations import Equation
+    from ..quantities import FieldQnty
 
 from ..equations import Equation
 from ..expressions import BinaryOperation, max_expr, min_expr, sin

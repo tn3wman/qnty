@@ -200,7 +200,7 @@ class TestExpressionEvaluation:
         b = Length("b", is_known=False)
         
         # Create expression before setting values
-        from qnty.domain.expressions import Expression
+        from qnty.expressions import Expression
         expr: Expression = a + b
         
         # Now set values for the variables that will be used in evaluation
@@ -219,7 +219,7 @@ class TestExpressionEvaluation:
         D = Length("D", is_known=False)
         
         # Create expression before setting values
-        from qnty.domain.expressions import Expression
+        from qnty.expressions import Expression
         expr: Expression = P * D * 2  # 90 * 1 * 2 = 180
         
         # Set values for the variables that will be used in evaluation
@@ -237,7 +237,7 @@ class TestExpressionEvaluation:
         var = Pressure("var", is_known=False)
         
         # Create expression before setting values
-        from qnty.domain.expressions import Expression
+        from qnty.expressions import Expression
         expr: Expression = var * 2  # 100 * 2 = 200
         
         # Set value for the variable that will be used in evaluation

@@ -19,7 +19,6 @@ if TYPE_CHECKING:
 
 from ..quantities import FieldQnty, Quantity
 from ..units._field_units_generated import DimensionlessUnits
-from .cache import wrap_operand
 
 
 class Expression(ABC):
@@ -481,3 +480,95 @@ class ConditionalExpression(Expression):
 
     def __str__(self) -> str:
         return ExpressionFormatter.format_conditional_expression(self)
+
+
+# Utility functions for expression creation
+
+# Cache for common types to avoid repeated type checks
+_NUMERIC_TYPES = (int, float)
+_DIMENSIONLESS_CONSTANT = None
+
+
+def _get_cached_dimensionless():
+    """Get cached dimensionless constant for numeric values."""
+    global _DIMENSIONLESS_CONSTANT
+    if _DIMENSIONLESS_CONSTANT is None:
+        _DIMENSIONLESS_CONSTANT = DimensionlessUnits.dimensionless
+    return _DIMENSIONLESS_CONSTANT
+
+
+def _get_dimensionless_quantity(value: float) -> Quantity:
+    """Get cached dimensionless quantity for common numeric values."""
+    cache_manager = get_cache_manager()
+    
+    # Check unified cache first
+    cached_qty = cache_manager.get_dimensionless_quantity(value)
+    if cached_qty is not None:
+        return cached_qty
+    
+    # Create new quantity
+    qty = Quantity(value, _get_cached_dimensionless())
+    
+    # Cache if appropriate
+    cache_manager.cache_dimensionless_quantity(value, qty)
+    
+    return qty
+
+
+def _is_numeric_type(obj) -> bool:
+    """Cached type check for numeric types."""
+    obj_type = type(obj)
+    cache_manager = get_cache_manager()
+    
+    # Check unified cache
+    cached_result = cache_manager.get_type_check(obj_type)
+    if cached_result is not None:
+        return cached_result
+    
+    # Compute and cache result
+    result = obj_type in _NUMERIC_TYPES
+    cache_manager.cache_type_check(obj_type, result)
+    return result
+
+
+def wrap_operand(operand: Expression | FieldQnty | Quantity | int | float) -> Expression:
+    """
+    Convert various types to Expression objects.
+    
+    This function uses cached type checks from the unified cache manager
+    for maximum performance.
+    
+    Args:
+        operand: Value to wrap as an Expression
+        
+    Returns:
+        Expression object representing the operand
+        
+    Raises:
+        TypeError: If operand type cannot be converted to Expression
+    """
+    # Fast path: check most common cases first using cached type check
+    if _is_numeric_type(operand):
+        # operand is guaranteed to be int or float at this point
+        return Constant(_get_dimensionless_quantity(float(operand)))  # type: ignore[arg-type]
+
+    # Check if already an Expression (using isinstance for speed)
+    if isinstance(operand, Expression):
+        return operand
+
+    # Check for Quantity
+    if isinstance(operand, Quantity):
+        return Constant(operand)
+
+    # Check for FieldQnty
+    if isinstance(operand, FieldQnty):
+        return VariableReference(operand)
+
+    # Check for ConfigurableVariable (from composition system)
+    if hasattr(operand, "_variable"):
+        var = getattr(operand, "_variable", None)
+        if isinstance(var, FieldQnty):
+            return VariableReference(var)
+
+    # No duck typing - fail fast for unknown types
+    raise TypeError(f"Cannot convert {type(operand)} to Expression")
