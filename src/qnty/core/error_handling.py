@@ -8,7 +8,7 @@ This is now a compatibility facade that imports from the infrastructure package.
 """
 
 # Import everything from the new infrastructure location for backward compatibility
-from .infrastructure.error_handling import *
+from ..infrastructure.error_handling import *
 
 # Maintain the same __all__ exports
 __all__ = [

@@ -10,7 +10,7 @@ from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Union
 
 from ...infrastructure.caching.manager import get_cache_manager
-from ...constants import CONDITION_EVALUATION_THRESHOLD, DIVISION_BY_ZERO_THRESHOLD, FLOAT_EQUALITY_TOLERANCE
+from ...core.constants import CONDITION_EVALUATION_THRESHOLD, DIVISION_BY_ZERO_THRESHOLD, FLOAT_EQUALITY_TOLERANCE
 from ...infrastructure.formatting.expression import ExpressionFormatter
 from .scope_discovery import ScopeDiscoveryService
 

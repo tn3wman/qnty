@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from typing import cast
 
-from ...constants import SOLVER_DEFAULT_TOLERANCE
+from ...core.constants import SOLVER_DEFAULT_TOLERANCE
 from ..expressions import Expression, VariableReference, ScopeDiscoveryService
 from ...core.quantities.unified_variable import UnifiedVariable
 

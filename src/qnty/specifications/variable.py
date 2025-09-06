@@ -11,7 +11,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any, Optional, Union
 
-from ..constants import FLOAT_EQUALITY_TOLERANCE
+from ..core.constants import FLOAT_EQUALITY_TOLERANCE
 
 
 @dataclass(frozen=True, slots=True)

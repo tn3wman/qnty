@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
-from ..constants import SOLVER_DEFAULT_MAX_ITERATIONS, SOLVER_DEFAULT_TOLERANCE
+from ..core.constants import SOLVER_DEFAULT_MAX_ITERATIONS, SOLVER_DEFAULT_TOLERANCE
 
 if TYPE_CHECKING:
     from qnty.domain.equations import Equation

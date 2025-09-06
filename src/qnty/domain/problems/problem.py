@@ -25,7 +25,7 @@ from qnty.solving.order import Order
 from qnty.solving.solvers import SolverManager
 from qnty.utils.logging import get_logger
 
-from ...constants import SOLVER_DEFAULT_MAX_ITERATIONS, SOLVER_DEFAULT_TOLERANCE
+from ...core.constants import SOLVER_DEFAULT_MAX_ITERATIONS, SOLVER_DEFAULT_TOLERANCE
 
 # Constants for equation processing
 MATHEMATICAL_OPERATORS = ["+", "-", "*", "/", " / ", " * ", " + ", " - "]

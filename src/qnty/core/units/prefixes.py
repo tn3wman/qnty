@@ -9,7 +9,7 @@ Provides systematic handling of metric prefixes like kilo-, milli-, micro-, etc.
 from dataclasses import dataclass
 from enum import Enum
 
-from ...constants import PREFIX_LOOKUP_MIN_TOLERANCE, PREFIX_LOOKUP_TOLERANCE
+from ..constants import PREFIX_LOOKUP_MIN_TOLERANCE, PREFIX_LOOKUP_TOLERANCE
 
 
 @dataclass(frozen=True, slots=True)
