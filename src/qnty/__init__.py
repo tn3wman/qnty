@@ -21,7 +21,7 @@ from .domain.expressions import (
     tan,
 )
 
-from .infrastructure.caching.manager import (
+from .utils.caching.manager import (
     get_cache_manager,
     clear_all_caches,
     get_cache_statistics,

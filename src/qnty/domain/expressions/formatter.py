@@ -80,7 +80,7 @@ class ExpressionFormatter:
     @staticmethod
     def _maybe_parenthesize_left(left_expr: Expression, operator: str, left_str: str) -> str:
         """Add parentheses to left operand if needed for precedence."""
-        from ...domain.expressions.nodes import BinaryOperation
+        from .nodes import BinaryOperation
         
         if not isinstance(left_expr, BinaryOperation):
             return left_str
@@ -97,7 +97,7 @@ class ExpressionFormatter:
     @staticmethod
     def _maybe_parenthesize_right(right_expr: Expression, operator: str, right_str: str) -> str:
         """Add parentheses to right operand if needed for precedence and associativity."""
-        from ...domain.expressions.nodes import BinaryOperation
+        from .nodes import BinaryOperation
         
         if not isinstance(right_expr, BinaryOperation):
             return right_str
@@ -157,7 +157,7 @@ class ExpressionFormatter:
         trying to auto-evaluate before falling back to symbolic representation.
         """
         # Check if auto-evaluation is possible
-        from ...domain.expressions.nodes import BinaryOperation
+        from .nodes import BinaryOperation
         
         if isinstance(expr, BinaryOperation):
             # Try to discover variables from scope for auto-evaluation

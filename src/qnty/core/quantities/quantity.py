@@ -10,7 +10,6 @@ from __future__ import annotations
 
 from typing import TypeVar
 
-from ..constants import FLOAT_EQUALITY_TOLERANCE
 from ...generated.dimensions import (
     AREA,
     DIMENSIONLESS,
@@ -26,6 +25,7 @@ from ...generated.dimensions import (
     ENERGY_HEAT_WORK as ENERGY,
 )
 from ...generated.units import AreaUnits, DimensionlessUnits, LengthUnits, PressureUnits, VolumeUnits
+from ..constants import FLOAT_EQUALITY_TOLERANCE
 from ..units.registry import UnitConstant, UnitDefinition, registry
 
 # TypeVar for generic dimensional types

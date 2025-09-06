@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     from .nodes import Expression
 
 # Import here to avoid circular imports - delayed imports
-from ...infrastructure.caching.manager import get_cache_manager
+from ...utils.caching.manager import get_cache_manager
 from ...generated.units import DimensionlessUnits
 from ...core.quantities.quantity import Quantity
 from ...core.quantities.unified_variable import UnifiedVariable

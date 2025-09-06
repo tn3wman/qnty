@@ -26,7 +26,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Self
 
-from qnty.infrastructure.error_handling import ErrorHandlerMixin
+from qnty.utils.error_handling import ErrorHandlerMixin
 
 if TYPE_CHECKING:
     from ...domain.equations.equation import Equation

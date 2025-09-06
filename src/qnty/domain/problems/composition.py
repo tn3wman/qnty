@@ -23,7 +23,7 @@ from qnty.generated.quantities import Dimensionless
 from qnty.core.quantities.unified_variable import UnifiedVariable as Variable
 from qnty.domain.equations import Equation
 
-from ...infrastructure.validation.rules import Rules
+from .rules import Rules
 
 # Constants for composition
 MATHEMATICAL_OPERATORS = ["+", "-", "*", "/", " / ", " * ", " + ", " - "]
