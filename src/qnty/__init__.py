@@ -7,7 +7,7 @@ A fast, type-safe unit system library for Python with dimensional safety and opt
 
 # from . import (quantity, expressions)
 
-from .domain.expressions import (
+from .expressions import (
     abs_expr,
     cond_expr,
     cos,
@@ -20,14 +20,8 @@ from .domain.expressions import (
     sqrt,
     tan,
 )
-
-from .utils.caching.manager import (
-    get_cache_manager,
-    clear_all_caches,
-    get_cache_statistics,
-    get_memory_usage,
-)
-from .generated.quantities import (
+from .problems import Problem
+from .quantities._field_qnty_generated import (
     AbsorbedDose,
     Acceleration,
     ActivationEnergy,
@@ -136,7 +130,6 @@ from .generated.quantities import (
     VolumetricMassFlowRate,
     Wavenumber,
 )
-from .domain.problems import Problem
 
 # Define public API
 __all__ = [

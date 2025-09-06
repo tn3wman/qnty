@@ -1,7 +1,7 @@
-from qnty.domain.equations.equation import Equation
-from qnty.core.quantities.field_qnty import FieldQnty as Variable
 from qnty.solving.order import Order
 
+from ..equations import Equation
+from ..quantities import FieldQnty
 from .solvers.base import BaseSolver, SolveResult
 from .solvers.iterative import IterativeSolver
 from .solvers.simultaneous import SimultaneousEquationSolver
@@ -19,7 +19,7 @@ class SolverManager:
             IterativeSolver(logger),  # Fall back to iterative
         ]
 
-    def solve(self, equations: list[Equation], variables: dict[str, Variable], dependency_graph: Order | None = None, max_iterations: int = 100, tolerance: float = 1e-10) -> SolveResult:
+    def solve(self, equations: list[Equation], variables: dict[str, FieldQnty], dependency_graph: Order | None = None, max_iterations: int = 100, tolerance: float = 1e-10) -> SolveResult:
         """
         Solve the system using the best available solver.
 

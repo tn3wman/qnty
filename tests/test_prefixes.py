@@ -6,13 +6,10 @@ Tests the prefix system including definition, application, and registration.
 """
 
 import pytest
-from qnty.generated.dimensions import LENGTH, PRESSURE, ENERGY_HEAT_WORK
-from qnty.core.units.registry import UnitDefinition, Registry
-from qnty.core.units.prefixes import (
-    SIPrefix, StandardPrefixes, 
-    get_prefix_by_name, get_prefix_by_symbol, get_prefix_by_factor,
-    COMMON_LENGTH_PREFIXES, COMMON_PRESSURE_PREFIXES
-)
+
+from qnty.dimensions import ENERGY_HEAT_WORK, LENGTH, PRESSURE
+from qnty.units.prefixes import COMMON_LENGTH_PREFIXES, COMMON_PRESSURE_PREFIXES, StandardPrefixes, get_prefix_by_factor, get_prefix_by_name, get_prefix_by_symbol
+from qnty.units.registry import Registry, UnitDefinition
 
 
 class TestSIPrefixDefinition:

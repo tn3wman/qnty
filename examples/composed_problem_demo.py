@@ -1,7 +1,7 @@
 from qnty import Dimensionless, Length, Pressure
 from qnty import cond_expr, min_expr
 from qnty import Problem
-from qnty.domain.problems.rules import add_rule
+from qnty.problems.rules import add_rule
 
 
 class StraightPipeInternal(Problem):

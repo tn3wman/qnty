@@ -1,7 +1,7 @@
 from collections import defaultdict, deque
 from typing import Any
 
-from qnty.domain.equations.equation import Equation
+from ..equations import Equation
 
 
 class Order:

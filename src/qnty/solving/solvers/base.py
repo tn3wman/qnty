@@ -4,9 +4,9 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from typing import Any
 
-from qnty.domain.equations.equation import Equation
-from qnty.core.quantities.field_qnty import FieldQnty as Variable
-from qnty.solving.order import Order
+from ...equations import Equation
+from ...quantities import FieldQnty
+from ..order import Order
 
 
 class SolveError(Exception):
@@ -19,7 +19,7 @@ class SolveError(Exception):
 class SolveResult:
     """Result of a solve operation."""
 
-    variables: dict[str, Variable]
+    variables: dict[str, FieldQnty]
     steps: list[dict[str, Any]] = field(default_factory=list)
     success: bool = True
     message: str = ""
@@ -51,7 +51,7 @@ class BaseSolver(ABC):
         pass
 
     @abstractmethod
-    def solve(self, equations: list[Equation], variables: dict[str, Variable], dependency_graph: Order | None = None, max_iterations: int = 100, tolerance: float = 1e-10) -> SolveResult:
+    def solve(self, equations: list[Equation], variables: dict[str, FieldQnty], dependency_graph: Order | None = None, max_iterations: int = 100, tolerance: float = 1e-10) -> SolveResult:
         """
         Solve the system of equations.
 
@@ -74,10 +74,10 @@ class BaseSolver(ABC):
         if self.logger:
             self.logger.debug(f"Solved {variable} = {result}")
 
-    def _get_known_variables(self, variables: dict[str, Variable]) -> set[str]:
+    def _get_known_variables(self, variables: dict[str, FieldQnty]) -> set[str]:
         """Get symbols of known variables."""
         return {s for s, v in variables.items() if v.is_known}
 
-    def _get_unknown_variables(self, variables: dict[str, Variable]) -> set[str]:
+    def _get_unknown_variables(self, variables: dict[str, FieldQnty]) -> set[str]:
         """Get symbols of unknown variables."""
         return {s for s, v in variables.items() if not v.is_known}

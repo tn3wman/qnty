@@ -2,11 +2,11 @@
 
 import pytest
 
-from qnty.domain.equations.equation import Equation
-from qnty.domain.expressions import BinaryOperation, Expression, VariableReference
-from qnty.core.quantities.base_qnty import Quantity
-from qnty.core.quantities.field_qnty import FieldQnty
-from qnty.generated.quantities import Dimensionless, Length, Pressure
+from qnty.equations import Equation
+from qnty.expressions import BinaryOperation, Expression, VariableReference
+from qnty.quantities import Quantity
+from qnty.quantities import FieldQnty
+from qnty.quantities import Dimensionless, Length, Pressure
 
 
 class TestEquationCreation:

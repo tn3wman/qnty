@@ -10,9 +10,9 @@ import math
 
 import pytest
 
-from qnty.core.dimensions.base import BaseDimension
-from qnty.core.dimensions.signature import DimensionSignature
-from qnty.generated.dimensions import (
+from qnty.dimensions.base import BaseDimension
+from qnty.dimensions.signature import DimensionSignature
+from qnty.dimensions._field_dims_generated import (
     ACCELERATION,
     AREA,
     DIMENSIONLESS,

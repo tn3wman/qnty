@@ -13,9 +13,9 @@ import pint
 import unyt
 from astropy.units import imperial
 
-from qnty.generated.units import DimensionlessUnits, LengthUnits, PressureUnits
-from qnty.core.quantities.base_qnty import Quantity
-from qnty.generated.quantities import Length
+from qnty.units import DimensionlessUnits, LengthUnits, PressureUnits
+from qnty.quantities import Quantity
+from qnty.quantities import Length
 
 # Pre-define all variables to exclude initialization from performance measurements
 ASTROPY_AVAILABLE = True

@@ -8,12 +8,12 @@ with the broader OptiUnit system.
 
 import pytest
 
-from qnty.generated.dimensions import LENGTH, PRESSURE
-from qnty.generated.units import LengthUnits, PressureUnits
-from qnty.core.quantities.base_qnty import Quantity, TypeSafeSetter
-from qnty.core.quantities.field_qnty import FieldQnty
-from qnty.generated.quantities import Length, Pressure
-from qnty.generated.setters import LengthSetter, PressureSetter
+from qnty.dimensions._field_dims_generated import LENGTH, PRESSURE
+from qnty.quantities import FieldQnty
+from qnty.quantities._field_qnty_generated import Length, Pressure
+from qnty.quantities._field_setter_generated import LengthSetter, PressureSetter
+from qnty.quantities.base_qnty import Quantity, TypeSafeSetter
+from qnty.units._field_units_generated import LengthUnits, PressureUnits
 
 
 class TestTypeSafeSetterInitialization:

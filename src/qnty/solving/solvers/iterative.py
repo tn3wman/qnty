@@ -1,10 +1,9 @@
 from typing import Any
 
-from qnty.domain.equations.equation import Equation
-from qnty.domain.expressions import VariableReference
-from qnty.core.quantities.field_qnty import FieldQnty as Variable
-from qnty.solving.order import Order
-
+from ...equations import Equation
+from ...expressions import VariableReference
+from ...quantities.field_qnty import FieldQnty
+from ..order import Order
 from .base import BaseSolver, SolveResult
 
 
@@ -41,7 +40,7 @@ class IterativeSolver(BaseSolver):
         # As a fallback, we can try to handle any system
         return len(unknowns) > 0
 
-    def solve(self, equations: list[Equation], variables: dict[str, Variable], dependency_graph: Order | None = None, max_iterations: int = 100, tolerance: float = 1e-10) -> SolveResult:
+    def solve(self, equations: list[Equation], variables: dict[str, FieldQnty], dependency_graph: Order | None = None, max_iterations: int = 100, tolerance: float = 1e-10) -> SolveResult:
         """
         Solve the system iteratively using dependency graph.
         """

@@ -2,11 +2,11 @@ from typing import Any
 
 import numpy as np
 
-from qnty.domain.equations.equation import Equation
-from qnty.core.quantities import Quantity as Qty
-from qnty.core.quantities.field_qnty import FieldQnty as Variable
 from qnty.solving.order import Order
 
+from ...equations import Equation
+from ...quantities import Quantity
+from ...quantities.field_qnty import FieldQnty as FieldQnty
 from .base import BaseSolver, SolveResult
 
 
@@ -76,7 +76,7 @@ class SimultaneousEquationSolver(BaseSolver):
         has_cycles = analysis.get("has_cycles", False)
         return bool(has_cycles)
 
-    def solve(self, equations: list[Equation], variables: dict[str, Variable], dependency_graph: Order | None = None, max_iterations: int = 100, tolerance: float = DEFAULT_TOLERANCE) -> SolveResult:
+    def solve(self, equations: list[Equation], variables: dict[str, FieldQnty], dependency_graph: Order | None = None, max_iterations: int = 100, tolerance: float = DEFAULT_TOLERANCE) -> SolveResult:
         """
         Solve the n×n simultaneous system using matrix operations.
 
@@ -124,7 +124,7 @@ class SimultaneousEquationSolver(BaseSolver):
         except Exception as general_error:
             return SolveResult(variables=working_variables, steps=self.steps, success=False, message=f"Simultaneous solving failed: {general_error}", method="SimultaneousEquationSolver")
 
-    def _validate_system(self, equations: list[Equation], variables: dict[str, Variable]) -> SolveResult:
+    def _validate_system(self, equations: list[Equation], variables: dict[str, FieldQnty]) -> SolveResult:
         """
         Validate that the system meets requirements for simultaneous solving.
 
@@ -150,7 +150,7 @@ class SimultaneousEquationSolver(BaseSolver):
 
         return SolveResult(variables=variables, steps=self.steps, success=True, message="System validation passed", method="SimultaneousEquationSolver")
 
-    def _solve_matrix_system(self, equations: list[Equation], unknown_variables: list[str], working_variables: dict[str, Variable]) -> np.ndarray | None:
+    def _solve_matrix_system(self, equations: list[Equation], unknown_variables: list[str], working_variables: dict[str, FieldQnty]) -> np.ndarray | None:
         """
         Extract coefficient matrix and solve the linear system.
 
@@ -253,7 +253,7 @@ class SimultaneousEquationSolver(BaseSolver):
             # Fallback to NumPy if scipy is not available
             return np.linalg.solve(coefficient_matrix, constant_vector)
 
-    def _apply_solution_to_variables(self, unknown_variables: list[str], solution_vector: np.ndarray, working_variables: dict[str, Variable]):
+    def _apply_solution_to_variables(self, unknown_variables: list[str], solution_vector: np.ndarray, working_variables: dict[str, FieldQnty]):
         """
         Apply solution values to variables and record solving steps.
         """
@@ -261,7 +261,7 @@ class SimultaneousEquationSolver(BaseSolver):
             solution_value = float(solution_vector[i])
             self._update_variable_with_solution(variable_name, solution_value, working_variables)
 
-    def _verify_solution_quality(self, equations: list[Equation], working_variables: dict[str, Variable], tolerance: float) -> SolveResult:
+    def _verify_solution_quality(self, equations: list[Equation], working_variables: dict[str, FieldQnty], tolerance: float) -> SolveResult:
         """
         Verify solution quality by checking equation residuals.
 
@@ -289,7 +289,7 @@ class SimultaneousEquationSolver(BaseSolver):
 
         return SolveResult(variables=working_variables, steps=[], success=is_successful, message=success_message, method="SimultaneousEquationSolver")
 
-    def _extract_matrix_system(self, equations: list[Equation], unknown_variables: list[str], variables: dict[str, Variable]) -> tuple[np.ndarray | None, np.ndarray | None]:
+    def _extract_matrix_system(self, equations: list[Equation], unknown_variables: list[str], variables: dict[str, FieldQnty]) -> tuple[np.ndarray | None, np.ndarray | None]:
         """
         Extract coefficient matrix A and constant vector b from the system of equations.
 
@@ -333,7 +333,7 @@ class SimultaneousEquationSolver(BaseSolver):
         except Exception:
             return None, None
 
-    def _extract_linear_coefficients_vector(self, equation: Equation, unknown_variables: list[str], variables: dict[str, Variable]) -> list[float] | None:
+    def _extract_linear_coefficients_vector(self, equation: Equation, unknown_variables: list[str], variables: dict[str, FieldQnty]) -> list[float] | None:
         """
         Extract linear coefficients from equation using numerical differentiation.
 
@@ -370,8 +370,8 @@ class SimultaneousEquationSolver(BaseSolver):
                     original_var = test_vars[var_name]
                     if original_var.quantity is None:
                         raise ValueError(f"Variable {var_name} has no quantity")
-                    test_var = Variable(name=f"test_{var_name}", expected_dimension=original_var.quantity.dimension, is_known=True)
-                    test_var.quantity = Qty(test_value, original_var.quantity.unit)
+                    test_var = FieldQnty(name=f"test_{var_name}", expected_dimension=original_var.quantity.dimension, is_known=True)
+                    test_var.quantity = Quantity(test_value, original_var.quantity.unit)
                     test_var.symbol = var_name
                     test_vars[var_name] = test_var
 
@@ -386,8 +386,8 @@ class SimultaneousEquationSolver(BaseSolver):
                 original_var = test_vars[var_name]
                 if original_var.quantity is None:
                     raise ValueError(f"Variable {var_name} has no quantity")
-                test_var = Variable(name=f"test_{var_name}", expected_dimension=original_var.quantity.dimension, is_known=True)
-                test_var.quantity = Qty(0.0, original_var.quantity.unit)
+                test_var = FieldQnty(name=f"test_{var_name}", expected_dimension=original_var.quantity.dimension, is_known=True)
+                test_var.quantity = Quantity(0.0, original_var.quantity.unit)
                 test_var.symbol = var_name
                 test_vars[var_name] = test_var
             baseline_residual = self._calculate_equation_residual(equation, test_vars)
@@ -407,7 +407,7 @@ class SimultaneousEquationSolver(BaseSolver):
         except Exception:
             return None
 
-    def _calculate_equation_residual(self, equation: Equation, test_variables: dict[str, Variable]) -> float:
+    def _calculate_equation_residual(self, equation: Equation, test_variables: dict[str, FieldQnty]) -> float:
         """
         Calculate equation residual (LHS - RHS) with proper unit handling.
 
@@ -439,7 +439,7 @@ class SimultaneousEquationSolver(BaseSolver):
             # Fallback for cases where evaluation fails
             return float("inf")
 
-    def _update_variable_with_solution(self, variable_symbol: str, solution_value: float, variables: dict[str, Variable]):
+    def _update_variable_with_solution(self, variable_symbol: str, solution_value: float, variables: dict[str, FieldQnty]):
         """
         Update a variable with its solved value and record the solving step.
 
@@ -452,11 +452,11 @@ class SimultaneousEquationSolver(BaseSolver):
         if original_variable.quantity is None:
             raise ValueError(f"Variable {variable_symbol} has no quantity")
         result_unit = original_variable.quantity.unit
-        solution_quantity = Qty(solution_value, result_unit)
+        solution_quantity = Quantity(solution_value, result_unit)
 
         # Preserve the original variable name and create solved variable
         original_name = original_variable.name
-        solved_variable = Variable(name=original_name, expected_dimension=solution_quantity.dimension, is_known=True)
+        solved_variable = FieldQnty(name=original_name, expected_dimension=solution_quantity.dimension, is_known=True)
         solved_variable.quantity = solution_quantity
         solved_variable.symbol = variable_symbol
         variables[variable_symbol] = solved_variable
