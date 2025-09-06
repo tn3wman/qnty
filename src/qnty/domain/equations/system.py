@@ -1,4 +1,4 @@
-from ...core.quantities.unified_variable import UnifiedVariable
+from ...core.quantities.field_qnty import FieldQnty
 from .equation import Equation
 
 
@@ -21,7 +21,7 @@ class EquationSystem:
         self.equations.append(equation)
         self._invalidate_caches()
 
-    def add_variable(self, variable: UnifiedVariable):
+    def add_variable(self, variable: FieldQnty):
         """Add a variable to the system."""
         self.variables[variable.name] = variable
         self._invalidate_caches()

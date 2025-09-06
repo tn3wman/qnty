@@ -10,14 +10,14 @@ Auto-generated from unit_data.json.
 
 from typing import Any
 
-from ..core.quantities.unified_variable import UnifiedVariable
+from ..core.quantities.field_qnty import FieldQnty
 from . import dimensions as dim
 from . import setters as ts
 
 # ===== QUANTITY CLASSES =====
 # Type stubs for quantity classes with setter relationships
 
-class AbsorbedDose(UnifiedVariable):
+class AbsorbedDose(FieldQnty):
     """
     Type-safe absorbed radiation dose quantity with expression capabilities.
     
@@ -59,7 +59,7 @@ class AbsorbedDose(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class Acceleration(UnifiedVariable):
+class Acceleration(FieldQnty):
     """
     Type-safe acceleration quantity with expression capabilities.
     
@@ -101,7 +101,7 @@ class Acceleration(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class ActivationEnergy(UnifiedVariable):
+class ActivationEnergy(FieldQnty):
     """
     Type-safe activation energy quantity with expression capabilities.
     
@@ -143,7 +143,7 @@ class ActivationEnergy(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class AmountOfSubstance(UnifiedVariable):
+class AmountOfSubstance(FieldQnty):
     """
     Type-safe amount of substance quantity with expression capabilities.
     
@@ -185,7 +185,7 @@ class AmountOfSubstance(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class AnglePlane(UnifiedVariable):
+class AnglePlane(FieldQnty):
     """
     Type-safe angle, plane quantity with expression capabilities.
     
@@ -227,7 +227,7 @@ class AnglePlane(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class AngleSolid(UnifiedVariable):
+class AngleSolid(FieldQnty):
     """
     Type-safe angle, solid quantity with expression capabilities.
     
@@ -269,7 +269,7 @@ class AngleSolid(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class AngularAcceleration(UnifiedVariable):
+class AngularAcceleration(FieldQnty):
     """
     Type-safe angular acceleration quantity with expression capabilities.
     
@@ -311,7 +311,7 @@ class AngularAcceleration(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class AngularMomentum(UnifiedVariable):
+class AngularMomentum(FieldQnty):
     """
     Type-safe angular momentum quantity with expression capabilities.
     
@@ -353,7 +353,7 @@ class AngularMomentum(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class Area(UnifiedVariable):
+class Area(FieldQnty):
     """
     Type-safe area quantity with expression capabilities.
     
@@ -395,7 +395,7 @@ class Area(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class AreaPerUnitVolume(UnifiedVariable):
+class AreaPerUnitVolume(FieldQnty):
     """
     Type-safe area per unit volume quantity with expression capabilities.
     
@@ -437,7 +437,7 @@ class AreaPerUnitVolume(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class AtomicWeight(UnifiedVariable):
+class AtomicWeight(FieldQnty):
     """
     Type-safe atomic weight quantity with expression capabilities.
     
@@ -479,7 +479,7 @@ class AtomicWeight(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class Concentration(UnifiedVariable):
+class Concentration(FieldQnty):
     """
     Type-safe concentration quantity with expression capabilities.
     
@@ -521,7 +521,7 @@ class Concentration(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class Dimensionless(UnifiedVariable):
+class Dimensionless(FieldQnty):
     """
     Type-safe dimensionless quantity with expression capabilities.
     
@@ -561,7 +561,7 @@ class Dimensionless(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class DynamicFluidity(UnifiedVariable):
+class DynamicFluidity(FieldQnty):
     """
     Type-safe dynamic fluidity quantity with expression capabilities.
     
@@ -603,7 +603,7 @@ class DynamicFluidity(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class ElectricCapacitance(UnifiedVariable):
+class ElectricCapacitance(FieldQnty):
     """
     Type-safe electric capacitance quantity with expression capabilities.
     
@@ -645,7 +645,7 @@ class ElectricCapacitance(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class ElectricCharge(UnifiedVariable):
+class ElectricCharge(FieldQnty):
     """
     Type-safe electric charge quantity with expression capabilities.
     
@@ -687,7 +687,7 @@ class ElectricCharge(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class ElectricCurrentIntensity(UnifiedVariable):
+class ElectricCurrentIntensity(FieldQnty):
     """
     Type-safe electric current intensity quantity with expression capabilities.
     
@@ -729,7 +729,7 @@ class ElectricCurrentIntensity(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class ElectricDipoleMoment(UnifiedVariable):
+class ElectricDipoleMoment(FieldQnty):
     """
     Type-safe electric dipole moment quantity with expression capabilities.
     
@@ -771,7 +771,7 @@ class ElectricDipoleMoment(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class ElectricFieldStrength(UnifiedVariable):
+class ElectricFieldStrength(FieldQnty):
     """
     Type-safe electric field strength quantity with expression capabilities.
     
@@ -813,7 +813,7 @@ class ElectricFieldStrength(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class ElectricInductance(UnifiedVariable):
+class ElectricInductance(FieldQnty):
     """
     Type-safe electric inductance quantity with expression capabilities.
     
@@ -855,7 +855,7 @@ class ElectricInductance(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class ElectricPotential(UnifiedVariable):
+class ElectricPotential(FieldQnty):
     """
     Type-safe electric potential quantity with expression capabilities.
     
@@ -897,7 +897,7 @@ class ElectricPotential(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class ElectricResistance(UnifiedVariable):
+class ElectricResistance(FieldQnty):
     """
     Type-safe electric resistance quantity with expression capabilities.
     
@@ -939,7 +939,7 @@ class ElectricResistance(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class ElectricalConductance(UnifiedVariable):
+class ElectricalConductance(FieldQnty):
     """
     Type-safe electrical conductance quantity with expression capabilities.
     
@@ -981,7 +981,7 @@ class ElectricalConductance(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class ElectricalPermittivity(UnifiedVariable):
+class ElectricalPermittivity(FieldQnty):
     """
     Type-safe electrical permittivity quantity with expression capabilities.
     
@@ -1023,7 +1023,7 @@ class ElectricalPermittivity(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class ElectricalResistivity(UnifiedVariable):
+class ElectricalResistivity(FieldQnty):
     """
     Type-safe electrical resistivity quantity with expression capabilities.
     
@@ -1065,7 +1065,7 @@ class ElectricalResistivity(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class EnergyFlux(UnifiedVariable):
+class EnergyFlux(FieldQnty):
     """
     Type-safe energy flux quantity with expression capabilities.
     
@@ -1107,7 +1107,7 @@ class EnergyFlux(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class EnergyHeatWork(UnifiedVariable):
+class EnergyHeatWork(FieldQnty):
     """
     Type-safe energy, heat, work quantity with expression capabilities.
     
@@ -1149,7 +1149,7 @@ class EnergyHeatWork(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class EnergyPerUnitArea(UnifiedVariable):
+class EnergyPerUnitArea(FieldQnty):
     """
     Type-safe energy per unit area quantity with expression capabilities.
     
@@ -1191,7 +1191,7 @@ class EnergyPerUnitArea(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class Force(UnifiedVariable):
+class Force(FieldQnty):
     """
     Type-safe force quantity with expression capabilities.
     
@@ -1233,7 +1233,7 @@ class Force(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class ForceBody(UnifiedVariable):
+class ForceBody(FieldQnty):
     """
     Type-safe force (body) quantity with expression capabilities.
     
@@ -1275,7 +1275,7 @@ class ForceBody(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class ForcePerUnitMass(UnifiedVariable):
+class ForcePerUnitMass(FieldQnty):
     """
     Type-safe force per unit mass quantity with expression capabilities.
     
@@ -1317,7 +1317,7 @@ class ForcePerUnitMass(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class FrequencyVoltageRatio(UnifiedVariable):
+class FrequencyVoltageRatio(FieldQnty):
     """
     Type-safe frequency voltage ratio quantity with expression capabilities.
     
@@ -1359,7 +1359,7 @@ class FrequencyVoltageRatio(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class FuelConsumption(UnifiedVariable):
+class FuelConsumption(FieldQnty):
     """
     Type-safe fuel consumption quantity with expression capabilities.
     
@@ -1401,7 +1401,7 @@ class FuelConsumption(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class HeatOfCombustion(UnifiedVariable):
+class HeatOfCombustion(FieldQnty):
     """
     Type-safe heat of combustion quantity with expression capabilities.
     
@@ -1443,7 +1443,7 @@ class HeatOfCombustion(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class HeatOfFusion(UnifiedVariable):
+class HeatOfFusion(FieldQnty):
     """
     Type-safe heat of fusion quantity with expression capabilities.
     
@@ -1485,7 +1485,7 @@ class HeatOfFusion(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class HeatOfVaporization(UnifiedVariable):
+class HeatOfVaporization(FieldQnty):
     """
     Type-safe heat of vaporization quantity with expression capabilities.
     
@@ -1527,7 +1527,7 @@ class HeatOfVaporization(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class HeatTransferCoefficient(UnifiedVariable):
+class HeatTransferCoefficient(FieldQnty):
     """
     Type-safe heat transfer coefficient quantity with expression capabilities.
     
@@ -1569,7 +1569,7 @@ class HeatTransferCoefficient(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class Illuminance(UnifiedVariable):
+class Illuminance(FieldQnty):
     """
     Type-safe illuminance quantity with expression capabilities.
     
@@ -1611,7 +1611,7 @@ class Illuminance(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class KineticEnergyOfTurbulence(UnifiedVariable):
+class KineticEnergyOfTurbulence(FieldQnty):
     """
     Type-safe kinetic energy of turbulence quantity with expression capabilities.
     
@@ -1653,7 +1653,7 @@ class KineticEnergyOfTurbulence(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class Length(UnifiedVariable):
+class Length(FieldQnty):
     """
     Type-safe length quantity with expression capabilities.
     
@@ -1695,7 +1695,7 @@ class Length(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class LinearMassDensity(UnifiedVariable):
+class LinearMassDensity(FieldQnty):
     """
     Type-safe linear mass density quantity with expression capabilities.
     
@@ -1737,7 +1737,7 @@ class LinearMassDensity(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class LinearMomentum(UnifiedVariable):
+class LinearMomentum(FieldQnty):
     """
     Type-safe linear momentum quantity with expression capabilities.
     
@@ -1779,7 +1779,7 @@ class LinearMomentum(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class LuminanceSelf(UnifiedVariable):
+class LuminanceSelf(FieldQnty):
     """
     Type-safe luminance (self) quantity with expression capabilities.
     
@@ -1821,7 +1821,7 @@ class LuminanceSelf(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class LuminousFlux(UnifiedVariable):
+class LuminousFlux(FieldQnty):
     """
     Type-safe luminous flux quantity with expression capabilities.
     
@@ -1863,7 +1863,7 @@ class LuminousFlux(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class LuminousIntensity(UnifiedVariable):
+class LuminousIntensity(FieldQnty):
     """
     Type-safe luminous intensity quantity with expression capabilities.
     
@@ -1905,7 +1905,7 @@ class LuminousIntensity(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class MagneticField(UnifiedVariable):
+class MagneticField(FieldQnty):
     """
     Type-safe magnetic field quantity with expression capabilities.
     
@@ -1947,7 +1947,7 @@ class MagneticField(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class MagneticFlux(UnifiedVariable):
+class MagneticFlux(FieldQnty):
     """
     Type-safe magnetic flux quantity with expression capabilities.
     
@@ -1989,7 +1989,7 @@ class MagneticFlux(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class MagneticInductionFieldStrength(UnifiedVariable):
+class MagneticInductionFieldStrength(FieldQnty):
     """
     Type-safe magnetic induction field strength quantity with expression capabilities.
     
@@ -2031,7 +2031,7 @@ class MagneticInductionFieldStrength(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class MagneticMoment(UnifiedVariable):
+class MagneticMoment(FieldQnty):
     """
     Type-safe magnetic moment quantity with expression capabilities.
     
@@ -2073,7 +2073,7 @@ class MagneticMoment(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class MagneticPermeability(UnifiedVariable):
+class MagneticPermeability(FieldQnty):
     """
     Type-safe magnetic permeability quantity with expression capabilities.
     
@@ -2115,7 +2115,7 @@ class MagneticPermeability(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class MagnetomotiveForce(UnifiedVariable):
+class MagnetomotiveForce(FieldQnty):
     """
     Type-safe magnetomotive force quantity with expression capabilities.
     
@@ -2157,7 +2157,7 @@ class MagnetomotiveForce(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class Mass(UnifiedVariable):
+class Mass(FieldQnty):
     """
     Type-safe mass quantity with expression capabilities.
     
@@ -2199,7 +2199,7 @@ class Mass(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class MassDensity(UnifiedVariable):
+class MassDensity(FieldQnty):
     """
     Type-safe mass density quantity with expression capabilities.
     
@@ -2241,7 +2241,7 @@ class MassDensity(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class MassFlowRate(UnifiedVariable):
+class MassFlowRate(FieldQnty):
     """
     Type-safe mass flow rate quantity with expression capabilities.
     
@@ -2283,7 +2283,7 @@ class MassFlowRate(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class MassFlux(UnifiedVariable):
+class MassFlux(FieldQnty):
     """
     Type-safe mass flux quantity with expression capabilities.
     
@@ -2325,7 +2325,7 @@ class MassFlux(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class MassFractionOfI(UnifiedVariable):
+class MassFractionOfI(FieldQnty):
     """
     Type-safe mass fraction of "i" quantity with expression capabilities.
     
@@ -2367,7 +2367,7 @@ class MassFractionOfI(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class MassTransferCoefficient(UnifiedVariable):
+class MassTransferCoefficient(FieldQnty):
     """
     Type-safe mass transfer coefficient quantity with expression capabilities.
     
@@ -2409,7 +2409,7 @@ class MassTransferCoefficient(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class MolalityOfSoluteI(UnifiedVariable):
+class MolalityOfSoluteI(FieldQnty):
     """
     Type-safe molality of solute "i" quantity with expression capabilities.
     
@@ -2451,7 +2451,7 @@ class MolalityOfSoluteI(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class MolarConcentrationByMass(UnifiedVariable):
+class MolarConcentrationByMass(FieldQnty):
     """
     Type-safe molar concentration by mass quantity with expression capabilities.
     
@@ -2493,7 +2493,7 @@ class MolarConcentrationByMass(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class MolarFlowRate(UnifiedVariable):
+class MolarFlowRate(FieldQnty):
     """
     Type-safe molar flow rate quantity with expression capabilities.
     
@@ -2535,7 +2535,7 @@ class MolarFlowRate(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class MolarFlux(UnifiedVariable):
+class MolarFlux(FieldQnty):
     """
     Type-safe molar flux quantity with expression capabilities.
     
@@ -2577,7 +2577,7 @@ class MolarFlux(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class MolarHeatCapacity(UnifiedVariable):
+class MolarHeatCapacity(FieldQnty):
     """
     Type-safe molar heat capacity quantity with expression capabilities.
     
@@ -2619,7 +2619,7 @@ class MolarHeatCapacity(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class MolarityOfI(UnifiedVariable):
+class MolarityOfI(FieldQnty):
     """
     Type-safe molarity of "i" quantity with expression capabilities.
     
@@ -2661,7 +2661,7 @@ class MolarityOfI(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class MoleFractionOfI(UnifiedVariable):
+class MoleFractionOfI(FieldQnty):
     """
     Type-safe mole fraction of "i" quantity with expression capabilities.
     
@@ -2703,7 +2703,7 @@ class MoleFractionOfI(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class MomentOfInertia(UnifiedVariable):
+class MomentOfInertia(FieldQnty):
     """
     Type-safe moment of inertia quantity with expression capabilities.
     
@@ -2745,7 +2745,7 @@ class MomentOfInertia(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class MomentumFlowRate(UnifiedVariable):
+class MomentumFlowRate(FieldQnty):
     """
     Type-safe momentum flow rate quantity with expression capabilities.
     
@@ -2787,7 +2787,7 @@ class MomentumFlowRate(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class MomentumFlux(UnifiedVariable):
+class MomentumFlux(FieldQnty):
     """
     Type-safe momentum flux quantity with expression capabilities.
     
@@ -2829,7 +2829,7 @@ class MomentumFlux(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class NormalityOfSolution(UnifiedVariable):
+class NormalityOfSolution(FieldQnty):
     """
     Type-safe normality of solution quantity with expression capabilities.
     
@@ -2871,7 +2871,7 @@ class NormalityOfSolution(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class ParticleDensity(UnifiedVariable):
+class ParticleDensity(FieldQnty):
     """
     Type-safe particle density quantity with expression capabilities.
     
@@ -2913,7 +2913,7 @@ class ParticleDensity(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class Percent(UnifiedVariable):
+class Percent(FieldQnty):
     """
     Type-safe percent quantity with expression capabilities.
     
@@ -2955,7 +2955,7 @@ class Percent(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class Permeability(UnifiedVariable):
+class Permeability(FieldQnty):
     """
     Type-safe permeability quantity with expression capabilities.
     
@@ -2997,7 +2997,7 @@ class Permeability(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class PhotonEmissionRate(UnifiedVariable):
+class PhotonEmissionRate(FieldQnty):
     """
     Type-safe photon emission rate quantity with expression capabilities.
     
@@ -3039,7 +3039,7 @@ class PhotonEmissionRate(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class PowerPerUnitMass(UnifiedVariable):
+class PowerPerUnitMass(FieldQnty):
     """
     Type-safe power per unit mass or specific power quantity with expression capabilities.
     
@@ -3081,7 +3081,7 @@ class PowerPerUnitMass(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class PowerPerUnitVolume(UnifiedVariable):
+class PowerPerUnitVolume(FieldQnty):
     """
     Type-safe power per unit volume or power density quantity with expression capabilities.
     
@@ -3123,7 +3123,7 @@ class PowerPerUnitVolume(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class PowerThermalDuty(UnifiedVariable):
+class PowerThermalDuty(FieldQnty):
     """
     Type-safe power, thermal duty quantity with expression capabilities.
     
@@ -3165,7 +3165,7 @@ class PowerThermalDuty(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class Pressure(UnifiedVariable):
+class Pressure(FieldQnty):
     """
     Type-safe pressure quantity with expression capabilities.
     
@@ -3207,7 +3207,7 @@ class Pressure(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class RadiationDoseEquivalent(UnifiedVariable):
+class RadiationDoseEquivalent(FieldQnty):
     """
     Type-safe radiation dose equivalent quantity with expression capabilities.
     
@@ -3249,7 +3249,7 @@ class RadiationDoseEquivalent(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class RadiationExposure(UnifiedVariable):
+class RadiationExposure(FieldQnty):
     """
     Type-safe radiation exposure quantity with expression capabilities.
     
@@ -3291,7 +3291,7 @@ class RadiationExposure(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class Radioactivity(UnifiedVariable):
+class Radioactivity(FieldQnty):
     """
     Type-safe radioactivity quantity with expression capabilities.
     
@@ -3333,7 +3333,7 @@ class Radioactivity(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class SecondMomentOfArea(UnifiedVariable):
+class SecondMomentOfArea(FieldQnty):
     """
     Type-safe second moment of area quantity with expression capabilities.
     
@@ -3375,7 +3375,7 @@ class SecondMomentOfArea(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class SecondRadiationConstantPlanck(UnifiedVariable):
+class SecondRadiationConstantPlanck(FieldQnty):
     """
     Type-safe second radiation constant (planck) quantity with expression capabilities.
     
@@ -3417,7 +3417,7 @@ class SecondRadiationConstantPlanck(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class SpecificEnthalpy(UnifiedVariable):
+class SpecificEnthalpy(FieldQnty):
     """
     Type-safe specific enthalpy quantity with expression capabilities.
     
@@ -3459,7 +3459,7 @@ class SpecificEnthalpy(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class SpecificGravity(UnifiedVariable):
+class SpecificGravity(FieldQnty):
     """
     Type-safe specific gravity quantity with expression capabilities.
     
@@ -3501,7 +3501,7 @@ class SpecificGravity(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class SpecificHeatCapacityConstantPressure(UnifiedVariable):
+class SpecificHeatCapacityConstantPressure(FieldQnty):
     """
     Type-safe specific heat capacity (constant pressure) quantity with expression capabilities.
     
@@ -3543,7 +3543,7 @@ class SpecificHeatCapacityConstantPressure(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class SpecificLength(UnifiedVariable):
+class SpecificLength(FieldQnty):
     """
     Type-safe specific length quantity with expression capabilities.
     
@@ -3585,7 +3585,7 @@ class SpecificLength(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class SpecificSurface(UnifiedVariable):
+class SpecificSurface(FieldQnty):
     """
     Type-safe specific surface quantity with expression capabilities.
     
@@ -3627,7 +3627,7 @@ class SpecificSurface(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class SpecificVolume(UnifiedVariable):
+class SpecificVolume(FieldQnty):
     """
     Type-safe specific volume quantity with expression capabilities.
     
@@ -3669,7 +3669,7 @@ class SpecificVolume(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class Stress(UnifiedVariable):
+class Stress(FieldQnty):
     """
     Type-safe stress quantity with expression capabilities.
     
@@ -3711,7 +3711,7 @@ class Stress(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class SurfaceMassDensity(UnifiedVariable):
+class SurfaceMassDensity(FieldQnty):
     """
     Type-safe surface mass density quantity with expression capabilities.
     
@@ -3753,7 +3753,7 @@ class SurfaceMassDensity(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class SurfaceTension(UnifiedVariable):
+class SurfaceTension(FieldQnty):
     """
     Type-safe surface tension quantity with expression capabilities.
     
@@ -3795,7 +3795,7 @@ class SurfaceTension(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class Temperature(UnifiedVariable):
+class Temperature(FieldQnty):
     """
     Type-safe temperature quantity with expression capabilities.
     
@@ -3837,7 +3837,7 @@ class Temperature(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class ThermalConductivity(UnifiedVariable):
+class ThermalConductivity(FieldQnty):
     """
     Type-safe thermal conductivity quantity with expression capabilities.
     
@@ -3879,7 +3879,7 @@ class ThermalConductivity(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class Time(UnifiedVariable):
+class Time(FieldQnty):
     """
     Type-safe time quantity with expression capabilities.
     
@@ -3921,7 +3921,7 @@ class Time(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class Torque(UnifiedVariable):
+class Torque(FieldQnty):
     """
     Type-safe torque quantity with expression capabilities.
     
@@ -3963,7 +3963,7 @@ class Torque(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class TurbulenceEnergyDissipationRate(UnifiedVariable):
+class TurbulenceEnergyDissipationRate(FieldQnty):
     """
     Type-safe turbulence energy dissipation rate quantity with expression capabilities.
     
@@ -4005,7 +4005,7 @@ class TurbulenceEnergyDissipationRate(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class VelocityAngular(UnifiedVariable):
+class VelocityAngular(FieldQnty):
     """
     Type-safe velocity, angular quantity with expression capabilities.
     
@@ -4047,7 +4047,7 @@ class VelocityAngular(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class VelocityLinear(UnifiedVariable):
+class VelocityLinear(FieldQnty):
     """
     Type-safe velocity, linear quantity with expression capabilities.
     
@@ -4089,7 +4089,7 @@ class VelocityLinear(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class ViscosityDynamic(UnifiedVariable):
+class ViscosityDynamic(FieldQnty):
     """
     Type-safe viscosity, dynamic quantity with expression capabilities.
     
@@ -4131,7 +4131,7 @@ class ViscosityDynamic(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class ViscosityKinematic(UnifiedVariable):
+class ViscosityKinematic(FieldQnty):
     """
     Type-safe viscosity, kinematic quantity with expression capabilities.
     
@@ -4173,7 +4173,7 @@ class ViscosityKinematic(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class Volume(UnifiedVariable):
+class Volume(FieldQnty):
     """
     Type-safe volume quantity with expression capabilities.
     
@@ -4215,7 +4215,7 @@ class Volume(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class VolumeFractionOfI(UnifiedVariable):
+class VolumeFractionOfI(FieldQnty):
     """
     Type-safe volume fraction of "i" quantity with expression capabilities.
     
@@ -4257,7 +4257,7 @@ class VolumeFractionOfI(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class VolumetricCalorificHeatingValue(UnifiedVariable):
+class VolumetricCalorificHeatingValue(FieldQnty):
     """
     Type-safe volumetric calorific (heating) value quantity with expression capabilities.
     
@@ -4299,7 +4299,7 @@ class VolumetricCalorificHeatingValue(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class VolumetricCoefficientOfExpansion(UnifiedVariable):
+class VolumetricCoefficientOfExpansion(FieldQnty):
     """
     Type-safe volumetric coefficient of expansion quantity with expression capabilities.
     
@@ -4341,7 +4341,7 @@ class VolumetricCoefficientOfExpansion(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class VolumetricFlowRate(UnifiedVariable):
+class VolumetricFlowRate(FieldQnty):
     """
     Type-safe volumetric flow rate quantity with expression capabilities.
     
@@ -4383,7 +4383,7 @@ class VolumetricFlowRate(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class VolumetricFlux(UnifiedVariable):
+class VolumetricFlux(FieldQnty):
     """
     Type-safe volumetric flux quantity with expression capabilities.
     
@@ -4425,7 +4425,7 @@ class VolumetricFlux(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class VolumetricMassFlowRate(UnifiedVariable):
+class VolumetricMassFlowRate(FieldQnty):
     """
     Type-safe volumetric mass flow rate quantity with expression capabilities.
     
@@ -4467,7 +4467,7 @@ class VolumetricMassFlowRate(UnifiedVariable):
     def set_arithmetic_mode(self, mode: str) -> Any: ...
     
 
-class Wavenumber(UnifiedVariable):
+class Wavenumber(FieldQnty):
     """
     Type-safe wavenumber quantity with expression capabilities.
     

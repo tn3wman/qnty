@@ -20,11 +20,11 @@ from logging import Logger
 
 if TYPE_CHECKING:
     from qnty.domain.equations import Equation
-    from qnty.core.quantities.unified_variable import UnifiedVariable as Variable
+    from qnty.core.quantities.field_qnty import FieldQnty as Variable
 
 from qnty.domain.equations.equation import Equation
 from qnty.domain.expressions import BinaryOperation, ConditionalExpression, Constant, UnaryFunction, VariableReference, cos, sin
-from qnty.core.quantities.unified_variable import UnifiedVariable as Variable
+from qnty.core.quantities.field_qnty import FieldQnty as Variable
 
 # Type aliases for better readability
 VariableDict = dict[str, Variable]

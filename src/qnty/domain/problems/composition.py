@@ -15,12 +15,12 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
-    from qnty.core.quantities.unified_variable import UnifiedVariable as Variable
+    from qnty.core.quantities.field_qnty import FieldQnty as Variable
     from qnty.domain.equations import Equation
 
 from qnty.domain.expressions import BinaryOperation, max_expr, min_expr, sin
 from qnty.generated.quantities import Dimensionless
-from qnty.core.quantities.unified_variable import UnifiedVariable as Variable
+from qnty.core.quantities.field_qnty import FieldQnty as Variable
 from qnty.domain.equations import Equation
 
 from .rules import Rules

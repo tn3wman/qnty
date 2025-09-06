@@ -5,7 +5,7 @@ Core Quantities Package
 High-performance quantity and variable systems.
 """
 
-from .quantity import Quantity
-from .unified_variable import UnifiedVariable
+from .base_qnty import Quantity
+from .field_qnty import FieldQnty
 
-__all__ = ["Quantity", "UnifiedVariable"]
+__all__ = ["Quantity", "FieldQnty"]

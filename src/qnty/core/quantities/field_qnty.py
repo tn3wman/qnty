@@ -32,7 +32,7 @@ if TYPE_CHECKING:
     from ...domain.equations.equation import Equation
     from ...domain.expressions.nodes import Expression
     from ...generated.dimensions import DimensionSignature
-    from .quantity import Quantity, TypeSafeSetter
+    from .base_qnty import Quantity, TypeSafeSetter
 
 
 class QuantityManagementMixin:
@@ -120,7 +120,7 @@ class FlexibleConstructorMixin:
                 self._is_known = True
                 # For dimensionless, create quantity directly
                 from ...generated.units import DimensionlessUnits
-                from .quantity import Quantity
+                from .base_qnty import Quantity
 
                 self.quantity = Quantity(value, DimensionlessUnits.dimensionless)
             elif isinstance(args[1], str):
@@ -182,11 +182,11 @@ class FlexibleConstructorMixin:
 
         # Fallback to direct quantity creation
         from ...generated.units import DimensionlessUnits
-        from .quantity import Quantity
+        from .base_qnty import Quantity
 
         # Try to find the unit in the registry or use dimensionless fallback
         try:
-            from ...core.units.registry import registry
+            from ..units.registry import registry
             # Use a simple lookup approach since get_unit method may not exist
             if hasattr(registry, 'units') and str(unit) in registry.units:
                 unit_constant = registry.units[str(unit)]
@@ -316,7 +316,7 @@ class UnifiedArithmeticMixin:
     def _quantity_add(left: Any, right: Any):
         """Fast path addition returning Quantity."""
         from ...domain.expressions.nodes import BinaryOperation
-        from .quantity import ArithmeticOperations, Quantity
+        from .base_qnty import ArithmeticOperations, Quantity
 
         # Get quantities from variables or use direct quantities
         left_qty = left.quantity if hasattr(left, "quantity") else left
@@ -349,7 +349,7 @@ class UnifiedArithmeticMixin:
     @staticmethod
     def _quantity_subtract(left: Any, right: Any):
         """Fast path subtraction returning Quantity."""
-        from .quantity import ArithmeticOperations, Quantity
+        from .base_qnty import ArithmeticOperations, Quantity
 
         left_qty = left.quantity if hasattr(left, "quantity") else left
         right_qty = right.quantity if hasattr(right, "quantity") else right
@@ -376,7 +376,7 @@ class UnifiedArithmeticMixin:
     @staticmethod
     def _quantity_multiply(left: Any, right: Any):
         """Fast path multiplication returning Quantity."""
-        from .quantity import ArithmeticOperations, Quantity
+        from .base_qnty import ArithmeticOperations, Quantity
 
         left_qty = left.quantity if hasattr(left, "quantity") else left
         right_qty = right.quantity if hasattr(right, "quantity") else right
@@ -403,7 +403,7 @@ class UnifiedArithmeticMixin:
     @staticmethod
     def _quantity_divide(left: Any, right: Any):
         """Fast path division returning Quantity."""
-        from .quantity import ArithmeticOperations, Quantity
+        from .base_qnty import ArithmeticOperations, Quantity
 
         left_qty = left.quantity if hasattr(left, "quantity") else left
         right_qty = right.quantity if hasattr(right, "quantity") else right
@@ -513,7 +513,7 @@ class ExpressionMixin:
         """Get variable names used in this variable (for equation system compatibility)."""
         return {self.symbol or self.name}
 
-    def evaluate(self, variable_values: dict[str, UnifiedVariable]) -> Quantity:
+    def evaluate(self, variable_values: dict[str, FieldQnty]) -> Quantity:
         """Evaluate this variable in the context of a variable dictionary."""
         # If this variable has a quantity, return it
         if self.quantity is not None:
@@ -572,7 +572,7 @@ class ExpressionMixin:
         else:
             # Direct value input (int, float)
             try:
-                from ...core.quantities.quantity import Quantity
+                from .base_qnty import Quantity
 
                 # Try to create a quantity with the same dimension as this variable
                 if hasattr(self, "_dimension") and self._dimension:
@@ -670,12 +670,12 @@ class SetterCompatibilityMixin:
             return self._setter_class(self, value)  # Correct parameter order
         else:
             # Fallback to generic setter
-            from .quantity import TypeSafeSetter
+            from .base_qnty import TypeSafeSetter
 
             return TypeSafeSetter(self, value)  # Correct parameter order
 
 
-class UnifiedVariable(QuantityManagementMixin, FlexibleConstructorMixin, UnifiedArithmeticMixin, ExpressionMixin, SetterCompatibilityMixin, ErrorHandlerMixin):
+class FieldQnty(QuantityManagementMixin, FlexibleConstructorMixin, UnifiedArithmeticMixin, ExpressionMixin, SetterCompatibilityMixin, ErrorHandlerMixin):
     """
     Unified variable class that replaces the 4-level inheritance chain.
 
@@ -755,7 +755,7 @@ class UnifiedVariable(QuantityManagementMixin, FlexibleConstructorMixin, Unified
 
 def create_domain_variable_class(
     dimension: DimensionSignature, setter_class: type | None = None, default_unit_property: str | None = None, unit_mappings: dict[str, str] | None = None
-) -> type[UnifiedVariable]:
+) -> type[FieldQnty]:
     """
     Factory function to create domain-specific variable classes.
 
@@ -763,7 +763,7 @@ def create_domain_variable_class(
     the necessary class with proper dimension and setter configuration.
     """
 
-    class DomainVariable(UnifiedVariable):
+    class DomainVariable(FieldQnty):
         _dimension = dimension
         _setter_class = setter_class
         _default_unit_property = default_unit_property

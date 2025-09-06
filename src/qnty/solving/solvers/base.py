@@ -5,7 +5,7 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from qnty.domain.equations.equation import Equation
-from qnty.core.quantities.unified_variable import UnifiedVariable as Variable
+from qnty.core.quantities.field_qnty import FieldQnty as Variable
 from qnty.solving.order import Order
 
 

@@ -14,12 +14,12 @@ from collections.abc import Callable
 
 if TYPE_CHECKING:
     from qnty.core.quantities import Quantity as Qty
-    from qnty.core.quantities.unified_variable import UnifiedVariable as Variable
+    from qnty.core.quantities.field_qnty import FieldQnty as Variable
     from qnty.domain.equations import Equation
 
 from qnty.generated.units import DimensionlessUnits
 from qnty.core.quantities import Quantity as Qty
-from qnty.core.quantities.unified_variable import UnifiedVariable as Variable
+from qnty.core.quantities.field_qnty import FieldQnty as Variable
 from qnty.domain.equations import Equation, EquationSystem
 from qnty.solving.order import Order
 from qnty.solving.solvers import SolverManager

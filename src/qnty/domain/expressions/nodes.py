@@ -15,12 +15,12 @@ from .formatter import ExpressionFormatter
 from .scope_discovery import ScopeDiscoveryService
 
 if TYPE_CHECKING:
-    from ...core.quantities.quantity import Quantity
-    from ...core.quantities.unified_variable import UnifiedVariable
+    from ...core.quantities.base_qnty import Quantity
+    from ...core.quantities.field_qnty import FieldQnty
 
 from ...generated.units import DimensionlessUnits
-from ...core.quantities.quantity import Quantity
-from ...core.quantities.unified_variable import UnifiedVariable
+from ...core.quantities.base_qnty import Quantity
+from ...core.quantities.field_qnty import FieldQnty
 from .cache import wrap_operand
 
 
@@ -31,7 +31,7 @@ class Expression(ABC):
     _auto_eval_enabled = False  # Disabled by default for performance
 
     @abstractmethod
-    def evaluate(self, variable_values: dict[str, "UnifiedVariable"]) -> "Quantity":
+    def evaluate(self, variable_values: dict[str, "FieldQnty"]) -> "Quantity":
         """Evaluate the expression given variable values."""
         pass
 
@@ -49,7 +49,7 @@ class Expression(ABC):
     def __str__(self) -> str:
         pass
 
-    def _discover_variables_from_scope(self) -> dict[str, "UnifiedVariable"]:
+    def _discover_variables_from_scope(self) -> dict[str, "FieldQnty"]:
         """Automatically discover variables from the calling scope using centralized service."""
         # Skip if auto-evaluation is disabled
         if not self._auto_eval_enabled:
@@ -63,39 +63,39 @@ class Expression(ABC):
         # Use centralized scope discovery service
         return ScopeDiscoveryService.discover_variables(required_vars, enable_caching=True)
 
-    def _can_auto_evaluate(self) -> tuple[bool, dict[str, "UnifiedVariable"]]:
+    def _can_auto_evaluate(self) -> tuple[bool, dict[str, "FieldQnty"]]:
         """Check if expression can be auto-evaluated from scope using centralized service."""
         # Use centralized scope discovery service
         return ScopeDiscoveryService.can_auto_evaluate(self)
 
-    def __add__(self, other: Union["Expression", "UnifiedVariable", "Quantity", int, float]) -> "Expression":
+    def __add__(self, other: Union["Expression", "FieldQnty", "Quantity", int, float]) -> "Expression":
         return BinaryOperation("+", self, wrap_operand(other))
 
-    def __radd__(self, other: Union["UnifiedVariable", "Quantity", int, float]) -> "Expression":
+    def __radd__(self, other: Union["FieldQnty", "Quantity", int, float]) -> "Expression":
         return BinaryOperation("+", wrap_operand(other), self)
 
-    def __sub__(self, other: Union["Expression", "UnifiedVariable", "Quantity", int, float]) -> "Expression":
+    def __sub__(self, other: Union["Expression", "FieldQnty", "Quantity", int, float]) -> "Expression":
         return BinaryOperation("-", self, wrap_operand(other))
 
-    def __rsub__(self, other: Union["UnifiedVariable", "Quantity", int, float]) -> "Expression":
+    def __rsub__(self, other: Union["FieldQnty", "Quantity", int, float]) -> "Expression":
         return BinaryOperation("-", wrap_operand(other), self)
 
-    def __mul__(self, other: Union["Expression", "UnifiedVariable", "Quantity", int, float]) -> "Expression":
+    def __mul__(self, other: Union["Expression", "FieldQnty", "Quantity", int, float]) -> "Expression":
         return BinaryOperation("*", self, wrap_operand(other))
 
-    def __rmul__(self, other: Union["UnifiedVariable", "Quantity", int, float]) -> "Expression":
+    def __rmul__(self, other: Union["FieldQnty", "Quantity", int, float]) -> "Expression":
         return BinaryOperation("*", wrap_operand(other), self)
 
-    def __truediv__(self, other: Union["Expression", "UnifiedVariable", "Quantity", int, float]) -> "Expression":
+    def __truediv__(self, other: Union["Expression", "FieldQnty", "Quantity", int, float]) -> "Expression":
         return BinaryOperation("/", self, wrap_operand(other))
 
-    def __rtruediv__(self, other: Union["UnifiedVariable", "Quantity", int, float]) -> "Expression":
+    def __rtruediv__(self, other: Union["FieldQnty", "Quantity", int, float]) -> "Expression":
         return BinaryOperation("/", wrap_operand(other), self)
 
-    def __pow__(self, other: Union["Expression", "UnifiedVariable", "Quantity", int, float]) -> "Expression":
+    def __pow__(self, other: Union["Expression", "FieldQnty", "Quantity", int, float]) -> "Expression":
         return BinaryOperation("**", self, wrap_operand(other))
 
-    def __rpow__(self, other: Union["UnifiedVariable", "Quantity", int, float]) -> "Expression":
+    def __rpow__(self, other: Union["FieldQnty", "Quantity", int, float]) -> "Expression":
         return BinaryOperation("**", wrap_operand(other), self)
 
     def __abs__(self) -> "Expression":
@@ -107,20 +107,20 @@ class Expression(ABC):
         """Helper method to create comparison operations."""
         return BinaryOperation(operator, self, wrap_operand(other))
 
-    def __lt__(self, other: Union["Expression", "UnifiedVariable", "Quantity", int, float]) -> "BinaryOperation":
+    def __lt__(self, other: Union["Expression", "FieldQnty", "Quantity", int, float]) -> "BinaryOperation":
         return self._make_comparison("<", other)
 
-    def __le__(self, other: Union["Expression", "UnifiedVariable", "Quantity", int, float]) -> "BinaryOperation":
+    def __le__(self, other: Union["Expression", "FieldQnty", "Quantity", int, float]) -> "BinaryOperation":
         return self._make_comparison("<=", other)
 
-    def __gt__(self, other: Union["Expression", "UnifiedVariable", "Quantity", int, float]) -> "BinaryOperation":
+    def __gt__(self, other: Union["Expression", "FieldQnty", "Quantity", int, float]) -> "BinaryOperation":
         return self._make_comparison(">", other)
 
-    def __ge__(self, other: Union["Expression", "UnifiedVariable", "Quantity", int, float]) -> "BinaryOperation":
+    def __ge__(self, other: Union["Expression", "FieldQnty", "Quantity", int, float]) -> "BinaryOperation":
         return self._make_comparison(">=", other)
 
     @staticmethod
-    def _wrap_operand(operand: Union["Expression", "UnifiedVariable", "Quantity", int, float]) -> "Expression":
+    def _wrap_operand(operand: Union["Expression", "FieldQnty", "Quantity", int, float]) -> "Expression":
         """Wrap non-Expression operands in appropriate Expression subclasses."""
         return wrap_operand(operand)
 
@@ -130,7 +130,7 @@ class VariableReference(Expression):
 
     __slots__ = ("variable", "_cached_name", "_last_symbol")
 
-    def __init__(self, variable: "UnifiedVariable"):
+    def __init__(self, variable: "FieldQnty"):
         self.variable = variable
         # Cache the name resolution to avoid repeated lookups
         self._cached_name = None
@@ -146,7 +146,7 @@ class VariableReference(Expression):
             self._last_symbol = current_symbol
         return self._cached_name
 
-    def evaluate(self, variable_values: dict[str, "UnifiedVariable"]) -> "Quantity":
+    def evaluate(self, variable_values: dict[str, "FieldQnty"]) -> "Quantity":
         try:
             if self.name in variable_values:
                 var = variable_values[self.name]
@@ -181,7 +181,7 @@ class Constant(Expression):
     def __init__(self, value: "Quantity"):
         self.value = value
 
-    def evaluate(self, variable_values: dict[str, "UnifiedVariable"]) -> "Quantity":
+    def evaluate(self, variable_values: dict[str, "FieldQnty"]) -> "Quantity":
         del variable_values  # Suppress unused variable warning
         return self.value
 
@@ -209,7 +209,7 @@ class BinaryOperation(Expression):
         self.left = left
         self.right = right
 
-    def evaluate(self, variable_values: dict[str, "UnifiedVariable"]) -> "Quantity":
+    def evaluate(self, variable_values: dict[str, "FieldQnty"]) -> "Quantity":
         """Evaluate the binary operation with caching and error handling."""
         try:
             # Check cache for constant expressions
@@ -388,7 +388,7 @@ class UnaryFunction(Expression):
         self.function_name = function_name
         self.operand = operand
 
-    def evaluate(self, variable_values: dict[str, "UnifiedVariable"]) -> "Quantity":
+    def evaluate(self, variable_values: dict[str, "FieldQnty"]) -> "Quantity":
         operand_val = self.operand.evaluate(variable_values)
 
         if self.function_name == "sin":
@@ -451,7 +451,7 @@ class ConditionalExpression(Expression):
         self.true_expr = true_expr
         self.false_expr = false_expr
 
-    def evaluate(self, variable_values: dict[str, "UnifiedVariable"]) -> "Quantity":
+    def evaluate(self, variable_values: dict[str, "FieldQnty"]) -> "Quantity":
         condition_val = self.condition.evaluate(variable_values)
         # Consider non-zero as True
         if abs(condition_val.value) > CONDITION_EVALUATION_THRESHOLD:

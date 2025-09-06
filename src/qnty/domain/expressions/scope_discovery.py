@@ -11,7 +11,7 @@ import logging
 from typing import TYPE_CHECKING, Optional, Any
 
 if TYPE_CHECKING:
-    from ...core.quantities.unified_variable import UnifiedVariable
+    from ...core.quantities.field_qnty import FieldQnty
     from .nodes import Expression
 
 # Setup logging for better debugging
@@ -33,7 +33,7 @@ class ScopeDiscoveryService:
     _max_search_depth = 8
     
     @classmethod
-    def discover_variables(cls, required_vars: set[str], enable_caching: bool = True) -> dict[str, "UnifiedVariable"]:
+    def discover_variables(cls, required_vars: set[str], enable_caching: bool = True) -> dict[str, "FieldQnty"]:
         """
         Discover variables from the calling scope.
         
@@ -86,7 +86,7 @@ class ScopeDiscoveryService:
             del frame
     
     @classmethod 
-    def can_auto_evaluate(cls, expression: "Expression") -> tuple[bool, dict[str, "UnifiedVariable"]]:
+    def can_auto_evaluate(cls, expression: "Expression") -> tuple[bool, dict[str, "FieldQnty"]]:
         """
         Check if expression can be auto-evaluated from scope.
         
@@ -127,7 +127,7 @@ class ScopeDiscoveryService:
         return inspect.currentframe()
     
     @classmethod
-    def find_variables_in_scope(cls, filter_func=None) -> dict[str, "UnifiedVariable"]:
+    def find_variables_in_scope(cls, filter_func=None) -> dict[str, "FieldQnty"]:
         """
         Find all UnifiedVariable instances in the calling scope.
         
@@ -209,7 +209,7 @@ class ScopeDiscoveryService:
         return None
     
     @classmethod
-    def _search_frame_for_variables(cls, frame: Any, required_vars: set[str]) -> dict[str, "UnifiedVariable"]:
+    def _search_frame_for_variables(cls, frame: Any, required_vars: set[str]) -> dict[str, "FieldQnty"]:
         """
         Search a specific frame for required variables.
         
@@ -286,10 +286,10 @@ class ScopeDiscoveryService:
         obj_type = type(obj)
         if obj_type not in cls._variable_type_cache:
             # Import here to avoid circular imports
-            from ...core.quantities.unified_variable import UnifiedVariable
+            from ...core.quantities.field_qnty import FieldQnty
             
             is_variable = (
-                isinstance(obj, UnifiedVariable) and
+                isinstance(obj, FieldQnty) and
                 hasattr(obj, "symbol") and 
                 hasattr(obj, "name") and 
                 hasattr(obj, "quantity")
@@ -343,7 +343,7 @@ class ScopeDiscoveryService:
 
 
 # Convenience function for backward compatibility
-def discover_variables_from_scope(required_vars: set[str]) -> dict[str, "UnifiedVariable"]:
+def discover_variables_from_scope(required_vars: set[str]) -> dict[str, "FieldQnty"]:
     """
     Convenience function to discover variables from scope.
     

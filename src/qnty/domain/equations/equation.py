@@ -11,7 +11,7 @@ from typing import cast
 
 from ...core.constants import SOLVER_DEFAULT_TOLERANCE
 from ..expressions import Expression, VariableReference, ScopeDiscoveryService
-from ...core.quantities.unified_variable import UnifiedVariable
+from ...core.quantities.field_qnty import FieldQnty
 
 # Global optimization flags
 _SCOPE_DISCOVERY_ENABLED = False  # Disabled by default due to high overhead
@@ -25,11 +25,11 @@ class Equation:
 
     __slots__ = ("name", "lhs", "rhs", "_variables")
 
-    def __init__(self, name: str, lhs: UnifiedVariable | Expression, rhs: Expression):
+    def __init__(self, name: str, lhs: FieldQnty | Expression, rhs: Expression):
         self.name = name
 
         # Convert Variable to VariableReference if needed - use isinstance for performance
-        if isinstance(lhs, UnifiedVariable):
+        if isinstance(lhs, FieldQnty):
             self.lhs = VariableReference(lhs)
         else:
             # It's already an Expression
@@ -72,7 +72,7 @@ class Equation:
         # Can solve if target_var is the only unknown
         return unknown_vars == {target_var}
 
-    def solve_for(self, target_var: str, variable_values: dict[str, UnifiedVariable]) -> UnifiedVariable:
+    def solve_for(self, target_var: str, variable_values: dict[str, FieldQnty]) -> FieldQnty:
         """
         Solve the equation for target_var.
         Returns the target variable with updated quantity.
@@ -109,7 +109,7 @@ class Equation:
         # Currently focusing on direct assignment which covers most engineering cases
         raise NotImplementedError(f"Cannot solve for {target_var} in equation {self}. Only direct assignment equations (var = expression) are supported.")
 
-    def check_residual(self, variable_values: dict[str, UnifiedVariable], tolerance: float = SOLVER_DEFAULT_TOLERANCE) -> bool:
+    def check_residual(self, variable_values: dict[str, FieldQnty], tolerance: float = SOLVER_DEFAULT_TOLERANCE) -> bool:
         """
         Check if equation is satisfied by evaluating residual (LHS - RHS).
         Returns True if |residual| < tolerance, accounting for units.
@@ -135,7 +135,7 @@ class Equation:
             # Re-raise unexpected errors to avoid masking bugs
             raise RuntimeError(f"Unexpected error in residual check for equation '{self.name}': {e}") from e
 
-    def _discover_variables_from_scope(self) -> dict[str, UnifiedVariable]:
+    def _discover_variables_from_scope(self) -> dict[str, FieldQnty]:
         """
         Automatically discover variables from the calling scope using centralized service.
         """
@@ -145,7 +145,7 @@ class Equation:
         # Use centralized scope discovery service
         return ScopeDiscoveryService.discover_variables(self.variables, enable_caching=True)
 
-    def _can_auto_solve(self) -> tuple[bool, str, dict[str, UnifiedVariable]]:
+    def _can_auto_solve(self) -> tuple[bool, str, dict[str, FieldQnty]]:
         """Check if equation can be auto-solved from scope using centralized service."""
         try:
             discovered = self._discover_variables_from_scope()

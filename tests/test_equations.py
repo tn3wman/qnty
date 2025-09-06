@@ -4,8 +4,8 @@ import pytest
 
 from qnty.domain.equations.equation import Equation
 from qnty.domain.expressions import BinaryOperation, Expression, VariableReference
-from qnty.core.quantities.quantity import Quantity
-from qnty.core.quantities.unified_variable import UnifiedVariable
+from qnty.core.quantities.base_qnty import Quantity
+from qnty.core.quantities.field_qnty import FieldQnty
 from qnty.generated.quantities import Dimensionless, Length, Pressure
 
 
@@ -164,7 +164,7 @@ class TestEquationSolving:
         # Create equation: c = a + b
         eqn = c.equals(a + b)
         
-        variables: dict[str, UnifiedVariable] = {"a": a, "b": b, "c": c}
+        variables: dict[str, FieldQnty] = {"a": a, "b": b, "c": c}
         
         # Should be satisfied
         assert eqn.check_residual(variables) is True
@@ -206,7 +206,7 @@ class TestExpressionEvaluation:
         # Now set values for the variables that will be used in evaluation
         a_eval = Length(5, "meter", "a")
         b_eval = Length(3, "meter", "b")
-        variables: dict[str, UnifiedVariable] = {"a": a_eval, "b": b_eval}
+        variables: dict[str, FieldQnty] = {"a": a_eval, "b": b_eval}
         
         result = expr.evaluate(variables)
         assert result.value == 8.0  # 5 + 3
@@ -225,7 +225,7 @@ class TestExpressionEvaluation:
         # Set values for the variables that will be used in evaluation
         P_eval = Pressure(90, "psi", "P")
         D_eval = Length(1, "inch", "D")  # Simplified for easier math
-        variables: dict[str, UnifiedVariable] = {"P": P_eval, "D": D_eval}
+        variables: dict[str, FieldQnty] = {"P": P_eval, "D": D_eval}
         
         result = expr.evaluate(variables)
         # Result will be in some combined unit, just check it evaluates
@@ -242,7 +242,7 @@ class TestExpressionEvaluation:
         
         # Set value for the variable that will be used in evaluation
         var_eval = Pressure(100, "psi", "var")
-        variables: dict[str, UnifiedVariable] = {"var": var_eval}
+        variables: dict[str, FieldQnty] = {"var": var_eval}
         
         result = expr.evaluate(variables)
         # The actual value depends on unit conversions, but should be computable
@@ -273,7 +273,7 @@ class TestEdgeCases:
         b = Length("b", is_known=False)
         
         eqn = b.equals(a * 2)
-        variables: dict[str, UnifiedVariable] = {"a": a, "b": b}
+        variables: dict[str, FieldQnty] = {"a": a, "b": b}
         
         with pytest.raises(ValueError, match="Variable 'nonexistent' not found"):
             eqn.solve_for("nonexistent", variables)

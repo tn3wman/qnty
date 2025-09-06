@@ -7,14 +7,14 @@ Uses static class generation instead of dynamic type() calls.
 Auto-generated from unit_data.json.
 """
 
-from ..core.quantities.unified_variable import UnifiedVariable
+from ..core.quantities.field_qnty import FieldQnty
 from . import dimensions as dim
 from . import setters as ts
 
 # ===== QUANTITY CLASSES =====
 # Static quantity class definitions with __slots__ optimization
 
-class AbsorbedDose(UnifiedVariable):
+class AbsorbedDose(FieldQnty):
     """
     Type-safe absorbed radiation dose quantity with expression capabilities.
     
@@ -71,7 +71,7 @@ class AbsorbedDose(UnifiedVariable):
         return ts.AbsorbedDoseSetter(self, value)
     
 
-class Acceleration(UnifiedVariable):
+class Acceleration(FieldQnty):
     """
     Type-safe acceleration quantity with expression capabilities.
     
@@ -128,7 +128,7 @@ class Acceleration(UnifiedVariable):
         return ts.AccelerationSetter(self, value)
     
 
-class ActivationEnergy(UnifiedVariable):
+class ActivationEnergy(FieldQnty):
     """
     Type-safe activation energy quantity with expression capabilities.
     
@@ -185,7 +185,7 @@ class ActivationEnergy(UnifiedVariable):
         return ts.ActivationEnergySetter(self, value)
     
 
-class AmountOfSubstance(UnifiedVariable):
+class AmountOfSubstance(FieldQnty):
     """
     Type-safe amount of substance quantity with expression capabilities.
     
@@ -242,7 +242,7 @@ class AmountOfSubstance(UnifiedVariable):
         return ts.AmountOfSubstanceSetter(self, value)
     
 
-class AnglePlane(UnifiedVariable):
+class AnglePlane(FieldQnty):
     """
     Type-safe angle, plane quantity with expression capabilities.
     
@@ -299,7 +299,7 @@ class AnglePlane(UnifiedVariable):
         return ts.AnglePlaneSetter(self, value)
     
 
-class AngleSolid(UnifiedVariable):
+class AngleSolid(FieldQnty):
     """
     Type-safe angle, solid quantity with expression capabilities.
     
@@ -356,7 +356,7 @@ class AngleSolid(UnifiedVariable):
         return ts.AngleSolidSetter(self, value)
     
 
-class AngularAcceleration(UnifiedVariable):
+class AngularAcceleration(FieldQnty):
     """
     Type-safe angular acceleration quantity with expression capabilities.
     
@@ -413,7 +413,7 @@ class AngularAcceleration(UnifiedVariable):
         return ts.AngularAccelerationSetter(self, value)
     
 
-class AngularMomentum(UnifiedVariable):
+class AngularMomentum(FieldQnty):
     """
     Type-safe angular momentum quantity with expression capabilities.
     
@@ -470,7 +470,7 @@ class AngularMomentum(UnifiedVariable):
         return ts.AngularMomentumSetter(self, value)
     
 
-class Area(UnifiedVariable):
+class Area(FieldQnty):
     """
     Type-safe area quantity with expression capabilities.
     
@@ -527,7 +527,7 @@ class Area(UnifiedVariable):
         return ts.AreaSetter(self, value)
     
 
-class AreaPerUnitVolume(UnifiedVariable):
+class AreaPerUnitVolume(FieldQnty):
     """
     Type-safe area per unit volume quantity with expression capabilities.
     
@@ -584,7 +584,7 @@ class AreaPerUnitVolume(UnifiedVariable):
         return ts.AreaPerUnitVolumeSetter(self, value)
     
 
-class AtomicWeight(UnifiedVariable):
+class AtomicWeight(FieldQnty):
     """
     Type-safe atomic weight quantity with expression capabilities.
     
@@ -641,7 +641,7 @@ class AtomicWeight(UnifiedVariable):
         return ts.AtomicWeightSetter(self, value)
     
 
-class Concentration(UnifiedVariable):
+class Concentration(FieldQnty):
     """
     Type-safe concentration quantity with expression capabilities.
     
@@ -698,7 +698,7 @@ class Concentration(UnifiedVariable):
         return ts.ConcentrationSetter(self, value)
     
 
-class Dimensionless(UnifiedVariable):
+class Dimensionless(FieldQnty):
     """
     Type-safe dimensionless quantity with expression capabilities.
     
@@ -750,7 +750,7 @@ class Dimensionless(UnifiedVariable):
         return ts.DimensionlessSetter(self, value)
     
 
-class DynamicFluidity(UnifiedVariable):
+class DynamicFluidity(FieldQnty):
     """
     Type-safe dynamic fluidity quantity with expression capabilities.
     
@@ -807,7 +807,7 @@ class DynamicFluidity(UnifiedVariable):
         return ts.DynamicFluiditySetter(self, value)
     
 
-class ElectricCapacitance(UnifiedVariable):
+class ElectricCapacitance(FieldQnty):
     """
     Type-safe electric capacitance quantity with expression capabilities.
     
@@ -864,7 +864,7 @@ class ElectricCapacitance(UnifiedVariable):
         return ts.ElectricCapacitanceSetter(self, value)
     
 
-class ElectricCharge(UnifiedVariable):
+class ElectricCharge(FieldQnty):
     """
     Type-safe electric charge quantity with expression capabilities.
     
@@ -921,7 +921,7 @@ class ElectricCharge(UnifiedVariable):
         return ts.ElectricChargeSetter(self, value)
     
 
-class ElectricCurrentIntensity(UnifiedVariable):
+class ElectricCurrentIntensity(FieldQnty):
     """
     Type-safe electric current intensity quantity with expression capabilities.
     
@@ -978,7 +978,7 @@ class ElectricCurrentIntensity(UnifiedVariable):
         return ts.ElectricCurrentIntensitySetter(self, value)
     
 
-class ElectricDipoleMoment(UnifiedVariable):
+class ElectricDipoleMoment(FieldQnty):
     """
     Type-safe electric dipole moment quantity with expression capabilities.
     
@@ -1035,7 +1035,7 @@ class ElectricDipoleMoment(UnifiedVariable):
         return ts.ElectricDipoleMomentSetter(self, value)
     
 
-class ElectricFieldStrength(UnifiedVariable):
+class ElectricFieldStrength(FieldQnty):
     """
     Type-safe electric field strength quantity with expression capabilities.
     
@@ -1092,7 +1092,7 @@ class ElectricFieldStrength(UnifiedVariable):
         return ts.ElectricFieldStrengthSetter(self, value)
     
 
-class ElectricInductance(UnifiedVariable):
+class ElectricInductance(FieldQnty):
     """
     Type-safe electric inductance quantity with expression capabilities.
     
@@ -1149,7 +1149,7 @@ class ElectricInductance(UnifiedVariable):
         return ts.ElectricInductanceSetter(self, value)
     
 
-class ElectricPotential(UnifiedVariable):
+class ElectricPotential(FieldQnty):
     """
     Type-safe electric potential quantity with expression capabilities.
     
@@ -1206,7 +1206,7 @@ class ElectricPotential(UnifiedVariable):
         return ts.ElectricPotentialSetter(self, value)
     
 
-class ElectricResistance(UnifiedVariable):
+class ElectricResistance(FieldQnty):
     """
     Type-safe electric resistance quantity with expression capabilities.
     
@@ -1263,7 +1263,7 @@ class ElectricResistance(UnifiedVariable):
         return ts.ElectricResistanceSetter(self, value)
     
 
-class ElectricalConductance(UnifiedVariable):
+class ElectricalConductance(FieldQnty):
     """
     Type-safe electrical conductance quantity with expression capabilities.
     
@@ -1320,7 +1320,7 @@ class ElectricalConductance(UnifiedVariable):
         return ts.ElectricalConductanceSetter(self, value)
     
 
-class ElectricalPermittivity(UnifiedVariable):
+class ElectricalPermittivity(FieldQnty):
     """
     Type-safe electrical permittivity quantity with expression capabilities.
     
@@ -1377,7 +1377,7 @@ class ElectricalPermittivity(UnifiedVariable):
         return ts.ElectricalPermittivitySetter(self, value)
     
 
-class ElectricalResistivity(UnifiedVariable):
+class ElectricalResistivity(FieldQnty):
     """
     Type-safe electrical resistivity quantity with expression capabilities.
     
@@ -1434,7 +1434,7 @@ class ElectricalResistivity(UnifiedVariable):
         return ts.ElectricalResistivitySetter(self, value)
     
 
-class EnergyFlux(UnifiedVariable):
+class EnergyFlux(FieldQnty):
     """
     Type-safe energy flux quantity with expression capabilities.
     
@@ -1491,7 +1491,7 @@ class EnergyFlux(UnifiedVariable):
         return ts.EnergyFluxSetter(self, value)
     
 
-class EnergyHeatWork(UnifiedVariable):
+class EnergyHeatWork(FieldQnty):
     """
     Type-safe energy, heat, work quantity with expression capabilities.
     
@@ -1548,7 +1548,7 @@ class EnergyHeatWork(UnifiedVariable):
         return ts.EnergyHeatWorkSetter(self, value)
     
 
-class EnergyPerUnitArea(UnifiedVariable):
+class EnergyPerUnitArea(FieldQnty):
     """
     Type-safe energy per unit area quantity with expression capabilities.
     
@@ -1605,7 +1605,7 @@ class EnergyPerUnitArea(UnifiedVariable):
         return ts.EnergyPerUnitAreaSetter(self, value)
     
 
-class Force(UnifiedVariable):
+class Force(FieldQnty):
     """
     Type-safe force quantity with expression capabilities.
     
@@ -1662,7 +1662,7 @@ class Force(UnifiedVariable):
         return ts.ForceSetter(self, value)
     
 
-class ForceBody(UnifiedVariable):
+class ForceBody(FieldQnty):
     """
     Type-safe force (body) quantity with expression capabilities.
     
@@ -1719,7 +1719,7 @@ class ForceBody(UnifiedVariable):
         return ts.ForceBodySetter(self, value)
     
 
-class ForcePerUnitMass(UnifiedVariable):
+class ForcePerUnitMass(FieldQnty):
     """
     Type-safe force per unit mass quantity with expression capabilities.
     
@@ -1776,7 +1776,7 @@ class ForcePerUnitMass(UnifiedVariable):
         return ts.ForcePerUnitMassSetter(self, value)
     
 
-class FrequencyVoltageRatio(UnifiedVariable):
+class FrequencyVoltageRatio(FieldQnty):
     """
     Type-safe frequency voltage ratio quantity with expression capabilities.
     
@@ -1833,7 +1833,7 @@ class FrequencyVoltageRatio(UnifiedVariable):
         return ts.FrequencyVoltageRatioSetter(self, value)
     
 
-class FuelConsumption(UnifiedVariable):
+class FuelConsumption(FieldQnty):
     """
     Type-safe fuel consumption quantity with expression capabilities.
     
@@ -1890,7 +1890,7 @@ class FuelConsumption(UnifiedVariable):
         return ts.FuelConsumptionSetter(self, value)
     
 
-class HeatOfCombustion(UnifiedVariable):
+class HeatOfCombustion(FieldQnty):
     """
     Type-safe heat of combustion quantity with expression capabilities.
     
@@ -1947,7 +1947,7 @@ class HeatOfCombustion(UnifiedVariable):
         return ts.HeatOfCombustionSetter(self, value)
     
 
-class HeatOfFusion(UnifiedVariable):
+class HeatOfFusion(FieldQnty):
     """
     Type-safe heat of fusion quantity with expression capabilities.
     
@@ -2004,7 +2004,7 @@ class HeatOfFusion(UnifiedVariable):
         return ts.HeatOfFusionSetter(self, value)
     
 
-class HeatOfVaporization(UnifiedVariable):
+class HeatOfVaporization(FieldQnty):
     """
     Type-safe heat of vaporization quantity with expression capabilities.
     
@@ -2061,7 +2061,7 @@ class HeatOfVaporization(UnifiedVariable):
         return ts.HeatOfVaporizationSetter(self, value)
     
 
-class HeatTransferCoefficient(UnifiedVariable):
+class HeatTransferCoefficient(FieldQnty):
     """
     Type-safe heat transfer coefficient quantity with expression capabilities.
     
@@ -2118,7 +2118,7 @@ class HeatTransferCoefficient(UnifiedVariable):
         return ts.HeatTransferCoefficientSetter(self, value)
     
 
-class Illuminance(UnifiedVariable):
+class Illuminance(FieldQnty):
     """
     Type-safe illuminance quantity with expression capabilities.
     
@@ -2175,7 +2175,7 @@ class Illuminance(UnifiedVariable):
         return ts.IlluminanceSetter(self, value)
     
 
-class KineticEnergyOfTurbulence(UnifiedVariable):
+class KineticEnergyOfTurbulence(FieldQnty):
     """
     Type-safe kinetic energy of turbulence quantity with expression capabilities.
     
@@ -2232,7 +2232,7 @@ class KineticEnergyOfTurbulence(UnifiedVariable):
         return ts.KineticEnergyOfTurbulenceSetter(self, value)
     
 
-class Length(UnifiedVariable):
+class Length(FieldQnty):
     """
     Type-safe length quantity with expression capabilities.
     
@@ -2289,7 +2289,7 @@ class Length(UnifiedVariable):
         return ts.LengthSetter(self, value)
     
 
-class LinearMassDensity(UnifiedVariable):
+class LinearMassDensity(FieldQnty):
     """
     Type-safe linear mass density quantity with expression capabilities.
     
@@ -2346,7 +2346,7 @@ class LinearMassDensity(UnifiedVariable):
         return ts.LinearMassDensitySetter(self, value)
     
 
-class LinearMomentum(UnifiedVariable):
+class LinearMomentum(FieldQnty):
     """
     Type-safe linear momentum quantity with expression capabilities.
     
@@ -2403,7 +2403,7 @@ class LinearMomentum(UnifiedVariable):
         return ts.LinearMomentumSetter(self, value)
     
 
-class LuminanceSelf(UnifiedVariable):
+class LuminanceSelf(FieldQnty):
     """
     Type-safe luminance (self) quantity with expression capabilities.
     
@@ -2460,7 +2460,7 @@ class LuminanceSelf(UnifiedVariable):
         return ts.LuminanceSelfSetter(self, value)
     
 
-class LuminousFlux(UnifiedVariable):
+class LuminousFlux(FieldQnty):
     """
     Type-safe luminous flux quantity with expression capabilities.
     
@@ -2517,7 +2517,7 @@ class LuminousFlux(UnifiedVariable):
         return ts.LuminousFluxSetter(self, value)
     
 
-class LuminousIntensity(UnifiedVariable):
+class LuminousIntensity(FieldQnty):
     """
     Type-safe luminous intensity quantity with expression capabilities.
     
@@ -2574,7 +2574,7 @@ class LuminousIntensity(UnifiedVariable):
         return ts.LuminousIntensitySetter(self, value)
     
 
-class MagneticField(UnifiedVariable):
+class MagneticField(FieldQnty):
     """
     Type-safe magnetic field quantity with expression capabilities.
     
@@ -2631,7 +2631,7 @@ class MagneticField(UnifiedVariable):
         return ts.MagneticFieldSetter(self, value)
     
 
-class MagneticFlux(UnifiedVariable):
+class MagneticFlux(FieldQnty):
     """
     Type-safe magnetic flux quantity with expression capabilities.
     
@@ -2688,7 +2688,7 @@ class MagneticFlux(UnifiedVariable):
         return ts.MagneticFluxSetter(self, value)
     
 
-class MagneticInductionFieldStrength(UnifiedVariable):
+class MagneticInductionFieldStrength(FieldQnty):
     """
     Type-safe magnetic induction field strength quantity with expression capabilities.
     
@@ -2745,7 +2745,7 @@ class MagneticInductionFieldStrength(UnifiedVariable):
         return ts.MagneticInductionFieldStrengthSetter(self, value)
     
 
-class MagneticMoment(UnifiedVariable):
+class MagneticMoment(FieldQnty):
     """
     Type-safe magnetic moment quantity with expression capabilities.
     
@@ -2802,7 +2802,7 @@ class MagneticMoment(UnifiedVariable):
         return ts.MagneticMomentSetter(self, value)
     
 
-class MagneticPermeability(UnifiedVariable):
+class MagneticPermeability(FieldQnty):
     """
     Type-safe magnetic permeability quantity with expression capabilities.
     
@@ -2859,7 +2859,7 @@ class MagneticPermeability(UnifiedVariable):
         return ts.MagneticPermeabilitySetter(self, value)
     
 
-class MagnetomotiveForce(UnifiedVariable):
+class MagnetomotiveForce(FieldQnty):
     """
     Type-safe magnetomotive force quantity with expression capabilities.
     
@@ -2916,7 +2916,7 @@ class MagnetomotiveForce(UnifiedVariable):
         return ts.MagnetomotiveForceSetter(self, value)
     
 
-class Mass(UnifiedVariable):
+class Mass(FieldQnty):
     """
     Type-safe mass quantity with expression capabilities.
     
@@ -2973,7 +2973,7 @@ class Mass(UnifiedVariable):
         return ts.MassSetter(self, value)
     
 
-class MassDensity(UnifiedVariable):
+class MassDensity(FieldQnty):
     """
     Type-safe mass density quantity with expression capabilities.
     
@@ -3030,7 +3030,7 @@ class MassDensity(UnifiedVariable):
         return ts.MassDensitySetter(self, value)
     
 
-class MassFlowRate(UnifiedVariable):
+class MassFlowRate(FieldQnty):
     """
     Type-safe mass flow rate quantity with expression capabilities.
     
@@ -3087,7 +3087,7 @@ class MassFlowRate(UnifiedVariable):
         return ts.MassFlowRateSetter(self, value)
     
 
-class MassFlux(UnifiedVariable):
+class MassFlux(FieldQnty):
     """
     Type-safe mass flux quantity with expression capabilities.
     
@@ -3144,7 +3144,7 @@ class MassFlux(UnifiedVariable):
         return ts.MassFluxSetter(self, value)
     
 
-class MassFractionOfI(UnifiedVariable):
+class MassFractionOfI(FieldQnty):
     """
     Type-safe mass fraction of "i" quantity with expression capabilities.
     
@@ -3201,7 +3201,7 @@ class MassFractionOfI(UnifiedVariable):
         return ts.MassFractionOfISetter(self, value)
     
 
-class MassTransferCoefficient(UnifiedVariable):
+class MassTransferCoefficient(FieldQnty):
     """
     Type-safe mass transfer coefficient quantity with expression capabilities.
     
@@ -3258,7 +3258,7 @@ class MassTransferCoefficient(UnifiedVariable):
         return ts.MassTransferCoefficientSetter(self, value)
     
 
-class MolalityOfSoluteI(UnifiedVariable):
+class MolalityOfSoluteI(FieldQnty):
     """
     Type-safe molality of solute "i" quantity with expression capabilities.
     
@@ -3315,7 +3315,7 @@ class MolalityOfSoluteI(UnifiedVariable):
         return ts.MolalityOfSoluteISetter(self, value)
     
 
-class MolarConcentrationByMass(UnifiedVariable):
+class MolarConcentrationByMass(FieldQnty):
     """
     Type-safe molar concentration by mass quantity with expression capabilities.
     
@@ -3372,7 +3372,7 @@ class MolarConcentrationByMass(UnifiedVariable):
         return ts.MolarConcentrationByMassSetter(self, value)
     
 
-class MolarFlowRate(UnifiedVariable):
+class MolarFlowRate(FieldQnty):
     """
     Type-safe molar flow rate quantity with expression capabilities.
     
@@ -3429,7 +3429,7 @@ class MolarFlowRate(UnifiedVariable):
         return ts.MolarFlowRateSetter(self, value)
     
 
-class MolarFlux(UnifiedVariable):
+class MolarFlux(FieldQnty):
     """
     Type-safe molar flux quantity with expression capabilities.
     
@@ -3486,7 +3486,7 @@ class MolarFlux(UnifiedVariable):
         return ts.MolarFluxSetter(self, value)
     
 
-class MolarHeatCapacity(UnifiedVariable):
+class MolarHeatCapacity(FieldQnty):
     """
     Type-safe molar heat capacity quantity with expression capabilities.
     
@@ -3543,7 +3543,7 @@ class MolarHeatCapacity(UnifiedVariable):
         return ts.MolarHeatCapacitySetter(self, value)
     
 
-class MolarityOfI(UnifiedVariable):
+class MolarityOfI(FieldQnty):
     """
     Type-safe molarity of "i" quantity with expression capabilities.
     
@@ -3600,7 +3600,7 @@ class MolarityOfI(UnifiedVariable):
         return ts.MolarityOfISetter(self, value)
     
 
-class MoleFractionOfI(UnifiedVariable):
+class MoleFractionOfI(FieldQnty):
     """
     Type-safe mole fraction of "i" quantity with expression capabilities.
     
@@ -3657,7 +3657,7 @@ class MoleFractionOfI(UnifiedVariable):
         return ts.MoleFractionOfISetter(self, value)
     
 
-class MomentOfInertia(UnifiedVariable):
+class MomentOfInertia(FieldQnty):
     """
     Type-safe moment of inertia quantity with expression capabilities.
     
@@ -3714,7 +3714,7 @@ class MomentOfInertia(UnifiedVariable):
         return ts.MomentOfInertiaSetter(self, value)
     
 
-class MomentumFlowRate(UnifiedVariable):
+class MomentumFlowRate(FieldQnty):
     """
     Type-safe momentum flow rate quantity with expression capabilities.
     
@@ -3771,7 +3771,7 @@ class MomentumFlowRate(UnifiedVariable):
         return ts.MomentumFlowRateSetter(self, value)
     
 
-class MomentumFlux(UnifiedVariable):
+class MomentumFlux(FieldQnty):
     """
     Type-safe momentum flux quantity with expression capabilities.
     
@@ -3828,7 +3828,7 @@ class MomentumFlux(UnifiedVariable):
         return ts.MomentumFluxSetter(self, value)
     
 
-class NormalityOfSolution(UnifiedVariable):
+class NormalityOfSolution(FieldQnty):
     """
     Type-safe normality of solution quantity with expression capabilities.
     
@@ -3885,7 +3885,7 @@ class NormalityOfSolution(UnifiedVariable):
         return ts.NormalityOfSolutionSetter(self, value)
     
 
-class ParticleDensity(UnifiedVariable):
+class ParticleDensity(FieldQnty):
     """
     Type-safe particle density quantity with expression capabilities.
     
@@ -3942,7 +3942,7 @@ class ParticleDensity(UnifiedVariable):
         return ts.ParticleDensitySetter(self, value)
     
 
-class Percent(UnifiedVariable):
+class Percent(FieldQnty):
     """
     Type-safe percent quantity with expression capabilities.
     
@@ -3999,7 +3999,7 @@ class Percent(UnifiedVariable):
         return ts.PercentSetter(self, value)
     
 
-class Permeability(UnifiedVariable):
+class Permeability(FieldQnty):
     """
     Type-safe permeability quantity with expression capabilities.
     
@@ -4056,7 +4056,7 @@ class Permeability(UnifiedVariable):
         return ts.PermeabilitySetter(self, value)
     
 
-class PhotonEmissionRate(UnifiedVariable):
+class PhotonEmissionRate(FieldQnty):
     """
     Type-safe photon emission rate quantity with expression capabilities.
     
@@ -4113,7 +4113,7 @@ class PhotonEmissionRate(UnifiedVariable):
         return ts.PhotonEmissionRateSetter(self, value)
     
 
-class PowerPerUnitMass(UnifiedVariable):
+class PowerPerUnitMass(FieldQnty):
     """
     Type-safe power per unit mass or specific power quantity with expression capabilities.
     
@@ -4170,7 +4170,7 @@ class PowerPerUnitMass(UnifiedVariable):
         return ts.PowerPerUnitMassSetter(self, value)
     
 
-class PowerPerUnitVolume(UnifiedVariable):
+class PowerPerUnitVolume(FieldQnty):
     """
     Type-safe power per unit volume or power density quantity with expression capabilities.
     
@@ -4227,7 +4227,7 @@ class PowerPerUnitVolume(UnifiedVariable):
         return ts.PowerPerUnitVolumeSetter(self, value)
     
 
-class PowerThermalDuty(UnifiedVariable):
+class PowerThermalDuty(FieldQnty):
     """
     Type-safe power, thermal duty quantity with expression capabilities.
     
@@ -4284,7 +4284,7 @@ class PowerThermalDuty(UnifiedVariable):
         return ts.PowerThermalDutySetter(self, value)
     
 
-class Pressure(UnifiedVariable):
+class Pressure(FieldQnty):
     """
     Type-safe pressure quantity with expression capabilities.
     
@@ -4341,7 +4341,7 @@ class Pressure(UnifiedVariable):
         return ts.PressureSetter(self, value)
     
 
-class RadiationDoseEquivalent(UnifiedVariable):
+class RadiationDoseEquivalent(FieldQnty):
     """
     Type-safe radiation dose equivalent quantity with expression capabilities.
     
@@ -4398,7 +4398,7 @@ class RadiationDoseEquivalent(UnifiedVariable):
         return ts.RadiationDoseEquivalentSetter(self, value)
     
 
-class RadiationExposure(UnifiedVariable):
+class RadiationExposure(FieldQnty):
     """
     Type-safe radiation exposure quantity with expression capabilities.
     
@@ -4455,7 +4455,7 @@ class RadiationExposure(UnifiedVariable):
         return ts.RadiationExposureSetter(self, value)
     
 
-class Radioactivity(UnifiedVariable):
+class Radioactivity(FieldQnty):
     """
     Type-safe radioactivity quantity with expression capabilities.
     
@@ -4512,7 +4512,7 @@ class Radioactivity(UnifiedVariable):
         return ts.RadioactivitySetter(self, value)
     
 
-class SecondMomentOfArea(UnifiedVariable):
+class SecondMomentOfArea(FieldQnty):
     """
     Type-safe second moment of area quantity with expression capabilities.
     
@@ -4569,7 +4569,7 @@ class SecondMomentOfArea(UnifiedVariable):
         return ts.SecondMomentOfAreaSetter(self, value)
     
 
-class SecondRadiationConstantPlanck(UnifiedVariable):
+class SecondRadiationConstantPlanck(FieldQnty):
     """
     Type-safe second radiation constant (planck) quantity with expression capabilities.
     
@@ -4626,7 +4626,7 @@ class SecondRadiationConstantPlanck(UnifiedVariable):
         return ts.SecondRadiationConstantPlanckSetter(self, value)
     
 
-class SpecificEnthalpy(UnifiedVariable):
+class SpecificEnthalpy(FieldQnty):
     """
     Type-safe specific enthalpy quantity with expression capabilities.
     
@@ -4683,7 +4683,7 @@ class SpecificEnthalpy(UnifiedVariable):
         return ts.SpecificEnthalpySetter(self, value)
     
 
-class SpecificGravity(UnifiedVariable):
+class SpecificGravity(FieldQnty):
     """
     Type-safe specific gravity quantity with expression capabilities.
     
@@ -4740,7 +4740,7 @@ class SpecificGravity(UnifiedVariable):
         return ts.SpecificGravitySetter(self, value)
     
 
-class SpecificHeatCapacityConstantPressure(UnifiedVariable):
+class SpecificHeatCapacityConstantPressure(FieldQnty):
     """
     Type-safe specific heat capacity (constant pressure) quantity with expression capabilities.
     
@@ -4797,7 +4797,7 @@ class SpecificHeatCapacityConstantPressure(UnifiedVariable):
         return ts.SpecificHeatCapacityConstantPressureSetter(self, value)
     
 
-class SpecificLength(UnifiedVariable):
+class SpecificLength(FieldQnty):
     """
     Type-safe specific length quantity with expression capabilities.
     
@@ -4854,7 +4854,7 @@ class SpecificLength(UnifiedVariable):
         return ts.SpecificLengthSetter(self, value)
     
 
-class SpecificSurface(UnifiedVariable):
+class SpecificSurface(FieldQnty):
     """
     Type-safe specific surface quantity with expression capabilities.
     
@@ -4911,7 +4911,7 @@ class SpecificSurface(UnifiedVariable):
         return ts.SpecificSurfaceSetter(self, value)
     
 
-class SpecificVolume(UnifiedVariable):
+class SpecificVolume(FieldQnty):
     """
     Type-safe specific volume quantity with expression capabilities.
     
@@ -4968,7 +4968,7 @@ class SpecificVolume(UnifiedVariable):
         return ts.SpecificVolumeSetter(self, value)
     
 
-class Stress(UnifiedVariable):
+class Stress(FieldQnty):
     """
     Type-safe stress quantity with expression capabilities.
     
@@ -5025,7 +5025,7 @@ class Stress(UnifiedVariable):
         return ts.StressSetter(self, value)
     
 
-class SurfaceMassDensity(UnifiedVariable):
+class SurfaceMassDensity(FieldQnty):
     """
     Type-safe surface mass density quantity with expression capabilities.
     
@@ -5082,7 +5082,7 @@ class SurfaceMassDensity(UnifiedVariable):
         return ts.SurfaceMassDensitySetter(self, value)
     
 
-class SurfaceTension(UnifiedVariable):
+class SurfaceTension(FieldQnty):
     """
     Type-safe surface tension quantity with expression capabilities.
     
@@ -5139,7 +5139,7 @@ class SurfaceTension(UnifiedVariable):
         return ts.SurfaceTensionSetter(self, value)
     
 
-class Temperature(UnifiedVariable):
+class Temperature(FieldQnty):
     """
     Type-safe temperature quantity with expression capabilities.
     
@@ -5196,7 +5196,7 @@ class Temperature(UnifiedVariable):
         return ts.TemperatureSetter(self, value)
     
 
-class ThermalConductivity(UnifiedVariable):
+class ThermalConductivity(FieldQnty):
     """
     Type-safe thermal conductivity quantity with expression capabilities.
     
@@ -5253,7 +5253,7 @@ class ThermalConductivity(UnifiedVariable):
         return ts.ThermalConductivitySetter(self, value)
     
 
-class Time(UnifiedVariable):
+class Time(FieldQnty):
     """
     Type-safe time quantity with expression capabilities.
     
@@ -5310,7 +5310,7 @@ class Time(UnifiedVariable):
         return ts.TimeSetter(self, value)
     
 
-class Torque(UnifiedVariable):
+class Torque(FieldQnty):
     """
     Type-safe torque quantity with expression capabilities.
     
@@ -5367,7 +5367,7 @@ class Torque(UnifiedVariable):
         return ts.TorqueSetter(self, value)
     
 
-class TurbulenceEnergyDissipationRate(UnifiedVariable):
+class TurbulenceEnergyDissipationRate(FieldQnty):
     """
     Type-safe turbulence energy dissipation rate quantity with expression capabilities.
     
@@ -5424,7 +5424,7 @@ class TurbulenceEnergyDissipationRate(UnifiedVariable):
         return ts.TurbulenceEnergyDissipationRateSetter(self, value)
     
 
-class VelocityAngular(UnifiedVariable):
+class VelocityAngular(FieldQnty):
     """
     Type-safe velocity, angular quantity with expression capabilities.
     
@@ -5481,7 +5481,7 @@ class VelocityAngular(UnifiedVariable):
         return ts.VelocityAngularSetter(self, value)
     
 
-class VelocityLinear(UnifiedVariable):
+class VelocityLinear(FieldQnty):
     """
     Type-safe velocity, linear quantity with expression capabilities.
     
@@ -5538,7 +5538,7 @@ class VelocityLinear(UnifiedVariable):
         return ts.VelocityLinearSetter(self, value)
     
 
-class ViscosityDynamic(UnifiedVariable):
+class ViscosityDynamic(FieldQnty):
     """
     Type-safe viscosity, dynamic quantity with expression capabilities.
     
@@ -5595,7 +5595,7 @@ class ViscosityDynamic(UnifiedVariable):
         return ts.ViscosityDynamicSetter(self, value)
     
 
-class ViscosityKinematic(UnifiedVariable):
+class ViscosityKinematic(FieldQnty):
     """
     Type-safe viscosity, kinematic quantity with expression capabilities.
     
@@ -5652,7 +5652,7 @@ class ViscosityKinematic(UnifiedVariable):
         return ts.ViscosityKinematicSetter(self, value)
     
 
-class Volume(UnifiedVariable):
+class Volume(FieldQnty):
     """
     Type-safe volume quantity with expression capabilities.
     
@@ -5709,7 +5709,7 @@ class Volume(UnifiedVariable):
         return ts.VolumeSetter(self, value)
     
 
-class VolumeFractionOfI(UnifiedVariable):
+class VolumeFractionOfI(FieldQnty):
     """
     Type-safe volume fraction of "i" quantity with expression capabilities.
     
@@ -5766,7 +5766,7 @@ class VolumeFractionOfI(UnifiedVariable):
         return ts.VolumeFractionOfISetter(self, value)
     
 
-class VolumetricCalorificHeatingValue(UnifiedVariable):
+class VolumetricCalorificHeatingValue(FieldQnty):
     """
     Type-safe volumetric calorific (heating) value quantity with expression capabilities.
     
@@ -5823,7 +5823,7 @@ class VolumetricCalorificHeatingValue(UnifiedVariable):
         return ts.VolumetricCalorificHeatingValueSetter(self, value)
     
 
-class VolumetricCoefficientOfExpansion(UnifiedVariable):
+class VolumetricCoefficientOfExpansion(FieldQnty):
     """
     Type-safe volumetric coefficient of expansion quantity with expression capabilities.
     
@@ -5880,7 +5880,7 @@ class VolumetricCoefficientOfExpansion(UnifiedVariable):
         return ts.VolumetricCoefficientOfExpansionSetter(self, value)
     
 
-class VolumetricFlowRate(UnifiedVariable):
+class VolumetricFlowRate(FieldQnty):
     """
     Type-safe volumetric flow rate quantity with expression capabilities.
     
@@ -5937,7 +5937,7 @@ class VolumetricFlowRate(UnifiedVariable):
         return ts.VolumetricFlowRateSetter(self, value)
     
 
-class VolumetricFlux(UnifiedVariable):
+class VolumetricFlux(FieldQnty):
     """
     Type-safe volumetric flux quantity with expression capabilities.
     
@@ -5994,7 +5994,7 @@ class VolumetricFlux(UnifiedVariable):
         return ts.VolumetricFluxSetter(self, value)
     
 
-class VolumetricMassFlowRate(UnifiedVariable):
+class VolumetricMassFlowRate(FieldQnty):
     """
     Type-safe volumetric mass flow rate quantity with expression capabilities.
     
@@ -6051,7 +6051,7 @@ class VolumetricMassFlowRate(UnifiedVariable):
         return ts.VolumetricMassFlowRateSetter(self, value)
     
 
-class Wavenumber(UnifiedVariable):
+class Wavenumber(FieldQnty):
     """
     Type-safe wavenumber quantity with expression capabilities.
     
