@@ -20,23 +20,7 @@ from .domain.expressions import (
     sqrt,
     tan,
 )
-from .factories.variable import (
-    VariableFactory,
-    DimensionlessFactory,
-    make_length,
-    make_pressure,
-    make_temperature,
-    make_unknown,
-    from_spec,
-)
-from .specifications.variable import (
-    VariableSpec,
-    VariableSpecBatch,
-    spec,
-    known_spec,
-    unknown_spec,
-    dimensionless_spec,
-)
+
 from .infrastructure.caching.manager import (
     get_cache_manager,
     clear_all_caches,
