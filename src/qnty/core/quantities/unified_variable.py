@@ -16,203 +16,15 @@ Key improvements:
 
 from __future__ import annotations
 
-import inspect
-from typing import TYPE_CHECKING, Optional, Any, Union, Self
-from dataclasses import dataclass
+from typing import TYPE_CHECKING, Any, Optional, Self
 
-from ...constants import FLOAT_EQUALITY_TOLERANCE, DIVISION_BY_ZERO_THRESHOLD
-from ...infrastructure.caching.manager import get_cache_manager
-from ...error_handling import ErrorHandlerMixin, ErrorContext
+from ...error_handling import ErrorContext, ErrorHandlerMixin
 
 if TYPE_CHECKING:
-    from .quantity import Quantity, TypeSafeSetter
-    from ...domain.expressions.nodes import Expression
     from ...domain.equations.equation import Equation
+    from ...domain.expressions.nodes import Expression
     from ...generated.dimensions import DimensionSignature
-
-# TypeSafeVariable import removed - no longer inheriting
-
-
-class ArithmeticDispatcher:
-    """
-    Unified arithmetic dispatcher that eliminates the confusion between
-    Quantity-based and Expression-based arithmetic operations.
-    
-    Provides user-controllable return types while maintaining performance.
-    """
-    
-    @staticmethod
-    def add(left: Any, right: Any, return_type: str = 'auto') -> Any:
-        """Unified addition with controllable return type."""
-        if return_type == 'quantity' or (return_type == 'auto' and ArithmeticDispatcher._should_return_quantity(left, right)):
-            return ArithmeticDispatcher._quantity_add(left, right)
-        else:
-            return ArithmeticDispatcher._expression_add(left, right)
-    
-    @staticmethod
-    def subtract(left: Any, right: Any, return_type: str = 'auto') -> Any:
-        """Unified subtraction with controllable return type."""
-        if return_type == 'quantity' or (return_type == 'auto' and ArithmeticDispatcher._should_return_quantity(left, right)):
-            return ArithmeticDispatcher._quantity_subtract(left, right)
-        else:
-            return ArithmeticDispatcher._expression_subtract(left, right)
-    
-    @staticmethod
-    def multiply(left: Any, right: Any, return_type: str = 'auto') -> Any:
-        """Unified multiplication with controllable return type."""
-        if return_type == 'quantity' or (return_type == 'auto' and ArithmeticDispatcher._should_return_quantity(left, right)):
-            return ArithmeticDispatcher._quantity_multiply(left, right)
-        else:
-            return ArithmeticDispatcher._expression_multiply(left, right)
-    
-    @staticmethod
-    def divide(left: Any, right: Any, return_type: str = 'auto') -> Any:
-        """Unified division with controllable return type."""
-        if return_type == 'quantity' or (return_type == 'auto' and ArithmeticDispatcher._should_return_quantity(left, right)):
-            return ArithmeticDispatcher._quantity_divide(left, right)
-        else:
-            return ArithmeticDispatcher._expression_divide(left, right)
-    
-    @staticmethod
-    def power(left: Any, right: Any, return_type: str = 'auto') -> Any:
-        """Unified exponentiation with controllable return type."""
-        if return_type == 'quantity' or (return_type == 'auto' and ArithmeticDispatcher._should_return_quantity(left, right)):
-            return ArithmeticDispatcher._quantity_power(left, right)
-        else:
-            return ArithmeticDispatcher._expression_power(left, right)
-    
-    @staticmethod
-    def _should_return_quantity(left: Any, right: Any) -> bool:
-        """Determine if operations should return Quantity (fast path) or Expression (flexible path)."""
-        # Return Quantity if both operands have known values
-        left_is_known = hasattr(left, 'is_known') and left.is_known and hasattr(left, 'quantity') and left.quantity is not None
-        right_is_known = hasattr(right, 'is_known') and right.is_known and hasattr(right, 'quantity') and right.quantity is not None
-        
-        # Also handle primitive types (int, float) as known
-        if isinstance(right, (int, float)):
-            right_is_known = True
-        if isinstance(left, (int, float)):
-            left_is_known = True
-            
-        return left_is_known and right_is_known
-    
-    @staticmethod
-    def _quantity_add(left: Any, right: Any):
-        """Fast path addition returning Quantity."""
-        from .quantity import Quantity
-        from ...domain.expressions.nodes import BinaryOperation
-        
-        # Get quantities from variables or use direct quantities
-        left_qty = left.quantity if hasattr(left, 'quantity') else left
-        right_qty = right.quantity if hasattr(right, 'quantity') else right
-        
-        # If either operand has no quantity, fall back to expression mode
-        if left_qty is None or right_qty is None:
-            return BinaryOperation('+', left, right)
-        
-        # Handle numeric constants - create dimensionless quantities properly
-        if isinstance(right, (int, float)):
-            from ...generated.units import DimensionlessUnits
-            right_qty = Quantity(right, DimensionlessUnits.dimensionless)
-        if isinstance(left, (int, float)):
-            from ...generated.units import DimensionlessUnits
-            left_qty = Quantity(left, DimensionlessUnits.dimensionless)
-        
-        return left_qty + right_qty
-    
-    @staticmethod
-    def _expression_add(left: Any, right: Any) -> 'Expression':
-        """Flexible path addition returning Expression."""
-        from ...domain.expressions.nodes import BinaryOperation, wrap_operand
-        return BinaryOperation('+', wrap_operand(left), wrap_operand(right))
-    
-    @staticmethod
-    def _quantity_subtract(left: Any, right: Any) -> 'Quantity':
-        """Fast path subtraction returning Quantity."""
-        from .quantity import Quantity
-        
-        left_qty = left.quantity if hasattr(left, 'quantity') else left
-        right_qty = right.quantity if hasattr(right, 'quantity') else right
-        
-        if isinstance(right, (int, float)):
-            from ...generated.units import DimensionlessUnits
-            right_qty = Quantity(right, DimensionlessUnits.dimensionless)
-        if isinstance(left, (int, float)):
-            from ...generated.units import DimensionlessUnits
-            left_qty = Quantity(left, DimensionlessUnits.dimensionless)
-        
-        return left_qty - right_qty
-    
-    @staticmethod
-    def _expression_subtract(left: Any, right: Any) -> 'Expression':
-        """Flexible path subtraction returning Expression."""
-        from ...domain.expressions.nodes import BinaryOperation, wrap_operand
-        return BinaryOperation('-', wrap_operand(left), wrap_operand(right))
-    
-    @staticmethod
-    def _quantity_multiply(left: Any, right: Any) -> 'Quantity':
-        """Fast path multiplication returning Quantity."""
-        from .quantity import Quantity
-        
-        left_qty = left.quantity if hasattr(left, 'quantity') else left
-        right_qty = right.quantity if hasattr(right, 'quantity') else right
-        
-        if isinstance(right, (int, float)):
-            from ...generated.units import DimensionlessUnits
-            right_qty = Quantity(right, DimensionlessUnits.dimensionless)
-        if isinstance(left, (int, float)):
-            from ...generated.units import DimensionlessUnits
-            left_qty = Quantity(left, DimensionlessUnits.dimensionless)
-        
-        return left_qty * right_qty
-    
-    @staticmethod
-    def _expression_multiply(left: Any, right: Any) -> 'Expression':
-        """Flexible path multiplication returning Expression."""
-        from ...domain.expressions.nodes import BinaryOperation, wrap_operand
-        return BinaryOperation('*', wrap_operand(left), wrap_operand(right))
-    
-    @staticmethod
-    def _quantity_divide(left: Any, right: Any) -> 'Quantity':
-        """Fast path division returning Quantity."""
-        from .quantity import Quantity
-        
-        left_qty = left.quantity if hasattr(left, 'quantity') else left
-        right_qty = right.quantity if hasattr(right, 'quantity') else right
-        
-        if isinstance(right, (int, float)):
-            from ...generated.units import DimensionlessUnits
-            right_qty = Quantity(right, DimensionlessUnits.dimensionless)
-        if isinstance(left, (int, float)):
-            from ...generated.units import DimensionlessUnits
-            left_qty = Quantity(left, DimensionlessUnits.dimensionless)
-        
-        return left_qty / right_qty
-    
-    @staticmethod
-    def _expression_divide(left: Any, right: Any) -> 'Expression':
-        """Flexible path division returning Expression."""
-        from ...domain.expressions.nodes import BinaryOperation, wrap_operand
-        return BinaryOperation('/', wrap_operand(left), wrap_operand(right))
-    
-    @staticmethod
-    def _quantity_power(left: Any, right: Any) -> 'Quantity':
-        """Fast path exponentiation returning Quantity."""
-        from .quantity import Quantity
-        
-        left_qty = left.quantity if hasattr(left, 'quantity') else left
-        if isinstance(right, (int, float)):
-            return left_qty ** right
-        else:
-            right_qty = right.quantity if hasattr(right, 'quantity') else right
-            return left_qty ** right_qty
-    
-    @staticmethod
-    def _expression_power(left: Any, right: Any) -> 'Expression':
-        """Flexible path exponentiation returning Expression."""
-        from ...domain.expressions.nodes import BinaryOperation, wrap_operand
-        return BinaryOperation('**', wrap_operand(left), wrap_operand(right))
-
+    from .quantity import Quantity, TypeSafeSetter
 
 class QuantityManagementMixin:
     """Handles core quantity storage and state management."""
@@ -407,43 +219,214 @@ class UnifiedArithmeticMixin:
     
     def __add__(self, other) -> Any:
         """Unified addition with mode-based dispatch."""
-        return ArithmeticDispatcher.add(self, other, self._arithmetic_mode)
+        return self._unified_add(self, other, self._arithmetic_mode)
     
     def __radd__(self, other) -> Any:
         """Reverse addition."""
-        return ArithmeticDispatcher.add(other, self, self._arithmetic_mode)
+        return self._unified_add(other, self, self._arithmetic_mode)
     
     def __sub__(self, other) -> Any:
         """Unified subtraction with mode-based dispatch."""
-        return ArithmeticDispatcher.subtract(self, other, self._arithmetic_mode)
+        return self._unified_subtract(self, other, self._arithmetic_mode)
     
     def __rsub__(self, other) -> Any:
         """Reverse subtraction."""
-        return ArithmeticDispatcher.subtract(other, self, self._arithmetic_mode)
+        return self._unified_subtract(other, self, self._arithmetic_mode)
     
     def __mul__(self, other) -> Any:
         """Unified multiplication with mode-based dispatch."""
-        return ArithmeticDispatcher.multiply(self, other, self._arithmetic_mode)
+        return self._unified_multiply(self, other, self._arithmetic_mode)
     
     def __rmul__(self, other) -> Any:
         """Reverse multiplication."""
-        return ArithmeticDispatcher.multiply(other, self, self._arithmetic_mode)
+        return self._unified_multiply(other, self, self._arithmetic_mode)
     
     def __truediv__(self, other) -> Any:
         """Unified division with mode-based dispatch."""
-        return ArithmeticDispatcher.divide(self, other, self._arithmetic_mode)
+        return self._unified_divide(self, other, self._arithmetic_mode)
     
     def __rtruediv__(self, other) -> Any:
         """Reverse division."""
-        return ArithmeticDispatcher.divide(other, self, self._arithmetic_mode)
+        return self._unified_divide(other, self, self._arithmetic_mode)
     
     def __pow__(self, other) -> Any:
         """Unified exponentiation with mode-based dispatch."""
-        return ArithmeticDispatcher.power(self, other, self._arithmetic_mode)
+        return self._unified_power(self, other, self._arithmetic_mode)
     
     def __rpow__(self, other) -> Any:
         """Reverse exponentiation."""
-        return ArithmeticDispatcher.power(other, self, self._arithmetic_mode)
+        return self._unified_power(other, self, self._arithmetic_mode)
+    
+    @staticmethod
+    def _should_return_quantity(left: Any, right: Any) -> bool:
+        """Determine if operations should return Quantity (fast path) or Expression (flexible path)."""
+        # Return Quantity if both operands have known values
+        left_is_known = hasattr(left, 'is_known') and left.is_known and hasattr(left, 'quantity') and left.quantity is not None
+        right_is_known = hasattr(right, 'is_known') and right.is_known and hasattr(right, 'quantity') and right.quantity is not None
+        
+        # Also handle primitive types (int, float) as known
+        if isinstance(right, int | float):
+            right_is_known = True
+        if isinstance(left, int | float):
+            left_is_known = True
+            
+        return left_is_known and right_is_known
+    
+    def _unified_add(self, left: Any, right: Any, return_type: str = 'auto') -> Any:
+        """Unified addition with controllable return type."""
+        if return_type == 'quantity' or (return_type == 'auto' and self._should_return_quantity(left, right)):
+            return self._quantity_add(left, right)
+        else:
+            return self._expression_add(left, right)
+    
+    def _unified_subtract(self, left: Any, right: Any, return_type: str = 'auto') -> Any:
+        """Unified subtraction with controllable return type."""
+        if return_type == 'quantity' or (return_type == 'auto' and self._should_return_quantity(left, right)):
+            return self._quantity_subtract(left, right)
+        else:
+            return self._expression_subtract(left, right)
+    
+    def _unified_multiply(self, left: Any, right: Any, return_type: str = 'auto') -> Any:
+        """Unified multiplication with controllable return type."""
+        if return_type == 'quantity' or (return_type == 'auto' and self._should_return_quantity(left, right)):
+            return self._quantity_multiply(left, right)
+        else:
+            return self._expression_multiply(left, right)
+    
+    def _unified_divide(self, left: Any, right: Any, return_type: str = 'auto') -> Any:
+        """Unified division with controllable return type."""
+        if return_type == 'quantity' or (return_type == 'auto' and self._should_return_quantity(left, right)):
+            return self._quantity_divide(left, right)
+        else:
+            return self._expression_divide(left, right)
+    
+    def _unified_power(self, left: Any, right: Any, return_type: str = 'auto') -> Any:
+        """Unified exponentiation with controllable return type."""
+        if return_type == 'quantity' or (return_type == 'auto' and self._should_return_quantity(left, right)):
+            return self._quantity_power(left, right)
+        else:
+            return self._expression_power(left, right)
+    
+    @staticmethod
+    def _quantity_add(left: Any, right: Any):
+        """Fast path addition returning Quantity."""
+        from .quantity import ArithmeticOperations, Quantity
+        from ...domain.expressions.nodes import BinaryOperation
+        
+        # Get quantities from variables or use direct quantities
+        left_qty = left.quantity if hasattr(left, 'quantity') else left
+        right_qty = right.quantity if hasattr(right, 'quantity') else right
+        
+        # If either operand has no quantity, fall back to expression mode
+        if left_qty is None or right_qty is None:
+            return BinaryOperation('+', left, right)
+        
+        # Handle numeric constants - create dimensionless quantities properly
+        if isinstance(right, (int, float)):
+            from ...generated.units import DimensionlessUnits
+            right_qty = Quantity(right, DimensionlessUnits.dimensionless)
+        if isinstance(left, (int, float)):
+            from ...generated.units import DimensionlessUnits
+            left_qty = Quantity(left, DimensionlessUnits.dimensionless)
+        
+        # Delegate to ArithmeticOperations for the actual computation
+        return ArithmeticOperations.add(left_qty, right_qty)
+    
+    @staticmethod
+    def _expression_add(left: Any, right: Any):
+        """Flexible path addition returning Expression."""
+        from ...domain.expressions.nodes import BinaryOperation, wrap_operand
+        return BinaryOperation('+', wrap_operand(left), wrap_operand(right))
+    
+    @staticmethod
+    def _quantity_subtract(left: Any, right: Any):
+        """Fast path subtraction returning Quantity."""
+        from .quantity import ArithmeticOperations, Quantity
+        
+        left_qty = left.quantity if hasattr(left, 'quantity') else left
+        right_qty = right.quantity if hasattr(right, 'quantity') else right
+        
+        if isinstance(right, (int, float)):
+            from ...generated.units import DimensionlessUnits
+            right_qty = Quantity(right, DimensionlessUnits.dimensionless)
+        if isinstance(left, (int, float)):
+            from ...generated.units import DimensionlessUnits
+            left_qty = Quantity(left, DimensionlessUnits.dimensionless)
+        
+        # Delegate to ArithmeticOperations for the actual computation
+        return ArithmeticOperations.subtract(left_qty, right_qty)
+    
+    @staticmethod
+    def _expression_subtract(left: Any, right: Any):
+        """Flexible path subtraction returning Expression."""
+        from ...domain.expressions.nodes import BinaryOperation, wrap_operand
+        return BinaryOperation('-', wrap_operand(left), wrap_operand(right))
+    
+    @staticmethod
+    def _quantity_multiply(left: Any, right: Any):
+        """Fast path multiplication returning Quantity."""
+        from .quantity import ArithmeticOperations, Quantity
+        
+        left_qty = left.quantity if hasattr(left, 'quantity') else left
+        right_qty = right.quantity if hasattr(right, 'quantity') else right
+        
+        if isinstance(right, (int, float)):
+            from ...generated.units import DimensionlessUnits
+            right_qty = Quantity(right, DimensionlessUnits.dimensionless)
+        if isinstance(left, (int, float)):
+            from ...generated.units import DimensionlessUnits
+            left_qty = Quantity(left, DimensionlessUnits.dimensionless)
+        
+        # Delegate to ArithmeticOperations for the actual computation
+        return ArithmeticOperations.multiply(left_qty, right_qty)
+    
+    @staticmethod
+    def _expression_multiply(left: Any, right: Any):
+        """Flexible path multiplication returning Expression."""
+        from ...domain.expressions.nodes import BinaryOperation, wrap_operand
+        return BinaryOperation('*', wrap_operand(left), wrap_operand(right))
+    
+    @staticmethod
+    def _quantity_divide(left: Any, right: Any):
+        """Fast path division returning Quantity."""
+        from .quantity import ArithmeticOperations, Quantity
+        
+        left_qty = left.quantity if hasattr(left, 'quantity') else left
+        right_qty = right.quantity if hasattr(right, 'quantity') else right
+        
+        if isinstance(right, (int, float)):
+            from ...generated.units import DimensionlessUnits
+            right_qty = Quantity(right, DimensionlessUnits.dimensionless)
+        if isinstance(left, (int, float)):
+            from ...generated.units import DimensionlessUnits
+            left_qty = Quantity(left, DimensionlessUnits.dimensionless)
+        
+        # Delegate to ArithmeticOperations for the actual computation
+        return ArithmeticOperations.divide(left_qty, right_qty)
+    
+    @staticmethod
+    def _expression_divide(left: Any, right: Any):
+        """Flexible path division returning Expression."""
+        from ...domain.expressions.nodes import BinaryOperation, wrap_operand
+        return BinaryOperation('/', wrap_operand(left), wrap_operand(right))
+    
+    @staticmethod
+    def _quantity_power(left: Any, right: Any):
+        """Fast path exponentiation returning Quantity."""
+        from .quantity import Quantity
+        
+        left_qty = left.quantity if hasattr(left, 'quantity') else left
+        if isinstance(right, (int, float)):
+            return left_qty ** right
+        else:
+            right_qty = right.quantity if hasattr(right, 'quantity') else right
+            return left_qty ** right_qty
+    
+    @staticmethod
+    def _expression_power(left: Any, right: Any):
+        """Flexible path exponentiation returning Expression."""
+        from ...domain.expressions.nodes import BinaryOperation, wrap_operand
+        return BinaryOperation('**', wrap_operand(left), wrap_operand(right))
 
 
 class ExpressionMixin:

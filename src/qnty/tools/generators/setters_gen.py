@@ -48,7 +48,7 @@ def generate_setters(parsed_data: dict, dimension_mapping: dict) -> str:
         "Auto-generated from unit_data.json.",
         '"""',
         "",
-        "from ..quantities.quantity import Quantity, TypeSafeSetter",
+        "from ..core.quantities.quantity import Quantity, TypeSafeSetter",
         "from . import units",
         "",
     ]

@@ -54,7 +54,7 @@ def generate_quantities(parsed_data: dict, dimension_mapping: dict) -> str:
         "Auto-generated from unit_data.json.",
         '"""',
         "",
-        "from ..quantities.unified_variable import UnifiedVariable",
+        "from ..core.quantities.unified_variable import UnifiedVariable",
         "from . import dimensions as dim",
         "from . import setters as ts",
         "",

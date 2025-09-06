@@ -92,7 +92,7 @@ def generate_init_method(class_name: str, display_name: str, is_dimensionless: b
                 ]
             )
         else:
-            lines.append(" ...")
+            lines.append("        ...")
     else:
         lines.append("    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):")
         if not stub_only:
@@ -119,7 +119,7 @@ def generate_init_method(class_name: str, display_name: str, is_dimensionless: b
                 ]
             )
         else:
-            lines.append(" ...")
+            lines.append("        ...")
 
     return lines
 

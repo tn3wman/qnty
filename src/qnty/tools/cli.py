@@ -28,7 +28,7 @@ def run_generator(generator_name: str, script_path: Path) -> tuple[bool, str]:
         print(f"{'=' * 60}")
 
         # Run the generator script as a module to allow relative imports
-        module_name = f"qnty.codegen.generators.{script_path.stem}"
+        module_name = f"qnty.tools.generators.{script_path.stem}"
         result = subprocess.run(
             [sys.executable, "-m", module_name],
             capture_output=True,
@@ -44,10 +44,10 @@ def run_generator(generator_name: str, script_path: Path) -> tuple[bool, str]:
             print(f"STDERR: {result.stderr}")
 
         if result.returncode == 0:
-            print(f"✓ {generator_name} completed successfully")
+            print(f"SUCCESS: {generator_name} completed successfully")
             return True, result.stdout
         else:
-            print(f"✗ {generator_name} failed with return code {result.returncode}")
+            print(f"FAILED: {generator_name} failed with return code {result.returncode}")
             return False, result.stderr
 
     except Exception as e:
@@ -84,7 +84,7 @@ def main() -> int:
         script_path = script_dir / script_name
 
         if not script_path.exists():
-            print(f"✗ {generator_name}: Script not found at {script_path}")
+            print(f"FAILED: {generator_name}: Script not found at {script_path}")
             failed_generators.append(generator_name)
             continue
 
@@ -105,7 +105,7 @@ def main() -> int:
         print(f"Failed: {', '.join(failed_generators)}")
         return 1
     else:
-        print("✓ All generators completed successfully!")
+        print("SUCCESS: All generators completed successfully!")
         print("\nGenerated files:")
         print("  - src/qnty/generated/dimensions.py")
         print("  - src/qnty/generated/units.py")

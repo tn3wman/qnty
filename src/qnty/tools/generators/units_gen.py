@@ -88,7 +88,7 @@ class UnitsGenerator:
 
         lines.extend(
             [
-                "from ..units.registry import UnitConstant, UnitDefinition",
+                "from ..core.units.registry import UnitConstant, UnitDefinition",
                 "from . import dimensions as dim",
                 "",
                 "",

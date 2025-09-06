@@ -10,6 +10,8 @@ import math
 
 import pytest
 
+from qnty.core.dimensions.base import BaseDimension
+from qnty.core.dimensions.signature import DimensionSignature
 from qnty.generated.dimensions import (
     ACCELERATION,
     AREA,
@@ -22,8 +24,6 @@ from qnty.generated.dimensions import (
     TIME,
     VELOCITY_LINEAR as VELOCITY,
     VOLUME,
-    BaseDimension,
-    DimensionSignature,
 )
 
 

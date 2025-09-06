@@ -8,7 +8,7 @@ with dimensional safety.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Generic, Self, TypeVar
+from typing import TypeVar
 
 from ...constants import FLOAT_EQUALITY_TOLERANCE
 from ...generated.dimensions import (
@@ -27,9 +27,6 @@ from ...generated.dimensions import (
 )
 from ...generated.units import AreaUnits, DimensionlessUnits, LengthUnits, PressureUnits, VolumeUnits
 from ..units.registry import UnitConstant, UnitDefinition, registry
-
-if TYPE_CHECKING:
-    from ...domain.problems.problem import Problem
 
 # TypeVar for generic dimensional types
 DimensionType = TypeVar("DimensionType", bound="Quantity")

@@ -43,7 +43,7 @@ def generate_quantities_pyi(parsed_data: dict, dimension_mapping: dict) -> str:
         "",
         "from typing import Any",
         "",
-        "from ..quantities.unified_variable import UnifiedVariable",
+        "from ..core.quantities.unified_variable import UnifiedVariable",
         "from . import dimensions as dim",
         "from . import setters as ts",
         "",

@@ -10,7 +10,7 @@ Auto-generated from unit_data.json.
 
 from typing import Any
 
-from ..quantities.unified_variable import UnifiedVariable
+from ..core.quantities.unified_variable import UnifiedVariable
 from . import dimensions as dim
 from . import setters as ts
 
@@ -38,7 +38,7 @@ class AbsorbedDose(UnifiedVariable):
     _dimension = dim.ABSORBED_DOSE
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.AbsorbedDoseSetter:
         """
@@ -80,7 +80,7 @@ class Acceleration(UnifiedVariable):
     _dimension = dim.ACCELERATION
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.AccelerationSetter:
         """
@@ -122,7 +122,7 @@ class ActivationEnergy(UnifiedVariable):
     _dimension = dim.ACTIVATION_ENERGY
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.ActivationEnergySetter:
         """
@@ -164,7 +164,7 @@ class AmountOfSubstance(UnifiedVariable):
     _dimension = dim.AMOUNT_OF_SUBSTANCE
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.AmountOfSubstanceSetter:
         """
@@ -206,7 +206,7 @@ class AnglePlane(UnifiedVariable):
     _dimension = dim.ANGLE_PLANE
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.AnglePlaneSetter:
         """
@@ -248,7 +248,7 @@ class AngleSolid(UnifiedVariable):
     _dimension = dim.ANGLE_SOLID
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.AngleSolidSetter:
         """
@@ -290,7 +290,7 @@ class AngularAcceleration(UnifiedVariable):
     _dimension = dim.ANGULAR_ACCELERATION
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.AngularAccelerationSetter:
         """
@@ -332,7 +332,7 @@ class AngularMomentum(UnifiedVariable):
     _dimension = dim.ANGULAR_MOMENTUM
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.AngularMomentumSetter:
         """
@@ -374,7 +374,7 @@ class Area(UnifiedVariable):
     _dimension = dim.AREA
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.AreaSetter:
         """
@@ -416,7 +416,7 @@ class AreaPerUnitVolume(UnifiedVariable):
     _dimension = dim.AREA_PER_UNIT_VOLUME
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.AreaPerUnitVolumeSetter:
         """
@@ -458,7 +458,7 @@ class AtomicWeight(UnifiedVariable):
     _dimension = dim.ATOMIC_WEIGHT
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.AtomicWeightSetter:
         """
@@ -500,7 +500,7 @@ class Concentration(UnifiedVariable):
     _dimension = dim.CONCENTRATION
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.ConcentrationSetter:
         """
@@ -540,7 +540,7 @@ class Dimensionless(UnifiedVariable):
     _dimension = dim.DIMENSIONLESS
     
     def __init__(self, name_or_value: str | int | float, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.DimensionlessSetter:
         """
@@ -582,7 +582,7 @@ class DynamicFluidity(UnifiedVariable):
     _dimension = dim.DYNAMIC_FLUIDITY
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.DynamicFluiditySetter:
         """
@@ -624,7 +624,7 @@ class ElectricCapacitance(UnifiedVariable):
     _dimension = dim.ELECTRIC_CAPACITANCE
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.ElectricCapacitanceSetter:
         """
@@ -666,7 +666,7 @@ class ElectricCharge(UnifiedVariable):
     _dimension = dim.ELECTRIC_CHARGE
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.ElectricChargeSetter:
         """
@@ -708,7 +708,7 @@ class ElectricCurrentIntensity(UnifiedVariable):
     _dimension = dim.ELECTRIC_CURRENT_INTENSITY
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.ElectricCurrentIntensitySetter:
         """
@@ -750,7 +750,7 @@ class ElectricDipoleMoment(UnifiedVariable):
     _dimension = dim.ELECTRIC_DIPOLE_MOMENT
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.ElectricDipoleMomentSetter:
         """
@@ -792,7 +792,7 @@ class ElectricFieldStrength(UnifiedVariable):
     _dimension = dim.ELECTRIC_FIELD_STRENGTH
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.ElectricFieldStrengthSetter:
         """
@@ -834,7 +834,7 @@ class ElectricInductance(UnifiedVariable):
     _dimension = dim.ELECTRIC_INDUCTANCE
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.ElectricInductanceSetter:
         """
@@ -876,7 +876,7 @@ class ElectricPotential(UnifiedVariable):
     _dimension = dim.ELECTRIC_POTENTIAL
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.ElectricPotentialSetter:
         """
@@ -918,7 +918,7 @@ class ElectricResistance(UnifiedVariable):
     _dimension = dim.ELECTRIC_RESISTANCE
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.ElectricResistanceSetter:
         """
@@ -960,7 +960,7 @@ class ElectricalConductance(UnifiedVariable):
     _dimension = dim.ELECTRICAL_CONDUCTANCE
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.ElectricalConductanceSetter:
         """
@@ -1002,7 +1002,7 @@ class ElectricalPermittivity(UnifiedVariable):
     _dimension = dim.ELECTRICAL_PERMITTIVITY
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.ElectricalPermittivitySetter:
         """
@@ -1044,7 +1044,7 @@ class ElectricalResistivity(UnifiedVariable):
     _dimension = dim.ELECTRICAL_RESISTIVITY
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.ElectricalResistivitySetter:
         """
@@ -1086,7 +1086,7 @@ class EnergyFlux(UnifiedVariable):
     _dimension = dim.ENERGY_FLUX
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.EnergyFluxSetter:
         """
@@ -1128,7 +1128,7 @@ class EnergyHeatWork(UnifiedVariable):
     _dimension = dim.ENERGY_HEAT_WORK
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.EnergyHeatWorkSetter:
         """
@@ -1170,7 +1170,7 @@ class EnergyPerUnitArea(UnifiedVariable):
     _dimension = dim.ENERGY_PER_UNIT_AREA
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.EnergyPerUnitAreaSetter:
         """
@@ -1212,7 +1212,7 @@ class Force(UnifiedVariable):
     _dimension = dim.FORCE
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.ForceSetter:
         """
@@ -1254,7 +1254,7 @@ class ForceBody(UnifiedVariable):
     _dimension = dim.FORCE_BODY
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.ForceBodySetter:
         """
@@ -1296,7 +1296,7 @@ class ForcePerUnitMass(UnifiedVariable):
     _dimension = dim.FORCE_PER_UNIT_MASS
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.ForcePerUnitMassSetter:
         """
@@ -1338,7 +1338,7 @@ class FrequencyVoltageRatio(UnifiedVariable):
     _dimension = dim.FREQUENCY_VOLTAGE_RATIO
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.FrequencyVoltageRatioSetter:
         """
@@ -1380,7 +1380,7 @@ class FuelConsumption(UnifiedVariable):
     _dimension = dim.FUEL_CONSUMPTION
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.FuelConsumptionSetter:
         """
@@ -1422,7 +1422,7 @@ class HeatOfCombustion(UnifiedVariable):
     _dimension = dim.HEAT_OF_COMBUSTION
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.HeatOfCombustionSetter:
         """
@@ -1464,7 +1464,7 @@ class HeatOfFusion(UnifiedVariable):
     _dimension = dim.HEAT_OF_FUSION
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.HeatOfFusionSetter:
         """
@@ -1506,7 +1506,7 @@ class HeatOfVaporization(UnifiedVariable):
     _dimension = dim.HEAT_OF_VAPORIZATION
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.HeatOfVaporizationSetter:
         """
@@ -1548,7 +1548,7 @@ class HeatTransferCoefficient(UnifiedVariable):
     _dimension = dim.HEAT_TRANSFER_COEFFICIENT
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.HeatTransferCoefficientSetter:
         """
@@ -1590,7 +1590,7 @@ class Illuminance(UnifiedVariable):
     _dimension = dim.ILLUMINANCE
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.IlluminanceSetter:
         """
@@ -1632,7 +1632,7 @@ class KineticEnergyOfTurbulence(UnifiedVariable):
     _dimension = dim.KINETIC_ENERGY_OF_TURBULENCE
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.KineticEnergyOfTurbulenceSetter:
         """
@@ -1674,7 +1674,7 @@ class Length(UnifiedVariable):
     _dimension = dim.LENGTH
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.LengthSetter:
         """
@@ -1716,7 +1716,7 @@ class LinearMassDensity(UnifiedVariable):
     _dimension = dim.LINEAR_MASS_DENSITY
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.LinearMassDensitySetter:
         """
@@ -1758,7 +1758,7 @@ class LinearMomentum(UnifiedVariable):
     _dimension = dim.LINEAR_MOMENTUM
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.LinearMomentumSetter:
         """
@@ -1800,7 +1800,7 @@ class LuminanceSelf(UnifiedVariable):
     _dimension = dim.LUMINANCE_SELF
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.LuminanceSelfSetter:
         """
@@ -1842,7 +1842,7 @@ class LuminousFlux(UnifiedVariable):
     _dimension = dim.LUMINOUS_FLUX
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.LuminousFluxSetter:
         """
@@ -1884,7 +1884,7 @@ class LuminousIntensity(UnifiedVariable):
     _dimension = dim.LUMINOUS_INTENSITY
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.LuminousIntensitySetter:
         """
@@ -1926,7 +1926,7 @@ class MagneticField(UnifiedVariable):
     _dimension = dim.MAGNETIC_FIELD
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.MagneticFieldSetter:
         """
@@ -1968,7 +1968,7 @@ class MagneticFlux(UnifiedVariable):
     _dimension = dim.MAGNETIC_FLUX
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.MagneticFluxSetter:
         """
@@ -2010,7 +2010,7 @@ class MagneticInductionFieldStrength(UnifiedVariable):
     _dimension = dim.MAGNETIC_INDUCTION_FIELD_STRENGTH
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.MagneticInductionFieldStrengthSetter:
         """
@@ -2052,7 +2052,7 @@ class MagneticMoment(UnifiedVariable):
     _dimension = dim.MAGNETIC_MOMENT
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.MagneticMomentSetter:
         """
@@ -2094,7 +2094,7 @@ class MagneticPermeability(UnifiedVariable):
     _dimension = dim.MAGNETIC_PERMEABILITY
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.MagneticPermeabilitySetter:
         """
@@ -2136,7 +2136,7 @@ class MagnetomotiveForce(UnifiedVariable):
     _dimension = dim.MAGNETOMOTIVE_FORCE
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.MagnetomotiveForceSetter:
         """
@@ -2178,7 +2178,7 @@ class Mass(UnifiedVariable):
     _dimension = dim.MASS
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.MassSetter:
         """
@@ -2220,7 +2220,7 @@ class MassDensity(UnifiedVariable):
     _dimension = dim.MASS_DENSITY
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.MassDensitySetter:
         """
@@ -2262,7 +2262,7 @@ class MassFlowRate(UnifiedVariable):
     _dimension = dim.MASS_FLOW_RATE
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.MassFlowRateSetter:
         """
@@ -2304,7 +2304,7 @@ class MassFlux(UnifiedVariable):
     _dimension = dim.MASS_FLUX
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.MassFluxSetter:
         """
@@ -2346,7 +2346,7 @@ class MassFractionOfI(UnifiedVariable):
     _dimension = dim.MASS_FRACTION_OF_I
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.MassFractionOfISetter:
         """
@@ -2388,7 +2388,7 @@ class MassTransferCoefficient(UnifiedVariable):
     _dimension = dim.MASS_TRANSFER_COEFFICIENT
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.MassTransferCoefficientSetter:
         """
@@ -2430,7 +2430,7 @@ class MolalityOfSoluteI(UnifiedVariable):
     _dimension = dim.MOLALITY_OF_SOLUTE_I
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.MolalityOfSoluteISetter:
         """
@@ -2472,7 +2472,7 @@ class MolarConcentrationByMass(UnifiedVariable):
     _dimension = dim.MOLAR_CONCENTRATION_BY_MASS
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.MolarConcentrationByMassSetter:
         """
@@ -2514,7 +2514,7 @@ class MolarFlowRate(UnifiedVariable):
     _dimension = dim.MOLAR_FLOW_RATE
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.MolarFlowRateSetter:
         """
@@ -2556,7 +2556,7 @@ class MolarFlux(UnifiedVariable):
     _dimension = dim.MOLAR_FLUX
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.MolarFluxSetter:
         """
@@ -2598,7 +2598,7 @@ class MolarHeatCapacity(UnifiedVariable):
     _dimension = dim.MOLAR_HEAT_CAPACITY
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.MolarHeatCapacitySetter:
         """
@@ -2640,7 +2640,7 @@ class MolarityOfI(UnifiedVariable):
     _dimension = dim.MOLARITY_OF_I
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.MolarityOfISetter:
         """
@@ -2682,7 +2682,7 @@ class MoleFractionOfI(UnifiedVariable):
     _dimension = dim.MOLE_FRACTION_OF_I
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.MoleFractionOfISetter:
         """
@@ -2724,7 +2724,7 @@ class MomentOfInertia(UnifiedVariable):
     _dimension = dim.MOMENT_OF_INERTIA
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.MomentOfInertiaSetter:
         """
@@ -2766,7 +2766,7 @@ class MomentumFlowRate(UnifiedVariable):
     _dimension = dim.MOMENTUM_FLOW_RATE
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.MomentumFlowRateSetter:
         """
@@ -2808,7 +2808,7 @@ class MomentumFlux(UnifiedVariable):
     _dimension = dim.MOMENTUM_FLUX
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.MomentumFluxSetter:
         """
@@ -2850,7 +2850,7 @@ class NormalityOfSolution(UnifiedVariable):
     _dimension = dim.NORMALITY_OF_SOLUTION
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.NormalityOfSolutionSetter:
         """
@@ -2892,7 +2892,7 @@ class ParticleDensity(UnifiedVariable):
     _dimension = dim.PARTICLE_DENSITY
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.ParticleDensitySetter:
         """
@@ -2934,7 +2934,7 @@ class Percent(UnifiedVariable):
     _dimension = dim.PERCENT
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.PercentSetter:
         """
@@ -2976,7 +2976,7 @@ class Permeability(UnifiedVariable):
     _dimension = dim.PERMEABILITY
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.PermeabilitySetter:
         """
@@ -3018,7 +3018,7 @@ class PhotonEmissionRate(UnifiedVariable):
     _dimension = dim.PHOTON_EMISSION_RATE
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.PhotonEmissionRateSetter:
         """
@@ -3060,7 +3060,7 @@ class PowerPerUnitMass(UnifiedVariable):
     _dimension = dim.POWER_PER_UNIT_MASS
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.PowerPerUnitMassSetter:
         """
@@ -3102,7 +3102,7 @@ class PowerPerUnitVolume(UnifiedVariable):
     _dimension = dim.POWER_PER_UNIT_VOLUME
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.PowerPerUnitVolumeSetter:
         """
@@ -3144,7 +3144,7 @@ class PowerThermalDuty(UnifiedVariable):
     _dimension = dim.POWER_THERMAL_DUTY
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.PowerThermalDutySetter:
         """
@@ -3186,7 +3186,7 @@ class Pressure(UnifiedVariable):
     _dimension = dim.PRESSURE
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.PressureSetter:
         """
@@ -3228,7 +3228,7 @@ class RadiationDoseEquivalent(UnifiedVariable):
     _dimension = dim.RADIATION_DOSE_EQUIVALENT
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.RadiationDoseEquivalentSetter:
         """
@@ -3270,7 +3270,7 @@ class RadiationExposure(UnifiedVariable):
     _dimension = dim.RADIATION_EXPOSURE
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.RadiationExposureSetter:
         """
@@ -3312,7 +3312,7 @@ class Radioactivity(UnifiedVariable):
     _dimension = dim.RADIOACTIVITY
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.RadioactivitySetter:
         """
@@ -3354,7 +3354,7 @@ class SecondMomentOfArea(UnifiedVariable):
     _dimension = dim.SECOND_MOMENT_OF_AREA
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.SecondMomentOfAreaSetter:
         """
@@ -3396,7 +3396,7 @@ class SecondRadiationConstantPlanck(UnifiedVariable):
     _dimension = dim.SECOND_RADIATION_CONSTANT_PLANCK
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.SecondRadiationConstantPlanckSetter:
         """
@@ -3438,7 +3438,7 @@ class SpecificEnthalpy(UnifiedVariable):
     _dimension = dim.SPECIFIC_ENTHALPY
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.SpecificEnthalpySetter:
         """
@@ -3480,7 +3480,7 @@ class SpecificGravity(UnifiedVariable):
     _dimension = dim.SPECIFIC_GRAVITY
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.SpecificGravitySetter:
         """
@@ -3522,7 +3522,7 @@ class SpecificHeatCapacityConstantPressure(UnifiedVariable):
     _dimension = dim.SPECIFIC_HEAT_CAPACITY_CONSTANT_PRESSURE
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.SpecificHeatCapacityConstantPressureSetter:
         """
@@ -3564,7 +3564,7 @@ class SpecificLength(UnifiedVariable):
     _dimension = dim.SPECIFIC_LENGTH
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.SpecificLengthSetter:
         """
@@ -3606,7 +3606,7 @@ class SpecificSurface(UnifiedVariable):
     _dimension = dim.SPECIFIC_SURFACE
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.SpecificSurfaceSetter:
         """
@@ -3648,7 +3648,7 @@ class SpecificVolume(UnifiedVariable):
     _dimension = dim.SPECIFIC_VOLUME
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.SpecificVolumeSetter:
         """
@@ -3690,7 +3690,7 @@ class Stress(UnifiedVariable):
     _dimension = dim.STRESS
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.StressSetter:
         """
@@ -3732,7 +3732,7 @@ class SurfaceMassDensity(UnifiedVariable):
     _dimension = dim.SURFACE_MASS_DENSITY
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.SurfaceMassDensitySetter:
         """
@@ -3774,7 +3774,7 @@ class SurfaceTension(UnifiedVariable):
     _dimension = dim.SURFACE_TENSION
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.SurfaceTensionSetter:
         """
@@ -3816,7 +3816,7 @@ class Temperature(UnifiedVariable):
     _dimension = dim.TEMPERATURE
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.TemperatureSetter:
         """
@@ -3858,7 +3858,7 @@ class ThermalConductivity(UnifiedVariable):
     _dimension = dim.THERMAL_CONDUCTIVITY
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.ThermalConductivitySetter:
         """
@@ -3900,7 +3900,7 @@ class Time(UnifiedVariable):
     _dimension = dim.TIME
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.TimeSetter:
         """
@@ -3942,7 +3942,7 @@ class Torque(UnifiedVariable):
     _dimension = dim.TORQUE
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.TorqueSetter:
         """
@@ -3984,7 +3984,7 @@ class TurbulenceEnergyDissipationRate(UnifiedVariable):
     _dimension = dim.TURBULENCE_ENERGY_DISSIPATION_RATE
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.TurbulenceEnergyDissipationRateSetter:
         """
@@ -4026,7 +4026,7 @@ class VelocityAngular(UnifiedVariable):
     _dimension = dim.VELOCITY_ANGULAR
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.VelocityAngularSetter:
         """
@@ -4068,7 +4068,7 @@ class VelocityLinear(UnifiedVariable):
     _dimension = dim.VELOCITY_LINEAR
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.VelocityLinearSetter:
         """
@@ -4110,7 +4110,7 @@ class ViscosityDynamic(UnifiedVariable):
     _dimension = dim.VISCOSITY_DYNAMIC
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.ViscosityDynamicSetter:
         """
@@ -4152,7 +4152,7 @@ class ViscosityKinematic(UnifiedVariable):
     _dimension = dim.VISCOSITY_KINEMATIC
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.ViscosityKinematicSetter:
         """
@@ -4194,7 +4194,7 @@ class Volume(UnifiedVariable):
     _dimension = dim.VOLUME
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.VolumeSetter:
         """
@@ -4236,7 +4236,7 @@ class VolumeFractionOfI(UnifiedVariable):
     _dimension = dim.VOLUME_FRACTION_OF_I
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.VolumeFractionOfISetter:
         """
@@ -4278,7 +4278,7 @@ class VolumetricCalorificHeatingValue(UnifiedVariable):
     _dimension = dim.VOLUMETRIC_CALORIFIC_HEATING_VALUE
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.VolumetricCalorificHeatingValueSetter:
         """
@@ -4320,7 +4320,7 @@ class VolumetricCoefficientOfExpansion(UnifiedVariable):
     _dimension = dim.VOLUMETRIC_COEFFICIENT_OF_EXPANSION
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.VolumetricCoefficientOfExpansionSetter:
         """
@@ -4362,7 +4362,7 @@ class VolumetricFlowRate(UnifiedVariable):
     _dimension = dim.VOLUMETRIC_FLOW_RATE
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.VolumetricFlowRateSetter:
         """
@@ -4404,7 +4404,7 @@ class VolumetricFlux(UnifiedVariable):
     _dimension = dim.VOLUMETRIC_FLUX
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.VolumetricFluxSetter:
         """
@@ -4446,7 +4446,7 @@ class VolumetricMassFlowRate(UnifiedVariable):
     _dimension = dim.VOLUMETRIC_MASS_FLOW_RATE
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.VolumetricMassFlowRateSetter:
         """
@@ -4488,7 +4488,7 @@ class Wavenumber(UnifiedVariable):
     _dimension = dim.WAVENUMBER
     
     def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
- ...
+        ...
     
     def set(self, value: int | float) -> ts.WavenumberSetter:
         """
