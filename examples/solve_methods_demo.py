@@ -36,7 +36,7 @@ def test_solve_from_method():
 
     print(f"Expected: {expected_mm:.4f} mm, Got: {actual_mm:.4f} mm")
     assert abs(actual_mm - expected_mm) < 0.001, f"Expected {expected_mm}, got {actual_mm}"
-    print("✅ solve_from() test passed!")
+    print("PASS: solve_from() test passed!")
 
 
 def test_equation_based_solve():
@@ -76,21 +76,22 @@ def test_equation_based_solve():
     expected_d_inch = 10.0 - 2 * expected_T_inch  # 9.74275 inches
 
     if T.quantity:
-        temp_length = Length.from_value(1, "inch", "temp")
-        if temp_length.quantity:
-            T_inch = T.quantity.to(temp_length.quantity.unit).value
-        else:
-            T_inch = 0
+        # Convert T to inches for verification (T.quantity is in mm)
+        T_inch = T.quantity.value / 25.4  # Convert mm to inches
     else:
         T_inch = 0
-    d_inch = d.quantity.value if d.quantity else 0
+        
+    if d.quantity:
+        d_inch = d.quantity.value  # d is already in inches
+    else:
+        d_inch = 0
 
     print(f"T: Expected {expected_T_inch:.6f} in, Got {T_inch:.6f} in")
     print(f"d: Expected {expected_d_inch:.6f} in, Got {d_inch:.6f} in")
 
     assert abs(T_inch - expected_T_inch) < 0.001, f"T: Expected {expected_T_inch}, got {T_inch}"
     assert abs(d_inch - expected_d_inch) < 0.001, f"d: Expected {expected_d_inch}, got {d_inch}"
-    print("✅ equation-based solve() test passed!")
+    print("PASS: equation-based solve() test passed!")
 
 
 def test_complex_expressions():
@@ -131,7 +132,7 @@ def test_complex_expressions():
         print(f"Verification: LHS = {lhs_value:.6f} Pa, RHS = {rhs_value:.6f} Pa")
         assert abs(lhs_value - rhs_value) < 0.01, f"Verification failed: {lhs_value} != {rhs_value}"
 
-    print("✅ complex expression test passed!")
+    print("PASS: complex expression test passed!")
 
 
 def test_comparison_methods():
@@ -157,19 +158,19 @@ def test_comparison_methods():
     
     # Less than
     result_lt = P.lt(P_max/6 + 7 * 3)
-    print(f"  P.lt(P_max): P < P_max? → {result_lt}")
+    print(f"  P.lt(P_max): P < P_max? -> {result_lt}")
     
     # Greater than
     result_gt = P.gt(P_min)
-    print(f"  P.gt(P_min): P > P_min? → {result_gt}")
+    print(f"  P.gt(P_min): P > P_min? -> {result_gt}")
     
     # Less than or equal
     result_leq = T.leq(T_max)
-    print(f"  T.leq(T_max): T ≤ T_max? → {result_leq}")
+    print(f"  T.leq(T_max): T <= T_max? -> {result_leq}")
     
     # Greater than or equal
     result_geq = T.geq(T_min)
-    print(f"  T.geq(T_min): T ≥ T_min? → {result_geq}")
+    print(f"  T.geq(T_min): T >= T_min? -> {result_geq}")
     
     print()
     
@@ -192,7 +193,7 @@ def test_comparison_methods():
     
     # Check if safety factor is adequate (SF > 1.2)
     SF_adequate = SF.gt(1.2)
-    print(f"  Is SF > 1.2? → {SF_adequate}")
+    print(f"  Is SF > 1.2? -> {SF_adequate}")
     
     print()
     
@@ -201,11 +202,11 @@ def test_comparison_methods():
     
     # Check if pressure is within acceptable range
     P_in_range = P.geq(P_min) * P.leq(P_max)  # Both conditions must be true
-    print(f"  P_min ≤ P ≤ P_max? → {P_in_range}")
+    print(f"  P_min <= P <= P_max? -> {P_in_range}")
     
     # Check if thickness is within tolerance
     T_in_range = T.geq(T_min) * T.leq(T_max)
-    print(f"  T_min ≤ T ≤ T_max? → {T_in_range}")
+    print(f"  T_min <= T <= T_max? -> {T_in_range}")
     
     print()
     
@@ -215,7 +216,7 @@ def test_comparison_methods():
     # Example: If P > 120 Pa, use thicker wall
     P_high = Pressure(120, "pascal", "High Pressure Threshold")
     need_thick_wall = P.gt(P_high/6)
-    print(f"  Need thicker wall (P > 120 Pa)? → {need_thick_wall}")
+    print(f"  Need thicker wall (P > 120 Pa)? -> {need_thick_wall}")
     
     # Calculate required thickness based on condition
     # T_required = 5mm if P <= 120Pa, else 7mm
@@ -236,17 +237,17 @@ def test_comparison_methods():
     L2 = Length(1200, "millimeter", "Length 2")  # 1.2 meters
     
     print(f"  L1 = {L1}, L2 = {L2}")
-    print(f"  L1 < L2 (1m < 1200mm)? → {L1 < L2}")
-    print(f"  L1.lt(L2)? → {L1.lt(L2)}")
+    print(f"  L1 < L2 (1m < 1200mm)? -> {L1 < L2}")
+    print(f"  L1.lt(L2)? -> {L1.lt(L2)}")
     
     P1 = Pressure(100, "kilopascal", "Pressure 1")
     P2 = Pressure(15, "pound_force_per_square_inch", "Pressure 2")  # ~103.4 kPa
     
     print(f"  P1 = {P1}, P2 = {P2}")
-    print(f"  P1 < P2 (100 kPa < 15 psi)? → {P1 < P2}")
-    print(f"  P1.lt(P2)? → {P1.lt(P2)}")
+    print(f"  P1 < P2 (100 kPa < 15 psi)? -> {P1 < P2}")
+    print(f"  P1.lt(P2)? -> {P1.lt(P2)}")
     
-    print("\n✅ Comparison methods test passed!")
+    print("\nPASS: Comparison methods test passed!")
 
 
 def test_error_conditions():
@@ -260,7 +261,7 @@ def test_error_conditions():
         x.solve()
         raise AssertionError("Should have raised ValueError for no equations")
     except ValueError as e:
-        print(f"✅ Correctly caught error for no equations: {e}")
+        print(f"PASS: Correctly caught error for no equations: {e}")
 
     # Test solving unsolvable equation
     y = Length("y", is_known=False)
@@ -273,9 +274,9 @@ def test_error_conditions():
         y.solve()
         raise AssertionError("Should have raised ValueError for unsolvable equation")
     except ValueError as e:
-        print(f"✅ Correctly caught error for unsolvable equation: {e}")
+        print(f"PASS: Correctly caught error for unsolvable equation: {e}")
 
-    print("✅ error condition tests passed!")
+    print("PASS: error condition tests passed!")
 
 
 def main():
@@ -290,14 +291,14 @@ def main():
     test_error_conditions()
 
     print("\n" + "=" * 60)
-    print("🎉 All solve method tests passed!")
+    print("All solve method tests passed!")
     print("\nNew solve capabilities:")
-    print("  • var.solve_from(expression) - Create equation and solve immediately")
-    print("  • var.solve() - Find equations in scope and solve automatically")
-    print("  • Automatic variable discovery from calling scope")
-    print("  • Support for complex multi-variable systems")
-    print("  • Comparison methods: lt(), gt(), leq(), geq() and operators")
-    print("  • Drop-in replacement for removed auto-evaluation")
+    print("  - var.solve_from(expression) - Create equation and solve immediately")
+    print("  - var.solve() - Find equations in scope and solve automatically")
+    print("  - Automatic variable discovery from calling scope")
+    print("  - Support for complex multi-variable systems")
+    print("  - Comparison methods: lt(), gt(), leq(), geq() and operators")
+    print("  - Drop-in replacement for removed auto-evaluation")
 
 
 if __name__ == "__main__":

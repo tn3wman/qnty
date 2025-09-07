@@ -1,9 +1,7 @@
-from qnty import Dimensionless, Length, Pressure
-from qnty.expressions import cond_expr, min_expr
-from qnty.problem import Problem
-from qnty.validation.rules import add_rule
+from qnty import Dimensionless, Length, Pressure, Problem, cond_expr, min_expr
+from qnty.problems.rules import add_rule
 
-
+# Define a composed problem that includes another problem as a sub-component
 class StraightPipeInternal(Problem):
     name = "Pressure Design of a Straight Pipe Under Internal Pressure"
     description = "Calculate the minimum wall thickness of a straight pipe under internal pressure."

@@ -1,12 +1,15 @@
 {
   "permissions": {
-    "allow": [
-      "Bash(python:*)",
-      "Read(/C:\\Projects\\qnty\\src\\qnty\\engines\\problem/**)",
-      "Read(/C:\\Projects\\qnty\\src\\qnty/**)",
-      "mcp__ide__getDiagnostics"
+    "defaultMode": "bypassPermissions",
+    "ask": [
+      "Bash(rm -rf /*)"
     ],
-    "deny": [],
-    "ask": []
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(./secrets/**)",
+      "Bash(curl:*)",
+      "Bash(wget:*)"
+    ]
   }
 }

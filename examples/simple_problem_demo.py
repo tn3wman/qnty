@@ -1,9 +1,8 @@
-from qnty import Dimensionless, Length, Pressure
-from qnty.expressions import cond_expr
-from qnty.problem import Problem
-from qnty.validation.rules import add_rule
+from qnty import Dimensionless, Length, Pressure, Problem, cond_expr
+from qnty.expressions import Expression
+from qnty.problems.rules import add_rule
 
- 
+
 class StraightPipeInternal(Problem):
     name = "Pressure Design of a Straight Pipe Under Internal Pressure"
     description = "Calculate the minimum wall thickness of a straight pipe under internal pressure."
@@ -74,8 +73,7 @@ def test_simple_problem():
     print(f"  T_eqn value: {StraightPipeInternal.T_eqn}")
     
     # Debug: Test isinstance check directly
-    from qnty.equations.equation import Equation
-    print(f"  isinstance check: {isinstance(StraightPipeInternal.T_eqn, Equation)}")
+    print(f"  isinstance check: {isinstance(StraightPipeInternal.T_eqn, Expression)}")
     
     # Debug: Check all class attributes with their types
     print("\nAll class attributes:")

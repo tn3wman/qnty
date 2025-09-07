@@ -20,7 +20,8 @@ from .expressions import (
     sqrt,
     tan,
 )
-from .generated.quantities import (
+from .problems import Problem
+from .quantities.field_vars import (
     AbsorbedDose,
     Acceleration,
     ActivationEnergy,
@@ -129,7 +130,6 @@ from .generated.quantities import (
     VolumetricMassFlowRate,
     Wavenumber,
 )
-from .problem import Problem
 
 # Define public API
 __all__ = [
@@ -253,4 +253,3 @@ __all__ = [
     "VolumetricMassFlowRate",
     "Wavenumber",
 ]
-
