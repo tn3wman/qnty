@@ -56,12 +56,13 @@ class AbsorbedDose(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.AbsorbedDoseSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.AbsorbedDoseSetter:
         """
         Create a setter for this absorbed radiation dose quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             AbsorbedDoseSetter: A setter with unit properties like .meters, .inches, etc.
@@ -114,12 +115,13 @@ class Acceleration(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.AccelerationSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.AccelerationSetter:
         """
         Create a setter for this acceleration quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             AccelerationSetter: A setter with unit properties like .meters, .inches, etc.
@@ -172,12 +174,13 @@ class ActivationEnergy(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.ActivationEnergySetter:
+    def set(self, value: float, unit: str | None = None) -> ts.ActivationEnergySetter:
         """
         Create a setter for this activation energy quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             ActivationEnergySetter: A setter with unit properties like .meters, .inches, etc.
@@ -230,12 +233,13 @@ class AmountOfSubstance(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.AmountOfSubstanceSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.AmountOfSubstanceSetter:
         """
         Create a setter for this amount of substance quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             AmountOfSubstanceSetter: A setter with unit properties like .meters, .inches, etc.
@@ -288,12 +292,13 @@ class AnglePlane(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.AnglePlaneSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.AnglePlaneSetter:
         """
         Create a setter for this angle, plane quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             AnglePlaneSetter: A setter with unit properties like .meters, .inches, etc.
@@ -346,12 +351,13 @@ class AngleSolid(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.AngleSolidSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.AngleSolidSetter:
         """
         Create a setter for this angle, solid quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             AngleSolidSetter: A setter with unit properties like .meters, .inches, etc.
@@ -404,12 +410,13 @@ class AngularAcceleration(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.AngularAccelerationSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.AngularAccelerationSetter:
         """
         Create a setter for this angular acceleration quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             AngularAccelerationSetter: A setter with unit properties like .meters, .inches, etc.
@@ -462,12 +469,13 @@ class AngularMomentum(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.AngularMomentumSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.AngularMomentumSetter:
         """
         Create a setter for this angular momentum quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             AngularMomentumSetter: A setter with unit properties like .meters, .inches, etc.
@@ -520,12 +528,13 @@ class Area(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.AreaSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.AreaSetter:
         """
         Create a setter for this area quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             AreaSetter: A setter with unit properties like .meters, .inches, etc.
@@ -578,12 +587,13 @@ class AreaPerUnitVolume(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.AreaPerUnitVolumeSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.AreaPerUnitVolumeSetter:
         """
         Create a setter for this area per unit volume quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             AreaPerUnitVolumeSetter: A setter with unit properties like .meters, .inches, etc.
@@ -636,12 +646,13 @@ class AtomicWeight(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.AtomicWeightSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.AtomicWeightSetter:
         """
         Create a setter for this atomic weight quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             AtomicWeightSetter: A setter with unit properties like .meters, .inches, etc.
@@ -694,12 +705,13 @@ class Concentration(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.ConcentrationSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.ConcentrationSetter:
         """
         Create a setter for this concentration quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             ConcentrationSetter: A setter with unit properties like .meters, .inches, etc.
@@ -747,12 +759,13 @@ class Dimensionless(FieldQnty):
             super().__init__(name_or_value, name, is_known=is_known)
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.DimensionlessSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.DimensionlessSetter:
         """
         Create a setter for this dimensionless quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             DimensionlessSetter: A setter with unit properties like .meters, .inches, etc.
@@ -805,12 +818,13 @@ class DynamicFluidity(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.DynamicFluiditySetter:
+    def set(self, value: float, unit: str | None = None) -> ts.DynamicFluiditySetter:
         """
         Create a setter for this dynamic fluidity quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             DynamicFluiditySetter: A setter with unit properties like .meters, .inches, etc.
@@ -863,12 +877,13 @@ class ElectricCapacitance(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.ElectricCapacitanceSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.ElectricCapacitanceSetter:
         """
         Create a setter for this electric capacitance quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             ElectricCapacitanceSetter: A setter with unit properties like .meters, .inches, etc.
@@ -921,12 +936,13 @@ class ElectricCharge(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.ElectricChargeSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.ElectricChargeSetter:
         """
         Create a setter for this electric charge quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             ElectricChargeSetter: A setter with unit properties like .meters, .inches, etc.
@@ -979,12 +995,13 @@ class ElectricCurrentIntensity(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.ElectricCurrentIntensitySetter:
+    def set(self, value: float, unit: str | None = None) -> ts.ElectricCurrentIntensitySetter:
         """
         Create a setter for this electric current intensity quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             ElectricCurrentIntensitySetter: A setter with unit properties like .meters, .inches, etc.
@@ -1037,12 +1054,13 @@ class ElectricDipoleMoment(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.ElectricDipoleMomentSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.ElectricDipoleMomentSetter:
         """
         Create a setter for this electric dipole moment quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             ElectricDipoleMomentSetter: A setter with unit properties like .meters, .inches, etc.
@@ -1095,12 +1113,13 @@ class ElectricFieldStrength(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.ElectricFieldStrengthSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.ElectricFieldStrengthSetter:
         """
         Create a setter for this electric field strength quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             ElectricFieldStrengthSetter: A setter with unit properties like .meters, .inches, etc.
@@ -1153,12 +1172,13 @@ class ElectricInductance(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.ElectricInductanceSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.ElectricInductanceSetter:
         """
         Create a setter for this electric inductance quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             ElectricInductanceSetter: A setter with unit properties like .meters, .inches, etc.
@@ -1211,12 +1231,13 @@ class ElectricPotential(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.ElectricPotentialSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.ElectricPotentialSetter:
         """
         Create a setter for this electric potential quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             ElectricPotentialSetter: A setter with unit properties like .meters, .inches, etc.
@@ -1269,12 +1290,13 @@ class ElectricResistance(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.ElectricResistanceSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.ElectricResistanceSetter:
         """
         Create a setter for this electric resistance quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             ElectricResistanceSetter: A setter with unit properties like .meters, .inches, etc.
@@ -1327,12 +1349,13 @@ class ElectricalConductance(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.ElectricalConductanceSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.ElectricalConductanceSetter:
         """
         Create a setter for this electrical conductance quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             ElectricalConductanceSetter: A setter with unit properties like .meters, .inches, etc.
@@ -1385,12 +1408,13 @@ class ElectricalPermittivity(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.ElectricalPermittivitySetter:
+    def set(self, value: float, unit: str | None = None) -> ts.ElectricalPermittivitySetter:
         """
         Create a setter for this electrical permittivity quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             ElectricalPermittivitySetter: A setter with unit properties like .meters, .inches, etc.
@@ -1443,12 +1467,13 @@ class ElectricalResistivity(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.ElectricalResistivitySetter:
+    def set(self, value: float, unit: str | None = None) -> ts.ElectricalResistivitySetter:
         """
         Create a setter for this electrical resistivity quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             ElectricalResistivitySetter: A setter with unit properties like .meters, .inches, etc.
@@ -1501,12 +1526,13 @@ class EnergyFlux(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.EnergyFluxSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.EnergyFluxSetter:
         """
         Create a setter for this energy flux quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             EnergyFluxSetter: A setter with unit properties like .meters, .inches, etc.
@@ -1559,12 +1585,13 @@ class EnergyHeatWork(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.EnergyHeatWorkSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.EnergyHeatWorkSetter:
         """
         Create a setter for this energy, heat, work quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             EnergyHeatWorkSetter: A setter with unit properties like .meters, .inches, etc.
@@ -1617,12 +1644,13 @@ class EnergyPerUnitArea(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.EnergyPerUnitAreaSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.EnergyPerUnitAreaSetter:
         """
         Create a setter for this energy per unit area quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             EnergyPerUnitAreaSetter: A setter with unit properties like .meters, .inches, etc.
@@ -1675,12 +1703,13 @@ class Force(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.ForceSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.ForceSetter:
         """
         Create a setter for this force quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             ForceSetter: A setter with unit properties like .meters, .inches, etc.
@@ -1733,12 +1762,13 @@ class ForceBody(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.ForceBodySetter:
+    def set(self, value: float, unit: str | None = None) -> ts.ForceBodySetter:
         """
         Create a setter for this force (body) quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             ForceBodySetter: A setter with unit properties like .meters, .inches, etc.
@@ -1791,12 +1821,13 @@ class ForcePerUnitMass(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.ForcePerUnitMassSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.ForcePerUnitMassSetter:
         """
         Create a setter for this force per unit mass quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             ForcePerUnitMassSetter: A setter with unit properties like .meters, .inches, etc.
@@ -1849,12 +1880,13 @@ class FrequencyVoltageRatio(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.FrequencyVoltageRatioSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.FrequencyVoltageRatioSetter:
         """
         Create a setter for this frequency voltage ratio quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             FrequencyVoltageRatioSetter: A setter with unit properties like .meters, .inches, etc.
@@ -1907,12 +1939,13 @@ class FuelConsumption(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.FuelConsumptionSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.FuelConsumptionSetter:
         """
         Create a setter for this fuel consumption quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             FuelConsumptionSetter: A setter with unit properties like .meters, .inches, etc.
@@ -1965,12 +1998,13 @@ class HeatOfCombustion(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.HeatOfCombustionSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.HeatOfCombustionSetter:
         """
         Create a setter for this heat of combustion quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             HeatOfCombustionSetter: A setter with unit properties like .meters, .inches, etc.
@@ -2023,12 +2057,13 @@ class HeatOfFusion(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.HeatOfFusionSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.HeatOfFusionSetter:
         """
         Create a setter for this heat of fusion quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             HeatOfFusionSetter: A setter with unit properties like .meters, .inches, etc.
@@ -2081,12 +2116,13 @@ class HeatOfVaporization(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.HeatOfVaporizationSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.HeatOfVaporizationSetter:
         """
         Create a setter for this heat of vaporization quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             HeatOfVaporizationSetter: A setter with unit properties like .meters, .inches, etc.
@@ -2139,12 +2175,13 @@ class HeatTransferCoefficient(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.HeatTransferCoefficientSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.HeatTransferCoefficientSetter:
         """
         Create a setter for this heat transfer coefficient quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             HeatTransferCoefficientSetter: A setter with unit properties like .meters, .inches, etc.
@@ -2197,12 +2234,13 @@ class Illuminance(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.IlluminanceSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.IlluminanceSetter:
         """
         Create a setter for this illuminance quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             IlluminanceSetter: A setter with unit properties like .meters, .inches, etc.
@@ -2255,12 +2293,13 @@ class KineticEnergyOfTurbulence(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.KineticEnergyOfTurbulenceSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.KineticEnergyOfTurbulenceSetter:
         """
         Create a setter for this kinetic energy of turbulence quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             KineticEnergyOfTurbulenceSetter: A setter with unit properties like .meters, .inches, etc.
@@ -2313,12 +2352,13 @@ class Length(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.LengthSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.LengthSetter:
         """
         Create a setter for this length quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             LengthSetter: A setter with unit properties like .meters, .inches, etc.
@@ -2371,12 +2411,13 @@ class LinearMassDensity(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.LinearMassDensitySetter:
+    def set(self, value: float, unit: str | None = None) -> ts.LinearMassDensitySetter:
         """
         Create a setter for this linear mass density quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             LinearMassDensitySetter: A setter with unit properties like .meters, .inches, etc.
@@ -2429,12 +2470,13 @@ class LinearMomentum(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.LinearMomentumSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.LinearMomentumSetter:
         """
         Create a setter for this linear momentum quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             LinearMomentumSetter: A setter with unit properties like .meters, .inches, etc.
@@ -2487,12 +2529,13 @@ class LuminanceSelf(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.LuminanceSelfSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.LuminanceSelfSetter:
         """
         Create a setter for this luminance (self) quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             LuminanceSelfSetter: A setter with unit properties like .meters, .inches, etc.
@@ -2545,12 +2588,13 @@ class LuminousFlux(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.LuminousFluxSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.LuminousFluxSetter:
         """
         Create a setter for this luminous flux quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             LuminousFluxSetter: A setter with unit properties like .meters, .inches, etc.
@@ -2603,12 +2647,13 @@ class LuminousIntensity(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.LuminousIntensitySetter:
+    def set(self, value: float, unit: str | None = None) -> ts.LuminousIntensitySetter:
         """
         Create a setter for this luminous intensity quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             LuminousIntensitySetter: A setter with unit properties like .meters, .inches, etc.
@@ -2661,12 +2706,13 @@ class MagneticField(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.MagneticFieldSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.MagneticFieldSetter:
         """
         Create a setter for this magnetic field quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             MagneticFieldSetter: A setter with unit properties like .meters, .inches, etc.
@@ -2719,12 +2765,13 @@ class MagneticFlux(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.MagneticFluxSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.MagneticFluxSetter:
         """
         Create a setter for this magnetic flux quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             MagneticFluxSetter: A setter with unit properties like .meters, .inches, etc.
@@ -2777,12 +2824,13 @@ class MagneticInductionFieldStrength(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.MagneticInductionFieldStrengthSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.MagneticInductionFieldStrengthSetter:
         """
         Create a setter for this magnetic induction field strength quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             MagneticInductionFieldStrengthSetter: A setter with unit properties like .meters, .inches, etc.
@@ -2835,12 +2883,13 @@ class MagneticMoment(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.MagneticMomentSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.MagneticMomentSetter:
         """
         Create a setter for this magnetic moment quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             MagneticMomentSetter: A setter with unit properties like .meters, .inches, etc.
@@ -2893,12 +2942,13 @@ class MagneticPermeability(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.MagneticPermeabilitySetter:
+    def set(self, value: float, unit: str | None = None) -> ts.MagneticPermeabilitySetter:
         """
         Create a setter for this magnetic permeability quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             MagneticPermeabilitySetter: A setter with unit properties like .meters, .inches, etc.
@@ -2951,12 +3001,13 @@ class MagnetomotiveForce(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.MagnetomotiveForceSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.MagnetomotiveForceSetter:
         """
         Create a setter for this magnetomotive force quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             MagnetomotiveForceSetter: A setter with unit properties like .meters, .inches, etc.
@@ -3009,12 +3060,13 @@ class Mass(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.MassSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.MassSetter:
         """
         Create a setter for this mass quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             MassSetter: A setter with unit properties like .meters, .inches, etc.
@@ -3067,12 +3119,13 @@ class MassDensity(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.MassDensitySetter:
+    def set(self, value: float, unit: str | None = None) -> ts.MassDensitySetter:
         """
         Create a setter for this mass density quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             MassDensitySetter: A setter with unit properties like .meters, .inches, etc.
@@ -3125,12 +3178,13 @@ class MassFlowRate(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.MassFlowRateSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.MassFlowRateSetter:
         """
         Create a setter for this mass flow rate quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             MassFlowRateSetter: A setter with unit properties like .meters, .inches, etc.
@@ -3183,12 +3237,13 @@ class MassFlux(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.MassFluxSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.MassFluxSetter:
         """
         Create a setter for this mass flux quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             MassFluxSetter: A setter with unit properties like .meters, .inches, etc.
@@ -3241,12 +3296,13 @@ class MassFractionOfI(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.MassFractionOfISetter:
+    def set(self, value: float, unit: str | None = None) -> ts.MassFractionOfISetter:
         """
         Create a setter for this mass fraction of "i" quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             MassFractionOfISetter: A setter with unit properties like .meters, .inches, etc.
@@ -3299,12 +3355,13 @@ class MassTransferCoefficient(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.MassTransferCoefficientSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.MassTransferCoefficientSetter:
         """
         Create a setter for this mass transfer coefficient quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             MassTransferCoefficientSetter: A setter with unit properties like .meters, .inches, etc.
@@ -3357,12 +3414,13 @@ class MolalityOfSoluteI(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.MolalityOfSoluteISetter:
+    def set(self, value: float, unit: str | None = None) -> ts.MolalityOfSoluteISetter:
         """
         Create a setter for this molality of solute "i" quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             MolalityOfSoluteISetter: A setter with unit properties like .meters, .inches, etc.
@@ -3415,12 +3473,13 @@ class MolarConcentrationByMass(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.MolarConcentrationByMassSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.MolarConcentrationByMassSetter:
         """
         Create a setter for this molar concentration by mass quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             MolarConcentrationByMassSetter: A setter with unit properties like .meters, .inches, etc.
@@ -3473,12 +3532,13 @@ class MolarFlowRate(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.MolarFlowRateSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.MolarFlowRateSetter:
         """
         Create a setter for this molar flow rate quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             MolarFlowRateSetter: A setter with unit properties like .meters, .inches, etc.
@@ -3531,12 +3591,13 @@ class MolarFlux(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.MolarFluxSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.MolarFluxSetter:
         """
         Create a setter for this molar flux quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             MolarFluxSetter: A setter with unit properties like .meters, .inches, etc.
@@ -3589,12 +3650,13 @@ class MolarHeatCapacity(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.MolarHeatCapacitySetter:
+    def set(self, value: float, unit: str | None = None) -> ts.MolarHeatCapacitySetter:
         """
         Create a setter for this molar heat capacity quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             MolarHeatCapacitySetter: A setter with unit properties like .meters, .inches, etc.
@@ -3647,12 +3709,13 @@ class MolarityOfI(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.MolarityOfISetter:
+    def set(self, value: float, unit: str | None = None) -> ts.MolarityOfISetter:
         """
         Create a setter for this molarity of "i" quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             MolarityOfISetter: A setter with unit properties like .meters, .inches, etc.
@@ -3705,12 +3768,13 @@ class MoleFractionOfI(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.MoleFractionOfISetter:
+    def set(self, value: float, unit: str | None = None) -> ts.MoleFractionOfISetter:
         """
         Create a setter for this mole fraction of "i" quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             MoleFractionOfISetter: A setter with unit properties like .meters, .inches, etc.
@@ -3763,12 +3827,13 @@ class MomentOfInertia(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.MomentOfInertiaSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.MomentOfInertiaSetter:
         """
         Create a setter for this moment of inertia quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             MomentOfInertiaSetter: A setter with unit properties like .meters, .inches, etc.
@@ -3821,12 +3886,13 @@ class MomentumFlowRate(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.MomentumFlowRateSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.MomentumFlowRateSetter:
         """
         Create a setter for this momentum flow rate quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             MomentumFlowRateSetter: A setter with unit properties like .meters, .inches, etc.
@@ -3879,12 +3945,13 @@ class MomentumFlux(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.MomentumFluxSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.MomentumFluxSetter:
         """
         Create a setter for this momentum flux quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             MomentumFluxSetter: A setter with unit properties like .meters, .inches, etc.
@@ -3937,12 +4004,13 @@ class NormalityOfSolution(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.NormalityOfSolutionSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.NormalityOfSolutionSetter:
         """
         Create a setter for this normality of solution quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             NormalityOfSolutionSetter: A setter with unit properties like .meters, .inches, etc.
@@ -3995,12 +4063,13 @@ class ParticleDensity(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.ParticleDensitySetter:
+    def set(self, value: float, unit: str | None = None) -> ts.ParticleDensitySetter:
         """
         Create a setter for this particle density quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             ParticleDensitySetter: A setter with unit properties like .meters, .inches, etc.
@@ -4053,12 +4122,13 @@ class Percent(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.PercentSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.PercentSetter:
         """
         Create a setter for this percent quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             PercentSetter: A setter with unit properties like .meters, .inches, etc.
@@ -4111,12 +4181,13 @@ class Permeability(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.PermeabilitySetter:
+    def set(self, value: float, unit: str | None = None) -> ts.PermeabilitySetter:
         """
         Create a setter for this permeability quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             PermeabilitySetter: A setter with unit properties like .meters, .inches, etc.
@@ -4169,12 +4240,13 @@ class PhotonEmissionRate(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.PhotonEmissionRateSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.PhotonEmissionRateSetter:
         """
         Create a setter for this photon emission rate quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             PhotonEmissionRateSetter: A setter with unit properties like .meters, .inches, etc.
@@ -4227,12 +4299,13 @@ class PowerPerUnitMass(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.PowerPerUnitMassSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.PowerPerUnitMassSetter:
         """
         Create a setter for this power per unit mass or specific power quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             PowerPerUnitMassSetter: A setter with unit properties like .meters, .inches, etc.
@@ -4285,12 +4358,13 @@ class PowerPerUnitVolume(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.PowerPerUnitVolumeSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.PowerPerUnitVolumeSetter:
         """
         Create a setter for this power per unit volume or power density quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             PowerPerUnitVolumeSetter: A setter with unit properties like .meters, .inches, etc.
@@ -4343,12 +4417,13 @@ class PowerThermalDuty(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.PowerThermalDutySetter:
+    def set(self, value: float, unit: str | None = None) -> ts.PowerThermalDutySetter:
         """
         Create a setter for this power, thermal duty quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             PowerThermalDutySetter: A setter with unit properties like .meters, .inches, etc.
@@ -4401,12 +4476,13 @@ class Pressure(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.PressureSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.PressureSetter:
         """
         Create a setter for this pressure quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             PressureSetter: A setter with unit properties like .meters, .inches, etc.
@@ -4459,12 +4535,13 @@ class RadiationDoseEquivalent(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.RadiationDoseEquivalentSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.RadiationDoseEquivalentSetter:
         """
         Create a setter for this radiation dose equivalent quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             RadiationDoseEquivalentSetter: A setter with unit properties like .meters, .inches, etc.
@@ -4517,12 +4594,13 @@ class RadiationExposure(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.RadiationExposureSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.RadiationExposureSetter:
         """
         Create a setter for this radiation exposure quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             RadiationExposureSetter: A setter with unit properties like .meters, .inches, etc.
@@ -4575,12 +4653,13 @@ class Radioactivity(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.RadioactivitySetter:
+    def set(self, value: float, unit: str | None = None) -> ts.RadioactivitySetter:
         """
         Create a setter for this radioactivity quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             RadioactivitySetter: A setter with unit properties like .meters, .inches, etc.
@@ -4633,12 +4712,13 @@ class SecondMomentOfArea(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.SecondMomentOfAreaSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.SecondMomentOfAreaSetter:
         """
         Create a setter for this second moment of area quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             SecondMomentOfAreaSetter: A setter with unit properties like .meters, .inches, etc.
@@ -4691,12 +4771,13 @@ class SecondRadiationConstantPlanck(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.SecondRadiationConstantPlanckSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.SecondRadiationConstantPlanckSetter:
         """
         Create a setter for this second radiation constant (planck) quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             SecondRadiationConstantPlanckSetter: A setter with unit properties like .meters, .inches, etc.
@@ -4749,12 +4830,13 @@ class SpecificEnthalpy(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.SpecificEnthalpySetter:
+    def set(self, value: float, unit: str | None = None) -> ts.SpecificEnthalpySetter:
         """
         Create a setter for this specific enthalpy quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             SpecificEnthalpySetter: A setter with unit properties like .meters, .inches, etc.
@@ -4807,12 +4889,13 @@ class SpecificGravity(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.SpecificGravitySetter:
+    def set(self, value: float, unit: str | None = None) -> ts.SpecificGravitySetter:
         """
         Create a setter for this specific gravity quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             SpecificGravitySetter: A setter with unit properties like .meters, .inches, etc.
@@ -4865,12 +4948,13 @@ class SpecificHeatCapacityConstantPressure(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.SpecificHeatCapacityConstantPressureSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.SpecificHeatCapacityConstantPressureSetter:
         """
         Create a setter for this specific heat capacity (constant pressure) quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             SpecificHeatCapacityConstantPressureSetter: A setter with unit properties like .meters, .inches, etc.
@@ -4923,12 +5007,13 @@ class SpecificLength(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.SpecificLengthSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.SpecificLengthSetter:
         """
         Create a setter for this specific length quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             SpecificLengthSetter: A setter with unit properties like .meters, .inches, etc.
@@ -4981,12 +5066,13 @@ class SpecificSurface(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.SpecificSurfaceSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.SpecificSurfaceSetter:
         """
         Create a setter for this specific surface quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             SpecificSurfaceSetter: A setter with unit properties like .meters, .inches, etc.
@@ -5039,12 +5125,13 @@ class SpecificVolume(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.SpecificVolumeSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.SpecificVolumeSetter:
         """
         Create a setter for this specific volume quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             SpecificVolumeSetter: A setter with unit properties like .meters, .inches, etc.
@@ -5097,12 +5184,13 @@ class Stress(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.StressSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.StressSetter:
         """
         Create a setter for this stress quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             StressSetter: A setter with unit properties like .meters, .inches, etc.
@@ -5155,12 +5243,13 @@ class SurfaceMassDensity(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.SurfaceMassDensitySetter:
+    def set(self, value: float, unit: str | None = None) -> ts.SurfaceMassDensitySetter:
         """
         Create a setter for this surface mass density quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             SurfaceMassDensitySetter: A setter with unit properties like .meters, .inches, etc.
@@ -5213,12 +5302,13 @@ class SurfaceTension(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.SurfaceTensionSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.SurfaceTensionSetter:
         """
         Create a setter for this surface tension quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             SurfaceTensionSetter: A setter with unit properties like .meters, .inches, etc.
@@ -5271,12 +5361,13 @@ class Temperature(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.TemperatureSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.TemperatureSetter:
         """
         Create a setter for this temperature quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             TemperatureSetter: A setter with unit properties like .meters, .inches, etc.
@@ -5329,12 +5420,13 @@ class ThermalConductivity(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.ThermalConductivitySetter:
+    def set(self, value: float, unit: str | None = None) -> ts.ThermalConductivitySetter:
         """
         Create a setter for this thermal conductivity quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             ThermalConductivitySetter: A setter with unit properties like .meters, .inches, etc.
@@ -5387,12 +5479,13 @@ class Time(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.TimeSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.TimeSetter:
         """
         Create a setter for this time quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             TimeSetter: A setter with unit properties like .meters, .inches, etc.
@@ -5445,12 +5538,13 @@ class Torque(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.TorqueSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.TorqueSetter:
         """
         Create a setter for this torque quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             TorqueSetter: A setter with unit properties like .meters, .inches, etc.
@@ -5503,12 +5597,13 @@ class TurbulenceEnergyDissipationRate(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.TurbulenceEnergyDissipationRateSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.TurbulenceEnergyDissipationRateSetter:
         """
         Create a setter for this turbulence energy dissipation rate quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             TurbulenceEnergyDissipationRateSetter: A setter with unit properties like .meters, .inches, etc.
@@ -5561,12 +5656,13 @@ class VelocityAngular(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.VelocityAngularSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.VelocityAngularSetter:
         """
         Create a setter for this velocity, angular quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             VelocityAngularSetter: A setter with unit properties like .meters, .inches, etc.
@@ -5619,12 +5715,13 @@ class VelocityLinear(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.VelocityLinearSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.VelocityLinearSetter:
         """
         Create a setter for this velocity, linear quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             VelocityLinearSetter: A setter with unit properties like .meters, .inches, etc.
@@ -5677,12 +5774,13 @@ class ViscosityDynamic(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.ViscosityDynamicSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.ViscosityDynamicSetter:
         """
         Create a setter for this viscosity, dynamic quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             ViscosityDynamicSetter: A setter with unit properties like .meters, .inches, etc.
@@ -5735,12 +5833,13 @@ class ViscosityKinematic(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.ViscosityKinematicSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.ViscosityKinematicSetter:
         """
         Create a setter for this viscosity, kinematic quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             ViscosityKinematicSetter: A setter with unit properties like .meters, .inches, etc.
@@ -5793,12 +5892,13 @@ class Volume(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.VolumeSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.VolumeSetter:
         """
         Create a setter for this volume quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             VolumeSetter: A setter with unit properties like .meters, .inches, etc.
@@ -5851,12 +5951,13 @@ class VolumeFractionOfI(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.VolumeFractionOfISetter:
+    def set(self, value: float, unit: str | None = None) -> ts.VolumeFractionOfISetter:
         """
         Create a setter for this volume fraction of "i" quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             VolumeFractionOfISetter: A setter with unit properties like .meters, .inches, etc.
@@ -5909,12 +6010,13 @@ class VolumetricCalorificHeatingValue(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.VolumetricCalorificHeatingValueSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.VolumetricCalorificHeatingValueSetter:
         """
         Create a setter for this volumetric calorific (heating) value quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             VolumetricCalorificHeatingValueSetter: A setter with unit properties like .meters, .inches, etc.
@@ -5967,12 +6069,13 @@ class VolumetricCoefficientOfExpansion(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.VolumetricCoefficientOfExpansionSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.VolumetricCoefficientOfExpansionSetter:
         """
         Create a setter for this volumetric coefficient of expansion quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             VolumetricCoefficientOfExpansionSetter: A setter with unit properties like .meters, .inches, etc.
@@ -6025,12 +6128,13 @@ class VolumetricFlowRate(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.VolumetricFlowRateSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.VolumetricFlowRateSetter:
         """
         Create a setter for this volumetric flow rate quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             VolumetricFlowRateSetter: A setter with unit properties like .meters, .inches, etc.
@@ -6083,12 +6187,13 @@ class VolumetricFlux(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.VolumetricFluxSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.VolumetricFluxSetter:
         """
         Create a setter for this volumetric flux quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             VolumetricFluxSetter: A setter with unit properties like .meters, .inches, etc.
@@ -6141,12 +6246,13 @@ class VolumetricMassFlowRate(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.VolumetricMassFlowRateSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.VolumetricMassFlowRateSetter:
         """
         Create a setter for this volumetric mass flow rate quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             VolumetricMassFlowRateSetter: A setter with unit properties like .meters, .inches, etc.
@@ -6199,12 +6305,13 @@ class Wavenumber(FieldQnty):
             raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
         self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
     
-    def set(self, value: int | float) -> ts.WavenumberSetter:
+    def set(self, value: float, unit: str | None = None) -> ts.WavenumberSetter:
         """
         Create a setter for this wavenumber quantity.
         
         Args:
             value: The numeric value to set
+            unit: Optional unit string (for compatibility with base class)
         
         Returns:
             WavenumberSetter: A setter with unit properties like .meters, .inches, etc.

@@ -124,15 +124,42 @@ def generate_init_method(class_name: str, display_name: str, is_dimensionless: b
     return lines
 
 
+def generate_converter_stub_classes(parsed_data: dict) -> list[str]:
+    """Generate converter stub classes for type hints."""
+    # Use the base converter classes without specific type overrides to avoid conflicts
+    return [
+        "# ===== CONVERTER TYPE STUBS =====",
+        "# Unit conversion handled by base ToUnitConverter and AsUnitConverter classes",
+        "# with dynamic __getattr__ for unit method type hints",
+        "",
+    ]
+
+
+def _is_valid_identifier(name: str) -> bool:
+    """Check if a name is a valid Python identifier."""
+    import keyword
+
+    return name.isidentifier() and not keyword.iskeyword(name) and not name.startswith("_")
+
+
+def generate_converter_methods(class_name: str, stub_only: bool = False) -> list[str]:
+    """Generate to_unit and as_unit property methods with proper type hints."""
+    # Don't generate converter method overrides to avoid type conflicts
+    # The base FieldQnty class provides these properties with proper functionality
+    # and the correct generic typing that works with all specific converter classes
+    return []
+
+
 def generate_set_method(setter_class_name: str, display_name: str, stub_only: bool = False) -> list[str]:
     """Generate set method with comprehensive documentation."""
     lines = [
-        f"    def set(self, value: int | float) -> ts.{setter_class_name}:",
+        f"    def set(self, value: float, unit: str | None = None) -> ts.{setter_class_name}:",
         '        """',
         f"        Create a setter for this {display_name} quantity.",
         "        ",
         "        Args:",
         "            value: The numeric value to set",
+        "            unit: Optional unit string (for compatibility with base class)",
         "        ",
         "        Returns:",
         f"            {setter_class_name}: A setter with unit properties like .meters, .inches, etc.",

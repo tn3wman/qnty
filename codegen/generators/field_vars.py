@@ -17,7 +17,7 @@ from .data_processor import (
     save_text_file,
     setup_import_path,
 )
-from .doc_generator import generate_class_docstring, generate_init_method, generate_set_method
+from .doc_generator import generate_class_docstring, generate_init_method, generate_set_method, generate_converter_methods, generate_converter_stub_classes
 
 
 def generate_quantities_pyi(parsed_data: dict, dimension_mapping: dict) -> str:
@@ -38,13 +38,15 @@ def generate_quantities_pyi(parsed_data: dict, dimension_mapping: dict) -> str:
         "Auto-generated from unit_data.json.",
         '"""',
         "",
-        "from typing import Any",
-        "",
         "from ..dimensions import field_dims as dim",
         "from . import field_setter as ts",
         "from .field_qnty import FieldQnty",
         "",
     ]
+
+    # Generate converter stub classes first
+    lines.extend(generate_converter_stub_classes(parsed_data))
+    lines.append("")
 
     # Generate all quantity classes
     lines.append("# ===== QUANTITY CLASSES =====")
@@ -75,6 +77,10 @@ def generate_quantities_pyi(parsed_data: dict, dimension_mapping: dict) -> str:
         # Generate set method stub
         lines.append("    ")
         lines.extend(generate_set_method(setter_class_name, display_name, stub_only=True))
+
+        # Generate converter method stubs
+        lines.append("    ")
+        lines.extend(generate_converter_methods(class_name, stub_only=True))
         lines.append("    ")
         lines.append("")
 
@@ -179,7 +185,7 @@ def main():
     print("Generating field_vars.py...")
     py_content = generate_quantities(augmented_data, dimension_mapping)
 
-    # Generate stub file  
+    # Generate stub file
     print("Generating field_vars.pyi...")
     pyi_content = generate_quantities_pyi(augmented_data, dimension_mapping)
 

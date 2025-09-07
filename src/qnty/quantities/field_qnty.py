@@ -83,7 +83,7 @@ class QuantityManagementMixin:
         elif value is not None and unit is not None:
             # Create new quantity from value and unit using existing setter system
             if hasattr(self, "_create_quantity_from_value_unit"):
-                self.quantity = getattr(self, "_create_quantity_from_value_unit")(value, unit)  # type: ignore[misc]
+                self.quantity = self._create_quantity_from_value_unit(value, unit)  # type: ignore[misc]
 
         if is_known is not None:
             self._is_known = is_known
@@ -241,7 +241,7 @@ class UnifiedArithmeticMixin:
     def __mul__(self, other) -> Any:
         """Unified multiplication with mode-based dispatch."""
         # Ultra-fast path for scalar multiplication when in quantity mode only
-        if (type(other) in (int, float) and getattr(self, 'quantity', None) is not None and 
+        if (type(other) in (int, float) and getattr(self, 'quantity', None) is not None and
             self._arithmetic_mode == "quantity"):
             from .base_qnty import Quantity
             return Quantity(self.quantity.value * other, self.quantity.unit)  # type: ignore[attr-defined]
@@ -250,7 +250,7 @@ class UnifiedArithmeticMixin:
     def __rmul__(self, other) -> Any:
         """Reverse multiplication."""
         # Ultra-fast path for scalar multiplication when in quantity mode only
-        if (type(other) in (int, float) and getattr(self, 'quantity', None) is not None and 
+        if (type(other) in (int, float) and getattr(self, 'quantity', None) is not None and
             self._arithmetic_mode == "quantity"):
             from .base_qnty import Quantity
             return Quantity(other * self.quantity.value, self.quantity.unit)  # type: ignore[attr-defined]
@@ -259,7 +259,7 @@ class UnifiedArithmeticMixin:
     def __truediv__(self, other) -> Any:
         """Unified division with mode-based dispatch."""
         # Ultra-fast path for scalar division when in quantity mode only
-        if (type(other) in (int, float) and getattr(self, 'quantity', None) is not None and 
+        if (type(other) in (int, float) and getattr(self, 'quantity', None) is not None and
             self._arithmetic_mode == "quantity"):
             from .base_qnty import Quantity
             return Quantity(self.quantity.value / other, self.quantity.unit)  # type: ignore[attr-defined]
@@ -458,7 +458,7 @@ class UnifiedArithmeticMixin:
         # Delegate to ArithmeticOperations for the actual computation
         return ArithmeticOperations.multiply(left_qty, right_qty)
 
-    @staticmethod  
+    @staticmethod
     def _expression_multiply(left: Any, right: Any):
         """Optimized flexible path multiplication returning Expression."""
         from ..expressions import BinaryOperation, wrap_operand
@@ -479,7 +479,7 @@ class UnifiedArithmeticMixin:
             left_const = Constant(_get_dimensionless_quantity(float(left)))
             return BinaryOperation("*", left_const, wrap_operand(right))
         elif right_type in (int, float):
-            # Left variable, right scalar - very common case  
+            # Left variable, right scalar - very common case
             from ..expressions.nodes import Constant, _get_dimensionless_quantity
             right_const = Constant(_get_dimensionless_quantity(float(right)))
             return BinaryOperation("*", wrap_operand(left), right_const)
@@ -524,7 +524,7 @@ class UnifiedArithmeticMixin:
             right_const = Constant(_get_dimensionless_quantity(float(right)))
             return BinaryOperation("/", wrap_operand(left), right_const)
         elif left_type in (int, float):
-            # Less common: scalar / variable  
+            # Less common: scalar / variable
             from ..expressions.nodes import Constant, _get_dimensionless_quantity
             left_const = Constant(_get_dimensionless_quantity(float(left)))
             return BinaryOperation("/", left_const, wrap_operand(right))
@@ -786,6 +786,103 @@ class SetterCompatibilityMixin:
             return TypeSafeSetter(self, value)  # Correct parameter order
 
 
+class UnitConverter:
+    """Base class for unit conversion operations."""
+    
+    def __init__(self, variable: FieldQnty):
+        self.variable = variable
+    
+    def _get_unit_constant(self, unit_str: str):
+        """Get unit constant from unit string."""
+        # Try to get from field_units module directly using the variable type
+        try:
+            from ..units import field_units
+            # Get the units class for this variable type
+            var_type = self.variable.__class__.__name__
+            if hasattr(field_units, f"{var_type}Units"):
+                units_class = getattr(field_units, f"{var_type}Units")
+                # Try direct lookup first
+                if hasattr(units_class, unit_str):
+                    return getattr(units_class, unit_str)
+        except ImportError:
+            pass
+        
+        # Fallback to registry lookup
+        try:
+            from ..units.registry import registry
+            if hasattr(registry, 'units') and unit_str in registry.units:
+                return registry.units[unit_str]
+        except Exception:
+            pass
+        
+        raise ValueError(f"Unknown unit: {unit_str}")
+    
+    def _convert_quantity(self, to_unit_constant, modify_original: bool = True):
+        """Convert the variable's quantity to the specified unit."""
+        if self.variable.quantity is None:
+            raise ValueError(f"Cannot convert {self.variable.name}: no value set")
+            
+        from_unit = self.variable.quantity.unit
+        from_value = self.variable.quantity.value
+        
+        # Convert value
+        if from_unit.name == to_unit_constant.name:
+            new_value = from_value
+        else:
+            # Use the registry for conversion
+            try:
+                from ..units.registry import registry
+                new_value = registry.convert(from_value, from_unit, to_unit_constant)
+            except Exception:
+                # Fallback to SI conversion
+                si_value = from_value * from_unit.si_factor
+                new_value = si_value / to_unit_constant.si_factor
+        
+        # Create new quantity
+        from .base_qnty import Quantity
+        new_quantity = Quantity(new_value, to_unit_constant)
+        
+        if modify_original:
+            self.variable.quantity = new_quantity
+            return self.variable
+        else:
+            # Return a new variable with the converted value
+            new_var = self.variable.__class__(new_value, to_unit_constant.name, f"{self.variable.name}_converted")
+            return new_var
+
+
+class ToUnitConverter(UnitConverter):
+    """Handles L.to_unit.unit() conversions that modify the original variable."""
+    
+    def __call__(self, unit_str: str):
+        """Convert to specified unit using string notation."""
+        unit_constant = self._get_unit_constant(unit_str)
+        return self._convert_quantity(unit_constant, modify_original=True)
+    
+    def __getattr__(self, unit_name: str):
+        """Enable L.to_unit.mm() syntax."""
+        def converter():
+            unit_constant = self._get_unit_constant(unit_name)
+            return self._convert_quantity(unit_constant, modify_original=True)
+        return converter
+
+
+class AsUnitConverter(UnitConverter):
+    """Handles L.as_unit.unit() conversions that return a new representation."""
+    
+    def __call__(self, unit_str: str):
+        """Convert to specified unit using string notation, returning new variable."""
+        unit_constant = self._get_unit_constant(unit_str)
+        return self._convert_quantity(unit_constant, modify_original=False)
+    
+    def __getattr__(self, unit_name: str):
+        """Enable L.as_unit.mm() syntax."""
+        def converter():
+            unit_constant = self._get_unit_constant(unit_name)
+            return self._convert_quantity(unit_constant, modify_original=False)
+        return converter
+
+
 class FieldQnty(QuantityManagementMixin, FlexibleConstructorMixin, UnifiedArithmeticMixin, ExpressionMixin, SetterCompatibilityMixin, ErrorHandlerMixin):
     """
     Unified variable class that replaces the 4-level inheritance chain.
@@ -855,6 +952,38 @@ class FieldQnty(QuantityManagementMixin, FlexibleConstructorMixin, UnifiedArithm
     @symbol.setter
     def symbol(self, value: str | None) -> None:
         self._symbol = value
+
+    @property
+    def to_unit(self) -> ToUnitConverter:
+        """Get unit converter that modifies the original variable."""
+        # Try to get the specific converter class for this variable type
+        try:
+            from . import field_converters
+            class_name = self.__class__.__name__
+            converter_class_name = f"ToUnit{class_name}Converter"
+            converter_class = getattr(field_converters, converter_class_name, None)
+            if converter_class:
+                return converter_class(self)
+        except ImportError:
+            pass
+        # Fallback to generic converter
+        return ToUnitConverter(self)
+    
+    @property
+    def as_unit(self) -> AsUnitConverter:
+        """Get unit converter that returns a new variable representation."""
+        # Try to get the specific converter class for this variable type
+        try:
+            from . import field_converters
+            class_name = self.__class__.__name__
+            converter_class_name = f"AsUnit{class_name}Converter"
+            converter_class = getattr(field_converters, converter_class_name, None)
+            if converter_class:
+                return converter_class(self)
+        except ImportError:
+            pass
+        # Fallback to generic converter
+        return AsUnitConverter(self)
 
     def __str__(self) -> str:
         status = f"{self._quantity}" if (self.is_known and self._quantity) else "(unset)"

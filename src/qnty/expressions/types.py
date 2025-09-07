@@ -7,10 +7,8 @@ Type definitions and protocols to avoid circular imports.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Protocol
-
-if TYPE_CHECKING:
-    from ..quantities import FieldQnty, Quantity
+from typing import Protocol
+from ..quantities import FieldQnty, Quantity
 
 
 class ExpressionProtocol(Protocol):
@@ -23,9 +21,9 @@ class ExpressionProtocol(Protocol):
 
 class VariableReferenceProtocol(Protocol):
     """Protocol for variable reference objects."""
-    
+
     name: str
-    
+
     def evaluate(self, variable_values: dict[str, FieldQnty]) -> Quantity:
         """Evaluate the variable reference."""
         ...
@@ -33,9 +31,9 @@ class VariableReferenceProtocol(Protocol):
 
 class ConstantProtocol(Protocol):
     """Protocol for constant objects."""
-    
+
     value: Quantity
-    
+
     def evaluate(self, variable_values: dict[str, FieldQnty]) -> Quantity:
         """Evaluate the constant."""
         ...
