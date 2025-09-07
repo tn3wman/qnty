@@ -265,17 +265,25 @@ class UnifiedArithmeticMixin:
     @staticmethod
     def _should_return_quantity(left: Any, right: Any) -> bool:
         """Determine if operations should return Quantity (fast path) or Expression (flexible path)."""
-        # Return Quantity if both operands have known values
-        left_is_known = hasattr(left, "is_known") and left.is_known and hasattr(left, "quantity") and left.quantity is not None
-        right_is_known = hasattr(right, "is_known") and right.is_known and hasattr(right, "quantity") and right.quantity is not None
+        # Fast type checks for primitives first (most common case)
+        left_type = type(left)
+        right_type = type(right)
 
-        # Also handle primitive types (int, float) as known
-        if isinstance(right, int | float):
-            right_is_known = True
-        if isinstance(left, int | float):
-            left_is_known = True
+        # Cache primitive type checks
+        left_is_primitive = left_type in (int, float)
+        right_is_primitive = right_type in (int, float)
 
-        return left_is_known and right_is_known
+        if left_is_primitive and right_is_primitive:
+            return True
+        elif left_is_primitive:
+            return hasattr(right, "is_known") and right.is_known and hasattr(right, "quantity") and right.quantity is not None
+        elif right_is_primitive:
+            return hasattr(left, "is_known") and left.is_known and hasattr(left, "quantity") and left.quantity is not None
+        else:
+            # Both are complex objects
+            left_is_known = hasattr(left, "is_known") and left.is_known and hasattr(left, "quantity") and left.quantity is not None
+            right_is_known = hasattr(right, "is_known") and right.is_known and hasattr(right, "quantity") and right.quantity is not None
+            return left_is_known and right_is_known
 
     def _unified_add(self, left: Any, right: Any, return_type: str = "auto") -> Any:
         """Unified addition with controllable return type."""
@@ -312,29 +320,68 @@ class UnifiedArithmeticMixin:
         else:
             return self._expression_power(left, right)
 
-    @staticmethod
-    def _quantity_add(left: Any, right: Any):
-        """Fast path addition returning Quantity."""
-        from ..expressions import BinaryOperation
-        from .base_qnty import ArithmeticOperations, Quantity
+    # Cache for dimensionless quantities to reduce allocation
+    _DIMENSIONLESS_ZERO = None
+    _DIMENSIONLESS_ONE = None
+    _DIMENSIONLESS_CACHE = {}  # Cache for common dimensionless values
 
-        # Get quantities from variables or use direct quantities
-        left_qty = left.quantity if hasattr(left, "quantity") else left
-        right_qty = right.quantity if hasattr(right, "quantity") else right
+    @classmethod
+    def _get_dimensionless_quantity(cls, value: float):
+        """Get cached dimensionless quantity for common values."""
+        # Initialize cache if needed
+        if cls._DIMENSIONLESS_ZERO is None:
+            from ..units import DimensionlessUnits
+            from .base_qnty import Quantity
+
+            cls._DIMENSIONLESS_ZERO = Quantity(0.0, DimensionlessUnits.dimensionless)
+            cls._DIMENSIONLESS_ONE = Quantity(1.0, DimensionlessUnits.dimensionless)
+
+        # Fast return for common values
+        if value == 0.0:
+            return cls._DIMENSIONLESS_ZERO
+        elif value == 1.0:
+            return cls._DIMENSIONLESS_ONE
+        elif value in cls._DIMENSIONLESS_CACHE:
+            return cls._DIMENSIONLESS_CACHE[value]
+        else:
+            # Create new quantity and cache if it's a common value
+            from ..units import DimensionlessUnits
+            from .base_qnty import Quantity
+
+            qty = Quantity(value, DimensionlessUnits.dimensionless)
+
+            # Cache common integer values
+            if isinstance(value, int) and -10 <= value <= 10:
+                cls._DIMENSIONLESS_CACHE[value] = qty
+            # Cache common decimal values
+            elif value in (-1.0, 0.5, 2.0, -0.5):
+                cls._DIMENSIONLESS_CACHE[value] = qty
+
+            return qty
+
+    @classmethod
+    def _quantity_add(cls, left: Any, right: Any):
+        """Fast path addition returning Quantity with optimized quantity creation."""
+        from ..expressions import BinaryOperation
+        from .base_qnty import ArithmeticOperations
+
+        # Fast path for numeric types
+        left_type = type(left)
+        right_type = type(right)
+
+        if left_type in (int, float):
+            left_qty = cls._get_dimensionless_quantity(float(left))
+        else:
+            left_qty = left.quantity if hasattr(left, "quantity") else left
+
+        if right_type in (int, float):
+            right_qty = cls._get_dimensionless_quantity(float(right))
+        else:
+            right_qty = right.quantity if hasattr(right, "quantity") else right
 
         # If either operand has no quantity, fall back to expression mode
         if left_qty is None or right_qty is None:
             return BinaryOperation("+", left, right)
-
-        # Handle numeric constants - create dimensionless quantities properly
-        if isinstance(right, int | float):
-            from ..units import DimensionlessUnits
-
-            right_qty = Quantity(right, DimensionlessUnits.dimensionless)
-        if isinstance(left, int | float):
-            from ..units import DimensionlessUnits
-
-            left_qty = Quantity(left, DimensionlessUnits.dimensionless)
 
         # Delegate to ArithmeticOperations for the actual computation
         return ArithmeticOperations.add(left_qty, right_qty)
@@ -346,22 +393,24 @@ class UnifiedArithmeticMixin:
 
         return BinaryOperation("+", wrap_operand(left), wrap_operand(right))
 
-    @staticmethod
-    def _quantity_subtract(left: Any, right: Any):
-        """Fast path subtraction returning Quantity."""
-        from .base_qnty import ArithmeticOperations, Quantity
+    @classmethod
+    def _quantity_subtract(cls, left: Any, right: Any):
+        """Fast path subtraction returning Quantity with optimized quantity creation."""
+        from .base_qnty import ArithmeticOperations
 
-        left_qty = left.quantity if hasattr(left, "quantity") else left
-        right_qty = right.quantity if hasattr(right, "quantity") else right
+        # Fast path for numeric types using cached dimensionless quantities
+        left_type = type(left)
+        right_type = type(right)
 
-        if isinstance(right, int | float):
-            from ..units import DimensionlessUnits
+        if left_type in (int, float):
+            left_qty = cls._get_dimensionless_quantity(float(left))
+        else:
+            left_qty = left.quantity if hasattr(left, "quantity") else left
 
-            right_qty = Quantity(right, DimensionlessUnits.dimensionless)
-        if isinstance(left, int | float):
-            from ..units import DimensionlessUnits
-
-            left_qty = Quantity(left, DimensionlessUnits.dimensionless)
+        if right_type in (int, float):
+            right_qty = cls._get_dimensionless_quantity(float(right))
+        else:
+            right_qty = right.quantity if hasattr(right, "quantity") else right
 
         # Delegate to ArithmeticOperations for the actual computation
         return ArithmeticOperations.subtract(left_qty, right_qty)
@@ -373,22 +422,24 @@ class UnifiedArithmeticMixin:
 
         return BinaryOperation("-", wrap_operand(left), wrap_operand(right))
 
-    @staticmethod
-    def _quantity_multiply(left: Any, right: Any):
-        """Fast path multiplication returning Quantity."""
-        from .base_qnty import ArithmeticOperations, Quantity
+    @classmethod
+    def _quantity_multiply(cls, left: Any, right: Any):
+        """Fast path multiplication returning Quantity with optimized quantity creation."""
+        from .base_qnty import ArithmeticOperations
 
-        left_qty = left.quantity if hasattr(left, "quantity") else left
-        right_qty = right.quantity if hasattr(right, "quantity") else right
+        # Fast path for numeric types using cached dimensionless quantities
+        left_type = type(left)
+        right_type = type(right)
 
-        if isinstance(right, int | float):
-            from ..units import DimensionlessUnits
+        if left_type in (int, float):
+            left_qty = cls._get_dimensionless_quantity(float(left))
+        else:
+            left_qty = left.quantity if hasattr(left, "quantity") else left
 
-            right_qty = Quantity(right, DimensionlessUnits.dimensionless)
-        if isinstance(left, int | float):
-            from ..units import DimensionlessUnits
-
-            left_qty = Quantity(left, DimensionlessUnits.dimensionless)
+        if right_type in (int, float):
+            right_qty = cls._get_dimensionless_quantity(float(right))
+        else:
+            right_qty = right.quantity if hasattr(right, "quantity") else right
 
         # Delegate to ArithmeticOperations for the actual computation
         return ArithmeticOperations.multiply(left_qty, right_qty)
@@ -400,22 +451,24 @@ class UnifiedArithmeticMixin:
 
         return BinaryOperation("*", wrap_operand(left), wrap_operand(right))
 
-    @staticmethod
-    def _quantity_divide(left: Any, right: Any):
-        """Fast path division returning Quantity."""
-        from .base_qnty import ArithmeticOperations, Quantity
+    @classmethod
+    def _quantity_divide(cls, left: Any, right: Any):
+        """Fast path division returning Quantity with optimized quantity creation."""
+        from .base_qnty import ArithmeticOperations
 
-        left_qty = left.quantity if hasattr(left, "quantity") else left
-        right_qty = right.quantity if hasattr(right, "quantity") else right
+        # Fast path for numeric types using cached dimensionless quantities
+        left_type = type(left)
+        right_type = type(right)
 
-        if isinstance(right, int | float):
-            from ..units import DimensionlessUnits
+        if left_type in (int, float):
+            left_qty = cls._get_dimensionless_quantity(float(left))
+        else:
+            left_qty = left.quantity if hasattr(left, "quantity") else left
 
-            right_qty = Quantity(right, DimensionlessUnits.dimensionless)
-        if isinstance(left, int | float):
-            from ..units import DimensionlessUnits
-
-            left_qty = Quantity(left, DimensionlessUnits.dimensionless)
+        if right_type in (int, float):
+            right_qty = cls._get_dimensionless_quantity(float(right))
+        else:
+            right_qty = right.quantity if hasattr(right, "quantity") else right
 
         # Delegate to ArithmeticOperations for the actual computation
         return ArithmeticOperations.divide(left_qty, right_qty)
@@ -427,12 +480,20 @@ class UnifiedArithmeticMixin:
 
         return BinaryOperation("/", wrap_operand(left), wrap_operand(right))
 
-    @staticmethod
-    def _quantity_power(left: Any, right: Any):
-        """Fast path exponentiation returning Quantity."""
+    @classmethod
+    def _quantity_power(cls, left: Any, right: Any):
+        """Fast path exponentiation returning Quantity with optimized handling."""
+        left_type = type(left)
+        right_type = type(right)
 
-        left_qty = left.quantity if hasattr(left, "quantity") else left
-        if isinstance(right, int | float):
+        # Get quantities efficiently
+        if left_type in (int, float):
+            left_qty = cls._get_dimensionless_quantity(float(left))
+        else:
+            left_qty = left.quantity if hasattr(left, "quantity") else left
+
+        # For exponentiation, right operand is usually a scalar
+        if right_type in (int, float):
             return left_qty**right
         else:
             right_qty = right.quantity if hasattr(right, "quantity") else right
@@ -544,10 +605,12 @@ class ExpressionMixin:
         """
         from ..expressions import Expression
 
-        # Handle different types of input
+        # Handle different types of input with optimized type checking
+
         if hasattr(expression, "quantity") and expression.quantity is not None:
-            # Direct quantity/variable input
-            self.quantity = expression.quantity
+            # Direct quantity/variable input - avoid repeated attribute access
+            qty = expression.quantity
+            self.quantity = qty
             self._is_known = True
         elif isinstance(expression, Expression):
             # Expression input - try to evaluate it first
@@ -572,14 +635,10 @@ class ExpressionMixin:
         else:
             # Direct value input (int, float)
             try:
-                from .base_qnty import Quantity
-
                 # Try to create a quantity with the same dimension as this variable
                 if hasattr(self, "_dimension") and self._dimension:
-                    # Use a simple dimensionless unit as fallback
-                    from ..units import DimensionlessUnits
-
-                    self.quantity = Quantity(float(expression), DimensionlessUnits.dimensionless)
+                    # Use cached dimensionless quantity for better performance
+                    self.quantity = self._get_dimensionless_quantity(float(expression))
                     self._is_known = True
             except Exception:
                 pass

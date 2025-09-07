@@ -7,12 +7,10 @@ Compile-time dimensional analysis using type system for ultra-fast operations.
 This file contains dimension constants for all engineering fields.
 """
 
-from typing import Dict, Union
-
 from .signature import DimensionSignature
 
-# Dimension signature constants - computed from prime factorization  
-_SIGNATURES: Dict[str, Union[int, float]] = {
+# Dimension signature constants - computed from prime factorization
+_SIGNATURES: dict[str, int | float] = {
     "ABSORBED_DOSE": 0.16,  # L^2 T^-2
     "ACCELERATION": 0.08,  # L T^-2
     "ACTIVATION_ENERGY": 0.01230769231,  # N^-1 L^2 T^-2

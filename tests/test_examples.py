@@ -11,16 +11,16 @@ These tests validate the functionality demonstrated in the example files:
 - unit_conversion_demo.py: Unit conversion capabilities
 """
 
-import pytest
 import sys
 from pathlib import Path
+
+import pytest
 
 # Add src to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-from qnty import Dimensionless, Length, Pressure, Area, Temperature, Problem
+from qnty import Area, Dimensionless, Length, Pressure, Problem, Temperature
 from qnty.expressions import cond_expr, min_expr
-from qnty.problems.rules import add_rule
 
 
 class TestSimpleProblemDemo:
@@ -158,7 +158,7 @@ class TestSimpleProblemDemo:
 
         except Exception as e:
             # If solving fails, ensure we still have the proper structure
-            assert isinstance(e, (ValueError, RuntimeError))
+            assert isinstance(e, ValueError | RuntimeError)
 
     def test_validation_rules(self):
         """Test validation rules from the demo."""
@@ -429,7 +429,7 @@ class TestComposedProblemDemo:
 
         except Exception as e:
             # If solving fails, ensure we still have the proper structure
-            assert isinstance(e, (ValueError, RuntimeError))
+            assert isinstance(e, ValueError | RuntimeError)
 
 
 class TestSolveMethodsDemo:
@@ -551,7 +551,7 @@ class TestSolveMethodsDemo:
         try:
             # Try to solve from nothing - should raise error
             x.solve_from(None)
-            assert False, "Should have raised an error"
+            raise AssertionError("Should have raised an error")
         except Exception:
             # Expected - should raise some kind of error
             assert True
@@ -863,10 +863,10 @@ class TestIntegrationScenarios:
             y = Pressure("pressure")
 
             # Test operations that should either work or fail gracefully
-            result = x.lt(y)  # Different dimensions - should handle gracefully
+            x.lt(y)  # Different dimensions - should handle gracefully
         except Exception as e:
             # Should either work or raise a reasonable exception
-            assert isinstance(e, (ValueError, TypeError, AttributeError))
+            assert isinstance(e, ValueError | TypeError | AttributeError)
 
     def test_variable_state_consistency(self):
         """Test that variable states remain consistent across operations."""
@@ -875,7 +875,7 @@ class TestIntegrationScenarios:
 
         # Known variable should stay known
         assert L1.is_known is True
-        result = L1 + Length(5, "mm", "temp")
+        L1 + Length(5, "mm", "temp")
         assert L1.is_known is True  # Original should be unchanged
 
         # Unknown variable should stay unknown until solved

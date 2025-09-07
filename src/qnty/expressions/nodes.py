@@ -12,6 +12,7 @@ from ..constants import CONDITION_EVALUATION_THRESHOLD, DIVISION_BY_ZERO_THRESHO
 from ..quantities import FieldQnty, Quantity
 from ..units.field_units import DimensionlessUnits
 from ..utils.caching.manager import get_cache_manager
+from ..utils.protocols import register_expression_type, register_variable_type
 from ..utils.scope_discovery import ScopeDiscoveryService
 from .formatter import ExpressionFormatter
 
@@ -203,26 +204,39 @@ class BinaryOperation(Expression):
     def evaluate(self, variable_values: dict[str, "FieldQnty"]) -> "Quantity":
         """Evaluate the binary operation with caching and error handling."""
         try:
-            # Check cache for constant expressions
-            cached_result = self._try_get_cached_result()
-            if cached_result is not None:
-                return cached_result
-
-            # Evaluate operands
-            left_val = self.left.evaluate(variable_values)
-            right_val = self.right.evaluate(variable_values)
-
-            # Dispatch operation
-            result = self._dispatch_operation(left_val, right_val)
-
-            # Cache result for constant expressions
-            self._try_cache_result(result)
-
-            return result
+            return self._evaluate_with_caching(variable_values)
         except Exception as e:
-            if isinstance(e, ValueError):
-                raise
-            raise ValueError(f"Error evaluating binary operation '{self}': {e}") from e
+            return self._handle_evaluation_error(e)
+
+    def _evaluate_with_caching(self, variable_values: dict[str, "FieldQnty"]) -> "Quantity":
+        """Core evaluation logic with caching support."""
+        # Check cache for constant expressions
+        cached_result = self._try_get_cached_result()
+        if cached_result is not None:
+            return cached_result
+
+        # Evaluate operands
+        left_val, right_val = self._evaluate_operands(variable_values)
+
+        # Dispatch operation
+        result = self._dispatch_operation(left_val, right_val)
+
+        # Cache result for constant expressions
+        self._try_cache_result(result)
+
+        return result
+
+    def _evaluate_operands(self, variable_values: dict[str, "FieldQnty"]) -> tuple["Quantity", "Quantity"]:
+        """Evaluate both operands and return as tuple."""
+        left_val = self.left.evaluate(variable_values)
+        right_val = self.right.evaluate(variable_values)
+        return left_val, right_val
+
+    def _handle_evaluation_error(self, error: Exception) -> "Quantity":
+        """Handle evaluation errors with appropriate context."""
+        if isinstance(error, ValueError):
+            raise
+        raise ValueError(f"Error evaluating binary operation '{self}': {error}") from error
 
     def _try_get_cached_result(self) -> "Quantity | None":
         """Attempt to retrieve a cached result for constant expressions."""
@@ -244,128 +258,232 @@ class BinaryOperation(Expression):
 
     def _is_constant_expression(self) -> bool:
         """Check if both operands are constants."""
-        return isinstance(self.left, Constant) and isinstance(self.right, Constant)
+        return _is_constant_fast(self.left) and _is_constant_fast(self.right)
 
     def _generate_cache_key(self) -> str:
         """Generate a cache key for constant expressions."""
         # Safe to cast since _is_constant_expression() already verified types
         left_const = self.left
         right_const = self.right
-        assert isinstance(left_const, Constant) and isinstance(right_const, Constant)
         return f"{id(self)}_{self.operator}_{id(left_const.value)}_{id(right_const.value)}"
 
     def _dispatch_operation(self, left_val: "Quantity", right_val: "Quantity") -> "Quantity":
-        """Dispatch to the appropriate operation handler."""
+        """Dispatch to the appropriate operation handler with fast lookup."""
+        # Fast path: check operator type with pre-compiled sets
         if self.operator in self._ARITHMETIC_OPS:
-            return self._evaluate_arithmetic(left_val, right_val)
+            return self._evaluate_arithmetic_dispatch(left_val, right_val)
         elif self.operator in self._COMPARISON_OPS:
             return self._evaluate_comparison(left_val, right_val)
         else:
             raise ValueError(f"Unknown operator: {self.operator}")
 
-    def _evaluate_arithmetic(self, left_val: "Quantity", right_val: "Quantity") -> "Quantity":
-        """Evaluate arithmetic operations using operation-specific handlers."""
-        operation_map = {"*": self._multiply, "+": self._add, "-": self._subtract, "/": self._divide, "**": self._power}
-
-        handler = operation_map.get(self.operator)
-        if handler:
-            return handler(left_val, right_val)
+    def _evaluate_arithmetic_dispatch(self, left_val: "Quantity", right_val: "Quantity") -> "Quantity":
+        """Dispatch arithmetic operations with direct method lookup."""
+        # Use direct method dispatch for better performance
+        if self.operator == "*":
+            return self._multiply(left_val, right_val)
+        elif self.operator == "+":
+            return self._add(left_val, right_val)
+        elif self.operator == "-":
+            return self._subtract(left_val, right_val)
+        elif self.operator == "/":
+            return self._divide(left_val, right_val)
+        elif self.operator == "**":
+            return self._power(left_val, right_val)
         else:
             raise ValueError(f"Unknown arithmetic operator: {self.operator}")
 
+    def _evaluate_arithmetic(self, left_val: "Quantity", right_val: "Quantity") -> "Quantity":
+        """Legacy arithmetic evaluation method - redirects to new dispatch."""
+        return self._evaluate_arithmetic_dispatch(left_val, right_val)
+
     def _multiply(self, left_val: "Quantity", right_val: "Quantity") -> "Quantity":
-        """Handle multiplication with fast path optimizations."""
-        if right_val.value == 1.0:
+        """Handle multiplication with ultra-fast path optimizations aligned with base_qnty."""
+        # PERFORMANCE OPTIMIZATION: Extract values once
+        left_value = left_val.value
+        right_value = right_val.value
+        
+        # ENHANCED FAST PATHS: Check most common optimizations first
+        # Identity optimizations (1.0 multiplication) - most frequent case
+        if right_value == 1.0:
             return left_val
-        elif left_val.value == 1.0:
+        elif left_value == 1.0:
             return right_val
-        elif right_val.value == 0.0:
+
+        # Zero optimizations - second most common
+        elif right_value == 0.0:
             return Quantity(0.0, right_val.unit)
-        elif left_val.value == 0.0:
+        elif left_value == 0.0:
             return Quantity(0.0, left_val.unit)
+
+        # Additional fast paths for common values
+        elif right_value == -1.0:
+            return Quantity(-left_value, left_val.unit)
+        elif left_value == -1.0:
+            return Quantity(-right_value, right_val.unit)
+        
+        # ADDITIONAL COMMON CASES: Powers of 2 and 0.5 (very common in engineering)
+        elif right_value == 2.0:
+            return Quantity(left_value * 2.0, left_val.unit)
+        elif left_value == 2.0:
+            return Quantity(right_value * 2.0, right_val.unit)
+        elif right_value == 0.5:
+            return Quantity(left_value * 0.5, left_val.unit)
+        elif left_value == 0.5:
+            return Quantity(right_value * 0.5, right_val.unit)
+
+        # OPTIMIZED REGULAR CASE: Use the enhanced multiplication from base_qnty
+        # This leverages the optimized caching and dimensionless handling
         return left_val * right_val
 
     def _add(self, left_val: "Quantity", right_val: "Quantity") -> "Quantity":
         """Handle addition with fast path optimizations."""
-        if right_val.value == 0.0:
+        # Fast path: check for zero additions (most common optimization)
+        left_value = left_val.value
+        right_value = right_val.value
+
+        if right_value == 0.0:
             return left_val
-        elif left_val.value == 0.0:
+        elif left_value == 0.0:
             return right_val
+
+        # Regular addition
         return left_val + right_val
 
     def _subtract(self, left_val: "Quantity", right_val: "Quantity") -> "Quantity":
         """Handle subtraction with fast path optimizations."""
-        if right_val.value == 0.0:
+        # Fast path: subtracting zero
+        right_value = right_val.value
+        left_value = left_val.value
+
+        if right_value == 0.0:
             return left_val
+        elif left_value == right_value:
+            # Same value subtraction -> zero with left unit
+            return Quantity(0.0, left_val.unit)
+
+        # Regular subtraction
         return left_val - right_val
 
     def _divide(self, left_val: "Quantity", right_val: "Quantity") -> "Quantity":
         """Handle division with zero checking and optimizations."""
-        if abs(right_val.value) < DIVISION_BY_ZERO_THRESHOLD:
+        right_value = right_val.value
+        left_value = left_val.value
+
+        # Check for division by zero first
+        if abs(right_value) < DIVISION_BY_ZERO_THRESHOLD:
             raise ValueError(f"Division by zero in expression: {self}")
-        if right_val.value == 1.0:
+
+        # Fast paths
+        if right_value == 1.0:
             return left_val
+        elif left_value == 0.0:
+            # Zero divided by anything is zero (with appropriate unit)
+            return Quantity(0.0, (left_val / right_val).unit)
+        elif right_value == -1.0:
+            # Division by -1 is negation
+            return Quantity(-left_value, (left_val / right_val).unit)
+
+        # Regular division
         return left_val / right_val
 
     def _power(self, left_val: "Quantity", right_val: "Quantity") -> "Quantity":
         """Handle power operations with special cases."""
-        if not isinstance(right_val.value, int | float):
+        right_value = right_val.value
+        left_value = left_val.value
+
+        if not isinstance(right_value, int | float):
             raise ValueError("Exponent must be dimensionless number")
 
         # Fast paths for common exponents
-        if right_val.value == 1.0:
+        if right_value == 1.0:
             return left_val
-        elif right_val.value == 0.0:
+        elif right_value == 0.0:
             return Quantity(1.0, DimensionlessUnits.dimensionless)
-        elif right_val.value == 2.0:
+        elif right_value == 2.0:
             return left_val * left_val  # Use multiplication for squaring
+        elif right_value == 0.5:
+            # Square root optimization
+            import math
 
-        if right_val.value < 0 and left_val.value < 0:
-            raise ValueError(f"Negative base with negative exponent: {left_val.value}^{right_val.value}")
+            return Quantity(math.sqrt(left_value), left_val.unit)
+        elif right_value == -1.0:
+            # Reciprocal
+            return Quantity(1.0 / left_value, left_val.unit)
+        elif left_value == 1.0:
+            # 1 to any power is 1
+            return Quantity(1.0, DimensionlessUnits.dimensionless)
+        elif left_value == 0.0 and right_value > 0:
+            # 0 to positive power is 0
+            return Quantity(0.0, left_val.unit)
 
-        result_value = left_val.value**right_val.value
+        # Validation for negative bases
+        if right_value < 0 and left_value < 0:
+            raise ValueError(f"Negative base with negative exponent: {left_value}^{right_value}")
+
+        result_value = left_value**right_value
         return Quantity(result_value, left_val.unit)
 
     def _evaluate_comparison(self, left_val: "Quantity", right_val: "Quantity") -> "Quantity":
-        """Evaluate comparison operations."""
-        # Convert to same units for comparison if possible
+        """Evaluate comparison operations with optimized unit conversion."""
+        # Normalize units for comparison if needed
+        left_val, right_val = self._normalize_comparison_units(left_val, right_val)
+
+        # Perform comparison using optimized dispatch
+        result = self._perform_comparison(left_val.value, right_val.value)
+        return Quantity(1.0 if result else 0.0, DimensionlessUnits.dimensionless)
+
+    def _normalize_comparison_units(self, left_val: "Quantity", right_val: "Quantity") -> tuple["Quantity", "Quantity"]:
+        """Normalize units for comparison operations."""
         try:
             if left_val._dimension_sig == right_val._dimension_sig and left_val.unit != right_val.unit:
                 right_val = right_val.to(left_val.unit)
         except (ValueError, TypeError, AttributeError):
             pass
+        return left_val, right_val
 
-        # Use dispatch dictionary for comparisons
-        ops = {
-            "<": lambda left, right: left < right,
-            "<=": lambda left, right: left <= right,
-            ">": lambda left, right: left > right,
-            ">=": lambda left, right: left >= right,
-            "==": lambda left, right: abs(left - right) < FLOAT_EQUALITY_TOLERANCE,
-            "!=": lambda left, right: abs(left - right) >= FLOAT_EQUALITY_TOLERANCE,
-        }
-
-        result = ops[self.operator](left_val.value, right_val.value)
-        return Quantity(1.0 if result else 0.0, DimensionlessUnits.dimensionless)
+    def _perform_comparison(self, left_value: float, right_value: float) -> bool:
+        """Perform the actual comparison operation."""
+        # Direct dispatch for better performance
+        if self.operator == "<":
+            return left_value < right_value
+        elif self.operator == "<=":
+            return left_value <= right_value
+        elif self.operator == ">":
+            return left_value > right_value
+        elif self.operator == ">=":
+            return left_value >= right_value
+        elif self.operator == "==":
+            return abs(left_value - right_value) < FLOAT_EQUALITY_TOLERANCE
+        elif self.operator == "!=":
+            return abs(left_value - right_value) >= FLOAT_EQUALITY_TOLERANCE
+        else:
+            raise ValueError(f"Unknown comparison operator: {self.operator}")
 
     def get_variables(self) -> set[str]:
         return self.left.get_variables() | self.right.get_variables()
 
     def simplify(self) -> Expression:
+        """Simplify the binary operation with optimized constant folding."""
         left_simplified = self.left.simplify()
         right_simplified = self.right.simplify()
 
-        # Basic simplification rules
-        if isinstance(left_simplified, Constant) and isinstance(right_simplified, Constant):
-            # Evaluate constant expressions
-            dummy_vars = {}
-            try:
-                result = BinaryOperation(self.operator, left_simplified, right_simplified).evaluate(dummy_vars)
-                return Constant(result)
-            except (ValueError, TypeError, ArithmeticError):
-                pass
+        # Fast path: check for constant expression simplification
+        if _is_constant_fast(left_simplified) and _is_constant_fast(right_simplified):
+            return self._try_constant_folding(left_simplified, right_simplified)
 
         return BinaryOperation(self.operator, left_simplified, right_simplified)
+
+    def _try_constant_folding(self, left_const: Expression, right_const: Expression) -> Expression:
+        """Attempt to fold constant expressions."""
+        try:
+            # Evaluate constant expressions at compile time
+            dummy_vars = {}
+            result = BinaryOperation(self.operator, left_const, right_const).evaluate(dummy_vars)
+            return Constant(result)
+        except (ValueError, TypeError, ArithmeticError):
+            # Return original operation if folding fails
+            return BinaryOperation(self.operator, left_const, right_const)
 
     def __str__(self) -> str:
         # Delegate to centralized formatter
@@ -408,7 +526,7 @@ class UnaryFunction(Expression):
 
     def simplify(self) -> Expression:
         simplified_operand = self.operand.simplify()
-        if isinstance(simplified_operand, Constant):
+        if _is_constant_fast(simplified_operand):
             # Evaluate constant functions at compile time
             try:
                 dummy_vars = {}
@@ -449,7 +567,7 @@ class ConditionalExpression(Expression):
         simplified_false = self.false_expr.simplify()
 
         # If condition is constant, choose the appropriate branch
-        if isinstance(simplified_condition, Constant):
+        if _is_constant_fast(simplified_condition):
             try:
                 dummy_vars = {}
                 condition_val = simplified_condition.evaluate(dummy_vars)
@@ -471,6 +589,59 @@ class ConditionalExpression(Expression):
 # Cache for common types to avoid repeated type checks
 _NUMERIC_TYPES = (int, float)
 _DIMENSIONLESS_CONSTANT = None
+
+# Type caches for hot path optimization
+_TYPE_CACHE = {}
+_CONSTANT_TYPE = None
+_VARIABLE_REF_TYPE = None
+_EXPRESSION_TYPE = None
+_QUANTITY_TYPE = None
+_FIELDQNTY_TYPE = None
+
+
+def _init_type_cache():
+    """Initialize type cache for fast isinstance checks."""
+    global _CONSTANT_TYPE, _VARIABLE_REF_TYPE, _EXPRESSION_TYPE, _QUANTITY_TYPE, _FIELDQNTY_TYPE
+    if _CONSTANT_TYPE is None:
+        _CONSTANT_TYPE = Constant
+        _VARIABLE_REF_TYPE = VariableReference
+        _EXPRESSION_TYPE = Expression
+        from ..quantities import FieldQnty, Quantity
+
+        _QUANTITY_TYPE = Quantity
+        _FIELDQNTY_TYPE = FieldQnty
+
+
+def _is_constant_fast(obj) -> bool:
+    """Fast type check for Constant objects."""
+    _init_type_cache()
+    return type(obj) is _CONSTANT_TYPE
+
+
+def _is_expression_fast(obj) -> bool:
+    """Fast type check for Expression objects."""
+    _init_type_cache()
+    obj_type = type(obj)
+    cached_result = _TYPE_CACHE.get(obj_type)
+    if cached_result is not None:
+        return cached_result
+    result = isinstance(obj, _EXPRESSION_TYPE)
+    _TYPE_CACHE[obj_type] = result
+    return result
+
+
+def _is_quantity_fast(obj) -> bool:
+    """Fast type check for Quantity objects."""
+    _init_type_cache()
+    return type(obj) is _QUANTITY_TYPE
+
+
+def _is_fieldqnty_fast(obj) -> bool:
+    """Fast type check for FieldQnty objects using TypeRegistry."""
+    # Use TypeRegistry for comprehensive type checking
+    from ..utils.protocols import TypeRegistry
+
+    return TypeRegistry.is_variable(obj)
 
 
 def _get_cached_dimensionless():
@@ -536,34 +707,42 @@ def wrap_operand(operand: "OperandType") -> Expression:
         # operand is guaranteed to be int or float at this point
         return Constant(_get_dimensionless_quantity(float(operand)))  # type: ignore[arg-type]
 
-    # Check if already an Expression (using isinstance for speed)
-    if isinstance(operand, Expression):
+    # Check if already an Expression (using fast type checks)
+    if _is_expression_fast(operand):
         return operand
 
     # Check for Quantity
-    if isinstance(operand, Quantity):
+    if _is_quantity_fast(operand):
         return Constant(operand)
 
-    # Check for FieldQnty
-    if isinstance(operand, FieldQnty):
+    # Check for FieldQnty and any variable types
+    if _is_fieldqnty_fast(operand):
         return VariableReference(operand)
 
     # Check for ConfigurableVariable (from composition system)
     if hasattr(operand, "_variable"):
         var = getattr(operand, "_variable", None)
-        if isinstance(var, FieldQnty):
+        if _is_fieldqnty_fast(var):
             return VariableReference(var)
 
     # No duck typing - fail fast for unknown types
     raise TypeError(f"Cannot convert {type(operand)} to Expression")
 
 
-# Register expression types with the TypeRegistry for optimal performance
-from ..utils.protocols import register_expression_type
+# Register expression and variable types with the TypeRegistry for optimal performance
 
+# Register expression types
 register_expression_type(Expression)
 register_expression_type(BinaryOperation)
 register_expression_type(VariableReference)
 register_expression_type(Constant)
 register_expression_type(UnaryFunction)
 register_expression_type(ConditionalExpression)
+
+# Register variable types - do this at module level to ensure it happens early
+try:
+    from ..quantities import FieldQnty
+
+    register_variable_type(FieldQnty)
+except ImportError:
+    pass  # Handle import ordering issues gracefully

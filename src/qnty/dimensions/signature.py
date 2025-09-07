@@ -9,7 +9,7 @@ compatibility checking through compile-time type system integration.
 """
 
 from dataclasses import dataclass
-from typing import ClassVar, Dict, Tuple, Union, final
+from typing import ClassVar, final
 
 from .base import BaseDimension
 
@@ -20,22 +20,22 @@ class DimensionSignature:
     """Immutable dimension signature for zero-cost dimensional analysis."""
 
     # Store as bit pattern for ultra-fast comparison
-    _signature: Union[int, float] = 1
+    _signature: int | float = 1
 
     # Instance cache for interning common dimensions
-    _INSTANCE_CACHE: ClassVar[Dict[Union[int, float], "DimensionSignature"]] = {}
-    
+    _INSTANCE_CACHE: ClassVar[dict[int | float, "DimensionSignature"]] = {}
+
     # Maximum cache size to prevent memory issues
     _MAX_CACHE_SIZE: ClassVar[int] = 100
 
-    def __new__(cls, signature: Union[int, float] = 1):
+    def __new__(cls, signature: int | float = 1):
         """Optimized constructor with instance interning and validation."""
         # Input validation
-        if not isinstance(signature, (int, float)):
+        if not isinstance(signature, int | float):
             raise TypeError(f"Signature must be int or float, got {type(signature)}")
         if signature <= 0:
             raise ValueError(f"Signature must be positive, got {signature}")
-        
+
         if signature in cls._INSTANCE_CACHE:
             return cls._INSTANCE_CACHE[signature]
 
@@ -48,8 +48,7 @@ class DimensionSignature:
         return instance
 
     @classmethod
-    def create(cls, length: int = 0, mass: int = 0, time: int = 0, current: int = 0, 
-               temp: int = 0, amount: int = 0, luminosity: int = 0):
+    def create(cls, length: int = 0, mass: int = 0, time: int = 0, current: int = 0, temp: int = 0, amount: int = 0, luminosity: int = 0):
         """Create dimension from exponents with efficient computation."""
         # Fast path for dimensionless
         if not any([length, mass, time, current, temp, amount, luminosity]):
@@ -66,10 +65,10 @@ class DimensionSignature:
             (BaseDimension.AMOUNT, amount),
             (BaseDimension.LUMINOSITY, luminosity),
         ]
-        
+
         for base, exponent in dimensions:
             if exponent != 0:
-                signature *= base ** exponent
+                signature *= base**exponent
 
         return cls(signature)
 
@@ -85,15 +84,15 @@ class DimensionSignature:
             raise TypeError(f"Cannot divide DimensionSignature by {type(other)}")
         return DimensionSignature(self._signature / other._signature)
 
-    def __pow__(self, power: Union[int, float]) -> "DimensionSignature":
+    def __pow__(self, power: int | float) -> "DimensionSignature":
         """Raise dimension to a power."""
-        if not isinstance(power, (int, float)):
+        if not isinstance(power, int | float):
             raise TypeError(f"Power must be int or float, got {type(power)}")
         if power == 1:
             return self
         if power == 0:
             return DimensionSignature(1)
-        return DimensionSignature(self._signature ** power)
+        return DimensionSignature(self._signature**power)
 
     def is_compatible(self, other: "DimensionSignature") -> bool:
         """Check dimensional compatibility."""

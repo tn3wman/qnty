@@ -10,9 +10,9 @@ import pytest
 
 from qnty.dimensions.field_dims import LENGTH, PRESSURE
 from qnty.quantities import FieldQnty
-from qnty.quantities.field_vars import Length, Pressure
-from qnty.quantities.field_setter import LengthSetter, PressureSetter
 from qnty.quantities.base_qnty import Quantity, TypeSafeSetter
+from qnty.quantities.field_setter import LengthSetter, PressureSetter
+from qnty.quantities.field_vars import Length, Pressure
 from qnty.units.field_units import LengthUnits, PressureUnits
 
 

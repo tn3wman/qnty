@@ -6,8 +6,8 @@ Type protocols and registration system to avoid duck typing and circular imports
 while maintaining maximum performance.
 """
 
-from typing import Protocol, runtime_checkable
 from abc import abstractmethod
+from typing import Protocol, runtime_checkable
 
 
 @runtime_checkable

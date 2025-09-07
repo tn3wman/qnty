@@ -4,14 +4,13 @@ Type stubs for field_dims module.
 This file provides type information for the dynamically generated dimension constants.
 """
 
-from typing import Dict, List, Union
 from .signature import DimensionSignature
 
 # Dimension signature constants lookup
-_SIGNATURES: Dict[str, Union[int, float]]
+_SIGNATURES: dict[str, int | float]
 
-# Lazy loading cache  
-_dimension_cache: Dict[str, DimensionSignature]
+# Lazy loading cache
+_dimension_cache: dict[str, DimensionSignature]
 
 # Module attribute access function
 def __getattr__(name: str) -> DimensionSignature: ...
@@ -129,4 +128,4 @@ VOLUME_FRACTION_OF_I: DimensionSignature
 WAVENUMBER: DimensionSignature
 
 # Module exports
-__all__: List[str]
+__all__: list[str]

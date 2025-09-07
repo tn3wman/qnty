@@ -4,9 +4,7 @@ import pytest
 
 from qnty.equations import Equation
 from qnty.expressions import BinaryOperation, Expression, VariableReference
-from qnty.quantities import Quantity
-from qnty.quantities import FieldQnty
-from qnty.quantities import Dimensionless, Length, Pressure
+from qnty.quantities import Dimensionless, FieldQnty, Length, Pressure, Quantity
 
 
 class TestEquationCreation:
@@ -248,10 +246,11 @@ class TestExpressionEvaluation:
         result = expr.evaluate(variables)
         # The actual value depends on unit conversions, but should be computable
         assert result.value > 0
-        # Should be roughly double the original value
-        original_pascals = 100 * 6894.757  # psi to pascals
-        expected_result = original_pascals * 2
-        assert abs(result.value - expected_result) < 10  # Allow some tolerance for floating point precision
+        # Should be roughly double the original value in the same unit
+        # When multiplying by a scalar, the original unit should be preserved
+        expected_result = 200.0  # 100 psi * 2 = 200 psi
+        assert abs(result.value - expected_result) < 0.1  # Should be exact for scalar multiplication
+        assert result.unit.name == "pound_force_per_square_inch"  # Unit should be preserved
 
 
 class TestEdgeCases:

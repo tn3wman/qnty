@@ -11,20 +11,24 @@ import math
 import pytest
 
 from qnty.dimensions.base import BaseDimension
-from qnty.dimensions.signature import DimensionSignature
 from qnty.dimensions.field_dims import (
     ACCELERATION,
     AREA,
     DIMENSIONLESS,
-    ENERGY_HEAT_WORK as ENERGY,
     FORCE,
     LENGTH,
     MASS,
     PRESSURE,
     TIME,
-    VELOCITY_LINEAR as VELOCITY,
     VOLUME,
 )
+from qnty.dimensions.field_dims import (
+    ENERGY_HEAT_WORK as ENERGY,
+)
+from qnty.dimensions.field_dims import (
+    VELOCITY_LINEAR as VELOCITY,
+)
+from qnty.dimensions.signature import DimensionSignature
 
 
 class TestBaseDimension:

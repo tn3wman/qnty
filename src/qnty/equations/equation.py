@@ -12,8 +12,8 @@ from typing import cast
 
 from ..constants import SOLVER_DEFAULT_TOLERANCE
 from ..expressions import Expression, VariableReference
-from ..utils.scope_discovery import ScopeDiscoveryService
 from ..quantities import FieldQnty
+from ..utils.scope_discovery import ScopeDiscoveryService
 
 _logger = logging.getLogger(__name__)
 

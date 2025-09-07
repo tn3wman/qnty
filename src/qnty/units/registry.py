@@ -140,29 +140,36 @@ class Registry:
                         self.conversion_table[(from_unit.name, to_unit.name)] = factor
 
     def convert(self, value: float, from_unit: UnitConstant, to_unit: UnitConstant) -> float:
-        """Convert a value between units."""
-        # Same unit - no conversion needed
+        """Convert a value between units with optimized lookups."""
+        # ULTRA-FAST PATH: Same unit - no conversion needed (most common case)
         if from_unit.name == to_unit.name:
             return value
 
-        key = (from_unit.name, to_unit.name)
+        # OPTIMIZATION: Extract names once to avoid repeated attribute access
+        from_name = from_unit.name
+        to_name = to_unit.name
+        key = (from_name, to_name)
 
-        # Check cache first
-        if key in self._conversion_cache:
-            return value * self._conversion_cache[key]
+        # STREAMLINED CACHE: Direct dictionary access with batched operations
+        conversion_cache = self._conversion_cache
+        if key in conversion_cache:
+            return value * conversion_cache[key]
 
-        # Look up pre-computed conversion
-        if key in self.conversion_table:
-            factor = self.conversion_table[key]
-            # Cache frequently used conversions
-            if len(self._conversion_cache) < 50:
-                self._conversion_cache[key] = factor
+        # OPTIMIZED LOOKUP: Direct table access
+        conversion_table = self.conversion_table
+        if key in conversion_table:
+            factor = conversion_table[key]
+            # Cache frequently used conversions - direct assignment for speed
+            if len(conversion_cache) < 50:
+                conversion_cache[key] = factor
             return value * factor
 
-        # Fallback for unregistered units
-        factor = from_unit.si_factor / to_unit.si_factor
-        if len(self._conversion_cache) < 50:
-            self._conversion_cache[key] = factor
+        # FAST FALLBACK: Direct SI factor calculation with caching
+        from_si = from_unit.si_factor
+        to_si = to_unit.si_factor
+        factor = from_si / to_si
+        if len(conversion_cache) < 50:
+            conversion_cache[key] = factor
         return value * factor
 
 

@@ -8,7 +8,7 @@ consistent cache policies, monitoring, and memory management.
 
 from __future__ import annotations
 
-from typing import Any, Dict, Optional, Tuple, TypeVar
+from typing import Any, TypeVar
 from weakref import WeakValueDictionary
 
 # Type variables for cache keys and values
@@ -69,18 +69,18 @@ class UnifiedCacheManager:
 
     def __init__(self):
         # Core caches with different policies
-        self._unit_property_cache: Dict[Tuple[type, str], Optional[str]] = {}
-        self._available_units_cache: Dict[type, list[str]] = {}
-        self._expression_result_cache: Dict[str, Any] = {}
-        self._type_check_cache: Dict[type, bool] = {}
-        self._dimensionless_cache: Dict[float, Any] = {}
-        self._validation_cache: Dict[Tuple[type, str], bool] = {}
+        self._unit_property_cache: dict[tuple[type, str], str | None] = {}
+        self._available_units_cache: dict[type, list[str]] = {}
+        self._expression_result_cache: dict[str, Any] = {}
+        self._type_check_cache: dict[type, bool] = {}
+        self._dimensionless_cache: dict[float, Any] = {}
+        self._validation_cache: dict[tuple[type, str], bool] = {}
 
         # Quantity-specific caches
-        self._small_integer_cache: Dict[Tuple[int, str], Any] = {}
-        self._multiplication_cache: Dict[Tuple[Any, Any], Any] = {}
-        self._division_cache: Dict[Tuple[Any, Any], Any] = {}
-        self._dimension_cache: Dict[Any, Any] = {}
+        self._small_integer_cache: dict[tuple[int, str], Any] = {}
+        self._multiplication_cache: dict[tuple[Any, Any], Any] = {}
+        self._division_cache: dict[tuple[Any, Any], Any] = {}
+        self._dimension_cache: dict[Any, Any] = {}
 
         # Weak reference caches for object-based keys
         self._dimension_signature_cache: WeakValueDictionary = WeakValueDictionary()
@@ -100,7 +100,7 @@ class UnifiedCacheManager:
         }
 
     # Unit Property Cache Operations
-    def get_unit_property(self, setter_class: type, unit: str) -> Optional[str]:
+    def get_unit_property(self, setter_class: type, unit: str) -> str | None:
         """Get cached unit property mapping."""
         key = (setter_class, unit)
         if key in self._unit_property_cache:
@@ -110,7 +110,7 @@ class UnifiedCacheManager:
         self._stats["unit_property"].miss()
         return None
 
-    def cache_unit_property(self, setter_class: type, unit: str, property_name: Optional[str]) -> None:
+    def cache_unit_property(self, setter_class: type, unit: str, property_name: str | None) -> None:
         """Cache unit property mapping."""
         key = (setter_class, unit)
         self._unit_property_cache[key] = property_name
@@ -120,7 +120,7 @@ class UnifiedCacheManager:
             self._evict_oldest("unit_property", self._unit_property_cache, self.UNIT_PROPERTY_CACHE_SIZE // 4)
 
     # Available Units Cache Operations
-    def get_available_units(self, setter_class: type) -> Optional[list[str]]:
+    def get_available_units(self, setter_class: type) -> list[str] | None:
         """Get cached available units for a setter class."""
         if setter_class in self._available_units_cache:
             self._stats["available_units"].hit()
@@ -137,7 +137,7 @@ class UnifiedCacheManager:
             self._evict_oldest("available_units", self._available_units_cache, self.AVAILABLE_UNITS_CACHE_SIZE // 4)
 
     # Type Check Cache Operations
-    def get_type_check(self, obj_type: type) -> Optional[bool]:
+    def get_type_check(self, obj_type: type) -> bool | None:
         """Get cached type check result."""
         if obj_type in self._type_check_cache:
             self._stats["type_check"].hit()
@@ -154,7 +154,7 @@ class UnifiedCacheManager:
             self._evict_oldest("type_check", self._type_check_cache, self.TYPE_CHECK_CACHE_SIZE // 4)
 
     # Dimensionless Quantity Cache Operations
-    def get_dimensionless_quantity(self, value: float) -> Optional[Any]:
+    def get_dimensionless_quantity(self, value: float) -> Any | None:
         """Get cached dimensionless quantity."""
         if value in self._dimensionless_cache:
             self._stats["dimensionless"].hit()
@@ -173,7 +173,7 @@ class UnifiedCacheManager:
                 self._evict_oldest("dimensionless", self._dimensionless_cache, self.DIMENSIONLESS_CACHE_SIZE // 4)
 
     # Validation Cache Operations
-    def get_validation_result(self, setter_class: type, unit: str) -> Optional[bool]:
+    def get_validation_result(self, setter_class: type, unit: str) -> bool | None:
         """Get cached validation result."""
         key = (setter_class, unit)
         if key in self._validation_cache:
@@ -192,7 +192,7 @@ class UnifiedCacheManager:
             self._evict_oldest("validation", self._validation_cache, self.VALIDATION_CACHE_SIZE // 4)
 
     # Expression Result Cache Operations (for future use)
-    def get_expression_result(self, expression_key: str) -> Optional[Any]:
+    def get_expression_result(self, expression_key: str) -> Any | None:
         """Get cached expression evaluation result."""
         if expression_key in self._expression_result_cache:
             self._stats["expression_result"].hit()
@@ -209,9 +209,9 @@ class UnifiedCacheManager:
             self._evict_oldest("expression_result", self._expression_result_cache, self.EXPRESSION_CACHE_SIZE // 4)
 
     # Quantity-specific Cache Operations
-    def get_cached_quantity(self, value: int | float, unit_name: str) -> Optional[Any]:
+    def get_cached_quantity(self, value: int | float, unit_name: str) -> Any | None:
         """Get cached quantity for small integers."""
-        if isinstance(value, (int, float)) and -10 <= value <= 10 and value == int(value):
+        if isinstance(value, int | float) and -10 <= value <= 10 and value == int(value):
             key = (int(value), unit_name)
             if key in self._small_integer_cache:
                 self._stats["small_integer"].hit()
@@ -222,14 +222,14 @@ class UnifiedCacheManager:
 
     def cache_quantity(self, value: int | float, unit_name: str, quantity: Any) -> None:
         """Cache quantity if it's a small integer."""
-        if isinstance(value, (int, float)) and -10 <= value <= 10 and value == int(value):
+        if isinstance(value, int | float) and -10 <= value <= 10 and value == int(value):
             key = (int(value), unit_name)
             self._small_integer_cache[key] = quantity
 
             if len(self._small_integer_cache) > self.SMALL_INTEGER_CACHE_SIZE:
                 self._evict_oldest("small_integer", self._small_integer_cache, self.SMALL_INTEGER_CACHE_SIZE // 4)
 
-    def get_multiplication_result(self, left_sig: Any, right_sig: Any) -> Optional[Any]:
+    def get_multiplication_result(self, left_sig: Any, right_sig: Any) -> Any | None:
         """Get cached multiplication result."""
         key = (left_sig, right_sig)
         if key in self._multiplication_cache:
@@ -247,7 +247,7 @@ class UnifiedCacheManager:
         if len(self._multiplication_cache) > self.MULTIPLICATION_CACHE_SIZE:
             self._evict_oldest("multiplication", self._multiplication_cache, self.MULTIPLICATION_CACHE_SIZE // 4)
 
-    def get_division_result(self, left_sig: Any, right_sig: Any) -> Optional[Any]:
+    def get_division_result(self, left_sig: Any, right_sig: Any) -> Any | None:
         """Get cached division result."""
         key = (left_sig, right_sig)
         if key in self._division_cache:
@@ -265,7 +265,7 @@ class UnifiedCacheManager:
         if len(self._division_cache) > self.DIVISION_CACHE_SIZE:
             self._evict_oldest("division", self._division_cache, self.DIVISION_CACHE_SIZE // 4)
 
-    def get_dimension_unit(self, dimension_sig: Any) -> Optional[Any]:
+    def get_dimension_unit(self, dimension_sig: Any) -> Any | None:
         """Get cached unit for dimension signature."""
         if dimension_sig in self._dimension_cache:
             self._stats["dimension"].hit()
@@ -278,17 +278,17 @@ class UnifiedCacheManager:
         """Cache unit for dimension signature."""
         self._dimension_cache[dimension_sig] = unit
 
-    def initialize_dimension_cache(self, initial_mappings: Dict[Any, Any]) -> None:
+    def initialize_dimension_cache(self, initial_mappings: dict[Any, Any]) -> None:
         """Initialize dimension cache with common mappings."""
         self._dimension_cache.update(initial_mappings)
 
-    def initialize_operation_caches(self, multiplication_mappings: Dict[Tuple[Any, Any], Any], division_mappings: Dict[Tuple[Any, Any], Any]) -> None:
+    def initialize_operation_caches(self, multiplication_mappings: dict[tuple[Any, Any], Any], division_mappings: dict[tuple[Any, Any], Any]) -> None:
         """Initialize multiplication and division caches with common operations."""
         self._multiplication_cache.update(multiplication_mappings)
         self._division_cache.update(division_mappings)
 
     # Cache Management Operations
-    def _evict_oldest(self, cache_name: str, cache_dict: Dict, evict_count: int) -> None:
+    def _evict_oldest(self, cache_name: str, cache_dict: dict, evict_count: int) -> None:
         """Evict oldest entries from cache."""
         # Simple FIFO eviction - remove first N items
         keys_to_remove = list(cache_dict.keys())[:evict_count]
@@ -296,7 +296,7 @@ class UnifiedCacheManager:
             del cache_dict[key]
             self._stats[cache_name].evict()
 
-    def clear_cache(self, cache_name: Optional[str] = None) -> None:
+    def clear_cache(self, cache_name: str | None = None) -> None:
         """Clear specific cache or all caches."""
         if cache_name is None:
             # Clear all caches
@@ -328,11 +328,11 @@ class UnifiedCacheManager:
             if cache_name in cache_map:
                 cache_map[cache_name].clear()
 
-    def get_cache_stats(self) -> Dict[str, CacheStats]:
+    def get_cache_stats(self) -> dict[str, CacheStats]:
         """Get performance statistics for all caches."""
         return self._stats.copy()
 
-    def get_cache_sizes(self) -> Dict[str, int]:
+    def get_cache_sizes(self) -> dict[str, int]:
         """Get current size of all caches."""
         return {
             "unit_property": len(self._unit_property_cache),
@@ -367,7 +367,7 @@ class UnifiedCacheManager:
 
 
 # Global cache manager instance
-_cache_manager: Optional[UnifiedCacheManager] = None
+_cache_manager: UnifiedCacheManager | None = None
 
 
 def get_cache_manager() -> UnifiedCacheManager:
@@ -384,7 +384,7 @@ def clear_all_caches() -> None:
     get_cache_manager().clear_cache()
 
 
-def get_cache_statistics() -> Dict[str, str]:
+def get_cache_statistics() -> dict[str, str]:
     """Get formatted cache statistics."""
     stats = get_cache_manager().get_cache_stats()
     return {name: str(stat) for name, stat in stats.items()}

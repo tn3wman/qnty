@@ -6,7 +6,7 @@ consistent error reporting throughout the library.
 """
 
 from dataclasses import dataclass
-from typing import Any, Optional
+from typing import Any
 
 
 @dataclass
@@ -16,8 +16,8 @@ class ErrorContext:
     module: str
     function: str
     operation: str
-    variables: Optional[dict[str, Any]] = None
-    additional_info: Optional[dict[str, Any]] = None
+    variables: dict[str, Any] | None = None
+    additional_info: dict[str, Any] | None = None
 
     def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary for error logging."""

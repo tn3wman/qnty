@@ -10,42 +10,38 @@ This module provides a streamlined Problem system with 4 focused files instead o
 The system maintains full backward compatibility with the original Problem API.
 """
 
-from .problem import Problem as BaseProblem, EngineeringProblem as BaseEngineeringProblem, ValidationMixin, VariableNotFoundError, EquationValidationError, SolverError
-
 from .composition import (
     CompositionMixin,
+    ConfigurableVariable,
+    DelayedEquation,
+    DelayedExpression,
+    DelayedFunction,
+    DelayedVariableReference,
+    MetaclassError,
+    NamespaceError,
     ProblemMeta,
     ProxiedNamespace,
     SubProblemProxy,
-    ConfigurableVariable,
-    DelayedEquation,
-    DelayedVariableReference,
-    DelayedExpression,
-    DelayedFunction,
-    delayed_sin,
-    delayed_min_expr,
-    delayed_max_expr,
-    MetaclassError,
     SubProblemProxyError,
-    NamespaceError,
+    delayed_max_expr,
+    delayed_min_expr,
+    delayed_sin,
 )
-
+from .problem import EquationValidationError, SolverError, ValidationMixin, VariableNotFoundError
+from .problem import Problem as BaseProblem
 from .solving import (
-    EquationReconstructor,
-    ExpressionParser,
-    NamespaceMapper,
     CompositeExpressionRebuilder,
     DelayedExpressionResolver,
     EquationReconstructionError,
+    EquationReconstructor,
+    ExpressionParser,
     MalformedExpressionError,
+    NamespaceMapper,
     NamespaceMappingError,
     PatternReconstructionError,
 )
 
-from .validation import (
-    ValidationMixin as ValidationMixinOriginal,  # Avoid naming conflict
-)
-
+# ValidationMixin is already imported from .problem above
 
 # ========== INTEGRATED PROBLEM CLASS ==========
 

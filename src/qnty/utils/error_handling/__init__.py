@@ -12,33 +12,32 @@ Public API:
 """
 
 # Import all exception classes
-from .exceptions import (
-    QntyError,
-    DimensionalError,
-    UnitConversionError,
-    VariableNotFoundError,
-    EquationSolvingError,
-    ExpressionEvaluationError,
-    DivisionByZeroError,
-    ERROR_MESSAGES,
-)
-
 # Import context management
 from .context import (
     ErrorContext,
-    get_dimension_string,
     create_context,
+    get_dimension_string,
+)
+from .exceptions import (
+    ERROR_MESSAGES,
+    DimensionalError,
+    DivisionByZeroError,
+    EquationSolvingError,
+    ExpressionEvaluationError,
+    QntyError,
+    UnitConversionError,
+    VariableNotFoundError,
 )
 
 # Import handlers and utilities
 from .handlers import (
     ErrorHandler,
     ErrorHandlerMixin,
-    get_error_handler,
-    set_error_handler,
-    require_variable,
     ensure_not_zero,
+    get_error_handler,
+    require_variable,
     safe_evaluate,
+    set_error_handler,
 )
 
 # Define public API

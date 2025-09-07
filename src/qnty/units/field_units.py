@@ -22,67 +22,79 @@ class AbsorbedDoseUnits:
     __slots__ = ()
 
     # erg per gram
-    erg_per_gram: Final = UnitConstant(UnitDefinition(
-        name="erg_per_gram",
-        symbol="erg/g",
-        dimension=dim.ABSORBED_DOSE,
-        si_factor=0.0001,
-        si_offset=0.0,
-    ))
+    erg_per_gram: Final = UnitConstant(
+        UnitDefinition(
+            name="erg_per_gram",
+            symbol="erg/g",
+            dimension=dim.ABSORBED_DOSE,
+            si_factor=0.0001,
+            si_offset=0.0,
+        )
+    )
 
     erg_g: Final = erg_per_gram
     erg_per_g: Final = erg_per_gram
 
     # gram-rad
-    gram_rad: Final = UnitConstant(UnitDefinition(
-        name="gram_rad",
-        symbol="g-rad",
-        dimension=dim.ABSORBED_DOSE,
-        si_factor=0.01,
-        si_offset=0.0,
-    ))
+    gram_rad: Final = UnitConstant(
+        UnitDefinition(
+            name="gram_rad",
+            symbol="g-rad",
+            dimension=dim.ABSORBED_DOSE,
+            si_factor=0.01,
+            si_offset=0.0,
+        )
+    )
 
     g_rad: Final = gram_rad
 
     # gray
-    gray: Final = UnitConstant(UnitDefinition(
-        name="gray",
-        symbol="Gy",
-        dimension=dim.ABSORBED_DOSE,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    gray: Final = UnitConstant(
+        UnitDefinition(
+            name="gray",
+            symbol="Gy",
+            dimension=dim.ABSORBED_DOSE,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     Gy: Final = gray
 
     # rad
-    rad: Final = UnitConstant(UnitDefinition(
-        name="rad",
-        symbol="rad",
-        dimension=dim.ABSORBED_DOSE,
-        si_factor=0.01,
-        si_offset=0.0,
-    ))
+    rad: Final = UnitConstant(
+        UnitDefinition(
+            name="rad",
+            symbol="rad",
+            dimension=dim.ABSORBED_DOSE,
+            si_factor=0.01,
+            si_offset=0.0,
+        )
+    )
 
     # milligray
-    milligray: Final = UnitConstant(UnitDefinition(
-        name="milligray",
-        symbol="mGy",
-        dimension=dim.ABSORBED_DOSE,
-        si_factor=0.001,
-        si_offset=0.0,
-    ))
+    milligray: Final = UnitConstant(
+        UnitDefinition(
+            name="milligray",
+            symbol="mGy",
+            dimension=dim.ABSORBED_DOSE,
+            si_factor=0.001,
+            si_offset=0.0,
+        )
+    )
 
     mGy: Final = milligray
 
     # microgray
-    microgray: Final = UnitConstant(UnitDefinition(
-        name="microgray",
-        symbol="μGy",
-        dimension=dim.ABSORBED_DOSE,
-        si_factor=1e-06,
-        si_offset=0.0,
-    ))
+    microgray: Final = UnitConstant(
+        UnitDefinition(
+            name="microgray",
+            symbol="μGy",
+            dimension=dim.ABSORBED_DOSE,
+            si_factor=1e-06,
+            si_offset=0.0,
+        )
+    )
 
 
 class AccelerationUnits:
@@ -91,25 +103,29 @@ class AccelerationUnits:
     __slots__ = ()
 
     # meter per second squared
-    meter_per_second_squared: Final = UnitConstant(UnitDefinition(
-        name="meter_per_second_squared",
-        symbol="$\\mathrm{m} / \\mathrm{s}^{2}$",
-        dimension=dim.ACCELERATION,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    meter_per_second_squared: Final = UnitConstant(
+        UnitDefinition(
+            name="meter_per_second_squared",
+            symbol="$\\mathrm{m} / \\mathrm{s}^{2}$",
+            dimension=dim.ACCELERATION,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_m_mathrm_s_2: Final = meter_per_second_squared
     m_per_s2: Final = meter_per_second_squared
 
     # foot per second squared
-    foot_per_second_squared: Final = UnitConstant(UnitDefinition(
-        name="foot_per_second_squared",
-        symbol="$\\mathrm{ft} / \\mathrm{s}^{2}$ or $\\mathrm{ft} / \\mathrm{sec}^{2}$",
-        dimension=dim.ACCELERATION,
-        si_factor=0.3048,
-        si_offset=0.0,
-    ))
+    foot_per_second_squared: Final = UnitConstant(
+        UnitDefinition(
+            name="foot_per_second_squared",
+            symbol="$\\mathrm{ft} / \\mathrm{s}^{2}$ or $\\mathrm{ft} / \\mathrm{sec}^{2}$",
+            dimension=dim.ACCELERATION,
+            si_factor=0.3048,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_ft_mathrm_s_2_or_mathrm_ft_mathrm_sec_2: Final = foot_per_second_squared
     ft_per_s2: Final = foot_per_second_squared
@@ -122,59 +138,69 @@ class ActivationEnergyUnits:
     __slots__ = ()
 
     # Btu per pound mole
-    btu_per_pound_mole: Final = UnitConstant(UnitDefinition(
-        name="btu_per_pound_mole",
-        symbol="Btu/lb-mol",
-        dimension=dim.ACTIVATION_ENERGY,
-        si_factor=2326.0,
-        si_offset=0.0,
-    ))
+    btu_per_pound_mole: Final = UnitConstant(
+        UnitDefinition(
+            name="btu_per_pound_mole",
+            symbol="Btu/lb-mol",
+            dimension=dim.ACTIVATION_ENERGY,
+            si_factor=2326.0,
+            si_offset=0.0,
+        )
+    )
 
     Btu_lb_mol: Final = btu_per_pound_mole
     btu_per_lbmol: Final = btu_per_pound_mole
 
     # calorie (mean) per gram mole
-    calorie_mean_per_gram_mole: Final = UnitConstant(UnitDefinition(
-        name="calorie_mean_per_gram_mole",
-        symbol="cal/mol",
-        dimension=dim.ACTIVATION_ENERGY,
-        si_factor=4.18675,
-        si_offset=0.0,
-    ))
+    calorie_mean_per_gram_mole: Final = UnitConstant(
+        UnitDefinition(
+            name="calorie_mean_per_gram_mole",
+            symbol="cal/mol",
+            dimension=dim.ACTIVATION_ENERGY,
+            si_factor=4.18675,
+            si_offset=0.0,
+        )
+    )
 
     cal_mol: Final = calorie_mean_per_gram_mole
     cal_mean_per_gmol: Final = calorie_mean_per_gram_mole
 
     # joule per gram mole
-    joule_per_gram_mole: Final = UnitConstant(UnitDefinition(
-        name="joule_per_gram_mole",
-        symbol="J/mol",
-        dimension=dim.ACTIVATION_ENERGY,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    joule_per_gram_mole: Final = UnitConstant(
+        UnitDefinition(
+            name="joule_per_gram_mole",
+            symbol="J/mol",
+            dimension=dim.ACTIVATION_ENERGY,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     J_mol: Final = joule_per_gram_mole
 
     # joule per kilogram mole
-    joule_per_kilogram_mole: Final = UnitConstant(UnitDefinition(
-        name="joule_per_kilogram_mole",
-        symbol="J/kmol",
-        dimension=dim.ACTIVATION_ENERGY,
-        si_factor=1000.0,
-        si_offset=0.0,
-    ))
+    joule_per_kilogram_mole: Final = UnitConstant(
+        UnitDefinition(
+            name="joule_per_kilogram_mole",
+            symbol="J/kmol",
+            dimension=dim.ACTIVATION_ENERGY,
+            si_factor=1000.0,
+            si_offset=0.0,
+        )
+    )
 
     J_kmol: Final = joule_per_kilogram_mole
 
     # kilocalorie per kilogram mole
-    kilocalorie_per_kilogram_mole: Final = UnitConstant(UnitDefinition(
-        name="kilocalorie_per_kilogram_mole",
-        symbol="kcal/kmol",
-        dimension=dim.ACTIVATION_ENERGY,
-        si_factor=4.18675,
-        si_offset=0.0,
-    ))
+    kilocalorie_per_kilogram_mole: Final = UnitConstant(
+        UnitDefinition(
+            name="kilocalorie_per_kilogram_mole",
+            symbol="kcal/kmol",
+            dimension=dim.ACTIVATION_ENERGY,
+            si_factor=4.18675,
+            si_offset=0.0,
+        )
+    )
 
     kcal_kmol: Final = kilocalorie_per_kilogram_mole
 
@@ -185,59 +211,69 @@ class AmountOfSubstanceUnits:
     __slots__ = ()
 
     # kilogram mol or kmol
-    kilogram_mol: Final = UnitConstant(UnitDefinition(
-        name="kilogram_mol",
-        symbol="kmol",
-        dimension=dim.AMOUNT_OF_SUBSTANCE,
-        si_factor=1000.0,
-        si_offset=0.0,
-    ))
+    kilogram_mol: Final = UnitConstant(
+        UnitDefinition(
+            name="kilogram_mol",
+            symbol="kmol",
+            dimension=dim.AMOUNT_OF_SUBSTANCE,
+            si_factor=1000.0,
+            si_offset=0.0,
+        )
+    )
 
     kmol: Final = kilogram_mol
 
     # mole (gram)
-    mole: Final = UnitConstant(UnitDefinition(
-        name="mole",
-        symbol="mol",
-        dimension=dim.AMOUNT_OF_SUBSTANCE,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    mole: Final = UnitConstant(
+        UnitDefinition(
+            name="mole",
+            symbol="mol",
+            dimension=dim.AMOUNT_OF_SUBSTANCE,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     mol: Final = mole
 
     # pound-mole
-    pound_mole: Final = UnitConstant(UnitDefinition(
-        name="pound_mole",
-        symbol="lb-mol or mole",
-        dimension=dim.AMOUNT_OF_SUBSTANCE,
-        si_factor=453.6,
-        si_offset=0.0,
-    ))
+    pound_mole: Final = UnitConstant(
+        UnitDefinition(
+            name="pound_mole",
+            symbol="lb-mol or mole",
+            dimension=dim.AMOUNT_OF_SUBSTANCE,
+            si_factor=453.6,
+            si_offset=0.0,
+        )
+    )
 
     lb_mol_or_mole: Final = pound_mole
     lb_mol: Final = pound_mole
     mole: Final = pound_mole
 
     # millimole (gram)
-    millimole: Final = UnitConstant(UnitDefinition(
-        name="millimole",
-        symbol="mmol",
-        dimension=dim.AMOUNT_OF_SUBSTANCE,
-        si_factor=0.001,
-        si_offset=0.0,
-    ))
+    millimole: Final = UnitConstant(
+        UnitDefinition(
+            name="millimole",
+            symbol="mmol",
+            dimension=dim.AMOUNT_OF_SUBSTANCE,
+            si_factor=0.001,
+            si_offset=0.0,
+        )
+    )
 
     mmol: Final = millimole
 
     # micromole (gram)
-    micromole: Final = UnitConstant(UnitDefinition(
-        name="micromole",
-        symbol="μmol",
-        dimension=dim.AMOUNT_OF_SUBSTANCE,
-        si_factor=1e-06,
-        si_offset=0.0,
-    ))
+    micromole: Final = UnitConstant(
+        UnitDefinition(
+            name="micromole",
+            symbol="μmol",
+            dimension=dim.AMOUNT_OF_SUBSTANCE,
+            si_factor=1e-06,
+            si_offset=0.0,
+        )
+    )
 
 
 class AnglePlaneUnits:
@@ -246,159 +282,189 @@ class AnglePlaneUnits:
     __slots__ = ()
 
     # degree
-    degree: Final = UnitConstant(UnitDefinition(
-        name="degree",
-        symbol="${ }^{\\circ}$",
-        dimension=dim.ANGLE_PLANE,
-        si_factor=0.0174533,
-        si_offset=0.0,
-    ))
+    degree: Final = UnitConstant(
+        UnitDefinition(
+            name="degree",
+            symbol="${ }^{\\circ}$",
+            dimension=dim.ANGLE_PLANE,
+            si_factor=0.0174533,
+            si_offset=0.0,
+        )
+    )
 
     circ: Final = degree
 
     # gon
-    gon: Final = UnitConstant(UnitDefinition(
-        name="gon",
-        symbol="gon",
-        dimension=dim.ANGLE_PLANE,
-        si_factor=0.015708,
-        si_offset=0.0,
-    ))
+    gon: Final = UnitConstant(
+        UnitDefinition(
+            name="gon",
+            symbol="gon",
+            dimension=dim.ANGLE_PLANE,
+            si_factor=0.015708,
+            si_offset=0.0,
+        )
+    )
 
     # grade
-    grade: Final = UnitConstant(UnitDefinition(
-        name="grade",
-        symbol="grade",
-        dimension=dim.ANGLE_PLANE,
-        si_factor=0.015708,
-        si_offset=0.0,
-    ))
+    grade: Final = UnitConstant(
+        UnitDefinition(
+            name="grade",
+            symbol="grade",
+            dimension=dim.ANGLE_PLANE,
+            si_factor=0.015708,
+            si_offset=0.0,
+        )
+    )
 
     # minute (new)
-    minute_new: Final = UnitConstant(UnitDefinition(
-        name="minute_new",
-        symbol="c",
-        dimension=dim.ANGLE_PLANE,
-        si_factor=0.00015708,
-        si_offset=0.0,
-    ))
+    minute_new: Final = UnitConstant(
+        UnitDefinition(
+            name="minute_new",
+            symbol="c",
+            dimension=dim.ANGLE_PLANE,
+            si_factor=0.00015708,
+            si_offset=0.0,
+        )
+    )
 
     c: Final = minute_new
 
     # minute of angle
-    minute_of_angle: Final = UnitConstant(UnitDefinition(
-        name="minute_of_angle",
-        symbol="'",
-        dimension=dim.ANGLE_PLANE,
-        si_factor=0.000290888,
-        si_offset=0.0,
-    ))
+    minute_of_angle: Final = UnitConstant(
+        UnitDefinition(
+            name="minute_of_angle",
+            symbol="'",
+            dimension=dim.ANGLE_PLANE,
+            si_factor=0.000290888,
+            si_offset=0.0,
+        )
+    )
 
     unnamed: Final = minute_of_angle
 
     # percent
-    percent: Final = UnitConstant(UnitDefinition(
-        name="percent",
-        symbol="\\%",
-        dimension=dim.ANGLE_PLANE,
-        si_factor=0.062832,
-        si_offset=0.0,
-    ))
+    percent: Final = UnitConstant(
+        UnitDefinition(
+            name="percent",
+            symbol="\\%",
+            dimension=dim.ANGLE_PLANE,
+            si_factor=0.062832,
+            si_offset=0.0,
+        )
+    )
 
     # plane angle
-    plane_angle: Final = UnitConstant(UnitDefinition(
-        name="plane_angle",
-        symbol="-",
-        dimension=dim.ANGLE_PLANE,
-        si_factor=3.141593,
-        si_offset=0.0,
-    ))
+    plane_angle: Final = UnitConstant(
+        UnitDefinition(
+            name="plane_angle",
+            symbol="-",
+            dimension=dim.ANGLE_PLANE,
+            si_factor=3.141593,
+            si_offset=0.0,
+        )
+    )
 
     # quadrant
-    quadrant: Final = UnitConstant(UnitDefinition(
-        name="quadrant",
-        symbol="quadr",
-        dimension=dim.ANGLE_PLANE,
-        si_factor=1.570796,
-        si_offset=0.0,
-    ))
+    quadrant: Final = UnitConstant(
+        UnitDefinition(
+            name="quadrant",
+            symbol="quadr",
+            dimension=dim.ANGLE_PLANE,
+            si_factor=1.570796,
+            si_offset=0.0,
+        )
+    )
 
     quadr: Final = quadrant
 
     # radian
-    radian: Final = UnitConstant(UnitDefinition(
-        name="radian",
-        symbol="rad",
-        dimension=dim.ANGLE_PLANE,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    radian: Final = UnitConstant(
+        UnitDefinition(
+            name="radian",
+            symbol="rad",
+            dimension=dim.ANGLE_PLANE,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     rad: Final = radian
 
     # right angle
-    right_angle: Final = UnitConstant(UnitDefinition(
-        name="right_angle",
-        symbol="$\\perp$",
-        dimension=dim.ANGLE_PLANE,
-        si_factor=1.570796,
-        si_offset=0.0,
-    ))
+    right_angle: Final = UnitConstant(
+        UnitDefinition(
+            name="right_angle",
+            symbol="$\\perp$",
+            dimension=dim.ANGLE_PLANE,
+            si_factor=1.570796,
+            si_offset=0.0,
+        )
+    )
 
     perp: Final = right_angle
 
     # round
-    round: Final = UnitConstant(UnitDefinition(
-        name="round",
-        symbol="tr or r",
-        dimension=dim.ANGLE_PLANE,
-        si_factor=6.283185,
-        si_offset=0.0,
-    ))
+    round: Final = UnitConstant(
+        UnitDefinition(
+            name="round",
+            symbol="tr or r",
+            dimension=dim.ANGLE_PLANE,
+            si_factor=6.283185,
+            si_offset=0.0,
+        )
+    )
 
     tr_or_r: Final = round
     tr: Final = round
     r: Final = round
 
     # second (new)
-    second_new: Final = UnitConstant(UnitDefinition(
-        name="second_new",
-        symbol="cc",
-        dimension=dim.ANGLE_PLANE,
-        si_factor=1.5707999999999999e-06,
-        si_offset=0.0,
-    ))
+    second_new: Final = UnitConstant(
+        UnitDefinition(
+            name="second_new",
+            symbol="cc",
+            dimension=dim.ANGLE_PLANE,
+            si_factor=1.5707999999999999e-06,
+            si_offset=0.0,
+        )
+    )
 
     cc: Final = second_new
 
     # second of angle
-    second_of_angle: Final = UnitConstant(UnitDefinition(
-        name="second_of_angle",
-        symbol="\"",
-        dimension=dim.ANGLE_PLANE,
-        si_factor=4.848099999999999e-06,
-        si_offset=0.0,
-    ))
+    second_of_angle: Final = UnitConstant(
+        UnitDefinition(
+            name="second_of_angle",
+            symbol='"',
+            dimension=dim.ANGLE_PLANE,
+            si_factor=4.848099999999999e-06,
+            si_offset=0.0,
+        )
+    )
 
     # thousandth (US)
-    thousandth_us: Final = UnitConstant(UnitDefinition(
-        name="thousandth_us",
-        symbol="\\% (US)",
-        dimension=dim.ANGLE_PLANE,
-        si_factor=0.0015708,
-        si_offset=0.0,
-    ))
+    thousandth_us: Final = UnitConstant(
+        UnitDefinition(
+            name="thousandth_us",
+            symbol="\\% (US)",
+            dimension=dim.ANGLE_PLANE,
+            si_factor=0.0015708,
+            si_offset=0.0,
+        )
+    )
 
     US: Final = thousandth_us
 
     # turn
-    turn: Final = UnitConstant(UnitDefinition(
-        name="turn",
-        symbol="turn or rev",
-        dimension=dim.ANGLE_PLANE,
-        si_factor=6.283185,
-        si_offset=0.0,
-    ))
+    turn: Final = UnitConstant(
+        UnitDefinition(
+            name="turn",
+            symbol="turn or rev",
+            dimension=dim.ANGLE_PLANE,
+            si_factor=6.283185,
+            si_offset=0.0,
+        )
+    )
 
     turn_or_rev: Final = turn
     rev: Final = turn
@@ -410,44 +476,52 @@ class AngleSolidUnits:
     __slots__ = ()
 
     # spat
-    spat: Final = UnitConstant(UnitDefinition(
-        name="spat",
-        symbol="spat",
-        dimension=dim.ANGLE_SOLID,
-        si_factor=12.5663,
-        si_offset=0.0,
-    ))
+    spat: Final = UnitConstant(
+        UnitDefinition(
+            name="spat",
+            symbol="spat",
+            dimension=dim.ANGLE_SOLID,
+            si_factor=12.5663,
+            si_offset=0.0,
+        )
+    )
 
     # square degree
-    square_degree: Final = UnitConstant(UnitDefinition(
-        name="square_degree",
-        symbol="$\\left({ }^{\\circ}\\right)^{2}$",
-        dimension=dim.ANGLE_SOLID,
-        si_factor=0.000304617,
-        si_offset=0.0,
-    ))
+    square_degree: Final = UnitConstant(
+        UnitDefinition(
+            name="square_degree",
+            symbol="$\\left({ }^{\\circ}\\right)^{2}$",
+            dimension=dim.ANGLE_SOLID,
+            si_factor=0.000304617,
+            si_offset=0.0,
+        )
+    )
 
     left_circ_right_2: Final = square_degree
 
     # square gon
-    square_gon: Final = UnitConstant(UnitDefinition(
-        name="square_gon",
-        symbol="(g) ${ }^{2}$",
-        dimension=dim.ANGLE_SOLID,
-        si_factor=0.00024674,
-        si_offset=0.0,
-    ))
+    square_gon: Final = UnitConstant(
+        UnitDefinition(
+            name="square_gon",
+            symbol="(g) ${ }^{2}$",
+            dimension=dim.ANGLE_SOLID,
+            si_factor=0.00024674,
+            si_offset=0.0,
+        )
+    )
 
     g_2: Final = square_gon
 
     # steradian
-    steradian: Final = UnitConstant(UnitDefinition(
-        name="steradian",
-        symbol="sr",
-        dimension=dim.ANGLE_SOLID,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    steradian: Final = UnitConstant(
+        UnitDefinition(
+            name="steradian",
+            symbol="sr",
+            dimension=dim.ANGLE_SOLID,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     sr: Final = steradian
 
@@ -458,35 +532,41 @@ class AngularAccelerationUnits:
     __slots__ = ()
 
     # radian per second squared
-    radian_per_second_squared: Final = UnitConstant(UnitDefinition(
-        name="radian_per_second_squared",
-        symbol="$\\mathrm{rad} / \\mathrm{s}^{2}$",
-        dimension=dim.ANGULAR_ACCELERATION,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    radian_per_second_squared: Final = UnitConstant(
+        UnitDefinition(
+            name="radian_per_second_squared",
+            symbol="$\\mathrm{rad} / \\mathrm{s}^{2}$",
+            dimension=dim.ANGULAR_ACCELERATION,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_rad_mathrm_s_2: Final = radian_per_second_squared
 
     # revolution per second squared
-    revolution_per_second_squared: Final = UnitConstant(UnitDefinition(
-        name="revolution_per_second_squared",
-        symbol="$\\mathrm{rev} / \\mathrm{sec}^{2}$",
-        dimension=dim.ANGULAR_ACCELERATION,
-        si_factor=6.2832,
-        si_offset=0.0,
-    ))
+    revolution_per_second_squared: Final = UnitConstant(
+        UnitDefinition(
+            name="revolution_per_second_squared",
+            symbol="$\\mathrm{rev} / \\mathrm{sec}^{2}$",
+            dimension=dim.ANGULAR_ACCELERATION,
+            si_factor=6.2832,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_rev_mathrm_sec_2: Final = revolution_per_second_squared
 
     # rpm (or revolution per minute) per minute
-    rpm_or_revolution_per_minute: Final = UnitConstant(UnitDefinition(
-        name="rpm_or_revolution_per_minute",
-        symbol="$\\mathrm{rev} / \\mathrm{min}^{2}$ or rpm/min",
-        dimension=dim.ANGULAR_ACCELERATION,
-        si_factor=0.001745,
-        si_offset=0.0,
-    ))
+    rpm_or_revolution_per_minute: Final = UnitConstant(
+        UnitDefinition(
+            name="rpm_or_revolution_per_minute",
+            symbol="$\\mathrm{rev} / \\mathrm{min}^{2}$ or rpm/min",
+            dimension=dim.ANGULAR_ACCELERATION,
+            si_factor=0.001745,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_rev_mathrm_min_2_or_rpm_min: Final = rpm_or_revolution_per_minute
     rev_min_2: Final = rpm_or_revolution_per_minute
@@ -499,35 +579,41 @@ class AngularMomentumUnits:
     __slots__ = ()
 
     # gram centimeter squared per second
-    gram_centimeter_squared_per_second: Final = UnitConstant(UnitDefinition(
-        name="gram_centimeter_squared_per_second",
-        symbol="$\\mathrm{g} \\mathrm{cm}^{2} / \\mathrm{s}$",
-        dimension=dim.ANGULAR_MOMENTUM,
-        si_factor=1e-07,
-        si_offset=0.0,
-    ))
+    gram_centimeter_squared_per_second: Final = UnitConstant(
+        UnitDefinition(
+            name="gram_centimeter_squared_per_second",
+            symbol="$\\mathrm{g} \\mathrm{cm}^{2} / \\mathrm{s}$",
+            dimension=dim.ANGULAR_MOMENTUM,
+            si_factor=1e-07,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_g_mathrm_cm_2_mathrm_s: Final = gram_centimeter_squared_per_second
 
     # kilogram meter squared per second
-    kilogram_meter_squared_per_second: Final = UnitConstant(UnitDefinition(
-        name="kilogram_meter_squared_per_second",
-        symbol="$\\mathrm{kg} \\mathrm{m}^{2} / \\mathrm{s}$",
-        dimension=dim.ANGULAR_MOMENTUM,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    kilogram_meter_squared_per_second: Final = UnitConstant(
+        UnitDefinition(
+            name="kilogram_meter_squared_per_second",
+            symbol="$\\mathrm{kg} \\mathrm{m}^{2} / \\mathrm{s}$",
+            dimension=dim.ANGULAR_MOMENTUM,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_kg_mathrm_m_2_mathrm_s: Final = kilogram_meter_squared_per_second
 
     # pound force square foot per second
-    pound_force_square_foot_per_second: Final = UnitConstant(UnitDefinition(
-        name="pound_force_square_foot_per_second",
-        symbol="lb ft ${ }^{2} / \\mathrm{sec}$",
-        dimension=dim.ANGULAR_MOMENTUM,
-        si_factor=0.04214,
-        si_offset=0.0,
-    ))
+    pound_force_square_foot_per_second: Final = UnitConstant(
+        UnitDefinition(
+            name="pound_force_square_foot_per_second",
+            symbol="lb ft ${ }^{2} / \\mathrm{sec}$",
+            dimension=dim.ANGULAR_MOMENTUM,
+            si_factor=0.04214,
+            si_offset=0.0,
+        )
+    )
 
     lb_ft_2_mathrm_sec: Final = pound_force_square_foot_per_second
 
@@ -538,292 +624,344 @@ class AreaUnits:
     __slots__ = ()
 
     # acre (general)
-    acre_general: Final = UnitConstant(UnitDefinition(
-        name="acre_general",
-        symbol="ac",
-        dimension=dim.AREA,
-        si_factor=4046.856,
-        si_offset=0.0,
-    ))
+    acre_general: Final = UnitConstant(
+        UnitDefinition(
+            name="acre_general",
+            symbol="ac",
+            dimension=dim.AREA,
+            si_factor=4046.856,
+            si_offset=0.0,
+        )
+    )
 
     ac: Final = acre_general
 
     # are
-    are: Final = UnitConstant(UnitDefinition(
-        name="are",
-        symbol="a",
-        dimension=dim.AREA,
-        si_factor=100.0,
-        si_offset=0.0,
-    ))
+    are: Final = UnitConstant(
+        UnitDefinition(
+            name="are",
+            symbol="a",
+            dimension=dim.AREA,
+            si_factor=100.0,
+            si_offset=0.0,
+        )
+    )
 
     a: Final = are
 
     # arpent (Quebec)
-    arpent_quebec: Final = UnitConstant(UnitDefinition(
-        name="arpent_quebec",
-        symbol="arp",
-        dimension=dim.AREA,
-        si_factor=3418.89,
-        si_offset=0.0,
-    ))
+    arpent_quebec: Final = UnitConstant(
+        UnitDefinition(
+            name="arpent_quebec",
+            symbol="arp",
+            dimension=dim.AREA,
+            si_factor=3418.89,
+            si_offset=0.0,
+        )
+    )
 
     arp: Final = arpent_quebec
 
     # barn
-    barn: Final = UnitConstant(UnitDefinition(
-        name="barn",
-        symbol="b",
-        dimension=dim.AREA,
-        si_factor=1e-28,
-        si_offset=0.0,
-    ))
+    barn: Final = UnitConstant(
+        UnitDefinition(
+            name="barn",
+            symbol="b",
+            dimension=dim.AREA,
+            si_factor=1e-28,
+            si_offset=0.0,
+        )
+    )
 
     b: Final = barn
 
     # circular inch
-    circular_inch: Final = UnitConstant(UnitDefinition(
-        name="circular_inch",
-        symbol="cin",
-        dimension=dim.AREA,
-        si_factor=0.000506707,
-        si_offset=0.0,
-    ))
+    circular_inch: Final = UnitConstant(
+        UnitDefinition(
+            name="circular_inch",
+            symbol="cin",
+            dimension=dim.AREA,
+            si_factor=0.000506707,
+            si_offset=0.0,
+        )
+    )
 
     cin: Final = circular_inch
 
     # circular mil
-    circular_mil: Final = UnitConstant(UnitDefinition(
-        name="circular_mil",
-        symbol="cmil",
-        dimension=dim.AREA,
-        si_factor=5.07e-10,
-        si_offset=0.0,
-    ))
+    circular_mil: Final = UnitConstant(
+        UnitDefinition(
+            name="circular_mil",
+            symbol="cmil",
+            dimension=dim.AREA,
+            si_factor=5.07e-10,
+            si_offset=0.0,
+        )
+    )
 
     cmil: Final = circular_mil
 
     # hectare
-    hectare: Final = UnitConstant(UnitDefinition(
-        name="hectare",
-        symbol="ha",
-        dimension=dim.AREA,
-        si_factor=10000.0,
-        si_offset=0.0,
-    ))
+    hectare: Final = UnitConstant(
+        UnitDefinition(
+            name="hectare",
+            symbol="ha",
+            dimension=dim.AREA,
+            si_factor=10000.0,
+            si_offset=0.0,
+        )
+    )
 
     ha: Final = hectare
 
     # shed
-    shed: Final = UnitConstant(UnitDefinition(
-        name="shed",
-        symbol="shed",
-        dimension=dim.AREA,
-        si_factor=1e-52,
-        si_offset=0.0,
-    ))
+    shed: Final = UnitConstant(
+        UnitDefinition(
+            name="shed",
+            symbol="shed",
+            dimension=dim.AREA,
+            si_factor=1e-52,
+            si_offset=0.0,
+        )
+    )
 
     # square centimeter
-    square_centimeter: Final = UnitConstant(UnitDefinition(
-        name="square_centimeter",
-        symbol="$\\mathrm{cm}^{2}$",
-        dimension=dim.AREA,
-        si_factor=0.0001,
-        si_offset=0.0,
-    ))
+    square_centimeter: Final = UnitConstant(
+        UnitDefinition(
+            name="square_centimeter",
+            symbol="$\\mathrm{cm}^{2}$",
+            dimension=dim.AREA,
+            si_factor=0.0001,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_cm_2: Final = square_centimeter
 
     # square chain (Ramsden)
-    square_chain_ramsden: Final = UnitConstant(UnitDefinition(
-        name="square_chain_ramsden",
-        symbol="sq ch (Rams)",
-        dimension=dim.AREA,
-        si_factor=929.03,
-        si_offset=0.0,
-    ))
+    square_chain_ramsden: Final = UnitConstant(
+        UnitDefinition(
+            name="square_chain_ramsden",
+            symbol="sq ch (Rams)",
+            dimension=dim.AREA,
+            si_factor=929.03,
+            si_offset=0.0,
+        )
+    )
 
     sq_ch_Rams: Final = square_chain_ramsden
 
     # square chain (Survey, Gunter's)
-    square_chain_survey_gunters: Final = UnitConstant(UnitDefinition(
-        name="square_chain_survey_gunters",
-        symbol="sq ch (surv)",
-        dimension=dim.AREA,
-        si_factor=404.6856,
-        si_offset=0.0,
-    ))
+    square_chain_survey_gunters: Final = UnitConstant(
+        UnitDefinition(
+            name="square_chain_survey_gunters",
+            symbol="sq ch (surv)",
+            dimension=dim.AREA,
+            si_factor=404.6856,
+            si_offset=0.0,
+        )
+    )
 
     sq_ch_surv: Final = square_chain_survey_gunters
 
     # square decimeter
-    square_decimeter: Final = UnitConstant(UnitDefinition(
-        name="square_decimeter",
-        symbol="$\\mathrm{dm}^{2}$",
-        dimension=dim.AREA,
-        si_factor=0.01,
-        si_offset=0.0,
-    ))
+    square_decimeter: Final = UnitConstant(
+        UnitDefinition(
+            name="square_decimeter",
+            symbol="$\\mathrm{dm}^{2}$",
+            dimension=dim.AREA,
+            si_factor=0.01,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_dm_2: Final = square_decimeter
 
     # square fermi
-    square_fermi: Final = UnitConstant(UnitDefinition(
-        name="square_fermi",
-        symbol="$\\mathrm{F}^{2}$",
-        dimension=dim.AREA,
-        si_factor=1e-30,
-        si_offset=0.0,
-    ))
+    square_fermi: Final = UnitConstant(
+        UnitDefinition(
+            name="square_fermi",
+            symbol="$\\mathrm{F}^{2}$",
+            dimension=dim.AREA,
+            si_factor=1e-30,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_F_2: Final = square_fermi
 
     # square foot
-    square_foot: Final = UnitConstant(UnitDefinition(
-        name="square_foot",
-        symbol="sq ft or ft ${ }^{2}$",
-        dimension=dim.AREA,
-        si_factor=0.092903,
-        si_offset=0.0,
-    ))
+    square_foot: Final = UnitConstant(
+        UnitDefinition(
+            name="square_foot",
+            symbol="sq ft or ft ${ }^{2}$",
+            dimension=dim.AREA,
+            si_factor=0.092903,
+            si_offset=0.0,
+        )
+    )
 
     sq_ft_or_ft_2: Final = square_foot
     sq_ft: Final = square_foot
     ft_2: Final = square_foot
 
     # square hectometer
-    square_hectometer: Final = UnitConstant(UnitDefinition(
-        name="square_hectometer",
-        symbol="$\\mathrm{hm}^{2}$",
-        dimension=dim.AREA,
-        si_factor=10000.0,
-        si_offset=0.0,
-    ))
+    square_hectometer: Final = UnitConstant(
+        UnitDefinition(
+            name="square_hectometer",
+            symbol="$\\mathrm{hm}^{2}$",
+            dimension=dim.AREA,
+            si_factor=10000.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_hm_2: Final = square_hectometer
 
     # square inch
-    square_inch: Final = UnitConstant(UnitDefinition(
-        name="square_inch",
-        symbol="sq in or in ${ }^{2}$",
-        dimension=dim.AREA,
-        si_factor=0.00064516,
-        si_offset=0.0,
-    ))
+    square_inch: Final = UnitConstant(
+        UnitDefinition(
+            name="square_inch",
+            symbol="sq in or in ${ }^{2}$",
+            dimension=dim.AREA,
+            si_factor=0.00064516,
+            si_offset=0.0,
+        )
+    )
 
     sq_in_or_in_2: Final = square_inch
     sq_in: Final = square_inch
     in_2: Final = square_inch
 
     # square kilometer
-    square_kilometer: Final = UnitConstant(UnitDefinition(
-        name="square_kilometer",
-        symbol="$\\mathrm{km}^{2}$",
-        dimension=dim.AREA,
-        si_factor=1000000.0,
-        si_offset=0.0,
-    ))
+    square_kilometer: Final = UnitConstant(
+        UnitDefinition(
+            name="square_kilometer",
+            symbol="$\\mathrm{km}^{2}$",
+            dimension=dim.AREA,
+            si_factor=1000000.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_km_2: Final = square_kilometer
 
     # square league (statute)
-    square_league_statute: Final = UnitConstant(UnitDefinition(
-        name="square_league_statute",
-        symbol="sq lg (stat)",
-        dimension=dim.AREA,
-        si_factor=23310000.0,
-        si_offset=0.0,
-    ))
+    square_league_statute: Final = UnitConstant(
+        UnitDefinition(
+            name="square_league_statute",
+            symbol="sq lg (stat)",
+            dimension=dim.AREA,
+            si_factor=23310000.0,
+            si_offset=0.0,
+        )
+    )
 
     sq_lg_stat: Final = square_league_statute
 
     # square meter
-    square_meter: Final = UnitConstant(UnitDefinition(
-        name="square_meter",
-        symbol="$\\mathrm{m}^{2}$",
-        dimension=dim.AREA,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    square_meter: Final = UnitConstant(
+        UnitDefinition(
+            name="square_meter",
+            symbol="$\\mathrm{m}^{2}$",
+            dimension=dim.AREA,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_m_2: Final = square_meter
 
     # square micron
-    square_micron: Final = UnitConstant(UnitDefinition(
-        name="square_micron",
-        symbol="$\\mu \\mathrm{m}^{2}$ or $\\mu^{2}$",
-        dimension=dim.AREA,
-        si_factor=1e-12,
-        si_offset=0.0,
-    ))
+    square_micron: Final = UnitConstant(
+        UnitDefinition(
+            name="square_micron",
+            symbol="$\\mu \\mathrm{m}^{2}$ or $\\mu^{2}$",
+            dimension=dim.AREA,
+            si_factor=1e-12,
+            si_offset=0.0,
+        )
+    )
 
     mu_mathrm_m_2_or_mu_2: Final = square_micron
     mu_m_2: Final = square_micron
     mu_2: Final = square_micron
 
     # square mile (statute)
-    square_mile_statute: Final = UnitConstant(UnitDefinition(
-        name="square_mile_statute",
-        symbol="sq mi (stat)",
-        dimension=dim.AREA,
-        si_factor=2590000.0,
-        si_offset=0.0,
-    ))
+    square_mile_statute: Final = UnitConstant(
+        UnitDefinition(
+            name="square_mile_statute",
+            symbol="sq mi (stat)",
+            dimension=dim.AREA,
+            si_factor=2590000.0,
+            si_offset=0.0,
+        )
+    )
 
     sq_mi_stat: Final = square_mile_statute
 
     # square mile (US survey)
-    square_mile_us_survey: Final = UnitConstant(UnitDefinition(
-        name="square_mile_us_survey",
-        symbol="sq mi (US Surv)",
-        dimension=dim.AREA,
-        si_factor=2590000.0,
-        si_offset=0.0,
-    ))
+    square_mile_us_survey: Final = UnitConstant(
+        UnitDefinition(
+            name="square_mile_us_survey",
+            symbol="sq mi (US Surv)",
+            dimension=dim.AREA,
+            si_factor=2590000.0,
+            si_offset=0.0,
+        )
+    )
 
     sq_mi_US_Surv: Final = square_mile_us_survey
 
     # square millimeter
-    square_millimeter: Final = UnitConstant(UnitDefinition(
-        name="square_millimeter",
-        symbol="$\\mathrm{mm}^{2}$",
-        dimension=dim.AREA,
-        si_factor=1e-06,
-        si_offset=0.0,
-    ))
+    square_millimeter: Final = UnitConstant(
+        UnitDefinition(
+            name="square_millimeter",
+            symbol="$\\mathrm{mm}^{2}$",
+            dimension=dim.AREA,
+            si_factor=1e-06,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_mm_2: Final = square_millimeter
 
     # square nanometer
-    square_nanometer: Final = UnitConstant(UnitDefinition(
-        name="square_nanometer",
-        symbol="$\\mathrm{nm}^{2}$",
-        dimension=dim.AREA,
-        si_factor=1e-18,
-        si_offset=0.0,
-    ))
+    square_nanometer: Final = UnitConstant(
+        UnitDefinition(
+            name="square_nanometer",
+            symbol="$\\mathrm{nm}^{2}$",
+            dimension=dim.AREA,
+            si_factor=1e-18,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_nm_2: Final = square_nanometer
 
     # square yard
-    square_yard: Final = UnitConstant(UnitDefinition(
-        name="square_yard",
-        symbol="sq yd",
-        dimension=dim.AREA,
-        si_factor=0.836131,
-        si_offset=0.0,
-    ))
+    square_yard: Final = UnitConstant(
+        UnitDefinition(
+            name="square_yard",
+            symbol="sq yd",
+            dimension=dim.AREA,
+            si_factor=0.836131,
+            si_offset=0.0,
+        )
+    )
 
     sq_yd: Final = square_yard
 
     # township (US)
-    township_us: Final = UnitConstant(UnitDefinition(
-        name="township_us",
-        symbol="twshp",
-        dimension=dim.AREA,
-        si_factor=93240000.0,
-        si_offset=0.0,
-    ))
+    township_us: Final = UnitConstant(
+        UnitDefinition(
+            name="township_us",
+            symbol="twshp",
+            dimension=dim.AREA,
+            si_factor=93240000.0,
+            si_offset=0.0,
+        )
+    )
 
     twshp: Final = township_us
 
@@ -834,50 +972,58 @@ class AreaPerUnitVolumeUnits:
     __slots__ = ()
 
     # square centimeter per cubic centimeter
-    square_centimeter_per_cubic_centimeter: Final = UnitConstant(UnitDefinition(
-        name="square_centimeter_per_cubic_centimeter",
-        symbol="$\\mathrm{cm}^{2} / \\mathrm{cc}$",
-        dimension=dim.AREA_PER_UNIT_VOLUME,
-        si_factor=100.0,
-        si_offset=0.0,
-    ))
+    square_centimeter_per_cubic_centimeter: Final = UnitConstant(
+        UnitDefinition(
+            name="square_centimeter_per_cubic_centimeter",
+            symbol="$\\mathrm{cm}^{2} / \\mathrm{cc}$",
+            dimension=dim.AREA_PER_UNIT_VOLUME,
+            si_factor=100.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_cm_2_mathrm_cc: Final = square_centimeter_per_cubic_centimeter
 
     # square foot per cubic foot
-    square_foot_per_cubic_foot: Final = UnitConstant(UnitDefinition(
-        name="square_foot_per_cubic_foot",
-        symbol="$\\mathrm{ft}^{2} / \\mathrm{ft}^{3}$ or sqft/cft",
-        dimension=dim.AREA_PER_UNIT_VOLUME,
-        si_factor=3.2808,
-        si_offset=0.0,
-    ))
+    square_foot_per_cubic_foot: Final = UnitConstant(
+        UnitDefinition(
+            name="square_foot_per_cubic_foot",
+            symbol="$\\mathrm{ft}^{2} / \\mathrm{ft}^{3}$ or sqft/cft",
+            dimension=dim.AREA_PER_UNIT_VOLUME,
+            si_factor=3.2808,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_ft_2_mathrm_ft_3_or_sqft_cft: Final = square_foot_per_cubic_foot
     ft_2_ft_3: Final = square_foot_per_cubic_foot
     sqft_cft: Final = square_foot_per_cubic_foot
 
     # square inch per cubic inch
-    square_inch_per_cubic_inch: Final = UnitConstant(UnitDefinition(
-        name="square_inch_per_cubic_inch",
-        symbol="$\\mathrm{in}^{2} / \\mathrm{in}^{3}$ or sq.in./cu. in.",
-        dimension=dim.AREA_PER_UNIT_VOLUME,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    square_inch_per_cubic_inch: Final = UnitConstant(
+        UnitDefinition(
+            name="square_inch_per_cubic_inch",
+            symbol="$\\mathrm{in}^{2} / \\mathrm{in}^{3}$ or sq.in./cu. in.",
+            dimension=dim.AREA_PER_UNIT_VOLUME,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_in_2_mathrm_in_3_or_sq_in_cu_in: Final = square_inch_per_cubic_inch
     in_2_in_3: Final = square_inch_per_cubic_inch
     sq_in_cu_in: Final = square_inch_per_cubic_inch
 
     # square meter per cubic meter
-    square_meter_per_cubic_meter: Final = UnitConstant(UnitDefinition(
-        name="square_meter_per_cubic_meter",
-        symbol="$\\mathrm{m}^{2} / \\mathrm{m}^{3}$ or $1 / \\mathrm{m}^{3}$",
-        dimension=dim.AREA_PER_UNIT_VOLUME,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    square_meter_per_cubic_meter: Final = UnitConstant(
+        UnitDefinition(
+            name="square_meter_per_cubic_meter",
+            symbol="$\\mathrm{m}^{2} / \\mathrm{m}^{3}$ or $1 / \\mathrm{m}^{3}$",
+            dimension=dim.AREA_PER_UNIT_VOLUME,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_m_2_mathrm_m_3_or_1_mathrm_m_3: Final = square_meter_per_cubic_meter
     m_2_m_3: Final = square_meter_per_cubic_meter
@@ -890,46 +1036,54 @@ class AtomicWeightUnits:
     __slots__ = ()
 
     # atomic mass unit (12C)
-    atomic_mass_unit_12c: Final = UnitConstant(UnitDefinition(
-        name="atomic_mass_unit_12c",
-        symbol="amu",
-        dimension=dim.ATOMIC_WEIGHT,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    atomic_mass_unit_12c: Final = UnitConstant(
+        UnitDefinition(
+            name="atomic_mass_unit_12c",
+            symbol="amu",
+            dimension=dim.ATOMIC_WEIGHT,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     amu: Final = atomic_mass_unit_12c
 
     # grams per mole
-    grams_per_mole: Final = UnitConstant(UnitDefinition(
-        name="grams_per_mole",
-        symbol="g/mol",
-        dimension=dim.ATOMIC_WEIGHT,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    grams_per_mole: Final = UnitConstant(
+        UnitDefinition(
+            name="grams_per_mole",
+            symbol="g/mol",
+            dimension=dim.ATOMIC_WEIGHT,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     g_mol: Final = grams_per_mole
 
     # kilograms per kilomole
-    kilograms_per_kilomole: Final = UnitConstant(UnitDefinition(
-        name="kilograms_per_kilomole",
-        symbol="kg/kmol",
-        dimension=dim.ATOMIC_WEIGHT,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    kilograms_per_kilomole: Final = UnitConstant(
+        UnitDefinition(
+            name="kilograms_per_kilomole",
+            symbol="kg/kmol",
+            dimension=dim.ATOMIC_WEIGHT,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     kg_kmol: Final = kilograms_per_kilomole
 
     # pounds per pound mole
-    pounds_per_pound_mole: Final = UnitConstant(UnitDefinition(
-        name="pounds_per_pound_mole",
-        symbol="$\\mathrm{lb} / \\mathrm{lb}-$ mol or $\\mathrm{lb} /$ mole",
-        dimension=dim.ATOMIC_WEIGHT,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    pounds_per_pound_mole: Final = UnitConstant(
+        UnitDefinition(
+            name="pounds_per_pound_mole",
+            symbol="$\\mathrm{lb} / \\mathrm{lb}-$ mol or $\\mathrm{lb} /$ mole",
+            dimension=dim.ATOMIC_WEIGHT,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_lb_mathrm_lb_mol_or_mathrm_lb_mole: Final = pounds_per_pound_mole
     lb_lb_mol: Final = pounds_per_pound_mole
@@ -942,26 +1096,30 @@ class ConcentrationUnits:
     __slots__ = ()
 
     # grains of "i" per cubic foot
-    grains_of_i_per_cubic_foot: Final = UnitConstant(UnitDefinition(
-        name="grains_of_i_per_cubic_foot",
-        symbol="$\\mathrm{gr} / \\mathrm{ft}^{3}$ or gr/cft",
-        dimension=dim.CONCENTRATION,
-        si_factor=0.002288,
-        si_offset=0.0,
-    ))
+    grains_of_i_per_cubic_foot: Final = UnitConstant(
+        UnitDefinition(
+            name="grains_of_i_per_cubic_foot",
+            symbol="$\\mathrm{gr} / \\mathrm{ft}^{3}$ or gr/cft",
+            dimension=dim.CONCENTRATION,
+            si_factor=0.002288,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_gr_mathrm_ft_3_or_gr_cft: Final = grains_of_i_per_cubic_foot
     gr_ft_3: Final = grains_of_i_per_cubic_foot
     gr_cft: Final = grains_of_i_per_cubic_foot
 
     # grains of "i" per gallon (US)
-    grains_of_i_per_gallon_us: Final = UnitConstant(UnitDefinition(
-        name="grains_of_i_per_gallon_us",
-        symbol="gr/gal",
-        dimension=dim.CONCENTRATION,
-        si_factor=0.017115,
-        si_offset=0.0,
-    ))
+    grains_of_i_per_gallon_us: Final = UnitConstant(
+        UnitDefinition(
+            name="grains_of_i_per_gallon_us",
+            symbol="gr/gal",
+            dimension=dim.CONCENTRATION,
+            si_factor=0.017115,
+            si_offset=0.0,
+        )
+    )
 
     gr_gal: Final = grains_of_i_per_gallon_us
 
@@ -972,42 +1130,50 @@ class DimensionlessUnits:
     __slots__ = ()
 
     # dimensionless
-    dimensionless: Final = UnitConstant(UnitDefinition(
-        name="dimensionless",
-        symbol="",
-        dimension=dim.DIMENSIONLESS,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    dimensionless: Final = UnitConstant(
+        UnitDefinition(
+            name="dimensionless",
+            symbol="",
+            dimension=dim.DIMENSIONLESS,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     # ratio
-    ratio: Final = UnitConstant(UnitDefinition(
-        name="ratio",
-        symbol="ratio",
-        dimension=dim.DIMENSIONLESS,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    ratio: Final = UnitConstant(
+        UnitDefinition(
+            name="ratio",
+            symbol="ratio",
+            dimension=dim.DIMENSIONLESS,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     # parts per million
-    parts_per_million: Final = UnitConstant(UnitDefinition(
-        name="parts_per_million",
-        symbol="ppm",
-        dimension=dim.DIMENSIONLESS,
-        si_factor=1e-06,
-        si_offset=0.0,
-    ))
+    parts_per_million: Final = UnitConstant(
+        UnitDefinition(
+            name="parts_per_million",
+            symbol="ppm",
+            dimension=dim.DIMENSIONLESS,
+            si_factor=1e-06,
+            si_offset=0.0,
+        )
+    )
 
     ppm: Final = parts_per_million
 
     # parts per billion
-    parts_per_billion: Final = UnitConstant(UnitDefinition(
-        name="parts_per_billion",
-        symbol="ppb",
-        dimension=dim.DIMENSIONLESS,
-        si_factor=1e-09,
-        si_offset=0.0,
-    ))
+    parts_per_billion: Final = UnitConstant(
+        UnitDefinition(
+            name="parts_per_billion",
+            symbol="ppb",
+            dimension=dim.DIMENSIONLESS,
+            si_factor=1e-09,
+            si_offset=0.0,
+        )
+    )
 
     ppb: Final = parts_per_billion
 
@@ -1018,44 +1184,52 @@ class DynamicFluidityUnits:
     __slots__ = ()
 
     # meter-seconds per kilogram
-    meter_seconds_per_kilogram: Final = UnitConstant(UnitDefinition(
-        name="meter_seconds_per_kilogram",
-        symbol="m s/kg",
-        dimension=dim.DYNAMIC_FLUIDITY,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    meter_seconds_per_kilogram: Final = UnitConstant(
+        UnitDefinition(
+            name="meter_seconds_per_kilogram",
+            symbol="m s/kg",
+            dimension=dim.DYNAMIC_FLUIDITY,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     m_s_kg: Final = meter_seconds_per_kilogram
 
     # rhe
-    rhe: Final = UnitConstant(UnitDefinition(
-        name="rhe",
-        symbol="rhe",
-        dimension=dim.DYNAMIC_FLUIDITY,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    rhe: Final = UnitConstant(
+        UnitDefinition(
+            name="rhe",
+            symbol="rhe",
+            dimension=dim.DYNAMIC_FLUIDITY,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     # square foot per pound second
-    square_foot_per_pound_second: Final = UnitConstant(UnitDefinition(
-        name="square_foot_per_pound_second",
-        symbol="$\\mathrm{ft}^{2}$ /(lb sec)",
-        dimension=dim.DYNAMIC_FLUIDITY,
-        si_factor=0.002086,
-        si_offset=0.0,
-    ))
+    square_foot_per_pound_second: Final = UnitConstant(
+        UnitDefinition(
+            name="square_foot_per_pound_second",
+            symbol="$\\mathrm{ft}^{2}$ /(lb sec)",
+            dimension=dim.DYNAMIC_FLUIDITY,
+            si_factor=0.002086,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_ft_2_lb_sec: Final = square_foot_per_pound_second
 
     # square meters per newton per second
-    square_meters_per_newton_per_second: Final = UnitConstant(UnitDefinition(
-        name="square_meters_per_newton_per_second",
-        symbol="$\\mathrm{m}^{2} /(\\mathrm{N} \\mathrm{s})$",
-        dimension=dim.DYNAMIC_FLUIDITY,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    square_meters_per_newton_per_second: Final = UnitConstant(
+        UnitDefinition(
+            name="square_meters_per_newton_per_second",
+            symbol="$\\mathrm{m}^{2} /(\\mathrm{N} \\mathrm{s})$",
+            dimension=dim.DYNAMIC_FLUIDITY,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_m_2_mathrm_N_mathrm_s: Final = square_meters_per_newton_per_second
 
@@ -1066,115 +1240,137 @@ class ElectricCapacitanceUnits:
     __slots__ = ()
 
     # "cm"
-    cm: Final = UnitConstant(UnitDefinition(
-        name="cm",
-        symbol="\"cm\"",
-        dimension=dim.ELECTRIC_CAPACITANCE,
-        si_factor=1.1111e-12,
-        si_offset=0.0,
-    ))
+    cm: Final = UnitConstant(
+        UnitDefinition(
+            name="cm",
+            symbol='"cm"',
+            dimension=dim.ELECTRIC_CAPACITANCE,
+            si_factor=1.1111e-12,
+            si_offset=0.0,
+        )
+    )
 
     # abfarad
-    abfarad: Final = UnitConstant(UnitDefinition(
-        name="abfarad",
-        symbol="emu cgs",
-        dimension=dim.ELECTRIC_CAPACITANCE,
-        si_factor=1000000000.0,
-        si_offset=0.0,
-    ))
+    abfarad: Final = UnitConstant(
+        UnitDefinition(
+            name="abfarad",
+            symbol="emu cgs",
+            dimension=dim.ELECTRIC_CAPACITANCE,
+            si_factor=1000000000.0,
+            si_offset=0.0,
+        )
+    )
 
     emu_cgs: Final = abfarad
 
     # farad
-    farad: Final = UnitConstant(UnitDefinition(
-        name="farad",
-        symbol="F",
-        dimension=dim.ELECTRIC_CAPACITANCE,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    farad: Final = UnitConstant(
+        UnitDefinition(
+            name="farad",
+            symbol="F",
+            dimension=dim.ELECTRIC_CAPACITANCE,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     F: Final = farad
 
     # farad (intl)
-    farad_intl: Final = UnitConstant(UnitDefinition(
-        name="farad_intl",
-        symbol="F (int)",
-        dimension=dim.ELECTRIC_CAPACITANCE,
-        si_factor=0.99951,
-        si_offset=0.0,
-    ))
+    farad_intl: Final = UnitConstant(
+        UnitDefinition(
+            name="farad_intl",
+            symbol="F (int)",
+            dimension=dim.ELECTRIC_CAPACITANCE,
+            si_factor=0.99951,
+            si_offset=0.0,
+        )
+    )
 
     F_int: Final = farad_intl
 
     # jar
-    jar: Final = UnitConstant(UnitDefinition(
-        name="jar",
-        symbol="jar",
-        dimension=dim.ELECTRIC_CAPACITANCE,
-        si_factor=1.1111e-09,
-        si_offset=0.0,
-    ))
+    jar: Final = UnitConstant(
+        UnitDefinition(
+            name="jar",
+            symbol="jar",
+            dimension=dim.ELECTRIC_CAPACITANCE,
+            si_factor=1.1111e-09,
+            si_offset=0.0,
+        )
+    )
 
     # puff
-    puff: Final = UnitConstant(UnitDefinition(
-        name="puff",
-        symbol="puff",
-        dimension=dim.ELECTRIC_CAPACITANCE,
-        si_factor=1e-12,
-        si_offset=0.0,
-    ))
+    puff: Final = UnitConstant(
+        UnitDefinition(
+            name="puff",
+            symbol="puff",
+            dimension=dim.ELECTRIC_CAPACITANCE,
+            si_factor=1e-12,
+            si_offset=0.0,
+        )
+    )
 
     # statfarad
-    statfarad: Final = UnitConstant(UnitDefinition(
-        name="statfarad",
-        symbol="esu cgs",
-        dimension=dim.ELECTRIC_CAPACITANCE,
-        si_factor=1.113e-12,
-        si_offset=0.0,
-    ))
+    statfarad: Final = UnitConstant(
+        UnitDefinition(
+            name="statfarad",
+            symbol="esu cgs",
+            dimension=dim.ELECTRIC_CAPACITANCE,
+            si_factor=1.113e-12,
+            si_offset=0.0,
+        )
+    )
 
     esu_cgs: Final = statfarad
 
     # millifarad
-    millifarad: Final = UnitConstant(UnitDefinition(
-        name="millifarad",
-        symbol="mF",
-        dimension=dim.ELECTRIC_CAPACITANCE,
-        si_factor=0.001,
-        si_offset=0.0,
-    ))
+    millifarad: Final = UnitConstant(
+        UnitDefinition(
+            name="millifarad",
+            symbol="mF",
+            dimension=dim.ELECTRIC_CAPACITANCE,
+            si_factor=0.001,
+            si_offset=0.0,
+        )
+    )
 
     mF: Final = millifarad
 
     # microfarad
-    microfarad: Final = UnitConstant(UnitDefinition(
-        name="microfarad",
-        symbol="μF",
-        dimension=dim.ELECTRIC_CAPACITANCE,
-        si_factor=1e-06,
-        si_offset=0.0,
-    ))
+    microfarad: Final = UnitConstant(
+        UnitDefinition(
+            name="microfarad",
+            symbol="μF",
+            dimension=dim.ELECTRIC_CAPACITANCE,
+            si_factor=1e-06,
+            si_offset=0.0,
+        )
+    )
 
     # nanofarad
-    nanofarad: Final = UnitConstant(UnitDefinition(
-        name="nanofarad",
-        symbol="nF",
-        dimension=dim.ELECTRIC_CAPACITANCE,
-        si_factor=1e-09,
-        si_offset=0.0,
-    ))
+    nanofarad: Final = UnitConstant(
+        UnitDefinition(
+            name="nanofarad",
+            symbol="nF",
+            dimension=dim.ELECTRIC_CAPACITANCE,
+            si_factor=1e-09,
+            si_offset=0.0,
+        )
+    )
 
     nF: Final = nanofarad
 
     # picofarad
-    picofarad: Final = UnitConstant(UnitDefinition(
-        name="picofarad",
-        symbol="pF",
-        dimension=dim.ELECTRIC_CAPACITANCE,
-        si_factor=1e-12,
-        si_offset=0.0,
-    ))
+    picofarad: Final = UnitConstant(
+        UnitDefinition(
+            name="picofarad",
+            symbol="pF",
+            dimension=dim.ELECTRIC_CAPACITANCE,
+            si_factor=1e-12,
+            si_offset=0.0,
+        )
+    )
 
     pF: Final = picofarad
 
@@ -1185,126 +1381,150 @@ class ElectricChargeUnits:
     __slots__ = ()
 
     # abcoulomb
-    abcoulomb: Final = UnitConstant(UnitDefinition(
-        name="abcoulomb",
-        symbol="emu cgs",
-        dimension=dim.ELECTRIC_CHARGE,
-        si_factor=0.000103643,
-        si_offset=0.0,
-    ))
+    abcoulomb: Final = UnitConstant(
+        UnitDefinition(
+            name="abcoulomb",
+            symbol="emu cgs",
+            dimension=dim.ELECTRIC_CHARGE,
+            si_factor=0.000103643,
+            si_offset=0.0,
+        )
+    )
 
     # ampere-hour
-    ampere_hour: Final = UnitConstant(UnitDefinition(
-        name="ampere_hour",
-        symbol="Ah",
-        dimension=dim.ELECTRIC_CHARGE,
-        si_factor=0.03731138,
-        si_offset=0.0,
-    ))
+    ampere_hour: Final = UnitConstant(
+        UnitDefinition(
+            name="ampere_hour",
+            symbol="Ah",
+            dimension=dim.ELECTRIC_CHARGE,
+            si_factor=0.03731138,
+            si_offset=0.0,
+        )
+    )
 
     Ah: Final = ampere_hour
 
     # coulomb
-    coulomb: Final = UnitConstant(UnitDefinition(
-        name="coulomb",
-        symbol="C",
-        dimension=dim.ELECTRIC_CHARGE,
-        si_factor=1.0364000000000001e-05,
-        si_offset=0.0,
-    ))
+    coulomb: Final = UnitConstant(
+        UnitDefinition(
+            name="coulomb",
+            symbol="C",
+            dimension=dim.ELECTRIC_CHARGE,
+            si_factor=1.0364000000000001e-05,
+            si_offset=0.0,
+        )
+    )
 
     C: Final = coulomb
 
     # faraday (C12)
-    faraday_c12: Final = UnitConstant(UnitDefinition(
-        name="faraday_c12",
-        symbol="F",
-        dimension=dim.ELECTRIC_CHARGE,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    faraday_c12: Final = UnitConstant(
+        UnitDefinition(
+            name="faraday_c12",
+            symbol="F",
+            dimension=dim.ELECTRIC_CHARGE,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     # franklin
-    franklin: Final = UnitConstant(UnitDefinition(
-        name="franklin",
-        symbol="Fr",
-        dimension=dim.ELECTRIC_CHARGE,
-        si_factor=3.45715e-15,
-        si_offset=0.0,
-    ))
+    franklin: Final = UnitConstant(
+        UnitDefinition(
+            name="franklin",
+            symbol="Fr",
+            dimension=dim.ELECTRIC_CHARGE,
+            si_factor=3.45715e-15,
+            si_offset=0.0,
+        )
+    )
 
     Fr: Final = franklin
 
     # statcoulomb
-    statcoulomb: Final = UnitConstant(UnitDefinition(
-        name="statcoulomb",
-        symbol="esu cgs",
-        dimension=dim.ELECTRIC_CHARGE,
-        si_factor=3.45715e-15,
-        si_offset=0.0,
-    ))
+    statcoulomb: Final = UnitConstant(
+        UnitDefinition(
+            name="statcoulomb",
+            symbol="esu cgs",
+            dimension=dim.ELECTRIC_CHARGE,
+            si_factor=3.45715e-15,
+            si_offset=0.0,
+        )
+    )
 
     # u.a. charge
-    u_a_charge: Final = UnitConstant(UnitDefinition(
-        name="u_a_charge",
-        symbol="u.a.",
-        dimension=dim.ELECTRIC_CHARGE,
-        si_factor=1.66054e-24,
-        si_offset=0.0,
-    ))
+    u_a_charge: Final = UnitConstant(
+        UnitDefinition(
+            name="u_a_charge",
+            symbol="u.a.",
+            dimension=dim.ELECTRIC_CHARGE,
+            si_factor=1.66054e-24,
+            si_offset=0.0,
+        )
+    )
 
     u_a: Final = u_a_charge
 
     # kilocoulomb
-    kilocoulomb: Final = UnitConstant(UnitDefinition(
-        name="kilocoulomb",
-        symbol="kC",
-        dimension=dim.ELECTRIC_CHARGE,
-        si_factor=0.010364000000000002,
-        si_offset=0.0,
-    ))
+    kilocoulomb: Final = UnitConstant(
+        UnitDefinition(
+            name="kilocoulomb",
+            symbol="kC",
+            dimension=dim.ELECTRIC_CHARGE,
+            si_factor=0.010364000000000002,
+            si_offset=0.0,
+        )
+    )
 
     kC: Final = kilocoulomb
 
     # millicoulomb
-    millicoulomb: Final = UnitConstant(UnitDefinition(
-        name="millicoulomb",
-        symbol="mC",
-        dimension=dim.ELECTRIC_CHARGE,
-        si_factor=1.0364000000000001e-08,
-        si_offset=0.0,
-    ))
+    millicoulomb: Final = UnitConstant(
+        UnitDefinition(
+            name="millicoulomb",
+            symbol="mC",
+            dimension=dim.ELECTRIC_CHARGE,
+            si_factor=1.0364000000000001e-08,
+            si_offset=0.0,
+        )
+    )
 
     mC: Final = millicoulomb
 
     # microcoulomb
-    microcoulomb: Final = UnitConstant(UnitDefinition(
-        name="microcoulomb",
-        symbol="μC",
-        dimension=dim.ELECTRIC_CHARGE,
-        si_factor=1.0364e-11,
-        si_offset=0.0,
-    ))
+    microcoulomb: Final = UnitConstant(
+        UnitDefinition(
+            name="microcoulomb",
+            symbol="μC",
+            dimension=dim.ELECTRIC_CHARGE,
+            si_factor=1.0364e-11,
+            si_offset=0.0,
+        )
+    )
 
     # nanocoulomb
-    nanocoulomb: Final = UnitConstant(UnitDefinition(
-        name="nanocoulomb",
-        symbol="nC",
-        dimension=dim.ELECTRIC_CHARGE,
-        si_factor=1.0364000000000002e-14,
-        si_offset=0.0,
-    ))
+    nanocoulomb: Final = UnitConstant(
+        UnitDefinition(
+            name="nanocoulomb",
+            symbol="nC",
+            dimension=dim.ELECTRIC_CHARGE,
+            si_factor=1.0364000000000002e-14,
+            si_offset=0.0,
+        )
+    )
 
     nC: Final = nanocoulomb
 
     # picocoulomb
-    picocoulomb: Final = UnitConstant(UnitDefinition(
-        name="picocoulomb",
-        symbol="pC",
-        dimension=dim.ELECTRIC_CHARGE,
-        si_factor=1.0364000000000001e-17,
-        si_offset=0.0,
-    ))
+    picocoulomb: Final = UnitConstant(
+        UnitDefinition(
+            name="picocoulomb",
+            symbol="pC",
+            dimension=dim.ELECTRIC_CHARGE,
+            si_factor=1.0364000000000001e-17,
+            si_offset=0.0,
+        )
+    )
 
     pC: Final = picocoulomb
 
@@ -1315,73 +1535,87 @@ class ElectricCurrentIntensityUnits:
     __slots__ = ()
 
     # abampere
-    abampere: Final = UnitConstant(UnitDefinition(
-        name="abampere",
-        symbol="emu cgs",
-        dimension=dim.ELECTRIC_CURRENT_INTENSITY,
-        si_factor=10.0,
-        si_offset=0.0,
-    ))
+    abampere: Final = UnitConstant(
+        UnitDefinition(
+            name="abampere",
+            symbol="emu cgs",
+            dimension=dim.ELECTRIC_CURRENT_INTENSITY,
+            si_factor=10.0,
+            si_offset=0.0,
+        )
+    )
 
     # ampere (intl mean)
-    ampere_intl_mean: Final = UnitConstant(UnitDefinition(
-        name="ampere_intl_mean",
-        symbol="A (int mean)",
-        dimension=dim.ELECTRIC_CURRENT_INTENSITY,
-        si_factor=0.99985,
-        si_offset=0.0,
-    ))
+    ampere_intl_mean: Final = UnitConstant(
+        UnitDefinition(
+            name="ampere_intl_mean",
+            symbol="A (int mean)",
+            dimension=dim.ELECTRIC_CURRENT_INTENSITY,
+            si_factor=0.99985,
+            si_offset=0.0,
+        )
+    )
 
     A_int_mean: Final = ampere_intl_mean
 
     # ampere (intl US)
-    ampere_intl_us: Final = UnitConstant(UnitDefinition(
-        name="ampere_intl_us",
-        symbol="A (int US)",
-        dimension=dim.ELECTRIC_CURRENT_INTENSITY,
-        si_factor=0.999835,
-        si_offset=0.0,
-    ))
+    ampere_intl_us: Final = UnitConstant(
+        UnitDefinition(
+            name="ampere_intl_us",
+            symbol="A (int US)",
+            dimension=dim.ELECTRIC_CURRENT_INTENSITY,
+            si_factor=0.999835,
+            si_offset=0.0,
+        )
+    )
 
     A_int_US: Final = ampere_intl_us
 
     # ampere or amp
-    ampere_or_amp: Final = UnitConstant(UnitDefinition(
-        name="ampere_or_amp",
-        symbol="A",
-        dimension=dim.ELECTRIC_CURRENT_INTENSITY,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    ampere_or_amp: Final = UnitConstant(
+        UnitDefinition(
+            name="ampere_or_amp",
+            symbol="A",
+            dimension=dim.ELECTRIC_CURRENT_INTENSITY,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     A: Final = ampere_or_amp
 
     # biot
-    biot: Final = UnitConstant(UnitDefinition(
-        name="biot",
-        symbol="biot",
-        dimension=dim.ELECTRIC_CURRENT_INTENSITY,
-        si_factor=10.0,
-        si_offset=0.0,
-    ))
+    biot: Final = UnitConstant(
+        UnitDefinition(
+            name="biot",
+            symbol="biot",
+            dimension=dim.ELECTRIC_CURRENT_INTENSITY,
+            si_factor=10.0,
+            si_offset=0.0,
+        )
+    )
 
     # statampere
-    statampere: Final = UnitConstant(UnitDefinition(
-        name="statampere",
-        symbol="esu cgs",
-        dimension=dim.ELECTRIC_CURRENT_INTENSITY,
-        si_factor=3.33564e-10,
-        si_offset=0.0,
-    ))
+    statampere: Final = UnitConstant(
+        UnitDefinition(
+            name="statampere",
+            symbol="esu cgs",
+            dimension=dim.ELECTRIC_CURRENT_INTENSITY,
+            si_factor=3.33564e-10,
+            si_offset=0.0,
+        )
+    )
 
     # u.a. or current
-    u_a_or_current: Final = UnitConstant(UnitDefinition(
-        name="u_a_or_current",
-        symbol="u.a.",
-        dimension=dim.ELECTRIC_CURRENT_INTENSITY,
-        si_factor=0.00662362,
-        si_offset=0.0,
-    ))
+    u_a_or_current: Final = UnitConstant(
+        UnitDefinition(
+            name="u_a_or_current",
+            symbol="u.a.",
+            dimension=dim.ELECTRIC_CURRENT_INTENSITY,
+            si_factor=0.00662362,
+            si_offset=0.0,
+        )
+    )
 
 
 class ElectricDipoleMomentUnits:
@@ -1390,46 +1624,54 @@ class ElectricDipoleMomentUnits:
     __slots__ = ()
 
     # ampere meter second
-    ampere_meter_second: Final = UnitConstant(UnitDefinition(
-        name="ampere_meter_second",
-        symbol="A m s",
-        dimension=dim.ELECTRIC_DIPOLE_MOMENT,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    ampere_meter_second: Final = UnitConstant(
+        UnitDefinition(
+            name="ampere_meter_second",
+            symbol="A m s",
+            dimension=dim.ELECTRIC_DIPOLE_MOMENT,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     A_m_s: Final = ampere_meter_second
 
     # coulomb meter
-    coulomb_meter: Final = UnitConstant(UnitDefinition(
-        name="coulomb_meter",
-        symbol="C m",
-        dimension=dim.ELECTRIC_DIPOLE_MOMENT,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    coulomb_meter: Final = UnitConstant(
+        UnitDefinition(
+            name="coulomb_meter",
+            symbol="C m",
+            dimension=dim.ELECTRIC_DIPOLE_MOMENT,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     C_m: Final = coulomb_meter
 
     # debye
-    debye: Final = UnitConstant(UnitDefinition(
-        name="debye",
-        symbol="D",
-        dimension=dim.ELECTRIC_DIPOLE_MOMENT,
-        si_factor=3.3356e-30,
-        si_offset=0.0,
-    ))
+    debye: Final = UnitConstant(
+        UnitDefinition(
+            name="debye",
+            symbol="D",
+            dimension=dim.ELECTRIC_DIPOLE_MOMENT,
+            si_factor=3.3356e-30,
+            si_offset=0.0,
+        )
+    )
 
     D: Final = debye
 
     # electron meter
-    electron_meter: Final = UnitConstant(UnitDefinition(
-        name="electron_meter",
-        symbol="e m",
-        dimension=dim.ELECTRIC_DIPOLE_MOMENT,
-        si_factor=1.6022e-19,
-        si_offset=0.0,
-    ))
+    electron_meter: Final = UnitConstant(
+        UnitDefinition(
+            name="electron_meter",
+            symbol="e m",
+            dimension=dim.ELECTRIC_DIPOLE_MOMENT,
+            si_factor=1.6022e-19,
+            si_offset=0.0,
+        )
+    )
 
     e_m: Final = electron_meter
 
@@ -1440,24 +1682,28 @@ class ElectricFieldStrengthUnits:
     __slots__ = ()
 
     # volt per centimeter
-    volt_per_centimeter: Final = UnitConstant(UnitDefinition(
-        name="volt_per_centimeter",
-        symbol="V/cm",
-        dimension=dim.ELECTRIC_FIELD_STRENGTH,
-        si_factor=100.0,
-        si_offset=0.0,
-    ))
+    volt_per_centimeter: Final = UnitConstant(
+        UnitDefinition(
+            name="volt_per_centimeter",
+            symbol="V/cm",
+            dimension=dim.ELECTRIC_FIELD_STRENGTH,
+            si_factor=100.0,
+            si_offset=0.0,
+        )
+    )
 
     V_cm: Final = volt_per_centimeter
 
     # volt per meter
-    volt_per_meter: Final = UnitConstant(UnitDefinition(
-        name="volt_per_meter",
-        symbol="V/m",
-        dimension=dim.ELECTRIC_FIELD_STRENGTH,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    volt_per_meter: Final = UnitConstant(
+        UnitDefinition(
+            name="volt_per_meter",
+            symbol="V/m",
+            dimension=dim.ELECTRIC_FIELD_STRENGTH,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     V_m: Final = volt_per_meter
 
@@ -1468,102 +1714,122 @@ class ElectricInductanceUnits:
     __slots__ = ()
 
     # abhenry
-    abhenry: Final = UnitConstant(UnitDefinition(
-        name="abhenry",
-        symbol="emu cgs",
-        dimension=dim.ELECTRIC_INDUCTANCE,
-        si_factor=1e-09,
-        si_offset=0.0,
-    ))
+    abhenry: Final = UnitConstant(
+        UnitDefinition(
+            name="abhenry",
+            symbol="emu cgs",
+            dimension=dim.ELECTRIC_INDUCTANCE,
+            si_factor=1e-09,
+            si_offset=0.0,
+        )
+    )
 
     # cm
-    cm: Final = UnitConstant(UnitDefinition(
-        name="cm",
-        symbol="cm",
-        dimension=dim.ELECTRIC_INDUCTANCE,
-        si_factor=1e-09,
-        si_offset=0.0,
-    ))
+    cm: Final = UnitConstant(
+        UnitDefinition(
+            name="cm",
+            symbol="cm",
+            dimension=dim.ELECTRIC_INDUCTANCE,
+            si_factor=1e-09,
+            si_offset=0.0,
+        )
+    )
 
     # henry
-    henry: Final = UnitConstant(UnitDefinition(
-        name="henry",
-        symbol="H",
-        dimension=dim.ELECTRIC_INDUCTANCE,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    henry: Final = UnitConstant(
+        UnitDefinition(
+            name="henry",
+            symbol="H",
+            dimension=dim.ELECTRIC_INDUCTANCE,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     H: Final = henry
 
     # henry (intl mean)
-    henry_intl_mean: Final = UnitConstant(UnitDefinition(
-        name="henry_intl_mean",
-        symbol="H (int mean)",
-        dimension=dim.ELECTRIC_INDUCTANCE,
-        si_factor=1.00049,
-        si_offset=0.0,
-    ))
+    henry_intl_mean: Final = UnitConstant(
+        UnitDefinition(
+            name="henry_intl_mean",
+            symbol="H (int mean)",
+            dimension=dim.ELECTRIC_INDUCTANCE,
+            si_factor=1.00049,
+            si_offset=0.0,
+        )
+    )
 
     H_int_mean: Final = henry_intl_mean
 
     # henry (intl US)
-    henry_intl_us: Final = UnitConstant(UnitDefinition(
-        name="henry_intl_us",
-        symbol="H (int US)",
-        dimension=dim.ELECTRIC_INDUCTANCE,
-        si_factor=1.000495,
-        si_offset=0.0,
-    ))
+    henry_intl_us: Final = UnitConstant(
+        UnitDefinition(
+            name="henry_intl_us",
+            symbol="H (int US)",
+            dimension=dim.ELECTRIC_INDUCTANCE,
+            si_factor=1.000495,
+            si_offset=0.0,
+        )
+    )
 
     H_int_US: Final = henry_intl_us
 
     # mic
-    mic: Final = UnitConstant(UnitDefinition(
-        name="mic",
-        symbol="mic",
-        dimension=dim.ELECTRIC_INDUCTANCE,
-        si_factor=1e-06,
-        si_offset=0.0,
-    ))
+    mic: Final = UnitConstant(
+        UnitDefinition(
+            name="mic",
+            symbol="mic",
+            dimension=dim.ELECTRIC_INDUCTANCE,
+            si_factor=1e-06,
+            si_offset=0.0,
+        )
+    )
 
     # stathenry
-    stathenry: Final = UnitConstant(UnitDefinition(
-        name="stathenry",
-        symbol="esu cgs",
-        dimension=dim.ELECTRIC_INDUCTANCE,
-        si_factor=898760000000.0,
-        si_offset=0.0,
-    ))
+    stathenry: Final = UnitConstant(
+        UnitDefinition(
+            name="stathenry",
+            symbol="esu cgs",
+            dimension=dim.ELECTRIC_INDUCTANCE,
+            si_factor=898760000000.0,
+            si_offset=0.0,
+        )
+    )
 
     # millihenry
-    millihenry: Final = UnitConstant(UnitDefinition(
-        name="millihenry",
-        symbol="mH",
-        dimension=dim.ELECTRIC_INDUCTANCE,
-        si_factor=0.001,
-        si_offset=0.0,
-    ))
+    millihenry: Final = UnitConstant(
+        UnitDefinition(
+            name="millihenry",
+            symbol="mH",
+            dimension=dim.ELECTRIC_INDUCTANCE,
+            si_factor=0.001,
+            si_offset=0.0,
+        )
+    )
 
     mH: Final = millihenry
 
     # microhenry
-    microhenry: Final = UnitConstant(UnitDefinition(
-        name="microhenry",
-        symbol="μH",
-        dimension=dim.ELECTRIC_INDUCTANCE,
-        si_factor=1e-06,
-        si_offset=0.0,
-    ))
+    microhenry: Final = UnitConstant(
+        UnitDefinition(
+            name="microhenry",
+            symbol="μH",
+            dimension=dim.ELECTRIC_INDUCTANCE,
+            si_factor=1e-06,
+            si_offset=0.0,
+        )
+    )
 
     # nanohenry
-    nanohenry: Final = UnitConstant(UnitDefinition(
-        name="nanohenry",
-        symbol="nH",
-        dimension=dim.ELECTRIC_INDUCTANCE,
-        si_factor=1e-09,
-        si_offset=0.0,
-    ))
+    nanohenry: Final = UnitConstant(
+        UnitDefinition(
+            name="nanohenry",
+            symbol="nH",
+            dimension=dim.ELECTRIC_INDUCTANCE,
+            si_factor=1e-09,
+            si_offset=0.0,
+        )
+    )
 
     nH: Final = nanohenry
 
@@ -1574,115 +1840,137 @@ class ElectricPotentialUnits:
     __slots__ = ()
 
     # abvolt
-    abvolt: Final = UnitConstant(UnitDefinition(
-        name="abvolt",
-        symbol="emu cgs",
-        dimension=dim.ELECTRIC_POTENTIAL,
-        si_factor=1e-08,
-        si_offset=0.0,
-    ))
+    abvolt: Final = UnitConstant(
+        UnitDefinition(
+            name="abvolt",
+            symbol="emu cgs",
+            dimension=dim.ELECTRIC_POTENTIAL,
+            si_factor=1e-08,
+            si_offset=0.0,
+        )
+    )
 
     # statvolt
-    statvolt: Final = UnitConstant(UnitDefinition(
-        name="statvolt",
-        symbol="esu cgs",
-        dimension=dim.ELECTRIC_POTENTIAL,
-        si_factor=299.792,
-        si_offset=0.0,
-    ))
+    statvolt: Final = UnitConstant(
+        UnitDefinition(
+            name="statvolt",
+            symbol="esu cgs",
+            dimension=dim.ELECTRIC_POTENTIAL,
+            si_factor=299.792,
+            si_offset=0.0,
+        )
+    )
 
     # u.a. potential
-    u_a_potential: Final = UnitConstant(UnitDefinition(
-        name="u_a_potential",
-        symbol="u.a.",
-        dimension=dim.ELECTRIC_POTENTIAL,
-        si_factor=27.2114,
-        si_offset=0.0,
-    ))
+    u_a_potential: Final = UnitConstant(
+        UnitDefinition(
+            name="u_a_potential",
+            symbol="u.a.",
+            dimension=dim.ELECTRIC_POTENTIAL,
+            si_factor=27.2114,
+            si_offset=0.0,
+        )
+    )
 
     # volt
-    volt: Final = UnitConstant(UnitDefinition(
-        name="volt",
-        symbol="V",
-        dimension=dim.ELECTRIC_POTENTIAL,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    volt: Final = UnitConstant(
+        UnitDefinition(
+            name="volt",
+            symbol="V",
+            dimension=dim.ELECTRIC_POTENTIAL,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     V: Final = volt
 
     # volt (intl mean)
-    volt_intl_mean: Final = UnitConstant(UnitDefinition(
-        name="volt_intl_mean",
-        symbol="V (int mean)",
-        dimension=dim.ELECTRIC_POTENTIAL,
-        si_factor=1.00034,
-        si_offset=0.0,
-    ))
+    volt_intl_mean: Final = UnitConstant(
+        UnitDefinition(
+            name="volt_intl_mean",
+            symbol="V (int mean)",
+            dimension=dim.ELECTRIC_POTENTIAL,
+            si_factor=1.00034,
+            si_offset=0.0,
+        )
+    )
 
     V_int_mean: Final = volt_intl_mean
 
     # volt (US)
-    volt_us: Final = UnitConstant(UnitDefinition(
-        name="volt_us",
-        symbol="V (int US)",
-        dimension=dim.ELECTRIC_POTENTIAL,
-        si_factor=1.00033,
-        si_offset=0.0,
-    ))
+    volt_us: Final = UnitConstant(
+        UnitDefinition(
+            name="volt_us",
+            symbol="V (int US)",
+            dimension=dim.ELECTRIC_POTENTIAL,
+            si_factor=1.00033,
+            si_offset=0.0,
+        )
+    )
 
     V_int_US: Final = volt_us
 
     # kilovolt
-    kilovolt: Final = UnitConstant(UnitDefinition(
-        name="kilovolt",
-        symbol="kV",
-        dimension=dim.ELECTRIC_POTENTIAL,
-        si_factor=1000.0,
-        si_offset=0.0,
-    ))
+    kilovolt: Final = UnitConstant(
+        UnitDefinition(
+            name="kilovolt",
+            symbol="kV",
+            dimension=dim.ELECTRIC_POTENTIAL,
+            si_factor=1000.0,
+            si_offset=0.0,
+        )
+    )
 
     kV: Final = kilovolt
 
     # millivolt
-    millivolt: Final = UnitConstant(UnitDefinition(
-        name="millivolt",
-        symbol="mV",
-        dimension=dim.ELECTRIC_POTENTIAL,
-        si_factor=0.001,
-        si_offset=0.0,
-    ))
+    millivolt: Final = UnitConstant(
+        UnitDefinition(
+            name="millivolt",
+            symbol="mV",
+            dimension=dim.ELECTRIC_POTENTIAL,
+            si_factor=0.001,
+            si_offset=0.0,
+        )
+    )
 
     mV: Final = millivolt
 
     # microvolt
-    microvolt: Final = UnitConstant(UnitDefinition(
-        name="microvolt",
-        symbol="μV",
-        dimension=dim.ELECTRIC_POTENTIAL,
-        si_factor=1e-06,
-        si_offset=0.0,
-    ))
+    microvolt: Final = UnitConstant(
+        UnitDefinition(
+            name="microvolt",
+            symbol="μV",
+            dimension=dim.ELECTRIC_POTENTIAL,
+            si_factor=1e-06,
+            si_offset=0.0,
+        )
+    )
 
     # nanovolt
-    nanovolt: Final = UnitConstant(UnitDefinition(
-        name="nanovolt",
-        symbol="nV",
-        dimension=dim.ELECTRIC_POTENTIAL,
-        si_factor=1e-09,
-        si_offset=0.0,
-    ))
+    nanovolt: Final = UnitConstant(
+        UnitDefinition(
+            name="nanovolt",
+            symbol="nV",
+            dimension=dim.ELECTRIC_POTENTIAL,
+            si_factor=1e-09,
+            si_offset=0.0,
+        )
+    )
 
     nV: Final = nanovolt
 
     # picovolt
-    picovolt: Final = UnitConstant(UnitDefinition(
-        name="picovolt",
-        symbol="pV",
-        dimension=dim.ELECTRIC_POTENTIAL,
-        si_factor=1e-12,
-        si_offset=0.0,
-    ))
+    picovolt: Final = UnitConstant(
+        UnitDefinition(
+            name="picovolt",
+            symbol="pV",
+            dimension=dim.ELECTRIC_POTENTIAL,
+            si_factor=1e-12,
+            si_offset=0.0,
+        )
+    )
 
     pV: Final = picovolt
 
@@ -1693,137 +1981,163 @@ class ElectricResistanceUnits:
     __slots__ = ()
 
     # abohm
-    abohm: Final = UnitConstant(UnitDefinition(
-        name="abohm",
-        symbol="emu cgs",
-        dimension=dim.ELECTRIC_RESISTANCE,
-        si_factor=1e-09,
-        si_offset=0.0,
-    ))
+    abohm: Final = UnitConstant(
+        UnitDefinition(
+            name="abohm",
+            symbol="emu cgs",
+            dimension=dim.ELECTRIC_RESISTANCE,
+            si_factor=1e-09,
+            si_offset=0.0,
+        )
+    )
 
     # jacobi
-    jacobi: Final = UnitConstant(UnitDefinition(
-        name="jacobi",
-        symbol="-",
-        dimension=dim.ELECTRIC_RESISTANCE,
-        si_factor=0.64,
-        si_offset=0.0,
-    ))
+    jacobi: Final = UnitConstant(
+        UnitDefinition(
+            name="jacobi",
+            symbol="-",
+            dimension=dim.ELECTRIC_RESISTANCE,
+            si_factor=0.64,
+            si_offset=0.0,
+        )
+    )
 
     # lenz
-    lenz: Final = UnitConstant(UnitDefinition(
-        name="lenz",
-        symbol="Metric",
-        dimension=dim.ELECTRIC_RESISTANCE,
-        si_factor=80000.0,
-        si_offset=0.0,
-    ))
+    lenz: Final = UnitConstant(
+        UnitDefinition(
+            name="lenz",
+            symbol="Metric",
+            dimension=dim.ELECTRIC_RESISTANCE,
+            si_factor=80000.0,
+            si_offset=0.0,
+        )
+    )
 
     Metric: Final = lenz
 
     # ohm
-    ohm: Final = UnitConstant(UnitDefinition(
-        name="ohm",
-        symbol="$\\Omega$",
-        dimension=dim.ELECTRIC_RESISTANCE,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    ohm: Final = UnitConstant(
+        UnitDefinition(
+            name="ohm",
+            symbol="$\\Omega$",
+            dimension=dim.ELECTRIC_RESISTANCE,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     Omega: Final = ohm
 
     # ohm (intl mean)
-    ohm_intl_mean: Final = UnitConstant(UnitDefinition(
-        name="ohm_intl_mean",
-        symbol="$\\Omega$ (int mean)",
-        dimension=dim.ELECTRIC_RESISTANCE,
-        si_factor=1.00049,
-        si_offset=0.0,
-    ))
+    ohm_intl_mean: Final = UnitConstant(
+        UnitDefinition(
+            name="ohm_intl_mean",
+            symbol="$\\Omega$ (int mean)",
+            dimension=dim.ELECTRIC_RESISTANCE,
+            si_factor=1.00049,
+            si_offset=0.0,
+        )
+    )
 
     Omega_int_mean: Final = ohm_intl_mean
 
     # ohm (intl US)
-    ohm_intl_us: Final = UnitConstant(UnitDefinition(
-        name="ohm_intl_us",
-        symbol="$\\Omega$ (int US)",
-        dimension=dim.ELECTRIC_RESISTANCE,
-        si_factor=1.000495,
-        si_offset=0.0,
-    ))
+    ohm_intl_us: Final = UnitConstant(
+        UnitDefinition(
+            name="ohm_intl_us",
+            symbol="$\\Omega$ (int US)",
+            dimension=dim.ELECTRIC_RESISTANCE,
+            si_factor=1.000495,
+            si_offset=0.0,
+        )
+    )
 
     Omega_int_US: Final = ohm_intl_us
 
     # ohm (legal)
-    ohm_legal: Final = UnitConstant(UnitDefinition(
-        name="ohm_legal",
-        symbol="$\\Omega$ (legal)",
-        dimension=dim.ELECTRIC_RESISTANCE,
-        si_factor=0.9972,
-        si_offset=0.0,
-    ))
+    ohm_legal: Final = UnitConstant(
+        UnitDefinition(
+            name="ohm_legal",
+            symbol="$\\Omega$ (legal)",
+            dimension=dim.ELECTRIC_RESISTANCE,
+            si_factor=0.9972,
+            si_offset=0.0,
+        )
+    )
 
     Omega_legal: Final = ohm_legal
 
     # preece
-    preece: Final = UnitConstant(UnitDefinition(
-        name="preece",
-        symbol="preece",
-        dimension=dim.ELECTRIC_RESISTANCE,
-        si_factor=1000000.0,
-        si_offset=0.0,
-    ))
+    preece: Final = UnitConstant(
+        UnitDefinition(
+            name="preece",
+            symbol="preece",
+            dimension=dim.ELECTRIC_RESISTANCE,
+            si_factor=1000000.0,
+            si_offset=0.0,
+        )
+    )
 
     # statohm
-    statohm: Final = UnitConstant(UnitDefinition(
-        name="statohm",
-        symbol="csu cgs",
-        dimension=dim.ELECTRIC_RESISTANCE,
-        si_factor=8.987552,
-        si_offset=0.0,
-    ))
+    statohm: Final = UnitConstant(
+        UnitDefinition(
+            name="statohm",
+            symbol="csu cgs",
+            dimension=dim.ELECTRIC_RESISTANCE,
+            si_factor=8.987552,
+            si_offset=0.0,
+        )
+    )
 
     csu_cgs: Final = statohm
 
     # wheatstone
-    wheatstone: Final = UnitConstant(UnitDefinition(
-        name="wheatstone",
-        symbol="-",
-        dimension=dim.ELECTRIC_RESISTANCE,
-        si_factor=0.0025,
-        si_offset=0.0,
-    ))
+    wheatstone: Final = UnitConstant(
+        UnitDefinition(
+            name="wheatstone",
+            symbol="-",
+            dimension=dim.ELECTRIC_RESISTANCE,
+            si_factor=0.0025,
+            si_offset=0.0,
+        )
+    )
 
     # kiloohm
-    kiloohm: Final = UnitConstant(UnitDefinition(
-        name="kiloohm",
-        symbol="k$\\Omega$",
-        dimension=dim.ELECTRIC_RESISTANCE,
-        si_factor=1000.0,
-        si_offset=0.0,
-    ))
+    kiloohm: Final = UnitConstant(
+        UnitDefinition(
+            name="kiloohm",
+            symbol="k$\\Omega$",
+            dimension=dim.ELECTRIC_RESISTANCE,
+            si_factor=1000.0,
+            si_offset=0.0,
+        )
+    )
 
     k_Omega: Final = kiloohm
 
     # megaohm
-    megaohm: Final = UnitConstant(UnitDefinition(
-        name="megaohm",
-        symbol="M$\\Omega$",
-        dimension=dim.ELECTRIC_RESISTANCE,
-        si_factor=1000000.0,
-        si_offset=0.0,
-    ))
+    megaohm: Final = UnitConstant(
+        UnitDefinition(
+            name="megaohm",
+            symbol="M$\\Omega$",
+            dimension=dim.ELECTRIC_RESISTANCE,
+            si_factor=1000000.0,
+            si_offset=0.0,
+        )
+    )
 
     M_Omega: Final = megaohm
 
     # milliohm
-    milliohm: Final = UnitConstant(UnitDefinition(
-        name="milliohm",
-        symbol="m$\\Omega$",
-        dimension=dim.ELECTRIC_RESISTANCE,
-        si_factor=0.001,
-        si_offset=0.0,
-    ))
+    milliohm: Final = UnitConstant(
+        UnitDefinition(
+            name="milliohm",
+            symbol="m$\\Omega$",
+            dimension=dim.ELECTRIC_RESISTANCE,
+            si_factor=0.001,
+            si_offset=0.0,
+        )
+    )
 
     m_Omega: Final = milliohm
 
@@ -1834,66 +2148,78 @@ class ElectricalConductanceUnits:
     __slots__ = ()
 
     # emu cgs
-    emu_cgs: Final = UnitConstant(UnitDefinition(
-        name="emu_cgs",
-        symbol="abmho",
-        dimension=dim.ELECTRICAL_CONDUCTANCE,
-        si_factor=1000000000.0,
-        si_offset=0.0,
-    ))
+    emu_cgs: Final = UnitConstant(
+        UnitDefinition(
+            name="emu_cgs",
+            symbol="abmho",
+            dimension=dim.ELECTRICAL_CONDUCTANCE,
+            si_factor=1000000000.0,
+            si_offset=0.0,
+        )
+    )
 
     abmho: Final = emu_cgs
 
     # esu cgs
-    esu_cgs: Final = UnitConstant(UnitDefinition(
-        name="esu_cgs",
-        symbol="statmho",
-        dimension=dim.ELECTRICAL_CONDUCTANCE,
-        si_factor=1.1127e-12,
-        si_offset=0.0,
-    ))
+    esu_cgs: Final = UnitConstant(
+        UnitDefinition(
+            name="esu_cgs",
+            symbol="statmho",
+            dimension=dim.ELECTRICAL_CONDUCTANCE,
+            si_factor=1.1127e-12,
+            si_offset=0.0,
+        )
+    )
 
     statmho: Final = esu_cgs
 
     # mho
-    mho: Final = UnitConstant(UnitDefinition(
-        name="mho",
-        symbol="mho",
-        dimension=dim.ELECTRICAL_CONDUCTANCE,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    mho: Final = UnitConstant(
+        UnitDefinition(
+            name="mho",
+            symbol="mho",
+            dimension=dim.ELECTRICAL_CONDUCTANCE,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     # microsiemens
-    microsiemens: Final = UnitConstant(UnitDefinition(
-        name="microsiemens",
-        symbol="$\\mu \\mathrm{S}$",
-        dimension=dim.ELECTRICAL_CONDUCTANCE,
-        si_factor=1e-06,
-        si_offset=0.0,
-    ))
+    microsiemens: Final = UnitConstant(
+        UnitDefinition(
+            name="microsiemens",
+            symbol="$\\mu \\mathrm{S}$",
+            dimension=dim.ELECTRICAL_CONDUCTANCE,
+            si_factor=1e-06,
+            si_offset=0.0,
+        )
+    )
 
     mu_mathrm_S: Final = microsiemens
 
     # siemens
-    siemens: Final = UnitConstant(UnitDefinition(
-        name="siemens",
-        symbol="S",
-        dimension=dim.ELECTRICAL_CONDUCTANCE,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    siemens: Final = UnitConstant(
+        UnitDefinition(
+            name="siemens",
+            symbol="S",
+            dimension=dim.ELECTRICAL_CONDUCTANCE,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     S: Final = siemens
 
     # millisiemens
-    millisiemens: Final = UnitConstant(UnitDefinition(
-        name="millisiemens",
-        symbol="mS",
-        dimension=dim.ELECTRICAL_CONDUCTANCE,
-        si_factor=0.001,
-        si_offset=0.0,
-    ))
+    millisiemens: Final = UnitConstant(
+        UnitDefinition(
+            name="millisiemens",
+            symbol="mS",
+            dimension=dim.ELECTRICAL_CONDUCTANCE,
+            si_factor=0.001,
+            si_offset=0.0,
+        )
+    )
 
     mS: Final = millisiemens
 
@@ -1904,13 +2230,15 @@ class ElectricalPermittivityUnits:
     __slots__ = ()
 
     # farad per meter
-    farad_per_meter: Final = UnitConstant(UnitDefinition(
-        name="farad_per_meter",
-        symbol="F/m",
-        dimension=dim.ELECTRICAL_PERMITTIVITY,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    farad_per_meter: Final = UnitConstant(
+        UnitDefinition(
+            name="farad_per_meter",
+            symbol="F/m",
+            dimension=dim.ELECTRICAL_PERMITTIVITY,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     F_m: Final = farad_per_meter
 
@@ -1921,57 +2249,67 @@ class ElectricalResistivityUnits:
     __slots__ = ()
 
     # circular mil-ohm per foot
-    circular_mil_ohm_per_foot: Final = UnitConstant(UnitDefinition(
-        name="circular_mil_ohm_per_foot",
-        symbol="circmil $\\Omega / \\mathrm{ft}$",
-        dimension=dim.ELECTRICAL_RESISTIVITY,
-        si_factor=1.6624000000000002e-09,
-        si_offset=0.0,
-    ))
+    circular_mil_ohm_per_foot: Final = UnitConstant(
+        UnitDefinition(
+            name="circular_mil_ohm_per_foot",
+            symbol="circmil $\\Omega / \\mathrm{ft}$",
+            dimension=dim.ELECTRICAL_RESISTIVITY,
+            si_factor=1.6624000000000002e-09,
+            si_offset=0.0,
+        )
+    )
 
     circmil_Omega_mathrm_ft: Final = circular_mil_ohm_per_foot
 
     # emu cgs
-    emu_cgs: Final = UnitConstant(UnitDefinition(
-        name="emu_cgs",
-        symbol="abohm cm",
-        dimension=dim.ELECTRICAL_RESISTIVITY,
-        si_factor=1e-11,
-        si_offset=0.0,
-    ))
+    emu_cgs: Final = UnitConstant(
+        UnitDefinition(
+            name="emu_cgs",
+            symbol="abohm cm",
+            dimension=dim.ELECTRICAL_RESISTIVITY,
+            si_factor=1e-11,
+            si_offset=0.0,
+        )
+    )
 
     abohm_cm: Final = emu_cgs
 
     # microhm-inch
-    microhm_inch: Final = UnitConstant(UnitDefinition(
-        name="microhm_inch",
-        symbol="$\\mu \\Omega$ in",
-        dimension=dim.ELECTRICAL_RESISTIVITY,
-        si_factor=2.5400000000000002e-08,
-        si_offset=0.0,
-    ))
+    microhm_inch: Final = UnitConstant(
+        UnitDefinition(
+            name="microhm_inch",
+            symbol="$\\mu \\Omega$ in",
+            dimension=dim.ELECTRICAL_RESISTIVITY,
+            si_factor=2.5400000000000002e-08,
+            si_offset=0.0,
+        )
+    )
 
     mu_Omega_in: Final = microhm_inch
 
     # ohm-centimeter
-    ohm_centimeter: Final = UnitConstant(UnitDefinition(
-        name="ohm_centimeter",
-        symbol="$\\boldsymbol{\\Omega} \\mathbf{c m}$",
-        dimension=dim.ELECTRICAL_RESISTIVITY,
-        si_factor=0.01,
-        si_offset=0.0,
-    ))
+    ohm_centimeter: Final = UnitConstant(
+        UnitDefinition(
+            name="ohm_centimeter",
+            symbol="$\\boldsymbol{\\Omega} \\mathbf{c m}$",
+            dimension=dim.ELECTRICAL_RESISTIVITY,
+            si_factor=0.01,
+            si_offset=0.0,
+        )
+    )
 
     boldsymbol_Omega_mathbf_c_m: Final = ohm_centimeter
 
     # ohm-meter
-    ohm_meter: Final = UnitConstant(UnitDefinition(
-        name="ohm_meter",
-        symbol="$\\Omega \\mathrm{m}$",
-        dimension=dim.ELECTRICAL_RESISTIVITY,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    ohm_meter: Final = UnitConstant(
+        UnitDefinition(
+            name="ohm_meter",
+            symbol="$\\Omega \\mathrm{m}$",
+            dimension=dim.ELECTRICAL_RESISTIVITY,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     Omega_mathrm_m: Final = ohm_meter
 
@@ -1982,69 +2320,81 @@ class EnergyFluxUnits:
     __slots__ = ()
 
     # Btu per square foot per hour
-    btu_per_square_foot_per_hour: Final = UnitConstant(UnitDefinition(
-        name="btu_per_square_foot_per_hour",
-        symbol="$\\mathrm{Btu} / \\mathrm{ft}^{2} / \\mathrm{hr}$",
-        dimension=dim.ENERGY_FLUX,
-        si_factor=3.1546,
-        si_offset=0.0,
-    ))
+    btu_per_square_foot_per_hour: Final = UnitConstant(
+        UnitDefinition(
+            name="btu_per_square_foot_per_hour",
+            symbol="$\\mathrm{Btu} / \\mathrm{ft}^{2} / \\mathrm{hr}$",
+            dimension=dim.ENERGY_FLUX,
+            si_factor=3.1546,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_Btu_mathrm_ft_2_mathrm_hr: Final = btu_per_square_foot_per_hour
 
     # calorie per square centimeter per second
-    calorie_per_square_centimeter_per_second: Final = UnitConstant(UnitDefinition(
-        name="calorie_per_square_centimeter_per_second",
-        symbol="$\\mathrm{cal} / \\mathrm{cm}^{2} / \\mathrm{s}$ or $\\mathrm{cal} /$ ( $\\mathrm{cm}^{2} \\mathrm{~s}$ )",
-        dimension=dim.ENERGY_FLUX,
-        si_factor=41868.0,
-        si_offset=0.0,
-    ))
+    calorie_per_square_centimeter_per_second: Final = UnitConstant(
+        UnitDefinition(
+            name="calorie_per_square_centimeter_per_second",
+            symbol="$\\mathrm{cal} / \\mathrm{cm}^{2} / \\mathrm{s}$ or $\\mathrm{cal} /$ ( $\\mathrm{cm}^{2} \\mathrm{~s}$ )",
+            dimension=dim.ENERGY_FLUX,
+            si_factor=41868.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_cal_mathrm_cm_2_mathrm_s_or_mathrm_cal_mathrm_cm_2_mathrm_s: Final = calorie_per_square_centimeter_per_second
     cal_cm_2_s: Final = calorie_per_square_centimeter_per_second
 
     # Celsius heat units (Chu) per square foot per hour
-    celsius_heat_units_chu: Final = UnitConstant(UnitDefinition(
-        name="celsius_heat_units_chu",
-        symbol="$\\mathrm{Chu} / \\mathrm{ft}^{2} / \\mathrm{hr}$",
-        dimension=dim.ENERGY_FLUX,
-        si_factor=5.6784,
-        si_offset=0.0,
-    ))
+    celsius_heat_units_chu: Final = UnitConstant(
+        UnitDefinition(
+            name="celsius_heat_units_chu",
+            symbol="$\\mathrm{Chu} / \\mathrm{ft}^{2} / \\mathrm{hr}$",
+            dimension=dim.ENERGY_FLUX,
+            si_factor=5.6784,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_Chu_mathrm_ft_2_mathrm_hr: Final = celsius_heat_units_chu
 
     # kilocalorie per square foot per hour
-    kilocalorie_per_square_foot_per_hour: Final = UnitConstant(UnitDefinition(
-        name="kilocalorie_per_square_foot_per_hour",
-        symbol="$\\mathrm{kcal} /\\left(\\mathrm{ft}^{2} \\mathrm{hr}\\right)$",
-        dimension=dim.ENERGY_FLUX,
-        si_factor=12.518,
-        si_offset=0.0,
-    ))
+    kilocalorie_per_square_foot_per_hour: Final = UnitConstant(
+        UnitDefinition(
+            name="kilocalorie_per_square_foot_per_hour",
+            symbol="$\\mathrm{kcal} /\\left(\\mathrm{ft}^{2} \\mathrm{hr}\\right)$",
+            dimension=dim.ENERGY_FLUX,
+            si_factor=12.518,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_kcal_left_mathrm_ft_2_mathrm_hr_right: Final = kilocalorie_per_square_foot_per_hour
 
     # kilocalorie per square meter per hour
-    kilocalorie_per_square_meter_per_hour: Final = UnitConstant(UnitDefinition(
-        name="kilocalorie_per_square_meter_per_hour",
-        symbol="$\\mathrm{kcal} /\\left(\\mathrm{m}^{2} \\mathrm{hr}\\right)$",
-        dimension=dim.ENERGY_FLUX,
-        si_factor=1.163,
-        si_offset=0.0,
-    ))
+    kilocalorie_per_square_meter_per_hour: Final = UnitConstant(
+        UnitDefinition(
+            name="kilocalorie_per_square_meter_per_hour",
+            symbol="$\\mathrm{kcal} /\\left(\\mathrm{m}^{2} \\mathrm{hr}\\right)$",
+            dimension=dim.ENERGY_FLUX,
+            si_factor=1.163,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_kcal_left_mathrm_m_2_mathrm_hr_right: Final = kilocalorie_per_square_meter_per_hour
 
     # watt per square meter
-    watt_per_square_meter: Final = UnitConstant(UnitDefinition(
-        name="watt_per_square_meter",
-        symbol="$\\mathrm{W} / \\mathrm{m}^{2}$",
-        dimension=dim.ENERGY_FLUX,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    watt_per_square_meter: Final = UnitConstant(
+        UnitDefinition(
+            name="watt_per_square_meter",
+            symbol="$\\mathrm{W} / \\mathrm{m}^{2}$",
+            dimension=dim.ENERGY_FLUX,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_W_mathrm_m_2: Final = watt_per_square_meter
 
@@ -2055,477 +2405,563 @@ class EnergyHeatWorkUnits:
     __slots__ = ()
 
     # barrel oil equivalent or equivalent barrel
-    barrel_oil_equivalent_or_equivalent_barrel: Final = UnitConstant(UnitDefinition(
-        name="barrel_oil_equivalent_or_equivalent_barrel",
-        symbol="bboe or boe",
-        dimension=dim.ENERGY_HEAT_WORK,
-        si_factor=6120000000.0,
-        si_offset=0.0,
-    ))
+    barrel_oil_equivalent_or_equivalent_barrel: Final = UnitConstant(
+        UnitDefinition(
+            name="barrel_oil_equivalent_or_equivalent_barrel",
+            symbol="bboe or boe",
+            dimension=dim.ENERGY_HEAT_WORK,
+            si_factor=6120000000.0,
+            si_offset=0.0,
+        )
+    )
 
     bboe_or_boe: Final = barrel_oil_equivalent_or_equivalent_barrel
     bboe: Final = barrel_oil_equivalent_or_equivalent_barrel
     boe: Final = barrel_oil_equivalent_or_equivalent_barrel
 
     # billion electronvolt
-    billion_electronvolt: Final = UnitConstant(UnitDefinition(
-        name="billion_electronvolt",
-        symbol="BeV",
-        dimension=dim.ENERGY_HEAT_WORK,
-        si_factor=1.6022000000000002e-10,
-        si_offset=0.0,
-    ))
+    billion_electronvolt: Final = UnitConstant(
+        UnitDefinition(
+            name="billion_electronvolt",
+            symbol="BeV",
+            dimension=dim.ENERGY_HEAT_WORK,
+            si_factor=1.6022000000000002e-10,
+            si_offset=0.0,
+        )
+    )
 
     BeV: Final = billion_electronvolt
 
     # British thermal unit ( $4^{\circ} \mathrm{C}$ )
-    british_thermal_unit_4circ_mathrmc: Final = UnitConstant(UnitDefinition(
-        name="british_thermal_unit_4circ_mathrmc",
-        symbol="Btu ( $39.2{ }^{\\circ} \\mathrm{F}$ )",
-        dimension=dim.ENERGY_HEAT_WORK,
-        si_factor=1059.67,
-        si_offset=0.0,
-    ))
+    british_thermal_unit_4circ_mathrmc: Final = UnitConstant(
+        UnitDefinition(
+            name="british_thermal_unit_4circ_mathrmc",
+            symbol="Btu ( $39.2{ }^{\\circ} \\mathrm{F}$ )",
+            dimension=dim.ENERGY_HEAT_WORK,
+            si_factor=1059.67,
+            si_offset=0.0,
+        )
+    )
 
     Btu_39_2_circ_mathrm_F: Final = british_thermal_unit_4circ_mathrmc
 
     # British thermal unit ( $60^{\circ} \mathrm{F}$ )
-    british_thermal_unit_60circ_mathrmf: Final = UnitConstant(UnitDefinition(
-        name="british_thermal_unit_60circ_mathrmf",
-        symbol="Btu ( $60{ }^{\\circ} \\mathrm{F}$ )",
-        dimension=dim.ENERGY_HEAT_WORK,
-        si_factor=1054.678,
-        si_offset=0.0,
-    ))
+    british_thermal_unit_60circ_mathrmf: Final = UnitConstant(
+        UnitDefinition(
+            name="british_thermal_unit_60circ_mathrmf",
+            symbol="Btu ( $60{ }^{\\circ} \\mathrm{F}$ )",
+            dimension=dim.ENERGY_HEAT_WORK,
+            si_factor=1054.678,
+            si_offset=0.0,
+        )
+    )
 
     Btu_60_circ_mathrm_F: Final = british_thermal_unit_60circ_mathrmf
 
     # British thermal unit (international steam tables)
-    british_thermal_unit_international_steam_tables: Final = UnitConstant(UnitDefinition(
-        name="british_thermal_unit_international_steam_tables",
-        symbol="Btu (IT)",
-        dimension=dim.ENERGY_HEAT_WORK,
-        si_factor=1055.055853,
-        si_offset=0.0,
-    ))
+    british_thermal_unit_international_steam_tables: Final = UnitConstant(
+        UnitDefinition(
+            name="british_thermal_unit_international_steam_tables",
+            symbol="Btu (IT)",
+            dimension=dim.ENERGY_HEAT_WORK,
+            si_factor=1055.055853,
+            si_offset=0.0,
+        )
+    )
 
     Btu_IT: Final = british_thermal_unit_international_steam_tables
 
     # British thermal unit (ISO/TC 12)
-    british_thermal_unit_isotc_12: Final = UnitConstant(UnitDefinition(
-        name="british_thermal_unit_isotc_12",
-        symbol="Btu (ISO)",
-        dimension=dim.ENERGY_HEAT_WORK,
-        si_factor=1055.06,
-        si_offset=0.0,
-    ))
+    british_thermal_unit_isotc_12: Final = UnitConstant(
+        UnitDefinition(
+            name="british_thermal_unit_isotc_12",
+            symbol="Btu (ISO)",
+            dimension=dim.ENERGY_HEAT_WORK,
+            si_factor=1055.06,
+            si_offset=0.0,
+        )
+    )
 
     Btu_ISO: Final = british_thermal_unit_isotc_12
 
     # British thermal unit (mean)
-    british_thermal_unit_mean: Final = UnitConstant(UnitDefinition(
-        name="british_thermal_unit_mean",
-        symbol="Btu (mean) or Btu",
-        dimension=dim.ENERGY_HEAT_WORK,
-        si_factor=1055.87,
-        si_offset=0.0,
-    ))
+    british_thermal_unit_mean: Final = UnitConstant(
+        UnitDefinition(
+            name="british_thermal_unit_mean",
+            symbol="Btu (mean) or Btu",
+            dimension=dim.ENERGY_HEAT_WORK,
+            si_factor=1055.87,
+            si_offset=0.0,
+        )
+    )
 
     Btu_mean_or_Btu: Final = british_thermal_unit_mean
     Btu_mean: Final = british_thermal_unit_mean
     Btu: Final = british_thermal_unit_mean
 
     # British thermal unit (thermochemical)
-    british_thermal_unit_thermochemical: Final = UnitConstant(UnitDefinition(
-        name="british_thermal_unit_thermochemical",
-        symbol="Btu (therm)",
-        dimension=dim.ENERGY_HEAT_WORK,
-        si_factor=1054.35,
-        si_offset=0.0,
-    ))
+    british_thermal_unit_thermochemical: Final = UnitConstant(
+        UnitDefinition(
+            name="british_thermal_unit_thermochemical",
+            symbol="Btu (therm)",
+            dimension=dim.ENERGY_HEAT_WORK,
+            si_factor=1054.35,
+            si_offset=0.0,
+        )
+    )
 
     Btu_therm: Final = british_thermal_unit_thermochemical
 
     # calorie ( $20^{\circ} \mathrm{C}$ )
-    calorie_20circ_mathrmc: Final = UnitConstant(UnitDefinition(
-        name="calorie_20circ_mathrmc",
-        symbol="cal ( $20^{\\circ} \\mathrm{C}$ )",
-        dimension=dim.ENERGY_HEAT_WORK,
-        si_factor=4.1819,
-        si_offset=0.0,
-    ))
+    calorie_20circ_mathrmc: Final = UnitConstant(
+        UnitDefinition(
+            name="calorie_20circ_mathrmc",
+            symbol="cal ( $20^{\\circ} \\mathrm{C}$ )",
+            dimension=dim.ENERGY_HEAT_WORK,
+            si_factor=4.1819,
+            si_offset=0.0,
+        )
+    )
 
     cal_20_circ_mathrm_C: Final = calorie_20circ_mathrmc
 
     # calorie ( $4^{\circ} \mathrm{C}$ )
-    calorie_4circ_mathrmc: Final = UnitConstant(UnitDefinition(
-        name="calorie_4circ_mathrmc",
-        symbol="cal ( $4^{\\circ} \\mathrm{C}$ )",
-        dimension=dim.ENERGY_HEAT_WORK,
-        si_factor=4.2045,
-        si_offset=0.0,
-    ))
+    calorie_4circ_mathrmc: Final = UnitConstant(
+        UnitDefinition(
+            name="calorie_4circ_mathrmc",
+            symbol="cal ( $4^{\\circ} \\mathrm{C}$ )",
+            dimension=dim.ENERGY_HEAT_WORK,
+            si_factor=4.2045,
+            si_offset=0.0,
+        )
+    )
 
     cal_4_circ_mathrm_C: Final = calorie_4circ_mathrmc
 
     # calorie (international steam tables)
-    calorie_international_steam_tables: Final = UnitConstant(UnitDefinition(
-        name="calorie_international_steam_tables",
-        symbol="cal (IT)",
-        dimension=dim.ENERGY_HEAT_WORK,
-        si_factor=4.18674,
-        si_offset=0.0,
-    ))
+    calorie_international_steam_tables: Final = UnitConstant(
+        UnitDefinition(
+            name="calorie_international_steam_tables",
+            symbol="cal (IT)",
+            dimension=dim.ENERGY_HEAT_WORK,
+            si_factor=4.18674,
+            si_offset=0.0,
+        )
+    )
 
     cal_IT: Final = calorie_international_steam_tables
 
     # calorie (mean)
-    calorie_mean: Final = UnitConstant(UnitDefinition(
-        name="calorie_mean",
-        symbol="cal (mean)",
-        dimension=dim.ENERGY_HEAT_WORK,
-        si_factor=4.19002,
-        si_offset=0.0,
-    ))
+    calorie_mean: Final = UnitConstant(
+        UnitDefinition(
+            name="calorie_mean",
+            symbol="cal (mean)",
+            dimension=dim.ENERGY_HEAT_WORK,
+            si_factor=4.19002,
+            si_offset=0.0,
+        )
+    )
 
     cal_mean: Final = calorie_mean
 
     # Calorie (nutritional)
-    calorie_nutritional: Final = UnitConstant(UnitDefinition(
-        name="calorie_nutritional",
-        symbol="Cal (nutr)",
-        dimension=dim.ENERGY_HEAT_WORK,
-        si_factor=4184.0,
-        si_offset=0.0,
-    ))
+    calorie_nutritional: Final = UnitConstant(
+        UnitDefinition(
+            name="calorie_nutritional",
+            symbol="Cal (nutr)",
+            dimension=dim.ENERGY_HEAT_WORK,
+            si_factor=4184.0,
+            si_offset=0.0,
+        )
+    )
 
     Cal_nutr: Final = calorie_nutritional
 
     # calorie (thermochemical)
-    calorie_thermochemical: Final = UnitConstant(UnitDefinition(
-        name="calorie_thermochemical",
-        symbol="cal (therm)",
-        dimension=dim.ENERGY_HEAT_WORK,
-        si_factor=4.184,
-        si_offset=0.0,
-    ))
+    calorie_thermochemical: Final = UnitConstant(
+        UnitDefinition(
+            name="calorie_thermochemical",
+            symbol="cal (therm)",
+            dimension=dim.ENERGY_HEAT_WORK,
+            si_factor=4.184,
+            si_offset=0.0,
+        )
+    )
 
     cal_therm: Final = calorie_thermochemical
 
     # Celsius heat unit
-    celsius_heat_unit: Final = UnitConstant(UnitDefinition(
-        name="celsius_heat_unit",
-        symbol="Chu",
-        dimension=dim.ENERGY_HEAT_WORK,
-        si_factor=1899.18,
-        si_offset=0.0,
-    ))
+    celsius_heat_unit: Final = UnitConstant(
+        UnitDefinition(
+            name="celsius_heat_unit",
+            symbol="Chu",
+            dimension=dim.ENERGY_HEAT_WORK,
+            si_factor=1899.18,
+            si_offset=0.0,
+        )
+    )
 
     Chu: Final = celsius_heat_unit
 
     # Celsius heat unit ( $15{ }^{\circ} \mathrm{C}$ )
-    celsius_heat_unit_15_circ_mathrmc: Final = UnitConstant(UnitDefinition(
-        name="celsius_heat_unit_15_circ_mathrmc",
-        symbol="Chu ( $15{ }^{\\circ} \\mathrm{C}$ )",
-        dimension=dim.ENERGY_HEAT_WORK,
-        si_factor=1899.1,
-        si_offset=0.0,
-    ))
+    celsius_heat_unit_15_circ_mathrmc: Final = UnitConstant(
+        UnitDefinition(
+            name="celsius_heat_unit_15_circ_mathrmc",
+            symbol="Chu ( $15{ }^{\\circ} \\mathrm{C}$ )",
+            dimension=dim.ENERGY_HEAT_WORK,
+            si_factor=1899.1,
+            si_offset=0.0,
+        )
+    )
 
     Chu_15_circ_mathrm_C: Final = celsius_heat_unit_15_circ_mathrmc
 
     # electron volt
-    electron_volt: Final = UnitConstant(UnitDefinition(
-        name="electron_volt",
-        symbol="eV",
-        dimension=dim.ENERGY_HEAT_WORK,
-        si_factor=1.6022e-19,
-        si_offset=0.0,
-    ))
+    electron_volt: Final = UnitConstant(
+        UnitDefinition(
+            name="electron_volt",
+            symbol="eV",
+            dimension=dim.ENERGY_HEAT_WORK,
+            si_factor=1.6022e-19,
+            si_offset=0.0,
+        )
+    )
 
     eV: Final = electron_volt
 
     # erg
-    erg: Final = UnitConstant(UnitDefinition(
-        name="erg",
-        symbol="erg",
-        dimension=dim.ENERGY_HEAT_WORK,
-        si_factor=1e-07,
-        si_offset=0.0,
-    ))
+    erg: Final = UnitConstant(
+        UnitDefinition(
+            name="erg",
+            symbol="erg",
+            dimension=dim.ENERGY_HEAT_WORK,
+            si_factor=1e-07,
+            si_offset=0.0,
+        )
+    )
 
     # foot pound force (duty)
-    foot_pound_force_duty: Final = UnitConstant(UnitDefinition(
-        name="foot_pound_force_duty",
-        symbol="ft $\\mathrm{lb}_{\\mathrm{f}}$",
-        dimension=dim.ENERGY_HEAT_WORK,
-        si_factor=1.355818,
-        si_offset=0.0,
-    ))
+    foot_pound_force_duty: Final = UnitConstant(
+        UnitDefinition(
+            name="foot_pound_force_duty",
+            symbol="ft $\\mathrm{lb}_{\\mathrm{f}}$",
+            dimension=dim.ENERGY_HEAT_WORK,
+            si_factor=1.355818,
+            si_offset=0.0,
+        )
+    )
 
     ft_mathrm_lb_mathrm_f: Final = foot_pound_force_duty
 
     # foot-poundal
-    foot_poundal: Final = UnitConstant(UnitDefinition(
-        name="foot_poundal",
-        symbol="ft pdl",
-        dimension=dim.ENERGY_HEAT_WORK,
-        si_factor=0.04214,
-        si_offset=0.0,
-    ))
+    foot_poundal: Final = UnitConstant(
+        UnitDefinition(
+            name="foot_poundal",
+            symbol="ft pdl",
+            dimension=dim.ENERGY_HEAT_WORK,
+            si_factor=0.04214,
+            si_offset=0.0,
+        )
+    )
 
     ft_pdl: Final = foot_poundal
 
     # frigorie
-    frigorie: Final = UnitConstant(UnitDefinition(
-        name="frigorie",
-        symbol="fg",
-        dimension=dim.ENERGY_HEAT_WORK,
-        si_factor=4190.0,
-        si_offset=0.0,
-    ))
+    frigorie: Final = UnitConstant(
+        UnitDefinition(
+            name="frigorie",
+            symbol="fg",
+            dimension=dim.ENERGY_HEAT_WORK,
+            si_factor=4190.0,
+            si_offset=0.0,
+        )
+    )
 
     fg: Final = frigorie
 
     # hartree (atomic unit of energy)
-    hartree_atomic_unit_of_energy: Final = UnitConstant(UnitDefinition(
-        name="hartree_atomic_unit_of_energy",
-        symbol="$\\mathrm{E}_{\\mathrm{H}}$ a.u.",
-        dimension=dim.ENERGY_HEAT_WORK,
-        si_factor=4.359700000000001e-18,
-        si_offset=0.0,
-    ))
+    hartree_atomic_unit_of_energy: Final = UnitConstant(
+        UnitDefinition(
+            name="hartree_atomic_unit_of_energy",
+            symbol="$\\mathrm{E}_{\\mathrm{H}}$ a.u.",
+            dimension=dim.ENERGY_HEAT_WORK,
+            si_factor=4.359700000000001e-18,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_E_mathrm_H_a_u: Final = hartree_atomic_unit_of_energy
 
     # joule
-    joule: Final = UnitConstant(UnitDefinition(
-        name="joule",
-        symbol="J",
-        dimension=dim.ENERGY_HEAT_WORK,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    joule: Final = UnitConstant(
+        UnitDefinition(
+            name="joule",
+            symbol="J",
+            dimension=dim.ENERGY_HEAT_WORK,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     J: Final = joule
 
     # joule (international)
-    joule_international: Final = UnitConstant(UnitDefinition(
-        name="joule_international",
-        symbol="J (intl)",
-        dimension=dim.ENERGY_HEAT_WORK,
-        si_factor=1.000165,
-        si_offset=0.0,
-    ))
+    joule_international: Final = UnitConstant(
+        UnitDefinition(
+            name="joule_international",
+            symbol="J (intl)",
+            dimension=dim.ENERGY_HEAT_WORK,
+            si_factor=1.000165,
+            si_offset=0.0,
+        )
+    )
 
     J_intl: Final = joule_international
 
     # kilocalorie (thermal)
-    kilocalorie_thermal: Final = UnitConstant(UnitDefinition(
-        name="kilocalorie_thermal",
-        symbol="kcal (therm)",
-        dimension=dim.ENERGY_HEAT_WORK,
-        si_factor=4184.0,
-        si_offset=0.0,
-    ))
+    kilocalorie_thermal: Final = UnitConstant(
+        UnitDefinition(
+            name="kilocalorie_thermal",
+            symbol="kcal (therm)",
+            dimension=dim.ENERGY_HEAT_WORK,
+            si_factor=4184.0,
+            si_offset=0.0,
+        )
+    )
 
     kcal_therm: Final = kilocalorie_thermal
 
     # kilogram force meter
-    kilogram_force_meter: Final = UnitConstant(UnitDefinition(
-        name="kilogram_force_meter",
-        symbol="$\\mathrm{kg}_{\\mathrm{f}}$ m",
-        dimension=dim.ENERGY_HEAT_WORK,
-        si_factor=9.80665,
-        si_offset=0.0,
-    ))
+    kilogram_force_meter: Final = UnitConstant(
+        UnitDefinition(
+            name="kilogram_force_meter",
+            symbol="$\\mathrm{kg}_{\\mathrm{f}}$ m",
+            dimension=dim.ENERGY_HEAT_WORK,
+            si_factor=9.80665,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_kg_mathrm_f_m: Final = kilogram_force_meter
 
     # kiloton (TNT)
-    kiloton_tnt: Final = UnitConstant(UnitDefinition(
-        name="kiloton_tnt",
-        symbol="kt (TNT)",
-        dimension=dim.ENERGY_HEAT_WORK,
-        si_factor=4.1799999999999995e+18,
-        si_offset=0.0,
-    ))
+    kiloton_tnt: Final = UnitConstant(
+        UnitDefinition(
+            name="kiloton_tnt",
+            symbol="kt (TNT)",
+            dimension=dim.ENERGY_HEAT_WORK,
+            si_factor=4.1799999999999995e18,
+            si_offset=0.0,
+        )
+    )
 
     kt_TNT: Final = kiloton_tnt
 
     # kilowatt hour
-    kilowatt_hour: Final = UnitConstant(UnitDefinition(
-        name="kilowatt_hour",
-        symbol="kWh",
-        dimension=dim.ENERGY_HEAT_WORK,
-        si_factor=3600000.0,
-        si_offset=0.0,
-    ))
+    kilowatt_hour: Final = UnitConstant(
+        UnitDefinition(
+            name="kilowatt_hour",
+            symbol="kWh",
+            dimension=dim.ENERGY_HEAT_WORK,
+            si_factor=3600000.0,
+            si_offset=0.0,
+        )
+    )
 
     kWh: Final = kilowatt_hour
 
     # liter atmosphere
-    liter_atmosphere: Final = UnitConstant(UnitDefinition(
-        name="liter_atmosphere",
-        symbol="L atm",
-        dimension=dim.ENERGY_HEAT_WORK,
-        si_factor=101.325,
-        si_offset=0.0,
-    ))
+    liter_atmosphere: Final = UnitConstant(
+        UnitDefinition(
+            name="liter_atmosphere",
+            symbol="L atm",
+            dimension=dim.ENERGY_HEAT_WORK,
+            si_factor=101.325,
+            si_offset=0.0,
+        )
+    )
 
     L_atm: Final = liter_atmosphere
 
     # megaton (TNT)
-    megaton_tnt: Final = UnitConstant(UnitDefinition(
-        name="megaton_tnt",
-        symbol="Mt (TNT)",
-        dimension=dim.ENERGY_HEAT_WORK,
-        si_factor=4.1799999999999995e+21,
-        si_offset=0.0,
-    ))
+    megaton_tnt: Final = UnitConstant(
+        UnitDefinition(
+            name="megaton_tnt",
+            symbol="Mt (TNT)",
+            dimension=dim.ENERGY_HEAT_WORK,
+            si_factor=4.1799999999999995e21,
+            si_offset=0.0,
+        )
+    )
 
     Mt_TNT: Final = megaton_tnt
 
     # pound centigrade unit ( $15^{\circ} \mathrm{C}$ )
-    pound_centigrade_unit_15circ_mathrmc: Final = UnitConstant(UnitDefinition(
-        name="pound_centigrade_unit_15circ_mathrmc",
-        symbol="pcu ( $15{ }^{\\circ} \\mathrm{C}$ )",
-        dimension=dim.ENERGY_HEAT_WORK,
-        si_factor=1899.1,
-        si_offset=0.0,
-    ))
+    pound_centigrade_unit_15circ_mathrmc: Final = UnitConstant(
+        UnitDefinition(
+            name="pound_centigrade_unit_15circ_mathrmc",
+            symbol="pcu ( $15{ }^{\\circ} \\mathrm{C}$ )",
+            dimension=dim.ENERGY_HEAT_WORK,
+            si_factor=1899.1,
+            si_offset=0.0,
+        )
+    )
 
     pcu_15_circ_mathrm_C: Final = pound_centigrade_unit_15circ_mathrmc
 
     # prout
-    prout: Final = UnitConstant(UnitDefinition(
-        name="prout",
-        symbol="prout",
-        dimension=dim.ENERGY_HEAT_WORK,
-        si_factor=2.9638e-14,
-        si_offset=0.0,
-    ))
+    prout: Final = UnitConstant(
+        UnitDefinition(
+            name="prout",
+            symbol="prout",
+            dimension=dim.ENERGY_HEAT_WORK,
+            si_factor=2.9638e-14,
+            si_offset=0.0,
+        )
+    )
 
     # Q unit
-    q_unit: Final = UnitConstant(UnitDefinition(
-        name="q_unit",
-        symbol="Q",
-        dimension=dim.ENERGY_HEAT_WORK,
-        si_factor=1.055e+21,
-        si_offset=0.0,
-    ))
+    q_unit: Final = UnitConstant(
+        UnitDefinition(
+            name="q_unit",
+            symbol="Q",
+            dimension=dim.ENERGY_HEAT_WORK,
+            si_factor=1.055e21,
+            si_offset=0.0,
+        )
+    )
 
     Q: Final = q_unit
 
     # quad (quadrillion Btu)
-    quad_quadrillion_btu: Final = UnitConstant(UnitDefinition(
-        name="quad_quadrillion_btu",
-        symbol="quad",
-        dimension=dim.ENERGY_HEAT_WORK,
-        si_factor=1.0550999999999999e+18,
-        si_offset=0.0,
-    ))
+    quad_quadrillion_btu: Final = UnitConstant(
+        UnitDefinition(
+            name="quad_quadrillion_btu",
+            symbol="quad",
+            dimension=dim.ENERGY_HEAT_WORK,
+            si_factor=1.0550999999999999e18,
+            si_offset=0.0,
+        )
+    )
 
     quad: Final = quad_quadrillion_btu
 
     # rydberg
-    rydberg: Final = UnitConstant(UnitDefinition(
-        name="rydberg",
-        symbol="Ry",
-        dimension=dim.ENERGY_HEAT_WORK,
-        si_factor=2.1799000000000002e-18,
-        si_offset=0.0,
-    ))
+    rydberg: Final = UnitConstant(
+        UnitDefinition(
+            name="rydberg",
+            symbol="Ry",
+            dimension=dim.ENERGY_HEAT_WORK,
+            si_factor=2.1799000000000002e-18,
+            si_offset=0.0,
+        )
+    )
 
     Ry: Final = rydberg
 
     # therm (EEG)
-    therm_eeg: Final = UnitConstant(UnitDefinition(
-        name="therm_eeg",
-        symbol="therm (EEG)",
-        dimension=dim.ENERGY_HEAT_WORK,
-        si_factor=105510000.0,
-        si_offset=0.0,
-    ))
+    therm_eeg: Final = UnitConstant(
+        UnitDefinition(
+            name="therm_eeg",
+            symbol="therm (EEG)",
+            dimension=dim.ENERGY_HEAT_WORK,
+            si_factor=105510000.0,
+            si_offset=0.0,
+        )
+    )
 
     therm_EEG: Final = therm_eeg
 
     # therm (refineries)
-    therm_refineries: Final = UnitConstant(UnitDefinition(
-        name="therm_refineries",
-        symbol="therm (refy) or therm",
-        dimension=dim.ENERGY_HEAT_WORK,
-        si_factor=1055900000.0000001,
-        si_offset=0.0,
-    ))
+    therm_refineries: Final = UnitConstant(
+        UnitDefinition(
+            name="therm_refineries",
+            symbol="therm (refy) or therm",
+            dimension=dim.ENERGY_HEAT_WORK,
+            si_factor=1055900000.0000001,
+            si_offset=0.0,
+        )
+    )
 
     therm_refy_or_therm: Final = therm_refineries
     therm_refy: Final = therm_refineries
     therm: Final = therm_refineries
 
     # therm (US)
-    therm_us: Final = UnitConstant(UnitDefinition(
-        name="therm_us",
-        symbol="therm (US) or therm",
-        dimension=dim.ENERGY_HEAT_WORK,
-        si_factor=105480000.0,
-        si_offset=0.0,
-    ))
+    therm_us: Final = UnitConstant(
+        UnitDefinition(
+            name="therm_us",
+            symbol="therm (US) or therm",
+            dimension=dim.ENERGY_HEAT_WORK,
+            si_factor=105480000.0,
+            si_offset=0.0,
+        )
+    )
 
     therm_US_or_therm: Final = therm_us
 
     # ton coal equivalent
-    ton_coal_equivalent: Final = UnitConstant(UnitDefinition(
-        name="ton_coal_equivalent",
-        symbol="tce (tec)",
-        dimension=dim.ENERGY_HEAT_WORK,
-        si_factor=292900000.0,
-        si_offset=0.0,
-    ))
+    ton_coal_equivalent: Final = UnitConstant(
+        UnitDefinition(
+            name="ton_coal_equivalent",
+            symbol="tce (tec)",
+            dimension=dim.ENERGY_HEAT_WORK,
+            si_factor=292900000.0,
+            si_offset=0.0,
+        )
+    )
 
     tce_tec: Final = ton_coal_equivalent
 
     # ton oil equivalent
-    ton_oil_equivalent: Final = UnitConstant(UnitDefinition(
-        name="ton_oil_equivalent",
-        symbol="toe (tep)",
-        dimension=dim.ENERGY_HEAT_WORK,
-        si_factor=418700000.0,
-        si_offset=0.0,
-    ))
+    ton_oil_equivalent: Final = UnitConstant(
+        UnitDefinition(
+            name="ton_oil_equivalent",
+            symbol="toe (tep)",
+            dimension=dim.ENERGY_HEAT_WORK,
+            si_factor=418700000.0,
+            si_offset=0.0,
+        )
+    )
 
     toe_tep: Final = ton_oil_equivalent
 
     # kilojoule
-    kilojoule: Final = UnitConstant(UnitDefinition(
-        name="kilojoule",
-        symbol="kJ",
-        dimension=dim.ENERGY_HEAT_WORK,
-        si_factor=1000.0,
-        si_offset=0.0,
-    ))
+    kilojoule: Final = UnitConstant(
+        UnitDefinition(
+            name="kilojoule",
+            symbol="kJ",
+            dimension=dim.ENERGY_HEAT_WORK,
+            si_factor=1000.0,
+            si_offset=0.0,
+        )
+    )
 
     kJ: Final = kilojoule
 
     # megajoule
-    megajoule: Final = UnitConstant(UnitDefinition(
-        name="megajoule",
-        symbol="MJ",
-        dimension=dim.ENERGY_HEAT_WORK,
-        si_factor=1000000.0,
-        si_offset=0.0,
-    ))
+    megajoule: Final = UnitConstant(
+        UnitDefinition(
+            name="megajoule",
+            symbol="MJ",
+            dimension=dim.ENERGY_HEAT_WORK,
+            si_factor=1000000.0,
+            si_offset=0.0,
+        )
+    )
 
     MJ: Final = megajoule
 
     # gigajoule
-    gigajoule: Final = UnitConstant(UnitDefinition(
-        name="gigajoule",
-        symbol="GJ",
-        dimension=dim.ENERGY_HEAT_WORK,
-        si_factor=1000000000.0,
-        si_offset=0.0,
-    ))
+    gigajoule: Final = UnitConstant(
+        UnitDefinition(
+            name="gigajoule",
+            symbol="GJ",
+            dimension=dim.ENERGY_HEAT_WORK,
+            si_factor=1000000000.0,
+            si_offset=0.0,
+        )
+    )
 
     GJ: Final = gigajoule
 
@@ -2536,37 +2972,43 @@ class EnergyPerUnitAreaUnits:
     __slots__ = ()
 
     # British thermal unit per square foot
-    british_thermal_unit_per_square_foot: Final = UnitConstant(UnitDefinition(
-        name="british_thermal_unit_per_square_foot",
-        symbol="$\\mathrm{Btu} / \\mathrm{ft}^{2}$ or Btu/sq ft",
-        dimension=dim.ENERGY_PER_UNIT_AREA,
-        si_factor=11354.0,
-        si_offset=0.0,
-    ))
+    british_thermal_unit_per_square_foot: Final = UnitConstant(
+        UnitDefinition(
+            name="british_thermal_unit_per_square_foot",
+            symbol="$\\mathrm{Btu} / \\mathrm{ft}^{2}$ or Btu/sq ft",
+            dimension=dim.ENERGY_PER_UNIT_AREA,
+            si_factor=11354.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_Btu_mathrm_ft_2_or_Btu_sq_ft: Final = british_thermal_unit_per_square_foot
     Btu_ft_2: Final = british_thermal_unit_per_square_foot
     Btu_sq_ft: Final = british_thermal_unit_per_square_foot
 
     # joule per square meter
-    joule_per_square_meter: Final = UnitConstant(UnitDefinition(
-        name="joule_per_square_meter",
-        symbol="$\\mathrm{J} / \\mathrm{m}^{2}$",
-        dimension=dim.ENERGY_PER_UNIT_AREA,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    joule_per_square_meter: Final = UnitConstant(
+        UnitDefinition(
+            name="joule_per_square_meter",
+            symbol="$\\mathrm{J} / \\mathrm{m}^{2}$",
+            dimension=dim.ENERGY_PER_UNIT_AREA,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_J_mathrm_m_2: Final = joule_per_square_meter
 
     # Langley
-    langley: Final = UnitConstant(UnitDefinition(
-        name="langley",
-        symbol="Ly",
-        dimension=dim.ENERGY_PER_UNIT_AREA,
-        si_factor=41840.0,
-        si_offset=0.0,
-    ))
+    langley: Final = UnitConstant(
+        UnitDefinition(
+            name="langley",
+            symbol="Ly",
+            dimension=dim.ENERGY_PER_UNIT_AREA,
+            si_factor=41840.0,
+            si_offset=0.0,
+        )
+    )
 
     Ly: Final = langley
 
@@ -2577,189 +3019,223 @@ class ForceUnits:
     __slots__ = ()
 
     # crinal
-    crinal: Final = UnitConstant(UnitDefinition(
-        name="crinal",
-        symbol="crinal",
-        dimension=dim.FORCE,
-        si_factor=0.1,
-        si_offset=0.0,
-    ))
+    crinal: Final = UnitConstant(
+        UnitDefinition(
+            name="crinal",
+            symbol="crinal",
+            dimension=dim.FORCE,
+            si_factor=0.1,
+            si_offset=0.0,
+        )
+    )
 
     # dyne
-    dyne: Final = UnitConstant(UnitDefinition(
-        name="dyne",
-        symbol="dyn",
-        dimension=dim.FORCE,
-        si_factor=1e-05,
-        si_offset=0.0,
-    ))
+    dyne: Final = UnitConstant(
+        UnitDefinition(
+            name="dyne",
+            symbol="dyn",
+            dimension=dim.FORCE,
+            si_factor=1e-05,
+            si_offset=0.0,
+        )
+    )
 
     dyn: Final = dyne
 
     # funal
-    funal: Final = UnitConstant(UnitDefinition(
-        name="funal",
-        symbol="funal",
-        dimension=dim.FORCE,
-        si_factor=1000.0,
-        si_offset=0.0,
-    ))
+    funal: Final = UnitConstant(
+        UnitDefinition(
+            name="funal",
+            symbol="funal",
+            dimension=dim.FORCE,
+            si_factor=1000.0,
+            si_offset=0.0,
+        )
+    )
 
     # kilogram force
-    kilogram_force: Final = UnitConstant(UnitDefinition(
-        name="kilogram_force",
-        symbol="$\\mathrm{kg}_{\\mathrm{f}}$",
-        dimension=dim.FORCE,
-        si_factor=9.80665,
-        si_offset=0.0,
-    ))
+    kilogram_force: Final = UnitConstant(
+        UnitDefinition(
+            name="kilogram_force",
+            symbol="$\\mathrm{kg}_{\\mathrm{f}}$",
+            dimension=dim.FORCE,
+            si_factor=9.80665,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_kg_mathrm_f: Final = kilogram_force
 
     # kip force
-    kip_force: Final = UnitConstant(UnitDefinition(
-        name="kip_force",
-        symbol="$\\operatorname{kip}_{\\mathrm{f}}$",
-        dimension=dim.FORCE,
-        si_factor=4448.22,
-        si_offset=0.0,
-    ))
+    kip_force: Final = UnitConstant(
+        UnitDefinition(
+            name="kip_force",
+            symbol="$\\operatorname{kip}_{\\mathrm{f}}$",
+            dimension=dim.FORCE,
+            si_factor=4448.22,
+            si_offset=0.0,
+        )
+    )
 
     operatorname_kip_mathrm_f: Final = kip_force
 
     # newton
-    newton: Final = UnitConstant(UnitDefinition(
-        name="newton",
-        symbol="N",
-        dimension=dim.FORCE,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    newton: Final = UnitConstant(
+        UnitDefinition(
+            name="newton",
+            symbol="N",
+            dimension=dim.FORCE,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     N: Final = newton
 
     # ounce force
-    ounce_force: Final = UnitConstant(UnitDefinition(
-        name="ounce_force",
-        symbol="$\\mathrm{oz}_{\\mathrm{f}}$ or oz",
-        dimension=dim.FORCE,
-        si_factor=0.27801385,
-        si_offset=0.0,
-    ))
+    ounce_force: Final = UnitConstant(
+        UnitDefinition(
+            name="ounce_force",
+            symbol="$\\mathrm{oz}_{\\mathrm{f}}$ or oz",
+            dimension=dim.FORCE,
+            si_factor=0.27801385,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_oz_mathrm_f_or_oz: Final = ounce_force
     oz_f: Final = ounce_force
     oz: Final = ounce_force
 
     # pond
-    pond: Final = UnitConstant(UnitDefinition(
-        name="pond",
-        symbol="p",
-        dimension=dim.FORCE,
-        si_factor=0.0098066,
-        si_offset=0.0,
-    ))
+    pond: Final = UnitConstant(
+        UnitDefinition(
+            name="pond",
+            symbol="p",
+            dimension=dim.FORCE,
+            si_factor=0.0098066,
+            si_offset=0.0,
+        )
+    )
 
     p: Final = pond
 
     # pound force
-    pound_force: Final = UnitConstant(UnitDefinition(
-        name="pound_force",
-        symbol="$\\mathrm{lb}_{\\mathrm{f}}$ or lb",
-        dimension=dim.FORCE,
-        si_factor=4.4482216,
-        si_offset=0.0,
-    ))
+    pound_force: Final = UnitConstant(
+        UnitDefinition(
+            name="pound_force",
+            symbol="$\\mathrm{lb}_{\\mathrm{f}}$ or lb",
+            dimension=dim.FORCE,
+            si_factor=4.4482216,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_lb_mathrm_f_or_lb: Final = pound_force
     lb_f: Final = pound_force
     lb: Final = pound_force
 
     # poundal
-    poundal: Final = UnitConstant(UnitDefinition(
-        name="poundal",
-        symbol="pdl",
-        dimension=dim.FORCE,
-        si_factor=0.13825495,
-        si_offset=0.0,
-    ))
+    poundal: Final = UnitConstant(
+        UnitDefinition(
+            name="poundal",
+            symbol="pdl",
+            dimension=dim.FORCE,
+            si_factor=0.13825495,
+            si_offset=0.0,
+        )
+    )
 
     pdl: Final = poundal
 
     # slug force
-    slug_force: Final = UnitConstant(UnitDefinition(
-        name="slug_force",
-        symbol="$\\operatorname{slug}_{f}$",
-        dimension=dim.FORCE,
-        si_factor=143.117,
-        si_offset=0.0,
-    ))
+    slug_force: Final = UnitConstant(
+        UnitDefinition(
+            name="slug_force",
+            symbol="$\\operatorname{slug}_{f}$",
+            dimension=dim.FORCE,
+            si_factor=143.117,
+            si_offset=0.0,
+        )
+    )
 
     operatorname_slug_f: Final = slug_force
 
     # sthène
-    sth_ne: Final = UnitConstant(UnitDefinition(
-        name="sth_ne",
-        symbol="sn",
-        dimension=dim.FORCE,
-        si_factor=1000.0,
-        si_offset=0.0,
-    ))
+    sth_ne: Final = UnitConstant(
+        UnitDefinition(
+            name="sth_ne",
+            symbol="sn",
+            dimension=dim.FORCE,
+            si_factor=1000.0,
+            si_offset=0.0,
+        )
+    )
 
     sn: Final = sth_ne
 
     # ton (force, long)
-    ton_force_long: Final = UnitConstant(UnitDefinition(
-        name="ton_force_long",
-        symbol="LT",
-        dimension=dim.FORCE,
-        si_factor=9964.016,
-        si_offset=0.0,
-    ))
+    ton_force_long: Final = UnitConstant(
+        UnitDefinition(
+            name="ton_force_long",
+            symbol="LT",
+            dimension=dim.FORCE,
+            si_factor=9964.016,
+            si_offset=0.0,
+        )
+    )
 
     LT: Final = ton_force_long
 
     # ton (force, metric)
-    ton_force_metric: Final = UnitConstant(UnitDefinition(
-        name="ton_force_metric",
-        symbol="MT",
-        dimension=dim.FORCE,
-        si_factor=9806.65,
-        si_offset=0.0,
-    ))
+    ton_force_metric: Final = UnitConstant(
+        UnitDefinition(
+            name="ton_force_metric",
+            symbol="MT",
+            dimension=dim.FORCE,
+            si_factor=9806.65,
+            si_offset=0.0,
+        )
+    )
 
     MT: Final = ton_force_metric
 
     # ton (force, short)
-    ton_force_short: Final = UnitConstant(UnitDefinition(
-        name="ton_force_short",
-        symbol="T",
-        dimension=dim.FORCE,
-        si_factor=8896.44,
-        si_offset=0.0,
-    ))
+    ton_force_short: Final = UnitConstant(
+        UnitDefinition(
+            name="ton_force_short",
+            symbol="T",
+            dimension=dim.FORCE,
+            si_factor=8896.44,
+            si_offset=0.0,
+        )
+    )
 
     T: Final = ton_force_short
 
     # kilonewton
-    kilonewton: Final = UnitConstant(UnitDefinition(
-        name="kilonewton",
-        symbol="kN",
-        dimension=dim.FORCE,
-        si_factor=1000.0,
-        si_offset=0.0,
-    ))
+    kilonewton: Final = UnitConstant(
+        UnitDefinition(
+            name="kilonewton",
+            symbol="kN",
+            dimension=dim.FORCE,
+            si_factor=1000.0,
+            si_offset=0.0,
+        )
+    )
 
     kN: Final = kilonewton
 
     # millinewton
-    millinewton: Final = UnitConstant(UnitDefinition(
-        name="millinewton",
-        symbol="mN",
-        dimension=dim.FORCE,
-        si_factor=0.001,
-        si_offset=0.0,
-    ))
+    millinewton: Final = UnitConstant(
+        UnitDefinition(
+            name="millinewton",
+            symbol="mN",
+            dimension=dim.FORCE,
+            si_factor=0.001,
+            si_offset=0.0,
+        )
+    )
 
     mN: Final = millinewton
 
@@ -2770,81 +3246,95 @@ class ForceBodyUnits:
     __slots__ = ()
 
     # dyne per cubic centimeter
-    dyne_per_cubic_centimeter: Final = UnitConstant(UnitDefinition(
-        name="dyne_per_cubic_centimeter",
-        symbol="dyn/cc or dyn/ $\\mathrm{cm}^{3}$",
-        dimension=dim.FORCE_BODY,
-        si_factor=10.0,
-        si_offset=0.0,
-    ))
+    dyne_per_cubic_centimeter: Final = UnitConstant(
+        UnitDefinition(
+            name="dyne_per_cubic_centimeter",
+            symbol="dyn/cc or dyn/ $\\mathrm{cm}^{3}$",
+            dimension=dim.FORCE_BODY,
+            si_factor=10.0,
+            si_offset=0.0,
+        )
+    )
 
     dyn_cc_or_dyn_mathrm_cm_3: Final = dyne_per_cubic_centimeter
     dyn_cc: Final = dyne_per_cubic_centimeter
     dyn_cm_3: Final = dyne_per_cubic_centimeter
 
     # kilogram force per cubic centimeter
-    kilogram_force_per_cubic_centimeter: Final = UnitConstant(UnitDefinition(
-        name="kilogram_force_per_cubic_centimeter",
-        symbol="$\\mathrm{kg}_{\\mathrm{f}} / \\mathrm{cm}^{3}$",
-        dimension=dim.FORCE_BODY,
-        si_factor=9806700.0,
-        si_offset=0.0,
-    ))
+    kilogram_force_per_cubic_centimeter: Final = UnitConstant(
+        UnitDefinition(
+            name="kilogram_force_per_cubic_centimeter",
+            symbol="$\\mathrm{kg}_{\\mathrm{f}} / \\mathrm{cm}^{3}$",
+            dimension=dim.FORCE_BODY,
+            si_factor=9806700.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_kg_mathrm_f_mathrm_cm_3: Final = kilogram_force_per_cubic_centimeter
 
     # kilogram force per cubic meter
-    kilogram_force_per_cubic_meter: Final = UnitConstant(UnitDefinition(
-        name="kilogram_force_per_cubic_meter",
-        symbol="$\\mathrm{kg}_{\\mathrm{f}} / \\mathrm{m}^{3}$",
-        dimension=dim.FORCE_BODY,
-        si_factor=9.80665,
-        si_offset=0.0,
-    ))
+    kilogram_force_per_cubic_meter: Final = UnitConstant(
+        UnitDefinition(
+            name="kilogram_force_per_cubic_meter",
+            symbol="$\\mathrm{kg}_{\\mathrm{f}} / \\mathrm{m}^{3}$",
+            dimension=dim.FORCE_BODY,
+            si_factor=9.80665,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_kg_mathrm_f_mathrm_m_3: Final = kilogram_force_per_cubic_meter
 
     # newton per cubic meter
-    newton_per_cubic_meter: Final = UnitConstant(UnitDefinition(
-        name="newton_per_cubic_meter",
-        symbol="$\\mathrm{N} / \\mathrm{m}^{3}$",
-        dimension=dim.FORCE_BODY,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    newton_per_cubic_meter: Final = UnitConstant(
+        UnitDefinition(
+            name="newton_per_cubic_meter",
+            symbol="$\\mathrm{N} / \\mathrm{m}^{3}$",
+            dimension=dim.FORCE_BODY,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_N_mathrm_m_3: Final = newton_per_cubic_meter
 
     # pound force per cubic foot
-    pound_force_per_cubic_foot: Final = UnitConstant(UnitDefinition(
-        name="pound_force_per_cubic_foot",
-        symbol="$\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{cft}$",
-        dimension=dim.FORCE_BODY,
-        si_factor=157.087,
-        si_offset=0.0,
-    ))
+    pound_force_per_cubic_foot: Final = UnitConstant(
+        UnitDefinition(
+            name="pound_force_per_cubic_foot",
+            symbol="$\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{cft}$",
+            dimension=dim.FORCE_BODY,
+            si_factor=157.087,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_lb_mathrm_f_mathrm_cft: Final = pound_force_per_cubic_foot
 
     # pound force per cubic inch
-    pound_force_per_cubic_inch: Final = UnitConstant(UnitDefinition(
-        name="pound_force_per_cubic_inch",
-        symbol="$\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{cu} . \\mathrm{in}$.",
-        dimension=dim.FORCE_BODY,
-        si_factor=271450.0,
-        si_offset=0.0,
-    ))
+    pound_force_per_cubic_inch: Final = UnitConstant(
+        UnitDefinition(
+            name="pound_force_per_cubic_inch",
+            symbol="$\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{cu} . \\mathrm{in}$.",
+            dimension=dim.FORCE_BODY,
+            si_factor=271450.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_lb_mathrm_f_mathrm_cu_mathrm_in: Final = pound_force_per_cubic_inch
 
     # ton force per cubic foot
-    ton_force_per_cubic_foot: Final = UnitConstant(UnitDefinition(
-        name="ton_force_per_cubic_foot",
-        symbol="ton $_{\\mathrm{f}} / \\mathrm{cft}$",
-        dimension=dim.FORCE_BODY,
-        si_factor=351880.0,
-        si_offset=0.0,
-    ))
+    ton_force_per_cubic_foot: Final = UnitConstant(
+        UnitDefinition(
+            name="ton_force_per_cubic_foot",
+            symbol="ton $_{\\mathrm{f}} / \\mathrm{cft}$",
+            dimension=dim.FORCE_BODY,
+            si_factor=351880.0,
+            si_offset=0.0,
+        )
+    )
 
     ton_mathrm_f_mathrm_cft: Final = ton_force_per_cubic_foot
 
@@ -2855,59 +3345,69 @@ class ForcePerUnitMassUnits:
     __slots__ = ()
 
     # dyne per gram
-    dyne_per_gram: Final = UnitConstant(UnitDefinition(
-        name="dyne_per_gram",
-        symbol="dyn/g",
-        dimension=dim.FORCE_PER_UNIT_MASS,
-        si_factor=0.01,
-        si_offset=0.0,
-    ))
+    dyne_per_gram: Final = UnitConstant(
+        UnitDefinition(
+            name="dyne_per_gram",
+            symbol="dyn/g",
+            dimension=dim.FORCE_PER_UNIT_MASS,
+            si_factor=0.01,
+            si_offset=0.0,
+        )
+    )
 
     dyn_g: Final = dyne_per_gram
 
     # kilogram force per kilogram
-    kilogram_force_per_kilogram: Final = UnitConstant(UnitDefinition(
-        name="kilogram_force_per_kilogram",
-        symbol="$\\mathrm{kg}_{\\mathrm{f}} / \\mathrm{kg}$",
-        dimension=dim.FORCE_PER_UNIT_MASS,
-        si_factor=9.80665,
-        si_offset=0.0,
-    ))
+    kilogram_force_per_kilogram: Final = UnitConstant(
+        UnitDefinition(
+            name="kilogram_force_per_kilogram",
+            symbol="$\\mathrm{kg}_{\\mathrm{f}} / \\mathrm{kg}$",
+            dimension=dim.FORCE_PER_UNIT_MASS,
+            si_factor=9.80665,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_kg_mathrm_f_mathrm_kg: Final = kilogram_force_per_kilogram
 
     # newton per kilogram
-    newton_per_kilogram: Final = UnitConstant(UnitDefinition(
-        name="newton_per_kilogram",
-        symbol="N/kg",
-        dimension=dim.FORCE_PER_UNIT_MASS,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    newton_per_kilogram: Final = UnitConstant(
+        UnitDefinition(
+            name="newton_per_kilogram",
+            symbol="N/kg",
+            dimension=dim.FORCE_PER_UNIT_MASS,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     N_kg: Final = newton_per_kilogram
 
     # pound force per pound mass
-    pound_force_per_pound_mass: Final = UnitConstant(UnitDefinition(
-        name="pound_force_per_pound_mass",
-        symbol="$\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{lb}$ or $\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{lb}_{\\mathrm{m}}$",
-        dimension=dim.FORCE_PER_UNIT_MASS,
-        si_factor=9.80665,
-        si_offset=0.0,
-    ))
+    pound_force_per_pound_mass: Final = UnitConstant(
+        UnitDefinition(
+            name="pound_force_per_pound_mass",
+            symbol="$\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{lb}$ or $\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{lb}_{\\mathrm{m}}$",
+            dimension=dim.FORCE_PER_UNIT_MASS,
+            si_factor=9.80665,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_lb_mathrm_f_mathrm_lb_or_mathrm_lb_mathrm_f_mathrm_lb_mathrm_m: Final = pound_force_per_pound_mass
     lb_f_lb: Final = pound_force_per_pound_mass
     lb_f_lb_m: Final = pound_force_per_pound_mass
 
     # pound force per slug
-    pound_force_per_slug: Final = UnitConstant(UnitDefinition(
-        name="pound_force_per_slug",
-        symbol="$\\mathrm{lb}_{\\mathrm{f}} /$ slug",
-        dimension=dim.FORCE_PER_UNIT_MASS,
-        si_factor=0.3048,
-        si_offset=0.0,
-    ))
+    pound_force_per_slug: Final = UnitConstant(
+        UnitDefinition(
+            name="pound_force_per_slug",
+            symbol="$\\mathrm{lb}_{\\mathrm{f}} /$ slug",
+            dimension=dim.FORCE_PER_UNIT_MASS,
+            si_factor=0.3048,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_lb_mathrm_f_slug: Final = pound_force_per_slug
 
@@ -2918,35 +3418,41 @@ class FrequencyVoltageRatioUnits:
     __slots__ = ()
 
     # cycles per second per volt
-    cycles_per_second_per_volt: Final = UnitConstant(UnitDefinition(
-        name="cycles_per_second_per_volt",
-        symbol="cycle/(sec V)",
-        dimension=dim.FREQUENCY_VOLTAGE_RATIO,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    cycles_per_second_per_volt: Final = UnitConstant(
+        UnitDefinition(
+            name="cycles_per_second_per_volt",
+            symbol="cycle/(sec V)",
+            dimension=dim.FREQUENCY_VOLTAGE_RATIO,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     cycle_sec_V: Final = cycles_per_second_per_volt
 
     # hertz per volt
-    hertz_per_volt: Final = UnitConstant(UnitDefinition(
-        name="hertz_per_volt",
-        symbol="Hz/V",
-        dimension=dim.FREQUENCY_VOLTAGE_RATIO,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    hertz_per_volt: Final = UnitConstant(
+        UnitDefinition(
+            name="hertz_per_volt",
+            symbol="Hz/V",
+            dimension=dim.FREQUENCY_VOLTAGE_RATIO,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     Hz_V: Final = hertz_per_volt
 
     # terahertz per volt
-    terahertz_per_volt: Final = UnitConstant(UnitDefinition(
-        name="terahertz_per_volt",
-        symbol="THz/V",
-        dimension=dim.FREQUENCY_VOLTAGE_RATIO,
-        si_factor=1000000000000.0,
-        si_offset=0.0,
-    ))
+    terahertz_per_volt: Final = UnitConstant(
+        UnitDefinition(
+            name="terahertz_per_volt",
+            symbol="THz/V",
+            dimension=dim.FREQUENCY_VOLTAGE_RATIO,
+            si_factor=1000000000000.0,
+            si_offset=0.0,
+        )
+    )
 
     THz_V: Final = terahertz_per_volt
 
@@ -2957,145 +3463,171 @@ class FuelConsumptionUnits:
     __slots__ = ()
 
     # 100 km per liter
-    unit_100_km_per_liter: Final = UnitConstant(UnitDefinition(
-        name="unit_100_km_per_liter",
-        symbol="$100 \\mathrm{~km} / \\mathrm{l}$",
-        dimension=dim.FUEL_CONSUMPTION,
-        si_factor=100.0,
-        si_offset=0.0,
-    ))
+    unit_100_km_per_liter: Final = UnitConstant(
+        UnitDefinition(
+            name="unit_100_km_per_liter",
+            symbol="$100 \\mathrm{~km} / \\mathrm{l}$",
+            dimension=dim.FUEL_CONSUMPTION,
+            si_factor=100.0,
+            si_offset=0.0,
+        )
+    )
 
     # gallons (UK) per 100 miles
-    gallons_uk: Final = UnitConstant(UnitDefinition(
-        name="gallons_uk",
-        symbol="gal (UK)/ 100 mi",
-        dimension=dim.FUEL_CONSUMPTION,
-        si_factor=35.4,
-        si_offset=0.0,
-    ))
+    gallons_uk: Final = UnitConstant(
+        UnitDefinition(
+            name="gallons_uk",
+            symbol="gal (UK)/ 100 mi",
+            dimension=dim.FUEL_CONSUMPTION,
+            si_factor=35.4,
+            si_offset=0.0,
+        )
+    )
 
     gal_UK_100_mi: Final = gallons_uk
 
     # gallons (US) per 100 miles
-    gallons_us: Final = UnitConstant(UnitDefinition(
-        name="gallons_us",
-        symbol="gal (US)/ 100 mi",
-        dimension=dim.FUEL_CONSUMPTION,
-        si_factor=42.51,
-        si_offset=0.0,
-    ))
+    gallons_us: Final = UnitConstant(
+        UnitDefinition(
+            name="gallons_us",
+            symbol="gal (US)/ 100 mi",
+            dimension=dim.FUEL_CONSUMPTION,
+            si_factor=42.51,
+            si_offset=0.0,
+        )
+    )
 
     gal_US_100_mi: Final = gallons_us
 
     # kilometers per gallon (UK)
-    kilometers_per_gallon_uk: Final = UnitConstant(UnitDefinition(
-        name="kilometers_per_gallon_uk",
-        symbol="km/gal (UK)",
-        dimension=dim.FUEL_CONSUMPTION,
-        si_factor=0.21997,
-        si_offset=0.0,
-    ))
+    kilometers_per_gallon_uk: Final = UnitConstant(
+        UnitDefinition(
+            name="kilometers_per_gallon_uk",
+            symbol="km/gal (UK)",
+            dimension=dim.FUEL_CONSUMPTION,
+            si_factor=0.21997,
+            si_offset=0.0,
+        )
+    )
 
     km_gal_UK: Final = kilometers_per_gallon_uk
 
     # kilometers per gallon (US)
-    kilometers_per_gallon_us: Final = UnitConstant(UnitDefinition(
-        name="kilometers_per_gallon_us",
-        symbol="km/gal(US)",
-        dimension=dim.FUEL_CONSUMPTION,
-        si_factor=0.26417,
-        si_offset=0.0,
-    ))
+    kilometers_per_gallon_us: Final = UnitConstant(
+        UnitDefinition(
+            name="kilometers_per_gallon_us",
+            symbol="km/gal(US)",
+            dimension=dim.FUEL_CONSUMPTION,
+            si_factor=0.26417,
+            si_offset=0.0,
+        )
+    )
 
     km_gal_US: Final = kilometers_per_gallon_us
 
     # kilometers per liter
-    kilometers_per_liter: Final = UnitConstant(UnitDefinition(
-        name="kilometers_per_liter",
-        symbol="km/l",
-        dimension=dim.FUEL_CONSUMPTION,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    kilometers_per_liter: Final = UnitConstant(
+        UnitDefinition(
+            name="kilometers_per_liter",
+            symbol="km/l",
+            dimension=dim.FUEL_CONSUMPTION,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     km_l: Final = kilometers_per_liter
 
     # liters per 100 km
-    liters_per_100_km: Final = UnitConstant(UnitDefinition(
-        name="liters_per_100_km",
-        symbol="$1 / 100 \\mathrm{~km}$",
-        dimension=dim.FUEL_CONSUMPTION,
-        si_factor=100.0,
-        si_offset=0.0,
-    ))
+    liters_per_100_km: Final = UnitConstant(
+        UnitDefinition(
+            name="liters_per_100_km",
+            symbol="$1 / 100 \\mathrm{~km}$",
+            dimension=dim.FUEL_CONSUMPTION,
+            si_factor=100.0,
+            si_offset=0.0,
+        )
+    )
 
     # liters per kilometer
-    liters_per_kilometer: Final = UnitConstant(UnitDefinition(
-        name="liters_per_kilometer",
-        symbol="1/km",
-        dimension=dim.FUEL_CONSUMPTION,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    liters_per_kilometer: Final = UnitConstant(
+        UnitDefinition(
+            name="liters_per_kilometer",
+            symbol="1/km",
+            dimension=dim.FUEL_CONSUMPTION,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     unit_1_km: Final = liters_per_kilometer
 
     # meters per gallon (UK)
-    meters_per_gallon_uk: Final = UnitConstant(UnitDefinition(
-        name="meters_per_gallon_uk",
-        symbol="m/gal (UK)",
-        dimension=dim.FUEL_CONSUMPTION,
-        si_factor=0.00021997,
-        si_offset=0.0,
-    ))
+    meters_per_gallon_uk: Final = UnitConstant(
+        UnitDefinition(
+            name="meters_per_gallon_uk",
+            symbol="m/gal (UK)",
+            dimension=dim.FUEL_CONSUMPTION,
+            si_factor=0.00021997,
+            si_offset=0.0,
+        )
+    )
 
     m_gal_UK: Final = meters_per_gallon_uk
 
     # meters per gallon (US)
-    meters_per_gallon_us: Final = UnitConstant(UnitDefinition(
-        name="meters_per_gallon_us",
-        symbol="1/gal (US)",
-        dimension=dim.FUEL_CONSUMPTION,
-        si_factor=0.00022642000000000004,
-        si_offset=0.0,
-    ))
+    meters_per_gallon_us: Final = UnitConstant(
+        UnitDefinition(
+            name="meters_per_gallon_us",
+            symbol="1/gal (US)",
+            dimension=dim.FUEL_CONSUMPTION,
+            si_factor=0.00022642000000000004,
+            si_offset=0.0,
+        )
+    )
 
     unit_1_gal_US: Final = meters_per_gallon_us
 
     # miles per gallon (UK)
-    miles_per_gallon_uk: Final = UnitConstant(UnitDefinition(
-        name="miles_per_gallon_uk",
-        symbol="mi/gal (UK) or mpg (UK)",
-        dimension=dim.FUEL_CONSUMPTION,
-        si_factor=0.35401,
-        si_offset=0.0,
-    ))
+    miles_per_gallon_uk: Final = UnitConstant(
+        UnitDefinition(
+            name="miles_per_gallon_uk",
+            symbol="mi/gal (UK) or mpg (UK)",
+            dimension=dim.FUEL_CONSUMPTION,
+            si_factor=0.35401,
+            si_offset=0.0,
+        )
+    )
 
     mi_gal_UK_or_mpg_UK: Final = miles_per_gallon_uk
     mi_gal_UK: Final = miles_per_gallon_uk
     mpg_UK: Final = miles_per_gallon_uk
 
     # miles per gallon (US)
-    miles_per_gallon_us: Final = UnitConstant(UnitDefinition(
-        name="miles_per_gallon_us",
-        symbol="mi/gal (US) or mpg (US)",
-        dimension=dim.FUEL_CONSUMPTION,
-        si_factor=0.42514,
-        si_offset=0.0,
-    ))
+    miles_per_gallon_us: Final = UnitConstant(
+        UnitDefinition(
+            name="miles_per_gallon_us",
+            symbol="mi/gal (US) or mpg (US)",
+            dimension=dim.FUEL_CONSUMPTION,
+            si_factor=0.42514,
+            si_offset=0.0,
+        )
+    )
 
     mi_gal_US_or_mpg_US: Final = miles_per_gallon_us
     mi_gal_US: Final = miles_per_gallon_us
     mpg_US: Final = miles_per_gallon_us
 
     # miles per liter
-    miles_per_liter: Final = UnitConstant(UnitDefinition(
-        name="miles_per_liter",
-        symbol="mi/l",
-        dimension=dim.FUEL_CONSUMPTION,
-        si_factor=1.6093,
-        si_offset=0.0,
-    ))
+    miles_per_liter: Final = UnitConstant(
+        UnitDefinition(
+            name="miles_per_liter",
+            symbol="mi/l",
+            dimension=dim.FUEL_CONSUMPTION,
+            si_factor=1.6093,
+            si_offset=0.0,
+        )
+    )
 
     mi_l: Final = miles_per_liter
 
@@ -3106,46 +3638,54 @@ class HeatOfCombustionUnits:
     __slots__ = ()
 
     # British thermal unit per pound
-    british_thermal_unit_per_pound: Final = UnitConstant(UnitDefinition(
-        name="british_thermal_unit_per_pound",
-        symbol="Btu/lb",
-        dimension=dim.HEAT_OF_COMBUSTION,
-        si_factor=2326.0,
-        si_offset=0.0,
-    ))
+    british_thermal_unit_per_pound: Final = UnitConstant(
+        UnitDefinition(
+            name="british_thermal_unit_per_pound",
+            symbol="Btu/lb",
+            dimension=dim.HEAT_OF_COMBUSTION,
+            si_factor=2326.0,
+            si_offset=0.0,
+        )
+    )
 
     Btu_lb: Final = british_thermal_unit_per_pound
 
     # calorie per gram
-    calorie_per_gram: Final = UnitConstant(UnitDefinition(
-        name="calorie_per_gram",
-        symbol="$\\mathrm{cal} / \\mathrm{g}$",
-        dimension=dim.HEAT_OF_COMBUSTION,
-        si_factor=4186.0,
-        si_offset=0.0,
-    ))
+    calorie_per_gram: Final = UnitConstant(
+        UnitDefinition(
+            name="calorie_per_gram",
+            symbol="$\\mathrm{cal} / \\mathrm{g}$",
+            dimension=dim.HEAT_OF_COMBUSTION,
+            si_factor=4186.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_cal_mathrm_g: Final = calorie_per_gram
 
     # Chu per pound
-    chu_per_pound: Final = UnitConstant(UnitDefinition(
-        name="chu_per_pound",
-        symbol="Chu/lb",
-        dimension=dim.HEAT_OF_COMBUSTION,
-        si_factor=4186.8,
-        si_offset=0.0,
-    ))
+    chu_per_pound: Final = UnitConstant(
+        UnitDefinition(
+            name="chu_per_pound",
+            symbol="Chu/lb",
+            dimension=dim.HEAT_OF_COMBUSTION,
+            si_factor=4186.8,
+            si_offset=0.0,
+        )
+    )
 
     Chu_lb: Final = chu_per_pound
 
     # joule per kilogram
-    joule_per_kilogram: Final = UnitConstant(UnitDefinition(
-        name="joule_per_kilogram",
-        symbol="J/kg",
-        dimension=dim.HEAT_OF_COMBUSTION,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    joule_per_kilogram: Final = UnitConstant(
+        UnitDefinition(
+            name="joule_per_kilogram",
+            symbol="J/kg",
+            dimension=dim.HEAT_OF_COMBUSTION,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     J_kg: Final = joule_per_kilogram
 
@@ -3156,51 +3696,61 @@ class HeatOfFusionUnits:
     __slots__ = ()
 
     # British thermal unit (mean) per pound
-    british_thermal_unit_mean: Final = UnitConstant(UnitDefinition(
-        name="british_thermal_unit_mean",
-        symbol="Btu (mean)/lb",
-        dimension=dim.HEAT_OF_FUSION,
-        si_factor=2327.79,
-        si_offset=0.0,
-    ))
+    british_thermal_unit_mean: Final = UnitConstant(
+        UnitDefinition(
+            name="british_thermal_unit_mean",
+            symbol="Btu (mean)/lb",
+            dimension=dim.HEAT_OF_FUSION,
+            si_factor=2327.79,
+            si_offset=0.0,
+        )
+    )
 
     Btu_mean_lb: Final = british_thermal_unit_mean
 
     # British thermal unit per pound
-    british_thermal_unit_per_pound: Final = UnitConstant(UnitDefinition(
-        name="british_thermal_unit_per_pound",
-        symbol="Btu/lb",
-        dimension=dim.HEAT_OF_FUSION,
-        si_factor=2326.0,
-        si_offset=0.0,
-    ))
+    british_thermal_unit_per_pound: Final = UnitConstant(
+        UnitDefinition(
+            name="british_thermal_unit_per_pound",
+            symbol="Btu/lb",
+            dimension=dim.HEAT_OF_FUSION,
+            si_factor=2326.0,
+            si_offset=0.0,
+        )
+    )
 
     # calorie per gram
-    calorie_per_gram: Final = UnitConstant(UnitDefinition(
-        name="calorie_per_gram",
-        symbol="$\\mathrm{cal} / \\mathrm{g}$",
-        dimension=dim.HEAT_OF_FUSION,
-        si_factor=4186.0,
-        si_offset=0.0,
-    ))
+    calorie_per_gram: Final = UnitConstant(
+        UnitDefinition(
+            name="calorie_per_gram",
+            symbol="$\\mathrm{cal} / \\mathrm{g}$",
+            dimension=dim.HEAT_OF_FUSION,
+            si_factor=4186.0,
+            si_offset=0.0,
+        )
+    )
 
     # Chu per pound
-    chu_per_pound: Final = UnitConstant(UnitDefinition(
-        name="chu_per_pound",
-        symbol="Chu/lb",
-        dimension=dim.HEAT_OF_FUSION,
-        si_factor=4186.8,
-        si_offset=0.0,
-    ))
+    chu_per_pound: Final = UnitConstant(
+        UnitDefinition(
+            name="chu_per_pound",
+            symbol="Chu/lb",
+            dimension=dim.HEAT_OF_FUSION,
+            si_factor=4186.8,
+            si_offset=0.0,
+        )
+    )
 
     # joule per kilogram
-    joule_per_kilogram: Final = UnitConstant(UnitDefinition(
-        name="joule_per_kilogram",
-        symbol="J/kg",
-        dimension=dim.HEAT_OF_FUSION,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    joule_per_kilogram: Final = UnitConstant(
+        UnitDefinition(
+            name="joule_per_kilogram",
+            symbol="J/kg",
+            dimension=dim.HEAT_OF_FUSION,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
 
 class HeatOfVaporizationUnits:
@@ -3209,40 +3759,48 @@ class HeatOfVaporizationUnits:
     __slots__ = ()
 
     # British thermal unit per pound
-    british_thermal_unit_per_pound: Final = UnitConstant(UnitDefinition(
-        name="british_thermal_unit_per_pound",
-        symbol="Btu/lb",
-        dimension=dim.HEAT_OF_VAPORIZATION,
-        si_factor=2326.0,
-        si_offset=0.0,
-    ))
+    british_thermal_unit_per_pound: Final = UnitConstant(
+        UnitDefinition(
+            name="british_thermal_unit_per_pound",
+            symbol="Btu/lb",
+            dimension=dim.HEAT_OF_VAPORIZATION,
+            si_factor=2326.0,
+            si_offset=0.0,
+        )
+    )
 
     # calorie per gram
-    calorie_per_gram: Final = UnitConstant(UnitDefinition(
-        name="calorie_per_gram",
-        symbol="$\\mathrm{cal} / \\mathrm{g}$",
-        dimension=dim.HEAT_OF_VAPORIZATION,
-        si_factor=4186.0,
-        si_offset=0.0,
-    ))
+    calorie_per_gram: Final = UnitConstant(
+        UnitDefinition(
+            name="calorie_per_gram",
+            symbol="$\\mathrm{cal} / \\mathrm{g}$",
+            dimension=dim.HEAT_OF_VAPORIZATION,
+            si_factor=4186.0,
+            si_offset=0.0,
+        )
+    )
 
     # Chu per pound
-    chu_per_pound: Final = UnitConstant(UnitDefinition(
-        name="chu_per_pound",
-        symbol="Chu/lb",
-        dimension=dim.HEAT_OF_VAPORIZATION,
-        si_factor=4186.8,
-        si_offset=0.0,
-    ))
+    chu_per_pound: Final = UnitConstant(
+        UnitDefinition(
+            name="chu_per_pound",
+            symbol="Chu/lb",
+            dimension=dim.HEAT_OF_VAPORIZATION,
+            si_factor=4186.8,
+            si_offset=0.0,
+        )
+    )
 
     # joule per kilogram
-    joule_per_kilogram: Final = UnitConstant(UnitDefinition(
-        name="joule_per_kilogram",
-        symbol="J/kg",
-        dimension=dim.HEAT_OF_VAPORIZATION,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    joule_per_kilogram: Final = UnitConstant(
+        UnitDefinition(
+            name="joule_per_kilogram",
+            symbol="J/kg",
+            dimension=dim.HEAT_OF_VAPORIZATION,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
 
 class HeatTransferCoefficientUnits:
@@ -3251,24 +3809,28 @@ class HeatTransferCoefficientUnits:
     __slots__ = ()
 
     # Btu per square foot per hour per degree Fahrenheit (or Rankine)
-    btu_per_square_foot_per_hour_per_degree_fahrenheit_or_rankine: Final = UnitConstant(UnitDefinition(
-        name="btu_per_square_foot_per_hour_per_degree_fahrenheit_or_rankine",
-        symbol="$\\mathrm{Btu} /\\left(\\mathrm{ft}^{2} \\mathrm{~h}{ }^{\\circ} \\mathrm{F}\\right)$",
-        dimension=dim.HEAT_TRANSFER_COEFFICIENT,
-        si_factor=5.679,
-        si_offset=0.0,
-    ))
+    btu_per_square_foot_per_hour_per_degree_fahrenheit_or_rankine: Final = UnitConstant(
+        UnitDefinition(
+            name="btu_per_square_foot_per_hour_per_degree_fahrenheit_or_rankine",
+            symbol="$\\mathrm{Btu} /\\left(\\mathrm{ft}^{2} \\mathrm{~h}{ }^{\\circ} \\mathrm{F}\\right)$",
+            dimension=dim.HEAT_TRANSFER_COEFFICIENT,
+            si_factor=5.679,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_Btu_left_mathrm_ft_2_mathrm_h_circ_mathrm_F_right: Final = btu_per_square_foot_per_hour_per_degree_fahrenheit_or_rankine
 
     # watt per square meter per degree Celsius (or kelvin)
-    watt_per_square_meter_per_degree_celsius_or_kelvin: Final = UnitConstant(UnitDefinition(
-        name="watt_per_square_meter_per_degree_celsius_or_kelvin",
-        symbol="$\\mathrm{W} /\\left(\\mathrm{m}^{2}{ }^{\\circ} \\mathrm{C}\\right)$",
-        dimension=dim.HEAT_TRANSFER_COEFFICIENT,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    watt_per_square_meter_per_degree_celsius_or_kelvin: Final = UnitConstant(
+        UnitDefinition(
+            name="watt_per_square_meter_per_degree_celsius_or_kelvin",
+            symbol="$\\mathrm{W} /\\left(\\mathrm{m}^{2}{ }^{\\circ} \\mathrm{C}\\right)$",
+            dimension=dim.HEAT_TRANSFER_COEFFICIENT,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_W_left_mathrm_m_2_circ_mathrm_C_right: Final = watt_per_square_meter_per_degree_celsius_or_kelvin
 
@@ -3279,57 +3841,67 @@ class IlluminanceUnits:
     __slots__ = ()
 
     # foot-candle
-    foot_candle: Final = UnitConstant(UnitDefinition(
-        name="foot_candle",
-        symbol="$\\mathrm{ft}-\\mathrm{C}$ or $\\mathrm{ft}-\\mathrm{Cd}$",
-        dimension=dim.ILLUMINANCE,
-        si_factor=10.76391,
-        si_offset=0.0,
-    ))
+    foot_candle: Final = UnitConstant(
+        UnitDefinition(
+            name="foot_candle",
+            symbol="$\\mathrm{ft}-\\mathrm{C}$ or $\\mathrm{ft}-\\mathrm{Cd}$",
+            dimension=dim.ILLUMINANCE,
+            si_factor=10.76391,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_ft_mathrm_C_or_mathrm_ft_mathrm_Cd: Final = foot_candle
     ft_C: Final = foot_candle
     ft_Cd: Final = foot_candle
 
     # lux
-    lux: Final = UnitConstant(UnitDefinition(
-        name="lux",
-        symbol="lx",
-        dimension=dim.ILLUMINANCE,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    lux: Final = UnitConstant(
+        UnitDefinition(
+            name="lux",
+            symbol="lx",
+            dimension=dim.ILLUMINANCE,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     lx: Final = lux
 
     # nox
-    nox: Final = UnitConstant(UnitDefinition(
-        name="nox",
-        symbol="nox",
-        dimension=dim.ILLUMINANCE,
-        si_factor=0.001,
-        si_offset=0.0,
-    ))
+    nox: Final = UnitConstant(
+        UnitDefinition(
+            name="nox",
+            symbol="nox",
+            dimension=dim.ILLUMINANCE,
+            si_factor=0.001,
+            si_offset=0.0,
+        )
+    )
 
     # phot
-    phot: Final = UnitConstant(UnitDefinition(
-        name="phot",
-        symbol="ph",
-        dimension=dim.ILLUMINANCE,
-        si_factor=10000.0,
-        si_offset=0.0,
-    ))
+    phot: Final = UnitConstant(
+        UnitDefinition(
+            name="phot",
+            symbol="ph",
+            dimension=dim.ILLUMINANCE,
+            si_factor=10000.0,
+            si_offset=0.0,
+        )
+    )
 
     ph: Final = phot
 
     # skot
-    skot: Final = UnitConstant(UnitDefinition(
-        name="skot",
-        symbol="skot",
-        dimension=dim.ILLUMINANCE,
-        si_factor=0.001,
-        si_offset=0.0,
-    ))
+    skot: Final = UnitConstant(
+        UnitDefinition(
+            name="skot",
+            symbol="skot",
+            dimension=dim.ILLUMINANCE,
+            si_factor=0.001,
+            si_offset=0.0,
+        )
+    )
 
 
 class KineticEnergyOfTurbulenceUnits:
@@ -3338,26 +3910,30 @@ class KineticEnergyOfTurbulenceUnits:
     __slots__ = ()
 
     # square foot per second squared
-    square_foot_per_second_squared: Final = UnitConstant(UnitDefinition(
-        name="square_foot_per_second_squared",
-        symbol="$\\mathrm{ft}^{2} / \\mathrm{s}^{2}$ or sqft/sec ${ }^{2}$",
-        dimension=dim.KINETIC_ENERGY_OF_TURBULENCE,
-        si_factor=0.0929,
-        si_offset=0.0,
-    ))
+    square_foot_per_second_squared: Final = UnitConstant(
+        UnitDefinition(
+            name="square_foot_per_second_squared",
+            symbol="$\\mathrm{ft}^{2} / \\mathrm{s}^{2}$ or sqft/sec ${ }^{2}$",
+            dimension=dim.KINETIC_ENERGY_OF_TURBULENCE,
+            si_factor=0.0929,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_ft_2_mathrm_s_2_or_sqft_sec_2: Final = square_foot_per_second_squared
     ft_2_s_2: Final = square_foot_per_second_squared
     sqft_sec_2: Final = square_foot_per_second_squared
 
     # square meters per second squared
-    square_meters_per_second_squared: Final = UnitConstant(UnitDefinition(
-        name="square_meters_per_second_squared",
-        symbol="$\\mathrm{m}^{2} / \\mathrm{s}^{2}$",
-        dimension=dim.KINETIC_ENERGY_OF_TURBULENCE,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    square_meters_per_second_squared: Final = UnitConstant(
+        UnitDefinition(
+            name="square_meters_per_second_squared",
+            symbol="$\\mathrm{m}^{2} / \\mathrm{s}^{2}$",
+            dimension=dim.KINETIC_ENERGY_OF_TURBULENCE,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_m_2_mathrm_s_2: Final = square_meters_per_second_squared
 
@@ -3368,486 +3944,578 @@ class LengthUnits:
     __slots__ = ()
 
     # ångström
-    ngstr_m: Final = UnitConstant(UnitDefinition(
-        name="ngstr_m",
-        symbol="$\\AA$",
-        dimension=dim.LENGTH,
-        si_factor=1e-10,
-        si_offset=0.0,
-    ))
+    ngstr_m: Final = UnitConstant(
+        UnitDefinition(
+            name="ngstr_m",
+            symbol="$\\AA$",
+            dimension=dim.LENGTH,
+            si_factor=1e-10,
+            si_offset=0.0,
+        )
+    )
 
     AA: Final = ngstr_m
 
     # arpent (Quebec)
-    arpent_quebec: Final = UnitConstant(UnitDefinition(
-        name="arpent_quebec",
-        symbol="arp",
-        dimension=dim.LENGTH,
-        si_factor=58.47,
-        si_offset=0.0,
-    ))
+    arpent_quebec: Final = UnitConstant(
+        UnitDefinition(
+            name="arpent_quebec",
+            symbol="arp",
+            dimension=dim.LENGTH,
+            si_factor=58.47,
+            si_offset=0.0,
+        )
+    )
 
     # astronomic unit
-    astronomic_unit: Final = UnitConstant(UnitDefinition(
-        name="astronomic_unit",
-        symbol="AU",
-        dimension=dim.LENGTH,
-        si_factor=149600000000.0,
-        si_offset=0.0,
-    ))
+    astronomic_unit: Final = UnitConstant(
+        UnitDefinition(
+            name="astronomic_unit",
+            symbol="AU",
+            dimension=dim.LENGTH,
+            si_factor=149600000000.0,
+            si_offset=0.0,
+        )
+    )
 
     AU: Final = astronomic_unit
 
     # attometer
-    attometer: Final = UnitConstant(UnitDefinition(
-        name="attometer",
-        symbol="am",
-        dimension=dim.LENGTH,
-        si_factor=1e-18,
-        si_offset=0.0,
-    ))
+    attometer: Final = UnitConstant(
+        UnitDefinition(
+            name="attometer",
+            symbol="am",
+            dimension=dim.LENGTH,
+            si_factor=1e-18,
+            si_offset=0.0,
+        )
+    )
 
     am: Final = attometer
 
     # calibre (centinch)
-    calibre_centinch: Final = UnitConstant(UnitDefinition(
-        name="calibre_centinch",
-        symbol="cin",
-        dimension=dim.LENGTH,
-        si_factor=0.000254,
-        si_offset=0.0,
-    ))
+    calibre_centinch: Final = UnitConstant(
+        UnitDefinition(
+            name="calibre_centinch",
+            symbol="cin",
+            dimension=dim.LENGTH,
+            si_factor=0.000254,
+            si_offset=0.0,
+        )
+    )
 
     # centimeter
-    centimeter: Final = UnitConstant(UnitDefinition(
-        name="centimeter",
-        symbol="cm",
-        dimension=dim.LENGTH,
-        si_factor=0.01,
-        si_offset=0.0,
-    ))
+    centimeter: Final = UnitConstant(
+        UnitDefinition(
+            name="centimeter",
+            symbol="cm",
+            dimension=dim.LENGTH,
+            si_factor=0.01,
+            si_offset=0.0,
+        )
+    )
 
     cm: Final = centimeter
 
     # chain (Engr's or Ramsden)
-    chain_engrs_or_ramsden: Final = UnitConstant(UnitDefinition(
-        name="chain_engrs_or_ramsden",
-        symbol="ch (eng or Rams)",
-        dimension=dim.LENGTH,
-        si_factor=30.48,
-        si_offset=0.0,
-    ))
+    chain_engrs_or_ramsden: Final = UnitConstant(
+        UnitDefinition(
+            name="chain_engrs_or_ramsden",
+            symbol="ch (eng or Rams)",
+            dimension=dim.LENGTH,
+            si_factor=30.48,
+            si_offset=0.0,
+        )
+    )
 
     ch_eng_or_Rams: Final = chain_engrs_or_ramsden
     ch_eng: Final = chain_engrs_or_ramsden
     Rams: Final = chain_engrs_or_ramsden
 
     # chain (Gunter's)
-    chain_gunters: Final = UnitConstant(UnitDefinition(
-        name="chain_gunters",
-        symbol="ch (Gunt)",
-        dimension=dim.LENGTH,
-        si_factor=20.1168,
-        si_offset=0.0,
-    ))
+    chain_gunters: Final = UnitConstant(
+        UnitDefinition(
+            name="chain_gunters",
+            symbol="ch (Gunt)",
+            dimension=dim.LENGTH,
+            si_factor=20.1168,
+            si_offset=0.0,
+        )
+    )
 
     ch_Gunt: Final = chain_gunters
 
     # chain (surveyors)
-    chain_surveyors: Final = UnitConstant(UnitDefinition(
-        name="chain_surveyors",
-        symbol="ch (surv)",
-        dimension=dim.LENGTH,
-        si_factor=20.1168,
-        si_offset=0.0,
-    ))
+    chain_surveyors: Final = UnitConstant(
+        UnitDefinition(
+            name="chain_surveyors",
+            symbol="ch (surv)",
+            dimension=dim.LENGTH,
+            si_factor=20.1168,
+            si_offset=0.0,
+        )
+    )
 
     ch_surv: Final = chain_surveyors
 
     # cubit (UK)
-    cubit_uk: Final = UnitConstant(UnitDefinition(
-        name="cubit_uk",
-        symbol="cu (UK)",
-        dimension=dim.LENGTH,
-        si_factor=0.4572,
-        si_offset=0.0,
-    ))
+    cubit_uk: Final = UnitConstant(
+        UnitDefinition(
+            name="cubit_uk",
+            symbol="cu (UK)",
+            dimension=dim.LENGTH,
+            si_factor=0.4572,
+            si_offset=0.0,
+        )
+    )
 
     cu_UK: Final = cubit_uk
 
     # ell
-    ell: Final = UnitConstant(UnitDefinition(
-        name="ell",
-        symbol="ell",
-        dimension=dim.LENGTH,
-        si_factor=1.143,
-        si_offset=0.0,
-    ))
+    ell: Final = UnitConstant(
+        UnitDefinition(
+            name="ell",
+            symbol="ell",
+            dimension=dim.LENGTH,
+            si_factor=1.143,
+            si_offset=0.0,
+        )
+    )
 
     # fathom
-    fathom: Final = UnitConstant(UnitDefinition(
-        name="fathom",
-        symbol="fath",
-        dimension=dim.LENGTH,
-        si_factor=1.8288,
-        si_offset=0.0,
-    ))
+    fathom: Final = UnitConstant(
+        UnitDefinition(
+            name="fathom",
+            symbol="fath",
+            dimension=dim.LENGTH,
+            si_factor=1.8288,
+            si_offset=0.0,
+        )
+    )
 
     fath: Final = fathom
 
     # femtometre
-    femtometre: Final = UnitConstant(UnitDefinition(
-        name="femtometre",
-        symbol="fm",
-        dimension=dim.LENGTH,
-        si_factor=1e-15,
-        si_offset=0.0,
-    ))
+    femtometre: Final = UnitConstant(
+        UnitDefinition(
+            name="femtometre",
+            symbol="fm",
+            dimension=dim.LENGTH,
+            si_factor=1e-15,
+            si_offset=0.0,
+        )
+    )
 
     fm: Final = femtometre
 
     # fermi
-    fermi: Final = UnitConstant(UnitDefinition(
-        name="fermi",
-        symbol="F",
-        dimension=dim.LENGTH,
-        si_factor=1e-15,
-        si_offset=0.0,
-    ))
+    fermi: Final = UnitConstant(
+        UnitDefinition(
+            name="fermi",
+            symbol="F",
+            dimension=dim.LENGTH,
+            si_factor=1e-15,
+            si_offset=0.0,
+        )
+    )
 
     # foot
-    foot: Final = UnitConstant(UnitDefinition(
-        name="foot",
-        symbol="ft",
-        dimension=dim.LENGTH,
-        si_factor=0.3048,
-        si_offset=0.0,
-    ))
+    foot: Final = UnitConstant(
+        UnitDefinition(
+            name="foot",
+            symbol="ft",
+            dimension=dim.LENGTH,
+            si_factor=0.3048,
+            si_offset=0.0,
+        )
+    )
 
     ft: Final = foot
 
     # furlong (UK and US)
-    furlong_uk_and_us: Final = UnitConstant(UnitDefinition(
-        name="furlong_uk_and_us",
-        symbol="fur",
-        dimension=dim.LENGTH,
-        si_factor=201.168,
-        si_offset=0.0,
-    ))
+    furlong_uk_and_us: Final = UnitConstant(
+        UnitDefinition(
+            name="furlong_uk_and_us",
+            symbol="fur",
+            dimension=dim.LENGTH,
+            si_factor=201.168,
+            si_offset=0.0,
+        )
+    )
 
     fur: Final = furlong_uk_and_us
 
     # inch
-    inch: Final = UnitConstant(UnitDefinition(
-        name="inch",
-        symbol="in",
-        dimension=dim.LENGTH,
-        si_factor=0.0254,
-        si_offset=0.0,
-    ))
+    inch: Final = UnitConstant(
+        UnitDefinition(
+            name="inch",
+            symbol="in",
+            dimension=dim.LENGTH,
+            si_factor=0.0254,
+            si_offset=0.0,
+        )
+    )
 
     in_unit: Final = inch
 
     # kilometer
-    kilometer: Final = UnitConstant(UnitDefinition(
-        name="kilometer",
-        symbol="km",
-        dimension=dim.LENGTH,
-        si_factor=1000.0,
-        si_offset=0.0,
-    ))
+    kilometer: Final = UnitConstant(
+        UnitDefinition(
+            name="kilometer",
+            symbol="km",
+            dimension=dim.LENGTH,
+            si_factor=1000.0,
+            si_offset=0.0,
+        )
+    )
 
     km: Final = kilometer
 
     # league (US, statute)
-    league_us_statute: Final = UnitConstant(UnitDefinition(
-        name="league_us_statute",
-        symbol="lg (US, stat)",
-        dimension=dim.LENGTH,
-        si_factor=4828.0,
-        si_offset=0.0,
-    ))
+    league_us_statute: Final = UnitConstant(
+        UnitDefinition(
+            name="league_us_statute",
+            symbol="lg (US, stat)",
+            dimension=dim.LENGTH,
+            si_factor=4828.0,
+            si_offset=0.0,
+        )
+    )
 
     lg_US_stat: Final = league_us_statute
 
     # lieue (metric)
-    lieue_metric: Final = UnitConstant(UnitDefinition(
-        name="lieue_metric",
-        symbol="lieue (metric)",
-        dimension=dim.LENGTH,
-        si_factor=4000.0,
-        si_offset=0.0,
-    ))
+    lieue_metric: Final = UnitConstant(
+        UnitDefinition(
+            name="lieue_metric",
+            symbol="lieue (metric)",
+            dimension=dim.LENGTH,
+            si_factor=4000.0,
+            si_offset=0.0,
+        )
+    )
 
     # ligne (metric)
-    ligne_metric: Final = UnitConstant(UnitDefinition(
-        name="ligne_metric",
-        symbol="ligne (metric)",
-        dimension=dim.LENGTH,
-        si_factor=0.0023,
-        si_offset=0.0,
-    ))
+    ligne_metric: Final = UnitConstant(
+        UnitDefinition(
+            name="ligne_metric",
+            symbol="ligne (metric)",
+            dimension=dim.LENGTH,
+            si_factor=0.0023,
+            si_offset=0.0,
+        )
+    )
 
     # line (US)
-    line_us: Final = UnitConstant(UnitDefinition(
-        name="line_us",
-        symbol="li (US)",
-        dimension=dim.LENGTH,
-        si_factor=0.000635,
-        si_offset=0.0,
-    ))
+    line_us: Final = UnitConstant(
+        UnitDefinition(
+            name="line_us",
+            symbol="li (US)",
+            dimension=dim.LENGTH,
+            si_factor=0.000635,
+            si_offset=0.0,
+        )
+    )
 
     li_US: Final = line_us
 
     # link (surveyors)
-    link_surveyors: Final = UnitConstant(UnitDefinition(
-        name="link_surveyors",
-        symbol="li (surv)",
-        dimension=dim.LENGTH,
-        si_factor=0.201168,
-        si_offset=0.0,
-    ))
+    link_surveyors: Final = UnitConstant(
+        UnitDefinition(
+            name="link_surveyors",
+            symbol="li (surv)",
+            dimension=dim.LENGTH,
+            si_factor=0.201168,
+            si_offset=0.0,
+        )
+    )
 
     li_surv: Final = link_surveyors
 
     # meter
-    meter: Final = UnitConstant(UnitDefinition(
-        name="meter",
-        symbol="m",
-        dimension=dim.LENGTH,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    meter: Final = UnitConstant(
+        UnitDefinition(
+            name="meter",
+            symbol="m",
+            dimension=dim.LENGTH,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     m: Final = meter
 
     # micrometer
-    micrometer: Final = UnitConstant(UnitDefinition(
-        name="micrometer",
-        symbol="$\\mu \\mathrm{m}$",
-        dimension=dim.LENGTH,
-        si_factor=1e-06,
-        si_offset=0.0,
-    ))
+    micrometer: Final = UnitConstant(
+        UnitDefinition(
+            name="micrometer",
+            symbol="$\\mu \\mathrm{m}$",
+            dimension=dim.LENGTH,
+            si_factor=1e-06,
+            si_offset=0.0,
+        )
+    )
 
     mu_mathrm_m: Final = micrometer
 
     # micron
-    micron: Final = UnitConstant(UnitDefinition(
-        name="micron",
-        symbol="$\\mu$",
-        dimension=dim.LENGTH,
-        si_factor=1e-06,
-        si_offset=0.0,
-    ))
+    micron: Final = UnitConstant(
+        UnitDefinition(
+            name="micron",
+            symbol="$\\mu$",
+            dimension=dim.LENGTH,
+            si_factor=1e-06,
+            si_offset=0.0,
+        )
+    )
 
     mu: Final = micron
 
     # mil
-    mil: Final = UnitConstant(UnitDefinition(
-        name="mil",
-        symbol="mil",
-        dimension=dim.LENGTH,
-        si_factor=2.54e-05,
-        si_offset=0.0,
-    ))
+    mil: Final = UnitConstant(
+        UnitDefinition(
+            name="mil",
+            symbol="mil",
+            dimension=dim.LENGTH,
+            si_factor=2.54e-05,
+            si_offset=0.0,
+        )
+    )
 
     # mile (geographical)
-    mile_geographical: Final = UnitConstant(UnitDefinition(
-        name="mile_geographical",
-        symbol="mi",
-        dimension=dim.LENGTH,
-        si_factor=7421.59,
-        si_offset=0.0,
-    ))
+    mile_geographical: Final = UnitConstant(
+        UnitDefinition(
+            name="mile_geographical",
+            symbol="mi",
+            dimension=dim.LENGTH,
+            si_factor=7421.59,
+            si_offset=0.0,
+        )
+    )
 
     mi: Final = mile_geographical
 
     # mile (US, nautical)
-    mile_us_nautical: Final = UnitConstant(UnitDefinition(
-        name="mile_us_nautical",
-        symbol="mi (US, naut)",
-        dimension=dim.LENGTH,
-        si_factor=1853.2,
-        si_offset=0.0,
-    ))
+    mile_us_nautical: Final = UnitConstant(
+        UnitDefinition(
+            name="mile_us_nautical",
+            symbol="mi (US, naut)",
+            dimension=dim.LENGTH,
+            si_factor=1853.2,
+            si_offset=0.0,
+        )
+    )
 
     mi_US_naut: Final = mile_us_nautical
 
     # mile (US, statute)
-    mile_us_statute: Final = UnitConstant(UnitDefinition(
-        name="mile_us_statute",
-        symbol="mi",
-        dimension=dim.LENGTH,
-        si_factor=1609.344,
-        si_offset=0.0,
-    ))
+    mile_us_statute: Final = UnitConstant(
+        UnitDefinition(
+            name="mile_us_statute",
+            symbol="mi",
+            dimension=dim.LENGTH,
+            si_factor=1609.344,
+            si_offset=0.0,
+        )
+    )
 
     # mile (US, survey)
-    mile_us_survey: Final = UnitConstant(UnitDefinition(
-        name="mile_us_survey",
-        symbol="mi (US, surv)",
-        dimension=dim.LENGTH,
-        si_factor=1609.3,
-        si_offset=0.0,
-    ))
+    mile_us_survey: Final = UnitConstant(
+        UnitDefinition(
+            name="mile_us_survey",
+            symbol="mi (US, surv)",
+            dimension=dim.LENGTH,
+            si_factor=1609.3,
+            si_offset=0.0,
+        )
+    )
 
     mi_US_surv: Final = mile_us_survey
 
     # millimeter
-    millimeter: Final = UnitConstant(UnitDefinition(
-        name="millimeter",
-        symbol="mm",
-        dimension=dim.LENGTH,
-        si_factor=0.001,
-        si_offset=0.0,
-    ))
+    millimeter: Final = UnitConstant(
+        UnitDefinition(
+            name="millimeter",
+            symbol="mm",
+            dimension=dim.LENGTH,
+            si_factor=0.001,
+            si_offset=0.0,
+        )
+    )
 
     mm: Final = millimeter
 
     # millimicron
-    millimicron: Final = UnitConstant(UnitDefinition(
-        name="millimicron",
-        symbol="$\\mathrm{m} \\mu$",
-        dimension=dim.LENGTH,
-        si_factor=1e-09,
-        si_offset=0.0,
-    ))
+    millimicron: Final = UnitConstant(
+        UnitDefinition(
+            name="millimicron",
+            symbol="$\\mathrm{m} \\mu$",
+            dimension=dim.LENGTH,
+            si_factor=1e-09,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_m_mu: Final = millimicron
 
     # nanometer or nanon
-    nanometer_or_nanon: Final = UnitConstant(UnitDefinition(
-        name="nanometer_or_nanon",
-        symbol="nm",
-        dimension=dim.LENGTH,
-        si_factor=1e-09,
-        si_offset=0.0,
-    ))
+    nanometer_or_nanon: Final = UnitConstant(
+        UnitDefinition(
+            name="nanometer_or_nanon",
+            symbol="nm",
+            dimension=dim.LENGTH,
+            si_factor=1e-09,
+            si_offset=0.0,
+        )
+    )
 
     nm: Final = nanometer_or_nanon
 
     # parsec
-    parsec: Final = UnitConstant(UnitDefinition(
-        name="parsec",
-        symbol="pc",
-        dimension=dim.LENGTH,
-        si_factor=3.086e+16,
-        si_offset=0.0,
-    ))
+    parsec: Final = UnitConstant(
+        UnitDefinition(
+            name="parsec",
+            symbol="pc",
+            dimension=dim.LENGTH,
+            si_factor=3.086e16,
+            si_offset=0.0,
+        )
+    )
 
     pc: Final = parsec
 
     # perche
-    perche: Final = UnitConstant(UnitDefinition(
-        name="perche",
-        symbol="rod",
-        dimension=dim.LENGTH,
-        si_factor=5.0292,
-        si_offset=0.0,
-    ))
+    perche: Final = UnitConstant(
+        UnitDefinition(
+            name="perche",
+            symbol="rod",
+            dimension=dim.LENGTH,
+            si_factor=5.0292,
+            si_offset=0.0,
+        )
+    )
 
     rod: Final = perche
 
     # pica
-    pica: Final = UnitConstant(UnitDefinition(
-        name="pica",
-        symbol="pica",
-        dimension=dim.LENGTH,
-        si_factor=0.0042175,
-        si_offset=0.0,
-    ))
+    pica: Final = UnitConstant(
+        UnitDefinition(
+            name="pica",
+            symbol="pica",
+            dimension=dim.LENGTH,
+            si_factor=0.0042175,
+            si_offset=0.0,
+        )
+    )
 
     # picometer
-    picometer: Final = UnitConstant(UnitDefinition(
-        name="picometer",
-        symbol="pm",
-        dimension=dim.LENGTH,
-        si_factor=1e-12,
-        si_offset=0.0,
-    ))
+    picometer: Final = UnitConstant(
+        UnitDefinition(
+            name="picometer",
+            symbol="pm",
+            dimension=dim.LENGTH,
+            si_factor=1e-12,
+            si_offset=0.0,
+        )
+    )
 
     pm: Final = picometer
 
     # point (Didot)
-    point_didot: Final = UnitConstant(UnitDefinition(
-        name="point_didot",
-        symbol="pt (Didot)",
-        dimension=dim.LENGTH,
-        si_factor=0.00037597,
-        si_offset=0.0,
-    ))
+    point_didot: Final = UnitConstant(
+        UnitDefinition(
+            name="point_didot",
+            symbol="pt (Didot)",
+            dimension=dim.LENGTH,
+            si_factor=0.00037597,
+            si_offset=0.0,
+        )
+    )
 
     pt_Didot: Final = point_didot
 
     # point (US)
-    point_us: Final = UnitConstant(UnitDefinition(
-        name="point_us",
-        symbol="pt (US)",
-        dimension=dim.LENGTH,
-        si_factor=0.00035146,
-        si_offset=0.0,
-    ))
+    point_us: Final = UnitConstant(
+        UnitDefinition(
+            name="point_us",
+            symbol="pt (US)",
+            dimension=dim.LENGTH,
+            si_factor=0.00035146,
+            si_offset=0.0,
+        )
+    )
 
     pt_US: Final = point_us
 
     # rod or pole
-    rod_or_pole: Final = UnitConstant(UnitDefinition(
-        name="rod_or_pole",
-        symbol="rod",
-        dimension=dim.LENGTH,
-        si_factor=5.0292,
-        si_offset=0.0,
-    ))
+    rod_or_pole: Final = UnitConstant(
+        UnitDefinition(
+            name="rod_or_pole",
+            symbol="rod",
+            dimension=dim.LENGTH,
+            si_factor=5.0292,
+            si_offset=0.0,
+        )
+    )
 
     # span
-    span: Final = UnitConstant(UnitDefinition(
-        name="span",
-        symbol="span",
-        dimension=dim.LENGTH,
-        si_factor=0.2286,
-        si_offset=0.0,
-    ))
+    span: Final = UnitConstant(
+        UnitDefinition(
+            name="span",
+            symbol="span",
+            dimension=dim.LENGTH,
+            si_factor=0.2286,
+            si_offset=0.0,
+        )
+    )
 
     # thou (millinch)
-    thou_millinch: Final = UnitConstant(UnitDefinition(
-        name="thou_millinch",
-        symbol="thou",
-        dimension=dim.LENGTH,
-        si_factor=2.54e-05,
-        si_offset=0.0,
-    ))
+    thou_millinch: Final = UnitConstant(
+        UnitDefinition(
+            name="thou_millinch",
+            symbol="thou",
+            dimension=dim.LENGTH,
+            si_factor=2.54e-05,
+            si_offset=0.0,
+        )
+    )
 
     thou: Final = thou_millinch
 
     # toise (metric)
-    toise_metric: Final = UnitConstant(UnitDefinition(
-        name="toise_metric",
-        symbol="toise (metric)",
-        dimension=dim.LENGTH,
-        si_factor=2.0,
-        si_offset=0.0,
-    ))
+    toise_metric: Final = UnitConstant(
+        UnitDefinition(
+            name="toise_metric",
+            symbol="toise (metric)",
+            dimension=dim.LENGTH,
+            si_factor=2.0,
+            si_offset=0.0,
+        )
+    )
 
     # yard
-    yard: Final = UnitConstant(UnitDefinition(
-        name="yard",
-        symbol="yd",
-        dimension=dim.LENGTH,
-        si_factor=0.9144,
-        si_offset=0.0,
-    ))
+    yard: Final = UnitConstant(
+        UnitDefinition(
+            name="yard",
+            symbol="yd",
+            dimension=dim.LENGTH,
+            si_factor=0.9144,
+            si_offset=0.0,
+        )
+    )
 
     yd: Final = yard
 
     # nanometer
-    nanometer: Final = UnitConstant(UnitDefinition(
-        name="nanometer",
-        symbol="nm",
-        dimension=dim.LENGTH,
-        si_factor=1e-09,
-        si_offset=0.0,
-    ))
+    nanometer: Final = UnitConstant(
+        UnitDefinition(
+            name="nanometer",
+            symbol="nm",
+            dimension=dim.LENGTH,
+            si_factor=1e-09,
+            si_offset=0.0,
+        )
+    )
 
 
 class LinearMassDensityUnits:
@@ -3856,90 +4524,106 @@ class LinearMassDensityUnits:
     __slots__ = ()
 
     # denier
-    denier: Final = UnitConstant(UnitDefinition(
-        name="denier",
-        symbol="denier",
-        dimension=dim.LINEAR_MASS_DENSITY,
-        si_factor=1.111e-07,
-        si_offset=0.0,
-    ))
+    denier: Final = UnitConstant(
+        UnitDefinition(
+            name="denier",
+            symbol="denier",
+            dimension=dim.LINEAR_MASS_DENSITY,
+            si_factor=1.111e-07,
+            si_offset=0.0,
+        )
+    )
 
     # kilogram per centimeter
-    kilogram_per_centimeter: Final = UnitConstant(UnitDefinition(
-        name="kilogram_per_centimeter",
-        symbol="kg/cm",
-        dimension=dim.LINEAR_MASS_DENSITY,
-        si_factor=100.0,
-        si_offset=0.0,
-    ))
+    kilogram_per_centimeter: Final = UnitConstant(
+        UnitDefinition(
+            name="kilogram_per_centimeter",
+            symbol="kg/cm",
+            dimension=dim.LINEAR_MASS_DENSITY,
+            si_factor=100.0,
+            si_offset=0.0,
+        )
+    )
 
     kg_cm: Final = kilogram_per_centimeter
 
     # kilogram per meter
-    kilogram_per_meter: Final = UnitConstant(UnitDefinition(
-        name="kilogram_per_meter",
-        symbol="kg/m",
-        dimension=dim.LINEAR_MASS_DENSITY,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    kilogram_per_meter: Final = UnitConstant(
+        UnitDefinition(
+            name="kilogram_per_meter",
+            symbol="kg/m",
+            dimension=dim.LINEAR_MASS_DENSITY,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     kg_m: Final = kilogram_per_meter
 
     # pound per foot
-    pound_per_foot: Final = UnitConstant(UnitDefinition(
-        name="pound_per_foot",
-        symbol="lb/ft",
-        dimension=dim.LINEAR_MASS_DENSITY,
-        si_factor=1.488,
-        si_offset=0.0,
-    ))
+    pound_per_foot: Final = UnitConstant(
+        UnitDefinition(
+            name="pound_per_foot",
+            symbol="lb/ft",
+            dimension=dim.LINEAR_MASS_DENSITY,
+            si_factor=1.488,
+            si_offset=0.0,
+        )
+    )
 
     lb_ft: Final = pound_per_foot
 
     # pound per inch
-    pound_per_inch: Final = UnitConstant(UnitDefinition(
-        name="pound_per_inch",
-        symbol="lb/in",
-        dimension=dim.LINEAR_MASS_DENSITY,
-        si_factor=17.858,
-        si_offset=0.0,
-    ))
+    pound_per_inch: Final = UnitConstant(
+        UnitDefinition(
+            name="pound_per_inch",
+            symbol="lb/in",
+            dimension=dim.LINEAR_MASS_DENSITY,
+            si_factor=17.858,
+            si_offset=0.0,
+        )
+    )
 
     lb_in: Final = pound_per_inch
 
     # pound per yard
-    pound_per_yard: Final = UnitConstant(UnitDefinition(
-        name="pound_per_yard",
-        symbol="lb/yd",
-        dimension=dim.LINEAR_MASS_DENSITY,
-        si_factor=0.49606,
-        si_offset=0.0,
-    ))
+    pound_per_yard: Final = UnitConstant(
+        UnitDefinition(
+            name="pound_per_yard",
+            symbol="lb/yd",
+            dimension=dim.LINEAR_MASS_DENSITY,
+            si_factor=0.49606,
+            si_offset=0.0,
+        )
+    )
 
     lb_yd: Final = pound_per_yard
 
     # ton (metric) per kilometer
-    ton_metric: Final = UnitConstant(UnitDefinition(
-        name="ton_metric",
-        symbol="t/km or MT/km",
-        dimension=dim.LINEAR_MASS_DENSITY,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    ton_metric: Final = UnitConstant(
+        UnitDefinition(
+            name="ton_metric",
+            symbol="t/km or MT/km",
+            dimension=dim.LINEAR_MASS_DENSITY,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     t_km_or_MT_km: Final = ton_metric
     t_km: Final = ton_metric
     MT_km: Final = ton_metric
 
     # ton (metric) per meter
-    ton_metric: Final = UnitConstant(UnitDefinition(
-        name="ton_metric",
-        symbol="t/m or MT/m",
-        dimension=dim.LINEAR_MASS_DENSITY,
-        si_factor=1000.0,
-        si_offset=0.0,
-    ))
+    ton_metric: Final = UnitConstant(
+        UnitDefinition(
+            name="ton_metric",
+            symbol="t/m or MT/m",
+            dimension=dim.LINEAR_MASS_DENSITY,
+            si_factor=1000.0,
+            si_offset=0.0,
+        )
+    )
 
     t_m_or_MT_m: Final = ton_metric
     t_m: Final = ton_metric
@@ -3952,63 +4636,73 @@ class LinearMomentumUnits:
     __slots__ = ()
 
     # foot pounds force per hour
-    foot_pounds_force_per_hour: Final = UnitConstant(UnitDefinition(
-        name="foot_pounds_force_per_hour",
-        symbol="${\\mathrm{ft} \\mathrm{lb}_{\\mathrm{f}}}^{/} \\mathrm{h}$ or $\\mathrm{ft}-\\mathrm{lb} / \\mathrm{hr}$",
-        dimension=dim.LINEAR_MOMENTUM,
-        si_factor=3.8400000000000005e-05,
-        si_offset=0.0,
-    ))
+    foot_pounds_force_per_hour: Final = UnitConstant(
+        UnitDefinition(
+            name="foot_pounds_force_per_hour",
+            symbol="${\\mathrm{ft} \\mathrm{lb}_{\\mathrm{f}}}^{/} \\mathrm{h}$ or $\\mathrm{ft}-\\mathrm{lb} / \\mathrm{hr}$",
+            dimension=dim.LINEAR_MOMENTUM,
+            si_factor=3.8400000000000005e-05,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_ft_mathrm_lb_mathrm_f_mathrm_h_or_mathrm_ft_mathrm_lb_mathrm_hr: Final = foot_pounds_force_per_hour
     ft_lb_f_h: Final = foot_pounds_force_per_hour
     ft_lb_hr: Final = foot_pounds_force_per_hour
 
     # foot pounds force per minute
-    foot_pounds_force_per_minute: Final = UnitConstant(UnitDefinition(
-        name="foot_pounds_force_per_minute",
-        symbol="$\\mathrm{ft} \\mathrm{lb}_{\\mathrm{f}} / \\min$ or $\\mathrm{ft}-\\mathrm{lb} /$ min",
-        dimension=dim.LINEAR_MOMENTUM,
-        si_factor=0.0023042,
-        si_offset=0.0,
-    ))
+    foot_pounds_force_per_minute: Final = UnitConstant(
+        UnitDefinition(
+            name="foot_pounds_force_per_minute",
+            symbol="$\\mathrm{ft} \\mathrm{lb}_{\\mathrm{f}} / \\min$ or $\\mathrm{ft}-\\mathrm{lb} /$ min",
+            dimension=dim.LINEAR_MOMENTUM,
+            si_factor=0.0023042,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_ft_mathrm_lb_mathrm_f_min_or_mathrm_ft_mathrm_lb_min: Final = foot_pounds_force_per_minute
     ft_lb_f_min: Final = foot_pounds_force_per_minute
     ft_lb_min: Final = foot_pounds_force_per_minute
 
     # foot pounds force per second
-    foot_pounds_force_per_second: Final = UnitConstant(UnitDefinition(
-        name="foot_pounds_force_per_second",
-        symbol="$\\mathrm{ft} \\mathrm{lb}_{\\mathrm{f}} / \\mathrm{s}$ or ft-lb/sec",
-        dimension=dim.LINEAR_MOMENTUM,
-        si_factor=0.13825,
-        si_offset=0.0,
-    ))
+    foot_pounds_force_per_second: Final = UnitConstant(
+        UnitDefinition(
+            name="foot_pounds_force_per_second",
+            symbol="$\\mathrm{ft} \\mathrm{lb}_{\\mathrm{f}} / \\mathrm{s}$ or ft-lb/sec",
+            dimension=dim.LINEAR_MOMENTUM,
+            si_factor=0.13825,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_ft_mathrm_lb_mathrm_f_mathrm_s_or_ft_lb_sec: Final = foot_pounds_force_per_second
     ft_lb_f_s: Final = foot_pounds_force_per_second
     ft_lb_sec: Final = foot_pounds_force_per_second
 
     # gram centimeters per second
-    gram_centimeters_per_second: Final = UnitConstant(UnitDefinition(
-        name="gram_centimeters_per_second",
-        symbol="$\\mathrm{g} \\mathrm{cm} / \\mathrm{s}$",
-        dimension=dim.LINEAR_MOMENTUM,
-        si_factor=1e-05,
-        si_offset=0.0,
-    ))
+    gram_centimeters_per_second: Final = UnitConstant(
+        UnitDefinition(
+            name="gram_centimeters_per_second",
+            symbol="$\\mathrm{g} \\mathrm{cm} / \\mathrm{s}$",
+            dimension=dim.LINEAR_MOMENTUM,
+            si_factor=1e-05,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_g_mathrm_cm_mathrm_s: Final = gram_centimeters_per_second
 
     # kilogram meters per second
-    kilogram_meters_per_second: Final = UnitConstant(UnitDefinition(
-        name="kilogram_meters_per_second",
-        symbol="$\\mathrm{kg} \\mathrm{m} / \\mathrm{s}$",
-        dimension=dim.LINEAR_MOMENTUM,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    kilogram_meters_per_second: Final = UnitConstant(
+        UnitDefinition(
+            name="kilogram_meters_per_second",
+            symbol="$\\mathrm{kg} \\mathrm{m} / \\mathrm{s}$",
+            dimension=dim.LINEAR_MOMENTUM,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_kg_mathrm_m_mathrm_s: Final = kilogram_meters_per_second
 
@@ -4019,97 +4713,115 @@ class LuminanceSelfUnits:
     __slots__ = ()
 
     # apostilb
-    apostilb: Final = UnitConstant(UnitDefinition(
-        name="apostilb",
-        symbol="asb",
-        dimension=dim.LUMINANCE_SELF,
-        si_factor=0.31831,
-        si_offset=0.0,
-    ))
+    apostilb: Final = UnitConstant(
+        UnitDefinition(
+            name="apostilb",
+            symbol="asb",
+            dimension=dim.LUMINANCE_SELF,
+            si_factor=0.31831,
+            si_offset=0.0,
+        )
+    )
 
     asb: Final = apostilb
 
     # blondel
-    blondel: Final = UnitConstant(UnitDefinition(
-        name="blondel",
-        symbol="B1",
-        dimension=dim.LUMINANCE_SELF,
-        si_factor=0.31831,
-        si_offset=0.0,
-    ))
+    blondel: Final = UnitConstant(
+        UnitDefinition(
+            name="blondel",
+            symbol="B1",
+            dimension=dim.LUMINANCE_SELF,
+            si_factor=0.31831,
+            si_offset=0.0,
+        )
+    )
 
     B1: Final = blondel
 
     # candela per square meter
-    candela_per_square_meter: Final = UnitConstant(UnitDefinition(
-        name="candela_per_square_meter",
-        symbol="$\\mathrm{cd} / \\mathrm{m}^{2}$",
-        dimension=dim.LUMINANCE_SELF,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    candela_per_square_meter: Final = UnitConstant(
+        UnitDefinition(
+            name="candela_per_square_meter",
+            symbol="$\\mathrm{cd} / \\mathrm{m}^{2}$",
+            dimension=dim.LUMINANCE_SELF,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_cd_mathrm_m_2: Final = candela_per_square_meter
 
     # foot-lambert
-    foot_lambert: Final = UnitConstant(UnitDefinition(
-        name="foot_lambert",
-        symbol="ft-L",
-        dimension=dim.LUMINANCE_SELF,
-        si_factor=3.426259,
-        si_offset=0.0,
-    ))
+    foot_lambert: Final = UnitConstant(
+        UnitDefinition(
+            name="foot_lambert",
+            symbol="ft-L",
+            dimension=dim.LUMINANCE_SELF,
+            si_factor=3.426259,
+            si_offset=0.0,
+        )
+    )
 
     ft_L: Final = foot_lambert
 
     # lambert
-    lambert: Final = UnitConstant(UnitDefinition(
-        name="lambert",
-        symbol="L",
-        dimension=dim.LUMINANCE_SELF,
-        si_factor=3183.1,
-        si_offset=0.0,
-    ))
+    lambert: Final = UnitConstant(
+        UnitDefinition(
+            name="lambert",
+            symbol="L",
+            dimension=dim.LUMINANCE_SELF,
+            si_factor=3183.1,
+            si_offset=0.0,
+        )
+    )
 
     L: Final = lambert
 
     # luxon
-    luxon: Final = UnitConstant(UnitDefinition(
-        name="luxon",
-        symbol="luxon",
-        dimension=dim.LUMINANCE_SELF,
-        si_factor=10000.0,
-        si_offset=0.0,
-    ))
+    luxon: Final = UnitConstant(
+        UnitDefinition(
+            name="luxon",
+            symbol="luxon",
+            dimension=dim.LUMINANCE_SELF,
+            si_factor=10000.0,
+            si_offset=0.0,
+        )
+    )
 
     # nit
-    nit: Final = UnitConstant(UnitDefinition(
-        name="nit",
-        symbol="nit",
-        dimension=dim.LUMINANCE_SELF,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    nit: Final = UnitConstant(
+        UnitDefinition(
+            name="nit",
+            symbol="nit",
+            dimension=dim.LUMINANCE_SELF,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     # stilb
-    stilb: Final = UnitConstant(UnitDefinition(
-        name="stilb",
-        symbol="sb",
-        dimension=dim.LUMINANCE_SELF,
-        si_factor=10000.0,
-        si_offset=0.0,
-    ))
+    stilb: Final = UnitConstant(
+        UnitDefinition(
+            name="stilb",
+            symbol="sb",
+            dimension=dim.LUMINANCE_SELF,
+            si_factor=10000.0,
+            si_offset=0.0,
+        )
+    )
 
     sb: Final = stilb
 
     # troland
-    troland: Final = UnitConstant(UnitDefinition(
-        name="troland",
-        symbol="luxon",
-        dimension=dim.LUMINANCE_SELF,
-        si_factor=10000.0,
-        si_offset=0.0,
-    ))
+    troland: Final = UnitConstant(
+        UnitDefinition(
+            name="troland",
+            symbol="luxon",
+            dimension=dim.LUMINANCE_SELF,
+            si_factor=10000.0,
+            si_offset=0.0,
+        )
+    )
 
     luxon: Final = troland
 
@@ -4120,24 +4832,28 @@ class LuminousFluxUnits:
     __slots__ = ()
 
     # candela steradian
-    candela_steradian: Final = UnitConstant(UnitDefinition(
-        name="candela_steradian",
-        symbol="cd sr",
-        dimension=dim.LUMINOUS_FLUX,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    candela_steradian: Final = UnitConstant(
+        UnitDefinition(
+            name="candela_steradian",
+            symbol="cd sr",
+            dimension=dim.LUMINOUS_FLUX,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     cd_sr: Final = candela_steradian
 
     # lumen
-    lumen: Final = UnitConstant(UnitDefinition(
-        name="lumen",
-        symbol="lumen",
-        dimension=dim.LUMINOUS_FLUX,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    lumen: Final = UnitConstant(
+        UnitDefinition(
+            name="lumen",
+            symbol="lumen",
+            dimension=dim.LUMINOUS_FLUX,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
 
 class LuminousIntensityUnits:
@@ -4146,44 +4862,52 @@ class LuminousIntensityUnits:
     __slots__ = ()
 
     # candela
-    candela: Final = UnitConstant(UnitDefinition(
-        name="candela",
-        symbol="cd",
-        dimension=dim.LUMINOUS_INTENSITY,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    candela: Final = UnitConstant(
+        UnitDefinition(
+            name="candela",
+            symbol="cd",
+            dimension=dim.LUMINOUS_INTENSITY,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     cd: Final = candela
 
     # candle (international)
-    candle_international: Final = UnitConstant(UnitDefinition(
-        name="candle_international",
-        symbol="Cd (int)",
-        dimension=dim.LUMINOUS_INTENSITY,
-        si_factor=1.01937,
-        si_offset=0.0,
-    ))
+    candle_international: Final = UnitConstant(
+        UnitDefinition(
+            name="candle_international",
+            symbol="Cd (int)",
+            dimension=dim.LUMINOUS_INTENSITY,
+            si_factor=1.01937,
+            si_offset=0.0,
+        )
+    )
 
     Cd_int: Final = candle_international
 
     # carcel
-    carcel: Final = UnitConstant(UnitDefinition(
-        name="carcel",
-        symbol="carcel",
-        dimension=dim.LUMINOUS_INTENSITY,
-        si_factor=10.0,
-        si_offset=0.0,
-    ))
+    carcel: Final = UnitConstant(
+        UnitDefinition(
+            name="carcel",
+            symbol="carcel",
+            dimension=dim.LUMINOUS_INTENSITY,
+            si_factor=10.0,
+            si_offset=0.0,
+        )
+    )
 
     # Hefner unit
-    hefner_unit: Final = UnitConstant(UnitDefinition(
-        name="hefner_unit",
-        symbol="HK",
-        dimension=dim.LUMINOUS_INTENSITY,
-        si_factor=0.903,
-        si_offset=0.0,
-    ))
+    hefner_unit: Final = UnitConstant(
+        UnitDefinition(
+            name="hefner_unit",
+            symbol="HK",
+            dimension=dim.LUMINOUS_INTENSITY,
+            si_factor=0.903,
+            si_offset=0.0,
+        )
+    )
 
     HK: Final = hefner_unit
 
@@ -4194,44 +4918,52 @@ class MagneticFieldUnits:
     __slots__ = ()
 
     # ampere per meter
-    ampere_per_meter: Final = UnitConstant(UnitDefinition(
-        name="ampere_per_meter",
-        symbol="A/m",
-        dimension=dim.MAGNETIC_FIELD,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    ampere_per_meter: Final = UnitConstant(
+        UnitDefinition(
+            name="ampere_per_meter",
+            symbol="A/m",
+            dimension=dim.MAGNETIC_FIELD,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     A_m: Final = ampere_per_meter
 
     # lenz
-    lenz: Final = UnitConstant(UnitDefinition(
-        name="lenz",
-        symbol="lenz",
-        dimension=dim.MAGNETIC_FIELD,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    lenz: Final = UnitConstant(
+        UnitDefinition(
+            name="lenz",
+            symbol="lenz",
+            dimension=dim.MAGNETIC_FIELD,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     # oersted
-    oersted: Final = UnitConstant(UnitDefinition(
-        name="oersted",
-        symbol="Oe",
-        dimension=dim.MAGNETIC_FIELD,
-        si_factor=79.57747,
-        si_offset=0.0,
-    ))
+    oersted: Final = UnitConstant(
+        UnitDefinition(
+            name="oersted",
+            symbol="Oe",
+            dimension=dim.MAGNETIC_FIELD,
+            si_factor=79.57747,
+            si_offset=0.0,
+        )
+    )
 
     Oe: Final = oersted
 
     # praoersted
-    praoersted: Final = UnitConstant(UnitDefinition(
-        name="praoersted",
-        symbol="-",
-        dimension=dim.MAGNETIC_FIELD,
-        si_factor=11459.08,
-        si_offset=0.0,
-    ))
+    praoersted: Final = UnitConstant(
+        UnitDefinition(
+            name="praoersted",
+            symbol="-",
+            dimension=dim.MAGNETIC_FIELD,
+            si_factor=11459.08,
+            si_offset=0.0,
+        )
+    )
 
 
 class MagneticFluxUnits:
@@ -4240,73 +4972,87 @@ class MagneticFluxUnits:
     __slots__ = ()
 
     # kapp line
-    kapp_line: Final = UnitConstant(UnitDefinition(
-        name="kapp_line",
-        symbol="-",
-        dimension=dim.MAGNETIC_FLUX,
-        si_factor=6.000000000000001e-05,
-        si_offset=0.0,
-    ))
+    kapp_line: Final = UnitConstant(
+        UnitDefinition(
+            name="kapp_line",
+            symbol="-",
+            dimension=dim.MAGNETIC_FLUX,
+            si_factor=6.000000000000001e-05,
+            si_offset=0.0,
+        )
+    )
 
     # line
-    line: Final = UnitConstant(UnitDefinition(
-        name="line",
-        symbol="line",
-        dimension=dim.MAGNETIC_FLUX,
-        si_factor=1e-08,
-        si_offset=0.0,
-    ))
+    line: Final = UnitConstant(
+        UnitDefinition(
+            name="line",
+            symbol="line",
+            dimension=dim.MAGNETIC_FLUX,
+            si_factor=1e-08,
+            si_offset=0.0,
+        )
+    )
 
     # maxwell
-    maxwell: Final = UnitConstant(UnitDefinition(
-        name="maxwell",
-        symbol="Mx",
-        dimension=dim.MAGNETIC_FLUX,
-        si_factor=1e-08,
-        si_offset=0.0,
-    ))
+    maxwell: Final = UnitConstant(
+        UnitDefinition(
+            name="maxwell",
+            symbol="Mx",
+            dimension=dim.MAGNETIC_FLUX,
+            si_factor=1e-08,
+            si_offset=0.0,
+        )
+    )
 
     Mx: Final = maxwell
 
     # unit pole
-    unit_pole: Final = UnitConstant(UnitDefinition(
-        name="unit_pole",
-        symbol="unit pole",
-        dimension=dim.MAGNETIC_FLUX,
-        si_factor=1.2565999999999998e-07,
-        si_offset=0.0,
-    ))
+    unit_pole: Final = UnitConstant(
+        UnitDefinition(
+            name="unit_pole",
+            symbol="unit pole",
+            dimension=dim.MAGNETIC_FLUX,
+            si_factor=1.2565999999999998e-07,
+            si_offset=0.0,
+        )
+    )
 
     # weber
-    weber: Final = UnitConstant(UnitDefinition(
-        name="weber",
-        symbol="Wb",
-        dimension=dim.MAGNETIC_FLUX,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    weber: Final = UnitConstant(
+        UnitDefinition(
+            name="weber",
+            symbol="Wb",
+            dimension=dim.MAGNETIC_FLUX,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     Wb: Final = weber
 
     # milliweber
-    milliweber: Final = UnitConstant(UnitDefinition(
-        name="milliweber",
-        symbol="mWb",
-        dimension=dim.MAGNETIC_FLUX,
-        si_factor=0.001,
-        si_offset=0.0,
-    ))
+    milliweber: Final = UnitConstant(
+        UnitDefinition(
+            name="milliweber",
+            symbol="mWb",
+            dimension=dim.MAGNETIC_FLUX,
+            si_factor=0.001,
+            si_offset=0.0,
+        )
+    )
 
     mWb: Final = milliweber
 
     # microweber
-    microweber: Final = UnitConstant(UnitDefinition(
-        name="microweber",
-        symbol="μWb",
-        dimension=dim.MAGNETIC_FLUX,
-        si_factor=1e-06,
-        si_offset=0.0,
-    ))
+    microweber: Final = UnitConstant(
+        UnitDefinition(
+            name="microweber",
+            symbol="μWb",
+            dimension=dim.MAGNETIC_FLUX,
+            si_factor=1e-06,
+            si_offset=0.0,
+        )
+    )
 
 
 class MagneticInductionFieldStrengthUnits:
@@ -4315,104 +5061,124 @@ class MagneticInductionFieldStrengthUnits:
     __slots__ = ()
 
     # gamma
-    gamma: Final = UnitConstant(UnitDefinition(
-        name="gamma",
-        symbol="$\\gamma$",
-        dimension=dim.MAGNETIC_INDUCTION_FIELD_STRENGTH,
-        si_factor=1e-09,
-        si_offset=0.0,
-    ))
+    gamma: Final = UnitConstant(
+        UnitDefinition(
+            name="gamma",
+            symbol="$\\gamma$",
+            dimension=dim.MAGNETIC_INDUCTION_FIELD_STRENGTH,
+            si_factor=1e-09,
+            si_offset=0.0,
+        )
+    )
 
     # gauss
-    gauss: Final = UnitConstant(UnitDefinition(
-        name="gauss",
-        symbol="G",
-        dimension=dim.MAGNETIC_INDUCTION_FIELD_STRENGTH,
-        si_factor=0.0001,
-        si_offset=0.0,
-    ))
+    gauss: Final = UnitConstant(
+        UnitDefinition(
+            name="gauss",
+            symbol="G",
+            dimension=dim.MAGNETIC_INDUCTION_FIELD_STRENGTH,
+            si_factor=0.0001,
+            si_offset=0.0,
+        )
+    )
 
     G: Final = gauss
 
     # line per square centimeter
-    line_per_square_centimeter: Final = UnitConstant(UnitDefinition(
-        name="line_per_square_centimeter",
-        symbol="line $/ \\mathrm{cm}^{2}$",
-        dimension=dim.MAGNETIC_INDUCTION_FIELD_STRENGTH,
-        si_factor=0.0001,
-        si_offset=0.0,
-    ))
+    line_per_square_centimeter: Final = UnitConstant(
+        UnitDefinition(
+            name="line_per_square_centimeter",
+            symbol="line $/ \\mathrm{cm}^{2}$",
+            dimension=dim.MAGNETIC_INDUCTION_FIELD_STRENGTH,
+            si_factor=0.0001,
+            si_offset=0.0,
+        )
+    )
 
     line_mathrm_cm_2: Final = line_per_square_centimeter
 
     # maxwell per square centimeter
-    maxwell_per_square_centimeter: Final = UnitConstant(UnitDefinition(
-        name="maxwell_per_square_centimeter",
-        symbol="$\\mathrm{Mx} / \\mathrm{cm}^{2}$",
-        dimension=dim.MAGNETIC_INDUCTION_FIELD_STRENGTH,
-        si_factor=0.0001,
-        si_offset=0.0,
-    ))
+    maxwell_per_square_centimeter: Final = UnitConstant(
+        UnitDefinition(
+            name="maxwell_per_square_centimeter",
+            symbol="$\\mathrm{Mx} / \\mathrm{cm}^{2}$",
+            dimension=dim.MAGNETIC_INDUCTION_FIELD_STRENGTH,
+            si_factor=0.0001,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_Mx_mathrm_cm_2: Final = maxwell_per_square_centimeter
 
     # tesla
-    tesla: Final = UnitConstant(UnitDefinition(
-        name="tesla",
-        symbol="T",
-        dimension=dim.MAGNETIC_INDUCTION_FIELD_STRENGTH,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    tesla: Final = UnitConstant(
+        UnitDefinition(
+            name="tesla",
+            symbol="T",
+            dimension=dim.MAGNETIC_INDUCTION_FIELD_STRENGTH,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     # u.a.
-    u_a: Final = UnitConstant(UnitDefinition(
-        name="u_a",
-        symbol="u.a.",
-        dimension=dim.MAGNETIC_INDUCTION_FIELD_STRENGTH,
-        si_factor=2350520000000000.0,
-        si_offset=0.0,
-    ))
+    u_a: Final = UnitConstant(
+        UnitDefinition(
+            name="u_a",
+            symbol="u.a.",
+            dimension=dim.MAGNETIC_INDUCTION_FIELD_STRENGTH,
+            si_factor=2350520000000000.0,
+            si_offset=0.0,
+        )
+    )
 
     # weber per square meter
-    weber_per_square_meter: Final = UnitConstant(UnitDefinition(
-        name="weber_per_square_meter",
-        symbol="$\\mathrm{Wb} / \\mathrm{m}^{2}$",
-        dimension=dim.MAGNETIC_INDUCTION_FIELD_STRENGTH,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    weber_per_square_meter: Final = UnitConstant(
+        UnitDefinition(
+            name="weber_per_square_meter",
+            symbol="$\\mathrm{Wb} / \\mathrm{m}^{2}$",
+            dimension=dim.MAGNETIC_INDUCTION_FIELD_STRENGTH,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_Wb_mathrm_m_2: Final = weber_per_square_meter
 
     # millitesla
-    millitesla: Final = UnitConstant(UnitDefinition(
-        name="millitesla",
-        symbol="mT",
-        dimension=dim.MAGNETIC_INDUCTION_FIELD_STRENGTH,
-        si_factor=0.001,
-        si_offset=0.0,
-    ))
+    millitesla: Final = UnitConstant(
+        UnitDefinition(
+            name="millitesla",
+            symbol="mT",
+            dimension=dim.MAGNETIC_INDUCTION_FIELD_STRENGTH,
+            si_factor=0.001,
+            si_offset=0.0,
+        )
+    )
 
     mT: Final = millitesla
 
     # microtesla
-    microtesla: Final = UnitConstant(UnitDefinition(
-        name="microtesla",
-        symbol="μT",
-        dimension=dim.MAGNETIC_INDUCTION_FIELD_STRENGTH,
-        si_factor=1e-06,
-        si_offset=0.0,
-    ))
+    microtesla: Final = UnitConstant(
+        UnitDefinition(
+            name="microtesla",
+            symbol="μT",
+            dimension=dim.MAGNETIC_INDUCTION_FIELD_STRENGTH,
+            si_factor=1e-06,
+            si_offset=0.0,
+        )
+    )
 
     # nanotesla
-    nanotesla: Final = UnitConstant(UnitDefinition(
-        name="nanotesla",
-        symbol="nT",
-        dimension=dim.MAGNETIC_INDUCTION_FIELD_STRENGTH,
-        si_factor=1e-09,
-        si_offset=0.0,
-    ))
+    nanotesla: Final = UnitConstant(
+        UnitDefinition(
+            name="nanotesla",
+            symbol="nT",
+            dimension=dim.MAGNETIC_INDUCTION_FIELD_STRENGTH,
+            si_factor=1e-09,
+            si_offset=0.0,
+        )
+    )
 
     nT: Final = nanotesla
 
@@ -4423,35 +5189,41 @@ class MagneticMomentUnits:
     __slots__ = ()
 
     # Bohr magneton
-    bohr_magneton: Final = UnitConstant(UnitDefinition(
-        name="bohr_magneton",
-        symbol="Bohr magneton",
-        dimension=dim.MAGNETIC_MOMENT,
-        si_factor=9.273999999999999e-24,
-        si_offset=0.0,
-    ))
+    bohr_magneton: Final = UnitConstant(
+        UnitDefinition(
+            name="bohr_magneton",
+            symbol="Bohr magneton",
+            dimension=dim.MAGNETIC_MOMENT,
+            si_factor=9.273999999999999e-24,
+            si_offset=0.0,
+        )
+    )
 
     Bohr_magneton: Final = bohr_magneton
 
     # joule per tesla
-    joule_per_tesla: Final = UnitConstant(UnitDefinition(
-        name="joule_per_tesla",
-        symbol="J/T",
-        dimension=dim.MAGNETIC_MOMENT,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    joule_per_tesla: Final = UnitConstant(
+        UnitDefinition(
+            name="joule_per_tesla",
+            symbol="J/T",
+            dimension=dim.MAGNETIC_MOMENT,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     J_T: Final = joule_per_tesla
 
     # nuclear magneton
-    nuclear_magneton: Final = UnitConstant(UnitDefinition(
-        name="nuclear_magneton",
-        symbol="nucl. Magneton",
-        dimension=dim.MAGNETIC_MOMENT,
-        si_factor=5.0508e-27,
-        si_offset=0.0,
-    ))
+    nuclear_magneton: Final = UnitConstant(
+        UnitDefinition(
+            name="nuclear_magneton",
+            symbol="nucl. Magneton",
+            dimension=dim.MAGNETIC_MOMENT,
+            si_factor=5.0508e-27,
+            si_offset=0.0,
+        )
+    )
 
     nucl_Magneton: Final = nuclear_magneton
 
@@ -4462,24 +5234,28 @@ class MagneticPermeabilityUnits:
     __slots__ = ()
 
     # henrys per meter
-    henrys_per_meter: Final = UnitConstant(UnitDefinition(
-        name="henrys_per_meter",
-        symbol="H/m",
-        dimension=dim.MAGNETIC_PERMEABILITY,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    henrys_per_meter: Final = UnitConstant(
+        UnitDefinition(
+            name="henrys_per_meter",
+            symbol="H/m",
+            dimension=dim.MAGNETIC_PERMEABILITY,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     H_m: Final = henrys_per_meter
 
     # newton per square ampere
-    newton_per_square_ampere: Final = UnitConstant(UnitDefinition(
-        name="newton_per_square_ampere",
-        symbol="N/A ${ }^{2}$",
-        dimension=dim.MAGNETIC_PERMEABILITY,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    newton_per_square_ampere: Final = UnitConstant(
+        UnitDefinition(
+            name="newton_per_square_ampere",
+            symbol="N/A ${ }^{2}$",
+            dimension=dim.MAGNETIC_PERMEABILITY,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     N_A_2: Final = newton_per_square_ampere
 
@@ -4490,95 +5266,113 @@ class MagnetomotiveForceUnits:
     __slots__ = ()
 
     # abampere-turn
-    abampere_turn: Final = UnitConstant(UnitDefinition(
-        name="abampere_turn",
-        symbol="emu cgs",
-        dimension=dim.MAGNETOMOTIVE_FORCE,
-        si_factor=10.0,
-        si_offset=0.0,
-    ))
+    abampere_turn: Final = UnitConstant(
+        UnitDefinition(
+            name="abampere_turn",
+            symbol="emu cgs",
+            dimension=dim.MAGNETOMOTIVE_FORCE,
+            si_factor=10.0,
+            si_offset=0.0,
+        )
+    )
 
     # ampere
-    ampere: Final = UnitConstant(UnitDefinition(
-        name="ampere",
-        symbol="A",
-        dimension=dim.MAGNETOMOTIVE_FORCE,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    ampere: Final = UnitConstant(
+        UnitDefinition(
+            name="ampere",
+            symbol="A",
+            dimension=dim.MAGNETOMOTIVE_FORCE,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     # ampere-turn
-    ampere_turn: Final = UnitConstant(UnitDefinition(
-        name="ampere_turn",
-        symbol="A-turn",
-        dimension=dim.MAGNETOMOTIVE_FORCE,
-        si_factor=2864.77,
-        si_offset=0.0,
-    ))
+    ampere_turn: Final = UnitConstant(
+        UnitDefinition(
+            name="ampere_turn",
+            symbol="A-turn",
+            dimension=dim.MAGNETOMOTIVE_FORCE,
+            si_factor=2864.77,
+            si_offset=0.0,
+        )
+    )
 
     A_turn: Final = ampere_turn
 
     # gilbert
-    gilbert: Final = UnitConstant(UnitDefinition(
-        name="gilbert",
-        symbol="Gb",
-        dimension=dim.MAGNETOMOTIVE_FORCE,
-        si_factor=0.79577,
-        si_offset=0.0,
-    ))
+    gilbert: Final = UnitConstant(
+        UnitDefinition(
+            name="gilbert",
+            symbol="Gb",
+            dimension=dim.MAGNETOMOTIVE_FORCE,
+            si_factor=0.79577,
+            si_offset=0.0,
+        )
+    )
 
     Gb: Final = gilbert
 
     # kiloampere
-    kiloampere: Final = UnitConstant(UnitDefinition(
-        name="kiloampere",
-        symbol="kA",
-        dimension=dim.MAGNETOMOTIVE_FORCE,
-        si_factor=1000.0,
-        si_offset=0.0,
-    ))
+    kiloampere: Final = UnitConstant(
+        UnitDefinition(
+            name="kiloampere",
+            symbol="kA",
+            dimension=dim.MAGNETOMOTIVE_FORCE,
+            si_factor=1000.0,
+            si_offset=0.0,
+        )
+    )
 
     kA: Final = kiloampere
 
     # milliampere
-    milliampere: Final = UnitConstant(UnitDefinition(
-        name="milliampere",
-        symbol="mA",
-        dimension=dim.MAGNETOMOTIVE_FORCE,
-        si_factor=0.001,
-        si_offset=0.0,
-    ))
+    milliampere: Final = UnitConstant(
+        UnitDefinition(
+            name="milliampere",
+            symbol="mA",
+            dimension=dim.MAGNETOMOTIVE_FORCE,
+            si_factor=0.001,
+            si_offset=0.0,
+        )
+    )
 
     mA: Final = milliampere
 
     # microampere
-    microampere: Final = UnitConstant(UnitDefinition(
-        name="microampere",
-        symbol="μA",
-        dimension=dim.MAGNETOMOTIVE_FORCE,
-        si_factor=1e-06,
-        si_offset=0.0,
-    ))
+    microampere: Final = UnitConstant(
+        UnitDefinition(
+            name="microampere",
+            symbol="μA",
+            dimension=dim.MAGNETOMOTIVE_FORCE,
+            si_factor=1e-06,
+            si_offset=0.0,
+        )
+    )
 
     # nanoampere
-    nanoampere: Final = UnitConstant(UnitDefinition(
-        name="nanoampere",
-        symbol="nA",
-        dimension=dim.MAGNETOMOTIVE_FORCE,
-        si_factor=1e-09,
-        si_offset=0.0,
-    ))
+    nanoampere: Final = UnitConstant(
+        UnitDefinition(
+            name="nanoampere",
+            symbol="nA",
+            dimension=dim.MAGNETOMOTIVE_FORCE,
+            si_factor=1e-09,
+            si_offset=0.0,
+        )
+    )
 
     nA: Final = nanoampere
 
     # picoampere
-    picoampere: Final = UnitConstant(UnitDefinition(
-        name="picoampere",
-        symbol="pA",
-        dimension=dim.MAGNETOMOTIVE_FORCE,
-        si_factor=1e-12,
-        si_offset=0.0,
-    ))
+    picoampere: Final = UnitConstant(
+        UnitDefinition(
+            name="picoampere",
+            symbol="pA",
+            dimension=dim.MAGNETOMOTIVE_FORCE,
+            si_factor=1e-12,
+            si_offset=0.0,
+        )
+    )
 
     pA: Final = picoampere
 
@@ -4589,373 +5383,441 @@ class MassUnits:
     __slots__ = ()
 
     # slug
-    slug: Final = UnitConstant(UnitDefinition(
-        name="slug",
-        symbol="sl",
-        dimension=dim.MASS,
-        si_factor=14.594,
-        si_offset=0.0,
-    ))
+    slug: Final = UnitConstant(
+        UnitDefinition(
+            name="slug",
+            symbol="sl",
+            dimension=dim.MASS,
+            si_factor=14.594,
+            si_offset=0.0,
+        )
+    )
 
     sl: Final = slug
 
     # atomic mass unit ( ${ }^{12} \mathrm{C}$ )
-    atomic_mass_unit_12_mathrmc: Final = UnitConstant(UnitDefinition(
-        name="atomic_mass_unit_12_mathrmc",
-        symbol="$\\mathrm{u}\\left({ }^{12} \\mathrm{C}\\right)$ or amu",
-        dimension=dim.MASS,
-        si_factor=1.6605000000000002e-27,
-        si_offset=0.0,
-    ))
+    atomic_mass_unit_12_mathrmc: Final = UnitConstant(
+        UnitDefinition(
+            name="atomic_mass_unit_12_mathrmc",
+            symbol="$\\mathrm{u}\\left({ }^{12} \\mathrm{C}\\right)$ or amu",
+            dimension=dim.MASS,
+            si_factor=1.6605000000000002e-27,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_u_left_12_mathrm_C_right_or_amu: Final = atomic_mass_unit_12_mathrmc
     uleft_12_Cright: Final = atomic_mass_unit_12_mathrmc
 
     # carat (metric)
-    carat_metric: Final = UnitConstant(UnitDefinition(
-        name="carat_metric",
-        symbol="ct",
-        dimension=dim.MASS,
-        si_factor=0.0002,
-        si_offset=0.0,
-    ))
+    carat_metric: Final = UnitConstant(
+        UnitDefinition(
+            name="carat_metric",
+            symbol="ct",
+            dimension=dim.MASS,
+            si_factor=0.0002,
+            si_offset=0.0,
+        )
+    )
 
     ct: Final = carat_metric
 
     # cental
-    cental: Final = UnitConstant(UnitDefinition(
-        name="cental",
-        symbol="sh cwt, cH",
-        dimension=dim.MASS,
-        si_factor=45.359,
-        si_offset=0.0,
-    ))
+    cental: Final = UnitConstant(
+        UnitDefinition(
+            name="cental",
+            symbol="sh cwt, cH",
+            dimension=dim.MASS,
+            si_factor=45.359,
+            si_offset=0.0,
+        )
+    )
 
     sh_cwt_cH: Final = cental
 
     # centigram
-    centigram: Final = UnitConstant(UnitDefinition(
-        name="centigram",
-        symbol="cg",
-        dimension=dim.MASS,
-        si_factor=1e-05,
-        si_offset=0.0,
-    ))
+    centigram: Final = UnitConstant(
+        UnitDefinition(
+            name="centigram",
+            symbol="cg",
+            dimension=dim.MASS,
+            si_factor=1e-05,
+            si_offset=0.0,
+        )
+    )
 
     cg: Final = centigram
 
     # clove (UK)
-    clove_uk: Final = UnitConstant(UnitDefinition(
-        name="clove_uk",
-        symbol="cl",
-        dimension=dim.MASS,
-        si_factor=3.6287,
-        si_offset=0.0,
-    ))
+    clove_uk: Final = UnitConstant(
+        UnitDefinition(
+            name="clove_uk",
+            symbol="cl",
+            dimension=dim.MASS,
+            si_factor=3.6287,
+            si_offset=0.0,
+        )
+    )
 
     cl: Final = clove_uk
 
     # drachm (apothecary)
-    drachm_apothecary: Final = UnitConstant(UnitDefinition(
-        name="drachm_apothecary",
-        symbol="dr (ap)",
-        dimension=dim.MASS,
-        si_factor=0.0038879,
-        si_offset=0.0,
-    ))
+    drachm_apothecary: Final = UnitConstant(
+        UnitDefinition(
+            name="drachm_apothecary",
+            symbol="dr (ap)",
+            dimension=dim.MASS,
+            si_factor=0.0038879,
+            si_offset=0.0,
+        )
+    )
 
     dr_ap: Final = drachm_apothecary
 
     # dram (avoirdupois)
-    dram_avoirdupois: Final = UnitConstant(UnitDefinition(
-        name="dram_avoirdupois",
-        symbol="dr (av)",
-        dimension=dim.MASS,
-        si_factor=0.0017718,
-        si_offset=0.0,
-    ))
+    dram_avoirdupois: Final = UnitConstant(
+        UnitDefinition(
+            name="dram_avoirdupois",
+            symbol="dr (av)",
+            dimension=dim.MASS,
+            si_factor=0.0017718,
+            si_offset=0.0,
+        )
+    )
 
     dr_av: Final = dram_avoirdupois
 
     # dram (troy)
-    dram_troy: Final = UnitConstant(UnitDefinition(
-        name="dram_troy",
-        symbol="dr (troy)",
-        dimension=dim.MASS,
-        si_factor=0.0038879,
-        si_offset=0.0,
-    ))
+    dram_troy: Final = UnitConstant(
+        UnitDefinition(
+            name="dram_troy",
+            symbol="dr (troy)",
+            dimension=dim.MASS,
+            si_factor=0.0038879,
+            si_offset=0.0,
+        )
+    )
 
     dr_troy: Final = dram_troy
 
     # grain
-    grain: Final = UnitConstant(UnitDefinition(
-        name="grain",
-        symbol="gr",
-        dimension=dim.MASS,
-        si_factor=6.4799e-05,
-        si_offset=0.0,
-    ))
+    grain: Final = UnitConstant(
+        UnitDefinition(
+            name="grain",
+            symbol="gr",
+            dimension=dim.MASS,
+            si_factor=6.4799e-05,
+            si_offset=0.0,
+        )
+    )
 
     gr: Final = grain
 
     # gram
-    gram: Final = UnitConstant(UnitDefinition(
-        name="gram",
-        symbol="g",
-        dimension=dim.MASS,
-        si_factor=0.001,
-        si_offset=0.0,
-    ))
+    gram: Final = UnitConstant(
+        UnitDefinition(
+            name="gram",
+            symbol="g",
+            dimension=dim.MASS,
+            si_factor=0.001,
+            si_offset=0.0,
+        )
+    )
 
     g: Final = gram
 
     # hundredweight, long or gross
-    hundredweight_long_or_gross: Final = UnitConstant(UnitDefinition(
-        name="hundredweight_long_or_gross",
-        symbol="cwt, lg cwt",
-        dimension=dim.MASS,
-        si_factor=50.802,
-        si_offset=0.0,
-    ))
+    hundredweight_long_or_gross: Final = UnitConstant(
+        UnitDefinition(
+            name="hundredweight_long_or_gross",
+            symbol="cwt, lg cwt",
+            dimension=dim.MASS,
+            si_factor=50.802,
+            si_offset=0.0,
+        )
+    )
 
     cwt_lg_cwt: Final = hundredweight_long_or_gross
 
     # hundredweight, short or net
-    hundredweight_short_or_net: Final = UnitConstant(UnitDefinition(
-        name="hundredweight_short_or_net",
-        symbol="sh cwt",
-        dimension=dim.MASS,
-        si_factor=45.359,
-        si_offset=0.0,
-    ))
+    hundredweight_short_or_net: Final = UnitConstant(
+        UnitDefinition(
+            name="hundredweight_short_or_net",
+            symbol="sh cwt",
+            dimension=dim.MASS,
+            si_factor=45.359,
+            si_offset=0.0,
+        )
+    )
 
     sh_cwt: Final = hundredweight_short_or_net
 
     # kilogram
-    kilogram: Final = UnitConstant(UnitDefinition(
-        name="kilogram",
-        symbol="kg",
-        dimension=dim.MASS,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    kilogram: Final = UnitConstant(
+        UnitDefinition(
+            name="kilogram",
+            symbol="kg",
+            dimension=dim.MASS,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     kg: Final = kilogram
 
     # kip
-    kip: Final = UnitConstant(UnitDefinition(
-        name="kip",
-        symbol="kip",
-        dimension=dim.MASS,
-        si_factor=453.59,
-        si_offset=0.0,
-    ))
+    kip: Final = UnitConstant(
+        UnitDefinition(
+            name="kip",
+            symbol="kip",
+            dimension=dim.MASS,
+            si_factor=453.59,
+            si_offset=0.0,
+        )
+    )
 
     # microgram
-    microgram: Final = UnitConstant(UnitDefinition(
-        name="microgram",
-        symbol="$\\mu \\mathrm{g}$",
-        dimension=dim.MASS,
-        si_factor=1e-09,
-        si_offset=0.0,
-    ))
+    microgram: Final = UnitConstant(
+        UnitDefinition(
+            name="microgram",
+            symbol="$\\mu \\mathrm{g}$",
+            dimension=dim.MASS,
+            si_factor=1e-09,
+            si_offset=0.0,
+        )
+    )
 
     mu_mathrm_g: Final = microgram
 
     # milligram
-    milligram: Final = UnitConstant(UnitDefinition(
-        name="milligram",
-        symbol="mg",
-        dimension=dim.MASS,
-        si_factor=1e-06,
-        si_offset=0.0,
-    ))
+    milligram: Final = UnitConstant(
+        UnitDefinition(
+            name="milligram",
+            symbol="mg",
+            dimension=dim.MASS,
+            si_factor=1e-06,
+            si_offset=0.0,
+        )
+    )
 
     mg: Final = milligram
 
     # ounce (apothecary)
-    ounce_apothecary: Final = UnitConstant(UnitDefinition(
-        name="ounce_apothecary",
-        symbol="oz (ap)",
-        dimension=dim.MASS,
-        si_factor=0.031103,
-        si_offset=0.0,
-    ))
+    ounce_apothecary: Final = UnitConstant(
+        UnitDefinition(
+            name="ounce_apothecary",
+            symbol="oz (ap)",
+            dimension=dim.MASS,
+            si_factor=0.031103,
+            si_offset=0.0,
+        )
+    )
 
     oz_ap: Final = ounce_apothecary
 
     # ounce (avoirdupois)
-    ounce_avoirdupois: Final = UnitConstant(UnitDefinition(
-        name="ounce_avoirdupois",
-        symbol="oz",
-        dimension=dim.MASS,
-        si_factor=0.02835,
-        si_offset=0.0,
-    ))
+    ounce_avoirdupois: Final = UnitConstant(
+        UnitDefinition(
+            name="ounce_avoirdupois",
+            symbol="oz",
+            dimension=dim.MASS,
+            si_factor=0.02835,
+            si_offset=0.0,
+        )
+    )
 
     # ounce (troy)
-    ounce_troy: Final = UnitConstant(UnitDefinition(
-        name="ounce_troy",
-        symbol="oz (troy)",
-        dimension=dim.MASS,
-        si_factor=0.031103,
-        si_offset=0.0,
-    ))
+    ounce_troy: Final = UnitConstant(
+        UnitDefinition(
+            name="ounce_troy",
+            symbol="oz (troy)",
+            dimension=dim.MASS,
+            si_factor=0.031103,
+            si_offset=0.0,
+        )
+    )
 
     oz_troy: Final = ounce_troy
 
     # pennyweight (troy)
-    pennyweight_troy: Final = UnitConstant(UnitDefinition(
-        name="pennyweight_troy",
-        symbol="dwt (troy)",
-        dimension=dim.MASS,
-        si_factor=0.0015552,
-        si_offset=0.0,
-    ))
+    pennyweight_troy: Final = UnitConstant(
+        UnitDefinition(
+            name="pennyweight_troy",
+            symbol="dwt (troy)",
+            dimension=dim.MASS,
+            si_factor=0.0015552,
+            si_offset=0.0,
+        )
+    )
 
     dwt_troy: Final = pennyweight_troy
 
     # pood, (Russia)
-    pood_russia: Final = UnitConstant(UnitDefinition(
-        name="pood_russia",
-        symbol="pood",
-        dimension=dim.MASS,
-        si_factor=16.38,
-        si_offset=0.0,
-    ))
+    pood_russia: Final = UnitConstant(
+        UnitDefinition(
+            name="pood_russia",
+            symbol="pood",
+            dimension=dim.MASS,
+            si_factor=16.38,
+            si_offset=0.0,
+        )
+    )
 
     pood: Final = pood_russia
 
     # pound (apothecary)
-    pound_apothecary: Final = UnitConstant(UnitDefinition(
-        name="pound_apothecary",
-        symbol="lb (ap)",
-        dimension=dim.MASS,
-        si_factor=0.37324,
-        si_offset=0.0,
-    ))
+    pound_apothecary: Final = UnitConstant(
+        UnitDefinition(
+            name="pound_apothecary",
+            symbol="lb (ap)",
+            dimension=dim.MASS,
+            si_factor=0.37324,
+            si_offset=0.0,
+        )
+    )
 
     lb_ap: Final = pound_apothecary
 
     # pound (avoirdupois)
-    pound_avoirdupois: Final = UnitConstant(UnitDefinition(
-        name="pound_avoirdupois",
-        symbol="lb (av)",
-        dimension=dim.MASS,
-        si_factor=0.45359,
-        si_offset=0.0,
-    ))
+    pound_avoirdupois: Final = UnitConstant(
+        UnitDefinition(
+            name="pound_avoirdupois",
+            symbol="lb (av)",
+            dimension=dim.MASS,
+            si_factor=0.45359,
+            si_offset=0.0,
+        )
+    )
 
     lb_av: Final = pound_avoirdupois
 
     # pound (troy)
-    pound_troy: Final = UnitConstant(UnitDefinition(
-        name="pound_troy",
-        symbol="lb (troy)",
-        dimension=dim.MASS,
-        si_factor=0.37324,
-        si_offset=0.0,
-    ))
+    pound_troy: Final = UnitConstant(
+        UnitDefinition(
+            name="pound_troy",
+            symbol="lb (troy)",
+            dimension=dim.MASS,
+            si_factor=0.37324,
+            si_offset=0.0,
+        )
+    )
 
     lb_troy: Final = pound_troy
 
     # pound mass
-    pound_mass: Final = UnitConstant(UnitDefinition(
-        name="pound_mass",
-        symbol="$\\mathrm{lb}_{\\mathrm{m}}$",
-        dimension=dim.MASS,
-        si_factor=0.45359,
-        si_offset=0.0,
-    ))
+    pound_mass: Final = UnitConstant(
+        UnitDefinition(
+            name="pound_mass",
+            symbol="$\\mathrm{lb}_{\\mathrm{m}}$",
+            dimension=dim.MASS,
+            si_factor=0.45359,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_lb_mathrm_m: Final = pound_mass
 
     # quarter (UK)
-    quarter_uk: Final = UnitConstant(UnitDefinition(
-        name="quarter_uk",
-        symbol="qt",
-        dimension=dim.MASS,
-        si_factor=12.7,
-        si_offset=0.0,
-    ))
+    quarter_uk: Final = UnitConstant(
+        UnitDefinition(
+            name="quarter_uk",
+            symbol="qt",
+            dimension=dim.MASS,
+            si_factor=12.7,
+            si_offset=0.0,
+        )
+    )
 
     qt: Final = quarter_uk
 
     # quintal, metric
-    quintal_metric: Final = UnitConstant(UnitDefinition(
-        name="quintal_metric",
-        symbol="q, dt",
-        dimension=dim.MASS,
-        si_factor=100.0,
-        si_offset=0.0,
-    ))
+    quintal_metric: Final = UnitConstant(
+        UnitDefinition(
+            name="quintal_metric",
+            symbol="q, dt",
+            dimension=dim.MASS,
+            si_factor=100.0,
+            si_offset=0.0,
+        )
+    )
 
     q_dt: Final = quintal_metric
 
     # quital, US
-    quital_us: Final = UnitConstant(UnitDefinition(
-        name="quital_us",
-        symbol="quint (US)",
-        dimension=dim.MASS,
-        si_factor=45.359,
-        si_offset=0.0,
-    ))
+    quital_us: Final = UnitConstant(
+        UnitDefinition(
+            name="quital_us",
+            symbol="quint (US)",
+            dimension=dim.MASS,
+            si_factor=45.359,
+            si_offset=0.0,
+        )
+    )
 
     quint_US: Final = quital_us
 
     # scruple (avoirdupois)
-    scruple_avoirdupois: Final = UnitConstant(UnitDefinition(
-        name="scruple_avoirdupois",
-        symbol="scf",
-        dimension=dim.MASS,
-        si_factor=0.001575,
-        si_offset=0.0,
-    ))
+    scruple_avoirdupois: Final = UnitConstant(
+        UnitDefinition(
+            name="scruple_avoirdupois",
+            symbol="scf",
+            dimension=dim.MASS,
+            si_factor=0.001575,
+            si_offset=0.0,
+        )
+    )
 
     scf: Final = scruple_avoirdupois
 
     # stone (UK)
-    stone_uk: Final = UnitConstant(UnitDefinition(
-        name="stone_uk",
-        symbol="st",
-        dimension=dim.MASS,
-        si_factor=6.3503,
-        si_offset=0.0,
-    ))
+    stone_uk: Final = UnitConstant(
+        UnitDefinition(
+            name="stone_uk",
+            symbol="st",
+            dimension=dim.MASS,
+            si_factor=6.3503,
+            si_offset=0.0,
+        )
+    )
 
     st: Final = stone_uk
 
     # ton, metric
-    ton_metric: Final = UnitConstant(UnitDefinition(
-        name="ton_metric",
-        symbol="t",
-        dimension=dim.MASS,
-        si_factor=1000.0,
-        si_offset=0.0,
-    ))
+    ton_metric: Final = UnitConstant(
+        UnitDefinition(
+            name="ton_metric",
+            symbol="t",
+            dimension=dim.MASS,
+            si_factor=1000.0,
+            si_offset=0.0,
+        )
+    )
 
     t: Final = ton_metric
 
     # ton, US, long
-    ton_us_long: Final = UnitConstant(UnitDefinition(
-        name="ton_us_long",
-        symbol="lg ton",
-        dimension=dim.MASS,
-        si_factor=1016.0,
-        si_offset=0.0,
-    ))
+    ton_us_long: Final = UnitConstant(
+        UnitDefinition(
+            name="ton_us_long",
+            symbol="lg ton",
+            dimension=dim.MASS,
+            si_factor=1016.0,
+            si_offset=0.0,
+        )
+    )
 
     lg_ton: Final = ton_us_long
 
     # ton, US, short
-    ton_us_short: Final = UnitConstant(UnitDefinition(
-        name="ton_us_short",
-        symbol="sh ton",
-        dimension=dim.MASS,
-        si_factor=907.18,
-        si_offset=0.0,
-    ))
+    ton_us_short: Final = UnitConstant(
+        UnitDefinition(
+            name="ton_us_short",
+            symbol="sh ton",
+            dimension=dim.MASS,
+            si_factor=907.18,
+            si_offset=0.0,
+        )
+    )
 
     sh_ton: Final = ton_us_short
 
@@ -4966,120 +5828,140 @@ class MassDensityUnits:
     __slots__ = ()
 
     # gram per cubic centimeter
-    gram_per_cubic_centimeter: Final = UnitConstant(UnitDefinition(
-        name="gram_per_cubic_centimeter",
-        symbol="g/cc or g/ml",
-        dimension=dim.MASS_DENSITY,
-        si_factor=1000.0,
-        si_offset=0.0,
-    ))
+    gram_per_cubic_centimeter: Final = UnitConstant(
+        UnitDefinition(
+            name="gram_per_cubic_centimeter",
+            symbol="g/cc or g/ml",
+            dimension=dim.MASS_DENSITY,
+            si_factor=1000.0,
+            si_offset=0.0,
+        )
+    )
 
     g_cc_or_g_ml: Final = gram_per_cubic_centimeter
     g_cc: Final = gram_per_cubic_centimeter
     g_ml: Final = gram_per_cubic_centimeter
 
     # gram per cubic decimeter
-    gram_per_cubic_decimeter: Final = UnitConstant(UnitDefinition(
-        name="gram_per_cubic_decimeter",
-        symbol="$\\mathrm{g} / \\mathrm{dm}^{3}$",
-        dimension=dim.MASS_DENSITY,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    gram_per_cubic_decimeter: Final = UnitConstant(
+        UnitDefinition(
+            name="gram_per_cubic_decimeter",
+            symbol="$\\mathrm{g} / \\mathrm{dm}^{3}$",
+            dimension=dim.MASS_DENSITY,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_g_mathrm_dm_3: Final = gram_per_cubic_decimeter
 
     # gram per cubic meter
-    gram_per_cubic_meter: Final = UnitConstant(UnitDefinition(
-        name="gram_per_cubic_meter",
-        symbol="$\\mathrm{g} / \\mathrm{m}^{3}$",
-        dimension=dim.MASS_DENSITY,
-        si_factor=0.001,
-        si_offset=0.0,
-    ))
+    gram_per_cubic_meter: Final = UnitConstant(
+        UnitDefinition(
+            name="gram_per_cubic_meter",
+            symbol="$\\mathrm{g} / \\mathrm{m}^{3}$",
+            dimension=dim.MASS_DENSITY,
+            si_factor=0.001,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_g_mathrm_m_3: Final = gram_per_cubic_meter
 
     # gram per liter
-    gram_per_liter: Final = UnitConstant(UnitDefinition(
-        name="gram_per_liter",
-        symbol="$\\mathrm{g} / \\mathrm{l}$ or g/L",
-        dimension=dim.MASS_DENSITY,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    gram_per_liter: Final = UnitConstant(
+        UnitDefinition(
+            name="gram_per_liter",
+            symbol="$\\mathrm{g} / \\mathrm{l}$ or g/L",
+            dimension=dim.MASS_DENSITY,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_g_mathrm_l_or_g_L: Final = gram_per_liter
     g_l: Final = gram_per_liter
     g_L: Final = gram_per_liter
 
     # kilogram per cubic meter
-    kilogram_per_cubic_meter: Final = UnitConstant(UnitDefinition(
-        name="kilogram_per_cubic_meter",
-        symbol="$\\mathrm{kg} / \\mathrm{m}^{3}$",
-        dimension=dim.MASS_DENSITY,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    kilogram_per_cubic_meter: Final = UnitConstant(
+        UnitDefinition(
+            name="kilogram_per_cubic_meter",
+            symbol="$\\mathrm{kg} / \\mathrm{m}^{3}$",
+            dimension=dim.MASS_DENSITY,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_kg_mathrm_m_3: Final = kilogram_per_cubic_meter
 
     # ounce (avdp) per US gallon
-    ounce_avdp: Final = UnitConstant(UnitDefinition(
-        name="ounce_avdp",
-        symbol="oz/gal",
-        dimension=dim.MASS_DENSITY,
-        si_factor=7.489152,
-        si_offset=0.0,
-    ))
+    ounce_avdp: Final = UnitConstant(
+        UnitDefinition(
+            name="ounce_avdp",
+            symbol="oz/gal",
+            dimension=dim.MASS_DENSITY,
+            si_factor=7.489152,
+            si_offset=0.0,
+        )
+    )
 
     oz_gal: Final = ounce_avdp
 
     # pound (avdp) per cubic foot
-    pound_avdp: Final = UnitConstant(UnitDefinition(
-        name="pound_avdp",
-        symbol="$\\mathrm{lb} / \\mathrm{cu} \\mathrm{ft}$ or lb/ft ${ }^{3}$",
-        dimension=dim.MASS_DENSITY,
-        si_factor=16.01846,
-        si_offset=0.0,
-    ))
+    pound_avdp: Final = UnitConstant(
+        UnitDefinition(
+            name="pound_avdp",
+            symbol="$\\mathrm{lb} / \\mathrm{cu} \\mathrm{ft}$ or lb/ft ${ }^{3}$",
+            dimension=dim.MASS_DENSITY,
+            si_factor=16.01846,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_lb_mathrm_cu_mathrm_ft_or_lb_ft_3: Final = pound_avdp
     lb_cu_ft: Final = pound_avdp
     lb_ft_3: Final = pound_avdp
 
     # pound (avdp) per US gallon
-    pound_avdp: Final = UnitConstant(UnitDefinition(
-        name="pound_avdp",
-        symbol="lb/gal",
-        dimension=dim.MASS_DENSITY,
-        si_factor=119.826,
-        si_offset=0.0,
-    ))
+    pound_avdp: Final = UnitConstant(
+        UnitDefinition(
+            name="pound_avdp",
+            symbol="lb/gal",
+            dimension=dim.MASS_DENSITY,
+            si_factor=119.826,
+            si_offset=0.0,
+        )
+    )
 
     lb_gal: Final = pound_avdp
 
     # pound (mass) per cubic inch
-    pound_mass: Final = UnitConstant(UnitDefinition(
-        name="pound_mass",
-        symbol="$\\mathrm{lb} / \\mathrm{cu}$ in or $\\mathrm{lb} / \\mathrm{in}^{3}$",
-        dimension=dim.MASS_DENSITY,
-        si_factor=0.000276799,
-        si_offset=0.0,
-    ))
+    pound_mass: Final = UnitConstant(
+        UnitDefinition(
+            name="pound_mass",
+            symbol="$\\mathrm{lb} / \\mathrm{cu}$ in or $\\mathrm{lb} / \\mathrm{in}^{3}$",
+            dimension=dim.MASS_DENSITY,
+            si_factor=0.000276799,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_lb_mathrm_cu_in_or_mathrm_lb_mathrm_in_3: Final = pound_mass
     lb_cu_in: Final = pound_mass
     lb_in_3: Final = pound_mass
 
     # ton (metric) per cubic meter
-    ton_metric: Final = UnitConstant(UnitDefinition(
-        name="ton_metric",
-        symbol="$\\mathrm{t} / \\mathrm{m}^{3}$ or MT $/ \\mathrm{m}^{3}$",
-        dimension=dim.MASS_DENSITY,
-        si_factor=1000.0,
-        si_offset=0.0,
-    ))
+    ton_metric: Final = UnitConstant(
+        UnitDefinition(
+            name="ton_metric",
+            symbol="$\\mathrm{t} / \\mathrm{m}^{3}$ or MT $/ \\mathrm{m}^{3}$",
+            dimension=dim.MASS_DENSITY,
+            si_factor=1000.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_t_mathrm_m_3_or_MT_mathrm_m_3: Final = ton_metric
     t_m_3: Final = ton_metric
@@ -5092,115 +5974,135 @@ class MassFlowRateUnits:
     __slots__ = ()
 
     # kilograms per day
-    kilograms_per_day: Final = UnitConstant(UnitDefinition(
-        name="kilograms_per_day",
-        symbol="kg/d",
-        dimension=dim.MASS_FLOW_RATE,
-        si_factor=1.1574000000000001e-05,
-        si_offset=0.0,
-    ))
+    kilograms_per_day: Final = UnitConstant(
+        UnitDefinition(
+            name="kilograms_per_day",
+            symbol="kg/d",
+            dimension=dim.MASS_FLOW_RATE,
+            si_factor=1.1574000000000001e-05,
+            si_offset=0.0,
+        )
+    )
 
     kg_d: Final = kilograms_per_day
 
     # kilograms per hour
-    kilograms_per_hour: Final = UnitConstant(UnitDefinition(
-        name="kilograms_per_hour",
-        symbol="kg/h",
-        dimension=dim.MASS_FLOW_RATE,
-        si_factor=0.00027778,
-        si_offset=0.0,
-    ))
+    kilograms_per_hour: Final = UnitConstant(
+        UnitDefinition(
+            name="kilograms_per_hour",
+            symbol="kg/h",
+            dimension=dim.MASS_FLOW_RATE,
+            si_factor=0.00027778,
+            si_offset=0.0,
+        )
+    )
 
     kg_h: Final = kilograms_per_hour
 
     # kilograms per minute
-    kilograms_per_minute: Final = UnitConstant(UnitDefinition(
-        name="kilograms_per_minute",
-        symbol="kg/min",
-        dimension=dim.MASS_FLOW_RATE,
-        si_factor=0.016667,
-        si_offset=0.0,
-    ))
+    kilograms_per_minute: Final = UnitConstant(
+        UnitDefinition(
+            name="kilograms_per_minute",
+            symbol="kg/min",
+            dimension=dim.MASS_FLOW_RATE,
+            si_factor=0.016667,
+            si_offset=0.0,
+        )
+    )
 
     kg_min: Final = kilograms_per_minute
 
     # kilograms per second
-    kilograms_per_second: Final = UnitConstant(UnitDefinition(
-        name="kilograms_per_second",
-        symbol="kg/s",
-        dimension=dim.MASS_FLOW_RATE,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    kilograms_per_second: Final = UnitConstant(
+        UnitDefinition(
+            name="kilograms_per_second",
+            symbol="kg/s",
+            dimension=dim.MASS_FLOW_RATE,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     kg_s: Final = kilograms_per_second
 
     # metric tons per day
-    metric_tons_per_day: Final = UnitConstant(UnitDefinition(
-        name="metric_tons_per_day",
-        symbol="MT/d or MTD",
-        dimension=dim.MASS_FLOW_RATE,
-        si_factor=0.01157,
-        si_offset=0.0,
-    ))
+    metric_tons_per_day: Final = UnitConstant(
+        UnitDefinition(
+            name="metric_tons_per_day",
+            symbol="MT/d or MTD",
+            dimension=dim.MASS_FLOW_RATE,
+            si_factor=0.01157,
+            si_offset=0.0,
+        )
+    )
 
     MT_d_or_MTD: Final = metric_tons_per_day
     MT_d: Final = metric_tons_per_day
     MTD: Final = metric_tons_per_day
 
     # metric tons per hour
-    metric_tons_per_hour: Final = UnitConstant(UnitDefinition(
-        name="metric_tons_per_hour",
-        symbol="MT/h or MTD",
-        dimension=dim.MASS_FLOW_RATE,
-        si_factor=0.2778,
-        si_offset=0.0,
-    ))
+    metric_tons_per_hour: Final = UnitConstant(
+        UnitDefinition(
+            name="metric_tons_per_hour",
+            symbol="MT/h or MTD",
+            dimension=dim.MASS_FLOW_RATE,
+            si_factor=0.2778,
+            si_offset=0.0,
+        )
+    )
 
     MT_h_or_MTD: Final = metric_tons_per_hour
     MT_h: Final = metric_tons_per_hour
 
     # metric tons per minute
-    metric_tons_per_minute: Final = UnitConstant(UnitDefinition(
-        name="metric_tons_per_minute",
-        symbol="MT/h",
-        dimension=dim.MASS_FLOW_RATE,
-        si_factor=16.67,
-        si_offset=0.0,
-    ))
+    metric_tons_per_minute: Final = UnitConstant(
+        UnitDefinition(
+            name="metric_tons_per_minute",
+            symbol="MT/h",
+            dimension=dim.MASS_FLOW_RATE,
+            si_factor=16.67,
+            si_offset=0.0,
+        )
+    )
 
     # metric tons per second
-    metric_tons_per_second: Final = UnitConstant(UnitDefinition(
-        name="metric_tons_per_second",
-        symbol="MT/s",
-        dimension=dim.MASS_FLOW_RATE,
-        si_factor=1000.0,
-        si_offset=0.0,
-    ))
+    metric_tons_per_second: Final = UnitConstant(
+        UnitDefinition(
+            name="metric_tons_per_second",
+            symbol="MT/s",
+            dimension=dim.MASS_FLOW_RATE,
+            si_factor=1000.0,
+            si_offset=0.0,
+        )
+    )
 
     MT_s: Final = metric_tons_per_second
 
     # metric tons per year (365 d)
-    metric_tons_per_year_365_d: Final = UnitConstant(UnitDefinition(
-        name="metric_tons_per_year_365_d",
-        symbol="MT/yr or MTY",
-        dimension=dim.MASS_FLOW_RATE,
-        si_factor=3.171e-05,
-        si_offset=0.0,
-    ))
+    metric_tons_per_year_365_d: Final = UnitConstant(
+        UnitDefinition(
+            name="metric_tons_per_year_365_d",
+            symbol="MT/yr or MTY",
+            dimension=dim.MASS_FLOW_RATE,
+            si_factor=3.171e-05,
+            si_offset=0.0,
+        )
+    )
 
     MT_yr_or_MTY: Final = metric_tons_per_year_365_d
     MT_yr: Final = metric_tons_per_year_365_d
     MTY: Final = metric_tons_per_year_365_d
 
     # pounds per day
-    pounds_per_day: Final = UnitConstant(UnitDefinition(
-        name="pounds_per_day",
-        symbol="$\\mathrm{lb} / \\mathrm{d}$ or $\\mathrm{lb} / \\mathrm{da}$ or PPD",
-        dimension=dim.MASS_FLOW_RATE,
-        si_factor=5.248999999999999e-06,
-        si_offset=0.0,
-    ))
+    pounds_per_day: Final = UnitConstant(
+        UnitDefinition(
+            name="pounds_per_day",
+            symbol="$\\mathrm{lb} / \\mathrm{d}$ or $\\mathrm{lb} / \\mathrm{da}$ or PPD",
+            dimension=dim.MASS_FLOW_RATE,
+            si_factor=5.248999999999999e-06,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_lb_mathrm_d_or_mathrm_lb_mathrm_da_or_PPD: Final = pounds_per_day
     lb_d: Final = pounds_per_day
@@ -5208,13 +6110,15 @@ class MassFlowRateUnits:
     PPD: Final = pounds_per_day
 
     # pounds per hour
-    pounds_per_hour: Final = UnitConstant(UnitDefinition(
-        name="pounds_per_hour",
-        symbol="$\\mathrm{lb} / \\mathrm{h}$ or lb/hr or PPH",
-        dimension=dim.MASS_FLOW_RATE,
-        si_factor=0.00012598,
-        si_offset=0.0,
-    ))
+    pounds_per_hour: Final = UnitConstant(
+        UnitDefinition(
+            name="pounds_per_hour",
+            symbol="$\\mathrm{lb} / \\mathrm{h}$ or lb/hr or PPH",
+            dimension=dim.MASS_FLOW_RATE,
+            si_factor=0.00012598,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_lb_mathrm_h_or_lb_hr_or_PPH: Final = pounds_per_hour
     lb_h: Final = pounds_per_hour
@@ -5222,26 +6126,30 @@ class MassFlowRateUnits:
     PPH: Final = pounds_per_hour
 
     # pounds per minute
-    pounds_per_minute: Final = UnitConstant(UnitDefinition(
-        name="pounds_per_minute",
-        symbol="$\\mathrm{lb} / \\mathrm{min}$ or PPM",
-        dimension=dim.MASS_FLOW_RATE,
-        si_factor=0.0075586,
-        si_offset=0.0,
-    ))
+    pounds_per_minute: Final = UnitConstant(
+        UnitDefinition(
+            name="pounds_per_minute",
+            symbol="$\\mathrm{lb} / \\mathrm{min}$ or PPM",
+            dimension=dim.MASS_FLOW_RATE,
+            si_factor=0.0075586,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_lb_mathrm_min_or_PPM: Final = pounds_per_minute
     lb_min: Final = pounds_per_minute
     PPM: Final = pounds_per_minute
 
     # pounds per second
-    pounds_per_second: Final = UnitConstant(UnitDefinition(
-        name="pounds_per_second",
-        symbol="$\\mathrm{lb} / \\mathrm{s}$ or lb/sec or PPS",
-        dimension=dim.MASS_FLOW_RATE,
-        si_factor=0.45351,
-        si_offset=0.0,
-    ))
+    pounds_per_second: Final = UnitConstant(
+        UnitDefinition(
+            name="pounds_per_second",
+            symbol="$\\mathrm{lb} / \\mathrm{s}$ or lb/sec or PPS",
+            dimension=dim.MASS_FLOW_RATE,
+            si_factor=0.45351,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_lb_mathrm_s_or_lb_sec_or_PPS: Final = pounds_per_second
     lb_s: Final = pounds_per_second
@@ -5255,96 +6163,112 @@ class MassFluxUnits:
     __slots__ = ()
 
     # kilogram per square meter per day
-    kilogram_per_square_meter_per_day: Final = UnitConstant(UnitDefinition(
-        name="kilogram_per_square_meter_per_day",
-        symbol="$\\mathrm{kg} /\\left(\\mathrm{m}^{2} \\mathrm{~d}\\right)$",
-        dimension=dim.MASS_FLUX,
-        si_factor=1.1574000000000001e-05,
-        si_offset=0.0,
-    ))
+    kilogram_per_square_meter_per_day: Final = UnitConstant(
+        UnitDefinition(
+            name="kilogram_per_square_meter_per_day",
+            symbol="$\\mathrm{kg} /\\left(\\mathrm{m}^{2} \\mathrm{~d}\\right)$",
+            dimension=dim.MASS_FLUX,
+            si_factor=1.1574000000000001e-05,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_kg_left_mathrm_m_2_mathrm_d_right: Final = kilogram_per_square_meter_per_day
 
     # kilogram per square meter per hour
-    kilogram_per_square_meter_per_hour: Final = UnitConstant(UnitDefinition(
-        name="kilogram_per_square_meter_per_hour",
-        symbol="$\\mathrm{kg} /\\left(\\mathrm{m}^{2} \\mathrm{~h}\\right)$",
-        dimension=dim.MASS_FLUX,
-        si_factor=0.00027778000000000004,
-        si_offset=0.0,
-    ))
+    kilogram_per_square_meter_per_hour: Final = UnitConstant(
+        UnitDefinition(
+            name="kilogram_per_square_meter_per_hour",
+            symbol="$\\mathrm{kg} /\\left(\\mathrm{m}^{2} \\mathrm{~h}\\right)$",
+            dimension=dim.MASS_FLUX,
+            si_factor=0.00027778000000000004,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_kg_left_mathrm_m_2_mathrm_h_right: Final = kilogram_per_square_meter_per_hour
 
     # kilogram per square meter per minute
-    kilogram_per_square_meter_per_minute: Final = UnitConstant(UnitDefinition(
-        name="kilogram_per_square_meter_per_minute",
-        symbol="$\\mathrm{kg} /\\left(\\mathrm{m}^{2} \\mathrm{~min}\\right)$",
-        dimension=dim.MASS_FLUX,
-        si_factor=0.016667,
-        si_offset=0.0,
-    ))
+    kilogram_per_square_meter_per_minute: Final = UnitConstant(
+        UnitDefinition(
+            name="kilogram_per_square_meter_per_minute",
+            symbol="$\\mathrm{kg} /\\left(\\mathrm{m}^{2} \\mathrm{~min}\\right)$",
+            dimension=dim.MASS_FLUX,
+            si_factor=0.016667,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_kg_left_mathrm_m_2_mathrm_min_right: Final = kilogram_per_square_meter_per_minute
 
     # kilogram per square meter per second
-    kilogram_per_square_meter_per_second: Final = UnitConstant(UnitDefinition(
-        name="kilogram_per_square_meter_per_second",
-        symbol="$\\mathrm{kg} /\\left(\\mathrm{m}^{2} \\mathrm{~s}\\right)$",
-        dimension=dim.MASS_FLUX,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    kilogram_per_square_meter_per_second: Final = UnitConstant(
+        UnitDefinition(
+            name="kilogram_per_square_meter_per_second",
+            symbol="$\\mathrm{kg} /\\left(\\mathrm{m}^{2} \\mathrm{~s}\\right)$",
+            dimension=dim.MASS_FLUX,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_kg_left_mathrm_m_2_mathrm_s_right: Final = kilogram_per_square_meter_per_second
 
     # pound per square foot per day
-    pound_per_square_foot_per_day: Final = UnitConstant(UnitDefinition(
-        name="pound_per_square_foot_per_day",
-        symbol="$\\mathrm{lb} /\\left(\\mathrm{ft}^{2} \\mathrm{~d}\\right)$ or lb/sqft/ da",
-        dimension=dim.MASS_FLUX,
-        si_factor=5.6478000000000004e-05,
-        si_offset=0.0,
-    ))
+    pound_per_square_foot_per_day: Final = UnitConstant(
+        UnitDefinition(
+            name="pound_per_square_foot_per_day",
+            symbol="$\\mathrm{lb} /\\left(\\mathrm{ft}^{2} \\mathrm{~d}\\right)$ or lb/sqft/ da",
+            dimension=dim.MASS_FLUX,
+            si_factor=5.6478000000000004e-05,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_lb_left_mathrm_ft_2_mathrm_d_right_or_lb_sqft_da: Final = pound_per_square_foot_per_day
     lb_left_ft_2_dright: Final = pound_per_square_foot_per_day
     lb_sqft_da: Final = pound_per_square_foot_per_day
 
     # pound per square foot per hour
-    pound_per_square_foot_per_hour: Final = UnitConstant(UnitDefinition(
-        name="pound_per_square_foot_per_hour",
-        symbol="$\\mathrm{lb} /\\left(\\mathrm{ft}^{2} \\mathrm{~h}\\right)$ or lb/sqft/ hr",
-        dimension=dim.MASS_FLUX,
-        si_factor=0.0013555,
-        si_offset=0.0,
-    ))
+    pound_per_square_foot_per_hour: Final = UnitConstant(
+        UnitDefinition(
+            name="pound_per_square_foot_per_hour",
+            symbol="$\\mathrm{lb} /\\left(\\mathrm{ft}^{2} \\mathrm{~h}\\right)$ or lb/sqft/ hr",
+            dimension=dim.MASS_FLUX,
+            si_factor=0.0013555,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_lb_left_mathrm_ft_2_mathrm_h_right_or_lb_sqft_hr: Final = pound_per_square_foot_per_hour
     lb_left_ft_2_hright: Final = pound_per_square_foot_per_hour
     lb_sqft_hr: Final = pound_per_square_foot_per_hour
 
     # pound per square foot per minute
-    pound_per_square_foot_per_minute: Final = UnitConstant(UnitDefinition(
-        name="pound_per_square_foot_per_minute",
-        symbol="$\\mathrm{lb} /\\left(\\mathrm{ft}^{2} \\min \\right)$ or lb/ sqft/min",
-        dimension=dim.MASS_FLUX,
-        si_factor=0.081329,
-        si_offset=0.0,
-    ))
+    pound_per_square_foot_per_minute: Final = UnitConstant(
+        UnitDefinition(
+            name="pound_per_square_foot_per_minute",
+            symbol="$\\mathrm{lb} /\\left(\\mathrm{ft}^{2} \\min \\right)$ or lb/ sqft/min",
+            dimension=dim.MASS_FLUX,
+            si_factor=0.081329,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_lb_left_mathrm_ft_2_min_right_or_lb_sqft_min: Final = pound_per_square_foot_per_minute
     lb_left_ft_2_min_right: Final = pound_per_square_foot_per_minute
     lb_sqft_min: Final = pound_per_square_foot_per_minute
 
     # pound per square foot per second
-    pound_per_square_foot_per_second: Final = UnitConstant(UnitDefinition(
-        name="pound_per_square_foot_per_second",
-        symbol="$\\mathrm{lb} /\\left(\\mathrm{ft}^{2} \\mathrm{~s}\\right)$ or lb/sqft/ sec",
-        dimension=dim.MASS_FLUX,
-        si_factor=4.8797,
-        si_offset=0.0,
-    ))
+    pound_per_square_foot_per_second: Final = UnitConstant(
+        UnitDefinition(
+            name="pound_per_square_foot_per_second",
+            symbol="$\\mathrm{lb} /\\left(\\mathrm{ft}^{2} \\mathrm{~s}\\right)$ or lb/sqft/ sec",
+            dimension=dim.MASS_FLUX,
+            si_factor=4.8797,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_lb_left_mathrm_ft_2_mathrm_s_right_or_lb_sqft_sec: Final = pound_per_square_foot_per_second
     lb_left_ft_2_sright: Final = pound_per_square_foot_per_second
@@ -5357,46 +6281,54 @@ class MassFractionOfIUnits:
     __slots__ = ()
 
     # grains of "i" per pound total
-    grains_of_i_per_pound_total: Final = UnitConstant(UnitDefinition(
-        name="grains_of_i_per_pound_total",
-        symbol="$\\mathrm{gr}_{\\mathrm{i}} / \\mathrm{lb}$",
-        dimension=dim.MASS_FRACTION_OF_I,
-        si_factor=0.00014286,
-        si_offset=0.0,
-    ))
+    grains_of_i_per_pound_total: Final = UnitConstant(
+        UnitDefinition(
+            name="grains_of_i_per_pound_total",
+            symbol="$\\mathrm{gr}_{\\mathrm{i}} / \\mathrm{lb}$",
+            dimension=dim.MASS_FRACTION_OF_I,
+            si_factor=0.00014286,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_gr_mathrm_i_mathrm_lb: Final = grains_of_i_per_pound_total
 
     # gram of "i" per kilogram total
-    gram_of_i_per_kilogram_total: Final = UnitConstant(UnitDefinition(
-        name="gram_of_i_per_kilogram_total",
-        symbol="$\\mathrm{g}_{\\mathrm{i}} / \\mathrm{kg}$",
-        dimension=dim.MASS_FRACTION_OF_I,
-        si_factor=0.001,
-        si_offset=0.0,
-    ))
+    gram_of_i_per_kilogram_total: Final = UnitConstant(
+        UnitDefinition(
+            name="gram_of_i_per_kilogram_total",
+            symbol="$\\mathrm{g}_{\\mathrm{i}} / \\mathrm{kg}$",
+            dimension=dim.MASS_FRACTION_OF_I,
+            si_factor=0.001,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_g_mathrm_i_mathrm_kg: Final = gram_of_i_per_kilogram_total
 
     # kilogram of "i" per kilogram total
-    kilogram_of_i_per_kilogram_total: Final = UnitConstant(UnitDefinition(
-        name="kilogram_of_i_per_kilogram_total",
-        symbol="$\\mathrm{kg}_{\\mathrm{i}} / \\mathrm{kg}$",
-        dimension=dim.MASS_FRACTION_OF_I,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    kilogram_of_i_per_kilogram_total: Final = UnitConstant(
+        UnitDefinition(
+            name="kilogram_of_i_per_kilogram_total",
+            symbol="$\\mathrm{kg}_{\\mathrm{i}} / \\mathrm{kg}$",
+            dimension=dim.MASS_FRACTION_OF_I,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_kg_mathrm_i_mathrm_kg: Final = kilogram_of_i_per_kilogram_total
 
     # pound of "i" per pound total
-    pound_of_i_per_pound_total: Final = UnitConstant(UnitDefinition(
-        name="pound_of_i_per_pound_total",
-        symbol="$\\mathrm{lb}_{\\mathrm{i}} / \\mathrm{lb}$",
-        dimension=dim.MASS_FRACTION_OF_I,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    pound_of_i_per_pound_total: Final = UnitConstant(
+        UnitDefinition(
+            name="pound_of_i_per_pound_total",
+            symbol="$\\mathrm{lb}_{\\mathrm{i}} / \\mathrm{lb}$",
+            dimension=dim.MASS_FRACTION_OF_I,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_lb_mathrm_i_mathrm_lb: Final = pound_of_i_per_pound_total
 
@@ -5407,56 +6339,66 @@ class MassTransferCoefficientUnits:
     __slots__ = ()
 
     # gram per square centimeter per second
-    gram_per_square_centimeter_per_second: Final = UnitConstant(UnitDefinition(
-        name="gram_per_square_centimeter_per_second",
-        symbol="$\\mathrm{g} / \\mathrm{cm}^{2} / \\mathrm{s}$",
-        dimension=dim.MASS_TRANSFER_COEFFICIENT,
-        si_factor=0.1,
-        si_offset=0.0,
-    ))
+    gram_per_square_centimeter_per_second: Final = UnitConstant(
+        UnitDefinition(
+            name="gram_per_square_centimeter_per_second",
+            symbol="$\\mathrm{g} / \\mathrm{cm}^{2} / \\mathrm{s}$",
+            dimension=dim.MASS_TRANSFER_COEFFICIENT,
+            si_factor=0.1,
+            si_offset=0.0,
+        )
+    )
 
     # kilogram per square meter per second
-    kilogram_per_square_meter_per_second: Final = UnitConstant(UnitDefinition(
-        name="kilogram_per_square_meter_per_second",
-        symbol="$\\mathrm{kg} / \\mathrm{m}^{2} / \\mathrm{s}$",
-        dimension=dim.MASS_TRANSFER_COEFFICIENT,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    kilogram_per_square_meter_per_second: Final = UnitConstant(
+        UnitDefinition(
+            name="kilogram_per_square_meter_per_second",
+            symbol="$\\mathrm{kg} / \\mathrm{m}^{2} / \\mathrm{s}$",
+            dimension=dim.MASS_TRANSFER_COEFFICIENT,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     # pounds force per cubic foot per hour
-    pounds_force_per_cubic_foot_per_hour: Final = UnitConstant(UnitDefinition(
-        name="pounds_force_per_cubic_foot_per_hour",
-        symbol="$\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{ft}^{3} / \\mathrm{h}$ or $\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{cft} / \\mathrm{hr}$",
-        dimension=dim.MASS_TRANSFER_COEFFICIENT,
-        si_factor=15.709,
-        si_offset=0.0,
-    ))
+    pounds_force_per_cubic_foot_per_hour: Final = UnitConstant(
+        UnitDefinition(
+            name="pounds_force_per_cubic_foot_per_hour",
+            symbol="$\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{ft}^{3} / \\mathrm{h}$ or $\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{cft} / \\mathrm{hr}$",
+            dimension=dim.MASS_TRANSFER_COEFFICIENT,
+            si_factor=15.709,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_lb_mathrm_f_mathrm_ft_3_mathrm_h_or_mathrm_lb_mathrm_f_mathrm_cft_mathrm_hr: Final = pounds_force_per_cubic_foot_per_hour
     lb_f_ft_3_h: Final = pounds_force_per_cubic_foot_per_hour
     lb_f_cft_hr: Final = pounds_force_per_cubic_foot_per_hour
 
     # pounds mass per square foot per hour
-    pounds_mass_per_square_foot_per_hour: Final = UnitConstant(UnitDefinition(
-        name="pounds_mass_per_square_foot_per_hour",
-        symbol="lb/(ft ${ }^{2} \\mathrm{hr}$ ) or lb/sqft/ hr",
-        dimension=dim.MASS_TRANSFER_COEFFICIENT,
-        si_factor=0.00013562,
-        si_offset=0.0,
-    ))
+    pounds_mass_per_square_foot_per_hour: Final = UnitConstant(
+        UnitDefinition(
+            name="pounds_mass_per_square_foot_per_hour",
+            symbol="lb/(ft ${ }^{2} \\mathrm{hr}$ ) or lb/sqft/ hr",
+            dimension=dim.MASS_TRANSFER_COEFFICIENT,
+            si_factor=0.00013562,
+            si_offset=0.0,
+        )
+    )
 
     lb_ft_2_mathrm_hr_or_lb_sqft_hr: Final = pounds_mass_per_square_foot_per_hour
     lb_ft_2_hr: Final = pounds_mass_per_square_foot_per_hour
 
     # pounds mass per square foot per second
-    pounds_mass_per_square_foot_per_second: Final = UnitConstant(UnitDefinition(
-        name="pounds_mass_per_square_foot_per_second",
-        symbol="$\\mathrm{lb} /\\left(\\mathrm{ft}^{2} \\mathrm{~s}\\right)$ or lb/sqft/ sec",
-        dimension=dim.MASS_TRANSFER_COEFFICIENT,
-        si_factor=0.48824,
-        si_offset=0.0,
-    ))
+    pounds_mass_per_square_foot_per_second: Final = UnitConstant(
+        UnitDefinition(
+            name="pounds_mass_per_square_foot_per_second",
+            symbol="$\\mathrm{lb} /\\left(\\mathrm{ft}^{2} \\mathrm{~s}\\right)$ or lb/sqft/ sec",
+            dimension=dim.MASS_TRANSFER_COEFFICIENT,
+            si_factor=0.48824,
+            si_offset=0.0,
+        )
+    )
 
 
 class MolalityOfSoluteIUnits:
@@ -5465,55 +6407,65 @@ class MolalityOfSoluteIUnits:
     __slots__ = ()
 
     # gram moles of "i" per kilogram
-    gram_moles_of_i_per_kilogram: Final = UnitConstant(UnitDefinition(
-        name="gram_moles_of_i_per_kilogram",
-        symbol="$\\mathrm{mol}_{\\mathrm{i}} / \\mathrm{kg}$",
-        dimension=dim.MOLALITY_OF_SOLUTE_I,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    gram_moles_of_i_per_kilogram: Final = UnitConstant(
+        UnitDefinition(
+            name="gram_moles_of_i_per_kilogram",
+            symbol="$\\mathrm{mol}_{\\mathrm{i}} / \\mathrm{kg}$",
+            dimension=dim.MOLALITY_OF_SOLUTE_I,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_mol_mathrm_i_mathrm_kg: Final = gram_moles_of_i_per_kilogram
 
     # kilogram mols of "i" per kilogram
-    kilogram_mols_of_i_per_kilogram: Final = UnitConstant(UnitDefinition(
-        name="kilogram_mols_of_i_per_kilogram",
-        symbol="$\\mathrm{kmol}_{\\mathrm{i}} / \\mathrm{kg}$",
-        dimension=dim.MOLALITY_OF_SOLUTE_I,
-        si_factor=1000.0,
-        si_offset=0.0,
-    ))
+    kilogram_mols_of_i_per_kilogram: Final = UnitConstant(
+        UnitDefinition(
+            name="kilogram_mols_of_i_per_kilogram",
+            symbol="$\\mathrm{kmol}_{\\mathrm{i}} / \\mathrm{kg}$",
+            dimension=dim.MOLALITY_OF_SOLUTE_I,
+            si_factor=1000.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_kmol_mathrm_i_mathrm_kg: Final = kilogram_mols_of_i_per_kilogram
 
     # kmols of "i" per kilogram
-    kmols_of_i_per_kilogram: Final = UnitConstant(UnitDefinition(
-        name="kmols_of_i_per_kilogram",
-        symbol="$\\mathrm{kmol}_{\\mathrm{i}} / \\mathrm{kg}$",
-        dimension=dim.MOLALITY_OF_SOLUTE_I,
-        si_factor=1000.0,
-        si_offset=0.0,
-    ))
+    kmols_of_i_per_kilogram: Final = UnitConstant(
+        UnitDefinition(
+            name="kmols_of_i_per_kilogram",
+            symbol="$\\mathrm{kmol}_{\\mathrm{i}} / \\mathrm{kg}$",
+            dimension=dim.MOLALITY_OF_SOLUTE_I,
+            si_factor=1000.0,
+            si_offset=0.0,
+        )
+    )
 
     # mols of "i" per gram
-    mols_of_i_per_gram: Final = UnitConstant(UnitDefinition(
-        name="mols_of_i_per_gram",
-        symbol="$\\mathrm{mol}_{\\mathrm{i}} / \\mathrm{g}$",
-        dimension=dim.MOLALITY_OF_SOLUTE_I,
-        si_factor=1000.0,
-        si_offset=0.0,
-    ))
+    mols_of_i_per_gram: Final = UnitConstant(
+        UnitDefinition(
+            name="mols_of_i_per_gram",
+            symbol="$\\mathrm{mol}_{\\mathrm{i}} / \\mathrm{g}$",
+            dimension=dim.MOLALITY_OF_SOLUTE_I,
+            si_factor=1000.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_mol_mathrm_i_mathrm_g: Final = mols_of_i_per_gram
 
     # pound moles of "i" per pound mass
-    pound_moles_of_i_per_pound_mass: Final = UnitConstant(UnitDefinition(
-        name="pound_moles_of_i_per_pound_mass",
-        symbol="mole $_{\\mathrm{i}} / \\mathrm{lb}$ (mass)",
-        dimension=dim.MOLALITY_OF_SOLUTE_I,
-        si_factor=1000.0,
-        si_offset=0.0,
-    ))
+    pound_moles_of_i_per_pound_mass: Final = UnitConstant(
+        UnitDefinition(
+            name="pound_moles_of_i_per_pound_mass",
+            symbol="mole $_{\\mathrm{i}} / \\mathrm{lb}$ (mass)",
+            dimension=dim.MOLALITY_OF_SOLUTE_I,
+            si_factor=1000.0,
+            si_offset=0.0,
+        )
+    )
 
     mole_mathrm_i_mathrm_lb_mass: Final = pound_moles_of_i_per_pound_mass
 
@@ -5524,79 +6476,93 @@ class MolarConcentrationByMassUnits:
     __slots__ = ()
 
     # gram mole or mole per gram
-    gram_mole_or_mole_per_gram: Final = UnitConstant(UnitDefinition(
-        name="gram_mole_or_mole_per_gram",
-        symbol="mol/g",
-        dimension=dim.MOLAR_CONCENTRATION_BY_MASS,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    gram_mole_or_mole_per_gram: Final = UnitConstant(
+        UnitDefinition(
+            name="gram_mole_or_mole_per_gram",
+            symbol="mol/g",
+            dimension=dim.MOLAR_CONCENTRATION_BY_MASS,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     mol_g: Final = gram_mole_or_mole_per_gram
 
     # gram mole or mole per kilogram
-    gram_mole_or_mole_per_kilogram: Final = UnitConstant(UnitDefinition(
-        name="gram_mole_or_mole_per_kilogram",
-        symbol="mol/kg",
-        dimension=dim.MOLAR_CONCENTRATION_BY_MASS,
-        si_factor=0.001,
-        si_offset=0.0,
-    ))
+    gram_mole_or_mole_per_kilogram: Final = UnitConstant(
+        UnitDefinition(
+            name="gram_mole_or_mole_per_kilogram",
+            symbol="mol/kg",
+            dimension=dim.MOLAR_CONCENTRATION_BY_MASS,
+            si_factor=0.001,
+            si_offset=0.0,
+        )
+    )
 
     mol_kg: Final = gram_mole_or_mole_per_kilogram
 
     # kilogram mole or kmol per kilogram
-    kilogram_mole_or_kmol_per_kilogram: Final = UnitConstant(UnitDefinition(
-        name="kilogram_mole_or_kmol_per_kilogram",
-        symbol="kmol/kg",
-        dimension=dim.MOLAR_CONCENTRATION_BY_MASS,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    kilogram_mole_or_kmol_per_kilogram: Final = UnitConstant(
+        UnitDefinition(
+            name="kilogram_mole_or_kmol_per_kilogram",
+            symbol="kmol/kg",
+            dimension=dim.MOLAR_CONCENTRATION_BY_MASS,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     kmol_kg: Final = kilogram_mole_or_kmol_per_kilogram
 
     # micromole per gram
-    micromole_per_gram: Final = UnitConstant(UnitDefinition(
-        name="micromole_per_gram",
-        symbol="$\\mu \\mathrm{mol} / \\mathrm{g}$",
-        dimension=dim.MOLAR_CONCENTRATION_BY_MASS,
-        si_factor=1e-06,
-        si_offset=0.0,
-    ))
+    micromole_per_gram: Final = UnitConstant(
+        UnitDefinition(
+            name="micromole_per_gram",
+            symbol="$\\mu \\mathrm{mol} / \\mathrm{g}$",
+            dimension=dim.MOLAR_CONCENTRATION_BY_MASS,
+            si_factor=1e-06,
+            si_offset=0.0,
+        )
+    )
 
     mu_mathrm_mol_mathrm_g: Final = micromole_per_gram
 
     # millimole per gram
-    millimole_per_gram: Final = UnitConstant(UnitDefinition(
-        name="millimole_per_gram",
-        symbol="mmol/g",
-        dimension=dim.MOLAR_CONCENTRATION_BY_MASS,
-        si_factor=0.001,
-        si_offset=0.0,
-    ))
+    millimole_per_gram: Final = UnitConstant(
+        UnitDefinition(
+            name="millimole_per_gram",
+            symbol="mmol/g",
+            dimension=dim.MOLAR_CONCENTRATION_BY_MASS,
+            si_factor=0.001,
+            si_offset=0.0,
+        )
+    )
 
     mmol_g: Final = millimole_per_gram
 
     # picomole per gram
-    picomole_per_gram: Final = UnitConstant(UnitDefinition(
-        name="picomole_per_gram",
-        symbol="pmol/g",
-        dimension=dim.MOLAR_CONCENTRATION_BY_MASS,
-        si_factor=1e-12,
-        si_offset=0.0,
-    ))
+    picomole_per_gram: Final = UnitConstant(
+        UnitDefinition(
+            name="picomole_per_gram",
+            symbol="pmol/g",
+            dimension=dim.MOLAR_CONCENTRATION_BY_MASS,
+            si_factor=1e-12,
+            si_offset=0.0,
+        )
+    )
 
     pmol_g: Final = picomole_per_gram
 
     # pound mole per pound
-    pound_mole_per_pound: Final = UnitConstant(UnitDefinition(
-        name="pound_mole_per_pound",
-        symbol="$\\mathrm{lb}-\\mathrm{mol} / \\mathrm{lb}$ or mole/lb",
-        dimension=dim.MOLAR_CONCENTRATION_BY_MASS,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    pound_mole_per_pound: Final = UnitConstant(
+        UnitDefinition(
+            name="pound_mole_per_pound",
+            symbol="$\\mathrm{lb}-\\mathrm{mol} / \\mathrm{lb}$ or mole/lb",
+            dimension=dim.MOLAR_CONCENTRATION_BY_MASS,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_lb_mathrm_mol_mathrm_lb_or_mole_lb: Final = pound_mole_per_pound
     lb_mol_lb: Final = pound_mole_per_pound
@@ -5609,140 +6575,164 @@ class MolarFlowRateUnits:
     __slots__ = ()
 
     # gram mole per day
-    gram_mole_per_day: Final = UnitConstant(UnitDefinition(
-        name="gram_mole_per_day",
-        symbol="mol/d",
-        dimension=dim.MOLAR_FLOW_RATE,
-        si_factor=4.167e-05,
-        si_offset=0.0,
-    ))
+    gram_mole_per_day: Final = UnitConstant(
+        UnitDefinition(
+            name="gram_mole_per_day",
+            symbol="mol/d",
+            dimension=dim.MOLAR_FLOW_RATE,
+            si_factor=4.167e-05,
+            si_offset=0.0,
+        )
+    )
 
     mol_d: Final = gram_mole_per_day
 
     # gram mole per hour
-    gram_mole_per_hour: Final = UnitConstant(UnitDefinition(
-        name="gram_mole_per_hour",
-        symbol="mol/h",
-        dimension=dim.MOLAR_FLOW_RATE,
-        si_factor=0.001,
-        si_offset=0.0,
-    ))
+    gram_mole_per_hour: Final = UnitConstant(
+        UnitDefinition(
+            name="gram_mole_per_hour",
+            symbol="mol/h",
+            dimension=dim.MOLAR_FLOW_RATE,
+            si_factor=0.001,
+            si_offset=0.0,
+        )
+    )
 
     mol_h: Final = gram_mole_per_hour
 
     # gram mole per minute
-    gram_mole_per_minute: Final = UnitConstant(UnitDefinition(
-        name="gram_mole_per_minute",
-        symbol="mol/min",
-        dimension=dim.MOLAR_FLOW_RATE,
-        si_factor=0.06,
-        si_offset=0.0,
-    ))
+    gram_mole_per_minute: Final = UnitConstant(
+        UnitDefinition(
+            name="gram_mole_per_minute",
+            symbol="mol/min",
+            dimension=dim.MOLAR_FLOW_RATE,
+            si_factor=0.06,
+            si_offset=0.0,
+        )
+    )
 
     mol_min: Final = gram_mole_per_minute
 
     # gram mole per second
-    gram_mole_per_second: Final = UnitConstant(UnitDefinition(
-        name="gram_mole_per_second",
-        symbol="mol/s",
-        dimension=dim.MOLAR_FLOW_RATE,
-        si_factor=3.6,
-        si_offset=0.0,
-    ))
+    gram_mole_per_second: Final = UnitConstant(
+        UnitDefinition(
+            name="gram_mole_per_second",
+            symbol="mol/s",
+            dimension=dim.MOLAR_FLOW_RATE,
+            si_factor=3.6,
+            si_offset=0.0,
+        )
+    )
 
     mol_s: Final = gram_mole_per_second
 
     # kilogram mole or kmol per day
-    kilogram_mole_or_kmol_per_day: Final = UnitConstant(UnitDefinition(
-        name="kilogram_mole_or_kmol_per_day",
-        symbol="kmol/d",
-        dimension=dim.MOLAR_FLOW_RATE,
-        si_factor=0.04167,
-        si_offset=0.0,
-    ))
+    kilogram_mole_or_kmol_per_day: Final = UnitConstant(
+        UnitDefinition(
+            name="kilogram_mole_or_kmol_per_day",
+            symbol="kmol/d",
+            dimension=dim.MOLAR_FLOW_RATE,
+            si_factor=0.04167,
+            si_offset=0.0,
+        )
+    )
 
     kmol_d: Final = kilogram_mole_or_kmol_per_day
 
     # kilogram mole or kmol per hour
-    kilogram_mole_or_kmol_per_hour: Final = UnitConstant(UnitDefinition(
-        name="kilogram_mole_or_kmol_per_hour",
-        symbol="kmol/h",
-        dimension=dim.MOLAR_FLOW_RATE,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    kilogram_mole_or_kmol_per_hour: Final = UnitConstant(
+        UnitDefinition(
+            name="kilogram_mole_or_kmol_per_hour",
+            symbol="kmol/h",
+            dimension=dim.MOLAR_FLOW_RATE,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     kmol_h: Final = kilogram_mole_or_kmol_per_hour
 
     # kilogram mole or kmol per minute
-    kilogram_mole_or_kmol_per_minute: Final = UnitConstant(UnitDefinition(
-        name="kilogram_mole_or_kmol_per_minute",
-        symbol="kmol/min",
-        dimension=dim.MOLAR_FLOW_RATE,
-        si_factor=60.0,
-        si_offset=0.0,
-    ))
+    kilogram_mole_or_kmol_per_minute: Final = UnitConstant(
+        UnitDefinition(
+            name="kilogram_mole_or_kmol_per_minute",
+            symbol="kmol/min",
+            dimension=dim.MOLAR_FLOW_RATE,
+            si_factor=60.0,
+            si_offset=0.0,
+        )
+    )
 
     kmol_min: Final = kilogram_mole_or_kmol_per_minute
 
     # kilogram mole or kmol per second
-    kilogram_mole_or_kmol_per_second: Final = UnitConstant(UnitDefinition(
-        name="kilogram_mole_or_kmol_per_second",
-        symbol="kmol/s",
-        dimension=dim.MOLAR_FLOW_RATE,
-        si_factor=3600.0,
-        si_offset=0.0,
-    ))
+    kilogram_mole_or_kmol_per_second: Final = UnitConstant(
+        UnitDefinition(
+            name="kilogram_mole_or_kmol_per_second",
+            symbol="kmol/s",
+            dimension=dim.MOLAR_FLOW_RATE,
+            si_factor=3600.0,
+            si_offset=0.0,
+        )
+    )
 
     kmol_s: Final = kilogram_mole_or_kmol_per_second
 
     # pound mole or lb-mol per day
-    pound_mole_or_lb_mol_per_day: Final = UnitConstant(UnitDefinition(
-        name="pound_mole_or_lb_mol_per_day",
-        symbol="lb-mol/d or mole/da",
-        dimension=dim.MOLAR_FLOW_RATE,
-        si_factor=0.0189,
-        si_offset=0.0,
-    ))
+    pound_mole_or_lb_mol_per_day: Final = UnitConstant(
+        UnitDefinition(
+            name="pound_mole_or_lb_mol_per_day",
+            symbol="lb-mol/d or mole/da",
+            dimension=dim.MOLAR_FLOW_RATE,
+            si_factor=0.0189,
+            si_offset=0.0,
+        )
+    )
 
     lb_mol_d_or_mole_da: Final = pound_mole_or_lb_mol_per_day
     lb_mol_d: Final = pound_mole_or_lb_mol_per_day
     mole_da: Final = pound_mole_or_lb_mol_per_day
 
     # pound mole or lb-mol per hour
-    pound_mole_or_lb_mol_per_hour: Final = UnitConstant(UnitDefinition(
-        name="pound_mole_or_lb_mol_per_hour",
-        symbol="lb-mol/h or mole/hr",
-        dimension=dim.MOLAR_FLOW_RATE,
-        si_factor=0.4535,
-        si_offset=0.0,
-    ))
+    pound_mole_or_lb_mol_per_hour: Final = UnitConstant(
+        UnitDefinition(
+            name="pound_mole_or_lb_mol_per_hour",
+            symbol="lb-mol/h or mole/hr",
+            dimension=dim.MOLAR_FLOW_RATE,
+            si_factor=0.4535,
+            si_offset=0.0,
+        )
+    )
 
     lb_mol_h_or_mole_hr: Final = pound_mole_or_lb_mol_per_hour
     lb_mol_h: Final = pound_mole_or_lb_mol_per_hour
     mole_hr: Final = pound_mole_or_lb_mol_per_hour
 
     # pound mole or lb-mol per minute
-    pound_mole_or_lb_mol_per_minute: Final = UnitConstant(UnitDefinition(
-        name="pound_mole_or_lb_mol_per_minute",
-        symbol="lb-mol/min or mole/ min",
-        dimension=dim.MOLAR_FLOW_RATE,
-        si_factor=27.21,
-        si_offset=0.0,
-    ))
+    pound_mole_or_lb_mol_per_minute: Final = UnitConstant(
+        UnitDefinition(
+            name="pound_mole_or_lb_mol_per_minute",
+            symbol="lb-mol/min or mole/ min",
+            dimension=dim.MOLAR_FLOW_RATE,
+            si_factor=27.21,
+            si_offset=0.0,
+        )
+    )
 
     lb_mol_min_or_mole_min: Final = pound_mole_or_lb_mol_per_minute
     lb_mol_min: Final = pound_mole_or_lb_mol_per_minute
     mole_min: Final = pound_mole_or_lb_mol_per_minute
 
     # pound mole or lb-mol per second
-    pound_mole_or_lb_mol_per_second: Final = UnitConstant(UnitDefinition(
-        name="pound_mole_or_lb_mol_per_second",
-        symbol="$\\mathrm{lb}-\\mathrm{mol} / \\mathrm{s}$ or mole/sec",
-        dimension=dim.MOLAR_FLOW_RATE,
-        si_factor=1633.0,
-        si_offset=0.0,
-    ))
+    pound_mole_or_lb_mol_per_second: Final = UnitConstant(
+        UnitDefinition(
+            name="pound_mole_or_lb_mol_per_second",
+            symbol="$\\mathrm{lb}-\\mathrm{mol} / \\mathrm{s}$ or mole/sec",
+            dimension=dim.MOLAR_FLOW_RATE,
+            si_factor=1633.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_lb_mathrm_mol_mathrm_s_or_mole_sec: Final = pound_mole_or_lb_mol_per_second
     lb_mol_s: Final = pound_mole_or_lb_mol_per_second
@@ -5755,96 +6745,112 @@ class MolarFluxUnits:
     __slots__ = ()
 
     # kmol per square meter per day
-    kmol_per_square_meter_per_day: Final = UnitConstant(UnitDefinition(
-        name="kmol_per_square_meter_per_day",
-        symbol="$\\mathrm{kmol} /\\left(\\mathrm{m}^{2} \\mathrm{~d}\\right)$",
-        dimension=dim.MOLAR_FLUX,
-        si_factor=1.1574000000000001e-05,
-        si_offset=0.0,
-    ))
+    kmol_per_square_meter_per_day: Final = UnitConstant(
+        UnitDefinition(
+            name="kmol_per_square_meter_per_day",
+            symbol="$\\mathrm{kmol} /\\left(\\mathrm{m}^{2} \\mathrm{~d}\\right)$",
+            dimension=dim.MOLAR_FLUX,
+            si_factor=1.1574000000000001e-05,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_kmol_left_mathrm_m_2_mathrm_d_right: Final = kmol_per_square_meter_per_day
 
     # kmol per square meter per hour
-    kmol_per_square_meter_per_hour: Final = UnitConstant(UnitDefinition(
-        name="kmol_per_square_meter_per_hour",
-        symbol="$\\mathrm{kmol} /\\left(\\mathrm{m}^{2} \\mathrm{~h}\\right)$",
-        dimension=dim.MOLAR_FLUX,
-        si_factor=0.00027778000000000004,
-        si_offset=0.0,
-    ))
+    kmol_per_square_meter_per_hour: Final = UnitConstant(
+        UnitDefinition(
+            name="kmol_per_square_meter_per_hour",
+            symbol="$\\mathrm{kmol} /\\left(\\mathrm{m}^{2} \\mathrm{~h}\\right)$",
+            dimension=dim.MOLAR_FLUX,
+            si_factor=0.00027778000000000004,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_kmol_left_mathrm_m_2_mathrm_h_right: Final = kmol_per_square_meter_per_hour
 
     # kmol per square meter per minute
-    kmol_per_square_meter_per_minute: Final = UnitConstant(UnitDefinition(
-        name="kmol_per_square_meter_per_minute",
-        symbol="$\\mathrm{kmol} /\\left(\\mathrm{m}^{2}\\right.$ amin $)$",
-        dimension=dim.MOLAR_FLUX,
-        si_factor=0.016667,
-        si_offset=0.0,
-    ))
+    kmol_per_square_meter_per_minute: Final = UnitConstant(
+        UnitDefinition(
+            name="kmol_per_square_meter_per_minute",
+            symbol="$\\mathrm{kmol} /\\left(\\mathrm{m}^{2}\\right.$ amin $)$",
+            dimension=dim.MOLAR_FLUX,
+            si_factor=0.016667,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_kmol_left_mathrm_m_2_right_amin: Final = kmol_per_square_meter_per_minute
 
     # kmol per square meter per second
-    kmol_per_square_meter_per_second: Final = UnitConstant(UnitDefinition(
-        name="kmol_per_square_meter_per_second",
-        symbol="$\\mathrm{kmol} /\\left(\\mathrm{m}^{2} \\mathrm{~s}\\right)$",
-        dimension=dim.MOLAR_FLUX,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    kmol_per_square_meter_per_second: Final = UnitConstant(
+        UnitDefinition(
+            name="kmol_per_square_meter_per_second",
+            symbol="$\\mathrm{kmol} /\\left(\\mathrm{m}^{2} \\mathrm{~s}\\right)$",
+            dimension=dim.MOLAR_FLUX,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_kmol_left_mathrm_m_2_mathrm_s_right: Final = kmol_per_square_meter_per_second
 
     # pound mole per square foot per day
-    pound_mole_per_square_foot_per_day: Final = UnitConstant(UnitDefinition(
-        name="pound_mole_per_square_foot_per_day",
-        symbol="$\\mathrm{lb}-\\mathrm{mol} /\\left(\\mathrm{ft}^{2} \\mathrm{~d}\\right)$ or mole/sqft/da",
-        dimension=dim.MOLAR_FLUX,
-        si_factor=5.6478000000000004e-05,
-        si_offset=0.0,
-    ))
+    pound_mole_per_square_foot_per_day: Final = UnitConstant(
+        UnitDefinition(
+            name="pound_mole_per_square_foot_per_day",
+            symbol="$\\mathrm{lb}-\\mathrm{mol} /\\left(\\mathrm{ft}^{2} \\mathrm{~d}\\right)$ or mole/sqft/da",
+            dimension=dim.MOLAR_FLUX,
+            si_factor=5.6478000000000004e-05,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_lb_mathrm_mol_left_mathrm_ft_2_mathrm_d_right_or_mole_sqft_da: Final = pound_mole_per_square_foot_per_day
     lb_mol_left_ft_2_dright: Final = pound_mole_per_square_foot_per_day
     mole_sqft_da: Final = pound_mole_per_square_foot_per_day
 
     # pound mole per square foot per hour
-    pound_mole_per_square_foot_per_hour: Final = UnitConstant(UnitDefinition(
-        name="pound_mole_per_square_foot_per_hour",
-        symbol="$\\mathrm{lb}-\\mathrm{mol} /\\left(\\mathrm{ft}^{2} \\mathrm{~h}\\right)$ or mole/sqft/hr",
-        dimension=dim.MOLAR_FLUX,
-        si_factor=0.0013555,
-        si_offset=0.0,
-    ))
+    pound_mole_per_square_foot_per_hour: Final = UnitConstant(
+        UnitDefinition(
+            name="pound_mole_per_square_foot_per_hour",
+            symbol="$\\mathrm{lb}-\\mathrm{mol} /\\left(\\mathrm{ft}^{2} \\mathrm{~h}\\right)$ or mole/sqft/hr",
+            dimension=dim.MOLAR_FLUX,
+            si_factor=0.0013555,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_lb_mathrm_mol_left_mathrm_ft_2_mathrm_h_right_or_mole_sqft_hr: Final = pound_mole_per_square_foot_per_hour
     lb_mol_left_ft_2_hright: Final = pound_mole_per_square_foot_per_hour
     mole_sqft_hr: Final = pound_mole_per_square_foot_per_hour
 
     # pound mole per square foot per minute
-    pound_mole_per_square_foot_per_minute: Final = UnitConstant(UnitDefinition(
-        name="pound_mole_per_square_foot_per_minute",
-        symbol="$\\mathrm{lb}-\\mathrm{mol} /\\left(\\mathrm{ft}^{2} \\mathrm{~min}\\right)$ or mole/sqft/min",
-        dimension=dim.MOLAR_FLUX,
-        si_factor=0.081329,
-        si_offset=0.0,
-    ))
+    pound_mole_per_square_foot_per_minute: Final = UnitConstant(
+        UnitDefinition(
+            name="pound_mole_per_square_foot_per_minute",
+            symbol="$\\mathrm{lb}-\\mathrm{mol} /\\left(\\mathrm{ft}^{2} \\mathrm{~min}\\right)$ or mole/sqft/min",
+            dimension=dim.MOLAR_FLUX,
+            si_factor=0.081329,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_lb_mathrm_mol_left_mathrm_ft_2_mathrm_min_right_or_mole_sqft_min: Final = pound_mole_per_square_foot_per_minute
     lb_mol_left_ft_2_minright: Final = pound_mole_per_square_foot_per_minute
     mole_sqft_min: Final = pound_mole_per_square_foot_per_minute
 
     # pound mole per square foot per second
-    pound_mole_per_square_foot_per_second: Final = UnitConstant(UnitDefinition(
-        name="pound_mole_per_square_foot_per_second",
-        symbol="$\\mathrm{lb}-\\mathrm{mol} /\\left(\\mathrm{ft}^{2} \\mathrm{~s}\\right)$ or mole/sqft/sec",
-        dimension=dim.MOLAR_FLUX,
-        si_factor=4.8797,
-        si_offset=0.0,
-    ))
+    pound_mole_per_square_foot_per_second: Final = UnitConstant(
+        UnitDefinition(
+            name="pound_mole_per_square_foot_per_second",
+            symbol="$\\mathrm{lb}-\\mathrm{mol} /\\left(\\mathrm{ft}^{2} \\mathrm{~s}\\right)$ or mole/sqft/sec",
+            dimension=dim.MOLAR_FLUX,
+            si_factor=4.8797,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_lb_mathrm_mol_left_mathrm_ft_2_mathrm_s_right_or_mole_sqft_sec: Final = pound_mole_per_square_foot_per_second
     lb_mol_left_ft_2_sright: Final = pound_mole_per_square_foot_per_second
@@ -5857,35 +6863,41 @@ class MolarHeatCapacityUnits:
     __slots__ = ()
 
     # Btu per pound mole per degree Fahrenheit (or degree Rankine)
-    btu_per_pound_mole_per_degree_fahrenheit_or_degree_rankine: Final = UnitConstant(UnitDefinition(
-        name="btu_per_pound_mole_per_degree_fahrenheit_or_degree_rankine",
-        symbol="Btu/lb-mol/ ${ }^{\\circ} \\mathrm{F}$",
-        dimension=dim.MOLAR_HEAT_CAPACITY,
-        si_factor=4.1868,
-        si_offset=0.0,
-    ))
+    btu_per_pound_mole_per_degree_fahrenheit_or_degree_rankine: Final = UnitConstant(
+        UnitDefinition(
+            name="btu_per_pound_mole_per_degree_fahrenheit_or_degree_rankine",
+            symbol="Btu/lb-mol/ ${ }^{\\circ} \\mathrm{F}$",
+            dimension=dim.MOLAR_HEAT_CAPACITY,
+            si_factor=4.1868,
+            si_offset=0.0,
+        )
+    )
 
     Btu_lb_mol_circ_mathrm_F: Final = btu_per_pound_mole_per_degree_fahrenheit_or_degree_rankine
 
     # calories per gram mole per kelvin (or degree Celsius)
-    calories_per_gram_mole_per_kelvin_or_degree_celsius: Final = UnitConstant(UnitDefinition(
-        name="calories_per_gram_mole_per_kelvin_or_degree_celsius",
-        symbol="cal/(mol K)",
-        dimension=dim.MOLAR_HEAT_CAPACITY,
-        si_factor=4.1868,
-        si_offset=0.0,
-    ))
+    calories_per_gram_mole_per_kelvin_or_degree_celsius: Final = UnitConstant(
+        UnitDefinition(
+            name="calories_per_gram_mole_per_kelvin_or_degree_celsius",
+            symbol="cal/(mol K)",
+            dimension=dim.MOLAR_HEAT_CAPACITY,
+            si_factor=4.1868,
+            si_offset=0.0,
+        )
+    )
 
     cal_mol_K: Final = calories_per_gram_mole_per_kelvin_or_degree_celsius
 
     # joule per gram mole per kelvin (or degree Celsius)
-    joule_per_gram_mole_per_kelvin_or_degree_celsius: Final = UnitConstant(UnitDefinition(
-        name="joule_per_gram_mole_per_kelvin_or_degree_celsius",
-        symbol="J/(mol K)",
-        dimension=dim.MOLAR_HEAT_CAPACITY,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    joule_per_gram_mole_per_kelvin_or_degree_celsius: Final = UnitConstant(
+        UnitDefinition(
+            name="joule_per_gram_mole_per_kelvin_or_degree_celsius",
+            symbol="J/(mol K)",
+            dimension=dim.MOLAR_HEAT_CAPACITY,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     J_mol_K: Final = joule_per_gram_mole_per_kelvin_or_degree_celsius
 
@@ -5896,72 +6908,84 @@ class MolarityOfIUnits:
     __slots__ = ()
 
     # gram moles of "i" per cubic meter
-    gram_moles_of_i_per_cubic_meter: Final = UnitConstant(UnitDefinition(
-        name="gram_moles_of_i_per_cubic_meter",
-        symbol="$\\mathrm{mol}_{\\mathrm{i}} / \\mathrm{m}^{3}$ or $\\mathrm{c}_{\\mathrm{i}}$",
-        dimension=dim.MOLARITY_OF_I,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    gram_moles_of_i_per_cubic_meter: Final = UnitConstant(
+        UnitDefinition(
+            name="gram_moles_of_i_per_cubic_meter",
+            symbol="$\\mathrm{mol}_{\\mathrm{i}} / \\mathrm{m}^{3}$ or $\\mathrm{c}_{\\mathrm{i}}$",
+            dimension=dim.MOLARITY_OF_I,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_mol_mathrm_i_mathrm_m_3_or_mathrm_c_mathrm_i: Final = gram_moles_of_i_per_cubic_meter
     mol_i_m_3: Final = gram_moles_of_i_per_cubic_meter
     c_i: Final = gram_moles_of_i_per_cubic_meter
 
     # gram moles of "i" per liter
-    gram_moles_of_i_per_liter: Final = UnitConstant(UnitDefinition(
-        name="gram_moles_of_i_per_liter",
-        symbol="$\\mathrm{mol}_{\\mathrm{i}} / \\mathrm{l}$",
-        dimension=dim.MOLARITY_OF_I,
-        si_factor=1000.0,
-        si_offset=0.0,
-    ))
+    gram_moles_of_i_per_liter: Final = UnitConstant(
+        UnitDefinition(
+            name="gram_moles_of_i_per_liter",
+            symbol="$\\mathrm{mol}_{\\mathrm{i}} / \\mathrm{l}$",
+            dimension=dim.MOLARITY_OF_I,
+            si_factor=1000.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_mol_mathrm_i_mathrm_l: Final = gram_moles_of_i_per_liter
 
     # kilogram moles of "i" per cubic meter
-    kilogram_moles_of_i_per_cubic_meter: Final = UnitConstant(UnitDefinition(
-        name="kilogram_moles_of_i_per_cubic_meter",
-        symbol="$\\mathrm{kmol}_{\\mathrm{i}} / \\mathrm{m}^{3}$",
-        dimension=dim.MOLARITY_OF_I,
-        si_factor=1000.0,
-        si_offset=0.0,
-    ))
+    kilogram_moles_of_i_per_cubic_meter: Final = UnitConstant(
+        UnitDefinition(
+            name="kilogram_moles_of_i_per_cubic_meter",
+            symbol="$\\mathrm{kmol}_{\\mathrm{i}} / \\mathrm{m}^{3}$",
+            dimension=dim.MOLARITY_OF_I,
+            si_factor=1000.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_kmol_mathrm_i_mathrm_m_3: Final = kilogram_moles_of_i_per_cubic_meter
 
     # kilogram moles of "i" per liter
-    kilogram_moles_of_i_per_liter: Final = UnitConstant(UnitDefinition(
-        name="kilogram_moles_of_i_per_liter",
-        symbol="$\\mathrm{kmol}_{\\mathrm{i}} / \\mathrm{l}$",
-        dimension=dim.MOLARITY_OF_I,
-        si_factor=1000000.0,
-        si_offset=0.0,
-    ))
+    kilogram_moles_of_i_per_liter: Final = UnitConstant(
+        UnitDefinition(
+            name="kilogram_moles_of_i_per_liter",
+            symbol="$\\mathrm{kmol}_{\\mathrm{i}} / \\mathrm{l}$",
+            dimension=dim.MOLARITY_OF_I,
+            si_factor=1000000.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_kmol_mathrm_i_mathrm_l: Final = kilogram_moles_of_i_per_liter
 
     # pound moles of "i" per cubic foot
-    pound_moles_of_i_per_cubic_foot: Final = UnitConstant(UnitDefinition(
-        name="pound_moles_of_i_per_cubic_foot",
-        symbol="lb $\\mathrm{mol}_{\\mathrm{i}} / \\mathrm{ft}^{3}$ or $\\mathrm{mole}_{\\mathrm{i}} /$ cft",
-        dimension=dim.MOLARITY_OF_I,
-        si_factor=77844.0,
-        si_offset=0.0,
-    ))
+    pound_moles_of_i_per_cubic_foot: Final = UnitConstant(
+        UnitDefinition(
+            name="pound_moles_of_i_per_cubic_foot",
+            symbol="lb $\\mathrm{mol}_{\\mathrm{i}} / \\mathrm{ft}^{3}$ or $\\mathrm{mole}_{\\mathrm{i}} /$ cft",
+            dimension=dim.MOLARITY_OF_I,
+            si_factor=77844.0,
+            si_offset=0.0,
+        )
+    )
 
     lb_mathrm_mol_mathrm_i_mathrm_ft_3_or_mathrm_mole_mathrm_i_cft: Final = pound_moles_of_i_per_cubic_foot
     lb_mol_i_ft_3: Final = pound_moles_of_i_per_cubic_foot
     mole_i_cft: Final = pound_moles_of_i_per_cubic_foot
 
     # pound moles of " $i$ " per gallon (US)
-    pound_moles_of_i_per_gallon_us: Final = UnitConstant(UnitDefinition(
-        name="pound_moles_of_i_per_gallon_us",
-        symbol="lb $\\mathrm{mol}_{\\mathrm{i}} / \\mathrm{gal}$ or $\\mathrm{mole}_{\\mathrm{i}} /$ gal",
-        dimension=dim.MOLARITY_OF_I,
-        si_factor=10406.0,
-        si_offset=0.0,
-    ))
+    pound_moles_of_i_per_gallon_us: Final = UnitConstant(
+        UnitDefinition(
+            name="pound_moles_of_i_per_gallon_us",
+            symbol="lb $\\mathrm{mol}_{\\mathrm{i}} / \\mathrm{gal}$ or $\\mathrm{mole}_{\\mathrm{i}} /$ gal",
+            dimension=dim.MOLARITY_OF_I,
+            si_factor=10406.0,
+            si_offset=0.0,
+        )
+    )
 
     lb_mathrm_mol_mathrm_i_mathrm_gal_or_mathrm_mole_mathrm_i_gal: Final = pound_moles_of_i_per_gallon_us
     lb_mol_i_gal: Final = pound_moles_of_i_per_gallon_us
@@ -5974,44 +6998,52 @@ class MoleFractionOfIUnits:
     __slots__ = ()
 
     # gram mole of "i" per gram mole total
-    gram_mole_of_i_per_gram_mole_total: Final = UnitConstant(UnitDefinition(
-        name="gram_mole_of_i_per_gram_mole_total",
-        symbol="$\\mathrm{mol}_{\\mathrm{i}} / \\mathrm{mol}$",
-        dimension=dim.MOLE_FRACTION_OF_I,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    gram_mole_of_i_per_gram_mole_total: Final = UnitConstant(
+        UnitDefinition(
+            name="gram_mole_of_i_per_gram_mole_total",
+            symbol="$\\mathrm{mol}_{\\mathrm{i}} / \\mathrm{mol}$",
+            dimension=dim.MOLE_FRACTION_OF_I,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_mol_mathrm_i_mathrm_mol: Final = gram_mole_of_i_per_gram_mole_total
 
     # kilogram mole of "i" per kilogram mole total
-    kilogram_mole_of_i_per_kilogram_mole_total: Final = UnitConstant(UnitDefinition(
-        name="kilogram_mole_of_i_per_kilogram_mole_total",
-        symbol="$\\mathrm{kmol}_{\\mathrm{i}} / \\mathrm{kmol}$",
-        dimension=dim.MOLE_FRACTION_OF_I,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    kilogram_mole_of_i_per_kilogram_mole_total: Final = UnitConstant(
+        UnitDefinition(
+            name="kilogram_mole_of_i_per_kilogram_mole_total",
+            symbol="$\\mathrm{kmol}_{\\mathrm{i}} / \\mathrm{kmol}$",
+            dimension=dim.MOLE_FRACTION_OF_I,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_kmol_mathrm_i_mathrm_kmol: Final = kilogram_mole_of_i_per_kilogram_mole_total
 
     # kilomole of "i" per kilomole total
-    kilomole_of_i_per_kilomole_total: Final = UnitConstant(UnitDefinition(
-        name="kilomole_of_i_per_kilomole_total",
-        symbol="$\\mathrm{kmol}_{\\mathrm{i}} / \\mathrm{kmol}$",
-        dimension=dim.MOLE_FRACTION_OF_I,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    kilomole_of_i_per_kilomole_total: Final = UnitConstant(
+        UnitDefinition(
+            name="kilomole_of_i_per_kilomole_total",
+            symbol="$\\mathrm{kmol}_{\\mathrm{i}} / \\mathrm{kmol}$",
+            dimension=dim.MOLE_FRACTION_OF_I,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     # pound mole of "i" per pound mole total
-    pound_mole_of_i_per_pound_mole_total: Final = UnitConstant(UnitDefinition(
-        name="pound_mole_of_i_per_pound_mole_total",
-        symbol="lb $\\mathrm{mol}_{\\mathrm{i}} / \\mathrm{lb} \\mathrm{mol}$",
-        dimension=dim.MOLE_FRACTION_OF_I,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    pound_mole_of_i_per_pound_mole_total: Final = UnitConstant(
+        UnitDefinition(
+            name="pound_mole_of_i_per_pound_mole_total",
+            symbol="lb $\\mathrm{mol}_{\\mathrm{i}} / \\mathrm{lb} \\mathrm{mol}$",
+            dimension=dim.MOLE_FRACTION_OF_I,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     lb_mathrm_mol_mathrm_i_mathrm_lb_mathrm_mol: Final = pound_mole_of_i_per_pound_mole_total
 
@@ -6022,114 +7054,134 @@ class MomentOfInertiaUnits:
     __slots__ = ()
 
     # gram force centimeter square second
-    gram_force_centimeter_square_second: Final = UnitConstant(UnitDefinition(
-        name="gram_force_centimeter_square_second",
-        symbol="$\\mathrm{g}_{\\mathrm{f}} \\mathrm{cm} \\mathrm{s}^{2}$",
-        dimension=dim.MOMENT_OF_INERTIA,
-        si_factor=9.8067e-05,
-        si_offset=0.0,
-    ))
+    gram_force_centimeter_square_second: Final = UnitConstant(
+        UnitDefinition(
+            name="gram_force_centimeter_square_second",
+            symbol="$\\mathrm{g}_{\\mathrm{f}} \\mathrm{cm} \\mathrm{s}^{2}$",
+            dimension=dim.MOMENT_OF_INERTIA,
+            si_factor=9.8067e-05,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_g_mathrm_f_mathrm_cm_mathrm_s_2: Final = gram_force_centimeter_square_second
 
     # gram square centimeter
-    gram_square_centimeter: Final = UnitConstant(UnitDefinition(
-        name="gram_square_centimeter",
-        symbol="$\\mathrm{g} \\mathrm{cm}^{2}$",
-        dimension=dim.MOMENT_OF_INERTIA,
-        si_factor=1e-07,
-        si_offset=0.0,
-    ))
+    gram_square_centimeter: Final = UnitConstant(
+        UnitDefinition(
+            name="gram_square_centimeter",
+            symbol="$\\mathrm{g} \\mathrm{cm}^{2}$",
+            dimension=dim.MOMENT_OF_INERTIA,
+            si_factor=1e-07,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_g_mathrm_cm_2: Final = gram_square_centimeter
 
     # kilogram force centimeter square second
-    kilogram_force_centimeter_square_second: Final = UnitConstant(UnitDefinition(
-        name="kilogram_force_centimeter_square_second",
-        symbol="$\\mathrm{kg}_{\\mathrm{f}} \\mathrm{cm} \\mathrm{s}{ }^{2}$",
-        dimension=dim.MOMENT_OF_INERTIA,
-        si_factor=0.098067,
-        si_offset=0.0,
-    ))
+    kilogram_force_centimeter_square_second: Final = UnitConstant(
+        UnitDefinition(
+            name="kilogram_force_centimeter_square_second",
+            symbol="$\\mathrm{kg}_{\\mathrm{f}} \\mathrm{cm} \\mathrm{s}{ }^{2}$",
+            dimension=dim.MOMENT_OF_INERTIA,
+            si_factor=0.098067,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_kg_mathrm_f_mathrm_cm_mathrm_s_2: Final = kilogram_force_centimeter_square_second
 
     # kilogram force meter square second
-    kilogram_force_meter_square_second: Final = UnitConstant(UnitDefinition(
-        name="kilogram_force_meter_square_second",
-        symbol="$\\mathrm{kg}_{\\mathrm{f}} \\mathrm{m} \\mathrm{s}^{2}$",
-        dimension=dim.MOMENT_OF_INERTIA,
-        si_factor=9.8067,
-        si_offset=0.0,
-    ))
+    kilogram_force_meter_square_second: Final = UnitConstant(
+        UnitDefinition(
+            name="kilogram_force_meter_square_second",
+            symbol="$\\mathrm{kg}_{\\mathrm{f}} \\mathrm{m} \\mathrm{s}^{2}$",
+            dimension=dim.MOMENT_OF_INERTIA,
+            si_factor=9.8067,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_kg_mathrm_f_mathrm_m_mathrm_s_2: Final = kilogram_force_meter_square_second
 
     # kilogram square centimeter
-    kilogram_square_centimeter: Final = UnitConstant(UnitDefinition(
-        name="kilogram_square_centimeter",
-        symbol="$\\mathrm{kg} \\mathrm{cm}^{2}$",
-        dimension=dim.MOMENT_OF_INERTIA,
-        si_factor=0.0001,
-        si_offset=0.0,
-    ))
+    kilogram_square_centimeter: Final = UnitConstant(
+        UnitDefinition(
+            name="kilogram_square_centimeter",
+            symbol="$\\mathrm{kg} \\mathrm{cm}^{2}$",
+            dimension=dim.MOMENT_OF_INERTIA,
+            si_factor=0.0001,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_kg_mathrm_cm_2: Final = kilogram_square_centimeter
 
     # kilogram square meter
-    kilogram_square_meter: Final = UnitConstant(UnitDefinition(
-        name="kilogram_square_meter",
-        symbol="$\\mathrm{kg} \\mathrm{m}^{2}$",
-        dimension=dim.MOMENT_OF_INERTIA,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    kilogram_square_meter: Final = UnitConstant(
+        UnitDefinition(
+            name="kilogram_square_meter",
+            symbol="$\\mathrm{kg} \\mathrm{m}^{2}$",
+            dimension=dim.MOMENT_OF_INERTIA,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_kg_mathrm_m_2: Final = kilogram_square_meter
 
     # ounce force inch square second
-    ounce_force_inch_square_second: Final = UnitConstant(UnitDefinition(
-        name="ounce_force_inch_square_second",
-        symbol="$\\mathrm{oz}_{\\mathrm{f}}$ in $\\mathrm{s}^{2}$",
-        dimension=dim.MOMENT_OF_INERTIA,
-        si_factor=0.0070616,
-        si_offset=0.0,
-    ))
+    ounce_force_inch_square_second: Final = UnitConstant(
+        UnitDefinition(
+            name="ounce_force_inch_square_second",
+            symbol="$\\mathrm{oz}_{\\mathrm{f}}$ in $\\mathrm{s}^{2}$",
+            dimension=dim.MOMENT_OF_INERTIA,
+            si_factor=0.0070616,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_oz_mathrm_f_in_mathrm_s_2: Final = ounce_force_inch_square_second
 
     # ounce mass square inch
-    ounce_mass_square_inch: Final = UnitConstant(UnitDefinition(
-        name="ounce_mass_square_inch",
-        symbol="oz in ${ }^{2}$",
-        dimension=dim.MOMENT_OF_INERTIA,
-        si_factor=1.8290000000000003e-05,
-        si_offset=0.0,
-    ))
+    ounce_mass_square_inch: Final = UnitConstant(
+        UnitDefinition(
+            name="ounce_mass_square_inch",
+            symbol="oz in ${ }^{2}$",
+            dimension=dim.MOMENT_OF_INERTIA,
+            si_factor=1.8290000000000003e-05,
+            si_offset=0.0,
+        )
+    )
 
     oz_in_2: Final = ounce_mass_square_inch
 
     # pound mass square foot
-    pound_mass_square_foot: Final = UnitConstant(UnitDefinition(
-        name="pound_mass_square_foot",
-        symbol="lb ft ${ }^{2}$ or lb sq ft",
-        dimension=dim.MOMENT_OF_INERTIA,
-        si_factor=0.04214,
-        si_offset=0.0,
-    ))
+    pound_mass_square_foot: Final = UnitConstant(
+        UnitDefinition(
+            name="pound_mass_square_foot",
+            symbol="lb ft ${ }^{2}$ or lb sq ft",
+            dimension=dim.MOMENT_OF_INERTIA,
+            si_factor=0.04214,
+            si_offset=0.0,
+        )
+    )
 
     lb_ft_2_or_lb_sq_ft: Final = pound_mass_square_foot
     lb_ft_2: Final = pound_mass_square_foot
     lb_sq_ft: Final = pound_mass_square_foot
 
     # pound mass square inch
-    pound_mass_square_inch: Final = UnitConstant(UnitDefinition(
-        name="pound_mass_square_inch",
-        symbol="$\\mathrm{lb} \\mathrm{in}^{2}$",
-        dimension=dim.MOMENT_OF_INERTIA,
-        si_factor=0.00029264000000000004,
-        si_offset=0.0,
-    ))
+    pound_mass_square_inch: Final = UnitConstant(
+        UnitDefinition(
+            name="pound_mass_square_inch",
+            symbol="$\\mathrm{lb} \\mathrm{in}^{2}$",
+            dimension=dim.MOMENT_OF_INERTIA,
+            si_factor=0.00029264000000000004,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_lb_mathrm_in_2: Final = pound_mass_square_inch
 
@@ -6140,61 +7192,71 @@ class MomentumFlowRateUnits:
     __slots__ = ()
 
     # foot pounds per square hour
-    foot_pounds_per_square_hour: Final = UnitConstant(UnitDefinition(
-        name="foot_pounds_per_square_hour",
-        symbol="$\\mathrm{ft} \\mathrm{lb} / \\mathrm{h}^{2}$ or $\\mathrm{ft} \\mathrm{lb} / \\mathrm{hr}^{2}$",
-        dimension=dim.MOMENTUM_FLOW_RATE,
-        si_factor=1.0671e-08,
-        si_offset=0.0,
-    ))
+    foot_pounds_per_square_hour: Final = UnitConstant(
+        UnitDefinition(
+            name="foot_pounds_per_square_hour",
+            symbol="$\\mathrm{ft} \\mathrm{lb} / \\mathrm{h}^{2}$ or $\\mathrm{ft} \\mathrm{lb} / \\mathrm{hr}^{2}$",
+            dimension=dim.MOMENTUM_FLOW_RATE,
+            si_factor=1.0671e-08,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_ft_mathrm_lb_mathrm_h_2_or_mathrm_ft_mathrm_lb_mathrm_hr_2: Final = foot_pounds_per_square_hour
     ft_lb_h_2: Final = foot_pounds_per_square_hour
     ft_lb_hr_2: Final = foot_pounds_per_square_hour
 
     # foot pounds per square minute
-    foot_pounds_per_square_minute: Final = UnitConstant(UnitDefinition(
-        name="foot_pounds_per_square_minute",
-        symbol="$\\mathrm{ft} \\mathrm{lb} / \\mathrm{min}^{2}$",
-        dimension=dim.MOMENTUM_FLOW_RATE,
-        si_factor=3.8417e-05,
-        si_offset=0.0,
-    ))
+    foot_pounds_per_square_minute: Final = UnitConstant(
+        UnitDefinition(
+            name="foot_pounds_per_square_minute",
+            symbol="$\\mathrm{ft} \\mathrm{lb} / \\mathrm{min}^{2}$",
+            dimension=dim.MOMENTUM_FLOW_RATE,
+            si_factor=3.8417e-05,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_ft_mathrm_lb_mathrm_min_2: Final = foot_pounds_per_square_minute
 
     # foot pounds per square second
-    foot_pounds_per_square_second: Final = UnitConstant(UnitDefinition(
-        name="foot_pounds_per_square_second",
-        symbol="$\\mathrm{ft} \\mathrm{lb} / \\mathrm{s}^{2}$ or ft lb/sec ${ }^{2}$",
-        dimension=dim.MOMENTUM_FLOW_RATE,
-        si_factor=0.1383,
-        si_offset=0.0,
-    ))
+    foot_pounds_per_square_second: Final = UnitConstant(
+        UnitDefinition(
+            name="foot_pounds_per_square_second",
+            symbol="$\\mathrm{ft} \\mathrm{lb} / \\mathrm{s}^{2}$ or ft lb/sec ${ }^{2}$",
+            dimension=dim.MOMENTUM_FLOW_RATE,
+            si_factor=0.1383,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_ft_mathrm_lb_mathrm_s_2_or_ft_lb_sec_2: Final = foot_pounds_per_square_second
     ft_lb_s_2: Final = foot_pounds_per_square_second
     ft_lb_sec_2: Final = foot_pounds_per_square_second
 
     # gram centimeters per square second
-    gram_centimeters_per_square_second: Final = UnitConstant(UnitDefinition(
-        name="gram_centimeters_per_square_second",
-        symbol="$\\mathrm{g} \\mathrm{cm} / \\mathrm{s}^{2}$",
-        dimension=dim.MOMENTUM_FLOW_RATE,
-        si_factor=1e-05,
-        si_offset=0.0,
-    ))
+    gram_centimeters_per_square_second: Final = UnitConstant(
+        UnitDefinition(
+            name="gram_centimeters_per_square_second",
+            symbol="$\\mathrm{g} \\mathrm{cm} / \\mathrm{s}^{2}$",
+            dimension=dim.MOMENTUM_FLOW_RATE,
+            si_factor=1e-05,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_g_mathrm_cm_mathrm_s_2: Final = gram_centimeters_per_square_second
 
     # kilogram meters per square second
-    kilogram_meters_per_square_second: Final = UnitConstant(UnitDefinition(
-        name="kilogram_meters_per_square_second",
-        symbol="$\\mathrm{kg} \\mathrm{m} / \\mathrm{s}^{2}$",
-        dimension=dim.MOMENTUM_FLOW_RATE,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    kilogram_meters_per_square_second: Final = UnitConstant(
+        UnitDefinition(
+            name="kilogram_meters_per_square_second",
+            symbol="$\\mathrm{kg} \\mathrm{m} / \\mathrm{s}^{2}$",
+            dimension=dim.MOMENTUM_FLOW_RATE,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_kg_mathrm_m_mathrm_s_2: Final = kilogram_meters_per_square_second
 
@@ -6205,55 +7267,65 @@ class MomentumFluxUnits:
     __slots__ = ()
 
     # dyne per square centimeter
-    dyne_per_square_centimeter: Final = UnitConstant(UnitDefinition(
-        name="dyne_per_square_centimeter",
-        symbol="dyn/ $\\mathrm{cm}^{2}$",
-        dimension=dim.MOMENTUM_FLUX,
-        si_factor=10.0,
-        si_offset=0.0,
-    ))
+    dyne_per_square_centimeter: Final = UnitConstant(
+        UnitDefinition(
+            name="dyne_per_square_centimeter",
+            symbol="dyn/ $\\mathrm{cm}^{2}$",
+            dimension=dim.MOMENTUM_FLUX,
+            si_factor=10.0,
+            si_offset=0.0,
+        )
+    )
 
     dyn_mathrm_cm_2: Final = dyne_per_square_centimeter
 
     # gram per centimeter per square second
-    gram_per_centimeter_per_square_second: Final = UnitConstant(UnitDefinition(
-        name="gram_per_centimeter_per_square_second",
-        symbol="$\\mathrm{g} / \\mathrm{cm} / \\mathrm{s}^{2}$",
-        dimension=dim.MOMENTUM_FLUX,
-        si_factor=10.0,
-        si_offset=0.0,
-    ))
+    gram_per_centimeter_per_square_second: Final = UnitConstant(
+        UnitDefinition(
+            name="gram_per_centimeter_per_square_second",
+            symbol="$\\mathrm{g} / \\mathrm{cm} / \\mathrm{s}^{2}$",
+            dimension=dim.MOMENTUM_FLUX,
+            si_factor=10.0,
+            si_offset=0.0,
+        )
+    )
 
     # newton per square meter
-    newton_per_square_meter: Final = UnitConstant(UnitDefinition(
-        name="newton_per_square_meter",
-        symbol="$\\mathrm{N} / \\mathrm{m}^{2}$",
-        dimension=dim.MOMENTUM_FLUX,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    newton_per_square_meter: Final = UnitConstant(
+        UnitDefinition(
+            name="newton_per_square_meter",
+            symbol="$\\mathrm{N} / \\mathrm{m}^{2}$",
+            dimension=dim.MOMENTUM_FLUX,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_N_mathrm_m_2: Final = newton_per_square_meter
 
     # pound force per square foot
-    pound_force_per_square_foot: Final = UnitConstant(UnitDefinition(
-        name="pound_force_per_square_foot",
-        symbol="$\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{sq} \\mathrm{ft}$",
-        dimension=dim.MOMENTUM_FLUX,
-        si_factor=478.8,
-        si_offset=0.0,
-    ))
+    pound_force_per_square_foot: Final = UnitConstant(
+        UnitDefinition(
+            name="pound_force_per_square_foot",
+            symbol="$\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{sq} \\mathrm{ft}$",
+            dimension=dim.MOMENTUM_FLUX,
+            si_factor=478.8,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_lb_mathrm_f_mathrm_sq_mathrm_ft: Final = pound_force_per_square_foot
 
     # pound mass per foot per square second
-    pound_mass_per_foot_per_square_second: Final = UnitConstant(UnitDefinition(
-        name="pound_mass_per_foot_per_square_second",
-        symbol="$\\mathrm{lb}_{\\mathrm{m}} / \\mathrm{ft} / \\mathrm{s}^{2}$ or $\\mathrm{lb} / \\mathrm{ft} / \\mathrm{sec}^{2}$",
-        dimension=dim.MOMENTUM_FLUX,
-        si_factor=14.882,
-        si_offset=0.0,
-    ))
+    pound_mass_per_foot_per_square_second: Final = UnitConstant(
+        UnitDefinition(
+            name="pound_mass_per_foot_per_square_second",
+            symbol="$\\mathrm{lb}_{\\mathrm{m}} / \\mathrm{ft} / \\mathrm{s}^{2}$ or $\\mathrm{lb} / \\mathrm{ft} / \\mathrm{sec}^{2}$",
+            dimension=dim.MOMENTUM_FLUX,
+            si_factor=14.882,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_lb_mathrm_m_mathrm_ft_mathrm_s_2_or_mathrm_lb_mathrm_ft_mathrm_sec_2: Final = pound_mass_per_foot_per_square_second
     lb_m_ft_s_2: Final = pound_mass_per_foot_per_square_second
@@ -6266,48 +7338,56 @@ class NormalityOfSolutionUnits:
     __slots__ = ()
 
     # gram equivalents per cubic meter
-    gram_equivalents_per_cubic_meter: Final = UnitConstant(UnitDefinition(
-        name="gram_equivalents_per_cubic_meter",
-        symbol="$\\mathrm{eq} / \\mathrm{m}^{3}$",
-        dimension=dim.NORMALITY_OF_SOLUTION,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    gram_equivalents_per_cubic_meter: Final = UnitConstant(
+        UnitDefinition(
+            name="gram_equivalents_per_cubic_meter",
+            symbol="$\\mathrm{eq} / \\mathrm{m}^{3}$",
+            dimension=dim.NORMALITY_OF_SOLUTION,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_eq_mathrm_m_3: Final = gram_equivalents_per_cubic_meter
 
     # gram equivalents per liter
-    gram_equivalents_per_liter: Final = UnitConstant(UnitDefinition(
-        name="gram_equivalents_per_liter",
-        symbol="eq/l",
-        dimension=dim.NORMALITY_OF_SOLUTION,
-        si_factor=1000.0,
-        si_offset=0.0,
-    ))
+    gram_equivalents_per_liter: Final = UnitConstant(
+        UnitDefinition(
+            name="gram_equivalents_per_liter",
+            symbol="eq/l",
+            dimension=dim.NORMALITY_OF_SOLUTION,
+            si_factor=1000.0,
+            si_offset=0.0,
+        )
+    )
 
     eq_l: Final = gram_equivalents_per_liter
 
     # pound equivalents per cubic foot
-    pound_equivalents_per_cubic_foot: Final = UnitConstant(UnitDefinition(
-        name="pound_equivalents_per_cubic_foot",
-        symbol="$\\mathrm{lb} \\mathrm{eq} / \\mathrm{ft}^{3}$ or lb eq/cft",
-        dimension=dim.NORMALITY_OF_SOLUTION,
-        si_factor=77844.0,
-        si_offset=0.0,
-    ))
+    pound_equivalents_per_cubic_foot: Final = UnitConstant(
+        UnitDefinition(
+            name="pound_equivalents_per_cubic_foot",
+            symbol="$\\mathrm{lb} \\mathrm{eq} / \\mathrm{ft}^{3}$ or lb eq/cft",
+            dimension=dim.NORMALITY_OF_SOLUTION,
+            si_factor=77844.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_lb_mathrm_eq_mathrm_ft_3_or_lb_eq_cft: Final = pound_equivalents_per_cubic_foot
     lb_eq_ft_3: Final = pound_equivalents_per_cubic_foot
     lb_eq_cft: Final = pound_equivalents_per_cubic_foot
 
     # pound equivalents per gallon
-    pound_equivalents_per_gallon: Final = UnitConstant(UnitDefinition(
-        name="pound_equivalents_per_gallon",
-        symbol="lb eq/gal (US)",
-        dimension=dim.NORMALITY_OF_SOLUTION,
-        si_factor=10406.0,
-        si_offset=0.0,
-    ))
+    pound_equivalents_per_gallon: Final = UnitConstant(
+        UnitDefinition(
+            name="pound_equivalents_per_gallon",
+            symbol="lb eq/gal (US)",
+            dimension=dim.NORMALITY_OF_SOLUTION,
+            si_factor=10406.0,
+            si_offset=0.0,
+        )
+    )
 
     lb_eq_gal_US: Final = pound_equivalents_per_gallon
 
@@ -6318,72 +7398,84 @@ class ParticleDensityUnits:
     __slots__ = ()
 
     # particles per cubic centimeter
-    particles_per_cubic_centimeter: Final = UnitConstant(UnitDefinition(
-        name="particles_per_cubic_centimeter",
-        symbol="part/cm ${ }^{3}$ or part/cc",
-        dimension=dim.PARTICLE_DENSITY,
-        si_factor=10000.0,
-        si_offset=0.0,
-    ))
+    particles_per_cubic_centimeter: Final = UnitConstant(
+        UnitDefinition(
+            name="particles_per_cubic_centimeter",
+            symbol="part/cm ${ }^{3}$ or part/cc",
+            dimension=dim.PARTICLE_DENSITY,
+            si_factor=10000.0,
+            si_offset=0.0,
+        )
+    )
 
     part_cm_3_or_part_cc: Final = particles_per_cubic_centimeter
     part_cm_3: Final = particles_per_cubic_centimeter
     part_cc: Final = particles_per_cubic_centimeter
 
     # particles per cubic foot
-    particles_per_cubic_foot: Final = UnitConstant(UnitDefinition(
-        name="particles_per_cubic_foot",
-        symbol="part/ $\\mathrm{ft}^{3}$ or part/cft",
-        dimension=dim.PARTICLE_DENSITY,
-        si_factor=35.31,
-        si_offset=0.0,
-    ))
+    particles_per_cubic_foot: Final = UnitConstant(
+        UnitDefinition(
+            name="particles_per_cubic_foot",
+            symbol="part/ $\\mathrm{ft}^{3}$ or part/cft",
+            dimension=dim.PARTICLE_DENSITY,
+            si_factor=35.31,
+            si_offset=0.0,
+        )
+    )
 
     part_mathrm_ft_3_or_part_cft: Final = particles_per_cubic_foot
     part_ft_3: Final = particles_per_cubic_foot
     part_cft: Final = particles_per_cubic_foot
 
     # particles per cubic meter
-    particles_per_cubic_meter: Final = UnitConstant(UnitDefinition(
-        name="particles_per_cubic_meter",
-        symbol="part $/ \\mathrm{m}^{3}$",
-        dimension=dim.PARTICLE_DENSITY,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    particles_per_cubic_meter: Final = UnitConstant(
+        UnitDefinition(
+            name="particles_per_cubic_meter",
+            symbol="part $/ \\mathrm{m}^{3}$",
+            dimension=dim.PARTICLE_DENSITY,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     part_mathrm_m_3: Final = particles_per_cubic_meter
 
     # particles per gallon (US)
-    particles_per_gallon_us: Final = UnitConstant(UnitDefinition(
-        name="particles_per_gallon_us",
-        symbol="part/gal",
-        dimension=dim.PARTICLE_DENSITY,
-        si_factor=264.14,
-        si_offset=0.0,
-    ))
+    particles_per_gallon_us: Final = UnitConstant(
+        UnitDefinition(
+            name="particles_per_gallon_us",
+            symbol="part/gal",
+            dimension=dim.PARTICLE_DENSITY,
+            si_factor=264.14,
+            si_offset=0.0,
+        )
+    )
 
     part_gal: Final = particles_per_gallon_us
 
     # particles per liter
-    particles_per_liter: Final = UnitConstant(UnitDefinition(
-        name="particles_per_liter",
-        symbol="part/l",
-        dimension=dim.PARTICLE_DENSITY,
-        si_factor=1000.0,
-        si_offset=0.0,
-    ))
+    particles_per_liter: Final = UnitConstant(
+        UnitDefinition(
+            name="particles_per_liter",
+            symbol="part/l",
+            dimension=dim.PARTICLE_DENSITY,
+            si_factor=1000.0,
+            si_offset=0.0,
+        )
+    )
 
     part_l: Final = particles_per_liter
 
     # particles per milliliter
-    particles_per_milliliter: Final = UnitConstant(UnitDefinition(
-        name="particles_per_milliliter",
-        symbol="part/ml",
-        dimension=dim.PARTICLE_DENSITY,
-        si_factor=10000.0,
-        si_offset=0.0,
-    ))
+    particles_per_milliliter: Final = UnitConstant(
+        UnitDefinition(
+            name="particles_per_milliliter",
+            symbol="part/ml",
+            dimension=dim.PARTICLE_DENSITY,
+            si_factor=10000.0,
+            si_offset=0.0,
+        )
+    )
 
     part_ml: Final = particles_per_milliliter
 
@@ -6394,31 +7486,37 @@ class PercentUnits:
     __slots__ = ()
 
     # percent
-    percent: Final = UnitConstant(UnitDefinition(
-        name="percent",
-        symbol="%",
-        dimension=dim.PERCENT,
-        si_factor=0.01,
-        si_offset=0.0,
-    ))
+    percent: Final = UnitConstant(
+        UnitDefinition(
+            name="percent",
+            symbol="%",
+            dimension=dim.PERCENT,
+            si_factor=0.01,
+            si_offset=0.0,
+        )
+    )
 
     # per mille
-    per_mille: Final = UnitConstant(UnitDefinition(
-        name="per_mille",
-        symbol="‰",
-        dimension=dim.PERCENT,
-        si_factor=0.001,
-        si_offset=0.0,
-    ))
+    per_mille: Final = UnitConstant(
+        UnitDefinition(
+            name="per_mille",
+            symbol="‰",
+            dimension=dim.PERCENT,
+            si_factor=0.001,
+            si_offset=0.0,
+        )
+    )
 
     # basis point
-    basis_point: Final = UnitConstant(UnitDefinition(
-        name="basis_point",
-        symbol="bp",
-        dimension=dim.PERCENT,
-        si_factor=0.0001,
-        si_offset=0.0,
-    ))
+    basis_point: Final = UnitConstant(
+        UnitDefinition(
+            name="basis_point",
+            symbol="bp",
+            dimension=dim.PERCENT,
+            si_factor=0.0001,
+            si_offset=0.0,
+        )
+    )
 
     bp: Final = basis_point
     bps: Final = basis_point
@@ -6430,33 +7528,39 @@ class PermeabilityUnits:
     __slots__ = ()
 
     # darcy
-    darcy: Final = UnitConstant(UnitDefinition(
-        name="darcy",
-        symbol="darcy",
-        dimension=dim.PERMEABILITY,
-        si_factor=9.8692e-13,
-        si_offset=0.0,
-    ))
+    darcy: Final = UnitConstant(
+        UnitDefinition(
+            name="darcy",
+            symbol="darcy",
+            dimension=dim.PERMEABILITY,
+            si_factor=9.8692e-13,
+            si_offset=0.0,
+        )
+    )
 
     # square feet
-    square_feet: Final = UnitConstant(UnitDefinition(
-        name="square_feet",
-        symbol="$\\mathrm{ft}^{2}$ or sq ft",
-        dimension=dim.PERMEABILITY,
-        si_factor=0.0929,
-        si_offset=0.0,
-    ))
+    square_feet: Final = UnitConstant(
+        UnitDefinition(
+            name="square_feet",
+            symbol="$\\mathrm{ft}^{2}$ or sq ft",
+            dimension=dim.PERMEABILITY,
+            si_factor=0.0929,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_ft_2_or_sq_ft: Final = square_feet
 
     # square meters
-    square_meters: Final = UnitConstant(UnitDefinition(
-        name="square_meters",
-        symbol="$\\mathrm{m}^{2}$",
-        dimension=dim.PERMEABILITY,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    square_meters: Final = UnitConstant(
+        UnitDefinition(
+            name="square_meters",
+            symbol="$\\mathrm{m}^{2}$",
+            dimension=dim.PERMEABILITY,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
 
 class PhotonEmissionRateUnits:
@@ -6465,24 +7569,28 @@ class PhotonEmissionRateUnits:
     __slots__ = ()
 
     # rayleigh
-    rayleigh: Final = UnitConstant(UnitDefinition(
-        name="rayleigh",
-        symbol="R",
-        dimension=dim.PHOTON_EMISSION_RATE,
-        si_factor=10000000000.0,
-        si_offset=0.0,
-    ))
+    rayleigh: Final = UnitConstant(
+        UnitDefinition(
+            name="rayleigh",
+            symbol="R",
+            dimension=dim.PHOTON_EMISSION_RATE,
+            si_factor=10000000000.0,
+            si_offset=0.0,
+        )
+    )
 
     R: Final = rayleigh
 
     # reciprocal square meter second
-    reciprocal_square_meter_second: Final = UnitConstant(UnitDefinition(
-        name="reciprocal_square_meter_second",
-        symbol="$1 /\\left(\\mathrm{m}^{2} \\mathrm{sec}\\right)$",
-        dimension=dim.PHOTON_EMISSION_RATE,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    reciprocal_square_meter_second: Final = UnitConstant(
+        UnitDefinition(
+            name="reciprocal_square_meter_second",
+            symbol="$1 /\\left(\\mathrm{m}^{2} \\mathrm{sec}\\right)$",
+            dimension=dim.PHOTON_EMISSION_RATE,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
 
 class PowerPerUnitMassUnits:
@@ -6491,52 +7599,60 @@ class PowerPerUnitMassUnits:
     __slots__ = ()
 
     # British thermal unit per hour per pound mass
-    british_thermal_unit_per_hour_per_pound_mass: Final = UnitConstant(UnitDefinition(
-        name="british_thermal_unit_per_hour_per_pound_mass",
-        symbol="Btu/h/lb or Btu/ (lb hr)",
-        dimension=dim.POWER_PER_UNIT_MASS,
-        si_factor=0.64612,
-        si_offset=0.0,
-    ))
+    british_thermal_unit_per_hour_per_pound_mass: Final = UnitConstant(
+        UnitDefinition(
+            name="british_thermal_unit_per_hour_per_pound_mass",
+            symbol="Btu/h/lb or Btu/ (lb hr)",
+            dimension=dim.POWER_PER_UNIT_MASS,
+            si_factor=0.64612,
+            si_offset=0.0,
+        )
+    )
 
     Btu_h_lb_or_Btu_lb_hr: Final = british_thermal_unit_per_hour_per_pound_mass
     Btu_h_lb: Final = british_thermal_unit_per_hour_per_pound_mass
     Btu_lb_hr: Final = british_thermal_unit_per_hour_per_pound_mass
 
     # calorie per second per gram
-    calorie_per_second_per_gram: Final = UnitConstant(UnitDefinition(
-        name="calorie_per_second_per_gram",
-        symbol="cal/s/g or cal/(g sec)",
-        dimension=dim.POWER_PER_UNIT_MASS,
-        si_factor=4186.8,
-        si_offset=0.0,
-    ))
+    calorie_per_second_per_gram: Final = UnitConstant(
+        UnitDefinition(
+            name="calorie_per_second_per_gram",
+            symbol="cal/s/g or cal/(g sec)",
+            dimension=dim.POWER_PER_UNIT_MASS,
+            si_factor=4186.8,
+            si_offset=0.0,
+        )
+    )
 
     cal_s_g_or_cal_g_sec: Final = calorie_per_second_per_gram
     cal_s_g: Final = calorie_per_second_per_gram
     cal_g_sec: Final = calorie_per_second_per_gram
 
     # kilocalorie per hour per kilogram
-    kilocalorie_per_hour_per_kilogram: Final = UnitConstant(UnitDefinition(
-        name="kilocalorie_per_hour_per_kilogram",
-        symbol="kcal/h/kg or kcal/ (kg hr)",
-        dimension=dim.POWER_PER_UNIT_MASS,
-        si_factor=1.163,
-        si_offset=0.0,
-    ))
+    kilocalorie_per_hour_per_kilogram: Final = UnitConstant(
+        UnitDefinition(
+            name="kilocalorie_per_hour_per_kilogram",
+            symbol="kcal/h/kg or kcal/ (kg hr)",
+            dimension=dim.POWER_PER_UNIT_MASS,
+            si_factor=1.163,
+            si_offset=0.0,
+        )
+    )
 
     kcal_h_kg_or_kcal_kg_hr: Final = kilocalorie_per_hour_per_kilogram
     kcal_h_kg: Final = kilocalorie_per_hour_per_kilogram
     kcal_kg_hr: Final = kilocalorie_per_hour_per_kilogram
 
     # watt per kilogram
-    watt_per_kilogram: Final = UnitConstant(UnitDefinition(
-        name="watt_per_kilogram",
-        symbol="W/kg",
-        dimension=dim.POWER_PER_UNIT_MASS,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    watt_per_kilogram: Final = UnitConstant(
+        UnitDefinition(
+            name="watt_per_kilogram",
+            symbol="W/kg",
+            dimension=dim.POWER_PER_UNIT_MASS,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     W_kg: Final = watt_per_kilogram
 
@@ -6547,91 +7663,105 @@ class PowerPerUnitVolumeUnits:
     __slots__ = ()
 
     # British thermal unit per hour per cubic foot
-    british_thermal_unit_per_hour_per_cubic_foot: Final = UnitConstant(UnitDefinition(
-        name="british_thermal_unit_per_hour_per_cubic_foot",
-        symbol="$\\mathrm{Btu} / \\mathrm{h} / \\mathrm{ft}^{3}$ or $\\mathrm{Btu} / \\mathrm{hr} /$ cft",
-        dimension=dim.POWER_PER_UNIT_VOLUME,
-        si_factor=10.35,
-        si_offset=0.0,
-    ))
+    british_thermal_unit_per_hour_per_cubic_foot: Final = UnitConstant(
+        UnitDefinition(
+            name="british_thermal_unit_per_hour_per_cubic_foot",
+            symbol="$\\mathrm{Btu} / \\mathrm{h} / \\mathrm{ft}^{3}$ or $\\mathrm{Btu} / \\mathrm{hr} /$ cft",
+            dimension=dim.POWER_PER_UNIT_VOLUME,
+            si_factor=10.35,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_Btu_mathrm_h_mathrm_ft_3_or_mathrm_Btu_mathrm_hr_cft: Final = british_thermal_unit_per_hour_per_cubic_foot
     Btu_h_ft_3: Final = british_thermal_unit_per_hour_per_cubic_foot
     Btu_hr_cft: Final = british_thermal_unit_per_hour_per_cubic_foot
 
     # calorie per second per cubic centimeter
-    calorie_per_second_per_cubic_centimeter: Final = UnitConstant(UnitDefinition(
-        name="calorie_per_second_per_cubic_centimeter",
-        symbol="$\\mathrm{cal} / \\mathrm{s} / \\mathrm{cm}^{3}$ or $\\mathrm{cal} / \\mathrm{s} / \\mathrm{cc}$",
-        dimension=dim.POWER_PER_UNIT_VOLUME,
-        si_factor=4186800.0,
-        si_offset=0.0,
-    ))
+    calorie_per_second_per_cubic_centimeter: Final = UnitConstant(
+        UnitDefinition(
+            name="calorie_per_second_per_cubic_centimeter",
+            symbol="$\\mathrm{cal} / \\mathrm{s} / \\mathrm{cm}^{3}$ or $\\mathrm{cal} / \\mathrm{s} / \\mathrm{cc}$",
+            dimension=dim.POWER_PER_UNIT_VOLUME,
+            si_factor=4186800.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_cal_mathrm_s_mathrm_cm_3_or_mathrm_cal_mathrm_s_mathrm_cc: Final = calorie_per_second_per_cubic_centimeter
     cal_s_cm_3: Final = calorie_per_second_per_cubic_centimeter
     cal_s_cc: Final = calorie_per_second_per_cubic_centimeter
 
     # Chu per hour per cubic foot
-    chu_per_hour_per_cubic_foot: Final = UnitConstant(UnitDefinition(
-        name="chu_per_hour_per_cubic_foot",
-        symbol="Chu/h/ft3 or Chu/hr/ cft",
-        dimension=dim.POWER_PER_UNIT_VOLUME,
-        si_factor=18.63,
-        si_offset=0.0,
-    ))
+    chu_per_hour_per_cubic_foot: Final = UnitConstant(
+        UnitDefinition(
+            name="chu_per_hour_per_cubic_foot",
+            symbol="Chu/h/ft3 or Chu/hr/ cft",
+            dimension=dim.POWER_PER_UNIT_VOLUME,
+            si_factor=18.63,
+            si_offset=0.0,
+        )
+    )
 
     Chu_h_ft3_or_Chu_hr_cft: Final = chu_per_hour_per_cubic_foot
     Chu_h_ft3: Final = chu_per_hour_per_cubic_foot
     Chu_hr_cft: Final = chu_per_hour_per_cubic_foot
 
     # kilocalorie per hour per cubic centimeter
-    kilocalorie_per_hour_per_cubic_centimeter: Final = UnitConstant(UnitDefinition(
-        name="kilocalorie_per_hour_per_cubic_centimeter",
-        symbol="$\\mathrm{kcal} / \\mathrm{h} / \\mathrm{cm}^{3}$ or $\\mathrm{kcal} /$ hr/cc",
-        dimension=dim.POWER_PER_UNIT_VOLUME,
-        si_factor=1.163,
-        si_offset=0.0,
-    ))
+    kilocalorie_per_hour_per_cubic_centimeter: Final = UnitConstant(
+        UnitDefinition(
+            name="kilocalorie_per_hour_per_cubic_centimeter",
+            symbol="$\\mathrm{kcal} / \\mathrm{h} / \\mathrm{cm}^{3}$ or $\\mathrm{kcal} /$ hr/cc",
+            dimension=dim.POWER_PER_UNIT_VOLUME,
+            si_factor=1.163,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_kcal_mathrm_h_mathrm_cm_3_or_mathrm_kcal_hr_cc: Final = kilocalorie_per_hour_per_cubic_centimeter
     kcal_h_cm_3: Final = kilocalorie_per_hour_per_cubic_centimeter
     kcal_hr_cc: Final = kilocalorie_per_hour_per_cubic_centimeter
 
     # kilocalorie per hour per cubic foot
-    kilocalorie_per_hour_per_cubic_foot: Final = UnitConstant(UnitDefinition(
-        name="kilocalorie_per_hour_per_cubic_foot",
-        symbol="$\\mathrm{kcal} / \\mathrm{h} / \\mathrm{ft}^{3}$ or $\\mathrm{kcal} / \\mathrm{hr} /$ cft",
-        dimension=dim.POWER_PER_UNIT_VOLUME,
-        si_factor=41.071,
-        si_offset=0.0,
-    ))
+    kilocalorie_per_hour_per_cubic_foot: Final = UnitConstant(
+        UnitDefinition(
+            name="kilocalorie_per_hour_per_cubic_foot",
+            symbol="$\\mathrm{kcal} / \\mathrm{h} / \\mathrm{ft}^{3}$ or $\\mathrm{kcal} / \\mathrm{hr} /$ cft",
+            dimension=dim.POWER_PER_UNIT_VOLUME,
+            si_factor=41.071,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_kcal_mathrm_h_mathrm_ft_3_or_mathrm_kcal_mathrm_hr_cft: Final = kilocalorie_per_hour_per_cubic_foot
     kcal_h_ft_3: Final = kilocalorie_per_hour_per_cubic_foot
     kcal_hr_cft: Final = kilocalorie_per_hour_per_cubic_foot
 
     # kilocalorie per second per cubic centimeter
-    kilocalorie_per_second_per_cubic_centimeter: Final = UnitConstant(UnitDefinition(
-        name="kilocalorie_per_second_per_cubic_centimeter",
-        symbol="kcal/s/cm ${ }^{3}$ or kcal/s/ cc",
-        dimension=dim.POWER_PER_UNIT_VOLUME,
-        si_factor=4186800000.0,
-        si_offset=0.0,
-    ))
+    kilocalorie_per_second_per_cubic_centimeter: Final = UnitConstant(
+        UnitDefinition(
+            name="kilocalorie_per_second_per_cubic_centimeter",
+            symbol="kcal/s/cm ${ }^{3}$ or kcal/s/ cc",
+            dimension=dim.POWER_PER_UNIT_VOLUME,
+            si_factor=4186800000.0,
+            si_offset=0.0,
+        )
+    )
 
     kcal_s_cm_3_or_kcal_s_cc: Final = kilocalorie_per_second_per_cubic_centimeter
     kcal_s_cm_3: Final = kilocalorie_per_second_per_cubic_centimeter
     kcal_s_cc: Final = kilocalorie_per_second_per_cubic_centimeter
 
     # watt per cubic meter
-    watt_per_cubic_meter: Final = UnitConstant(UnitDefinition(
-        name="watt_per_cubic_meter",
-        symbol="$\\mathrm{W} / \\mathrm{m}^{3}$",
-        dimension=dim.POWER_PER_UNIT_VOLUME,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    watt_per_cubic_meter: Final = UnitConstant(
+        UnitDefinition(
+            name="watt_per_cubic_meter",
+            symbol="$\\mathrm{W} / \\mathrm{m}^{3}$",
+            dimension=dim.POWER_PER_UNIT_VOLUME,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_W_mathrm_m_3: Final = watt_per_cubic_meter
 
@@ -6642,389 +7772,459 @@ class PowerThermalDutyUnits:
     __slots__ = ()
 
     # abwatt (emu of power)
-    abwatt_emu_of_power: Final = UnitConstant(UnitDefinition(
-        name="abwatt_emu_of_power",
-        symbol="emu",
-        dimension=dim.POWER_THERMAL_DUTY,
-        si_factor=1e-08,
-        si_offset=0.0,
-    ))
+    abwatt_emu_of_power: Final = UnitConstant(
+        UnitDefinition(
+            name="abwatt_emu_of_power",
+            symbol="emu",
+            dimension=dim.POWER_THERMAL_DUTY,
+            si_factor=1e-08,
+            si_offset=0.0,
+        )
+    )
 
     emu: Final = abwatt_emu_of_power
 
     # boiler horsepower
-    boiler_horsepower: Final = UnitConstant(UnitDefinition(
-        name="boiler_horsepower",
-        symbol="HP (boiler)",
-        dimension=dim.POWER_THERMAL_DUTY,
-        si_factor=9809.5,
-        si_offset=0.0,
-    ))
+    boiler_horsepower: Final = UnitConstant(
+        UnitDefinition(
+            name="boiler_horsepower",
+            symbol="HP (boiler)",
+            dimension=dim.POWER_THERMAL_DUTY,
+            si_factor=9809.5,
+            si_offset=0.0,
+        )
+    )
 
     HP_boiler: Final = boiler_horsepower
 
     # British thermal unit (mean) per hour
-    british_thermal_unit_mean: Final = UnitConstant(UnitDefinition(
-        name="british_thermal_unit_mean",
-        symbol="Btu (mean)/hr or Btu/hr",
-        dimension=dim.POWER_THERMAL_DUTY,
-        si_factor=0.293297,
-        si_offset=0.0,
-    ))
+    british_thermal_unit_mean: Final = UnitConstant(
+        UnitDefinition(
+            name="british_thermal_unit_mean",
+            symbol="Btu (mean)/hr or Btu/hr",
+            dimension=dim.POWER_THERMAL_DUTY,
+            si_factor=0.293297,
+            si_offset=0.0,
+        )
+    )
 
     Btu_mean_hr_or_Btu_hr: Final = british_thermal_unit_mean
     Btu_mean_hr: Final = british_thermal_unit_mean
     Btu_hr: Final = british_thermal_unit_mean
 
     # British thermal unit (mean) per minute
-    british_thermal_unit_mean: Final = UnitConstant(UnitDefinition(
-        name="british_thermal_unit_mean",
-        symbol="Btu/min or Btu (mean)/min",
-        dimension=dim.POWER_THERMAL_DUTY,
-        si_factor=17.597833,
-        si_offset=0.0,
-    ))
+    british_thermal_unit_mean: Final = UnitConstant(
+        UnitDefinition(
+            name="british_thermal_unit_mean",
+            symbol="Btu/min or Btu (mean)/min",
+            dimension=dim.POWER_THERMAL_DUTY,
+            si_factor=17.597833,
+            si_offset=0.0,
+        )
+    )
 
     Btu_min_or_Btu_mean_min: Final = british_thermal_unit_mean
     Btu_min: Final = british_thermal_unit_mean
     Btu_mean_min: Final = british_thermal_unit_mean
 
     # British thermal unit (thermochemical) per hour
-    british_thermal_unit_thermochemical: Final = UnitConstant(UnitDefinition(
-        name="british_thermal_unit_thermochemical",
-        symbol="Btu (therm)/hr or Btu/hr",
-        dimension=dim.POWER_THERMAL_DUTY,
-        si_factor=0.292875,
-        si_offset=0.0,
-    ))
+    british_thermal_unit_thermochemical: Final = UnitConstant(
+        UnitDefinition(
+            name="british_thermal_unit_thermochemical",
+            symbol="Btu (therm)/hr or Btu/hr",
+            dimension=dim.POWER_THERMAL_DUTY,
+            si_factor=0.292875,
+            si_offset=0.0,
+        )
+    )
 
     Btu_therm_hr_or_Btu_hr: Final = british_thermal_unit_thermochemical
     Btu_therm_hr: Final = british_thermal_unit_thermochemical
 
     # British thermal unit (thermochemical) per minute
-    british_thermal_unit_thermochemical: Final = UnitConstant(UnitDefinition(
-        name="british_thermal_unit_thermochemical",
-        symbol="$\\mathrm{Btu} / \\mathrm{min}$ or Btu (therm)/min",
-        dimension=dim.POWER_THERMAL_DUTY,
-        si_factor=17.5725,
-        si_offset=0.0,
-    ))
+    british_thermal_unit_thermochemical: Final = UnitConstant(
+        UnitDefinition(
+            name="british_thermal_unit_thermochemical",
+            symbol="$\\mathrm{Btu} / \\mathrm{min}$ or Btu (therm)/min",
+            dimension=dim.POWER_THERMAL_DUTY,
+            si_factor=17.5725,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_Btu_mathrm_min_or_Btu_therm_min: Final = british_thermal_unit_thermochemical
     Btu_therm_min: Final = british_thermal_unit_thermochemical
 
     # calorie (mean) per hour
-    calorie_mean: Final = UnitConstant(UnitDefinition(
-        name="calorie_mean",
-        symbol="cal (mean)/hr",
-        dimension=dim.POWER_THERMAL_DUTY,
-        si_factor=0.00116389,
-        si_offset=0.0,
-    ))
+    calorie_mean: Final = UnitConstant(
+        UnitDefinition(
+            name="calorie_mean",
+            symbol="cal (mean)/hr",
+            dimension=dim.POWER_THERMAL_DUTY,
+            si_factor=0.00116389,
+            si_offset=0.0,
+        )
+    )
 
     cal_mean_hr: Final = calorie_mean
 
     # calorie (thermochemical) per hour
-    calorie_thermochemical: Final = UnitConstant(UnitDefinition(
-        name="calorie_thermochemical",
-        symbol="cal (therm)/hr",
-        dimension=dim.POWER_THERMAL_DUTY,
-        si_factor=0.00116222,
-        si_offset=0.0,
-    ))
+    calorie_thermochemical: Final = UnitConstant(
+        UnitDefinition(
+            name="calorie_thermochemical",
+            symbol="cal (therm)/hr",
+            dimension=dim.POWER_THERMAL_DUTY,
+            si_factor=0.00116222,
+            si_offset=0.0,
+        )
+    )
 
     cal_therm_hr: Final = calorie_thermochemical
 
     # donkey
-    donkey: Final = UnitConstant(UnitDefinition(
-        name="donkey",
-        symbol="donkey",
-        dimension=dim.POWER_THERMAL_DUTY,
-        si_factor=250.0,
-        si_offset=0.0,
-    ))
+    donkey: Final = UnitConstant(
+        UnitDefinition(
+            name="donkey",
+            symbol="donkey",
+            dimension=dim.POWER_THERMAL_DUTY,
+            si_factor=250.0,
+            si_offset=0.0,
+        )
+    )
 
     # erg per second
-    erg_per_second: Final = UnitConstant(UnitDefinition(
-        name="erg_per_second",
-        symbol="erg/s",
-        dimension=dim.POWER_THERMAL_DUTY,
-        si_factor=1e-07,
-        si_offset=0.0,
-    ))
+    erg_per_second: Final = UnitConstant(
+        UnitDefinition(
+            name="erg_per_second",
+            symbol="erg/s",
+            dimension=dim.POWER_THERMAL_DUTY,
+            si_factor=1e-07,
+            si_offset=0.0,
+        )
+    )
 
     erg_s: Final = erg_per_second
 
     # foot pondal per second
-    foot_pondal_per_second: Final = UnitConstant(UnitDefinition(
-        name="foot_pondal_per_second",
-        symbol="ft pdl/s",
-        dimension=dim.POWER_THERMAL_DUTY,
-        si_factor=0.04214,
-        si_offset=0.0,
-    ))
+    foot_pondal_per_second: Final = UnitConstant(
+        UnitDefinition(
+            name="foot_pondal_per_second",
+            symbol="ft pdl/s",
+            dimension=dim.POWER_THERMAL_DUTY,
+            si_factor=0.04214,
+            si_offset=0.0,
+        )
+    )
 
     ft_pdl_s: Final = foot_pondal_per_second
 
     # foot pound force per hour
-    foot_pound_force_per_hour: Final = UnitConstant(UnitDefinition(
-        name="foot_pound_force_per_hour",
-        symbol="$\\mathrm{ft} \\mathrm{lb}_{\\mathrm{f}} / \\mathrm{hr}$",
-        dimension=dim.POWER_THERMAL_DUTY,
-        si_factor=0.00037044000000000004,
-        si_offset=0.0,
-    ))
+    foot_pound_force_per_hour: Final = UnitConstant(
+        UnitDefinition(
+            name="foot_pound_force_per_hour",
+            symbol="$\\mathrm{ft} \\mathrm{lb}_{\\mathrm{f}} / \\mathrm{hr}$",
+            dimension=dim.POWER_THERMAL_DUTY,
+            si_factor=0.00037044000000000004,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_ft_mathrm_lb_mathrm_f_mathrm_hr: Final = foot_pound_force_per_hour
 
     # foot pound force per minute
-    foot_pound_force_per_minute: Final = UnitConstant(UnitDefinition(
-        name="foot_pound_force_per_minute",
-        symbol="$\\mathrm{ft} \\mathrm{lb}_{\\mathrm{f}} / \\min$",
-        dimension=dim.POWER_THERMAL_DUTY,
-        si_factor=0.022597,
-        si_offset=0.0,
-    ))
+    foot_pound_force_per_minute: Final = UnitConstant(
+        UnitDefinition(
+            name="foot_pound_force_per_minute",
+            symbol="$\\mathrm{ft} \\mathrm{lb}_{\\mathrm{f}} / \\min$",
+            dimension=dim.POWER_THERMAL_DUTY,
+            si_factor=0.022597,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_ft_mathrm_lb_mathrm_f_min: Final = foot_pound_force_per_minute
 
     # foot pound force per second
-    foot_pound_force_per_second: Final = UnitConstant(UnitDefinition(
-        name="foot_pound_force_per_second",
-        symbol="$\\mathrm{ft} \\mathrm{lb}_{\\mathrm{f}} / \\mathrm{s}$",
-        dimension=dim.POWER_THERMAL_DUTY,
-        si_factor=1.355818,
-        si_offset=0.0,
-    ))
+    foot_pound_force_per_second: Final = UnitConstant(
+        UnitDefinition(
+            name="foot_pound_force_per_second",
+            symbol="$\\mathrm{ft} \\mathrm{lb}_{\\mathrm{f}} / \\mathrm{s}$",
+            dimension=dim.POWER_THERMAL_DUTY,
+            si_factor=1.355818,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_ft_mathrm_lb_mathrm_f_mathrm_s: Final = foot_pound_force_per_second
 
     # horsepower ( $550 \mathrm{ft} \mathrm{lb}_{\mathrm{f}} / \mathrm{s}$ )
-    horsepower_550_mathrmft_mathrmlb_mathrmf_mathrms: Final = UnitConstant(UnitDefinition(
-        name="horsepower_550_mathrmft_mathrmlb_mathrmf_mathrms",
-        symbol="HP",
-        dimension=dim.POWER_THERMAL_DUTY,
-        si_factor=745.7,
-        si_offset=0.0,
-    ))
+    horsepower_550_mathrmft_mathrmlb_mathrmf_mathrms: Final = UnitConstant(
+        UnitDefinition(
+            name="horsepower_550_mathrmft_mathrmlb_mathrmf_mathrms",
+            symbol="HP",
+            dimension=dim.POWER_THERMAL_DUTY,
+            si_factor=745.7,
+            si_offset=0.0,
+        )
+    )
 
     HP: Final = horsepower_550_mathrmft_mathrmlb_mathrmf_mathrms
 
     # horsepower (electric)
-    horsepower_electric: Final = UnitConstant(UnitDefinition(
-        name="horsepower_electric",
-        symbol="HP (elect)",
-        dimension=dim.POWER_THERMAL_DUTY,
-        si_factor=746.0,
-        si_offset=0.0,
-    ))
+    horsepower_electric: Final = UnitConstant(
+        UnitDefinition(
+            name="horsepower_electric",
+            symbol="HP (elect)",
+            dimension=dim.POWER_THERMAL_DUTY,
+            si_factor=746.0,
+            si_offset=0.0,
+        )
+    )
 
     HP_elect: Final = horsepower_electric
 
     # horsepower (UK)
-    horsepower_uk: Final = UnitConstant(UnitDefinition(
-        name="horsepower_uk",
-        symbol="HP (UK)",
-        dimension=dim.POWER_THERMAL_DUTY,
-        si_factor=745.7,
-        si_offset=0.0,
-    ))
+    horsepower_uk: Final = UnitConstant(
+        UnitDefinition(
+            name="horsepower_uk",
+            symbol="HP (UK)",
+            dimension=dim.POWER_THERMAL_DUTY,
+            si_factor=745.7,
+            si_offset=0.0,
+        )
+    )
 
     HP_UK: Final = horsepower_uk
 
     # kcal per hour
-    kcal_per_hour: Final = UnitConstant(UnitDefinition(
-        name="kcal_per_hour",
-        symbol="kcal/hr",
-        dimension=dim.POWER_THERMAL_DUTY,
-        si_factor=1.16389,
-        si_offset=0.0,
-    ))
+    kcal_per_hour: Final = UnitConstant(
+        UnitDefinition(
+            name="kcal_per_hour",
+            symbol="kcal/hr",
+            dimension=dim.POWER_THERMAL_DUTY,
+            si_factor=1.16389,
+            si_offset=0.0,
+        )
+    )
 
     kcal_hr: Final = kcal_per_hour
 
     # kilogram force meter per second
-    kilogram_force_meter_per_second: Final = UnitConstant(UnitDefinition(
-        name="kilogram_force_meter_per_second",
-        symbol="$\\mathrm{kg}_{\\mathrm{f}} \\mathrm{m} / \\mathrm{s}$",
-        dimension=dim.POWER_THERMAL_DUTY,
-        si_factor=9.80665,
-        si_offset=0.0,
-    ))
+    kilogram_force_meter_per_second: Final = UnitConstant(
+        UnitDefinition(
+            name="kilogram_force_meter_per_second",
+            symbol="$\\mathrm{kg}_{\\mathrm{f}} \\mathrm{m} / \\mathrm{s}$",
+            dimension=dim.POWER_THERMAL_DUTY,
+            si_factor=9.80665,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_kg_mathrm_f_mathrm_m_mathrm_s: Final = kilogram_force_meter_per_second
 
     # kilowatt
-    kilowatt: Final = UnitConstant(UnitDefinition(
-        name="kilowatt",
-        symbol="kW",
-        dimension=dim.POWER_THERMAL_DUTY,
-        si_factor=1000.0,
-        si_offset=0.0,
-    ))
+    kilowatt: Final = UnitConstant(
+        UnitDefinition(
+            name="kilowatt",
+            symbol="kW",
+            dimension=dim.POWER_THERMAL_DUTY,
+            si_factor=1000.0,
+            si_offset=0.0,
+        )
+    )
 
     kW: Final = kilowatt
 
     # megawatt
-    megawatt: Final = UnitConstant(UnitDefinition(
-        name="megawatt",
-        symbol="MW",
-        dimension=dim.POWER_THERMAL_DUTY,
-        si_factor=1000000.0,
-        si_offset=0.0,
-    ))
+    megawatt: Final = UnitConstant(
+        UnitDefinition(
+            name="megawatt",
+            symbol="MW",
+            dimension=dim.POWER_THERMAL_DUTY,
+            si_factor=1000000.0,
+            si_offset=0.0,
+        )
+    )
 
     MW: Final = megawatt
 
     # metric horsepower
-    metric_horsepower: Final = UnitConstant(UnitDefinition(
-        name="metric_horsepower",
-        symbol="HP (metric)",
-        dimension=dim.POWER_THERMAL_DUTY,
-        si_factor=735.499,
-        si_offset=0.0,
-    ))
+    metric_horsepower: Final = UnitConstant(
+        UnitDefinition(
+            name="metric_horsepower",
+            symbol="HP (metric)",
+            dimension=dim.POWER_THERMAL_DUTY,
+            si_factor=735.499,
+            si_offset=0.0,
+        )
+    )
 
     HP_metric: Final = metric_horsepower
 
     # million British thermal units per hour (petroleum)
-    million_british_thermal_units_per_hour_petroleum: Final = UnitConstant(UnitDefinition(
-        name="million_british_thermal_units_per_hour_petroleum",
-        symbol="MMBtu/hr",
-        dimension=dim.POWER_THERMAL_DUTY,
-        si_factor=293297.0,
-        si_offset=0.0,
-    ))
+    million_british_thermal_units_per_hour_petroleum: Final = UnitConstant(
+        UnitDefinition(
+            name="million_british_thermal_units_per_hour_petroleum",
+            symbol="MMBtu/hr",
+            dimension=dim.POWER_THERMAL_DUTY,
+            si_factor=293297.0,
+            si_offset=0.0,
+        )
+    )
 
     MMBtu_hr: Final = million_british_thermal_units_per_hour_petroleum
 
     # million kilocalorie per hour
-    million_kilocalorie_per_hour: Final = UnitConstant(UnitDefinition(
-        name="million_kilocalorie_per_hour",
-        symbol="MM kcal/hr",
-        dimension=dim.POWER_THERMAL_DUTY,
-        si_factor=1163890.0,
-        si_offset=0.0,
-    ))
+    million_kilocalorie_per_hour: Final = UnitConstant(
+        UnitDefinition(
+            name="million_kilocalorie_per_hour",
+            symbol="MM kcal/hr",
+            dimension=dim.POWER_THERMAL_DUTY,
+            si_factor=1163890.0,
+            si_offset=0.0,
+        )
+    )
 
     MM_kcal_hr: Final = million_kilocalorie_per_hour
 
     # prony
-    prony: Final = UnitConstant(UnitDefinition(
-        name="prony",
-        symbol="prony",
-        dimension=dim.POWER_THERMAL_DUTY,
-        si_factor=98.0665,
-        si_offset=0.0,
-    ))
+    prony: Final = UnitConstant(
+        UnitDefinition(
+            name="prony",
+            symbol="prony",
+            dimension=dim.POWER_THERMAL_DUTY,
+            si_factor=98.0665,
+            si_offset=0.0,
+        )
+    )
 
     # ton of refrigeration (US)
-    ton_of_refrigeration_us: Final = UnitConstant(UnitDefinition(
-        name="ton_of_refrigeration_us",
-        symbol="CTR (US)",
-        dimension=dim.POWER_THERMAL_DUTY,
-        si_factor=3516.8,
-        si_offset=0.0,
-    ))
+    ton_of_refrigeration_us: Final = UnitConstant(
+        UnitDefinition(
+            name="ton_of_refrigeration_us",
+            symbol="CTR (US)",
+            dimension=dim.POWER_THERMAL_DUTY,
+            si_factor=3516.8,
+            si_offset=0.0,
+        )
+    )
 
     CTR_US: Final = ton_of_refrigeration_us
 
     # ton or refrigeration (UK)
-    ton_or_refrigeration_uk: Final = UnitConstant(UnitDefinition(
-        name="ton_or_refrigeration_uk",
-        symbol="CTR (UK)",
-        dimension=dim.POWER_THERMAL_DUTY,
-        si_factor=3922.7,
-        si_offset=0.0,
-    ))
+    ton_or_refrigeration_uk: Final = UnitConstant(
+        UnitDefinition(
+            name="ton_or_refrigeration_uk",
+            symbol="CTR (UK)",
+            dimension=dim.POWER_THERMAL_DUTY,
+            si_factor=3922.7,
+            si_offset=0.0,
+        )
+    )
 
     CTR_UK: Final = ton_or_refrigeration_uk
 
     # volt-ampere
-    volt_ampere: Final = UnitConstant(UnitDefinition(
-        name="volt_ampere",
-        symbol="VA",
-        dimension=dim.POWER_THERMAL_DUTY,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    volt_ampere: Final = UnitConstant(
+        UnitDefinition(
+            name="volt_ampere",
+            symbol="VA",
+            dimension=dim.POWER_THERMAL_DUTY,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     VA: Final = volt_ampere
 
     # water horsepower
-    water_horsepower: Final = UnitConstant(UnitDefinition(
-        name="water_horsepower",
-        symbol="HP (water)",
-        dimension=dim.POWER_THERMAL_DUTY,
-        si_factor=746.043,
-        si_offset=0.0,
-    ))
+    water_horsepower: Final = UnitConstant(
+        UnitDefinition(
+            name="water_horsepower",
+            symbol="HP (water)",
+            dimension=dim.POWER_THERMAL_DUTY,
+            si_factor=746.043,
+            si_offset=0.0,
+        )
+    )
 
     HP_water: Final = water_horsepower
 
     # watt
-    watt: Final = UnitConstant(UnitDefinition(
-        name="watt",
-        symbol="W",
-        dimension=dim.POWER_THERMAL_DUTY,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    watt: Final = UnitConstant(
+        UnitDefinition(
+            name="watt",
+            symbol="W",
+            dimension=dim.POWER_THERMAL_DUTY,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     W: Final = watt
 
     # watt (international, mean)
-    watt_international_mean: Final = UnitConstant(UnitDefinition(
-        name="watt_international_mean",
-        symbol="W (int, mean)",
-        dimension=dim.POWER_THERMAL_DUTY,
-        si_factor=1.00019,
-        si_offset=0.0,
-    ))
+    watt_international_mean: Final = UnitConstant(
+        UnitDefinition(
+            name="watt_international_mean",
+            symbol="W (int, mean)",
+            dimension=dim.POWER_THERMAL_DUTY,
+            si_factor=1.00019,
+            si_offset=0.0,
+        )
+    )
 
     W_int_mean: Final = watt_international_mean
 
     # watt (international, US)
-    watt_international_us: Final = UnitConstant(UnitDefinition(
-        name="watt_international_us",
-        symbol="watt (int, US)",
-        dimension=dim.POWER_THERMAL_DUTY,
-        si_factor=1.000165,
-        si_offset=0.0,
-    ))
+    watt_international_us: Final = UnitConstant(
+        UnitDefinition(
+            name="watt_international_us",
+            symbol="watt (int, US)",
+            dimension=dim.POWER_THERMAL_DUTY,
+            si_factor=1.000165,
+            si_offset=0.0,
+        )
+    )
 
     watt_int_US: Final = watt_international_us
 
     # gigawatt
-    gigawatt: Final = UnitConstant(UnitDefinition(
-        name="gigawatt",
-        symbol="GW",
-        dimension=dim.POWER_THERMAL_DUTY,
-        si_factor=1000000000.0,
-        si_offset=0.0,
-    ))
+    gigawatt: Final = UnitConstant(
+        UnitDefinition(
+            name="gigawatt",
+            symbol="GW",
+            dimension=dim.POWER_THERMAL_DUTY,
+            si_factor=1000000000.0,
+            si_offset=0.0,
+        )
+    )
 
     GW: Final = gigawatt
 
     # milliwatt
-    milliwatt: Final = UnitConstant(UnitDefinition(
-        name="milliwatt",
-        symbol="mW",
-        dimension=dim.POWER_THERMAL_DUTY,
-        si_factor=0.001,
-        si_offset=0.0,
-    ))
+    milliwatt: Final = UnitConstant(
+        UnitDefinition(
+            name="milliwatt",
+            symbol="mW",
+            dimension=dim.POWER_THERMAL_DUTY,
+            si_factor=0.001,
+            si_offset=0.0,
+        )
+    )
 
     mW: Final = milliwatt
 
     # microwatt
-    microwatt: Final = UnitConstant(UnitDefinition(
-        name="microwatt",
-        symbol="μW",
-        dimension=dim.POWER_THERMAL_DUTY,
-        si_factor=1e-06,
-        si_offset=0.0,
-    ))
+    microwatt: Final = UnitConstant(
+        UnitDefinition(
+            name="microwatt",
+            symbol="μW",
+            dimension=dim.POWER_THERMAL_DUTY,
+            si_factor=1e-06,
+            si_offset=0.0,
+        )
+    )
 
 
 class PressureUnits:
@@ -7033,141 +8233,167 @@ class PressureUnits:
     __slots__ = ()
 
     # atmosphere, standard
-    atmosphere_standard: Final = UnitConstant(UnitDefinition(
-        name="atmosphere_standard",
-        symbol="atm",
-        dimension=dim.PRESSURE,
-        si_factor=101325.0,
-        si_offset=0.0,
-    ))
+    atmosphere_standard: Final = UnitConstant(
+        UnitDefinition(
+            name="atmosphere_standard",
+            symbol="atm",
+            dimension=dim.PRESSURE,
+            si_factor=101325.0,
+            si_offset=0.0,
+        )
+    )
 
     atm: Final = atmosphere_standard
 
     # bar
-    bar: Final = UnitConstant(UnitDefinition(
-        name="bar",
-        symbol="bar",
-        dimension=dim.PRESSURE,
-        si_factor=100000.0,
-        si_offset=0.0,
-    ))
+    bar: Final = UnitConstant(
+        UnitDefinition(
+            name="bar",
+            symbol="bar",
+            dimension=dim.PRESSURE,
+            si_factor=100000.0,
+            si_offset=0.0,
+        )
+    )
 
     # barye
-    barye: Final = UnitConstant(UnitDefinition(
-        name="barye",
-        symbol="barye",
-        dimension=dim.PRESSURE,
-        si_factor=0.1,
-        si_offset=0.0,
-    ))
+    barye: Final = UnitConstant(
+        UnitDefinition(
+            name="barye",
+            symbol="barye",
+            dimension=dim.PRESSURE,
+            si_factor=0.1,
+            si_offset=0.0,
+        )
+    )
 
     # dyne per square centimeter
-    dyne_per_square_centimeter: Final = UnitConstant(UnitDefinition(
-        name="dyne_per_square_centimeter",
-        symbol="dyn $/ \\mathrm{cm}^{2}$",
-        dimension=dim.PRESSURE,
-        si_factor=0.1,
-        si_offset=0.0,
-    ))
+    dyne_per_square_centimeter: Final = UnitConstant(
+        UnitDefinition(
+            name="dyne_per_square_centimeter",
+            symbol="dyn $/ \\mathrm{cm}^{2}$",
+            dimension=dim.PRESSURE,
+            si_factor=0.1,
+            si_offset=0.0,
+        )
+    )
 
     # foot of mercury ( $60{ }^{\circ} \mathrm{F}$ )
-    foot_of_mercury_60_circ_mathrmf: Final = UnitConstant(UnitDefinition(
-        name="foot_of_mercury_60_circ_mathrmf",
-        symbol="ft Hg ( $60{ }^{\\circ} \\mathrm{F}$ )",
-        dimension=dim.PRESSURE,
-        si_factor=40526.0,
-        si_offset=0.0,
-    ))
+    foot_of_mercury_60_circ_mathrmf: Final = UnitConstant(
+        UnitDefinition(
+            name="foot_of_mercury_60_circ_mathrmf",
+            symbol="ft Hg ( $60{ }^{\\circ} \\mathrm{F}$ )",
+            dimension=dim.PRESSURE,
+            si_factor=40526.0,
+            si_offset=0.0,
+        )
+    )
 
     ft_Hg_60_circ_mathrm_F: Final = foot_of_mercury_60_circ_mathrmf
 
     # foot of water ( $60{ }^{\circ} \mathrm{F}$ )
-    foot_of_water_60_circ_mathrmf: Final = UnitConstant(UnitDefinition(
-        name="foot_of_water_60_circ_mathrmf",
-        symbol="ft $\\mathrm{H}_{2} \\mathrm{O}\\left(60^{\\circ} \\mathrm{F}\\right)$",
-        dimension=dim.PRESSURE,
-        si_factor=2989.0,
-        si_offset=0.0,
-    ))
+    foot_of_water_60_circ_mathrmf: Final = UnitConstant(
+        UnitDefinition(
+            name="foot_of_water_60_circ_mathrmf",
+            symbol="ft $\\mathrm{H}_{2} \\mathrm{O}\\left(60^{\\circ} \\mathrm{F}\\right)$",
+            dimension=dim.PRESSURE,
+            si_factor=2989.0,
+            si_offset=0.0,
+        )
+    )
 
     ft_mathrm_H_2_mathrm_O_left_60_circ_mathrm_F_right: Final = foot_of_water_60_circ_mathrmf
 
     # gigapascal
-    gigapascal: Final = UnitConstant(UnitDefinition(
-        name="gigapascal",
-        symbol="GPa",
-        dimension=dim.PRESSURE,
-        si_factor=1000000000.0,
-        si_offset=0.0,
-    ))
+    gigapascal: Final = UnitConstant(
+        UnitDefinition(
+            name="gigapascal",
+            symbol="GPa",
+            dimension=dim.PRESSURE,
+            si_factor=1000000000.0,
+            si_offset=0.0,
+        )
+    )
 
     GPa: Final = gigapascal
 
     # hectopascal
-    hectopascal: Final = UnitConstant(UnitDefinition(
-        name="hectopascal",
-        symbol="hPa",
-        dimension=dim.PRESSURE,
-        si_factor=100.0,
-        si_offset=0.0,
-    ))
+    hectopascal: Final = UnitConstant(
+        UnitDefinition(
+            name="hectopascal",
+            symbol="hPa",
+            dimension=dim.PRESSURE,
+            si_factor=100.0,
+            si_offset=0.0,
+        )
+    )
 
     hPa: Final = hectopascal
 
     # inch of mercury ( $60{ }^{\circ} \mathrm{F}$ )
-    inch_of_mercury_60_circ_mathrmf: Final = UnitConstant(UnitDefinition(
-        name="inch_of_mercury_60_circ_mathrmf",
-        symbol="in $\\mathrm{Hg}\\left(60{ }^{\\circ} \\mathrm{F}\\right)$",
-        dimension=dim.PRESSURE,
-        si_factor=3386.4,
-        si_offset=0.0,
-    ))
+    inch_of_mercury_60_circ_mathrmf: Final = UnitConstant(
+        UnitDefinition(
+            name="inch_of_mercury_60_circ_mathrmf",
+            symbol="in $\\mathrm{Hg}\\left(60{ }^{\\circ} \\mathrm{F}\\right)$",
+            dimension=dim.PRESSURE,
+            si_factor=3386.4,
+            si_offset=0.0,
+        )
+    )
 
     in_mathrm_Hg_left_60_circ_mathrm_F_right: Final = inch_of_mercury_60_circ_mathrmf
 
     # inch of water ( $60{ }^{\circ} \mathrm{F}$ )
-    inch_of_water_60_circ_mathrmf: Final = UnitConstant(UnitDefinition(
-        name="inch_of_water_60_circ_mathrmf",
-        symbol="in $\\mathrm{H}_{2} \\mathrm{O}\\left(60^{\\circ} \\mathrm{F}\\right)$",
-        dimension=dim.PRESSURE,
-        si_factor=248.845,
-        si_offset=0.0,
-    ))
+    inch_of_water_60_circ_mathrmf: Final = UnitConstant(
+        UnitDefinition(
+            name="inch_of_water_60_circ_mathrmf",
+            symbol="in $\\mathrm{H}_{2} \\mathrm{O}\\left(60^{\\circ} \\mathrm{F}\\right)$",
+            dimension=dim.PRESSURE,
+            si_factor=248.845,
+            si_offset=0.0,
+        )
+    )
 
     in_mathrm_H_2_mathrm_O_left_60_circ_mathrm_F_right: Final = inch_of_water_60_circ_mathrmf
 
     # kilogram force per square centimeter
-    kilogram_force_per_square_centimeter: Final = UnitConstant(UnitDefinition(
-        name="kilogram_force_per_square_centimeter",
-        symbol="at or $\\mathrm{kg}_{\\mathrm{f}} / \\mathrm{cm}^{2}$",
-        dimension=dim.PRESSURE,
-        si_factor=98067.0,
-        si_offset=0.0,
-    ))
+    kilogram_force_per_square_centimeter: Final = UnitConstant(
+        UnitDefinition(
+            name="kilogram_force_per_square_centimeter",
+            symbol="at or $\\mathrm{kg}_{\\mathrm{f}} / \\mathrm{cm}^{2}$",
+            dimension=dim.PRESSURE,
+            si_factor=98067.0,
+            si_offset=0.0,
+        )
+    )
 
     at_or_mathrm_kg_mathrm_f_mathrm_cm_2: Final = kilogram_force_per_square_centimeter
     at: Final = kilogram_force_per_square_centimeter
     kg_f_cm_2: Final = kilogram_force_per_square_centimeter
 
     # kilogram force per square meter
-    kilogram_force_per_square_meter: Final = UnitConstant(UnitDefinition(
-        name="kilogram_force_per_square_meter",
-        symbol="$\\mathrm{kg}_{\\mathrm{f}} / \\mathrm{m}^{2}$",
-        dimension=dim.PRESSURE,
-        si_factor=9.80665,
-        si_offset=0.0,
-    ))
+    kilogram_force_per_square_meter: Final = UnitConstant(
+        UnitDefinition(
+            name="kilogram_force_per_square_meter",
+            symbol="$\\mathrm{kg}_{\\mathrm{f}} / \\mathrm{m}^{2}$",
+            dimension=dim.PRESSURE,
+            si_factor=9.80665,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_kg_mathrm_f_mathrm_m_2: Final = kilogram_force_per_square_meter
 
     # kip force per square inch
-    kip_force_per_square_inch: Final = UnitConstant(UnitDefinition(
-        name="kip_force_per_square_inch",
-        symbol="KSI or ksi or kip ${ }_{f} / \\mathrm{in}^{2}$",
-        dimension=dim.PRESSURE,
-        si_factor=6894800.0,
-        si_offset=0.0,
-    ))
+    kip_force_per_square_inch: Final = UnitConstant(
+        UnitDefinition(
+            name="kip_force_per_square_inch",
+            symbol="KSI or ksi or kip ${ }_{f} / \\mathrm{in}^{2}$",
+            dimension=dim.PRESSURE,
+            si_factor=6894800.0,
+            si_offset=0.0,
+        )
+    )
 
     KSI_or_ksi_or_kip_f_mathrm_in_2: Final = kip_force_per_square_inch
     KSI: Final = kip_force_per_square_inch
@@ -7175,158 +8401,186 @@ class PressureUnits:
     kip_f_in_2: Final = kip_force_per_square_inch
 
     # megapascal
-    megapascal: Final = UnitConstant(UnitDefinition(
-        name="megapascal",
-        symbol="MPa",
-        dimension=dim.PRESSURE,
-        si_factor=1000000.0,
-        si_offset=0.0,
-    ))
+    megapascal: Final = UnitConstant(
+        UnitDefinition(
+            name="megapascal",
+            symbol="MPa",
+            dimension=dim.PRESSURE,
+            si_factor=1000000.0,
+            si_offset=0.0,
+        )
+    )
 
     MPa: Final = megapascal
 
     # meter of water ( $4^{\circ} \mathrm{C}$ )
-    meter_of_water_4circ_mathrmc: Final = UnitConstant(UnitDefinition(
-        name="meter_of_water_4circ_mathrmc",
-        symbol="$\\mathrm{m} \\mathrm{H}_{2} \\mathrm{O}\\left(4^{\\circ} \\mathrm{C}\\right)$",
-        dimension=dim.PRESSURE,
-        si_factor=9806.4,
-        si_offset=0.0,
-    ))
+    meter_of_water_4circ_mathrmc: Final = UnitConstant(
+        UnitDefinition(
+            name="meter_of_water_4circ_mathrmc",
+            symbol="$\\mathrm{m} \\mathrm{H}_{2} \\mathrm{O}\\left(4^{\\circ} \\mathrm{C}\\right)$",
+            dimension=dim.PRESSURE,
+            si_factor=9806.4,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_m_mathrm_H_2_mathrm_O_left_4_circ_mathrm_C_right: Final = meter_of_water_4circ_mathrmc
 
     # microbar
-    microbar: Final = UnitConstant(UnitDefinition(
-        name="microbar",
-        symbol="$\\mu \\mathrm{bar}$",
-        dimension=dim.PRESSURE,
-        si_factor=0.1,
-        si_offset=0.0,
-    ))
+    microbar: Final = UnitConstant(
+        UnitDefinition(
+            name="microbar",
+            symbol="$\\mu \\mathrm{bar}$",
+            dimension=dim.PRESSURE,
+            si_factor=0.1,
+            si_offset=0.0,
+        )
+    )
 
     mu_mathrm_bar: Final = microbar
 
     # millibar
-    millibar: Final = UnitConstant(UnitDefinition(
-        name="millibar",
-        symbol="mbar",
-        dimension=dim.PRESSURE,
-        si_factor=100.0,
-        si_offset=0.0,
-    ))
+    millibar: Final = UnitConstant(
+        UnitDefinition(
+            name="millibar",
+            symbol="mbar",
+            dimension=dim.PRESSURE,
+            si_factor=100.0,
+            si_offset=0.0,
+        )
+    )
 
     mbar: Final = millibar
 
     # millimeter of mercury ( $4^{\circ} \mathrm{C}$ )
-    millimeter_of_mercury_4circ_mathrmc: Final = UnitConstant(UnitDefinition(
-        name="millimeter_of_mercury_4circ_mathrmc",
-        symbol="$\\mathrm{mm} \\mathrm{Hg}\\left(4^{\\circ} \\mathrm{C}\\right)$",
-        dimension=dim.PRESSURE,
-        si_factor=133.322,
-        si_offset=0.0,
-    ))
+    millimeter_of_mercury_4circ_mathrmc: Final = UnitConstant(
+        UnitDefinition(
+            name="millimeter_of_mercury_4circ_mathrmc",
+            symbol="$\\mathrm{mm} \\mathrm{Hg}\\left(4^{\\circ} \\mathrm{C}\\right)$",
+            dimension=dim.PRESSURE,
+            si_factor=133.322,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_mm_mathrm_Hg_left_4_circ_mathrm_C_right: Final = millimeter_of_mercury_4circ_mathrmc
 
     # millimeter of water ( $4^{\circ} \mathrm{C}$ )
-    millimeter_of_water_4circ_mathrmc: Final = UnitConstant(UnitDefinition(
-        name="millimeter_of_water_4circ_mathrmc",
-        symbol="$\\mathrm{mm} \\mathrm{H}_{2} \\mathrm{O}\\left(4^{\\circ} \\mathrm{C}\\right)$",
-        dimension=dim.PRESSURE,
-        si_factor=9.806375,
-        si_offset=0.0,
-    ))
+    millimeter_of_water_4circ_mathrmc: Final = UnitConstant(
+        UnitDefinition(
+            name="millimeter_of_water_4circ_mathrmc",
+            symbol="$\\mathrm{mm} \\mathrm{H}_{2} \\mathrm{O}\\left(4^{\\circ} \\mathrm{C}\\right)$",
+            dimension=dim.PRESSURE,
+            si_factor=9.806375,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_mm_mathrm_H_2_mathrm_O_left_4_circ_mathrm_C_right: Final = millimeter_of_water_4circ_mathrmc
 
     # newton per square meter
-    newton_per_square_meter: Final = UnitConstant(UnitDefinition(
-        name="newton_per_square_meter",
-        symbol="$\\mathrm{N} / \\mathrm{m}^{2}$",
-        dimension=dim.PRESSURE,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    newton_per_square_meter: Final = UnitConstant(
+        UnitDefinition(
+            name="newton_per_square_meter",
+            symbol="$\\mathrm{N} / \\mathrm{m}^{2}$",
+            dimension=dim.PRESSURE,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     # ounce force per square inch
-    ounce_force_per_square_inch: Final = UnitConstant(UnitDefinition(
-        name="ounce_force_per_square_inch",
-        symbol="OSI or osi or $\\mathrm{oz}_{\\mathrm{f}} / \\mathrm{in}^{2}$",
-        dimension=dim.PRESSURE,
-        si_factor=430.922,
-        si_offset=0.0,
-    ))
+    ounce_force_per_square_inch: Final = UnitConstant(
+        UnitDefinition(
+            name="ounce_force_per_square_inch",
+            symbol="OSI or osi or $\\mathrm{oz}_{\\mathrm{f}} / \\mathrm{in}^{2}$",
+            dimension=dim.PRESSURE,
+            si_factor=430.922,
+            si_offset=0.0,
+        )
+    )
 
     OSI_or_osi_or_mathrm_oz_mathrm_f_mathrm_in_2: Final = ounce_force_per_square_inch
     OSI: Final = ounce_force_per_square_inch
     osi: Final = ounce_force_per_square_inch
 
     # pascal
-    pascal: Final = UnitConstant(UnitDefinition(
-        name="pascal",
-        symbol="Pa",
-        dimension=dim.PRESSURE,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    pascal: Final = UnitConstant(
+        UnitDefinition(
+            name="pascal",
+            symbol="Pa",
+            dimension=dim.PRESSURE,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     Pa: Final = pascal
 
     # pièze
-    pi_ze: Final = UnitConstant(UnitDefinition(
-        name="pi_ze",
-        symbol="pz",
-        dimension=dim.PRESSURE,
-        si_factor=1000.0,
-        si_offset=0.0,
-    ))
+    pi_ze: Final = UnitConstant(
+        UnitDefinition(
+            name="pi_ze",
+            symbol="pz",
+            dimension=dim.PRESSURE,
+            si_factor=1000.0,
+            si_offset=0.0,
+        )
+    )
 
     pz: Final = pi_ze
 
     # pound force per square foot
-    pound_force_per_square_foot: Final = UnitConstant(UnitDefinition(
-        name="pound_force_per_square_foot",
-        symbol="PSF or psf or $\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{ft}^{2}$",
-        dimension=dim.PRESSURE,
-        si_factor=47.880259,
-        si_offset=0.0,
-    ))
+    pound_force_per_square_foot: Final = UnitConstant(
+        UnitDefinition(
+            name="pound_force_per_square_foot",
+            symbol="PSF or psf or $\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{ft}^{2}$",
+            dimension=dim.PRESSURE,
+            si_factor=47.880259,
+            si_offset=0.0,
+        )
+    )
 
     PSF_or_psf_or_mathrm_lb_mathrm_f_mathrm_ft_2: Final = pound_force_per_square_foot
     psf: Final = pound_force_per_square_foot
 
     # pound force per square inch
-    pound_force_per_square_inch: Final = UnitConstant(UnitDefinition(
-        name="pound_force_per_square_inch",
-        symbol="psi",
-        dimension=dim.PRESSURE,
-        si_factor=6894.757,
-        si_offset=0.0,
-    ))
+    pound_force_per_square_inch: Final = UnitConstant(
+        UnitDefinition(
+            name="pound_force_per_square_inch",
+            symbol="psi",
+            dimension=dim.PRESSURE,
+            si_factor=6894.757,
+            si_offset=0.0,
+        )
+    )
 
     psi: Final = pound_force_per_square_inch
 
     # torr
-    torr: Final = UnitConstant(UnitDefinition(
-        name="torr",
-        symbol="torr or mm Hg ( $0{ }^{\\circ}$ C)",
-        dimension=dim.PRESSURE,
-        si_factor=133.322,
-        si_offset=0.0,
-    ))
+    torr: Final = UnitConstant(
+        UnitDefinition(
+            name="torr",
+            symbol="torr or mm Hg ( $0{ }^{\\circ}$ C)",
+            dimension=dim.PRESSURE,
+            si_factor=133.322,
+            si_offset=0.0,
+        )
+    )
 
     torr_or_mm_Hg_0_circ_C: Final = torr
     mm_Hg_0_circ_C: Final = torr
 
     # kilopascal
-    kilopascal: Final = UnitConstant(UnitDefinition(
-        name="kilopascal",
-        symbol="kPa",
-        dimension=dim.PRESSURE,
-        si_factor=1000.0,
-        si_offset=0.0,
-    ))
+    kilopascal: Final = UnitConstant(
+        UnitDefinition(
+            name="kilopascal",
+            symbol="kPa",
+            dimension=dim.PRESSURE,
+            si_factor=1000.0,
+            si_offset=0.0,
+        )
+    )
 
     kPa: Final = kilopascal
 
@@ -7337,44 +8591,52 @@ class RadiationDoseEquivalentUnits:
     __slots__ = ()
 
     # rem
-    rem: Final = UnitConstant(UnitDefinition(
-        name="rem",
-        symbol="rem",
-        dimension=dim.RADIATION_DOSE_EQUIVALENT,
-        si_factor=0.01,
-        si_offset=0.0,
-    ))
+    rem: Final = UnitConstant(
+        UnitDefinition(
+            name="rem",
+            symbol="rem",
+            dimension=dim.RADIATION_DOSE_EQUIVALENT,
+            si_factor=0.01,
+            si_offset=0.0,
+        )
+    )
 
     # sievert
-    sievert: Final = UnitConstant(UnitDefinition(
-        name="sievert",
-        symbol="Sv",
-        dimension=dim.RADIATION_DOSE_EQUIVALENT,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    sievert: Final = UnitConstant(
+        UnitDefinition(
+            name="sievert",
+            symbol="Sv",
+            dimension=dim.RADIATION_DOSE_EQUIVALENT,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     Sv: Final = sievert
 
     # millisievert
-    millisievert: Final = UnitConstant(UnitDefinition(
-        name="millisievert",
-        symbol="mSv",
-        dimension=dim.RADIATION_DOSE_EQUIVALENT,
-        si_factor=0.001,
-        si_offset=0.0,
-    ))
+    millisievert: Final = UnitConstant(
+        UnitDefinition(
+            name="millisievert",
+            symbol="mSv",
+            dimension=dim.RADIATION_DOSE_EQUIVALENT,
+            si_factor=0.001,
+            si_offset=0.0,
+        )
+    )
 
     mSv: Final = millisievert
 
     # microsievert
-    microsievert: Final = UnitConstant(UnitDefinition(
-        name="microsievert",
-        symbol="μSv",
-        dimension=dim.RADIATION_DOSE_EQUIVALENT,
-        si_factor=1e-06,
-        si_offset=0.0,
-    ))
+    microsievert: Final = UnitConstant(
+        UnitDefinition(
+            name="microsievert",
+            symbol="μSv",
+            dimension=dim.RADIATION_DOSE_EQUIVALENT,
+            si_factor=1e-06,
+            si_offset=0.0,
+        )
+    )
 
 
 class RadiationExposureUnits:
@@ -7383,46 +8645,54 @@ class RadiationExposureUnits:
     __slots__ = ()
 
     # coulomb per kilogram
-    coulomb_per_kilogram: Final = UnitConstant(UnitDefinition(
-        name="coulomb_per_kilogram",
-        symbol="C/kg",
-        dimension=dim.RADIATION_EXPOSURE,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    coulomb_per_kilogram: Final = UnitConstant(
+        UnitDefinition(
+            name="coulomb_per_kilogram",
+            symbol="C/kg",
+            dimension=dim.RADIATION_EXPOSURE,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     C_kg: Final = coulomb_per_kilogram
 
     # D unit
-    d_unit: Final = UnitConstant(UnitDefinition(
-        name="d_unit",
-        symbol="D unit",
-        dimension=dim.RADIATION_EXPOSURE,
-        si_factor=0.0258,
-        si_offset=0.0,
-    ))
+    d_unit: Final = UnitConstant(
+        UnitDefinition(
+            name="d_unit",
+            symbol="D unit",
+            dimension=dim.RADIATION_EXPOSURE,
+            si_factor=0.0258,
+            si_offset=0.0,
+        )
+    )
 
     D_unit: Final = d_unit
 
     # pastille dose (B unit)
-    pastille_dose_b_unit: Final = UnitConstant(UnitDefinition(
-        name="pastille_dose_b_unit",
-        symbol="B unit",
-        dimension=dim.RADIATION_EXPOSURE,
-        si_factor=0.129,
-        si_offset=0.0,
-    ))
+    pastille_dose_b_unit: Final = UnitConstant(
+        UnitDefinition(
+            name="pastille_dose_b_unit",
+            symbol="B unit",
+            dimension=dim.RADIATION_EXPOSURE,
+            si_factor=0.129,
+            si_offset=0.0,
+        )
+    )
 
     B_unit: Final = pastille_dose_b_unit
 
     # röentgen
-    r_entgen: Final = UnitConstant(UnitDefinition(
-        name="r_entgen",
-        symbol="R",
-        dimension=dim.RADIATION_EXPOSURE,
-        si_factor=0.000258,
-        si_offset=0.0,
-    ))
+    r_entgen: Final = UnitConstant(
+        UnitDefinition(
+            name="r_entgen",
+            symbol="R",
+            dimension=dim.RADIATION_EXPOSURE,
+            si_factor=0.000258,
+            si_offset=0.0,
+        )
+    )
 
 
 class RadioactivityUnits:
@@ -7431,88 +8701,104 @@ class RadioactivityUnits:
     __slots__ = ()
 
     # becquerel
-    becquerel: Final = UnitConstant(UnitDefinition(
-        name="becquerel",
-        symbol="Bq",
-        dimension=dim.RADIOACTIVITY,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    becquerel: Final = UnitConstant(
+        UnitDefinition(
+            name="becquerel",
+            symbol="Bq",
+            dimension=dim.RADIOACTIVITY,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     Bq: Final = becquerel
 
     # curie
-    curie: Final = UnitConstant(UnitDefinition(
-        name="curie",
-        symbol="Ci",
-        dimension=dim.RADIOACTIVITY,
-        si_factor=37000000000.0,
-        si_offset=0.0,
-    ))
+    curie: Final = UnitConstant(
+        UnitDefinition(
+            name="curie",
+            symbol="Ci",
+            dimension=dim.RADIOACTIVITY,
+            si_factor=37000000000.0,
+            si_offset=0.0,
+        )
+    )
 
     Ci: Final = curie
 
     # Mache unit
-    mache_unit: Final = UnitConstant(UnitDefinition(
-        name="mache_unit",
-        symbol="Mache",
-        dimension=dim.RADIOACTIVITY,
-        si_factor=13.32,
-        si_offset=0.0,
-    ))
+    mache_unit: Final = UnitConstant(
+        UnitDefinition(
+            name="mache_unit",
+            symbol="Mache",
+            dimension=dim.RADIOACTIVITY,
+            si_factor=13.32,
+            si_offset=0.0,
+        )
+    )
 
     Mache: Final = mache_unit
 
     # rutherford
-    rutherford: Final = UnitConstant(UnitDefinition(
-        name="rutherford",
-        symbol="Rd",
-        dimension=dim.RADIOACTIVITY,
-        si_factor=1000000.0,
-        si_offset=0.0,
-    ))
+    rutherford: Final = UnitConstant(
+        UnitDefinition(
+            name="rutherford",
+            symbol="Rd",
+            dimension=dim.RADIOACTIVITY,
+            si_factor=1000000.0,
+            si_offset=0.0,
+        )
+    )
 
     Rd: Final = rutherford
 
     # stat
-    stat: Final = UnitConstant(UnitDefinition(
-        name="stat",
-        symbol="stat",
-        dimension=dim.RADIOACTIVITY,
-        si_factor=1.34e-16,
-        si_offset=0.0,
-    ))
+    stat: Final = UnitConstant(
+        UnitDefinition(
+            name="stat",
+            symbol="stat",
+            dimension=dim.RADIOACTIVITY,
+            si_factor=1.34e-16,
+            si_offset=0.0,
+        )
+    )
 
     # kilobecquerel
-    kilobecquerel: Final = UnitConstant(UnitDefinition(
-        name="kilobecquerel",
-        symbol="kBq",
-        dimension=dim.RADIOACTIVITY,
-        si_factor=1000.0,
-        si_offset=0.0,
-    ))
+    kilobecquerel: Final = UnitConstant(
+        UnitDefinition(
+            name="kilobecquerel",
+            symbol="kBq",
+            dimension=dim.RADIOACTIVITY,
+            si_factor=1000.0,
+            si_offset=0.0,
+        )
+    )
 
     kBq: Final = kilobecquerel
 
     # megabecquerel
-    megabecquerel: Final = UnitConstant(UnitDefinition(
-        name="megabecquerel",
-        symbol="MBq",
-        dimension=dim.RADIOACTIVITY,
-        si_factor=1000000.0,
-        si_offset=0.0,
-    ))
+    megabecquerel: Final = UnitConstant(
+        UnitDefinition(
+            name="megabecquerel",
+            symbol="MBq",
+            dimension=dim.RADIOACTIVITY,
+            si_factor=1000000.0,
+            si_offset=0.0,
+        )
+    )
 
     MBq: Final = megabecquerel
 
     # gigabecquerel
-    gigabecquerel: Final = UnitConstant(UnitDefinition(
-        name="gigabecquerel",
-        symbol="GBq",
-        dimension=dim.RADIOACTIVITY,
-        si_factor=1000000000.0,
-        si_offset=0.0,
-    ))
+    gigabecquerel: Final = UnitConstant(
+        UnitDefinition(
+            name="gigabecquerel",
+            symbol="GBq",
+            dimension=dim.RADIOACTIVITY,
+            si_factor=1000000000.0,
+            si_offset=0.0,
+        )
+    )
 
     GBq: Final = gigabecquerel
 
@@ -7523,46 +8809,54 @@ class SecondMomentOfAreaUnits:
     __slots__ = ()
 
     # inch quadrupled
-    inch_quadrupled: Final = UnitConstant(UnitDefinition(
-        name="inch_quadrupled",
-        symbol="in ${ }^{4}$",
-        dimension=dim.SECOND_MOMENT_OF_AREA,
-        si_factor=4.1623e-07,
-        si_offset=0.0,
-    ))
+    inch_quadrupled: Final = UnitConstant(
+        UnitDefinition(
+            name="inch_quadrupled",
+            symbol="in ${ }^{4}$",
+            dimension=dim.SECOND_MOMENT_OF_AREA,
+            si_factor=4.1623e-07,
+            si_offset=0.0,
+        )
+    )
 
     in_4: Final = inch_quadrupled
 
     # centimeter quadrupled
-    centimeter_quadrupled: Final = UnitConstant(UnitDefinition(
-        name="centimeter_quadrupled",
-        symbol="$\\mathrm{cm}^{4}$",
-        dimension=dim.SECOND_MOMENT_OF_AREA,
-        si_factor=1e-08,
-        si_offset=0.0,
-    ))
+    centimeter_quadrupled: Final = UnitConstant(
+        UnitDefinition(
+            name="centimeter_quadrupled",
+            symbol="$\\mathrm{cm}^{4}$",
+            dimension=dim.SECOND_MOMENT_OF_AREA,
+            si_factor=1e-08,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_cm_4: Final = centimeter_quadrupled
 
     # foot quadrupled
-    foot_quadrupled: Final = UnitConstant(UnitDefinition(
-        name="foot_quadrupled",
-        symbol="$\\mathrm{ft}^{4}$",
-        dimension=dim.SECOND_MOMENT_OF_AREA,
-        si_factor=0.008631,
-        si_offset=0.0,
-    ))
+    foot_quadrupled: Final = UnitConstant(
+        UnitDefinition(
+            name="foot_quadrupled",
+            symbol="$\\mathrm{ft}^{4}$",
+            dimension=dim.SECOND_MOMENT_OF_AREA,
+            si_factor=0.008631,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_ft_4: Final = foot_quadrupled
 
     # meter quadrupled
-    meter_quadrupled: Final = UnitConstant(UnitDefinition(
-        name="meter_quadrupled",
-        symbol="$\\mathrm{m}^{4}$",
-        dimension=dim.SECOND_MOMENT_OF_AREA,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    meter_quadrupled: Final = UnitConstant(
+        UnitDefinition(
+            name="meter_quadrupled",
+            symbol="$\\mathrm{m}^{4}$",
+            dimension=dim.SECOND_MOMENT_OF_AREA,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_m_4: Final = meter_quadrupled
 
@@ -7573,13 +8867,15 @@ class SecondRadiationConstantPlanckUnits:
     __slots__ = ()
 
     # meter kelvin
-    meter_kelvin: Final = UnitConstant(UnitDefinition(
-        name="meter_kelvin",
-        symbol="m K",
-        dimension=dim.SECOND_RADIATION_CONSTANT_PLANCK,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    meter_kelvin: Final = UnitConstant(
+        UnitDefinition(
+            name="meter_kelvin",
+            symbol="m K",
+            dimension=dim.SECOND_RADIATION_CONSTANT_PLANCK,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     m_K: Final = meter_kelvin
 
@@ -7590,58 +8886,70 @@ class SpecificEnthalpyUnits:
     __slots__ = ()
 
     # British thermal unit (mean) per pound
-    british_thermal_unit_mean: Final = UnitConstant(UnitDefinition(
-        name="british_thermal_unit_mean",
-        symbol="Btu (mean)/lb",
-        dimension=dim.SPECIFIC_ENTHALPY,
-        si_factor=2327.8,
-        si_offset=0.0,
-    ))
+    british_thermal_unit_mean: Final = UnitConstant(
+        UnitDefinition(
+            name="british_thermal_unit_mean",
+            symbol="Btu (mean)/lb",
+            dimension=dim.SPECIFIC_ENTHALPY,
+            si_factor=2327.8,
+            si_offset=0.0,
+        )
+    )
 
     # British thermal unit per pound
-    british_thermal_unit_per_pound: Final = UnitConstant(UnitDefinition(
-        name="british_thermal_unit_per_pound",
-        symbol="Btu/lb",
-        dimension=dim.SPECIFIC_ENTHALPY,
-        si_factor=2324.4,
-        si_offset=0.0,
-    ))
+    british_thermal_unit_per_pound: Final = UnitConstant(
+        UnitDefinition(
+            name="british_thermal_unit_per_pound",
+            symbol="Btu/lb",
+            dimension=dim.SPECIFIC_ENTHALPY,
+            si_factor=2324.4,
+            si_offset=0.0,
+        )
+    )
 
     # calorie per gram
-    calorie_per_gram: Final = UnitConstant(UnitDefinition(
-        name="calorie_per_gram",
-        symbol="$\\mathrm{cal} / \\mathrm{g}$",
-        dimension=dim.SPECIFIC_ENTHALPY,
-        si_factor=4186.8,
-        si_offset=0.0,
-    ))
+    calorie_per_gram: Final = UnitConstant(
+        UnitDefinition(
+            name="calorie_per_gram",
+            symbol="$\\mathrm{cal} / \\mathrm{g}$",
+            dimension=dim.SPECIFIC_ENTHALPY,
+            si_factor=4186.8,
+            si_offset=0.0,
+        )
+    )
 
     # Chu per pound
-    chu_per_pound: Final = UnitConstant(UnitDefinition(
-        name="chu_per_pound",
-        symbol="Chu/lb",
-        dimension=dim.SPECIFIC_ENTHALPY,
-        si_factor=4186.8,
-        si_offset=0.0,
-    ))
+    chu_per_pound: Final = UnitConstant(
+        UnitDefinition(
+            name="chu_per_pound",
+            symbol="Chu/lb",
+            dimension=dim.SPECIFIC_ENTHALPY,
+            si_factor=4186.8,
+            si_offset=0.0,
+        )
+    )
 
     # joule per kilogram
-    joule_per_kilogram: Final = UnitConstant(UnitDefinition(
-        name="joule_per_kilogram",
-        symbol="J/kg",
-        dimension=dim.SPECIFIC_ENTHALPY,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    joule_per_kilogram: Final = UnitConstant(
+        UnitDefinition(
+            name="joule_per_kilogram",
+            symbol="J/kg",
+            dimension=dim.SPECIFIC_ENTHALPY,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     # kilojoule per kilogram
-    kilojoule_per_kilogram: Final = UnitConstant(UnitDefinition(
-        name="kilojoule_per_kilogram",
-        symbol="kJ/kg",
-        dimension=dim.SPECIFIC_ENTHALPY,
-        si_factor=1000.0,
-        si_offset=0.0,
-    ))
+    kilojoule_per_kilogram: Final = UnitConstant(
+        UnitDefinition(
+            name="kilojoule_per_kilogram",
+            symbol="kJ/kg",
+            dimension=dim.SPECIFIC_ENTHALPY,
+            si_factor=1000.0,
+            si_offset=0.0,
+        )
+    )
 
     kJ_kg: Final = kilojoule_per_kilogram
 
@@ -7652,13 +8960,15 @@ class SpecificGravityUnits:
     __slots__ = ()
 
     # Dimensionless
-    dimensionless: Final = UnitConstant(UnitDefinition(
-        name="dimensionless",
-        symbol="Dmls",
-        dimension=dim.SPECIFIC_GRAVITY,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    dimensionless: Final = UnitConstant(
+        UnitDefinition(
+            name="dimensionless",
+            symbol="Dmls",
+            dimension=dim.SPECIFIC_GRAVITY,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     Dmls: Final = dimensionless
 
@@ -7669,35 +8979,41 @@ class SpecificHeatCapacityConstantPressureUnits:
     __slots__ = ()
 
     # Btu per pound per degree Fahrenheit (or degree Rankine)
-    btu_per_pound_per_degree_fahrenheit_or_degree_rankine: Final = UnitConstant(UnitDefinition(
-        name="btu_per_pound_per_degree_fahrenheit_or_degree_rankine",
-        symbol="Btu/(lb ${ }^{\\circ} \\mathrm{F}$ )",
-        dimension=dim.SPECIFIC_HEAT_CAPACITY_CONSTANT_PRESSURE,
-        si_factor=4186.8,
-        si_offset=0.0,
-    ))
+    btu_per_pound_per_degree_fahrenheit_or_degree_rankine: Final = UnitConstant(
+        UnitDefinition(
+            name="btu_per_pound_per_degree_fahrenheit_or_degree_rankine",
+            symbol="Btu/(lb ${ }^{\\circ} \\mathrm{F}$ )",
+            dimension=dim.SPECIFIC_HEAT_CAPACITY_CONSTANT_PRESSURE,
+            si_factor=4186.8,
+            si_offset=0.0,
+        )
+    )
 
     Btu_lb_circ_mathrm_F: Final = btu_per_pound_per_degree_fahrenheit_or_degree_rankine
 
     # calories per gram per kelvin (or degree Celsius)
-    calories_per_gram_per_kelvin_or_degree_celsius: Final = UnitConstant(UnitDefinition(
-        name="calories_per_gram_per_kelvin_or_degree_celsius",
-        symbol="cal/(g K)",
-        dimension=dim.SPECIFIC_HEAT_CAPACITY_CONSTANT_PRESSURE,
-        si_factor=4186.8,
-        si_offset=0.0,
-    ))
+    calories_per_gram_per_kelvin_or_degree_celsius: Final = UnitConstant(
+        UnitDefinition(
+            name="calories_per_gram_per_kelvin_or_degree_celsius",
+            symbol="cal/(g K)",
+            dimension=dim.SPECIFIC_HEAT_CAPACITY_CONSTANT_PRESSURE,
+            si_factor=4186.8,
+            si_offset=0.0,
+        )
+    )
 
     cal_g_K: Final = calories_per_gram_per_kelvin_or_degree_celsius
 
     # joules per kilogram per kelvin (or degree Celsius)
-    joules_per_kilogram_per_kelvin_or_degree_celsius: Final = UnitConstant(UnitDefinition(
-        name="joules_per_kilogram_per_kelvin_or_degree_celsius",
-        symbol="J/(kg K)",
-        dimension=dim.SPECIFIC_HEAT_CAPACITY_CONSTANT_PRESSURE,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    joules_per_kilogram_per_kelvin_or_degree_celsius: Final = UnitConstant(
+        UnitDefinition(
+            name="joules_per_kilogram_per_kelvin_or_degree_celsius",
+            symbol="J/(kg K)",
+            dimension=dim.SPECIFIC_HEAT_CAPACITY_CONSTANT_PRESSURE,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     J_kg_K: Final = joules_per_kilogram_per_kelvin_or_degree_celsius
 
@@ -7708,66 +9024,78 @@ class SpecificLengthUnits:
     __slots__ = ()
 
     # centimeter per gram
-    centimeter_per_gram: Final = UnitConstant(UnitDefinition(
-        name="centimeter_per_gram",
-        symbol="cm/g",
-        dimension=dim.SPECIFIC_LENGTH,
-        si_factor=10.0,
-        si_offset=0.0,
-    ))
+    centimeter_per_gram: Final = UnitConstant(
+        UnitDefinition(
+            name="centimeter_per_gram",
+            symbol="cm/g",
+            dimension=dim.SPECIFIC_LENGTH,
+            si_factor=10.0,
+            si_offset=0.0,
+        )
+    )
 
     cm_g: Final = centimeter_per_gram
 
     # cotton count
-    cotton_count: Final = UnitConstant(UnitDefinition(
-        name="cotton_count",
-        symbol="cc",
-        dimension=dim.SPECIFIC_LENGTH,
-        si_factor=590500000.0,
-        si_offset=0.0,
-    ))
+    cotton_count: Final = UnitConstant(
+        UnitDefinition(
+            name="cotton_count",
+            symbol="cc",
+            dimension=dim.SPECIFIC_LENGTH,
+            si_factor=590500000.0,
+            si_offset=0.0,
+        )
+    )
 
     # ft per pound
-    ft_per_pound: Final = UnitConstant(UnitDefinition(
-        name="ft_per_pound",
-        symbol="ft/lb",
-        dimension=dim.SPECIFIC_LENGTH,
-        si_factor=0.67192,
-        si_offset=0.0,
-    ))
+    ft_per_pound: Final = UnitConstant(
+        UnitDefinition(
+            name="ft_per_pound",
+            symbol="ft/lb",
+            dimension=dim.SPECIFIC_LENGTH,
+            si_factor=0.67192,
+            si_offset=0.0,
+        )
+    )
 
     ft_lb: Final = ft_per_pound
 
     # meters per kilogram
-    meters_per_kilogram: Final = UnitConstant(UnitDefinition(
-        name="meters_per_kilogram",
-        symbol="m/kg",
-        dimension=dim.SPECIFIC_LENGTH,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    meters_per_kilogram: Final = UnitConstant(
+        UnitDefinition(
+            name="meters_per_kilogram",
+            symbol="m/kg",
+            dimension=dim.SPECIFIC_LENGTH,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     m_kg: Final = meters_per_kilogram
 
     # newton meter
-    newton_meter: Final = UnitConstant(UnitDefinition(
-        name="newton_meter",
-        symbol="Nm",
-        dimension=dim.SPECIFIC_LENGTH,
-        si_factor=1000.0,
-        si_offset=0.0,
-    ))
+    newton_meter: Final = UnitConstant(
+        UnitDefinition(
+            name="newton_meter",
+            symbol="Nm",
+            dimension=dim.SPECIFIC_LENGTH,
+            si_factor=1000.0,
+            si_offset=0.0,
+        )
+    )
 
     Nm: Final = newton_meter
 
     # worsted
-    worsted: Final = UnitConstant(UnitDefinition(
-        name="worsted",
-        symbol="worsted",
-        dimension=dim.SPECIFIC_LENGTH,
-        si_factor=888679999.9999999,
-        si_offset=0.0,
-    ))
+    worsted: Final = UnitConstant(
+        UnitDefinition(
+            name="worsted",
+            symbol="worsted",
+            dimension=dim.SPECIFIC_LENGTH,
+            si_factor=888679999.9999999,
+            si_offset=0.0,
+        )
+    )
 
 
 class SpecificSurfaceUnits:
@@ -7776,61 +9104,71 @@ class SpecificSurfaceUnits:
     __slots__ = ()
 
     # square centimeter per gram
-    square_centimeter_per_gram: Final = UnitConstant(UnitDefinition(
-        name="square_centimeter_per_gram",
-        symbol="$\\mathrm{cm}^{2} / \\mathrm{g}$",
-        dimension=dim.SPECIFIC_SURFACE,
-        si_factor=0.1,
-        si_offset=0.0,
-    ))
+    square_centimeter_per_gram: Final = UnitConstant(
+        UnitDefinition(
+            name="square_centimeter_per_gram",
+            symbol="$\\mathrm{cm}^{2} / \\mathrm{g}$",
+            dimension=dim.SPECIFIC_SURFACE,
+            si_factor=0.1,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_cm_2_mathrm_g: Final = square_centimeter_per_gram
 
     # square foot per kilogram
-    square_foot_per_kilogram: Final = UnitConstant(UnitDefinition(
-        name="square_foot_per_kilogram",
-        symbol="$\\mathrm{ft}^{2} / \\mathrm{kg}$ or sq ft/kg",
-        dimension=dim.SPECIFIC_SURFACE,
-        si_factor=0.092903,
-        si_offset=0.0,
-    ))
+    square_foot_per_kilogram: Final = UnitConstant(
+        UnitDefinition(
+            name="square_foot_per_kilogram",
+            symbol="$\\mathrm{ft}^{2} / \\mathrm{kg}$ or sq ft/kg",
+            dimension=dim.SPECIFIC_SURFACE,
+            si_factor=0.092903,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_ft_2_mathrm_kg_or_sq_ft_kg: Final = square_foot_per_kilogram
     ft_2_kg: Final = square_foot_per_kilogram
     sq_ft_kg: Final = square_foot_per_kilogram
 
     # square foot per pound
-    square_foot_per_pound: Final = UnitConstant(UnitDefinition(
-        name="square_foot_per_pound",
-        symbol="$\\mathrm{ft}^{2} / \\mathrm{lb}$ or sq ft/lb",
-        dimension=dim.SPECIFIC_SURFACE,
-        si_factor=0.20482,
-        si_offset=0.0,
-    ))
+    square_foot_per_pound: Final = UnitConstant(
+        UnitDefinition(
+            name="square_foot_per_pound",
+            symbol="$\\mathrm{ft}^{2} / \\mathrm{lb}$ or sq ft/lb",
+            dimension=dim.SPECIFIC_SURFACE,
+            si_factor=0.20482,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_ft_2_mathrm_lb_or_sq_ft_lb: Final = square_foot_per_pound
     ft_2_lb: Final = square_foot_per_pound
     sq_ft_lb: Final = square_foot_per_pound
 
     # square meter per gram
-    square_meter_per_gram: Final = UnitConstant(UnitDefinition(
-        name="square_meter_per_gram",
-        symbol="$\\mathrm{m}^{2} / \\mathrm{g}$",
-        dimension=dim.SPECIFIC_SURFACE,
-        si_factor=1000.0,
-        si_offset=0.0,
-    ))
+    square_meter_per_gram: Final = UnitConstant(
+        UnitDefinition(
+            name="square_meter_per_gram",
+            symbol="$\\mathrm{m}^{2} / \\mathrm{g}$",
+            dimension=dim.SPECIFIC_SURFACE,
+            si_factor=1000.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_m_2_mathrm_g: Final = square_meter_per_gram
 
     # square meter per kilogram
-    square_meter_per_kilogram: Final = UnitConstant(UnitDefinition(
-        name="square_meter_per_kilogram",
-        symbol="$\\mathrm{m}^{2} / \\mathrm{kg}$",
-        dimension=dim.SPECIFIC_SURFACE,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    square_meter_per_kilogram: Final = UnitConstant(
+        UnitDefinition(
+            name="square_meter_per_kilogram",
+            symbol="$\\mathrm{m}^{2} / \\mathrm{kg}$",
+            dimension=dim.SPECIFIC_SURFACE,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_m_2_mathrm_kg: Final = square_meter_per_kilogram
 
@@ -7841,52 +9179,60 @@ class SpecificVolumeUnits:
     __slots__ = ()
 
     # cubic centimeter per gram
-    cubic_centimeter_per_gram: Final = UnitConstant(UnitDefinition(
-        name="cubic_centimeter_per_gram",
-        symbol="$\\mathrm{cm}^{3} / \\mathrm{g}$ or $\\mathrm{cc} / \\mathrm{g}$",
-        dimension=dim.SPECIFIC_VOLUME,
-        si_factor=0.001,
-        si_offset=0.0,
-    ))
+    cubic_centimeter_per_gram: Final = UnitConstant(
+        UnitDefinition(
+            name="cubic_centimeter_per_gram",
+            symbol="$\\mathrm{cm}^{3} / \\mathrm{g}$ or $\\mathrm{cc} / \\mathrm{g}$",
+            dimension=dim.SPECIFIC_VOLUME,
+            si_factor=0.001,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_cm_3_mathrm_g_or_mathrm_cc_mathrm_g: Final = cubic_centimeter_per_gram
     cm_3_g: Final = cubic_centimeter_per_gram
     cc_g: Final = cubic_centimeter_per_gram
 
     # cubic foot per kilogram
-    cubic_foot_per_kilogram: Final = UnitConstant(UnitDefinition(
-        name="cubic_foot_per_kilogram",
-        symbol="$\\mathrm{ft}^{3} / \\mathrm{kg}$ or $\\mathrm{cft} / \\mathrm{kg}$",
-        dimension=dim.SPECIFIC_VOLUME,
-        si_factor=0.028317,
-        si_offset=0.0,
-    ))
+    cubic_foot_per_kilogram: Final = UnitConstant(
+        UnitDefinition(
+            name="cubic_foot_per_kilogram",
+            symbol="$\\mathrm{ft}^{3} / \\mathrm{kg}$ or $\\mathrm{cft} / \\mathrm{kg}$",
+            dimension=dim.SPECIFIC_VOLUME,
+            si_factor=0.028317,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_ft_3_mathrm_kg_or_mathrm_cft_mathrm_kg: Final = cubic_foot_per_kilogram
     ft_3_kg: Final = cubic_foot_per_kilogram
     cft_kg: Final = cubic_foot_per_kilogram
 
     # cubic foot per pound
-    cubic_foot_per_pound: Final = UnitConstant(UnitDefinition(
-        name="cubic_foot_per_pound",
-        symbol="$\\mathrm{ft}^{3} / \\mathrm{lb}$ or $\\mathrm{cft} / \\mathrm{lb}$",
-        dimension=dim.SPECIFIC_VOLUME,
-        si_factor=0.062428,
-        si_offset=0.0,
-    ))
+    cubic_foot_per_pound: Final = UnitConstant(
+        UnitDefinition(
+            name="cubic_foot_per_pound",
+            symbol="$\\mathrm{ft}^{3} / \\mathrm{lb}$ or $\\mathrm{cft} / \\mathrm{lb}$",
+            dimension=dim.SPECIFIC_VOLUME,
+            si_factor=0.062428,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_ft_3_mathrm_lb_or_mathrm_cft_mathrm_lb: Final = cubic_foot_per_pound
     ft_3_lb: Final = cubic_foot_per_pound
     cft_lb: Final = cubic_foot_per_pound
 
     # cubic meter per kilogram
-    cubic_meter_per_kilogram: Final = UnitConstant(UnitDefinition(
-        name="cubic_meter_per_kilogram",
-        symbol="$\\mathrm{m}^{3} / \\mathrm{kg}$",
-        dimension=dim.SPECIFIC_VOLUME,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    cubic_meter_per_kilogram: Final = UnitConstant(
+        UnitDefinition(
+            name="cubic_meter_per_kilogram",
+            symbol="$\\mathrm{m}^{3} / \\mathrm{kg}$",
+            dimension=dim.SPECIFIC_VOLUME,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_m_3_mathrm_kg: Final = cubic_meter_per_kilogram
 
@@ -7897,117 +9243,141 @@ class StressUnits:
     __slots__ = ()
 
     # dyne per square centimeter
-    dyne_per_square_centimeter: Final = UnitConstant(UnitDefinition(
-        name="dyne_per_square_centimeter",
-        symbol="dyn/ $\\mathrm{cm}^{2}$",
-        dimension=dim.STRESS,
-        si_factor=0.1,
-        si_offset=0.0,
-    ))
+    dyne_per_square_centimeter: Final = UnitConstant(
+        UnitDefinition(
+            name="dyne_per_square_centimeter",
+            symbol="dyn/ $\\mathrm{cm}^{2}$",
+            dimension=dim.STRESS,
+            si_factor=0.1,
+            si_offset=0.0,
+        )
+    )
 
     # gigapascal
-    gigapascal: Final = UnitConstant(UnitDefinition(
-        name="gigapascal",
-        symbol="GPa",
-        dimension=dim.STRESS,
-        si_factor=1000000000.0,
-        si_offset=0.0,
-    ))
+    gigapascal: Final = UnitConstant(
+        UnitDefinition(
+            name="gigapascal",
+            symbol="GPa",
+            dimension=dim.STRESS,
+            si_factor=1000000000.0,
+            si_offset=0.0,
+        )
+    )
 
     # hectopascal
-    hectopascal: Final = UnitConstant(UnitDefinition(
-        name="hectopascal",
-        symbol="hPa",
-        dimension=dim.STRESS,
-        si_factor=100.0,
-        si_offset=0.0,
-    ))
+    hectopascal: Final = UnitConstant(
+        UnitDefinition(
+            name="hectopascal",
+            symbol="hPa",
+            dimension=dim.STRESS,
+            si_factor=100.0,
+            si_offset=0.0,
+        )
+    )
 
     # kilogram force per square centimeter
-    kilogram_force_per_square_centimeter: Final = UnitConstant(UnitDefinition(
-        name="kilogram_force_per_square_centimeter",
-        symbol="at or $\\mathrm{kg}_{\\mathrm{f}} / \\mathrm{cm}^{2}$",
-        dimension=dim.STRESS,
-        si_factor=98067.0,
-        si_offset=0.0,
-    ))
+    kilogram_force_per_square_centimeter: Final = UnitConstant(
+        UnitDefinition(
+            name="kilogram_force_per_square_centimeter",
+            symbol="at or $\\mathrm{kg}_{\\mathrm{f}} / \\mathrm{cm}^{2}$",
+            dimension=dim.STRESS,
+            si_factor=98067.0,
+            si_offset=0.0,
+        )
+    )
 
     # kilogram force per square meter
-    kilogram_force_per_square_meter: Final = UnitConstant(UnitDefinition(
-        name="kilogram_force_per_square_meter",
-        symbol="$\\mathrm{kg}_{\\mathrm{f}} / \\mathrm{m}^{2}$",
-        dimension=dim.STRESS,
-        si_factor=9.80665,
-        si_offset=0.0,
-    ))
+    kilogram_force_per_square_meter: Final = UnitConstant(
+        UnitDefinition(
+            name="kilogram_force_per_square_meter",
+            symbol="$\\mathrm{kg}_{\\mathrm{f}} / \\mathrm{m}^{2}$",
+            dimension=dim.STRESS,
+            si_factor=9.80665,
+            si_offset=0.0,
+        )
+    )
 
     # kip force per square inch
-    kip_force_per_square_inch: Final = UnitConstant(UnitDefinition(
-        name="kip_force_per_square_inch",
-        symbol="KSI or ksi or kip ${ }_{f} / \\mathrm{in}^{2}$",
-        dimension=dim.STRESS,
-        si_factor=6894800.0,
-        si_offset=0.0,
-    ))
+    kip_force_per_square_inch: Final = UnitConstant(
+        UnitDefinition(
+            name="kip_force_per_square_inch",
+            symbol="KSI or ksi or kip ${ }_{f} / \\mathrm{in}^{2}$",
+            dimension=dim.STRESS,
+            si_factor=6894800.0,
+            si_offset=0.0,
+        )
+    )
 
     # megapascal
-    megapascal: Final = UnitConstant(UnitDefinition(
-        name="megapascal",
-        symbol="MPa",
-        dimension=dim.STRESS,
-        si_factor=1000000.0,
-        si_offset=0.0,
-    ))
+    megapascal: Final = UnitConstant(
+        UnitDefinition(
+            name="megapascal",
+            symbol="MPa",
+            dimension=dim.STRESS,
+            si_factor=1000000.0,
+            si_offset=0.0,
+        )
+    )
 
     # newton per square meter
-    newton_per_square_meter: Final = UnitConstant(UnitDefinition(
-        name="newton_per_square_meter",
-        symbol="$\\mathrm{N} / \\mathrm{m}^{2}$",
-        dimension=dim.STRESS,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    newton_per_square_meter: Final = UnitConstant(
+        UnitDefinition(
+            name="newton_per_square_meter",
+            symbol="$\\mathrm{N} / \\mathrm{m}^{2}$",
+            dimension=dim.STRESS,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     # ounce force per square inch
-    ounce_force_per_square_inch: Final = UnitConstant(UnitDefinition(
-        name="ounce_force_per_square_inch",
-        symbol="OSI or osi or $\\mathrm{oz}_{\\mathrm{f}} / \\mathrm{in}^{2}$",
-        dimension=dim.STRESS,
-        si_factor=430.922,
-        si_offset=0.0,
-    ))
+    ounce_force_per_square_inch: Final = UnitConstant(
+        UnitDefinition(
+            name="ounce_force_per_square_inch",
+            symbol="OSI or osi or $\\mathrm{oz}_{\\mathrm{f}} / \\mathrm{in}^{2}$",
+            dimension=dim.STRESS,
+            si_factor=430.922,
+            si_offset=0.0,
+        )
+    )
 
     oz_f_in_2: Final = ounce_force_per_square_inch
 
     # pascal
-    pascal: Final = UnitConstant(UnitDefinition(
-        name="pascal",
-        symbol="Pa",
-        dimension=dim.STRESS,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    pascal: Final = UnitConstant(
+        UnitDefinition(
+            name="pascal",
+            symbol="Pa",
+            dimension=dim.STRESS,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     # pound force per square foot
-    pound_force_per_square_foot: Final = UnitConstant(UnitDefinition(
-        name="pound_force_per_square_foot",
-        symbol="PSF or psf or $\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{ft}^{2}$",
-        dimension=dim.STRESS,
-        si_factor=47.880259,
-        si_offset=0.0,
-    ))
+    pound_force_per_square_foot: Final = UnitConstant(
+        UnitDefinition(
+            name="pound_force_per_square_foot",
+            symbol="PSF or psf or $\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{ft}^{2}$",
+            dimension=dim.STRESS,
+            si_factor=47.880259,
+            si_offset=0.0,
+        )
+    )
 
     PSF: Final = pound_force_per_square_foot
     lb_f_ft_2: Final = pound_force_per_square_foot
 
     # pound force per square inch
-    pound_force_per_square_inch: Final = UnitConstant(UnitDefinition(
-        name="pound_force_per_square_inch",
-        symbol="psi",
-        dimension=dim.STRESS,
-        si_factor=6894.757,
-        si_offset=0.0,
-    ))
+    pound_force_per_square_inch: Final = UnitConstant(
+        UnitDefinition(
+            name="pound_force_per_square_inch",
+            symbol="psi",
+            dimension=dim.STRESS,
+            si_factor=6894.757,
+            si_offset=0.0,
+        )
+    )
 
 
 class SurfaceMassDensityUnits:
@@ -8016,53 +9386,63 @@ class SurfaceMassDensityUnits:
     __slots__ = ()
 
     # gram per square centimeter
-    gram_per_square_centimeter: Final = UnitConstant(UnitDefinition(
-        name="gram_per_square_centimeter",
-        symbol="$\\mathrm{kg} / \\mathrm{cm}^{2}$",
-        dimension=dim.SURFACE_MASS_DENSITY,
-        si_factor=10.0,
-        si_offset=0.0,
-    ))
+    gram_per_square_centimeter: Final = UnitConstant(
+        UnitDefinition(
+            name="gram_per_square_centimeter",
+            symbol="$\\mathrm{kg} / \\mathrm{cm}^{2}$",
+            dimension=dim.SURFACE_MASS_DENSITY,
+            si_factor=10.0,
+            si_offset=0.0,
+        )
+    )
 
     # gram per square meter
-    gram_per_square_meter: Final = UnitConstant(UnitDefinition(
-        name="gram_per_square_meter",
-        symbol="$\\mathrm{g} / \\mathrm{m}^{2}$",
-        dimension=dim.SURFACE_MASS_DENSITY,
-        si_factor=0.001,
-        si_offset=0.0,
-    ))
+    gram_per_square_meter: Final = UnitConstant(
+        UnitDefinition(
+            name="gram_per_square_meter",
+            symbol="$\\mathrm{g} / \\mathrm{m}^{2}$",
+            dimension=dim.SURFACE_MASS_DENSITY,
+            si_factor=0.001,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_g_mathrm_m_2: Final = gram_per_square_meter
 
     # kilogram per square meter
-    kilogram_per_square_meter: Final = UnitConstant(UnitDefinition(
-        name="kilogram_per_square_meter",
-        symbol="$\\mathrm{kg} / \\mathrm{m}^{2}$",
-        dimension=dim.SURFACE_MASS_DENSITY,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    kilogram_per_square_meter: Final = UnitConstant(
+        UnitDefinition(
+            name="kilogram_per_square_meter",
+            symbol="$\\mathrm{kg} / \\mathrm{m}^{2}$",
+            dimension=dim.SURFACE_MASS_DENSITY,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     # pound (mass) per square foot
-    pound_mass: Final = UnitConstant(UnitDefinition(
-        name="pound_mass",
-        symbol="$\\mathrm{lb} / \\mathrm{ft}^{2}$",
-        dimension=dim.SURFACE_MASS_DENSITY,
-        si_factor=4.882427,
-        si_offset=0.0,
-    ))
+    pound_mass: Final = UnitConstant(
+        UnitDefinition(
+            name="pound_mass",
+            symbol="$\\mathrm{lb} / \\mathrm{ft}^{2}$",
+            dimension=dim.SURFACE_MASS_DENSITY,
+            si_factor=4.882427,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_lb_mathrm_ft_2: Final = pound_mass
 
     # pound (mass) per square inch
-    pound_mass: Final = UnitConstant(UnitDefinition(
-        name="pound_mass",
-        symbol="$\\mathrm{lb} / \\mathrm{in}^{2}$",
-        dimension=dim.SURFACE_MASS_DENSITY,
-        si_factor=703.07,
-        si_offset=0.0,
-    ))
+    pound_mass: Final = UnitConstant(
+        UnitDefinition(
+            name="pound_mass",
+            symbol="$\\mathrm{lb} / \\mathrm{in}^{2}$",
+            dimension=dim.SURFACE_MASS_DENSITY,
+            si_factor=703.07,
+            si_offset=0.0,
+        )
+    )
 
 
 class SurfaceTensionUnits:
@@ -8071,57 +9451,67 @@ class SurfaceTensionUnits:
     __slots__ = ()
 
     # dyne per centimeter
-    dyne_per_centimeter: Final = UnitConstant(UnitDefinition(
-        name="dyne_per_centimeter",
-        symbol="dyn/cm",
-        dimension=dim.SURFACE_TENSION,
-        si_factor=0.001,
-        si_offset=0.0,
-    ))
+    dyne_per_centimeter: Final = UnitConstant(
+        UnitDefinition(
+            name="dyne_per_centimeter",
+            symbol="dyn/cm",
+            dimension=dim.SURFACE_TENSION,
+            si_factor=0.001,
+            si_offset=0.0,
+        )
+    )
 
     dyn_cm: Final = dyne_per_centimeter
 
     # gram force per centimeter
-    gram_force_per_centimeter: Final = UnitConstant(UnitDefinition(
-        name="gram_force_per_centimeter",
-        symbol="$\\mathrm{g}_{\\mathrm{f}} / \\mathrm{cm}$",
-        dimension=dim.SURFACE_TENSION,
-        si_factor=0.0102,
-        si_offset=0.0,
-    ))
+    gram_force_per_centimeter: Final = UnitConstant(
+        UnitDefinition(
+            name="gram_force_per_centimeter",
+            symbol="$\\mathrm{g}_{\\mathrm{f}} / \\mathrm{cm}$",
+            dimension=dim.SURFACE_TENSION,
+            si_factor=0.0102,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_g_mathrm_f_mathrm_cm: Final = gram_force_per_centimeter
 
     # newton per meter
-    newton_per_meter: Final = UnitConstant(UnitDefinition(
-        name="newton_per_meter",
-        symbol="N/m",
-        dimension=dim.SURFACE_TENSION,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    newton_per_meter: Final = UnitConstant(
+        UnitDefinition(
+            name="newton_per_meter",
+            symbol="N/m",
+            dimension=dim.SURFACE_TENSION,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     N_m: Final = newton_per_meter
 
     # pound force per foot
-    pound_force_per_foot: Final = UnitConstant(UnitDefinition(
-        name="pound_force_per_foot",
-        symbol="$\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{ft}$",
-        dimension=dim.SURFACE_TENSION,
-        si_factor=14.594,
-        si_offset=0.0,
-    ))
+    pound_force_per_foot: Final = UnitConstant(
+        UnitDefinition(
+            name="pound_force_per_foot",
+            symbol="$\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{ft}$",
+            dimension=dim.SURFACE_TENSION,
+            si_factor=14.594,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_lb_mathrm_f_mathrm_ft: Final = pound_force_per_foot
 
     # pound force per inch
-    pound_force_per_inch: Final = UnitConstant(UnitDefinition(
-        name="pound_force_per_inch",
-        symbol="$\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{in}$",
-        dimension=dim.SURFACE_TENSION,
-        si_factor=175.13,
-        si_offset=0.0,
-    ))
+    pound_force_per_inch: Final = UnitConstant(
+        UnitDefinition(
+            name="pound_force_per_inch",
+            symbol="$\\mathrm{lb}_{\\mathrm{f}} / \\mathrm{in}$",
+            dimension=dim.SURFACE_TENSION,
+            si_factor=175.13,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_lb_mathrm_f_mathrm_in: Final = pound_force_per_inch
 
@@ -8132,57 +9522,67 @@ class TemperatureUnits:
     __slots__ = ()
 
     # degree Celsius (unit size)
-    degree_celsius_unit_size: Final = UnitConstant(UnitDefinition(
-        name="degree_celsius_unit_size",
-        symbol="$\\mathrm{C}^{\\circ}$",
-        dimension=dim.TEMPERATURE,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    degree_celsius_unit_size: Final = UnitConstant(
+        UnitDefinition(
+            name="degree_celsius_unit_size",
+            symbol="$\\mathrm{C}^{\\circ}$",
+            dimension=dim.TEMPERATURE,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_C_circ: Final = degree_celsius_unit_size
 
     # degree Fahrenheit (unit size)
-    degree_fahrenheit_unit_size: Final = UnitConstant(UnitDefinition(
-        name="degree_fahrenheit_unit_size",
-        symbol="$\\mathrm{F}^{\\circ}$",
-        dimension=dim.TEMPERATURE,
-        si_factor=0.555556,
-        si_offset=0.0,
-    ))
+    degree_fahrenheit_unit_size: Final = UnitConstant(
+        UnitDefinition(
+            name="degree_fahrenheit_unit_size",
+            symbol="$\\mathrm{F}^{\\circ}$",
+            dimension=dim.TEMPERATURE,
+            si_factor=0.555556,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_F_circ: Final = degree_fahrenheit_unit_size
 
     # degree Réaumur (unit size)
-    degree_r_aumur_unit_size: Final = UnitConstant(UnitDefinition(
-        name="degree_r_aumur_unit_size",
-        symbol="Ré ${ }^{\\circ}$",
-        dimension=dim.TEMPERATURE,
-        si_factor=1.25,
-        si_offset=0.0,
-    ))
+    degree_r_aumur_unit_size: Final = UnitConstant(
+        UnitDefinition(
+            name="degree_r_aumur_unit_size",
+            symbol="Ré ${ }^{\\circ}$",
+            dimension=dim.TEMPERATURE,
+            si_factor=1.25,
+            si_offset=0.0,
+        )
+    )
 
     R_circ: Final = degree_r_aumur_unit_size
 
     # kelvin (absolute scale)
-    kelvin_absolute_scale: Final = UnitConstant(UnitDefinition(
-        name="kelvin_absolute_scale",
-        symbol="K",
-        dimension=dim.TEMPERATURE,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    kelvin_absolute_scale: Final = UnitConstant(
+        UnitDefinition(
+            name="kelvin_absolute_scale",
+            symbol="K",
+            dimension=dim.TEMPERATURE,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     K: Final = kelvin_absolute_scale
 
     # Rankine (absolute scale)
-    rankine_absolute_scale: Final = UnitConstant(UnitDefinition(
-        name="rankine_absolute_scale",
-        symbol="${ }^{\\circ} \\mathrm{R}$",
-        dimension=dim.TEMPERATURE,
-        si_factor=0.555556,
-        si_offset=0.0,
-    ))
+    rankine_absolute_scale: Final = UnitConstant(
+        UnitDefinition(
+            name="rankine_absolute_scale",
+            symbol="${ }^{\\circ} \\mathrm{R}$",
+            dimension=dim.TEMPERATURE,
+            si_factor=0.555556,
+            si_offset=0.0,
+        )
+    )
 
     circ_mathrm_R: Final = rankine_absolute_scale
 
@@ -8193,79 +9593,93 @@ class ThermalConductivityUnits:
     __slots__ = ()
 
     # Btu (IT) per inch per hour per degree Fahrenheit
-    btu_it: Final = UnitConstant(UnitDefinition(
-        name="btu_it",
-        symbol="Btu (IT)/(in hr ${ }^{\\circ} \\mathrm{F}$ )",
-        dimension=dim.THERMAL_CONDUCTIVITY,
-        si_factor=0.207688,
-        si_offset=0.0,
-    ))
+    btu_it: Final = UnitConstant(
+        UnitDefinition(
+            name="btu_it",
+            symbol="Btu (IT)/(in hr ${ }^{\\circ} \\mathrm{F}$ )",
+            dimension=dim.THERMAL_CONDUCTIVITY,
+            si_factor=0.207688,
+            si_offset=0.0,
+        )
+    )
 
     Btu_IT_in_hr_circ_mathrm_F: Final = btu_it
 
     # Btu (therm) per foot per hour per degree Fahrenheit
-    btu_therm: Final = UnitConstant(UnitDefinition(
-        name="btu_therm",
-        symbol="$\\mathrm{Btu} /\\left(\\mathrm{ft} \\mathrm{hr}{ }^{\\circ} \\mathrm{F}\\right)$",
-        dimension=dim.THERMAL_CONDUCTIVITY,
-        si_factor=0.017296,
-        si_offset=0.0,
-    ))
+    btu_therm: Final = UnitConstant(
+        UnitDefinition(
+            name="btu_therm",
+            symbol="$\\mathrm{Btu} /\\left(\\mathrm{ft} \\mathrm{hr}{ }^{\\circ} \\mathrm{F}\\right)$",
+            dimension=dim.THERMAL_CONDUCTIVITY,
+            si_factor=0.017296,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_Btu_left_mathrm_ft_mathrm_hr_circ_mathrm_F_right: Final = btu_therm
 
     # Btu (therm) per inch per hour per degree Fahrenheit
-    btu_therm: Final = UnitConstant(UnitDefinition(
-        name="btu_therm",
-        symbol="Btu/(in hr ${ }^{\\circ} \\mathrm{F}$ )",
-        dimension=dim.THERMAL_CONDUCTIVITY,
-        si_factor=0.207549,
-        si_offset=0.0,
-    ))
+    btu_therm: Final = UnitConstant(
+        UnitDefinition(
+            name="btu_therm",
+            symbol="Btu/(in hr ${ }^{\\circ} \\mathrm{F}$ )",
+            dimension=dim.THERMAL_CONDUCTIVITY,
+            si_factor=0.207549,
+            si_offset=0.0,
+        )
+    )
 
     Btu_in_hr_circ_mathrm_F: Final = btu_therm
 
     # calorie (therm) per centimeter per second per degree Celsius
-    calorie_therm: Final = UnitConstant(UnitDefinition(
-        name="calorie_therm",
-        symbol="$\\operatorname{cal}(\\mathrm{IT}) /\\left(\\mathrm{cm} \\mathrm{s}^{\\circ} \\mathrm{C}\\right)$",
-        dimension=dim.THERMAL_CONDUCTIVITY,
-        si_factor=4.184,
-        si_offset=0.0,
-    ))
+    calorie_therm: Final = UnitConstant(
+        UnitDefinition(
+            name="calorie_therm",
+            symbol="$\\operatorname{cal}(\\mathrm{IT}) /\\left(\\mathrm{cm} \\mathrm{s}^{\\circ} \\mathrm{C}\\right)$",
+            dimension=dim.THERMAL_CONDUCTIVITY,
+            si_factor=4.184,
+            si_offset=0.0,
+        )
+    )
 
     operatorname_cal_mathrm_IT_left_mathrm_cm_mathrm_s_circ_mathrm_C_right: Final = calorie_therm
 
     # joule per second per centimeter per kelvin
-    joule_per_second_per_centimeter_per_kelvin: Final = UnitConstant(UnitDefinition(
-        name="joule_per_second_per_centimeter_per_kelvin",
-        symbol="J/(cm s K)",
-        dimension=dim.THERMAL_CONDUCTIVITY,
-        si_factor=0.01,
-        si_offset=0.0,
-    ))
+    joule_per_second_per_centimeter_per_kelvin: Final = UnitConstant(
+        UnitDefinition(
+            name="joule_per_second_per_centimeter_per_kelvin",
+            symbol="J/(cm s K)",
+            dimension=dim.THERMAL_CONDUCTIVITY,
+            si_factor=0.01,
+            si_offset=0.0,
+        )
+    )
 
     J_cm_s_K: Final = joule_per_second_per_centimeter_per_kelvin
 
     # watt per centimeter per kelvin
-    watt_per_centimeter_per_kelvin: Final = UnitConstant(UnitDefinition(
-        name="watt_per_centimeter_per_kelvin",
-        symbol="W/(cm K)",
-        dimension=dim.THERMAL_CONDUCTIVITY,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    watt_per_centimeter_per_kelvin: Final = UnitConstant(
+        UnitDefinition(
+            name="watt_per_centimeter_per_kelvin",
+            symbol="W/(cm K)",
+            dimension=dim.THERMAL_CONDUCTIVITY,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     W_cm_K: Final = watt_per_centimeter_per_kelvin
 
     # watt per meter per kelvin
-    watt_per_meter_per_kelvin: Final = UnitConstant(UnitDefinition(
-        name="watt_per_meter_per_kelvin",
-        symbol="W/(m K)",
-        dimension=dim.THERMAL_CONDUCTIVITY,
-        si_factor=0.01,
-        si_offset=0.0,
-    ))
+    watt_per_meter_per_kelvin: Final = UnitConstant(
+        UnitDefinition(
+            name="watt_per_meter_per_kelvin",
+            symbol="W/(m K)",
+            dimension=dim.THERMAL_CONDUCTIVITY,
+            si_factor=0.01,
+            si_offset=0.0,
+        )
+    )
 
     W_m_K: Final = watt_per_meter_per_kelvin
 
@@ -8276,207 +9690,245 @@ class TimeUnits:
     __slots__ = ()
 
     # blink
-    blink: Final = UnitConstant(UnitDefinition(
-        name="blink",
-        symbol="blink",
-        dimension=dim.TIME,
-        si_factor=0.864,
-        si_offset=0.0,
-    ))
+    blink: Final = UnitConstant(
+        UnitDefinition(
+            name="blink",
+            symbol="blink",
+            dimension=dim.TIME,
+            si_factor=0.864,
+            si_offset=0.0,
+        )
+    )
 
     # century
-    century: Final = UnitConstant(UnitDefinition(
-        name="century",
-        symbol="-",
-        dimension=dim.TIME,
-        si_factor=3155800000.0,
-        si_offset=0.0,
-    ))
+    century: Final = UnitConstant(
+        UnitDefinition(
+            name="century",
+            symbol="-",
+            dimension=dim.TIME,
+            si_factor=3155800000.0,
+            si_offset=0.0,
+        )
+    )
 
     # chronon or tempon
-    chronon_or_tempon: Final = UnitConstant(UnitDefinition(
-        name="chronon_or_tempon",
-        symbol="-",
-        dimension=dim.TIME,
-        si_factor=1e-23,
-        si_offset=0.0,
-    ))
+    chronon_or_tempon: Final = UnitConstant(
+        UnitDefinition(
+            name="chronon_or_tempon",
+            symbol="-",
+            dimension=dim.TIME,
+            si_factor=1e-23,
+            si_offset=0.0,
+        )
+    )
 
     # gigan or eon
-    gigan_or_eon: Final = UnitConstant(UnitDefinition(
-        name="gigan_or_eon",
-        symbol="Ga or eon",
-        dimension=dim.TIME,
-        si_factor=3.1558e+16,
-        si_offset=0.0,
-    ))
+    gigan_or_eon: Final = UnitConstant(
+        UnitDefinition(
+            name="gigan_or_eon",
+            symbol="Ga or eon",
+            dimension=dim.TIME,
+            si_factor=3.1558e16,
+            si_offset=0.0,
+        )
+    )
 
     Ga_or_eon: Final = gigan_or_eon
     Ga: Final = gigan_or_eon
     eon: Final = gigan_or_eon
 
     # hour
-    hour: Final = UnitConstant(UnitDefinition(
-        name="hour",
-        symbol="h or hr",
-        dimension=dim.TIME,
-        si_factor=3600.0,
-        si_offset=0.0,
-    ))
+    hour: Final = UnitConstant(
+        UnitDefinition(
+            name="hour",
+            symbol="h or hr",
+            dimension=dim.TIME,
+            si_factor=3600.0,
+            si_offset=0.0,
+        )
+    )
 
     h_or_hr: Final = hour
     h: Final = hour
     hr: Final = hour
 
     # Julian year
-    julian_year: Final = UnitConstant(UnitDefinition(
-        name="julian_year",
-        symbol="a (jul) or yr",
-        dimension=dim.TIME,
-        si_factor=31557000.0,
-        si_offset=0.0,
-    ))
+    julian_year: Final = UnitConstant(
+        UnitDefinition(
+            name="julian_year",
+            symbol="a (jul) or yr",
+            dimension=dim.TIME,
+            si_factor=31557000.0,
+            si_offset=0.0,
+        )
+    )
 
     a_jul_or_yr: Final = julian_year
     a_jul: Final = julian_year
     yr: Final = julian_year
 
     # mean solar day
-    mean_solar_day: Final = UnitConstant(UnitDefinition(
-        name="mean_solar_day",
-        symbol="da or d",
-        dimension=dim.TIME,
-        si_factor=86400.0,
-        si_offset=0.0,
-    ))
+    mean_solar_day: Final = UnitConstant(
+        UnitDefinition(
+            name="mean_solar_day",
+            symbol="da or d",
+            dimension=dim.TIME,
+            si_factor=86400.0,
+            si_offset=0.0,
+        )
+    )
 
     da_or_d: Final = mean_solar_day
     da: Final = mean_solar_day
     d: Final = mean_solar_day
 
     # millenium
-    millenium: Final = UnitConstant(UnitDefinition(
-        name="millenium",
-        symbol="-",
-        dimension=dim.TIME,
-        si_factor=31558000000.0,
-        si_offset=0.0,
-    ))
+    millenium: Final = UnitConstant(
+        UnitDefinition(
+            name="millenium",
+            symbol="-",
+            dimension=dim.TIME,
+            si_factor=31558000000.0,
+            si_offset=0.0,
+        )
+    )
 
     # minute
-    minute: Final = UnitConstant(UnitDefinition(
-        name="minute",
-        symbol="min",
-        dimension=dim.TIME,
-        si_factor=60.0,
-        si_offset=0.0,
-    ))
+    minute: Final = UnitConstant(
+        UnitDefinition(
+            name="minute",
+            symbol="min",
+            dimension=dim.TIME,
+            si_factor=60.0,
+            si_offset=0.0,
+        )
+    )
 
     min: Final = minute
 
     # second
-    second: Final = UnitConstant(UnitDefinition(
-        name="second",
-        symbol="s",
-        dimension=dim.TIME,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    second: Final = UnitConstant(
+        UnitDefinition(
+            name="second",
+            symbol="s",
+            dimension=dim.TIME,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     s: Final = second
 
     # shake
-    shake: Final = UnitConstant(UnitDefinition(
-        name="shake",
-        symbol="shake",
-        dimension=dim.TIME,
-        si_factor=1e-08,
-        si_offset=0.0,
-    ))
+    shake: Final = UnitConstant(
+        UnitDefinition(
+            name="shake",
+            symbol="shake",
+            dimension=dim.TIME,
+            si_factor=1e-08,
+            si_offset=0.0,
+        )
+    )
 
     # sidereal year (1900 AD)
-    sidereal_year_1900_ad: Final = UnitConstant(UnitDefinition(
-        name="sidereal_year_1900_ad",
-        symbol="a (sider) or yr",
-        dimension=dim.TIME,
-        si_factor=31551999.999999996,
-        si_offset=0.0,
-    ))
+    sidereal_year_1900_ad: Final = UnitConstant(
+        UnitDefinition(
+            name="sidereal_year_1900_ad",
+            symbol="a (sider) or yr",
+            dimension=dim.TIME,
+            si_factor=31551999.999999996,
+            si_offset=0.0,
+        )
+    )
 
     a_sider_or_yr: Final = sidereal_year_1900_ad
     a_sider: Final = sidereal_year_1900_ad
 
     # tropical year
-    tropical_year: Final = UnitConstant(UnitDefinition(
-        name="tropical_year",
-        symbol="a (trop)",
-        dimension=dim.TIME,
-        si_factor=31557000.0,
-        si_offset=0.0,
-    ))
+    tropical_year: Final = UnitConstant(
+        UnitDefinition(
+            name="tropical_year",
+            symbol="a (trop)",
+            dimension=dim.TIME,
+            si_factor=31557000.0,
+            si_offset=0.0,
+        )
+    )
 
     a_trop: Final = tropical_year
 
     # wink
-    wink: Final = UnitConstant(UnitDefinition(
-        name="wink",
-        symbol="wink",
-        dimension=dim.TIME,
-        si_factor=3.33333e-12,
-        si_offset=0.0,
-    ))
+    wink: Final = UnitConstant(
+        UnitDefinition(
+            name="wink",
+            symbol="wink",
+            dimension=dim.TIME,
+            si_factor=3.33333e-12,
+            si_offset=0.0,
+        )
+    )
 
     # year
-    year: Final = UnitConstant(UnitDefinition(
-        name="year",
-        symbol="a or y or yr",
-        dimension=dim.TIME,
-        si_factor=31558000.0,
-        si_offset=0.0,
-    ))
+    year: Final = UnitConstant(
+        UnitDefinition(
+            name="year",
+            symbol="a or y or yr",
+            dimension=dim.TIME,
+            si_factor=31558000.0,
+            si_offset=0.0,
+        )
+    )
 
     a_or_y_or_yr: Final = year
     y: Final = year
 
     # millisecond
-    millisecond: Final = UnitConstant(UnitDefinition(
-        name="millisecond",
-        symbol="ms",
-        dimension=dim.TIME,
-        si_factor=0.001,
-        si_offset=0.0,
-    ))
+    millisecond: Final = UnitConstant(
+        UnitDefinition(
+            name="millisecond",
+            symbol="ms",
+            dimension=dim.TIME,
+            si_factor=0.001,
+            si_offset=0.0,
+        )
+    )
 
     ms: Final = millisecond
 
     # microsecond
-    microsecond: Final = UnitConstant(UnitDefinition(
-        name="microsecond",
-        symbol="μs",
-        dimension=dim.TIME,
-        si_factor=1e-06,
-        si_offset=0.0,
-    ))
+    microsecond: Final = UnitConstant(
+        UnitDefinition(
+            name="microsecond",
+            symbol="μs",
+            dimension=dim.TIME,
+            si_factor=1e-06,
+            si_offset=0.0,
+        )
+    )
 
     # nanosecond
-    nanosecond: Final = UnitConstant(UnitDefinition(
-        name="nanosecond",
-        symbol="ns",
-        dimension=dim.TIME,
-        si_factor=1e-09,
-        si_offset=0.0,
-    ))
+    nanosecond: Final = UnitConstant(
+        UnitDefinition(
+            name="nanosecond",
+            symbol="ns",
+            dimension=dim.TIME,
+            si_factor=1e-09,
+            si_offset=0.0,
+        )
+    )
 
     ns: Final = nanosecond
 
     # picosecond
-    picosecond: Final = UnitConstant(UnitDefinition(
-        name="picosecond",
-        symbol="ps",
-        dimension=dim.TIME,
-        si_factor=1e-12,
-        si_offset=0.0,
-    ))
+    picosecond: Final = UnitConstant(
+        UnitDefinition(
+            name="picosecond",
+            symbol="ps",
+            dimension=dim.TIME,
+            si_factor=1e-12,
+            si_offset=0.0,
+        )
+    )
 
     ps: Final = picosecond
 
@@ -8487,108 +9939,128 @@ class TorqueUnits:
     __slots__ = ()
 
     # centimeter kilogram force
-    centimeter_kilogram_force: Final = UnitConstant(UnitDefinition(
-        name="centimeter_kilogram_force",
-        symbol="cm kg ${ }_{\\mathrm{f}}$",
-        dimension=dim.TORQUE,
-        si_factor=0.098067,
-        si_offset=0.0,
-    ))
+    centimeter_kilogram_force: Final = UnitConstant(
+        UnitDefinition(
+            name="centimeter_kilogram_force",
+            symbol="cm kg ${ }_{\\mathrm{f}}$",
+            dimension=dim.TORQUE,
+            si_factor=0.098067,
+            si_offset=0.0,
+        )
+    )
 
     cm_kg_mathrm_f: Final = centimeter_kilogram_force
 
     # dyne centimeter
-    dyne_centimeter: Final = UnitConstant(UnitDefinition(
-        name="dyne_centimeter",
-        symbol="dyn cm",
-        dimension=dim.TORQUE,
-        si_factor=1e-07,
-        si_offset=0.0,
-    ))
+    dyne_centimeter: Final = UnitConstant(
+        UnitDefinition(
+            name="dyne_centimeter",
+            symbol="dyn cm",
+            dimension=dim.TORQUE,
+            si_factor=1e-07,
+            si_offset=0.0,
+        )
+    )
 
     # foot kilogram force
-    foot_kilogram_force: Final = UnitConstant(UnitDefinition(
-        name="foot_kilogram_force",
-        symbol="$\\mathrm{ft} \\mathrm{kg}_{\\mathrm{f}}$",
-        dimension=dim.TORQUE,
-        si_factor=2.9891,
-        si_offset=0.0,
-    ))
+    foot_kilogram_force: Final = UnitConstant(
+        UnitDefinition(
+            name="foot_kilogram_force",
+            symbol="$\\mathrm{ft} \\mathrm{kg}_{\\mathrm{f}}$",
+            dimension=dim.TORQUE,
+            si_factor=2.9891,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_ft_mathrm_kg_mathrm_f: Final = foot_kilogram_force
 
     # foot pound force
-    foot_pound_force: Final = UnitConstant(UnitDefinition(
-        name="foot_pound_force",
-        symbol="$\\mathrm{ft} \\mathrm{lb}_{\\mathrm{f}}$",
-        dimension=dim.TORQUE,
-        si_factor=1.3558,
-        si_offset=0.0,
-    ))
+    foot_pound_force: Final = UnitConstant(
+        UnitDefinition(
+            name="foot_pound_force",
+            symbol="$\\mathrm{ft} \\mathrm{lb}_{\\mathrm{f}}$",
+            dimension=dim.TORQUE,
+            si_factor=1.3558,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_ft_mathrm_lb_mathrm_f: Final = foot_pound_force
 
     # foot poundal
-    foot_poundal: Final = UnitConstant(UnitDefinition(
-        name="foot_poundal",
-        symbol="ft pdl",
-        dimension=dim.TORQUE,
-        si_factor=0.04214,
-        si_offset=0.0,
-    ))
+    foot_poundal: Final = UnitConstant(
+        UnitDefinition(
+            name="foot_poundal",
+            symbol="ft pdl",
+            dimension=dim.TORQUE,
+            si_factor=0.04214,
+            si_offset=0.0,
+        )
+    )
 
     # in pound force
-    in_pound_force: Final = UnitConstant(UnitDefinition(
-        name="in_pound_force",
-        symbol="in $\\mathrm{lb}_{\\mathrm{f}}$",
-        dimension=dim.TORQUE,
-        si_factor=0.11298,
-        si_offset=0.0,
-    ))
+    in_pound_force: Final = UnitConstant(
+        UnitDefinition(
+            name="in_pound_force",
+            symbol="in $\\mathrm{lb}_{\\mathrm{f}}$",
+            dimension=dim.TORQUE,
+            si_factor=0.11298,
+            si_offset=0.0,
+        )
+    )
 
     in_mathrm_lb_mathrm_f: Final = in_pound_force
 
     # inch ounce force
-    inch_ounce_force: Final = UnitConstant(UnitDefinition(
-        name="inch_ounce_force",
-        symbol="in $\\mathrm{OZ}_{\\mathrm{f}}$",
-        dimension=dim.TORQUE,
-        si_factor=0.0070616,
-        si_offset=0.0,
-    ))
+    inch_ounce_force: Final = UnitConstant(
+        UnitDefinition(
+            name="inch_ounce_force",
+            symbol="in $\\mathrm{OZ}_{\\mathrm{f}}$",
+            dimension=dim.TORQUE,
+            si_factor=0.0070616,
+            si_offset=0.0,
+        )
+    )
 
     in_mathrm_OZ_mathrm_f: Final = inch_ounce_force
 
     # meter kilogram force
-    meter_kilogram_force: Final = UnitConstant(UnitDefinition(
-        name="meter_kilogram_force",
-        symbol="$\\mathrm{m} \\mathrm{kg}_{\\mathrm{f}}$",
-        dimension=dim.TORQUE,
-        si_factor=9.8067,
-        si_offset=0.0,
-    ))
+    meter_kilogram_force: Final = UnitConstant(
+        UnitDefinition(
+            name="meter_kilogram_force",
+            symbol="$\\mathrm{m} \\mathrm{kg}_{\\mathrm{f}}$",
+            dimension=dim.TORQUE,
+            si_factor=9.8067,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_m_mathrm_kg_mathrm_f: Final = meter_kilogram_force
 
     # newton centimeter
-    newton_centimeter: Final = UnitConstant(UnitDefinition(
-        name="newton_centimeter",
-        symbol="N cm",
-        dimension=dim.TORQUE,
-        si_factor=0.01,
-        si_offset=0.0,
-    ))
+    newton_centimeter: Final = UnitConstant(
+        UnitDefinition(
+            name="newton_centimeter",
+            symbol="N cm",
+            dimension=dim.TORQUE,
+            si_factor=0.01,
+            si_offset=0.0,
+        )
+    )
 
     N_cm: Final = newton_centimeter
 
     # newton meter
-    newton_meter: Final = UnitConstant(UnitDefinition(
-        name="newton_meter",
-        symbol="N m",
-        dimension=dim.TORQUE,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    newton_meter: Final = UnitConstant(
+        UnitDefinition(
+            name="newton_meter",
+            symbol="N m",
+            dimension=dim.TORQUE,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
 
 class TurbulenceEnergyDissipationRateUnits:
@@ -8597,26 +10069,30 @@ class TurbulenceEnergyDissipationRateUnits:
     __slots__ = ()
 
     # square foot per cubic second
-    square_foot_per_cubic_second: Final = UnitConstant(UnitDefinition(
-        name="square_foot_per_cubic_second",
-        symbol="$\\mathrm{ft}^{2} / \\mathrm{s}^{3}$ or sq ft/sec ${ }^{3}$",
-        dimension=dim.TURBULENCE_ENERGY_DISSIPATION_RATE,
-        si_factor=0.0929,
-        si_offset=0.0,
-    ))
+    square_foot_per_cubic_second: Final = UnitConstant(
+        UnitDefinition(
+            name="square_foot_per_cubic_second",
+            symbol="$\\mathrm{ft}^{2} / \\mathrm{s}^{3}$ or sq ft/sec ${ }^{3}$",
+            dimension=dim.TURBULENCE_ENERGY_DISSIPATION_RATE,
+            si_factor=0.0929,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_ft_2_mathrm_s_3_or_sq_ft_sec_3: Final = square_foot_per_cubic_second
     ft_2_s_3: Final = square_foot_per_cubic_second
     sq_ft_sec_3: Final = square_foot_per_cubic_second
 
     # square meter per cubic second
-    square_meter_per_cubic_second: Final = UnitConstant(UnitDefinition(
-        name="square_meter_per_cubic_second",
-        symbol="$\\mathrm{m}^{2} / \\mathrm{s}^{3}$",
-        dimension=dim.TURBULENCE_ENERGY_DISSIPATION_RATE,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    square_meter_per_cubic_second: Final = UnitConstant(
+        UnitDefinition(
+            name="square_meter_per_cubic_second",
+            symbol="$\\mathrm{m}^{2} / \\mathrm{s}^{3}$",
+            dimension=dim.TURBULENCE_ENERGY_DISSIPATION_RATE,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_m_2_mathrm_s_3: Final = square_meter_per_cubic_second
 
@@ -8627,100 +10103,116 @@ class VelocityAngularUnits:
     __slots__ = ()
 
     # degree per minute
-    degree_per_minute: Final = UnitConstant(UnitDefinition(
-        name="degree_per_minute",
-        symbol="deg/min or ${ }^{\\circ} / \\mathrm{min}$",
-        dimension=dim.VELOCITY_ANGULAR,
-        si_factor=0.000290888,
-        si_offset=0.0,
-    ))
+    degree_per_minute: Final = UnitConstant(
+        UnitDefinition(
+            name="degree_per_minute",
+            symbol="deg/min or ${ }^{\\circ} / \\mathrm{min}$",
+            dimension=dim.VELOCITY_ANGULAR,
+            si_factor=0.000290888,
+            si_offset=0.0,
+        )
+    )
 
     deg_min_or_circ_mathrm_min: Final = degree_per_minute
     deg_min: Final = degree_per_minute
     circ_min: Final = degree_per_minute
 
     # degree per second
-    degree_per_second: Final = UnitConstant(UnitDefinition(
-        name="degree_per_second",
-        symbol="deg/s or ${ }^{\\circ}$ /s",
-        dimension=dim.VELOCITY_ANGULAR,
-        si_factor=0.0174533,
-        si_offset=0.0,
-    ))
+    degree_per_second: Final = UnitConstant(
+        UnitDefinition(
+            name="degree_per_second",
+            symbol="deg/s or ${ }^{\\circ}$ /s",
+            dimension=dim.VELOCITY_ANGULAR,
+            si_factor=0.0174533,
+            si_offset=0.0,
+        )
+    )
 
     deg_s_or_circ_s: Final = degree_per_second
     deg_s: Final = degree_per_second
     circ_s: Final = degree_per_second
 
     # grade per minute
-    grade_per_minute: Final = UnitConstant(UnitDefinition(
-        name="grade_per_minute",
-        symbol="gon/min or grad/min",
-        dimension=dim.VELOCITY_ANGULAR,
-        si_factor=0.000261799,
-        si_offset=0.0,
-    ))
+    grade_per_minute: Final = UnitConstant(
+        UnitDefinition(
+            name="grade_per_minute",
+            symbol="gon/min or grad/min",
+            dimension=dim.VELOCITY_ANGULAR,
+            si_factor=0.000261799,
+            si_offset=0.0,
+        )
+    )
 
     gon_min_or_grad_min: Final = grade_per_minute
     gon_min: Final = grade_per_minute
     grad_min: Final = grade_per_minute
 
     # radian per minute
-    radian_per_minute: Final = UnitConstant(UnitDefinition(
-        name="radian_per_minute",
-        symbol="$\\mathrm{rad} / \\mathrm{min}$",
-        dimension=dim.VELOCITY_ANGULAR,
-        si_factor=0.016667,
-        si_offset=0.0,
-    ))
+    radian_per_minute: Final = UnitConstant(
+        UnitDefinition(
+            name="radian_per_minute",
+            symbol="$\\mathrm{rad} / \\mathrm{min}$",
+            dimension=dim.VELOCITY_ANGULAR,
+            si_factor=0.016667,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_rad_mathrm_min: Final = radian_per_minute
 
     # radian per second
-    radian_per_second: Final = UnitConstant(UnitDefinition(
-        name="radian_per_second",
-        symbol="$\\mathrm{rad} / \\mathrm{s}$",
-        dimension=dim.VELOCITY_ANGULAR,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    radian_per_second: Final = UnitConstant(
+        UnitDefinition(
+            name="radian_per_second",
+            symbol="$\\mathrm{rad} / \\mathrm{s}$",
+            dimension=dim.VELOCITY_ANGULAR,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_rad_mathrm_s: Final = radian_per_second
 
     # revolution per minute
-    revolution_per_minute: Final = UnitConstant(UnitDefinition(
-        name="revolution_per_minute",
-        symbol="rev/m or rpm",
-        dimension=dim.VELOCITY_ANGULAR,
-        si_factor=0.010472,
-        si_offset=0.0,
-    ))
+    revolution_per_minute: Final = UnitConstant(
+        UnitDefinition(
+            name="revolution_per_minute",
+            symbol="rev/m or rpm",
+            dimension=dim.VELOCITY_ANGULAR,
+            si_factor=0.010472,
+            si_offset=0.0,
+        )
+    )
 
     rev_m_or_rpm: Final = revolution_per_minute
     rev_m: Final = revolution_per_minute
     rpm: Final = revolution_per_minute
 
     # revolution per second
-    revolution_per_second: Final = UnitConstant(UnitDefinition(
-        name="revolution_per_second",
-        symbol="rev/s or rps",
-        dimension=dim.VELOCITY_ANGULAR,
-        si_factor=6.283185,
-        si_offset=0.0,
-    ))
+    revolution_per_second: Final = UnitConstant(
+        UnitDefinition(
+            name="revolution_per_second",
+            symbol="rev/s or rps",
+            dimension=dim.VELOCITY_ANGULAR,
+            si_factor=6.283185,
+            si_offset=0.0,
+        )
+    )
 
     rev_s_or_rps: Final = revolution_per_second
     rev_s: Final = revolution_per_second
     rps: Final = revolution_per_second
 
     # turn per minute
-    turn_per_minute: Final = UnitConstant(UnitDefinition(
-        name="turn_per_minute",
-        symbol="tr/min",
-        dimension=dim.VELOCITY_ANGULAR,
-        si_factor=0.010472,
-        si_offset=0.0,
-    ))
+    turn_per_minute: Final = UnitConstant(
+        UnitDefinition(
+            name="turn_per_minute",
+            symbol="tr/min",
+            dimension=dim.VELOCITY_ANGULAR,
+            si_factor=0.010472,
+            si_offset=0.0,
+        )
+    )
 
     tr_min: Final = turn_per_minute
 
@@ -8731,13 +10223,15 @@ class VelocityLinearUnits:
     __slots__ = ()
 
     # foot per hour
-    foot_per_hour: Final = UnitConstant(UnitDefinition(
-        name="foot_per_hour",
-        symbol="ft/h or ft/hr or fph",
-        dimension=dim.VELOCITY_LINEAR,
-        si_factor=8.4667e-05,
-        si_offset=0.0,
-    ))
+    foot_per_hour: Final = UnitConstant(
+        UnitDefinition(
+            name="foot_per_hour",
+            symbol="ft/h or ft/hr or fph",
+            dimension=dim.VELOCITY_LINEAR,
+            si_factor=8.4667e-05,
+            si_offset=0.0,
+        )
+    )
 
     ft_h_or_ft_hr_or_fph: Final = foot_per_hour
     ft_h: Final = foot_per_hour
@@ -8745,96 +10239,112 @@ class VelocityLinearUnits:
     fph: Final = foot_per_hour
 
     # foot per minute
-    foot_per_minute: Final = UnitConstant(UnitDefinition(
-        name="foot_per_minute",
-        symbol="ft/min or fpm",
-        dimension=dim.VELOCITY_LINEAR,
-        si_factor=0.00508,
-        si_offset=0.0,
-    ))
+    foot_per_minute: Final = UnitConstant(
+        UnitDefinition(
+            name="foot_per_minute",
+            symbol="ft/min or fpm",
+            dimension=dim.VELOCITY_LINEAR,
+            si_factor=0.00508,
+            si_offset=0.0,
+        )
+    )
 
     ft_min_or_fpm: Final = foot_per_minute
     ft_min: Final = foot_per_minute
     fpm: Final = foot_per_minute
 
     # foot per second
-    foot_per_second: Final = UnitConstant(UnitDefinition(
-        name="foot_per_second",
-        symbol="ft/s or fps",
-        dimension=dim.VELOCITY_LINEAR,
-        si_factor=0.3048,
-        si_offset=0.0,
-    ))
+    foot_per_second: Final = UnitConstant(
+        UnitDefinition(
+            name="foot_per_second",
+            symbol="ft/s or fps",
+            dimension=dim.VELOCITY_LINEAR,
+            si_factor=0.3048,
+            si_offset=0.0,
+        )
+    )
 
     ft_s_or_fps: Final = foot_per_second
     ft_s: Final = foot_per_second
     fps: Final = foot_per_second
 
     # inch per second
-    inch_per_second: Final = UnitConstant(UnitDefinition(
-        name="inch_per_second",
-        symbol="in/s or ips",
-        dimension=dim.VELOCITY_LINEAR,
-        si_factor=0.0254,
-        si_offset=0.0,
-    ))
+    inch_per_second: Final = UnitConstant(
+        UnitDefinition(
+            name="inch_per_second",
+            symbol="in/s or ips",
+            dimension=dim.VELOCITY_LINEAR,
+            si_factor=0.0254,
+            si_offset=0.0,
+        )
+    )
 
     in_s_or_ips: Final = inch_per_second
     in_s: Final = inch_per_second
     ips: Final = inch_per_second
 
     # international knot
-    international_knot: Final = UnitConstant(UnitDefinition(
-        name="international_knot",
-        symbol="knot",
-        dimension=dim.VELOCITY_LINEAR,
-        si_factor=0.0514444,
-        si_offset=0.0,
-    ))
+    international_knot: Final = UnitConstant(
+        UnitDefinition(
+            name="international_knot",
+            symbol="knot",
+            dimension=dim.VELOCITY_LINEAR,
+            si_factor=0.0514444,
+            si_offset=0.0,
+        )
+    )
 
     knot: Final = international_knot
 
     # kilometer per hour
-    kilometer_per_hour: Final = UnitConstant(UnitDefinition(
-        name="kilometer_per_hour",
-        symbol="km/h ot kph",
-        dimension=dim.VELOCITY_LINEAR,
-        si_factor=0.027778,
-        si_offset=0.0,
-    ))
+    kilometer_per_hour: Final = UnitConstant(
+        UnitDefinition(
+            name="kilometer_per_hour",
+            symbol="km/h ot kph",
+            dimension=dim.VELOCITY_LINEAR,
+            si_factor=0.027778,
+            si_offset=0.0,
+        )
+    )
 
     km_h_ot_kph: Final = kilometer_per_hour
 
     # kilometer per second
-    kilometer_per_second: Final = UnitConstant(UnitDefinition(
-        name="kilometer_per_second",
-        symbol="km/s",
-        dimension=dim.VELOCITY_LINEAR,
-        si_factor=1000.0,
-        si_offset=0.0,
-    ))
+    kilometer_per_second: Final = UnitConstant(
+        UnitDefinition(
+            name="kilometer_per_second",
+            symbol="km/s",
+            dimension=dim.VELOCITY_LINEAR,
+            si_factor=1000.0,
+            si_offset=0.0,
+        )
+    )
 
     km_s: Final = kilometer_per_second
 
     # meter per second
-    meter_per_second: Final = UnitConstant(UnitDefinition(
-        name="meter_per_second",
-        symbol="$\\mathrm{m} / \\mathrm{s}$",
-        dimension=dim.VELOCITY_LINEAR,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    meter_per_second: Final = UnitConstant(
+        UnitDefinition(
+            name="meter_per_second",
+            symbol="$\\mathrm{m} / \\mathrm{s}$",
+            dimension=dim.VELOCITY_LINEAR,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_m_mathrm_s: Final = meter_per_second
 
     # mile per hour
-    mile_per_hour: Final = UnitConstant(UnitDefinition(
-        name="mile_per_hour",
-        symbol="$\\mathrm{mi} / \\mathrm{h}$ or $\\mathrm{mi} / \\mathrm{hr}$ or mph",
-        dimension=dim.VELOCITY_LINEAR,
-        si_factor=0.0444704,
-        si_offset=0.0,
-    ))
+    mile_per_hour: Final = UnitConstant(
+        UnitDefinition(
+            name="mile_per_hour",
+            symbol="$\\mathrm{mi} / \\mathrm{h}$ or $\\mathrm{mi} / \\mathrm{hr}$ or mph",
+            dimension=dim.VELOCITY_LINEAR,
+            si_factor=0.0444704,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_mi_mathrm_h_or_mathrm_mi_mathrm_hr_or_mph: Final = mile_per_hour
     mi_h: Final = mile_per_hour
@@ -8848,111 +10358,129 @@ class ViscosityDynamicUnits:
     __slots__ = ()
 
     # centipoise
-    centipoise: Final = UnitConstant(UnitDefinition(
-        name="centipoise",
-        symbol="cP or cPo",
-        dimension=dim.VISCOSITY_DYNAMIC,
-        si_factor=0.01,
-        si_offset=0.0,
-    ))
+    centipoise: Final = UnitConstant(
+        UnitDefinition(
+            name="centipoise",
+            symbol="cP or cPo",
+            dimension=dim.VISCOSITY_DYNAMIC,
+            si_factor=0.01,
+            si_offset=0.0,
+        )
+    )
 
     cP_or_cPo: Final = centipoise
     cP: Final = centipoise
     cPo: Final = centipoise
 
     # dyne second per square centimeter
-    dyne_second_per_square_centimeter: Final = UnitConstant(UnitDefinition(
-        name="dyne_second_per_square_centimeter",
-        symbol="dyn s/ $\\mathrm{cm}^{2}$",
-        dimension=dim.VISCOSITY_DYNAMIC,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    dyne_second_per_square_centimeter: Final = UnitConstant(
+        UnitDefinition(
+            name="dyne_second_per_square_centimeter",
+            symbol="dyn s/ $\\mathrm{cm}^{2}$",
+            dimension=dim.VISCOSITY_DYNAMIC,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     dyn_s_mathrm_cm_2: Final = dyne_second_per_square_centimeter
 
     # kilopound second per square meter
-    kilopound_second_per_square_meter: Final = UnitConstant(UnitDefinition(
-        name="kilopound_second_per_square_meter",
-        symbol="kip $\\mathrm{s} / \\mathrm{m}^{2}$",
-        dimension=dim.VISCOSITY_DYNAMIC,
-        si_factor=98.0665,
-        si_offset=0.0,
-    ))
+    kilopound_second_per_square_meter: Final = UnitConstant(
+        UnitDefinition(
+            name="kilopound_second_per_square_meter",
+            symbol="kip $\\mathrm{s} / \\mathrm{m}^{2}$",
+            dimension=dim.VISCOSITY_DYNAMIC,
+            si_factor=98.0665,
+            si_offset=0.0,
+        )
+    )
 
     kip_mathrm_s_mathrm_m_2: Final = kilopound_second_per_square_meter
 
     # millipoise
-    millipoise: Final = UnitConstant(UnitDefinition(
-        name="millipoise",
-        symbol="mP or mPo",
-        dimension=dim.VISCOSITY_DYNAMIC,
-        si_factor=0.001,
-        si_offset=0.0,
-    ))
+    millipoise: Final = UnitConstant(
+        UnitDefinition(
+            name="millipoise",
+            symbol="mP or mPo",
+            dimension=dim.VISCOSITY_DYNAMIC,
+            si_factor=0.001,
+            si_offset=0.0,
+        )
+    )
 
     mP_or_mPo: Final = millipoise
     mP: Final = millipoise
     mPo: Final = millipoise
 
     # newton second per square meter
-    newton_second_per_square_meter: Final = UnitConstant(UnitDefinition(
-        name="newton_second_per_square_meter",
-        symbol="$\\mathrm{N} \\mathrm{s} / \\mathrm{m}^{2}$",
-        dimension=dim.VISCOSITY_DYNAMIC,
-        si_factor=10.0,
-        si_offset=0.0,
-    ))
+    newton_second_per_square_meter: Final = UnitConstant(
+        UnitDefinition(
+            name="newton_second_per_square_meter",
+            symbol="$\\mathrm{N} \\mathrm{s} / \\mathrm{m}^{2}$",
+            dimension=dim.VISCOSITY_DYNAMIC,
+            si_factor=10.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_N_mathrm_s_mathrm_m_2: Final = newton_second_per_square_meter
 
     # pascal second
-    pascal_second: Final = UnitConstant(UnitDefinition(
-        name="pascal_second",
-        symbol="Pa s or PI",
-        dimension=dim.VISCOSITY_DYNAMIC,
-        si_factor=10.0,
-        si_offset=0.0,
-    ))
+    pascal_second: Final = UnitConstant(
+        UnitDefinition(
+            name="pascal_second",
+            symbol="Pa s or PI",
+            dimension=dim.VISCOSITY_DYNAMIC,
+            si_factor=10.0,
+            si_offset=0.0,
+        )
+    )
 
     Pa_s_or_PI: Final = pascal_second
     Pa_s: Final = pascal_second
     PI: Final = pascal_second
 
     # poise
-    poise: Final = UnitConstant(UnitDefinition(
-        name="poise",
-        symbol="P or Po",
-        dimension=dim.VISCOSITY_DYNAMIC,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    poise: Final = UnitConstant(
+        UnitDefinition(
+            name="poise",
+            symbol="P or Po",
+            dimension=dim.VISCOSITY_DYNAMIC,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     P_or_Po: Final = poise
     P: Final = poise
     Po: Final = poise
 
     # pound force hour per square foot
-    pound_force_hour_per_square_foot: Final = UnitConstant(UnitDefinition(
-        name="pound_force_hour_per_square_foot",
-        symbol="$\\mathrm{lb}_{\\mathrm{f}} \\mathrm{h} / \\mathrm{ft}^{2}$ or $\\mathrm{lb} \\mathrm{hr} / \\mathrm{sq}$ ft",
-        dimension=dim.VISCOSITY_DYNAMIC,
-        si_factor=1723690.0,
-        si_offset=0.0,
-    ))
+    pound_force_hour_per_square_foot: Final = UnitConstant(
+        UnitDefinition(
+            name="pound_force_hour_per_square_foot",
+            symbol="$\\mathrm{lb}_{\\mathrm{f}} \\mathrm{h} / \\mathrm{ft}^{2}$ or $\\mathrm{lb} \\mathrm{hr} / \\mathrm{sq}$ ft",
+            dimension=dim.VISCOSITY_DYNAMIC,
+            si_factor=1723690.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_lb_mathrm_f_mathrm_h_mathrm_ft_2_or_mathrm_lb_mathrm_hr_mathrm_sq_ft: Final = pound_force_hour_per_square_foot
     lb_f_h_ft_2: Final = pound_force_hour_per_square_foot
     lb_hr_sq_ft: Final = pound_force_hour_per_square_foot
 
     # pound force second per square foot
-    pound_force_second_per_square_foot: Final = UnitConstant(UnitDefinition(
-        name="pound_force_second_per_square_foot",
-        symbol="$\\mathrm{lb}_{\\mathrm{f}} \\mathrm{s} / \\mathrm{ft}^{2}$ or $\\mathrm{lb} \\mathrm{sec} / \\mathrm{sq}$ ft",
-        dimension=dim.VISCOSITY_DYNAMIC,
-        si_factor=478.803,
-        si_offset=0.0,
-    ))
+    pound_force_second_per_square_foot: Final = UnitConstant(
+        UnitDefinition(
+            name="pound_force_second_per_square_foot",
+            symbol="$\\mathrm{lb}_{\\mathrm{f}} \\mathrm{s} / \\mathrm{ft}^{2}$ or $\\mathrm{lb} \\mathrm{sec} / \\mathrm{sq}$ ft",
+            dimension=dim.VISCOSITY_DYNAMIC,
+            si_factor=478.803,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_lb_mathrm_f_mathrm_s_mathrm_ft_2_or_mathrm_lb_mathrm_sec_mathrm_sq_ft: Final = pound_force_second_per_square_foot
     lb_f_s_ft_2: Final = pound_force_second_per_square_foot
@@ -8965,81 +10493,95 @@ class ViscosityKinematicUnits:
     __slots__ = ()
 
     # centistokes
-    centistokes: Final = UnitConstant(UnitDefinition(
-        name="centistokes",
-        symbol="cSt",
-        dimension=dim.VISCOSITY_KINEMATIC,
-        si_factor=1e-06,
-        si_offset=0.0,
-    ))
+    centistokes: Final = UnitConstant(
+        UnitDefinition(
+            name="centistokes",
+            symbol="cSt",
+            dimension=dim.VISCOSITY_KINEMATIC,
+            si_factor=1e-06,
+            si_offset=0.0,
+        )
+    )
 
     cSt: Final = centistokes
 
     # millistokes
-    millistokes: Final = UnitConstant(UnitDefinition(
-        name="millistokes",
-        symbol="mSt",
-        dimension=dim.VISCOSITY_KINEMATIC,
-        si_factor=1e-07,
-        si_offset=0.0,
-    ))
+    millistokes: Final = UnitConstant(
+        UnitDefinition(
+            name="millistokes",
+            symbol="mSt",
+            dimension=dim.VISCOSITY_KINEMATIC,
+            si_factor=1e-07,
+            si_offset=0.0,
+        )
+    )
 
     mSt: Final = millistokes
 
     # square centimeter per second
-    square_centimeter_per_second: Final = UnitConstant(UnitDefinition(
-        name="square_centimeter_per_second",
-        symbol="$\\mathrm{cm}^{2} / \\mathrm{s}$",
-        dimension=dim.VISCOSITY_KINEMATIC,
-        si_factor=0.0001,
-        si_offset=0.0,
-    ))
+    square_centimeter_per_second: Final = UnitConstant(
+        UnitDefinition(
+            name="square_centimeter_per_second",
+            symbol="$\\mathrm{cm}^{2} / \\mathrm{s}$",
+            dimension=dim.VISCOSITY_KINEMATIC,
+            si_factor=0.0001,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_cm_2_mathrm_s: Final = square_centimeter_per_second
 
     # square foot per hour
-    square_foot_per_hour: Final = UnitConstant(UnitDefinition(
-        name="square_foot_per_hour",
-        symbol="$\\mathrm{ft}^{2} / \\mathrm{h}$ or $\\mathrm{ft}^{2} / \\mathrm{hr}$",
-        dimension=dim.VISCOSITY_KINEMATIC,
-        si_factor=2.58064e-05,
-        si_offset=0.0,
-    ))
+    square_foot_per_hour: Final = UnitConstant(
+        UnitDefinition(
+            name="square_foot_per_hour",
+            symbol="$\\mathrm{ft}^{2} / \\mathrm{h}$ or $\\mathrm{ft}^{2} / \\mathrm{hr}$",
+            dimension=dim.VISCOSITY_KINEMATIC,
+            si_factor=2.58064e-05,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_ft_2_mathrm_h_or_mathrm_ft_2_mathrm_hr: Final = square_foot_per_hour
     ft_2_h: Final = square_foot_per_hour
     ft_2_hr: Final = square_foot_per_hour
 
     # square foot per second
-    square_foot_per_second: Final = UnitConstant(UnitDefinition(
-        name="square_foot_per_second",
-        symbol="$\\mathrm{ft}^{2} / \\mathrm{s}$",
-        dimension=dim.VISCOSITY_KINEMATIC,
-        si_factor=0.092903,
-        si_offset=0.0,
-    ))
+    square_foot_per_second: Final = UnitConstant(
+        UnitDefinition(
+            name="square_foot_per_second",
+            symbol="$\\mathrm{ft}^{2} / \\mathrm{s}$",
+            dimension=dim.VISCOSITY_KINEMATIC,
+            si_factor=0.092903,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_ft_2_mathrm_s: Final = square_foot_per_second
 
     # square meters per second
-    square_meters_per_second: Final = UnitConstant(UnitDefinition(
-        name="square_meters_per_second",
-        symbol="$\\mathrm{m}^{2} / \\mathrm{s}$",
-        dimension=dim.VISCOSITY_KINEMATIC,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    square_meters_per_second: Final = UnitConstant(
+        UnitDefinition(
+            name="square_meters_per_second",
+            symbol="$\\mathrm{m}^{2} / \\mathrm{s}$",
+            dimension=dim.VISCOSITY_KINEMATIC,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_m_2_mathrm_s: Final = square_meters_per_second
 
     # stokes
-    stokes: Final = UnitConstant(UnitDefinition(
-        name="stokes",
-        symbol="St",
-        dimension=dim.VISCOSITY_KINEMATIC,
-        si_factor=0.0001,
-        si_offset=0.0,
-    ))
+    stokes: Final = UnitConstant(
+        UnitDefinition(
+            name="stokes",
+            symbol="St",
+            dimension=dim.VISCOSITY_KINEMATIC,
+            si_factor=0.0001,
+            si_offset=0.0,
+        )
+    )
 
     St: Final = stokes
 
@@ -9050,464 +10592,546 @@ class VolumeUnits:
     __slots__ = ()
 
     # acre foot
-    acre_foot: Final = UnitConstant(UnitDefinition(
-        name="acre_foot",
-        symbol="ac-ft",
-        dimension=dim.VOLUME,
-        si_factor=1233.48,
-        si_offset=0.0,
-    ))
+    acre_foot: Final = UnitConstant(
+        UnitDefinition(
+            name="acre_foot",
+            symbol="ac-ft",
+            dimension=dim.VOLUME,
+            si_factor=1233.48,
+            si_offset=0.0,
+        )
+    )
 
     ac_ft: Final = acre_foot
 
     # acre inch
-    acre_inch: Final = UnitConstant(UnitDefinition(
-        name="acre_inch",
-        symbol="ac-in",
-        dimension=dim.VOLUME,
-        si_factor=102.79,
-        si_offset=0.0,
-    ))
+    acre_inch: Final = UnitConstant(
+        UnitDefinition(
+            name="acre_inch",
+            symbol="ac-in",
+            dimension=dim.VOLUME,
+            si_factor=102.79,
+            si_offset=0.0,
+        )
+    )
 
     ac_in: Final = acre_inch
 
     # barrel (US Liquid)
-    barrel_us_liquid: Final = UnitConstant(UnitDefinition(
-        name="barrel_us_liquid",
-        symbol="bbl (US liq)",
-        dimension=dim.VOLUME,
-        si_factor=0.1192405,
-        si_offset=0.0,
-    ))
+    barrel_us_liquid: Final = UnitConstant(
+        UnitDefinition(
+            name="barrel_us_liquid",
+            symbol="bbl (US liq)",
+            dimension=dim.VOLUME,
+            si_factor=0.1192405,
+            si_offset=0.0,
+        )
+    )
 
     bbl_US_liq: Final = barrel_us_liquid
 
     # barrel (US, Petro)
-    barrel_us_petro: Final = UnitConstant(UnitDefinition(
-        name="barrel_us_petro",
-        symbol="bbl",
-        dimension=dim.VOLUME,
-        si_factor=0.158987,
-        si_offset=0.0,
-    ))
+    barrel_us_petro: Final = UnitConstant(
+        UnitDefinition(
+            name="barrel_us_petro",
+            symbol="bbl",
+            dimension=dim.VOLUME,
+            si_factor=0.158987,
+            si_offset=0.0,
+        )
+    )
 
     bbl: Final = barrel_us_petro
 
     # board foot measure
-    board_foot_measure: Final = UnitConstant(UnitDefinition(
-        name="board_foot_measure",
-        symbol="BM or fbm",
-        dimension=dim.VOLUME,
-        si_factor=0.00235974,
-        si_offset=0.0,
-    ))
+    board_foot_measure: Final = UnitConstant(
+        UnitDefinition(
+            name="board_foot_measure",
+            symbol="BM or fbm",
+            dimension=dim.VOLUME,
+            si_factor=0.00235974,
+            si_offset=0.0,
+        )
+    )
 
     BM_or_fbm: Final = board_foot_measure
     BM: Final = board_foot_measure
     fbm: Final = board_foot_measure
 
     # bushel (US Dry)
-    bushel_us_dry: Final = UnitConstant(UnitDefinition(
-        name="bushel_us_dry",
-        symbol="bu (US dry)",
-        dimension=dim.VOLUME,
-        si_factor=0.0352391,
-        si_offset=0.0,
-    ))
+    bushel_us_dry: Final = UnitConstant(
+        UnitDefinition(
+            name="bushel_us_dry",
+            symbol="bu (US dry)",
+            dimension=dim.VOLUME,
+            si_factor=0.0352391,
+            si_offset=0.0,
+        )
+    )
 
     bu_US_dry: Final = bushel_us_dry
 
     # centiliter
-    centiliter: Final = UnitConstant(UnitDefinition(
-        name="centiliter",
-        symbol="cl or cL",
-        dimension=dim.VOLUME,
-        si_factor=1e-05,
-        si_offset=0.0,
-    ))
+    centiliter: Final = UnitConstant(
+        UnitDefinition(
+            name="centiliter",
+            symbol="cl or cL",
+            dimension=dim.VOLUME,
+            si_factor=1e-05,
+            si_offset=0.0,
+        )
+    )
 
     cl_or_cL: Final = centiliter
     cL: Final = centiliter
 
     # cord
-    cord: Final = UnitConstant(UnitDefinition(
-        name="cord",
-        symbol="cord or cd",
-        dimension=dim.VOLUME,
-        si_factor=3.62456,
-        si_offset=0.0,
-    ))
+    cord: Final = UnitConstant(
+        UnitDefinition(
+            name="cord",
+            symbol="cord or cd",
+            dimension=dim.VOLUME,
+            si_factor=3.62456,
+            si_offset=0.0,
+        )
+    )
 
     cord_or_cd: Final = cord
 
     # cord foot
-    cord_foot: Final = UnitConstant(UnitDefinition(
-        name="cord_foot",
-        symbol="cord-ft",
-        dimension=dim.VOLUME,
-        si_factor=0.4530695,
-        si_offset=0.0,
-    ))
+    cord_foot: Final = UnitConstant(
+        UnitDefinition(
+            name="cord_foot",
+            symbol="cord-ft",
+            dimension=dim.VOLUME,
+            si_factor=0.4530695,
+            si_offset=0.0,
+        )
+    )
 
     cord_ft: Final = cord_foot
 
     # cubic centimeter
-    cubic_centimeter: Final = UnitConstant(UnitDefinition(
-        name="cubic_centimeter",
-        symbol="$\\mathrm{cm}^{3}$ or cc",
-        dimension=dim.VOLUME,
-        si_factor=1e-06,
-        si_offset=0.0,
-    ))
+    cubic_centimeter: Final = UnitConstant(
+        UnitDefinition(
+            name="cubic_centimeter",
+            symbol="$\\mathrm{cm}^{3}$ or cc",
+            dimension=dim.VOLUME,
+            si_factor=1e-06,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_cm_3_or_cc: Final = cubic_centimeter
     cm_3: Final = cubic_centimeter
 
     # cubic decameter
-    cubic_decameter: Final = UnitConstant(UnitDefinition(
-        name="cubic_decameter",
-        symbol="dam ${ }^{3}$",
-        dimension=dim.VOLUME,
-        si_factor=1000.0,
-        si_offset=0.0,
-    ))
+    cubic_decameter: Final = UnitConstant(
+        UnitDefinition(
+            name="cubic_decameter",
+            symbol="dam ${ }^{3}$",
+            dimension=dim.VOLUME,
+            si_factor=1000.0,
+            si_offset=0.0,
+        )
+    )
 
     dam_3: Final = cubic_decameter
 
     # cubic decimeter
-    cubic_decimeter: Final = UnitConstant(UnitDefinition(
-        name="cubic_decimeter",
-        symbol="$\\mathrm{dm}^{3}$",
-        dimension=dim.VOLUME,
-        si_factor=0.001,
-        si_offset=0.0,
-    ))
+    cubic_decimeter: Final = UnitConstant(
+        UnitDefinition(
+            name="cubic_decimeter",
+            symbol="$\\mathrm{dm}^{3}$",
+            dimension=dim.VOLUME,
+            si_factor=0.001,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_dm_3: Final = cubic_decimeter
 
     # cubic foot
-    cubic_foot: Final = UnitConstant(UnitDefinition(
-        name="cubic_foot",
-        symbol="cu ft or ft ${ }^{3}$",
-        dimension=dim.VOLUME,
-        si_factor=0.0283168,
-        si_offset=0.0,
-    ))
+    cubic_foot: Final = UnitConstant(
+        UnitDefinition(
+            name="cubic_foot",
+            symbol="cu ft or ft ${ }^{3}$",
+            dimension=dim.VOLUME,
+            si_factor=0.0283168,
+            si_offset=0.0,
+        )
+    )
 
     cu_ft_or_ft_3: Final = cubic_foot
     cu_ft: Final = cubic_foot
     ft_3: Final = cubic_foot
 
     # cubic inch
-    cubic_inch: Final = UnitConstant(UnitDefinition(
-        name="cubic_inch",
-        symbol="cu in or $\\mathrm{in}^{3}$",
-        dimension=dim.VOLUME,
-        si_factor=1.63871e-05,
-        si_offset=0.0,
-    ))
+    cubic_inch: Final = UnitConstant(
+        UnitDefinition(
+            name="cubic_inch",
+            symbol="cu in or $\\mathrm{in}^{3}$",
+            dimension=dim.VOLUME,
+            si_factor=1.63871e-05,
+            si_offset=0.0,
+        )
+    )
 
     cu_in_or_mathrm_in_3: Final = cubic_inch
     cu_in: Final = cubic_inch
     in_3: Final = cubic_inch
 
     # cubic kilometer
-    cubic_kilometer: Final = UnitConstant(UnitDefinition(
-        name="cubic_kilometer",
-        symbol="$\\mathrm{km}^{3}$",
-        dimension=dim.VOLUME,
-        si_factor=1000000000.0,
-        si_offset=0.0,
-    ))
+    cubic_kilometer: Final = UnitConstant(
+        UnitDefinition(
+            name="cubic_kilometer",
+            symbol="$\\mathrm{km}^{3}$",
+            dimension=dim.VOLUME,
+            si_factor=1000000000.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_km_3: Final = cubic_kilometer
 
     # cubic meter
-    cubic_meter: Final = UnitConstant(UnitDefinition(
-        name="cubic_meter",
-        symbol="$\\mathrm{m}^{3}$",
-        dimension=dim.VOLUME,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    cubic_meter: Final = UnitConstant(
+        UnitDefinition(
+            name="cubic_meter",
+            symbol="$\\mathrm{m}^{3}$",
+            dimension=dim.VOLUME,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_m_3: Final = cubic_meter
 
     # cubic micrometer
-    cubic_micrometer: Final = UnitConstant(UnitDefinition(
-        name="cubic_micrometer",
-        symbol="$\\mu \\mathrm{m}^{3}$",
-        dimension=dim.VOLUME,
-        si_factor=1e-18,
-        si_offset=0.0,
-    ))
+    cubic_micrometer: Final = UnitConstant(
+        UnitDefinition(
+            name="cubic_micrometer",
+            symbol="$\\mu \\mathrm{m}^{3}$",
+            dimension=dim.VOLUME,
+            si_factor=1e-18,
+            si_offset=0.0,
+        )
+    )
 
     mu_mathrm_m_3: Final = cubic_micrometer
 
     # cubic mile (US, Intl)
-    cubic_mile_us_intl: Final = UnitConstant(UnitDefinition(
-        name="cubic_mile_us_intl",
-        symbol="cu mi",
-        dimension=dim.VOLUME,
-        si_factor=4168180000.0000005,
-        si_offset=0.0,
-    ))
+    cubic_mile_us_intl: Final = UnitConstant(
+        UnitDefinition(
+            name="cubic_mile_us_intl",
+            symbol="cu mi",
+            dimension=dim.VOLUME,
+            si_factor=4168180000.0000005,
+            si_offset=0.0,
+        )
+    )
 
     cu_mi: Final = cubic_mile_us_intl
 
     # cubic millimeter
-    cubic_millimeter: Final = UnitConstant(UnitDefinition(
-        name="cubic_millimeter",
-        symbol="$\\mathrm{mm}^{3}$",
-        dimension=dim.VOLUME,
-        si_factor=1e-09,
-        si_offset=0.0,
-    ))
+    cubic_millimeter: Final = UnitConstant(
+        UnitDefinition(
+            name="cubic_millimeter",
+            symbol="$\\mathrm{mm}^{3}$",
+            dimension=dim.VOLUME,
+            si_factor=1e-09,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_mm_3: Final = cubic_millimeter
 
     # cubic yard
-    cubic_yard: Final = UnitConstant(UnitDefinition(
-        name="cubic_yard",
-        symbol="cu yd or $\\mathrm{yd}^{3}$",
-        dimension=dim.VOLUME,
-        si_factor=0.7645549,
-        si_offset=0.0,
-    ))
+    cubic_yard: Final = UnitConstant(
+        UnitDefinition(
+            name="cubic_yard",
+            symbol="cu yd or $\\mathrm{yd}^{3}$",
+            dimension=dim.VOLUME,
+            si_factor=0.7645549,
+            si_offset=0.0,
+        )
+    )
 
     cu_yd_or_mathrm_yd_3: Final = cubic_yard
     cu_yd: Final = cubic_yard
     yd_3: Final = cubic_yard
 
     # decastére
-    decast_re: Final = UnitConstant(UnitDefinition(
-        name="decast_re",
-        symbol="dast",
-        dimension=dim.VOLUME,
-        si_factor=10.0,
-        si_offset=0.0,
-    ))
+    decast_re: Final = UnitConstant(
+        UnitDefinition(
+            name="decast_re",
+            symbol="dast",
+            dimension=dim.VOLUME,
+            si_factor=10.0,
+            si_offset=0.0,
+        )
+    )
 
     dast: Final = decast_re
 
     # deciliter
-    deciliter: Final = UnitConstant(UnitDefinition(
-        name="deciliter",
-        symbol="dl or dL",
-        dimension=dim.VOLUME,
-        si_factor=0.0001,
-        si_offset=0.0,
-    ))
+    deciliter: Final = UnitConstant(
+        UnitDefinition(
+            name="deciliter",
+            symbol="dl or dL",
+            dimension=dim.VOLUME,
+            si_factor=0.0001,
+            si_offset=0.0,
+        )
+    )
 
     dl_or_dL: Final = deciliter
     dl: Final = deciliter
     dL: Final = deciliter
 
     # fluid drachm (UK)
-    fluid_drachm_uk: Final = UnitConstant(UnitDefinition(
-        name="fluid_drachm_uk",
-        symbol="fl dr (UK)",
-        dimension=dim.VOLUME,
-        si_factor=3.5516299999999996e-06,
-        si_offset=0.0,
-    ))
+    fluid_drachm_uk: Final = UnitConstant(
+        UnitDefinition(
+            name="fluid_drachm_uk",
+            symbol="fl dr (UK)",
+            dimension=dim.VOLUME,
+            si_factor=3.5516299999999996e-06,
+            si_offset=0.0,
+        )
+    )
 
     fl_dr_UK: Final = fluid_drachm_uk
 
     # fluid dram (US)
-    fluid_dram_us: Final = UnitConstant(UnitDefinition(
-        name="fluid_dram_us",
-        symbol="fl dr (US liq)",
-        dimension=dim.VOLUME,
-        si_factor=3.69669e-06,
-        si_offset=0.0,
-    ))
+    fluid_dram_us: Final = UnitConstant(
+        UnitDefinition(
+            name="fluid_dram_us",
+            symbol="fl dr (US liq)",
+            dimension=dim.VOLUME,
+            si_factor=3.69669e-06,
+            si_offset=0.0,
+        )
+    )
 
     fl_dr_US_liq: Final = fluid_dram_us
 
     # fluid ounce (US)
-    fluid_ounce_us: Final = UnitConstant(UnitDefinition(
-        name="fluid_ounce_us",
-        symbol="fl oz",
-        dimension=dim.VOLUME,
-        si_factor=2.95735e-05,
-        si_offset=0.0,
-    ))
+    fluid_ounce_us: Final = UnitConstant(
+        UnitDefinition(
+            name="fluid_ounce_us",
+            symbol="fl oz",
+            dimension=dim.VOLUME,
+            si_factor=2.95735e-05,
+            si_offset=0.0,
+        )
+    )
 
     fl_oz: Final = fluid_ounce_us
 
     # gallon (Imperial UK)
-    gallon_imperial_uk: Final = UnitConstant(UnitDefinition(
-        name="gallon_imperial_uk",
-        symbol="gal (UK) or Imp gal",
-        dimension=dim.VOLUME,
-        si_factor=0.00454609,
-        si_offset=0.0,
-    ))
+    gallon_imperial_uk: Final = UnitConstant(
+        UnitDefinition(
+            name="gallon_imperial_uk",
+            symbol="gal (UK) or Imp gal",
+            dimension=dim.VOLUME,
+            si_factor=0.00454609,
+            si_offset=0.0,
+        )
+    )
 
     gal_UK_or_Imp_gal: Final = gallon_imperial_uk
     gal_UK: Final = gallon_imperial_uk
     Imp_gal: Final = gallon_imperial_uk
 
     # gallon (US Dry)
-    gallon_us_dry: Final = UnitConstant(UnitDefinition(
-        name="gallon_us_dry",
-        symbol="gal (US dry)",
-        dimension=dim.VOLUME,
-        si_factor=0.004404884,
-        si_offset=0.0,
-    ))
+    gallon_us_dry: Final = UnitConstant(
+        UnitDefinition(
+            name="gallon_us_dry",
+            symbol="gal (US dry)",
+            dimension=dim.VOLUME,
+            si_factor=0.004404884,
+            si_offset=0.0,
+        )
+    )
 
     gal_US_dry: Final = gallon_us_dry
 
     # gallon (US Liquid)
-    gallon_us_liquid: Final = UnitConstant(UnitDefinition(
-        name="gallon_us_liquid",
-        symbol="gal",
-        dimension=dim.VOLUME,
-        si_factor=0.003785412,
-        si_offset=0.0,
-    ))
+    gallon_us_liquid: Final = UnitConstant(
+        UnitDefinition(
+            name="gallon_us_liquid",
+            symbol="gal",
+            dimension=dim.VOLUME,
+            si_factor=0.003785412,
+            si_offset=0.0,
+        )
+    )
 
     gal: Final = gallon_us_liquid
 
     # last
-    last: Final = UnitConstant(UnitDefinition(
-        name="last",
-        symbol="last",
-        dimension=dim.VOLUME,
-        si_factor=2.9095,
-        si_offset=0.0,
-    ))
+    last: Final = UnitConstant(
+        UnitDefinition(
+            name="last",
+            symbol="last",
+            dimension=dim.VOLUME,
+            si_factor=2.9095,
+            si_offset=0.0,
+        )
+    )
 
     # liter
-    liter: Final = UnitConstant(UnitDefinition(
-        name="liter",
-        symbol="1 or L",
-        dimension=dim.VOLUME,
-        si_factor=0.001,
-        si_offset=0.0,
-    ))
+    liter: Final = UnitConstant(
+        UnitDefinition(
+            name="liter",
+            symbol="1 or L",
+            dimension=dim.VOLUME,
+            si_factor=0.001,
+            si_offset=0.0,
+        )
+    )
 
     unit_1_or_L: Final = liter
     unit_1: Final = liter
 
     # microliter
-    microliter: Final = UnitConstant(UnitDefinition(
-        name="microliter",
-        symbol="$\\mu \\mathrm{l}$ or $\\mu \\mathrm{L}$",
-        dimension=dim.VOLUME,
-        si_factor=1e-09,
-        si_offset=0.0,
-    ))
+    microliter: Final = UnitConstant(
+        UnitDefinition(
+            name="microliter",
+            symbol="$\\mu \\mathrm{l}$ or $\\mu \\mathrm{L}$",
+            dimension=dim.VOLUME,
+            si_factor=1e-09,
+            si_offset=0.0,
+        )
+    )
 
     mu_mathrm_l_or_mu_mathrm_L: Final = microliter
     mu_l: Final = microliter
     mu_L: Final = microliter
 
     # milliliter
-    milliliter: Final = UnitConstant(UnitDefinition(
-        name="milliliter",
-        symbol="ml",
-        dimension=dim.VOLUME,
-        si_factor=1e-06,
-        si_offset=0.0,
-    ))
+    milliliter: Final = UnitConstant(
+        UnitDefinition(
+            name="milliliter",
+            symbol="ml",
+            dimension=dim.VOLUME,
+            si_factor=1e-06,
+            si_offset=0.0,
+        )
+    )
 
     ml: Final = milliliter
 
     # Mohr centicube
-    mohr_centicube: Final = UnitConstant(UnitDefinition(
-        name="mohr_centicube",
-        symbol="cc",
-        dimension=dim.VOLUME,
-        si_factor=1.00238e-06,
-        si_offset=0.0,
-    ))
+    mohr_centicube: Final = UnitConstant(
+        UnitDefinition(
+            name="mohr_centicube",
+            symbol="cc",
+            dimension=dim.VOLUME,
+            si_factor=1.00238e-06,
+            si_offset=0.0,
+        )
+    )
 
     # pint (UK)
-    pint_uk: Final = UnitConstant(UnitDefinition(
-        name="pint_uk",
-        symbol="pt (UK)",
-        dimension=dim.VOLUME,
-        si_factor=0.000568262,
-        si_offset=0.0,
-    ))
+    pint_uk: Final = UnitConstant(
+        UnitDefinition(
+            name="pint_uk",
+            symbol="pt (UK)",
+            dimension=dim.VOLUME,
+            si_factor=0.000568262,
+            si_offset=0.0,
+        )
+    )
 
     pt_UK: Final = pint_uk
 
     # pint (US Dry)
-    pint_us_dry: Final = UnitConstant(UnitDefinition(
-        name="pint_us_dry",
-        symbol="pt (US dry)",
-        dimension=dim.VOLUME,
-        si_factor=0.000550611,
-        si_offset=0.0,
-    ))
+    pint_us_dry: Final = UnitConstant(
+        UnitDefinition(
+            name="pint_us_dry",
+            symbol="pt (US dry)",
+            dimension=dim.VOLUME,
+            si_factor=0.000550611,
+            si_offset=0.0,
+        )
+    )
 
     pt_US_dry: Final = pint_us_dry
 
     # pint (US Liquid)
-    pint_us_liquid: Final = UnitConstant(UnitDefinition(
-        name="pint_us_liquid",
-        symbol="pt",
-        dimension=dim.VOLUME,
-        si_factor=0.000473176,
-        si_offset=0.0,
-    ))
+    pint_us_liquid: Final = UnitConstant(
+        UnitDefinition(
+            name="pint_us_liquid",
+            symbol="pt",
+            dimension=dim.VOLUME,
+            si_factor=0.000473176,
+            si_offset=0.0,
+        )
+    )
 
     pt: Final = pint_us_liquid
 
     # quart (US Dry)
-    quart_us_dry: Final = UnitConstant(UnitDefinition(
-        name="quart_us_dry",
-        symbol="qt (US dry)",
-        dimension=dim.VOLUME,
-        si_factor=0.00110122,
-        si_offset=0.0,
-    ))
+    quart_us_dry: Final = UnitConstant(
+        UnitDefinition(
+            name="quart_us_dry",
+            symbol="qt (US dry)",
+            dimension=dim.VOLUME,
+            si_factor=0.00110122,
+            si_offset=0.0,
+        )
+    )
 
     qt_US_dry: Final = quart_us_dry
 
     # stére
-    st_re: Final = UnitConstant(UnitDefinition(
-        name="st_re",
-        symbol="st",
-        dimension=dim.VOLUME,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    st_re: Final = UnitConstant(
+        UnitDefinition(
+            name="st_re",
+            symbol="st",
+            dimension=dim.VOLUME,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     # tablespoon (Metric)
-    tablespoon_metric: Final = UnitConstant(UnitDefinition(
-        name="tablespoon_metric",
-        symbol="tbsp (Metric)",
-        dimension=dim.VOLUME,
-        si_factor=1.5000000000000002e-05,
-        si_offset=0.0,
-    ))
+    tablespoon_metric: Final = UnitConstant(
+        UnitDefinition(
+            name="tablespoon_metric",
+            symbol="tbsp (Metric)",
+            dimension=dim.VOLUME,
+            si_factor=1.5000000000000002e-05,
+            si_offset=0.0,
+        )
+    )
 
     tbsp_Metric: Final = tablespoon_metric
 
     # tablespoon (US)
-    tablespoon_us: Final = UnitConstant(UnitDefinition(
-        name="tablespoon_us",
-        symbol="tbsp",
-        dimension=dim.VOLUME,
-        si_factor=1.47868e-05,
-        si_offset=0.0,
-    ))
+    tablespoon_us: Final = UnitConstant(
+        UnitDefinition(
+            name="tablespoon_us",
+            symbol="tbsp",
+            dimension=dim.VOLUME,
+            si_factor=1.47868e-05,
+            si_offset=0.0,
+        )
+    )
 
     tbsp: Final = tablespoon_us
 
     # teaspoon (US)
-    teaspoon_us: Final = UnitConstant(UnitDefinition(
-        name="teaspoon_us",
-        symbol="tsp",
-        dimension=dim.VOLUME,
-        si_factor=4.928919999999999e-06,
-        si_offset=0.0,
-    ))
+    teaspoon_us: Final = UnitConstant(
+        UnitDefinition(
+            name="teaspoon_us",
+            symbol="tsp",
+            dimension=dim.VOLUME,
+            si_factor=4.928919999999999e-06,
+            si_offset=0.0,
+        )
+    )
 
     tsp: Final = teaspoon_us
 
@@ -9518,50 +11142,58 @@ class VolumeFractionOfIUnits:
     __slots__ = ()
 
     # cubic centimeters of "i" per cubic meter total
-    cubic_centimeters_of_i_per_cubic_meter_total: Final = UnitConstant(UnitDefinition(
-        name="cubic_centimeters_of_i_per_cubic_meter_total",
-        symbol="$\\mathrm{cm}_{\\mathrm{i}}^{3} / \\mathrm{m}^{3}$ or $\\mathrm{cc}_{\\mathrm{i}} / \\mathrm{m}^{3}$",
-        dimension=dim.VOLUME_FRACTION_OF_I,
-        si_factor=0.0001,
-        si_offset=0.0,
-    ))
+    cubic_centimeters_of_i_per_cubic_meter_total: Final = UnitConstant(
+        UnitDefinition(
+            name="cubic_centimeters_of_i_per_cubic_meter_total",
+            symbol="$\\mathrm{cm}_{\\mathrm{i}}^{3} / \\mathrm{m}^{3}$ or $\\mathrm{cc}_{\\mathrm{i}} / \\mathrm{m}^{3}$",
+            dimension=dim.VOLUME_FRACTION_OF_I,
+            si_factor=0.0001,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_cm_mathrm_i_3_mathrm_m_3_or_mathrm_cc_mathrm_i_mathrm_m_3: Final = cubic_centimeters_of_i_per_cubic_meter_total
     cm_i_3_m_3: Final = cubic_centimeters_of_i_per_cubic_meter_total
     cc_i_m_3: Final = cubic_centimeters_of_i_per_cubic_meter_total
 
     # cubic foot of "i" per cubic foot total
-    cubic_foot_of_i_per_cubic_foot_total: Final = UnitConstant(UnitDefinition(
-        name="cubic_foot_of_i_per_cubic_foot_total",
-        symbol="$\\mathrm{ft}_{\\mathrm{i}}^{3} / \\mathrm{ft}^{3}$ or $\\mathrm{cft}_{\\mathrm{i}} / \\mathrm{cft}$",
-        dimension=dim.VOLUME_FRACTION_OF_I,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    cubic_foot_of_i_per_cubic_foot_total: Final = UnitConstant(
+        UnitDefinition(
+            name="cubic_foot_of_i_per_cubic_foot_total",
+            symbol="$\\mathrm{ft}_{\\mathrm{i}}^{3} / \\mathrm{ft}^{3}$ or $\\mathrm{cft}_{\\mathrm{i}} / \\mathrm{cft}$",
+            dimension=dim.VOLUME_FRACTION_OF_I,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_ft_mathrm_i_3_mathrm_ft_3_or_mathrm_cft_mathrm_i_mathrm_cft: Final = cubic_foot_of_i_per_cubic_foot_total
     ft_i_3_ft_3: Final = cubic_foot_of_i_per_cubic_foot_total
     cft_i_cft: Final = cubic_foot_of_i_per_cubic_foot_total
 
     # cubic meters of " i " per cubic meter total
-    cubic_meters_of_i_per_cubic_meter_total: Final = UnitConstant(UnitDefinition(
-        name="cubic_meters_of_i_per_cubic_meter_total",
-        symbol="$\\mathrm{m}_{\\mathrm{i}}{ }^{3} / \\mathrm{m}^{3}$",
-        dimension=dim.VOLUME_FRACTION_OF_I,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    cubic_meters_of_i_per_cubic_meter_total: Final = UnitConstant(
+        UnitDefinition(
+            name="cubic_meters_of_i_per_cubic_meter_total",
+            symbol="$\\mathrm{m}_{\\mathrm{i}}{ }^{3} / \\mathrm{m}^{3}$",
+            dimension=dim.VOLUME_FRACTION_OF_I,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_m_mathrm_i_3_mathrm_m_3: Final = cubic_meters_of_i_per_cubic_meter_total
 
     # gallons of "i" per gallon total
-    gallons_of_i_per_gallon_total: Final = UnitConstant(UnitDefinition(
-        name="gallons_of_i_per_gallon_total",
-        symbol="$\\mathrm{gal}_{\\mathrm{i}} / \\mathrm{gal}$",
-        dimension=dim.VOLUME_FRACTION_OF_I,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    gallons_of_i_per_gallon_total: Final = UnitConstant(
+        UnitDefinition(
+            name="gallons_of_i_per_gallon_total",
+            symbol="$\\mathrm{gal}_{\\mathrm{i}} / \\mathrm{gal}$",
+            dimension=dim.VOLUME_FRACTION_OF_I,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_gal_mathrm_i_mathrm_gal: Final = gallons_of_i_per_gallon_total
 
@@ -9572,109 +11204,127 @@ class VolumetricCalorificHeatingValueUnits:
     __slots__ = ()
 
     # British thermal unit per cubic foot
-    british_thermal_unit_per_cubic_foot: Final = UnitConstant(UnitDefinition(
-        name="british_thermal_unit_per_cubic_foot",
-        symbol="$\\mathrm{Btu} / \\mathrm{ft}^{3}$ or Btu/cft",
-        dimension=dim.VOLUMETRIC_CALORIFIC_HEATING_VALUE,
-        si_factor=37260.0,
-        si_offset=0.0,
-    ))
+    british_thermal_unit_per_cubic_foot: Final = UnitConstant(
+        UnitDefinition(
+            name="british_thermal_unit_per_cubic_foot",
+            symbol="$\\mathrm{Btu} / \\mathrm{ft}^{3}$ or Btu/cft",
+            dimension=dim.VOLUMETRIC_CALORIFIC_HEATING_VALUE,
+            si_factor=37260.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_Btu_mathrm_ft_3_or_Btu_cft: Final = british_thermal_unit_per_cubic_foot
     Btu_ft_3: Final = british_thermal_unit_per_cubic_foot
     Btu_cft: Final = british_thermal_unit_per_cubic_foot
 
     # British thermal unit per gallon (UK)
-    british_thermal_unit_per_gallon_uk: Final = UnitConstant(UnitDefinition(
-        name="british_thermal_unit_per_gallon_uk",
-        symbol="Btu/gal (UK)",
-        dimension=dim.VOLUMETRIC_CALORIFIC_HEATING_VALUE,
-        si_factor=232090.0,
-        si_offset=0.0,
-    ))
+    british_thermal_unit_per_gallon_uk: Final = UnitConstant(
+        UnitDefinition(
+            name="british_thermal_unit_per_gallon_uk",
+            symbol="Btu/gal (UK)",
+            dimension=dim.VOLUMETRIC_CALORIFIC_HEATING_VALUE,
+            si_factor=232090.0,
+            si_offset=0.0,
+        )
+    )
 
     Btu_gal_UK: Final = british_thermal_unit_per_gallon_uk
 
     # British thermal unit per gallon (US)
-    british_thermal_unit_per_gallon_us: Final = UnitConstant(UnitDefinition(
-        name="british_thermal_unit_per_gallon_us",
-        symbol="Btu/gal (US)",
-        dimension=dim.VOLUMETRIC_CALORIFIC_HEATING_VALUE,
-        si_factor=193260.0,
-        si_offset=0.0,
-    ))
+    british_thermal_unit_per_gallon_us: Final = UnitConstant(
+        UnitDefinition(
+            name="british_thermal_unit_per_gallon_us",
+            symbol="Btu/gal (US)",
+            dimension=dim.VOLUMETRIC_CALORIFIC_HEATING_VALUE,
+            si_factor=193260.0,
+            si_offset=0.0,
+        )
+    )
 
     Btu_gal_US: Final = british_thermal_unit_per_gallon_us
 
     # calorie per cubic centimeter
-    calorie_per_cubic_centimeter: Final = UnitConstant(UnitDefinition(
-        name="calorie_per_cubic_centimeter",
-        symbol="$\\mathrm{cal} / \\mathrm{cm}^{3}$ or $\\mathrm{cal} / \\mathrm{cc}$",
-        dimension=dim.VOLUMETRIC_CALORIFIC_HEATING_VALUE,
-        si_factor=4186800.0,
-        si_offset=0.0,
-    ))
+    calorie_per_cubic_centimeter: Final = UnitConstant(
+        UnitDefinition(
+            name="calorie_per_cubic_centimeter",
+            symbol="$\\mathrm{cal} / \\mathrm{cm}^{3}$ or $\\mathrm{cal} / \\mathrm{cc}$",
+            dimension=dim.VOLUMETRIC_CALORIFIC_HEATING_VALUE,
+            si_factor=4186800.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_cal_mathrm_cm_3_or_mathrm_cal_mathrm_cc: Final = calorie_per_cubic_centimeter
     cal_cm_3: Final = calorie_per_cubic_centimeter
     cal_cc: Final = calorie_per_cubic_centimeter
 
     # Chu per cubic foot
-    chu_per_cubic_foot: Final = UnitConstant(UnitDefinition(
-        name="chu_per_cubic_foot",
-        symbol="$\\mathrm{Chu} / \\mathrm{ft}^{3}$ or $\\mathrm{Chu} / \\mathrm{cft}$",
-        dimension=dim.VOLUMETRIC_CALORIFIC_HEATING_VALUE,
-        si_factor=67067.0,
-        si_offset=0.0,
-    ))
+    chu_per_cubic_foot: Final = UnitConstant(
+        UnitDefinition(
+            name="chu_per_cubic_foot",
+            symbol="$\\mathrm{Chu} / \\mathrm{ft}^{3}$ or $\\mathrm{Chu} / \\mathrm{cft}$",
+            dimension=dim.VOLUMETRIC_CALORIFIC_HEATING_VALUE,
+            si_factor=67067.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_Chu_mathrm_ft_3_or_mathrm_Chu_mathrm_cft: Final = chu_per_cubic_foot
     Chu_ft_3: Final = chu_per_cubic_foot
     Chu_cft: Final = chu_per_cubic_foot
 
     # joule per cubic meter
-    joule_per_cubic_meter: Final = UnitConstant(UnitDefinition(
-        name="joule_per_cubic_meter",
-        symbol="$\\mathrm{J} / \\mathrm{m}^{3}$",
-        dimension=dim.VOLUMETRIC_CALORIFIC_HEATING_VALUE,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    joule_per_cubic_meter: Final = UnitConstant(
+        UnitDefinition(
+            name="joule_per_cubic_meter",
+            symbol="$\\mathrm{J} / \\mathrm{m}^{3}$",
+            dimension=dim.VOLUMETRIC_CALORIFIC_HEATING_VALUE,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_J_mathrm_m_3: Final = joule_per_cubic_meter
 
     # kilocalorie per cubic foot
-    kilocalorie_per_cubic_foot: Final = UnitConstant(UnitDefinition(
-        name="kilocalorie_per_cubic_foot",
-        symbol="$\\mathrm{kcal} / \\mathrm{ft}^{3}$ or $\\mathrm{kcal} / \\mathrm{cft}$",
-        dimension=dim.VOLUMETRIC_CALORIFIC_HEATING_VALUE,
-        si_factor=147860.0,
-        si_offset=0.0,
-    ))
+    kilocalorie_per_cubic_foot: Final = UnitConstant(
+        UnitDefinition(
+            name="kilocalorie_per_cubic_foot",
+            symbol="$\\mathrm{kcal} / \\mathrm{ft}^{3}$ or $\\mathrm{kcal} / \\mathrm{cft}$",
+            dimension=dim.VOLUMETRIC_CALORIFIC_HEATING_VALUE,
+            si_factor=147860.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_kcal_mathrm_ft_3_or_mathrm_kcal_mathrm_cft: Final = kilocalorie_per_cubic_foot
     kcal_ft_3: Final = kilocalorie_per_cubic_foot
     kcal_cft: Final = kilocalorie_per_cubic_foot
 
     # kilocalorie per cubic meter
-    kilocalorie_per_cubic_meter: Final = UnitConstant(UnitDefinition(
-        name="kilocalorie_per_cubic_meter",
-        symbol="$\\mathrm{kcal} / \\mathrm{m}^{3}$",
-        dimension=dim.VOLUMETRIC_CALORIFIC_HEATING_VALUE,
-        si_factor=4186.8,
-        si_offset=0.0,
-    ))
+    kilocalorie_per_cubic_meter: Final = UnitConstant(
+        UnitDefinition(
+            name="kilocalorie_per_cubic_meter",
+            symbol="$\\mathrm{kcal} / \\mathrm{m}^{3}$",
+            dimension=dim.VOLUMETRIC_CALORIFIC_HEATING_VALUE,
+            si_factor=4186.8,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_kcal_mathrm_m_3: Final = kilocalorie_per_cubic_meter
 
     # therm ( 100 K Btu ) per cubic foot
-    therm_100_k_btu: Final = UnitConstant(UnitDefinition(
-        name="therm_100_k_btu",
-        symbol="thm/cft",
-        dimension=dim.VOLUMETRIC_CALORIFIC_HEATING_VALUE,
-        si_factor=3726000000.0,
-        si_offset=0.0,
-    ))
+    therm_100_k_btu: Final = UnitConstant(
+        UnitDefinition(
+            name="therm_100_k_btu",
+            symbol="thm/cft",
+            dimension=dim.VOLUMETRIC_CALORIFIC_HEATING_VALUE,
+            si_factor=3726000000.0,
+            si_offset=0.0,
+        )
+    )
 
     thm_cft: Final = therm_100_k_btu
 
@@ -9685,52 +11335,60 @@ class VolumetricCoefficientOfExpansionUnits:
     __slots__ = ()
 
     # gram per cubic centimeter per kelvin (or degree Celsius)
-    gram_per_cubic_centimeter_per_kelvin_or_degree_celsius: Final = UnitConstant(UnitDefinition(
-        name="gram_per_cubic_centimeter_per_kelvin_or_degree_celsius",
-        symbol="$\\mathrm{g} / \\mathrm{cm}^{3} / \\mathrm{K}$ or g/cc/ ${ }^{\\circ} \\mathrm{C}$",
-        dimension=dim.VOLUMETRIC_COEFFICIENT_OF_EXPANSION,
-        si_factor=1000.0,
-        si_offset=0.0,
-    ))
+    gram_per_cubic_centimeter_per_kelvin_or_degree_celsius: Final = UnitConstant(
+        UnitDefinition(
+            name="gram_per_cubic_centimeter_per_kelvin_or_degree_celsius",
+            symbol="$\\mathrm{g} / \\mathrm{cm}^{3} / \\mathrm{K}$ or g/cc/ ${ }^{\\circ} \\mathrm{C}$",
+            dimension=dim.VOLUMETRIC_COEFFICIENT_OF_EXPANSION,
+            si_factor=1000.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_g_mathrm_cm_3_mathrm_K_or_g_cc_circ_mathrm_C: Final = gram_per_cubic_centimeter_per_kelvin_or_degree_celsius
     g_cm_3_K: Final = gram_per_cubic_centimeter_per_kelvin_or_degree_celsius
     g_cc_circ_C: Final = gram_per_cubic_centimeter_per_kelvin_or_degree_celsius
 
     # kilogram per cubic meter per kelvin (or degree Celsius)
-    kilogram_per_cubic_meter_per_kelvin_or_degree_celsius: Final = UnitConstant(UnitDefinition(
-        name="kilogram_per_cubic_meter_per_kelvin_or_degree_celsius",
-        symbol="$\\mathrm{kg} / \\mathrm{m}^{3} / \\mathrm{K}$ or $\\mathrm{kg} / \\mathrm{m}^{3} /{ }^{\\circ}$ C",
-        dimension=dim.VOLUMETRIC_COEFFICIENT_OF_EXPANSION,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    kilogram_per_cubic_meter_per_kelvin_or_degree_celsius: Final = UnitConstant(
+        UnitDefinition(
+            name="kilogram_per_cubic_meter_per_kelvin_or_degree_celsius",
+            symbol="$\\mathrm{kg} / \\mathrm{m}^{3} / \\mathrm{K}$ or $\\mathrm{kg} / \\mathrm{m}^{3} /{ }^{\\circ}$ C",
+            dimension=dim.VOLUMETRIC_COEFFICIENT_OF_EXPANSION,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_kg_mathrm_m_3_mathrm_K_or_mathrm_kg_mathrm_m_3_circ_C: Final = kilogram_per_cubic_meter_per_kelvin_or_degree_celsius
     kg_m_3_K: Final = kilogram_per_cubic_meter_per_kelvin_or_degree_celsius
     kg_m_3_circ_C: Final = kilogram_per_cubic_meter_per_kelvin_or_degree_celsius
 
     # pound per cubic foot per degree Fahrenheit (or degree Rankine)
-    pound_per_cubic_foot_per_degree_fahrenheit_or_degree_rankine: Final = UnitConstant(UnitDefinition(
-        name="pound_per_cubic_foot_per_degree_fahrenheit_or_degree_rankine",
-        symbol="$\\mathrm{lb} / \\mathrm{ft}^{3} /{ }^{\\circ} \\mathrm{R}$ or $\\mathrm{lb} / \\mathrm{cft} /{ }^{\\circ} \\mathrm{F}$",
-        dimension=dim.VOLUMETRIC_COEFFICIENT_OF_EXPANSION,
-        si_factor=28.833,
-        si_offset=0.0,
-    ))
+    pound_per_cubic_foot_per_degree_fahrenheit_or_degree_rankine: Final = UnitConstant(
+        UnitDefinition(
+            name="pound_per_cubic_foot_per_degree_fahrenheit_or_degree_rankine",
+            symbol="$\\mathrm{lb} / \\mathrm{ft}^{3} /{ }^{\\circ} \\mathrm{R}$ or $\\mathrm{lb} / \\mathrm{cft} /{ }^{\\circ} \\mathrm{F}$",
+            dimension=dim.VOLUMETRIC_COEFFICIENT_OF_EXPANSION,
+            si_factor=28.833,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_lb_mathrm_ft_3_circ_mathrm_R_or_mathrm_lb_mathrm_cft_circ_mathrm_F: Final = pound_per_cubic_foot_per_degree_fahrenheit_or_degree_rankine
     lb_ft_3_circ_R: Final = pound_per_cubic_foot_per_degree_fahrenheit_or_degree_rankine
     lb_cft_circ_F: Final = pound_per_cubic_foot_per_degree_fahrenheit_or_degree_rankine
 
     # pound per cubic foot per kelvin (or degree Celsius)
-    pound_per_cubic_foot_per_kelvin_or_degree_celsius: Final = UnitConstant(UnitDefinition(
-        name="pound_per_cubic_foot_per_kelvin_or_degree_celsius",
-        symbol="$\\mathrm{lb} / \\mathrm{ft}^{3} / \\mathrm{K}$ or $\\mathrm{lb} / \\mathrm{cft} /{ }^{\\circ} \\mathrm{C}$",
-        dimension=dim.VOLUMETRIC_COEFFICIENT_OF_EXPANSION,
-        si_factor=16.018,
-        si_offset=0.0,
-    ))
+    pound_per_cubic_foot_per_kelvin_or_degree_celsius: Final = UnitConstant(
+        UnitDefinition(
+            name="pound_per_cubic_foot_per_kelvin_or_degree_celsius",
+            symbol="$\\mathrm{lb} / \\mathrm{ft}^{3} / \\mathrm{K}$ or $\\mathrm{lb} / \\mathrm{cft} /{ }^{\\circ} \\mathrm{C}$",
+            dimension=dim.VOLUMETRIC_COEFFICIENT_OF_EXPANSION,
+            si_factor=16.018,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_lb_mathrm_ft_3_mathrm_K_or_mathrm_lb_mathrm_cft_circ_mathrm_C: Final = pound_per_cubic_foot_per_kelvin_or_degree_celsius
     lb_ft_3_K: Final = pound_per_cubic_foot_per_kelvin_or_degree_celsius
@@ -9743,13 +11401,15 @@ class VolumetricFlowRateUnits:
     __slots__ = ()
 
     # cubic feet per day
-    cubic_feet_per_day: Final = UnitConstant(UnitDefinition(
-        name="cubic_feet_per_day",
-        symbol="$\\mathrm{ft}^{3} / \\mathrm{d}$ or $\\mathrm{cft} / \\mathrm{da}$ or cfd",
-        dimension=dim.VOLUMETRIC_FLOW_RATE,
-        si_factor=3.2778e-07,
-        si_offset=0.0,
-    ))
+    cubic_feet_per_day: Final = UnitConstant(
+        UnitDefinition(
+            name="cubic_feet_per_day",
+            symbol="$\\mathrm{ft}^{3} / \\mathrm{d}$ or $\\mathrm{cft} / \\mathrm{da}$ or cfd",
+            dimension=dim.VOLUMETRIC_FLOW_RATE,
+            si_factor=3.2778e-07,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_ft_3_mathrm_d_or_mathrm_cft_mathrm_da_or_cfd: Final = cubic_feet_per_day
     ft_3_d: Final = cubic_feet_per_day
@@ -9757,13 +11417,15 @@ class VolumetricFlowRateUnits:
     cfd: Final = cubic_feet_per_day
 
     # cubic feet per hour
-    cubic_feet_per_hour: Final = UnitConstant(UnitDefinition(
-        name="cubic_feet_per_hour",
-        symbol="$\\mathrm{ft}^{3} / \\mathrm{h}$ or $\\mathrm{cft} / \\mathrm{hr}$ or cfh",
-        dimension=dim.VOLUMETRIC_FLOW_RATE,
-        si_factor=7.866699999999999e-06,
-        si_offset=0.0,
-    ))
+    cubic_feet_per_hour: Final = UnitConstant(
+        UnitDefinition(
+            name="cubic_feet_per_hour",
+            symbol="$\\mathrm{ft}^{3} / \\mathrm{h}$ or $\\mathrm{cft} / \\mathrm{hr}$ or cfh",
+            dimension=dim.VOLUMETRIC_FLOW_RATE,
+            si_factor=7.866699999999999e-06,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_ft_3_mathrm_h_or_mathrm_cft_mathrm_hr_or_cfh: Final = cubic_feet_per_hour
     ft_3_h: Final = cubic_feet_per_hour
@@ -9771,13 +11433,15 @@ class VolumetricFlowRateUnits:
     cfh: Final = cubic_feet_per_hour
 
     # cubic feet per minute
-    cubic_feet_per_minute: Final = UnitConstant(UnitDefinition(
-        name="cubic_feet_per_minute",
-        symbol="$\\mathrm{ft}^{3} / \\mathrm{min}$ or $\\mathrm{cft} / \\mathrm{min}$ or cfm",
-        dimension=dim.VOLUMETRIC_FLOW_RATE,
-        si_factor=0.000472,
-        si_offset=0.0,
-    ))
+    cubic_feet_per_minute: Final = UnitConstant(
+        UnitDefinition(
+            name="cubic_feet_per_minute",
+            symbol="$\\mathrm{ft}^{3} / \\mathrm{min}$ or $\\mathrm{cft} / \\mathrm{min}$ or cfm",
+            dimension=dim.VOLUMETRIC_FLOW_RATE,
+            si_factor=0.000472,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_ft_3_mathrm_min_or_mathrm_cft_mathrm_min_or_cfm: Final = cubic_feet_per_minute
     ft_3_min: Final = cubic_feet_per_minute
@@ -9785,13 +11449,15 @@ class VolumetricFlowRateUnits:
     cfm: Final = cubic_feet_per_minute
 
     # cubic feet per second
-    cubic_feet_per_second: Final = UnitConstant(UnitDefinition(
-        name="cubic_feet_per_second",
-        symbol="$\\mathrm{ft}^{3} / \\mathrm{s}$ or cft/sec or cfs",
-        dimension=dim.VOLUMETRIC_FLOW_RATE,
-        si_factor=0.02832,
-        si_offset=0.0,
-    ))
+    cubic_feet_per_second: Final = UnitConstant(
+        UnitDefinition(
+            name="cubic_feet_per_second",
+            symbol="$\\mathrm{ft}^{3} / \\mathrm{s}$ or cft/sec or cfs",
+            dimension=dim.VOLUMETRIC_FLOW_RATE,
+            si_factor=0.02832,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_ft_3_mathrm_s_or_cft_sec_or_cfs: Final = cubic_feet_per_second
     ft_3_s: Final = cubic_feet_per_second
@@ -9799,57 +11465,67 @@ class VolumetricFlowRateUnits:
     cfs: Final = cubic_feet_per_second
 
     # cubic meters per day
-    cubic_meters_per_day: Final = UnitConstant(UnitDefinition(
-        name="cubic_meters_per_day",
-        symbol="$\\mathrm{m}^{3} / \\mathrm{d}$",
-        dimension=dim.VOLUMETRIC_FLOW_RATE,
-        si_factor=1.1574000000000001e-05,
-        si_offset=0.0,
-    ))
+    cubic_meters_per_day: Final = UnitConstant(
+        UnitDefinition(
+            name="cubic_meters_per_day",
+            symbol="$\\mathrm{m}^{3} / \\mathrm{d}$",
+            dimension=dim.VOLUMETRIC_FLOW_RATE,
+            si_factor=1.1574000000000001e-05,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_m_3_mathrm_d: Final = cubic_meters_per_day
 
     # cubic meters per hour
-    cubic_meters_per_hour: Final = UnitConstant(UnitDefinition(
-        name="cubic_meters_per_hour",
-        symbol="$\\mathrm{m}^{3} / \\mathrm{h}$",
-        dimension=dim.VOLUMETRIC_FLOW_RATE,
-        si_factor=0.00027778,
-        si_offset=0.0,
-    ))
+    cubic_meters_per_hour: Final = UnitConstant(
+        UnitDefinition(
+            name="cubic_meters_per_hour",
+            symbol="$\\mathrm{m}^{3} / \\mathrm{h}$",
+            dimension=dim.VOLUMETRIC_FLOW_RATE,
+            si_factor=0.00027778,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_m_3_mathrm_h: Final = cubic_meters_per_hour
 
     # cubic meters per minute
-    cubic_meters_per_minute: Final = UnitConstant(UnitDefinition(
-        name="cubic_meters_per_minute",
-        symbol="$\\mathrm{m}^{3} / \\min$",
-        dimension=dim.VOLUMETRIC_FLOW_RATE,
-        si_factor=0.016667,
-        si_offset=0.0,
-    ))
+    cubic_meters_per_minute: Final = UnitConstant(
+        UnitDefinition(
+            name="cubic_meters_per_minute",
+            symbol="$\\mathrm{m}^{3} / \\min$",
+            dimension=dim.VOLUMETRIC_FLOW_RATE,
+            si_factor=0.016667,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_m_3_min: Final = cubic_meters_per_minute
 
     # cubic meters per second
-    cubic_meters_per_second: Final = UnitConstant(UnitDefinition(
-        name="cubic_meters_per_second",
-        symbol="$\\mathrm{m}^{3} / \\mathrm{s}$",
-        dimension=dim.VOLUMETRIC_FLOW_RATE,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    cubic_meters_per_second: Final = UnitConstant(
+        UnitDefinition(
+            name="cubic_meters_per_second",
+            symbol="$\\mathrm{m}^{3} / \\mathrm{s}$",
+            dimension=dim.VOLUMETRIC_FLOW_RATE,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_m_3_mathrm_s: Final = cubic_meters_per_second
 
     # gallons per day
-    gallons_per_day: Final = UnitConstant(UnitDefinition(
-        name="gallons_per_day",
-        symbol="gal/d or gpd or gal/ da",
-        dimension=dim.VOLUMETRIC_FLOW_RATE,
-        si_factor=0.002628,
-        si_offset=0.0,
-    ))
+    gallons_per_day: Final = UnitConstant(
+        UnitDefinition(
+            name="gallons_per_day",
+            symbol="gal/d or gpd or gal/ da",
+            dimension=dim.VOLUMETRIC_FLOW_RATE,
+            si_factor=0.002628,
+            si_offset=0.0,
+        )
+    )
 
     gal_d_or_gpd_or_gal_da: Final = gallons_per_day
     gal_d: Final = gallons_per_day
@@ -9857,13 +11533,15 @@ class VolumetricFlowRateUnits:
     gal_da: Final = gallons_per_day
 
     # gallons per hour
-    gallons_per_hour: Final = UnitConstant(UnitDefinition(
-        name="gallons_per_hour",
-        symbol="gal/h or gph or gal/ hr",
-        dimension=dim.VOLUMETRIC_FLOW_RATE,
-        si_factor=0.06308,
-        si_offset=0.0,
-    ))
+    gallons_per_hour: Final = UnitConstant(
+        UnitDefinition(
+            name="gallons_per_hour",
+            symbol="gal/h or gph or gal/ hr",
+            dimension=dim.VOLUMETRIC_FLOW_RATE,
+            si_factor=0.06308,
+            si_offset=0.0,
+        )
+    )
 
     gal_h_or_gph_or_gal_hr: Final = gallons_per_hour
     gal_h: Final = gallons_per_hour
@@ -9871,26 +11549,30 @@ class VolumetricFlowRateUnits:
     gal_hr: Final = gallons_per_hour
 
     # gallons per minute
-    gallons_per_minute: Final = UnitConstant(UnitDefinition(
-        name="gallons_per_minute",
-        symbol="gal/min or gpm",
-        dimension=dim.VOLUMETRIC_FLOW_RATE,
-        si_factor=3.785,
-        si_offset=0.0,
-    ))
+    gallons_per_minute: Final = UnitConstant(
+        UnitDefinition(
+            name="gallons_per_minute",
+            symbol="gal/min or gpm",
+            dimension=dim.VOLUMETRIC_FLOW_RATE,
+            si_factor=3.785,
+            si_offset=0.0,
+        )
+    )
 
     gal_min_or_gpm: Final = gallons_per_minute
     gal_min: Final = gallons_per_minute
     gpm: Final = gallons_per_minute
 
     # gallons per second
-    gallons_per_second: Final = UnitConstant(UnitDefinition(
-        name="gallons_per_second",
-        symbol="gal/s or gps or gal/ sec",
-        dimension=dim.VOLUMETRIC_FLOW_RATE,
-        si_factor=227.1,
-        si_offset=0.0,
-    ))
+    gallons_per_second: Final = UnitConstant(
+        UnitDefinition(
+            name="gallons_per_second",
+            symbol="gal/s or gps or gal/ sec",
+            dimension=dim.VOLUMETRIC_FLOW_RATE,
+            si_factor=227.1,
+            si_offset=0.0,
+        )
+    )
 
     gal_s_or_gps_or_gal_sec: Final = gallons_per_second
     gal_s: Final = gallons_per_second
@@ -9898,44 +11580,52 @@ class VolumetricFlowRateUnits:
     gal_sec: Final = gallons_per_second
 
     # liters per day
-    liters_per_day: Final = UnitConstant(UnitDefinition(
-        name="liters_per_day",
-        symbol="1/d",
-        dimension=dim.VOLUMETRIC_FLOW_RATE,
-        si_factor=0.00069444,
-        si_offset=0.0,
-    ))
+    liters_per_day: Final = UnitConstant(
+        UnitDefinition(
+            name="liters_per_day",
+            symbol="1/d",
+            dimension=dim.VOLUMETRIC_FLOW_RATE,
+            si_factor=0.00069444,
+            si_offset=0.0,
+        )
+    )
 
     unit_1_d: Final = liters_per_day
 
     # liters per hour
-    liters_per_hour: Final = UnitConstant(UnitDefinition(
-        name="liters_per_hour",
-        symbol="1/h",
-        dimension=dim.VOLUMETRIC_FLOW_RATE,
-        si_factor=0.016667,
-        si_offset=0.0,
-    ))
+    liters_per_hour: Final = UnitConstant(
+        UnitDefinition(
+            name="liters_per_hour",
+            symbol="1/h",
+            dimension=dim.VOLUMETRIC_FLOW_RATE,
+            si_factor=0.016667,
+            si_offset=0.0,
+        )
+    )
 
     unit_1_h: Final = liters_per_hour
 
     # liters per minute
-    liters_per_minute: Final = UnitConstant(UnitDefinition(
-        name="liters_per_minute",
-        symbol="$1 / \\mathrm{min}$",
-        dimension=dim.VOLUMETRIC_FLOW_RATE,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    liters_per_minute: Final = UnitConstant(
+        UnitDefinition(
+            name="liters_per_minute",
+            symbol="$1 / \\mathrm{min}$",
+            dimension=dim.VOLUMETRIC_FLOW_RATE,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     # liters per second
-    liters_per_second: Final = UnitConstant(UnitDefinition(
-        name="liters_per_second",
-        symbol="1/s",
-        dimension=dim.VOLUMETRIC_FLOW_RATE,
-        si_factor=60.0,
-        si_offset=0.0,
-    ))
+    liters_per_second: Final = UnitConstant(
+        UnitDefinition(
+            name="liters_per_second",
+            symbol="1/s",
+            dimension=dim.VOLUMETRIC_FLOW_RATE,
+            si_factor=60.0,
+            si_offset=0.0,
+        )
+    )
 
     unit_1_s: Final = liters_per_second
 
@@ -9946,135 +11636,157 @@ class VolumetricFluxUnits:
     __slots__ = ()
 
     # cubic feet per square foot per day
-    cubic_feet_per_square_foot_per_day: Final = UnitConstant(UnitDefinition(
-        name="cubic_feet_per_square_foot_per_day",
-        symbol="$\\mathrm{ft}^{3} /\\left(\\mathrm{ft}^{2} \\mathrm{~d}\\right)$ or $\\mathrm{cft} / \\mathrm{sqft} /$ da",
-        dimension=dim.VOLUMETRIC_FLUX,
-        si_factor=3.5276e-06,
-        si_offset=0.0,
-    ))
+    cubic_feet_per_square_foot_per_day: Final = UnitConstant(
+        UnitDefinition(
+            name="cubic_feet_per_square_foot_per_day",
+            symbol="$\\mathrm{ft}^{3} /\\left(\\mathrm{ft}^{2} \\mathrm{~d}\\right)$ or $\\mathrm{cft} / \\mathrm{sqft} /$ da",
+            dimension=dim.VOLUMETRIC_FLUX,
+            si_factor=3.5276e-06,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_ft_3_left_mathrm_ft_2_mathrm_d_right_or_mathrm_cft_mathrm_sqft_da: Final = cubic_feet_per_square_foot_per_day
     ft_3_left_ft_2_dright: Final = cubic_feet_per_square_foot_per_day
     cft_sqft_da: Final = cubic_feet_per_square_foot_per_day
 
     # cubic feet per square foot per hour
-    cubic_feet_per_square_foot_per_hour: Final = UnitConstant(UnitDefinition(
-        name="cubic_feet_per_square_foot_per_hour",
-        symbol="$\\mathrm{ft}^{3} /\\left(\\mathrm{ft}^{2} \\mathrm{~h}\\right)$ or $\\mathrm{cft} / \\mathrm{sqft} /$ hr",
-        dimension=dim.VOLUMETRIC_FLUX,
-        si_factor=8.466300000000001e-05,
-        si_offset=0.0,
-    ))
+    cubic_feet_per_square_foot_per_hour: Final = UnitConstant(
+        UnitDefinition(
+            name="cubic_feet_per_square_foot_per_hour",
+            symbol="$\\mathrm{ft}^{3} /\\left(\\mathrm{ft}^{2} \\mathrm{~h}\\right)$ or $\\mathrm{cft} / \\mathrm{sqft} /$ hr",
+            dimension=dim.VOLUMETRIC_FLUX,
+            si_factor=8.466300000000001e-05,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_ft_3_left_mathrm_ft_2_mathrm_h_right_or_mathrm_cft_mathrm_sqft_hr: Final = cubic_feet_per_square_foot_per_hour
     ft_3_left_ft_2_hright: Final = cubic_feet_per_square_foot_per_hour
     cft_sqft_hr: Final = cubic_feet_per_square_foot_per_hour
 
     # cubic feet per square foot per minute
-    cubic_feet_per_square_foot_per_minute: Final = UnitConstant(UnitDefinition(
-        name="cubic_feet_per_square_foot_per_minute",
-        symbol="$\\mathrm{ft}^{3} /\\left(\\mathrm{ft}^{2} \\min \\right)$ or $\\mathrm{cft} /$ sqft/min",
-        dimension=dim.VOLUMETRIC_FLUX,
-        si_factor=0.0050798,
-        si_offset=0.0,
-    ))
+    cubic_feet_per_square_foot_per_minute: Final = UnitConstant(
+        UnitDefinition(
+            name="cubic_feet_per_square_foot_per_minute",
+            symbol="$\\mathrm{ft}^{3} /\\left(\\mathrm{ft}^{2} \\min \\right)$ or $\\mathrm{cft} /$ sqft/min",
+            dimension=dim.VOLUMETRIC_FLUX,
+            si_factor=0.0050798,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_ft_3_left_mathrm_ft_2_min_right_or_mathrm_cft_sqft_min: Final = cubic_feet_per_square_foot_per_minute
     ft_3_left_ft_2_min_right: Final = cubic_feet_per_square_foot_per_minute
     cft_sqft_min: Final = cubic_feet_per_square_foot_per_minute
 
     # cubic feet per square foot per second
-    cubic_feet_per_square_foot_per_second: Final = UnitConstant(UnitDefinition(
-        name="cubic_feet_per_square_foot_per_second",
-        symbol="$\\mathrm{ft}^{3} /\\left(\\mathrm{ft}^{2} \\mathrm{~s}\\right)$ or cft/sqft/ sec",
-        dimension=dim.VOLUMETRIC_FLUX,
-        si_factor=0.30479,
-        si_offset=0.0,
-    ))
+    cubic_feet_per_square_foot_per_second: Final = UnitConstant(
+        UnitDefinition(
+            name="cubic_feet_per_square_foot_per_second",
+            symbol="$\\mathrm{ft}^{3} /\\left(\\mathrm{ft}^{2} \\mathrm{~s}\\right)$ or cft/sqft/ sec",
+            dimension=dim.VOLUMETRIC_FLUX,
+            si_factor=0.30479,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_ft_3_left_mathrm_ft_2_mathrm_s_right_or_cft_sqft_sec: Final = cubic_feet_per_square_foot_per_second
     ft_3_left_ft_2_sright: Final = cubic_feet_per_square_foot_per_second
     cft_sqft_sec: Final = cubic_feet_per_square_foot_per_second
 
     # cubic meters per square meter per day
-    cubic_meters_per_square_meter_per_day: Final = UnitConstant(UnitDefinition(
-        name="cubic_meters_per_square_meter_per_day",
-        symbol="$\\mathrm{m}^{3} /\\left(\\mathrm{m}^{2} \\mathrm{~d}\\right)$",
-        dimension=dim.VOLUMETRIC_FLUX,
-        si_factor=1.1574000000000001e-05,
-        si_offset=0.0,
-    ))
+    cubic_meters_per_square_meter_per_day: Final = UnitConstant(
+        UnitDefinition(
+            name="cubic_meters_per_square_meter_per_day",
+            symbol="$\\mathrm{m}^{3} /\\left(\\mathrm{m}^{2} \\mathrm{~d}\\right)$",
+            dimension=dim.VOLUMETRIC_FLUX,
+            si_factor=1.1574000000000001e-05,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_m_3_left_mathrm_m_2_mathrm_d_right: Final = cubic_meters_per_square_meter_per_day
 
     # cubic meters per square meter per hour
-    cubic_meters_per_square_meter_per_hour: Final = UnitConstant(UnitDefinition(
-        name="cubic_meters_per_square_meter_per_hour",
-        symbol="$\\mathrm{m}^{3} /\\left(\\mathrm{m}^{2} \\mathrm{~h}\\right)$",
-        dimension=dim.VOLUMETRIC_FLUX,
-        si_factor=0.00027778,
-        si_offset=0.0,
-    ))
+    cubic_meters_per_square_meter_per_hour: Final = UnitConstant(
+        UnitDefinition(
+            name="cubic_meters_per_square_meter_per_hour",
+            symbol="$\\mathrm{m}^{3} /\\left(\\mathrm{m}^{2} \\mathrm{~h}\\right)$",
+            dimension=dim.VOLUMETRIC_FLUX,
+            si_factor=0.00027778,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_m_3_left_mathrm_m_2_mathrm_h_right: Final = cubic_meters_per_square_meter_per_hour
 
     # cubic meters per square meter per minute
-    cubic_meters_per_square_meter_per_minute: Final = UnitConstant(UnitDefinition(
-        name="cubic_meters_per_square_meter_per_minute",
-        symbol="$\\mathrm{m}^{3} /\\left(\\mathrm{m}^{2} \\mathrm{~min}\\right)$",
-        dimension=dim.VOLUMETRIC_FLUX,
-        si_factor=0.016667,
-        si_offset=0.0,
-    ))
+    cubic_meters_per_square_meter_per_minute: Final = UnitConstant(
+        UnitDefinition(
+            name="cubic_meters_per_square_meter_per_minute",
+            symbol="$\\mathrm{m}^{3} /\\left(\\mathrm{m}^{2} \\mathrm{~min}\\right)$",
+            dimension=dim.VOLUMETRIC_FLUX,
+            si_factor=0.016667,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_m_3_left_mathrm_m_2_mathrm_min_right: Final = cubic_meters_per_square_meter_per_minute
 
     # cubic meters per square meter per second
-    cubic_meters_per_square_meter_per_second: Final = UnitConstant(UnitDefinition(
-        name="cubic_meters_per_square_meter_per_second",
-        symbol="$\\mathrm{m}^{3} /\\left(\\mathrm{m}^{2} \\mathrm{~s}\\right)$",
-        dimension=dim.VOLUMETRIC_FLUX,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    cubic_meters_per_square_meter_per_second: Final = UnitConstant(
+        UnitDefinition(
+            name="cubic_meters_per_square_meter_per_second",
+            symbol="$\\mathrm{m}^{3} /\\left(\\mathrm{m}^{2} \\mathrm{~s}\\right)$",
+            dimension=dim.VOLUMETRIC_FLUX,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_m_3_left_mathrm_m_2_mathrm_s_right: Final = cubic_meters_per_square_meter_per_second
 
     # gallons per square foot per day
-    gallons_per_square_foot_per_day: Final = UnitConstant(UnitDefinition(
-        name="gallons_per_square_foot_per_day",
-        symbol="$\\mathrm{gal} /\\left(\\mathrm{ft}^{2} \\mathrm{~d}\\right)$ or gal/ sqft/da",
-        dimension=dim.VOLUMETRIC_FLUX,
-        si_factor=0.00047138000000000003,
-        si_offset=0.0,
-    ))
+    gallons_per_square_foot_per_day: Final = UnitConstant(
+        UnitDefinition(
+            name="gallons_per_square_foot_per_day",
+            symbol="$\\mathrm{gal} /\\left(\\mathrm{ft}^{2} \\mathrm{~d}\\right)$ or gal/ sqft/da",
+            dimension=dim.VOLUMETRIC_FLUX,
+            si_factor=0.00047138000000000003,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_gal_left_mathrm_ft_2_mathrm_d_right_or_gal_sqft_da: Final = gallons_per_square_foot_per_day
     gal_left_ft_2_dright: Final = gallons_per_square_foot_per_day
     gal_sqft_da: Final = gallons_per_square_foot_per_day
 
     # gallons per square foot per hour
-    gallons_per_square_foot_per_hour: Final = UnitConstant(UnitDefinition(
-        name="gallons_per_square_foot_per_hour",
-        symbol="$\\mathrm{gal} /\\left(\\mathrm{ft}^{2} \\mathrm{~h}\\right)$ or gal/ sqft/hr",
-        dimension=dim.VOLUMETRIC_FLUX,
-        si_factor=0.011313,
-        si_offset=0.0,
-    ))
+    gallons_per_square_foot_per_hour: Final = UnitConstant(
+        UnitDefinition(
+            name="gallons_per_square_foot_per_hour",
+            symbol="$\\mathrm{gal} /\\left(\\mathrm{ft}^{2} \\mathrm{~h}\\right)$ or gal/ sqft/hr",
+            dimension=dim.VOLUMETRIC_FLUX,
+            si_factor=0.011313,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_gal_left_mathrm_ft_2_mathrm_h_right_or_gal_sqft_hr: Final = gallons_per_square_foot_per_hour
     gal_left_ft_2_hright: Final = gallons_per_square_foot_per_hour
     gal_sqft_hr: Final = gallons_per_square_foot_per_hour
 
     # gallons per square foot per minute
-    gallons_per_square_foot_per_minute: Final = UnitConstant(UnitDefinition(
-        name="gallons_per_square_foot_per_minute",
-        symbol="$\\mathrm{gal} /\\left(\\mathrm{ft}^{2} \\mathrm{~min}\\right)$ or gal/ sqft/min or gpm/sqft",
-        dimension=dim.VOLUMETRIC_FLUX,
-        si_factor=0.67878,
-        si_offset=0.0,
-    ))
+    gallons_per_square_foot_per_minute: Final = UnitConstant(
+        UnitDefinition(
+            name="gallons_per_square_foot_per_minute",
+            symbol="$\\mathrm{gal} /\\left(\\mathrm{ft}^{2} \\mathrm{~min}\\right)$ or gal/ sqft/min or gpm/sqft",
+            dimension=dim.VOLUMETRIC_FLUX,
+            si_factor=0.67878,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_gal_left_mathrm_ft_2_mathrm_min_right_or_gal_sqft_min_or_gpm_sqft: Final = gallons_per_square_foot_per_minute
     gal_left_ft_2_minright: Final = gallons_per_square_foot_per_minute
@@ -10082,53 +11794,63 @@ class VolumetricFluxUnits:
     gpm_sqft: Final = gallons_per_square_foot_per_minute
 
     # gallons per square foot per second
-    gallons_per_square_foot_per_second: Final = UnitConstant(UnitDefinition(
-        name="gallons_per_square_foot_per_second",
-        symbol="$\\mathrm{gal} /\\left(\\mathrm{ft}^{2} \\mathrm{~s}\\right)$ or gal/ $\\mathrm{sqft} / \\mathrm{sec}$",
-        dimension=dim.VOLUMETRIC_FLUX,
-        si_factor=40.727,
-        si_offset=0.0,
-    ))
+    gallons_per_square_foot_per_second: Final = UnitConstant(
+        UnitDefinition(
+            name="gallons_per_square_foot_per_second",
+            symbol="$\\mathrm{gal} /\\left(\\mathrm{ft}^{2} \\mathrm{~s}\\right)$ or gal/ $\\mathrm{sqft} / \\mathrm{sec}$",
+            dimension=dim.VOLUMETRIC_FLUX,
+            si_factor=40.727,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_gal_left_mathrm_ft_2_mathrm_s_right_or_gal_mathrm_sqft_mathrm_sec: Final = gallons_per_square_foot_per_second
     gal_left_ft_2_sright: Final = gallons_per_square_foot_per_second
     gal_sqft_sec: Final = gallons_per_square_foot_per_second
 
     # liters per square meter per day
-    liters_per_square_meter_per_day: Final = UnitConstant(UnitDefinition(
-        name="liters_per_square_meter_per_day",
-        symbol="$1 /\\left(\\mathrm{m}^{2} \\mathrm{~d}\\right)$",
-        dimension=dim.VOLUMETRIC_FLUX,
-        si_factor=1.1574000000000001e-05,
-        si_offset=0.0,
-    ))
+    liters_per_square_meter_per_day: Final = UnitConstant(
+        UnitDefinition(
+            name="liters_per_square_meter_per_day",
+            symbol="$1 /\\left(\\mathrm{m}^{2} \\mathrm{~d}\\right)$",
+            dimension=dim.VOLUMETRIC_FLUX,
+            si_factor=1.1574000000000001e-05,
+            si_offset=0.0,
+        )
+    )
 
     # liters per square meter per hour
-    liters_per_square_meter_per_hour: Final = UnitConstant(UnitDefinition(
-        name="liters_per_square_meter_per_hour",
-        symbol="$1 /\\left(\\mathrm{m}^{2} \\mathrm{~h}\\right)$",
-        dimension=dim.VOLUMETRIC_FLUX,
-        si_factor=0.00027778,
-        si_offset=0.0,
-    ))
+    liters_per_square_meter_per_hour: Final = UnitConstant(
+        UnitDefinition(
+            name="liters_per_square_meter_per_hour",
+            symbol="$1 /\\left(\\mathrm{m}^{2} \\mathrm{~h}\\right)$",
+            dimension=dim.VOLUMETRIC_FLUX,
+            si_factor=0.00027778,
+            si_offset=0.0,
+        )
+    )
 
     # liters per square meter per minute
-    liters_per_square_meter_per_minute: Final = UnitConstant(UnitDefinition(
-        name="liters_per_square_meter_per_minute",
-        symbol="$1 /\\left(\\mathrm{m}^{2} \\mathrm{~min}\\right)$",
-        dimension=dim.VOLUMETRIC_FLUX,
-        si_factor=0.016667,
-        si_offset=0.0,
-    ))
+    liters_per_square_meter_per_minute: Final = UnitConstant(
+        UnitDefinition(
+            name="liters_per_square_meter_per_minute",
+            symbol="$1 /\\left(\\mathrm{m}^{2} \\mathrm{~min}\\right)$",
+            dimension=dim.VOLUMETRIC_FLUX,
+            si_factor=0.016667,
+            si_offset=0.0,
+        )
+    )
 
     # liters per square meter per second
-    liters_per_square_meter_per_second: Final = UnitConstant(UnitDefinition(
-        name="liters_per_square_meter_per_second",
-        symbol="$1 /\\left(\\mathrm{m}^{2} \\mathrm{~s}\\right)$",
-        dimension=dim.VOLUMETRIC_FLUX,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    liters_per_square_meter_per_second: Final = UnitConstant(
+        UnitDefinition(
+            name="liters_per_square_meter_per_second",
+            symbol="$1 /\\left(\\mathrm{m}^{2} \\mathrm{~s}\\right)$",
+            dimension=dim.VOLUMETRIC_FLUX,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
 
 class VolumetricMassFlowRateUnits:
@@ -10137,13 +11859,15 @@ class VolumetricMassFlowRateUnits:
     __slots__ = ()
 
     # gram per second per cubic centimeter
-    gram_per_second_per_cubic_centimeter: Final = UnitConstant(UnitDefinition(
-        name="gram_per_second_per_cubic_centimeter",
-        symbol="$\\mathrm{g} /\\left(\\mathrm{s} \\mathrm{cm}^{3}\\right)$ or g/s/cc or $\\mathrm{g} / \\mathrm{cc} / \\mathrm{sec}$",
-        dimension=dim.VOLUMETRIC_MASS_FLOW_RATE,
-        si_factor=1000.0,
-        si_offset=0.0,
-    ))
+    gram_per_second_per_cubic_centimeter: Final = UnitConstant(
+        UnitDefinition(
+            name="gram_per_second_per_cubic_centimeter",
+            symbol="$\\mathrm{g} /\\left(\\mathrm{s} \\mathrm{cm}^{3}\\right)$ or g/s/cc or $\\mathrm{g} / \\mathrm{cc} / \\mathrm{sec}$",
+            dimension=dim.VOLUMETRIC_MASS_FLOW_RATE,
+            si_factor=1000.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_g_left_mathrm_s_mathrm_cm_3_right_or_g_s_cc_or_mathrm_g_mathrm_cc_mathrm_sec: Final = gram_per_second_per_cubic_centimeter
     g_left_s_cm_3right: Final = gram_per_second_per_cubic_centimeter
@@ -10151,52 +11875,60 @@ class VolumetricMassFlowRateUnits:
     g_cc_sec: Final = gram_per_second_per_cubic_centimeter
 
     # kilogram per hour per cubic foot
-    kilogram_per_hour_per_cubic_foot: Final = UnitConstant(UnitDefinition(
-        name="kilogram_per_hour_per_cubic_foot",
-        symbol="kg/(h ft ${ }^{3}$ ) or kg/hr/ cft",
-        dimension=dim.VOLUMETRIC_MASS_FLOW_RATE,
-        si_factor=0.0098096,
-        si_offset=0.0,
-    ))
+    kilogram_per_hour_per_cubic_foot: Final = UnitConstant(
+        UnitDefinition(
+            name="kilogram_per_hour_per_cubic_foot",
+            symbol="kg/(h ft ${ }^{3}$ ) or kg/hr/ cft",
+            dimension=dim.VOLUMETRIC_MASS_FLOW_RATE,
+            si_factor=0.0098096,
+            si_offset=0.0,
+        )
+    )
 
     kg_h_ft_3_or_kg_hr_cft: Final = kilogram_per_hour_per_cubic_foot
     kg_h_ft_3: Final = kilogram_per_hour_per_cubic_foot
     kg_hr_cft: Final = kilogram_per_hour_per_cubic_foot
 
     # kilogram per hour per cubic meter
-    kilogram_per_hour_per_cubic_meter: Final = UnitConstant(UnitDefinition(
-        name="kilogram_per_hour_per_cubic_meter",
-        symbol="kg/(h m3) or kg/hr/ cu.m",
-        dimension=dim.VOLUMETRIC_MASS_FLOW_RATE,
-        si_factor=0.00027778000000000004,
-        si_offset=0.0,
-    ))
+    kilogram_per_hour_per_cubic_meter: Final = UnitConstant(
+        UnitDefinition(
+            name="kilogram_per_hour_per_cubic_meter",
+            symbol="kg/(h m3) or kg/hr/ cu.m",
+            dimension=dim.VOLUMETRIC_MASS_FLOW_RATE,
+            si_factor=0.00027778000000000004,
+            si_offset=0.0,
+        )
+    )
 
     kg_h_m3_or_kg_hr_cu_m: Final = kilogram_per_hour_per_cubic_meter
     kg_h_m3: Final = kilogram_per_hour_per_cubic_meter
     kg_hr_cu_m: Final = kilogram_per_hour_per_cubic_meter
 
     # kilogram per second per cubic meter
-    kilogram_per_second_per_cubic_meter: Final = UnitConstant(UnitDefinition(
-        name="kilogram_per_second_per_cubic_meter",
-        symbol="$\\mathrm{kg} /\\left(\\mathrm{s} \\mathrm{m}^{3}\\right)$ or kg/sec/ cu.m",
-        dimension=dim.VOLUMETRIC_MASS_FLOW_RATE,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    kilogram_per_second_per_cubic_meter: Final = UnitConstant(
+        UnitDefinition(
+            name="kilogram_per_second_per_cubic_meter",
+            symbol="$\\mathrm{kg} /\\left(\\mathrm{s} \\mathrm{m}^{3}\\right)$ or kg/sec/ cu.m",
+            dimension=dim.VOLUMETRIC_MASS_FLOW_RATE,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_kg_left_mathrm_s_mathrm_m_3_right_or_kg_sec_cu_m: Final = kilogram_per_second_per_cubic_meter
     kg_left_s_m_3right: Final = kilogram_per_second_per_cubic_meter
     kg_sec_cu_m: Final = kilogram_per_second_per_cubic_meter
 
     # pound per hour per cubic foot
-    pound_per_hour_per_cubic_foot: Final = UnitConstant(UnitDefinition(
-        name="pound_per_hour_per_cubic_foot",
-        symbol="$\\mathrm{lb} /\\left(\\mathrm{h} \\mathrm{ft}^{3}\\right)$ or $\\mathrm{lb} / \\mathrm{hr} / \\mathrm{cft}$ or PPH/cft",
-        dimension=dim.VOLUMETRIC_MASS_FLOW_RATE,
-        si_factor=0.0044496,
-        si_offset=0.0,
-    ))
+    pound_per_hour_per_cubic_foot: Final = UnitConstant(
+        UnitDefinition(
+            name="pound_per_hour_per_cubic_foot",
+            symbol="$\\mathrm{lb} /\\left(\\mathrm{h} \\mathrm{ft}^{3}\\right)$ or $\\mathrm{lb} / \\mathrm{hr} / \\mathrm{cft}$ or PPH/cft",
+            dimension=dim.VOLUMETRIC_MASS_FLOW_RATE,
+            si_factor=0.0044496,
+            si_offset=0.0,
+        )
+    )
 
     mathrm_lb_left_mathrm_h_mathrm_ft_3_right_or_mathrm_lb_mathrm_hr_mathrm_cft_or_PPH_cft: Final = pound_per_hour_per_cubic_foot
     lb_left_h_ft_3right: Final = pound_per_hour_per_cubic_foot
@@ -10204,26 +11936,30 @@ class VolumetricMassFlowRateUnits:
     PPH_cft: Final = pound_per_hour_per_cubic_foot
 
     # pound per minute per cubic foot
-    pound_per_minute_per_cubic_foot: Final = UnitConstant(UnitDefinition(
-        name="pound_per_minute_per_cubic_foot",
-        symbol="lb/(min $\\mathrm{ft}^{3}$ ) or lb/ $\\mathrm{min} / \\mathrm{cft}$",
-        dimension=dim.VOLUMETRIC_MASS_FLOW_RATE,
-        si_factor=0.26697,
-        si_offset=0.0,
-    ))
+    pound_per_minute_per_cubic_foot: Final = UnitConstant(
+        UnitDefinition(
+            name="pound_per_minute_per_cubic_foot",
+            symbol="lb/(min $\\mathrm{ft}^{3}$ ) or lb/ $\\mathrm{min} / \\mathrm{cft}$",
+            dimension=dim.VOLUMETRIC_MASS_FLOW_RATE,
+            si_factor=0.26697,
+            si_offset=0.0,
+        )
+    )
 
     lb_min_mathrm_ft_3_or_lb_mathrm_min_mathrm_cft: Final = pound_per_minute_per_cubic_foot
     lb_min_ft_3: Final = pound_per_minute_per_cubic_foot
     lb_min_cft: Final = pound_per_minute_per_cubic_foot
 
     # pound per second per cubic foot
-    pound_per_second_per_cubic_foot: Final = UnitConstant(UnitDefinition(
-        name="pound_per_second_per_cubic_foot",
-        symbol="b/(s ft ${ }^{3}$ ) or lb/sec/cft",
-        dimension=dim.VOLUMETRIC_MASS_FLOW_RATE,
-        si_factor=16.018,
-        si_offset=0.0,
-    ))
+    pound_per_second_per_cubic_foot: Final = UnitConstant(
+        UnitDefinition(
+            name="pound_per_second_per_cubic_foot",
+            symbol="b/(s ft ${ }^{3}$ ) or lb/sec/cft",
+            dimension=dim.VOLUMETRIC_MASS_FLOW_RATE,
+            si_factor=16.018,
+            si_offset=0.0,
+        )
+    )
 
     b_s_ft_3_or_lb_sec_cft: Final = pound_per_second_per_cubic_foot
     b_s_ft_3: Final = pound_per_second_per_cubic_foot
@@ -10236,31 +11972,37 @@ class WavenumberUnits:
     __slots__ = ()
 
     # diopter
-    diopter: Final = UnitConstant(UnitDefinition(
-        name="diopter",
-        symbol="D",
-        dimension=dim.WAVENUMBER,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    diopter: Final = UnitConstant(
+        UnitDefinition(
+            name="diopter",
+            symbol="D",
+            dimension=dim.WAVENUMBER,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     # kayser
-    kayser: Final = UnitConstant(UnitDefinition(
-        name="kayser",
-        symbol="K",
-        dimension=dim.WAVENUMBER,
-        si_factor=100.0,
-        si_offset=0.0,
-    ))
+    kayser: Final = UnitConstant(
+        UnitDefinition(
+            name="kayser",
+            symbol="K",
+            dimension=dim.WAVENUMBER,
+            si_factor=100.0,
+            si_offset=0.0,
+        )
+    )
 
     # reciprocal meter
-    reciprocal_meter: Final = UnitConstant(UnitDefinition(
-        name="reciprocal_meter",
-        symbol="1/m",
-        dimension=dim.WAVENUMBER,
-        si_factor=1.0,
-        si_offset=0.0,
-    ))
+    reciprocal_meter: Final = UnitConstant(
+        UnitDefinition(
+            name="reciprocal_meter",
+            symbol="1/m",
+            dimension=dim.WAVENUMBER,
+            si_factor=1.0,
+            si_offset=0.0,
+        )
+    )
 
     unit_1_m: Final = reciprocal_meter
 

@@ -5,14 +5,14 @@ This module defines all custom exception types used throughout the library
 for consistent error handling and reporting.
 """
 
-from typing import Any, Optional
+from typing import Any
 
 
 # Custom Exception Hierarchy
 class QntyError(Exception):
     """Base exception for all qnty library errors."""
 
-    def __init__(self, message: str, context: Optional[dict[str, Any]] = None):
+    def __init__(self, message: str, context: dict[str, Any] | None = None):
         super().__init__(message)
         self.context = context or {}
         self.message = message
@@ -21,7 +21,7 @@ class QntyError(Exception):
 class DimensionalError(QntyError):
     """Raised when operations involve incompatible dimensions."""
 
-    def __init__(self, operation: str, left_dim: str, right_dim: str, context: Optional[dict] = None):
+    def __init__(self, operation: str, left_dim: str, right_dim: str, context: dict | None = None):
         message = f"Incompatible dimensions for {operation}: {left_dim} and {right_dim}"
         super().__init__(message, context)
         self.operation = operation
@@ -32,7 +32,7 @@ class DimensionalError(QntyError):
 class UnitConversionError(QntyError):
     """Raised when unit conversions fail."""
 
-    def __init__(self, from_unit: str, to_unit: str, reason: str = "", context: Optional[dict] = None):
+    def __init__(self, from_unit: str, to_unit: str, reason: str = "", context: dict | None = None):
         message = f"Cannot convert from '{from_unit}' to '{to_unit}'"
         if reason:
             message += f": {reason}"
@@ -44,7 +44,7 @@ class UnitConversionError(QntyError):
 class VariableNotFoundError(QntyError):
     """Raised when a required variable is not found."""
 
-    def __init__(self, variable_name: str, available_vars: Optional[list[str]] = None, context: Optional[dict] = None):
+    def __init__(self, variable_name: str, available_vars: list[str] | None = None, context: dict | None = None):
         message = f"Variable '{variable_name}' not found"
         if available_vars:
             message += f". Available variables: {', '.join(available_vars)}"
@@ -56,7 +56,7 @@ class VariableNotFoundError(QntyError):
 class EquationSolvingError(QntyError):
     """Raised when equation solving fails."""
 
-    def __init__(self, equation_name: str, target_var: str, reason: str = "", context: Optional[dict] = None):
+    def __init__(self, equation_name: str, target_var: str, reason: str = "", context: dict | None = None):
         message = f"Cannot solve equation '{equation_name}' for variable '{target_var}'"
         if reason:
             message += f": {reason}"
@@ -68,7 +68,7 @@ class EquationSolvingError(QntyError):
 class ExpressionEvaluationError(QntyError):
     """Raised when expression evaluation fails."""
 
-    def __init__(self, expression: str, reason: str = "", context: Optional[dict] = None):
+    def __init__(self, expression: str, reason: str = "", context: dict | None = None):
         message = f"Cannot evaluate expression '{expression}'"
         if reason:
             message += f": {reason}"
@@ -79,7 +79,7 @@ class ExpressionEvaluationError(QntyError):
 class DivisionByZeroError(QntyError):
     """Raised for division by zero operations."""
 
-    def __init__(self, dividend: str, context: Optional[dict] = None):
+    def __init__(self, dividend: str, context: dict | None = None):
         message = f"Division by zero: {dividend} / 0"
         super().__init__(message, context)
         self.dividend = dividend

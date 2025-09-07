@@ -88,30 +88,90 @@ class CacheManager:
                 ENERGY_PER_UNIT_AREA._signature: UnitConstant(UnitDefinition("joule_per_square_meter", "J/m²", ENERGY_PER_UNIT_AREA, 1.0)),
             }
 
-        # Pre-populate common engineering combinations
+        # Pre-populate common engineering combinations with extensive coverage
         force_unit = UnitConstant(UnitDefinition("newton", "N", FORCE, 1.0))
         energy_unit = UnitConstant(UnitDefinition("joule", "J", ENERGY, 1.0))
+        surface_tension_unit = UnitConstant(UnitDefinition("newton_per_meter", "N/m", SURFACE_TENSION, 1.0))
+        energy_per_area_unit = UnitConstant(UnitDefinition("joule_per_square_meter", "J/m²", ENERGY_PER_UNIT_AREA, 1.0))
 
-        self.multiplication_cache.update(
-            {
-                (LENGTH._signature, LENGTH._signature): AreaUnits.square_millimeter,
-                (LENGTH._signature, AREA._signature): VolumeUnits.cubic_millimeter,
-                (AREA._signature, LENGTH._signature): VolumeUnits.cubic_millimeter,
-                (PRESSURE._signature, AREA._signature): force_unit,
-                (AREA._signature, PRESSURE._signature): force_unit,
-                (FORCE._signature, LENGTH._signature): energy_unit,
-                (LENGTH._signature, FORCE._signature): energy_unit,
-            }
-        )
+        # Create comprehensive multiplication cache with all common engineering patterns
+        multiplication_patterns = {
+            # Basic geometric operations (most common)
+            (LENGTH._signature, LENGTH._signature): AreaUnits.square_millimeter,
+            (LENGTH._signature, AREA._signature): VolumeUnits.cubic_millimeter,
+            (AREA._signature, LENGTH._signature): VolumeUnits.cubic_millimeter,
+            (AREA._signature, AREA._signature): UnitConstant(UnitDefinition("m4", "m⁴", 
+                DimensionSignature(AREA._signature * AREA._signature), 1e-12)),  # mm⁴
+            
+            # Force and pressure operations (ASME common)
+            (PRESSURE._signature, AREA._signature): force_unit,
+            (AREA._signature, PRESSURE._signature): force_unit,
+            (FORCE._signature, LENGTH._signature): energy_unit,
+            (LENGTH._signature, FORCE._signature): energy_unit,
+            (FORCE._signature, FORCE._signature): UnitConstant(UnitDefinition("N2", "N²", 
+                DimensionSignature(FORCE._signature * FORCE._signature), 1.0)),
+            
+            # ASME-specific: Pressure × Length = Force (P×D term in hoop stress)
+            (PRESSURE._signature, LENGTH._signature): force_unit,
+            (LENGTH._signature, PRESSURE._signature): force_unit,
+            (PRESSURE._signature, PRESSURE._signature): UnitConstant(UnitDefinition("Pa2", "Pa²", 
+                DimensionSignature(PRESSURE._signature * PRESSURE._signature), 1.0)),
+            
+            # Advanced engineering combinations
+            (PRESSURE._signature, VOLUME._signature): energy_unit,  # PV work
+            (VOLUME._signature, PRESSURE._signature): energy_unit,
+            (FORCE._signature, AREA._signature): energy_unit,  # Force × Area = Energy
+            (AREA._signature, FORCE._signature): energy_unit,
+            (ENERGY._signature, LENGTH._signature): force_unit,  # Energy/Length = Force
+            (LENGTH._signature, ENERGY._signature): force_unit,
+            (ENERGY._signature, AREA._signature): energy_per_area_unit,
+            (AREA._signature, ENERGY._signature): energy_per_area_unit,
+            (FORCE._signature, LENGTH._signature * LENGTH._signature): energy_unit,  # Moment × Length = Energy
+            
+            # Surface tension operations
+            (SURFACE_TENSION._signature, LENGTH._signature): force_unit,
+            (LENGTH._signature, SURFACE_TENSION._signature): force_unit,
+            
+            # Dimensionless combinations (extremely common in ASME equations - factor of safety, ratios, etc.)
+            (PRESSURE._signature, DIMENSIONLESS._signature): PressureUnits.Pa,
+            (DIMENSIONLESS._signature, PRESSURE._signature): PressureUnits.Pa,
+            (LENGTH._signature, DIMENSIONLESS._signature): LengthUnits.millimeter,
+            (DIMENSIONLESS._signature, LENGTH._signature): LengthUnits.millimeter,
+            (AREA._signature, DIMENSIONLESS._signature): AreaUnits.square_millimeter,
+            (DIMENSIONLESS._signature, AREA._signature): AreaUnits.square_millimeter,
+            (VOLUME._signature, DIMENSIONLESS._signature): VolumeUnits.cubic_millimeter,
+            (DIMENSIONLESS._signature, VOLUME._signature): VolumeUnits.cubic_millimeter,
+            (FORCE._signature, DIMENSIONLESS._signature): force_unit,
+            (DIMENSIONLESS._signature, FORCE._signature): force_unit,
+            (ENERGY._signature, DIMENSIONLESS._signature): energy_unit,
+            (DIMENSIONLESS._signature, ENERGY._signature): energy_unit,
+            (DIMENSIONLESS._signature, DIMENSIONLESS._signature): DimensionlessUnits.dimensionless,
+        }
+
+        self.multiplication_cache.update(multiplication_patterns)
 
         self.division_cache.update(
             {
+                # Basic geometric divisions
                 (AREA._signature, LENGTH._signature): LengthUnits.millimeter,
                 (VOLUME._signature, AREA._signature): LengthUnits.millimeter,
                 (VOLUME._signature, LENGTH._signature): AreaUnits.square_millimeter,
+                
+                # Force and pressure divisions
                 (FORCE._signature, AREA._signature): PressureUnits.Pa,
                 (ENERGY._signature, FORCE._signature): LengthUnits.meter,
                 (ENERGY._signature, LENGTH._signature): force_unit,
+                
+                # ASME-specific: Force ÷ Length = Pressure (common in final result)
+                (FORCE._signature, LENGTH._signature): PressureUnits.Pa,
+                
+                # Dimensionless divisions (maintain original units)
+                (PRESSURE._signature, DIMENSIONLESS._signature): PressureUnits.Pa,
+                (LENGTH._signature, DIMENSIONLESS._signature): LengthUnits.millimeter,
+                (FORCE._signature, DIMENSIONLESS._signature): force_unit,
+                
+                # Combined unit divisions (P×D ÷ P = D pattern in ASME)
+                (force_unit.dimension._signature, PRESSURE._signature): LengthUnits.millimeter,
             }
         )
 
@@ -166,13 +226,12 @@ class ArithmeticOperations:
 
     @staticmethod
     def multiply(quantity, other):
-        """Multiply quantity by another quantity or scalar."""
-        # Fast path for numeric types - use type() for speed
+        """Multiply quantity by another quantity or scalar with ultra-fast optimizations."""
+        # CRITICAL FAST PATH: Numeric types (most common case for scaling)
         if isinstance(other, int | float):
             return Quantity(quantity.value * other, quantity.unit)
 
-        # Handle UnifiedVariable objects by using their quantity
-        # Check for quantity attribute without importing (duck typing)
+        # Handle UnifiedVariable objects by using their quantity - duck typing for performance
         if hasattr(other, "quantity") and getattr(other, "quantity", None) is not None:
             other = other.quantity  # type: ignore
 
@@ -180,22 +239,52 @@ class ArithmeticOperations:
         if not isinstance(other, Quantity):
             raise TypeError(f"Expected Quantity, got {type(other)}")
 
-        # Check multiplication cache first
-        cached_unit = _cache_manager.get_multiplication_result(quantity._dimension_sig, other._dimension_sig)
-        if cached_unit:
-            result_si_value = (quantity.value * quantity._si_factor) * (other.value * other._si_factor)
+        # PERFORMANCE OPTIMIZATIONS: Extract frequently accessed attributes once
+        quantity_value = quantity.value
+        quantity_si = quantity._si_factor
+        quantity_dim = quantity._dimension_sig
+        other_value = other.value
+        other_si = other._si_factor
+        other_dim = other._dimension_sig
+
+        # ULTRA-FAST PATH: Special values (identity, zero) - checked first for maximum impact
+        if quantity_value == 1.0 and quantity_dim == 1:  # 1.0 * dimensionless
+            return Quantity(other_value * quantity_si, other.unit)
+        elif other_value == 1.0 and other_dim == 1:  # something * 1.0 dimensionless
+            return Quantity(quantity_value * other_si, quantity.unit)
+        elif quantity_value == 0.0:
+            return Quantity(0.0, quantity.unit)
+        elif other_value == 0.0:
+            return Quantity(0.0, other.unit)
+
+        # ENHANCED DIMENSIONLESS FAST PATHS: Handle like scalars with minimal overhead
+        if other_dim == 1:  # DIMENSIONLESS right operand
+            # Dimensionless multiplication: just scale, keep original unit - avoid complex operations
+            return Quantity(quantity_value * other_value * other_si, quantity.unit)
+        elif quantity_dim == 1:  # DIMENSIONLESS left operand
+            # Dimensionless left operand: scale the right operand - avoid complex operations
+            return Quantity(quantity_value * quantity_si * other_value, other.unit)
+
+        # STREAMLINED CACHE LOOKUP: Direct dictionary access instead of method calls
+        cache_key = (quantity_dim, other_dim)
+        if cache_key in _cache_manager.multiplication_cache:
+            cached_unit = _cache_manager.multiplication_cache[cache_key]
+            # BATCHED SI CALCULATIONS: Combine operations to reduce attribute access
+            result_si_value = (quantity_value * quantity_si) * (other_value * other_si)
             return Quantity(result_si_value / cached_unit.si_factor, cached_unit)
 
-        # Calculate result dimension and value
-        result_dimension_sig = quantity._dimension_sig * other._dimension_sig
-        result_si_value = (quantity.value * quantity._si_factor) * (other.value * other._si_factor)
+        # OPTIMIZED GENERAL CASE: Pre-calculate result dimension
+        result_dimension_sig = quantity_dim * other_dim
+        result_si_value = (quantity_value * quantity_si) * (other_value * other_si)
 
-        # Find appropriate result unit
+        # Find appropriate result unit using fast path
         result_unit = UnitResolution.find_result_unit_fast(quantity, result_dimension_sig)
         result_value = result_si_value / result_unit.si_factor
 
-        # Cache the result for future use
-        _cache_manager.cache_multiplication_result(quantity._dimension_sig, other._dimension_sig, result_unit)
+        # Cache the result for future use - direct dictionary assignment for speed
+        if len(_cache_manager.multiplication_cache) < _cache_manager.max_cache_size:
+            _cache_manager.multiplication_cache[cache_key] = result_unit
+        
         return Quantity(result_value, result_unit)
 
     @staticmethod
@@ -212,6 +301,13 @@ class ArithmeticOperations:
         # Type narrowing: at this point other should be Quantity
         if not isinstance(other, Quantity):
             raise TypeError(f"Expected Quantity, got {type(other)}")
+
+        # OPTIMIZATION: Fast path for dimensionless divisor (signature = 1)
+        # Treat dimensionless quantities more like scalars to reduce overhead
+        if other._dimension_sig == 1:  # DIMENSIONLESS divisor
+            # Division by dimensionless: just scale the value, keep original unit
+            divisor = other.value * other._si_factor
+            return Quantity(quantity.value / divisor, quantity.unit)
 
         # Check division cache first
         cached_unit = _cache_manager.get_division_result(quantity._dimension_sig, other._dimension_sig)
@@ -303,22 +399,25 @@ class UnitResolution:
     @staticmethod
     def find_result_unit_fast(quantity, result_dimension_sig: int | float) -> UnitConstant:
         """Ultra-fast unit finding using pre-cached dimension signatures."""
-        # O(1) lookup for common dimensions (cache initialized at module load)
-        if result_dimension_sig in registry._dimension_cache:
-            return registry._dimension_cache[result_dimension_sig]
+        # CRITICAL OPTIMIZATION: Direct dictionary access (O(1)) for common dimensions
+        dimension_cache = registry._dimension_cache
+        if result_dimension_sig in dimension_cache:
+            return dimension_cache[result_dimension_sig]
 
-        # For rare combined dimensions, create SI base unit with descriptive name
+        # OPTIMIZED PATH: For rare combined dimensions, create SI base unit efficiently
         result_dimension = DimensionSignature(result_dimension_sig)
 
-        # Create descriptive name based on dimensional analysis
-        si_name = UnitResolution.create_si_unit_name(quantity, result_dimension)
-        si_symbol = UnitResolution.create_si_unit_symbol(quantity, result_dimension)
+        # FAST CREATION: Minimize string operations for performance
+        sig_hash = abs(hash(result_dimension_sig)) % 10000
+        si_name = f"si_derived_{sig_hash}"
+        si_symbol = f"SI_{sig_hash % 1000}"
 
+        # STREAMLINED CREATION: Avoid unnecessary method calls
         temp_unit = UnitDefinition(name=si_name, symbol=si_symbol, dimension=result_dimension, si_factor=1.0)
         result_unit = UnitConstant(temp_unit)
 
-        # Cache for future use
-        registry._dimension_cache[result_dimension_sig] = result_unit
+        # DIRECT CACHE ASSIGNMENT: Bypass cache size checks for dimension cache
+        dimension_cache[result_dimension_sig] = result_unit
         return result_unit
 
     @staticmethod
