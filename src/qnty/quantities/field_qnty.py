@@ -240,14 +240,29 @@ class UnifiedArithmeticMixin:
 
     def __mul__(self, other) -> Any:
         """Unified multiplication with mode-based dispatch."""
+        # Ultra-fast path for scalar multiplication when in quantity mode only
+        if (type(other) in (int, float) and self.quantity is not None and 
+            self._arithmetic_mode == "quantity"):
+            from .base_qnty import Quantity
+            return Quantity(self.quantity.value * other, self.quantity.unit)
         return self._unified_multiply(self, other, self._arithmetic_mode)
 
     def __rmul__(self, other) -> Any:
         """Reverse multiplication."""
+        # Ultra-fast path for scalar multiplication when in quantity mode only
+        if (type(other) in (int, float) and self.quantity is not None and 
+            self._arithmetic_mode == "quantity"):
+            from .base_qnty import Quantity
+            return Quantity(other * self.quantity.value, self.quantity.unit)
         return self._unified_multiply(other, self, self._arithmetic_mode)
 
     def __truediv__(self, other) -> Any:
         """Unified division with mode-based dispatch."""
+        # Ultra-fast path for scalar division when in quantity mode only
+        if (type(other) in (int, float) and self.quantity is not None and 
+            self._arithmetic_mode == "quantity"):
+            from .base_qnty import Quantity
+            return Quantity(self.quantity.value / other, self.quantity.unit)
         return self._unified_divide(self, other, self._arithmetic_mode)
 
     def __rtruediv__(self, other) -> Any:
@@ -264,26 +279,25 @@ class UnifiedArithmeticMixin:
 
     @staticmethod
     def _should_return_quantity(left: Any, right: Any) -> bool:
-        """Determine if operations should return Quantity (fast path) or Expression (flexible path)."""
-        # Fast type checks for primitives first (most common case)
+        """Optimized check for quantity path eligibility."""
+        # Ultra-fast type checks using type() comparison
         left_type = type(left)
         right_type = type(right)
 
-        # Cache primitive type checks
-        left_is_primitive = left_type in (int, float)
-        right_is_primitive = right_type in (int, float)
-
-        if left_is_primitive and right_is_primitive:
+        # Fast path: both primitives
+        if left_type in (int, float) and right_type in (int, float):
             return True
-        elif left_is_primitive:
-            return hasattr(right, "is_known") and right.is_known and hasattr(right, "quantity") and right.quantity is not None
-        elif right_is_primitive:
-            return hasattr(left, "is_known") and left.is_known and hasattr(left, "quantity") and left.quantity is not None
-        else:
-            # Both are complex objects
-            left_is_known = hasattr(left, "is_known") and left.is_known and hasattr(left, "quantity") and left.quantity is not None
-            right_is_known = hasattr(right, "is_known") and right.is_known and hasattr(right, "quantity") and right.quantity is not None
-            return left_is_known and right_is_known
+        
+        # Fast path: one primitive, one variable
+        if left_type in (int, float):
+            # Use getattr for safe access, defaulting to False for missing attributes
+            return getattr(right, "is_known", False) and getattr(right, "quantity", None) is not None
+        if right_type in (int, float):
+            return getattr(left, "is_known", False) and getattr(left, "quantity", None) is not None
+            
+        # Both complex objects - optimized checks
+        return (getattr(left, "is_known", False) and getattr(left, "quantity", None) is not None and
+                getattr(right, "is_known", False) and getattr(right, "quantity", None) is not None)
 
     def _unified_add(self, left: Any, right: Any, return_type: str = "auto") -> Any:
         """Unified addition with controllable return type."""
