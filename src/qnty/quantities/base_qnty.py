@@ -11,7 +11,6 @@ from __future__ import annotations
 from typing import TypeVar
 
 from ..constants import FLOAT_EQUALITY_TOLERANCE
-from ..utils.caching import get_cache_manager
 from ..dimensions._field_dims_generated import (
     AREA,
     DIMENSIONLESS,
@@ -33,52 +32,92 @@ from ..units.registry import UnitConstant, UnitDefinition, registry
 DimensionType = TypeVar("DimensionType", bound="Quantity")
 
 
-# Initialize the global cache manager with common operations
-def _initialize_cache():
-    """Initialize common dimensional operations cache."""
-    cache_manager = get_cache_manager()
-    
-    # Initialize dimension cache if not already done by registry
-    if not registry._dimension_cache:
-        registry._dimension_cache = {
-            DIMENSIONLESS._signature: DimensionlessUnits.dimensionless,
-            LENGTH._signature: LengthUnits.millimeter,
-            PRESSURE._signature: PressureUnits.Pa,
-            AREA._signature: AreaUnits.square_millimeter,
-            VOLUME._signature: VolumeUnits.cubic_millimeter,
-            FORCE._signature: UnitConstant(UnitDefinition("newton", "N", FORCE, 1.0)),
-            ENERGY._signature: UnitConstant(UnitDefinition("joule", "J", ENERGY, 1.0)),
-            SURFACE_TENSION._signature: UnitConstant(UnitDefinition("newton_per_meter", "N/m", SURFACE_TENSION, 1.0)),
-            ENERGY_PER_UNIT_AREA._signature: UnitConstant(UnitDefinition("joule_per_square_meter", "J/m²", ENERGY_PER_UNIT_AREA, 1.0)),
-        }
-    
-    # Also initialize the centralized cache with the same mappings
-    cache_manager.initialize_dimension_cache(registry._dimension_cache)
-    
-    # Pre-populate common engineering combinations
-    force_unit = UnitConstant(UnitDefinition("newton", "N", FORCE, 1.0))
-    energy_unit = UnitConstant(UnitDefinition("joule", "J", ENERGY, 1.0))
-    
-    multiplication_mappings = {
-        (LENGTH._signature, LENGTH._signature): AreaUnits.square_millimeter,
-        (LENGTH._signature, AREA._signature): VolumeUnits.cubic_millimeter,
-        (AREA._signature, LENGTH._signature): VolumeUnits.cubic_millimeter,
-        (PRESSURE._signature, AREA._signature): force_unit,
-        (AREA._signature, PRESSURE._signature): force_unit,
-        (FORCE._signature, LENGTH._signature): energy_unit,
-        (LENGTH._signature, FORCE._signature): energy_unit,
-    }
-    
-    division_mappings = {
-        (AREA._signature, LENGTH._signature): LengthUnits.millimeter,
-        (VOLUME._signature, AREA._signature): LengthUnits.millimeter,
-        (VOLUME._signature, LENGTH._signature): AreaUnits.square_millimeter,
-        (FORCE._signature, AREA._signature): PressureUnits.Pa,
-        (ENERGY._signature, FORCE._signature): LengthUnits.meter,
-        (ENERGY._signature, LENGTH._signature): force_unit,
-    }
-    
-    cache_manager.initialize_operation_caches(multiplication_mappings, division_mappings)
+# Global state management and caching system
+class CacheManager:
+    """Centralized cache management for better encapsulation and control."""
+
+    def __init__(self):
+        self.small_integer_cache: dict[tuple[int, str], Quantity] = {}
+        self.multiplication_cache: dict[tuple[int | float, int | float], UnitConstant] = {}
+        self.division_cache: dict[tuple[int | float, int | float], UnitConstant] = {}
+        self.max_cache_size = 100
+
+    def get_cached_quantity(self, value: int | float, unit: UnitConstant) -> Quantity | None:
+        """Get cached quantity for small integers."""
+        if isinstance(value, int | float) and -10 <= value <= 10 and value == int(value):
+            cache_key = (int(value), unit.name)
+            return self.small_integer_cache.get(cache_key)
+        return None
+
+    def cache_quantity(self, value: int | float, unit: UnitConstant, quantity: Quantity) -> None:
+        """Cache quantity if under size limit."""
+        if len(self.small_integer_cache) < self.max_cache_size:
+            cache_key = (int(value), unit.name)
+            self.small_integer_cache[cache_key] = quantity
+
+    def get_multiplication_result(self, left_sig: int | float, right_sig: int | float) -> UnitConstant | None:
+        """Get cached multiplication result."""
+        return self.multiplication_cache.get((left_sig, right_sig))
+
+    def cache_multiplication_result(self, left_sig: int | float, right_sig: int | float, result_unit: UnitConstant) -> None:
+        """Cache multiplication result if under size limit."""
+        if len(self.multiplication_cache) < self.max_cache_size:
+            self.multiplication_cache[(left_sig, right_sig)] = result_unit
+
+    def get_division_result(self, left_sig: int | float, right_sig: int | float) -> UnitConstant | None:
+        """Get cached division result."""
+        return self.division_cache.get((left_sig, right_sig))
+
+    def cache_division_result(self, left_sig: int | float, right_sig: int | float, result_unit: UnitConstant) -> None:
+        """Cache division result if under size limit."""
+        if len(self.division_cache) < self.max_cache_size:
+            self.division_cache[(left_sig, right_sig)] = result_unit
+
+    def initialize_common_operations(self) -> None:
+        """Initialize common dimensional operations cache."""
+        if not registry._dimension_cache:
+            registry._dimension_cache = {
+                DIMENSIONLESS._signature: DimensionlessUnits.dimensionless,
+                LENGTH._signature: LengthUnits.millimeter,
+                PRESSURE._signature: PressureUnits.Pa,
+                AREA._signature: AreaUnits.square_millimeter,
+                VOLUME._signature: VolumeUnits.cubic_millimeter,
+                FORCE._signature: UnitConstant(UnitDefinition("newton", "N", FORCE, 1.0)),
+                ENERGY._signature: UnitConstant(UnitDefinition("joule", "J", ENERGY, 1.0)),
+                SURFACE_TENSION._signature: UnitConstant(UnitDefinition("newton_per_meter", "N/m", SURFACE_TENSION, 1.0)),
+                ENERGY_PER_UNIT_AREA._signature: UnitConstant(UnitDefinition("joule_per_square_meter", "J/m²", ENERGY_PER_UNIT_AREA, 1.0)),
+            }
+
+        # Pre-populate common engineering combinations
+        force_unit = UnitConstant(UnitDefinition("newton", "N", FORCE, 1.0))
+        energy_unit = UnitConstant(UnitDefinition("joule", "J", ENERGY, 1.0))
+
+        self.multiplication_cache.update(
+            {
+                (LENGTH._signature, LENGTH._signature): AreaUnits.square_millimeter,
+                (LENGTH._signature, AREA._signature): VolumeUnits.cubic_millimeter,
+                (AREA._signature, LENGTH._signature): VolumeUnits.cubic_millimeter,
+                (PRESSURE._signature, AREA._signature): force_unit,
+                (AREA._signature, PRESSURE._signature): force_unit,
+                (FORCE._signature, LENGTH._signature): energy_unit,
+                (LENGTH._signature, FORCE._signature): energy_unit,
+            }
+        )
+
+        self.division_cache.update(
+            {
+                (AREA._signature, LENGTH._signature): LengthUnits.millimeter,
+                (VOLUME._signature, AREA._signature): LengthUnits.millimeter,
+                (VOLUME._signature, LENGTH._signature): AreaUnits.square_millimeter,
+                (FORCE._signature, AREA._signature): PressureUnits.Pa,
+                (ENERGY._signature, FORCE._signature): LengthUnits.meter,
+                (ENERGY._signature, LENGTH._signature): force_unit,
+            }
+        )
+
+
+# Global cache manager instance
+_cache_manager = CacheManager()
 
 
 # Error message constants for better maintainability
@@ -142,8 +181,7 @@ class ArithmeticOperations:
             raise TypeError(f"Expected Quantity, got {type(other)}")
 
         # Check multiplication cache first
-        cache_manager = get_cache_manager()
-        cached_unit = cache_manager.get_multiplication_result(quantity._dimension_sig, other._dimension_sig)
+        cached_unit = _cache_manager.get_multiplication_result(quantity._dimension_sig, other._dimension_sig)
         if cached_unit:
             result_si_value = (quantity.value * quantity._si_factor) * (other.value * other._si_factor)
             return Quantity(result_si_value / cached_unit.si_factor, cached_unit)
@@ -157,7 +195,7 @@ class ArithmeticOperations:
         result_value = result_si_value / result_unit.si_factor
 
         # Cache the result for future use
-        cache_manager.cache_multiplication_result(quantity._dimension_sig, other._dimension_sig, result_unit)
+        _cache_manager.cache_multiplication_result(quantity._dimension_sig, other._dimension_sig, result_unit)
         return Quantity(result_value, result_unit)
 
     @staticmethod
@@ -176,8 +214,7 @@ class ArithmeticOperations:
             raise TypeError(f"Expected Quantity, got {type(other)}")
 
         # Check division cache first
-        cache_manager = get_cache_manager()
-        cached_unit = cache_manager.get_division_result(quantity._dimension_sig, other._dimension_sig)
+        cached_unit = _cache_manager.get_division_result(quantity._dimension_sig, other._dimension_sig)
         if cached_unit:
             result_si_value = (quantity.value * quantity._si_factor) / (other.value * other._si_factor)
             return Quantity(result_si_value / cached_unit.si_factor, cached_unit)
@@ -191,7 +228,7 @@ class ArithmeticOperations:
         result_value = result_si_value / result_unit.si_factor
 
         # Cache the result for future use
-        cache_manager.cache_division_result(quantity._dimension_sig, other._dimension_sig, result_unit)
+        _cache_manager.cache_division_result(quantity._dimension_sig, other._dimension_sig, result_unit)
         return Quantity(result_value, result_unit)
 
 
@@ -264,34 +301,24 @@ class UnitResolution:
     """Handles unit resolution for dimensional operations."""
 
     @staticmethod
-    def find_result_unit_fast(_quantity, result_dimension_sig: int | float) -> UnitConstant:
+    def find_result_unit_fast(quantity, result_dimension_sig: int | float) -> UnitConstant:
         """Ultra-fast unit finding using pre-cached dimension signatures."""
-        # Try centralized cache first
-        cache_manager = get_cache_manager()
-        cached_unit = cache_manager.get_dimension_unit(result_dimension_sig)
-        if cached_unit:
-            return cached_unit
-        
         # O(1) lookup for common dimensions (cache initialized at module load)
         if result_dimension_sig in registry._dimension_cache:
-            unit = registry._dimension_cache[result_dimension_sig]
-            # Also cache in centralized cache
-            cache_manager.cache_dimension_unit(result_dimension_sig, unit)
-            return unit
+            return registry._dimension_cache[result_dimension_sig]
 
         # For rare combined dimensions, create SI base unit with descriptive name
         result_dimension = DimensionSignature(result_dimension_sig)
 
         # Create descriptive name based on dimensional analysis
-        si_name = UnitResolution.create_si_unit_name(_quantity, result_dimension)
-        si_symbol = UnitResolution.create_si_unit_symbol(_quantity, result_dimension)
+        si_name = UnitResolution.create_si_unit_name(quantity, result_dimension)
+        si_symbol = UnitResolution.create_si_unit_symbol(quantity, result_dimension)
 
         temp_unit = UnitDefinition(name=si_name, symbol=si_symbol, dimension=result_dimension, si_factor=1.0)
         result_unit = UnitConstant(temp_unit)
 
-        # Cache for future use in both locations
+        # Cache for future use
         registry._dimension_cache[result_dimension_sig] = result_unit
-        cache_manager.cache_dimension_unit(result_dimension_sig, result_unit)
         return result_unit
 
     @staticmethod
@@ -348,8 +375,7 @@ class Quantity:
     def get_cached(cls, value: int | float, unit: UnitConstant):
         """Get cached instance for small integers, otherwise create new."""
         # Check cache for small integers
-        cache_manager = get_cache_manager()
-        cached = cache_manager.get_cached_quantity(value, unit.name)
+        cached = _cache_manager.get_cached_quantity(value, unit)
         if cached:
             return cached
 
@@ -357,7 +383,7 @@ class Quantity:
         obj = cls(value, unit)
 
         # Cache if it qualifies
-        cache_manager.cache_quantity(value, unit.name, obj)
+        _cache_manager.cache_quantity(value, unit, obj)
         return obj
 
     def __str__(self) -> str:
@@ -413,5 +439,5 @@ class Quantity:
         return UnitConversions.to(self, target_unit)
 
 
-# Initialize cache at module load
-_initialize_cache()
+# Initialize cache manager at module load
+_cache_manager.initialize_common_operations()
