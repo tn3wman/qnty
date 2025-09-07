@@ -10,28 +10,16 @@ import json
 from pathlib import Path
 from typing import Any
 
-try:
-    from .data_processor import (
-        augment_with_prefixed_units,
-        convert_to_class_name,
-        escape_string,
-        get_dimension_constant_name,
-        get_unit_names_and_aliases,
-        is_valid_python_identifier,
-        load_unit_data,
-        setup_import_path,
-    )
-except ImportError:
-    from .data_processor import (
-        augment_with_prefixed_units,
-        convert_to_class_name,
-        escape_string,
-        get_dimension_constant_name,
-        get_unit_names_and_aliases,
-        is_valid_python_identifier,
-        load_unit_data,
-        setup_import_path,
-    )
+from .data_processor import (
+    augment_with_prefixed_units,
+    convert_to_class_name,
+    escape_string,
+    get_dimension_constant_name,
+    get_unit_names_and_aliases,
+    is_valid_python_identifier,
+    load_unit_data,
+    setup_import_path,
+)
 
 
 class UnitsGenerator:
@@ -55,6 +43,9 @@ class UnitsGenerator:
         # Track generated info
         self.dimension_constants: set[str] = set()
         self.field_to_class_mapping: dict[str, str] = {}
+        
+        # Track global aliases to prevent duplicates
+        self.global_aliases: dict[str, str] = {}  # alias -> "class.primary_unit"
 
     def get_class_name(self, field_name: str) -> str:
         """Convert field name to class name."""
@@ -88,8 +79,10 @@ class UnitsGenerator:
 
         lines.extend(
             [
-                "from ..core.units.registry import UnitConstant, UnitDefinition",
-                "from . import dimensions as dim",
+                "from typing import Final",
+                "",
+                "from ..dimensions import field_dims as dim",
+                "from .registry import UnitConstant, UnitDefinition",
                 "",
                 "",
             ]
@@ -105,6 +98,7 @@ class UnitsGenerator:
         lines = [
             f"class {class_name}:",
             f'    """Unit constants for {field_data["field"]}."""',
+            "",
             "    __slots__ = ()",
             "",
         ]
@@ -121,28 +115,52 @@ class UnitsGenerator:
             if not is_valid_python_identifier(primary_name):
                 continue
 
-            full_name = unit_data.get("name", "")
-            symbol = unit_data.get("notation", "")
+            full_name = unit_data.get("name", "").strip()
+            symbol = unit_data.get("notation", "").strip()
             si_factor = unit_data.get("si_conversion", 1.0)
 
-            lines.extend(
-                [
-                    f"    # {full_name}",
-                    f"    {primary_name} = UnitConstant(UnitDefinition(",
-                    f'        name="{escape_string(primary_name)}",',
-                    f'        symbol="{escape_string(symbol)}",',
-                    f"        dimension=dim.{dimension_constant},",
-                    f"        si_factor={si_factor},",
-                    "        si_offset=0.0",
-                    "    ))",
-                    "",
-                ]
-            )
+            # Format unit definition with proper line breaks for readability
+            if len(full_name) > 60:  # Long name comment
+                lines.append(f"    # {full_name}")
+            else:
+                lines.append(f"    # {full_name}")
+            
+            # More readable UnitDefinition formatting
+            lines.extend([
+                f"    {primary_name}: Final = UnitConstant(UnitDefinition(",
+                f'        name="{escape_string(primary_name)}",',
+                f'        symbol="{escape_string(symbol)}",',
+                f"        dimension=dim.{dimension_constant},",
+                f"        si_factor={si_factor},",
+                "        si_offset=0.0,",
+                "    ))",
+                "",
+            ])
 
-            # Add aliases as class attributes using shared processing
+            # Add aliases, but check for global conflicts
+            class_unit_id = f"{class_name}.{primary_name}"
+            valid_aliases = []
+            
             for alias in aliases:
-                if is_valid_python_identifier(alias):
-                    lines.append(f"    {alias} = {primary_name}")
+                if not is_valid_python_identifier(alias):
+                    continue
+                    
+                if alias in self.global_aliases:
+                    # Skip duplicate alias with warning
+                    existing = self.global_aliases[alias]
+                    print(f"Warning: Skipping duplicate alias '{alias}' (already used by {existing})")
+                    continue
+                    
+                # Register this alias globally
+                self.global_aliases[alias] = class_unit_id
+                valid_aliases.append(alias)
+            
+            # Add valid aliases as class attributes
+            for alias in valid_aliases:
+                lines.append(f"    {alias}: Final = {primary_name}")
+            
+            if valid_aliases:
+                lines.append("")
 
         lines.append("")
         return lines

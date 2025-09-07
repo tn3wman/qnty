@@ -54,13 +54,7 @@ class SolverManager:
                     return result
 
         # No solver could handle the problem
-        return SolveResult(
-            variables=variables,
-            steps=[],
-            success=False,
-            message="No solver could handle this problem",
-            method="NoSolver"
-        )
+        return SolveResult(variables=variables, steps=[], success=False, message="No solver could handle this problem", method="NoSolver")
 
     def add_solver(self, solver: BaseSolver):
         """Add a custom solver to the manager."""
@@ -70,11 +64,10 @@ class SolverManager:
         """Get list of available solver names."""
         return [solver.__class__.__name__ for solver in self.solvers]
 
-    def _try_solver(self, solver: BaseSolver, equations: list[Equation], variables: dict[str, FieldQnty],
-                   dependency_graph: Order | None, max_iterations: int, tolerance: float) -> SolveResult:
+    def _try_solver(self, solver: BaseSolver, equations: list[Equation], variables: dict[str, FieldQnty], dependency_graph: Order | None, max_iterations: int, tolerance: float) -> SolveResult:
         """
         Try a specific solver and log results appropriately.
-        
+
         Args:
             solver: The solver to try
             equations: List of equations to solve
@@ -82,12 +75,12 @@ class SolverManager:
             dependency_graph: Optional dependency graph
             max_iterations: Maximum iterations
             tolerance: Convergence tolerance
-            
+
         Returns:
             SolveResult from the attempted solver
         """
         solver_name = solver.__class__.__name__
-        
+
         if self.logger:
             self.logger.debug(f"Using {solver_name} for solving")
 
@@ -99,5 +92,5 @@ class SolverManager:
                 self.logger.debug(f"{solver_name} failed: {result.message}")
             else:
                 self.logger.warning(f"{solver_name} failed: {result.message}")
-        
+
         return result

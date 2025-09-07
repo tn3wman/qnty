@@ -107,7 +107,8 @@ class ErrorHandlerMixin:
                     self.handle_error(e, "some_operation")
     """
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self._error_handler = ErrorHandler(logging.getLogger(self.__class__.__module__))
 
     def handle_error(self, error: Exception, operation: str, **context_kwargs) -> None:

@@ -37,7 +37,7 @@ def augment_with_prefixed_units(raw_data: dict[str, Any]) -> tuple[dict[str, Any
         Tuple of (augmented_data, generated_count)
     """
     # Import prefixes (setup_import_path should be called first)
-    from qnty.core.units.prefixes import PREFIXABLE_UNITS, StandardPrefixes
+    from qnty.units.prefixes import PREFIXABLE_UNITS, StandardPrefixes
 
     # Create deep copy of data with consistent structure
     augmented_data = {}

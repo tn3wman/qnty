@@ -10,12 +10,9 @@ This module uses protocol-based design to avoid circular imports and duck typing
 
 import inspect
 import logging
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 from .protocols import TypeRegistry, ExpressionProtocol, VariableProtocol
-
-if TYPE_CHECKING:
-    from ..quantities.field_qnty import FieldQnty
 
 # Setup logging for better debugging
 _logger = logging.getLogger(__name__)
@@ -35,7 +32,7 @@ class ScopeDiscoveryService:
     _max_search_depth = 8
 
     @classmethod
-    def discover_variables(cls, required_vars: set[str], enable_caching: bool = True) -> dict[str, "FieldQnty"]:
+    def discover_variables(cls, required_vars: set[str], enable_caching: bool = True) -> dict[str, Any]:
         """
         Discover variables from the calling scope.
 
@@ -44,7 +41,7 @@ class ScopeDiscoveryService:
             enable_caching: Whether to use caching for performance
 
         Returns:
-            Dictionary mapping variable names to UnifiedVariable instances
+            Dictionary mapping variable names to variable instances
         """
         if not required_vars:
             return {}
@@ -88,7 +85,7 @@ class ScopeDiscoveryService:
             del frame
 
     @classmethod
-    def can_auto_evaluate(cls, expression: Any) -> tuple[bool, dict[str, "FieldQnty"]]:
+    def can_auto_evaluate(cls, expression: Any) -> tuple[bool, dict[str, Any]]:
         """
         Check if expression can be auto-evaluated from scope.
 
@@ -96,7 +93,7 @@ class ScopeDiscoveryService:
             expression: Expression to check for auto-evaluation
 
         Returns:
-            Tuple of (can_evaluate, discovered_variables with UnifiedVariable instances)
+            Tuple of (can_evaluate, discovered_variables)
         """
         try:
             # Use protocol-based checking instead of duck typing
@@ -128,7 +125,7 @@ class ScopeDiscoveryService:
             return False, {}
 
     @classmethod
-    def find_variables_in_scope(cls, filter_func=None) -> dict[str, "FieldQnty"]:
+    def find_variables_in_scope(cls, filter_func=None) -> dict[str, Any]:
         """
         Find all UnifiedVariable instances in the calling scope.
 
@@ -136,7 +133,7 @@ class ScopeDiscoveryService:
             filter_func: Optional function to filter variables (var) -> bool
 
         Returns:
-            Dictionary mapping variable names/symbols to UnifiedVariable instances
+            Dictionary mapping variable names/symbols to variable instances
         """
         frame = inspect.currentframe()
         if frame is None:
@@ -207,7 +204,7 @@ class ScopeDiscoveryService:
         return None
 
     @classmethod
-    def _search_frame_for_variables(cls, frame: Any, required_vars: set[str]) -> dict[str, "FieldQnty"]:
+    def _search_frame_for_variables(cls, frame: Any, required_vars: set[str]) -> dict[str, Any]:
         """
         Search a specific frame for required variables.
 
@@ -251,7 +248,7 @@ class ScopeDiscoveryService:
         return discovered
 
     @classmethod
-    def _search_by_symbol_name(cls, local_vars: dict, global_vars: dict, remaining_vars: set[str], discovered: dict[str, "FieldQnty"]) -> None:
+    def _search_by_symbol_name(cls, local_vars: dict, global_vars: dict, remaining_vars: set[str], discovered: dict[str, Any]) -> None:
         """Search for variables by their symbol/name attribute in both local and global scopes."""
         # Search locals by symbol/name
         for obj in local_vars.values():
@@ -280,7 +277,7 @@ class ScopeDiscoveryService:
         Get the name/symbol to use for a variable.
 
         Args:
-            var: UnifiedVariable instance
+            var: Variable instance
 
         Returns:
             Variable name/symbol or None if not available
@@ -319,7 +316,7 @@ class ScopeDiscoveryService:
 
 
 # Convenience function for backward compatibility
-def discover_variables_from_scope(required_vars: set[str]) -> dict[str, "FieldQnty"]:
+def discover_variables_from_scope(required_vars: set[str]) -> dict[str, Any]:
     """
     Convenience function to discover variables from scope.
 
@@ -327,6 +324,6 @@ def discover_variables_from_scope(required_vars: set[str]) -> dict[str, "FieldQn
         required_vars: Set of variable names to find
 
     Returns:
-        Dictionary mapping variable names to UnifiedVariable instances
+        Dictionary mapping variable names to variable instances
     """
     return ScopeDiscoveryService.discover_variables(required_vars)

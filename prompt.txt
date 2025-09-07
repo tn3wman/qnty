@@ -12,15 +12,17 @@
 [ ] Please thorougly look for simplification opportunities and code smells in /src/qnty/constants/tests.py and fix the code as needed. Ensure all imports are at the top of the module and not within methods. Do not place imports under TYPE_CHECKING blocks. If there are any circular import issues, refactor the code to eliminate them. Avoid duck typing. After making changes, run all tests to confirm everything works correctly.
 
 ## Dimensions
-[ ] base.py
-[ ] field_dims.py
-[ ] signature.py
+[x] base.py
+[x] signature.py
 
-[ ] Please thorougly look for simplification opportunities and code smells in /src/qnty/dimensions/base.py and fix the code as needed. Ensure all imports are at the top of the module and not within methods. Do not place imports under TYPE_CHECKING blocks. If there are any circular import issues, refactor the code to eliminate them. Avoid duck typing. After making changes, run all tests to confirm everything works correctly.
+[x] field_dims.py
 
-[ ] Please thorougly look for simplification opportunities and code smells in /src/qnty/dimensions/field_dims.py and fix the code as needed. Ensure all imports are at the top of the module and not within methods. Do not place imports under TYPE_CHECKING blocks. If there are any circular import issues, refactor the code to eliminate them. Avoid duck typing. After making changes, run all tests to confirm everything works correctly.
 
-[ ] Please thorougly look for simplification opportunities and code smells in /src/qnty/dimensions/signature.py and fix the code as needed. Ensure all imports are at the top of the module and not within methods. Do not place imports under TYPE_CHECKING blocks. If there are any circular import issues, refactor the code to eliminate them. Avoid duck typing. After making changes, run all tests to confirm everything works correctly.
+[x] Please thorougly look for simplification opportunities and code smells in /src/qnty/dimensions/base.py and fix the code as needed. Ensure all imports are at the top of the module and not within methods. Do not place imports under TYPE_CHECKING blocks. If there are any circular import issues, refactor the code to eliminate them. Avoid duck typing. After making changes, run all tests to confirm everything works correctly.
+
+[x] Please thorougly look for simplification opportunities and code smells in /src/qnty/dimensions/signature.py and fix the code as needed. Ensure all imports are at the top of the module and not within methods. Do not place imports under TYPE_CHECKING blocks. If there are any circular import issues, refactor the code to eliminate them. Avoid duck typing. After making changes, run all tests to confirm everything works correctly.
+
+[x] Please thorougly look for simplification opportunities and code smells in /src/qnty/dimensions/field_dims.py and fix the code as needed. Ensure all imports are at the top of the module and not within methods. This is a generated file so you will also have to fix /Users/tyler/Projects/qnty/codegen/generators/field_dims.py to generate the file correctly. Do not place imports under TYPE_CHECKING blocks. If there are any circular import issues, refactor the code to eliminate them. Avoid duck typing. After making changes, run all tests to confirm everything works correctly.
 
 ## Equations
 
@@ -77,9 +79,9 @@
 
 [x] Please thorougly look for simplification opportunities and code smells in /src/qnty/quantities/field_qnty.py and fix the code as needed. Ensure all imports are at the top of the module and not within methods. Do not place imports under TYPE_CHECKING blocks. If there are any circular import issues, refactor the code to eliminate them. Avoid duck typing. After making changes, run all tests to confirm everything works correctly.
 
-[x] Please thorougly look for simplification opportunities and code smells in /src/qnty/quantities/field_setter.py and fix the code as needed. Ensure all imports are at the top of the module and not within methods. Do not place imports under TYPE_CHECKING blocks. If there are any circular import issues, refactor the code to eliminate them. Avoid duck typing. After making changes, run all tests to confirm everything works correctly.
+[x] Please thorougly look for simplification opportunities and code smells in /src/qnty/quantities/field_setter.py and fix the code as needed. Ensure all imports are at the top of the module and not within methods. This is a generated file so you will also have to fix /Users/tyler/Projects/qnty/codegen/generators/field_setter.py.  Do not place imports under TYPE_CHECKING blocks. If there are any circular import issues, refactor the code to eliminate them. Avoid duck typing. After making changes, run all tests to confirm everything works correctly.
 
-[x] Please thorougly look for simplification opportunities and code smells in /src/qnty/quantities/field_vars.py and fix the code as needed. Ensure all imports are at the top of the module and not within methods. Do not place imports under TYPE_CHECKING blocks. If there are any circular import issues, refactor the code to eliminate them. Avoid duck typing. After making changes, run all tests to confirm everything works correctly.
+[x] Please thorougly look for simplification opportunities and code smells in /src/qnty/quantities/field_vars.py and fix the code as needed. Ensure all imports are at the top of the module and not within methods. This is a generated file so you will also have to fix /Users/tyler/Projects/qnty/codegen/generators/field_vars.py. Do not place imports under TYPE_CHECKING blocks. If there are any circular import issues, refactor the code to eliminate them. Avoid duck typing. After making changes, run all tests to confirm everything works correctly.
 
 ## Solving
 
@@ -101,11 +103,11 @@
 
 ## Units
 
-[ ] field_units.py
+[x] field_units.py
 [x] prefixes.py
 [x] registry.py
 
-[ ] Please thorougly look for simplification opportunities and code smells in /src/qnty/units/field_units.py and fix the code as needed. Ensure all imports are at the top of the module and not within methods. Do not place imports under TYPE_CHECKING blocks. If there are any circular import issues, refactor the code to eliminate them. Avoid duck typing. After making changes, run all tests to confirm everything works correctly.
+[x] Please thorougly look for simplification opportunities and code smells in /src/qnty/units/field_units.py and fix the code as needed. Ensure all imports are at the top of the module and not within methods. This is a generated file so you will also have to fix /Users/tyler/Projects/qnty/codegen/generators/field_units.py to generate the file correctly. Do not place imports under TYPE_CHECKING blocks. If there are any circular import issues, refactor the code to eliminate them. Avoid duck typing. After making changes, run all tests to confirm everything works correctly.
 
 [x] Please thorougly look for simplification opportunities and code smells in /src/qnty/units/prefixes.py and fix the code as needed. Ensure all imports are at the top of the module and not within methods. Do not place imports under TYPE_CHECKING blocks. If there are any circular import issues, refactor the code to eliminate them. Avoid duck typing. After making changes, run all tests to confirm everything works correctly.
 
@@ -113,28 +115,28 @@
 
 ## Utils
 
-[ ] manager.py
-[ ] context.py
-[ ] exceptions.py
-[ ] handlers.py
-[ ] logging.py
-[ ] protocols.py
-[ ] scope_discovery.py
+[x] manager.py
+[x] context.py
+[x] exceptions.py
+[x] handlers.py
+[x] logging.py
+[x] protocols.py
+[x] scope_discovery.py
 
-[ ] Please thorougly look for simplification opportunities and code smells in /src/qnty/utils/manager.py and fix the code as needed. Ensure all imports are at the top of the module and not within methods. Do not place imports under TYPE_CHECKING blocks. If there are any circular import issues, refactor the code to eliminate them. Avoid duck typing. After making changes, run all tests to confirm everything works correctly.
+[x] Please thorougly look for simplification opportunities and code smells in /src/qnty/utils/manager.py and fix the code as needed. Ensure all imports are at the top of the module and not within methods. Do not place imports under TYPE_CHECKING blocks. If there are any circular import issues, refactor the code to eliminate them. Avoid duck typing. After making changes, run all tests to confirm everything works correctly.
 
-[ ] Please thorougly look for simplification opportunities and code smells in /src/qnty/utils/context.py and fix the code as needed. Ensure all imports are at the top of the module and not within methods. Do not place imports under TYPE_CHECKING blocks. If there are any circular import issues, refactor the code to eliminate them. Avoid duck typing. After making changes, run all tests to confirm everything works correctly.
+[x] Please thorougly look for simplification opportunities and code smells in /src/qnty/utils/context.py and fix the code as needed. Ensure all imports are at the top of the module and not within methods. Do not place imports under TYPE_CHECKING blocks. If there are any circular import issues, refactor the code to eliminate them. Avoid duck typing. After making changes, run all tests to confirm everything works correctly.
 
-[ ] Please thorougly look for simplification opportunities and code smells in /src/qnty/utils/exceptions.py and fix the code as needed. Ensure all imports are at the top of the module and not within methods. Do not place imports under TYPE_CHECKING blocks. If there are any circular import issues, refactor the code to eliminate them. Avoid duck typing. After making changes, run all tests to confirm everything works correctly.
+[x] Please thorougly look for simplification opportunities and code smells in /src/qnty/utils/exceptions.py and fix the code as needed. Ensure all imports are at the top of the module and not within methods. Do not place imports under TYPE_CHECKING blocks. If there are any circular import issues, refactor the code to eliminate them. Avoid duck typing. After making changes, run all tests to confirm everything works correctly.
 
-[ ] Please thorougly look for simplification opportunities and code smells in /src/qnty/utils/handlers.py and fix the code as needed. Ensure all imports are at the top of the module and not within methods. Do not place imports under TYPE_CHECKING blocks. If there are any circular import issues, refactor the code to eliminate them. Avoid duck typing. After making changes, run all tests to confirm everything works correctly.
+[x] Please thorougly look for simplification opportunities and code smells in /src/qnty/utils/handlers.py and fix the code as needed. Ensure all imports are at the top of the module and not within methods. Do not place imports under TYPE_CHECKING blocks. If there are any circular import issues, refactor the code to eliminate them. Avoid duck typing. After making changes, run all tests to confirm everything works correctly.
 
-[ ] Please thorougly look for simplification opportunities and code smells in /src/qnty/utils/logging.py and fix the code as needed. Ensure all imports are at the top of the module and not within methods. Do not place imports under TYPE_CHECKING blocks. If there are any circular import issues, refactor the code to eliminate them. Avoid duck typing. After making changes, run all tests to confirm everything works correctly.
+[x] Please thorougly look for simplification opportunities and code smells in /src/qnty/utils/logging.py and fix the code as needed. Ensure all imports are at the top of the module and not within methods. Do not place imports under TYPE_CHECKING blocks. If there are any circular import issues, refactor the code to eliminate them. Avoid duck typing. After making changes, run all tests to confirm everything works correctly.
 
-[ ] Please thorougly look for simplification opportunities and code smells in /src/qnty/utils/protocols.py and fix the code as needed. Ensure all imports are at the top of the module and not within methods. Do not place imports under TYPE_CHECKING blocks. If there are any circular import issues, refactor the code to eliminate them. Avoid duck typing. After making changes, run all tests to confirm everything works correctly.
+[x] Please thorougly look for simplification opportunities and code smells in /src/qnty/utils/protocols.py and fix the code as needed. Ensure all imports are at the top of the module and not within methods. Do not place imports under TYPE_CHECKING blocks. If there are any circular import issues, refactor the code to eliminate them. Avoid duck typing. After making changes, run all tests to confirm everything works correctly.
 
-[ ] Please thorougly look for simplification opportunities and code smells in /src/qnty/utils/scope_discovery.py and fix the code as needed. Ensure all imports are at the top of the module and not within methods. Do not place imports under TYPE_CHECKING blocks. If there are any circular import issues, refactor the code to eliminate them. Avoid duck typing. After making changes, run all tests to confirm everything works correctly.
+[x] Please thorougly look for simplification opportunities and code smells in /src/qnty/utils/scope_discovery.py and fix the code as needed. Ensure all imports are at the top of the module and not within methods. Do not place imports under TYPE_CHECKING blocks. If there are any circular import issues, refactor the code to eliminate them. Avoid duck typing. After making changes, run all tests to confirm everything works correctly.
 
 ## Final
 
-Profile the qnty/examples/composed_problem_demo.py and follow the profiling with a focus on simplifing the code, reducing complexity, fixing code smells, and improving performance.
+Profile the qnty/examples/composed_problem_demo.py and any other tests like test_benchmark.py and follow the profiling with a focus on simplifying the code, reducing complexity, fixing code smells, and improving performance.

@@ -151,27 +151,26 @@ class Order:
         Returns (can_solve, unsolvable_variables).
         """
         all_unknown = self.variables - known_vars
-        
+
         # Find variables with no solver equations
         truly_unsolvable = self._find_truly_unsolvable_variables(all_unknown)
-        
+
         # Check equation-to-variable ratio
         variables_with_solvers = all_unknown - set(truly_unsolvable)
         unique_equations = self._get_unique_equations(variables_with_solvers)
-        
+
         # Simple heuristic: need at least as many equations as unknowns
-        can_solve_completely = (len(unique_equations) >= len(variables_with_solvers) and
-                               len(truly_unsolvable) == 0)
-        
+        can_solve_completely = len(unique_equations) >= len(variables_with_solvers) and len(truly_unsolvable) == 0
+
         if can_solve_completely:
             return True, []
-        
+
         # Find all unsolvable variables
         solving_order = self.get_solving_order(known_vars)
         solvable = set(solving_order)
         conditional_unsolvable = all_unknown - solvable
         unsolvable = list(set(truly_unsolvable) | conditional_unsolvable)
-        
+
         return False, unsolvable
 
     def get_solvable_variables(self, known_vars: set[str]) -> list[str]:
@@ -290,10 +289,10 @@ class Order:
     def _extract_variables_from_side(self, side: Any) -> set[str]:
         """
         Extract variables from either left or right side of an equation.
-        
+
         Args:
             side: The equation side (Variable or Expression)
-            
+
         Returns:
             Set of variable names found in this side
         """
@@ -306,12 +305,10 @@ class Order:
         else:
             return set()
 
-    def _process_equation_dependencies(self, equation: Equation, lhs_vars: set[str],
-                                     rhs_vars: set[str], unknown_vars: set[str],
-                                     eq_vars: set[str], known_vars: set[str]):
+    def _process_equation_dependencies(self, equation: Equation, lhs_vars: set[str], rhs_vars: set[str], unknown_vars: set[str], eq_vars: set[str], known_vars: set[str]):
         """
         Process dependencies and solvers for an equation based on its structure.
-        
+
         Args:
             equation: The equation to process
             lhs_vars: Variables on left-hand side
@@ -353,10 +350,10 @@ class Order:
     def _find_truly_unsolvable_variables(self, all_unknown: set[str]) -> list[str]:
         """
         Find variables that have no solver equations.
-        
+
         Args:
             all_unknown: Set of all unknown variables
-            
+
         Returns:
             List of variables with no solver equations
         """
@@ -369,10 +366,10 @@ class Order:
     def _get_unique_equations(self, variables_with_solvers: set[str]) -> set[Equation]:
         """
         Get unique equations that can solve variables.
-        
+
         Args:
             variables_with_solvers: Variables that have solver equations
-            
+
         Returns:
             Set of unique equations
         """

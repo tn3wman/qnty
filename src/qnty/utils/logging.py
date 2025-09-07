@@ -4,11 +4,11 @@ import os
 _LOGGER: logging.Logger | None = None
 
 
-def get_logger(name: str = "optinova") -> logging.Logger:
+def get_logger(name: str = "qnty") -> logging.Logger:
     """Return a module-level configured logger.
 
     Log level resolves in order:
-    1. Explicit environment variable OPTINOVA_LOG_LEVEL
+    1. Explicit environment variable QNTY_LOG_LEVEL
     2. Existing logger level if already configured
     3. Defaults to INFO
     """
@@ -20,12 +20,12 @@ def get_logger(name: str = "optinova") -> logging.Logger:
     if not logger.handlers:
         # Basic handler (stdout)
         handler = logging.StreamHandler()
-        fmt = os.getenv("OPTINOVA_LOG_FORMAT", "%(asctime)s | %(levelname)s | %(name)s | %(message)s")
+        fmt = os.getenv("QNTY_LOG_FORMAT", "%(asctime)s | %(levelname)s | %(name)s | %(message)s")
         handler.setFormatter(logging.Formatter(fmt))
         logger.addHandler(handler)
 
     # Resolve level
-    level_str = os.getenv("OPTINOVA_LOG_LEVEL", "INFO").upper()
+    level_str = os.getenv("QNTY_LOG_LEVEL", "INFO").upper()
     level = getattr(logging, level_str, logging.INFO)
     logger.setLevel(level)
     logger.propagate = False

@@ -8,9 +8,10 @@ This file contains the fundamental dimensional primitives for the qnty system.
 """
 
 from enum import IntEnum
+from types import MappingProxyType
+from typing import Dict, Any
 
 
-# TODO: This should be frozen and immutable
 class BaseDimension(IntEnum):
     """Base dimensions as prime numbers for efficient bit operations."""
 
@@ -24,9 +25,8 @@ class BaseDimension(IntEnum):
     LUMINOSITY = 17
 
 
-# TODO: This should be frozen and immutable
-# Dimension symbols for display
-DIMENSION_SYMBOLS = {
+# Immutable dimension symbols for display
+DIMENSION_SYMBOLS: Dict[str, str] = MappingProxyType({
     "length": "L",
     "mass": "M",
     "time": "T",
@@ -34,11 +34,10 @@ DIMENSION_SYMBOLS = {
     "temp": "Θ",
     "amount": "N",
     "luminosity": "J",
-}
+})
 
-# TODO: This should be frozen and immutable
-# Base dimensions configuration for generators
-BASE_DIMENSIONS = {
+# Immutable base dimensions configuration for generators
+BASE_DIMENSIONS: Dict[str, Dict[str, Any]] = MappingProxyType({
     "LENGTH": {"prime": BaseDimension.LENGTH, "params": {"length": 1}},
     "MASS": {"prime": BaseDimension.MASS, "params": {"mass": 1}},
     "TIME": {"prime": BaseDimension.TIME, "params": {"time": 1}},
@@ -47,11 +46,10 @@ BASE_DIMENSIONS = {
     "AMOUNT": {"prime": BaseDimension.AMOUNT, "params": {"amount": 1}},
     "LUMINOSITY": {"prime": BaseDimension.LUMINOSITY, "params": {"luminosity": 1}},
     "DIMENSIONLESS": {"prime": BaseDimension.DIMENSIONLESS, "params": {}},
-}
+})
 
-# TODO: This should be frozen and immutable
-# Prime mapping for signature calculations
-PRIME_MAP = {
+# Immutable prime mapping for signature calculations
+PRIME_MAP: Dict[str, BaseDimension] = MappingProxyType({
     "length": BaseDimension.LENGTH,
     "mass": BaseDimension.MASS,
     "time": BaseDimension.TIME,
@@ -59,4 +57,4 @@ PRIME_MAP = {
     "temp": BaseDimension.TEMPERATURE,
     "amount": BaseDimension.AMOUNT,
     "luminosity": BaseDimension.LUMINOSITY,
-}
+})

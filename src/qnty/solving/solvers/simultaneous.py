@@ -4,6 +4,7 @@ import numpy as np
 
 try:
     from scipy.linalg import solve as scipy_solve
+
     HAS_SCIPY = True
 except ImportError:
     HAS_SCIPY = False
@@ -434,7 +435,7 @@ class SimultaneousEquationSolver(BaseSolver):
     def _set_test_variables(self, test_vars: dict[str, FieldQnty], unknown_variables: list[str], active_index: int):
         """
         Set test variables for coefficient extraction.
-        
+
         Args:
             test_vars: Dictionary of test variables to modify
             unknown_variables: List of unknown variable names
@@ -445,11 +446,7 @@ class SimultaneousEquationSolver(BaseSolver):
             original_var = test_vars[var_name]
             if original_var.quantity is None:
                 raise ValueError(f"Variable {var_name} has no quantity")
-            test_var = FieldQnty(
-                name=f"test_{var_name}",
-                expected_dimension=original_var.quantity.dimension,
-                is_known=True
-            )
+            test_var = FieldQnty(name=f"test_{var_name}", expected_dimension=original_var.quantity.dimension, is_known=True)
             test_var.quantity = Quantity(test_value, original_var.quantity.unit)
             test_var.symbol = var_name
             test_vars[var_name] = test_var
@@ -457,10 +454,10 @@ class SimultaneousEquationSolver(BaseSolver):
     def _extract_numerical_value(self, value: Any) -> float:
         """
         Extract numerical value from various quantity types.
-        
+
         Args:
             value: Value that may be a Quantity, float, int, or other numeric type
-            
+
         Returns:
             Float representation of the value
         """
@@ -471,7 +468,7 @@ class SimultaneousEquationSolver(BaseSolver):
         elif isinstance(value, int | float):
             return float(value)
         # Handle objects with .value attribute as last resort
-        elif hasattr(value, 'value'):
+        elif hasattr(value, "value"):
             return float(value.value)
         else:
             # Last resort: try direct conversion
