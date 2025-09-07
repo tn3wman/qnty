@@ -2,11 +2,18 @@ from typing import Any
 
 import numpy as np
 
+try:
+    from scipy.linalg import solve as scipy_solve
+    HAS_SCIPY = True
+except ImportError:
+    HAS_SCIPY = False
+    scipy_solve = None
+
 from qnty.solving.order import Order
 
 from ...equations import Equation
 from ...quantities import Quantity
-from ...quantities.field_qnty import FieldQnty as FieldQnty
+from ...quantities.field_qnty import FieldQnty
 from .base import BaseSolver, SolveResult
 
 
@@ -223,35 +230,17 @@ class SimultaneousEquationSolver(BaseSolver):
 
     def _solve_sparse_system(self, coefficient_matrix: np.ndarray, constant_vector: np.ndarray) -> np.ndarray:
         """
-        Solve sparse matrix system using scipy.sparse algorithms.
-
-        Note: This is a placeholder for potential scipy.sparse integration.
-        For now, falls back to standard NumPy solver.
+        Solve sparse matrix system. Currently falls back to dense solver.
         """
-        # Future optimization: Convert to scipy.sparse.csc_matrix and use sparse solvers
-        # from scipy.sparse.linalg import spsolve
-        # sparse_matrix = scipy.sparse.csc_matrix(coefficient_matrix)
-        # return spsolve(sparse_matrix, constant_vector)
-
-        # Fallback to standard solver for now
         return np.linalg.solve(coefficient_matrix, constant_vector)
 
     def _solve_large_dense_system(self, coefficient_matrix: np.ndarray, constant_vector: np.ndarray) -> np.ndarray:
         """
         Solve large dense matrix system using optimized algorithms.
-
-        Uses LU decomposition with partial pivoting for better numerical stability
-        and potential reuse of factorization.
         """
-        # Use scipy.linalg.solve which is optimized for large systems
-        try:
-            # Try importing scipy for better performance on large systems
-            from scipy.linalg import solve  # type: ignore[import-untyped]
-
-            return solve(coefficient_matrix, constant_vector, assume_a="gen")
-        except ImportError:
-            # Fallback to NumPy if scipy is not available
-            return np.linalg.solve(coefficient_matrix, constant_vector)
+        if HAS_SCIPY and scipy_solve is not None:
+            return scipy_solve(coefficient_matrix, constant_vector, assume_a="gen")
+        return np.linalg.solve(coefficient_matrix, constant_vector)
 
     def _apply_solution_to_variables(self, unknown_variables: list[str], solution_vector: np.ndarray, working_variables: dict[str, FieldQnty]):
         """
@@ -357,39 +346,19 @@ class SimultaneousEquationSolver(BaseSolver):
             coefficients = []
 
             # Memory optimization: Pre-allocate arrays for large systems
-            residual_test_cases: np.ndarray | list[float] = np.zeros(num_unknowns) if num_unknowns > 10 else []
+            residual_test_cases: list[float] = []
 
             # Reuse test variables dictionary to reduce object creation overhead
             test_vars = variables.copy()
 
             # Test case for each unknown variable (finite difference)
             for variable_index in range(num_unknowns):
-                # Reset all unknowns to 0, then set current one to 1
-                for unknown_index, var_name in enumerate(unknown_variables):
-                    test_value = 1.0 if unknown_index == variable_index else 0.0
-                    original_var = test_vars[var_name]
-                    if original_var.quantity is None:
-                        raise ValueError(f"Variable {var_name} has no quantity")
-                    test_var = FieldQnty(name=f"test_{var_name}", expected_dimension=original_var.quantity.dimension, is_known=True)
-                    test_var.quantity = Quantity(test_value, original_var.quantity.unit)
-                    test_var.symbol = var_name
-                    test_vars[var_name] = test_var
-
+                self._set_test_variables(test_vars, unknown_variables, variable_index)
                 residual = self._calculate_equation_residual(equation, test_vars)
-                if isinstance(residual_test_cases, list):
-                    residual_test_cases.append(residual)
-                else:
-                    residual_test_cases[variable_index] = residual
+                residual_test_cases.append(residual)
 
             # Test case with all unknowns = 0 (baseline)
-            for var_name in unknown_variables:
-                original_var = test_vars[var_name]
-                if original_var.quantity is None:
-                    raise ValueError(f"Variable {var_name} has no quantity")
-                test_var = FieldQnty(name=f"test_{var_name}", expected_dimension=original_var.quantity.dimension, is_known=True)
-                test_var.quantity = Quantity(0.0, original_var.quantity.unit)
-                test_var.symbol = var_name
-                test_vars[var_name] = test_var
+            self._set_test_variables(test_vars, unknown_variables, -1)  # -1 means set all to 0
             baseline_residual = self._calculate_equation_residual(equation, test_vars)
 
             # Extract coefficients: for equation sum(ai*xi) - c = 0
@@ -423,17 +392,9 @@ class SimultaneousEquationSolver(BaseSolver):
             left_hand_side = equation.lhs.evaluate(test_variables)
             right_hand_side = equation.rhs.evaluate(test_variables)
 
-            # Calculate residual with unit handling
+            # Calculate residual and extract numerical value
             residual = left_hand_side - right_hand_side
-
-            # Return the magnitude of the residual
-            if hasattr(residual, "value"):
-                return residual.value
-            elif isinstance(residual, int | float):
-                return float(residual)
-            else:
-                # If it's a Qty object without .value, try to convert
-                return float(residual.value) if hasattr(residual, "value") else 0.0
+            return self._extract_numerical_value(residual)
 
         except Exception:
             # Fallback for cases where evaluation fails
@@ -469,3 +430,49 @@ class SimultaneousEquationSolver(BaseSolver):
             str(solution_quantity),
             "simultaneous",
         )
+
+    def _set_test_variables(self, test_vars: dict[str, FieldQnty], unknown_variables: list[str], active_index: int):
+        """
+        Set test variables for coefficient extraction.
+        
+        Args:
+            test_vars: Dictionary of test variables to modify
+            unknown_variables: List of unknown variable names
+            active_index: Index of variable to set to 1.0, others set to 0.0. If -1, all set to 0.0
+        """
+        for unknown_index, var_name in enumerate(unknown_variables):
+            test_value = 1.0 if unknown_index == active_index else 0.0
+            original_var = test_vars[var_name]
+            if original_var.quantity is None:
+                raise ValueError(f"Variable {var_name} has no quantity")
+            test_var = FieldQnty(
+                name=f"test_{var_name}",
+                expected_dimension=original_var.quantity.dimension,
+                is_known=True
+            )
+            test_var.quantity = Quantity(test_value, original_var.quantity.unit)
+            test_var.symbol = var_name
+            test_vars[var_name] = test_var
+
+    def _extract_numerical_value(self, value: Any) -> float:
+        """
+        Extract numerical value from various quantity types.
+        
+        Args:
+            value: Value that may be a Quantity, float, int, or other numeric type
+            
+        Returns:
+            Float representation of the value
+        """
+        # Check for Quantity type first (most common case)
+        if isinstance(value, Quantity):
+            return float(value.value)
+        # Handle primitive numeric types
+        elif isinstance(value, int | float):
+            return float(value)
+        # Handle objects with .value attribute as last resort
+        elif hasattr(value, 'value'):
+            return float(value.value)
+        else:
+            # Last resort: try direct conversion
+            return float(value)

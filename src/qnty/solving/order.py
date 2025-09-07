@@ -29,53 +29,11 @@ class Order:
         self.variables.update(eq_vars)
 
         # Analyze equation structure to determine dependencies and solvers
-        # For equations of the form "var = expression", var depends on all variables in expression
-        # Check if LHS is a Variable (has symbol) or Expression (has get_variables)
-        if hasattr(equation.lhs, "symbol"):
-            # Type guard: this is a Variable
-            lhs_vars = {equation.lhs.symbol}  # type: ignore[attr-defined]
-        elif hasattr(equation.lhs, "get_variables"):
-            lhs_vars = equation.lhs.get_variables()
-        else:
-            lhs_vars = set()
-        rhs_vars = equation.rhs.get_variables() if hasattr(equation.rhs, "get_variables") else set()
+        lhs_vars = self._extract_variables_from_side(equation.lhs)
+        rhs_vars = self._extract_variables_from_side(equation.rhs)
 
-        # If LHS is a single variable, it depends on all variables in RHS
-        if len(lhs_vars) == 1:
-            lhs_var = next(iter(lhs_vars))
-
-            # Only add as solver for the LHS variable (if it's unknown)
-            if lhs_var in unknown_vars:
-                self.solvers[lhs_var].append(equation)
-
-            # Add dependencies: LHS variable depends on all RHS variables
-            for rhs_var in rhs_vars:
-                if rhs_var != lhs_var:
-                    self.add_dependency(rhs_var, lhs_var)
-
-        # If RHS is a single variable, it depends on all variables in LHS
-        elif len(rhs_vars) == 1:
-            rhs_var = next(iter(rhs_vars))
-
-            # Only add as solver for the RHS variable (if it's unknown)
-            if rhs_var in unknown_vars:
-                self.solvers[rhs_var].append(equation)
-
-            # Add dependencies: RHS variable depends on all LHS variables
-            for lhs_var in lhs_vars:
-                if lhs_var != rhs_var:
-                    self.add_dependency(lhs_var, rhs_var)
-
-        # For more complex cases, use can_solve_for check
-        else:
-            for unknown_var in unknown_vars:
-                if equation.can_solve_for(unknown_var, known_vars):
-                    self.solvers[unknown_var].append(equation)
-
-                # Add dependencies: unknown_var depends on all other variables in equation
-                for other_var in eq_vars:
-                    if other_var != unknown_var:
-                        self.add_dependency(other_var, unknown_var)
+        # Handle different equation patterns
+        self._process_equation_dependencies(equation, lhs_vars, rhs_vars, unknown_vars, eq_vars, known_vars)
 
     def add_dependency(self, dependency_source: str, dependent_variable: str):
         """
@@ -193,30 +151,28 @@ class Order:
         Returns (can_solve, unsolvable_variables).
         """
         all_unknown = self.variables - known_vars
-
-        # Variables with no solver equations are truly unsolvable
-        truly_unsolvable = []
-        for var in all_unknown:
-            if var not in self.solvers or len(self.solvers[var]) == 0:
-                truly_unsolvable.append(var)
-
-        # Check if we have enough equations for unknowns
+        
+        # Find variables with no solver equations
+        truly_unsolvable = self._find_truly_unsolvable_variables(all_unknown)
+        
+        # Check equation-to-variable ratio
         variables_with_solvers = all_unknown - set(truly_unsolvable)
-        unique_equations = {self.solvers[var][0] for var in variables_with_solvers if var in self.solvers and self.solvers[var]}
-
-        # For now, use simple heuristic: need at least as many equations as unknowns
-        can_solve_completely = len(unique_equations) >= len(variables_with_solvers) and len(truly_unsolvable) == 0
-
-        if not can_solve_completely:
-            # If we can't solve completely, check what would be left unsolvable
-            solving_order = self.get_solving_order(known_vars)
-            solvable = set(solving_order)
-            conditional_unsolvable = all_unknown - solvable
-            unsolvable = list(set(truly_unsolvable) | conditional_unsolvable)
-        else:
-            unsolvable = []
-
-        return can_solve_completely, unsolvable
+        unique_equations = self._get_unique_equations(variables_with_solvers)
+        
+        # Simple heuristic: need at least as many equations as unknowns
+        can_solve_completely = (len(unique_equations) >= len(variables_with_solvers) and
+                               len(truly_unsolvable) == 0)
+        
+        if can_solve_completely:
+            return True, []
+        
+        # Find all unsolvable variables
+        solving_order = self.get_solving_order(known_vars)
+        solvable = set(solving_order)
+        conditional_unsolvable = all_unknown - solvable
+        unsolvable = list(set(truly_unsolvable) | conditional_unsolvable)
+        
+        return False, unsolvable
 
     def get_solvable_variables(self, known_vars: set[str]) -> list[str]:
         """Get variables that can be solved in the next iteration."""
@@ -330,6 +286,101 @@ class Order:
         analysis["immediately_solvable"] = self.get_solvable_variables(known_vars)
 
         return analysis
+
+    def _extract_variables_from_side(self, side: Any) -> set[str]:
+        """
+        Extract variables from either left or right side of an equation.
+        
+        Args:
+            side: The equation side (Variable or Expression)
+            
+        Returns:
+            Set of variable names found in this side
+        """
+        # Check if it's a Variable with a symbol attribute
+        if hasattr(side, "symbol") and hasattr(side, "name"):
+            return {side.symbol}
+        # Check if it's an Expression with get_variables method
+        elif hasattr(side, "get_variables") and callable(side.get_variables):
+            return side.get_variables()
+        else:
+            return set()
+
+    def _process_equation_dependencies(self, equation: Equation, lhs_vars: set[str],
+                                     rhs_vars: set[str], unknown_vars: set[str],
+                                     eq_vars: set[str], known_vars: set[str]):
+        """
+        Process dependencies and solvers for an equation based on its structure.
+        
+        Args:
+            equation: The equation to process
+            lhs_vars: Variables on left-hand side
+            rhs_vars: Variables on right-hand side
+            unknown_vars: Unknown variables in the equation
+            eq_vars: All variables in the equation
+            known_vars: Set of known variables
+        """
+        # If LHS is a single variable, it depends on all variables in RHS
+        if len(lhs_vars) == 1:
+            lhs_var = next(iter(lhs_vars))
+            if lhs_var in unknown_vars:
+                self.solvers[lhs_var].append(equation)
+            # Add dependencies: LHS variable depends on all RHS variables
+            for rhs_var in rhs_vars:
+                if rhs_var != lhs_var:
+                    self.add_dependency(rhs_var, lhs_var)
+
+        # If RHS is a single variable, it depends on all variables in LHS
+        elif len(rhs_vars) == 1:
+            rhs_var = next(iter(rhs_vars))
+            if rhs_var in unknown_vars:
+                self.solvers[rhs_var].append(equation)
+            # Add dependencies: RHS variable depends on all LHS variables
+            for lhs_var in lhs_vars:
+                if lhs_var != rhs_var:
+                    self.add_dependency(lhs_var, rhs_var)
+
+        # For more complex cases, use can_solve_for check
+        else:
+            for unknown_var in unknown_vars:
+                if equation.can_solve_for(unknown_var, known_vars):
+                    self.solvers[unknown_var].append(equation)
+                # Add dependencies: unknown_var depends on all other variables in equation
+                for other_var in eq_vars:
+                    if other_var != unknown_var:
+                        self.add_dependency(other_var, unknown_var)
+
+    def _find_truly_unsolvable_variables(self, all_unknown: set[str]) -> list[str]:
+        """
+        Find variables that have no solver equations.
+        
+        Args:
+            all_unknown: Set of all unknown variables
+            
+        Returns:
+            List of variables with no solver equations
+        """
+        truly_unsolvable = []
+        for var in all_unknown:
+            if var not in self.solvers or len(self.solvers[var]) == 0:
+                truly_unsolvable.append(var)
+        return truly_unsolvable
+
+    def _get_unique_equations(self, variables_with_solvers: set[str]) -> set[Equation]:
+        """
+        Get unique equations that can solve variables.
+        
+        Args:
+            variables_with_solvers: Variables that have solver equations
+            
+        Returns:
+            Set of unique equations
+        """
+        unique_equations = set()
+        for var in variables_with_solvers:
+            if var in self.solvers and self.solvers[var]:
+                unique_equations.add(self.solvers[var][0])
+        return unique_equations
 
     def visualize_dependencies(self) -> str:
         """Create a text representation of the dependency graph."""
