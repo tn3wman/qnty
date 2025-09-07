@@ -458,12 +458,34 @@ class UnifiedArithmeticMixin:
         # Delegate to ArithmeticOperations for the actual computation
         return ArithmeticOperations.multiply(left_qty, right_qty)
 
-    @staticmethod
+    @staticmethod  
     def _expression_multiply(left: Any, right: Any):
-        """Flexible path multiplication returning Expression."""
+        """Optimized flexible path multiplication returning Expression."""
         from ..expressions import BinaryOperation, wrap_operand
-
-        return BinaryOperation("*", wrap_operand(left), wrap_operand(right))
+        
+        # Fast path for scalar operations - avoid double wrap_operand calls
+        left_type = type(left)
+        right_type = type(right)
+        
+        if left_type in (int, float) and right_type in (int, float):
+            # Both scalars - very rare but handle efficiently
+            from ..expressions.nodes import Constant, _get_dimensionless_quantity
+            left_const = Constant(_get_dimensionless_quantity(float(left)))
+            right_const = Constant(_get_dimensionless_quantity(float(right)))
+            return BinaryOperation("*", left_const, right_const)
+        elif left_type in (int, float):
+            # Left scalar, right variable - common case
+            from ..expressions.nodes import Constant, _get_dimensionless_quantity
+            left_const = Constant(_get_dimensionless_quantity(float(left)))
+            return BinaryOperation("*", left_const, wrap_operand(right))
+        elif right_type in (int, float):
+            # Left variable, right scalar - very common case  
+            from ..expressions.nodes import Constant, _get_dimensionless_quantity
+            right_const = Constant(_get_dimensionless_quantity(float(right)))
+            return BinaryOperation("*", wrap_operand(left), right_const)
+        else:
+            # General case - both need wrapping
+            return BinaryOperation("*", wrap_operand(left), wrap_operand(right))
 
     @classmethod
     def _quantity_divide(cls, left: Any, right: Any):
@@ -489,10 +511,26 @@ class UnifiedArithmeticMixin:
 
     @staticmethod
     def _expression_divide(left: Any, right: Any):
-        """Flexible path division returning Expression."""
+        """Optimized flexible path division returning Expression."""
         from ..expressions import BinaryOperation, wrap_operand
-
-        return BinaryOperation("/", wrap_operand(left), wrap_operand(right))
+        
+        # Fast path for scalar operations - avoid double wrap_operand calls
+        left_type = type(left)
+        right_type = type(right)
+        
+        if right_type in (int, float):
+            # Most common case: variable / scalar
+            from ..expressions.nodes import Constant, _get_dimensionless_quantity
+            right_const = Constant(_get_dimensionless_quantity(float(right)))
+            return BinaryOperation("/", wrap_operand(left), right_const)
+        elif left_type in (int, float):
+            # Less common: scalar / variable  
+            from ..expressions.nodes import Constant, _get_dimensionless_quantity
+            left_const = Constant(_get_dimensionless_quantity(float(left)))
+            return BinaryOperation("/", left_const, wrap_operand(right))
+        else:
+            # General case - both need wrapping
+            return BinaryOperation("/", wrap_operand(left), wrap_operand(right))
 
     @classmethod
     def _quantity_power(cls, left: Any, right: Any):
