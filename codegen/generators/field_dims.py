@@ -10,7 +10,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from qnty.dimensions import BASE_DIMENSIONS, DIMENSION_SYMBOLS, PRIME_MAP
+from qnty.dimensions import BASE_DIMENSIONS, DIMENSION_SYMBOLS, PRIME_MAP, DimensionConfig
 
 
 class DimensionGenerator:
@@ -64,7 +64,7 @@ class DimensionGenerator:
         """Extract all unique dimensions from unit data."""
         # Add base dimensions
         for name, config in BASE_DIMENSIONS.items():
-            self.all_dimensions[name] = config["params"]
+            self.all_dimensions[name] = dict(config.params)
 
         # Extract from unit data
         for field_name, field_data in self.unit_data.items():

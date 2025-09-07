@@ -123,10 +123,6 @@ _SIGNATURES: dict[str, int | float] = {
     "WAVENUMBER": 0.5,  # L^-1
 }
 
-
 # Generate all dimension constants programmatically to avoid duplication
 for _name, _signature in _SIGNATURES.items():
     globals()[_name] = DimensionSignature(_signature)
-
-# Module exports - generated programmatically
-__all__ = list(_SIGNATURES.keys())
