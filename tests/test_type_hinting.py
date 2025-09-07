@@ -2,7 +2,7 @@
 
 from pytest import CaptureFixture
 
-from qnty.quantities._field_qnty_generated import Area, Length, Pressure
+from qnty.quantities.field_vars import Area, Length, Pressure
 
 
 def test_area_type_hinting(capsys: CaptureFixture[str]):

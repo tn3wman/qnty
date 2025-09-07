@@ -45,19 +45,17 @@ from .handlers import (
 __all__ = [
     # Exception classes
     "QntyError",
-    "DimensionalError", 
+    "DimensionalError",
     "UnitConversionError",
     "VariableNotFoundError",
     "EquationSolvingError",
     "ExpressionEvaluationError",
     "DivisionByZeroError",
     "ERROR_MESSAGES",
-    
     # Context management
     "ErrorContext",
     "get_dimension_string",
     "create_context",
-    
     # Handlers and utilities
     "ErrorHandler",
     "ErrorHandlerMixin",

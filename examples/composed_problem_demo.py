@@ -1,6 +1,4 @@
-from qnty import Dimensionless, Length, Pressure
-from qnty import cond_expr, min_expr
-from qnty import Problem
+from qnty import Dimensionless, Length, Pressure, Problem, cond_expr, min_expr
 from qnty.problems.rules import add_rule
 
 

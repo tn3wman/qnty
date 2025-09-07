@@ -3,19 +3,17 @@ Main Problem class with consolidated functionality.
 
 This module combines the core Problem functionality including:
 - Problem base class with state management and initialization (formerly base.py)
-- Variable lifecycle management (formerly variables.py) 
+- Variable lifecycle management (formerly variables.py)
 - Equation processing pipeline (formerly equations.py)
 """
 
 from __future__ import annotations
 
 from collections.abc import Callable
-from typing import TYPE_CHECKING, Any
+from copy import deepcopy
+from typing import Any
 
-if TYPE_CHECKING:
-    from ..equations import Equation
-    from ..quantities import FieldQnty, Quantity
-
+from qnty.expressions import BinaryOperation, Constant, VariableReference
 from qnty.solving.order import Order
 from qnty.solving.solvers import SolverManager
 from qnty.utils.logging import get_logger
@@ -24,6 +22,7 @@ from ..constants import SOLVER_DEFAULT_MAX_ITERATIONS, SOLVER_DEFAULT_TOLERANCE
 from ..equations import Equation, EquationSystem
 from ..quantities import FieldQnty, Quantity
 from ..units import DimensionlessUnits
+from .solving import EquationReconstructor
 
 # Constants for equation processing
 MATHEMATICAL_OPERATORS = ["+", "-", "*", "/", " / ", " * ", " + ", " - "]
@@ -35,16 +34,19 @@ TOLERANCE_DEFAULT = SOLVER_DEFAULT_TOLERANCE
 # Custom Exceptions
 class VariableNotFoundError(KeyError):
     """Raised when trying to access a variable that doesn't exist."""
+
     pass
 
 
 class EquationValidationError(ValueError):
     """Raised when an equation fails validation."""
+
     pass
 
 
 class SolverError(RuntimeError):
     """Raised when the solving process fails."""
+
     pass
 
 
@@ -176,20 +178,16 @@ class Problem(ValidationMixin):
         self.sub_problems: dict[str, Any] = {}
         self.variable_aliases: dict[str, str] = {}
 
-        # Initialize equation reconstructor (lazy import to avoid circular dependency)
+        # Initialize equation reconstructor
         self.equation_reconstructor = None
         self._init_reconstructor()
 
-        # Auto-populate from class-level variables and equations (subclass pattern)
-        self._extract_from_class_variables()
-
     def _init_reconstructor(self):
-        """Initialize the equation reconstructor with lazy import."""
+        """Initialize the equation reconstructor."""
         try:
-            from .solving import EquationReconstructor
             self.equation_reconstructor = EquationReconstructor(self)
-        except ImportError:
-            self.logger.debug("Could not initialize equation reconstructor")
+        except Exception as e:
+            self.logger.debug(f"Could not initialize equation reconstructor: {e}")
             self.equation_reconstructor = None
 
     # ========== CACHE MANAGEMENT ==========
@@ -230,11 +228,8 @@ class Problem(ValidationMixin):
         if variable.symbol is not None:
             self.variables[variable.symbol] = variable
         # Set parent problem reference for dependency invalidation
-        try:
+        if hasattr(variable, "_parent_problem"):
             variable._parent_problem = self
-        except (AttributeError, TypeError):
-            # _parent_problem might not be settable
-            pass
         # Also set as instance attribute for dot notation access
         if variable.symbol is not None:
             setattr(self, variable.symbol, variable)
@@ -367,12 +362,8 @@ class Problem(ValidationMixin):
         cloned.is_known = variable.is_known
 
         # Ensure the cloned variable has fresh validation checks
-        if hasattr(variable, "validation_checks"):
-            try:
-                cloned.validation_checks = []
-            except (AttributeError, TypeError):
-                # validation_checks might be read-only or not settable
-                pass
+        if hasattr(variable, "validation_checks") and hasattr(cloned, "validation_checks"):
+            cloned.validation_checks = []
         return cloned
 
     def _sync_variables_to_instance_attributes(self):
@@ -480,7 +471,6 @@ class Problem(ValidationMixin):
         """
         Recursively fix VariableReferences in an expression tree to point to correct Variables.
         """
-        from qnty.expressions import BinaryOperation, Constant, VariableReference
 
         if isinstance(expr, VariableReference):
             # Check if this VariableReference points to the wrong Variable
@@ -656,7 +646,6 @@ class Problem(ValidationMixin):
 
     def copy(self):
         """Create a copy of this problem."""
-        from copy import deepcopy
         return deepcopy(self)
 
     def __str__(self) -> str:
@@ -675,13 +664,9 @@ class Problem(ValidationMixin):
             super().__setattr__(name, value)
             return
 
-        # Import here to avoid circular imports
-        try:
-            # If setting a variable that exists in our variables dict, update both
-            if isinstance(value, FieldQnty) and name in self.variables:
-                self.variables[name] = value
-        except ImportError:
-            pass
+        # If setting a variable that exists in our variables dict, update both
+        if isinstance(value, FieldQnty) and hasattr(self, "variables") and name in self.variables:
+            self.variables[name] = value
 
         super().__setattr__(name, value)
 
@@ -691,18 +676,14 @@ class Problem(ValidationMixin):
 
     def __setitem__(self, key: str, value) -> None:
         """Allow dict-like assignment of variables."""
-        # Import here to avoid circular imports
-        try:
-            if isinstance(value, FieldQnty):
-                # Update the symbol to match the key if they differ
-                if value.symbol != key:
-                    value.symbol = key
-                self.add_variable(value)
-        except ImportError:
-            pass
+        if isinstance(value, FieldQnty):
+            # Update the symbol to match the key if they differ
+            if value.symbol != key:
+                value.symbol = key
+            self.add_variable(value)
 
     # ========== CLASS-LEVEL EXTRACTION ==========
-
+    # Note: _extract_from_class_variables() is provided by CompositionMixin in the full Problem class
 
 
 # Alias for backward compatibility

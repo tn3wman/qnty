@@ -12,28 +12,23 @@ from typing import Any, Optional
 @dataclass
 class ErrorContext:
     """Context information for errors to aid in debugging."""
+
     module: str
     function: str
     operation: str
     variables: Optional[dict[str, Any]] = None
     additional_info: Optional[dict[str, Any]] = None
-    
+
     def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary for error logging."""
-        return {
-            "module": self.module,
-            "function": self.function, 
-            "operation": self.operation,
-            "variables": self.variables,
-            "additional_info": self.additional_info
-        }
+        return {"module": self.module, "function": self.function, "operation": self.operation, "variables": self.variables, "additional_info": self.additional_info}
 
 
 def get_dimension_string(obj: Any) -> str:
     """Get dimension string representation for error messages."""
-    if hasattr(obj, '_dimension_sig'):
+    if hasattr(obj, "_dimension_sig"):
         return str(obj._dimension_sig)
-    elif hasattr(obj, 'unit') and hasattr(obj.unit, 'dimension'):
+    elif hasattr(obj, "unit") and hasattr(obj.unit, "dimension"):
         return str(obj.unit.dimension)
     else:
         return f"{type(obj).__name__}"
@@ -41,9 +36,4 @@ def get_dimension_string(obj: Any) -> str:
 
 def create_context(module: str, function: str, operation: str, **kwargs) -> ErrorContext:
     """Create error context for consistent error reporting."""
-    return ErrorContext(
-        module=module,
-        function=function,
-        operation=operation,
-        additional_info=kwargs
-    )
+    return ErrorContext(module=module, function=function, operation=operation, additional_info=kwargs)

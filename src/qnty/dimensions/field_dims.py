@@ -127,6 +127,7 @@ _DIMENSION_SIGNATURES = {
 # Lazy loading cache
 _dimension_cache: dict[str, DimensionSignature] = {}
 
+
 def __getattr__(name: str) -> DimensionSignature:
     """Lazy load dimension constants."""
     if name in _DIMENSION_SIGNATURES:
@@ -134,6 +135,7 @@ def __getattr__(name: str) -> DimensionSignature:
             _dimension_cache[name] = DimensionSignature(_DIMENSION_SIGNATURES[name])
         return _dimension_cache[name]
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+
 
 # All dimension constants generated from unit data
 ABSORBED_DOSE = DimensionSignature(0.16)  # L^2 T^-2
@@ -354,4 +356,3 @@ __all__ = [
     "VOLUMETRIC_MASS_FLOW_RATE",
     "WAVENUMBER",
 ]
-

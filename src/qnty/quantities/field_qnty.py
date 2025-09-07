@@ -44,7 +44,6 @@ class QuantityManagementMixin:
         self._name: str = ""
         self._symbol: str | None = None
 
-
     @property
     def quantity(self) -> Quantity | None:
         """Get the underlying quantity."""
@@ -98,9 +97,9 @@ class FlexibleConstructorMixin:
     def __init__(self):
         # Only set instance attributes if not already set by class definition
         # This preserves class attributes from generated quantities
-        if not hasattr(self, '_setter_class'):
+        if not hasattr(self, "_setter_class"):
             self._setter_class: type | None = None
-        if not hasattr(self, '_unit_mappings'):
+        if not hasattr(self, "_unit_mappings"):
             self._unit_mappings: dict[str, str] = {}
 
     def _initialize_from_args(self, *args, **kwargs) -> None:
@@ -187,8 +186,9 @@ class FlexibleConstructorMixin:
         # Try to find the unit in the registry or use dimensionless fallback
         try:
             from ..units.registry import registry
+
             # Use a simple lookup approach since get_unit method may not exist
-            if hasattr(registry, 'units') and str(unit) in registry.units:
+            if hasattr(registry, "units") and str(unit) in registry.units:
                 unit_constant = registry.units[str(unit)]
                 return Quantity(value, unit_constant)
         except Exception:
@@ -661,7 +661,7 @@ class SetterCompatibilityMixin:
     def __init__(self):
         # Only set instance attributes if not already set by class definition
         # This preserves class attributes from generated quantities
-        if not hasattr(self, '_setter_class'):
+        if not hasattr(self, "_setter_class"):
             self._setter_class: type | None = None
 
     def set(self, value: float) -> TypeSafeSetter:

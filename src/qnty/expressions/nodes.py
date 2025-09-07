@@ -7,18 +7,13 @@ Core abstract syntax tree nodes for mathematical expressions.
 
 import math
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Union
 
 from ..constants import CONDITION_EVALUATION_THRESHOLD, DIVISION_BY_ZERO_THRESHOLD, FLOAT_EQUALITY_TOLERANCE
-from ..utils.caching.manager import get_cache_manager
-from .formatter import ExpressionFormatter
-from .scope_discovery import ScopeDiscoveryService
-
-if TYPE_CHECKING:
-    from ..quantities import FieldQnty, Quantity
-
 from ..quantities import FieldQnty, Quantity
-from ..units._field_units_generated import DimensionlessUnits
+from ..units.field_units import DimensionlessUnits
+from ..utils.caching.manager import get_cache_manager
+from ..utils.scope_discovery import ScopeDiscoveryService
+from .formatter import ExpressionFormatter
 
 
 class Expression(ABC):
@@ -65,34 +60,34 @@ class Expression(ABC):
         # Use centralized scope discovery service
         return ScopeDiscoveryService.can_auto_evaluate(self)
 
-    def __add__(self, other: Union["Expression", "FieldQnty", "Quantity", int, float]) -> "Expression":
+    def __add__(self, other: "OperandType") -> "Expression":
         return BinaryOperation("+", self, wrap_operand(other))
 
-    def __radd__(self, other: Union["FieldQnty", "Quantity", int, float]) -> "Expression":
+    def __radd__(self, other: "OperandType") -> "Expression":
         return BinaryOperation("+", wrap_operand(other), self)
 
-    def __sub__(self, other: Union["Expression", "FieldQnty", "Quantity", int, float]) -> "Expression":
+    def __sub__(self, other: "OperandType") -> "Expression":
         return BinaryOperation("-", self, wrap_operand(other))
 
-    def __rsub__(self, other: Union["FieldQnty", "Quantity", int, float]) -> "Expression":
+    def __rsub__(self, other: "OperandType") -> "Expression":
         return BinaryOperation("-", wrap_operand(other), self)
 
-    def __mul__(self, other: Union["Expression", "FieldQnty", "Quantity", int, float]) -> "Expression":
+    def __mul__(self, other: "OperandType") -> "Expression":
         return BinaryOperation("*", self, wrap_operand(other))
 
-    def __rmul__(self, other: Union["FieldQnty", "Quantity", int, float]) -> "Expression":
+    def __rmul__(self, other: "OperandType") -> "Expression":
         return BinaryOperation("*", wrap_operand(other), self)
 
-    def __truediv__(self, other: Union["Expression", "FieldQnty", "Quantity", int, float]) -> "Expression":
+    def __truediv__(self, other: "OperandType") -> "Expression":
         return BinaryOperation("/", self, wrap_operand(other))
 
-    def __rtruediv__(self, other: Union["FieldQnty", "Quantity", int, float]) -> "Expression":
+    def __rtruediv__(self, other: "OperandType") -> "Expression":
         return BinaryOperation("/", wrap_operand(other), self)
 
-    def __pow__(self, other: Union["Expression", "FieldQnty", "Quantity", int, float]) -> "Expression":
+    def __pow__(self, other: "OperandType") -> "Expression":
         return BinaryOperation("**", self, wrap_operand(other))
 
-    def __rpow__(self, other: Union["FieldQnty", "Quantity", int, float]) -> "Expression":
+    def __rpow__(self, other: "OperandType") -> "Expression":
         return BinaryOperation("**", wrap_operand(other), self)
 
     def __abs__(self) -> "Expression":
@@ -104,22 +99,21 @@ class Expression(ABC):
         """Helper method to create comparison operations."""
         return BinaryOperation(operator, self, wrap_operand(other))
 
-    def __lt__(self, other: Union["Expression", "FieldQnty", "Quantity", int, float]) -> "BinaryOperation":
+    def __lt__(self, other: "OperandType") -> "BinaryOperation":
         return self._make_comparison("<", other)
 
-    def __le__(self, other: Union["Expression", "FieldQnty", "Quantity", int, float]) -> "BinaryOperation":
+    def __le__(self, other: "OperandType") -> "BinaryOperation":
         return self._make_comparison("<=", other)
 
-    def __gt__(self, other: Union["Expression", "FieldQnty", "Quantity", int, float]) -> "BinaryOperation":
+    def __gt__(self, other: "OperandType") -> "BinaryOperation":
         return self._make_comparison(">", other)
 
-    def __ge__(self, other: Union["Expression", "FieldQnty", "Quantity", int, float]) -> "BinaryOperation":
+    def __ge__(self, other: "OperandType") -> "BinaryOperation":
         return self._make_comparison(">=", other)
 
-    @staticmethod
-    def _wrap_operand(operand: Union["Expression", "FieldQnty", "Quantity", int, float]) -> "Expression":
-        """Wrap non-Expression operands in appropriate Expression subclasses."""
-        return wrap_operand(operand)
+
+# Type aliases to reduce repetition
+OperandType = Expression | FieldQnty | Quantity | int | float
 
 
 class VariableReference(Expression):
@@ -234,24 +228,24 @@ class BinaryOperation(Expression):
         """Attempt to retrieve a cached result for constant expressions."""
         if not self._is_constant_expression():
             return None
-            
+
         cache_manager = get_cache_manager()
         cache_key = self._generate_cache_key()
         return cache_manager.get_expression_result(cache_key)
-    
+
     def _try_cache_result(self, result: "Quantity") -> None:
         """Attempt to cache the result for constant expressions."""
         if not self._is_constant_expression():
             return
-            
+
         cache_manager = get_cache_manager()
         cache_key = self._generate_cache_key()
         cache_manager.cache_expression_result(cache_key, result)
-    
+
     def _is_constant_expression(self) -> bool:
         """Check if both operands are constants."""
         return isinstance(self.left, Constant) and isinstance(self.right, Constant)
-    
+
     def _generate_cache_key(self) -> str:
         """Generate a cache key for constant expressions."""
         # Safe to cast since _is_constant_expression() already verified types
@@ -259,7 +253,7 @@ class BinaryOperation(Expression):
         right_const = self.right
         assert isinstance(left_const, Constant) and isinstance(right_const, Constant)
         return f"{id(self)}_{self.operator}_{id(left_const.value)}_{id(right_const.value)}"
-    
+
     def _dispatch_operation(self, left_val: "Quantity", right_val: "Quantity") -> "Quantity":
         """Dispatch to the appropriate operation handler."""
         if self.operator in self._ARITHMETIC_OPS:
@@ -270,60 +264,67 @@ class BinaryOperation(Expression):
             raise ValueError(f"Unknown operator: {self.operator}")
 
     def _evaluate_arithmetic(self, left_val: "Quantity", right_val: "Quantity") -> "Quantity":
-        """Evaluate arithmetic operations with fast paths."""
-        # Fast path optimizations for common cases
-        if self.operator == "*":
-            # Fast path for multiplication by 1
-            if right_val.value == 1.0:
-                return left_val
-            elif left_val.value == 1.0:
-                return right_val
-            # Fast path for multiplication by 0
-            elif right_val.value == 0.0 or left_val.value == 0.0:
-                return Quantity(0.0, left_val.unit if right_val.value == 0.0 else right_val.unit)
-            return left_val * right_val
-        elif self.operator == "+":
-            # Fast path for addition with 0
-            if right_val.value == 0.0:
-                return left_val
-            elif left_val.value == 0.0:
-                return right_val
-            return left_val + right_val
-        elif self.operator == "-":
-            # Fast path for subtraction with 0
-            if right_val.value == 0.0:
-                return left_val
-            return left_val - right_val
-        elif self.operator == "/":
-            # Check for division by zero
-            if abs(right_val.value) < DIVISION_BY_ZERO_THRESHOLD:
-                raise ValueError(f"Division by zero in expression: {self}")
-            # Fast path for division by 1
-            if right_val.value == 1.0:
-                return left_val
-            return left_val / right_val
-        elif self.operator == "**":
-            # For power, right side should be dimensionless
-            if isinstance(right_val.value, int | float):
-                # Fast paths for common exponents
-                if right_val.value == 1.0:
-                    return left_val
-                elif right_val.value == 0.0:
-                    return Quantity(1.0, DimensionlessUnits.dimensionless)
-                elif right_val.value == 2.0:
-                    return left_val * left_val  # Use multiplication for squaring
+        """Evaluate arithmetic operations using operation-specific handlers."""
+        operation_map = {"*": self._multiply, "+": self._add, "-": self._subtract, "/": self._divide, "**": self._power}
 
-                if right_val.value < 0 and left_val.value < 0:
-                    raise ValueError(f"Negative base with negative exponent: {left_val.value}^{right_val.value}")
-                result_value = left_val.value**right_val.value
-                # For power operations, we need to handle units carefully
-                # This is a simplified implementation
-                return Quantity(result_value, left_val.unit)
-            else:
-                raise ValueError("Exponent must be dimensionless number")
+        handler = operation_map.get(self.operator)
+        if handler:
+            return handler(left_val, right_val)
         else:
-            # Unknown operator - should not happen
             raise ValueError(f"Unknown arithmetic operator: {self.operator}")
+
+    def _multiply(self, left_val: "Quantity", right_val: "Quantity") -> "Quantity":
+        """Handle multiplication with fast path optimizations."""
+        if right_val.value == 1.0:
+            return left_val
+        elif left_val.value == 1.0:
+            return right_val
+        elif right_val.value == 0.0:
+            return Quantity(0.0, right_val.unit)
+        elif left_val.value == 0.0:
+            return Quantity(0.0, left_val.unit)
+        return left_val * right_val
+
+    def _add(self, left_val: "Quantity", right_val: "Quantity") -> "Quantity":
+        """Handle addition with fast path optimizations."""
+        if right_val.value == 0.0:
+            return left_val
+        elif left_val.value == 0.0:
+            return right_val
+        return left_val + right_val
+
+    def _subtract(self, left_val: "Quantity", right_val: "Quantity") -> "Quantity":
+        """Handle subtraction with fast path optimizations."""
+        if right_val.value == 0.0:
+            return left_val
+        return left_val - right_val
+
+    def _divide(self, left_val: "Quantity", right_val: "Quantity") -> "Quantity":
+        """Handle division with zero checking and optimizations."""
+        if abs(right_val.value) < DIVISION_BY_ZERO_THRESHOLD:
+            raise ValueError(f"Division by zero in expression: {self}")
+        if right_val.value == 1.0:
+            return left_val
+        return left_val / right_val
+
+    def _power(self, left_val: "Quantity", right_val: "Quantity") -> "Quantity":
+        """Handle power operations with special cases."""
+        if not isinstance(right_val.value, int | float):
+            raise ValueError("Exponent must be dimensionless number")
+
+        # Fast paths for common exponents
+        if right_val.value == 1.0:
+            return left_val
+        elif right_val.value == 0.0:
+            return Quantity(1.0, DimensionlessUnits.dimensionless)
+        elif right_val.value == 2.0:
+            return left_val * left_val  # Use multiplication for squaring
+
+        if right_val.value < 0 and left_val.value < 0:
+            raise ValueError(f"Negative base with negative exponent: {left_val.value}^{right_val.value}")
+
+        result_value = left_val.value**right_val.value
+        return Quantity(result_value, left_val.unit)
 
     def _evaluate_comparison(self, left_val: "Quantity", right_val: "Quantity") -> "Quantity":
         """Evaluate comparison operations."""
@@ -369,11 +370,7 @@ class BinaryOperation(Expression):
     def __str__(self) -> str:
         # Delegate to centralized formatter
         can_eval, variables = self._can_auto_evaluate()
-        return ExpressionFormatter.format_binary_operation(
-            self,
-            can_auto_evaluate=can_eval,
-            auto_eval_variables=variables
-        )
+        return ExpressionFormatter.format_binary_operation(self, can_auto_evaluate=can_eval, auto_eval_variables=variables)
 
 
 class UnaryFunction(Expression):
@@ -388,34 +385,21 @@ class UnaryFunction(Expression):
     def evaluate(self, variable_values: dict[str, "FieldQnty"]) -> "Quantity":
         operand_val = self.operand.evaluate(variable_values)
 
-        if self.function_name == "sin":
-            # Assume input is in radians, result is dimensionless
-            result_value = math.sin(operand_val.value)
-            return Quantity(result_value, DimensionlessUnits.dimensionless)
-        elif self.function_name == "cos":
-            result_value = math.cos(operand_val.value)
-            return Quantity(result_value, DimensionlessUnits.dimensionless)
-        elif self.function_name == "tan":
-            result_value = math.tan(operand_val.value)
-            return Quantity(result_value, DimensionlessUnits.dimensionless)
-        elif self.function_name == "sqrt":
-            # For sqrt, we need to handle units carefully
-            result_value = math.sqrt(operand_val.value)
-            # This is simplified - proper unit handling would need dimensional analysis
-            return Quantity(result_value, operand_val.unit)
-        elif self.function_name == "abs":
-            return Quantity(abs(operand_val.value), operand_val.unit)
-        elif self.function_name == "ln":
-            # Natural log - input should be dimensionless
-            result_value = math.log(operand_val.value)
-            return Quantity(result_value, DimensionlessUnits.dimensionless)
-        elif self.function_name == "log10":
-            result_value = math.log10(operand_val.value)
-            return Quantity(result_value, DimensionlessUnits.dimensionless)
-        elif self.function_name == "exp":
-            # Exponential - input should be dimensionless
-            result_value = math.exp(operand_val.value)
-            return Quantity(result_value, DimensionlessUnits.dimensionless)
+        # Function dispatch table for better performance and maintainability
+        functions = {
+            "sin": lambda x: Quantity(math.sin(x.value), DimensionlessUnits.dimensionless),
+            "cos": lambda x: Quantity(math.cos(x.value), DimensionlessUnits.dimensionless),
+            "tan": lambda x: Quantity(math.tan(x.value), DimensionlessUnits.dimensionless),
+            "sqrt": lambda x: Quantity(math.sqrt(x.value), x.unit),
+            "abs": lambda x: Quantity(abs(x.value), x.unit),
+            "ln": lambda x: Quantity(math.log(x.value), DimensionlessUnits.dimensionless),
+            "log10": lambda x: Quantity(math.log10(x.value), DimensionlessUnits.dimensionless),
+            "exp": lambda x: Quantity(math.exp(x.value), DimensionlessUnits.dimensionless),
+        }
+
+        func = functions.get(self.function_name)
+        if func:
+            return func(operand_val)
         else:
             raise ValueError(f"Unknown function: {self.function_name}")
 
@@ -500,18 +484,18 @@ def _get_cached_dimensionless():
 def _get_dimensionless_quantity(value: float) -> Quantity:
     """Get cached dimensionless quantity for common numeric values."""
     cache_manager = get_cache_manager()
-    
+
     # Check unified cache first
     cached_qty = cache_manager.get_dimensionless_quantity(value)
     if cached_qty is not None:
         return cached_qty
-    
+
     # Create new quantity
     qty = Quantity(value, _get_cached_dimensionless())
-    
+
     # Cache if appropriate
     cache_manager.cache_dimensionless_quantity(value, qty)
-    
+
     return qty
 
 
@@ -519,31 +503,31 @@ def _is_numeric_type(obj) -> bool:
     """Cached type check for numeric types."""
     obj_type = type(obj)
     cache_manager = get_cache_manager()
-    
+
     # Check unified cache
     cached_result = cache_manager.get_type_check(obj_type)
     if cached_result is not None:
         return cached_result
-    
+
     # Compute and cache result
     result = obj_type in _NUMERIC_TYPES
     cache_manager.cache_type_check(obj_type, result)
     return result
 
 
-def wrap_operand(operand: Expression | FieldQnty | Quantity | int | float) -> Expression:
+def wrap_operand(operand: "OperandType") -> Expression:
     """
     Convert various types to Expression objects.
-    
+
     This function uses cached type checks from the unified cache manager
     for maximum performance.
-    
+
     Args:
         operand: Value to wrap as an Expression
-        
+
     Returns:
         Expression object representing the operand
-        
+
     Raises:
         TypeError: If operand type cannot be converted to Expression
     """
@@ -572,3 +556,14 @@ def wrap_operand(operand: Expression | FieldQnty | Quantity | int | float) -> Ex
 
     # No duck typing - fail fast for unknown types
     raise TypeError(f"Cannot convert {type(operand)} to Expression")
+
+
+# Register expression types with the TypeRegistry for optimal performance
+from ..utils.protocols import register_expression_type
+
+register_expression_type(Expression)
+register_expression_type(BinaryOperation)
+register_expression_type(VariableReference)
+register_expression_type(Constant)
+register_expression_type(UnaryFunction)
+register_expression_type(ConditionalExpression)

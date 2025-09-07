@@ -15,12 +15,8 @@ All consolidated into a focused solving system.
 from __future__ import annotations
 
 import re
-from typing import TYPE_CHECKING, Any, Set
 from logging import Logger
-
-if TYPE_CHECKING:
-    from ..equations import Equation
-    from ..quantities import FieldQnty
+from typing import Any
 
 from ..equations import Equation
 from ..expressions import BinaryOperation, ConditionalExpression, Constant, UnaryFunction, VariableReference, cos, sin
@@ -31,68 +27,75 @@ VariableDict = dict[str, FieldQnty]
 ReconstructionResult = Equation | None
 NamespaceMapping = dict[str, str]
 
-# Constants for pattern matching  
+# Constants for pattern matching
 CONDITIONAL_PATTERNS: set[str] = {"cond("}
 FUNCTION_PATTERNS: set[str] = {"sin(", "cos(", "tan(", "log(", "exp(", "sqrt"}
 MATH_OPERATORS: set[str] = {"(", ")", "+", "-", "*", "/"}
-EXCLUDED_FUNCTION_NAMES: Set[str] = {"sin", "cos", "max", "min", "exp", "log", "sqrt", "tan"}
+EXCLUDED_FUNCTION_NAMES: set[str] = {"sin", "cos", "max", "min", "exp", "log", "sqrt", "tan"}
 
 # Compiled regex patterns for performance
 VARIABLE_PATTERN_DETAILED = re.compile(r"\b([a-zA-Z_][a-zA-Z0-9_]*)\b")
 VARIABLE_PATTERN = re.compile(r"\b[A-Za-z][A-Za-z0-9_]*\b")
 
 # Tuple of types for isinstance() checks
-VALID_EXPRESSION_TYPES = (VariableReference, FieldQnty, int, float)
+VALID_EXPRESSION_TYPES = (VariableReference, FieldQnty, int, float, BinaryOperation, ConditionalExpression, Constant, UnaryFunction)
 
 
 # ========== CUSTOM EXCEPTIONS ==========
 
+
 class SolverError(RuntimeError):
     """Raised when the solving process fails."""
+
     pass
 
 
 class EquationReconstructionError(Exception):
     """Base exception for equation reconstruction errors."""
+
     pass
 
 
 class MalformedExpressionError(EquationReconstructionError):
     """Raised when expressions are malformed and cannot be reconstructed."""
+
     pass
 
 
 class NamespaceMappingError(EquationReconstructionError):
     """Raised when namespace mapping fails."""
+
     pass
 
 
 class PatternReconstructionError(EquationReconstructionError):
     """Raised when mathematical pattern reconstruction fails."""
+
     pass
 
 
 # ========== EXPRESSION PARSER ==========
 
+
 class ExpressionParser:
     """
     Focused class for parsing and rebuilding mathematical expressions.
-    
+
     Handles conversion from string patterns to Expression objects using
     safe evaluation techniques and proper namespace management.
     """
-    
+
     def __init__(self, variables: VariableDict, logger: Logger):
         """
         Initialize the expression parser.
-        
+
         Args:
             variables: Dictionary of available variables
             logger: Logger for debugging
         """
         self.variables = variables
         self.logger = logger
-    
+
     def parse_composite_expression_pattern(self, composite_symbol: str) -> Any | None:
         """
         Parse a composite expression pattern and reconstruct it using available variables.
@@ -109,18 +112,18 @@ class ExpressionParser:
         """
         if not composite_symbol or not isinstance(composite_symbol, str):
             return None
-        
+
         try:
             # Extract variable names from the composite expression
             var_matches = VARIABLE_PATTERN_DETAILED.findall(composite_symbol)
             if not var_matches:
                 return None
-            
+
             # Find the namespace that contains most of these variables
             best_namespace = self._find_best_namespace_for_variables(var_matches)
             if not best_namespace:
                 return None
-            
+
             # Create substitution mapping
             substitution_map = {}
             for var_name in var_matches:
@@ -128,129 +131,131 @@ class ExpressionParser:
                     namespaced_name = f"{best_namespace}_{var_name}"
                     if namespaced_name in self.variables:
                         substitution_map[var_name] = namespaced_name
-            
+
             if not substitution_map:
                 return None
-            
+
             # Substitute variables in the expression string
             substituted_expr = composite_symbol
             for original, namespaced in substitution_map.items():
                 # Use word boundary regex for precise replacement
-                pattern = r'\b' + re.escape(original) + r'\b'
+                pattern = r"\b" + re.escape(original) + r"\b"
                 substituted_expr = re.sub(pattern, namespaced, substituted_expr)
-            
+
             # Try to build the expression from the substituted string
             return self._build_expression_from_string(substituted_expr)
-            
+
         except Exception as e:
             self.logger.debug(f"Failed to parse composite expression '{composite_symbol}': {e}")
             return None
-    
+
     def _find_best_namespace_for_variables(self, var_names: list[str]) -> str | None:
         """Find the namespace that contains the most variables from the list."""
         namespace_scores = {}
-        
+
         # Score each namespace based on how many variables it contains
         for var_name in self.variables:
-            if '_' in var_name:
-                namespace = var_name.split('_')[0]
-                base_var = '_'.join(var_name.split('_')[1:])
-                
+            if "_" in var_name:
+                namespace = var_name.split("_")[0]
+                base_var = "_".join(var_name.split("_")[1:])
+
                 if base_var in var_names:
                     namespace_scores[namespace] = namespace_scores.get(namespace, 0) + 1
-        
+
         if not namespace_scores:
             return None
-        
+
         # Return the namespace with the highest score
         return max(namespace_scores.items(), key=lambda x: x[1])[0]
-    
+
     def _build_expression_from_string(self, expr_string: str) -> Any | None:
         """
         Build an expression from a string by safely evaluating with variable substitution.
-        
+
         Args:
             expr_string: The expression string to evaluate
-            
+
         Returns:
             Built expression object if successful, None otherwise
         """
         try:
             # Create a safe evaluation context with only our variables
             eval_context = {}
-            
+
             # Add variables to context
             for var_symbol, var_obj in self.variables.items():
                 eval_context[var_symbol] = var_obj
-            
+
             # Add safe mathematical functions
-            eval_context.update({
-                'sin': sin, 'cos': cos,
-                'abs': abs, 'min': min, 'max': max,
-                '__builtins__': {}  # Disable built-ins for security
-            })
-            
+            eval_context.update(
+                {
+                    "sin": sin,
+                    "cos": cos,
+                    "abs": abs,
+                    "min": min,
+                    "max": max,
+                    "__builtins__": {},  # Disable built-ins for security
+                }
+            )
+
             # Safely evaluate the expression
             result = eval(expr_string, eval_context, {})
             return result
-            
+
         except Exception as e:
             self.logger.debug(f"Failed to build expression from string '{expr_string}': {e}")
             return None
-    
+
     def parse_malformed_variable_pattern(self, malformed_symbol: str) -> Any | None:
         """
         Parse a malformed variable pattern from proxy evaluation.
-        
+
         Args:
             malformed_symbol: The malformed variable symbol to parse
-            
+
         Returns:
             Reconstructed expression if successful, None otherwise
         """
         if not malformed_symbol or not isinstance(malformed_symbol, str):
             return None
-        
+
         try:
             # Check if this looks like a mathematical expression with embedded values
             if any(char in malformed_symbol for char in MATH_OPERATORS):
                 # Try to parse as a composite expression
                 return self.parse_composite_expression_pattern(malformed_symbol)
-            
+
             # Check for specific malformed patterns
             if "." in malformed_symbol and "(" in malformed_symbol:
                 # Looks like a method call result - try to extract the base pattern
                 base_pattern = self._extract_base_pattern_from_malformed(malformed_symbol)
                 if base_pattern:
                     return self.parse_composite_expression_pattern(base_pattern)
-            
+
             return None
-            
+
         except Exception as e:
             self.logger.debug(f"Failed to parse malformed variable '{malformed_symbol}': {e}")
             return None
-    
+
     def _extract_base_pattern_from_malformed(self, malformed_symbol: str) -> str | None:
         """Extract the base mathematical pattern from a malformed symbol."""
+        if not malformed_symbol or not isinstance(malformed_symbol, str):
+            return None
+
         try:
-            # Remove method calls and numeric values, keep the structure
-            # This is a heuristic approach for common malformed patterns
-            
             # Remove numeric values that look like results
-            cleaned = re.sub(r'\d+\.\d+', 'VAR', malformed_symbol)
-            
+            cleaned = re.sub(r"\d+\.\d+", "VAR", malformed_symbol)
+
             # Remove method calls like .value, .quantity
-            cleaned = re.sub(r'\.(?:value|quantity|magnitude)\b', '', cleaned)
-            
-            # If we still have a recognizable pattern, return it
-            if any(char in cleaned for char in MATH_OPERATORS):
-                return cleaned
-            
+            cleaned = re.sub(r"\.(?:value|quantity|magnitude)\b", "", cleaned)
+
+            # Return pattern if it contains mathematical operators
+            return cleaned if any(char in cleaned for char in MATH_OPERATORS) else None
+
+        except (AttributeError, re.error):
             return None
-            
-        except Exception:
-            return None
-    
+
     def parse_and_rebuild_expression(self, expr: Any, missing_vars: list[str]) -> Any | None:
         """
         Parse composite expressions and rebuild them using existing variables.
@@ -264,109 +269,107 @@ class ExpressionParser:
         """
         if not missing_vars:
             return expr
-        
+
         try:
             # For each missing variable, try to reconstruct it
             reconstructed_components = {}
-            
+
             for missing_var in missing_vars:
                 if any(char in missing_var for char in MATH_OPERATORS):
                     # This is a composite expression
                     rebuilt = self.parse_composite_expression_pattern(missing_var)
                     if rebuilt:
                         reconstructed_components[missing_var] = rebuilt
-            
+
             if not reconstructed_components:
                 return None
-            
+
             # Try to substitute the reconstructed components back into the original expression
             return self._substitute_in_expression(expr, reconstructed_components)
-            
+
         except Exception as e:
             self.logger.debug(f"Failed to parse and rebuild expression: {e}")
             return None
-    
+
     def _substitute_in_expression(self, expr: Any, substitutions: dict[str, Any]) -> Any | None:
         """
         Substitute reconstructed components back into an expression tree.
-        
+
         Args:
             expr: The original expression
             substitutions: Map of missing variables to their reconstructed versions
-            
+
         Returns:
             Expression with substitutions applied
         """
-        try:
-            # This is a complex operation that would require deep expression tree traversal
-            # For now, return the first successful substitution
-            if substitutions:
-                return next(iter(substitutions.values()))
+        if not substitutions:
             return None
-            
-        except Exception:
-            return None
+
+        # Return the first successful substitution
+        # TODO: Implement full expression tree traversal for complex substitutions
+        return next(iter(substitutions.values()))
 
 
 # ========== NAMESPACE MAPPER ==========
 
+
 class NamespaceMapper:
     """
     Focused class for handling variable namespace mapping operations.
-    
+
     Provides efficient mapping of base variable names to their namespaced
     counterparts with caching for performance optimization.
     """
-    
+
     def __init__(self, variables: VariableDict, logger: Logger):
         """
         Initialize the namespace mapper.
-        
+
         Args:
             variables: Dictionary of available variables
             logger: Logger for debugging
         """
         self.variables = variables
         self.logger = logger
-        
+
         # Performance optimization caches
-        self._namespace_cache: dict[str, Set[str]] = {}
+        self._namespace_cache: dict[str, set[str]] = {}
         self._variable_mapping_cache: dict[frozenset, NamespaceMapping] = {}
-        self._all_variable_names: Set[str] | None = None
-    
-    def extract_base_variables_from_composites(self, missing_vars: list[str]) -> Set[str]:
+        self._all_variable_names: set[str] | None = None
+
+    def extract_base_variables_from_composites(self, missing_vars: list[str]) -> set[str]:
         """
         Extract base variable names from composite expressions.
-        
+
         Args:
             missing_vars: List of missing variable expressions
-            
+
         Returns:
             Set of base variable names found in the expressions
         """
         base_vars = set()
-        
+
         for missing_var in missing_vars:
             if not isinstance(missing_var, str):
                 continue
-                
+
             # Extract variable names using regex
             matches = VARIABLE_PATTERN.findall(missing_var)
-            
+
             for match in matches:
                 # Skip function names
                 if match not in EXCLUDED_FUNCTION_NAMES:
                     base_vars.add(match)
-        
+
         return base_vars
-    
-    def find_namespace_mappings(self, base_vars: Set[str]) -> NamespaceMapping:
+
+    def find_namespace_mappings(self, base_vars: set[str]) -> NamespaceMapping:
         """
         Find namespace mappings for a set of base variables.
-        
+
         Args:
             base_vars: Set of base variable names
-            
+
         Returns:
             Dictionary mapping base variables to their namespaced versions
         """
@@ -374,64 +377,67 @@ class NamespaceMapper:
         cache_key = frozenset(base_vars)
         if cache_key in self._variable_mapping_cache:
             return self._variable_mapping_cache[cache_key]
-        
+
         mappings = {}
-        
+
         # Build all variable names cache if needed
         if self._all_variable_names is None:
             self._all_variable_names = set(self.variables.keys())
-        
+
         # For each base variable, find its namespaced version
         for base_var in base_vars:
             namespaced_var = self._find_namespaced_variable(base_var)
             if namespaced_var:
                 mappings[base_var] = namespaced_var
-        
+
         # Cache the result
         self._variable_mapping_cache[cache_key] = mappings
         return mappings
-    
+
     def _find_namespaced_variable(self, base_var: str) -> str | None:
         """
         Find the namespaced version of a base variable.
-        
+
         Args:
             base_var: Base variable name
-            
+
         Returns:
             Namespaced variable name if found, None otherwise
         """
-        # Look for variables that end with the base variable name
-        candidates = []
-        
-        for var_name in self._all_variable_names:
-            if var_name.endswith(f"_{base_var}"):
-                candidates.append(var_name)
-            elif var_name == base_var:
-                candidates.append(var_name)
-        
-        if not candidates:
+        if not base_var or not isinstance(base_var, str):
             return None
-        
-        # Prefer the shortest match (least nested namespace)
-        return min(candidates, key=len)
-    
-    def get_namespaces_for_variable(self, base_var: str) -> Set[str]:
+
+        # Build all variable names cache if needed
+        if self._all_variable_names is None:
+            self._all_variable_names = set(self.variables.keys())
+
+        # Direct match first (most efficient)
+        if base_var in self._all_variable_names:
+            return base_var
+
+        # Look for namespaced versions
+        suffix = f"_{base_var}"
+        candidates = [name for name in self._all_variable_names if name.endswith(suffix)]
+
+        # Return shortest match (least nested namespace)
+        return min(candidates, key=len) if candidates else None
+
+    def get_namespaces_for_variable(self, base_var: str) -> set[str]:
         """
         Get all namespaces that contain a particular base variable.
-        
+
         Args:
             base_var: Base variable name
-            
+
         Returns:
             Set of namespace prefixes that contain the variable
         """
         # Use cache for performance
         if base_var in self._namespace_cache:
             return self._namespace_cache[base_var]
-        
+
         namespaces = set()
-        
+
         for var_name in self.variables.keys():
             if var_name.endswith(f"_{base_var}") and "_" in var_name:
                 # Extract namespace (everything before the last underscore + base_var)
@@ -439,11 +445,11 @@ class NamespaceMapper:
                 if len(parts) >= 2 and parts[-1] == base_var:
                     namespace = "_".join(parts[:-1])
                     namespaces.add(namespace)
-        
+
         # Cache the result
         self._namespace_cache[base_var] = namespaces
         return namespaces
-    
+
     def clear_caches(self) -> None:
         """Clear all internal caches."""
         self._namespace_cache.clear()
@@ -453,70 +459,75 @@ class NamespaceMapper:
 
 # ========== COMPOSITE EXPRESSION REBUILDER ==========
 
+
 class CompositeExpressionRebuilder:
     """
     Focused class for rebuilding composite expressions from malformed patterns.
-    
+
     Handles reconstruction of expressions that were malformed during proxy
     evaluation and provides methods to recover the original mathematical structure.
     """
-    
+
     def __init__(self, variables: VariableDict, logger: Logger):
         """
         Initialize the composite expression rebuilder.
-        
+
         Args:
             variables: Dictionary of available variables
             logger: Logger for debugging
         """
         self.variables = variables
         self.logger = logger
-    
+
     def identify_malformed_variables(self, missing_vars: list[str]) -> list[str]:
         """
         Identify which missing variables are malformed from proxy evaluation.
-        
+
         Args:
             missing_vars: List of missing variable names
-            
+
         Returns:
             List of variables that appear to be malformed
         """
         malformed = []
-        
+
         for var in missing_vars:
             if self._is_malformed_variable(var):
                 malformed.append(var)
-        
+
         return malformed
-    
+
     def _is_malformed_variable(self, var_name: str) -> bool:
         """
         Check if a variable name appears to be malformed from proxy evaluation.
-        
+
         Args:
             var_name: Variable name to check
-            
+
         Returns:
             True if the variable appears malformed
         """
-        if not isinstance(var_name, str):
+        if not isinstance(var_name, str) or not var_name:
             return False
-        
-        # Check for patterns that indicate malformed proxy evaluation
-        malformed_indicators = [
-            # Numeric values embedded in expressions
-            re.search(r'\d+\.\d+', var_name),
-            # Method calls in variable names
-            '.value' in var_name or '.quantity' in var_name,
-            # Complex nested expressions
-            var_name.count('(') != var_name.count(')'),
-            # Very long names with multiple operations
-            len(var_name) > 50 and any(op in var_name for op in MATH_OPERATORS)
-        ]
-        
-        return any(malformed_indicators)
-    
+
+        # Check for numeric values embedded in expressions
+        if re.search(r"\d+\.\d+", var_name):
+            return True
+
+        # Check for method calls in variable names
+        if ".value" in var_name or ".quantity" in var_name:
+            return True
+
+        # Check for unbalanced parentheses
+        if var_name.count("(") != var_name.count(")"):
+            return True
+
+        # Check for very long names with multiple operations
+        if len(var_name) > 50 and any(op in var_name for op in MATH_OPERATORS):
+            return True
+
+        return False
+
     def reconstruct_malformed_proxy_expression(self, equation: Equation, malformed_vars: list[str]) -> Any | None:
         """
         Generically reconstruct expressions that were malformed due to proxy evaluation.
@@ -531,179 +542,181 @@ class CompositeExpressionRebuilder:
         try:
             # Try to extract a meaningful pattern from the equation's RHS
             rhs_str = str(equation.rhs)
-            
+
             # Look for recognizable mathematical patterns
             pattern = self._extract_mathematical_pattern(rhs_str)
             if pattern:
                 # Try to reconstruct the pattern with proper variable references
                 return self._reconstruct_pattern(pattern)
-            
+
             # If direct pattern extraction fails, try alternative approaches
             return self._attempt_fallback_reconstruction(equation)
-            
+
         except Exception as e:
             self.logger.debug(f"Failed to reconstruct malformed proxy expression: {e}")
             return None
-    
+
     def _extract_mathematical_pattern(self, expression_str: str) -> str | None:
         """
         Extract a mathematical pattern from an expression string.
-        
+
         Args:
             expression_str: String representation of the expression
-            
+
         Returns:
             Cleaned mathematical pattern if extractable, None otherwise
         """
         try:
             # Remove common method calls and numeric results
             cleaned = expression_str
-            
+
             # Remove .value, .quantity, etc.
-            cleaned = re.sub(r'\.(?:value|quantity|magnitude)\b', '', cleaned)
-            
+            cleaned = re.sub(r"\.(?:value|quantity|magnitude)\b", "", cleaned)
+
             # Replace numeric constants with placeholders
-            cleaned = re.sub(r'\d+\.\d+', 'NUM', cleaned)
-            
+            cleaned = re.sub(r"\d+\.\d+", "NUM", cleaned)
+
             # If we still have mathematical operators, this might be reconstructable
             if any(op in cleaned for op in MATH_OPERATORS):
                 return cleaned
-                
+
             return None
-            
+
         except Exception:
             return None
-    
+
     def _reconstruct_pattern(self, pattern: str) -> Any | None:
         """
         Reconstruct a mathematical pattern using available variables.
-        
+
         Args:
             pattern: The mathematical pattern to reconstruct
-            
+
         Returns:
             Reconstructed expression if successful, None otherwise
         """
         try:
             # Extract variable names from the pattern
             var_matches = VARIABLE_PATTERN.findall(pattern)
-            
+
             # Try to map these to existing variables
             var_mapping = {}
             for var_name in var_matches:
-                if var_name not in EXCLUDED_FUNCTION_NAMES and var_name != 'NUM':
+                if var_name not in EXCLUDED_FUNCTION_NAMES and var_name != "NUM":
                     # Look for a matching variable in our namespace
                     matching_var = self._find_matching_variable(var_name)
                     if matching_var:
                         var_mapping[var_name] = matching_var
-            
+
             if not var_mapping:
                 return None
-            
+
             # Substitute the variables back into the pattern
             reconstructed_pattern = pattern
             for original, replacement in var_mapping.items():
-                reconstructed_pattern = re.sub(r'\b' + re.escape(original) + r'\b', replacement, reconstructed_pattern)
-            
+                reconstructed_pattern = re.sub(r"\b" + re.escape(original) + r"\b", replacement, reconstructed_pattern)
+
             # Replace NUM placeholders with appropriate constants
-            reconstructed_pattern = re.sub(r'\bNUM\b', '1.0', reconstructed_pattern)
-            
+            reconstructed_pattern = re.sub(r"\bNUM\b", "1.0", reconstructed_pattern)
+
             # Try to evaluate the reconstructed pattern
             return self._safe_evaluate_pattern(reconstructed_pattern)
-            
+
         except Exception as e:
             self.logger.debug(f"Failed to reconstruct pattern '{pattern}': {e}")
             return None
-    
+
     def _find_matching_variable(self, var_name: str) -> str | None:
         """Find a variable in our namespace that matches the given name."""
         # Direct match first
         if var_name in self.variables:
             return var_name
-        
+
         # Look for namespaced versions
         candidates = [v for v in self.variables.keys() if v.endswith(f"_{var_name}")]
-        
+
         if candidates:
             # Return the shortest match (least nested)
             return min(candidates, key=len)
-        
+
         return None
-    
+
     def _safe_evaluate_pattern(self, pattern: str) -> Any | None:
         """Safely evaluate a reconstructed pattern."""
         try:
             # Create evaluation context with our variables
-            eval_context = {name: var for name, var in self.variables.items()}
-            eval_context['__builtins__'] = {}  # Security
-            
+            eval_context = dict(self.variables)
+            eval_context["__builtins__"] = {}  # Security
+
             return eval(pattern, eval_context, {})
-            
+
         except Exception:
             return None
-    
+
     def _attempt_fallback_reconstruction(self, equation: Equation) -> Any | None:
         """Attempt fallback reconstruction methods."""
         try:
             # Try to get variables from the LHS and create a simple reconstruction
-            if hasattr(equation.lhs, 'symbol') and equation.lhs.symbol in self.variables:
-                lhs_var = self.variables[equation.lhs.symbol]
-                
-                # Look for similar variables that might be used in a simple expression
-                namespace = self._extract_namespace_from_variable(equation.lhs.symbol)
-                if namespace:
-                    return self._create_simple_reconstruction(namespace, lhs_var)
-            
+            if isinstance(equation.lhs, FieldQnty | VariableReference):
+                symbol = getattr(equation.lhs, "symbol", None)
+                if isinstance(symbol, str) and symbol in self.variables:
+                    lhs_var = self.variables[symbol]
+
+                    # Look for similar variables that might be used in a simple expression
+                    namespace = self._extract_namespace_from_variable(symbol)
+                    if namespace:
+                        return self._create_simple_reconstruction(namespace, lhs_var)
+
             return None
-            
-        except Exception:
+
+        except (AttributeError, TypeError):
             return None
-    
+
     def _extract_namespace_from_variable(self, var_symbol: str) -> str | None:
         """Extract namespace from a variable symbol."""
-        if '_' in var_symbol:
-            return var_symbol.split('_')[0]
+        if "_" in var_symbol:
+            return var_symbol.split("_")[0]
         return None
-    
+
     def _create_simple_reconstruction(self, namespace: str, target_var: FieldQnty) -> Any | None:
         """Create a simple reconstruction based on namespace variables."""
         try:
             # Find other variables in the same namespace
-            namespace_vars = [v for name, v in self.variables.items() 
-                            if name.startswith(f"{namespace}_") and v != target_var]
-            
+            namespace_vars = [v for name, v in self.variables.items() if name.startswith(f"{namespace}_") and v != target_var]
+
             if namespace_vars:
                 # Return the first other variable as a simple reconstruction
                 # This is a fallback - in practice, more sophisticated logic would be needed
                 return namespace_vars[0]
-            
+
             return None
-            
+
         except Exception:
             return None
 
 
 # ========== DELAYED EXPRESSION RESOLVER ==========
 
+
 class DelayedExpressionResolver:
     """
     Focused class for resolving delayed expressions and equations.
-    
+
     Handles components that have deferred evaluation needs and provides
     safe resolution with proper type checking and context management.
     """
-    
+
     def __init__(self, variables: VariableDict, logger: Logger):
         """
         Initialize the delayed expression resolver.
-        
+
         Args:
             variables: Dictionary of available variables
             logger: Logger for debugging
         """
         self.variables = variables
         self.logger = logger
-    
+
     def contains_delayed_expressions(self, equation: Equation) -> bool:
         """
         Check if an equation contains delayed expressions that need resolution.
@@ -717,18 +730,15 @@ class DelayedExpressionResolver:
         try:
             # Check for common delayed expression patterns
             equation_str = str(equation)
-            
+
             # Look for delayed expression markers
-            delayed_markers = [
-                "DelayedExpression", "DelayedVariable", "DelayedFunction",
-                "resolve(", "delayed_", "proxy_"
-            ]
-            
+            delayed_markers = ["DelayedExpression", "DelayedVariable", "DelayedFunction", "resolve(", "delayed_", "proxy_"]
+
             return any(marker in equation_str for marker in delayed_markers)
-            
+
         except Exception:
             return False
-    
+
     def resolve_delayed_equation(self, equation: Equation) -> ReconstructionResult:
         """
         Resolve a delayed equation by evaluating its delayed expressions.
@@ -742,57 +752,56 @@ class DelayedExpressionResolver:
         try:
             # Try to resolve the RHS if it has delayed components
             resolved_rhs = self._resolve_delayed_expression(equation.rhs)
-            
+
             if resolved_rhs is None:
                 return None
-            
+
             # Create new equation with resolved RHS
-            if hasattr(equation.lhs, 'equals'):
+            if isinstance(equation.lhs, FieldQnty):
                 return equation.lhs.equals(resolved_rhs)
-            
+
             return None
-            
+
         except Exception as e:
             self.logger.debug(f"Failed to resolve delayed equation: {e}")
             return None
-    
+
     def _resolve_delayed_expression(self, expr: Any) -> Any | None:
         """
         Resolve a delayed expression by calling its resolve method if available.
-        
+
         Args:
             expr: Expression that might be delayed
-            
+
         Returns:
             Resolved expression if successful, None otherwise
         """
         try:
-            # Check if this expression has a resolve method
-            if hasattr(expr, 'resolve'):
-                # Create context from our variables
-                context = self.variables.copy()
-                return expr.resolve(context)
-            
             # Check if this is a valid expression type that doesn't need resolution
             if isinstance(expr, VALID_EXPRESSION_TYPES):
+                # Check if this expression has a resolve method
+                if hasattr(expr, "resolve") and callable(expr.resolve):
+                    context = self.variables.copy()
+                    return expr.resolve(context)
                 return expr
-            
-            # Try to recursively resolve components
+
+            # Try to recursively resolve components for binary operations
             if isinstance(expr, BinaryOperation):
                 resolved_left = self._resolve_delayed_expression(expr.left)
                 resolved_right = self._resolve_delayed_expression(expr.right)
-                
+
                 if resolved_left is not None and resolved_right is not None:
                     return BinaryOperation(expr.operator, resolved_left, resolved_right)
-            
+
             return None
-            
-        except Exception as e:
+
+        except (AttributeError, TypeError) as e:
             self.logger.debug(f"Failed to resolve delayed expression: {e}")
             return None
 
 
 # ========== MAIN EQUATION RECONSTRUCTOR ==========
+
 
 class EquationReconstructor:
     """
@@ -825,12 +834,19 @@ class EquationReconstructor:
         Raises:
             ValueError: If problem doesn't have required attributes
         """
-        if not hasattr(problem, "variables") or not hasattr(problem, "logger"):
-            raise ValueError("Problem must have 'variables' and 'logger' attributes")
+        # Type-safe attribute access
+        try:
+            self.variables: VariableDict = problem.variables
+            self.logger: Logger = problem.logger
+        except AttributeError as e:
+            raise ValueError(f"Problem must have 'variables' and 'logger' attributes: {e}") from e
 
-        self.problem: Any = problem
-        self.variables: VariableDict = problem.variables
-        self.logger: Logger = problem.logger
+        if not isinstance(self.variables, dict):
+            raise ValueError("Problem.variables must be a dictionary")
+        if not isinstance(self.logger, Logger):
+            raise ValueError("Problem.logger must be a Logger instance")
+
+        self.problem = problem
 
         # Initialize focused component classes
         self.expression_parser = ExpressionParser(self.variables, self.logger)
@@ -885,7 +901,7 @@ class EquationReconstructor:
         """
         Generic reconstruction of equations with composite expressions.
 
-        Delegates to NamespaceMapper for variable mapping and ExpressionParser 
+        Delegates to NamespaceMapper for variable mapping and ExpressionParser
         for substitution operations.
 
         Args:
@@ -1001,16 +1017,19 @@ class EquationReconstructor:
         Returns:
             The LHS variable if valid, None otherwise
         """
-        # Check if lhs is a VariableReference
-        if isinstance(equation.lhs, VariableReference):
-            var_name = equation.lhs.name
-            if var_name in self.variables:
-                return self.variables[var_name]
-        # Check if lhs is a Variable with symbol attribute
-        elif hasattr(equation.lhs, "symbol"):
-            symbol = getattr(equation.lhs, "symbol", None)
-            if isinstance(symbol, str) and symbol in self.variables:
-                return self.variables[symbol]
+        try:
+            # Check if lhs is a VariableReference
+            if isinstance(equation.lhs, VariableReference):
+                var_name = equation.lhs.name
+                if var_name in self.variables:
+                    return self.variables[var_name]
+            # Check if lhs is a FieldQnty with symbol attribute
+            elif isinstance(equation.lhs, FieldQnty):
+                symbol = getattr(equation.lhs, "symbol", None)
+                if isinstance(symbol, str) and symbol in self.variables:
+                    return self.variables[symbol]
+        except (AttributeError, TypeError):
+            pass
 
         return None
 
@@ -1147,22 +1166,22 @@ class EquationReconstructor:
     def parse_composite_expression_pattern(self, composite_symbol: str) -> Any | None:
         """
         Parse a composite expression pattern using the expression parser.
-        
+
         Args:
             composite_symbol: The composite expression string to parse
-            
+
         Returns:
             Reconstructed expression if successful, None otherwise
         """
         return self.expression_parser.parse_composite_expression_pattern(composite_symbol)
-    
+
     def parse_malformed_variable_pattern(self, malformed_symbol: str) -> Any | None:
         """
         Parse a malformed variable pattern using the expression parser.
-        
+
         Args:
             malformed_symbol: The malformed variable symbol to parse
-            
+
         Returns:
             Reconstructed expression if successful, None otherwise
         """
@@ -1184,8 +1203,14 @@ class EquationReconstructor:
 
 # Export all relevant classes
 __all__ = [
-    "EquationReconstructor", "ExpressionParser", "NamespaceMapper", 
-    "CompositeExpressionRebuilder", "DelayedExpressionResolver",
-    "SolverError", "EquationReconstructionError", "MalformedExpressionError",
-    "NamespaceMappingError", "PatternReconstructionError"
+    "EquationReconstructor",
+    "ExpressionParser",
+    "NamespaceMapper",
+    "CompositeExpressionRebuilder",
+    "DelayedExpressionResolver",
+    "SolverError",
+    "EquationReconstructionError",
+    "MalformedExpressionError",
+    "NamespaceMappingError",
+    "PatternReconstructionError",
 ]

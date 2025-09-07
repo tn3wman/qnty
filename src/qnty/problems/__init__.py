@@ -10,14 +10,7 @@ This module provides a streamlined Problem system with 4 focused files instead o
 The system maintains full backward compatibility with the original Problem API.
 """
 
-from .problem import (
-    Problem as BaseProblem, 
-    EngineeringProblem as BaseEngineeringProblem,
-    ValidationMixin,
-    VariableNotFoundError,
-    EquationValidationError,
-    SolverError
-)
+from .problem import Problem as BaseProblem, EngineeringProblem as BaseEngineeringProblem, ValidationMixin, VariableNotFoundError, EquationValidationError, SolverError
 
 from .composition import (
     CompositionMixin,
@@ -34,7 +27,7 @@ from .composition import (
     delayed_max_expr,
     MetaclassError,
     SubProblemProxyError,
-    NamespaceError
+    NamespaceError,
 )
 
 from .solving import (
@@ -46,15 +39,16 @@ from .solving import (
     EquationReconstructionError,
     MalformedExpressionError,
     NamespaceMappingError,
-    PatternReconstructionError
+    PatternReconstructionError,
 )
 
 from .validation import (
-    ValidationMixin as ValidationMixinOriginal  # Avoid naming conflict
+    ValidationMixin as ValidationMixinOriginal,  # Avoid naming conflict
 )
 
 
 # ========== INTEGRATED PROBLEM CLASS ==========
+
 
 class Problem(BaseProblem, CompositionMixin, metaclass=ProblemMeta):
     """
@@ -105,6 +99,7 @@ class Problem(BaseProblem, CompositionMixin, metaclass=ProblemMeta):
 
         # Auto-populate from class-level variables and equations (subclass pattern)
         # This is handled by the CompositionMixin via _extract_from_class_variables()
+        self._extract_from_class_variables()
 
 
 # ========== BACKWARD COMPATIBILITY ALIASES ==========
@@ -115,17 +110,14 @@ EngineeringProblem = Problem
 # Export all relevant classes and exceptions for compatibility
 __all__ = [
     # Main classes
-    "Problem", 
+    "Problem",
     "EngineeringProblem",
-    
     # Mixins
     "ValidationMixin",
     "CompositionMixin",
-    
     # Metaclass system
     "ProblemMeta",
     "ProxiedNamespace",
-    
     # Composition classes
     "SubProblemProxy",
     "ConfigurableVariable",
@@ -133,22 +125,19 @@ __all__ = [
     "DelayedVariableReference",
     "DelayedExpression",
     "DelayedFunction",
-    
     # Delayed function factories
     "delayed_sin",
-    "delayed_min_expr", 
+    "delayed_min_expr",
     "delayed_max_expr",
-    
     # Reconstruction system
     "EquationReconstructor",
     "ExpressionParser",
     "NamespaceMapper",
     "CompositeExpressionRebuilder",
     "DelayedExpressionResolver",
-    
     # Exceptions
     "VariableNotFoundError",
-    "EquationValidationError", 
+    "EquationValidationError",
     "SolverError",
     "MetaclassError",
     "SubProblemProxyError",
@@ -156,5 +145,5 @@ __all__ = [
     "EquationReconstructionError",
     "MalformedExpressionError",
     "NamespaceMappingError",
-    "PatternReconstructionError"
+    "PatternReconstructionError",
 ]

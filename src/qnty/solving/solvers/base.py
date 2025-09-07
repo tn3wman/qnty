@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from typing import Any
@@ -11,8 +12,6 @@ from ..order import Order
 
 class SolveError(Exception):
     """Exception raised when solving fails."""
-
-    pass
 
 
 @dataclass
@@ -30,9 +29,9 @@ class SolveResult:
 class BaseSolver(ABC):
     """Base class for all equation solvers."""
 
-    def __init__(self, logger=None):
+    def __init__(self, logger: logging.Logger | None = None):
         self.logger = logger
-        self.steps = []
+        self.steps: list[dict[str, Any]] = []
 
     @abstractmethod
     def can_handle(self, equations: list[Equation], unknowns: set[str], dependency_graph: Order | None = None, analysis: dict[str, Any] | None = None) -> bool:
@@ -48,7 +47,7 @@ class BaseSolver(ABC):
         Returns:
             True if this solver can handle the problem
         """
-        pass
+        ...
 
     @abstractmethod
     def solve(self, equations: list[Equation], variables: dict[str, FieldQnty], dependency_graph: Order | None = None, max_iterations: int = 100, tolerance: float = 1e-10) -> SolveResult:
@@ -65,14 +64,14 @@ class BaseSolver(ABC):
         Returns:
             SolveResult containing the solution
         """
-        pass
+        ...
 
     def _log_step(self, iteration: int, variable: str, equation: str, result: str, method: str | None = None):
         """Log a solving step."""
         step = {"iteration": iteration, "variable": variable, "equation": equation, "result": result, "method": method or self.__class__.__name__}
         self.steps.append(step)
         if self.logger:
-            self.logger.debug(f"Solved {variable} = {result}")
+            self.logger.debug("Solved %s = %s", variable, result)
 
     def _get_known_variables(self, variables: dict[str, FieldQnty]) -> set[str]:
         """Get symbols of known variables."""

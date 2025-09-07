@@ -10,8 +10,10 @@ This file contains the fundamental dimensional primitives for the qnty system.
 from enum import IntEnum
 
 
+# TODO: This should be frozen and immutable
 class BaseDimension(IntEnum):
     """Base dimensions as prime numbers for efficient bit operations."""
+
     DIMENSIONLESS = 1  # Must be 1 to act as multiplicative identity
     LENGTH = 2
     MASS = 3
@@ -22,6 +24,7 @@ class BaseDimension(IntEnum):
     LUMINOSITY = 17
 
 
+# TODO: This should be frozen and immutable
 # Dimension symbols for display
 DIMENSION_SYMBOLS = {
     "length": "L",
@@ -33,6 +36,7 @@ DIMENSION_SYMBOLS = {
     "luminosity": "J",
 }
 
+# TODO: This should be frozen and immutable
 # Base dimensions configuration for generators
 BASE_DIMENSIONS = {
     "LENGTH": {"prime": BaseDimension.LENGTH, "params": {"length": 1}},
@@ -45,6 +49,7 @@ BASE_DIMENSIONS = {
     "DIMENSIONLESS": {"prime": BaseDimension.DIMENSIONLESS, "params": {}},
 }
 
+# TODO: This should be frozen and immutable
 # Prime mapping for signature calculations
 PRIME_MAP = {
     "length": BaseDimension.LENGTH,

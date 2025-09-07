@@ -12,14 +12,10 @@ Combined from composition.py and composition_mixin.py for focused functionality.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
-
-if TYPE_CHECKING:
-    from ..equations import Equation
-    from ..quantities import FieldQnty
+from typing import Any
 
 from ..equations import Equation
-from ..expressions import BinaryOperation, max_expr, min_expr, sin
+from ..expressions import BinaryOperation, ConditionalExpression, Constant, VariableReference, max_expr, min_expr, sin
 from ..quantities import Dimensionless, FieldQnty
 from .rules import Rules
 
@@ -34,6 +30,35 @@ SUB_PROBLEM_REQUIRED_ATTRIBUTES: tuple[str, ...] = ("variables", "equations")
 
 
 # ========== COMPOSITION CLASSES ==========
+
+
+class ArithmeticOperationsMixin:
+    """Mixin providing common arithmetic operations that create DelayedExpression objects."""
+
+    def __add__(self, other):
+        return DelayedExpression("+", self, other)
+
+    def __radd__(self, other):
+        return DelayedExpression("+", other, self)
+
+    def __sub__(self, other):
+        return DelayedExpression("-", self, other)
+
+    def __rsub__(self, other):
+        return DelayedExpression("-", other, self)
+
+    def __mul__(self, other):
+        return DelayedExpression("*", self, other)
+
+    def __rmul__(self, other):
+        return DelayedExpression("*", other, self)
+
+    def __truediv__(self, other):
+        return DelayedExpression("/", self, other)
+
+    def __rtruediv__(self, other):
+        return DelayedExpression("/", other, self)
+
 
 class DelayedEquation:
     """
@@ -84,15 +109,16 @@ class SubProblemProxy:
         if name in self._variable_cache:
             return self._variable_cache[name]
 
-        if hasattr(self._sub_problem, name):
+        try:
             attr_value = getattr(self._sub_problem, name)
             if isinstance(attr_value, FieldQnty):
                 # Create a properly namespaced variable immediately
                 namespaced_var = self._create_namespaced_variable(attr_value)
                 self._variable_cache[name] = namespaced_var
                 return namespaced_var
-
-        return getattr(self._sub_problem, name)
+            return attr_value
+        except AttributeError as e:
+            raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'") from e
 
     def _create_namespaced_variable(self, original_var):
         """Create a Variable with namespaced symbol for proper expression creation."""
@@ -235,7 +261,7 @@ class ConfigurableVariable:
         return result
 
 
-class DelayedVariableReference:
+class DelayedVariableReference(ArithmeticOperationsMixin):
     """
     A placeholder for a variable that will be resolved to its namespaced version later.
     Supports arithmetic operations that create delayed expressions.
@@ -251,32 +277,8 @@ class DelayedVariableReference:
         """Resolve to the actual namespaced variable from context."""
         return context.get(self._namespaced_symbol)
 
-    def __add__(self, other):
-        return DelayedExpression("+", self, other)
 
-    def __radd__(self, other):
-        return DelayedExpression("+", other, self)
-
-    def __sub__(self, other):
-        return DelayedExpression("-", self, other)
-
-    def __rsub__(self, other):
-        return DelayedExpression("-", other, self)
-
-    def __mul__(self, other):
-        return DelayedExpression("*", self, other)
-
-    def __rmul__(self, other):
-        return DelayedExpression("*", other, self)
-
-    def __truediv__(self, other):
-        return DelayedExpression("/", self, other)
-
-    def __rtruediv__(self, other):
-        return DelayedExpression("/", other, self)
-
-
-class DelayedExpression:
+class DelayedExpression(ArithmeticOperationsMixin):
     """
     Represents an arithmetic expression that will be resolved later when context is available.
     Supports chaining of operations.
@@ -309,42 +311,14 @@ class DelayedExpression:
 
     def _resolve_operand(self, operand, context):
         """Resolve a single operand to a Variable/Expression."""
-        if isinstance(operand, DelayedVariableReference):
-            return operand.resolve(context)
-        elif isinstance(operand, DelayedExpression):
-            return operand.resolve(context)
-        elif hasattr(operand, "resolve"):
+        if isinstance(operand, DelayedVariableReference | DelayedExpression | DelayedFunction):
             return operand.resolve(context)
         else:
             # It's a literal value or Variable
             return operand
 
-    def __add__(self, other):
-        return DelayedExpression("+", self, other)
 
-    def __radd__(self, other):
-        return DelayedExpression("+", other, self)
-
-    def __sub__(self, other):
-        return DelayedExpression("-", self, other)
-
-    def __rsub__(self, other):
-        return DelayedExpression("-", other, self)
-
-    def __mul__(self, other):
-        return DelayedExpression("*", self, other)
-
-    def __rmul__(self, other):
-        return DelayedExpression("*", other, self)
-
-    def __truediv__(self, other):
-        return DelayedExpression("/", self, other)
-
-    def __rtruediv__(self, other):
-        return DelayedExpression("/", other, self)
-
-
-class DelayedFunction:
+class DelayedFunction(ArithmeticOperationsMixin):
     """
     Represents a function call that will be resolved later when context is available.
     """
@@ -358,7 +332,7 @@ class DelayedFunction:
         # Resolve all arguments
         resolved_args = []
         for arg in self.args:
-            if hasattr(arg, "resolve"):
+            if isinstance(arg, DelayedVariableReference | DelayedExpression | DelayedFunction):
                 resolved_arg = arg.resolve(context)
                 if resolved_arg is None:
                     return None
@@ -377,30 +351,6 @@ class DelayedFunction:
             # Generic function call
             return None
 
-    def __add__(self, other):
-        return DelayedExpression("+", self, other)
-
-    def __radd__(self, other):
-        return DelayedExpression("+", other, self)
-
-    def __sub__(self, other):
-        return DelayedExpression("-", self, other)
-
-    def __rsub__(self, other):
-        return DelayedExpression("-", other, self)
-
-    def __mul__(self, other):
-        return DelayedExpression("*", self, other)
-
-    def __rmul__(self, other):
-        return DelayedExpression("*", other, self)
-
-    def __truediv__(self, other):
-        return DelayedExpression("/", self, other)
-
-    def __rtruediv__(self, other):
-        return DelayedExpression("/", other, self)
-
 
 # Delayed function factories
 def delayed_sin(expr):
@@ -416,6 +366,7 @@ def delayed_max_expr(*args):
 
 
 # ========== COMPOSITION MIXIN ==========
+
 
 class CompositionMixin:
     """Mixin class providing sub-problem composition functionality."""
@@ -512,14 +463,17 @@ class CompositionMixin:
         Creates a simple dotted access pattern: self.header.P becomes self.header_P
         """
         self.sub_problems[namespace] = sub_problem
-
-        # Get proxy configurations if available
         proxy_configs = getattr(self.__class__, "_proxy_configurations", {}).get(namespace, {})
 
-        # Create a namespace object for dotted access (self.header.P)
+        namespace_obj = self._create_namespace_object(sub_problem, namespace, proxy_configs)
+        super().__setattr__(namespace, namespace_obj)
+
+        self._integrate_sub_problem_equations(sub_problem, namespace)
+
+    def _create_namespace_object(self, sub_problem, namespace: str, proxy_configs: dict):
+        """Create namespace object with all sub-problem variables."""
         namespace_obj = type("SubProblemNamespace", (), {})()
 
-        # Add all sub-problem variables with namespace prefixes
         for var_symbol, var in sub_problem.variables.items():
             namespaced_var = self._create_namespaced_variable(var, var_symbol, namespace, proxy_configs)
             self.add_variable(namespaced_var)
@@ -529,10 +483,10 @@ class CompositionMixin:
                 super().__setattr__(namespaced_var.symbol, namespaced_var)
             setattr(namespace_obj, var_symbol, namespaced_var)
 
-        # Set the namespace object for dotted access
-        super().__setattr__(namespace, namespace_obj)
+        return namespace_obj
 
-        # Also add all sub-problem equations (they'll be namespaced automatically)
+    def _integrate_sub_problem_equations(self, sub_problem, namespace: str):
+        """Integrate equations from sub-problem with proper namespacing."""
         for equation in sub_problem.equations:
             try:
                 # Skip conditional equations for variables that are overridden to known values in composition
@@ -569,41 +523,44 @@ class CompositionMixin:
             variables_in_eq = equation.get_all_variables()
 
             # Create mapping from original symbols to namespaced symbols
-            symbol_mapping = {}
-            for var_symbol in variables_in_eq:
-                namespaced_symbol = f"{namespace}_{var_symbol}"
-                if namespaced_symbol in self.variables:
-                    symbol_mapping[var_symbol] = namespaced_symbol
-
+            symbol_mapping = self._create_symbol_mapping(variables_in_eq, namespace)
             if not symbol_mapping:
                 return None
 
             # Create new equation with namespaced references
-            # For LHS, we need a Variable object to call .equals()
-            # For RHS, we need proper expression structure
-            namespaced_lhs = self._namespace_expression_for_lhs(equation.lhs, symbol_mapping)
-            namespaced_rhs = self._namespace_expression(equation.rhs, symbol_mapping)
-
-            if namespaced_lhs and namespaced_rhs:
-                equals_method = getattr(namespaced_lhs, "equals", None)
-                if equals_method:
-                    return equals_method(namespaced_rhs)
-
-            return None
+            return self._create_namespaced_equation(equation, symbol_mapping)
 
         except Exception:
             return None
+
+    def _create_symbol_mapping(self, variables_in_eq: set[str], namespace: str) -> dict[str, str]:
+        """Create mapping from original symbols to namespaced symbols."""
+        symbol_mapping = {}
+        for var_symbol in variables_in_eq:
+            namespaced_symbol = f"{namespace}_{var_symbol}"
+            if namespaced_symbol in self.variables:
+                symbol_mapping[var_symbol] = namespaced_symbol
+        return symbol_mapping
+
+    def _create_namespaced_equation(self, equation: Equation, symbol_mapping: dict[str, str]) -> Equation | None:
+        """Create new equation with namespaced references."""
+        # For LHS, we need a Variable object to call .equals()
+        # For RHS, we need proper expression structure
+        namespaced_lhs = self._namespace_expression_for_lhs(equation.lhs, symbol_mapping)
+        namespaced_rhs = self._namespace_expression(equation.rhs, symbol_mapping)
+
+        if namespaced_lhs and namespaced_rhs and hasattr(namespaced_lhs, "equals"):
+            return namespaced_lhs.equals(namespaced_rhs)
+        return None
 
     def _namespace_expression(self, expr, symbol_mapping):
         """
         Create a namespaced version of an expression by replacing variable references.
         """
-        from ..expressions import BinaryOperation, ConditionalExpression, Constant, VariableReference
-
         # Handle variable references
         if isinstance(expr, VariableReference):
             return self._namespace_variable_reference(expr, symbol_mapping)
-        elif hasattr(expr, "symbol") and expr.symbol in symbol_mapping:
+        elif isinstance(expr, FieldQnty) and expr.symbol in symbol_mapping:
             return self._namespace_variable_object(expr, symbol_mapping)
 
         # Handle operations
@@ -611,19 +568,17 @@ class CompositionMixin:
             return self._namespace_binary_operation(expr, symbol_mapping)
         elif isinstance(expr, ConditionalExpression):
             return self._namespace_conditional_expression(expr, symbol_mapping)
-        elif hasattr(expr, "operand"):
+        elif self._is_unary_operation(expr):
             return self._namespace_unary_operation(expr, symbol_mapping)
-        elif hasattr(expr, "function_name"):
+        elif self._is_binary_function(expr):
             return self._namespace_binary_function(expr, symbol_mapping)
         elif isinstance(expr, Constant):
             return expr
         else:
             return expr
 
-    def _namespace_variable_reference(self, expr, symbol_mapping):
+    def _namespace_variable_reference(self, expr: VariableReference, symbol_mapping: dict[str, str]) -> VariableReference:
         """Namespace a VariableReference object."""
-        from ..expressions import VariableReference
-
         # VariableReference uses the 'name' property which returns the symbol if available
         symbol = expr.name
         if symbol in symbol_mapping:
@@ -632,20 +587,16 @@ class CompositionMixin:
                 return VariableReference(self.variables[namespaced_symbol])
         return expr
 
-    def _namespace_variable_object(self, expr, symbol_mapping):
+    def _namespace_variable_object(self, expr: FieldQnty, symbol_mapping: dict[str, str]) -> VariableReference | FieldQnty:
         """Namespace a Variable object."""
-        from ..expressions import VariableReference
-
         namespaced_symbol = symbol_mapping[expr.symbol]
         if namespaced_symbol in self.variables:
             # Return VariableReference for use in expressions, not the Variable itself
             return VariableReference(self.variables[namespaced_symbol])
         return expr
 
-    def _namespace_binary_operation(self, expr, symbol_mapping):
+    def _namespace_binary_operation(self, expr: BinaryOperation, symbol_mapping: dict[str, str]) -> BinaryOperation:
         """Namespace a BinaryOperation."""
-        from ..expressions import BinaryOperation
-
         namespaced_left = self._namespace_expression(expr.left, symbol_mapping)
         namespaced_right = self._namespace_expression(expr.right, symbol_mapping)
         return BinaryOperation(expr.operator, namespaced_left, namespaced_right)
@@ -661,22 +612,18 @@ class CompositionMixin:
         namespaced_right = self._namespace_expression(expr.right, symbol_mapping)
         return type(expr)(expr.function_name, namespaced_left, namespaced_right)
 
-    def _namespace_conditional_expression(self, expr, symbol_mapping):
+    def _namespace_conditional_expression(self, expr: ConditionalExpression, symbol_mapping: dict[str, str]) -> ConditionalExpression:
         """Namespace a ConditionalExpression."""
-        from ..expressions import ConditionalExpression
-
         namespaced_condition = self._namespace_expression(expr.condition, symbol_mapping)
         namespaced_true_expr = self._namespace_expression(expr.true_expr, symbol_mapping)
         namespaced_false_expr = self._namespace_expression(expr.false_expr, symbol_mapping)
 
         return ConditionalExpression(namespaced_condition, namespaced_true_expr, namespaced_false_expr)
 
-    def _namespace_expression_for_lhs(self, expr, symbol_mapping):
+    def _namespace_expression_for_lhs(self, expr, symbol_mapping: dict[str, str]) -> FieldQnty | None:
         """
         Create a namespaced version of an expression for LHS, returning Variable objects.
         """
-        from ..expressions import VariableReference
-
         if isinstance(expr, VariableReference):
             # VariableReference uses the 'name' property which returns the symbol if available
             symbol = expr.name
@@ -686,7 +633,7 @@ class CompositionMixin:
                     return self.variables[namespaced_symbol]
             # If we can't find a mapping, return None since VariableReference doesn't have .equals()
             return None
-        elif hasattr(expr, "symbol") and expr.symbol in symbol_mapping:
+        elif isinstance(expr, FieldQnty) and expr.symbol in symbol_mapping:
             # This is a Variable object
             namespaced_symbol = symbol_mapping[expr.symbol]
             if namespaced_symbol in self.variables:
@@ -694,6 +641,16 @@ class CompositionMixin:
             return expr
         else:
             return expr
+
+    def _is_unary_operation(self, expr) -> bool:
+        """Check if expression is a unary operation."""
+        # UnaryFunction and similar classes have an 'operand' attribute
+        return hasattr(expr, "operand") and hasattr(expr, "operator")
+
+    def _is_binary_function(self, expr) -> bool:
+        """Check if expression is a binary function."""
+        # BinaryFunction classes have 'function_name', 'left', and 'right' attributes
+        return hasattr(expr, "function_name") and hasattr(expr, "left") and hasattr(expr, "right")
 
     def _should_skip_subproblem_equation(self, equation, namespace: str) -> bool:
         """
@@ -779,19 +736,23 @@ class CompositionMixin:
 
 # ========== METACLASS SYSTEM ==========
 
+
 # Custom exceptions for better error handling
 class MetaclassError(Exception):
     """Base exception for metaclass-related errors."""
+
     pass
 
 
 class SubProblemProxyError(MetaclassError):
     """Raised when sub-problem proxy creation fails."""
+
     pass
 
 
 class NamespaceError(MetaclassError):
     """Raised when namespace operations fail."""
+
     pass
 
 
@@ -1046,8 +1007,19 @@ class ProxiedNamespace(dict):
 
 # Export all relevant classes
 __all__ = [
-    "CompositionMixin", "ProblemMeta", "ProxiedNamespace", "SubProblemProxy", "ConfigurableVariable",
-    "DelayedEquation", "DelayedVariableReference", "DelayedExpression", "DelayedFunction",
-    "delayed_sin", "delayed_min_expr", "delayed_max_expr",
-    "MetaclassError", "SubProblemProxyError", "NamespaceError"
+    "CompositionMixin",
+    "ProblemMeta",
+    "ProxiedNamespace",
+    "SubProblemProxy",
+    "ConfigurableVariable",
+    "DelayedEquation",
+    "DelayedVariableReference",
+    "DelayedExpression",
+    "DelayedFunction",
+    "delayed_sin",
+    "delayed_min_expr",
+    "delayed_max_expr",
+    "MetaclassError",
+    "SubProblemProxyError",
+    "NamespaceError",
 ]

@@ -11,7 +11,7 @@ from __future__ import annotations
 from typing import TypeVar
 
 from ..constants import FLOAT_EQUALITY_TOLERANCE
-from ..dimensions._field_dims_generated import (
+from ..dimensions.field_dims import (
     AREA,
     DIMENSIONLESS,
     ENERGY_PER_UNIT_AREA,
@@ -22,10 +22,10 @@ from ..dimensions._field_dims_generated import (
     VOLUME,
     DimensionSignature,
 )
-from ..dimensions._field_dims_generated import (
+from ..dimensions.field_dims import (
     ENERGY_HEAT_WORK as ENERGY,
 )
-from ..units._field_units_generated import AreaUnits, DimensionlessUnits, LengthUnits, PressureUnits, VolumeUnits
+from ..units.field_units import AreaUnits, DimensionlessUnits, LengthUnits, PressureUnits, VolumeUnits
 from ..units.registry import UnitConstant, UnitDefinition, registry
 
 # TypeVar for generic dimensional types

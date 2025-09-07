@@ -7,10 +7,12 @@ warnings, and validation rules at the problem level rather than variable level.
 
 from __future__ import annotations
 
+import traceback
 from dataclasses import dataclass
 from typing import Any, Literal
 
 from ..expressions import Expression
+from ..quantities import FieldQnty, Quantity
 
 
 @dataclass
@@ -34,12 +36,12 @@ class Rules:
         if self.name is None:
             self.name = f"{self.warning_type}_{self.severity}"
 
-    def evaluate(self, variables: dict[str, Any]) -> dict[str, Any] | None:
+    def evaluate(self, variables: dict[str, FieldQnty]) -> dict[str, Any] | None:
         """
         Evaluate the check condition and return a warning dict if condition is True.
 
         Args:
-            variables: Dictionary of variable name -> variable object mappings
+            variables: Dictionary of variable name -> FieldQnty object mappings
 
         Returns:
             Warning dictionary if condition is met, None otherwise
@@ -53,7 +55,6 @@ class Rules:
 
         except Exception as e:
             # If evaluation fails, return an error warning
-            import traceback
 
             return {
                 "type": "EVALUATION_ERROR",
@@ -67,48 +68,42 @@ class Rules:
 
         return None
 
-    def _evaluate_expression(self, expr: Expression, variables: dict[str, Any]) -> bool:
+    def _evaluate_expression(self, expr: Expression, variables: dict[str, FieldQnty]) -> bool:
         """
         Evaluate a qnty expression with current variable values.
 
-        For qnty expressions, we can evaluate them directly since they have
-        references to the variable values.
-        """
-        try:
-            # qnty expressions have an evaluate() method that needs variable values
-            if hasattr(expr, "evaluate"):
-                # Create a variable_values dict with the variable objects, not their quantities
-                var_values = {}
-                for var_name, var_obj in variables.items():
-                    var_values[var_name] = var_obj
+        Args:
+            expr: The expression to evaluate
+            variables: Dictionary of variable name -> FieldQnty object mappings
 
-                result = expr.evaluate(var_values)
-                # For boolean comparisons, result should be 1.0 (True) or 0.0 (False)
-                # Handle FastQuantity type
-                if hasattr(result, "value"):  # FastQuantity
-                    return bool(result.value > 0.5)
-                elif hasattr(result, "__float__"):
-                    # Use type: ignore to handle FastQuantity/Expression types that don't have __float__
-                    return bool(float(result) > 0.5)  # type: ignore[arg-type]
-                else:
-                    # Last resort - try str conversion then float
-                    result_str = str(result)
-                    # Handle cases like "0.0 " (with units)
-                    try:
-                        return bool(float(result_str.split()[0]) > 0.5)
-                    except (ValueError, IndexError):
-                        return False
-            else:
-                # Try direct conversion as fallback
-                if hasattr(expr, "__float__"):
-                    # Use type: ignore to handle Expression types that don't have __float__
-                    return bool(float(expr) > 0.5)  # type: ignore[arg-type]
-                else:
-                    return bool(float(str(expr)) > 0.5)
-        except Exception as e:
-            # If evaluation fails, assume the condition is not met
-            # Re-raise to get better debugging info
-            raise e
+        Returns:
+            Boolean result of the expression evaluation
+        """
+        # Evaluate the expression using the qnty evaluation system
+        result = expr.evaluate(variables)
+
+        # Convert result to boolean based on type
+        return self._convert_result_to_bool(result)
+
+    def _convert_result_to_bool(self, result: Quantity) -> bool:
+        """
+        Convert an evaluation result to a boolean.
+
+        Args:
+            result: The result from expression evaluation
+
+        Returns:
+            Boolean interpretation of the result
+        """
+        # For qnty Quantity objects, check the value
+        if isinstance(result, Quantity) and result.value is not None:
+            return bool(result.value > 0.5)
+
+        # Fallback for any numeric types
+        try:
+            return bool(float(result) > 0.5)  # type: ignore[arg-type]
+        except (TypeError, ValueError) as e:
+            raise ValueError(f"Cannot convert expression result to boolean: {result}") from e
 
 
 def add_rule(condition: Expression, message: str, warning_type: str = "VALIDATION", severity: Literal["INFO", "WARNING", "ERROR"] = "WARNING", name: str | None = None) -> Rules:

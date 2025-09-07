@@ -21,7 +21,7 @@ from .expressions import (
     tan,
 )
 from .problems import Problem
-from .quantities._field_qnty_generated import (
+from .quantities.field_vars import (
     AbsorbedDose,
     Acceleration,
     ActivationEnergy,

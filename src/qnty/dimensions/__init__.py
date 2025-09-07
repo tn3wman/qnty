@@ -9,14 +9,8 @@ This module provides the fundamental building blocks for qnty's dimensional anal
 - DimensionSignature: Ultra-fast dimensional compatibility checking
 """
 
-from ._field_dims_generated import *
+from .field_dims import *
 from .base import BASE_DIMENSIONS, DIMENSION_SYMBOLS, PRIME_MAP, BaseDimension
 from .signature import DimensionSignature
 
-__all__ = [
-    "BaseDimension",
-    "DimensionSignature",
-    "BASE_DIMENSIONS",
-    "DIMENSION_SYMBOLS",
-    "PRIME_MAP"
-]
+__all__ = ["BaseDimension", "DimensionSignature", "BASE_DIMENSIONS", "DIMENSION_SYMBOLS", "PRIME_MAP"]
