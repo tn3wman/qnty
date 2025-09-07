@@ -12,7 +12,6 @@ from .data_processor import (
     augment_with_prefixed_units,
     calculate_statistics,
     convert_to_class_name,
-    get_dimension_constant_name,
     get_unit_names_and_aliases,
     load_unit_data,
     save_text_file,
@@ -22,6 +21,7 @@ from .data_processor import (
 
 def generate_setters(parsed_data: dict, dimension_mapping: dict) -> str:
     """Generate the setters.py content with static setter class definitions."""
+    del dimension_mapping  # Unused but kept for API compatibility
 
     sorted_fields = sorted(parsed_data.items())
     fields_with_units = [(k, v) for k, v in sorted_fields if v.get("units")]
@@ -52,7 +52,6 @@ def generate_setters(parsed_data: dict, dimension_mapping: dict) -> str:
     for field_name, field_data in fields_with_units:
         class_name = convert_to_class_name(field_name)
         setter_class_name = f"{class_name}Setter"
-        get_dimension_constant_name(field_name)
         units_class_name = f"{class_name}Units"
 
         lines.append(f"class {setter_class_name}(TypeSafeSetter):")
@@ -76,7 +75,7 @@ def generate_setters(parsed_data: dict, dimension_mapping: dict) -> str:
             generated_properties.add(property_name)
 
             lines.append("    @property")
-            lines.append(f"    def {property_name}(self) -> 'TypeSafeSetter':")
+            lines.append(f"    def {property_name}(self):")
             unit_display_name = unit_data.get("name", primary_name)
             # Escape backslashes in the docstring to avoid escape sequence warnings
             escaped_name = unit_display_name.replace("\\", "\\\\")
@@ -92,7 +91,7 @@ def generate_setters(parsed_data: dict, dimension_mapping: dict) -> str:
                 if alias != property_name and alias.isidentifier() and alias not in generated_properties:
                     generated_properties.add(alias)
                     lines.append("    @property")
-                    lines.append(f"    def {alias}(self) -> 'TypeSafeSetter':")
+                    lines.append(f"    def {alias}(self):")
                     lines.append(f'        """Set value using {alias} units (alias for {primary_name})."""')
                     lines.append(f"        return self.{property_name}")
                     lines.append("")

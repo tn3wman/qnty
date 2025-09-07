@@ -3,11 +3,13 @@
 ## Core Package Files
 
 ### Main Package
+
 [ ] __init__.py
 
 [ ] Profile and optimize /src/qnty/__init__.py with a focus on import performance, reducing complexity, fixing code smells, eliminating circular imports, and improving startup time. Ensure all imports are at the top of the module and not within methods. Avoid duck typing and add proper type hints. Run benchmarks to confirm performance improvements.
 
 ### Constants Module
+
 [ ] numerical.py
 [ ] solvers.py  
 [ ] tests.py
@@ -19,6 +21,7 @@
 [ ] Profile and optimize /src/qnty/constants/tests.py with a focus on test constant performance, reducing complexity, fixing code smells, eliminating circular imports, and improving test efficiency. Ensure all imports are at the top of the module and not within methods. Avoid duck typing and add proper type hints. Run benchmarks to confirm performance improvements.
 
 ### Dimensions Module  
+
 [ ] base.py
 [ ] signature.py
 [ ] field_dims.py
@@ -30,6 +33,7 @@
 [ ] Profile and optimize /src/qnty/dimensions/field_dims.py and its generator /codegen/generators/field_dims.py with a focus on dimension constant access performance, reducing complexity, fixing code smells, eliminating circular imports, and improving constant lookup speed. Ensure all imports are at the top of the module and not within methods. Avoid duck typing and add proper type hints. Run benchmarks to confirm performance improvements.
 
 ### Equations Module
+
 [ ] equation.py
 [ ] system.py
 
@@ -38,6 +42,7 @@
 [ ] Profile and optimize /src/qnty/equations/system.py with a focus on equation system performance, reducing complexity, fixing code smells, eliminating circular imports, and improving simultaneous solving efficiency. Ensure all imports are at the top of the module and not within methods. Avoid duck typing and add proper type hints. Run benchmarks to confirm performance improvements.
 
 ### Expressions Module
+
 [ ] formatter.py
 [ ] functions.py
 [ ] nodes.py
@@ -52,6 +57,7 @@
 [ ] Profile and optimize /src/qnty/expressions/types.py with a focus on expression type system performance, reducing complexity, fixing code smells, eliminating circular imports, and improving type checking efficiency. Ensure all imports are at the top of the module and not within methods. Avoid duck typing and add proper type hints. Run benchmarks to confirm performance improvements.
 
 ### Extensions Module
+
 [ ] integration/__init__.py
 [ ] plotting/__init__.py  
 [ ] reporting/__init__.py
@@ -63,6 +69,7 @@
 [ ] Profile and optimize /src/qnty/extensions/reporting/__init__.py with a focus on reporting extension performance, reducing complexity, fixing code smells, eliminating circular imports, and improving report generation efficiency. Ensure all imports are at the top of the module and not within methods. Avoid duck typing and add proper type hints. Run benchmarks to confirm performance improvements.
 
 ### Problems Module
+
 [ ] composition.py
 [ ] problem.py
 [ ] rules.py
@@ -80,6 +87,7 @@
 [ ] Profile and optimize /src/qnty/problems/validation.py with a focus on validation system performance, reducing complexity, fixing code smells, eliminating circular imports, and improving check execution efficiency. Ensure all imports are at the top of the module and not within methods. Avoid duck typing and add proper type hints. Run benchmarks to confirm performance improvements.
 
 ### Quantities Module
+
 [ ] base_qnty.py
 [ ] field_qnty.py
 [ ] field_setter.py
@@ -94,6 +102,7 @@
 [ ] Profile and optimize /src/qnty/quantities/field_vars.py and its generator /codegen/generators/field_vars.py with a focus on variable class performance, reducing complexity, fixing code smells, eliminating circular imports, and improving variable instantiation efficiency. Ensure all imports are at the top of the module and not within methods. Avoid duck typing and add proper type hints. Run benchmarks to confirm performance improvements.
 
 ### Solving Module
+
 [ ] manager.py
 [ ] order.py
 [ ] solvers/base.py
@@ -111,6 +120,7 @@
 [ ] Profile and optimize /src/qnty/solving/solvers/simultaneous.py with a focus on simultaneous solver performance, reducing complexity, fixing code smells, eliminating circular imports, and improving simultaneous equation solving efficiency. Ensure all imports are at the top of the module and not within methods. Avoid duck typing and add proper type hints. Run benchmarks to confirm performance improvements.
 
 ### Units Module
+
 [ ] field_units.py
 [ ] prefixes.py
 [ ] registry.py
@@ -122,6 +132,7 @@
 [ ] Profile and optimize /src/qnty/units/registry.py with a focus on unit registry performance, reducing complexity, fixing code smells, eliminating circular imports, and improving unit conversion efficiency with pre-computed lookup tables. Ensure all imports are at the top of the module and not within methods. Avoid duck typing and add proper type hints. Run benchmarks to confirm performance improvements.
 
 ### Utils Module
+
 [ ] caching/manager.py
 [ ] error_handling/context.py
 [ ] error_handling/exceptions.py
@@ -147,6 +158,7 @@
 ## Code Generation System
 
 ### Generators
+
 [ ] cli.py
 [ ] data_processor.py
 [ ] doc_generator.py

@@ -240,7 +240,7 @@ def get_standard_generator_paths(generator_file: Path) -> dict[str, Path]:
 
 def identify_base_units_needing_prefixes(parsed_data: dict[str, Any]) -> dict[str, list]:
     """Identify base SI units that should have prefixes generated."""
-    from qnty.core.units.prefixes import PREFIXABLE_UNITS
+    from qnty.units.prefixes import PREFIXABLE_UNITS
 
     base_units = {}
 
@@ -286,7 +286,7 @@ def generate_prefixed_unit_data(base_unit_data: dict[str, Any], prefix, field_da
 
 def augment_parsed_data_with_prefixes(parsed_data: dict[str, Any]) -> dict[str, Any]:
     """Add missing prefixed units to the parsed data."""
-    from qnty.core.units.prefixes import StandardPrefixes
+    from qnty.units.prefixes import StandardPrefixes
 
     # Make a deep copy to avoid modifying the original
     augmented_data = {}

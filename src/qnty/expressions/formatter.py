@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from .types import BinaryOperationProtocol, ConditionalExpressionProtocol, ExpressionProtocol, UnaryFunctionProtocol
+from .types import BinaryOperationProtocol, ConditionalExpressionProtocol, ConstantProtocol, ExpressionProtocol, UnaryFunctionProtocol, VariableReferenceProtocol
 
 
 class ExpressionFormatter:
@@ -118,14 +118,14 @@ class ExpressionFormatter:
         return f"if({cond_expr.condition}, {cond_expr.true_expr}, {cond_expr.false_expr})"
 
     @staticmethod
-    def format_variable_reference(var_ref: ExpressionProtocol) -> str:
+    def format_variable_reference(var_ref: VariableReferenceProtocol) -> str:
         """Format variable reference (just the name)."""
         return var_ref.name
 
     @staticmethod
-    def format_constant(constant: ExpressionProtocol) -> str:
+    def format_constant(constant: ConstantProtocol) -> str:
         """Format constant value."""
-        return str(constant.value.value)
+        return str(constant.value)
 
     @staticmethod
     def is_operator_right_associative(operator: str) -> bool:
@@ -163,8 +163,10 @@ class ExpressionFormatter:
     @staticmethod
     def _get_expression_precedence(expr: ExpressionProtocol) -> int:
         """Get precedence of an expression if it's a binary operation."""
-        if ExpressionFormatter._is_binary_operation(expr) and hasattr(expr, "operator"):
-            return ExpressionFormatter.get_operator_precedence(expr.operator)
+        if ExpressionFormatter._is_binary_operation(expr):
+            # We know it's a binary operation from the check above, so it has an operator
+            binary_op = expr  # type: ignore[assignment]
+            return ExpressionFormatter.get_operator_precedence(binary_op.operator)  # type: ignore[attr-defined]
         return 0
 
     @staticmethod
@@ -177,9 +179,10 @@ class ExpressionFormatter:
         """
         # Check if auto-evaluation is possible for binary operations
         if ExpressionFormatter._is_binary_operation(expr) and hasattr(expr, "_can_auto_evaluate"):
-            # Try to discover variables from scope for auto-evaluation
-            can_eval, variables = expr._can_auto_evaluate()
-            return ExpressionFormatter.format_binary_operation(expr, can_auto_evaluate=can_eval, auto_eval_variables=variables)
+            # We know it's a binary operation with auto-evaluation capability
+            binary_op = expr  # type: ignore[assignment]
+            can_eval, variables = binary_op._can_auto_evaluate()  # type: ignore[attr-defined]
+            return ExpressionFormatter.format_binary_operation(binary_op, can_auto_evaluate=can_eval, auto_eval_variables=variables)  # type: ignore[arg-type]
         else:
             # For other expression types, just use their standard string representation
             return str(expr)

@@ -3,7 +3,7 @@ from typing import Any
 import numpy as np
 
 try:
-    from scipy.linalg import solve as scipy_solve
+    from scipy.linalg import solve as scipy_solve  # type: ignore[import-untyped]
 
     HAS_SCIPY = True
 except ImportError:

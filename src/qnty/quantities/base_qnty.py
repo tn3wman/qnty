@@ -35,16 +35,19 @@ DimensionType = TypeVar("DimensionType", bound="Quantity")
 # Performance optimization data structures
 class ResultTemplate:
     """Pre-computed result template to bypass Quantity creation overhead."""
-    __slots__ = ('unit', 'combined_si_factor')
-    
+
+    __slots__ = ("unit", "combined_si_factor")
+
     def __init__(self, unit: UnitConstant, combined_si_factor: float):
         self.unit = unit
         self.combined_si_factor = combined_si_factor
 
+
 class ObjectPool:
     """Object pool for common quantity types to reduce allocations."""
-    __slots__ = ('_area_pool', '_volume_pool', '_force_pool', '_energy_pool', '_pool_index', '_initialized')
-    
+
+    __slots__ = ("_area_pool", "_volume_pool", "_force_pool", "_energy_pool", "_pool_index", "_initialized")
+
     def __init__(self):
         # Initialize empty pools - delay creation until first use
         self._area_pool: list[Quantity] = []
@@ -53,27 +56,28 @@ class ObjectPool:
         self._energy_pool: list[Quantity] = []
         self._pool_index = 0
         self._initialized = False
-    
+
     def _initialize_pools_lazy(self):
         """Lazily create pooled objects to avoid circular imports."""
         if self._initialized:
             return
-        
+
         from ..units.field_units import AreaUnits, VolumeUnits
+
         area_unit = AreaUnits.square_millimeter
         volume_unit = VolumeUnits.cubic_millimeter
         force_unit = UnitConstant(UnitDefinition("newton", "N", FORCE, 1.0))
         energy_unit = UnitConstant(UnitDefinition("joule", "J", ENERGY, 1.0))
-        
+
         # Pre-allocate 10 of each common type
         for _ in range(10):
             self._area_pool.append(Quantity(0.0, area_unit))
             self._volume_pool.append(Quantity(0.0, volume_unit))
             self._force_pool.append(Quantity(0.0, force_unit))
             self._energy_pool.append(Quantity(0.0, energy_unit))
-        
+
         self._initialized = True
-    
+
     def get_area_quantity(self, value: float, unit: UnitConstant) -> Quantity:
         """Get pooled area quantity or create new if pool empty."""
         self._initialize_pools_lazy()
@@ -85,7 +89,7 @@ class ObjectPool:
             qty._dimension_sig = unit.dimension._signature
             return qty
         return Quantity(value, unit)
-    
+
     def get_volume_quantity(self, value: float, unit: UnitConstant) -> Quantity:
         """Get pooled volume quantity or create new if pool empty."""
         self._initialize_pools_lazy()
@@ -97,7 +101,7 @@ class ObjectPool:
             qty._dimension_sig = unit.dimension._signature
             return qty
         return Quantity(value, unit)
-    
+
     def get_force_quantity(self, value: float, unit: UnitConstant) -> Quantity:
         """Get pooled force quantity or create new if pool empty."""
         self._initialize_pools_lazy()
@@ -109,6 +113,7 @@ class ObjectPool:
             qty._dimension_sig = unit.dimension._signature
             return qty
         return Quantity(value, unit)
+
 
 # Global state management and caching system
 class CacheManager:
@@ -173,76 +178,71 @@ class CacheManager:
         # Pre-populate common engineering combinations with extensive coverage
         force_unit = UnitConstant(UnitDefinition("newton", "N", FORCE, 1.0))
         energy_unit = UnitConstant(UnitDefinition("joule", "J", ENERGY, 1.0))
-        surface_tension_unit = UnitConstant(UnitDefinition("newton_per_meter", "N/m", SURFACE_TENSION, 1.0))
+        # _surface_tension_unit = UnitConstant(UnitDefinition("newton_per_meter", "N/m", SURFACE_TENSION, 1.0))  # Unused
         energy_per_area_unit = UnitConstant(UnitDefinition("joule_per_square_meter", "J/m²", ENERGY_PER_UNIT_AREA, 1.0))
 
         # NEW APPROACH: Create result templates with pre-computed combined SI factors
         # This eliminates the need for SI factor division during multiplication
-        
+
         # Helper function to create template with pre-computed factors
         def create_template(unit: UnitConstant) -> ResultTemplate:
             """Create result template with pre-computed combined SI factor.
-            
+
             For typical case where left and right operands use the cached base units,
-            the combined factor is just 1.0 / result_unit.si_factor since the SI 
+            the combined factor is just 1.0 / result_unit.si_factor since the SI
             conversion will be handled by the quantity's own _si_factor attributes.
             """
             # The template assumes SI values will be multiplied in, so we just need
             # the reciprocal of the result unit's SI factor for final conversion
             combined_factor = 1.0 / unit.si_factor
             return ResultTemplate(unit, combined_factor)
-        
-        # Get common unit SI factors for template pre-computation
-        mm_si = LengthUnits.millimeter.si_factor  # 0.001
-        pa_si = PressureUnits.Pa.si_factor        # 1.0
-        mm2_si = AreaUnits.square_millimeter.si_factor  # 1e-6
-        mm3_si = VolumeUnits.cubic_millimeter.si_factor  # 1e-9
-        
+
+        # Get common unit SI factors for template pre-computation (unused in current implementation)
+        # _mm_si = LengthUnits.millimeter.si_factor  # 0.001
+        # _pa_si = PressureUnits.Pa.si_factor        # 1.0
+        # _mm2_si = AreaUnits.square_millimeter.si_factor  # 1e-6
+        # _mm3_si = VolumeUnits.cubic_millimeter.si_factor  # 1e-9
+
         # ULTRA-OPTIMIZED TEMPLATES: Most common engineering operations
-        self.multiplication_templates.update({
-            # TOP 5 ENGINEERING COMBINATIONS (hardcoded for maximum speed)
-            # 1. Length × Length = Area (most common geometric operation)
-            (LENGTH._signature, LENGTH._signature): create_template(AreaUnits.square_millimeter),
-            
-            # 2. Pressure × Area = Force (ASME pressure vessel calculations)
-            (PRESSURE._signature, AREA._signature): create_template(force_unit),
-            (AREA._signature, PRESSURE._signature): create_template(force_unit),
-            
-            # 3. Length × Area = Volume (geometric calculations)
-            (LENGTH._signature, AREA._signature): create_template(VolumeUnits.cubic_millimeter),
-            (AREA._signature, LENGTH._signature): create_template(VolumeUnits.cubic_millimeter),
-            
-            # 4. Force × Length = Energy (work calculations)
-            (FORCE._signature, LENGTH._signature): create_template(energy_unit),
-            (LENGTH._signature, FORCE._signature): create_template(energy_unit),
-            
-            # 5. Dimensionless scaling (extremely common - factors of safety, ratios)
-            (PRESSURE._signature, DIMENSIONLESS._signature): create_template(PressureUnits.Pa),
-            (DIMENSIONLESS._signature, PRESSURE._signature): create_template(PressureUnits.Pa),
-            (LENGTH._signature, DIMENSIONLESS._signature): create_template(LengthUnits.millimeter),
-            (DIMENSIONLESS._signature, LENGTH._signature): create_template(LengthUnits.millimeter),
-            (AREA._signature, DIMENSIONLESS._signature): create_template(AreaUnits.square_millimeter),
-            (DIMENSIONLESS._signature, AREA._signature): create_template(AreaUnits.square_millimeter),
-            (VOLUME._signature, DIMENSIONLESS._signature): create_template(VolumeUnits.cubic_millimeter),
-            (DIMENSIONLESS._signature, VOLUME._signature): create_template(VolumeUnits.cubic_millimeter),
-            (FORCE._signature, DIMENSIONLESS._signature): create_template(force_unit),
-            (DIMENSIONLESS._signature, FORCE._signature): create_template(force_unit),
-            (ENERGY._signature, DIMENSIONLESS._signature): create_template(energy_unit),
-            (DIMENSIONLESS._signature, ENERGY._signature): create_template(energy_unit),
-            (DIMENSIONLESS._signature, DIMENSIONLESS._signature): create_template(DimensionlessUnits.dimensionless),
-        })
-        
+        self.multiplication_templates.update(
+            {
+                # TOP 5 ENGINEERING COMBINATIONS (hardcoded for maximum speed)
+                # 1. Length × Length = Area (most common geometric operation)
+                (LENGTH._signature, LENGTH._signature): create_template(AreaUnits.square_millimeter),
+                # 2. Pressure × Area = Force (ASME pressure vessel calculations)
+                (PRESSURE._signature, AREA._signature): create_template(force_unit),
+                (AREA._signature, PRESSURE._signature): create_template(force_unit),
+                # 3. Length × Area = Volume (geometric calculations)
+                (LENGTH._signature, AREA._signature): create_template(VolumeUnits.cubic_millimeter),
+                (AREA._signature, LENGTH._signature): create_template(VolumeUnits.cubic_millimeter),
+                # 4. Force × Length = Energy (work calculations)
+                (FORCE._signature, LENGTH._signature): create_template(energy_unit),
+                (LENGTH._signature, FORCE._signature): create_template(energy_unit),
+                # 5. Dimensionless scaling (extremely common - factors of safety, ratios)
+                (PRESSURE._signature, DIMENSIONLESS._signature): create_template(PressureUnits.Pa),
+                (DIMENSIONLESS._signature, PRESSURE._signature): create_template(PressureUnits.Pa),
+                (LENGTH._signature, DIMENSIONLESS._signature): create_template(LengthUnits.millimeter),
+                (DIMENSIONLESS._signature, LENGTH._signature): create_template(LengthUnits.millimeter),
+                (AREA._signature, DIMENSIONLESS._signature): create_template(AreaUnits.square_millimeter),
+                (DIMENSIONLESS._signature, AREA._signature): create_template(AreaUnits.square_millimeter),
+                (VOLUME._signature, DIMENSIONLESS._signature): create_template(VolumeUnits.cubic_millimeter),
+                (DIMENSIONLESS._signature, VOLUME._signature): create_template(VolumeUnits.cubic_millimeter),
+                (FORCE._signature, DIMENSIONLESS._signature): create_template(force_unit),
+                (DIMENSIONLESS._signature, FORCE._signature): create_template(force_unit),
+                (ENERGY._signature, DIMENSIONLESS._signature): create_template(energy_unit),
+                (DIMENSIONLESS._signature, ENERGY._signature): create_template(energy_unit),
+                (DIMENSIONLESS._signature, DIMENSIONLESS._signature): create_template(DimensionlessUnits.dimensionless),
+            }
+        )
+
         # Keep legacy multiplication cache for compatibility with less common operations
         multiplication_patterns = {
             # Less common but still cached operations
-            (AREA._signature, AREA._signature): UnitConstant(UnitDefinition("m4", "m⁴", 
-                DimensionSignature(AREA._signature * AREA._signature), 1e-12)),  # mm⁴
-            (FORCE._signature, FORCE._signature): UnitConstant(UnitDefinition("N2", "N²", 
-                DimensionSignature(FORCE._signature * FORCE._signature), 1.0)),
+            (AREA._signature, AREA._signature): UnitConstant(UnitDefinition("m4", "m⁴", AREA * AREA, 1e-12)),  # mm⁴
+            (FORCE._signature, FORCE._signature): UnitConstant(UnitDefinition("N2", "N²", FORCE * FORCE, 1.0)),
             (PRESSURE._signature, LENGTH._signature): force_unit,
             (LENGTH._signature, PRESSURE._signature): force_unit,
-            (PRESSURE._signature, PRESSURE._signature): UnitConstant(UnitDefinition("Pa2", "Pa²", 
-                DimensionSignature(PRESSURE._signature * PRESSURE._signature), 1.0)),
+            (PRESSURE._signature, PRESSURE._signature): UnitConstant(UnitDefinition("Pa2", "Pa²", PRESSURE * PRESSURE, 1.0)),
             (PRESSURE._signature, VOLUME._signature): energy_unit,  # PV work
             (VOLUME._signature, PRESSURE._signature): energy_unit,
             (FORCE._signature, AREA._signature): energy_unit,  # Force × Area = Energy
@@ -263,20 +263,16 @@ class CacheManager:
                 (AREA._signature, LENGTH._signature): LengthUnits.millimeter,
                 (VOLUME._signature, AREA._signature): LengthUnits.millimeter,
                 (VOLUME._signature, LENGTH._signature): AreaUnits.square_millimeter,
-                
                 # Force and pressure divisions
                 (FORCE._signature, AREA._signature): PressureUnits.Pa,
                 (ENERGY._signature, FORCE._signature): LengthUnits.meter,
                 (ENERGY._signature, LENGTH._signature): force_unit,
-                
                 # ASME-specific: Force ÷ Length = Pressure (common in final result)
                 (FORCE._signature, LENGTH._signature): PressureUnits.Pa,
-                
                 # Dimensionless divisions (maintain original units)
                 (PRESSURE._signature, DIMENSIONLESS._signature): PressureUnits.Pa,
                 (LENGTH._signature, DIMENSIONLESS._signature): LengthUnits.millimeter,
                 (FORCE._signature, DIMENSIONLESS._signature): force_unit,
-                
                 # Combined unit divisions (P×D ÷ P = D pattern in ASME)
                 (force_unit.dimension._signature, PRESSURE._signature): LengthUnits.millimeter,
             }
@@ -284,16 +280,15 @@ class CacheManager:
 
 
 # Pre-cached units for ultra-fast paths (avoid repeated creation/import overhead)
-from ..units.field_units import AreaUnits, VolumeUnits
 _CACHED_AREA_UNIT = AreaUnits.square_millimeter
-_CACHED_VOLUME_UNIT = VolumeUnits.cubic_millimeter  
+_CACHED_VOLUME_UNIT = VolumeUnits.cubic_millimeter
 _CACHED_FORCE_UNIT = UnitConstant(UnitDefinition("newton", "N", FORCE, 1.0))
-_CACHED_ENERGY_UNIT = UnitConstant(UnitDefinition("joule", "J", ENERGY, 1.0))
+# _CACHED_ENERGY_UNIT = UnitConstant(UnitDefinition("joule", "J", ENERGY, 1.0))  # Unused
 
 # Pre-computed reciprocals for division (eliminate division operations)
-_AREA_SI_RECIPROCAL = 1.0 / _CACHED_AREA_UNIT.si_factor    # 1.0 / 1e-6 = 1e6
-_VOLUME_SI_RECIPROCAL = 1.0 / _CACHED_VOLUME_UNIT.si_factor  # 1.0 / 1e-9 = 1e9  
-_FORCE_SI_RECIPROCAL = 1.0 / _CACHED_FORCE_UNIT.si_factor    # 1.0 / 1.0 = 1.0
+_AREA_SI_RECIPROCAL = 1.0 / _CACHED_AREA_UNIT.si_factor  # 1.0 / 1e-6 = 1e6
+_VOLUME_SI_RECIPROCAL = 1.0 / _CACHED_VOLUME_UNIT.si_factor  # 1.0 / 1e-9 = 1e9
+# _FORCE_SI_RECIPROCAL = 1.0 / _CACHED_FORCE_UNIT.si_factor    # 1.0 / 1.0 = 1.0  # Unused
 
 # Global cache manager instance
 _cache_manager = CacheManager()
@@ -359,9 +354,9 @@ class ArithmeticOperations:
         # ULTRA-FAST ATTRIBUTE ACCESS: Direct access with getattr fallback for robustness
         q_val = quantity.value
         q_dim = quantity._dimension_sig
-        o_val = getattr(other, 'value', None)
-        o_dim = getattr(other, '_dimension_sig', None)
-        
+        o_val = getattr(other, "value", None)
+        o_dim = getattr(other, "_dimension_sig", None)
+
         # Quick validation
         if o_val is None or o_dim is None:
             raise TypeError(f"Expected Quantity-like object, got {type(other)}")
@@ -377,7 +372,7 @@ class ArithmeticOperations:
         # DIMENSIONLESS FAST PATHS: Treat as scaling to avoid template lookup
         if o_dim == 1:  # Right dimensionless
             return Quantity(q_val * o_val * other._si_factor, quantity.unit)
-        if q_dim == 1:  # Left dimensionless  
+        if q_dim == 1:  # Left dimensionless
             return Quantity(q_val * quantity._si_factor * o_val, other.unit)
 
         # ULTRA-OPTIMIZED HARDCODED PATHS: Use multiplication instead of division
@@ -386,17 +381,15 @@ class ArithmeticOperations:
             # Eliminate division: (q_val * q_si) * (o_val * o_si) * (1/result_si)
             result_val = q_val * quantity._si_factor * o_val * other._si_factor * _AREA_SI_RECIPROCAL
             return Quantity(result_val, _CACHED_AREA_UNIT)
-        
-        # Pressure × Area = Force (ASME pressure vessel calculations)  
-        elif (q_dim == PRESSURE._signature and o_dim == AREA._signature) or \
-             (q_dim == AREA._signature and o_dim == PRESSURE._signature):
+
+        # Pressure × Area = Force (ASME pressure vessel calculations)
+        elif (q_dim == PRESSURE._signature and o_dim == AREA._signature) or (q_dim == AREA._signature and o_dim == PRESSURE._signature):
             # Force SI factor is 1.0, so no reciprocal multiplication needed
             result_val = q_val * quantity._si_factor * o_val * other._si_factor
             return Quantity(result_val, _CACHED_FORCE_UNIT)
-        
+
         # Length × Area = Volume (geometric calculations)
-        elif (q_dim == LENGTH._signature and o_dim == AREA._signature) or \
-             (q_dim == AREA._signature and o_dim == LENGTH._signature):
+        elif (q_dim == LENGTH._signature and o_dim == AREA._signature) or (q_dim == AREA._signature and o_dim == LENGTH._signature):
             result_val = q_val * quantity._si_factor * o_val * other._si_factor * _VOLUME_SI_RECIPROCAL
             return Quantity(result_val, _CACHED_VOLUME_UNIT)
 
@@ -419,7 +412,7 @@ class ArithmeticOperations:
         # FALLBACK PATH: General case for uncached operations
         result_dimension_sig = q_dim * o_dim
         result_si_value = (q_val * quantity._si_factor) * (o_val * other._si_factor)
-        
+
         # Fast unit resolution
         result_unit = UnitResolution.find_result_unit_fast(quantity, result_dimension_sig)
         result_value = result_si_value / result_unit.si_factor
@@ -427,7 +420,7 @@ class ArithmeticOperations:
         # Direct cache assignment for future use
         if len(_cache_manager.multiplication_cache) < _cache_manager.max_cache_size:
             _cache_manager.multiplication_cache[cache_key] = result_unit
-        
+
         return Quantity(result_value, result_unit)
 
     @staticmethod
@@ -540,7 +533,7 @@ class UnitResolution:
     """Handles unit resolution for dimensional operations."""
 
     @staticmethod
-    def find_result_unit_fast(quantity, result_dimension_sig: int | float) -> UnitConstant:
+    def find_result_unit_fast(_quantity, result_dimension_sig: int | float) -> UnitConstant:
         """Ultra-fast unit finding using pre-cached dimension signatures."""
         # CRITICAL OPTIMIZATION: Direct dictionary access (O(1)) for common dimensions
         dimension_cache = registry._dimension_cache
@@ -548,7 +541,8 @@ class UnitResolution:
             return dimension_cache[result_dimension_sig]
 
         # OPTIMIZED PATH: For rare combined dimensions, create SI base unit efficiently
-        result_dimension = DimensionSignature(result_dimension_sig)
+        # Create new dimension signature from the computed value
+        result_dimension = DimensionSignature(result_dimension_sig)  # type: ignore[misc]
 
         # FAST CREATION: Minimize string operations for performance
         sig_hash = abs(hash(result_dimension_sig)) % 10000

@@ -298,10 +298,10 @@ class Order:
         """
         # Check if it's a Variable with a symbol attribute
         if hasattr(side, "symbol") and hasattr(side, "name"):
-            return {side.symbol}
+            return {str(side.symbol) if side.symbol else str(side.name)}
         # Check if it's an Expression with get_variables method
         elif hasattr(side, "get_variables") and callable(side.get_variables):
-            return side.get_variables()
+            return side.get_variables()  # type: ignore[return-value]
         else:
             return set()
 

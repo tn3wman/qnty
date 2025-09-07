@@ -16,6 +16,7 @@ from typing import Any
 
 from ..equations import Equation
 from ..expressions import BinaryOperation, ConditionalExpression, Constant, VariableReference, max_expr, min_expr, sin
+from ..expressions.nodes import wrap_operand
 from ..quantities import Dimensionless, FieldQnty
 from .rules import Rules
 
@@ -244,9 +245,9 @@ class ConfigurableVariable:
             self._proxy.track_configuration(self._original_symbol, self._variable.quantity, self._variable.is_known)
         return result
 
-    def mark_known(self, quantity=None):
+    def mark_known(self):
         """Override mark_known to track configuration changes."""
-        result = self._variable.mark_known(quantity)
+        result = self._variable.mark_known()
         if self._proxy and self._original_symbol:
             # Track this configuration change
             self._proxy.track_configuration(self._original_symbol, self._variable.quantity, self._variable.is_known)
@@ -376,17 +377,19 @@ class CompositionMixin:
     sub_problems: dict[str, Any]
     logger: Any
 
-    def add_variable(self, _variable: FieldQnty) -> None:
+    def add_variable(self, variable: FieldQnty) -> None:
         """Will be provided by Problem class."""
+        del variable  # Unused in stub method
         ...
 
-    def add_equation(self, _equation: Equation) -> None:
+    def add_equation(self, equation: Equation) -> None:
         """Will be provided by Problem class."""
+        del equation  # Unused in stub method
         ...
 
-    def _clone_variable(self, _variable: FieldQnty) -> FieldQnty:
+    def _clone_variable(self, variable: FieldQnty) -> FieldQnty:
         """Will be provided by Problem class."""
-        ...
+        return variable  # Stub method - return input as placeholder
 
     def _recreate_validation_checks(self) -> None:
         """Will be provided by ValidationMixin."""
@@ -589,6 +592,8 @@ class CompositionMixin:
 
     def _namespace_variable_object(self, expr: FieldQnty, symbol_mapping: dict[str, str]) -> VariableReference | FieldQnty:
         """Namespace a Variable object."""
+        if expr.symbol is None:
+            return expr
         namespaced_symbol = symbol_mapping[expr.symbol]
         if namespaced_symbol in self.variables:
             # Return VariableReference for use in expressions, not the Variable itself
@@ -599,7 +604,7 @@ class CompositionMixin:
         """Namespace a BinaryOperation."""
         namespaced_left = self._namespace_expression(expr.left, symbol_mapping)
         namespaced_right = self._namespace_expression(expr.right, symbol_mapping)
-        return BinaryOperation(expr.operator, namespaced_left, namespaced_right)
+        return BinaryOperation(expr.operator, wrap_operand(namespaced_left), wrap_operand(namespaced_right))
 
     def _namespace_unary_operation(self, expr, symbol_mapping):
         """Namespace a UnaryFunction."""
@@ -618,7 +623,7 @@ class CompositionMixin:
         namespaced_true_expr = self._namespace_expression(expr.true_expr, symbol_mapping)
         namespaced_false_expr = self._namespace_expression(expr.false_expr, symbol_mapping)
 
-        return ConditionalExpression(namespaced_condition, namespaced_true_expr, namespaced_false_expr)
+        return ConditionalExpression(wrap_operand(namespaced_condition), wrap_operand(namespaced_true_expr), wrap_operand(namespaced_false_expr))
 
     def _namespace_expression_for_lhs(self, expr, symbol_mapping: dict[str, str]) -> FieldQnty | None:
         """
@@ -721,8 +726,9 @@ class CompositionMixin:
                     self.logger.debug(f"Failed to create composite equation for {var_name}: {e}")
 
     # Placeholder methods that will be provided by Problem class
-    def _process_equation(self, _attr_name: str, _equation: Equation) -> bool:
+    def _process_equation(self, attr_name: str, equation: Equation) -> bool:
         """Will be provided by Problem class."""
+        del attr_name, equation  # Unused in stub method
         return True
 
     def _is_conditional_equation(self, _equation: Equation) -> bool:

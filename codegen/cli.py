@@ -70,8 +70,7 @@ def main() -> int:
         ("Dimensions Generator", "dimensions_gen.py"),
         ("Units Generator", "units_gen.py"),
         ("Setters Generator", "setters_gen.py"),
-        ("Quantities Generator", "quantities_gen.py"),
-        ("Type Stubs Generator", "stubs_gen.py"),
+        ("Field Variables Generator", "field_vars.py"),
     ]
 
     # Track results

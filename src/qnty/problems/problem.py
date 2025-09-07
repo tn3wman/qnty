@@ -229,7 +229,7 @@ class Problem(ValidationMixin):
             self.variables[variable.symbol] = variable
         # Set parent problem reference for dependency invalidation
         if hasattr(variable, "_parent_problem"):
-            variable._parent_problem = self
+            setattr(variable, "_parent_problem", self)
         # Also set as instance attribute for dot notation access
         if variable.symbol is not None:
             setattr(self, variable.symbol, variable)
@@ -301,7 +301,9 @@ class Problem(ValidationMixin):
         """Mark variables as known and set their values."""
         for symbol, quantity in symbol_values.items():
             if symbol in self.variables:
-                self.variables[symbol].mark_known(quantity)
+                # Set the quantity first, then mark as known
+                self.variables[symbol].quantity = quantity
+                self.variables[symbol].mark_known()
             else:
                 raise VariableNotFoundError(f"Variable '{symbol}' not found in problem '{self.name}'")
         self.is_solved = False

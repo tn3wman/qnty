@@ -79,8 +79,6 @@ class UnitsGenerator:
 
         lines.extend(
             [
-                "from typing import Final",
-                "",
                 "from ..dimensions import field_dims as dim",
                 "from .registry import UnitConstant, UnitDefinition",
                 "",
@@ -127,7 +125,7 @@ class UnitsGenerator:
             
             # More readable UnitDefinition formatting
             lines.extend([
-                f"    {primary_name}: Final = UnitConstant(UnitDefinition(",
+                f"    {primary_name} = UnitConstant(UnitDefinition(",
                 f'        name="{escape_string(primary_name)}",',
                 f'        symbol="{escape_string(symbol)}",',
                 f"        dimension=dim.{dimension_constant},",
@@ -157,7 +155,7 @@ class UnitsGenerator:
             
             # Add valid aliases as class attributes
             for alias in valid_aliases:
-                lines.append(f"    {alias}: Final = {primary_name}")
+                lines.append(f"    {alias} = {primary_name}")
             
             if valid_aliases:
                 lines.append("")
@@ -273,6 +271,9 @@ class UnitsGenerator:
         content = "\n".join(lines) + "\n"
         self.output_path.write_text(content, encoding="utf-8")
         print(f"Generated {self.output_path}")
+        
+        # Generate stub file
+        self.generate_stubs()
 
         # Save metadata
         metadata = {
@@ -288,13 +289,79 @@ class UnitsGenerator:
             json.dump(metadata, f, indent=2)
         print(f"Saved metadata to {metadata_path}")
 
+    def generate_stubs(self) -> None:
+        """Generate .pyi stub file for better type checking."""
+        stub_path = self.output_path.with_suffix('.pyi')
+        
+        lines = [
+            '"""Type stubs for field units."""',
+            "",
+            "from .registry import UnitConstant",
+            "",
+            "",
+        ]
+        
+        # Generate class stubs
+        for field_name, field_data in sorted(self.unit_data.items()):
+            class_name = self.get_class_name(field_name)
+            
+            lines.extend([
+                f"class {class_name}:",
+                f'    """Unit constants for {field_data["field"]}."""',
+                "    __slots__: tuple[()]",
+                "",
+            ])
+            
+            # Generate unit attributes
+            units = field_data.get("units", [])
+            if not units:
+                lines.extend(["    ...", "", ""])
+                continue
+                
+            for unit_data in units:
+                primary_name, aliases = get_unit_names_and_aliases(unit_data)
+                if not is_valid_python_identifier(primary_name):
+                    continue
+                    
+                # Primary unit
+                lines.append(f"    {primary_name}: UnitConstant")
+                
+                # Valid aliases that were successfully registered during main generation
+                class_unit_id = f"{class_name}.{primary_name}"
+                for alias in aliases:
+                    if (is_valid_python_identifier(alias) and 
+                        self.global_aliases.get(alias) == class_unit_id):
+                        lines.append(f"    {alias}: UnitConstant")
+            
+            lines.append("")
+        
+        # Only add backward compatibility class if DimensionlessUnits wasn't already generated
+        if "DimensionlessUnits" not in [self.get_class_name(field_name) for field_name in self.unit_data.keys()]:
+            lines.extend([
+                "class DimensionlessUnits:",
+                '    """Dimensionless units for backward compatibility."""',
+                "    __slots__: tuple[()]",
+                "    dimensionless: UnitConstant",
+                "",
+            ])
+        
+        lines.extend([
+            "def register_all_units() -> None: ...",
+            "",
+        ])
+        
+        # Write stub file
+        content = "\n".join(lines) + "\n"
+        stub_path.write_text(content, encoding="utf-8")
+        print(f"Generated {stub_path}")
+
 
 def main() -> None:
     """Main entry point."""
     # Set up paths
     generator_dir = Path(__file__).parent
     data_path = generator_dir / "data" / "unit_data.json"
-    output_path = generator_dir.parent.parent / "generated" / "units.py"
+    output_path = generator_dir.parent.parent / "src" / "qnty" / "units" / "field_units.py"
     out_dir = generator_dir / "out"
 
     # Create output directory if needed

@@ -738,6 +738,7 @@ class TestUnitConversionDemo:
         assert area_result is not None
 
         # Verify area calculation: 5m * 3m = 15 m²
+        area_expected_mm2 = 15.0 * 1000000  # 15 m² = 15,000,000 mm² (default fallback)
         if hasattr(area_result, "value"):
             area_unit = str(area_result.unit) if hasattr(area_result, "unit") else "unknown"
             if "m²" in area_unit or ("m" in area_unit and "²" in area_unit):
@@ -875,7 +876,7 @@ class TestIntegrationScenarios:
 
         # Known variable should stay known
         assert L1.is_known is True
-        L1 + Length(5, "mm", "temp")
+        _ = L1 + Length(5, "mm", "temp")  # Test operation without changing original
         assert L1.is_known is True  # Original should be unchanged
 
         # Unknown variable should stay unknown until solved

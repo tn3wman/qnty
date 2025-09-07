@@ -162,7 +162,7 @@ class VariableReference(Expression):
         return self
 
     def __str__(self) -> str:
-        return ExpressionFormatter.format_variable_reference(self)
+        return ExpressionFormatter.format_variable_reference(self)  # type: ignore[arg-type]
 
 
 class Constant(Expression):
@@ -184,7 +184,7 @@ class Constant(Expression):
         return self
 
     def __str__(self) -> str:
-        return ExpressionFormatter.format_constant(self)
+        return ExpressionFormatter.format_constant(self)  # type: ignore[arg-type]
 
 
 class BinaryOperation(Expression):
@@ -265,7 +265,7 @@ class BinaryOperation(Expression):
         # Safe to cast since _is_constant_expression() already verified types
         left_const = self.left
         right_const = self.right
-        return f"{id(self)}_{self.operator}_{id(left_const.value)}_{id(right_const.value)}"
+        return f"{id(self)}_{self.operator}_{id(left_const.value)}_{id(right_const.value)}"  # type: ignore[attr-defined]
 
     def _dispatch_operation(self, left_val: "Quantity", right_val: "Quantity") -> "Quantity":
         """Dispatch to the appropriate operation handler with fast lookup."""
@@ -488,7 +488,7 @@ class BinaryOperation(Expression):
     def __str__(self) -> str:
         # Delegate to centralized formatter
         can_eval, variables = self._can_auto_evaluate()
-        return ExpressionFormatter.format_binary_operation(self, can_auto_evaluate=can_eval, auto_eval_variables=variables)
+        return ExpressionFormatter.format_binary_operation(self, can_auto_evaluate=can_eval, auto_eval_variables=variables)  # type: ignore[arg-type]
 
 
 class UnaryFunction(Expression):
@@ -537,7 +537,7 @@ class UnaryFunction(Expression):
         return UnaryFunction(self.function_name, simplified_operand)
 
     def __str__(self) -> str:
-        return ExpressionFormatter.format_unary_function(self)
+        return ExpressionFormatter.format_unary_function(self)  # type: ignore[arg-type]
 
 
 class ConditionalExpression(Expression):
@@ -581,31 +581,27 @@ class ConditionalExpression(Expression):
         return ConditionalExpression(simplified_condition, simplified_true, simplified_false)
 
     def __str__(self) -> str:
-        return ExpressionFormatter.format_conditional_expression(self)
+        return ExpressionFormatter.format_conditional_expression(self)  # type: ignore[arg-type]
 
 
 # Utility functions for expression creation
 
 # Cache for common types to avoid repeated type checks
-_NUMERIC_TYPES = (int, float)
 _DIMENSIONLESS_CONSTANT = None
 
 # Type caches for hot path optimization
-_TYPE_CACHE = {}
 _CONSTANT_TYPE = None
 _VARIABLE_REF_TYPE = None
-_EXPRESSION_TYPE = None
 _QUANTITY_TYPE = None
 _FIELDQNTY_TYPE = None
 
 
 def _init_type_cache():
     """Initialize type cache for fast isinstance checks."""
-    global _CONSTANT_TYPE, _VARIABLE_REF_TYPE, _EXPRESSION_TYPE, _QUANTITY_TYPE, _FIELDQNTY_TYPE
+    global _CONSTANT_TYPE, _VARIABLE_REF_TYPE, _QUANTITY_TYPE, _FIELDQNTY_TYPE
     if _CONSTANT_TYPE is None:
         _CONSTANT_TYPE = Constant
         _VARIABLE_REF_TYPE = VariableReference
-        _EXPRESSION_TYPE = Expression
         from ..quantities import FieldQnty, Quantity
 
         _QUANTITY_TYPE = Quantity
@@ -616,32 +612,6 @@ def _is_constant_fast(obj) -> bool:
     """Fast type check for Constant objects."""
     _init_type_cache()
     return type(obj) is _CONSTANT_TYPE
-
-
-def _is_expression_fast(obj) -> bool:
-    """Fast type check for Expression objects."""
-    _init_type_cache()
-    obj_type = type(obj)
-    cached_result = _TYPE_CACHE.get(obj_type)
-    if cached_result is not None:
-        return cached_result
-    result = isinstance(obj, _EXPRESSION_TYPE)
-    _TYPE_CACHE[obj_type] = result
-    return result
-
-
-def _is_quantity_fast(obj) -> bool:
-    """Fast type check for Quantity objects."""
-    _init_type_cache()
-    return type(obj) is _QUANTITY_TYPE
-
-
-def _is_fieldqnty_fast(obj) -> bool:
-    """Fast type check for FieldQnty objects using TypeRegistry."""
-    # Use TypeRegistry for comprehensive type checking
-    from ..utils.protocols import TypeRegistry
-
-    return TypeRegistry.is_variable(obj)
 
 
 def _get_cached_dimensionless():
@@ -673,22 +643,6 @@ def _get_dimensionless_quantity(value: float) -> Quantity:
     return qty
 
 
-def _is_numeric_type(obj) -> bool:
-    """Cached type check for numeric types."""
-    obj_type = type(obj)
-    cache_manager = get_cache_manager()
-
-    # Check unified cache
-    cached_result = cache_manager.get_type_check(obj_type)
-    if cached_result is not None:
-        return cached_result
-
-    # Compute and cache result
-    result = obj_type in _NUMERIC_TYPES
-    cache_manager.cache_type_check(obj_type, result)
-    return result
-
-
 def wrap_operand(operand: "OperandType") -> Expression:
     """
     Ultra-optimized operand wrapping with minimal function call overhead.
@@ -707,12 +661,12 @@ def wrap_operand(operand: "OperandType") -> Expression:
     
     # Second most common: already wrapped expressions (20-25% of calls)  
     if operand_type is BinaryOperation:  # Direct type check is faster
-        return operand
+        return operand  # type: ignore[return-value]
     
     # Third most common: field quantities/variables (20-30% of calls)
     # Use getattr with hasattr-style check to reduce calls
     if hasattr(operand, "quantity") and hasattr(operand, "symbol"):
-        return VariableReference(operand)
+        return VariableReference(operand)  # type: ignore[arg-type]
     
     # Handle other Expression types (Constant, VariableReference, etc.)
     if isinstance(operand, Expression):
@@ -720,13 +674,13 @@ def wrap_operand(operand: "OperandType") -> Expression:
     
     # Check for base Quantity objects  
     if hasattr(operand, "value") and hasattr(operand, "unit") and hasattr(operand, "_dimension_sig"):
-        return Constant(operand)
+        return Constant(operand)  # type: ignore[arg-type]
 
     # Check for ConfigurableVariable (from composition system) - rare case
     if hasattr(operand, "_variable"):
         var = getattr(operand, "_variable", None)
-        if hasattr(var, "quantity") and hasattr(var, "symbol"):
-            return VariableReference(var)
+        if var is not None and hasattr(var, "quantity") and hasattr(var, "symbol"):
+            return VariableReference(var)  # type: ignore[arg-type]
 
     # Fast failure for unknown types
     raise TypeError(f"Cannot convert {operand_type.__name__} to Expression")

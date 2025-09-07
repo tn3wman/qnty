@@ -10,14 +10,34 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Protocol
 
 if TYPE_CHECKING:
-    from typing import Any
+    from ..quantities import FieldQnty, Quantity
 
 
 class ExpressionProtocol(Protocol):
     """Protocol for expression objects."""
 
-    def evaluate(self, variables: dict[str, Any]) -> Any:
+    def evaluate(self, variable_values: dict[str, FieldQnty]) -> Quantity:
         """Evaluate the expression with given variables."""
+        ...
+
+
+class VariableReferenceProtocol(Protocol):
+    """Protocol for variable reference objects."""
+    
+    name: str
+    
+    def evaluate(self, variable_values: dict[str, FieldQnty]) -> Quantity:
+        """Evaluate the variable reference."""
+        ...
+
+
+class ConstantProtocol(Protocol):
+    """Protocol for constant objects."""
+    
+    value: Quantity
+    
+    def evaluate(self, variable_values: dict[str, FieldQnty]) -> Quantity:
+        """Evaluate the constant."""
         ...
 
 
@@ -28,11 +48,11 @@ class BinaryOperationProtocol(Protocol):
     right: ExpressionProtocol
     operator: str
 
-    def evaluate(self, variables: dict[str, Any]) -> Any:
+    def evaluate(self, variable_values: dict[str, FieldQnty]) -> Quantity:
         """Evaluate the binary operation."""
         ...
 
-    def _can_auto_evaluate(self) -> tuple[bool, dict[str, Any] | None]:
+    def _can_auto_evaluate(self) -> tuple[bool, dict[str, FieldQnty] | None]:
         """Check if auto-evaluation is possible."""
         ...
 

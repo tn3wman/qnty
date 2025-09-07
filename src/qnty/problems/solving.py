@@ -291,12 +291,12 @@ class ExpressionParser:
             self.logger.debug(f"Failed to parse and rebuild expression: {e}")
             return None
 
-    def _substitute_in_expression(self, expr: Any, substitutions: dict[str, Any]) -> Any | None:
+    def _substitute_in_expression(self, _expr: Any, substitutions: dict[str, Any]) -> Any | None:
         """
         Substitute reconstructed components back into an expression tree.
 
         Args:
-            expr: The original expression
+            _expr: The original expression (unused in current implementation)
             substitutions: Map of missing variables to their reconstructed versions
 
         Returns:
@@ -528,13 +528,13 @@ class CompositeExpressionRebuilder:
 
         return False
 
-    def reconstruct_malformed_proxy_expression(self, equation: Equation, malformed_vars: list[str]) -> Any | None:
+    def reconstruct_malformed_proxy_expression(self, equation: Equation, _malformed_vars: list[str]) -> Any | None:
         """
         Generically reconstruct expressions that were malformed due to proxy evaluation.
 
         Args:
             equation: The equation containing malformed expressions
-            malformed_vars: List of malformed variable names (kept for signature compatibility)
+            _malformed_vars: List of malformed variable names (kept for signature compatibility)
 
         Returns:
             Reconstructed expression if successful, None otherwise
@@ -644,8 +644,8 @@ class CompositeExpressionRebuilder:
     def _safe_evaluate_pattern(self, pattern: str) -> Any | None:
         """Safely evaluate a reconstructed pattern."""
         try:
-            # Create evaluation context with our variables
-            eval_context = dict(self.variables)
+            # Create evaluation context with our variables  
+            eval_context: dict[str, Any] = dict(self.variables)
             eval_context["__builtins__"] = {}  # Security
 
             return eval(pattern, eval_context, {})
@@ -780,9 +780,9 @@ class DelayedExpressionResolver:
             # Check if this is a valid expression type that doesn't need resolution
             if isinstance(expr, VALID_EXPRESSION_TYPES):
                 # Check if this expression has a resolve method
-                if hasattr(expr, "resolve") and callable(expr.resolve):
+                if hasattr(expr, "resolve") and callable(getattr(expr, "resolve", None)):
                     context = self.variables.copy()
-                    return expr.resolve(context)
+                    return getattr(expr, "resolve")(context)
                 return expr
 
             # Try to recursively resolve components for binary operations
