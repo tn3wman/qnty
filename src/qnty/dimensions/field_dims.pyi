@@ -19,7 +19,6 @@ def __getattr__(name: str) -> DimensionSignature: ...
 ABSORBED_DOSE: DimensionSignature
 ACCELERATION: DimensionSignature
 ACTIVATION_ENERGY: DimensionSignature
-AMOUNT: DimensionSignature
 AMOUNT_OF_SUBSTANCE: DimensionSignature
 ANGLE_PLANE: DimensionSignature
 ANGLE_SOLID: DimensionSignature
@@ -29,12 +28,8 @@ AREA: DimensionSignature
 AREA_PER_UNIT_VOLUME: DimensionSignature
 ATOMIC_WEIGHT: DimensionSignature
 CONCENTRATION: DimensionSignature
-CURRENT: DimensionSignature
 DIMENSIONLESS: DimensionSignature
 DYNAMIC_FLUIDITY: DimensionSignature
-ELECTRICAL_CONDUCTANCE: DimensionSignature
-ELECTRICAL_PERMITTIVITY: DimensionSignature
-ELECTRICAL_RESISTIVITY: DimensionSignature
 ELECTRIC_CAPACITANCE: DimensionSignature
 ELECTRIC_CHARGE: DimensionSignature
 ELECTRIC_CURRENT_INTENSITY: DimensionSignature
@@ -43,6 +38,9 @@ ELECTRIC_FIELD_STRENGTH: DimensionSignature
 ELECTRIC_INDUCTANCE: DimensionSignature
 ELECTRIC_POTENTIAL: DimensionSignature
 ELECTRIC_RESISTANCE: DimensionSignature
+ELECTRICAL_CONDUCTANCE: DimensionSignature
+ELECTRICAL_PERMITTIVITY: DimensionSignature
+ELECTRICAL_RESISTIVITY: DimensionSignature
 ENERGY_FLUX: DimensionSignature
 ENERGY_HEAT_WORK: DimensionSignature
 ENERGY_PER_UNIT_AREA: DimensionSignature
@@ -61,7 +59,6 @@ LENGTH: DimensionSignature
 LINEAR_MASS_DENSITY: DimensionSignature
 LINEAR_MOMENTUM: DimensionSignature
 LUMINANCE_SELF: DimensionSignature
-LUMINOSITY: DimensionSignature
 LUMINOUS_FLUX: DimensionSignature
 LUMINOUS_INTENSITY: DimensionSignature
 MAGNETIC_FIELD: DimensionSignature
@@ -77,15 +74,15 @@ MASS_FLUX: DimensionSignature
 MASS_FRACTION_OF_I: DimensionSignature
 MASS_TRANSFER_COEFFICIENT: DimensionSignature
 MOLALITY_OF_SOLUTE_I: DimensionSignature
-MOLARITY_OF_I: DimensionSignature
 MOLAR_CONCENTRATION_BY_MASS: DimensionSignature
 MOLAR_FLOW_RATE: DimensionSignature
 MOLAR_FLUX: DimensionSignature
 MOLAR_HEAT_CAPACITY: DimensionSignature
+MOLARITY_OF_I: DimensionSignature
 MOLE_FRACTION_OF_I: DimensionSignature
+MOMENT_OF_INERTIA: DimensionSignature
 MOMENTUM_FLOW_RATE: DimensionSignature
 MOMENTUM_FLUX: DimensionSignature
-MOMENT_OF_INERTIA: DimensionSignature
 NORMALITY_OF_SOLUTION: DimensionSignature
 PARTICLE_DENSITY: DimensionSignature
 PERCENT: DimensionSignature
@@ -119,12 +116,12 @@ VELOCITY_LINEAR: DimensionSignature
 VISCOSITY_DYNAMIC: DimensionSignature
 VISCOSITY_KINEMATIC: DimensionSignature
 VOLUME: DimensionSignature
+VOLUME_FRACTION_OF_I: DimensionSignature
 VOLUMETRIC_CALORIFIC_HEATING_VALUE: DimensionSignature
 VOLUMETRIC_COEFFICIENT_OF_EXPANSION: DimensionSignature
 VOLUMETRIC_FLOW_RATE: DimensionSignature
 VOLUMETRIC_FLUX: DimensionSignature
 VOLUMETRIC_MASS_FLOW_RATE: DimensionSignature
-VOLUME_FRACTION_OF_I: DimensionSignature
 WAVENUMBER: DimensionSignature
 
 # Module exports

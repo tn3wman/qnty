@@ -14,7 +14,6 @@ _SIGNATURES: dict[str, int | float] = {
     "ABSORBED_DOSE": 0.16,  # L^2 T^-2
     "ACCELERATION": 0.08,  # L T^-2
     "ACTIVATION_ENERGY": 0.01230769231,  # N^-1 L^2 T^-2
-    "AMOUNT": 13,  # N
     "AMOUNT_OF_SUBSTANCE": 13,  # N
     "ANGLE_PLANE": 1,  # Dimensionless
     "ANGLE_SOLID": 1,  # Dimensionless
@@ -24,12 +23,8 @@ _SIGNATURES: dict[str, int | float] = {
     "AREA_PER_UNIT_VOLUME": 0.5,  # L^-1
     "ATOMIC_WEIGHT": 0.2307692308,  # N^-1 M
     "CONCENTRATION": 0.375,  # L^-3 M
-    "CURRENT": 7,  # A
     "DIMENSIONLESS": 1,  # Dimensionless
     "DYNAMIC_FLUIDITY": 3.333333333,  # L M^-1 T
-    "ELECTRICAL_CONDUCTANCE": 510.4166667,  # A^2 L^-2 M^-1 T^3
-    "ELECTRICAL_PERMITTIVITY": 1276.041667,  # A^2 L^-3 M^-1 T^4
-    "ELECTRICAL_RESISTIVITY": 0.003918367347,  # A^-2 L^3 M T^-3
     "ELECTRIC_CAPACITANCE": 2552.083333,  # A^2 L^-2 M^-1 T^4
     "ELECTRIC_CHARGE": 2.692307692,  # N^-1 A T
     "ELECTRIC_CURRENT_INTENSITY": 7,  # A
@@ -38,6 +33,9 @@ _SIGNATURES: dict[str, int | float] = {
     "ELECTRIC_INDUCTANCE": 0.009795918367,  # A^-2 L^2 M T^-2
     "ELECTRIC_POTENTIAL": 0.01371428571,  # A^-1 L^2 M T^-3
     "ELECTRIC_RESISTANCE": 0.001959183673,  # A^-2 L^2 M T^-3
+    "ELECTRICAL_CONDUCTANCE": 510.4166667,  # A^2 L^-2 M^-1 T^3
+    "ELECTRICAL_PERMITTIVITY": 1276.041667,  # A^2 L^-3 M^-1 T^4
+    "ELECTRICAL_RESISTIVITY": 0.003918367347,  # A^-2 L^3 M T^-3
     "ENERGY_FLUX": 0.024,  # M T^-3
     "ENERGY_HEAT_WORK": 0.48,  # L^2 M T^-2
     "ENERGY_PER_UNIT_AREA": 0.12,  # M T^-2
@@ -56,7 +54,6 @@ _SIGNATURES: dict[str, int | float] = {
     "LINEAR_MASS_DENSITY": 1.5,  # L^-1 M
     "LINEAR_MOMENTUM": 1.2,  # L M T^-1
     "LUMINANCE_SELF": 0.25,  # L^-2 L
-    "LUMINOSITY": 17,  # J
     "LUMINOUS_FLUX": 1,  # L
     "LUMINOUS_INTENSITY": 1,  # L
     "MAGNETIC_FIELD": 3.5,  # A L^-1
@@ -72,15 +69,15 @@ _SIGNATURES: dict[str, int | float] = {
     "MASS_FRACTION_OF_I": 1,  # Dimensionless
     "MASS_TRANSFER_COEFFICIENT": 0.15,  # L^-2 M T^-1
     "MOLALITY_OF_SOLUTE_I": 4.333333333,  # N M^-1
-    "MOLARITY_OF_I": 1.625,  # N L^-3
     "MOLAR_CONCENTRATION_BY_MASS": 13,  # N
     "MOLAR_FLOW_RATE": 2.6,  # N T^-1
     "MOLAR_FLUX": 0.65,  # N L^-2 T^-1
     "MOLAR_HEAT_CAPACITY": 0.001118881119,  # N^-1 L^2 Θ^-1 T^-2
+    "MOLARITY_OF_I": 1.625,  # N L^-3
     "MOLE_FRACTION_OF_I": 1,  # Dimensionless
+    "MOMENT_OF_INERTIA": 12,  # L^2 M
     "MOMENTUM_FLOW_RATE": 0.24,  # L M T^-2
     "MOMENTUM_FLUX": 0.06,  # L^-1 M T^-2
-    "MOMENT_OF_INERTIA": 12,  # L^2 M
     "NORMALITY_OF_SOLUTION": 1.625,  # N L^-3
     "PARTICLE_DENSITY": 0.125,  # L^-3
     "PERCENT": 1,  # Dimensionless
@@ -114,15 +111,16 @@ _SIGNATURES: dict[str, int | float] = {
     "VISCOSITY_DYNAMIC": 0.3,  # L^-1 M T^-1
     "VISCOSITY_KINEMATIC": 0.8,  # L^2 T^-1
     "VOLUME": 8,  # L^3
+    "VOLUME_FRACTION_OF_I": 1,  # Dimensionless
     "VOLUMETRIC_CALORIFIC_HEATING_VALUE": 0.06,  # L^-1 M T^-2
     "VOLUMETRIC_COEFFICIENT_OF_EXPANSION": 0.03409090909,  # L^-3 M Θ^-1
     "VOLUMETRIC_FLOW_RATE": 1.6,  # L^3 T^-1
     "VOLUMETRIC_FLUX": 0.4,  # L T^-1
     "VOLUMETRIC_MASS_FLOW_RATE": 0.075,  # L^-3 M T^-1
-    "VOLUME_FRACTION_OF_I": 1,  # Dimensionless
     "WAVENUMBER": 0.5,  # L^-1
 }
 
 # Generate all dimension constants programmatically to avoid duplication
 for _name, _signature in _SIGNATURES.items():
     globals()[_name] = DimensionSignature(_signature)
+
