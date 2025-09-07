@@ -602,8 +602,6 @@ def _init_type_cache():
     if _CONSTANT_TYPE is None:
         _CONSTANT_TYPE = Constant
         _VARIABLE_REF_TYPE = VariableReference
-        from ..quantities import FieldQnty, Quantity
-
         _QUANTITY_TYPE = Quantity
         _FIELDQNTY_TYPE = FieldQnty
 
@@ -649,7 +647,7 @@ def wrap_operand(operand: "OperandType") -> Expression:
     
     Performance optimizations:
     - Single type() call instead of multiple isinstance checks
-    - Cached common type patterns 
+    - Cached common type patterns
     - Reduced function call depth
     """
     # ULTRA-FAST PATH: Use single type() call for most common cases
@@ -659,7 +657,7 @@ def wrap_operand(operand: "OperandType") -> Expression:
     if operand_type in (int, float):
         return Constant(_get_dimensionless_quantity(float(operand)))  # type: ignore[arg-type]
     
-    # Second most common: already wrapped expressions (20-25% of calls)  
+    # Second most common: already wrapped expressions (20-25% of calls)
     if operand_type is BinaryOperation:  # Direct type check is faster
         return operand  # type: ignore[return-value]
     
@@ -672,7 +670,7 @@ def wrap_operand(operand: "OperandType") -> Expression:
     if isinstance(operand, Expression):
         return operand
     
-    # Check for base Quantity objects  
+    # Check for base Quantity objects
     if hasattr(operand, "value") and hasattr(operand, "unit") and hasattr(operand, "_dimension_sig"):
         return Constant(operand)  # type: ignore[arg-type]
 
@@ -698,8 +696,6 @@ register_expression_type(ConditionalExpression)
 
 # Register variable types - do this at module level to ensure it happens early
 try:
-    from ..quantities import FieldQnty
-
     register_variable_type(FieldQnty)
 except ImportError:
     pass  # Handle import ordering issues gracefully

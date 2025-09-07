@@ -45,87 +45,83 @@ All other modules and classes are internal implementation details that users sho
 
 - **Automated Release**: `python release.py` - Increments patch version, creates git tag, and pushes to origin
 - **Version Control**: Uses semantic versioning with Poetry version management
-- **Current Version**: 0.0.8 (as of latest update)
+- **Current Version**: 0.0.9 (as of latest update)
 
 ## Architecture Overview
 
 ### Clean Dependency Hierarchy
 
-The codebase has been carefully structured to eliminate circular imports with a strict hierarchy:
+The codebase has been restructured with a modular architecture:
 
 ```python
-generated/dimensions → units → quantities → generated → expressions → equations → problem
+dimensions → units → quantities → expressions → equations → problems → solving
 ```
 
 This ensures clean dependencies and enables proper type checking throughout the system.
 
-### Simplified Variable Architecture
+### Consolidated Architecture
 
-The system uses a clean 2-level hierarchy with mixin-based composition:
+The system uses a field-based architecture with consolidated components:
 
 ```
-UnifiedVariable (Base with mixins)
-└── Domain Variables (Length, Pressure, etc.) - 100+ classes
+FieldQnty (Base quantity class)
+└── Domain Variables (Length, Pressure, etc.) - 100+ classes via field_vars
 
-Mixins:
-├── QuantityManagementMixin
-├── FlexibleConstructorMixin  
-├── UnifiedArithmeticMixin
-├── ExpressionMixin
-├── SetterCompatibilityMixin
-└── ErrorHandlerMixin
+Key Components:
+├── quantities/ (FieldQnty, base_qnty, field_setter, field_vars)
+├── dimensions/ (Dimensional analysis system)
+├── units/ (Unit definitions and registry)
+├── expressions/ (Mathematical expression system)
+├── equations/ (Equation handling)
+├── problems/ (Problem container with solving)
+└── solving/ (Solvers and solution management)
 ```
 
 ### Modular Architecture
 
 The system uses a layered approach with separate concerns:
 
-- **Core Layer** (`generated/dimensions.py`): Dimensional analysis system using prime number encoding
-- **Quantities Layer** (`quantities/`): Unified variable system with mixin composition
+- **Dimensions Layer** (`dimensions/`): Dimensional analysis system and signature handling
 - **Units Layer** (`units/`): Unit definitions, registry, and constants
-- **Generated Layer** (`generated/`): Auto-generated domain-specific variable classes
-- **Expression Layer** (`expressions/`): Mathematical expression system with nodes and functions
-- **Equation Layer** (`equations/`): Equation handling and system solving
-- **Problem Solving Layer** (`problem/`): Modular problem system with focused components
+- **Quantities Layer** (`quantities/`): Field-based quantity system with FieldQnty core
+- **Expressions Layer** (`expressions/`): Mathematical expression system with nodes and functions
+- **Equations Layer** (`equations/`): Equation handling and system solving
+- **Problems Layer** (`problems/`): Consolidated problem system with solving capabilities
+- **Solving Layer** (`solving/`): Advanced solvers and solution management
 - **Code Generation** (`codegen/`): Automated code generation system for all generated files
+- **Utils Layer** (`utils/`): Caching, error handling, and logging utilities
+- **Extensions** (`extensions/`): Integration, plotting, and reporting extensions
 
 ### Core Components
 
-**Dimensional System (`generated/dimensions.py`)**
+**Dimensional System (`dimensions/`)**
 
-- `DimensionSignature`: Immutable dimension signatures using prime number encoding for ultra-fast dimensional compatibility checks
-- `BaseDimension`: Enum of base dimensions (LENGTH, MASS, TIME, etc.) as prime numbers for efficient bit operations
-- Enables zero-cost dimensional analysis at compile time
+- `DimensionSignature`: Immutable dimension signatures with high-performance dimensional compatibility checks
+- `BaseDimension`: Core dimensional constants and operations
+- Enables efficient dimensional analysis throughout the system
 
 **Units System (`units/`)**
 
-- `UnitDefinition` (`units/registry.py`): Immutable dataclass for unit definitions with SI conversion factors
-- `UnitConstant` (`units/registry.py`): Type-safe unit constants that provide performance optimizations
-- `registry` (`units/registry.py`): Central registry with pre-computed conversion tables for fast unit conversions
+- `UnitDefinition`: Immutable dataclass for unit definitions with SI conversion factors
+- `UnitConstant`: Type-safe unit constants that provide performance optimizations
+- `registry`: Central registry with pre-computed conversion tables for fast unit conversions
 - Comprehensive SI prefix system for automatic unit generation
 
-**Unified Variable System (`quantities/`)**
+**Field-Based Quantity System (`quantities/`)**
 
-- `Quantity` (`quantities/quantity.py`): High-performance quantity class optimized for engineering calculations
-- `UnifiedVariable` (`quantities/unified_variable.py`): Unified base class combining all variable capabilities through focused mixins
-- Uses mixin composition for clean separation of concerns and reduced inheritance complexity
-- **Variable Management Methods**: `update()`, `mark_known()`, `mark_unknown()` for flexible variable state management
-- **Arithmetic Mode Control**: `set_arithmetic_mode('quantity'|'expression'|'auto')` for user-controlled return types
+- `FieldQnty` (`quantities/field_qnty.py`): Core field-based quantity class optimized for engineering calculations
+- `BaseQnty` (`quantities/base_qnty.py`): Base quantity functionality and operations
+- `FieldSetter` (`quantities/field_setter.py`): Field-based setter system for type-safe value assignment
+- **Variable Management**: Streamlined variable state management and operations
+- **Field Variables** (`quantities/field_vars.py`): 100+ domain-specific variable types
 
-**Generated Variables and Units (`generated/`)**
+**Domain-Specific Variables (`quantities/field_vars.py`)**
 
-- `quantities.py`: 100+ domain-specific variable types including `Length`, `Pressure`, `Temperature`, `Mass`, `Volume`, etc.
-- All extend `UnifiedVariable` with complete mathematical operation and expression capabilities
-- Provides fluent API patterns for type-safe value setting with specialized setters
-- **Arithmetic Mode Support**: Each variable supports quantity, expression, and auto arithmetic modes
-- **Comparison Methods**: `lt()`, `leq()`, `geq()`, `gt()` methods and Python operators (`<`, `<=`, `>`, `>=`) for conditional logic
-- Auto-generated from comprehensive unit database with consistent patterns
-
-**Unit Constants (`generated/units.py`)**
-
-- Type-safe unit constant classes: `LengthUnits`, `PressureUnits`, `DimensionlessUnits`
-- Provides both full names and common aliases (e.g., `m`, `mm`, `Pa`, `kPa`)
-- No string-based unit handling - all type-safe constants
+- 100+ engineering variable types including `Length`, `Pressure`, `Temperature`, `Mass`, `Volume`, etc.
+- All extend `FieldQnty` with complete mathematical operation and expression capabilities
+- Field-based architecture for consistent behavior and performance optimization
+- **Comparison Methods**: Full support for comparison operators and conditional logic
+- **Type Safety**: Dimensional validation and unit compatibility checking
 
 **Mathematical Expression System (`expressions/`)**
 
@@ -145,22 +141,21 @@ The system uses a layered approach with separate concerns:
 - Supports equation solving and residual checking for engineering calculations
 - **Auto-solving**: Equations automatically solve and display results when printed and only one unknown variable exists
 
-**Problem System Architecture (`problem/`)**
+**Consolidated Problem System (`problems/`)**
 
-The Problem system has been decomposed into focused modules using multiple inheritance:
+The Problem system has been consolidated into focused modules:
 
-- **`base.py`**: Core Problem state, initialization, caching, and utility methods
-- **`variables.py`**: Variable lifecycle management, adding/getting variables, known/unknown state
-- **`equations.py`**: Equation processing pipeline, validation, missing variable handling
-- **`solving.py`**: High-level solve orchestration, dependency graphs, solution verification
-- **`validation.py`**: Problem-validation integration and check management
-- **`composition_mixin.py`**: Sub-problem composition, namespacing, and composite equation creation
-- **`composition.py`**: Additional composition utilities and helpers
-- **`reconstruction.py`**: Equation reconstruction and variable reference management
-- **`metaclass.py`**: Problem metaclass for class-level variable and equation processing
-- **`__init__.py`**: Reassembled Problem class using multiple inheritance with `ProblemMeta` metaclass
+- **`problem.py`**: Main Problem class with consolidated functionality combining variable management, equation processing, and solving
+- **`solving.py`**: Solution algorithms and equation reconstruction capabilities  
+- **`composition.py`**: Sub-problem composition and complex problem handling
+- **`validation.py`**: Problem validation and constraint checking
+- **`rules.py`**: Problem-specific rules and constraints management
 
-The Problem class combines all mixins: `Problem(ProblemBase, VariablesMixin, EquationsMixin, SolvingMixin, ValidationMixin, CompositionMixin, metaclass=ProblemMeta)`
+**Advanced Solving System (`solving/`)**
+
+- **`solvers/`**: Comprehensive solver implementations for different equation types
+- **`order.py`**: Solution ordering and dependency management
+- Core solving infrastructure with performance optimizations
 
 ### Key Architecture Patterns
 
@@ -180,14 +175,16 @@ from qnty import Length, Pressure, Temperature, Mass, Volume, Area, Force, etc.
 
 # Engineering problem system
 from qnty import Problem
-from qnty.validation import validate
+
+# Mathematical expressions
+from qnty import sin, cos, tan, sqrt, ln, log10, exp, abs_expr, min_expr, max_expr, cond_expr
 ```
 
 **Restricted User Access**: Users should ONLY access these public components:
 
-- **All variables from `generated/quantities.py`**: Length, Pressure, Temperature, etc. (100+ engineering variable types)
-- **Problem class from `problem/`**: Main container for engineering problems with solving capabilities
-- **`validate` function from `validation.py`**: Validation and compliance checking system
+- **All variables from `quantities/field_vars.py`**: Length, Pressure, Temperature, etc. (100+ engineering variable types)
+- **Problem class from `problems/`**: Main container for engineering problems with solving capabilities
+- **Mathematical expression functions**: Built-in mathematical operations and functions
 - **Expression methods**: Available through variables (e.g., `length * width`, `pressure.geq(limit)`)
 
 All other classes, modules, and functions are internal implementation details and should not be used directly by users.
@@ -311,14 +308,15 @@ Recent architectural improvements include enhanced dimensional signature handlin
 
 ## Testing and Benchmarking
 
-The project includes comprehensive test coverage with **187 tests** across 6 test files:
+The project includes comprehensive test coverage with **146 tests** across 7 test files:
 
-- **Dimension tests**: `test_dimension.py` - Dimensional analysis and signature operations
-- **Equation tests**: `test_equations.py` - Mathematical equations, expressions, and auto-solving
-- **Setter tests**: `test_setters.py` - Fluent API and type safety for variable setters
-- **Prefix tests**: `test_prefixes.py` - SI prefix system and unit generation
-- **Type hinting tests**: `test_type_hinting.py` - Type safety and generic type validation
-- **Benchmarks**: `test_benchmark.py` - Performance comparisons against Pint library
+- **Dimension tests**: `test_dimension.py` (50 tests) - Dimensional analysis and signature operations
+- **Equation tests**: `test_equations.py` (15 tests) - Mathematical equations, expressions, and auto-solving
+- **Setter tests**: `test_setters.py` (42 tests) - Fluent API and type safety for variable setters
+- **Prefix tests**: `test_prefixes.py` (13 tests) - SI prefix system and unit generation
+- **Type hinting tests**: `test_type_hinting.py` (1 test) - Type safety and generic type validation
+- **Examples tests**: `test_examples.py` (24 tests) - Comprehensive example validation and integration testing
+- **Benchmarks**: `test_benchmark.py` (1 test) - Performance comparisons against Pint library
 
 ### Important Testing Notes
 
@@ -340,19 +338,21 @@ from qnty import Length, Pressure, Temperature, Mass, Volume, Area, Force
 
 # Engineering problem system
 from qnty import Problem
-from qnty.problem_system.checks import add_check
+
+# Mathematical expressions
+from qnty import sin, cos, tan, sqrt, ln, log10, exp, abs_expr, min_expr, max_expr, cond_expr
 ```
 
 **Internal development** (for library development only):
 
 ```python
 # Internal systems - users should NOT import these
-from .quantities.quantity import Quantity
-from .quantities.typed_quantity import TypedQuantity
+from .quantities.field_qnty import FieldQnty
+from .quantities.base_qnty import BaseQnty
 from .units.registry import UnitDefinition, UnitConstant, registry
 from .expressions.nodes import Expression, wrap_operand
 from .equations.equation import Equation
-from .problem.solving import SolverManager
+from .solving.solvers import SolverManager
 ```
 
 **User API Boundaries**: The public API is intentionally minimal to ensure users only need to learn and use the essential components. All other modules contain implementation details that should remain hidden from users.
@@ -365,8 +365,8 @@ from .problem.solving import SolverManager
 - Prefer `TYPE_CHECKING` guards for type-only imports
 - Follow the established dependency hierarchy when adding new modules
 - Use `hasattr()` checks before accessing potentially missing attributes
-- The core quantity class is now `Quantity` (formerly `FastQuantity`)
-- Variable types now extend `TypedQuantity` and `ExpressionQuantity`
+- The core quantity class is now `FieldQnty` with field-based architecture
+- Variable types extend `FieldQnty` through the field system in `field_vars.py`
 
 ### Performance Considerations
 

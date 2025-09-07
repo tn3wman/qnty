@@ -62,8 +62,6 @@ class ObjectPool:
         if self._initialized:
             return
 
-        from ..units.field_units import AreaUnits, VolumeUnits
-
         area_unit = AreaUnits.square_millimeter
         volume_unit = VolumeUnits.cubic_millimeter
         force_unit = UnitConstant(UnitDefinition("newton", "N", FORCE, 1.0))
