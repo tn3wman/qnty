@@ -67,7 +67,6 @@ class PipeBends(Problem):
     s = create_straight_pipe_internal()
 
     s.Y.set(0.4).dimensionless
-    s.D.set(2).inch
 
     R_1 = Length(5, "inch", "Bend Radius")
     I_i = Dimensionless(1.0, "Intrados Correction Factor", is_known=False)
@@ -104,14 +103,6 @@ class PipeBends(Problem):
 
     P_max_eqn = P_max.equals(min_expr(P_max_i, P_max_e, s.P_max))
 
-    # Validation rule for solver limitations
-    bend_geometry_check = add_rule(
-        s.D.lt(R_1 / 2),  # D < R_1/2 can cause solver issues
-        "Small diameter relative to bend radius may cause solver issues. Consider using D >= R_1/2 or solve equations manually.",
-        warning_type="SOLVER_LIMITATION", 
-        severity="WARNING",
-    )
-
 def create_pipe_bends():
     return PipeBends()
 
@@ -119,35 +110,22 @@ def create_pipe_bends():
 def test_composed_problem():
     problem = create_pipe_bends()
 
-    print("=== First solve with D = 2 inches ===")
     problem.solve()
-    print(f"P_max = {problem.P_max}")
-    
-    # Show validation warnings
-    warnings = problem.validate()
-    if warnings:
-        print("\nValidation warnings:")
-        for warning in warnings:
-            print(f"  {warning}")
 
-    print("\n=== Second solve with D = 1 inch ===")
+    print(problem.P_max)
+
     problem.s.D.set(1).inch
-    
-    # Show validation warnings before solving
-    warnings = problem.validate()
-    if warnings:
-        print("Validation warnings:")
-        for warning in warnings:
-            print(f"  {warning}")
-    
-    try:
-        problem.solve()
-        print(f"P_max = {problem.P_max}")
-    except Exception as e:
-        print(f"Solver error: {e}")
-        print("This error is due to a known solver limitation with complex expressions.")
-        print("The equation is mathematically valid but the solver cannot handle this specific case.")
 
+    problem.solve()
+
+    print(problem.P_max)
+
+    problem.s.D.set(2).inch
+
+    problem.solve()
+
+    print(problem.P_max)
+    
 
 if __name__ == "__main__":
     test_composed_problem()
