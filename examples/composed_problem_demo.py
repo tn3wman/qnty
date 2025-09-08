@@ -114,6 +114,18 @@ def test_composed_problem():
 
     print(problem.P_max)
 
+    problem.s.D.set(1).inch
+
+    problem.solve()
+
+    print(problem.P_max)
+
+    problem.s.D.set(2).inch
+
+    problem.solve()
+
+    print(problem.P_max)
+    
 
 if __name__ == "__main__":
     test_composed_problem()

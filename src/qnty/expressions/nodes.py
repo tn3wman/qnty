@@ -374,15 +374,16 @@ class BinaryOperation(Expression):
         if abs(right_value) < DIVISION_BY_ZERO_THRESHOLD:
             raise ValueError(f"Division by zero in expression: {self}")
 
-        # Fast paths
-        if right_value == 1.0:
+        # Fast paths - but only when they preserve correct dimensional analysis
+        if right_value == 1.0 and right_val._dimension_sig == 1:
+            # Division by dimensionless 1.0 - safe optimization
             return left_val
         elif left_value == 0.0:
             # Zero divided by anything is zero (with appropriate unit)
             return Quantity(0.0, (left_val / right_val).unit)
-        elif right_value == -1.0:
-            # Division by -1 is negation
-            return Quantity(-left_value, (left_val / right_val).unit)
+        elif right_value == -1.0 and right_val._dimension_sig == 1:
+            # Division by dimensionless -1.0 is negation - safe optimization
+            return Quantity(-left_value, left_val.unit)
 
         # Regular division
         return left_val / right_val
