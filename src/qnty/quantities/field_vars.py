@@ -765,16 +765,34 @@ class Dimensionless(FieldQnty):
         
         Args:
             value: The numeric value to set
-            unit: Optional unit string (for compatibility with base class)
+            unit: Optional unit string (for direct setting)
         
         Returns:
-            DimensionlessSetter: A setter with unit properties like .meters, .inches, etc.
+            DimensionlessSetter: A setter with unit properties like .dimensionless
         
         Example:
-            >>> length = Length("beam_length")
-            >>> length.set(100).millimeters  # Sets to 100 mm
+            >>> factor = Dimensionless("factor")
+            >>> factor.set(2.5).dimensionless  # Sets to 2.5
+            >>> factor.set(2.5, "dimensionless")  # Direct setting
         """
-        return ts.DimensionlessSetter(self, value)
+        if unit is not None:
+            # Direct setting with unit
+            setter = ts.DimensionlessSetter(self, value)
+            # Get the unit property and call it to set the value
+            if hasattr(setter, unit):
+                getattr(setter, unit)
+            else:
+                # Try common aliases
+                unit_aliases = {
+                    "dimensionless": "dimensionless", "": "dimensionless"
+                }
+                if unit in unit_aliases and hasattr(setter, unit_aliases[unit]):
+                    getattr(setter, unit_aliases[unit])
+                else:
+                    raise ValueError(f"Unknown unit: {unit}")
+            return self  # Return the variable itself for consistency
+        else:
+            return ts.DimensionlessSetter(self, value)
     
 
 class DynamicFluidity(FieldQnty):
@@ -2358,7 +2376,7 @@ class Length(FieldQnty):
         
         Args:
             value: The numeric value to set
-            unit: Optional unit string (for compatibility with base class)
+            unit: Optional unit string (for direct setting)
         
         Returns:
             LengthSetter: A setter with unit properties like .meters, .inches, etc.
@@ -2366,8 +2384,30 @@ class Length(FieldQnty):
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
+            >>> length.set(100, "inch")  # Direct setting
         """
-        return ts.LengthSetter(self, value)
+        if unit is not None:
+            # Direct setting with unit
+            setter = ts.LengthSetter(self, value)
+            # Get the unit property and call it to set the value
+            if hasattr(setter, unit):
+                getattr(setter, unit)
+            else:
+                # Try common aliases
+                unit_aliases = {
+                    "inch": "inch", "inches": "inch", "in": "inch",
+                    "foot": "foot", "feet": "foot", "ft": "foot", 
+                    "meter": "meter", "meters": "meter", "m": "meter",
+                    "millimeter": "millimeter", "millimeters": "millimeter", "mm": "millimeter",
+                    "centimeter": "centimeter", "centimeters": "centimeter", "cm": "centimeter"
+                }
+                if unit in unit_aliases and hasattr(setter, unit_aliases[unit]):
+                    getattr(setter, unit_aliases[unit])
+                else:
+                    raise ValueError(f"Unknown unit: {unit}")
+            return self  # Return the variable itself for consistency
+        else:
+            return ts.LengthSetter(self, value)
     
 
 class LinearMassDensity(FieldQnty):
@@ -4482,16 +4522,39 @@ class Pressure(FieldQnty):
         
         Args:
             value: The numeric value to set
-            unit: Optional unit string (for compatibility with base class)
+            unit: Optional unit string (for direct setting)
         
         Returns:
-            PressureSetter: A setter with unit properties like .meters, .inches, etc.
+            PressureSetter: A setter with unit properties like .psi, .bar, etc.
         
         Example:
-            >>> length = Length("beam_length")
-            >>> length.set(100).millimeters  # Sets to 100 mm
+            >>> pressure = Pressure("system_pressure")
+            >>> pressure.set(100).psi  # Sets to 100 psi
+            >>> pressure.set(100, "psi")  # Direct setting
         """
-        return ts.PressureSetter(self, value)
+        if unit is not None:
+            # Direct setting with unit
+            setter = ts.PressureSetter(self, value)
+            # Get the unit property and call it to set the value
+            if hasattr(setter, unit):
+                getattr(setter, unit)
+            else:
+                # Try common aliases
+                unit_aliases = {
+                    "psi": "psi", "pound_per_square_inch": "psi",
+                    "bar": "bar", "bars": "bar",
+                    "pascal": "pascal", "pascals": "pascal", "pa": "pascal",
+                    "kpa": "kilopascal", "kilopascal": "kilopascal",
+                    "mpa": "megapascal", "megapascal": "megapascal",
+                    "atm": "atmosphere", "atmosphere": "atmosphere"
+                }
+                if unit in unit_aliases and hasattr(setter, unit_aliases[unit]):
+                    getattr(setter, unit_aliases[unit])
+                else:
+                    raise ValueError(f"Unknown unit: {unit}")
+            return self  # Return the variable itself for consistency
+        else:
+            return ts.PressureSetter(self, value)
     
 
 class RadiationDoseEquivalent(FieldQnty):

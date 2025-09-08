@@ -177,6 +177,10 @@ class Problem(ValidationMixin):
         # Sub-problem composition support
         self.sub_problems: dict[str, Any] = {}
         self.variable_aliases: dict[str, str] = {}
+        
+        # Track original variable states for re-solving
+        self._original_variable_states: dict[str, bool] = {}
+        self._original_variable_units: dict[str, Any] = {}
 
         # Initialize equation reconstructor
         self.equation_reconstructor = None
@@ -227,6 +231,11 @@ class Problem(ValidationMixin):
 
         if variable.symbol is not None:
             self.variables[variable.symbol] = variable
+            # Track original is_known state and unit for re-solving
+            self._original_variable_states[variable.symbol] = variable.is_known
+            # Store the unit from original quantity to preserve unit info
+            if variable.quantity is not None:
+                self._original_variable_units[variable.symbol] = variable.quantity.unit
         # Set parent problem reference for dependency invalidation
         if hasattr(variable, "_parent_problem"):
             setattr(variable, "_parent_problem", self)
@@ -353,11 +362,11 @@ class Problem(ValidationMixin):
         # This ensures domain-specific variables (Length, Pressure, etc.) keep their type
         variable_type = type(variable)
 
-        # Use __new__ to avoid constructor parameter issues
-        cloned = variable_type.__new__(variable_type)
+        # Create a new instance properly initialized
+        # Pass the name to the constructor which all FieldQnty subclasses accept
+        cloned = variable_type(variable.name)
 
-        # Initialize manually with the same attributes as the original
-        cloned.name = variable.name
+        # Copy over the attributes from the original
         cloned.symbol = variable.symbol
         cloned.expected_dimension = variable.expected_dimension
         cloned.quantity = variable.quantity  # Keep reference to same quantity - units must not be copied
@@ -367,6 +376,37 @@ class Problem(ValidationMixin):
         if hasattr(variable, "validation_checks") and hasattr(cloned, "validation_checks"):
             cloned.validation_checks = []
         return cloned
+
+    def _update_variables_with_solution(self, solved_variables: dict[str, FieldQnty]):
+        """
+        Update variables with solution, preserving original units for display.
+        """
+        for symbol, solved_var in solved_variables.items():
+            if symbol in self.variables:
+                original_var = self.variables[symbol]
+                
+                # If we have a solved quantity and an original unit to preserve
+                if (solved_var.quantity is not None and 
+                    symbol in self._original_variable_units and 
+                    symbol in self._original_variable_states and 
+                    not self._original_variable_states[symbol]):  # Was originally unknown
+                    
+                    # Convert solved quantity to original unit for display
+                    original_unit = self._original_variable_units[symbol]
+                    try:
+                        # Convert the solved quantity to the original unit
+                        converted_value = solved_var.quantity.to(original_unit).value
+                        from ..quantities.base_qnty import Quantity
+                        original_var.quantity = Quantity(converted_value, original_unit)
+                        original_var.is_known = True
+                    except Exception:
+                        # If conversion fails, use the solved quantity as-is
+                        original_var.quantity = solved_var.quantity
+                        original_var.is_known = solved_var.is_known
+                else:
+                    # For originally known variables or if no unit conversion needed
+                    original_var.quantity = solved_var.quantity
+                    original_var.is_known = solved_var.is_known
 
     def _sync_variables_to_instance_attributes(self):
         """
@@ -539,10 +579,8 @@ class Problem(ValidationMixin):
         self.logger.info(f"Solving problem: {self.name}")
 
         try:
-            # Clear previous solution
-            self.solution = {}
-            self.is_solved = False
-            self.solving_history = []
+            # Reset solution state and restore original variable states
+            self.reset_solution()
 
             # Build dependency graph
             self._build_dependency_graph()
@@ -551,8 +589,8 @@ class Problem(ValidationMixin):
             solve_result = self.solver_manager.solve(self.equations, self.variables, self.dependency_graph, max_iterations, tolerance)
 
             if solve_result.success:
-                # Update variables with the result
-                self.variables = solve_result.variables
+                # Update variables with the result, preserving original units where possible
+                self._update_variables_with_solution(solve_result.variables)
                 self.solving_history.extend(solve_result.steps)
 
                 # Sync solved values back to instance attributes
@@ -641,10 +679,14 @@ class Problem(ValidationMixin):
         self.solution = {}
         self.solving_history = []
 
-        # Reset unknown variables to unknown state
-        for var in self.variables.values():
-            if not var.is_known:
-                var.is_known = False
+        # Reset variables to their original known/unknown states
+        for symbol, var in self.variables.items():
+            if symbol in self._original_variable_states:
+                original_state = self._original_variable_states[symbol]
+                var.is_known = original_state
+                # If variable was originally unknown, reset it to None so solver can update it
+                if not original_state:
+                    var.quantity = None
 
     def copy(self):
         """Create a copy of this problem."""

@@ -133,6 +133,7 @@ class SubProblemProxy:
             is_known=original_var.is_known,
             proxy=self,
             original_symbol=original_var.symbol,
+            original_variable=original_var,  # Pass the original variable for type preservation
         )
 
         return namespaced_var
@@ -152,16 +153,25 @@ class ConfigurableVariable:
     This acts as a proxy around the actual qnty Variable rather than inheriting from it.
     """
 
-    def __init__(self, symbol, name, quantity, is_known=True, proxy=None, original_symbol=None):
+    def __init__(self, symbol, name, quantity, is_known=True, proxy=None, original_symbol=None, original_variable=None):
         # Store the actual variable (we'll delegate to it)
         # Create a variable of the appropriate type based on the original
-        # For now, we'll create a Dimensionless variable and update it
-        self._variable = Dimensionless(name)
+        if original_variable is not None:
+            # Preserve the original variable type
+            self._variable = type(original_variable)(name)
+        else:
+            # Fallback to Dimensionless if no original variable provided
+            self._variable = Dimensionless(name)
 
         # Set the properties
         self._variable.symbol = symbol
         self._variable.quantity = quantity
         self._variable.is_known = is_known
+        
+        # Ensure the arithmetic mode is properly initialized
+        # The __init__ should have set it, but in case it didn't
+        if not hasattr(self._variable, '_arithmetic_mode'):
+            self._variable._arithmetic_mode = "expression"
 
         # Store proxy information
         self._proxy = proxy
@@ -169,6 +179,13 @@ class ConfigurableVariable:
 
     def __getattr__(self, name):
         """Delegate all other attributes to the wrapped variable."""
+        # Handle special case for _arithmetic_mode since it's accessed in __mul__ etc.
+        if name == '_arithmetic_mode':
+            # First check if we have it directly
+            if hasattr(self._variable, '_arithmetic_mode'):
+                return self._variable._arithmetic_mode
+            # Otherwise default to 'expression'
+            return 'expression'
         return getattr(self._variable, name)
 
     # Delegate arithmetic operations to the wrapped variable
@@ -230,11 +247,64 @@ class ConfigurableVariable:
             setattr(self._variable, name, value)
 
     def set(self, value):
-        """Override set method to track configuration changes."""
-        result = self._variable.set(value)
+        """Override set method to track configuration changes and return the correct setter."""
+        # Create a wrapper setter that tracks changes after unit application
+        original_setter = self._variable.set(value)
+        
         if self._proxy and self._original_symbol:
-            # Track this configuration change
-            self._proxy.track_configuration(self._original_symbol, self._variable.quantity, self._variable.is_known)
+            # Create tracking wrapper
+            return TrackingSetterWrapper(original_setter, self._proxy, self._original_symbol, self._variable)
+        else:
+            return original_setter
+
+
+class TrackingSetterWrapper:
+    """
+    A wrapper around setter objects that tracks configuration changes after unit application.
+    This ensures that when `proxy.set(value).unit` is called, the proxy tracks the final
+    configuration after the unit is applied.
+    """
+    
+    def __init__(self, original_setter, proxy, original_symbol, variable):
+        self._original_setter = original_setter
+        self._proxy = proxy
+        self._original_symbol = original_symbol
+        self._variable = variable
+        
+    def __getattr__(self, name):
+        """
+        Intercept property access for unit properties and track configuration after application.
+        """
+        # Get the property from the original setter
+        attr = getattr(self._original_setter, name)
+        
+        # If it's a property (unit setter), wrap it to track configuration
+        if hasattr(attr, '__call__'):
+            # It's a method, just delegate
+            return attr
+        else:
+            # It's a property access, call it and then track configuration
+            result = attr  # This will set the variable quantity and return the variable
+            
+            # Track the configuration after the unit is applied
+            if self._proxy and self._original_symbol:
+                self._proxy.track_configuration(
+                    self._original_symbol, 
+                    self._variable.quantity, 
+                    self._variable.is_known
+                )
+            
+            return result
+    
+    def with_unit(self, unit):
+        """Delegate with_unit method and track configuration."""
+        result = self._original_setter.with_unit(unit)
+        if self._proxy and self._original_symbol:
+            self._proxy.track_configuration(
+                self._original_symbol, 
+                self._variable.quantity, 
+                self._variable.is_known
+            )
         return result
 
     def update(self, value=None, unit=None, quantity=None, is_known=None):
