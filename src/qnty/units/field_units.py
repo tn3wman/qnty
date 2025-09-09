@@ -248,7 +248,7 @@ class AnglePlaneUnits:
         name="degree",
         symbol="${ }^{\\circ}$",
         dimension=dim.ANGLE_PLANE,
-        si_factor=0.0174533,
+        si_factor=0.017453292519943295,
         si_offset=0.0,
     ))
 
