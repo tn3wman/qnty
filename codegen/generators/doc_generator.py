@@ -197,3 +197,52 @@ def generate_set_method(setter_class_name: str, display_name: str, stub_only: bo
         ])
 
     return lines
+
+
+def generate_value_unit_properties(display_name: str, stub_only: bool = False) -> list[str]:
+    """Generate value and unit property methods for direct access."""
+    lines = []
+    
+    # Value property
+    lines.append("    @property")
+    lines.append("    def value(self) -> float | None:")
+    if stub_only:
+        lines.append("        ...")
+    else:
+        lines.extend([
+            '        """',
+            f"        Get the numeric value of this {display_name}.",
+            "        ",
+            "        Returns:",
+            "            The numeric value if known, None if unknown",
+            "        ",
+            "        Example:",
+            '            >>> length = Length(100, "mm", "beam_length")',
+            "            >>> length.value  # Returns 100.0",
+            '        """',
+            "        return self.quantity.value if self.quantity is not None else None"
+        ])
+    
+    lines.append("")
+    
+    # Unit property
+    lines.append("    @property")
+    lines.append("    def unit(self) -> str | None:")
+    if stub_only:
+        lines.append("        ...")
+    else:
+        lines.extend([
+            '        """',
+            f"        Get the unit symbol of this {display_name}.",
+            "        ",
+            "        Returns:",
+            "            The unit symbol if known, None if unknown",
+            "        ",
+            "        Example:",
+            '            >>> length = Length(100, "mm", "beam_length")',
+            '            >>> length.unit  # Returns "mm"',
+            '        """',
+            "        return self.quantity.unit.symbol if self.quantity is not None else None"
+        ])
+    
+    return lines
