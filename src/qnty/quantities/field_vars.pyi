@@ -56,6 +56,14 @@ class AbsorbedDose(FieldQnty):
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.AbsorbedDoseSetter:
         ...
     
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
+        ...
+    
     
 
 class Acceleration(FieldQnty):
@@ -87,6 +95,14 @@ class Acceleration(FieldQnty):
     @overload
     def set(self, value: float, unit: None = None) -> field_setter.AccelerationSetter: ...
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.AccelerationSetter:
+        ...
+    
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
         ...
     
     
@@ -122,6 +138,14 @@ class ActivationEnergy(FieldQnty):
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.ActivationEnergySetter:
         ...
     
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
+        ...
+    
     
 
 class AmountOfSubstance(FieldQnty):
@@ -153,6 +177,14 @@ class AmountOfSubstance(FieldQnty):
     @overload
     def set(self, value: float, unit: None = None) -> field_setter.AmountOfSubstanceSetter: ...
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.AmountOfSubstanceSetter:
+        ...
+    
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
         ...
     
     
@@ -188,6 +220,14 @@ class AnglePlane(FieldQnty):
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.AnglePlaneSetter:
         ...
     
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
+        ...
+    
     
 
 class AngleSolid(FieldQnty):
@@ -219,6 +259,14 @@ class AngleSolid(FieldQnty):
     @overload
     def set(self, value: float, unit: None = None) -> field_setter.AngleSolidSetter: ...
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.AngleSolidSetter:
+        ...
+    
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
         ...
     
     
@@ -254,6 +302,14 @@ class AngularAcceleration(FieldQnty):
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.AngularAccelerationSetter:
         ...
     
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
+        ...
+    
     
 
 class AngularMomentum(FieldQnty):
@@ -285,6 +341,14 @@ class AngularMomentum(FieldQnty):
     @overload
     def set(self, value: float, unit: None = None) -> field_setter.AngularMomentumSetter: ...
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.AngularMomentumSetter:
+        ...
+    
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
         ...
     
     
@@ -320,6 +384,14 @@ class Area(FieldQnty):
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.AreaSetter:
         ...
     
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
+        ...
+    
     
 
 class AreaPerUnitVolume(FieldQnty):
@@ -351,6 +423,14 @@ class AreaPerUnitVolume(FieldQnty):
     @overload
     def set(self, value: float, unit: None = None) -> field_setter.AreaPerUnitVolumeSetter: ...
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.AreaPerUnitVolumeSetter:
+        ...
+    
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
         ...
     
     
@@ -386,6 +466,14 @@ class AtomicWeight(FieldQnty):
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.AtomicWeightSetter:
         ...
     
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
+        ...
+    
     
 
 class Concentration(FieldQnty):
@@ -419,6 +507,14 @@ class Concentration(FieldQnty):
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.ConcentrationSetter:
         ...
     
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
+        ...
+    
     
 
 class Dimensionless(FieldQnty):
@@ -448,6 +544,14 @@ class Dimensionless(FieldQnty):
     @overload
     def set(self, value: float, unit: None = None) -> field_setter.DimensionlessSetter: ...
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.DimensionlessSetter:
+        ...
+    
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
         ...
     
     
@@ -483,6 +587,14 @@ class DynamicFluidity(FieldQnty):
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.DynamicFluiditySetter:
         ...
     
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
+        ...
+    
     
 
 class ElectricCapacitance(FieldQnty):
@@ -514,6 +626,14 @@ class ElectricCapacitance(FieldQnty):
     @overload
     def set(self, value: float, unit: None = None) -> field_setter.ElectricCapacitanceSetter: ...
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.ElectricCapacitanceSetter:
+        ...
+    
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
         ...
     
     
@@ -549,6 +669,14 @@ class ElectricCharge(FieldQnty):
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.ElectricChargeSetter:
         ...
     
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
+        ...
+    
     
 
 class ElectricCurrentIntensity(FieldQnty):
@@ -580,6 +708,14 @@ class ElectricCurrentIntensity(FieldQnty):
     @overload
     def set(self, value: float, unit: None = None) -> field_setter.ElectricCurrentIntensitySetter: ...
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.ElectricCurrentIntensitySetter:
+        ...
+    
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
         ...
     
     
@@ -615,6 +751,14 @@ class ElectricDipoleMoment(FieldQnty):
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.ElectricDipoleMomentSetter:
         ...
     
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
+        ...
+    
     
 
 class ElectricFieldStrength(FieldQnty):
@@ -646,6 +790,14 @@ class ElectricFieldStrength(FieldQnty):
     @overload
     def set(self, value: float, unit: None = None) -> field_setter.ElectricFieldStrengthSetter: ...
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.ElectricFieldStrengthSetter:
+        ...
+    
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
         ...
     
     
@@ -681,6 +833,14 @@ class ElectricInductance(FieldQnty):
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.ElectricInductanceSetter:
         ...
     
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
+        ...
+    
     
 
 class ElectricPotential(FieldQnty):
@@ -712,6 +872,14 @@ class ElectricPotential(FieldQnty):
     @overload
     def set(self, value: float, unit: None = None) -> field_setter.ElectricPotentialSetter: ...
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.ElectricPotentialSetter:
+        ...
+    
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
         ...
     
     
@@ -747,6 +915,14 @@ class ElectricResistance(FieldQnty):
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.ElectricResistanceSetter:
         ...
     
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
+        ...
+    
     
 
 class ElectricalConductance(FieldQnty):
@@ -778,6 +954,14 @@ class ElectricalConductance(FieldQnty):
     @overload
     def set(self, value: float, unit: None = None) -> field_setter.ElectricalConductanceSetter: ...
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.ElectricalConductanceSetter:
+        ...
+    
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
         ...
     
     
@@ -813,6 +997,14 @@ class ElectricalPermittivity(FieldQnty):
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.ElectricalPermittivitySetter:
         ...
     
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
+        ...
+    
     
 
 class ElectricalResistivity(FieldQnty):
@@ -844,6 +1036,14 @@ class ElectricalResistivity(FieldQnty):
     @overload
     def set(self, value: float, unit: None = None) -> field_setter.ElectricalResistivitySetter: ...
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.ElectricalResistivitySetter:
+        ...
+    
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
         ...
     
     
@@ -879,6 +1079,14 @@ class EnergyFlux(FieldQnty):
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.EnergyFluxSetter:
         ...
     
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
+        ...
+    
     
 
 class EnergyHeatWork(FieldQnty):
@@ -910,6 +1118,14 @@ class EnergyHeatWork(FieldQnty):
     @overload
     def set(self, value: float, unit: None = None) -> field_setter.EnergyHeatWorkSetter: ...
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.EnergyHeatWorkSetter:
+        ...
+    
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
         ...
     
     
@@ -945,6 +1161,14 @@ class EnergyPerUnitArea(FieldQnty):
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.EnergyPerUnitAreaSetter:
         ...
     
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
+        ...
+    
     
 
 class Force(FieldQnty):
@@ -976,6 +1200,14 @@ class Force(FieldQnty):
     @overload
     def set(self, value: float, unit: None = None) -> field_setter.ForceSetter: ...
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.ForceSetter:
+        ...
+    
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
         ...
     
     
@@ -1011,6 +1243,14 @@ class ForceBody(FieldQnty):
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.ForceBodySetter:
         ...
     
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
+        ...
+    
     
 
 class ForcePerUnitMass(FieldQnty):
@@ -1042,6 +1282,14 @@ class ForcePerUnitMass(FieldQnty):
     @overload
     def set(self, value: float, unit: None = None) -> field_setter.ForcePerUnitMassSetter: ...
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.ForcePerUnitMassSetter:
+        ...
+    
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
         ...
     
     
@@ -1077,6 +1325,14 @@ class FrequencyVoltageRatio(FieldQnty):
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.FrequencyVoltageRatioSetter:
         ...
     
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
+        ...
+    
     
 
 class FuelConsumption(FieldQnty):
@@ -1108,6 +1364,14 @@ class FuelConsumption(FieldQnty):
     @overload
     def set(self, value: float, unit: None = None) -> field_setter.FuelConsumptionSetter: ...
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.FuelConsumptionSetter:
+        ...
+    
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
         ...
     
     
@@ -1143,6 +1407,14 @@ class HeatOfCombustion(FieldQnty):
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.HeatOfCombustionSetter:
         ...
     
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
+        ...
+    
     
 
 class HeatOfFusion(FieldQnty):
@@ -1174,6 +1446,14 @@ class HeatOfFusion(FieldQnty):
     @overload
     def set(self, value: float, unit: None = None) -> field_setter.HeatOfFusionSetter: ...
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.HeatOfFusionSetter:
+        ...
+    
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
         ...
     
     
@@ -1209,6 +1489,14 @@ class HeatOfVaporization(FieldQnty):
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.HeatOfVaporizationSetter:
         ...
     
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
+        ...
+    
     
 
 class HeatTransferCoefficient(FieldQnty):
@@ -1240,6 +1528,14 @@ class HeatTransferCoefficient(FieldQnty):
     @overload
     def set(self, value: float, unit: None = None) -> field_setter.HeatTransferCoefficientSetter: ...
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.HeatTransferCoefficientSetter:
+        ...
+    
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
         ...
     
     
@@ -1275,6 +1571,14 @@ class Illuminance(FieldQnty):
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.IlluminanceSetter:
         ...
     
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
+        ...
+    
     
 
 class KineticEnergyOfTurbulence(FieldQnty):
@@ -1306,6 +1610,14 @@ class KineticEnergyOfTurbulence(FieldQnty):
     @overload
     def set(self, value: float, unit: None = None) -> field_setter.KineticEnergyOfTurbulenceSetter: ...
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.KineticEnergyOfTurbulenceSetter:
+        ...
+    
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
         ...
     
     
@@ -1341,6 +1653,14 @@ class Length(FieldQnty):
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.LengthSetter:
         ...
     
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
+        ...
+    
     
 
 class LinearMassDensity(FieldQnty):
@@ -1372,6 +1692,14 @@ class LinearMassDensity(FieldQnty):
     @overload
     def set(self, value: float, unit: None = None) -> field_setter.LinearMassDensitySetter: ...
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.LinearMassDensitySetter:
+        ...
+    
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
         ...
     
     
@@ -1407,6 +1735,14 @@ class LinearMomentum(FieldQnty):
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.LinearMomentumSetter:
         ...
     
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
+        ...
+    
     
 
 class LuminanceSelf(FieldQnty):
@@ -1438,6 +1774,14 @@ class LuminanceSelf(FieldQnty):
     @overload
     def set(self, value: float, unit: None = None) -> field_setter.LuminanceSelfSetter: ...
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.LuminanceSelfSetter:
+        ...
+    
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
         ...
     
     
@@ -1473,6 +1817,14 @@ class LuminousFlux(FieldQnty):
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.LuminousFluxSetter:
         ...
     
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
+        ...
+    
     
 
 class LuminousIntensity(FieldQnty):
@@ -1504,6 +1856,14 @@ class LuminousIntensity(FieldQnty):
     @overload
     def set(self, value: float, unit: None = None) -> field_setter.LuminousIntensitySetter: ...
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.LuminousIntensitySetter:
+        ...
+    
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
         ...
     
     
@@ -1539,6 +1899,14 @@ class MagneticField(FieldQnty):
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.MagneticFieldSetter:
         ...
     
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
+        ...
+    
     
 
 class MagneticFlux(FieldQnty):
@@ -1570,6 +1938,14 @@ class MagneticFlux(FieldQnty):
     @overload
     def set(self, value: float, unit: None = None) -> field_setter.MagneticFluxSetter: ...
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.MagneticFluxSetter:
+        ...
+    
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
         ...
     
     
@@ -1605,6 +1981,14 @@ class MagneticInductionFieldStrength(FieldQnty):
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.MagneticInductionFieldStrengthSetter:
         ...
     
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
+        ...
+    
     
 
 class MagneticMoment(FieldQnty):
@@ -1636,6 +2020,14 @@ class MagneticMoment(FieldQnty):
     @overload
     def set(self, value: float, unit: None = None) -> field_setter.MagneticMomentSetter: ...
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.MagneticMomentSetter:
+        ...
+    
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
         ...
     
     
@@ -1671,6 +2063,14 @@ class MagneticPermeability(FieldQnty):
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.MagneticPermeabilitySetter:
         ...
     
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
+        ...
+    
     
 
 class MagnetomotiveForce(FieldQnty):
@@ -1702,6 +2102,14 @@ class MagnetomotiveForce(FieldQnty):
     @overload
     def set(self, value: float, unit: None = None) -> field_setter.MagnetomotiveForceSetter: ...
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.MagnetomotiveForceSetter:
+        ...
+    
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
         ...
     
     
@@ -1737,6 +2145,14 @@ class Mass(FieldQnty):
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.MassSetter:
         ...
     
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
+        ...
+    
     
 
 class MassDensity(FieldQnty):
@@ -1768,6 +2184,14 @@ class MassDensity(FieldQnty):
     @overload
     def set(self, value: float, unit: None = None) -> field_setter.MassDensitySetter: ...
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.MassDensitySetter:
+        ...
+    
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
         ...
     
     
@@ -1803,6 +2227,14 @@ class MassFlowRate(FieldQnty):
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.MassFlowRateSetter:
         ...
     
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
+        ...
+    
     
 
 class MassFlux(FieldQnty):
@@ -1834,6 +2266,14 @@ class MassFlux(FieldQnty):
     @overload
     def set(self, value: float, unit: None = None) -> field_setter.MassFluxSetter: ...
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.MassFluxSetter:
+        ...
+    
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
         ...
     
     
@@ -1869,6 +2309,14 @@ class MassFractionOfI(FieldQnty):
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.MassFractionOfISetter:
         ...
     
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
+        ...
+    
     
 
 class MassTransferCoefficient(FieldQnty):
@@ -1900,6 +2348,14 @@ class MassTransferCoefficient(FieldQnty):
     @overload
     def set(self, value: float, unit: None = None) -> field_setter.MassTransferCoefficientSetter: ...
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.MassTransferCoefficientSetter:
+        ...
+    
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
         ...
     
     
@@ -1935,6 +2391,14 @@ class MolalityOfSoluteI(FieldQnty):
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.MolalityOfSoluteISetter:
         ...
     
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
+        ...
+    
     
 
 class MolarConcentrationByMass(FieldQnty):
@@ -1966,6 +2430,14 @@ class MolarConcentrationByMass(FieldQnty):
     @overload
     def set(self, value: float, unit: None = None) -> field_setter.MolarConcentrationByMassSetter: ...
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.MolarConcentrationByMassSetter:
+        ...
+    
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
         ...
     
     
@@ -2001,6 +2473,14 @@ class MolarFlowRate(FieldQnty):
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.MolarFlowRateSetter:
         ...
     
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
+        ...
+    
     
 
 class MolarFlux(FieldQnty):
@@ -2032,6 +2512,14 @@ class MolarFlux(FieldQnty):
     @overload
     def set(self, value: float, unit: None = None) -> field_setter.MolarFluxSetter: ...
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.MolarFluxSetter:
+        ...
+    
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
         ...
     
     
@@ -2067,6 +2555,14 @@ class MolarHeatCapacity(FieldQnty):
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.MolarHeatCapacitySetter:
         ...
     
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
+        ...
+    
     
 
 class MolarityOfI(FieldQnty):
@@ -2098,6 +2594,14 @@ class MolarityOfI(FieldQnty):
     @overload
     def set(self, value: float, unit: None = None) -> field_setter.MolarityOfISetter: ...
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.MolarityOfISetter:
+        ...
+    
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
         ...
     
     
@@ -2133,6 +2637,14 @@ class MoleFractionOfI(FieldQnty):
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.MoleFractionOfISetter:
         ...
     
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
+        ...
+    
     
 
 class MomentOfInertia(FieldQnty):
@@ -2164,6 +2676,14 @@ class MomentOfInertia(FieldQnty):
     @overload
     def set(self, value: float, unit: None = None) -> field_setter.MomentOfInertiaSetter: ...
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.MomentOfInertiaSetter:
+        ...
+    
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
         ...
     
     
@@ -2199,6 +2719,14 @@ class MomentumFlowRate(FieldQnty):
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.MomentumFlowRateSetter:
         ...
     
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
+        ...
+    
     
 
 class MomentumFlux(FieldQnty):
@@ -2230,6 +2758,14 @@ class MomentumFlux(FieldQnty):
     @overload
     def set(self, value: float, unit: None = None) -> field_setter.MomentumFluxSetter: ...
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.MomentumFluxSetter:
+        ...
+    
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
         ...
     
     
@@ -2265,6 +2801,14 @@ class NormalityOfSolution(FieldQnty):
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.NormalityOfSolutionSetter:
         ...
     
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
+        ...
+    
     
 
 class ParticleDensity(FieldQnty):
@@ -2296,6 +2840,14 @@ class ParticleDensity(FieldQnty):
     @overload
     def set(self, value: float, unit: None = None) -> field_setter.ParticleDensitySetter: ...
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.ParticleDensitySetter:
+        ...
+    
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
         ...
     
     
@@ -2331,6 +2883,14 @@ class Percent(FieldQnty):
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.PercentSetter:
         ...
     
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
+        ...
+    
     
 
 class Permeability(FieldQnty):
@@ -2362,6 +2922,14 @@ class Permeability(FieldQnty):
     @overload
     def set(self, value: float, unit: None = None) -> field_setter.PermeabilitySetter: ...
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.PermeabilitySetter:
+        ...
+    
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
         ...
     
     
@@ -2397,6 +2965,14 @@ class PhotonEmissionRate(FieldQnty):
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.PhotonEmissionRateSetter:
         ...
     
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
+        ...
+    
     
 
 class PowerPerUnitMass(FieldQnty):
@@ -2428,6 +3004,14 @@ class PowerPerUnitMass(FieldQnty):
     @overload
     def set(self, value: float, unit: None = None) -> field_setter.PowerPerUnitMassSetter: ...
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.PowerPerUnitMassSetter:
+        ...
+    
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
         ...
     
     
@@ -2463,6 +3047,14 @@ class PowerPerUnitVolume(FieldQnty):
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.PowerPerUnitVolumeSetter:
         ...
     
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
+        ...
+    
     
 
 class PowerThermalDuty(FieldQnty):
@@ -2494,6 +3086,14 @@ class PowerThermalDuty(FieldQnty):
     @overload
     def set(self, value: float, unit: None = None) -> field_setter.PowerThermalDutySetter: ...
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.PowerThermalDutySetter:
+        ...
+    
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
         ...
     
     
@@ -2529,6 +3129,14 @@ class Pressure(FieldQnty):
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.PressureSetter:
         ...
     
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
+        ...
+    
     
 
 class RadiationDoseEquivalent(FieldQnty):
@@ -2560,6 +3168,14 @@ class RadiationDoseEquivalent(FieldQnty):
     @overload
     def set(self, value: float, unit: None = None) -> field_setter.RadiationDoseEquivalentSetter: ...
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.RadiationDoseEquivalentSetter:
+        ...
+    
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
         ...
     
     
@@ -2595,6 +3211,14 @@ class RadiationExposure(FieldQnty):
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.RadiationExposureSetter:
         ...
     
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
+        ...
+    
     
 
 class Radioactivity(FieldQnty):
@@ -2626,6 +3250,14 @@ class Radioactivity(FieldQnty):
     @overload
     def set(self, value: float, unit: None = None) -> field_setter.RadioactivitySetter: ...
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.RadioactivitySetter:
+        ...
+    
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
         ...
     
     
@@ -2661,6 +3293,14 @@ class SecondMomentOfArea(FieldQnty):
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.SecondMomentOfAreaSetter:
         ...
     
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
+        ...
+    
     
 
 class SecondRadiationConstantPlanck(FieldQnty):
@@ -2692,6 +3332,14 @@ class SecondRadiationConstantPlanck(FieldQnty):
     @overload
     def set(self, value: float, unit: None = None) -> field_setter.SecondRadiationConstantPlanckSetter: ...
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.SecondRadiationConstantPlanckSetter:
+        ...
+    
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
         ...
     
     
@@ -2727,6 +3375,14 @@ class SpecificEnthalpy(FieldQnty):
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.SpecificEnthalpySetter:
         ...
     
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
+        ...
+    
     
 
 class SpecificGravity(FieldQnty):
@@ -2758,6 +3414,14 @@ class SpecificGravity(FieldQnty):
     @overload
     def set(self, value: float, unit: None = None) -> field_setter.SpecificGravitySetter: ...
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.SpecificGravitySetter:
+        ...
+    
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
         ...
     
     
@@ -2793,6 +3457,14 @@ class SpecificHeatCapacityConstantPressure(FieldQnty):
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.SpecificHeatCapacityConstantPressureSetter:
         ...
     
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
+        ...
+    
     
 
 class SpecificLength(FieldQnty):
@@ -2824,6 +3496,14 @@ class SpecificLength(FieldQnty):
     @overload
     def set(self, value: float, unit: None = None) -> field_setter.SpecificLengthSetter: ...
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.SpecificLengthSetter:
+        ...
+    
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
         ...
     
     
@@ -2859,6 +3539,14 @@ class SpecificSurface(FieldQnty):
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.SpecificSurfaceSetter:
         ...
     
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
+        ...
+    
     
 
 class SpecificVolume(FieldQnty):
@@ -2890,6 +3578,14 @@ class SpecificVolume(FieldQnty):
     @overload
     def set(self, value: float, unit: None = None) -> field_setter.SpecificVolumeSetter: ...
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.SpecificVolumeSetter:
+        ...
+    
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
         ...
     
     
@@ -2925,6 +3621,14 @@ class Stress(FieldQnty):
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.StressSetter:
         ...
     
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
+        ...
+    
     
 
 class SurfaceMassDensity(FieldQnty):
@@ -2956,6 +3660,14 @@ class SurfaceMassDensity(FieldQnty):
     @overload
     def set(self, value: float, unit: None = None) -> field_setter.SurfaceMassDensitySetter: ...
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.SurfaceMassDensitySetter:
+        ...
+    
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
         ...
     
     
@@ -2991,6 +3703,14 @@ class SurfaceTension(FieldQnty):
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.SurfaceTensionSetter:
         ...
     
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
+        ...
+    
     
 
 class Temperature(FieldQnty):
@@ -3022,6 +3742,14 @@ class Temperature(FieldQnty):
     @overload
     def set(self, value: float, unit: None = None) -> field_setter.TemperatureSetter: ...
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.TemperatureSetter:
+        ...
+    
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
         ...
     
     
@@ -3057,6 +3785,14 @@ class ThermalConductivity(FieldQnty):
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.ThermalConductivitySetter:
         ...
     
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
+        ...
+    
     
 
 class Time(FieldQnty):
@@ -3088,6 +3824,14 @@ class Time(FieldQnty):
     @overload
     def set(self, value: float, unit: None = None) -> field_setter.TimeSetter: ...
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.TimeSetter:
+        ...
+    
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
         ...
     
     
@@ -3123,6 +3867,14 @@ class Torque(FieldQnty):
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.TorqueSetter:
         ...
     
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
+        ...
+    
     
 
 class TurbulenceEnergyDissipationRate(FieldQnty):
@@ -3154,6 +3906,14 @@ class TurbulenceEnergyDissipationRate(FieldQnty):
     @overload
     def set(self, value: float, unit: None = None) -> field_setter.TurbulenceEnergyDissipationRateSetter: ...
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.TurbulenceEnergyDissipationRateSetter:
+        ...
+    
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
         ...
     
     
@@ -3189,6 +3949,14 @@ class VelocityAngular(FieldQnty):
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.VelocityAngularSetter:
         ...
     
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
+        ...
+    
     
 
 class VelocityLinear(FieldQnty):
@@ -3220,6 +3988,14 @@ class VelocityLinear(FieldQnty):
     @overload
     def set(self, value: float, unit: None = None) -> field_setter.VelocityLinearSetter: ...
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.VelocityLinearSetter:
+        ...
+    
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
         ...
     
     
@@ -3255,6 +4031,14 @@ class ViscosityDynamic(FieldQnty):
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.ViscosityDynamicSetter:
         ...
     
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
+        ...
+    
     
 
 class ViscosityKinematic(FieldQnty):
@@ -3286,6 +4070,14 @@ class ViscosityKinematic(FieldQnty):
     @overload
     def set(self, value: float, unit: None = None) -> field_setter.ViscosityKinematicSetter: ...
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.ViscosityKinematicSetter:
+        ...
+    
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
         ...
     
     
@@ -3321,6 +4113,14 @@ class Volume(FieldQnty):
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.VolumeSetter:
         ...
     
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
+        ...
+    
     
 
 class VolumeFractionOfI(FieldQnty):
@@ -3352,6 +4152,14 @@ class VolumeFractionOfI(FieldQnty):
     @overload
     def set(self, value: float, unit: None = None) -> field_setter.VolumeFractionOfISetter: ...
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.VolumeFractionOfISetter:
+        ...
+    
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
         ...
     
     
@@ -3387,6 +4195,14 @@ class VolumetricCalorificHeatingValue(FieldQnty):
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.VolumetricCalorificHeatingValueSetter:
         ...
     
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
+        ...
+    
     
 
 class VolumetricCoefficientOfExpansion(FieldQnty):
@@ -3418,6 +4234,14 @@ class VolumetricCoefficientOfExpansion(FieldQnty):
     @overload
     def set(self, value: float, unit: None = None) -> field_setter.VolumetricCoefficientOfExpansionSetter: ...
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.VolumetricCoefficientOfExpansionSetter:
+        ...
+    
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
         ...
     
     
@@ -3453,6 +4277,14 @@ class VolumetricFlowRate(FieldQnty):
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.VolumetricFlowRateSetter:
         ...
     
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
+        ...
+    
     
 
 class VolumetricFlux(FieldQnty):
@@ -3484,6 +4316,14 @@ class VolumetricFlux(FieldQnty):
     @overload
     def set(self, value: float, unit: None = None) -> field_setter.VolumetricFluxSetter: ...
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.VolumetricFluxSetter:
+        ...
+    
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
         ...
     
     
@@ -3519,6 +4359,14 @@ class VolumetricMassFlowRate(FieldQnty):
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.VolumetricMassFlowRateSetter:
         ...
     
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
+        ...
+    
     
 
 class Wavenumber(FieldQnty):
@@ -3550,6 +4398,14 @@ class Wavenumber(FieldQnty):
     @overload
     def set(self, value: float, unit: None = None) -> field_setter.WavenumberSetter: ...
     def set(self, value: float, unit: str | None = None) -> Self | field_setter.WavenumberSetter:
+        ...
+    
+    @property
+    def value(self) -> float | None:
+        ...
+
+    @property
+    def unit(self) -> str | None:
         ...
     
     

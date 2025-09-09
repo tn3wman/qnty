@@ -122,6 +122,35 @@ def test_composed_problem():
 
     print(problem.P_max)
 
+    # Using new direct access properties instead of problem.s.P.quantity.value
+    print(problem.s.P.symbol)
+    print(problem.s.P.value)
+    print(problem.s.P.unit)
+    print(problem.s.P.name)
+
+    print(problem.s.D)
+    print(problem.s.T_bar)
+    print(problem.s.U_m)
+    print(problem.s.c)
+    print(problem.s.S)
+    print(problem.s.E)
+    print(problem.s.W)
+    print(problem.s.Y)
+    print(problem.s.T)
+    print(problem.s.d)
+    print(problem.s.t)
+    print(problem.s.t_m)
+    print(problem.s.P_max)
+
+    print(problem.I_i)
+    print(problem.I_e)
+    print(problem.t_i)
+    print(problem.t_e)
+    print(problem.t_m_i)
+    print(problem.t_m_e)
+    print(problem.P_max_i)
+    print(problem.P_max_e)
+
 
 if __name__ == "__main__":
     test_composed_problem()

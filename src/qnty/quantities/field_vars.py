@@ -86,6 +86,34 @@ class AbsorbedDose(FieldQnty):
         else:
             return field_setter.AbsorbedDoseSetter(self, value)
     
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this absorbed radiation dose.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this absorbed radiation dose.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
+    
 
 class Acceleration(FieldQnty):
     """
@@ -154,6 +182,34 @@ class Acceleration(FieldQnty):
             return self
         else:
             return field_setter.AccelerationSetter(self, value)
+    
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this acceleration.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this acceleration.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
     
 
 class ActivationEnergy(FieldQnty):
@@ -224,6 +280,34 @@ class ActivationEnergy(FieldQnty):
         else:
             return field_setter.ActivationEnergySetter(self, value)
     
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this activation energy.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this activation energy.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
+    
 
 class AmountOfSubstance(FieldQnty):
     """
@@ -292,6 +376,34 @@ class AmountOfSubstance(FieldQnty):
             return self
         else:
             return field_setter.AmountOfSubstanceSetter(self, value)
+    
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this amount of substance.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this amount of substance.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
     
 
 class AnglePlane(FieldQnty):
@@ -362,6 +474,34 @@ class AnglePlane(FieldQnty):
         else:
             return field_setter.AnglePlaneSetter(self, value)
     
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this angle, plane.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this angle, plane.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
+    
 
 class AngleSolid(FieldQnty):
     """
@@ -430,6 +570,34 @@ class AngleSolid(FieldQnty):
             return self
         else:
             return field_setter.AngleSolidSetter(self, value)
+    
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this angle, solid.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this angle, solid.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
     
 
 class AngularAcceleration(FieldQnty):
@@ -500,6 +668,34 @@ class AngularAcceleration(FieldQnty):
         else:
             return field_setter.AngularAccelerationSetter(self, value)
     
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this angular acceleration.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this angular acceleration.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
+    
 
 class AngularMomentum(FieldQnty):
     """
@@ -568,6 +764,34 @@ class AngularMomentum(FieldQnty):
             return self
         else:
             return field_setter.AngularMomentumSetter(self, value)
+    
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this angular momentum.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this angular momentum.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
     
 
 class Area(FieldQnty):
@@ -638,6 +862,34 @@ class Area(FieldQnty):
         else:
             return field_setter.AreaSetter(self, value)
     
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this area.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this area.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
+    
 
 class AreaPerUnitVolume(FieldQnty):
     """
@@ -706,6 +958,34 @@ class AreaPerUnitVolume(FieldQnty):
             return self
         else:
             return field_setter.AreaPerUnitVolumeSetter(self, value)
+    
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this area per unit volume.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this area per unit volume.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
     
 
 class AtomicWeight(FieldQnty):
@@ -776,6 +1056,34 @@ class AtomicWeight(FieldQnty):
         else:
             return field_setter.AtomicWeightSetter(self, value)
     
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this atomic weight.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this atomic weight.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
+    
 
 class Concentration(FieldQnty):
     """
@@ -845,6 +1153,34 @@ class Concentration(FieldQnty):
         else:
             return field_setter.ConcentrationSetter(self, value)
     
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this concentration.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this concentration.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
+    
 
 class Dimensionless(FieldQnty):
     """
@@ -908,6 +1244,34 @@ class Dimensionless(FieldQnty):
             return self
         else:
             return field_setter.DimensionlessSetter(self, value)
+    
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this dimensionless.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this dimensionless.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
     
 
 class DynamicFluidity(FieldQnty):
@@ -978,6 +1342,34 @@ class DynamicFluidity(FieldQnty):
         else:
             return field_setter.DynamicFluiditySetter(self, value)
     
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this dynamic fluidity.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this dynamic fluidity.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
+    
 
 class ElectricCapacitance(FieldQnty):
     """
@@ -1046,6 +1438,34 @@ class ElectricCapacitance(FieldQnty):
             return self
         else:
             return field_setter.ElectricCapacitanceSetter(self, value)
+    
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this electric capacitance.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this electric capacitance.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
     
 
 class ElectricCharge(FieldQnty):
@@ -1116,6 +1536,34 @@ class ElectricCharge(FieldQnty):
         else:
             return field_setter.ElectricChargeSetter(self, value)
     
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this electric charge.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this electric charge.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
+    
 
 class ElectricCurrentIntensity(FieldQnty):
     """
@@ -1184,6 +1632,34 @@ class ElectricCurrentIntensity(FieldQnty):
             return self
         else:
             return field_setter.ElectricCurrentIntensitySetter(self, value)
+    
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this electric current intensity.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this electric current intensity.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
     
 
 class ElectricDipoleMoment(FieldQnty):
@@ -1254,6 +1730,34 @@ class ElectricDipoleMoment(FieldQnty):
         else:
             return field_setter.ElectricDipoleMomentSetter(self, value)
     
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this electric dipole moment.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this electric dipole moment.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
+    
 
 class ElectricFieldStrength(FieldQnty):
     """
@@ -1322,6 +1826,34 @@ class ElectricFieldStrength(FieldQnty):
             return self
         else:
             return field_setter.ElectricFieldStrengthSetter(self, value)
+    
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this electric field strength.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this electric field strength.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
     
 
 class ElectricInductance(FieldQnty):
@@ -1392,6 +1924,34 @@ class ElectricInductance(FieldQnty):
         else:
             return field_setter.ElectricInductanceSetter(self, value)
     
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this electric inductance.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this electric inductance.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
+    
 
 class ElectricPotential(FieldQnty):
     """
@@ -1460,6 +2020,34 @@ class ElectricPotential(FieldQnty):
             return self
         else:
             return field_setter.ElectricPotentialSetter(self, value)
+    
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this electric potential.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this electric potential.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
     
 
 class ElectricResistance(FieldQnty):
@@ -1530,6 +2118,34 @@ class ElectricResistance(FieldQnty):
         else:
             return field_setter.ElectricResistanceSetter(self, value)
     
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this electric resistance.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this electric resistance.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
+    
 
 class ElectricalConductance(FieldQnty):
     """
@@ -1598,6 +2214,34 @@ class ElectricalConductance(FieldQnty):
             return self
         else:
             return field_setter.ElectricalConductanceSetter(self, value)
+    
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this electrical conductance.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this electrical conductance.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
     
 
 class ElectricalPermittivity(FieldQnty):
@@ -1668,6 +2312,34 @@ class ElectricalPermittivity(FieldQnty):
         else:
             return field_setter.ElectricalPermittivitySetter(self, value)
     
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this electrical permittivity.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this electrical permittivity.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
+    
 
 class ElectricalResistivity(FieldQnty):
     """
@@ -1736,6 +2408,34 @@ class ElectricalResistivity(FieldQnty):
             return self
         else:
             return field_setter.ElectricalResistivitySetter(self, value)
+    
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this electrical resistivity.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this electrical resistivity.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
     
 
 class EnergyFlux(FieldQnty):
@@ -1806,6 +2506,34 @@ class EnergyFlux(FieldQnty):
         else:
             return field_setter.EnergyFluxSetter(self, value)
     
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this energy flux.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this energy flux.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
+    
 
 class EnergyHeatWork(FieldQnty):
     """
@@ -1874,6 +2602,34 @@ class EnergyHeatWork(FieldQnty):
             return self
         else:
             return field_setter.EnergyHeatWorkSetter(self, value)
+    
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this energy, heat, work.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this energy, heat, work.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
     
 
 class EnergyPerUnitArea(FieldQnty):
@@ -1944,6 +2700,34 @@ class EnergyPerUnitArea(FieldQnty):
         else:
             return field_setter.EnergyPerUnitAreaSetter(self, value)
     
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this energy per unit area.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this energy per unit area.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
+    
 
 class Force(FieldQnty):
     """
@@ -2012,6 +2796,34 @@ class Force(FieldQnty):
             return self
         else:
             return field_setter.ForceSetter(self, value)
+    
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this force.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this force.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
     
 
 class ForceBody(FieldQnty):
@@ -2082,6 +2894,34 @@ class ForceBody(FieldQnty):
         else:
             return field_setter.ForceBodySetter(self, value)
     
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this force (body).
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this force (body).
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
+    
 
 class ForcePerUnitMass(FieldQnty):
     """
@@ -2150,6 +2990,34 @@ class ForcePerUnitMass(FieldQnty):
             return self
         else:
             return field_setter.ForcePerUnitMassSetter(self, value)
+    
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this force per unit mass.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this force per unit mass.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
     
 
 class FrequencyVoltageRatio(FieldQnty):
@@ -2220,6 +3088,34 @@ class FrequencyVoltageRatio(FieldQnty):
         else:
             return field_setter.FrequencyVoltageRatioSetter(self, value)
     
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this frequency voltage ratio.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this frequency voltage ratio.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
+    
 
 class FuelConsumption(FieldQnty):
     """
@@ -2288,6 +3184,34 @@ class FuelConsumption(FieldQnty):
             return self
         else:
             return field_setter.FuelConsumptionSetter(self, value)
+    
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this fuel consumption.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this fuel consumption.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
     
 
 class HeatOfCombustion(FieldQnty):
@@ -2358,6 +3282,34 @@ class HeatOfCombustion(FieldQnty):
         else:
             return field_setter.HeatOfCombustionSetter(self, value)
     
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this heat of combustion.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this heat of combustion.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
+    
 
 class HeatOfFusion(FieldQnty):
     """
@@ -2426,6 +3378,34 @@ class HeatOfFusion(FieldQnty):
             return self
         else:
             return field_setter.HeatOfFusionSetter(self, value)
+    
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this heat of fusion.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this heat of fusion.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
     
 
 class HeatOfVaporization(FieldQnty):
@@ -2496,6 +3476,34 @@ class HeatOfVaporization(FieldQnty):
         else:
             return field_setter.HeatOfVaporizationSetter(self, value)
     
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this heat of vaporization.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this heat of vaporization.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
+    
 
 class HeatTransferCoefficient(FieldQnty):
     """
@@ -2564,6 +3572,34 @@ class HeatTransferCoefficient(FieldQnty):
             return self
         else:
             return field_setter.HeatTransferCoefficientSetter(self, value)
+    
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this heat transfer coefficient.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this heat transfer coefficient.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
     
 
 class Illuminance(FieldQnty):
@@ -2634,6 +3670,34 @@ class Illuminance(FieldQnty):
         else:
             return field_setter.IlluminanceSetter(self, value)
     
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this illuminance.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this illuminance.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
+    
 
 class KineticEnergyOfTurbulence(FieldQnty):
     """
@@ -2702,6 +3766,34 @@ class KineticEnergyOfTurbulence(FieldQnty):
             return self
         else:
             return field_setter.KineticEnergyOfTurbulenceSetter(self, value)
+    
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this kinetic energy of turbulence.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this kinetic energy of turbulence.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
     
 
 class Length(FieldQnty):
@@ -2772,6 +3864,34 @@ class Length(FieldQnty):
         else:
             return field_setter.LengthSetter(self, value)
     
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this length.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this length.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
+    
 
 class LinearMassDensity(FieldQnty):
     """
@@ -2840,6 +3960,34 @@ class LinearMassDensity(FieldQnty):
             return self
         else:
             return field_setter.LinearMassDensitySetter(self, value)
+    
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this linear mass density.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this linear mass density.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
     
 
 class LinearMomentum(FieldQnty):
@@ -2910,6 +4058,34 @@ class LinearMomentum(FieldQnty):
         else:
             return field_setter.LinearMomentumSetter(self, value)
     
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this linear momentum.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this linear momentum.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
+    
 
 class LuminanceSelf(FieldQnty):
     """
@@ -2978,6 +4154,34 @@ class LuminanceSelf(FieldQnty):
             return self
         else:
             return field_setter.LuminanceSelfSetter(self, value)
+    
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this luminance (self).
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this luminance (self).
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
     
 
 class LuminousFlux(FieldQnty):
@@ -3048,6 +4252,34 @@ class LuminousFlux(FieldQnty):
         else:
             return field_setter.LuminousFluxSetter(self, value)
     
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this luminous flux.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this luminous flux.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
+    
 
 class LuminousIntensity(FieldQnty):
     """
@@ -3116,6 +4348,34 @@ class LuminousIntensity(FieldQnty):
             return self
         else:
             return field_setter.LuminousIntensitySetter(self, value)
+    
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this luminous intensity.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this luminous intensity.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
     
 
 class MagneticField(FieldQnty):
@@ -3186,6 +4446,34 @@ class MagneticField(FieldQnty):
         else:
             return field_setter.MagneticFieldSetter(self, value)
     
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this magnetic field.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this magnetic field.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
+    
 
 class MagneticFlux(FieldQnty):
     """
@@ -3254,6 +4542,34 @@ class MagneticFlux(FieldQnty):
             return self
         else:
             return field_setter.MagneticFluxSetter(self, value)
+    
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this magnetic flux.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this magnetic flux.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
     
 
 class MagneticInductionFieldStrength(FieldQnty):
@@ -3324,6 +4640,34 @@ class MagneticInductionFieldStrength(FieldQnty):
         else:
             return field_setter.MagneticInductionFieldStrengthSetter(self, value)
     
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this magnetic induction field strength.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this magnetic induction field strength.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
+    
 
 class MagneticMoment(FieldQnty):
     """
@@ -3392,6 +4736,34 @@ class MagneticMoment(FieldQnty):
             return self
         else:
             return field_setter.MagneticMomentSetter(self, value)
+    
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this magnetic moment.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this magnetic moment.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
     
 
 class MagneticPermeability(FieldQnty):
@@ -3462,6 +4834,34 @@ class MagneticPermeability(FieldQnty):
         else:
             return field_setter.MagneticPermeabilitySetter(self, value)
     
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this magnetic permeability.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this magnetic permeability.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
+    
 
 class MagnetomotiveForce(FieldQnty):
     """
@@ -3530,6 +4930,34 @@ class MagnetomotiveForce(FieldQnty):
             return self
         else:
             return field_setter.MagnetomotiveForceSetter(self, value)
+    
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this magnetomotive force.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this magnetomotive force.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
     
 
 class Mass(FieldQnty):
@@ -3600,6 +5028,34 @@ class Mass(FieldQnty):
         else:
             return field_setter.MassSetter(self, value)
     
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this mass.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this mass.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
+    
 
 class MassDensity(FieldQnty):
     """
@@ -3668,6 +5124,34 @@ class MassDensity(FieldQnty):
             return self
         else:
             return field_setter.MassDensitySetter(self, value)
+    
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this mass density.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this mass density.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
     
 
 class MassFlowRate(FieldQnty):
@@ -3738,6 +5222,34 @@ class MassFlowRate(FieldQnty):
         else:
             return field_setter.MassFlowRateSetter(self, value)
     
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this mass flow rate.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this mass flow rate.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
+    
 
 class MassFlux(FieldQnty):
     """
@@ -3806,6 +5318,34 @@ class MassFlux(FieldQnty):
             return self
         else:
             return field_setter.MassFluxSetter(self, value)
+    
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this mass flux.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this mass flux.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
     
 
 class MassFractionOfI(FieldQnty):
@@ -3876,6 +5416,34 @@ class MassFractionOfI(FieldQnty):
         else:
             return field_setter.MassFractionOfISetter(self, value)
     
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this mass fraction of "i".
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this mass fraction of "i".
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
+    
 
 class MassTransferCoefficient(FieldQnty):
     """
@@ -3944,6 +5512,34 @@ class MassTransferCoefficient(FieldQnty):
             return self
         else:
             return field_setter.MassTransferCoefficientSetter(self, value)
+    
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this mass transfer coefficient.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this mass transfer coefficient.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
     
 
 class MolalityOfSoluteI(FieldQnty):
@@ -4014,6 +5610,34 @@ class MolalityOfSoluteI(FieldQnty):
         else:
             return field_setter.MolalityOfSoluteISetter(self, value)
     
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this molality of solute "i".
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this molality of solute "i".
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
+    
 
 class MolarConcentrationByMass(FieldQnty):
     """
@@ -4082,6 +5706,34 @@ class MolarConcentrationByMass(FieldQnty):
             return self
         else:
             return field_setter.MolarConcentrationByMassSetter(self, value)
+    
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this molar concentration by mass.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this molar concentration by mass.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
     
 
 class MolarFlowRate(FieldQnty):
@@ -4152,6 +5804,34 @@ class MolarFlowRate(FieldQnty):
         else:
             return field_setter.MolarFlowRateSetter(self, value)
     
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this molar flow rate.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this molar flow rate.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
+    
 
 class MolarFlux(FieldQnty):
     """
@@ -4220,6 +5900,34 @@ class MolarFlux(FieldQnty):
             return self
         else:
             return field_setter.MolarFluxSetter(self, value)
+    
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this molar flux.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this molar flux.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
     
 
 class MolarHeatCapacity(FieldQnty):
@@ -4290,6 +5998,34 @@ class MolarHeatCapacity(FieldQnty):
         else:
             return field_setter.MolarHeatCapacitySetter(self, value)
     
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this molar heat capacity.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this molar heat capacity.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
+    
 
 class MolarityOfI(FieldQnty):
     """
@@ -4358,6 +6094,34 @@ class MolarityOfI(FieldQnty):
             return self
         else:
             return field_setter.MolarityOfISetter(self, value)
+    
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this molarity of "i".
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this molarity of "i".
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
     
 
 class MoleFractionOfI(FieldQnty):
@@ -4428,6 +6192,34 @@ class MoleFractionOfI(FieldQnty):
         else:
             return field_setter.MoleFractionOfISetter(self, value)
     
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this mole fraction of "i".
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this mole fraction of "i".
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
+    
 
 class MomentOfInertia(FieldQnty):
     """
@@ -4496,6 +6288,34 @@ class MomentOfInertia(FieldQnty):
             return self
         else:
             return field_setter.MomentOfInertiaSetter(self, value)
+    
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this moment of inertia.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this moment of inertia.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
     
 
 class MomentumFlowRate(FieldQnty):
@@ -4566,6 +6386,34 @@ class MomentumFlowRate(FieldQnty):
         else:
             return field_setter.MomentumFlowRateSetter(self, value)
     
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this momentum flow rate.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this momentum flow rate.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
+    
 
 class MomentumFlux(FieldQnty):
     """
@@ -4634,6 +6482,34 @@ class MomentumFlux(FieldQnty):
             return self
         else:
             return field_setter.MomentumFluxSetter(self, value)
+    
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this momentum flux.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this momentum flux.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
     
 
 class NormalityOfSolution(FieldQnty):
@@ -4704,6 +6580,34 @@ class NormalityOfSolution(FieldQnty):
         else:
             return field_setter.NormalityOfSolutionSetter(self, value)
     
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this normality of solution.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this normality of solution.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
+    
 
 class ParticleDensity(FieldQnty):
     """
@@ -4772,6 +6676,34 @@ class ParticleDensity(FieldQnty):
             return self
         else:
             return field_setter.ParticleDensitySetter(self, value)
+    
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this particle density.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this particle density.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
     
 
 class Percent(FieldQnty):
@@ -4842,6 +6774,34 @@ class Percent(FieldQnty):
         else:
             return field_setter.PercentSetter(self, value)
     
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this percent.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this percent.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
+    
 
 class Permeability(FieldQnty):
     """
@@ -4910,6 +6870,34 @@ class Permeability(FieldQnty):
             return self
         else:
             return field_setter.PermeabilitySetter(self, value)
+    
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this permeability.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this permeability.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
     
 
 class PhotonEmissionRate(FieldQnty):
@@ -4980,6 +6968,34 @@ class PhotonEmissionRate(FieldQnty):
         else:
             return field_setter.PhotonEmissionRateSetter(self, value)
     
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this photon emission rate.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this photon emission rate.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
+    
 
 class PowerPerUnitMass(FieldQnty):
     """
@@ -5048,6 +7064,34 @@ class PowerPerUnitMass(FieldQnty):
             return self
         else:
             return field_setter.PowerPerUnitMassSetter(self, value)
+    
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this power per unit mass or specific power.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this power per unit mass or specific power.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
     
 
 class PowerPerUnitVolume(FieldQnty):
@@ -5118,6 +7162,34 @@ class PowerPerUnitVolume(FieldQnty):
         else:
             return field_setter.PowerPerUnitVolumeSetter(self, value)
     
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this power per unit volume or power density.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this power per unit volume or power density.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
+    
 
 class PowerThermalDuty(FieldQnty):
     """
@@ -5186,6 +7258,34 @@ class PowerThermalDuty(FieldQnty):
             return self
         else:
             return field_setter.PowerThermalDutySetter(self, value)
+    
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this power, thermal duty.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this power, thermal duty.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
     
 
 class Pressure(FieldQnty):
@@ -5256,6 +7356,34 @@ class Pressure(FieldQnty):
         else:
             return field_setter.PressureSetter(self, value)
     
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this pressure.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this pressure.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
+    
 
 class RadiationDoseEquivalent(FieldQnty):
     """
@@ -5324,6 +7452,34 @@ class RadiationDoseEquivalent(FieldQnty):
             return self
         else:
             return field_setter.RadiationDoseEquivalentSetter(self, value)
+    
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this radiation dose equivalent.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this radiation dose equivalent.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
     
 
 class RadiationExposure(FieldQnty):
@@ -5394,6 +7550,34 @@ class RadiationExposure(FieldQnty):
         else:
             return field_setter.RadiationExposureSetter(self, value)
     
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this radiation exposure.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this radiation exposure.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
+    
 
 class Radioactivity(FieldQnty):
     """
@@ -5462,6 +7646,34 @@ class Radioactivity(FieldQnty):
             return self
         else:
             return field_setter.RadioactivitySetter(self, value)
+    
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this radioactivity.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this radioactivity.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
     
 
 class SecondMomentOfArea(FieldQnty):
@@ -5532,6 +7744,34 @@ class SecondMomentOfArea(FieldQnty):
         else:
             return field_setter.SecondMomentOfAreaSetter(self, value)
     
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this second moment of area.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this second moment of area.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
+    
 
 class SecondRadiationConstantPlanck(FieldQnty):
     """
@@ -5600,6 +7840,34 @@ class SecondRadiationConstantPlanck(FieldQnty):
             return self
         else:
             return field_setter.SecondRadiationConstantPlanckSetter(self, value)
+    
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this second radiation constant (planck).
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this second radiation constant (planck).
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
     
 
 class SpecificEnthalpy(FieldQnty):
@@ -5670,6 +7938,34 @@ class SpecificEnthalpy(FieldQnty):
         else:
             return field_setter.SpecificEnthalpySetter(self, value)
     
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this specific enthalpy.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this specific enthalpy.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
+    
 
 class SpecificGravity(FieldQnty):
     """
@@ -5738,6 +8034,34 @@ class SpecificGravity(FieldQnty):
             return self
         else:
             return field_setter.SpecificGravitySetter(self, value)
+    
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this specific gravity.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this specific gravity.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
     
 
 class SpecificHeatCapacityConstantPressure(FieldQnty):
@@ -5808,6 +8132,34 @@ class SpecificHeatCapacityConstantPressure(FieldQnty):
         else:
             return field_setter.SpecificHeatCapacityConstantPressureSetter(self, value)
     
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this specific heat capacity (constant pressure).
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this specific heat capacity (constant pressure).
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
+    
 
 class SpecificLength(FieldQnty):
     """
@@ -5876,6 +8228,34 @@ class SpecificLength(FieldQnty):
             return self
         else:
             return field_setter.SpecificLengthSetter(self, value)
+    
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this specific length.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this specific length.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
     
 
 class SpecificSurface(FieldQnty):
@@ -5946,6 +8326,34 @@ class SpecificSurface(FieldQnty):
         else:
             return field_setter.SpecificSurfaceSetter(self, value)
     
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this specific surface.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this specific surface.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
+    
 
 class SpecificVolume(FieldQnty):
     """
@@ -6014,6 +8422,34 @@ class SpecificVolume(FieldQnty):
             return self
         else:
             return field_setter.SpecificVolumeSetter(self, value)
+    
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this specific volume.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this specific volume.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
     
 
 class Stress(FieldQnty):
@@ -6084,6 +8520,34 @@ class Stress(FieldQnty):
         else:
             return field_setter.StressSetter(self, value)
     
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this stress.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this stress.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
+    
 
 class SurfaceMassDensity(FieldQnty):
     """
@@ -6152,6 +8616,34 @@ class SurfaceMassDensity(FieldQnty):
             return self
         else:
             return field_setter.SurfaceMassDensitySetter(self, value)
+    
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this surface mass density.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this surface mass density.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
     
 
 class SurfaceTension(FieldQnty):
@@ -6222,6 +8714,34 @@ class SurfaceTension(FieldQnty):
         else:
             return field_setter.SurfaceTensionSetter(self, value)
     
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this surface tension.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this surface tension.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
+    
 
 class Temperature(FieldQnty):
     """
@@ -6290,6 +8810,34 @@ class Temperature(FieldQnty):
             return self
         else:
             return field_setter.TemperatureSetter(self, value)
+    
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this temperature.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this temperature.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
     
 
 class ThermalConductivity(FieldQnty):
@@ -6360,6 +8908,34 @@ class ThermalConductivity(FieldQnty):
         else:
             return field_setter.ThermalConductivitySetter(self, value)
     
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this thermal conductivity.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this thermal conductivity.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
+    
 
 class Time(FieldQnty):
     """
@@ -6428,6 +9004,34 @@ class Time(FieldQnty):
             return self
         else:
             return field_setter.TimeSetter(self, value)
+    
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this time.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this time.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
     
 
 class Torque(FieldQnty):
@@ -6498,6 +9102,34 @@ class Torque(FieldQnty):
         else:
             return field_setter.TorqueSetter(self, value)
     
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this torque.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this torque.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
+    
 
 class TurbulenceEnergyDissipationRate(FieldQnty):
     """
@@ -6566,6 +9198,34 @@ class TurbulenceEnergyDissipationRate(FieldQnty):
             return self
         else:
             return field_setter.TurbulenceEnergyDissipationRateSetter(self, value)
+    
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this turbulence energy dissipation rate.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this turbulence energy dissipation rate.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
     
 
 class VelocityAngular(FieldQnty):
@@ -6636,6 +9296,34 @@ class VelocityAngular(FieldQnty):
         else:
             return field_setter.VelocityAngularSetter(self, value)
     
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this velocity, angular.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this velocity, angular.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
+    
 
 class VelocityLinear(FieldQnty):
     """
@@ -6704,6 +9392,34 @@ class VelocityLinear(FieldQnty):
             return self
         else:
             return field_setter.VelocityLinearSetter(self, value)
+    
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this velocity, linear.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this velocity, linear.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
     
 
 class ViscosityDynamic(FieldQnty):
@@ -6774,6 +9490,34 @@ class ViscosityDynamic(FieldQnty):
         else:
             return field_setter.ViscosityDynamicSetter(self, value)
     
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this viscosity, dynamic.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this viscosity, dynamic.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
+    
 
 class ViscosityKinematic(FieldQnty):
     """
@@ -6842,6 +9586,34 @@ class ViscosityKinematic(FieldQnty):
             return self
         else:
             return field_setter.ViscosityKinematicSetter(self, value)
+    
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this viscosity, kinematic.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this viscosity, kinematic.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
     
 
 class Volume(FieldQnty):
@@ -6912,6 +9684,34 @@ class Volume(FieldQnty):
         else:
             return field_setter.VolumeSetter(self, value)
     
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this volume.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this volume.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
+    
 
 class VolumeFractionOfI(FieldQnty):
     """
@@ -6980,6 +9780,34 @@ class VolumeFractionOfI(FieldQnty):
             return self
         else:
             return field_setter.VolumeFractionOfISetter(self, value)
+    
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this volume fraction of "i".
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this volume fraction of "i".
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
     
 
 class VolumetricCalorificHeatingValue(FieldQnty):
@@ -7050,6 +9878,34 @@ class VolumetricCalorificHeatingValue(FieldQnty):
         else:
             return field_setter.VolumetricCalorificHeatingValueSetter(self, value)
     
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this volumetric calorific (heating) value.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this volumetric calorific (heating) value.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
+    
 
 class VolumetricCoefficientOfExpansion(FieldQnty):
     """
@@ -7118,6 +9974,34 @@ class VolumetricCoefficientOfExpansion(FieldQnty):
             return self
         else:
             return field_setter.VolumetricCoefficientOfExpansionSetter(self, value)
+    
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this volumetric coefficient of expansion.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this volumetric coefficient of expansion.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
     
 
 class VolumetricFlowRate(FieldQnty):
@@ -7188,6 +10072,34 @@ class VolumetricFlowRate(FieldQnty):
         else:
             return field_setter.VolumetricFlowRateSetter(self, value)
     
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this volumetric flow rate.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this volumetric flow rate.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
+    
 
 class VolumetricFlux(FieldQnty):
     """
@@ -7256,6 +10168,34 @@ class VolumetricFlux(FieldQnty):
             return self
         else:
             return field_setter.VolumetricFluxSetter(self, value)
+    
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this volumetric flux.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this volumetric flux.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
     
 
 class VolumetricMassFlowRate(FieldQnty):
@@ -7326,6 +10266,34 @@ class VolumetricMassFlowRate(FieldQnty):
         else:
             return field_setter.VolumetricMassFlowRateSetter(self, value)
     
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this volumetric mass flow rate.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this volumetric mass flow rate.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
+    
 
 class Wavenumber(FieldQnty):
     """
@@ -7394,5 +10362,33 @@ class Wavenumber(FieldQnty):
             return self
         else:
             return field_setter.WavenumberSetter(self, value)
+    
+    @property
+    def value(self) -> float | None:
+        """
+        Get the numeric value of this wavenumber.
+        
+        Returns:
+            The numeric value if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.value  # Returns 100.0
+        """
+        return self.quantity.value if self.quantity is not None else None
+
+    @property
+    def unit(self) -> str | None:
+        """
+        Get the unit symbol of this wavenumber.
+        
+        Returns:
+            The unit symbol if known, None if unknown
+        
+        Example:
+            >>> length = Length(100, "mm", "beam_length")
+            >>> length.unit  # Returns "mm"
+        """
+        return self.quantity.unit.symbol if self.quantity is not None else None
     
 
