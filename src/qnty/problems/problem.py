@@ -714,6 +714,20 @@ class Problem(ValidationMixin):
 
         super().__setattr__(name, value)
 
+    def __getattr__(self, name: str) -> Any:
+        """Dynamic attribute access for composed variables and other attributes."""
+        # Avoid recursion by checking the dict directly instead of using hasattr
+        try:
+            variables = object.__getattribute__(self, "variables")
+            if name in variables:
+                return variables[name]
+        except AttributeError:
+            # variables attribute doesn't exist yet (during initialization)
+            pass
+        
+        # If not found, raise AttributeError
+        raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
+
     def __getitem__(self, key: str):
         """Allow dict-like access to variables."""
         return self.get_variable(key)
