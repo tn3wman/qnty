@@ -143,6 +143,7 @@ def test_composed_problem():
     print(problem.s.P_max)
 
     print(problem.I_i)
+    print(problem.I_i.value)
     print(problem.I_e)
     print(problem.t_i)
     print(problem.t_e)

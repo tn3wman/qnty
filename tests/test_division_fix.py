@@ -122,9 +122,10 @@ class TestDivisionByOne:
         # Now evaluate the full expression
         result = result_expr.evaluate(context)
         # Check that the division was performed (not just returning the energy)
-        # Result: 500 joule / (100 newton * 1 meter) = 5.0 meter (actual behavior)
+        # Result: 500 joule / (100 newton * 1 meter) = 5.0 (dimensionless)
+        # Energy and (Force × Length) have the same dimension, so result is dimensionless
         assert result.value == pytest.approx(5.0)
-        assert result._dimension_sig == 2  # Result is Length dimension
+        assert result._dimension_sig == 1  # Result is dimensionless
 
     def test_multiple_variable_types_with_one(self):
         """Test various variable types divided by quantities with value 1.0."""

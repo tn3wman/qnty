@@ -304,32 +304,37 @@ class BinaryOperation(Expression):
         right_value = right_val.value
         
         # ENHANCED FAST PATHS: Check most common optimizations first
+        # BUT ONLY when they don't affect dimensional analysis!
+        
         # Identity optimizations (1.0 multiplication) - most frequent case
-        if right_value == 1.0:
+        # Only safe when the 1.0 value is dimensionless
+        if right_value == 1.0 and right_val._dimension_sig == 1:
             return left_val
-        elif left_value == 1.0:
+        elif left_value == 1.0 and left_val._dimension_sig == 1:
             return right_val
 
         # Zero optimizations - second most common
-        elif right_value == 0.0:
-            return Quantity(0.0, right_val.unit)
-        elif left_value == 0.0:
-            return Quantity(0.0, left_val.unit)
+        # Zero multiplication always gives zero, but we need proper units via full multiplication
+        elif right_value == 0.0 or left_value == 0.0:
+            # Use full multiplication to get correct dimensional result for zero
+            return left_val * right_val
 
         # Additional fast paths for common values
-        elif right_value == -1.0:
+        # Only safe when the scalar value is dimensionless
+        elif right_value == -1.0 and right_val._dimension_sig == 1:
             return Quantity(-left_value, left_val.unit)
-        elif left_value == -1.0:
+        elif left_value == -1.0 and left_val._dimension_sig == 1:
             return Quantity(-right_value, right_val.unit)
         
         # ADDITIONAL COMMON CASES: Powers of 2 and 0.5 (very common in engineering)
-        elif right_value == 2.0:
+        # Only safe when the scalar value is dimensionless
+        elif right_value == 2.0 and right_val._dimension_sig == 1:
             return Quantity(left_value * 2.0, left_val.unit)
-        elif left_value == 2.0:
+        elif left_value == 2.0 and left_val._dimension_sig == 1:
             return Quantity(right_value * 2.0, right_val.unit)
-        elif right_value == 0.5:
+        elif right_value == 0.5 and right_val._dimension_sig == 1:
             return Quantity(left_value * 0.5, left_val.unit)
-        elif left_value == 0.5:
+        elif left_value == 0.5 and left_val._dimension_sig == 1:
             return Quantity(right_value * 0.5, right_val.unit)
 
         # OPTIMIZED REGULAR CASE: Use the enhanced multiplication from base_qnty
