@@ -38,8 +38,13 @@ def generate_quantities_pyi(parsed_data: dict, dimension_mapping: dict) -> str:
         "Auto-generated from unit_data.json.",
         '"""',
         "",
+        "from typing import TYPE_CHECKING, Self, overload",
+        "",
+        "if TYPE_CHECKING:",
+        "    from . import field_setter",
+        "",
         "from ..dimensions import field_dims as dim",
-        "from . import field_setter as ts",
+        "from .base_qnty import TypeSafeSetter",
         "from .field_qnty import FieldQnty",
         "",
     ]
@@ -67,7 +72,7 @@ def generate_quantities_pyi(parsed_data: dict, dimension_mapping: dict) -> str:
         # Class attributes
         lines.append("")
         lines.append("    __slots__ = ()")
-        lines.append(f"    _setter_class = ts.{setter_class_name}")
+        lines.append(f"    _setter_class = field_setter.{setter_class_name}")
         lines.append(f"    _dimension = dim.{dimension_constant}")
         lines.append("")
 
@@ -105,8 +110,11 @@ def generate_quantities(parsed_data: dict, dimension_mapping: dict) -> str:
         "DO NOT EDIT MANUALLY - changes will be overwritten.",
         '"""',
         "",
+        "from typing import Self",
+        "",
         "from ..dimensions import field_dims as dim",
-        "from . import field_setter as ts",
+        "from . import field_setter",
+        "from .base_qnty import TypeSafeSetter",
         "from .field_qnty import FieldQnty",
         "",
     ]
@@ -130,7 +138,7 @@ def generate_quantities(parsed_data: dict, dimension_mapping: dict) -> str:
         # Class attributes
         lines.append("")
         lines.append("    __slots__ = ()")
-        lines.append(f"    _setter_class = ts.{setter_class_name}")
+        lines.append(f"    _setter_class = field_setter.{setter_class_name}")
         lines.append(f"    _dimension = dim.{dimension_constant}")
         lines.append("")
 

@@ -35,6 +35,12 @@ class ComposedProblem(Problem):
 
     # Compose the simple problem
     sub = create_simple_problem()
+    
+    # Type hints for composed variables (for IDE support)
+    sub_P: Pressure
+    sub_D: Length
+    sub_E: Dimensionless
+    sub_P_out: Pressure
 
     # Try to modify composed variables - this should preserve types
     sub.P.set(150).psi  # Should work with Pressure type
@@ -110,6 +116,14 @@ def test_nested_composition_preserves_types():
 
         # Compose the already-composed problem
         composed = ComposedProblem()
+        
+        # Type hints for doubly-composed variables (for IDE support)
+        composed_sub_P: Pressure
+        composed_sub_D: Length
+        composed_sub_E: Dimensionless
+        composed_sub_P_out: Pressure
+        composed_factor: Dimensionless
+        composed_P_final: Pressure
 
         # Access deeply nested variables
         composed.sub.P.set(250).psi  # Should still work
@@ -196,13 +210,13 @@ def test_error_on_wrong_unit_type():
     # These should raise AttributeError because the units don't match the variable type
     # Test on the setters (where unit properties are accessible)
     with pytest.raises(AttributeError):
-        problem.sub_P.set(100).meter  # Pressure setter doesn't have meter
+        problem.sub_P.set(100).meter  # type: ignore[attr-defined] # Pressure setter doesn't have meter
 
     with pytest.raises(AttributeError):
-        problem.sub_D.set(1.0).psi  # Length setter doesn't have psi
+        problem.sub_D.set(1.0).psi  # type: ignore[attr-defined] # Length setter doesn't have psi
 
     with pytest.raises(AttributeError):
-        problem.sub_E.set(0.5).inch  # Dimensionless setter doesn't have inch
+        problem.sub_E.set(0.5).inch  # type: ignore[attr-defined] # Dimensionless setter doesn't have inch
 
 
 if __name__ == "__main__":

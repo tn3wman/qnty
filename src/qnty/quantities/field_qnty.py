@@ -738,7 +738,7 @@ class ExpressionMixin:
                 continue
 
         # Strategy 2: Look for Equation objects in scope (created with .equals())
-        frame = ScopeDiscoveryService._find_user_frame(getattr(ScopeDiscoveryService, '_get_current_frame', lambda: None)())  # type: ignore[misc]
+        frame = ScopeDiscoveryService._get_cached_user_frame()
         if frame:
             for obj in list(frame.f_locals.values()) + list(frame.f_globals.values()):
                 if isinstance(obj, Equation):
@@ -775,8 +775,20 @@ class SetterCompatibilityMixin:
         if not hasattr(self, "_setter_class"):
             self._setter_class: type | None = None
 
-    def set(self, value: float) -> TypeSafeSetter:
+    def set(self, value: float, unit: str | None = None) -> 'Self | TypeSafeSetter':
         """Create setter object for fluent API compatibility."""
+        if unit is not None:
+            # Handle direct unit setting using the specialized setter
+            if hasattr(self, "_setter_class") and self._setter_class:
+                setter = self._setter_class(self, value)
+                if hasattr(setter, unit):
+                    getattr(setter, unit)
+                    return self
+                else:
+                    raise ValueError(f"Unknown unit: {unit}")
+            else:
+                raise ValueError("Unit parameter not supported for this variable type")
+        
         if hasattr(self, "_setter_class") and self._setter_class:
             return self._setter_class(self, value)  # Correct parameter order
         else:

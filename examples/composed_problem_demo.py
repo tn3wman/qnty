@@ -1,6 +1,7 @@
 from qnty import Dimensionless, Length, Pressure, Problem, cond_expr, min_expr
 from qnty.problems.rules import add_rule
 
+
 # Define a composed problem that includes another problem as a sub-component
 class StraightPipeInternal(Problem):
     name = "Pressure Design of a Straight Pipe Under Internal Pressure"
@@ -60,8 +61,10 @@ class StraightPipeInternal(Problem):
         severity="WARNING",
     )
 
+
 def create_straight_pipe_internal():
     return StraightPipeInternal()
+
 
 class PipeBends(Problem):
     s = create_straight_pipe_internal()
@@ -80,28 +83,21 @@ class PipeBends(Problem):
     P_max = Pressure(1.0, "psi", "Maximum Allowable Pressure", is_known=False)
 
     # Equations
-    I_i_eqn = I_i.equals((4*(R_1/s.D) - 1)/(4*(R_1/s.D) - 2))
-    I_e_eqn = I_e.equals((4*(R_1/s.D) + 1)/(4*(R_1/s.D) + 2))
+    I_i_eqn = I_i.equals((4 * (R_1 / s.D) - 1) / (4 * (R_1 / s.D) - 2))
+    I_e_eqn = I_e.equals((4 * (R_1 / s.D) + 1) / (4 * (R_1 / s.D) + 2))
 
-    t_i_eqn = t_i.equals(
-        (s.P * s.D) / (2 * ((s.S * s.E * s.W/I_i) + s.P * s.Y))
-    )
-    t_e_eqn = t_e.equals(
-        (s.P * s.D) / (2 * ((s.S * s.E * s.W/I_e) + s.P * s.Y))
-    )
+    t_i_eqn = t_i.equals((s.P * s.D) / (2 * ((s.S * s.E * s.W / I_i) + s.P * s.Y)))
+    t_e_eqn = t_e.equals((s.P * s.D) / (2 * ((s.S * s.E * s.W / I_e) + s.P * s.Y)))
 
     t_m_i_eqn = t_m_i.equals(t_i + s.c)
     t_m_e_eqn = t_m_e.equals(t_e + s.c)
 
-    P_max_i_eqn = P_max_i.equals(
-        2*s.E*s.S*s.W*s.T/(I_i*(s.D - 2*s.Y*s.T))
-    )
+    P_max_i_eqn = P_max_i.equals(2 * s.E * s.S * s.W * s.T / (I_i * (s.D - 2 * s.Y * s.T)))
 
-    P_max_e_eqn = P_max_e.equals(
-        2*s.E*s.S*s.W*s.T/(I_e*(s.D - 2*s.Y*s.T))
-    )
+    P_max_e_eqn = P_max_e.equals(2 * s.E * s.S * s.W * s.T / (I_e * (s.D - 2 * s.Y * s.T)))
 
     P_max_eqn = P_max.equals(min_expr(P_max_i, P_max_e, s.P_max))
+
 
 def create_pipe_bends():
     return PipeBends()
@@ -125,7 +121,7 @@ def test_composed_problem():
     problem.solve()
 
     print(problem.P_max)
-    
+
 
 if __name__ == "__main__":
     test_composed_problem()

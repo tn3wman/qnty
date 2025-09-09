@@ -31,25 +31,22 @@ def test_basic_re_solving():
     
     # First solve
     problem.solve()
-    first_result = problem.result.quantity.value
     
     # Verify first result
     # result = P * factor = 100 * 2.0 = 200 psi
-    assert first_result == pytest.approx(200.0)
+    assert problem.result.quantity is not None
+    assert problem.result.quantity.value == pytest.approx(200.0)
     assert problem.result.quantity.unit.symbol == "psi"
     
     # Change P and re-solve
     problem.P.set(150, "psi")  # Using the fixed set method
     problem.solve()
-    second_result = problem.result.quantity.value
     
     # Verify second result
     # result = P * factor = 150 * 2.0 = 300 psi  
-    assert second_result == pytest.approx(300.0)
+    assert problem.result.quantity is not None
+    assert problem.result.quantity.value == pytest.approx(300.0)
     assert problem.result.quantity.unit.symbol == "psi"
-    
-    # Verify the results are different
-    assert second_result != first_result
 
 
 def test_unit_preservation_in_re_solving():
@@ -58,6 +55,7 @@ def test_unit_preservation_in_re_solving():
     
     # First solve - should give result in psi
     problem.solve()
+    assert problem.result.quantity is not None
     assert problem.result.quantity.unit.symbol == "psi"
     
     # Change input and re-solve
@@ -65,6 +63,7 @@ def test_unit_preservation_in_re_solving():
     problem.solve()
     
     # Unit should still be psi
+    assert problem.result.quantity is not None
     assert problem.result.quantity.unit.symbol == "psi"
     assert problem.result.quantity.value == pytest.approx(400.0)  # 200 * 2.0
 
@@ -75,7 +74,6 @@ def test_multiple_variable_changes():
     
     # Initial solve
     problem.solve()
-    initial_result = problem.result.quantity.value  # 100 * 2.0 = 200
     
     # Change both P and factor
     problem.P.set(50, "psi")
@@ -83,6 +81,7 @@ def test_multiple_variable_changes():
     problem.solve()
     
     # result = 50 * 3.0 = 150 psi
+    assert problem.result.quantity is not None
     assert problem.result.quantity.value == pytest.approx(150.0)
     assert problem.result.quantity.unit.symbol == "psi"
 
@@ -93,16 +92,14 @@ def test_fluent_api_re_solving():
     
     # First solve
     problem.solve()
-    first_result = problem.result.quantity.value
     
     # Change using fluent API
     problem.P.set(120).psi
     problem.solve()
     
-    second_result = problem.result.quantity.value
     # result = 120 * 2.0 = 240 psi
-    assert second_result == pytest.approx(240.0)
-    assert second_result != first_result
+    assert problem.result.quantity is not None
+    assert problem.result.quantity.value == pytest.approx(240.0)
 
 
 def test_unit_conversion_in_re_solving():
@@ -111,6 +108,7 @@ def test_unit_conversion_in_re_solving():
     
     # First solve with original units
     problem.solve()
+    assert problem.result.quantity is not None
     assert problem.result.quantity.unit.symbol == "psi"
     
     # Change D using different units
@@ -119,6 +117,7 @@ def test_unit_conversion_in_re_solving():
     
     # Result should be the same since D doesn't affect the equation
     # and the result should still be in psi
+    assert problem.result.quantity is not None
     assert problem.result.quantity.unit.symbol == "psi"
 
 
@@ -173,6 +172,7 @@ def test_composed_problem_re_solving():
     # Check initial calculation:
     # sub.result = sub.P * sub.factor = 100 * 2.0 = 200 psi
     # final_result = sub.result * multiplier = 200 * 1.5 = 300 psi
+    assert problem.final_result.quantity is not None
     assert problem.final_result.quantity.value == pytest.approx(300.0)
     assert problem.final_result.quantity.unit.symbol == "psi"
     
@@ -183,6 +183,7 @@ def test_composed_problem_re_solving():
     # New calculation:
     # sub.result = 200 * 2.0 = 400 psi
     # final_result = 400 * 1.5 = 600 psi
+    assert problem.final_result.quantity is not None
     assert problem.final_result.quantity.value == pytest.approx(600.0)
     assert problem.final_result.quantity.unit.symbol == "psi"
 
@@ -192,12 +193,11 @@ def test_set_method_with_unit_parameter():
     problem = SimpleProblemForReSolving()
     
     # Test set with unit parameter
-    original_value = problem.P.quantity.value
     problem.P.set(150, "psi")
-    new_value = problem.P.quantity.value
     
-    assert new_value != original_value
-    assert new_value == pytest.approx(150.0)
+    # Verify the new value was set correctly
+    assert problem.P.quantity is not None
+    assert problem.P.quantity.value == pytest.approx(150.0)
     assert problem.P.quantity.unit.symbol == "psi"
 
 

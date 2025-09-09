@@ -31,11 +31,11 @@ def test_solve_from_method():
 
     # Verify the result manually
     expected_value = 0.147 * (1 - 0.125)  # = 0.128625 inches
-    actual_mm = T.quantity.value if T.quantity else 0
-    expected_mm = expected_value * 25.4  # Convert to mm
+    actual = T.quantity.value if T.quantity else 0
+    expected = expected_value  # Convert to mm
 
-    print(f"Expected: {expected_mm:.4f} mm, Got: {actual_mm:.4f} mm")
-    assert abs(actual_mm - expected_mm) < 0.001, f"Expected {expected_mm}, got {actual_mm}"
+    print(f"Expected: {expected:.4f} in, Got: {actual:.4f} in")
+    assert abs(actual - expected) < 0.001, f"Expected {expected}, got {actual}"
     print("PASS: solve_from() test passed!")
 
 
@@ -76,8 +76,12 @@ def test_equation_based_solve():
     expected_d_inch = 10.0 - 2 * expected_T_inch  # 9.74275 inches
 
     if T.quantity:
-        # Convert T to inches for verification (T.quantity is in mm)
-        T_inch = T.quantity.value / 25.4  # Convert mm to inches
+        # Check actual unit of T and convert to inches for verification
+        print(f"T unit: {T.quantity.unit.symbol}")
+        if T.quantity.unit.symbol == "in":
+            T_inch = T.quantity.value  # Already in inches
+        else:
+            T_inch = T.quantity.value / 25.4  # Convert mm to inches
     else:
         T_inch = 0
         

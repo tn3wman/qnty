@@ -152,27 +152,48 @@ def generate_converter_methods(class_name: str, stub_only: bool = False) -> list
 
 def generate_set_method(setter_class_name: str, display_name: str, stub_only: bool = False) -> list[str]:
     """Generate set method with comprehensive documentation."""
-    lines = [
-        f"    def set(self, value: float, unit: str | None = None) -> ts.{setter_class_name}:",
-        '        """',
-        f"        Create a setter for this {display_name} quantity.",
-        "        ",
-        "        Args:",
-        "            value: The numeric value to set",
-        "            unit: Optional unit string (for compatibility with base class)",
-        "        ",
-        "        Returns:",
-        f"            {setter_class_name}: A setter with unit properties like .meters, .inches, etc.",
-        "        ",
-        "        Example:",
-        '            >>> length = Length("beam_length")',
-        "            >>> length.set(100).millimeters  # Sets to 100 mm",
-        '        """',
-    ]
+    if stub_only:
+        lines = [
+            "    @overload",
+            f"    def set(self, value: float, unit: str) -> Self: ...",
+            "    @overload", 
+            f"    def set(self, value: float, unit: None = None) -> field_setter.{setter_class_name}: ...",
+            f"    def set(self, value: float, unit: str | None = None) -> Self | field_setter.{setter_class_name}:",
+        ]
+    else:
+        lines = [
+            f"    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.{setter_class_name}':",
+            '        """',
+            f"        Create a setter for this {display_name} quantity.",
+            "        ",
+            "        Args:",
+            "            value: The numeric value to set",
+            "            unit: Optional unit string (for compatibility with base class)",
+            "        ",
+            "        Returns:",
+            f"            {setter_class_name}: A setter with unit properties like .meters, .inches, etc.",
+            "        ",
+            "        Example:",
+            '            >>> length = Length("beam_length")',
+            "            >>> length.set(100).millimeters  # Sets to 100 mm",
+            '        """',
+        ]
 
     if stub_only:
         lines.append("        ...")
     else:
-        lines.append(f"        return ts.{setter_class_name}(self, value)")
+        lines.extend([
+            "        if unit is not None:",
+            "            # Direct setting with unit",
+            f"            setter = field_setter.{setter_class_name}(self, value)",
+            "            # Get the unit property and call it to set the value",
+            "            if hasattr(setter, unit):",
+            "                getattr(setter, unit)",
+            "            else:",
+            "                raise ValueError(f\"Unknown unit: {unit}\")",
+            "            return self",
+            "        else:",
+            f"            return field_setter.{setter_class_name}(self, value)"
+        ])
 
     return lines
