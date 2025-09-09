@@ -620,6 +620,12 @@ class ExpressionMixin:
 
     def __gt__(self, other) -> Expression:
         return self.gt(other)
+    
+    def __eq__(self, other) -> Expression:  # type: ignore[override]
+        return self.eq(other)
+    
+    def __ne__(self, other) -> Expression:  # type: ignore[override]
+        return self.ne(other)
 
     def eq(self, other) -> Expression:
         """Create equality comparison expression."""
