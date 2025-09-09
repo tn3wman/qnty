@@ -11,7 +11,7 @@ This script:
 
 Usage:
     python release.py --patch    # Increment patch version (0.0.1 -> 0.0.2)
-    python release.py --minor    # Increment minor version (0.0.1 -> 0.1.0) 
+    python release.py --minor    # Increment minor version (0.0.1 -> 0.1.0)
     python release.py --major    # Increment major version (0.0.1 -> 1.0.0)
     python release.py           # Interactive selection (IDE mode)
 """
