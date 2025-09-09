@@ -6,7 +6,7 @@ Tests that comparison operations return proper boolean values (True/False)
 instead of numeric values (1.0/0.0).
 """
 
-import pytest
+from typing import cast
 
 from qnty import Length, Pressure, Temperature
 from qnty.quantities.base_qnty import BooleanQuantity
@@ -30,10 +30,11 @@ class TestBooleanComparisons:
             pressure1 != pressure2,  # Not equal
         ]
         
-        context = {pressure1.name: pressure1, pressure2.name: pressure2}
+        context: dict[str, Pressure] = {pressure1.name: pressure1, pressure2.name: pressure2}
         
         for comparison in comparisons:
-            result = comparison.evaluate(context)
+            # Type ignore for the evaluate call due to dict variance
+            result = comparison.evaluate(context)  # type: ignore[arg-type]
             assert isinstance(result, BooleanQuantity)
             assert isinstance(result.boolean_value, bool)
     
@@ -52,10 +53,11 @@ class TestBooleanComparisons:
             length1.ne(length2),   # Not equal
         ]
         
-        context = {length1.name: length1, length2.name: length2}
+        context: dict[str, Length] = {length1.name: length1, length2.name: length2}
         
         for comparison in comparisons:
-            result = comparison.evaluate(context)
+            # Type ignore for the evaluate call due to dict variance
+            result = comparison.evaluate(context)  # type: ignore[arg-type]
             assert isinstance(result, BooleanQuantity)
     
     def test_boolean_comparison_display(self):
@@ -63,18 +65,18 @@ class TestBooleanComparisons:
         temp1 = Temperature(273.15, "K", "T1")  # 0°C
         temp2 = Temperature(373.15, "K", "T2")  # 100°C
         
-        context = {temp1.name: temp1, temp2.name: temp2}
+        context: dict[str, Temperature] = {temp1.name: temp1, temp2.name: temp2}
         
         # True comparison
         true_comparison = temp1 < temp2
-        true_result = true_comparison.evaluate(context)
+        true_result = true_comparison.evaluate(context)  # type: ignore[arg-type]
         assert str(true_result) == "True"
         assert repr(true_result) == "BooleanQuantity(True)"
         assert bool(true_result) is True
         
         # False comparison
         false_comparison = temp1 > temp2
-        false_result = false_comparison.evaluate(context)
+        false_result = false_comparison.evaluate(context)  # type: ignore[arg-type]
         assert str(false_result) == "False"
         assert repr(false_result) == "BooleanQuantity(False)"
         assert bool(false_result) is False
@@ -85,20 +87,20 @@ class TestBooleanComparisons:
         length_cm = Length(100, "centimeter", "L_cm")  # Equal to 1 meter
         length_mm = Length(1500, "millimeter", "L_mm")  # 1.5 meters
         
-        context = {
+        context: dict[str, Length] = {
             length_m.name: length_m,
-            length_cm.name: length_cm, 
+            length_cm.name: length_cm,
             length_mm.name: length_mm
         }
         
         # Equal values in different units
-        equal_result = (length_m == length_cm).evaluate(context)
+        equal_result = (length_m == length_cm).evaluate(context)  # type: ignore[arg-type]
         assert isinstance(equal_result, BooleanQuantity)
         assert equal_result.boolean_value is True
         assert str(equal_result) == "True"
         
         # Less than with unit conversion
-        less_result = (length_m < length_mm).evaluate(context)
+        less_result = (length_m < length_mm).evaluate(context)  # type: ignore[arg-type]
         assert isinstance(less_result, BooleanQuantity)
         assert less_result.boolean_value is True
         assert str(less_result) == "True"
@@ -108,9 +110,9 @@ class TestBooleanComparisons:
         pressure1 = Pressure(50, "kilopascal", "P1")
         pressure2 = Pressure(100, "kilopascal", "P2")
         
-        context = {pressure1.name: pressure1, pressure2.name: pressure2}
+        context: dict[str, Pressure] = {pressure1.name: pressure1, pressure2.name: pressure2}
         
-        result = (pressure1 < pressure2).evaluate(context)
+        result = (pressure1 < pressure2).evaluate(context)  # type: ignore[arg-type]
         
         # Should still be usable as a numeric value for compatibility
         assert result.value == 1.0  # True -> 1.0
@@ -121,7 +123,7 @@ class TestBooleanComparisons:
         assert bool(result) is True
         
         # False case
-        false_result = (pressure1 > pressure2).evaluate(context)
+        false_result = (pressure1 > pressure2).evaluate(context)  # type: ignore[arg-type]
         assert false_result.value == 0.0  # False -> 0.0
         assert str(false_result) == "False"
         assert bool(false_result) is False
@@ -151,7 +153,7 @@ class TestComparisonBehaviorChange:
         pressure1 = Pressure(100, "pascal", "P1")
         pressure2 = Pressure(200, "pascal", "P2")
         
-        context = {pressure1.name: pressure1, pressure2.name: pressure2}
+        context: dict[str, Pressure] = {pressure1.name: pressure1, pressure2.name: pressure2}
         
         # All these should return BooleanQuantity with True/False display
         test_cases = [
@@ -164,7 +166,8 @@ class TestComparisonBehaviorChange:
         ]
         
         for comparison_expr, expected_bool in test_cases:
-            result = comparison_expr.evaluate(context)
+            result = comparison_expr.evaluate(context)  # type: ignore[arg-type]
+            result = cast(BooleanQuantity, result)  # We know this returns BooleanQuantity
             
             # New behavior: displays as True/False
             assert str(result) == str(expected_bool)

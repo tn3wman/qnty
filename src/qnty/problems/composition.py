@@ -186,6 +186,8 @@ class ConfigurableVariable:
                 return self._variable._arithmetic_mode
             # Otherwise default to 'expression'
             return 'expression'
+        
+        
         return getattr(self._variable, name)
 
     # Delegate arithmetic operations to the wrapped variable
@@ -233,10 +235,10 @@ class ConfigurableVariable:
     def __ge__(self, other):
         return self._variable.__ge__(other)
 
-    def __eq__(self, other):
+    def __eq__(self, other):  # type: ignore[override]
         return self._variable.__eq__(other)
 
-    def __ne__(self, other):
+    def __ne__(self, other):  # type: ignore[override]
         return self._variable.__ne__(other)
 
     def __setattr__(self, name, value):
@@ -256,6 +258,30 @@ class ConfigurableVariable:
             return TrackingSetterWrapper(original_setter, self._proxy, self._original_symbol, self._variable)
         else:
             return original_setter
+
+    def update(self, value=None, unit=None, quantity=None, is_known=None):
+        """Override update method to track configuration changes."""
+        result = self._variable.update(value, unit, quantity, is_known)
+        if self._proxy and self._original_symbol:
+            # Track this configuration change
+            self._proxy.track_configuration(self._original_symbol, self._variable.quantity, self._variable.is_known)
+        return result
+
+    def mark_known(self):
+        """Override mark_known to track configuration changes."""
+        result = self._variable.mark_known()
+        if self._proxy and self._original_symbol:
+            # Track this configuration change
+            self._proxy.track_configuration(self._original_symbol, self._variable.quantity, self._variable.is_known)
+        return result
+
+    def mark_unknown(self):
+        """Override mark_unknown to track configuration changes."""
+        result = self._variable.mark_unknown()
+        if self._proxy and self._original_symbol:
+            # Track this configuration change
+            self._proxy.track_configuration(self._original_symbol, self._variable.quantity, self._variable.is_known)
+        return result
 
 
 class TrackingSetterWrapper:
@@ -305,30 +331,6 @@ class TrackingSetterWrapper:
                 self._variable.quantity, 
                 self._variable.is_known
             )
-        return result
-
-    def update(self, value=None, unit=None, quantity=None, is_known=None):
-        """Override update method to track configuration changes."""
-        result = self._variable.update(value, unit, quantity, is_known)
-        if self._proxy and self._original_symbol:
-            # Track this configuration change
-            self._proxy.track_configuration(self._original_symbol, self._variable.quantity, self._variable.is_known)
-        return result
-
-    def mark_known(self):
-        """Override mark_known to track configuration changes."""
-        result = self._variable.mark_known()
-        if self._proxy and self._original_symbol:
-            # Track this configuration change
-            self._proxy.track_configuration(self._original_symbol, self._variable.quantity, self._variable.is_known)
-        return result
-
-    def mark_unknown(self):
-        """Override mark_unknown to track configuration changes."""
-        result = self._variable.mark_unknown()
-        if self._proxy and self._original_symbol:
-            # Track this configuration change
-            self._proxy.track_configuration(self._original_symbol, self._variable.quantity, self._variable.is_known)
         return result
 
 
