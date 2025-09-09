@@ -673,5 +673,43 @@ class Quantity:
         return UnitConversions.to(self, target_unit)
 
 
+class BooleanQuantity(Quantity):
+    """A quantity that represents a boolean value but maintains Quantity compatibility.
+    
+    This class is used for comparison operations that need to return boolean results
+    while maintaining the Expression interface requirement of returning Quantity objects.
+    """
+    
+    __slots__ = ("_boolean_value",)
+    
+    def __init__(self, boolean_value: bool):
+        """Initialize with a boolean value."""
+        # Store the actual boolean value
+        self._boolean_value = boolean_value
+        
+        # Initialize parent with numeric representation
+        super().__init__(
+            1.0 if boolean_value else 0.0,
+            DimensionlessUnits.dimensionless
+        )
+    
+    def __str__(self) -> str:
+        """Display as True/False instead of 1.0/0.0."""
+        return str(self._boolean_value)
+    
+    def __repr__(self) -> str:
+        """Display as BooleanQuantity(True/False)."""
+        return f"BooleanQuantity({self._boolean_value})"
+    
+    def __bool__(self) -> bool:
+        """Return the actual boolean value."""
+        return self._boolean_value
+    
+    @property
+    def boolean_value(self) -> bool:
+        """Access the boolean value directly."""
+        return self._boolean_value
+
+
 # Initialize cache manager at module load
 _cache_manager.initialize_common_operations()

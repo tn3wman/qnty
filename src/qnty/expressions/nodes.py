@@ -437,7 +437,10 @@ class BinaryOperation(Expression):
 
         # Perform comparison using optimized dispatch
         result = self._perform_comparison(left_val.value, right_val.value)
-        return Quantity(1.0 if result else 0.0, DimensionlessUnits.dimensionless)
+        
+        # Import BooleanQuantity locally to avoid circular imports
+        from ..quantities.base_qnty import BooleanQuantity
+        return BooleanQuantity(result)
 
     def _normalize_comparison_units(self, left_val: "Quantity", right_val: "Quantity") -> tuple["Quantity", "Quantity"]:
         """Normalize units for comparison operations."""
