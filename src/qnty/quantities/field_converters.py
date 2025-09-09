@@ -13,8 +13,8 @@ from typing import TYPE_CHECKING, Final
 if TYPE_CHECKING:
     from ..quantities.field_qnty import FieldQnty
 
-from ..units import field_units
 from .base_qnty import Quantity
+from ..units import field_units
 
 # ===== BASE CONVERTER CLASSES =====
 
@@ -33,7 +33,10 @@ class UnitConverter:
             units_class = getattr(field_units, units_class_name, None)
             if units_class and hasattr(units_class, unit_name):
                 return getattr(units_class, unit_name)
-        raise ValueError(f'Unknown unit: {unit_name} for {self.variable.__class__.__name__}')
+        # Raise error with suggestions
+        from ..utils.unit_suggestions import create_unit_validation_error
+        var_type = getattr(self.variable, '__class__', type(self.variable)).__name__
+        raise create_unit_validation_error(unit_name, var_type)
 
     def _convert_quantity(self, unit_constant, modify_original: bool = False):
         """Convert quantity to specified unit."""

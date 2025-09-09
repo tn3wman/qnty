@@ -190,10 +190,9 @@ class FlexibleConstructorMixin:
                 return result
 
         # Fallback to direct quantity creation
-        from ..units import DimensionlessUnits
         from .base_qnty import Quantity
 
-        # Try to find the unit in the registry or use dimensionless fallback
+        # Try to find the unit in the registry
         try:
             from ..units.registry import registry
 
@@ -204,8 +203,10 @@ class FlexibleConstructorMixin:
         except Exception:
             pass
 
-        # Final fallback to dimensionless
-        return Quantity(value, DimensionlessUnits.dimensionless)
+        # If unit is not found, raise error with suggestions instead of falling back to dimensionless
+        from ..utils.unit_suggestions import create_unit_validation_error
+        var_type = getattr(self, '__class__', type(self)).__name__
+        raise create_unit_validation_error(str(unit), var_type)
 
     def _find_unit_property(self, setter: TypeSafeSetter, unit: str) -> str | None:
         """Find unit property with simple lookup."""
@@ -837,7 +838,10 @@ class UnitConverter:
         except Exception:
             pass
         
-        raise ValueError(f"Unknown unit: {unit_str}")
+        # Raise error with suggestions
+        from ..utils.unit_suggestions import create_unit_validation_error
+        var_type = getattr(self.variable, '__class__', type(self.variable)).__name__
+        raise create_unit_validation_error(unit_str, var_type)
     
     def _convert_quantity(self, to_unit_constant, modify_original: bool = True):
         """Convert the variable's quantity to the specified unit."""

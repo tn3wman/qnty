@@ -98,7 +98,8 @@ class AbsorbedDose(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.AbsorbedDoseSetter(self, value)
@@ -212,7 +213,8 @@ class Acceleration(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.AccelerationSetter(self, value)
@@ -326,7 +328,8 @@ class ActivationEnergy(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.ActivationEnergySetter(self, value)
@@ -440,7 +443,8 @@ class AmountOfSubstance(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.AmountOfSubstanceSetter(self, value)
@@ -554,7 +558,8 @@ class AnglePlane(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.AnglePlaneSetter(self, value)
@@ -668,7 +673,8 @@ class AngleSolid(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.AngleSolidSetter(self, value)
@@ -782,7 +788,8 @@ class AngularAcceleration(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.AngularAccelerationSetter(self, value)
@@ -896,7 +903,8 @@ class AngularMomentum(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.AngularMomentumSetter(self, value)
@@ -1010,7 +1018,8 @@ class Area(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.AreaSetter(self, value)
@@ -1124,7 +1133,8 @@ class AreaPerUnitVolume(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.AreaPerUnitVolumeSetter(self, value)
@@ -1238,7 +1248,8 @@ class AtomicWeight(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.AtomicWeightSetter(self, value)
@@ -1352,7 +1363,8 @@ class Concentration(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.ConcentrationSetter(self, value)
@@ -1456,7 +1468,8 @@ class Dimensionless(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.DimensionlessSetter(self, value)
@@ -1570,7 +1583,8 @@ class DynamicFluidity(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.DynamicFluiditySetter(self, value)
@@ -1684,7 +1698,8 @@ class ElectricCapacitance(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.ElectricCapacitanceSetter(self, value)
@@ -1798,7 +1813,8 @@ class ElectricCharge(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.ElectricChargeSetter(self, value)
@@ -1912,7 +1928,8 @@ class ElectricCurrentIntensity(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.ElectricCurrentIntensitySetter(self, value)
@@ -2026,7 +2043,8 @@ class ElectricDipoleMoment(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.ElectricDipoleMomentSetter(self, value)
@@ -2140,7 +2158,8 @@ class ElectricFieldStrength(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.ElectricFieldStrengthSetter(self, value)
@@ -2254,7 +2273,8 @@ class ElectricInductance(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.ElectricInductanceSetter(self, value)
@@ -2368,7 +2388,8 @@ class ElectricPotential(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.ElectricPotentialSetter(self, value)
@@ -2482,7 +2503,8 @@ class ElectricResistance(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.ElectricResistanceSetter(self, value)
@@ -2596,7 +2618,8 @@ class ElectricalConductance(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.ElectricalConductanceSetter(self, value)
@@ -2710,7 +2733,8 @@ class ElectricalPermittivity(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.ElectricalPermittivitySetter(self, value)
@@ -2824,7 +2848,8 @@ class ElectricalResistivity(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.ElectricalResistivitySetter(self, value)
@@ -2938,7 +2963,8 @@ class EnergyFlux(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.EnergyFluxSetter(self, value)
@@ -3052,7 +3078,8 @@ class EnergyHeatWork(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.EnergyHeatWorkSetter(self, value)
@@ -3166,7 +3193,8 @@ class EnergyPerUnitArea(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.EnergyPerUnitAreaSetter(self, value)
@@ -3280,7 +3308,8 @@ class Force(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.ForceSetter(self, value)
@@ -3394,7 +3423,8 @@ class ForceBody(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.ForceBodySetter(self, value)
@@ -3508,7 +3538,8 @@ class ForcePerUnitMass(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.ForcePerUnitMassSetter(self, value)
@@ -3622,7 +3653,8 @@ class FrequencyVoltageRatio(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.FrequencyVoltageRatioSetter(self, value)
@@ -3736,7 +3768,8 @@ class FuelConsumption(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.FuelConsumptionSetter(self, value)
@@ -3850,7 +3883,8 @@ class HeatOfCombustion(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.HeatOfCombustionSetter(self, value)
@@ -3964,7 +3998,8 @@ class HeatOfFusion(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.HeatOfFusionSetter(self, value)
@@ -4078,7 +4113,8 @@ class HeatOfVaporization(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.HeatOfVaporizationSetter(self, value)
@@ -4192,7 +4228,8 @@ class HeatTransferCoefficient(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.HeatTransferCoefficientSetter(self, value)
@@ -4306,7 +4343,8 @@ class Illuminance(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.IlluminanceSetter(self, value)
@@ -4420,7 +4458,8 @@ class KineticEnergyOfTurbulence(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.KineticEnergyOfTurbulenceSetter(self, value)
@@ -4534,7 +4573,8 @@ class Length(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.LengthSetter(self, value)
@@ -4648,7 +4688,8 @@ class LinearMassDensity(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.LinearMassDensitySetter(self, value)
@@ -4762,7 +4803,8 @@ class LinearMomentum(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.LinearMomentumSetter(self, value)
@@ -4876,7 +4918,8 @@ class LuminanceSelf(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.LuminanceSelfSetter(self, value)
@@ -4990,7 +5033,8 @@ class LuminousFlux(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.LuminousFluxSetter(self, value)
@@ -5104,7 +5148,8 @@ class LuminousIntensity(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.LuminousIntensitySetter(self, value)
@@ -5218,7 +5263,8 @@ class MagneticField(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.MagneticFieldSetter(self, value)
@@ -5332,7 +5378,8 @@ class MagneticFlux(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.MagneticFluxSetter(self, value)
@@ -5446,7 +5493,8 @@ class MagneticInductionFieldStrength(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.MagneticInductionFieldStrengthSetter(self, value)
@@ -5560,7 +5608,8 @@ class MagneticMoment(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.MagneticMomentSetter(self, value)
@@ -5674,7 +5723,8 @@ class MagneticPermeability(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.MagneticPermeabilitySetter(self, value)
@@ -5788,7 +5838,8 @@ class MagnetomotiveForce(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.MagnetomotiveForceSetter(self, value)
@@ -5902,7 +5953,8 @@ class Mass(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.MassSetter(self, value)
@@ -6016,7 +6068,8 @@ class MassDensity(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.MassDensitySetter(self, value)
@@ -6130,7 +6183,8 @@ class MassFlowRate(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.MassFlowRateSetter(self, value)
@@ -6244,7 +6298,8 @@ class MassFlux(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.MassFluxSetter(self, value)
@@ -6358,7 +6413,8 @@ class MassFractionOfI(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.MassFractionOfISetter(self, value)
@@ -6472,7 +6528,8 @@ class MassTransferCoefficient(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.MassTransferCoefficientSetter(self, value)
@@ -6586,7 +6643,8 @@ class MolalityOfSoluteI(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.MolalityOfSoluteISetter(self, value)
@@ -6700,7 +6758,8 @@ class MolarConcentrationByMass(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.MolarConcentrationByMassSetter(self, value)
@@ -6814,7 +6873,8 @@ class MolarFlowRate(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.MolarFlowRateSetter(self, value)
@@ -6928,7 +6988,8 @@ class MolarFlux(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.MolarFluxSetter(self, value)
@@ -7042,7 +7103,8 @@ class MolarHeatCapacity(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.MolarHeatCapacitySetter(self, value)
@@ -7156,7 +7218,8 @@ class MolarityOfI(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.MolarityOfISetter(self, value)
@@ -7270,7 +7333,8 @@ class MoleFractionOfI(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.MoleFractionOfISetter(self, value)
@@ -7384,7 +7448,8 @@ class MomentOfInertia(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.MomentOfInertiaSetter(self, value)
@@ -7498,7 +7563,8 @@ class MomentumFlowRate(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.MomentumFlowRateSetter(self, value)
@@ -7612,7 +7678,8 @@ class MomentumFlux(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.MomentumFluxSetter(self, value)
@@ -7726,7 +7793,8 @@ class NormalityOfSolution(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.NormalityOfSolutionSetter(self, value)
@@ -7840,7 +7908,8 @@ class ParticleDensity(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.ParticleDensitySetter(self, value)
@@ -7954,7 +8023,8 @@ class Percent(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.PercentSetter(self, value)
@@ -8068,7 +8138,8 @@ class Permeability(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.PermeabilitySetter(self, value)
@@ -8182,7 +8253,8 @@ class PhotonEmissionRate(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.PhotonEmissionRateSetter(self, value)
@@ -8296,7 +8368,8 @@ class PowerPerUnitMass(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.PowerPerUnitMassSetter(self, value)
@@ -8410,7 +8483,8 @@ class PowerPerUnitVolume(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.PowerPerUnitVolumeSetter(self, value)
@@ -8524,7 +8598,8 @@ class PowerThermalDuty(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.PowerThermalDutySetter(self, value)
@@ -8638,7 +8713,8 @@ class Pressure(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.PressureSetter(self, value)
@@ -8752,7 +8828,8 @@ class RadiationDoseEquivalent(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.RadiationDoseEquivalentSetter(self, value)
@@ -8866,7 +8943,8 @@ class RadiationExposure(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.RadiationExposureSetter(self, value)
@@ -8980,7 +9058,8 @@ class Radioactivity(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.RadioactivitySetter(self, value)
@@ -9094,7 +9173,8 @@ class SecondMomentOfArea(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.SecondMomentOfAreaSetter(self, value)
@@ -9208,7 +9288,8 @@ class SecondRadiationConstantPlanck(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.SecondRadiationConstantPlanckSetter(self, value)
@@ -9322,7 +9403,8 @@ class SpecificEnthalpy(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.SpecificEnthalpySetter(self, value)
@@ -9436,7 +9518,8 @@ class SpecificGravity(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.SpecificGravitySetter(self, value)
@@ -9550,7 +9633,8 @@ class SpecificHeatCapacityConstantPressure(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.SpecificHeatCapacityConstantPressureSetter(self, value)
@@ -9664,7 +9748,8 @@ class SpecificLength(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.SpecificLengthSetter(self, value)
@@ -9778,7 +9863,8 @@ class SpecificSurface(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.SpecificSurfaceSetter(self, value)
@@ -9892,7 +9978,8 @@ class SpecificVolume(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.SpecificVolumeSetter(self, value)
@@ -10006,7 +10093,8 @@ class Stress(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.StressSetter(self, value)
@@ -10120,7 +10208,8 @@ class SurfaceMassDensity(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.SurfaceMassDensitySetter(self, value)
@@ -10234,7 +10323,8 @@ class SurfaceTension(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.SurfaceTensionSetter(self, value)
@@ -10348,7 +10438,8 @@ class Temperature(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.TemperatureSetter(self, value)
@@ -10462,7 +10553,8 @@ class ThermalConductivity(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.ThermalConductivitySetter(self, value)
@@ -10576,7 +10668,8 @@ class Time(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.TimeSetter(self, value)
@@ -10690,7 +10783,8 @@ class Torque(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.TorqueSetter(self, value)
@@ -10804,7 +10898,8 @@ class TurbulenceEnergyDissipationRate(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.TurbulenceEnergyDissipationRateSetter(self, value)
@@ -10918,7 +11013,8 @@ class VelocityAngular(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.VelocityAngularSetter(self, value)
@@ -11032,7 +11128,8 @@ class VelocityLinear(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.VelocityLinearSetter(self, value)
@@ -11146,7 +11243,8 @@ class ViscosityDynamic(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.ViscosityDynamicSetter(self, value)
@@ -11260,7 +11358,8 @@ class ViscosityKinematic(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.ViscosityKinematicSetter(self, value)
@@ -11374,7 +11473,8 @@ class Volume(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.VolumeSetter(self, value)
@@ -11488,7 +11588,8 @@ class VolumeFractionOfI(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.VolumeFractionOfISetter(self, value)
@@ -11602,7 +11703,8 @@ class VolumetricCalorificHeatingValue(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.VolumetricCalorificHeatingValueSetter(self, value)
@@ -11716,7 +11818,8 @@ class VolumetricCoefficientOfExpansion(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.VolumetricCoefficientOfExpansionSetter(self, value)
@@ -11830,7 +11933,8 @@ class VolumetricFlowRate(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.VolumetricFlowRateSetter(self, value)
@@ -11944,7 +12048,8 @@ class VolumetricFlux(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.VolumetricFluxSetter(self, value)
@@ -12058,7 +12163,8 @@ class VolumetricMassFlowRate(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.VolumetricMassFlowRateSetter(self, value)
@@ -12172,7 +12278,8 @@ class Wavenumber(FieldQnty):
             if hasattr(setter, unit):
                 getattr(setter, unit)
             else:
-                raise ValueError(f"Unknown unit: {unit}")
+                from ..utils.unit_suggestions import create_unit_validation_error
+                raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.WavenumberSetter(self, value)

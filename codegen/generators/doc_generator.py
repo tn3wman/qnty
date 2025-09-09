@@ -218,7 +218,8 @@ def generate_set_method(setter_class_name: str, display_name: str, stub_only: bo
             "            if hasattr(setter, unit):",
             "                getattr(setter, unit)",
             "            else:",
-            "                raise ValueError(f\"Unknown unit: {unit}\")",
+            "                from ..utils.unit_suggestions import create_unit_validation_error",
+            "                raise create_unit_validation_error(unit, self.__class__.__name__)",
             "            return self",
             "        else:",
             f"            return field_setter.{setter_class_name}(self, value)"

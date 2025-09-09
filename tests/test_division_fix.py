@@ -137,7 +137,7 @@ class TestDivisionByOne:
             (VelocityLinear(20, "meter_per_second", "Speed"), VelocityLinear(1, "meter_per_second", "Unit Speed"), 20.0),
             (Acceleration(9.8, "meter_per_second_squared", "Gravity"), Acceleration(1, "meter_per_second_squared", "Unit Acceleration"), 9.8),
             (PowerThermalDuty(1000, "watt", "Engine Power"), PowerThermalDuty(1, "watt", "Unit Power"), 1000.0),
-            (Temperature(373, "kelvin", "Boiling Point"), Temperature(1, "kelvin", "Unit Temperature"), 373.0),
+            (Temperature(373, "K", "Boiling Point"), Temperature(1, "K", "Unit Temperature"), 373.0),
         ]
 
         for numerator, denominator, expected_value in test_cases:

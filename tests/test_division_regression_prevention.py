@@ -49,7 +49,7 @@ class TestDivisionOptimizationRegression:
             (10.0, "square_meter", 1.0, "square_meter", Area),  
             (100.0, "newton", 1.0, "newton", Force),
             (50.0, "pascal", 1.0, "pascal", Pressure),
-            (373.0, "kelvin", 1.0, "kelvin", Temperature),
+            (373.0, "K", 1.0, "K", Temperature),
             (60.0, "second", 1.0, "second", Time),
             (20.0, "kilogram", 1.0, "kilogram", Mass),
             (15.0, "meter_per_second", 1.0, "meter_per_second", VelocityLinear),
