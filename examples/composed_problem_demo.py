@@ -19,11 +19,11 @@ class StraightPipeInternal(Problem):
 
     # Unknown variables - using new simplified syntax
     Y = Dimensionless(0.4, "Y Coefficient")
-    T = Length(0.0, "inch", "Wall Thickness", is_known=False)
-    d = Length(0.0, "inch", "Inside Diameter", is_known=False)
-    t = Length(0.0, "inch", "Pressure Design Thickness", is_known=False)
-    t_m = Length(0.0, "inch", "Minimum Required Thickness", is_known=False)
-    P_max = Pressure(0.0, "psi", "Pressure, Maximum", is_known=False)
+    T = Length("Wall Thickness", "inch")
+    d = Length("Inside Diameter", "inch")
+    t = Length("Pressure Design Thickness", "inch")
+    t_m = Length("Minimum Required Thickness", "inch")
+    P_max = Pressure("Pressure, Maximum", "psi")
 
     # Equations
     T_eqn = T.equals(T_bar * (1 - U_m))
@@ -72,15 +72,15 @@ class PipeBends(Problem):
     s.Y.set(0.4).dimensionless
 
     R_1 = Length(5, "inch", "Bend Radius")
-    I_i = Dimensionless(1.0, "Intrados Correction Factor", is_known=False)
-    I_e = Dimensionless(1.0, "Extrados Correction Factor", is_known=False)
-    t_i = Length(1.0, "inch", "Design Thickness, Inside Bend", is_known=False)
-    t_e = Length(1.0, "inch", "Design Thickness, Outside Bend", is_known=False)
-    t_m_i = Length(1.0, "inch", "Minimum Required Thickness, Inside Bend", is_known=False)
-    t_m_e = Length(1.0, "inch", "Minimum Required Thickness, Outside Bend", is_known=False)
-    P_max_i = Pressure(1.0, "psi", "Maximum Pressure, Inside Bend", is_known=False)
-    P_max_e = Pressure(1.0, "psi", "Maximum Pressure, Outside Bend", is_known=False)
-    P_max = Pressure(1.0, "psi", "Maximum Allowable Pressure", is_known=False)
+    I_i = Dimensionless("Intrados Correction Factor")
+    I_e = Dimensionless("Extrados Correction Factor")
+    t_i = Length("Design Thickness, Inside Bend", "inch")
+    t_e = Length("Design Thickness, Outside Bend", "inch")
+    t_m_i = Length("Minimum Required Thickness, Inside Bend", "inch")
+    t_m_e = Length("Minimum Required Thickness, Outside Bend", "inch")
+    P_max_i = Pressure("Maximum Pressure, Inside Bend", "psi")
+    P_max_e = Pressure("Maximum Pressure, Outside Bend", "psi")
+    P_max = Pressure("Maximum Allowable Pressure", "psi")
 
     # Equations
     I_i_eqn = I_i.equals((4 * (R_1 / s.D) - 1) / (4 * (R_1 / s.D) - 2))

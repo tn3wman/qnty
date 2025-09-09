@@ -65,57 +65,85 @@ def generate_class_docstring(class_name: str, display_name: str, units: list, is
 
 
 def generate_init_method(class_name: str, display_name: str, is_dimensionless: bool = False, stub_only: bool = False) -> list[str]:
-    """Generate __init__ method with proper type hints."""
-    del class_name  # Unused but kept for API compatibility
+    """Generate __init__ method supporting both old and new constructor syntax."""
     lines = []
 
     if is_dimensionless:
-        lines.append("    def __init__(self, name_or_value: str | int | float, name: str | None = None, is_known: bool = True):")
+        lines.append("    def __init__(self, name_or_value: str | int | float, name_or_unit: str | int | float | None = None):")
         if not stub_only:
             lines.extend(
                 [
                     '        """',
-                    f"        Initialize {display_name} quantity.",
+                    f"        Initialize {display_name} quantity with flexible syntax.",
+                    "        ",
+                    "        Constructor Patterns:",
+                    "        --------------------",
+                    f"        - {class_name}(\"name\") -> Unknown {display_name}",
+                    f"        - {class_name}(\"name\", value) -> Known {display_name} (NEW)",
+                    f"        - {class_name}(value, \"name\") -> Known {display_name} (OLD, backward compatibility)",
                     "        ",
                     "        Args:",
-                    "            name_or_value: Variable name (str) if unknown, or value (int/float) if known",
-                    "            name: Variable name (required if providing value)",
-                    "            is_known: Whether the variable has a known value",
+                    "            name_or_value: Variable name (str) or value (int/float)",
+                    "            name_or_unit: Variable name (str) or value (int/float), depending on first arg",
                     '        """',
-                    "        if name is None:",
-                    "            # Single argument: name only (unknown variable)",
-                    "            super().__init__(name_or_value, is_known=is_known)",
+                    "        if isinstance(name_or_value, str):",
+                    "            # NEW syntax: name first",
+                    "            if name_or_unit is None:",
+                    "                # Unknown variable",
+                    "                super().__init__(name_or_value, is_known=False)",
+                    "            else:",
+                    "                # Known variable",
+                    "                super().__init__(name_or_unit, name_or_value, is_known=True)",
                     "        else:",
-                    "            # Two arguments: value and name (known variable)",
-                    "            super().__init__(name_or_value, name, is_known=is_known)",
-                    "        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility",
+                    "            # OLD syntax: value first (backward compatibility)",
+                    "            if name_or_unit is None:",
+                    '                raise ValueError("Variable name required")',
+                    "            super().__init__(name_or_value, name_or_unit, is_known=True)",
+                    "        self.set_arithmetic_mode('expression')",
                 ]
             )
         else:
             lines.append("        ...")
     else:
-        lines.append("    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):")
+        lines.append("    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):")
         if not stub_only:
             lines.extend(
                 [
                     '        """',
-                    f"        Initialize {display_name} quantity.",
+                    f"        Initialize {display_name} quantity with flexible syntax.",
+                    "        ",
+                    "        Constructor Patterns:",
+                    "        --------------------",
+                    f"        - {class_name}(\"name\") -> Unknown {display_name}",
+                    f"        - {class_name}(\"name\", \"unit\") -> Unknown {display_name} with unit preference (NEW)",
+                    f"        - {class_name}(\"name\", \"unit\", value) -> Known {display_name} (NEW)",
+                    f"        - {class_name}(value, \"unit\", \"name\") -> Known {display_name} (OLD, backward compatibility)",
                     "        ",
                     "        Args:",
-                    "            name_or_value: Variable name (str) if unknown, or value (int/float) if known",
-                    "            unit: Unit string (required if providing value)",
-                    "            name: Variable name (required if providing value)",
-                    "            is_known: Whether the variable has a known value",
+                    "            name_or_value: Variable name (str) or value (int/float)",
+                    "            unit_or_name: Unit string or variable name, depending on usage",
+                    "            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns",
                     '        """',
-                    "        if unit is None and name is None:",
-                    "            # Single argument: name only (unknown variable)",
-                    "            super().__init__(name_or_value, is_known=is_known)",
-                    "        elif unit is not None and name is not None:",
-                    "            # Three arguments: value, unit, name (known variable)",
-                    "            super().__init__(name_or_value, unit, name, is_known=is_known)",
+                    "        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):",
+                    "            # NEW syntax: name first",
+                    "            if unit_or_name is None:",
+                    "                # Pattern: Length(\"name\")",
+                    "                super().__init__(name_or_value, is_known=False)",
+                    "            elif name_or_value2 is None:",
+                    "                # Pattern: Length(\"name\", \"unit\")",
+                    "                super().__init__(name_or_value, is_known=False)",
+                    "                self._set_preferred_unit(unit_or_name)",
+                    "            else:",
+                    "                # Pattern: Length(\"name\", \"unit\", value)",
+                    "                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)",
+                    "        elif isinstance(name_or_value, (int, float)):",
+                    "            # OLD syntax: value first (backward compatibility)",
+                    "            if unit_or_name is None or name_or_value2 is None:",
+                    '                raise ValueError("Unit and name required for value-first syntax")',
+                    "            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)",
                     "        else:",
-                    '            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")',
-                    "        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility",
+                    '            raise ValueError("Invalid constructor arguments")',
+                    "        self.set_arithmetic_mode('expression')",
                 ]
             )
         else:

@@ -159,7 +159,7 @@ def safety_factor_check():
     print()
 
     # Calculate safety factor
-    SF = Dimensionless("Safety Factor", is_known=False)
+    SF = Dimensionless("Safety Factor")
     SF.solve_from(S_yield / S_applied)
     print(f"Calculated safety factor: {SF}")
     print()

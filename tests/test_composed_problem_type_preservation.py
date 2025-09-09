@@ -19,7 +19,7 @@ class SimpleProblem(Problem):
     E = Dimensionless(0.8, "Efficiency")
 
     # Unknown variables
-    P_out = Pressure(0.0, "psi", "Output Pressure", is_known=False)
+    P_out = Pressure("Output Pressure", "psi")
 
     # Simple equation
     P_out_eqn = P_out.equals(P * E)
@@ -49,7 +49,7 @@ class ComposedProblem(Problem):
 
     # Add our own variables
     factor = Dimensionless(1.5, "Factor")
-    P_final = Pressure(0.0, "psi", "Final Pressure", is_known=False)
+    P_final = Pressure("Final Pressure", "psi")
 
     # Equation using composed variables
     P_final_eqn = P_final.equals(sub.P_out * factor)

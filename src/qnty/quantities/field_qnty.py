@@ -43,6 +43,7 @@ class QuantityManagementMixin:
         self._is_known: bool = False
         self._name: str = ""
         self._symbol: str | None = None
+        self._preferred_unit: str | None = None
 
     @property
     def quantity(self) -> Quantity | None:
@@ -89,6 +90,15 @@ class QuantityManagementMixin:
             self._is_known = is_known
 
         return self
+
+    def _set_preferred_unit(self, unit: str) -> None:
+        """Set the preferred unit for solver results."""
+        self._preferred_unit = unit
+
+    @property
+    def preferred_unit(self) -> str | None:
+        """Get the preferred unit for this variable."""
+        return self._preferred_unit
 
 
 class FlexibleConstructorMixin:

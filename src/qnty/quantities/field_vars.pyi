@@ -46,7 +46,7 @@ class AbsorbedDose(FieldQnty):
     _setter_class = field_setter.AbsorbedDoseSetter
     _dimension = dim.ABSORBED_DOSE
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -87,7 +87,7 @@ class Acceleration(FieldQnty):
     _setter_class = field_setter.AccelerationSetter
     _dimension = dim.ACCELERATION
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -128,7 +128,7 @@ class ActivationEnergy(FieldQnty):
     _setter_class = field_setter.ActivationEnergySetter
     _dimension = dim.ACTIVATION_ENERGY
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -169,7 +169,7 @@ class AmountOfSubstance(FieldQnty):
     _setter_class = field_setter.AmountOfSubstanceSetter
     _dimension = dim.AMOUNT_OF_SUBSTANCE
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -210,7 +210,7 @@ class AnglePlane(FieldQnty):
     _setter_class = field_setter.AnglePlaneSetter
     _dimension = dim.ANGLE_PLANE
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -251,7 +251,7 @@ class AngleSolid(FieldQnty):
     _setter_class = field_setter.AngleSolidSetter
     _dimension = dim.ANGLE_SOLID
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -292,7 +292,7 @@ class AngularAcceleration(FieldQnty):
     _setter_class = field_setter.AngularAccelerationSetter
     _dimension = dim.ANGULAR_ACCELERATION
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -333,7 +333,7 @@ class AngularMomentum(FieldQnty):
     _setter_class = field_setter.AngularMomentumSetter
     _dimension = dim.ANGULAR_MOMENTUM
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -374,7 +374,7 @@ class Area(FieldQnty):
     _setter_class = field_setter.AreaSetter
     _dimension = dim.AREA
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -415,7 +415,7 @@ class AreaPerUnitVolume(FieldQnty):
     _setter_class = field_setter.AreaPerUnitVolumeSetter
     _dimension = dim.AREA_PER_UNIT_VOLUME
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -456,7 +456,7 @@ class AtomicWeight(FieldQnty):
     _setter_class = field_setter.AtomicWeightSetter
     _dimension = dim.ATOMIC_WEIGHT
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -497,7 +497,7 @@ class Concentration(FieldQnty):
     _setter_class = field_setter.ConcentrationSetter
     _dimension = dim.CONCENTRATION
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -536,7 +536,7 @@ class Dimensionless(FieldQnty):
     _setter_class = field_setter.DimensionlessSetter
     _dimension = dim.DIMENSIONLESS
 
-    def __init__(self, name_or_value: str | int | float, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, name_or_unit: str | int | float | None = None):
         ...
     
     @overload
@@ -577,7 +577,7 @@ class DynamicFluidity(FieldQnty):
     _setter_class = field_setter.DynamicFluiditySetter
     _dimension = dim.DYNAMIC_FLUIDITY
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -618,7 +618,7 @@ class ElectricCapacitance(FieldQnty):
     _setter_class = field_setter.ElectricCapacitanceSetter
     _dimension = dim.ELECTRIC_CAPACITANCE
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -659,7 +659,7 @@ class ElectricCharge(FieldQnty):
     _setter_class = field_setter.ElectricChargeSetter
     _dimension = dim.ELECTRIC_CHARGE
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -700,7 +700,7 @@ class ElectricCurrentIntensity(FieldQnty):
     _setter_class = field_setter.ElectricCurrentIntensitySetter
     _dimension = dim.ELECTRIC_CURRENT_INTENSITY
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -741,7 +741,7 @@ class ElectricDipoleMoment(FieldQnty):
     _setter_class = field_setter.ElectricDipoleMomentSetter
     _dimension = dim.ELECTRIC_DIPOLE_MOMENT
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -782,7 +782,7 @@ class ElectricFieldStrength(FieldQnty):
     _setter_class = field_setter.ElectricFieldStrengthSetter
     _dimension = dim.ELECTRIC_FIELD_STRENGTH
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -823,7 +823,7 @@ class ElectricInductance(FieldQnty):
     _setter_class = field_setter.ElectricInductanceSetter
     _dimension = dim.ELECTRIC_INDUCTANCE
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -864,7 +864,7 @@ class ElectricPotential(FieldQnty):
     _setter_class = field_setter.ElectricPotentialSetter
     _dimension = dim.ELECTRIC_POTENTIAL
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -905,7 +905,7 @@ class ElectricResistance(FieldQnty):
     _setter_class = field_setter.ElectricResistanceSetter
     _dimension = dim.ELECTRIC_RESISTANCE
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -946,7 +946,7 @@ class ElectricalConductance(FieldQnty):
     _setter_class = field_setter.ElectricalConductanceSetter
     _dimension = dim.ELECTRICAL_CONDUCTANCE
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -987,7 +987,7 @@ class ElectricalPermittivity(FieldQnty):
     _setter_class = field_setter.ElectricalPermittivitySetter
     _dimension = dim.ELECTRICAL_PERMITTIVITY
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -1028,7 +1028,7 @@ class ElectricalResistivity(FieldQnty):
     _setter_class = field_setter.ElectricalResistivitySetter
     _dimension = dim.ELECTRICAL_RESISTIVITY
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -1069,7 +1069,7 @@ class EnergyFlux(FieldQnty):
     _setter_class = field_setter.EnergyFluxSetter
     _dimension = dim.ENERGY_FLUX
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -1110,7 +1110,7 @@ class EnergyHeatWork(FieldQnty):
     _setter_class = field_setter.EnergyHeatWorkSetter
     _dimension = dim.ENERGY_HEAT_WORK
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -1151,7 +1151,7 @@ class EnergyPerUnitArea(FieldQnty):
     _setter_class = field_setter.EnergyPerUnitAreaSetter
     _dimension = dim.ENERGY_PER_UNIT_AREA
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -1192,7 +1192,7 @@ class Force(FieldQnty):
     _setter_class = field_setter.ForceSetter
     _dimension = dim.FORCE
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -1233,7 +1233,7 @@ class ForceBody(FieldQnty):
     _setter_class = field_setter.ForceBodySetter
     _dimension = dim.FORCE_BODY
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -1274,7 +1274,7 @@ class ForcePerUnitMass(FieldQnty):
     _setter_class = field_setter.ForcePerUnitMassSetter
     _dimension = dim.FORCE_PER_UNIT_MASS
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -1315,7 +1315,7 @@ class FrequencyVoltageRatio(FieldQnty):
     _setter_class = field_setter.FrequencyVoltageRatioSetter
     _dimension = dim.FREQUENCY_VOLTAGE_RATIO
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -1356,7 +1356,7 @@ class FuelConsumption(FieldQnty):
     _setter_class = field_setter.FuelConsumptionSetter
     _dimension = dim.FUEL_CONSUMPTION
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -1397,7 +1397,7 @@ class HeatOfCombustion(FieldQnty):
     _setter_class = field_setter.HeatOfCombustionSetter
     _dimension = dim.HEAT_OF_COMBUSTION
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -1438,7 +1438,7 @@ class HeatOfFusion(FieldQnty):
     _setter_class = field_setter.HeatOfFusionSetter
     _dimension = dim.HEAT_OF_FUSION
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -1479,7 +1479,7 @@ class HeatOfVaporization(FieldQnty):
     _setter_class = field_setter.HeatOfVaporizationSetter
     _dimension = dim.HEAT_OF_VAPORIZATION
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -1520,7 +1520,7 @@ class HeatTransferCoefficient(FieldQnty):
     _setter_class = field_setter.HeatTransferCoefficientSetter
     _dimension = dim.HEAT_TRANSFER_COEFFICIENT
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -1561,7 +1561,7 @@ class Illuminance(FieldQnty):
     _setter_class = field_setter.IlluminanceSetter
     _dimension = dim.ILLUMINANCE
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -1602,7 +1602,7 @@ class KineticEnergyOfTurbulence(FieldQnty):
     _setter_class = field_setter.KineticEnergyOfTurbulenceSetter
     _dimension = dim.KINETIC_ENERGY_OF_TURBULENCE
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -1643,7 +1643,7 @@ class Length(FieldQnty):
     _setter_class = field_setter.LengthSetter
     _dimension = dim.LENGTH
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -1684,7 +1684,7 @@ class LinearMassDensity(FieldQnty):
     _setter_class = field_setter.LinearMassDensitySetter
     _dimension = dim.LINEAR_MASS_DENSITY
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -1725,7 +1725,7 @@ class LinearMomentum(FieldQnty):
     _setter_class = field_setter.LinearMomentumSetter
     _dimension = dim.LINEAR_MOMENTUM
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -1766,7 +1766,7 @@ class LuminanceSelf(FieldQnty):
     _setter_class = field_setter.LuminanceSelfSetter
     _dimension = dim.LUMINANCE_SELF
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -1807,7 +1807,7 @@ class LuminousFlux(FieldQnty):
     _setter_class = field_setter.LuminousFluxSetter
     _dimension = dim.LUMINOUS_FLUX
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -1848,7 +1848,7 @@ class LuminousIntensity(FieldQnty):
     _setter_class = field_setter.LuminousIntensitySetter
     _dimension = dim.LUMINOUS_INTENSITY
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -1889,7 +1889,7 @@ class MagneticField(FieldQnty):
     _setter_class = field_setter.MagneticFieldSetter
     _dimension = dim.MAGNETIC_FIELD
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -1930,7 +1930,7 @@ class MagneticFlux(FieldQnty):
     _setter_class = field_setter.MagneticFluxSetter
     _dimension = dim.MAGNETIC_FLUX
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -1971,7 +1971,7 @@ class MagneticInductionFieldStrength(FieldQnty):
     _setter_class = field_setter.MagneticInductionFieldStrengthSetter
     _dimension = dim.MAGNETIC_INDUCTION_FIELD_STRENGTH
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -2012,7 +2012,7 @@ class MagneticMoment(FieldQnty):
     _setter_class = field_setter.MagneticMomentSetter
     _dimension = dim.MAGNETIC_MOMENT
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -2053,7 +2053,7 @@ class MagneticPermeability(FieldQnty):
     _setter_class = field_setter.MagneticPermeabilitySetter
     _dimension = dim.MAGNETIC_PERMEABILITY
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -2094,7 +2094,7 @@ class MagnetomotiveForce(FieldQnty):
     _setter_class = field_setter.MagnetomotiveForceSetter
     _dimension = dim.MAGNETOMOTIVE_FORCE
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -2135,7 +2135,7 @@ class Mass(FieldQnty):
     _setter_class = field_setter.MassSetter
     _dimension = dim.MASS
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -2176,7 +2176,7 @@ class MassDensity(FieldQnty):
     _setter_class = field_setter.MassDensitySetter
     _dimension = dim.MASS_DENSITY
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -2217,7 +2217,7 @@ class MassFlowRate(FieldQnty):
     _setter_class = field_setter.MassFlowRateSetter
     _dimension = dim.MASS_FLOW_RATE
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -2258,7 +2258,7 @@ class MassFlux(FieldQnty):
     _setter_class = field_setter.MassFluxSetter
     _dimension = dim.MASS_FLUX
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -2299,7 +2299,7 @@ class MassFractionOfI(FieldQnty):
     _setter_class = field_setter.MassFractionOfISetter
     _dimension = dim.MASS_FRACTION_OF_I
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -2340,7 +2340,7 @@ class MassTransferCoefficient(FieldQnty):
     _setter_class = field_setter.MassTransferCoefficientSetter
     _dimension = dim.MASS_TRANSFER_COEFFICIENT
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -2381,7 +2381,7 @@ class MolalityOfSoluteI(FieldQnty):
     _setter_class = field_setter.MolalityOfSoluteISetter
     _dimension = dim.MOLALITY_OF_SOLUTE_I
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -2422,7 +2422,7 @@ class MolarConcentrationByMass(FieldQnty):
     _setter_class = field_setter.MolarConcentrationByMassSetter
     _dimension = dim.MOLAR_CONCENTRATION_BY_MASS
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -2463,7 +2463,7 @@ class MolarFlowRate(FieldQnty):
     _setter_class = field_setter.MolarFlowRateSetter
     _dimension = dim.MOLAR_FLOW_RATE
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -2504,7 +2504,7 @@ class MolarFlux(FieldQnty):
     _setter_class = field_setter.MolarFluxSetter
     _dimension = dim.MOLAR_FLUX
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -2545,7 +2545,7 @@ class MolarHeatCapacity(FieldQnty):
     _setter_class = field_setter.MolarHeatCapacitySetter
     _dimension = dim.MOLAR_HEAT_CAPACITY
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -2586,7 +2586,7 @@ class MolarityOfI(FieldQnty):
     _setter_class = field_setter.MolarityOfISetter
     _dimension = dim.MOLARITY_OF_I
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -2627,7 +2627,7 @@ class MoleFractionOfI(FieldQnty):
     _setter_class = field_setter.MoleFractionOfISetter
     _dimension = dim.MOLE_FRACTION_OF_I
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -2668,7 +2668,7 @@ class MomentOfInertia(FieldQnty):
     _setter_class = field_setter.MomentOfInertiaSetter
     _dimension = dim.MOMENT_OF_INERTIA
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -2709,7 +2709,7 @@ class MomentumFlowRate(FieldQnty):
     _setter_class = field_setter.MomentumFlowRateSetter
     _dimension = dim.MOMENTUM_FLOW_RATE
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -2750,7 +2750,7 @@ class MomentumFlux(FieldQnty):
     _setter_class = field_setter.MomentumFluxSetter
     _dimension = dim.MOMENTUM_FLUX
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -2791,7 +2791,7 @@ class NormalityOfSolution(FieldQnty):
     _setter_class = field_setter.NormalityOfSolutionSetter
     _dimension = dim.NORMALITY_OF_SOLUTION
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -2832,7 +2832,7 @@ class ParticleDensity(FieldQnty):
     _setter_class = field_setter.ParticleDensitySetter
     _dimension = dim.PARTICLE_DENSITY
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -2873,7 +2873,7 @@ class Percent(FieldQnty):
     _setter_class = field_setter.PercentSetter
     _dimension = dim.PERCENT
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -2914,7 +2914,7 @@ class Permeability(FieldQnty):
     _setter_class = field_setter.PermeabilitySetter
     _dimension = dim.PERMEABILITY
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -2955,7 +2955,7 @@ class PhotonEmissionRate(FieldQnty):
     _setter_class = field_setter.PhotonEmissionRateSetter
     _dimension = dim.PHOTON_EMISSION_RATE
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -2996,7 +2996,7 @@ class PowerPerUnitMass(FieldQnty):
     _setter_class = field_setter.PowerPerUnitMassSetter
     _dimension = dim.POWER_PER_UNIT_MASS
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -3037,7 +3037,7 @@ class PowerPerUnitVolume(FieldQnty):
     _setter_class = field_setter.PowerPerUnitVolumeSetter
     _dimension = dim.POWER_PER_UNIT_VOLUME
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -3078,7 +3078,7 @@ class PowerThermalDuty(FieldQnty):
     _setter_class = field_setter.PowerThermalDutySetter
     _dimension = dim.POWER_THERMAL_DUTY
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -3119,7 +3119,7 @@ class Pressure(FieldQnty):
     _setter_class = field_setter.PressureSetter
     _dimension = dim.PRESSURE
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -3160,7 +3160,7 @@ class RadiationDoseEquivalent(FieldQnty):
     _setter_class = field_setter.RadiationDoseEquivalentSetter
     _dimension = dim.RADIATION_DOSE_EQUIVALENT
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -3201,7 +3201,7 @@ class RadiationExposure(FieldQnty):
     _setter_class = field_setter.RadiationExposureSetter
     _dimension = dim.RADIATION_EXPOSURE
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -3242,7 +3242,7 @@ class Radioactivity(FieldQnty):
     _setter_class = field_setter.RadioactivitySetter
     _dimension = dim.RADIOACTIVITY
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -3283,7 +3283,7 @@ class SecondMomentOfArea(FieldQnty):
     _setter_class = field_setter.SecondMomentOfAreaSetter
     _dimension = dim.SECOND_MOMENT_OF_AREA
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -3324,7 +3324,7 @@ class SecondRadiationConstantPlanck(FieldQnty):
     _setter_class = field_setter.SecondRadiationConstantPlanckSetter
     _dimension = dim.SECOND_RADIATION_CONSTANT_PLANCK
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -3365,7 +3365,7 @@ class SpecificEnthalpy(FieldQnty):
     _setter_class = field_setter.SpecificEnthalpySetter
     _dimension = dim.SPECIFIC_ENTHALPY
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -3406,7 +3406,7 @@ class SpecificGravity(FieldQnty):
     _setter_class = field_setter.SpecificGravitySetter
     _dimension = dim.SPECIFIC_GRAVITY
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -3447,7 +3447,7 @@ class SpecificHeatCapacityConstantPressure(FieldQnty):
     _setter_class = field_setter.SpecificHeatCapacityConstantPressureSetter
     _dimension = dim.SPECIFIC_HEAT_CAPACITY_CONSTANT_PRESSURE
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -3488,7 +3488,7 @@ class SpecificLength(FieldQnty):
     _setter_class = field_setter.SpecificLengthSetter
     _dimension = dim.SPECIFIC_LENGTH
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -3529,7 +3529,7 @@ class SpecificSurface(FieldQnty):
     _setter_class = field_setter.SpecificSurfaceSetter
     _dimension = dim.SPECIFIC_SURFACE
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -3570,7 +3570,7 @@ class SpecificVolume(FieldQnty):
     _setter_class = field_setter.SpecificVolumeSetter
     _dimension = dim.SPECIFIC_VOLUME
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -3611,7 +3611,7 @@ class Stress(FieldQnty):
     _setter_class = field_setter.StressSetter
     _dimension = dim.STRESS
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -3652,7 +3652,7 @@ class SurfaceMassDensity(FieldQnty):
     _setter_class = field_setter.SurfaceMassDensitySetter
     _dimension = dim.SURFACE_MASS_DENSITY
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -3693,7 +3693,7 @@ class SurfaceTension(FieldQnty):
     _setter_class = field_setter.SurfaceTensionSetter
     _dimension = dim.SURFACE_TENSION
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -3734,7 +3734,7 @@ class Temperature(FieldQnty):
     _setter_class = field_setter.TemperatureSetter
     _dimension = dim.TEMPERATURE
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -3775,7 +3775,7 @@ class ThermalConductivity(FieldQnty):
     _setter_class = field_setter.ThermalConductivitySetter
     _dimension = dim.THERMAL_CONDUCTIVITY
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -3816,7 +3816,7 @@ class Time(FieldQnty):
     _setter_class = field_setter.TimeSetter
     _dimension = dim.TIME
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -3857,7 +3857,7 @@ class Torque(FieldQnty):
     _setter_class = field_setter.TorqueSetter
     _dimension = dim.TORQUE
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -3898,7 +3898,7 @@ class TurbulenceEnergyDissipationRate(FieldQnty):
     _setter_class = field_setter.TurbulenceEnergyDissipationRateSetter
     _dimension = dim.TURBULENCE_ENERGY_DISSIPATION_RATE
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -3939,7 +3939,7 @@ class VelocityAngular(FieldQnty):
     _setter_class = field_setter.VelocityAngularSetter
     _dimension = dim.VELOCITY_ANGULAR
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -3980,7 +3980,7 @@ class VelocityLinear(FieldQnty):
     _setter_class = field_setter.VelocityLinearSetter
     _dimension = dim.VELOCITY_LINEAR
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -4021,7 +4021,7 @@ class ViscosityDynamic(FieldQnty):
     _setter_class = field_setter.ViscosityDynamicSetter
     _dimension = dim.VISCOSITY_DYNAMIC
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -4062,7 +4062,7 @@ class ViscosityKinematic(FieldQnty):
     _setter_class = field_setter.ViscosityKinematicSetter
     _dimension = dim.VISCOSITY_KINEMATIC
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -4103,7 +4103,7 @@ class Volume(FieldQnty):
     _setter_class = field_setter.VolumeSetter
     _dimension = dim.VOLUME
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -4144,7 +4144,7 @@ class VolumeFractionOfI(FieldQnty):
     _setter_class = field_setter.VolumeFractionOfISetter
     _dimension = dim.VOLUME_FRACTION_OF_I
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -4185,7 +4185,7 @@ class VolumetricCalorificHeatingValue(FieldQnty):
     _setter_class = field_setter.VolumetricCalorificHeatingValueSetter
     _dimension = dim.VOLUMETRIC_CALORIFIC_HEATING_VALUE
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -4226,7 +4226,7 @@ class VolumetricCoefficientOfExpansion(FieldQnty):
     _setter_class = field_setter.VolumetricCoefficientOfExpansionSetter
     _dimension = dim.VOLUMETRIC_COEFFICIENT_OF_EXPANSION
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -4267,7 +4267,7 @@ class VolumetricFlowRate(FieldQnty):
     _setter_class = field_setter.VolumetricFlowRateSetter
     _dimension = dim.VOLUMETRIC_FLOW_RATE
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -4308,7 +4308,7 @@ class VolumetricFlux(FieldQnty):
     _setter_class = field_setter.VolumetricFluxSetter
     _dimension = dim.VOLUMETRIC_FLUX
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -4349,7 +4349,7 @@ class VolumetricMassFlowRate(FieldQnty):
     _setter_class = field_setter.VolumetricMassFlowRateSetter
     _dimension = dim.VOLUMETRIC_MASS_FLOW_RATE
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload
@@ -4390,7 +4390,7 @@ class Wavenumber(FieldQnty):
     _setter_class = field_setter.WavenumberSetter
     _dimension = dim.WAVENUMBER
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         ...
     
     @overload

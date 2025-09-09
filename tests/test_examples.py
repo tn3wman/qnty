@@ -45,11 +45,11 @@ class TestSimpleProblemDemo:
 
             # Unknown variables
             Y = Dimensionless(0.4, "Y Coefficient")
-            T = Length(0.0, "inch", "Wall Thickness", is_known=False)
-            d = Length(0.0, "inch", "Inside Diameter", is_known=False)
-            t = Length(0.0, "inch", "Pressure Design Thickness", is_known=False)
-            t_m = Length(0.0, "inch", "Minimum Required Thickness", is_known=False)
-            P_max = Pressure(0.0, "psi", "Pressure, Maximum", is_known=False)
+            T = Length("Wall Thickness", "inch")
+            d = Length("Inside Diameter", "inch")
+            t = Length("Pressure Design Thickness", "inch")
+            t_m = Length("Minimum Required Thickness", "inch")
+            P_max = Pressure("Pressure, Maximum", "psi")
 
             # Equations
             T_eqn = T.equals(T_bar * (1 - U_m))
@@ -267,7 +267,7 @@ class TestComparisonDemo:
         S_yield = Pressure(250, "megapascal", "Yield Strength")
         S_applied = Pressure(100, "megapascal", "Applied Stress")
 
-        SF = Dimensionless("Safety Factor", is_known=False)
+        SF = Dimensionless("Safety Factor")
         try:
             SF.solve_from(S_yield / S_applied)
 
@@ -302,11 +302,11 @@ class TestComposedProblemDemo:
             W = Dimensionless(1, "Weld Joint Strength Reduction Factor")
             Y = Dimensionless(0.4, "Y Coefficient")
 
-            T = Length(0.0, "inch", "Wall Thickness", is_known=False)
-            d = Length(0.0, "inch", "Inside Diameter", is_known=False)
-            t = Length(0.0, "inch", "Pressure Design Thickness", is_known=False)
-            t_m = Length(0.0, "inch", "Minimum Required Thickness", is_known=False)
-            P_max = Pressure(0.0, "psi", "Pressure, Maximum", is_known=False)
+            T = Length("Wall Thickness", "inch")
+            d = Length("Inside Diameter", "inch")
+            t = Length("Pressure Design Thickness", "inch")
+            t_m = Length("Minimum Required Thickness", "inch")
+            P_max = Pressure("Pressure, Maximum", "psi")
 
             T_eqn = T.equals(T_bar * (1 - U_m))
             d_eqn = d.equals(D - 2 * T)
@@ -333,11 +333,11 @@ class TestComposedProblemDemo:
                 E = Dimensionless(0.8, "Quality Factor")
                 W = Dimensionless(1, "Weld Joint Strength Reduction Factor")
                 Y = Dimensionless(0.4, "Y Coefficient")
-                T = Length(0.0, "inch", "Wall Thickness", is_known=False)
-                d = Length(0.0, "inch", "Inside Diameter", is_known=False)
-                t = Length(0.0, "inch", "Pressure Design Thickness", is_known=False)
-                t_m = Length(0.0, "inch", "Minimum Required Thickness", is_known=False)
-                P_max = Pressure(0.0, "psi", "Pressure, Maximum", is_known=False)
+                T = Length("Wall Thickness", "inch")
+                d = Length("Inside Diameter", "inch")
+                t = Length("Pressure Design Thickness", "inch")
+                t_m = Length("Minimum Required Thickness", "inch")
+                P_max = Pressure("Pressure, Maximum", "psi")
 
                 # Equations (simplified for composition test)
                 T_eqn = T.equals(T_bar * (1 - U_m))
@@ -352,13 +352,13 @@ class TestComposedProblemDemo:
             s = create_straight_pipe_internal()
 
             R_1 = Length(5, "inch", "Bend Radius")
-            I_i = Dimensionless(1.0, "Intrados Correction Factor", is_known=False)
-            I_e = Dimensionless(1.0, "Extrados Correction Factor", is_known=False)
-            t_i = Length(1.0, "inch", "Design Thickness, Inside Bend", is_known=False)
-            t_e = Length(1.0, "inch", "Design Thickness, Outside Bend", is_known=False)
-            P_max_i = Pressure(1.0, "psi", "Maximum Pressure, Inside Bend", is_known=False)
-            P_max_e = Pressure(1.0, "psi", "Maximum Pressure, Outside Bend", is_known=False)
-            P_max = Pressure(1.0, "psi", "Maximum Allowable Pressure", is_known=False)
+            I_i = Dimensionless("Intrados Correction Factor")
+            I_e = Dimensionless("Extrados Correction Factor")
+            t_i = Length("Design Thickness, Inside Bend", "inch")
+            t_e = Length("Design Thickness, Outside Bend", "inch")
+            P_max_i = Pressure("Maximum Pressure, Inside Bend", "psi")
+            P_max_e = Pressure("Maximum Pressure, Outside Bend", "psi")
+            P_max = Pressure("Maximum Allowable Pressure", "psi")
 
             # Bend correction factor equations
             I_i_eqn = I_i.equals((4 * (R_1 / s.D) - 1) / (4 * (R_1 / s.D) - 2))
@@ -439,7 +439,7 @@ class TestSolveMethodsDemo:
         """Test the solve_from() method."""
         T_bar = Length(0.147, "inch", "T_bar")
         U_m = Dimensionless(0.125, "U_m")
-        T = Length("T", is_known=False)
+        T = Length("T")
 
         # Test solve_from
         try:
@@ -468,8 +468,8 @@ class TestSolveMethodsDemo:
         T_bar = Length(0.147, "inch", "T_bar")
         U_m = Dimensionless(0.125, "U_m")
 
-        T = Length("T", is_known=False)
-        d = Length("d", is_known=False)
+        T = Length("T")
+        d = Length("d")
 
         # Create equations
         T_eq = T.equals(T_bar * (1 - U_m))
@@ -497,7 +497,7 @@ class TestSolveMethodsDemo:
         P = Pressure(100, "pascal", "P")
         S = Pressure(200, "pascal", "S")
         R = Length(50, "millimeter", "R")
-        t = Length("t", is_known=False)
+        t = Length("t")
 
         # Test complex expression handling
         complex_expr = (P * R) / (S - P * 0.6)
@@ -545,7 +545,7 @@ class TestSolveMethodsDemo:
 
     def test_error_conditions(self):
         """Test error conditions and edge cases."""
-        x = Length("x", is_known=False)
+        x = Length("x")
 
         # Test solve_from with invalid expression should handle gracefully
         try:
@@ -635,7 +635,7 @@ class TestUnifiedVariableDemo:
 
     def test_equation_creation(self):
         """Test equation creation."""
-        area = Area("calculated_area", is_known=False)
+        area = Area("calculated_area")
         length = Length(12, "mm", "length")
         width = Length(8, "mm", "width")
 
@@ -650,7 +650,7 @@ class TestUnifiedVariableDemo:
 
         length = Length(12, "mm", "length")
         width = Length(8, "mm", "width")
-        area = Area("calculated_area", is_known=False)
+        area = Area("calculated_area")
 
         # Test adding variables
         problem.add_variable(length)
@@ -699,7 +699,7 @@ class TestUnitConversionDemo:
         """Test basic unit conversion from the demo."""
         L = Length(5, "m", "Length")
         W = Length(3, "m", "Width")
-        A = Area("Area", is_known=False)
+        A = Area("Area")
 
         assert L.quantity is not None
         assert W.quantity is not None
@@ -834,7 +834,7 @@ class TestIntegrationScenarios:
         # Create variables with different patterns
         P = Pressure(100, "kPa", "Pressure")
         L = Length(10, "mm", "Length")
-        A = Area("Area", is_known=False)
+        A = Area("Area")
 
         # Add to problem
         problem.add_variable(P)
@@ -872,7 +872,7 @@ class TestIntegrationScenarios:
     def test_variable_state_consistency(self):
         """Test that variable states remain consistent across operations."""
         L1 = Length(10, "mm", "L1")
-        L2 = Length("L2", is_known=False)
+        L2 = Length("L2")
 
         # Known variable should stay known
         assert L1.is_known is True

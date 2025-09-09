@@ -372,6 +372,10 @@ class Problem(ValidationMixin):
         cloned.quantity = variable.quantity  # Keep reference to same quantity - units must not be copied
         cloned.is_known = variable.is_known
 
+        # Copy unit preference if it exists
+        if hasattr(variable, '_preferred_unit'):
+            cloned._preferred_unit = variable._preferred_unit
+
         # Ensure the cloned variable has fresh validation checks
         if hasattr(variable, "validation_checks") and hasattr(cloned, "validation_checks"):
             cloned.validation_checks = []

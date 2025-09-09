@@ -7,7 +7,7 @@ print("=" * 40)
 # Create some variables
 L = qt.Length(5, "m", "Length")
 W = qt.Length(3, "m", "Width")
-A = qt.Area("Area", is_known=False)
+A = qt.Area("Area")
 
 # Demonstrate the new unit conversion API methods
 print("Testing new unit conversion API:")

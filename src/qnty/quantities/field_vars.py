@@ -39,25 +39,42 @@ class AbsorbedDose(FieldQnty):
     _setter_class = field_setter.AbsorbedDoseSetter
     _dimension = dim.ABSORBED_DOSE
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize absorbed radiation dose quantity.
+        Initialize absorbed radiation dose quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - AbsorbedDose("name") -> Unknown absorbed radiation dose
+        - AbsorbedDose("name", "unit") -> Unknown absorbed radiation dose with unit preference (NEW)
+        - AbsorbedDose("name", "unit", value) -> Known absorbed radiation dose (NEW)
+        - AbsorbedDose(value, "unit", "name") -> Known absorbed radiation dose (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.AbsorbedDoseSetter':
         """
@@ -136,25 +153,42 @@ class Acceleration(FieldQnty):
     _setter_class = field_setter.AccelerationSetter
     _dimension = dim.ACCELERATION
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize acceleration quantity.
+        Initialize acceleration quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - Acceleration("name") -> Unknown acceleration
+        - Acceleration("name", "unit") -> Unknown acceleration with unit preference (NEW)
+        - Acceleration("name", "unit", value) -> Known acceleration (NEW)
+        - Acceleration(value, "unit", "name") -> Known acceleration (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.AccelerationSetter':
         """
@@ -233,25 +267,42 @@ class ActivationEnergy(FieldQnty):
     _setter_class = field_setter.ActivationEnergySetter
     _dimension = dim.ACTIVATION_ENERGY
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize activation energy quantity.
+        Initialize activation energy quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - ActivationEnergy("name") -> Unknown activation energy
+        - ActivationEnergy("name", "unit") -> Unknown activation energy with unit preference (NEW)
+        - ActivationEnergy("name", "unit", value) -> Known activation energy (NEW)
+        - ActivationEnergy(value, "unit", "name") -> Known activation energy (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.ActivationEnergySetter':
         """
@@ -330,25 +381,42 @@ class AmountOfSubstance(FieldQnty):
     _setter_class = field_setter.AmountOfSubstanceSetter
     _dimension = dim.AMOUNT_OF_SUBSTANCE
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize amount of substance quantity.
+        Initialize amount of substance quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - AmountOfSubstance("name") -> Unknown amount of substance
+        - AmountOfSubstance("name", "unit") -> Unknown amount of substance with unit preference (NEW)
+        - AmountOfSubstance("name", "unit", value) -> Known amount of substance (NEW)
+        - AmountOfSubstance(value, "unit", "name") -> Known amount of substance (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.AmountOfSubstanceSetter':
         """
@@ -427,25 +495,42 @@ class AnglePlane(FieldQnty):
     _setter_class = field_setter.AnglePlaneSetter
     _dimension = dim.ANGLE_PLANE
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize angle, plane quantity.
+        Initialize angle, plane quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - AnglePlane("name") -> Unknown angle, plane
+        - AnglePlane("name", "unit") -> Unknown angle, plane with unit preference (NEW)
+        - AnglePlane("name", "unit", value) -> Known angle, plane (NEW)
+        - AnglePlane(value, "unit", "name") -> Known angle, plane (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.AnglePlaneSetter':
         """
@@ -524,25 +609,42 @@ class AngleSolid(FieldQnty):
     _setter_class = field_setter.AngleSolidSetter
     _dimension = dim.ANGLE_SOLID
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize angle, solid quantity.
+        Initialize angle, solid quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - AngleSolid("name") -> Unknown angle, solid
+        - AngleSolid("name", "unit") -> Unknown angle, solid with unit preference (NEW)
+        - AngleSolid("name", "unit", value) -> Known angle, solid (NEW)
+        - AngleSolid(value, "unit", "name") -> Known angle, solid (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.AngleSolidSetter':
         """
@@ -621,25 +723,42 @@ class AngularAcceleration(FieldQnty):
     _setter_class = field_setter.AngularAccelerationSetter
     _dimension = dim.ANGULAR_ACCELERATION
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize angular acceleration quantity.
+        Initialize angular acceleration quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - AngularAcceleration("name") -> Unknown angular acceleration
+        - AngularAcceleration("name", "unit") -> Unknown angular acceleration with unit preference (NEW)
+        - AngularAcceleration("name", "unit", value) -> Known angular acceleration (NEW)
+        - AngularAcceleration(value, "unit", "name") -> Known angular acceleration (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.AngularAccelerationSetter':
         """
@@ -718,25 +837,42 @@ class AngularMomentum(FieldQnty):
     _setter_class = field_setter.AngularMomentumSetter
     _dimension = dim.ANGULAR_MOMENTUM
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize angular momentum quantity.
+        Initialize angular momentum quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - AngularMomentum("name") -> Unknown angular momentum
+        - AngularMomentum("name", "unit") -> Unknown angular momentum with unit preference (NEW)
+        - AngularMomentum("name", "unit", value) -> Known angular momentum (NEW)
+        - AngularMomentum(value, "unit", "name") -> Known angular momentum (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.AngularMomentumSetter':
         """
@@ -815,25 +951,42 @@ class Area(FieldQnty):
     _setter_class = field_setter.AreaSetter
     _dimension = dim.AREA
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize area quantity.
+        Initialize area quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - Area("name") -> Unknown area
+        - Area("name", "unit") -> Unknown area with unit preference (NEW)
+        - Area("name", "unit", value) -> Known area (NEW)
+        - Area(value, "unit", "name") -> Known area (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.AreaSetter':
         """
@@ -912,25 +1065,42 @@ class AreaPerUnitVolume(FieldQnty):
     _setter_class = field_setter.AreaPerUnitVolumeSetter
     _dimension = dim.AREA_PER_UNIT_VOLUME
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize area per unit volume quantity.
+        Initialize area per unit volume quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - AreaPerUnitVolume("name") -> Unknown area per unit volume
+        - AreaPerUnitVolume("name", "unit") -> Unknown area per unit volume with unit preference (NEW)
+        - AreaPerUnitVolume("name", "unit", value) -> Known area per unit volume (NEW)
+        - AreaPerUnitVolume(value, "unit", "name") -> Known area per unit volume (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.AreaPerUnitVolumeSetter':
         """
@@ -1009,25 +1179,42 @@ class AtomicWeight(FieldQnty):
     _setter_class = field_setter.AtomicWeightSetter
     _dimension = dim.ATOMIC_WEIGHT
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize atomic weight quantity.
+        Initialize atomic weight quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - AtomicWeight("name") -> Unknown atomic weight
+        - AtomicWeight("name", "unit") -> Unknown atomic weight with unit preference (NEW)
+        - AtomicWeight("name", "unit", value) -> Known atomic weight (NEW)
+        - AtomicWeight(value, "unit", "name") -> Known atomic weight (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.AtomicWeightSetter':
         """
@@ -1106,25 +1293,42 @@ class Concentration(FieldQnty):
     _setter_class = field_setter.ConcentrationSetter
     _dimension = dim.CONCENTRATION
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize concentration quantity.
+        Initialize concentration quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - Concentration("name") -> Unknown concentration
+        - Concentration("name", "unit") -> Unknown concentration with unit preference (NEW)
+        - Concentration("name", "unit", value) -> Known concentration (NEW)
+        - Concentration(value, "unit", "name") -> Known concentration (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.ConcentrationSetter':
         """
@@ -1201,22 +1405,34 @@ class Dimensionless(FieldQnty):
     _setter_class = field_setter.DimensionlessSetter
     _dimension = dim.DIMENSIONLESS
 
-    def __init__(self, name_or_value: str | int | float, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, name_or_unit: str | int | float | None = None):
         """
-        Initialize dimensionless quantity.
+        Initialize dimensionless quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - Dimensionless("name") -> Unknown dimensionless
+        - Dimensionless("name", value) -> Known dimensionless (NEW)
+        - Dimensionless(value, "name") -> Known dimensionless (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            name_or_unit: Variable name (str) or value (int/float), depending on first arg
         """
-        if name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
+        if isinstance(name_or_value, str):
+            # NEW syntax: name first
+            if name_or_unit is None:
+                # Unknown variable
+                super().__init__(name_or_value, is_known=False)
+            else:
+                # Known variable
+                super().__init__(name_or_unit, name_or_value, is_known=True)
         else:
-            # Two arguments: value and name (known variable)
-            super().__init__(name_or_value, name, is_known=is_known)
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            # OLD syntax: value first (backward compatibility)
+            if name_or_unit is None:
+                raise ValueError("Variable name required")
+            super().__init__(name_or_value, name_or_unit, is_known=True)
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.DimensionlessSetter':
         """
@@ -1295,25 +1511,42 @@ class DynamicFluidity(FieldQnty):
     _setter_class = field_setter.DynamicFluiditySetter
     _dimension = dim.DYNAMIC_FLUIDITY
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize dynamic fluidity quantity.
+        Initialize dynamic fluidity quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - DynamicFluidity("name") -> Unknown dynamic fluidity
+        - DynamicFluidity("name", "unit") -> Unknown dynamic fluidity with unit preference (NEW)
+        - DynamicFluidity("name", "unit", value) -> Known dynamic fluidity (NEW)
+        - DynamicFluidity(value, "unit", "name") -> Known dynamic fluidity (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.DynamicFluiditySetter':
         """
@@ -1392,25 +1625,42 @@ class ElectricCapacitance(FieldQnty):
     _setter_class = field_setter.ElectricCapacitanceSetter
     _dimension = dim.ELECTRIC_CAPACITANCE
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize electric capacitance quantity.
+        Initialize electric capacitance quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - ElectricCapacitance("name") -> Unknown electric capacitance
+        - ElectricCapacitance("name", "unit") -> Unknown electric capacitance with unit preference (NEW)
+        - ElectricCapacitance("name", "unit", value) -> Known electric capacitance (NEW)
+        - ElectricCapacitance(value, "unit", "name") -> Known electric capacitance (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.ElectricCapacitanceSetter':
         """
@@ -1489,25 +1739,42 @@ class ElectricCharge(FieldQnty):
     _setter_class = field_setter.ElectricChargeSetter
     _dimension = dim.ELECTRIC_CHARGE
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize electric charge quantity.
+        Initialize electric charge quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - ElectricCharge("name") -> Unknown electric charge
+        - ElectricCharge("name", "unit") -> Unknown electric charge with unit preference (NEW)
+        - ElectricCharge("name", "unit", value) -> Known electric charge (NEW)
+        - ElectricCharge(value, "unit", "name") -> Known electric charge (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.ElectricChargeSetter':
         """
@@ -1586,25 +1853,42 @@ class ElectricCurrentIntensity(FieldQnty):
     _setter_class = field_setter.ElectricCurrentIntensitySetter
     _dimension = dim.ELECTRIC_CURRENT_INTENSITY
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize electric current intensity quantity.
+        Initialize electric current intensity quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - ElectricCurrentIntensity("name") -> Unknown electric current intensity
+        - ElectricCurrentIntensity("name", "unit") -> Unknown electric current intensity with unit preference (NEW)
+        - ElectricCurrentIntensity("name", "unit", value) -> Known electric current intensity (NEW)
+        - ElectricCurrentIntensity(value, "unit", "name") -> Known electric current intensity (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.ElectricCurrentIntensitySetter':
         """
@@ -1683,25 +1967,42 @@ class ElectricDipoleMoment(FieldQnty):
     _setter_class = field_setter.ElectricDipoleMomentSetter
     _dimension = dim.ELECTRIC_DIPOLE_MOMENT
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize electric dipole moment quantity.
+        Initialize electric dipole moment quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - ElectricDipoleMoment("name") -> Unknown electric dipole moment
+        - ElectricDipoleMoment("name", "unit") -> Unknown electric dipole moment with unit preference (NEW)
+        - ElectricDipoleMoment("name", "unit", value) -> Known electric dipole moment (NEW)
+        - ElectricDipoleMoment(value, "unit", "name") -> Known electric dipole moment (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.ElectricDipoleMomentSetter':
         """
@@ -1780,25 +2081,42 @@ class ElectricFieldStrength(FieldQnty):
     _setter_class = field_setter.ElectricFieldStrengthSetter
     _dimension = dim.ELECTRIC_FIELD_STRENGTH
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize electric field strength quantity.
+        Initialize electric field strength quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - ElectricFieldStrength("name") -> Unknown electric field strength
+        - ElectricFieldStrength("name", "unit") -> Unknown electric field strength with unit preference (NEW)
+        - ElectricFieldStrength("name", "unit", value) -> Known electric field strength (NEW)
+        - ElectricFieldStrength(value, "unit", "name") -> Known electric field strength (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.ElectricFieldStrengthSetter':
         """
@@ -1877,25 +2195,42 @@ class ElectricInductance(FieldQnty):
     _setter_class = field_setter.ElectricInductanceSetter
     _dimension = dim.ELECTRIC_INDUCTANCE
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize electric inductance quantity.
+        Initialize electric inductance quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - ElectricInductance("name") -> Unknown electric inductance
+        - ElectricInductance("name", "unit") -> Unknown electric inductance with unit preference (NEW)
+        - ElectricInductance("name", "unit", value) -> Known electric inductance (NEW)
+        - ElectricInductance(value, "unit", "name") -> Known electric inductance (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.ElectricInductanceSetter':
         """
@@ -1974,25 +2309,42 @@ class ElectricPotential(FieldQnty):
     _setter_class = field_setter.ElectricPotentialSetter
     _dimension = dim.ELECTRIC_POTENTIAL
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize electric potential quantity.
+        Initialize electric potential quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - ElectricPotential("name") -> Unknown electric potential
+        - ElectricPotential("name", "unit") -> Unknown electric potential with unit preference (NEW)
+        - ElectricPotential("name", "unit", value) -> Known electric potential (NEW)
+        - ElectricPotential(value, "unit", "name") -> Known electric potential (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.ElectricPotentialSetter':
         """
@@ -2071,25 +2423,42 @@ class ElectricResistance(FieldQnty):
     _setter_class = field_setter.ElectricResistanceSetter
     _dimension = dim.ELECTRIC_RESISTANCE
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize electric resistance quantity.
+        Initialize electric resistance quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - ElectricResistance("name") -> Unknown electric resistance
+        - ElectricResistance("name", "unit") -> Unknown electric resistance with unit preference (NEW)
+        - ElectricResistance("name", "unit", value) -> Known electric resistance (NEW)
+        - ElectricResistance(value, "unit", "name") -> Known electric resistance (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.ElectricResistanceSetter':
         """
@@ -2168,25 +2537,42 @@ class ElectricalConductance(FieldQnty):
     _setter_class = field_setter.ElectricalConductanceSetter
     _dimension = dim.ELECTRICAL_CONDUCTANCE
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize electrical conductance quantity.
+        Initialize electrical conductance quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - ElectricalConductance("name") -> Unknown electrical conductance
+        - ElectricalConductance("name", "unit") -> Unknown electrical conductance with unit preference (NEW)
+        - ElectricalConductance("name", "unit", value) -> Known electrical conductance (NEW)
+        - ElectricalConductance(value, "unit", "name") -> Known electrical conductance (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.ElectricalConductanceSetter':
         """
@@ -2265,25 +2651,42 @@ class ElectricalPermittivity(FieldQnty):
     _setter_class = field_setter.ElectricalPermittivitySetter
     _dimension = dim.ELECTRICAL_PERMITTIVITY
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize electrical permittivity quantity.
+        Initialize electrical permittivity quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - ElectricalPermittivity("name") -> Unknown electrical permittivity
+        - ElectricalPermittivity("name", "unit") -> Unknown electrical permittivity with unit preference (NEW)
+        - ElectricalPermittivity("name", "unit", value) -> Known electrical permittivity (NEW)
+        - ElectricalPermittivity(value, "unit", "name") -> Known electrical permittivity (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.ElectricalPermittivitySetter':
         """
@@ -2362,25 +2765,42 @@ class ElectricalResistivity(FieldQnty):
     _setter_class = field_setter.ElectricalResistivitySetter
     _dimension = dim.ELECTRICAL_RESISTIVITY
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize electrical resistivity quantity.
+        Initialize electrical resistivity quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - ElectricalResistivity("name") -> Unknown electrical resistivity
+        - ElectricalResistivity("name", "unit") -> Unknown electrical resistivity with unit preference (NEW)
+        - ElectricalResistivity("name", "unit", value) -> Known electrical resistivity (NEW)
+        - ElectricalResistivity(value, "unit", "name") -> Known electrical resistivity (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.ElectricalResistivitySetter':
         """
@@ -2459,25 +2879,42 @@ class EnergyFlux(FieldQnty):
     _setter_class = field_setter.EnergyFluxSetter
     _dimension = dim.ENERGY_FLUX
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize energy flux quantity.
+        Initialize energy flux quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - EnergyFlux("name") -> Unknown energy flux
+        - EnergyFlux("name", "unit") -> Unknown energy flux with unit preference (NEW)
+        - EnergyFlux("name", "unit", value) -> Known energy flux (NEW)
+        - EnergyFlux(value, "unit", "name") -> Known energy flux (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.EnergyFluxSetter':
         """
@@ -2556,25 +2993,42 @@ class EnergyHeatWork(FieldQnty):
     _setter_class = field_setter.EnergyHeatWorkSetter
     _dimension = dim.ENERGY_HEAT_WORK
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize energy, heat, work quantity.
+        Initialize energy, heat, work quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - EnergyHeatWork("name") -> Unknown energy, heat, work
+        - EnergyHeatWork("name", "unit") -> Unknown energy, heat, work with unit preference (NEW)
+        - EnergyHeatWork("name", "unit", value) -> Known energy, heat, work (NEW)
+        - EnergyHeatWork(value, "unit", "name") -> Known energy, heat, work (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.EnergyHeatWorkSetter':
         """
@@ -2653,25 +3107,42 @@ class EnergyPerUnitArea(FieldQnty):
     _setter_class = field_setter.EnergyPerUnitAreaSetter
     _dimension = dim.ENERGY_PER_UNIT_AREA
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize energy per unit area quantity.
+        Initialize energy per unit area quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - EnergyPerUnitArea("name") -> Unknown energy per unit area
+        - EnergyPerUnitArea("name", "unit") -> Unknown energy per unit area with unit preference (NEW)
+        - EnergyPerUnitArea("name", "unit", value) -> Known energy per unit area (NEW)
+        - EnergyPerUnitArea(value, "unit", "name") -> Known energy per unit area (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.EnergyPerUnitAreaSetter':
         """
@@ -2750,25 +3221,42 @@ class Force(FieldQnty):
     _setter_class = field_setter.ForceSetter
     _dimension = dim.FORCE
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize force quantity.
+        Initialize force quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - Force("name") -> Unknown force
+        - Force("name", "unit") -> Unknown force with unit preference (NEW)
+        - Force("name", "unit", value) -> Known force (NEW)
+        - Force(value, "unit", "name") -> Known force (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.ForceSetter':
         """
@@ -2847,25 +3335,42 @@ class ForceBody(FieldQnty):
     _setter_class = field_setter.ForceBodySetter
     _dimension = dim.FORCE_BODY
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize force (body) quantity.
+        Initialize force (body) quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - ForceBody("name") -> Unknown force (body)
+        - ForceBody("name", "unit") -> Unknown force (body) with unit preference (NEW)
+        - ForceBody("name", "unit", value) -> Known force (body) (NEW)
+        - ForceBody(value, "unit", "name") -> Known force (body) (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.ForceBodySetter':
         """
@@ -2944,25 +3449,42 @@ class ForcePerUnitMass(FieldQnty):
     _setter_class = field_setter.ForcePerUnitMassSetter
     _dimension = dim.FORCE_PER_UNIT_MASS
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize force per unit mass quantity.
+        Initialize force per unit mass quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - ForcePerUnitMass("name") -> Unknown force per unit mass
+        - ForcePerUnitMass("name", "unit") -> Unknown force per unit mass with unit preference (NEW)
+        - ForcePerUnitMass("name", "unit", value) -> Known force per unit mass (NEW)
+        - ForcePerUnitMass(value, "unit", "name") -> Known force per unit mass (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.ForcePerUnitMassSetter':
         """
@@ -3041,25 +3563,42 @@ class FrequencyVoltageRatio(FieldQnty):
     _setter_class = field_setter.FrequencyVoltageRatioSetter
     _dimension = dim.FREQUENCY_VOLTAGE_RATIO
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize frequency voltage ratio quantity.
+        Initialize frequency voltage ratio quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - FrequencyVoltageRatio("name") -> Unknown frequency voltage ratio
+        - FrequencyVoltageRatio("name", "unit") -> Unknown frequency voltage ratio with unit preference (NEW)
+        - FrequencyVoltageRatio("name", "unit", value) -> Known frequency voltage ratio (NEW)
+        - FrequencyVoltageRatio(value, "unit", "name") -> Known frequency voltage ratio (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.FrequencyVoltageRatioSetter':
         """
@@ -3138,25 +3677,42 @@ class FuelConsumption(FieldQnty):
     _setter_class = field_setter.FuelConsumptionSetter
     _dimension = dim.FUEL_CONSUMPTION
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize fuel consumption quantity.
+        Initialize fuel consumption quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - FuelConsumption("name") -> Unknown fuel consumption
+        - FuelConsumption("name", "unit") -> Unknown fuel consumption with unit preference (NEW)
+        - FuelConsumption("name", "unit", value) -> Known fuel consumption (NEW)
+        - FuelConsumption(value, "unit", "name") -> Known fuel consumption (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.FuelConsumptionSetter':
         """
@@ -3235,25 +3791,42 @@ class HeatOfCombustion(FieldQnty):
     _setter_class = field_setter.HeatOfCombustionSetter
     _dimension = dim.HEAT_OF_COMBUSTION
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize heat of combustion quantity.
+        Initialize heat of combustion quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - HeatOfCombustion("name") -> Unknown heat of combustion
+        - HeatOfCombustion("name", "unit") -> Unknown heat of combustion with unit preference (NEW)
+        - HeatOfCombustion("name", "unit", value) -> Known heat of combustion (NEW)
+        - HeatOfCombustion(value, "unit", "name") -> Known heat of combustion (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.HeatOfCombustionSetter':
         """
@@ -3332,25 +3905,42 @@ class HeatOfFusion(FieldQnty):
     _setter_class = field_setter.HeatOfFusionSetter
     _dimension = dim.HEAT_OF_FUSION
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize heat of fusion quantity.
+        Initialize heat of fusion quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - HeatOfFusion("name") -> Unknown heat of fusion
+        - HeatOfFusion("name", "unit") -> Unknown heat of fusion with unit preference (NEW)
+        - HeatOfFusion("name", "unit", value) -> Known heat of fusion (NEW)
+        - HeatOfFusion(value, "unit", "name") -> Known heat of fusion (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.HeatOfFusionSetter':
         """
@@ -3429,25 +4019,42 @@ class HeatOfVaporization(FieldQnty):
     _setter_class = field_setter.HeatOfVaporizationSetter
     _dimension = dim.HEAT_OF_VAPORIZATION
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize heat of vaporization quantity.
+        Initialize heat of vaporization quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - HeatOfVaporization("name") -> Unknown heat of vaporization
+        - HeatOfVaporization("name", "unit") -> Unknown heat of vaporization with unit preference (NEW)
+        - HeatOfVaporization("name", "unit", value) -> Known heat of vaporization (NEW)
+        - HeatOfVaporization(value, "unit", "name") -> Known heat of vaporization (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.HeatOfVaporizationSetter':
         """
@@ -3526,25 +4133,42 @@ class HeatTransferCoefficient(FieldQnty):
     _setter_class = field_setter.HeatTransferCoefficientSetter
     _dimension = dim.HEAT_TRANSFER_COEFFICIENT
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize heat transfer coefficient quantity.
+        Initialize heat transfer coefficient quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - HeatTransferCoefficient("name") -> Unknown heat transfer coefficient
+        - HeatTransferCoefficient("name", "unit") -> Unknown heat transfer coefficient with unit preference (NEW)
+        - HeatTransferCoefficient("name", "unit", value) -> Known heat transfer coefficient (NEW)
+        - HeatTransferCoefficient(value, "unit", "name") -> Known heat transfer coefficient (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.HeatTransferCoefficientSetter':
         """
@@ -3623,25 +4247,42 @@ class Illuminance(FieldQnty):
     _setter_class = field_setter.IlluminanceSetter
     _dimension = dim.ILLUMINANCE
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize illuminance quantity.
+        Initialize illuminance quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - Illuminance("name") -> Unknown illuminance
+        - Illuminance("name", "unit") -> Unknown illuminance with unit preference (NEW)
+        - Illuminance("name", "unit", value) -> Known illuminance (NEW)
+        - Illuminance(value, "unit", "name") -> Known illuminance (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.IlluminanceSetter':
         """
@@ -3720,25 +4361,42 @@ class KineticEnergyOfTurbulence(FieldQnty):
     _setter_class = field_setter.KineticEnergyOfTurbulenceSetter
     _dimension = dim.KINETIC_ENERGY_OF_TURBULENCE
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize kinetic energy of turbulence quantity.
+        Initialize kinetic energy of turbulence quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - KineticEnergyOfTurbulence("name") -> Unknown kinetic energy of turbulence
+        - KineticEnergyOfTurbulence("name", "unit") -> Unknown kinetic energy of turbulence with unit preference (NEW)
+        - KineticEnergyOfTurbulence("name", "unit", value) -> Known kinetic energy of turbulence (NEW)
+        - KineticEnergyOfTurbulence(value, "unit", "name") -> Known kinetic energy of turbulence (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.KineticEnergyOfTurbulenceSetter':
         """
@@ -3817,25 +4475,42 @@ class Length(FieldQnty):
     _setter_class = field_setter.LengthSetter
     _dimension = dim.LENGTH
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize length quantity.
+        Initialize length quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - Length("name") -> Unknown length
+        - Length("name", "unit") -> Unknown length with unit preference (NEW)
+        - Length("name", "unit", value) -> Known length (NEW)
+        - Length(value, "unit", "name") -> Known length (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.LengthSetter':
         """
@@ -3914,25 +4589,42 @@ class LinearMassDensity(FieldQnty):
     _setter_class = field_setter.LinearMassDensitySetter
     _dimension = dim.LINEAR_MASS_DENSITY
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize linear mass density quantity.
+        Initialize linear mass density quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - LinearMassDensity("name") -> Unknown linear mass density
+        - LinearMassDensity("name", "unit") -> Unknown linear mass density with unit preference (NEW)
+        - LinearMassDensity("name", "unit", value) -> Known linear mass density (NEW)
+        - LinearMassDensity(value, "unit", "name") -> Known linear mass density (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.LinearMassDensitySetter':
         """
@@ -4011,25 +4703,42 @@ class LinearMomentum(FieldQnty):
     _setter_class = field_setter.LinearMomentumSetter
     _dimension = dim.LINEAR_MOMENTUM
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize linear momentum quantity.
+        Initialize linear momentum quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - LinearMomentum("name") -> Unknown linear momentum
+        - LinearMomentum("name", "unit") -> Unknown linear momentum with unit preference (NEW)
+        - LinearMomentum("name", "unit", value) -> Known linear momentum (NEW)
+        - LinearMomentum(value, "unit", "name") -> Known linear momentum (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.LinearMomentumSetter':
         """
@@ -4108,25 +4817,42 @@ class LuminanceSelf(FieldQnty):
     _setter_class = field_setter.LuminanceSelfSetter
     _dimension = dim.LUMINANCE_SELF
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize luminance (self) quantity.
+        Initialize luminance (self) quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - LuminanceSelf("name") -> Unknown luminance (self)
+        - LuminanceSelf("name", "unit") -> Unknown luminance (self) with unit preference (NEW)
+        - LuminanceSelf("name", "unit", value) -> Known luminance (self) (NEW)
+        - LuminanceSelf(value, "unit", "name") -> Known luminance (self) (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.LuminanceSelfSetter':
         """
@@ -4205,25 +4931,42 @@ class LuminousFlux(FieldQnty):
     _setter_class = field_setter.LuminousFluxSetter
     _dimension = dim.LUMINOUS_FLUX
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize luminous flux quantity.
+        Initialize luminous flux quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - LuminousFlux("name") -> Unknown luminous flux
+        - LuminousFlux("name", "unit") -> Unknown luminous flux with unit preference (NEW)
+        - LuminousFlux("name", "unit", value) -> Known luminous flux (NEW)
+        - LuminousFlux(value, "unit", "name") -> Known luminous flux (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.LuminousFluxSetter':
         """
@@ -4302,25 +5045,42 @@ class LuminousIntensity(FieldQnty):
     _setter_class = field_setter.LuminousIntensitySetter
     _dimension = dim.LUMINOUS_INTENSITY
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize luminous intensity quantity.
+        Initialize luminous intensity quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - LuminousIntensity("name") -> Unknown luminous intensity
+        - LuminousIntensity("name", "unit") -> Unknown luminous intensity with unit preference (NEW)
+        - LuminousIntensity("name", "unit", value) -> Known luminous intensity (NEW)
+        - LuminousIntensity(value, "unit", "name") -> Known luminous intensity (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.LuminousIntensitySetter':
         """
@@ -4399,25 +5159,42 @@ class MagneticField(FieldQnty):
     _setter_class = field_setter.MagneticFieldSetter
     _dimension = dim.MAGNETIC_FIELD
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize magnetic field quantity.
+        Initialize magnetic field quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - MagneticField("name") -> Unknown magnetic field
+        - MagneticField("name", "unit") -> Unknown magnetic field with unit preference (NEW)
+        - MagneticField("name", "unit", value) -> Known magnetic field (NEW)
+        - MagneticField(value, "unit", "name") -> Known magnetic field (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.MagneticFieldSetter':
         """
@@ -4496,25 +5273,42 @@ class MagneticFlux(FieldQnty):
     _setter_class = field_setter.MagneticFluxSetter
     _dimension = dim.MAGNETIC_FLUX
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize magnetic flux quantity.
+        Initialize magnetic flux quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - MagneticFlux("name") -> Unknown magnetic flux
+        - MagneticFlux("name", "unit") -> Unknown magnetic flux with unit preference (NEW)
+        - MagneticFlux("name", "unit", value) -> Known magnetic flux (NEW)
+        - MagneticFlux(value, "unit", "name") -> Known magnetic flux (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.MagneticFluxSetter':
         """
@@ -4593,25 +5387,42 @@ class MagneticInductionFieldStrength(FieldQnty):
     _setter_class = field_setter.MagneticInductionFieldStrengthSetter
     _dimension = dim.MAGNETIC_INDUCTION_FIELD_STRENGTH
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize magnetic induction field strength quantity.
+        Initialize magnetic induction field strength quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - MagneticInductionFieldStrength("name") -> Unknown magnetic induction field strength
+        - MagneticInductionFieldStrength("name", "unit") -> Unknown magnetic induction field strength with unit preference (NEW)
+        - MagneticInductionFieldStrength("name", "unit", value) -> Known magnetic induction field strength (NEW)
+        - MagneticInductionFieldStrength(value, "unit", "name") -> Known magnetic induction field strength (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.MagneticInductionFieldStrengthSetter':
         """
@@ -4690,25 +5501,42 @@ class MagneticMoment(FieldQnty):
     _setter_class = field_setter.MagneticMomentSetter
     _dimension = dim.MAGNETIC_MOMENT
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize magnetic moment quantity.
+        Initialize magnetic moment quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - MagneticMoment("name") -> Unknown magnetic moment
+        - MagneticMoment("name", "unit") -> Unknown magnetic moment with unit preference (NEW)
+        - MagneticMoment("name", "unit", value) -> Known magnetic moment (NEW)
+        - MagneticMoment(value, "unit", "name") -> Known magnetic moment (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.MagneticMomentSetter':
         """
@@ -4787,25 +5615,42 @@ class MagneticPermeability(FieldQnty):
     _setter_class = field_setter.MagneticPermeabilitySetter
     _dimension = dim.MAGNETIC_PERMEABILITY
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize magnetic permeability quantity.
+        Initialize magnetic permeability quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - MagneticPermeability("name") -> Unknown magnetic permeability
+        - MagneticPermeability("name", "unit") -> Unknown magnetic permeability with unit preference (NEW)
+        - MagneticPermeability("name", "unit", value) -> Known magnetic permeability (NEW)
+        - MagneticPermeability(value, "unit", "name") -> Known magnetic permeability (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.MagneticPermeabilitySetter':
         """
@@ -4884,25 +5729,42 @@ class MagnetomotiveForce(FieldQnty):
     _setter_class = field_setter.MagnetomotiveForceSetter
     _dimension = dim.MAGNETOMOTIVE_FORCE
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize magnetomotive force quantity.
+        Initialize magnetomotive force quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - MagnetomotiveForce("name") -> Unknown magnetomotive force
+        - MagnetomotiveForce("name", "unit") -> Unknown magnetomotive force with unit preference (NEW)
+        - MagnetomotiveForce("name", "unit", value) -> Known magnetomotive force (NEW)
+        - MagnetomotiveForce(value, "unit", "name") -> Known magnetomotive force (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.MagnetomotiveForceSetter':
         """
@@ -4981,25 +5843,42 @@ class Mass(FieldQnty):
     _setter_class = field_setter.MassSetter
     _dimension = dim.MASS
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize mass quantity.
+        Initialize mass quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - Mass("name") -> Unknown mass
+        - Mass("name", "unit") -> Unknown mass with unit preference (NEW)
+        - Mass("name", "unit", value) -> Known mass (NEW)
+        - Mass(value, "unit", "name") -> Known mass (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.MassSetter':
         """
@@ -5078,25 +5957,42 @@ class MassDensity(FieldQnty):
     _setter_class = field_setter.MassDensitySetter
     _dimension = dim.MASS_DENSITY
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize mass density quantity.
+        Initialize mass density quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - MassDensity("name") -> Unknown mass density
+        - MassDensity("name", "unit") -> Unknown mass density with unit preference (NEW)
+        - MassDensity("name", "unit", value) -> Known mass density (NEW)
+        - MassDensity(value, "unit", "name") -> Known mass density (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.MassDensitySetter':
         """
@@ -5175,25 +6071,42 @@ class MassFlowRate(FieldQnty):
     _setter_class = field_setter.MassFlowRateSetter
     _dimension = dim.MASS_FLOW_RATE
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize mass flow rate quantity.
+        Initialize mass flow rate quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - MassFlowRate("name") -> Unknown mass flow rate
+        - MassFlowRate("name", "unit") -> Unknown mass flow rate with unit preference (NEW)
+        - MassFlowRate("name", "unit", value) -> Known mass flow rate (NEW)
+        - MassFlowRate(value, "unit", "name") -> Known mass flow rate (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.MassFlowRateSetter':
         """
@@ -5272,25 +6185,42 @@ class MassFlux(FieldQnty):
     _setter_class = field_setter.MassFluxSetter
     _dimension = dim.MASS_FLUX
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize mass flux quantity.
+        Initialize mass flux quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - MassFlux("name") -> Unknown mass flux
+        - MassFlux("name", "unit") -> Unknown mass flux with unit preference (NEW)
+        - MassFlux("name", "unit", value) -> Known mass flux (NEW)
+        - MassFlux(value, "unit", "name") -> Known mass flux (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.MassFluxSetter':
         """
@@ -5369,25 +6299,42 @@ class MassFractionOfI(FieldQnty):
     _setter_class = field_setter.MassFractionOfISetter
     _dimension = dim.MASS_FRACTION_OF_I
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize mass fraction of "i" quantity.
+        Initialize mass fraction of "i" quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - MassFractionOfI("name") -> Unknown mass fraction of "i"
+        - MassFractionOfI("name", "unit") -> Unknown mass fraction of "i" with unit preference (NEW)
+        - MassFractionOfI("name", "unit", value) -> Known mass fraction of "i" (NEW)
+        - MassFractionOfI(value, "unit", "name") -> Known mass fraction of "i" (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.MassFractionOfISetter':
         """
@@ -5466,25 +6413,42 @@ class MassTransferCoefficient(FieldQnty):
     _setter_class = field_setter.MassTransferCoefficientSetter
     _dimension = dim.MASS_TRANSFER_COEFFICIENT
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize mass transfer coefficient quantity.
+        Initialize mass transfer coefficient quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - MassTransferCoefficient("name") -> Unknown mass transfer coefficient
+        - MassTransferCoefficient("name", "unit") -> Unknown mass transfer coefficient with unit preference (NEW)
+        - MassTransferCoefficient("name", "unit", value) -> Known mass transfer coefficient (NEW)
+        - MassTransferCoefficient(value, "unit", "name") -> Known mass transfer coefficient (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.MassTransferCoefficientSetter':
         """
@@ -5563,25 +6527,42 @@ class MolalityOfSoluteI(FieldQnty):
     _setter_class = field_setter.MolalityOfSoluteISetter
     _dimension = dim.MOLALITY_OF_SOLUTE_I
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize molality of solute "i" quantity.
+        Initialize molality of solute "i" quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - MolalityOfSoluteI("name") -> Unknown molality of solute "i"
+        - MolalityOfSoluteI("name", "unit") -> Unknown molality of solute "i" with unit preference (NEW)
+        - MolalityOfSoluteI("name", "unit", value) -> Known molality of solute "i" (NEW)
+        - MolalityOfSoluteI(value, "unit", "name") -> Known molality of solute "i" (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.MolalityOfSoluteISetter':
         """
@@ -5660,25 +6641,42 @@ class MolarConcentrationByMass(FieldQnty):
     _setter_class = field_setter.MolarConcentrationByMassSetter
     _dimension = dim.MOLAR_CONCENTRATION_BY_MASS
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize molar concentration by mass quantity.
+        Initialize molar concentration by mass quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - MolarConcentrationByMass("name") -> Unknown molar concentration by mass
+        - MolarConcentrationByMass("name", "unit") -> Unknown molar concentration by mass with unit preference (NEW)
+        - MolarConcentrationByMass("name", "unit", value) -> Known molar concentration by mass (NEW)
+        - MolarConcentrationByMass(value, "unit", "name") -> Known molar concentration by mass (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.MolarConcentrationByMassSetter':
         """
@@ -5757,25 +6755,42 @@ class MolarFlowRate(FieldQnty):
     _setter_class = field_setter.MolarFlowRateSetter
     _dimension = dim.MOLAR_FLOW_RATE
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize molar flow rate quantity.
+        Initialize molar flow rate quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - MolarFlowRate("name") -> Unknown molar flow rate
+        - MolarFlowRate("name", "unit") -> Unknown molar flow rate with unit preference (NEW)
+        - MolarFlowRate("name", "unit", value) -> Known molar flow rate (NEW)
+        - MolarFlowRate(value, "unit", "name") -> Known molar flow rate (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.MolarFlowRateSetter':
         """
@@ -5854,25 +6869,42 @@ class MolarFlux(FieldQnty):
     _setter_class = field_setter.MolarFluxSetter
     _dimension = dim.MOLAR_FLUX
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize molar flux quantity.
+        Initialize molar flux quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - MolarFlux("name") -> Unknown molar flux
+        - MolarFlux("name", "unit") -> Unknown molar flux with unit preference (NEW)
+        - MolarFlux("name", "unit", value) -> Known molar flux (NEW)
+        - MolarFlux(value, "unit", "name") -> Known molar flux (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.MolarFluxSetter':
         """
@@ -5951,25 +6983,42 @@ class MolarHeatCapacity(FieldQnty):
     _setter_class = field_setter.MolarHeatCapacitySetter
     _dimension = dim.MOLAR_HEAT_CAPACITY
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize molar heat capacity quantity.
+        Initialize molar heat capacity quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - MolarHeatCapacity("name") -> Unknown molar heat capacity
+        - MolarHeatCapacity("name", "unit") -> Unknown molar heat capacity with unit preference (NEW)
+        - MolarHeatCapacity("name", "unit", value) -> Known molar heat capacity (NEW)
+        - MolarHeatCapacity(value, "unit", "name") -> Known molar heat capacity (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.MolarHeatCapacitySetter':
         """
@@ -6048,25 +7097,42 @@ class MolarityOfI(FieldQnty):
     _setter_class = field_setter.MolarityOfISetter
     _dimension = dim.MOLARITY_OF_I
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize molarity of "i" quantity.
+        Initialize molarity of "i" quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - MolarityOfI("name") -> Unknown molarity of "i"
+        - MolarityOfI("name", "unit") -> Unknown molarity of "i" with unit preference (NEW)
+        - MolarityOfI("name", "unit", value) -> Known molarity of "i" (NEW)
+        - MolarityOfI(value, "unit", "name") -> Known molarity of "i" (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.MolarityOfISetter':
         """
@@ -6145,25 +7211,42 @@ class MoleFractionOfI(FieldQnty):
     _setter_class = field_setter.MoleFractionOfISetter
     _dimension = dim.MOLE_FRACTION_OF_I
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize mole fraction of "i" quantity.
+        Initialize mole fraction of "i" quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - MoleFractionOfI("name") -> Unknown mole fraction of "i"
+        - MoleFractionOfI("name", "unit") -> Unknown mole fraction of "i" with unit preference (NEW)
+        - MoleFractionOfI("name", "unit", value) -> Known mole fraction of "i" (NEW)
+        - MoleFractionOfI(value, "unit", "name") -> Known mole fraction of "i" (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.MoleFractionOfISetter':
         """
@@ -6242,25 +7325,42 @@ class MomentOfInertia(FieldQnty):
     _setter_class = field_setter.MomentOfInertiaSetter
     _dimension = dim.MOMENT_OF_INERTIA
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize moment of inertia quantity.
+        Initialize moment of inertia quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - MomentOfInertia("name") -> Unknown moment of inertia
+        - MomentOfInertia("name", "unit") -> Unknown moment of inertia with unit preference (NEW)
+        - MomentOfInertia("name", "unit", value) -> Known moment of inertia (NEW)
+        - MomentOfInertia(value, "unit", "name") -> Known moment of inertia (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.MomentOfInertiaSetter':
         """
@@ -6339,25 +7439,42 @@ class MomentumFlowRate(FieldQnty):
     _setter_class = field_setter.MomentumFlowRateSetter
     _dimension = dim.MOMENTUM_FLOW_RATE
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize momentum flow rate quantity.
+        Initialize momentum flow rate quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - MomentumFlowRate("name") -> Unknown momentum flow rate
+        - MomentumFlowRate("name", "unit") -> Unknown momentum flow rate with unit preference (NEW)
+        - MomentumFlowRate("name", "unit", value) -> Known momentum flow rate (NEW)
+        - MomentumFlowRate(value, "unit", "name") -> Known momentum flow rate (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.MomentumFlowRateSetter':
         """
@@ -6436,25 +7553,42 @@ class MomentumFlux(FieldQnty):
     _setter_class = field_setter.MomentumFluxSetter
     _dimension = dim.MOMENTUM_FLUX
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize momentum flux quantity.
+        Initialize momentum flux quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - MomentumFlux("name") -> Unknown momentum flux
+        - MomentumFlux("name", "unit") -> Unknown momentum flux with unit preference (NEW)
+        - MomentumFlux("name", "unit", value) -> Known momentum flux (NEW)
+        - MomentumFlux(value, "unit", "name") -> Known momentum flux (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.MomentumFluxSetter':
         """
@@ -6533,25 +7667,42 @@ class NormalityOfSolution(FieldQnty):
     _setter_class = field_setter.NormalityOfSolutionSetter
     _dimension = dim.NORMALITY_OF_SOLUTION
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize normality of solution quantity.
+        Initialize normality of solution quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - NormalityOfSolution("name") -> Unknown normality of solution
+        - NormalityOfSolution("name", "unit") -> Unknown normality of solution with unit preference (NEW)
+        - NormalityOfSolution("name", "unit", value) -> Known normality of solution (NEW)
+        - NormalityOfSolution(value, "unit", "name") -> Known normality of solution (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.NormalityOfSolutionSetter':
         """
@@ -6630,25 +7781,42 @@ class ParticleDensity(FieldQnty):
     _setter_class = field_setter.ParticleDensitySetter
     _dimension = dim.PARTICLE_DENSITY
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize particle density quantity.
+        Initialize particle density quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - ParticleDensity("name") -> Unknown particle density
+        - ParticleDensity("name", "unit") -> Unknown particle density with unit preference (NEW)
+        - ParticleDensity("name", "unit", value) -> Known particle density (NEW)
+        - ParticleDensity(value, "unit", "name") -> Known particle density (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.ParticleDensitySetter':
         """
@@ -6727,25 +7895,42 @@ class Percent(FieldQnty):
     _setter_class = field_setter.PercentSetter
     _dimension = dim.PERCENT
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize percent quantity.
+        Initialize percent quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - Percent("name") -> Unknown percent
+        - Percent("name", "unit") -> Unknown percent with unit preference (NEW)
+        - Percent("name", "unit", value) -> Known percent (NEW)
+        - Percent(value, "unit", "name") -> Known percent (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.PercentSetter':
         """
@@ -6824,25 +8009,42 @@ class Permeability(FieldQnty):
     _setter_class = field_setter.PermeabilitySetter
     _dimension = dim.PERMEABILITY
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize permeability quantity.
+        Initialize permeability quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - Permeability("name") -> Unknown permeability
+        - Permeability("name", "unit") -> Unknown permeability with unit preference (NEW)
+        - Permeability("name", "unit", value) -> Known permeability (NEW)
+        - Permeability(value, "unit", "name") -> Known permeability (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.PermeabilitySetter':
         """
@@ -6921,25 +8123,42 @@ class PhotonEmissionRate(FieldQnty):
     _setter_class = field_setter.PhotonEmissionRateSetter
     _dimension = dim.PHOTON_EMISSION_RATE
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize photon emission rate quantity.
+        Initialize photon emission rate quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - PhotonEmissionRate("name") -> Unknown photon emission rate
+        - PhotonEmissionRate("name", "unit") -> Unknown photon emission rate with unit preference (NEW)
+        - PhotonEmissionRate("name", "unit", value) -> Known photon emission rate (NEW)
+        - PhotonEmissionRate(value, "unit", "name") -> Known photon emission rate (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.PhotonEmissionRateSetter':
         """
@@ -7018,25 +8237,42 @@ class PowerPerUnitMass(FieldQnty):
     _setter_class = field_setter.PowerPerUnitMassSetter
     _dimension = dim.POWER_PER_UNIT_MASS
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize power per unit mass or specific power quantity.
+        Initialize power per unit mass or specific power quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - PowerPerUnitMass("name") -> Unknown power per unit mass or specific power
+        - PowerPerUnitMass("name", "unit") -> Unknown power per unit mass or specific power with unit preference (NEW)
+        - PowerPerUnitMass("name", "unit", value) -> Known power per unit mass or specific power (NEW)
+        - PowerPerUnitMass(value, "unit", "name") -> Known power per unit mass or specific power (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.PowerPerUnitMassSetter':
         """
@@ -7115,25 +8351,42 @@ class PowerPerUnitVolume(FieldQnty):
     _setter_class = field_setter.PowerPerUnitVolumeSetter
     _dimension = dim.POWER_PER_UNIT_VOLUME
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize power per unit volume or power density quantity.
+        Initialize power per unit volume or power density quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - PowerPerUnitVolume("name") -> Unknown power per unit volume or power density
+        - PowerPerUnitVolume("name", "unit") -> Unknown power per unit volume or power density with unit preference (NEW)
+        - PowerPerUnitVolume("name", "unit", value) -> Known power per unit volume or power density (NEW)
+        - PowerPerUnitVolume(value, "unit", "name") -> Known power per unit volume or power density (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.PowerPerUnitVolumeSetter':
         """
@@ -7212,25 +8465,42 @@ class PowerThermalDuty(FieldQnty):
     _setter_class = field_setter.PowerThermalDutySetter
     _dimension = dim.POWER_THERMAL_DUTY
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize power, thermal duty quantity.
+        Initialize power, thermal duty quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - PowerThermalDuty("name") -> Unknown power, thermal duty
+        - PowerThermalDuty("name", "unit") -> Unknown power, thermal duty with unit preference (NEW)
+        - PowerThermalDuty("name", "unit", value) -> Known power, thermal duty (NEW)
+        - PowerThermalDuty(value, "unit", "name") -> Known power, thermal duty (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.PowerThermalDutySetter':
         """
@@ -7309,25 +8579,42 @@ class Pressure(FieldQnty):
     _setter_class = field_setter.PressureSetter
     _dimension = dim.PRESSURE
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize pressure quantity.
+        Initialize pressure quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - Pressure("name") -> Unknown pressure
+        - Pressure("name", "unit") -> Unknown pressure with unit preference (NEW)
+        - Pressure("name", "unit", value) -> Known pressure (NEW)
+        - Pressure(value, "unit", "name") -> Known pressure (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.PressureSetter':
         """
@@ -7406,25 +8693,42 @@ class RadiationDoseEquivalent(FieldQnty):
     _setter_class = field_setter.RadiationDoseEquivalentSetter
     _dimension = dim.RADIATION_DOSE_EQUIVALENT
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize radiation dose equivalent quantity.
+        Initialize radiation dose equivalent quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - RadiationDoseEquivalent("name") -> Unknown radiation dose equivalent
+        - RadiationDoseEquivalent("name", "unit") -> Unknown radiation dose equivalent with unit preference (NEW)
+        - RadiationDoseEquivalent("name", "unit", value) -> Known radiation dose equivalent (NEW)
+        - RadiationDoseEquivalent(value, "unit", "name") -> Known radiation dose equivalent (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.RadiationDoseEquivalentSetter':
         """
@@ -7503,25 +8807,42 @@ class RadiationExposure(FieldQnty):
     _setter_class = field_setter.RadiationExposureSetter
     _dimension = dim.RADIATION_EXPOSURE
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize radiation exposure quantity.
+        Initialize radiation exposure quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - RadiationExposure("name") -> Unknown radiation exposure
+        - RadiationExposure("name", "unit") -> Unknown radiation exposure with unit preference (NEW)
+        - RadiationExposure("name", "unit", value) -> Known radiation exposure (NEW)
+        - RadiationExposure(value, "unit", "name") -> Known radiation exposure (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.RadiationExposureSetter':
         """
@@ -7600,25 +8921,42 @@ class Radioactivity(FieldQnty):
     _setter_class = field_setter.RadioactivitySetter
     _dimension = dim.RADIOACTIVITY
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize radioactivity quantity.
+        Initialize radioactivity quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - Radioactivity("name") -> Unknown radioactivity
+        - Radioactivity("name", "unit") -> Unknown radioactivity with unit preference (NEW)
+        - Radioactivity("name", "unit", value) -> Known radioactivity (NEW)
+        - Radioactivity(value, "unit", "name") -> Known radioactivity (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.RadioactivitySetter':
         """
@@ -7697,25 +9035,42 @@ class SecondMomentOfArea(FieldQnty):
     _setter_class = field_setter.SecondMomentOfAreaSetter
     _dimension = dim.SECOND_MOMENT_OF_AREA
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize second moment of area quantity.
+        Initialize second moment of area quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - SecondMomentOfArea("name") -> Unknown second moment of area
+        - SecondMomentOfArea("name", "unit") -> Unknown second moment of area with unit preference (NEW)
+        - SecondMomentOfArea("name", "unit", value) -> Known second moment of area (NEW)
+        - SecondMomentOfArea(value, "unit", "name") -> Known second moment of area (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.SecondMomentOfAreaSetter':
         """
@@ -7794,25 +9149,42 @@ class SecondRadiationConstantPlanck(FieldQnty):
     _setter_class = field_setter.SecondRadiationConstantPlanckSetter
     _dimension = dim.SECOND_RADIATION_CONSTANT_PLANCK
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize second radiation constant (planck) quantity.
+        Initialize second radiation constant (planck) quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - SecondRadiationConstantPlanck("name") -> Unknown second radiation constant (planck)
+        - SecondRadiationConstantPlanck("name", "unit") -> Unknown second radiation constant (planck) with unit preference (NEW)
+        - SecondRadiationConstantPlanck("name", "unit", value) -> Known second radiation constant (planck) (NEW)
+        - SecondRadiationConstantPlanck(value, "unit", "name") -> Known second radiation constant (planck) (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.SecondRadiationConstantPlanckSetter':
         """
@@ -7891,25 +9263,42 @@ class SpecificEnthalpy(FieldQnty):
     _setter_class = field_setter.SpecificEnthalpySetter
     _dimension = dim.SPECIFIC_ENTHALPY
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize specific enthalpy quantity.
+        Initialize specific enthalpy quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - SpecificEnthalpy("name") -> Unknown specific enthalpy
+        - SpecificEnthalpy("name", "unit") -> Unknown specific enthalpy with unit preference (NEW)
+        - SpecificEnthalpy("name", "unit", value) -> Known specific enthalpy (NEW)
+        - SpecificEnthalpy(value, "unit", "name") -> Known specific enthalpy (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.SpecificEnthalpySetter':
         """
@@ -7988,25 +9377,42 @@ class SpecificGravity(FieldQnty):
     _setter_class = field_setter.SpecificGravitySetter
     _dimension = dim.SPECIFIC_GRAVITY
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize specific gravity quantity.
+        Initialize specific gravity quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - SpecificGravity("name") -> Unknown specific gravity
+        - SpecificGravity("name", "unit") -> Unknown specific gravity with unit preference (NEW)
+        - SpecificGravity("name", "unit", value) -> Known specific gravity (NEW)
+        - SpecificGravity(value, "unit", "name") -> Known specific gravity (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.SpecificGravitySetter':
         """
@@ -8085,25 +9491,42 @@ class SpecificHeatCapacityConstantPressure(FieldQnty):
     _setter_class = field_setter.SpecificHeatCapacityConstantPressureSetter
     _dimension = dim.SPECIFIC_HEAT_CAPACITY_CONSTANT_PRESSURE
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize specific heat capacity (constant pressure) quantity.
+        Initialize specific heat capacity (constant pressure) quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - SpecificHeatCapacityConstantPressure("name") -> Unknown specific heat capacity (constant pressure)
+        - SpecificHeatCapacityConstantPressure("name", "unit") -> Unknown specific heat capacity (constant pressure) with unit preference (NEW)
+        - SpecificHeatCapacityConstantPressure("name", "unit", value) -> Known specific heat capacity (constant pressure) (NEW)
+        - SpecificHeatCapacityConstantPressure(value, "unit", "name") -> Known specific heat capacity (constant pressure) (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.SpecificHeatCapacityConstantPressureSetter':
         """
@@ -8182,25 +9605,42 @@ class SpecificLength(FieldQnty):
     _setter_class = field_setter.SpecificLengthSetter
     _dimension = dim.SPECIFIC_LENGTH
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize specific length quantity.
+        Initialize specific length quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - SpecificLength("name") -> Unknown specific length
+        - SpecificLength("name", "unit") -> Unknown specific length with unit preference (NEW)
+        - SpecificLength("name", "unit", value) -> Known specific length (NEW)
+        - SpecificLength(value, "unit", "name") -> Known specific length (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.SpecificLengthSetter':
         """
@@ -8279,25 +9719,42 @@ class SpecificSurface(FieldQnty):
     _setter_class = field_setter.SpecificSurfaceSetter
     _dimension = dim.SPECIFIC_SURFACE
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize specific surface quantity.
+        Initialize specific surface quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - SpecificSurface("name") -> Unknown specific surface
+        - SpecificSurface("name", "unit") -> Unknown specific surface with unit preference (NEW)
+        - SpecificSurface("name", "unit", value) -> Known specific surface (NEW)
+        - SpecificSurface(value, "unit", "name") -> Known specific surface (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.SpecificSurfaceSetter':
         """
@@ -8376,25 +9833,42 @@ class SpecificVolume(FieldQnty):
     _setter_class = field_setter.SpecificVolumeSetter
     _dimension = dim.SPECIFIC_VOLUME
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize specific volume quantity.
+        Initialize specific volume quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - SpecificVolume("name") -> Unknown specific volume
+        - SpecificVolume("name", "unit") -> Unknown specific volume with unit preference (NEW)
+        - SpecificVolume("name", "unit", value) -> Known specific volume (NEW)
+        - SpecificVolume(value, "unit", "name") -> Known specific volume (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.SpecificVolumeSetter':
         """
@@ -8473,25 +9947,42 @@ class Stress(FieldQnty):
     _setter_class = field_setter.StressSetter
     _dimension = dim.STRESS
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize stress quantity.
+        Initialize stress quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - Stress("name") -> Unknown stress
+        - Stress("name", "unit") -> Unknown stress with unit preference (NEW)
+        - Stress("name", "unit", value) -> Known stress (NEW)
+        - Stress(value, "unit", "name") -> Known stress (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.StressSetter':
         """
@@ -8570,25 +10061,42 @@ class SurfaceMassDensity(FieldQnty):
     _setter_class = field_setter.SurfaceMassDensitySetter
     _dimension = dim.SURFACE_MASS_DENSITY
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize surface mass density quantity.
+        Initialize surface mass density quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - SurfaceMassDensity("name") -> Unknown surface mass density
+        - SurfaceMassDensity("name", "unit") -> Unknown surface mass density with unit preference (NEW)
+        - SurfaceMassDensity("name", "unit", value) -> Known surface mass density (NEW)
+        - SurfaceMassDensity(value, "unit", "name") -> Known surface mass density (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.SurfaceMassDensitySetter':
         """
@@ -8667,25 +10175,42 @@ class SurfaceTension(FieldQnty):
     _setter_class = field_setter.SurfaceTensionSetter
     _dimension = dim.SURFACE_TENSION
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize surface tension quantity.
+        Initialize surface tension quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - SurfaceTension("name") -> Unknown surface tension
+        - SurfaceTension("name", "unit") -> Unknown surface tension with unit preference (NEW)
+        - SurfaceTension("name", "unit", value) -> Known surface tension (NEW)
+        - SurfaceTension(value, "unit", "name") -> Known surface tension (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.SurfaceTensionSetter':
         """
@@ -8764,25 +10289,42 @@ class Temperature(FieldQnty):
     _setter_class = field_setter.TemperatureSetter
     _dimension = dim.TEMPERATURE
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize temperature quantity.
+        Initialize temperature quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - Temperature("name") -> Unknown temperature
+        - Temperature("name", "unit") -> Unknown temperature with unit preference (NEW)
+        - Temperature("name", "unit", value) -> Known temperature (NEW)
+        - Temperature(value, "unit", "name") -> Known temperature (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.TemperatureSetter':
         """
@@ -8861,25 +10403,42 @@ class ThermalConductivity(FieldQnty):
     _setter_class = field_setter.ThermalConductivitySetter
     _dimension = dim.THERMAL_CONDUCTIVITY
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize thermal conductivity quantity.
+        Initialize thermal conductivity quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - ThermalConductivity("name") -> Unknown thermal conductivity
+        - ThermalConductivity("name", "unit") -> Unknown thermal conductivity with unit preference (NEW)
+        - ThermalConductivity("name", "unit", value) -> Known thermal conductivity (NEW)
+        - ThermalConductivity(value, "unit", "name") -> Known thermal conductivity (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.ThermalConductivitySetter':
         """
@@ -8958,25 +10517,42 @@ class Time(FieldQnty):
     _setter_class = field_setter.TimeSetter
     _dimension = dim.TIME
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize time quantity.
+        Initialize time quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - Time("name") -> Unknown time
+        - Time("name", "unit") -> Unknown time with unit preference (NEW)
+        - Time("name", "unit", value) -> Known time (NEW)
+        - Time(value, "unit", "name") -> Known time (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.TimeSetter':
         """
@@ -9055,25 +10631,42 @@ class Torque(FieldQnty):
     _setter_class = field_setter.TorqueSetter
     _dimension = dim.TORQUE
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize torque quantity.
+        Initialize torque quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - Torque("name") -> Unknown torque
+        - Torque("name", "unit") -> Unknown torque with unit preference (NEW)
+        - Torque("name", "unit", value) -> Known torque (NEW)
+        - Torque(value, "unit", "name") -> Known torque (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.TorqueSetter':
         """
@@ -9152,25 +10745,42 @@ class TurbulenceEnergyDissipationRate(FieldQnty):
     _setter_class = field_setter.TurbulenceEnergyDissipationRateSetter
     _dimension = dim.TURBULENCE_ENERGY_DISSIPATION_RATE
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize turbulence energy dissipation rate quantity.
+        Initialize turbulence energy dissipation rate quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - TurbulenceEnergyDissipationRate("name") -> Unknown turbulence energy dissipation rate
+        - TurbulenceEnergyDissipationRate("name", "unit") -> Unknown turbulence energy dissipation rate with unit preference (NEW)
+        - TurbulenceEnergyDissipationRate("name", "unit", value) -> Known turbulence energy dissipation rate (NEW)
+        - TurbulenceEnergyDissipationRate(value, "unit", "name") -> Known turbulence energy dissipation rate (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.TurbulenceEnergyDissipationRateSetter':
         """
@@ -9249,25 +10859,42 @@ class VelocityAngular(FieldQnty):
     _setter_class = field_setter.VelocityAngularSetter
     _dimension = dim.VELOCITY_ANGULAR
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize velocity, angular quantity.
+        Initialize velocity, angular quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - VelocityAngular("name") -> Unknown velocity, angular
+        - VelocityAngular("name", "unit") -> Unknown velocity, angular with unit preference (NEW)
+        - VelocityAngular("name", "unit", value) -> Known velocity, angular (NEW)
+        - VelocityAngular(value, "unit", "name") -> Known velocity, angular (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.VelocityAngularSetter':
         """
@@ -9346,25 +10973,42 @@ class VelocityLinear(FieldQnty):
     _setter_class = field_setter.VelocityLinearSetter
     _dimension = dim.VELOCITY_LINEAR
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize velocity, linear quantity.
+        Initialize velocity, linear quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - VelocityLinear("name") -> Unknown velocity, linear
+        - VelocityLinear("name", "unit") -> Unknown velocity, linear with unit preference (NEW)
+        - VelocityLinear("name", "unit", value) -> Known velocity, linear (NEW)
+        - VelocityLinear(value, "unit", "name") -> Known velocity, linear (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.VelocityLinearSetter':
         """
@@ -9443,25 +11087,42 @@ class ViscosityDynamic(FieldQnty):
     _setter_class = field_setter.ViscosityDynamicSetter
     _dimension = dim.VISCOSITY_DYNAMIC
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize viscosity, dynamic quantity.
+        Initialize viscosity, dynamic quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - ViscosityDynamic("name") -> Unknown viscosity, dynamic
+        - ViscosityDynamic("name", "unit") -> Unknown viscosity, dynamic with unit preference (NEW)
+        - ViscosityDynamic("name", "unit", value) -> Known viscosity, dynamic (NEW)
+        - ViscosityDynamic(value, "unit", "name") -> Known viscosity, dynamic (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.ViscosityDynamicSetter':
         """
@@ -9540,25 +11201,42 @@ class ViscosityKinematic(FieldQnty):
     _setter_class = field_setter.ViscosityKinematicSetter
     _dimension = dim.VISCOSITY_KINEMATIC
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize viscosity, kinematic quantity.
+        Initialize viscosity, kinematic quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - ViscosityKinematic("name") -> Unknown viscosity, kinematic
+        - ViscosityKinematic("name", "unit") -> Unknown viscosity, kinematic with unit preference (NEW)
+        - ViscosityKinematic("name", "unit", value) -> Known viscosity, kinematic (NEW)
+        - ViscosityKinematic(value, "unit", "name") -> Known viscosity, kinematic (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.ViscosityKinematicSetter':
         """
@@ -9637,25 +11315,42 @@ class Volume(FieldQnty):
     _setter_class = field_setter.VolumeSetter
     _dimension = dim.VOLUME
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize volume quantity.
+        Initialize volume quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - Volume("name") -> Unknown volume
+        - Volume("name", "unit") -> Unknown volume with unit preference (NEW)
+        - Volume("name", "unit", value) -> Known volume (NEW)
+        - Volume(value, "unit", "name") -> Known volume (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.VolumeSetter':
         """
@@ -9734,25 +11429,42 @@ class VolumeFractionOfI(FieldQnty):
     _setter_class = field_setter.VolumeFractionOfISetter
     _dimension = dim.VOLUME_FRACTION_OF_I
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize volume fraction of "i" quantity.
+        Initialize volume fraction of "i" quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - VolumeFractionOfI("name") -> Unknown volume fraction of "i"
+        - VolumeFractionOfI("name", "unit") -> Unknown volume fraction of "i" with unit preference (NEW)
+        - VolumeFractionOfI("name", "unit", value) -> Known volume fraction of "i" (NEW)
+        - VolumeFractionOfI(value, "unit", "name") -> Known volume fraction of "i" (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.VolumeFractionOfISetter':
         """
@@ -9831,25 +11543,42 @@ class VolumetricCalorificHeatingValue(FieldQnty):
     _setter_class = field_setter.VolumetricCalorificHeatingValueSetter
     _dimension = dim.VOLUMETRIC_CALORIFIC_HEATING_VALUE
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize volumetric calorific (heating) value quantity.
+        Initialize volumetric calorific (heating) value quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - VolumetricCalorificHeatingValue("name") -> Unknown volumetric calorific (heating) value
+        - VolumetricCalorificHeatingValue("name", "unit") -> Unknown volumetric calorific (heating) value with unit preference (NEW)
+        - VolumetricCalorificHeatingValue("name", "unit", value) -> Known volumetric calorific (heating) value (NEW)
+        - VolumetricCalorificHeatingValue(value, "unit", "name") -> Known volumetric calorific (heating) value (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.VolumetricCalorificHeatingValueSetter':
         """
@@ -9928,25 +11657,42 @@ class VolumetricCoefficientOfExpansion(FieldQnty):
     _setter_class = field_setter.VolumetricCoefficientOfExpansionSetter
     _dimension = dim.VOLUMETRIC_COEFFICIENT_OF_EXPANSION
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize volumetric coefficient of expansion quantity.
+        Initialize volumetric coefficient of expansion quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - VolumetricCoefficientOfExpansion("name") -> Unknown volumetric coefficient of expansion
+        - VolumetricCoefficientOfExpansion("name", "unit") -> Unknown volumetric coefficient of expansion with unit preference (NEW)
+        - VolumetricCoefficientOfExpansion("name", "unit", value) -> Known volumetric coefficient of expansion (NEW)
+        - VolumetricCoefficientOfExpansion(value, "unit", "name") -> Known volumetric coefficient of expansion (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.VolumetricCoefficientOfExpansionSetter':
         """
@@ -10025,25 +11771,42 @@ class VolumetricFlowRate(FieldQnty):
     _setter_class = field_setter.VolumetricFlowRateSetter
     _dimension = dim.VOLUMETRIC_FLOW_RATE
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize volumetric flow rate quantity.
+        Initialize volumetric flow rate quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - VolumetricFlowRate("name") -> Unknown volumetric flow rate
+        - VolumetricFlowRate("name", "unit") -> Unknown volumetric flow rate with unit preference (NEW)
+        - VolumetricFlowRate("name", "unit", value) -> Known volumetric flow rate (NEW)
+        - VolumetricFlowRate(value, "unit", "name") -> Known volumetric flow rate (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.VolumetricFlowRateSetter':
         """
@@ -10122,25 +11885,42 @@ class VolumetricFlux(FieldQnty):
     _setter_class = field_setter.VolumetricFluxSetter
     _dimension = dim.VOLUMETRIC_FLUX
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize volumetric flux quantity.
+        Initialize volumetric flux quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - VolumetricFlux("name") -> Unknown volumetric flux
+        - VolumetricFlux("name", "unit") -> Unknown volumetric flux with unit preference (NEW)
+        - VolumetricFlux("name", "unit", value) -> Known volumetric flux (NEW)
+        - VolumetricFlux(value, "unit", "name") -> Known volumetric flux (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.VolumetricFluxSetter':
         """
@@ -10219,25 +11999,42 @@ class VolumetricMassFlowRate(FieldQnty):
     _setter_class = field_setter.VolumetricMassFlowRateSetter
     _dimension = dim.VOLUMETRIC_MASS_FLOW_RATE
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize volumetric mass flow rate quantity.
+        Initialize volumetric mass flow rate quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - VolumetricMassFlowRate("name") -> Unknown volumetric mass flow rate
+        - VolumetricMassFlowRate("name", "unit") -> Unknown volumetric mass flow rate with unit preference (NEW)
+        - VolumetricMassFlowRate("name", "unit", value) -> Known volumetric mass flow rate (NEW)
+        - VolumetricMassFlowRate(value, "unit", "name") -> Known volumetric mass flow rate (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.VolumetricMassFlowRateSetter':
         """
@@ -10316,25 +12113,42 @@ class Wavenumber(FieldQnty):
     _setter_class = field_setter.WavenumberSetter
     _dimension = dim.WAVENUMBER
 
-    def __init__(self, name_or_value: str | int | float, unit: str | None = None, name: str | None = None, is_known: bool = True):
+    def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
-        Initialize wavenumber quantity.
+        Initialize wavenumber quantity with flexible syntax.
+        
+        Constructor Patterns:
+        --------------------
+        - Wavenumber("name") -> Unknown wavenumber
+        - Wavenumber("name", "unit") -> Unknown wavenumber with unit preference (NEW)
+        - Wavenumber("name", "unit", value) -> Known wavenumber (NEW)
+        - Wavenumber(value, "unit", "name") -> Known wavenumber (OLD, backward compatibility)
         
         Args:
-            name_or_value: Variable name (str) if unknown, or value (int/float) if known
-            unit: Unit string (required if providing value)
-            name: Variable name (required if providing value)
-            is_known: Whether the variable has a known value
+            name_or_value: Variable name (str) or value (int/float)
+            unit_or_name: Unit string or variable name, depending on usage
+            name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if unit is None and name is None:
-            # Single argument: name only (unknown variable)
-            super().__init__(name_or_value, is_known=is_known)
-        elif unit is not None and name is not None:
-            # Three arguments: value, unit, name (known variable)
-            super().__init__(name_or_value, unit, name, is_known=is_known)
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+            # NEW syntax: name first
+            if unit_or_name is None:
+                # Pattern: Length("name")
+                super().__init__(name_or_value, is_known=False)
+            elif name_or_value2 is None:
+                # Pattern: Length("name", "unit")
+                super().__init__(name_or_value, is_known=False)
+                self._set_preferred_unit(unit_or_name)
+            else:
+                # Pattern: Length("name", "unit", value)
+                super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
+        elif isinstance(name_or_value, (int, float)):
+            # OLD syntax: value first (backward compatibility)
+            if unit_or_name is None or name_or_value2 is None:
+                raise ValueError("Unit and name required for value-first syntax")
+            super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
-            raise ValueError("Must provide either just name (unknown) or value, unit, and name (known)")
-        self.set_arithmetic_mode('expression')  # Default expression mode for backward compatibility
+            raise ValueError("Invalid constructor arguments")
+        self.set_arithmetic_mode('expression')
     
     def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.WavenumberSetter':
         """

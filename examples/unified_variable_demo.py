@@ -77,7 +77,7 @@ def main():
     print()
     
     # Create variables for equation
-    area = qnty.Area("calculated_area", is_known=False)
+    area = qnty.Area("calculated_area")
     length = qnty.Length(12, "mm", "length")
     width = qnty.Length(8, "mm", "width")
     

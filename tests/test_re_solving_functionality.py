@@ -19,7 +19,7 @@ class SimpleProblemForReSolving(Problem):
     factor = Dimensionless(2.0, "Multiplication Factor")
     
     # Unknown variables  
-    result = Pressure(0.0, "psi", "Result Pressure", is_known=False)
+    result = Pressure("Result Pressure", "psi")
     
     # Simple equation: result = P * factor
     result_eqn = result.equals(P * factor)
@@ -156,7 +156,7 @@ class ComposedProblemForReSolving(Problem):
     
     # Additional variables
     multiplier = Dimensionless(1.5, "Multiplier")
-    final_result = Pressure(0.0, "psi", "Final Result", is_known=False)
+    final_result = Pressure("Final Result", "psi")
     
     # Equation: final_result = sub.result * multiplier
     final_eqn = final_result.equals(sub.result * multiplier)

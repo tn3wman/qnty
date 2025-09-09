@@ -98,12 +98,38 @@ class Equation:
         if var_obj is None:
             raise ValueError(f"Variable '{target_var}' not found in variable_values")
 
-        # Convert result to the target variable's original unit if it had one
+        # Convert result to preferred unit or original unit if available
+        target_unit_constant = None
+        
+        # First priority: existing quantity unit
         if var_obj.quantity is not None and var_obj.quantity.unit is not None:
+            target_unit_constant = var_obj.quantity.unit
+        # Second priority: preferred unit from constructor
+        elif hasattr(var_obj, 'preferred_unit') and var_obj.preferred_unit is not None:
+            # Look up unit constant from string name
+            preferred_unit_name = var_obj.preferred_unit
             try:
-                result_qty = result_qty.to(var_obj.quantity.unit)
+                # Get the dimension-specific units class
+                class_name = var_obj.__class__.__name__
+                units_class_name = f'{class_name}Units'
+                
+                # Import field_units dynamically to avoid circular imports
+                from ..units import field_units
+                units_class = getattr(field_units, units_class_name, None)
+                if units_class and hasattr(units_class, preferred_unit_name):
+                    target_unit_constant = getattr(units_class, preferred_unit_name)
+                    _logger.debug(f"Found preferred unit constant: {preferred_unit_name}")
+                else:
+                    _logger.debug(f"Could not find unit constant for {preferred_unit_name} in {units_class_name}")
+            except (ImportError, AttributeError) as e:
+                _logger.debug(f"Failed to lookup preferred unit {preferred_unit_name}: {e}")
+            
+        if target_unit_constant is not None:
+            try:
+                result_qty = result_qty.to(target_unit_constant)
+                _logger.debug(f"Converted {target_var} result to preferred unit: {target_unit_constant.symbol}")
             except (ValueError, TypeError, AttributeError) as e:
-                _logger.debug(f"Unit conversion failed for {target_var}: {e}. Using calculated unit.")
+                _logger.debug(f"Unit conversion failed for {target_var} to {target_unit_constant}: {e}. Using calculated unit.")
 
         # Update the variable and return it
         var_obj.quantity = result_qty

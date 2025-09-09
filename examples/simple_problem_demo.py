@@ -19,11 +19,11 @@ class StraightPipeInternal(Problem):
 
     # Unknown variables - using new simplified syntax
     Y = Dimensionless(0.4, "Y Coefficient")
-    T = Length(0.0, "inch", "Wall Thickness", is_known=False)
-    d = Length(0.0, "inch", "Inside Diameter", is_known=False)
-    t = Length(0.0, "inch", "Pressure Design Thickness", is_known=False)
-    t_m = Length(0.0, "inch", "Minimum Required Thickness", is_known=False)
-    P_max = Pressure(0.0, "psi", "Pressure, Maximum", is_known=False)
+    T = Length("Wall Thickness", "inch")
+    d = Length("Inside Diameter", "inch")
+    t = Length("Pressure Design Thickness", "inch")
+    t_m = Length("Minimum Required Thickness", "inch")
+    P_max = Pressure("Pressure, Maximum", "psi")
 
     # Equations
     T_eqn = T.equals(T_bar * (1 - U_m))

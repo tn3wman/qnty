@@ -26,23 +26,23 @@ class StraightPipeInternal(Problem):
     name = "Pressure Design of a Straight Pipe Under Internal Pressure"
     description = "Calculate the minimum wall thickness of a straight pipe under internal pressure."
 
-    # Known variables - using new simplified syntax
-    P = Pressure(90, "psi", "Design Pressure")
-    D = Length(0.5, "inch", "Outside Diameter")
-    T_bar = Length(0.035, "inch", "Nominal Wall Thickness")
-    U_m = Dimensionless(0.125, "Mill Undertolerance")
-    c = Length(0.0, "inch", "Mechanical Allowances")
-    S = Pressure(20000, "psi", "Allowable Stress")
-    E = Dimensionless(1, "Quality Factor")
-    W = Dimensionless(1, "Weld Joint Strength Reduction Factor")
+    # Known variables - using new clean syntax
+    P = Pressure("Design_Pressure", "psi", 90)
+    D = Length("Outside_Diameter", "inch", 0.5)
+    T_bar = Length("Nominal_Wall_Thickness", "inch", 0.035)
+    U_m = Dimensionless("Mill_Undertolerance", 0.125)
+    c = Length("Mechanical_Allowances", "inch", 0.0)
+    S = Pressure("Allowable_Stress", "psi", 20000)
+    E = Dimensionless("Quality_Factor", 1)
+    W = Dimensionless("Weld_Joint_Strength_Reduction_Factor", 1)
 
-    # Unknown variables - using new simplified syntax
-    Y = Dimensionless(0.4, "Y Coefficient")
-    T = Length("Wall Thickness", is_known=False)
-    d = Length("Inside Diameter", is_known=False)
-    t = Length("Pressure Design Thickness", is_known=False)
-    t_m = Length("Minimum Required Thickness", is_known=False)
-    P_max = Pressure("Pressure, Maximum", is_known=False)
+    # Unknown variables - using new clean syntax
+    Y = Dimensionless("Y_Coefficient", 0.4)
+    T = Length("Wall_Thickness", "inch")
+    d = Length("Inside_Diameter", "inch") 
+    t = Length("Pressure_Design_Thickness", "inch")
+    t_m = Length("Minimum_Required_Thickness", "inch")
+    P_max = Pressure("Pressure_Maximum", "psi")
 
     # Equations
     T_eqn = T.equals(T_bar * (1 - U_m))
@@ -90,23 +90,21 @@ def test_simple_problem():
 
     expected_results = [
         # Known variables (exact)
-        ("P", 90, "psi", 1e-9),
-        ("D", 0.5, "in", 1e-9),
-        ("T_bar", 0.035, "in", 1e-9),
-        ("U_m", 0.125, "", 1e-9),
-        ("c", 0.0, "in", 1e-9),
-        ("S", 20000, "psi", 1e-9),
-        ("E", 1.0, "", 1e-9),
-        ("W", 1, "", 1e-9),
-        ("Y", 0.4, "", 1e-9),
+        ("P", 90, "psi", None),
+        ("D", 0.5, "in", None),
+        ("T_bar", 0.035, "in", None),
+        ("U_m", 0.125, "", None),
+        ("c", 0.0, "in", None),
+        ("S", 20000, "psi", None),
+        ("E", 1.0, "", None),
+        ("W", 1, "", None),
+        ("Y", 0.4, "", None),
         # Calculated variables (with tolerance)
         ("T", 0.030625000000000003, "in", 1e-9),
         ("d", 0.43875, "in", 1e-9),
-        ("t", 0.028523657416650028, "mm", 1e-9),
-        ("t_m", 0.028523657416650028, "mm", 1e-9),
-        ("P_max", 17762518.033648793, "Pa", 1e-9),
+        ("t", 0.0011229786384507885, "in", 1e-9),
+        ("t_m", 0.0011229786384507885, "in", 1e-9),
+        ("P_max", 2576.2355415352267, "psi", 1e-9),
     ]
-
-
 
     assert_problem_results(problem, expected_results)

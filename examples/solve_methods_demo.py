@@ -19,7 +19,7 @@ def test_solve_from_method():
     # Simple linear equation: T = T_bar * (1 - U_m)
     T_bar = Length(0.147, "inch", "T_bar")
     U_m = Dimensionless(0.125, "U_m")
-    T = Length("T", is_known=False)
+    T = Length("T")
 
     print(f"Given: T_bar = {T_bar}, U_m = {U_m}")
     print(f"Before solve: T = {T}")
@@ -49,8 +49,8 @@ def test_equation_based_solve():
     U_m = Dimensionless(0.125, "U_m")
 
     # Unknown variables
-    T = Length("T", is_known=False)
-    d = Length("d", is_known=False)
+    T = Length("T")
+    d = Length("d")
 
     print(f"Given: D = {D}, T_bar = {T_bar}, U_m = {U_m}")
     print(f"Unknown: T = {T}, d = {d}")
@@ -108,7 +108,7 @@ def test_complex_expressions():
     S = Pressure(200, "pascal", "S")  # Allowable stress (treating as pressure for units)
     R = Length(50, "millimeter", "R")  # Radius
 
-    t = Length("t", is_known=False)  # Wall thickness to solve for
+    t = Length("t")  # Wall thickness to solve for
 
     print(f"Given: P = {P}, S = {S}, R = {R}")
     print("Solve: P = (S * t) / (R + 0.6 * t) for t")
@@ -191,7 +191,7 @@ def test_comparison_methods():
     print("Comparisons in complex expressions:")
     
     # Safety factor calculation: SF = P_max / P
-    SF = Pressure("Safety Factor", is_known=False)
+    SF = Pressure("Safety Factor")
     SF.solve_from(P_max / P)
     print(f"  Safety Factor = P_max / P = {SF}")
     
@@ -259,7 +259,7 @@ def test_error_conditions():
     print("\n=== Testing error conditions ===")
 
     # Test solving with no equations
-    x = Length("x", is_known=False)
+    x = Length("x")
 
     try:
         x.solve()
@@ -268,8 +268,8 @@ def test_error_conditions():
         print(f"PASS: Correctly caught error for no equations: {e}")
 
     # Test solving unsolvable equation
-    y = Length("y", is_known=False)
-    z = Length("z", is_known=False)
+    y = Length("y")
+    z = Length("z")
 
     # Create equation with two unknowns
     y.equals(z + 5)  # Create equation but don't store it

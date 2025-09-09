@@ -12,7 +12,7 @@ class TestEquationCreation:
 
     def test_basic_equation_creation(self):
         """Test creating equations using the .equals() method."""
-        T = Length("Wall Thickness", is_known=False)
+        T = Length("Wall Thickness")
         T_bar = Length(0.147, "inch", "Nominal Wall Thickness")
         U_m = Dimensionless(0.125, "Mill Undertolerance")
 
@@ -35,7 +35,7 @@ class TestEquationCreation:
         Y = Dimensionless(0.4, "Y Coefficient")
 
         # Create equation: t = (P * D) / (2 * (S * E * W + P * Y))
-        t = Length("Pressure Design Thickness", is_known=False)
+        t = Length("Pressure Design Thickness")
         t_eqn = t.equals((P * D) / (2 * (S * E * W + P * Y)))
 
         expected_vars = {"Pressure Design Thickness", "Design Pressure", "Outside Diameter", "Allowable Stress", "Quality Factor", "Weld Joint Strength Reduction Factor", "Y Coefficient"}
@@ -54,7 +54,7 @@ class TestArithmeticOperations:
         assert isinstance(result, Expression)
 
         # Test that the expression can be used in equations
-        c = Length("Length C", is_known=False)
+        c = Length("Length C")
         eqn = c.equals(a + b)
         assert isinstance(eqn, Equation)
 
@@ -67,7 +67,7 @@ class TestArithmeticOperations:
         assert isinstance(result, Expression)
 
         # Use in equation
-        area = Length("Area", is_known=False)  # This should be Area type, but Length works for test
+        area = Length("Area")  # This should be Area type, but Length works for test
         eqn = area.equals(width * height)
         assert isinstance(eqn, Equation)
 
@@ -83,7 +83,7 @@ class TestArithmeticOperations:
         assert isinstance(expr, Expression)
 
         # Use in equation
-        t = Length("t", is_known=False)
+        t = Length("t")
         eqn = t.equals(expr)
         assert isinstance(eqn, Equation)
         assert len(eqn.get_all_variables()) == 5  # P, D, S, E, t
@@ -122,7 +122,7 @@ class TestEquationSolving:
         U_m = Dimensionless(0.125, "U_m")
 
         # Unknown variable
-        T = Length("T", is_known=False)
+        T = Length("T")
 
         # Create equation: T = T_bar * (1 - U_m)
         T_eqn = T.equals(T_bar * (1 - U_m))
@@ -174,8 +174,8 @@ class TestEquationSolving:
         """Test detection of unknown variables in equations."""
         P = Pressure(90, "psi", "P")  # Known
         D = Length(0.84, "inch", "D")  # Known
-        t = Length("t", is_known=False)  # Unknown
-        S = Pressure("S", is_known=False)  # Unknown
+        t = Length("t")  # Unknown
+        S = Pressure("S")  # Unknown
 
         eqn = t.equals(P * D / (2 * S))
 
@@ -192,8 +192,8 @@ class TestExpressionEvaluation:
     def test_expression_evaluation(self):
         """Test evaluating expressions with variable values."""
         # Create variables without initial quantities to force expression creation
-        a = Length("a", is_known=False)
-        b = Length("b", is_known=False)
+        a = Length("a")
+        b = Length("b")
 
         # Create expression before setting values
         from qnty.expressions import Expression
@@ -212,8 +212,8 @@ class TestExpressionEvaluation:
     def test_complex_expression_evaluation(self):
         """Test evaluating complex expressions."""
         # Create variables without initial quantities to force expression creation
-        P = Pressure("P", is_known=False)
-        D = Length("D", is_known=False)
+        P = Pressure("P")
+        D = Length("D")
 
         # Create expression before setting values
         from qnty.expressions import Expression
@@ -232,7 +232,7 @@ class TestExpressionEvaluation:
     def test_expression_with_constants(self):
         """Test expressions containing constants."""
         # Create variable without initial quantity to force expression creation
-        var = Pressure("var", is_known=False)
+        var = Pressure("var")
 
         # Create expression before setting values
         from qnty.expressions import Expression
@@ -258,8 +258,8 @@ class TestEdgeCases:
 
     def test_equation_with_unknown_variables(self):
         """Test equations cannot solve when too many unknowns."""
-        x = Length("x", is_known=False)
-        y = Length("y", is_known=False)
+        x = Length("x")
+        y = Length("y")
 
         eqn = x.equals(y + 5)
 
@@ -270,7 +270,7 @@ class TestEdgeCases:
     def test_invalid_solve_target(self):
         """Test error when trying to solve for non-existent variable."""
         a = Length(5, "meter", "a")
-        b = Length("b", is_known=False)
+        b = Length("b")
 
         eqn = b.equals(a * 2)
         variables: dict[str, FieldQnty] = {"a": a, "b": b}
