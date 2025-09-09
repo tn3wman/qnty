@@ -120,8 +120,8 @@ class WeldedBranchConnection(qt.Problem):
 
     # System-level variables
     P = qt.Pressure(90, "psi", "Design Pressure")
-    # TODO: Fix how angle calculations are handled
-    beta = qt.AnglePlane(1.5708, "degree", "Branch Angle")
+
+    beta = qt.AnglePlane(90, "degree", "Branch Angle")
 
     # Sub-problems - automatically integrated with namespace prefixes
     header = create_straight_pipe_internal()

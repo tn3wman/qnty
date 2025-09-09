@@ -197,7 +197,7 @@
         "name": "degree",
         "normalized_name": "degree",
         "notation": "${ }^{\\circ}$",
-        "si_conversion": 0.0174533,
+        "si_conversion": 0.017453292519943295,
         "imperial_conversion": 1.0,
         "aliases": []
       },

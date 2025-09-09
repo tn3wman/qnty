@@ -514,14 +514,14 @@ class UnaryFunction(Expression):
 
         # Function dispatch table for better performance and maintainability
         functions = {
-            "sin": lambda x: Quantity(math.sin(x.value), DimensionlessUnits.dimensionless),
-            "cos": lambda x: Quantity(math.cos(x.value), DimensionlessUnits.dimensionless),
-            "tan": lambda x: Quantity(math.tan(x.value), DimensionlessUnits.dimensionless),
+            "sin": lambda x: math.sin(self._to_radians_if_angle(x)),
+            "cos": lambda x: math.cos(self._to_radians_if_angle(x)),
+            "tan": lambda x: math.tan(self._to_radians_if_angle(x)),
             "sqrt": lambda x: Quantity(math.sqrt(x.value), x.unit),
             "abs": lambda x: Quantity(abs(x.value), x.unit),
-            "ln": lambda x: Quantity(math.log(x.value), DimensionlessUnits.dimensionless),
-            "log10": lambda x: Quantity(math.log10(x.value), DimensionlessUnits.dimensionless),
-            "exp": lambda x: Quantity(math.exp(x.value), DimensionlessUnits.dimensionless),
+            "ln": lambda x: math.log(x.value),
+            "log10": lambda x: math.log10(x.value),
+            "exp": lambda x: math.exp(x.value),
         }
 
         func = functions.get(self.function_name)
@@ -529,6 +529,35 @@ class UnaryFunction(Expression):
             return func(operand_val)
         else:
             raise ValueError(f"Unknown function: {self.function_name}")
+
+    def _to_radians_if_angle(self, quantity: "Quantity") -> float:
+        """Convert angle quantities to radians for trigonometric functions."""
+        from ..dimensions import field_dims
+        
+        # Check if this is an angle dimension by comparing dimension signature
+        # Need to handle the case where angle dimensions might not exactly match due to implementation details
+        try:
+            # Import angle plane dimension for comparison
+            angle_plane_dim = field_dims.ANGLE_PLANE
+            
+            # If this looks like an angle (has angle dimension or unit name suggests it)
+            if (hasattr(quantity, '_dimension_sig') and quantity._dimension_sig == angle_plane_dim) or \
+               (hasattr(quantity, 'unit') and hasattr(quantity.unit, 'name') and 
+                any(angle_word in str(quantity.unit.name).lower() for angle_word in ['degree', 'radian', 'grad', 'gon'])):
+                
+                # Import the radian unit for conversion
+                from ..units.field_units import AnglePlaneUnits
+                
+                # Convert to radians and return the numeric value
+                radian_quantity = quantity.to(AnglePlaneUnits.radian.definition)
+                return radian_quantity.value
+            else:
+                # Non-angle quantities: return raw value (backward compatibility)
+                return quantity.value
+        except (ImportError, AttributeError, ValueError):
+            # If anything goes wrong with angle detection/conversion, fall back to raw value
+            return quantity.value
+
 
     def get_variables(self) -> set[str]:
         return self.operand.get_variables()
@@ -546,6 +575,15 @@ class UnaryFunction(Expression):
         return UnaryFunction(self.function_name, simplified_operand)
 
     def __str__(self) -> str:
+        # Try auto-evaluation first if possible
+        can_eval, variables = self._can_auto_evaluate()
+        if can_eval and variables:
+            try:
+                result = self.evaluate(variables)
+                return str(result)
+            except (ValueError, TypeError, AttributeError):
+                # Fall back to symbolic representation
+                pass
         return ExpressionFormatter.format_unary_function(self)  # type: ignore[arg-type]
 
 

@@ -16,8 +16,24 @@ ConditionalOperand = Expression | BinaryOperation
 def _create_unary_function(name: str, docstring: str):
     """Factory function for creating unary mathematical functions."""
 
-    def func(expr: ExpressionOperand) -> UnaryFunction:
-        return UnaryFunction(name, wrap_operand(expr))
+    def func(expr: ExpressionOperand):
+        from .nodes import VariableReference
+        
+        wrapped_expr = wrap_operand(expr)
+        
+        # For known quantities (FieldQnty with known values), evaluate immediately
+        if hasattr(expr, 'quantity') and expr.quantity is not None:
+            try:
+                unary_func = UnaryFunction(name, wrapped_expr)
+                # Use an empty variable dict since we have the quantity directly
+                result = unary_func.evaluate({})
+                return result
+            except (ValueError, TypeError, AttributeError):
+                # Fall back to expression if evaluation fails
+                pass
+        
+        # For unknown variables or expressions, return the UnaryFunction
+        return UnaryFunction(name, wrapped_expr)
 
     func.__name__ = name
     func.__doc__ = docstring
