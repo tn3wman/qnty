@@ -177,7 +177,7 @@ class Problem(ValidationMixin):
         # Sub-problem composition support
         self.sub_problems: dict[str, Any] = {}
         self.variable_aliases: dict[str, str] = {}
-        
+
         # Track original variable states for re-solving
         self._original_variable_states: dict[str, bool] = {}
         self._original_variable_units: dict[str, Any] = {}
@@ -238,7 +238,7 @@ class Problem(ValidationMixin):
                 self._original_variable_units[variable.symbol] = variable.quantity.unit
         # Set parent problem reference for dependency invalidation
         if hasattr(variable, "_parent_problem"):
-            setattr(variable, "_parent_problem", self)
+            variable._parent_problem = self  # type: ignore[assignment]
         # Also set as instance attribute for dot notation access
         if variable.symbol is not None:
             setattr(self, variable.symbol, variable)
@@ -373,7 +373,7 @@ class Problem(ValidationMixin):
         cloned.is_known = variable.is_known
 
         # Copy unit preference if it exists
-        if hasattr(variable, '_preferred_unit'):
+        if hasattr(variable, "_preferred_unit"):
             cloned._preferred_unit = variable._preferred_unit
 
         # Ensure the cloned variable has fresh validation checks
@@ -388,19 +388,18 @@ class Problem(ValidationMixin):
         for symbol, solved_var in solved_variables.items():
             if symbol in self.variables:
                 original_var = self.variables[symbol]
-                
+
                 # If we have a solved quantity and an original unit to preserve
-                if (solved_var.quantity is not None and 
-                    symbol in self._original_variable_units and 
-                    symbol in self._original_variable_states and 
-                    not self._original_variable_states[symbol]):  # Was originally unknown
-                    
+                if (
+                    solved_var.quantity is not None and symbol in self._original_variable_units and symbol in self._original_variable_states and not self._original_variable_states[symbol]
+                ):  # Was originally unknown
                     # Convert solved quantity to original unit for display
                     original_unit = self._original_variable_units[symbol]
                     try:
                         # Convert the solved quantity to the original unit
                         converted_value = solved_var.quantity.to(original_unit).value
                         from ..quantities.base_qnty import Quantity
+
                         original_var.quantity = Quantity(converted_value, original_unit)
                         original_var.is_known = True
                     except Exception:
@@ -728,7 +727,7 @@ class Problem(ValidationMixin):
         except AttributeError:
             # variables attribute doesn't exist yet (during initialization)
             pass
-        
+
         # If not found, raise AttributeError
         raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
 

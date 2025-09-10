@@ -12,26 +12,26 @@ from typing import Self
 
 from ..dimensions import field_dims as dim
 from . import field_setter
-from .base_qnty import TypeSafeSetter
 from .field_qnty import FieldQnty
 
 # ===== QUANTITY CLASSES =====
 # Static quantity class definitions with __slots__ optimization
 
+
 class AbsorbedDose(FieldQnty):
     """
     Type-safe absorbed radiation dose quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - AbsorbedDose("variable_name") -> Create unknown absorbed radiation dose
     - AbsorbedDose(value, "unit", "variable_name") -> Create known absorbed radiation dose
-    
+
     Examples:
     ---------
     >>> unknown = AbsorbedDose("pressure")  # Unknown absorbed radiation dose
     >>> known = AbsorbedDose(100, "erg_per_gram", "inlet_pressure")  # Known absorbed radiation dose
-    
+
     Available units: "erg_per_gram", "gram_rad", "gray"
     """
 
@@ -42,20 +42,20 @@ class AbsorbedDose(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize absorbed radiation dose quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - AbsorbedDose("name") -> Unknown absorbed radiation dose
         - AbsorbedDose("name", "unit") -> Unknown absorbed radiation dose with unit preference (NEW)
         - AbsorbedDose("name", "unit", value) -> Known absorbed radiation dose (NEW)
         - AbsorbedDose(value, "unit", "name") -> Known absorbed radiation dose (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -67,26 +67,26 @@ class AbsorbedDose(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.AbsorbedDoseSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.AbsorbedDoseSetter":
         """
         Create a setter for this absorbed radiation dose quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             AbsorbedDoseSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -99,19 +99,20 @@ class AbsorbedDose(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.AbsorbedDoseSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this absorbed radiation dose.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -122,31 +123,31 @@ class AbsorbedDose(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this absorbed radiation dose.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class Acceleration(FieldQnty):
     """
     Type-safe acceleration quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - Acceleration("variable_name") -> Create unknown acceleration
     - Acceleration(value, "unit", "variable_name") -> Create known acceleration
-    
+
     Examples:
     ---------
     >>> unknown = Acceleration("pressure")  # Unknown acceleration
     >>> known = Acceleration(100, "meter_per_second_squared", "inlet_pressure")  # Known acceleration
-    
+
     Available units: "meter_per_second_squared", "foot_per_second_squared"
     """
 
@@ -157,20 +158,20 @@ class Acceleration(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize acceleration quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - Acceleration("name") -> Unknown acceleration
         - Acceleration("name", "unit") -> Unknown acceleration with unit preference (NEW)
         - Acceleration("name", "unit", value) -> Known acceleration (NEW)
         - Acceleration(value, "unit", "name") -> Known acceleration (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -182,26 +183,26 @@ class Acceleration(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.AccelerationSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.AccelerationSetter":
         """
         Create a setter for this acceleration quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             AccelerationSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -214,19 +215,20 @@ class Acceleration(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.AccelerationSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this acceleration.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -237,31 +239,31 @@ class Acceleration(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this acceleration.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class ActivationEnergy(FieldQnty):
     """
     Type-safe activation energy quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - ActivationEnergy("variable_name") -> Create unknown activation energy
     - ActivationEnergy(value, "unit", "variable_name") -> Create known activation energy
-    
+
     Examples:
     ---------
     >>> unknown = ActivationEnergy("pressure")  # Unknown activation energy
     >>> known = ActivationEnergy(100, "btu_per_pound_mole", "inlet_pressure")  # Known activation energy
-    
+
     Available units: "btu_per_pound_mole", "calorie_mean_per_gram_mole", "joule_per_gram_mole"
     """
 
@@ -272,20 +274,20 @@ class ActivationEnergy(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize activation energy quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - ActivationEnergy("name") -> Unknown activation energy
         - ActivationEnergy("name", "unit") -> Unknown activation energy with unit preference (NEW)
         - ActivationEnergy("name", "unit", value) -> Known activation energy (NEW)
         - ActivationEnergy(value, "unit", "name") -> Known activation energy (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -297,26 +299,26 @@ class ActivationEnergy(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.ActivationEnergySetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.ActivationEnergySetter":
         """
         Create a setter for this activation energy quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             ActivationEnergySetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -329,19 +331,20 @@ class ActivationEnergy(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.ActivationEnergySetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this activation energy.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -352,31 +355,31 @@ class ActivationEnergy(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this activation energy.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class AmountOfSubstance(FieldQnty):
     """
     Type-safe amount of substance quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - AmountOfSubstance("variable_name") -> Create unknown amount of substance
     - AmountOfSubstance(value, "unit", "variable_name") -> Create known amount of substance
-    
+
     Examples:
     ---------
     >>> unknown = AmountOfSubstance("pressure")  # Unknown amount of substance
     >>> known = AmountOfSubstance(100, "kilogram_mol", "inlet_pressure")  # Known amount of substance
-    
+
     Available units: "kilogram_mol", "mole", "pound_mole"
     """
 
@@ -387,20 +390,20 @@ class AmountOfSubstance(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize amount of substance quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - AmountOfSubstance("name") -> Unknown amount of substance
         - AmountOfSubstance("name", "unit") -> Unknown amount of substance with unit preference (NEW)
         - AmountOfSubstance("name", "unit", value) -> Known amount of substance (NEW)
         - AmountOfSubstance(value, "unit", "name") -> Known amount of substance (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -412,26 +415,26 @@ class AmountOfSubstance(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.AmountOfSubstanceSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.AmountOfSubstanceSetter":
         """
         Create a setter for this amount of substance quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             AmountOfSubstanceSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -444,19 +447,20 @@ class AmountOfSubstance(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.AmountOfSubstanceSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this amount of substance.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -467,31 +471,31 @@ class AmountOfSubstance(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this amount of substance.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class AnglePlane(FieldQnty):
     """
     Type-safe angle, plane quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - AnglePlane("variable_name") -> Create unknown angle, plane
     - AnglePlane(value, "unit", "variable_name") -> Create known angle, plane
-    
+
     Examples:
     ---------
     >>> unknown = AnglePlane("pressure")  # Unknown angle, plane
     >>> known = AnglePlane(100, "degree", "inlet_pressure")  # Known angle, plane
-    
+
     Available units: "degree", "gon", "grade"
     """
 
@@ -502,20 +506,20 @@ class AnglePlane(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize angle, plane quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - AnglePlane("name") -> Unknown angle, plane
         - AnglePlane("name", "unit") -> Unknown angle, plane with unit preference (NEW)
         - AnglePlane("name", "unit", value) -> Known angle, plane (NEW)
         - AnglePlane(value, "unit", "name") -> Known angle, plane (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -527,26 +531,26 @@ class AnglePlane(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.AnglePlaneSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.AnglePlaneSetter":
         """
         Create a setter for this angle, plane quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             AnglePlaneSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -559,19 +563,20 @@ class AnglePlane(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.AnglePlaneSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this angle, plane.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -582,31 +587,31 @@ class AnglePlane(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this angle, plane.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class AngleSolid(FieldQnty):
     """
     Type-safe angle, solid quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - AngleSolid("variable_name") -> Create unknown angle, solid
     - AngleSolid(value, "unit", "variable_name") -> Create known angle, solid
-    
+
     Examples:
     ---------
     >>> unknown = AngleSolid("pressure")  # Unknown angle, solid
     >>> known = AngleSolid(100, "spat", "inlet_pressure")  # Known angle, solid
-    
+
     Available units: "spat", "square_degree", "square_gon"
     """
 
@@ -617,20 +622,20 @@ class AngleSolid(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize angle, solid quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - AngleSolid("name") -> Unknown angle, solid
         - AngleSolid("name", "unit") -> Unknown angle, solid with unit preference (NEW)
         - AngleSolid("name", "unit", value) -> Known angle, solid (NEW)
         - AngleSolid(value, "unit", "name") -> Known angle, solid (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -642,26 +647,26 @@ class AngleSolid(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.AngleSolidSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.AngleSolidSetter":
         """
         Create a setter for this angle, solid quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             AngleSolidSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -674,19 +679,20 @@ class AngleSolid(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.AngleSolidSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this angle, solid.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -697,31 +703,31 @@ class AngleSolid(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this angle, solid.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class AngularAcceleration(FieldQnty):
     """
     Type-safe angular acceleration quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - AngularAcceleration("variable_name") -> Create unknown angular acceleration
     - AngularAcceleration(value, "unit", "variable_name") -> Create known angular acceleration
-    
+
     Examples:
     ---------
     >>> unknown = AngularAcceleration("pressure")  # Unknown angular acceleration
     >>> known = AngularAcceleration(100, "radian_per_second_squared", "inlet_pressure")  # Known angular acceleration
-    
+
     Available units: "radian_per_second_squared", "revolution_per_second_squared", "rpm_or_revolution_per_minute"
     """
 
@@ -732,20 +738,20 @@ class AngularAcceleration(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize angular acceleration quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - AngularAcceleration("name") -> Unknown angular acceleration
         - AngularAcceleration("name", "unit") -> Unknown angular acceleration with unit preference (NEW)
         - AngularAcceleration("name", "unit", value) -> Known angular acceleration (NEW)
         - AngularAcceleration(value, "unit", "name") -> Known angular acceleration (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -757,26 +763,26 @@ class AngularAcceleration(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.AngularAccelerationSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.AngularAccelerationSetter":
         """
         Create a setter for this angular acceleration quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             AngularAccelerationSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -789,19 +795,20 @@ class AngularAcceleration(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.AngularAccelerationSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this angular acceleration.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -812,31 +819,31 @@ class AngularAcceleration(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this angular acceleration.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class AngularMomentum(FieldQnty):
     """
     Type-safe angular momentum quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - AngularMomentum("variable_name") -> Create unknown angular momentum
     - AngularMomentum(value, "unit", "variable_name") -> Create known angular momentum
-    
+
     Examples:
     ---------
     >>> unknown = AngularMomentum("pressure")  # Unknown angular momentum
     >>> known = AngularMomentum(100, "gram_centimeter_squared_per_second", "inlet_pressure")  # Known angular momentum
-    
+
     Available units: "gram_centimeter_squared_per_second", "kilogram_meter_squared_per_second", "pound_force_square_foot_per_second"
     """
 
@@ -847,20 +854,20 @@ class AngularMomentum(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize angular momentum quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - AngularMomentum("name") -> Unknown angular momentum
         - AngularMomentum("name", "unit") -> Unknown angular momentum with unit preference (NEW)
         - AngularMomentum("name", "unit", value) -> Known angular momentum (NEW)
         - AngularMomentum(value, "unit", "name") -> Known angular momentum (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -872,26 +879,26 @@ class AngularMomentum(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.AngularMomentumSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.AngularMomentumSetter":
         """
         Create a setter for this angular momentum quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             AngularMomentumSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -904,19 +911,20 @@ class AngularMomentum(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.AngularMomentumSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this angular momentum.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -927,31 +935,31 @@ class AngularMomentum(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this angular momentum.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class Area(FieldQnty):
     """
     Type-safe area quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - Area("variable_name") -> Create unknown area
     - Area(value, "unit", "variable_name") -> Create known area
-    
+
     Examples:
     ---------
     >>> unknown = Area("pressure")  # Unknown area
     >>> known = Area(100, "acre_general", "inlet_pressure")  # Known area
-    
+
     Available units: "acre_general", "are", "arpent_quebec"
     """
 
@@ -962,20 +970,20 @@ class Area(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize area quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - Area("name") -> Unknown area
         - Area("name", "unit") -> Unknown area with unit preference (NEW)
         - Area("name", "unit", value) -> Known area (NEW)
         - Area(value, "unit", "name") -> Known area (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -987,26 +995,26 @@ class Area(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.AreaSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.AreaSetter":
         """
         Create a setter for this area quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             AreaSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -1019,19 +1027,20 @@ class Area(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.AreaSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this area.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -1042,31 +1051,31 @@ class Area(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this area.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class AreaPerUnitVolume(FieldQnty):
     """
     Type-safe area per unit volume quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - AreaPerUnitVolume("variable_name") -> Create unknown area per unit volume
     - AreaPerUnitVolume(value, "unit", "variable_name") -> Create known area per unit volume
-    
+
     Examples:
     ---------
     >>> unknown = AreaPerUnitVolume("pressure")  # Unknown area per unit volume
     >>> known = AreaPerUnitVolume(100, "square_centimeter_per_cubic_centimeter", "inlet_pressure")  # Known area per unit volume
-    
+
     Available units: "square_centimeter_per_cubic_centimeter", "square_foot_per_cubic_foot", "square_inch_per_cubic_inch"
     """
 
@@ -1077,20 +1086,20 @@ class AreaPerUnitVolume(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize area per unit volume quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - AreaPerUnitVolume("name") -> Unknown area per unit volume
         - AreaPerUnitVolume("name", "unit") -> Unknown area per unit volume with unit preference (NEW)
         - AreaPerUnitVolume("name", "unit", value) -> Known area per unit volume (NEW)
         - AreaPerUnitVolume(value, "unit", "name") -> Known area per unit volume (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -1102,26 +1111,26 @@ class AreaPerUnitVolume(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.AreaPerUnitVolumeSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.AreaPerUnitVolumeSetter":
         """
         Create a setter for this area per unit volume quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             AreaPerUnitVolumeSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -1134,19 +1143,20 @@ class AreaPerUnitVolume(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.AreaPerUnitVolumeSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this area per unit volume.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -1157,31 +1167,31 @@ class AreaPerUnitVolume(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this area per unit volume.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class AtomicWeight(FieldQnty):
     """
     Type-safe atomic weight quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - AtomicWeight("variable_name") -> Create unknown atomic weight
     - AtomicWeight(value, "unit", "variable_name") -> Create known atomic weight
-    
+
     Examples:
     ---------
     >>> unknown = AtomicWeight("pressure")  # Unknown atomic weight
     >>> known = AtomicWeight(100, "atomic_mass_unit_12c", "inlet_pressure")  # Known atomic weight
-    
+
     Available units: "atomic_mass_unit_12c", "grams_per_mole", "kilograms_per_kilomole"
     """
 
@@ -1192,20 +1202,20 @@ class AtomicWeight(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize atomic weight quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - AtomicWeight("name") -> Unknown atomic weight
         - AtomicWeight("name", "unit") -> Unknown atomic weight with unit preference (NEW)
         - AtomicWeight("name", "unit", value) -> Known atomic weight (NEW)
         - AtomicWeight(value, "unit", "name") -> Known atomic weight (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -1217,26 +1227,26 @@ class AtomicWeight(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.AtomicWeightSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.AtomicWeightSetter":
         """
         Create a setter for this atomic weight quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             AtomicWeightSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -1249,19 +1259,20 @@ class AtomicWeight(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.AtomicWeightSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this atomic weight.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -1272,31 +1283,31 @@ class AtomicWeight(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this atomic weight.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class Concentration(FieldQnty):
     """
     Type-safe concentration quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - Concentration("variable_name") -> Create unknown concentration
     - Concentration(value, "unit", "variable_name") -> Create known concentration
-    
+
     Examples:
     ---------
     >>> unknown = Concentration("pressure")  # Unknown concentration
     >>> known = Concentration(100, "grains_of_i_per_cubic_foot", "inlet_pressure")  # Known concentration
-    
+
     Available units: "grains_of_i_per_cubic_foot", "grains_of_i_per_gallon_us"
     """
 
@@ -1307,20 +1318,20 @@ class Concentration(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize concentration quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - Concentration("name") -> Unknown concentration
         - Concentration("name", "unit") -> Unknown concentration with unit preference (NEW)
         - Concentration("name", "unit", value) -> Known concentration (NEW)
         - Concentration(value, "unit", "name") -> Known concentration (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -1332,26 +1343,26 @@ class Concentration(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.ConcentrationSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.ConcentrationSetter":
         """
         Create a setter for this concentration quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             ConcentrationSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -1364,19 +1375,20 @@ class Concentration(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.ConcentrationSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this concentration.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -1387,26 +1399,26 @@ class Concentration(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this concentration.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class Dimensionless(FieldQnty):
     """
     Type-safe dimensionless quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - Dimensionless("variable_name") -> Create unknown dimensionless
     - Dimensionless(value, "variable_name") -> Create known dimensionless
-    
+
     Examples:
     ---------
     >>> unknown = Dimensionless("efficiency")  # Unknown dimensionless
@@ -1420,13 +1432,13 @@ class Dimensionless(FieldQnty):
     def __init__(self, name_or_value: str | int | float, name_or_unit: str | int | float | None = None):
         """
         Initialize dimensionless quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - Dimensionless("name") -> Unknown dimensionless
         - Dimensionless("name", value) -> Known dimensionless (NEW)
         - Dimensionless(value, "name") -> Known dimensionless (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             name_or_unit: Variable name (str) or value (int/float), depending on first arg
@@ -1444,19 +1456,19 @@ class Dimensionless(FieldQnty):
             if name_or_unit is None:
                 raise ValueError("Variable name required")
             super().__init__(name_or_value, name_or_unit, is_known=True)
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.DimensionlessSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.DimensionlessSetter":
         """
         Create a setter for this dimensionless quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             DimensionlessSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -1469,19 +1481,20 @@ class Dimensionless(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.DimensionlessSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this dimensionless.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -1492,31 +1505,31 @@ class Dimensionless(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this dimensionless.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class DynamicFluidity(FieldQnty):
     """
     Type-safe dynamic fluidity quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - DynamicFluidity("variable_name") -> Create unknown dynamic fluidity
     - DynamicFluidity(value, "unit", "variable_name") -> Create known dynamic fluidity
-    
+
     Examples:
     ---------
     >>> unknown = DynamicFluidity("pressure")  # Unknown dynamic fluidity
     >>> known = DynamicFluidity(100, "meter_seconds_per_kilogram", "inlet_pressure")  # Known dynamic fluidity
-    
+
     Available units: "meter_seconds_per_kilogram", "rhe", "square_foot_per_pound_second"
     """
 
@@ -1527,20 +1540,20 @@ class DynamicFluidity(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize dynamic fluidity quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - DynamicFluidity("name") -> Unknown dynamic fluidity
         - DynamicFluidity("name", "unit") -> Unknown dynamic fluidity with unit preference (NEW)
         - DynamicFluidity("name", "unit", value) -> Known dynamic fluidity (NEW)
         - DynamicFluidity(value, "unit", "name") -> Known dynamic fluidity (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -1552,26 +1565,26 @@ class DynamicFluidity(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.DynamicFluiditySetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.DynamicFluiditySetter":
         """
         Create a setter for this dynamic fluidity quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             DynamicFluiditySetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -1584,19 +1597,20 @@ class DynamicFluidity(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.DynamicFluiditySetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this dynamic fluidity.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -1607,31 +1621,31 @@ class DynamicFluidity(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this dynamic fluidity.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class ElectricCapacitance(FieldQnty):
     """
     Type-safe electric capacitance quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - ElectricCapacitance("variable_name") -> Create unknown electric capacitance
     - ElectricCapacitance(value, "unit", "variable_name") -> Create known electric capacitance
-    
+
     Examples:
     ---------
     >>> unknown = ElectricCapacitance("pressure")  # Unknown electric capacitance
     >>> known = ElectricCapacitance(100, "cm", "inlet_pressure")  # Known electric capacitance
-    
+
     Available units: "cm", "abfarad", "farad"
     """
 
@@ -1642,20 +1656,20 @@ class ElectricCapacitance(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize electric capacitance quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - ElectricCapacitance("name") -> Unknown electric capacitance
         - ElectricCapacitance("name", "unit") -> Unknown electric capacitance with unit preference (NEW)
         - ElectricCapacitance("name", "unit", value) -> Known electric capacitance (NEW)
         - ElectricCapacitance(value, "unit", "name") -> Known electric capacitance (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -1667,26 +1681,26 @@ class ElectricCapacitance(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.ElectricCapacitanceSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.ElectricCapacitanceSetter":
         """
         Create a setter for this electric capacitance quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             ElectricCapacitanceSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -1699,19 +1713,20 @@ class ElectricCapacitance(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.ElectricCapacitanceSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this electric capacitance.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -1722,31 +1737,31 @@ class ElectricCapacitance(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this electric capacitance.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class ElectricCharge(FieldQnty):
     """
     Type-safe electric charge quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - ElectricCharge("variable_name") -> Create unknown electric charge
     - ElectricCharge(value, "unit", "variable_name") -> Create known electric charge
-    
+
     Examples:
     ---------
     >>> unknown = ElectricCharge("pressure")  # Unknown electric charge
     >>> known = ElectricCharge(100, "abcoulomb", "inlet_pressure")  # Known electric charge
-    
+
     Available units: "abcoulomb", "ampere_hour", "coulomb"
     """
 
@@ -1757,20 +1772,20 @@ class ElectricCharge(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize electric charge quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - ElectricCharge("name") -> Unknown electric charge
         - ElectricCharge("name", "unit") -> Unknown electric charge with unit preference (NEW)
         - ElectricCharge("name", "unit", value) -> Known electric charge (NEW)
         - ElectricCharge(value, "unit", "name") -> Known electric charge (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -1782,26 +1797,26 @@ class ElectricCharge(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.ElectricChargeSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.ElectricChargeSetter":
         """
         Create a setter for this electric charge quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             ElectricChargeSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -1814,19 +1829,20 @@ class ElectricCharge(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.ElectricChargeSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this electric charge.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -1837,31 +1853,31 @@ class ElectricCharge(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this electric charge.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class ElectricCurrentIntensity(FieldQnty):
     """
     Type-safe electric current intensity quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - ElectricCurrentIntensity("variable_name") -> Create unknown electric current intensity
     - ElectricCurrentIntensity(value, "unit", "variable_name") -> Create known electric current intensity
-    
+
     Examples:
     ---------
     >>> unknown = ElectricCurrentIntensity("pressure")  # Unknown electric current intensity
     >>> known = ElectricCurrentIntensity(100, "abampere", "inlet_pressure")  # Known electric current intensity
-    
+
     Available units: "abampere", "ampere_intl_mean", "ampere_intl_us"
     """
 
@@ -1872,20 +1888,20 @@ class ElectricCurrentIntensity(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize electric current intensity quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - ElectricCurrentIntensity("name") -> Unknown electric current intensity
         - ElectricCurrentIntensity("name", "unit") -> Unknown electric current intensity with unit preference (NEW)
         - ElectricCurrentIntensity("name", "unit", value) -> Known electric current intensity (NEW)
         - ElectricCurrentIntensity(value, "unit", "name") -> Known electric current intensity (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -1897,26 +1913,26 @@ class ElectricCurrentIntensity(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.ElectricCurrentIntensitySetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.ElectricCurrentIntensitySetter":
         """
         Create a setter for this electric current intensity quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             ElectricCurrentIntensitySetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -1929,19 +1945,20 @@ class ElectricCurrentIntensity(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.ElectricCurrentIntensitySetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this electric current intensity.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -1952,31 +1969,31 @@ class ElectricCurrentIntensity(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this electric current intensity.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class ElectricDipoleMoment(FieldQnty):
     """
     Type-safe electric dipole moment quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - ElectricDipoleMoment("variable_name") -> Create unknown electric dipole moment
     - ElectricDipoleMoment(value, "unit", "variable_name") -> Create known electric dipole moment
-    
+
     Examples:
     ---------
     >>> unknown = ElectricDipoleMoment("pressure")  # Unknown electric dipole moment
     >>> known = ElectricDipoleMoment(100, "ampere_meter_second", "inlet_pressure")  # Known electric dipole moment
-    
+
     Available units: "ampere_meter_second", "coulomb_meter", "debye"
     """
 
@@ -1987,20 +2004,20 @@ class ElectricDipoleMoment(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize electric dipole moment quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - ElectricDipoleMoment("name") -> Unknown electric dipole moment
         - ElectricDipoleMoment("name", "unit") -> Unknown electric dipole moment with unit preference (NEW)
         - ElectricDipoleMoment("name", "unit", value) -> Known electric dipole moment (NEW)
         - ElectricDipoleMoment(value, "unit", "name") -> Known electric dipole moment (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -2012,26 +2029,26 @@ class ElectricDipoleMoment(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.ElectricDipoleMomentSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.ElectricDipoleMomentSetter":
         """
         Create a setter for this electric dipole moment quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             ElectricDipoleMomentSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -2044,19 +2061,20 @@ class ElectricDipoleMoment(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.ElectricDipoleMomentSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this electric dipole moment.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -2067,31 +2085,31 @@ class ElectricDipoleMoment(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this electric dipole moment.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class ElectricFieldStrength(FieldQnty):
     """
     Type-safe electric field strength quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - ElectricFieldStrength("variable_name") -> Create unknown electric field strength
     - ElectricFieldStrength(value, "unit", "variable_name") -> Create known electric field strength
-    
+
     Examples:
     ---------
     >>> unknown = ElectricFieldStrength("pressure")  # Unknown electric field strength
     >>> known = ElectricFieldStrength(100, "volt_per_centimeter", "inlet_pressure")  # Known electric field strength
-    
+
     Available units: "volt_per_centimeter", "volt_per_meter"
     """
 
@@ -2102,20 +2120,20 @@ class ElectricFieldStrength(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize electric field strength quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - ElectricFieldStrength("name") -> Unknown electric field strength
         - ElectricFieldStrength("name", "unit") -> Unknown electric field strength with unit preference (NEW)
         - ElectricFieldStrength("name", "unit", value) -> Known electric field strength (NEW)
         - ElectricFieldStrength(value, "unit", "name") -> Known electric field strength (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -2127,26 +2145,26 @@ class ElectricFieldStrength(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.ElectricFieldStrengthSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.ElectricFieldStrengthSetter":
         """
         Create a setter for this electric field strength quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             ElectricFieldStrengthSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -2159,19 +2177,20 @@ class ElectricFieldStrength(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.ElectricFieldStrengthSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this electric field strength.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -2182,31 +2201,31 @@ class ElectricFieldStrength(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this electric field strength.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class ElectricInductance(FieldQnty):
     """
     Type-safe electric inductance quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - ElectricInductance("variable_name") -> Create unknown electric inductance
     - ElectricInductance(value, "unit", "variable_name") -> Create known electric inductance
-    
+
     Examples:
     ---------
     >>> unknown = ElectricInductance("pressure")  # Unknown electric inductance
     >>> known = ElectricInductance(100, "abhenry", "inlet_pressure")  # Known electric inductance
-    
+
     Available units: "abhenry", "cm", "henry"
     """
 
@@ -2217,20 +2236,20 @@ class ElectricInductance(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize electric inductance quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - ElectricInductance("name") -> Unknown electric inductance
         - ElectricInductance("name", "unit") -> Unknown electric inductance with unit preference (NEW)
         - ElectricInductance("name", "unit", value) -> Known electric inductance (NEW)
         - ElectricInductance(value, "unit", "name") -> Known electric inductance (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -2242,26 +2261,26 @@ class ElectricInductance(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.ElectricInductanceSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.ElectricInductanceSetter":
         """
         Create a setter for this electric inductance quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             ElectricInductanceSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -2274,19 +2293,20 @@ class ElectricInductance(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.ElectricInductanceSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this electric inductance.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -2297,31 +2317,31 @@ class ElectricInductance(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this electric inductance.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class ElectricPotential(FieldQnty):
     """
     Type-safe electric potential quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - ElectricPotential("variable_name") -> Create unknown electric potential
     - ElectricPotential(value, "unit", "variable_name") -> Create known electric potential
-    
+
     Examples:
     ---------
     >>> unknown = ElectricPotential("pressure")  # Unknown electric potential
     >>> known = ElectricPotential(100, "abvolt", "inlet_pressure")  # Known electric potential
-    
+
     Available units: "abvolt", "statvolt", "u_a_potential"
     """
 
@@ -2332,20 +2352,20 @@ class ElectricPotential(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize electric potential quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - ElectricPotential("name") -> Unknown electric potential
         - ElectricPotential("name", "unit") -> Unknown electric potential with unit preference (NEW)
         - ElectricPotential("name", "unit", value) -> Known electric potential (NEW)
         - ElectricPotential(value, "unit", "name") -> Known electric potential (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -2357,26 +2377,26 @@ class ElectricPotential(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.ElectricPotentialSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.ElectricPotentialSetter":
         """
         Create a setter for this electric potential quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             ElectricPotentialSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -2389,19 +2409,20 @@ class ElectricPotential(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.ElectricPotentialSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this electric potential.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -2412,31 +2433,31 @@ class ElectricPotential(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this electric potential.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class ElectricResistance(FieldQnty):
     """
     Type-safe electric resistance quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - ElectricResistance("variable_name") -> Create unknown electric resistance
     - ElectricResistance(value, "unit", "variable_name") -> Create known electric resistance
-    
+
     Examples:
     ---------
     >>> unknown = ElectricResistance("pressure")  # Unknown electric resistance
     >>> known = ElectricResistance(100, "abohm", "inlet_pressure")  # Known electric resistance
-    
+
     Available units: "abohm", "jacobi", "lenz"
     """
 
@@ -2447,20 +2468,20 @@ class ElectricResistance(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize electric resistance quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - ElectricResistance("name") -> Unknown electric resistance
         - ElectricResistance("name", "unit") -> Unknown electric resistance with unit preference (NEW)
         - ElectricResistance("name", "unit", value) -> Known electric resistance (NEW)
         - ElectricResistance(value, "unit", "name") -> Known electric resistance (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -2472,26 +2493,26 @@ class ElectricResistance(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.ElectricResistanceSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.ElectricResistanceSetter":
         """
         Create a setter for this electric resistance quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             ElectricResistanceSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -2504,19 +2525,20 @@ class ElectricResistance(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.ElectricResistanceSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this electric resistance.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -2527,31 +2549,31 @@ class ElectricResistance(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this electric resistance.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class ElectricalConductance(FieldQnty):
     """
     Type-safe electrical conductance quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - ElectricalConductance("variable_name") -> Create unknown electrical conductance
     - ElectricalConductance(value, "unit", "variable_name") -> Create known electrical conductance
-    
+
     Examples:
     ---------
     >>> unknown = ElectricalConductance("pressure")  # Unknown electrical conductance
     >>> known = ElectricalConductance(100, "emu_cgs", "inlet_pressure")  # Known electrical conductance
-    
+
     Available units: "emu_cgs", "esu_cgs", "mho"
     """
 
@@ -2562,20 +2584,20 @@ class ElectricalConductance(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize electrical conductance quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - ElectricalConductance("name") -> Unknown electrical conductance
         - ElectricalConductance("name", "unit") -> Unknown electrical conductance with unit preference (NEW)
         - ElectricalConductance("name", "unit", value) -> Known electrical conductance (NEW)
         - ElectricalConductance(value, "unit", "name") -> Known electrical conductance (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -2587,26 +2609,26 @@ class ElectricalConductance(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.ElectricalConductanceSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.ElectricalConductanceSetter":
         """
         Create a setter for this electrical conductance quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             ElectricalConductanceSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -2619,19 +2641,20 @@ class ElectricalConductance(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.ElectricalConductanceSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this electrical conductance.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -2642,31 +2665,31 @@ class ElectricalConductance(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this electrical conductance.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class ElectricalPermittivity(FieldQnty):
     """
     Type-safe electrical permittivity quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - ElectricalPermittivity("variable_name") -> Create unknown electrical permittivity
     - ElectricalPermittivity(value, "unit", "variable_name") -> Create known electrical permittivity
-    
+
     Examples:
     ---------
     >>> unknown = ElectricalPermittivity("pressure")  # Unknown electrical permittivity
     >>> known = ElectricalPermittivity(100, "farad_per_meter", "inlet_pressure")  # Known electrical permittivity
-    
+
     Available units: "farad_per_meter"
     """
 
@@ -2677,20 +2700,20 @@ class ElectricalPermittivity(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize electrical permittivity quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - ElectricalPermittivity("name") -> Unknown electrical permittivity
         - ElectricalPermittivity("name", "unit") -> Unknown electrical permittivity with unit preference (NEW)
         - ElectricalPermittivity("name", "unit", value) -> Known electrical permittivity (NEW)
         - ElectricalPermittivity(value, "unit", "name") -> Known electrical permittivity (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -2702,26 +2725,26 @@ class ElectricalPermittivity(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.ElectricalPermittivitySetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.ElectricalPermittivitySetter":
         """
         Create a setter for this electrical permittivity quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             ElectricalPermittivitySetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -2734,19 +2757,20 @@ class ElectricalPermittivity(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.ElectricalPermittivitySetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this electrical permittivity.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -2757,31 +2781,31 @@ class ElectricalPermittivity(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this electrical permittivity.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class ElectricalResistivity(FieldQnty):
     """
     Type-safe electrical resistivity quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - ElectricalResistivity("variable_name") -> Create unknown electrical resistivity
     - ElectricalResistivity(value, "unit", "variable_name") -> Create known electrical resistivity
-    
+
     Examples:
     ---------
     >>> unknown = ElectricalResistivity("pressure")  # Unknown electrical resistivity
     >>> known = ElectricalResistivity(100, "circular_mil_ohm_per_foot", "inlet_pressure")  # Known electrical resistivity
-    
+
     Available units: "circular_mil_ohm_per_foot", "emu_cgs", "microhm_inch"
     """
 
@@ -2792,20 +2816,20 @@ class ElectricalResistivity(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize electrical resistivity quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - ElectricalResistivity("name") -> Unknown electrical resistivity
         - ElectricalResistivity("name", "unit") -> Unknown electrical resistivity with unit preference (NEW)
         - ElectricalResistivity("name", "unit", value) -> Known electrical resistivity (NEW)
         - ElectricalResistivity(value, "unit", "name") -> Known electrical resistivity (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -2817,26 +2841,26 @@ class ElectricalResistivity(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.ElectricalResistivitySetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.ElectricalResistivitySetter":
         """
         Create a setter for this electrical resistivity quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             ElectricalResistivitySetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -2849,19 +2873,20 @@ class ElectricalResistivity(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.ElectricalResistivitySetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this electrical resistivity.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -2872,31 +2897,31 @@ class ElectricalResistivity(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this electrical resistivity.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class EnergyFlux(FieldQnty):
     """
     Type-safe energy flux quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - EnergyFlux("variable_name") -> Create unknown energy flux
     - EnergyFlux(value, "unit", "variable_name") -> Create known energy flux
-    
+
     Examples:
     ---------
     >>> unknown = EnergyFlux("pressure")  # Unknown energy flux
     >>> known = EnergyFlux(100, "btu_per_square_foot_per_hour", "inlet_pressure")  # Known energy flux
-    
+
     Available units: "btu_per_square_foot_per_hour", "calorie_per_square_centimeter_per_second", "celsius_heat_units_chu"
     """
 
@@ -2907,20 +2932,20 @@ class EnergyFlux(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize energy flux quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - EnergyFlux("name") -> Unknown energy flux
         - EnergyFlux("name", "unit") -> Unknown energy flux with unit preference (NEW)
         - EnergyFlux("name", "unit", value) -> Known energy flux (NEW)
         - EnergyFlux(value, "unit", "name") -> Known energy flux (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -2932,26 +2957,26 @@ class EnergyFlux(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.EnergyFluxSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.EnergyFluxSetter":
         """
         Create a setter for this energy flux quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             EnergyFluxSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -2964,19 +2989,20 @@ class EnergyFlux(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.EnergyFluxSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this energy flux.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -2987,31 +3013,31 @@ class EnergyFlux(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this energy flux.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class EnergyHeatWork(FieldQnty):
     """
     Type-safe energy, heat, work quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - EnergyHeatWork("variable_name") -> Create unknown energy, heat, work
     - EnergyHeatWork(value, "unit", "variable_name") -> Create known energy, heat, work
-    
+
     Examples:
     ---------
     >>> unknown = EnergyHeatWork("pressure")  # Unknown energy, heat, work
     >>> known = EnergyHeatWork(100, "barrel_oil_equivalent_or_equivalent_barrel", "inlet_pressure")  # Known energy, heat, work
-    
+
     Available units: "barrel_oil_equivalent_or_equivalent_barrel", "billion_electronvolt", "british_thermal_unit_4circ_mathrmc"
     """
 
@@ -3022,20 +3048,20 @@ class EnergyHeatWork(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize energy, heat, work quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - EnergyHeatWork("name") -> Unknown energy, heat, work
         - EnergyHeatWork("name", "unit") -> Unknown energy, heat, work with unit preference (NEW)
         - EnergyHeatWork("name", "unit", value) -> Known energy, heat, work (NEW)
         - EnergyHeatWork(value, "unit", "name") -> Known energy, heat, work (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -3047,26 +3073,26 @@ class EnergyHeatWork(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.EnergyHeatWorkSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.EnergyHeatWorkSetter":
         """
         Create a setter for this energy, heat, work quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             EnergyHeatWorkSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -3079,19 +3105,20 @@ class EnergyHeatWork(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.EnergyHeatWorkSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this energy, heat, work.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -3102,31 +3129,31 @@ class EnergyHeatWork(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this energy, heat, work.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class EnergyPerUnitArea(FieldQnty):
     """
     Type-safe energy per unit area quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - EnergyPerUnitArea("variable_name") -> Create unknown energy per unit area
     - EnergyPerUnitArea(value, "unit", "variable_name") -> Create known energy per unit area
-    
+
     Examples:
     ---------
     >>> unknown = EnergyPerUnitArea("pressure")  # Unknown energy per unit area
     >>> known = EnergyPerUnitArea(100, "british_thermal_unit_per_square_foot", "inlet_pressure")  # Known energy per unit area
-    
+
     Available units: "british_thermal_unit_per_square_foot", "joule_per_square_meter", "langley"
     """
 
@@ -3137,20 +3164,20 @@ class EnergyPerUnitArea(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize energy per unit area quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - EnergyPerUnitArea("name") -> Unknown energy per unit area
         - EnergyPerUnitArea("name", "unit") -> Unknown energy per unit area with unit preference (NEW)
         - EnergyPerUnitArea("name", "unit", value) -> Known energy per unit area (NEW)
         - EnergyPerUnitArea(value, "unit", "name") -> Known energy per unit area (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -3162,26 +3189,26 @@ class EnergyPerUnitArea(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.EnergyPerUnitAreaSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.EnergyPerUnitAreaSetter":
         """
         Create a setter for this energy per unit area quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             EnergyPerUnitAreaSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -3194,19 +3221,20 @@ class EnergyPerUnitArea(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.EnergyPerUnitAreaSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this energy per unit area.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -3217,31 +3245,31 @@ class EnergyPerUnitArea(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this energy per unit area.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class Force(FieldQnty):
     """
     Type-safe force quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - Force("variable_name") -> Create unknown force
     - Force(value, "unit", "variable_name") -> Create known force
-    
+
     Examples:
     ---------
     >>> unknown = Force("pressure")  # Unknown force
     >>> known = Force(100, "crinal", "inlet_pressure")  # Known force
-    
+
     Available units: "crinal", "dyne", "funal"
     """
 
@@ -3252,20 +3280,20 @@ class Force(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize force quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - Force("name") -> Unknown force
         - Force("name", "unit") -> Unknown force with unit preference (NEW)
         - Force("name", "unit", value) -> Known force (NEW)
         - Force(value, "unit", "name") -> Known force (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -3277,26 +3305,26 @@ class Force(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.ForceSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.ForceSetter":
         """
         Create a setter for this force quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             ForceSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -3309,19 +3337,20 @@ class Force(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.ForceSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this force.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -3332,31 +3361,31 @@ class Force(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this force.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class ForceBody(FieldQnty):
     """
     Type-safe force (body) quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - ForceBody("variable_name") -> Create unknown force (body)
     - ForceBody(value, "unit", "variable_name") -> Create known force (body)
-    
+
     Examples:
     ---------
     >>> unknown = ForceBody("pressure")  # Unknown force (body)
     >>> known = ForceBody(100, "dyne_per_cubic_centimeter", "inlet_pressure")  # Known force (body)
-    
+
     Available units: "dyne_per_cubic_centimeter", "kilogram_force_per_cubic_centimeter", "kilogram_force_per_cubic_meter"
     """
 
@@ -3367,20 +3396,20 @@ class ForceBody(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize force (body) quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - ForceBody("name") -> Unknown force (body)
         - ForceBody("name", "unit") -> Unknown force (body) with unit preference (NEW)
         - ForceBody("name", "unit", value) -> Known force (body) (NEW)
         - ForceBody(value, "unit", "name") -> Known force (body) (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -3392,26 +3421,26 @@ class ForceBody(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.ForceBodySetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.ForceBodySetter":
         """
         Create a setter for this force (body) quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             ForceBodySetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -3424,19 +3453,20 @@ class ForceBody(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.ForceBodySetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this force (body).
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -3447,31 +3477,31 @@ class ForceBody(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this force (body).
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class ForcePerUnitMass(FieldQnty):
     """
     Type-safe force per unit mass quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - ForcePerUnitMass("variable_name") -> Create unknown force per unit mass
     - ForcePerUnitMass(value, "unit", "variable_name") -> Create known force per unit mass
-    
+
     Examples:
     ---------
     >>> unknown = ForcePerUnitMass("pressure")  # Unknown force per unit mass
     >>> known = ForcePerUnitMass(100, "dyne_per_gram", "inlet_pressure")  # Known force per unit mass
-    
+
     Available units: "dyne_per_gram", "kilogram_force_per_kilogram", "newton_per_kilogram"
     """
 
@@ -3482,20 +3512,20 @@ class ForcePerUnitMass(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize force per unit mass quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - ForcePerUnitMass("name") -> Unknown force per unit mass
         - ForcePerUnitMass("name", "unit") -> Unknown force per unit mass with unit preference (NEW)
         - ForcePerUnitMass("name", "unit", value) -> Known force per unit mass (NEW)
         - ForcePerUnitMass(value, "unit", "name") -> Known force per unit mass (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -3507,26 +3537,26 @@ class ForcePerUnitMass(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.ForcePerUnitMassSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.ForcePerUnitMassSetter":
         """
         Create a setter for this force per unit mass quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             ForcePerUnitMassSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -3539,19 +3569,20 @@ class ForcePerUnitMass(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.ForcePerUnitMassSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this force per unit mass.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -3562,31 +3593,31 @@ class ForcePerUnitMass(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this force per unit mass.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class FrequencyVoltageRatio(FieldQnty):
     """
     Type-safe frequency voltage ratio quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - FrequencyVoltageRatio("variable_name") -> Create unknown frequency voltage ratio
     - FrequencyVoltageRatio(value, "unit", "variable_name") -> Create known frequency voltage ratio
-    
+
     Examples:
     ---------
     >>> unknown = FrequencyVoltageRatio("pressure")  # Unknown frequency voltage ratio
     >>> known = FrequencyVoltageRatio(100, "cycles_per_second_per_volt", "inlet_pressure")  # Known frequency voltage ratio
-    
+
     Available units: "cycles_per_second_per_volt", "hertz_per_volt", "terahertz_per_volt"
     """
 
@@ -3597,20 +3628,20 @@ class FrequencyVoltageRatio(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize frequency voltage ratio quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - FrequencyVoltageRatio("name") -> Unknown frequency voltage ratio
         - FrequencyVoltageRatio("name", "unit") -> Unknown frequency voltage ratio with unit preference (NEW)
         - FrequencyVoltageRatio("name", "unit", value) -> Known frequency voltage ratio (NEW)
         - FrequencyVoltageRatio(value, "unit", "name") -> Known frequency voltage ratio (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -3622,26 +3653,26 @@ class FrequencyVoltageRatio(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.FrequencyVoltageRatioSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.FrequencyVoltageRatioSetter":
         """
         Create a setter for this frequency voltage ratio quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             FrequencyVoltageRatioSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -3654,19 +3685,20 @@ class FrequencyVoltageRatio(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.FrequencyVoltageRatioSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this frequency voltage ratio.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -3677,31 +3709,31 @@ class FrequencyVoltageRatio(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this frequency voltage ratio.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class FuelConsumption(FieldQnty):
     """
     Type-safe fuel consumption quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - FuelConsumption("variable_name") -> Create unknown fuel consumption
     - FuelConsumption(value, "unit", "variable_name") -> Create known fuel consumption
-    
+
     Examples:
     ---------
     >>> unknown = FuelConsumption("pressure")  # Unknown fuel consumption
     >>> known = FuelConsumption(100, "unit_100_km_per_liter", "inlet_pressure")  # Known fuel consumption
-    
+
     Available units: "unit_100_km_per_liter", "gallons_uk", "gallons_us"
     """
 
@@ -3712,20 +3744,20 @@ class FuelConsumption(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize fuel consumption quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - FuelConsumption("name") -> Unknown fuel consumption
         - FuelConsumption("name", "unit") -> Unknown fuel consumption with unit preference (NEW)
         - FuelConsumption("name", "unit", value) -> Known fuel consumption (NEW)
         - FuelConsumption(value, "unit", "name") -> Known fuel consumption (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -3737,26 +3769,26 @@ class FuelConsumption(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.FuelConsumptionSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.FuelConsumptionSetter":
         """
         Create a setter for this fuel consumption quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             FuelConsumptionSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -3769,19 +3801,20 @@ class FuelConsumption(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.FuelConsumptionSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this fuel consumption.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -3792,31 +3825,31 @@ class FuelConsumption(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this fuel consumption.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class HeatOfCombustion(FieldQnty):
     """
     Type-safe heat of combustion quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - HeatOfCombustion("variable_name") -> Create unknown heat of combustion
     - HeatOfCombustion(value, "unit", "variable_name") -> Create known heat of combustion
-    
+
     Examples:
     ---------
     >>> unknown = HeatOfCombustion("pressure")  # Unknown heat of combustion
     >>> known = HeatOfCombustion(100, "british_thermal_unit_per_pound", "inlet_pressure")  # Known heat of combustion
-    
+
     Available units: "british_thermal_unit_per_pound", "calorie_per_gram", "chu_per_pound"
     """
 
@@ -3827,20 +3860,20 @@ class HeatOfCombustion(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize heat of combustion quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - HeatOfCombustion("name") -> Unknown heat of combustion
         - HeatOfCombustion("name", "unit") -> Unknown heat of combustion with unit preference (NEW)
         - HeatOfCombustion("name", "unit", value) -> Known heat of combustion (NEW)
         - HeatOfCombustion(value, "unit", "name") -> Known heat of combustion (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -3852,26 +3885,26 @@ class HeatOfCombustion(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.HeatOfCombustionSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.HeatOfCombustionSetter":
         """
         Create a setter for this heat of combustion quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             HeatOfCombustionSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -3884,19 +3917,20 @@ class HeatOfCombustion(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.HeatOfCombustionSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this heat of combustion.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -3907,31 +3941,31 @@ class HeatOfCombustion(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this heat of combustion.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class HeatOfFusion(FieldQnty):
     """
     Type-safe heat of fusion quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - HeatOfFusion("variable_name") -> Create unknown heat of fusion
     - HeatOfFusion(value, "unit", "variable_name") -> Create known heat of fusion
-    
+
     Examples:
     ---------
     >>> unknown = HeatOfFusion("pressure")  # Unknown heat of fusion
     >>> known = HeatOfFusion(100, "british_thermal_unit_mean", "inlet_pressure")  # Known heat of fusion
-    
+
     Available units: "british_thermal_unit_mean", "british_thermal_unit_per_pound", "calorie_per_gram"
     """
 
@@ -3942,20 +3976,20 @@ class HeatOfFusion(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize heat of fusion quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - HeatOfFusion("name") -> Unknown heat of fusion
         - HeatOfFusion("name", "unit") -> Unknown heat of fusion with unit preference (NEW)
         - HeatOfFusion("name", "unit", value) -> Known heat of fusion (NEW)
         - HeatOfFusion(value, "unit", "name") -> Known heat of fusion (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -3967,26 +4001,26 @@ class HeatOfFusion(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.HeatOfFusionSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.HeatOfFusionSetter":
         """
         Create a setter for this heat of fusion quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             HeatOfFusionSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -3999,19 +4033,20 @@ class HeatOfFusion(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.HeatOfFusionSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this heat of fusion.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -4022,31 +4057,31 @@ class HeatOfFusion(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this heat of fusion.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class HeatOfVaporization(FieldQnty):
     """
     Type-safe heat of vaporization quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - HeatOfVaporization("variable_name") -> Create unknown heat of vaporization
     - HeatOfVaporization(value, "unit", "variable_name") -> Create known heat of vaporization
-    
+
     Examples:
     ---------
     >>> unknown = HeatOfVaporization("pressure")  # Unknown heat of vaporization
     >>> known = HeatOfVaporization(100, "british_thermal_unit_per_pound", "inlet_pressure")  # Known heat of vaporization
-    
+
     Available units: "british_thermal_unit_per_pound", "calorie_per_gram", "chu_per_pound"
     """
 
@@ -4057,20 +4092,20 @@ class HeatOfVaporization(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize heat of vaporization quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - HeatOfVaporization("name") -> Unknown heat of vaporization
         - HeatOfVaporization("name", "unit") -> Unknown heat of vaporization with unit preference (NEW)
         - HeatOfVaporization("name", "unit", value) -> Known heat of vaporization (NEW)
         - HeatOfVaporization(value, "unit", "name") -> Known heat of vaporization (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -4082,26 +4117,26 @@ class HeatOfVaporization(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.HeatOfVaporizationSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.HeatOfVaporizationSetter":
         """
         Create a setter for this heat of vaporization quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             HeatOfVaporizationSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -4114,19 +4149,20 @@ class HeatOfVaporization(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.HeatOfVaporizationSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this heat of vaporization.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -4137,31 +4173,31 @@ class HeatOfVaporization(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this heat of vaporization.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class HeatTransferCoefficient(FieldQnty):
     """
     Type-safe heat transfer coefficient quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - HeatTransferCoefficient("variable_name") -> Create unknown heat transfer coefficient
     - HeatTransferCoefficient(value, "unit", "variable_name") -> Create known heat transfer coefficient
-    
+
     Examples:
     ---------
     >>> unknown = HeatTransferCoefficient("pressure")  # Unknown heat transfer coefficient
     >>> known = HeatTransferCoefficient(100, "btu_per_square_foot_per_hour_per_degree_fahrenheit_or_rankine", "inlet_pressure")  # Known heat transfer coefficient
-    
+
     Available units: "btu_per_square_foot_per_hour_per_degree_fahrenheit_or_rankine", "watt_per_square_meter_per_degree_celsius_or_kelvin"
     """
 
@@ -4172,20 +4208,20 @@ class HeatTransferCoefficient(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize heat transfer coefficient quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - HeatTransferCoefficient("name") -> Unknown heat transfer coefficient
         - HeatTransferCoefficient("name", "unit") -> Unknown heat transfer coefficient with unit preference (NEW)
         - HeatTransferCoefficient("name", "unit", value) -> Known heat transfer coefficient (NEW)
         - HeatTransferCoefficient(value, "unit", "name") -> Known heat transfer coefficient (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -4197,26 +4233,26 @@ class HeatTransferCoefficient(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.HeatTransferCoefficientSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.HeatTransferCoefficientSetter":
         """
         Create a setter for this heat transfer coefficient quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             HeatTransferCoefficientSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -4229,19 +4265,20 @@ class HeatTransferCoefficient(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.HeatTransferCoefficientSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this heat transfer coefficient.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -4252,31 +4289,31 @@ class HeatTransferCoefficient(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this heat transfer coefficient.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class Illuminance(FieldQnty):
     """
     Type-safe illuminance quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - Illuminance("variable_name") -> Create unknown illuminance
     - Illuminance(value, "unit", "variable_name") -> Create known illuminance
-    
+
     Examples:
     ---------
     >>> unknown = Illuminance("pressure")  # Unknown illuminance
     >>> known = Illuminance(100, "foot_candle", "inlet_pressure")  # Known illuminance
-    
+
     Available units: "foot_candle", "lux", "nox"
     """
 
@@ -4287,20 +4324,20 @@ class Illuminance(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize illuminance quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - Illuminance("name") -> Unknown illuminance
         - Illuminance("name", "unit") -> Unknown illuminance with unit preference (NEW)
         - Illuminance("name", "unit", value) -> Known illuminance (NEW)
         - Illuminance(value, "unit", "name") -> Known illuminance (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -4312,26 +4349,26 @@ class Illuminance(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.IlluminanceSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.IlluminanceSetter":
         """
         Create a setter for this illuminance quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             IlluminanceSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -4344,19 +4381,20 @@ class Illuminance(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.IlluminanceSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this illuminance.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -4367,31 +4405,31 @@ class Illuminance(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this illuminance.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class KineticEnergyOfTurbulence(FieldQnty):
     """
     Type-safe kinetic energy of turbulence quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - KineticEnergyOfTurbulence("variable_name") -> Create unknown kinetic energy of turbulence
     - KineticEnergyOfTurbulence(value, "unit", "variable_name") -> Create known kinetic energy of turbulence
-    
+
     Examples:
     ---------
     >>> unknown = KineticEnergyOfTurbulence("pressure")  # Unknown kinetic energy of turbulence
     >>> known = KineticEnergyOfTurbulence(100, "square_foot_per_second_squared", "inlet_pressure")  # Known kinetic energy of turbulence
-    
+
     Available units: "square_foot_per_second_squared", "square_meters_per_second_squared"
     """
 
@@ -4402,20 +4440,20 @@ class KineticEnergyOfTurbulence(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize kinetic energy of turbulence quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - KineticEnergyOfTurbulence("name") -> Unknown kinetic energy of turbulence
         - KineticEnergyOfTurbulence("name", "unit") -> Unknown kinetic energy of turbulence with unit preference (NEW)
         - KineticEnergyOfTurbulence("name", "unit", value) -> Known kinetic energy of turbulence (NEW)
         - KineticEnergyOfTurbulence(value, "unit", "name") -> Known kinetic energy of turbulence (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -4427,26 +4465,26 @@ class KineticEnergyOfTurbulence(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.KineticEnergyOfTurbulenceSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.KineticEnergyOfTurbulenceSetter":
         """
         Create a setter for this kinetic energy of turbulence quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             KineticEnergyOfTurbulenceSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -4459,19 +4497,20 @@ class KineticEnergyOfTurbulence(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.KineticEnergyOfTurbulenceSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this kinetic energy of turbulence.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -4482,31 +4521,31 @@ class KineticEnergyOfTurbulence(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this kinetic energy of turbulence.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class Length(FieldQnty):
     """
     Type-safe length quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - Length("variable_name") -> Create unknown length
     - Length(value, "unit", "variable_name") -> Create known length
-    
+
     Examples:
     ---------
     >>> unknown = Length("pressure")  # Unknown length
     >>> known = Length(100, "ngstr_m", "inlet_pressure")  # Known length
-    
+
     Available units: "ngstr_m", "arpent_quebec", "astronomic_unit"
     """
 
@@ -4517,20 +4556,20 @@ class Length(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize length quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - Length("name") -> Unknown length
         - Length("name", "unit") -> Unknown length with unit preference (NEW)
         - Length("name", "unit", value) -> Known length (NEW)
         - Length(value, "unit", "name") -> Known length (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -4542,26 +4581,26 @@ class Length(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.LengthSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.LengthSetter":
         """
         Create a setter for this length quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             LengthSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -4574,19 +4613,20 @@ class Length(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.LengthSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this length.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -4597,31 +4637,31 @@ class Length(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this length.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class LinearMassDensity(FieldQnty):
     """
     Type-safe linear mass density quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - LinearMassDensity("variable_name") -> Create unknown linear mass density
     - LinearMassDensity(value, "unit", "variable_name") -> Create known linear mass density
-    
+
     Examples:
     ---------
     >>> unknown = LinearMassDensity("pressure")  # Unknown linear mass density
     >>> known = LinearMassDensity(100, "denier", "inlet_pressure")  # Known linear mass density
-    
+
     Available units: "denier", "kilogram_per_centimeter", "kilogram_per_meter"
     """
 
@@ -4632,20 +4672,20 @@ class LinearMassDensity(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize linear mass density quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - LinearMassDensity("name") -> Unknown linear mass density
         - LinearMassDensity("name", "unit") -> Unknown linear mass density with unit preference (NEW)
         - LinearMassDensity("name", "unit", value) -> Known linear mass density (NEW)
         - LinearMassDensity(value, "unit", "name") -> Known linear mass density (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -4657,26 +4697,26 @@ class LinearMassDensity(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.LinearMassDensitySetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.LinearMassDensitySetter":
         """
         Create a setter for this linear mass density quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             LinearMassDensitySetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -4689,19 +4729,20 @@ class LinearMassDensity(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.LinearMassDensitySetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this linear mass density.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -4712,31 +4753,31 @@ class LinearMassDensity(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this linear mass density.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class LinearMomentum(FieldQnty):
     """
     Type-safe linear momentum quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - LinearMomentum("variable_name") -> Create unknown linear momentum
     - LinearMomentum(value, "unit", "variable_name") -> Create known linear momentum
-    
+
     Examples:
     ---------
     >>> unknown = LinearMomentum("pressure")  # Unknown linear momentum
     >>> known = LinearMomentum(100, "foot_pounds_force_per_hour", "inlet_pressure")  # Known linear momentum
-    
+
     Available units: "foot_pounds_force_per_hour", "foot_pounds_force_per_minute", "foot_pounds_force_per_second"
     """
 
@@ -4747,20 +4788,20 @@ class LinearMomentum(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize linear momentum quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - LinearMomentum("name") -> Unknown linear momentum
         - LinearMomentum("name", "unit") -> Unknown linear momentum with unit preference (NEW)
         - LinearMomentum("name", "unit", value) -> Known linear momentum (NEW)
         - LinearMomentum(value, "unit", "name") -> Known linear momentum (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -4772,26 +4813,26 @@ class LinearMomentum(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.LinearMomentumSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.LinearMomentumSetter":
         """
         Create a setter for this linear momentum quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             LinearMomentumSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -4804,19 +4845,20 @@ class LinearMomentum(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.LinearMomentumSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this linear momentum.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -4827,31 +4869,31 @@ class LinearMomentum(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this linear momentum.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class LuminanceSelf(FieldQnty):
     """
     Type-safe luminance (self) quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - LuminanceSelf("variable_name") -> Create unknown luminance (self)
     - LuminanceSelf(value, "unit", "variable_name") -> Create known luminance (self)
-    
+
     Examples:
     ---------
     >>> unknown = LuminanceSelf("pressure")  # Unknown luminance (self)
     >>> known = LuminanceSelf(100, "apostilb", "inlet_pressure")  # Known luminance (self)
-    
+
     Available units: "apostilb", "blondel", "candela_per_square_meter"
     """
 
@@ -4862,20 +4904,20 @@ class LuminanceSelf(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize luminance (self) quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - LuminanceSelf("name") -> Unknown luminance (self)
         - LuminanceSelf("name", "unit") -> Unknown luminance (self) with unit preference (NEW)
         - LuminanceSelf("name", "unit", value) -> Known luminance (self) (NEW)
         - LuminanceSelf(value, "unit", "name") -> Known luminance (self) (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -4887,26 +4929,26 @@ class LuminanceSelf(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.LuminanceSelfSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.LuminanceSelfSetter":
         """
         Create a setter for this luminance (self) quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             LuminanceSelfSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -4919,19 +4961,20 @@ class LuminanceSelf(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.LuminanceSelfSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this luminance (self).
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -4942,31 +4985,31 @@ class LuminanceSelf(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this luminance (self).
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class LuminousFlux(FieldQnty):
     """
     Type-safe luminous flux quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - LuminousFlux("variable_name") -> Create unknown luminous flux
     - LuminousFlux(value, "unit", "variable_name") -> Create known luminous flux
-    
+
     Examples:
     ---------
     >>> unknown = LuminousFlux("pressure")  # Unknown luminous flux
     >>> known = LuminousFlux(100, "candela_steradian", "inlet_pressure")  # Known luminous flux
-    
+
     Available units: "candela_steradian", "lumen"
     """
 
@@ -4977,20 +5020,20 @@ class LuminousFlux(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize luminous flux quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - LuminousFlux("name") -> Unknown luminous flux
         - LuminousFlux("name", "unit") -> Unknown luminous flux with unit preference (NEW)
         - LuminousFlux("name", "unit", value) -> Known luminous flux (NEW)
         - LuminousFlux(value, "unit", "name") -> Known luminous flux (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -5002,26 +5045,26 @@ class LuminousFlux(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.LuminousFluxSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.LuminousFluxSetter":
         """
         Create a setter for this luminous flux quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             LuminousFluxSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -5034,19 +5077,20 @@ class LuminousFlux(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.LuminousFluxSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this luminous flux.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -5057,31 +5101,31 @@ class LuminousFlux(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this luminous flux.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class LuminousIntensity(FieldQnty):
     """
     Type-safe luminous intensity quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - LuminousIntensity("variable_name") -> Create unknown luminous intensity
     - LuminousIntensity(value, "unit", "variable_name") -> Create known luminous intensity
-    
+
     Examples:
     ---------
     >>> unknown = LuminousIntensity("pressure")  # Unknown luminous intensity
     >>> known = LuminousIntensity(100, "candela", "inlet_pressure")  # Known luminous intensity
-    
+
     Available units: "candela", "candle_international", "carcel"
     """
 
@@ -5092,20 +5136,20 @@ class LuminousIntensity(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize luminous intensity quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - LuminousIntensity("name") -> Unknown luminous intensity
         - LuminousIntensity("name", "unit") -> Unknown luminous intensity with unit preference (NEW)
         - LuminousIntensity("name", "unit", value) -> Known luminous intensity (NEW)
         - LuminousIntensity(value, "unit", "name") -> Known luminous intensity (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -5117,26 +5161,26 @@ class LuminousIntensity(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.LuminousIntensitySetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.LuminousIntensitySetter":
         """
         Create a setter for this luminous intensity quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             LuminousIntensitySetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -5149,19 +5193,20 @@ class LuminousIntensity(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.LuminousIntensitySetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this luminous intensity.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -5172,31 +5217,31 @@ class LuminousIntensity(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this luminous intensity.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class MagneticField(FieldQnty):
     """
     Type-safe magnetic field quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - MagneticField("variable_name") -> Create unknown magnetic field
     - MagneticField(value, "unit", "variable_name") -> Create known magnetic field
-    
+
     Examples:
     ---------
     >>> unknown = MagneticField("pressure")  # Unknown magnetic field
     >>> known = MagneticField(100, "ampere_per_meter", "inlet_pressure")  # Known magnetic field
-    
+
     Available units: "ampere_per_meter", "lenz", "oersted"
     """
 
@@ -5207,20 +5252,20 @@ class MagneticField(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize magnetic field quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - MagneticField("name") -> Unknown magnetic field
         - MagneticField("name", "unit") -> Unknown magnetic field with unit preference (NEW)
         - MagneticField("name", "unit", value) -> Known magnetic field (NEW)
         - MagneticField(value, "unit", "name") -> Known magnetic field (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -5232,26 +5277,26 @@ class MagneticField(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.MagneticFieldSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.MagneticFieldSetter":
         """
         Create a setter for this magnetic field quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             MagneticFieldSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -5264,19 +5309,20 @@ class MagneticField(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.MagneticFieldSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this magnetic field.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -5287,31 +5333,31 @@ class MagneticField(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this magnetic field.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class MagneticFlux(FieldQnty):
     """
     Type-safe magnetic flux quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - MagneticFlux("variable_name") -> Create unknown magnetic flux
     - MagneticFlux(value, "unit", "variable_name") -> Create known magnetic flux
-    
+
     Examples:
     ---------
     >>> unknown = MagneticFlux("pressure")  # Unknown magnetic flux
     >>> known = MagneticFlux(100, "kapp_line", "inlet_pressure")  # Known magnetic flux
-    
+
     Available units: "kapp_line", "line", "maxwell"
     """
 
@@ -5322,20 +5368,20 @@ class MagneticFlux(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize magnetic flux quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - MagneticFlux("name") -> Unknown magnetic flux
         - MagneticFlux("name", "unit") -> Unknown magnetic flux with unit preference (NEW)
         - MagneticFlux("name", "unit", value) -> Known magnetic flux (NEW)
         - MagneticFlux(value, "unit", "name") -> Known magnetic flux (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -5347,26 +5393,26 @@ class MagneticFlux(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.MagneticFluxSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.MagneticFluxSetter":
         """
         Create a setter for this magnetic flux quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             MagneticFluxSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -5379,19 +5425,20 @@ class MagneticFlux(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.MagneticFluxSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this magnetic flux.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -5402,31 +5449,31 @@ class MagneticFlux(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this magnetic flux.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class MagneticInductionFieldStrength(FieldQnty):
     """
     Type-safe magnetic induction field strength quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - MagneticInductionFieldStrength("variable_name") -> Create unknown magnetic induction field strength
     - MagneticInductionFieldStrength(value, "unit", "variable_name") -> Create known magnetic induction field strength
-    
+
     Examples:
     ---------
     >>> unknown = MagneticInductionFieldStrength("pressure")  # Unknown magnetic induction field strength
     >>> known = MagneticInductionFieldStrength(100, "gamma", "inlet_pressure")  # Known magnetic induction field strength
-    
+
     Available units: "gamma", "gauss", "line_per_square_centimeter"
     """
 
@@ -5437,20 +5484,20 @@ class MagneticInductionFieldStrength(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize magnetic induction field strength quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - MagneticInductionFieldStrength("name") -> Unknown magnetic induction field strength
         - MagneticInductionFieldStrength("name", "unit") -> Unknown magnetic induction field strength with unit preference (NEW)
         - MagneticInductionFieldStrength("name", "unit", value) -> Known magnetic induction field strength (NEW)
         - MagneticInductionFieldStrength(value, "unit", "name") -> Known magnetic induction field strength (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -5462,26 +5509,26 @@ class MagneticInductionFieldStrength(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.MagneticInductionFieldStrengthSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.MagneticInductionFieldStrengthSetter":
         """
         Create a setter for this magnetic induction field strength quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             MagneticInductionFieldStrengthSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -5494,19 +5541,20 @@ class MagneticInductionFieldStrength(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.MagneticInductionFieldStrengthSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this magnetic induction field strength.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -5517,31 +5565,31 @@ class MagneticInductionFieldStrength(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this magnetic induction field strength.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class MagneticMoment(FieldQnty):
     """
     Type-safe magnetic moment quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - MagneticMoment("variable_name") -> Create unknown magnetic moment
     - MagneticMoment(value, "unit", "variable_name") -> Create known magnetic moment
-    
+
     Examples:
     ---------
     >>> unknown = MagneticMoment("pressure")  # Unknown magnetic moment
     >>> known = MagneticMoment(100, "bohr_magneton", "inlet_pressure")  # Known magnetic moment
-    
+
     Available units: "bohr_magneton", "joule_per_tesla", "nuclear_magneton"
     """
 
@@ -5552,20 +5600,20 @@ class MagneticMoment(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize magnetic moment quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - MagneticMoment("name") -> Unknown magnetic moment
         - MagneticMoment("name", "unit") -> Unknown magnetic moment with unit preference (NEW)
         - MagneticMoment("name", "unit", value) -> Known magnetic moment (NEW)
         - MagneticMoment(value, "unit", "name") -> Known magnetic moment (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -5577,26 +5625,26 @@ class MagneticMoment(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.MagneticMomentSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.MagneticMomentSetter":
         """
         Create a setter for this magnetic moment quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             MagneticMomentSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -5609,19 +5657,20 @@ class MagneticMoment(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.MagneticMomentSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this magnetic moment.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -5632,31 +5681,31 @@ class MagneticMoment(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this magnetic moment.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class MagneticPermeability(FieldQnty):
     """
     Type-safe magnetic permeability quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - MagneticPermeability("variable_name") -> Create unknown magnetic permeability
     - MagneticPermeability(value, "unit", "variable_name") -> Create known magnetic permeability
-    
+
     Examples:
     ---------
     >>> unknown = MagneticPermeability("pressure")  # Unknown magnetic permeability
     >>> known = MagneticPermeability(100, "henrys_per_meter", "inlet_pressure")  # Known magnetic permeability
-    
+
     Available units: "henrys_per_meter", "newton_per_square_ampere"
     """
 
@@ -5667,20 +5716,20 @@ class MagneticPermeability(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize magnetic permeability quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - MagneticPermeability("name") -> Unknown magnetic permeability
         - MagneticPermeability("name", "unit") -> Unknown magnetic permeability with unit preference (NEW)
         - MagneticPermeability("name", "unit", value) -> Known magnetic permeability (NEW)
         - MagneticPermeability(value, "unit", "name") -> Known magnetic permeability (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -5692,26 +5741,26 @@ class MagneticPermeability(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.MagneticPermeabilitySetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.MagneticPermeabilitySetter":
         """
         Create a setter for this magnetic permeability quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             MagneticPermeabilitySetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -5724,19 +5773,20 @@ class MagneticPermeability(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.MagneticPermeabilitySetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this magnetic permeability.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -5747,31 +5797,31 @@ class MagneticPermeability(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this magnetic permeability.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class MagnetomotiveForce(FieldQnty):
     """
     Type-safe magnetomotive force quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - MagnetomotiveForce("variable_name") -> Create unknown magnetomotive force
     - MagnetomotiveForce(value, "unit", "variable_name") -> Create known magnetomotive force
-    
+
     Examples:
     ---------
     >>> unknown = MagnetomotiveForce("pressure")  # Unknown magnetomotive force
     >>> known = MagnetomotiveForce(100, "abampere_turn", "inlet_pressure")  # Known magnetomotive force
-    
+
     Available units: "abampere_turn", "ampere", "ampere_turn"
     """
 
@@ -5782,20 +5832,20 @@ class MagnetomotiveForce(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize magnetomotive force quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - MagnetomotiveForce("name") -> Unknown magnetomotive force
         - MagnetomotiveForce("name", "unit") -> Unknown magnetomotive force with unit preference (NEW)
         - MagnetomotiveForce("name", "unit", value) -> Known magnetomotive force (NEW)
         - MagnetomotiveForce(value, "unit", "name") -> Known magnetomotive force (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -5807,26 +5857,26 @@ class MagnetomotiveForce(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.MagnetomotiveForceSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.MagnetomotiveForceSetter":
         """
         Create a setter for this magnetomotive force quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             MagnetomotiveForceSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -5839,19 +5889,20 @@ class MagnetomotiveForce(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.MagnetomotiveForceSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this magnetomotive force.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -5862,31 +5913,31 @@ class MagnetomotiveForce(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this magnetomotive force.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class Mass(FieldQnty):
     """
     Type-safe mass quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - Mass("variable_name") -> Create unknown mass
     - Mass(value, "unit", "variable_name") -> Create known mass
-    
+
     Examples:
     ---------
     >>> unknown = Mass("pressure")  # Unknown mass
     >>> known = Mass(100, "slug", "inlet_pressure")  # Known mass
-    
+
     Available units: "slug", "atomic_mass_unit_12_mathrmc", "carat_metric"
     """
 
@@ -5897,20 +5948,20 @@ class Mass(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize mass quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - Mass("name") -> Unknown mass
         - Mass("name", "unit") -> Unknown mass with unit preference (NEW)
         - Mass("name", "unit", value) -> Known mass (NEW)
         - Mass(value, "unit", "name") -> Known mass (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -5922,26 +5973,26 @@ class Mass(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.MassSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.MassSetter":
         """
         Create a setter for this mass quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             MassSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -5954,19 +6005,20 @@ class Mass(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.MassSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this mass.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -5977,31 +6029,31 @@ class Mass(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this mass.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class MassDensity(FieldQnty):
     """
     Type-safe mass density quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - MassDensity("variable_name") -> Create unknown mass density
     - MassDensity(value, "unit", "variable_name") -> Create known mass density
-    
+
     Examples:
     ---------
     >>> unknown = MassDensity("pressure")  # Unknown mass density
     >>> known = MassDensity(100, "gram_per_cubic_centimeter", "inlet_pressure")  # Known mass density
-    
+
     Available units: "gram_per_cubic_centimeter", "gram_per_cubic_decimeter", "gram_per_cubic_meter"
     """
 
@@ -6012,20 +6064,20 @@ class MassDensity(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize mass density quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - MassDensity("name") -> Unknown mass density
         - MassDensity("name", "unit") -> Unknown mass density with unit preference (NEW)
         - MassDensity("name", "unit", value) -> Known mass density (NEW)
         - MassDensity(value, "unit", "name") -> Known mass density (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -6037,26 +6089,26 @@ class MassDensity(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.MassDensitySetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.MassDensitySetter":
         """
         Create a setter for this mass density quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             MassDensitySetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -6069,19 +6121,20 @@ class MassDensity(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.MassDensitySetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this mass density.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -6092,31 +6145,31 @@ class MassDensity(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this mass density.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class MassFlowRate(FieldQnty):
     """
     Type-safe mass flow rate quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - MassFlowRate("variable_name") -> Create unknown mass flow rate
     - MassFlowRate(value, "unit", "variable_name") -> Create known mass flow rate
-    
+
     Examples:
     ---------
     >>> unknown = MassFlowRate("pressure")  # Unknown mass flow rate
     >>> known = MassFlowRate(100, "kilograms_per_day", "inlet_pressure")  # Known mass flow rate
-    
+
     Available units: "kilograms_per_day", "kilograms_per_hour", "kilograms_per_minute"
     """
 
@@ -6127,20 +6180,20 @@ class MassFlowRate(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize mass flow rate quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - MassFlowRate("name") -> Unknown mass flow rate
         - MassFlowRate("name", "unit") -> Unknown mass flow rate with unit preference (NEW)
         - MassFlowRate("name", "unit", value) -> Known mass flow rate (NEW)
         - MassFlowRate(value, "unit", "name") -> Known mass flow rate (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -6152,26 +6205,26 @@ class MassFlowRate(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.MassFlowRateSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.MassFlowRateSetter":
         """
         Create a setter for this mass flow rate quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             MassFlowRateSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -6184,19 +6237,20 @@ class MassFlowRate(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.MassFlowRateSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this mass flow rate.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -6207,31 +6261,31 @@ class MassFlowRate(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this mass flow rate.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class MassFlux(FieldQnty):
     """
     Type-safe mass flux quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - MassFlux("variable_name") -> Create unknown mass flux
     - MassFlux(value, "unit", "variable_name") -> Create known mass flux
-    
+
     Examples:
     ---------
     >>> unknown = MassFlux("pressure")  # Unknown mass flux
     >>> known = MassFlux(100, "kilogram_per_square_meter_per_day", "inlet_pressure")  # Known mass flux
-    
+
     Available units: "kilogram_per_square_meter_per_day", "kilogram_per_square_meter_per_hour", "kilogram_per_square_meter_per_minute"
     """
 
@@ -6242,20 +6296,20 @@ class MassFlux(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize mass flux quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - MassFlux("name") -> Unknown mass flux
         - MassFlux("name", "unit") -> Unknown mass flux with unit preference (NEW)
         - MassFlux("name", "unit", value) -> Known mass flux (NEW)
         - MassFlux(value, "unit", "name") -> Known mass flux (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -6267,26 +6321,26 @@ class MassFlux(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.MassFluxSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.MassFluxSetter":
         """
         Create a setter for this mass flux quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             MassFluxSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -6299,19 +6353,20 @@ class MassFlux(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.MassFluxSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this mass flux.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -6322,31 +6377,31 @@ class MassFlux(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this mass flux.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class MassFractionOfI(FieldQnty):
     """
     Type-safe mass fraction of "i" quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - MassFractionOfI("variable_name") -> Create unknown mass fraction of "i"
     - MassFractionOfI(value, "unit", "variable_name") -> Create known mass fraction of "i"
-    
+
     Examples:
     ---------
     >>> unknown = MassFractionOfI("pressure")  # Unknown mass fraction of "i"
     >>> known = MassFractionOfI(100, "grains_of_i_per_pound_total", "inlet_pressure")  # Known mass fraction of "i"
-    
+
     Available units: "grains_of_i_per_pound_total", "gram_of_i_per_kilogram_total", "kilogram_of_i_per_kilogram_total"
     """
 
@@ -6357,20 +6412,20 @@ class MassFractionOfI(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize mass fraction of "i" quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - MassFractionOfI("name") -> Unknown mass fraction of "i"
         - MassFractionOfI("name", "unit") -> Unknown mass fraction of "i" with unit preference (NEW)
         - MassFractionOfI("name", "unit", value) -> Known mass fraction of "i" (NEW)
         - MassFractionOfI(value, "unit", "name") -> Known mass fraction of "i" (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -6382,26 +6437,26 @@ class MassFractionOfI(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.MassFractionOfISetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.MassFractionOfISetter":
         """
         Create a setter for this mass fraction of "i" quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             MassFractionOfISetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -6414,19 +6469,20 @@ class MassFractionOfI(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.MassFractionOfISetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this mass fraction of "i".
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -6437,31 +6493,31 @@ class MassFractionOfI(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this mass fraction of "i".
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class MassTransferCoefficient(FieldQnty):
     """
     Type-safe mass transfer coefficient quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - MassTransferCoefficient("variable_name") -> Create unknown mass transfer coefficient
     - MassTransferCoefficient(value, "unit", "variable_name") -> Create known mass transfer coefficient
-    
+
     Examples:
     ---------
     >>> unknown = MassTransferCoefficient("pressure")  # Unknown mass transfer coefficient
     >>> known = MassTransferCoefficient(100, "gram_per_square_centimeter_per_second", "inlet_pressure")  # Known mass transfer coefficient
-    
+
     Available units: "gram_per_square_centimeter_per_second", "kilogram_per_square_meter_per_second", "pounds_force_per_cubic_foot_per_hour"
     """
 
@@ -6472,20 +6528,20 @@ class MassTransferCoefficient(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize mass transfer coefficient quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - MassTransferCoefficient("name") -> Unknown mass transfer coefficient
         - MassTransferCoefficient("name", "unit") -> Unknown mass transfer coefficient with unit preference (NEW)
         - MassTransferCoefficient("name", "unit", value) -> Known mass transfer coefficient (NEW)
         - MassTransferCoefficient(value, "unit", "name") -> Known mass transfer coefficient (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -6497,26 +6553,26 @@ class MassTransferCoefficient(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.MassTransferCoefficientSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.MassTransferCoefficientSetter":
         """
         Create a setter for this mass transfer coefficient quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             MassTransferCoefficientSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -6529,19 +6585,20 @@ class MassTransferCoefficient(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.MassTransferCoefficientSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this mass transfer coefficient.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -6552,31 +6609,31 @@ class MassTransferCoefficient(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this mass transfer coefficient.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class MolalityOfSoluteI(FieldQnty):
     """
     Type-safe molality of solute "i" quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - MolalityOfSoluteI("variable_name") -> Create unknown molality of solute "i"
     - MolalityOfSoluteI(value, "unit", "variable_name") -> Create known molality of solute "i"
-    
+
     Examples:
     ---------
     >>> unknown = MolalityOfSoluteI("pressure")  # Unknown molality of solute "i"
     >>> known = MolalityOfSoluteI(100, "gram_moles_of_i_per_kilogram", "inlet_pressure")  # Known molality of solute "i"
-    
+
     Available units: "gram_moles_of_i_per_kilogram", "kilogram_mols_of_i_per_kilogram", "kmols_of_i_per_kilogram"
     """
 
@@ -6587,20 +6644,20 @@ class MolalityOfSoluteI(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize molality of solute "i" quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - MolalityOfSoluteI("name") -> Unknown molality of solute "i"
         - MolalityOfSoluteI("name", "unit") -> Unknown molality of solute "i" with unit preference (NEW)
         - MolalityOfSoluteI("name", "unit", value) -> Known molality of solute "i" (NEW)
         - MolalityOfSoluteI(value, "unit", "name") -> Known molality of solute "i" (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -6612,26 +6669,26 @@ class MolalityOfSoluteI(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.MolalityOfSoluteISetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.MolalityOfSoluteISetter":
         """
         Create a setter for this molality of solute "i" quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             MolalityOfSoluteISetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -6644,19 +6701,20 @@ class MolalityOfSoluteI(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.MolalityOfSoluteISetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this molality of solute "i".
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -6667,31 +6725,31 @@ class MolalityOfSoluteI(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this molality of solute "i".
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class MolarConcentrationByMass(FieldQnty):
     """
     Type-safe molar concentration by mass quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - MolarConcentrationByMass("variable_name") -> Create unknown molar concentration by mass
     - MolarConcentrationByMass(value, "unit", "variable_name") -> Create known molar concentration by mass
-    
+
     Examples:
     ---------
     >>> unknown = MolarConcentrationByMass("pressure")  # Unknown molar concentration by mass
     >>> known = MolarConcentrationByMass(100, "gram_mole_or_mole_per_gram", "inlet_pressure")  # Known molar concentration by mass
-    
+
     Available units: "gram_mole_or_mole_per_gram", "gram_mole_or_mole_per_kilogram", "kilogram_mole_or_kmol_per_kilogram"
     """
 
@@ -6702,20 +6760,20 @@ class MolarConcentrationByMass(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize molar concentration by mass quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - MolarConcentrationByMass("name") -> Unknown molar concentration by mass
         - MolarConcentrationByMass("name", "unit") -> Unknown molar concentration by mass with unit preference (NEW)
         - MolarConcentrationByMass("name", "unit", value) -> Known molar concentration by mass (NEW)
         - MolarConcentrationByMass(value, "unit", "name") -> Known molar concentration by mass (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -6727,26 +6785,26 @@ class MolarConcentrationByMass(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.MolarConcentrationByMassSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.MolarConcentrationByMassSetter":
         """
         Create a setter for this molar concentration by mass quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             MolarConcentrationByMassSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -6759,19 +6817,20 @@ class MolarConcentrationByMass(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.MolarConcentrationByMassSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this molar concentration by mass.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -6782,31 +6841,31 @@ class MolarConcentrationByMass(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this molar concentration by mass.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class MolarFlowRate(FieldQnty):
     """
     Type-safe molar flow rate quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - MolarFlowRate("variable_name") -> Create unknown molar flow rate
     - MolarFlowRate(value, "unit", "variable_name") -> Create known molar flow rate
-    
+
     Examples:
     ---------
     >>> unknown = MolarFlowRate("pressure")  # Unknown molar flow rate
     >>> known = MolarFlowRate(100, "gram_mole_per_day", "inlet_pressure")  # Known molar flow rate
-    
+
     Available units: "gram_mole_per_day", "gram_mole_per_hour", "gram_mole_per_minute"
     """
 
@@ -6817,20 +6876,20 @@ class MolarFlowRate(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize molar flow rate quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - MolarFlowRate("name") -> Unknown molar flow rate
         - MolarFlowRate("name", "unit") -> Unknown molar flow rate with unit preference (NEW)
         - MolarFlowRate("name", "unit", value) -> Known molar flow rate (NEW)
         - MolarFlowRate(value, "unit", "name") -> Known molar flow rate (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -6842,26 +6901,26 @@ class MolarFlowRate(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.MolarFlowRateSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.MolarFlowRateSetter":
         """
         Create a setter for this molar flow rate quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             MolarFlowRateSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -6874,19 +6933,20 @@ class MolarFlowRate(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.MolarFlowRateSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this molar flow rate.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -6897,31 +6957,31 @@ class MolarFlowRate(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this molar flow rate.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class MolarFlux(FieldQnty):
     """
     Type-safe molar flux quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - MolarFlux("variable_name") -> Create unknown molar flux
     - MolarFlux(value, "unit", "variable_name") -> Create known molar flux
-    
+
     Examples:
     ---------
     >>> unknown = MolarFlux("pressure")  # Unknown molar flux
     >>> known = MolarFlux(100, "kmol_per_square_meter_per_day", "inlet_pressure")  # Known molar flux
-    
+
     Available units: "kmol_per_square_meter_per_day", "kmol_per_square_meter_per_hour", "kmol_per_square_meter_per_minute"
     """
 
@@ -6932,20 +6992,20 @@ class MolarFlux(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize molar flux quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - MolarFlux("name") -> Unknown molar flux
         - MolarFlux("name", "unit") -> Unknown molar flux with unit preference (NEW)
         - MolarFlux("name", "unit", value) -> Known molar flux (NEW)
         - MolarFlux(value, "unit", "name") -> Known molar flux (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -6957,26 +7017,26 @@ class MolarFlux(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.MolarFluxSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.MolarFluxSetter":
         """
         Create a setter for this molar flux quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             MolarFluxSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -6989,19 +7049,20 @@ class MolarFlux(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.MolarFluxSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this molar flux.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -7012,31 +7073,31 @@ class MolarFlux(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this molar flux.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class MolarHeatCapacity(FieldQnty):
     """
     Type-safe molar heat capacity quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - MolarHeatCapacity("variable_name") -> Create unknown molar heat capacity
     - MolarHeatCapacity(value, "unit", "variable_name") -> Create known molar heat capacity
-    
+
     Examples:
     ---------
     >>> unknown = MolarHeatCapacity("pressure")  # Unknown molar heat capacity
     >>> known = MolarHeatCapacity(100, "btu_per_pound_mole_per_degree_fahrenheit_or_degree_rankine", "inlet_pressure")  # Known molar heat capacity
-    
+
     Available units: "btu_per_pound_mole_per_degree_fahrenheit_or_degree_rankine", "calories_per_gram_mole_per_kelvin_or_degree_celsius", "joule_per_gram_mole_per_kelvin_or_degree_celsius"
     """
 
@@ -7047,20 +7108,20 @@ class MolarHeatCapacity(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize molar heat capacity quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - MolarHeatCapacity("name") -> Unknown molar heat capacity
         - MolarHeatCapacity("name", "unit") -> Unknown molar heat capacity with unit preference (NEW)
         - MolarHeatCapacity("name", "unit", value) -> Known molar heat capacity (NEW)
         - MolarHeatCapacity(value, "unit", "name") -> Known molar heat capacity (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -7072,26 +7133,26 @@ class MolarHeatCapacity(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.MolarHeatCapacitySetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.MolarHeatCapacitySetter":
         """
         Create a setter for this molar heat capacity quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             MolarHeatCapacitySetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -7104,19 +7165,20 @@ class MolarHeatCapacity(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.MolarHeatCapacitySetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this molar heat capacity.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -7127,31 +7189,31 @@ class MolarHeatCapacity(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this molar heat capacity.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class MolarityOfI(FieldQnty):
     """
     Type-safe molarity of "i" quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - MolarityOfI("variable_name") -> Create unknown molarity of "i"
     - MolarityOfI(value, "unit", "variable_name") -> Create known molarity of "i"
-    
+
     Examples:
     ---------
     >>> unknown = MolarityOfI("pressure")  # Unknown molarity of "i"
     >>> known = MolarityOfI(100, "gram_moles_of_i_per_cubic_meter", "inlet_pressure")  # Known molarity of "i"
-    
+
     Available units: "gram_moles_of_i_per_cubic_meter", "gram_moles_of_i_per_liter", "kilogram_moles_of_i_per_cubic_meter"
     """
 
@@ -7162,20 +7224,20 @@ class MolarityOfI(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize molarity of "i" quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - MolarityOfI("name") -> Unknown molarity of "i"
         - MolarityOfI("name", "unit") -> Unknown molarity of "i" with unit preference (NEW)
         - MolarityOfI("name", "unit", value) -> Known molarity of "i" (NEW)
         - MolarityOfI(value, "unit", "name") -> Known molarity of "i" (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -7187,26 +7249,26 @@ class MolarityOfI(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.MolarityOfISetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.MolarityOfISetter":
         """
         Create a setter for this molarity of "i" quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             MolarityOfISetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -7219,19 +7281,20 @@ class MolarityOfI(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.MolarityOfISetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this molarity of "i".
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -7242,31 +7305,31 @@ class MolarityOfI(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this molarity of "i".
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class MoleFractionOfI(FieldQnty):
     """
     Type-safe mole fraction of "i" quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - MoleFractionOfI("variable_name") -> Create unknown mole fraction of "i"
     - MoleFractionOfI(value, "unit", "variable_name") -> Create known mole fraction of "i"
-    
+
     Examples:
     ---------
     >>> unknown = MoleFractionOfI("pressure")  # Unknown mole fraction of "i"
     >>> known = MoleFractionOfI(100, "gram_mole_of_i_per_gram_mole_total", "inlet_pressure")  # Known mole fraction of "i"
-    
+
     Available units: "gram_mole_of_i_per_gram_mole_total", "kilogram_mole_of_i_per_kilogram_mole_total", "kilomole_of_i_per_kilomole_total"
     """
 
@@ -7277,20 +7340,20 @@ class MoleFractionOfI(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize mole fraction of "i" quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - MoleFractionOfI("name") -> Unknown mole fraction of "i"
         - MoleFractionOfI("name", "unit") -> Unknown mole fraction of "i" with unit preference (NEW)
         - MoleFractionOfI("name", "unit", value) -> Known mole fraction of "i" (NEW)
         - MoleFractionOfI(value, "unit", "name") -> Known mole fraction of "i" (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -7302,26 +7365,26 @@ class MoleFractionOfI(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.MoleFractionOfISetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.MoleFractionOfISetter":
         """
         Create a setter for this mole fraction of "i" quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             MoleFractionOfISetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -7334,19 +7397,20 @@ class MoleFractionOfI(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.MoleFractionOfISetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this mole fraction of "i".
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -7357,31 +7421,31 @@ class MoleFractionOfI(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this mole fraction of "i".
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class MomentOfInertia(FieldQnty):
     """
     Type-safe moment of inertia quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - MomentOfInertia("variable_name") -> Create unknown moment of inertia
     - MomentOfInertia(value, "unit", "variable_name") -> Create known moment of inertia
-    
+
     Examples:
     ---------
     >>> unknown = MomentOfInertia("pressure")  # Unknown moment of inertia
     >>> known = MomentOfInertia(100, "gram_force_centimeter_square_second", "inlet_pressure")  # Known moment of inertia
-    
+
     Available units: "gram_force_centimeter_square_second", "gram_square_centimeter", "kilogram_force_centimeter_square_second"
     """
 
@@ -7392,20 +7456,20 @@ class MomentOfInertia(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize moment of inertia quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - MomentOfInertia("name") -> Unknown moment of inertia
         - MomentOfInertia("name", "unit") -> Unknown moment of inertia with unit preference (NEW)
         - MomentOfInertia("name", "unit", value) -> Known moment of inertia (NEW)
         - MomentOfInertia(value, "unit", "name") -> Known moment of inertia (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -7417,26 +7481,26 @@ class MomentOfInertia(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.MomentOfInertiaSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.MomentOfInertiaSetter":
         """
         Create a setter for this moment of inertia quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             MomentOfInertiaSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -7449,19 +7513,20 @@ class MomentOfInertia(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.MomentOfInertiaSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this moment of inertia.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -7472,31 +7537,31 @@ class MomentOfInertia(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this moment of inertia.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class MomentumFlowRate(FieldQnty):
     """
     Type-safe momentum flow rate quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - MomentumFlowRate("variable_name") -> Create unknown momentum flow rate
     - MomentumFlowRate(value, "unit", "variable_name") -> Create known momentum flow rate
-    
+
     Examples:
     ---------
     >>> unknown = MomentumFlowRate("pressure")  # Unknown momentum flow rate
     >>> known = MomentumFlowRate(100, "foot_pounds_per_square_hour", "inlet_pressure")  # Known momentum flow rate
-    
+
     Available units: "foot_pounds_per_square_hour", "foot_pounds_per_square_minute", "foot_pounds_per_square_second"
     """
 
@@ -7507,20 +7572,20 @@ class MomentumFlowRate(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize momentum flow rate quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - MomentumFlowRate("name") -> Unknown momentum flow rate
         - MomentumFlowRate("name", "unit") -> Unknown momentum flow rate with unit preference (NEW)
         - MomentumFlowRate("name", "unit", value) -> Known momentum flow rate (NEW)
         - MomentumFlowRate(value, "unit", "name") -> Known momentum flow rate (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -7532,26 +7597,26 @@ class MomentumFlowRate(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.MomentumFlowRateSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.MomentumFlowRateSetter":
         """
         Create a setter for this momentum flow rate quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             MomentumFlowRateSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -7564,19 +7629,20 @@ class MomentumFlowRate(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.MomentumFlowRateSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this momentum flow rate.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -7587,31 +7653,31 @@ class MomentumFlowRate(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this momentum flow rate.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class MomentumFlux(FieldQnty):
     """
     Type-safe momentum flux quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - MomentumFlux("variable_name") -> Create unknown momentum flux
     - MomentumFlux(value, "unit", "variable_name") -> Create known momentum flux
-    
+
     Examples:
     ---------
     >>> unknown = MomentumFlux("pressure")  # Unknown momentum flux
     >>> known = MomentumFlux(100, "dyne_per_square_centimeter", "inlet_pressure")  # Known momentum flux
-    
+
     Available units: "dyne_per_square_centimeter", "gram_per_centimeter_per_square_second", "newton_per_square_meter"
     """
 
@@ -7622,20 +7688,20 @@ class MomentumFlux(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize momentum flux quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - MomentumFlux("name") -> Unknown momentum flux
         - MomentumFlux("name", "unit") -> Unknown momentum flux with unit preference (NEW)
         - MomentumFlux("name", "unit", value) -> Known momentum flux (NEW)
         - MomentumFlux(value, "unit", "name") -> Known momentum flux (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -7647,26 +7713,26 @@ class MomentumFlux(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.MomentumFluxSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.MomentumFluxSetter":
         """
         Create a setter for this momentum flux quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             MomentumFluxSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -7679,19 +7745,20 @@ class MomentumFlux(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.MomentumFluxSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this momentum flux.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -7702,31 +7769,31 @@ class MomentumFlux(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this momentum flux.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class NormalityOfSolution(FieldQnty):
     """
     Type-safe normality of solution quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - NormalityOfSolution("variable_name") -> Create unknown normality of solution
     - NormalityOfSolution(value, "unit", "variable_name") -> Create known normality of solution
-    
+
     Examples:
     ---------
     >>> unknown = NormalityOfSolution("pressure")  # Unknown normality of solution
     >>> known = NormalityOfSolution(100, "gram_equivalents_per_cubic_meter", "inlet_pressure")  # Known normality of solution
-    
+
     Available units: "gram_equivalents_per_cubic_meter", "gram_equivalents_per_liter", "pound_equivalents_per_cubic_foot"
     """
 
@@ -7737,20 +7804,20 @@ class NormalityOfSolution(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize normality of solution quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - NormalityOfSolution("name") -> Unknown normality of solution
         - NormalityOfSolution("name", "unit") -> Unknown normality of solution with unit preference (NEW)
         - NormalityOfSolution("name", "unit", value) -> Known normality of solution (NEW)
         - NormalityOfSolution(value, "unit", "name") -> Known normality of solution (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -7762,26 +7829,26 @@ class NormalityOfSolution(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.NormalityOfSolutionSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.NormalityOfSolutionSetter":
         """
         Create a setter for this normality of solution quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             NormalityOfSolutionSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -7794,19 +7861,20 @@ class NormalityOfSolution(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.NormalityOfSolutionSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this normality of solution.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -7817,31 +7885,31 @@ class NormalityOfSolution(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this normality of solution.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class ParticleDensity(FieldQnty):
     """
     Type-safe particle density quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - ParticleDensity("variable_name") -> Create unknown particle density
     - ParticleDensity(value, "unit", "variable_name") -> Create known particle density
-    
+
     Examples:
     ---------
     >>> unknown = ParticleDensity("pressure")  # Unknown particle density
     >>> known = ParticleDensity(100, "particles_per_cubic_centimeter", "inlet_pressure")  # Known particle density
-    
+
     Available units: "particles_per_cubic_centimeter", "particles_per_cubic_foot", "particles_per_cubic_meter"
     """
 
@@ -7852,20 +7920,20 @@ class ParticleDensity(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize particle density quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - ParticleDensity("name") -> Unknown particle density
         - ParticleDensity("name", "unit") -> Unknown particle density with unit preference (NEW)
         - ParticleDensity("name", "unit", value) -> Known particle density (NEW)
         - ParticleDensity(value, "unit", "name") -> Known particle density (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -7877,26 +7945,26 @@ class ParticleDensity(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.ParticleDensitySetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.ParticleDensitySetter":
         """
         Create a setter for this particle density quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             ParticleDensitySetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -7909,19 +7977,20 @@ class ParticleDensity(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.ParticleDensitySetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this particle density.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -7932,31 +8001,31 @@ class ParticleDensity(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this particle density.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class Percent(FieldQnty):
     """
     Type-safe percent quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - Percent("variable_name") -> Create unknown percent
     - Percent(value, "unit", "variable_name") -> Create known percent
-    
+
     Examples:
     ---------
     >>> unknown = Percent("pressure")  # Unknown percent
     >>> known = Percent(100, "percent", "inlet_pressure")  # Known percent
-    
+
     Available units: "percent", "per_mille", "basis_point"
     """
 
@@ -7967,20 +8036,20 @@ class Percent(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize percent quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - Percent("name") -> Unknown percent
         - Percent("name", "unit") -> Unknown percent with unit preference (NEW)
         - Percent("name", "unit", value) -> Known percent (NEW)
         - Percent(value, "unit", "name") -> Known percent (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -7992,26 +8061,26 @@ class Percent(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.PercentSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.PercentSetter":
         """
         Create a setter for this percent quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             PercentSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -8024,19 +8093,20 @@ class Percent(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.PercentSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this percent.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -8047,31 +8117,31 @@ class Percent(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this percent.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class Permeability(FieldQnty):
     """
     Type-safe permeability quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - Permeability("variable_name") -> Create unknown permeability
     - Permeability(value, "unit", "variable_name") -> Create known permeability
-    
+
     Examples:
     ---------
     >>> unknown = Permeability("pressure")  # Unknown permeability
     >>> known = Permeability(100, "darcy", "inlet_pressure")  # Known permeability
-    
+
     Available units: "darcy", "square_feet", "square_meters"
     """
 
@@ -8082,20 +8152,20 @@ class Permeability(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize permeability quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - Permeability("name") -> Unknown permeability
         - Permeability("name", "unit") -> Unknown permeability with unit preference (NEW)
         - Permeability("name", "unit", value) -> Known permeability (NEW)
         - Permeability(value, "unit", "name") -> Known permeability (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -8107,26 +8177,26 @@ class Permeability(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.PermeabilitySetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.PermeabilitySetter":
         """
         Create a setter for this permeability quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             PermeabilitySetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -8139,19 +8209,20 @@ class Permeability(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.PermeabilitySetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this permeability.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -8162,31 +8233,31 @@ class Permeability(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this permeability.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class PhotonEmissionRate(FieldQnty):
     """
     Type-safe photon emission rate quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - PhotonEmissionRate("variable_name") -> Create unknown photon emission rate
     - PhotonEmissionRate(value, "unit", "variable_name") -> Create known photon emission rate
-    
+
     Examples:
     ---------
     >>> unknown = PhotonEmissionRate("pressure")  # Unknown photon emission rate
     >>> known = PhotonEmissionRate(100, "rayleigh", "inlet_pressure")  # Known photon emission rate
-    
+
     Available units: "rayleigh", "reciprocal_square_meter_second"
     """
 
@@ -8197,20 +8268,20 @@ class PhotonEmissionRate(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize photon emission rate quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - PhotonEmissionRate("name") -> Unknown photon emission rate
         - PhotonEmissionRate("name", "unit") -> Unknown photon emission rate with unit preference (NEW)
         - PhotonEmissionRate("name", "unit", value) -> Known photon emission rate (NEW)
         - PhotonEmissionRate(value, "unit", "name") -> Known photon emission rate (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -8222,26 +8293,26 @@ class PhotonEmissionRate(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.PhotonEmissionRateSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.PhotonEmissionRateSetter":
         """
         Create a setter for this photon emission rate quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             PhotonEmissionRateSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -8254,19 +8325,20 @@ class PhotonEmissionRate(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.PhotonEmissionRateSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this photon emission rate.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -8277,31 +8349,31 @@ class PhotonEmissionRate(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this photon emission rate.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class PowerPerUnitMass(FieldQnty):
     """
     Type-safe power per unit mass or specific power quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - PowerPerUnitMass("variable_name") -> Create unknown power per unit mass or specific power
     - PowerPerUnitMass(value, "unit", "variable_name") -> Create known power per unit mass or specific power
-    
+
     Examples:
     ---------
     >>> unknown = PowerPerUnitMass("pressure")  # Unknown power per unit mass or specific power
     >>> known = PowerPerUnitMass(100, "british_thermal_unit_per_hour_per_pound_mass", "inlet_pressure")  # Known power per unit mass or specific power
-    
+
     Available units: "british_thermal_unit_per_hour_per_pound_mass", "calorie_per_second_per_gram", "kilocalorie_per_hour_per_kilogram"
     """
 
@@ -8312,20 +8384,20 @@ class PowerPerUnitMass(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize power per unit mass or specific power quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - PowerPerUnitMass("name") -> Unknown power per unit mass or specific power
         - PowerPerUnitMass("name", "unit") -> Unknown power per unit mass or specific power with unit preference (NEW)
         - PowerPerUnitMass("name", "unit", value) -> Known power per unit mass or specific power (NEW)
         - PowerPerUnitMass(value, "unit", "name") -> Known power per unit mass or specific power (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -8337,26 +8409,26 @@ class PowerPerUnitMass(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.PowerPerUnitMassSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.PowerPerUnitMassSetter":
         """
         Create a setter for this power per unit mass or specific power quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             PowerPerUnitMassSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -8369,19 +8441,20 @@ class PowerPerUnitMass(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.PowerPerUnitMassSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this power per unit mass or specific power.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -8392,31 +8465,31 @@ class PowerPerUnitMass(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this power per unit mass or specific power.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class PowerPerUnitVolume(FieldQnty):
     """
     Type-safe power per unit volume or power density quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - PowerPerUnitVolume("variable_name") -> Create unknown power per unit volume or power density
     - PowerPerUnitVolume(value, "unit", "variable_name") -> Create known power per unit volume or power density
-    
+
     Examples:
     ---------
     >>> unknown = PowerPerUnitVolume("pressure")  # Unknown power per unit volume or power density
     >>> known = PowerPerUnitVolume(100, "british_thermal_unit_per_hour_per_cubic_foot", "inlet_pressure")  # Known power per unit volume or power density
-    
+
     Available units: "british_thermal_unit_per_hour_per_cubic_foot", "calorie_per_second_per_cubic_centimeter", "chu_per_hour_per_cubic_foot"
     """
 
@@ -8427,20 +8500,20 @@ class PowerPerUnitVolume(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize power per unit volume or power density quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - PowerPerUnitVolume("name") -> Unknown power per unit volume or power density
         - PowerPerUnitVolume("name", "unit") -> Unknown power per unit volume or power density with unit preference (NEW)
         - PowerPerUnitVolume("name", "unit", value) -> Known power per unit volume or power density (NEW)
         - PowerPerUnitVolume(value, "unit", "name") -> Known power per unit volume or power density (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -8452,26 +8525,26 @@ class PowerPerUnitVolume(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.PowerPerUnitVolumeSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.PowerPerUnitVolumeSetter":
         """
         Create a setter for this power per unit volume or power density quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             PowerPerUnitVolumeSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -8484,19 +8557,20 @@ class PowerPerUnitVolume(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.PowerPerUnitVolumeSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this power per unit volume or power density.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -8507,31 +8581,31 @@ class PowerPerUnitVolume(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this power per unit volume or power density.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class PowerThermalDuty(FieldQnty):
     """
     Type-safe power, thermal duty quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - PowerThermalDuty("variable_name") -> Create unknown power, thermal duty
     - PowerThermalDuty(value, "unit", "variable_name") -> Create known power, thermal duty
-    
+
     Examples:
     ---------
     >>> unknown = PowerThermalDuty("pressure")  # Unknown power, thermal duty
     >>> known = PowerThermalDuty(100, "abwatt_emu_of_power", "inlet_pressure")  # Known power, thermal duty
-    
+
     Available units: "abwatt_emu_of_power", "boiler_horsepower", "british_thermal_unit_mean"
     """
 
@@ -8542,20 +8616,20 @@ class PowerThermalDuty(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize power, thermal duty quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - PowerThermalDuty("name") -> Unknown power, thermal duty
         - PowerThermalDuty("name", "unit") -> Unknown power, thermal duty with unit preference (NEW)
         - PowerThermalDuty("name", "unit", value) -> Known power, thermal duty (NEW)
         - PowerThermalDuty(value, "unit", "name") -> Known power, thermal duty (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -8567,26 +8641,26 @@ class PowerThermalDuty(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.PowerThermalDutySetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.PowerThermalDutySetter":
         """
         Create a setter for this power, thermal duty quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             PowerThermalDutySetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -8599,19 +8673,20 @@ class PowerThermalDuty(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.PowerThermalDutySetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this power, thermal duty.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -8622,31 +8697,31 @@ class PowerThermalDuty(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this power, thermal duty.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class Pressure(FieldQnty):
     """
     Type-safe pressure quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - Pressure("variable_name") -> Create unknown pressure
     - Pressure(value, "unit", "variable_name") -> Create known pressure
-    
+
     Examples:
     ---------
     >>> unknown = Pressure("pressure")  # Unknown pressure
     >>> known = Pressure(100, "atmosphere_standard", "inlet_pressure")  # Known pressure
-    
+
     Available units: "atmosphere_standard", "bar", "barye"
     """
 
@@ -8657,20 +8732,20 @@ class Pressure(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize pressure quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - Pressure("name") -> Unknown pressure
         - Pressure("name", "unit") -> Unknown pressure with unit preference (NEW)
         - Pressure("name", "unit", value) -> Known pressure (NEW)
         - Pressure(value, "unit", "name") -> Known pressure (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -8682,26 +8757,26 @@ class Pressure(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.PressureSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.PressureSetter":
         """
         Create a setter for this pressure quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             PressureSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -8714,19 +8789,20 @@ class Pressure(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.PressureSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this pressure.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -8737,31 +8813,31 @@ class Pressure(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this pressure.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class RadiationDoseEquivalent(FieldQnty):
     """
     Type-safe radiation dose equivalent quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - RadiationDoseEquivalent("variable_name") -> Create unknown radiation dose equivalent
     - RadiationDoseEquivalent(value, "unit", "variable_name") -> Create known radiation dose equivalent
-    
+
     Examples:
     ---------
     >>> unknown = RadiationDoseEquivalent("pressure")  # Unknown radiation dose equivalent
     >>> known = RadiationDoseEquivalent(100, "rem", "inlet_pressure")  # Known radiation dose equivalent
-    
+
     Available units: "rem", "sievert", "millisievert"
     """
 
@@ -8772,20 +8848,20 @@ class RadiationDoseEquivalent(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize radiation dose equivalent quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - RadiationDoseEquivalent("name") -> Unknown radiation dose equivalent
         - RadiationDoseEquivalent("name", "unit") -> Unknown radiation dose equivalent with unit preference (NEW)
         - RadiationDoseEquivalent("name", "unit", value) -> Known radiation dose equivalent (NEW)
         - RadiationDoseEquivalent(value, "unit", "name") -> Known radiation dose equivalent (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -8797,26 +8873,26 @@ class RadiationDoseEquivalent(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.RadiationDoseEquivalentSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.RadiationDoseEquivalentSetter":
         """
         Create a setter for this radiation dose equivalent quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             RadiationDoseEquivalentSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -8829,19 +8905,20 @@ class RadiationDoseEquivalent(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.RadiationDoseEquivalentSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this radiation dose equivalent.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -8852,31 +8929,31 @@ class RadiationDoseEquivalent(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this radiation dose equivalent.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class RadiationExposure(FieldQnty):
     """
     Type-safe radiation exposure quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - RadiationExposure("variable_name") -> Create unknown radiation exposure
     - RadiationExposure(value, "unit", "variable_name") -> Create known radiation exposure
-    
+
     Examples:
     ---------
     >>> unknown = RadiationExposure("pressure")  # Unknown radiation exposure
     >>> known = RadiationExposure(100, "coulomb_per_kilogram", "inlet_pressure")  # Known radiation exposure
-    
+
     Available units: "coulomb_per_kilogram", "d_unit", "pastille_dose_b_unit"
     """
 
@@ -8887,20 +8964,20 @@ class RadiationExposure(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize radiation exposure quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - RadiationExposure("name") -> Unknown radiation exposure
         - RadiationExposure("name", "unit") -> Unknown radiation exposure with unit preference (NEW)
         - RadiationExposure("name", "unit", value) -> Known radiation exposure (NEW)
         - RadiationExposure(value, "unit", "name") -> Known radiation exposure (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -8912,26 +8989,26 @@ class RadiationExposure(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.RadiationExposureSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.RadiationExposureSetter":
         """
         Create a setter for this radiation exposure quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             RadiationExposureSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -8944,19 +9021,20 @@ class RadiationExposure(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.RadiationExposureSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this radiation exposure.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -8967,31 +9045,31 @@ class RadiationExposure(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this radiation exposure.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class Radioactivity(FieldQnty):
     """
     Type-safe radioactivity quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - Radioactivity("variable_name") -> Create unknown radioactivity
     - Radioactivity(value, "unit", "variable_name") -> Create known radioactivity
-    
+
     Examples:
     ---------
     >>> unknown = Radioactivity("pressure")  # Unknown radioactivity
     >>> known = Radioactivity(100, "becquerel", "inlet_pressure")  # Known radioactivity
-    
+
     Available units: "becquerel", "curie", "mache_unit"
     """
 
@@ -9002,20 +9080,20 @@ class Radioactivity(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize radioactivity quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - Radioactivity("name") -> Unknown radioactivity
         - Radioactivity("name", "unit") -> Unknown radioactivity with unit preference (NEW)
         - Radioactivity("name", "unit", value) -> Known radioactivity (NEW)
         - Radioactivity(value, "unit", "name") -> Known radioactivity (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -9027,26 +9105,26 @@ class Radioactivity(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.RadioactivitySetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.RadioactivitySetter":
         """
         Create a setter for this radioactivity quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             RadioactivitySetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -9059,19 +9137,20 @@ class Radioactivity(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.RadioactivitySetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this radioactivity.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -9082,31 +9161,31 @@ class Radioactivity(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this radioactivity.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class SecondMomentOfArea(FieldQnty):
     """
     Type-safe second moment of area quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - SecondMomentOfArea("variable_name") -> Create unknown second moment of area
     - SecondMomentOfArea(value, "unit", "variable_name") -> Create known second moment of area
-    
+
     Examples:
     ---------
     >>> unknown = SecondMomentOfArea("pressure")  # Unknown second moment of area
     >>> known = SecondMomentOfArea(100, "inch_quadrupled", "inlet_pressure")  # Known second moment of area
-    
+
     Available units: "inch_quadrupled", "centimeter_quadrupled", "foot_quadrupled"
     """
 
@@ -9117,20 +9196,20 @@ class SecondMomentOfArea(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize second moment of area quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - SecondMomentOfArea("name") -> Unknown second moment of area
         - SecondMomentOfArea("name", "unit") -> Unknown second moment of area with unit preference (NEW)
         - SecondMomentOfArea("name", "unit", value) -> Known second moment of area (NEW)
         - SecondMomentOfArea(value, "unit", "name") -> Known second moment of area (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -9142,26 +9221,26 @@ class SecondMomentOfArea(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.SecondMomentOfAreaSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.SecondMomentOfAreaSetter":
         """
         Create a setter for this second moment of area quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             SecondMomentOfAreaSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -9174,19 +9253,20 @@ class SecondMomentOfArea(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.SecondMomentOfAreaSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this second moment of area.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -9197,31 +9277,31 @@ class SecondMomentOfArea(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this second moment of area.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class SecondRadiationConstantPlanck(FieldQnty):
     """
     Type-safe second radiation constant (planck) quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - SecondRadiationConstantPlanck("variable_name") -> Create unknown second radiation constant (planck)
     - SecondRadiationConstantPlanck(value, "unit", "variable_name") -> Create known second radiation constant (planck)
-    
+
     Examples:
     ---------
     >>> unknown = SecondRadiationConstantPlanck("pressure")  # Unknown second radiation constant (planck)
     >>> known = SecondRadiationConstantPlanck(100, "meter_kelvin", "inlet_pressure")  # Known second radiation constant (planck)
-    
+
     Available units: "meter_kelvin"
     """
 
@@ -9232,20 +9312,20 @@ class SecondRadiationConstantPlanck(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize second radiation constant (planck) quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - SecondRadiationConstantPlanck("name") -> Unknown second radiation constant (planck)
         - SecondRadiationConstantPlanck("name", "unit") -> Unknown second radiation constant (planck) with unit preference (NEW)
         - SecondRadiationConstantPlanck("name", "unit", value) -> Known second radiation constant (planck) (NEW)
         - SecondRadiationConstantPlanck(value, "unit", "name") -> Known second radiation constant (planck) (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -9257,26 +9337,26 @@ class SecondRadiationConstantPlanck(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.SecondRadiationConstantPlanckSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.SecondRadiationConstantPlanckSetter":
         """
         Create a setter for this second radiation constant (planck) quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             SecondRadiationConstantPlanckSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -9289,19 +9369,20 @@ class SecondRadiationConstantPlanck(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.SecondRadiationConstantPlanckSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this second radiation constant (planck).
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -9312,31 +9393,31 @@ class SecondRadiationConstantPlanck(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this second radiation constant (planck).
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class SpecificEnthalpy(FieldQnty):
     """
     Type-safe specific enthalpy quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - SpecificEnthalpy("variable_name") -> Create unknown specific enthalpy
     - SpecificEnthalpy(value, "unit", "variable_name") -> Create known specific enthalpy
-    
+
     Examples:
     ---------
     >>> unknown = SpecificEnthalpy("pressure")  # Unknown specific enthalpy
     >>> known = SpecificEnthalpy(100, "british_thermal_unit_mean", "inlet_pressure")  # Known specific enthalpy
-    
+
     Available units: "british_thermal_unit_mean", "british_thermal_unit_per_pound", "calorie_per_gram"
     """
 
@@ -9347,20 +9428,20 @@ class SpecificEnthalpy(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize specific enthalpy quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - SpecificEnthalpy("name") -> Unknown specific enthalpy
         - SpecificEnthalpy("name", "unit") -> Unknown specific enthalpy with unit preference (NEW)
         - SpecificEnthalpy("name", "unit", value) -> Known specific enthalpy (NEW)
         - SpecificEnthalpy(value, "unit", "name") -> Known specific enthalpy (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -9372,26 +9453,26 @@ class SpecificEnthalpy(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.SpecificEnthalpySetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.SpecificEnthalpySetter":
         """
         Create a setter for this specific enthalpy quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             SpecificEnthalpySetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -9404,19 +9485,20 @@ class SpecificEnthalpy(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.SpecificEnthalpySetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this specific enthalpy.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -9427,31 +9509,31 @@ class SpecificEnthalpy(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this specific enthalpy.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class SpecificGravity(FieldQnty):
     """
     Type-safe specific gravity quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - SpecificGravity("variable_name") -> Create unknown specific gravity
     - SpecificGravity(value, "unit", "variable_name") -> Create known specific gravity
-    
+
     Examples:
     ---------
     >>> unknown = SpecificGravity("pressure")  # Unknown specific gravity
     >>> known = SpecificGravity(100, "dimensionless", "inlet_pressure")  # Known specific gravity
-    
+
     Available units: "dimensionless"
     """
 
@@ -9462,20 +9544,20 @@ class SpecificGravity(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize specific gravity quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - SpecificGravity("name") -> Unknown specific gravity
         - SpecificGravity("name", "unit") -> Unknown specific gravity with unit preference (NEW)
         - SpecificGravity("name", "unit", value) -> Known specific gravity (NEW)
         - SpecificGravity(value, "unit", "name") -> Known specific gravity (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -9487,26 +9569,26 @@ class SpecificGravity(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.SpecificGravitySetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.SpecificGravitySetter":
         """
         Create a setter for this specific gravity quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             SpecificGravitySetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -9519,19 +9601,20 @@ class SpecificGravity(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.SpecificGravitySetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this specific gravity.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -9542,31 +9625,31 @@ class SpecificGravity(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this specific gravity.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class SpecificHeatCapacityConstantPressure(FieldQnty):
     """
     Type-safe specific heat capacity (constant pressure) quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - SpecificHeatCapacityConstantPressure("variable_name") -> Create unknown specific heat capacity (constant pressure)
     - SpecificHeatCapacityConstantPressure(value, "unit", "variable_name") -> Create known specific heat capacity (constant pressure)
-    
+
     Examples:
     ---------
     >>> unknown = SpecificHeatCapacityConstantPressure("pressure")  # Unknown specific heat capacity (constant pressure)
     >>> known = SpecificHeatCapacityConstantPressure(100, "btu_per_pound_per_degree_fahrenheit_or_degree_rankine", "inlet_pressure")  # Known specific heat capacity (constant pressure)
-    
+
     Available units: "btu_per_pound_per_degree_fahrenheit_or_degree_rankine", "calories_per_gram_per_kelvin_or_degree_celsius", "joules_per_kilogram_per_kelvin_or_degree_celsius"
     """
 
@@ -9577,20 +9660,20 @@ class SpecificHeatCapacityConstantPressure(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize specific heat capacity (constant pressure) quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - SpecificHeatCapacityConstantPressure("name") -> Unknown specific heat capacity (constant pressure)
         - SpecificHeatCapacityConstantPressure("name", "unit") -> Unknown specific heat capacity (constant pressure) with unit preference (NEW)
         - SpecificHeatCapacityConstantPressure("name", "unit", value) -> Known specific heat capacity (constant pressure) (NEW)
         - SpecificHeatCapacityConstantPressure(value, "unit", "name") -> Known specific heat capacity (constant pressure) (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -9602,26 +9685,26 @@ class SpecificHeatCapacityConstantPressure(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.SpecificHeatCapacityConstantPressureSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.SpecificHeatCapacityConstantPressureSetter":
         """
         Create a setter for this specific heat capacity (constant pressure) quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             SpecificHeatCapacityConstantPressureSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -9634,19 +9717,20 @@ class SpecificHeatCapacityConstantPressure(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.SpecificHeatCapacityConstantPressureSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this specific heat capacity (constant pressure).
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -9657,31 +9741,31 @@ class SpecificHeatCapacityConstantPressure(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this specific heat capacity (constant pressure).
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class SpecificLength(FieldQnty):
     """
     Type-safe specific length quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - SpecificLength("variable_name") -> Create unknown specific length
     - SpecificLength(value, "unit", "variable_name") -> Create known specific length
-    
+
     Examples:
     ---------
     >>> unknown = SpecificLength("pressure")  # Unknown specific length
     >>> known = SpecificLength(100, "centimeter_per_gram", "inlet_pressure")  # Known specific length
-    
+
     Available units: "centimeter_per_gram", "cotton_count", "ft_per_pound"
     """
 
@@ -9692,20 +9776,20 @@ class SpecificLength(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize specific length quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - SpecificLength("name") -> Unknown specific length
         - SpecificLength("name", "unit") -> Unknown specific length with unit preference (NEW)
         - SpecificLength("name", "unit", value) -> Known specific length (NEW)
         - SpecificLength(value, "unit", "name") -> Known specific length (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -9717,26 +9801,26 @@ class SpecificLength(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.SpecificLengthSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.SpecificLengthSetter":
         """
         Create a setter for this specific length quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             SpecificLengthSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -9749,19 +9833,20 @@ class SpecificLength(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.SpecificLengthSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this specific length.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -9772,31 +9857,31 @@ class SpecificLength(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this specific length.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class SpecificSurface(FieldQnty):
     """
     Type-safe specific surface quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - SpecificSurface("variable_name") -> Create unknown specific surface
     - SpecificSurface(value, "unit", "variable_name") -> Create known specific surface
-    
+
     Examples:
     ---------
     >>> unknown = SpecificSurface("pressure")  # Unknown specific surface
     >>> known = SpecificSurface(100, "square_centimeter_per_gram", "inlet_pressure")  # Known specific surface
-    
+
     Available units: "square_centimeter_per_gram", "square_foot_per_kilogram", "square_foot_per_pound"
     """
 
@@ -9807,20 +9892,20 @@ class SpecificSurface(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize specific surface quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - SpecificSurface("name") -> Unknown specific surface
         - SpecificSurface("name", "unit") -> Unknown specific surface with unit preference (NEW)
         - SpecificSurface("name", "unit", value) -> Known specific surface (NEW)
         - SpecificSurface(value, "unit", "name") -> Known specific surface (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -9832,26 +9917,26 @@ class SpecificSurface(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.SpecificSurfaceSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.SpecificSurfaceSetter":
         """
         Create a setter for this specific surface quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             SpecificSurfaceSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -9864,19 +9949,20 @@ class SpecificSurface(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.SpecificSurfaceSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this specific surface.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -9887,31 +9973,31 @@ class SpecificSurface(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this specific surface.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class SpecificVolume(FieldQnty):
     """
     Type-safe specific volume quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - SpecificVolume("variable_name") -> Create unknown specific volume
     - SpecificVolume(value, "unit", "variable_name") -> Create known specific volume
-    
+
     Examples:
     ---------
     >>> unknown = SpecificVolume("pressure")  # Unknown specific volume
     >>> known = SpecificVolume(100, "cubic_centimeter_per_gram", "inlet_pressure")  # Known specific volume
-    
+
     Available units: "cubic_centimeter_per_gram", "cubic_foot_per_kilogram", "cubic_foot_per_pound"
     """
 
@@ -9922,20 +10008,20 @@ class SpecificVolume(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize specific volume quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - SpecificVolume("name") -> Unknown specific volume
         - SpecificVolume("name", "unit") -> Unknown specific volume with unit preference (NEW)
         - SpecificVolume("name", "unit", value) -> Known specific volume (NEW)
         - SpecificVolume(value, "unit", "name") -> Known specific volume (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -9947,26 +10033,26 @@ class SpecificVolume(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.SpecificVolumeSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.SpecificVolumeSetter":
         """
         Create a setter for this specific volume quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             SpecificVolumeSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -9979,19 +10065,20 @@ class SpecificVolume(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.SpecificVolumeSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this specific volume.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -10002,31 +10089,31 @@ class SpecificVolume(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this specific volume.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class Stress(FieldQnty):
     """
     Type-safe stress quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - Stress("variable_name") -> Create unknown stress
     - Stress(value, "unit", "variable_name") -> Create known stress
-    
+
     Examples:
     ---------
     >>> unknown = Stress("pressure")  # Unknown stress
     >>> known = Stress(100, "dyne_per_square_centimeter", "inlet_pressure")  # Known stress
-    
+
     Available units: "dyne_per_square_centimeter", "gigapascal", "hectopascal"
     """
 
@@ -10037,20 +10124,20 @@ class Stress(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize stress quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - Stress("name") -> Unknown stress
         - Stress("name", "unit") -> Unknown stress with unit preference (NEW)
         - Stress("name", "unit", value) -> Known stress (NEW)
         - Stress(value, "unit", "name") -> Known stress (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -10062,26 +10149,26 @@ class Stress(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.StressSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.StressSetter":
         """
         Create a setter for this stress quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             StressSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -10094,19 +10181,20 @@ class Stress(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.StressSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this stress.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -10117,31 +10205,31 @@ class Stress(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this stress.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class SurfaceMassDensity(FieldQnty):
     """
     Type-safe surface mass density quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - SurfaceMassDensity("variable_name") -> Create unknown surface mass density
     - SurfaceMassDensity(value, "unit", "variable_name") -> Create known surface mass density
-    
+
     Examples:
     ---------
     >>> unknown = SurfaceMassDensity("pressure")  # Unknown surface mass density
     >>> known = SurfaceMassDensity(100, "gram_per_square_centimeter", "inlet_pressure")  # Known surface mass density
-    
+
     Available units: "gram_per_square_centimeter", "gram_per_square_meter", "kilogram_per_square_meter"
     """
 
@@ -10152,20 +10240,20 @@ class SurfaceMassDensity(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize surface mass density quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - SurfaceMassDensity("name") -> Unknown surface mass density
         - SurfaceMassDensity("name", "unit") -> Unknown surface mass density with unit preference (NEW)
         - SurfaceMassDensity("name", "unit", value) -> Known surface mass density (NEW)
         - SurfaceMassDensity(value, "unit", "name") -> Known surface mass density (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -10177,26 +10265,26 @@ class SurfaceMassDensity(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.SurfaceMassDensitySetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.SurfaceMassDensitySetter":
         """
         Create a setter for this surface mass density quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             SurfaceMassDensitySetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -10209,19 +10297,20 @@ class SurfaceMassDensity(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.SurfaceMassDensitySetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this surface mass density.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -10232,31 +10321,31 @@ class SurfaceMassDensity(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this surface mass density.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class SurfaceTension(FieldQnty):
     """
     Type-safe surface tension quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - SurfaceTension("variable_name") -> Create unknown surface tension
     - SurfaceTension(value, "unit", "variable_name") -> Create known surface tension
-    
+
     Examples:
     ---------
     >>> unknown = SurfaceTension("pressure")  # Unknown surface tension
     >>> known = SurfaceTension(100, "dyne_per_centimeter", "inlet_pressure")  # Known surface tension
-    
+
     Available units: "dyne_per_centimeter", "gram_force_per_centimeter", "newton_per_meter"
     """
 
@@ -10267,20 +10356,20 @@ class SurfaceTension(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize surface tension quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - SurfaceTension("name") -> Unknown surface tension
         - SurfaceTension("name", "unit") -> Unknown surface tension with unit preference (NEW)
         - SurfaceTension("name", "unit", value) -> Known surface tension (NEW)
         - SurfaceTension(value, "unit", "name") -> Known surface tension (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -10292,26 +10381,26 @@ class SurfaceTension(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.SurfaceTensionSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.SurfaceTensionSetter":
         """
         Create a setter for this surface tension quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             SurfaceTensionSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -10324,19 +10413,20 @@ class SurfaceTension(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.SurfaceTensionSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this surface tension.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -10347,31 +10437,31 @@ class SurfaceTension(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this surface tension.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class Temperature(FieldQnty):
     """
     Type-safe temperature quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - Temperature("variable_name") -> Create unknown temperature
     - Temperature(value, "unit", "variable_name") -> Create known temperature
-    
+
     Examples:
     ---------
     >>> unknown = Temperature("pressure")  # Unknown temperature
     >>> known = Temperature(100, "degree_celsius_unit_size", "inlet_pressure")  # Known temperature
-    
+
     Available units: "degree_celsius_unit_size", "degree_fahrenheit_unit_size", "degree_r_aumur_unit_size"
     """
 
@@ -10382,20 +10472,20 @@ class Temperature(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize temperature quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - Temperature("name") -> Unknown temperature
         - Temperature("name", "unit") -> Unknown temperature with unit preference (NEW)
         - Temperature("name", "unit", value) -> Known temperature (NEW)
         - Temperature(value, "unit", "name") -> Known temperature (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -10407,26 +10497,26 @@ class Temperature(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.TemperatureSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.TemperatureSetter":
         """
         Create a setter for this temperature quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             TemperatureSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -10439,19 +10529,20 @@ class Temperature(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.TemperatureSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this temperature.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -10462,31 +10553,31 @@ class Temperature(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this temperature.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class ThermalConductivity(FieldQnty):
     """
     Type-safe thermal conductivity quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - ThermalConductivity("variable_name") -> Create unknown thermal conductivity
     - ThermalConductivity(value, "unit", "variable_name") -> Create known thermal conductivity
-    
+
     Examples:
     ---------
     >>> unknown = ThermalConductivity("pressure")  # Unknown thermal conductivity
     >>> known = ThermalConductivity(100, "btu_it", "inlet_pressure")  # Known thermal conductivity
-    
+
     Available units: "btu_it", "btu_therm", "btu_therm"
     """
 
@@ -10497,20 +10588,20 @@ class ThermalConductivity(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize thermal conductivity quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - ThermalConductivity("name") -> Unknown thermal conductivity
         - ThermalConductivity("name", "unit") -> Unknown thermal conductivity with unit preference (NEW)
         - ThermalConductivity("name", "unit", value) -> Known thermal conductivity (NEW)
         - ThermalConductivity(value, "unit", "name") -> Known thermal conductivity (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -10522,26 +10613,26 @@ class ThermalConductivity(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.ThermalConductivitySetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.ThermalConductivitySetter":
         """
         Create a setter for this thermal conductivity quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             ThermalConductivitySetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -10554,19 +10645,20 @@ class ThermalConductivity(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.ThermalConductivitySetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this thermal conductivity.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -10577,31 +10669,31 @@ class ThermalConductivity(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this thermal conductivity.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class Time(FieldQnty):
     """
     Type-safe time quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - Time("variable_name") -> Create unknown time
     - Time(value, "unit", "variable_name") -> Create known time
-    
+
     Examples:
     ---------
     >>> unknown = Time("pressure")  # Unknown time
     >>> known = Time(100, "blink", "inlet_pressure")  # Known time
-    
+
     Available units: "blink", "century", "chronon_or_tempon"
     """
 
@@ -10612,20 +10704,20 @@ class Time(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize time quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - Time("name") -> Unknown time
         - Time("name", "unit") -> Unknown time with unit preference (NEW)
         - Time("name", "unit", value) -> Known time (NEW)
         - Time(value, "unit", "name") -> Known time (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -10637,26 +10729,26 @@ class Time(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.TimeSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.TimeSetter":
         """
         Create a setter for this time quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             TimeSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -10669,19 +10761,20 @@ class Time(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.TimeSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this time.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -10692,31 +10785,31 @@ class Time(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this time.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class Torque(FieldQnty):
     """
     Type-safe torque quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - Torque("variable_name") -> Create unknown torque
     - Torque(value, "unit", "variable_name") -> Create known torque
-    
+
     Examples:
     ---------
     >>> unknown = Torque("pressure")  # Unknown torque
     >>> known = Torque(100, "centimeter_kilogram_force", "inlet_pressure")  # Known torque
-    
+
     Available units: "centimeter_kilogram_force", "dyne_centimeter", "foot_kilogram_force"
     """
 
@@ -10727,20 +10820,20 @@ class Torque(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize torque quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - Torque("name") -> Unknown torque
         - Torque("name", "unit") -> Unknown torque with unit preference (NEW)
         - Torque("name", "unit", value) -> Known torque (NEW)
         - Torque(value, "unit", "name") -> Known torque (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -10752,26 +10845,26 @@ class Torque(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.TorqueSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.TorqueSetter":
         """
         Create a setter for this torque quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             TorqueSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -10784,19 +10877,20 @@ class Torque(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.TorqueSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this torque.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -10807,31 +10901,31 @@ class Torque(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this torque.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class TurbulenceEnergyDissipationRate(FieldQnty):
     """
     Type-safe turbulence energy dissipation rate quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - TurbulenceEnergyDissipationRate("variable_name") -> Create unknown turbulence energy dissipation rate
     - TurbulenceEnergyDissipationRate(value, "unit", "variable_name") -> Create known turbulence energy dissipation rate
-    
+
     Examples:
     ---------
     >>> unknown = TurbulenceEnergyDissipationRate("pressure")  # Unknown turbulence energy dissipation rate
     >>> known = TurbulenceEnergyDissipationRate(100, "square_foot_per_cubic_second", "inlet_pressure")  # Known turbulence energy dissipation rate
-    
+
     Available units: "square_foot_per_cubic_second", "square_meter_per_cubic_second"
     """
 
@@ -10842,20 +10936,20 @@ class TurbulenceEnergyDissipationRate(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize turbulence energy dissipation rate quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - TurbulenceEnergyDissipationRate("name") -> Unknown turbulence energy dissipation rate
         - TurbulenceEnergyDissipationRate("name", "unit") -> Unknown turbulence energy dissipation rate with unit preference (NEW)
         - TurbulenceEnergyDissipationRate("name", "unit", value) -> Known turbulence energy dissipation rate (NEW)
         - TurbulenceEnergyDissipationRate(value, "unit", "name") -> Known turbulence energy dissipation rate (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -10867,26 +10961,26 @@ class TurbulenceEnergyDissipationRate(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.TurbulenceEnergyDissipationRateSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.TurbulenceEnergyDissipationRateSetter":
         """
         Create a setter for this turbulence energy dissipation rate quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             TurbulenceEnergyDissipationRateSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -10899,19 +10993,20 @@ class TurbulenceEnergyDissipationRate(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.TurbulenceEnergyDissipationRateSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this turbulence energy dissipation rate.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -10922,31 +11017,31 @@ class TurbulenceEnergyDissipationRate(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this turbulence energy dissipation rate.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class VelocityAngular(FieldQnty):
     """
     Type-safe velocity, angular quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - VelocityAngular("variable_name") -> Create unknown velocity, angular
     - VelocityAngular(value, "unit", "variable_name") -> Create known velocity, angular
-    
+
     Examples:
     ---------
     >>> unknown = VelocityAngular("pressure")  # Unknown velocity, angular
     >>> known = VelocityAngular(100, "degree_per_minute", "inlet_pressure")  # Known velocity, angular
-    
+
     Available units: "degree_per_minute", "degree_per_second", "grade_per_minute"
     """
 
@@ -10957,20 +11052,20 @@ class VelocityAngular(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize velocity, angular quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - VelocityAngular("name") -> Unknown velocity, angular
         - VelocityAngular("name", "unit") -> Unknown velocity, angular with unit preference (NEW)
         - VelocityAngular("name", "unit", value) -> Known velocity, angular (NEW)
         - VelocityAngular(value, "unit", "name") -> Known velocity, angular (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -10982,26 +11077,26 @@ class VelocityAngular(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.VelocityAngularSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.VelocityAngularSetter":
         """
         Create a setter for this velocity, angular quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             VelocityAngularSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -11014,19 +11109,20 @@ class VelocityAngular(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.VelocityAngularSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this velocity, angular.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -11037,31 +11133,31 @@ class VelocityAngular(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this velocity, angular.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class VelocityLinear(FieldQnty):
     """
     Type-safe velocity, linear quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - VelocityLinear("variable_name") -> Create unknown velocity, linear
     - VelocityLinear(value, "unit", "variable_name") -> Create known velocity, linear
-    
+
     Examples:
     ---------
     >>> unknown = VelocityLinear("pressure")  # Unknown velocity, linear
     >>> known = VelocityLinear(100, "foot_per_hour", "inlet_pressure")  # Known velocity, linear
-    
+
     Available units: "foot_per_hour", "foot_per_minute", "foot_per_second"
     """
 
@@ -11072,20 +11168,20 @@ class VelocityLinear(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize velocity, linear quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - VelocityLinear("name") -> Unknown velocity, linear
         - VelocityLinear("name", "unit") -> Unknown velocity, linear with unit preference (NEW)
         - VelocityLinear("name", "unit", value) -> Known velocity, linear (NEW)
         - VelocityLinear(value, "unit", "name") -> Known velocity, linear (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -11097,26 +11193,26 @@ class VelocityLinear(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.VelocityLinearSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.VelocityLinearSetter":
         """
         Create a setter for this velocity, linear quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             VelocityLinearSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -11129,19 +11225,20 @@ class VelocityLinear(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.VelocityLinearSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this velocity, linear.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -11152,31 +11249,31 @@ class VelocityLinear(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this velocity, linear.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class ViscosityDynamic(FieldQnty):
     """
     Type-safe viscosity, dynamic quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - ViscosityDynamic("variable_name") -> Create unknown viscosity, dynamic
     - ViscosityDynamic(value, "unit", "variable_name") -> Create known viscosity, dynamic
-    
+
     Examples:
     ---------
     >>> unknown = ViscosityDynamic("pressure")  # Unknown viscosity, dynamic
     >>> known = ViscosityDynamic(100, "centipoise", "inlet_pressure")  # Known viscosity, dynamic
-    
+
     Available units: "centipoise", "dyne_second_per_square_centimeter", "kilopound_second_per_square_meter"
     """
 
@@ -11187,20 +11284,20 @@ class ViscosityDynamic(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize viscosity, dynamic quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - ViscosityDynamic("name") -> Unknown viscosity, dynamic
         - ViscosityDynamic("name", "unit") -> Unknown viscosity, dynamic with unit preference (NEW)
         - ViscosityDynamic("name", "unit", value) -> Known viscosity, dynamic (NEW)
         - ViscosityDynamic(value, "unit", "name") -> Known viscosity, dynamic (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -11212,26 +11309,26 @@ class ViscosityDynamic(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.ViscosityDynamicSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.ViscosityDynamicSetter":
         """
         Create a setter for this viscosity, dynamic quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             ViscosityDynamicSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -11244,19 +11341,20 @@ class ViscosityDynamic(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.ViscosityDynamicSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this viscosity, dynamic.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -11267,31 +11365,31 @@ class ViscosityDynamic(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this viscosity, dynamic.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class ViscosityKinematic(FieldQnty):
     """
     Type-safe viscosity, kinematic quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - ViscosityKinematic("variable_name") -> Create unknown viscosity, kinematic
     - ViscosityKinematic(value, "unit", "variable_name") -> Create known viscosity, kinematic
-    
+
     Examples:
     ---------
     >>> unknown = ViscosityKinematic("pressure")  # Unknown viscosity, kinematic
     >>> known = ViscosityKinematic(100, "centistokes", "inlet_pressure")  # Known viscosity, kinematic
-    
+
     Available units: "centistokes", "millistokes", "square_centimeter_per_second"
     """
 
@@ -11302,20 +11400,20 @@ class ViscosityKinematic(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize viscosity, kinematic quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - ViscosityKinematic("name") -> Unknown viscosity, kinematic
         - ViscosityKinematic("name", "unit") -> Unknown viscosity, kinematic with unit preference (NEW)
         - ViscosityKinematic("name", "unit", value) -> Known viscosity, kinematic (NEW)
         - ViscosityKinematic(value, "unit", "name") -> Known viscosity, kinematic (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -11327,26 +11425,26 @@ class ViscosityKinematic(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.ViscosityKinematicSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.ViscosityKinematicSetter":
         """
         Create a setter for this viscosity, kinematic quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             ViscosityKinematicSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -11359,19 +11457,20 @@ class ViscosityKinematic(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.ViscosityKinematicSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this viscosity, kinematic.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -11382,31 +11481,31 @@ class ViscosityKinematic(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this viscosity, kinematic.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class Volume(FieldQnty):
     """
     Type-safe volume quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - Volume("variable_name") -> Create unknown volume
     - Volume(value, "unit", "variable_name") -> Create known volume
-    
+
     Examples:
     ---------
     >>> unknown = Volume("pressure")  # Unknown volume
     >>> known = Volume(100, "acre_foot", "inlet_pressure")  # Known volume
-    
+
     Available units: "acre_foot", "acre_inch", "barrel_us_liquid"
     """
 
@@ -11417,20 +11516,20 @@ class Volume(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize volume quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - Volume("name") -> Unknown volume
         - Volume("name", "unit") -> Unknown volume with unit preference (NEW)
         - Volume("name", "unit", value) -> Known volume (NEW)
         - Volume(value, "unit", "name") -> Known volume (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -11442,26 +11541,26 @@ class Volume(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.VolumeSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.VolumeSetter":
         """
         Create a setter for this volume quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             VolumeSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -11474,19 +11573,20 @@ class Volume(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.VolumeSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this volume.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -11497,31 +11597,31 @@ class Volume(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this volume.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class VolumeFractionOfI(FieldQnty):
     """
     Type-safe volume fraction of "i" quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - VolumeFractionOfI("variable_name") -> Create unknown volume fraction of "i"
     - VolumeFractionOfI(value, "unit", "variable_name") -> Create known volume fraction of "i"
-    
+
     Examples:
     ---------
     >>> unknown = VolumeFractionOfI("pressure")  # Unknown volume fraction of "i"
     >>> known = VolumeFractionOfI(100, "cubic_centimeters_of_i_per_cubic_meter_total", "inlet_pressure")  # Known volume fraction of "i"
-    
+
     Available units: "cubic_centimeters_of_i_per_cubic_meter_total", "cubic_foot_of_i_per_cubic_foot_total", "cubic_meters_of_i_per_cubic_meter_total"
     """
 
@@ -11532,20 +11632,20 @@ class VolumeFractionOfI(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize volume fraction of "i" quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - VolumeFractionOfI("name") -> Unknown volume fraction of "i"
         - VolumeFractionOfI("name", "unit") -> Unknown volume fraction of "i" with unit preference (NEW)
         - VolumeFractionOfI("name", "unit", value) -> Known volume fraction of "i" (NEW)
         - VolumeFractionOfI(value, "unit", "name") -> Known volume fraction of "i" (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -11557,26 +11657,26 @@ class VolumeFractionOfI(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.VolumeFractionOfISetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.VolumeFractionOfISetter":
         """
         Create a setter for this volume fraction of "i" quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             VolumeFractionOfISetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -11589,19 +11689,20 @@ class VolumeFractionOfI(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.VolumeFractionOfISetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this volume fraction of "i".
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -11612,31 +11713,31 @@ class VolumeFractionOfI(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this volume fraction of "i".
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class VolumetricCalorificHeatingValue(FieldQnty):
     """
     Type-safe volumetric calorific (heating) value quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - VolumetricCalorificHeatingValue("variable_name") -> Create unknown volumetric calorific (heating) value
     - VolumetricCalorificHeatingValue(value, "unit", "variable_name") -> Create known volumetric calorific (heating) value
-    
+
     Examples:
     ---------
     >>> unknown = VolumetricCalorificHeatingValue("pressure")  # Unknown volumetric calorific (heating) value
     >>> known = VolumetricCalorificHeatingValue(100, "british_thermal_unit_per_cubic_foot", "inlet_pressure")  # Known volumetric calorific (heating) value
-    
+
     Available units: "british_thermal_unit_per_cubic_foot", "british_thermal_unit_per_gallon_uk", "british_thermal_unit_per_gallon_us"
     """
 
@@ -11647,20 +11748,20 @@ class VolumetricCalorificHeatingValue(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize volumetric calorific (heating) value quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - VolumetricCalorificHeatingValue("name") -> Unknown volumetric calorific (heating) value
         - VolumetricCalorificHeatingValue("name", "unit") -> Unknown volumetric calorific (heating) value with unit preference (NEW)
         - VolumetricCalorificHeatingValue("name", "unit", value) -> Known volumetric calorific (heating) value (NEW)
         - VolumetricCalorificHeatingValue(value, "unit", "name") -> Known volumetric calorific (heating) value (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -11672,26 +11773,26 @@ class VolumetricCalorificHeatingValue(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.VolumetricCalorificHeatingValueSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.VolumetricCalorificHeatingValueSetter":
         """
         Create a setter for this volumetric calorific (heating) value quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             VolumetricCalorificHeatingValueSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -11704,19 +11805,20 @@ class VolumetricCalorificHeatingValue(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.VolumetricCalorificHeatingValueSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this volumetric calorific (heating) value.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -11727,31 +11829,31 @@ class VolumetricCalorificHeatingValue(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this volumetric calorific (heating) value.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class VolumetricCoefficientOfExpansion(FieldQnty):
     """
     Type-safe volumetric coefficient of expansion quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - VolumetricCoefficientOfExpansion("variable_name") -> Create unknown volumetric coefficient of expansion
     - VolumetricCoefficientOfExpansion(value, "unit", "variable_name") -> Create known volumetric coefficient of expansion
-    
+
     Examples:
     ---------
     >>> unknown = VolumetricCoefficientOfExpansion("pressure")  # Unknown volumetric coefficient of expansion
     >>> known = VolumetricCoefficientOfExpansion(100, "gram_per_cubic_centimeter_per_kelvin_or_degree_celsius", "inlet_pressure")  # Known volumetric coefficient of expansion
-    
+
     Available units: "gram_per_cubic_centimeter_per_kelvin_or_degree_celsius", "kilogram_per_cubic_meter_per_kelvin_or_degree_celsius", "pound_per_cubic_foot_per_degree_fahrenheit_or_degree_rankine"
     """
 
@@ -11762,20 +11864,20 @@ class VolumetricCoefficientOfExpansion(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize volumetric coefficient of expansion quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - VolumetricCoefficientOfExpansion("name") -> Unknown volumetric coefficient of expansion
         - VolumetricCoefficientOfExpansion("name", "unit") -> Unknown volumetric coefficient of expansion with unit preference (NEW)
         - VolumetricCoefficientOfExpansion("name", "unit", value) -> Known volumetric coefficient of expansion (NEW)
         - VolumetricCoefficientOfExpansion(value, "unit", "name") -> Known volumetric coefficient of expansion (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -11787,26 +11889,26 @@ class VolumetricCoefficientOfExpansion(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.VolumetricCoefficientOfExpansionSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.VolumetricCoefficientOfExpansionSetter":
         """
         Create a setter for this volumetric coefficient of expansion quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             VolumetricCoefficientOfExpansionSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -11819,19 +11921,20 @@ class VolumetricCoefficientOfExpansion(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.VolumetricCoefficientOfExpansionSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this volumetric coefficient of expansion.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -11842,31 +11945,31 @@ class VolumetricCoefficientOfExpansion(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this volumetric coefficient of expansion.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class VolumetricFlowRate(FieldQnty):
     """
     Type-safe volumetric flow rate quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - VolumetricFlowRate("variable_name") -> Create unknown volumetric flow rate
     - VolumetricFlowRate(value, "unit", "variable_name") -> Create known volumetric flow rate
-    
+
     Examples:
     ---------
     >>> unknown = VolumetricFlowRate("pressure")  # Unknown volumetric flow rate
     >>> known = VolumetricFlowRate(100, "cubic_feet_per_day", "inlet_pressure")  # Known volumetric flow rate
-    
+
     Available units: "cubic_feet_per_day", "cubic_feet_per_hour", "cubic_feet_per_minute"
     """
 
@@ -11877,20 +11980,20 @@ class VolumetricFlowRate(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize volumetric flow rate quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - VolumetricFlowRate("name") -> Unknown volumetric flow rate
         - VolumetricFlowRate("name", "unit") -> Unknown volumetric flow rate with unit preference (NEW)
         - VolumetricFlowRate("name", "unit", value) -> Known volumetric flow rate (NEW)
         - VolumetricFlowRate(value, "unit", "name") -> Known volumetric flow rate (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -11902,26 +12005,26 @@ class VolumetricFlowRate(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.VolumetricFlowRateSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.VolumetricFlowRateSetter":
         """
         Create a setter for this volumetric flow rate quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             VolumetricFlowRateSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -11934,19 +12037,20 @@ class VolumetricFlowRate(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.VolumetricFlowRateSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this volumetric flow rate.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -11957,31 +12061,31 @@ class VolumetricFlowRate(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this volumetric flow rate.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class VolumetricFlux(FieldQnty):
     """
     Type-safe volumetric flux quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - VolumetricFlux("variable_name") -> Create unknown volumetric flux
     - VolumetricFlux(value, "unit", "variable_name") -> Create known volumetric flux
-    
+
     Examples:
     ---------
     >>> unknown = VolumetricFlux("pressure")  # Unknown volumetric flux
     >>> known = VolumetricFlux(100, "cubic_feet_per_square_foot_per_day", "inlet_pressure")  # Known volumetric flux
-    
+
     Available units: "cubic_feet_per_square_foot_per_day", "cubic_feet_per_square_foot_per_hour", "cubic_feet_per_square_foot_per_minute"
     """
 
@@ -11992,20 +12096,20 @@ class VolumetricFlux(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize volumetric flux quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - VolumetricFlux("name") -> Unknown volumetric flux
         - VolumetricFlux("name", "unit") -> Unknown volumetric flux with unit preference (NEW)
         - VolumetricFlux("name", "unit", value) -> Known volumetric flux (NEW)
         - VolumetricFlux(value, "unit", "name") -> Known volumetric flux (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -12017,26 +12121,26 @@ class VolumetricFlux(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.VolumetricFluxSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.VolumetricFluxSetter":
         """
         Create a setter for this volumetric flux quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             VolumetricFluxSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -12049,19 +12153,20 @@ class VolumetricFlux(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.VolumetricFluxSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this volumetric flux.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -12072,31 +12177,31 @@ class VolumetricFlux(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this volumetric flux.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class VolumetricMassFlowRate(FieldQnty):
     """
     Type-safe volumetric mass flow rate quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - VolumetricMassFlowRate("variable_name") -> Create unknown volumetric mass flow rate
     - VolumetricMassFlowRate(value, "unit", "variable_name") -> Create known volumetric mass flow rate
-    
+
     Examples:
     ---------
     >>> unknown = VolumetricMassFlowRate("pressure")  # Unknown volumetric mass flow rate
     >>> known = VolumetricMassFlowRate(100, "gram_per_second_per_cubic_centimeter", "inlet_pressure")  # Known volumetric mass flow rate
-    
+
     Available units: "gram_per_second_per_cubic_centimeter", "kilogram_per_hour_per_cubic_foot", "kilogram_per_hour_per_cubic_meter"
     """
 
@@ -12107,20 +12212,20 @@ class VolumetricMassFlowRate(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize volumetric mass flow rate quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - VolumetricMassFlowRate("name") -> Unknown volumetric mass flow rate
         - VolumetricMassFlowRate("name", "unit") -> Unknown volumetric mass flow rate with unit preference (NEW)
         - VolumetricMassFlowRate("name", "unit", value) -> Known volumetric mass flow rate (NEW)
         - VolumetricMassFlowRate(value, "unit", "name") -> Known volumetric mass flow rate (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -12132,26 +12237,26 @@ class VolumetricMassFlowRate(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.VolumetricMassFlowRateSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.VolumetricMassFlowRateSetter":
         """
         Create a setter for this volumetric mass flow rate quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             VolumetricMassFlowRateSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -12164,19 +12269,20 @@ class VolumetricMassFlowRate(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.VolumetricMassFlowRateSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this volumetric mass flow rate.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -12187,31 +12293,31 @@ class VolumetricMassFlowRate(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this volumetric mass flow rate.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
+
 
 class Wavenumber(FieldQnty):
     """
     Type-safe wavenumber quantity with expression capabilities.
-    
+
     Constructor Options:
     -------------------
     - Wavenumber("variable_name") -> Create unknown wavenumber
     - Wavenumber(value, "unit", "variable_name") -> Create known wavenumber
-    
+
     Examples:
     ---------
     >>> unknown = Wavenumber("pressure")  # Unknown wavenumber
     >>> known = Wavenumber(100, "diopter", "inlet_pressure")  # Known wavenumber
-    
+
     Available units: "diopter", "kayser", "reciprocal_meter"
     """
 
@@ -12222,20 +12328,20 @@ class Wavenumber(FieldQnty):
     def __init__(self, name_or_value: str | int | float, unit_or_name: str | None = None, name_or_value2: str | int | float | None = None):
         """
         Initialize wavenumber quantity with flexible syntax.
-        
+
         Constructor Patterns:
         --------------------
         - Wavenumber("name") -> Unknown wavenumber
         - Wavenumber("name", "unit") -> Unknown wavenumber with unit preference (NEW)
         - Wavenumber("name", "unit", value) -> Known wavenumber (NEW)
         - Wavenumber(value, "unit", "name") -> Known wavenumber (OLD, backward compatibility)
-        
+
         Args:
             name_or_value: Variable name (str) or value (int/float)
             unit_or_name: Unit string or variable name, depending on usage
             name_or_value2: Variable name (str) or value (int/float) for 3-arg patterns
         """
-        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, (int, float))):
+        if isinstance(name_or_value, str) and (name_or_value2 is None or isinstance(name_or_value2, int | float)):
             # NEW syntax: name first
             if unit_or_name is None:
                 # Pattern: Length("name")
@@ -12247,26 +12353,26 @@ class Wavenumber(FieldQnty):
             else:
                 # Pattern: Length("name", "unit", value)
                 super().__init__(name_or_value2, unit_or_name, name_or_value, is_known=True)
-        elif isinstance(name_or_value, (int, float)):
+        elif isinstance(name_or_value, int | float):
             # OLD syntax: value first (backward compatibility)
             if unit_or_name is None or name_or_value2 is None:
                 raise ValueError("Unit and name required for value-first syntax")
             super().__init__(name_or_value, unit_or_name, name_or_value2, is_known=True)
         else:
             raise ValueError("Invalid constructor arguments")
-        self.set_arithmetic_mode('expression')
-    
-    def set(self, value: float, unit: str | None = None) -> 'Self | field_setter.WavenumberSetter':
+        self.set_arithmetic_mode("expression")
+
+    def set(self, value: float, unit: str | None = None) -> "Self | field_setter.WavenumberSetter":
         """
         Create a setter for this wavenumber quantity.
-        
+
         Args:
             value: The numeric value to set
             unit: Optional unit string (for compatibility with base class)
-        
+
         Returns:
             WavenumberSetter: A setter with unit properties like .meters, .inches, etc.
-        
+
         Example:
             >>> length = Length("beam_length")
             >>> length.set(100).millimeters  # Sets to 100 mm
@@ -12279,19 +12385,20 @@ class Wavenumber(FieldQnty):
                 getattr(setter, unit)
             else:
                 from ..utils.unit_suggestions import create_unit_validation_error
+
                 raise create_unit_validation_error(unit, self.__class__.__name__)
             return self
         else:
             return field_setter.WavenumberSetter(self, value)
-    
+
     @property
     def value(self) -> float | None:
         """
         Get the numeric value of this wavenumber.
-        
+
         Returns:
             The numeric value if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.value  # Returns 100.0
@@ -12302,14 +12409,12 @@ class Wavenumber(FieldQnty):
     def unit(self) -> str | None:
         """
         Get the unit symbol of this wavenumber.
-        
+
         Returns:
             The unit symbol if known, None if unknown
-        
+
         Example:
             >>> length = Length(100, "mm", "beam_length")
             >>> length.unit  # Returns "mm"
         """
         return self.quantity.unit.symbol if self.quantity is not None else None
-    
-

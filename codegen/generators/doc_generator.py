@@ -152,7 +152,7 @@ def generate_init_method(class_name: str, display_name: str, is_dimensionless: b
     return lines
 
 
-def generate_converter_stub_classes(parsed_data: dict) -> list[str]:
+def generate_converter_stub_classes(_: dict) -> list[str]:
     """Generate converter stub classes for type hints."""
     # Use the base converter classes without specific type overrides to avoid conflicts
     return [
@@ -170,7 +170,7 @@ def _is_valid_identifier(name: str) -> bool:
     return name.isidentifier() and not keyword.iskeyword(name) and not name.startswith("_")
 
 
-def generate_converter_methods(class_name: str, stub_only: bool = False) -> list[str]:
+def generate_converter_methods(_: str, __: bool = False) -> list[str]:
     """Generate to_unit and as_unit property methods with proper type hints."""
     # Don't generate converter method overrides to avoid type conflicts
     # The base FieldQnty class provides these properties with proper functionality

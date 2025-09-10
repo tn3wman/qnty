@@ -28,6 +28,7 @@ class BaseDimension(IntEnum):
 @dataclass(frozen=True)
 class DimensionConfig:
     """Immutable configuration for a base dimension."""
+
     prime: BaseDimension
     params: MappingProxyType[str, int]
 
@@ -48,38 +49,14 @@ DIMENSION_SYMBOLS: MappingProxyType[str, str] = MappingProxyType(
 # Immutable base dimensions configuration for generators
 BASE_DIMENSIONS: MappingProxyType[str, DimensionConfig] = MappingProxyType(
     {
-        "LENGTH": DimensionConfig(
-            BaseDimension.LENGTH,
-            MappingProxyType({"length": 1})
-        ),
-        "MASS": DimensionConfig(
-            BaseDimension.MASS,
-            MappingProxyType({"mass": 1})
-        ),
-        "TIME": DimensionConfig(
-            BaseDimension.TIME,
-            MappingProxyType({"time": 1})
-        ),
-        "CURRENT": DimensionConfig(
-            BaseDimension.CURRENT,
-            MappingProxyType({"current": 1})
-        ),
-        "TEMPERATURE": DimensionConfig(
-            BaseDimension.TEMPERATURE,
-            MappingProxyType({"temp": 1})
-        ),
-        "AMOUNT": DimensionConfig(
-            BaseDimension.AMOUNT,
-            MappingProxyType({"amount": 1})
-        ),
-        "LUMINOSITY": DimensionConfig(
-            BaseDimension.LUMINOSITY,
-            MappingProxyType({"luminosity": 1})
-        ),
-        "DIMENSIONLESS": DimensionConfig(
-            BaseDimension.DIMENSIONLESS,
-            MappingProxyType({})
-        ),
+        "LENGTH": DimensionConfig(BaseDimension.LENGTH, MappingProxyType({"length": 1})),
+        "MASS": DimensionConfig(BaseDimension.MASS, MappingProxyType({"mass": 1})),
+        "TIME": DimensionConfig(BaseDimension.TIME, MappingProxyType({"time": 1})),
+        "CURRENT": DimensionConfig(BaseDimension.CURRENT, MappingProxyType({"current": 1})),
+        "TEMPERATURE": DimensionConfig(BaseDimension.TEMPERATURE, MappingProxyType({"temp": 1})),
+        "AMOUNT": DimensionConfig(BaseDimension.AMOUNT, MappingProxyType({"amount": 1})),
+        "LUMINOSITY": DimensionConfig(BaseDimension.LUMINOSITY, MappingProxyType({"luminosity": 1})),
+        "DIMENSIONLESS": DimensionConfig(BaseDimension.DIMENSIONLESS, MappingProxyType({})),
     }
 )
 

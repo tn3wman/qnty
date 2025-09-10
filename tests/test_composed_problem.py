@@ -7,13 +7,12 @@ from qnty.problems.rules import add_rule
 def assert_qty_close(actual_var, expected_value, expected_unit, rel_tol=1e-9):
     """Helper function to assert variable quantity is close to expected value with relative tolerance."""
     # expected_qty = Qty(expected_value, expected_unit)
-    if expected_unit == 'inch':
-        expected_unit = 'in'
-    if expected_unit == 'square_millimeter':
-        expected_unit = '$\\mathrm{mm}^{2}$'
+    if expected_unit == "inch":
+        expected_unit = "in"
+    if expected_unit == "square_millimeter":
+        expected_unit = "$\\mathrm{mm}^{2}$"
     assert pytest.approx(expected_value, rel=rel_tol) == actual_var.value
     assert expected_unit == actual_var.unit
-
 
 
 def assert_problem_results(problem, expected_results):
@@ -35,9 +34,9 @@ def assert_problem_results(problem, expected_results):
     """
     for var_name, expected_value, expected_unit, tolerance in expected_results:
         actual_var = getattr(problem, var_name)
-        if expected_unit != '':
+        if expected_unit != "":
             actual_var = actual_var.to_unit(expected_unit)
-        
+
         assert_qty_close(actual_var, expected_value, expected_unit, tolerance)
 
 
@@ -164,7 +163,7 @@ class WeldedBranchConnection(qt.Problem):
     T_r = qt.Length("Nominal Thickness, Reinforcement", "inch")
     # # Known variables for welds
     z_b = qt.Length("Weld Leg, Branch", "inch", 0)
-    z_r = qt.Length("Weld Leg, Reinforcement", "inch", 0    )
+    z_r = qt.Length("Weld Leg, Reinforcement", "inch", 0)
     t_c_max = qt.Length("Weld Throat, Max", "mm", 6)
 
     # # Unknown variables for welds
@@ -201,23 +200,17 @@ class WeldedBranchConnection(qt.Problem):
 
     A_w_b_eqn = A_w_b.equals(
         qt.cond_expr(
-            T_r.leq(0), # T_r doesn't exist, no reinforcement interference
-            2 * 0.5 * qt.max_expr((t_c_b / 0.707), z_b) ** 2, # Calculate weld area
+            T_r.leq(0),  # T_r doesn't exist, no reinforcement interference
+            2 * 0.5 * qt.max_expr((t_c_b / 0.707), z_b) ** 2,  # Calculate weld area
             qt.cond_expr(
-                T_r.leq(L_4), # T_r + weld leg fits within L_4
-                2 * 0.5 * qt.max_expr((t_c_b / 0.707), z_b) ** 2, # Calculate weld area
-                0, # T_r + weld leg exceeds L_4, no weld area
+                T_r.leq(L_4),  # T_r + weld leg fits within L_4
+                2 * 0.5 * qt.max_expr((t_c_b / 0.707), z_b) ** 2,  # Calculate weld area
+                0,  # T_r + weld leg exceeds L_4, no weld area
             ),
         )
     )
 
-    A_w_r_eqn = A_w_r.equals(
-        qt.cond_expr(
-            D_r.leq(2 * d_2 - qt.max_expr((t_c_r / 0.707), z_r)),
-            2 * 0.5 * qt.max_expr((t_c_r / 0.707), z_r) ** 2,
-            0
-        )
-    )
+    A_w_r_eqn = A_w_r.equals(qt.cond_expr(D_r.leq(2 * d_2 - qt.max_expr((t_c_r / 0.707), z_r)), 2 * 0.5 * qt.max_expr((t_c_r / 0.707), z_r) ** 2, 0))
 
     A_w_eqn = A_w.equals(A_w_b + A_w_r)
 
@@ -289,3 +282,73 @@ def test_branch_reinforcement_h301(capsys):
         print(problem.A_w_r)
         print(problem.A_w)
         print(problem.A_4)
+
+
+def test_branch_reinforcement_h303(capsys):
+    problem = create_welded_branch_connection()
+
+    # For system
+    problem.P.set(3450).kPa
+
+    # For header
+    problem.header.D.set(406.4).mm
+    problem.header.T_bar.set(12.70).mm
+    problem.header.U_m.set(0.125).dimensionless
+    problem.header.c.set(2.5).mm
+    problem.header.S.set(99.3).MPa
+    problem.header.E.set(1).dimensionless
+    problem.header.W.set(1).dimensionless
+    problem.header.Y.set(0.4).dimensionless
+
+    # For run
+    problem.branch.D.set(168.3).mm
+    problem.branch.T_bar.set(7.11).mm
+    problem.branch.U_m.set(0.125).dimensionless
+    problem.branch.c.set(2.5).mm
+    problem.branch.S.set(99.3).MPa
+    problem.branch.E.set(1).dimensionless
+    problem.branch.W.set(1).dimensionless
+    problem.branch.Y.set(0.4).dimensionless
+
+    # For reinforcement
+    problem.beta.set(60).degree
+    problem.D_r.set(305).mm
+    problem.T_bar_r.set(12.7).mm
+    problem.S_r.set(99.3).MPa
+
+    problem.z_b.set(10).mm
+    problem.z_r.set(10).mm
+
+    problem.solve()
+
+    assert problem.is_solved
+
+    expected_results = [
+        ("d_1", 185.74224185234047, "mm", 1e-9),
+        ("d_2", 185.74224185234047, "mm", 1e-9),
+        ("L_4", 21.531249999999996, "mm", 1e-9),
+        ("A_1", 1466.6064824824148, "square_millimeter", 1e-9),
+        ("A_2", 306.3723083688089, "square_millimeter", 1e-9),
+        ("A_3", 41.65320666380044, "square_millimeter", 1e-9),
+        ("A_4", 1605.4315222628036, "square_millimeter", 1e-9),
+        ("A_r", 1405.4315222628036, "square_millimeter", 1e-9),
+        ("A_w", 200.0, "square_millimeter", 1e-9),
+        # ("P_max", 4037.931455359164, "kPa", 1e-9),
+    ]
+
+    assert_problem_results(problem, expected_results)
+
+    with capsys.disabled():
+        print("")
+        print(problem.beta)
+        print(problem.d_1)
+        print(problem.d_2)
+        print(problem.L_4)
+        print(problem.A_1)
+        print(problem.A_2)
+        print(problem.A_3)
+        print(problem.A_w_b)
+        print(problem.A_w_r)
+        print(problem.A_w)
+        print(problem.A_4)
+        print(problem.A_r)

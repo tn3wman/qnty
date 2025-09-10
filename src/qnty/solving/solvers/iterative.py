@@ -26,6 +26,8 @@ class IterativeSolver(BaseSolver):
         """
         Can handle any system that has at least one unknown and a dependency graph.
         """
+        # Parameters equations and analysis are not used but kept for interface compliance
+        del equations, analysis
         return bool(unknowns and dependency_graph)
 
     def solve(self, equations: list[Equation], variables: dict[str, FieldQnty], dependency_graph: Order | None = None, max_iterations: int = 100, tolerance: float = 1e-10) -> SolveResult:

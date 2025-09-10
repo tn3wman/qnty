@@ -65,6 +65,8 @@ ignore = [
     "E501",   # line too long (handled by line-length)
     "B018",   # no-else-return
     "W293",   # blank line contains whitespace
+    "F403",   # star imports used in __init__.py files for auto-generated modules
+    "F405",   # names may be undefined from star imports (acceptable for auto-generated modules)
 ]
 
 [tool.pytest.ini_options]

@@ -35,7 +35,7 @@ class ComposedProblem(Problem):
 
     # Compose the simple problem
     sub = create_simple_problem()
-    
+
     # Type hints for composed variables (for IDE support)
     sub_P: Pressure
     sub_D: Length
@@ -116,7 +116,7 @@ def test_nested_composition_preserves_types():
 
         # Compose the already-composed problem
         composed = ComposedProblem()
-        
+
         # Type hints for doubly-composed variables (for IDE support)
         composed_sub_P: Pressure
         composed_sub_D: Length

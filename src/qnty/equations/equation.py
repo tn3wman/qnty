@@ -100,21 +100,22 @@ class Equation:
 
         # Convert result to preferred unit or original unit if available
         target_unit_constant = None
-        
+
         # First priority: existing quantity unit
         if var_obj.quantity is not None and var_obj.quantity.unit is not None:
             target_unit_constant = var_obj.quantity.unit
         # Second priority: preferred unit from constructor
-        elif hasattr(var_obj, 'preferred_unit') and var_obj.preferred_unit is not None:
+        elif hasattr(var_obj, "preferred_unit") and var_obj.preferred_unit is not None:
             # Look up unit constant from string name
             preferred_unit_name = var_obj.preferred_unit
             try:
                 # Get the dimension-specific units class
                 class_name = var_obj.__class__.__name__
-                units_class_name = f'{class_name}Units'
-                
+                units_class_name = f"{class_name}Units"
+
                 # Import field_units dynamically to avoid circular imports
                 from ..units import field_units
+
                 units_class = getattr(field_units, units_class_name, None)
                 if units_class and hasattr(units_class, preferred_unit_name):
                     target_unit_constant = getattr(units_class, preferred_unit_name)
@@ -123,7 +124,7 @@ class Equation:
                     _logger.debug(f"Could not find unit constant for {preferred_unit_name} in {units_class_name}")
             except (ImportError, AttributeError) as e:
                 _logger.debug(f"Failed to lookup preferred unit {preferred_unit_name}: {e}")
-            
+
         if target_unit_constant is not None:
             try:
                 result_qty = result_qty.to(target_unit_constant)
