@@ -230,6 +230,18 @@ class BinaryOperation(Expression):
         """Evaluate both operands and return as tuple."""
         left_val = self.left.evaluate(variable_values)
         right_val = self.right.evaluate(variable_values)
+
+        # Handle cases where evaluation returns plain float (e.g., from trig functions)
+        # Convert to dimensionless Quantity for consistent handling
+        if isinstance(left_val, int | float):
+            from ..units.field_units import DimensionlessUnits
+
+            left_val = Quantity(left_val, DimensionlessUnits.dimensionless)
+        if isinstance(right_val, int | float):
+            from ..units.field_units import DimensionlessUnits
+
+            right_val = Quantity(right_val, DimensionlessUnits.dimensionless)
+
         return left_val, right_val
 
     def _handle_evaluation_error(self, error: Exception) -> "Quantity":
@@ -302,10 +314,10 @@ class BinaryOperation(Expression):
         # PERFORMANCE OPTIMIZATION: Extract values once
         left_value = left_val.value
         right_value = right_val.value
-        
+
         # ENHANCED FAST PATHS: Check most common optimizations first
         # BUT ONLY when they don't affect dimensional analysis!
-        
+
         # Identity optimizations (1.0 multiplication) - most frequent case
         # Only safe when the 1.0 value is dimensionless
         if right_value == 1.0 and right_val._dimension_sig == 1:
@@ -325,7 +337,7 @@ class BinaryOperation(Expression):
             return Quantity(-left_value, left_val.unit)
         elif left_value == -1.0 and left_val._dimension_sig == 1:
             return Quantity(-right_value, right_val.unit)
-        
+
         # ADDITIONAL COMMON CASES: Powers of 2 and 0.5 (very common in engineering)
         # Only safe when the scalar value is dimensionless
         elif right_value == 2.0 and right_val._dimension_sig == 1:
@@ -437,9 +449,10 @@ class BinaryOperation(Expression):
 
         # Perform comparison using optimized dispatch
         result = self._perform_comparison(left_val.value, right_val.value)
-        
+
         # Import BooleanQuantity locally to avoid circular imports
         from ..quantities.base_qnty import BooleanQuantity
+
         return BooleanQuantity(result)
 
     def _normalize_comparison_units(self, left_val: "Quantity", right_val: "Quantity") -> tuple["Quantity", "Quantity"]:
@@ -533,23 +546,22 @@ class UnaryFunction(Expression):
     def _to_radians_if_angle(self, quantity: "Quantity") -> float:
         """Convert angle quantities to radians for trigonometric functions."""
         from ..dimensions import field_dims
-        
+
         # Check if this is an angle dimension by comparing dimension signature
         # Need to handle the case where angle dimensions might not exactly match due to implementation details
         try:
             # Import angle plane dimension for comparison
             angle_plane_dim = field_dims.ANGLE_PLANE
-            
+
             # If this looks like an angle (has angle dimension or unit name suggests it)
-            if (hasattr(quantity, '_dimension_sig') and quantity._dimension_sig == angle_plane_dim) or \
-               (hasattr(quantity, 'unit') and hasattr(quantity.unit, 'name') and 
-                any(angle_word in str(quantity.unit.name).lower() for angle_word in ['degree', 'radian', 'grad', 'gon'])):
-                
+            if (hasattr(quantity, "_dimension_sig") and quantity._dimension_sig == angle_plane_dim) or (
+                hasattr(quantity, "unit") and hasattr(quantity.unit, "name") and any(angle_word in str(quantity.unit.name).lower() for angle_word in ["degree", "radian", "grad", "gon"])
+            ):
                 # Import the radian unit for conversion
                 from ..units.field_units import AnglePlaneUnits
-                
+
                 # Convert to radians and return the numeric value
-                radian_quantity = quantity.to(AnglePlaneUnits.radian.definition)
+                radian_quantity = quantity.to(AnglePlaneUnits.radian)
                 return radian_quantity.value
             else:
                 # Non-angle quantities: return raw value (backward compatibility)
@@ -558,6 +570,11 @@ class UnaryFunction(Expression):
             # If anything goes wrong with angle detection/conversion, fall back to raw value
             return quantity.value
 
+    def _create_dimensionless_quantity(self, value: float) -> "Quantity":
+        """Create a dimensionless quantity from a float value."""
+        from ..units.field_units import DimensionlessUnits
+
+        return Quantity(value, DimensionlessUnits.dimensionless)
 
     def get_variables(self) -> set[str]:
         return self.operand.get_variables()
@@ -670,16 +687,17 @@ def _get_cached_dimensionless():
 # Ultra-fast local cache for most common dimensionless values
 _COMMON_DIMENSIONLESS_CACHE: dict[float, Quantity] = {}
 
+
 def _get_dimensionless_quantity(value: float) -> Quantity:
     """Ultra-optimized dimensionless quantity creation with local caching."""
     # Ultra-fast local cache for most common values (0, 1, 2, -1, 0.5, etc.)
     cached_qty = _COMMON_DIMENSIONLESS_CACHE.get(value)
     if cached_qty is not None:
         return cached_qty
-    
+
     # Create quantity with cached unit
     qty = Quantity(value, _get_cached_dimensionless())
-    
+
     # Cache common values locally for ultra-fast access
     if value in (-1.0, 0.0, 0.5, 1.0, 2.0) or (isinstance(value, float) and -10 <= value <= 10 and value == int(value)):
         if len(_COMMON_DIMENSIONLESS_CACHE) < 25:  # Prevent unbounded growth
@@ -691,7 +709,7 @@ def _get_dimensionless_quantity(value: float) -> Quantity:
 def wrap_operand(operand: "OperandType") -> Expression:
     """
     Ultra-optimized operand wrapping with minimal function call overhead.
-    
+
     Performance optimizations:
     - Single type() call instead of multiple isinstance checks
     - Cached common type patterns
@@ -699,24 +717,24 @@ def wrap_operand(operand: "OperandType") -> Expression:
     """
     # ULTRA-FAST PATH: Use single type() call for most common cases
     operand_type = type(operand)
-    
+
     # Most common cases first: primitives (35-40% of all calls)
     if operand_type in (int, float):
         return Constant(_get_dimensionless_quantity(float(operand)))  # type: ignore[arg-type]
-    
+
     # Second most common: already wrapped expressions (20-25% of calls)
     if operand_type is BinaryOperation:  # Direct type check is faster
         return operand  # type: ignore[return-value]
-    
+
     # Third most common: field quantities/variables (20-30% of calls)
     # Use getattr with hasattr-style check to reduce calls
     if hasattr(operand, "quantity") and hasattr(operand, "symbol"):
         return VariableReference(operand)  # type: ignore[arg-type]
-    
+
     # Handle other Expression types (Constant, VariableReference, etc.)
     if isinstance(operand, Expression):
         return operand
-    
+
     # Check for base Quantity objects
     if hasattr(operand, "value") and hasattr(operand, "unit") and hasattr(operand, "_dimension_sig"):
         return Constant(operand)  # type: ignore[arg-type]

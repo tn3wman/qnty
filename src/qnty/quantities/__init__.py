@@ -6,9 +6,7 @@ High-performance quantity and variable systems.
 """
 
 from .base_qnty import Quantity
-from .field_qnty import *
 from .field_qnty import FieldQnty
-from .field_vars import *
 
 # Register types with TypeRegistry for performance optimization
 try:
@@ -20,7 +18,7 @@ try:
     import sys
 
     current_module = sys.modules[__name__]
-    for _name, obj in inspect.getmembers(current_module, inspect.isclass):
+    for _, obj in inspect.getmembers(current_module, inspect.isclass):
         if hasattr(obj, "_dimension") and issubclass(obj, FieldQnty):
             register_variable_type(obj)
 except ImportError:

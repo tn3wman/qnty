@@ -10,7 +10,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from qnty.dimensions import BASE_DIMENSIONS, DIMENSION_SYMBOLS, PRIME_MAP, DimensionConfig
+from qnty.dimensions import BASE_DIMENSIONS, DIMENSION_SYMBOLS, PRIME_MAP
 
 
 class DimensionGenerator:

@@ -8,6 +8,7 @@ Type definitions and protocols to avoid circular imports.
 from __future__ import annotations
 
 from typing import Protocol
+
 from ..quantities import FieldQnty, Quantity
 
 

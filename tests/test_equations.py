@@ -2,9 +2,10 @@
 
 import pytest
 
+from qnty import Dimensionless, Length, Pressure
 from qnty.equations import Equation
 from qnty.expressions import BinaryOperation, Expression, VariableReference
-from qnty.quantities import Dimensionless, FieldQnty, Length, Pressure, Quantity
+from qnty.quantities import FieldQnty, Quantity
 
 
 class TestEquationCreation:

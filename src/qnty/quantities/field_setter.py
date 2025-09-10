@@ -16,6 +16,7 @@ from .base_qnty import Quantity, TypeSafeSetter
 # ===== SETTER CLASSES =====
 # Static setter class definitions with __slots__ optimization
 
+
 class AbsorbedDoseSetter(TypeSafeSetter):
     """AbsorbedDose-specific setter with optimized unit properties."""
 
@@ -12316,5 +12317,3 @@ class WavenumberSetter(TypeSafeSetter):
     def unit_1_m(self):
         """Set value using unit_1_m units (alias for reciprocal_meter)."""
         return self.reciprocal_meter
-
-

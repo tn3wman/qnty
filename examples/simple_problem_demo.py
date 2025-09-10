@@ -106,7 +106,7 @@ def test_simple_problem():
         print(f"\nSolving failed: {e}")
         # Still print some results for debugging
         print("Final variable states:")
-        for _name, var in problem.variables.items():
+        for _, var in problem.variables.items():
             print(f"  {var.symbol}: known={var.is_known}, value={var.quantity}")
 
     # Try changing the value and re-solving

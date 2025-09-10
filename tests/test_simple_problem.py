@@ -1,6 +1,6 @@
 import pytest
 
-from qnty import Dimensionless, Length, Pressure, Problem, cond_expr
+from qnty import Dimensionless, Length, Pressure, Problem
 from qnty.problems.rules import add_rule
 
 
@@ -11,16 +11,11 @@ def assert_qty_close(actual_var, expected_value, expected_unit, rel_tol=1e-9):
     assert expected_unit == actual_var.unit
 
 
-
 def assert_problem_results(problem, expected_results):
     for var_name, expected_value, expected_unit, tolerance in expected_results:
         actual_var = getattr(problem, var_name)
-        assert_qty_close(
-            actual_var,
-            expected_value,
-            expected_unit,
-            tolerance
-        )
+        assert_qty_close(actual_var, expected_value, expected_unit, tolerance)
+
 
 class StraightPipeInternal(Problem):
     name = "Pressure Design of a Straight Pipe Under Internal Pressure"
@@ -39,7 +34,7 @@ class StraightPipeInternal(Problem):
     # Unknown variables - using new clean syntax
     Y = Dimensionless("Y_Coefficient", 0.4)
     T = Length("Wall_Thickness", "inch")
-    d = Length("Inside_Diameter", "inch") 
+    d = Length("Inside_Diameter", "inch")
     t = Length("Pressure_Design_Thickness", "inch")
     t_m = Length("Minimum_Required_Thickness", "inch")
     P_max = Pressure("Pressure_Maximum", "psi")
@@ -80,12 +75,14 @@ class StraightPipeInternal(Problem):
         severity="WARNING",
     )
 
+
 def create_straight_pipe_internal():
     return StraightPipeInternal()
 
+
 def test_simple_problem():
     problem = create_straight_pipe_internal()
-    
+
     problem.solve()
 
     expected_results = [

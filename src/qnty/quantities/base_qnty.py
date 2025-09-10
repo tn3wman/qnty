@@ -531,7 +531,7 @@ class UnitResolution:
     """Handles unit resolution for dimensional operations."""
 
     @staticmethod
-    def find_result_unit_fast(_quantity, result_dimension_sig: int | float) -> UnitConstant:
+    def find_result_unit_fast(_, result_dimension_sig: int | float) -> UnitConstant:
         """Ultra-fast unit finding using pre-cached dimension signatures."""
         # CRITICAL OPTIMIZATION: Direct dictionary access (O(1)) for common dimensions
         dimension_cache = registry._dimension_cache
@@ -556,14 +556,14 @@ class UnitResolution:
         return result_unit
 
     @staticmethod
-    def create_si_unit_name(_quantity, dimension: DimensionSignature) -> str:
+    def create_si_unit_name(_, dimension: DimensionSignature) -> str:
         """Create descriptive SI unit name based on dimensional analysis."""
         # For now, return a generic SI unit name. In the future, this could be enhanced
         # to parse the dimension signature and create descriptive names like "newton_per_meter"
         return f"si_derived_unit_{abs(hash(dimension._signature)) % 10000}"
 
     @staticmethod
-    def create_si_unit_symbol(_quantity, dimension: DimensionSignature) -> str:
+    def create_si_unit_symbol(_, dimension: DimensionSignature) -> str:
         """Create SI unit symbol based on dimensional analysis."""
         # For complex units, return descriptive symbol based on common engineering units
         # Use dimension signature for unique symbol generation
@@ -642,6 +642,42 @@ class Quantity:
             return Quantity(other * self.value, self.unit)
         return NotImplemented
 
+    def __radd__(self, other: float | int) -> Quantity:
+        """Reverse addition for cases like 2 + quantity."""
+        if isinstance(other, int | float):
+            # Only allow addition if self is dimensionless
+            if self._dimension_sig != 1:  # Not dimensionless
+                return NotImplemented
+            # Convert scalar to dimensionless quantity for addition
+            from ..units.field_units import DimensionlessUnits
+
+            other_qty = Quantity(other, DimensionlessUnits.dimensionless)
+            return ArithmeticOperations.add(other_qty, self)
+        return NotImplemented
+
+    def __rsub__(self, other: float | int) -> Quantity:
+        """Reverse subtraction for cases like 2 - quantity."""
+        if isinstance(other, int | float):
+            # Only allow subtraction if self is dimensionless
+            if self._dimension_sig != 1:  # Not dimensionless
+                return NotImplemented
+            # Convert scalar to dimensionless quantity for subtraction
+            from ..units.field_units import DimensionlessUnits
+
+            other_qty = Quantity(other, DimensionlessUnits.dimensionless)
+            return ArithmeticOperations.subtract(other_qty, self)
+        return NotImplemented
+
+    def __rtruediv__(self, other: float | int) -> Quantity:
+        """Reverse division for cases like 2 / quantity."""
+        if isinstance(other, int | float):
+            # Convert scalar to dimensionless quantity for division
+            from ..units.field_units import DimensionlessUnits
+
+            other_qty = Quantity(other, DimensionlessUnits.dimensionless)
+            return ArithmeticOperations.divide(other_qty, self)
+        return NotImplemented
+
     def __truediv__(self, other: Quantity | float | int) -> Quantity:
         return ArithmeticOperations.divide(self, other)
 
@@ -675,36 +711,33 @@ class Quantity:
 
 class BooleanQuantity(Quantity):
     """A quantity that represents a boolean value but maintains Quantity compatibility.
-    
+
     This class is used for comparison operations that need to return boolean results
     while maintaining the Expression interface requirement of returning Quantity objects.
     """
-    
+
     __slots__ = ("_boolean_value",)
-    
+
     def __init__(self, boolean_value: bool):
         """Initialize with a boolean value."""
         # Store the actual boolean value
         self._boolean_value = boolean_value
-        
+
         # Initialize parent with numeric representation
-        super().__init__(
-            1.0 if boolean_value else 0.0,
-            DimensionlessUnits.dimensionless
-        )
-    
+        super().__init__(1.0 if boolean_value else 0.0, DimensionlessUnits.dimensionless)
+
     def __str__(self) -> str:
         """Display as True/False instead of 1.0/0.0."""
         return str(self._boolean_value)
-    
+
     def __repr__(self) -> str:
         """Display as BooleanQuantity(True/False)."""
         return f"BooleanQuantity({self._boolean_value})"
-    
+
     def __bool__(self) -> bool:
         """Return the actual boolean value."""
         return self._boolean_value
-    
+
     @property
     def boolean_value(self) -> bool:
         """Access the boolean value directly."""

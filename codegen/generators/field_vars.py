@@ -17,7 +17,7 @@ from .data_processor import (
     save_text_file,
     setup_import_path,
 )
-from .doc_generator import generate_class_docstring, generate_init_method, generate_set_method, generate_converter_methods, generate_converter_stub_classes, generate_value_unit_properties
+from .doc_generator import generate_class_docstring, generate_converter_methods, generate_converter_stub_classes, generate_init_method, generate_set_method, generate_value_unit_properties
 
 
 def generate_quantities_pyi(parsed_data: dict, dimension_mapping: dict) -> str:
@@ -89,7 +89,7 @@ def generate_quantities_pyi(parsed_data: dict, dimension_mapping: dict) -> str:
 
         # Generate converter method stubs
         lines.append("    ")
-        lines.extend(generate_converter_methods(class_name, stub_only=True))
+        lines.extend(generate_converter_methods(class_name, True))
         lines.append("    ")
         lines.append("")
 
@@ -152,7 +152,7 @@ def generate_quantities(parsed_data: dict, dimension_mapping: dict) -> str:
         # Generate set method
         lines.append("    ")
         lines.extend(generate_set_method(setter_class_name, display_name, stub_only=False))
-        
+
         # Generate value and unit properties
         lines.append("    ")
         lines.extend(generate_value_unit_properties(display_name, stub_only=False))

@@ -291,7 +291,7 @@ class ExpressionParser:
             self.logger.debug(f"Failed to parse and rebuild expression: {e}")
             return None
 
-    def _substitute_in_expression(self, _expr: Any, substitutions: dict[str, Any]) -> Any | None:
+    def _substitute_in_expression(self, _: Any, substitutions: dict[str, Any]) -> Any | None:
         """
         Substitute reconstructed components back into an expression tree.
 
@@ -528,7 +528,7 @@ class CompositeExpressionRebuilder:
 
         return False
 
-    def reconstruct_malformed_proxy_expression(self, equation: Equation, _malformed_vars: list[str]) -> Any | None:
+    def reconstruct_malformed_proxy_expression(self, equation: Equation, _: list[str]) -> Any | None:
         """
         Generically reconstruct expressions that were malformed due to proxy evaluation.
 
@@ -644,7 +644,7 @@ class CompositeExpressionRebuilder:
     def _safe_evaluate_pattern(self, pattern: str) -> Any | None:
         """Safely evaluate a reconstructed pattern."""
         try:
-            # Create evaluation context with our variables  
+            # Create evaluation context with our variables
             eval_context: dict[str, Any] = dict(self.variables)
             eval_context["__builtins__"] = {}  # Security
 
@@ -782,7 +782,7 @@ class DelayedExpressionResolver:
                 # Check if this expression has a resolve method
                 if hasattr(expr, "resolve") and callable(getattr(expr, "resolve", None)):
                     context = self.variables.copy()
-                    return getattr(expr, "resolve")(context)
+                    return expr.resolve(context)  # type: ignore[attr-defined]
                 return expr
 
             # Try to recursively resolve components for binary operations
