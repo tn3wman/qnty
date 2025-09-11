@@ -10,6 +10,7 @@ This is intentionally small to compare structure + perf vs tuple encoding.
 """
 from __future__ import annotations
 from dataclasses import dataclass
+from re import A
 from typing import Tuple, Dict
 import math, random, time
 
@@ -76,6 +77,7 @@ TH = Dimension(*encode_prime_pair((0,0,0,0,1,0,0)))
 N_ = Dimension(*encode_prime_pair((0,0,0,0,0,1,0)))
 J_ = Dimension(*encode_prime_pair((0,0,0,0,0,0,1)))
 DIMLESS = Dimension(*encode_prime_pair((0,0,0,0,0,0,0)))
+ABSORBED_DOSE = Dimension(*encode_prime_pair((2,0,-2,0,0,0,0)))
 
 # Common derived (only L,M,T used here; others remain zero)
 Area      = L**2
@@ -169,3 +171,4 @@ def tiny_perf(n=50_000, seed=0) -> Dict[str,float]:
 if __name__ == "__main__":
     print("DEMO:", tiny_demo())
     print("PERF:", tiny_perf())
+    print(ABSORBED_DOSE)

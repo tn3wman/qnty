@@ -9,7 +9,7 @@ changes will be overwritten
 see codegen/generate_dimensions.py
 """
 
-from .base import Dimension
+from .core import Dimension
 
 # All dynamically generated dimension constants
 ABSORBED_DOSE: Dimension

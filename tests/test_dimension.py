@@ -11,7 +11,7 @@ import math
 import pytest
 
 from qnty.dimension import BaseDimension
-from qnty.dimensions.dimensions import (
+from qnty.dimensions.namespace import (
     ACCELERATION,
     AREA,
     DIMENSIONLESS,
@@ -22,10 +22,10 @@ from qnty.dimensions.dimensions import (
     TIME,
     VOLUME,
 )
-from qnty.dimensions.dimensions import (
+from qnty.dimensions.namespace import (
     ENERGY_HEAT_WORK as ENERGY,
 )
-from qnty.dimensions.dimensions import (
+from qnty.dimensions.namespace import (
     VELOCITY_LINEAR as VELOCITY,
 )
 from qnty.dimensions.signature import DimensionSignature

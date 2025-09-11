@@ -10,7 +10,7 @@ DO NOT EDIT MANUALLY - changes will be overwritten.
 
 from typing import Self
 
-from ..dimensions import dimensions as dim
+from ..dimensions import namespace as dim
 from . import field_setter
 from .field_qnty import FieldQnty
 

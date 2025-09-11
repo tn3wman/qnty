@@ -194,7 +194,7 @@ class FlexibleConstructorMixin:
 
         # Try to find the unit in the registry
         try:
-            from ..units.registry import registry
+            from ..units.core import registry
 
             # Use a simple lookup approach since get_unit method may not exist
             if hasattr(registry, "units") and str(unit) in registry.units:
@@ -844,7 +844,7 @@ class UnitConverter:
 
         # Fallback to registry lookup
         try:
-            from ..units.registry import registry
+            from ..units.core import registry
 
             if hasattr(registry, "units") and unit_str in registry.units:
                 return registry.units[unit_str]
@@ -871,7 +871,7 @@ class UnitConverter:
         else:
             # Use the registry for conversion
             try:
-                from ..units.registry import registry
+                from ..units.core import registry
 
                 new_value = registry.convert(from_value, from_unit, to_unit_constant)
             except Exception:

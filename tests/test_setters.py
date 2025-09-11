@@ -8,7 +8,7 @@ with the broader OptiUnit system.
 
 import pytest
 
-from qnty.dimensions.dimensions import LENGTH, PRESSURE
+from qnty.dimensions.namespace import LENGTH, PRESSURE
 from qnty.quantities import FieldQnty
 from qnty.quantities.base_qnty import Quantity, TypeSafeSetter
 from qnty.quantities.field_setter import LengthSetter, PressureSetter

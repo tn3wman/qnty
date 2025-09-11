@@ -545,13 +545,13 @@ class UnaryFunction(Expression):
 
     def _to_radians_if_angle(self, quantity: "Quantity") -> float:
         """Convert angle quantities to radians for trigonometric functions."""
-        from ..dimensions import dimensions
+        from ..dimensions import namespace
 
         # Check if this is an angle dimension by comparing dimension signature
         # Need to handle the case where angle dimensions might not exactly match due to implementation details
         try:
             # Import angle plane dimension for comparison
-            angle_plane_dim = dimensions.ANGLE_PLANE
+            angle_plane_dim = namespace.ANGLE_PLANE
 
             # If this looks like an angle (has angle dimension or unit name suggests it)
             if (hasattr(quantity, "_dimension_sig") and quantity._dimension_sig == angle_plane_dim) or (

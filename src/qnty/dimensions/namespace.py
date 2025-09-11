@@ -9,7 +9,7 @@ changes will be overwritten
 see codegen/generate_dimensions.py
 """
 
-from .base import Dimension
+from .core import Dimension
 
 ABSORBED_DOSE = Dimension((2, 0, -2, 0, 0, 0, 0))  # L^2 T^-2
 ACCELERATION = Dimension((1, 0, -2, 0, 0, 0, 0))  # L T^-2

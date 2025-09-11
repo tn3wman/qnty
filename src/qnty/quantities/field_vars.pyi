@@ -13,7 +13,7 @@ from typing import TYPE_CHECKING, Self, overload
 if TYPE_CHECKING:
     from . import field_setter
 
-from ..dimensions import dimensions as dim
+from ..dimensions import namespace as dim
 from .field_qnty import FieldQnty
 
 # ===== CONVERTER TYPE STUBS =====

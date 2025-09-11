@@ -1,6 +1,6 @@
 """Type stubs for field units."""
 
-from .registry import Unit, UnitRegistry
+from .core import Unit, UnitRegistry
 
 
 class AbsorbedDoseUnits:
