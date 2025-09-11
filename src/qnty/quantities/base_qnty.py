@@ -12,10 +12,14 @@ class Quantity:
         if isinstance(o, Quantity):
             return Quantity(self.value*o.value, self.dim*o.dim)
         return Quantity(self.value*float(o), self.dim)
+    def __rmul__(self, o: "float") -> "Quantity":
+        return Quantity(float(o)*self.value, self.dim)
     def __truediv__(self, o: "Quantity|float") -> "Quantity":
         if isinstance(o, Quantity):
             return Quantity(self.value/o.value, self.dim/o.dim)
         return Quantity(self.value/float(o), self.dim)
+    def __rtruediv__(self, o: "float") -> "Quantity":
+        return Quantity(float(o)/self.value, self.dim**-1)
     def __pow__(self, p: int) -> "Quantity":
         return Quantity(self.value**p, self.dim**p)
     def __add__(self, o: "Quantity") -> "Quantity":

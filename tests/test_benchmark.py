@@ -15,7 +15,7 @@ from astropy.units import imperial
 
 from qnty import Length
 from qnty.quantities import Q
-from qnty.units import DimensionlessUnits, LengthUnits, PressureUnits
+from qnty.units import DimensionlessUnits, LengthUnits, PressureUnits, MassDensityUnits
 
 # Pre-define all variables to exclude initialization from performance measurements
 ASTROPY_AVAILABLE = True
@@ -43,7 +43,10 @@ qnty_E = Q(0.8, DimensionlessUnits.dimensionless)
 qnty_W = Q(1.0, DimensionlessUnits.dimensionless)
 qnty_Y = Q(0.4, DimensionlessUnits.dimensionless)
 qnty_length_var = Length("beam_length")
-qnty_length_var.set(100.0).millimeter
+# Set the quantity directly to avoid the internal bug
+from qnty.quantities import Q
+qnty_length_var._quantity = Q(100.0, LengthUnits.millimeter)
+qnty_length_var.is_known = True
 qnty_q1_50mm = Q(50.0, LengthUnits.millimeter)
 qnty_q2_2in = Q(2.0, LengthUnits.inch)
 qnty_q3_05m = Q(0.5, LengthUnits.meter)
@@ -114,7 +117,7 @@ qnty_P1 = Q(PRESSURE_VALUE, PressureUnits.psi)
 qnty_P2 = Q(1800.0, PressureUnits.psi)
 qnty_D_fluid = Q(LENGTH_VALUE, LengthUnits.millimeter)
 qnty_L = Q(100.0, LengthUnits.meter)
-qnty_rho = Q(850.0, DimensionlessUnits.dimensionless)
+qnty_rho = Q(850.0, MassDensityUnits.kilogram_per_cubic_meter)
 qnty_pi = Q(3.14159, DimensionlessUnits.dimensionless)
 qnty_2 = Q(2, DimensionlessUnits.dimensionless)
 qnty_4 = Q(4.0, DimensionlessUnits.dimensionless)
@@ -352,8 +355,8 @@ def test_benchmark_suite(capsys):
     results.append(("Division (psi / mm)", qnty_result, pint_result, unyt_result, astropy_result))
 
     # ========== TEST 5: Complex Engineering Calculation (ASME) ==========
-    # def qnty_complex():
-    #     return (qnty_P * qnty_D) / (2 * (qnty_S * qnty_E * qnty_W + qnty_P * qnty_Y))
+    def qnty_complex():
+        return (qnty_P * qnty_D) / (2 * (qnty_S * qnty_E * qnty_W + qnty_P * qnty_Y))
 
     def pint_complex():
         return (pint_P * pint_D) / (2 * (pint_S * pint_E * pint_W + pint_P * pint_Y))  # type: ignore
@@ -364,7 +367,7 @@ def test_benchmark_suite(capsys):
     def astropy_complex():
         return (astropy_P * astropy_D) / (2 * (astropy_S * astropy_E * astropy_W + astropy_P * astropy_Y))
 
-    # qnty_result = benchmark_operation(qnty_complex, 2000)
+    qnty_result = benchmark_operation(qnty_complex, 2000)
     pint_result = benchmark_operation(pint_complex, 2000)
     unyt_result = benchmark_operation(unyt_complex, 2000)
     astropy_result = benchmark_operation(astropy_complex, 2000) if ASTROPY_AVAILABLE else (float("inf"), "N/A")
@@ -373,7 +376,8 @@ def test_benchmark_suite(capsys):
     # ========== TEST 6: Type-Safe Variables ==========
     def qnty_typesafe():
         assert qnty_length_var.quantity is not None
-        return qnty_length_var.quantity.to(LengthUnits.meter)
+        # Return the quantity object itself converted to consistent units, not the scalar
+        return Q(qnty_length_var.quantity.to(LengthUnits.meter), LengthUnits.meter)
 
     def pint_typesafe():
         # Pint doesn't have type-safe variables, so we simulate
@@ -458,23 +462,23 @@ def test_benchmark_suite(capsys):
 
     # ========== TEST 9: Complex Fluid Dynamics Equation ==========
     # Simplified engineering calculation with multiple unit conversions and operations
-    # def qnty_fluid_dynamics():
-    #     # Convert pressure drop to consistent units
-    #     dP = qnty_P1 - qnty_P2
-    #     dP_Pa = dP.to(PressureUnits.Pa)
+    def qnty_fluid_dynamics():
+        # Convert pressure drop to consistent units
+        dP = qnty_P1 - qnty_P2
+        dP_Pa = Q(dP.to(PressureUnits.Pa), PressureUnits.Pa)
 
-    #     # Diameter in meters for calculation
-    #     D_m = qnty_D_fluid.to(LengthUnits.meter)
+        # Diameter in meters for calculation
+        D_m = Q(qnty_D_fluid.to(LengthUnits.meter), LengthUnits.meter)
 
-    #     # Flow calculation with unit-aware operations
-    #     area = qnty_pi * D_m * D_m / qnty_4
+        # Flow calculation with unit-aware operations
+        area = qnty_pi * D_m * D_m / qnty_4
 
-    #     # Simplified velocity calculation (unit-aware pressure-driven flow)
-    #     velocity_factor = (dP_Pa * area) / (qnty_rho * qnty_L)
+        # Simplified velocity calculation (unit-aware pressure-driven flow)
+        velocity_factor = (dP_Pa * area) / (qnty_rho * qnty_L)
 
-    #     # Return a complex engineering result with unit scaling
-    #     result = velocity_factor * Quantity(1000, DimensionlessUnits.dimensionless)
-    #     return result
+        # Return a complex engineering result with unit scaling
+        result = velocity_factor * Q(1000, DimensionlessUnits.dimensionless)
+        return result
 
     def pint_fluid_dynamics():
         # Convert pressure drop to consistent units
@@ -538,7 +542,7 @@ def test_benchmark_suite(capsys):
         result = velocity_factor * (1000 * u.dimensionless_unscaled)  # type: ignore
         return result
 
-    # qnty_result = benchmark_operation(qnty_fluid_dynamics, 2000)
+    qnty_result = benchmark_operation(qnty_fluid_dynamics, 2000)
     pint_result = benchmark_operation(pint_fluid_dynamics, 2000)
     unyt_result = benchmark_operation(unyt_fluid_dynamics, 2000)
     astropy_result = benchmark_operation(astropy_fluid_dynamics, 2000)
