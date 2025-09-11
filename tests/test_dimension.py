@@ -7,9 +7,11 @@ BaseDimension enum, and all pre-defined dimensional constants.
 
 import dataclasses
 import math
+from unittest import result
 
 import pytest
 
+import qnty.dimensions as dims
 from qnty.dimensions.base import BaseDimension
 from qnty.dimensions.field_dims import (
     ACCELERATION,
@@ -72,7 +74,6 @@ class TestBaseDimension:
         assert isinstance(BaseDimension.LENGTH, int)
         assert BaseDimension.LENGTH + 1 == 3
         assert BaseDimension.MASS * 2 == 6
-
 
 class TestDimensionSignature:
     """Tests for the DimensionSignature class."""
@@ -225,7 +226,6 @@ class TestDimensionSignature:
         with pytest.raises(dataclasses.FrozenInstanceError):
             dim._signature = 10  # type: ignore[misc]
 
-
 class TestDimensionalConstants:
     """Tests for pre-defined dimensional constants."""
 
@@ -288,9 +288,42 @@ class TestDimensionalConstants:
         assert isinstance(constant._signature, int | float)
         assert constant._signature > 0, f"{name} should have positive signature"
 
-
-class TestDimensionalArithmetic:
+class TestDimensionalAddition:
     """Tests for dimensional arithmetic operations."""
+
+    def test_addition(self, capsys):
+        abdorbed1 = dims.ABSORBED_DOSE
+        abdorbed2 = dims.ABSORBED_DOSE
+        result = abdorbed1 + abdorbed2
+
+        with capsys.disabled():
+            print("")
+            print(result)
+
+    def test_subtraction(self, capsys):
+        abdorbed1 = dims.ABSORBED_DOSE
+        abdorbed2 = dims.ABSORBED_DOSE
+        result = abdorbed1 - abdorbed2
+
+        with capsys.disabled():
+            print("")
+            print(result)
+
+    def test_length_mul_length(self, capsys):
+        """Test length multiplication: LENGTH * LENGTH = AREA."""
+        length1 = dims.LENGTH
+        length2 = dims.LENGTH
+        result = length1 * length2
+
+        obtained = result._signature
+        expected = dims.AREA._signature
+        assert obtained == expected, f"Expected {expected}, got {obtained}"
+
+        with capsys.disabled():
+            print("")
+            print(result)
+
+
 
     def test_area_calculation(self):
         """Test area calculation: LENGTH * LENGTH = AREA."""
@@ -359,6 +392,80 @@ class TestDimensionalArithmetic:
         except (ZeroDivisionError, ValueError):
             pytest.skip("Integer division limitation with floating signatures")
 
+class TestDimensionalSubtraction:
+    """Tests for dimensional subtraction operations."""
+
+    def test_subtraction_different_dimensions(self):
+        """Test subtraction of different dimensions raises error."""
+        length = dims.LENGTH
+        mass = dims.MASS
+
+        with pytest.raises(ValueError):
+            _ = length - mass
+
+    def test_subtraction_with_non_dimension(self):
+        """Test subtraction with non-dimension raises error."""
+        length = dims.LENGTH
+
+        with pytest.raises(TypeError):
+            _ = length - 5  # Invalid type
+
+        with pytest.raises(TypeError):
+            _ = length - "length"  # Invalid type
+
+# BASE DIMENSIONS
+
+class TestLenAdd:
+    pass
+
+class TestLenSub:
+    pass
+
+class TestLenMul:
+    """Tests for dimensional multiplication operations."""
+    def test_length_mul_length(self):
+        """Test length multiplication: LENGTH * LENGTH = AREA."""
+        length1 = dims.LENGTH
+        length2 = dims.LENGTH
+        result = length1 * length2
+
+        actual = result._signature
+        expected = dims.AREA._signature
+        assert actual == expected, f"Expected {expected}, got {actual}"
+
+    def test_len_mul_len_mul_len(self):
+        """Test length multiplication with mass: LENGTH * MASS."""
+        length1 = dims.LENGTH
+        length2 = dims.LENGTH
+        length3 = dims.LENGTH
+        result = length1 * length2 * length3
+
+        actual = result._signature
+        expected = dims.VOLUME._signature
+        assert actual == expected, f"Expected {expected}, got {actual}"
+
+    def test_length_mul_area(self):
+        """Test length multiplication with area: LENGTH * AREA."""
+        length = dims.LENGTH
+        area = dims.AREA
+        result = length * area
+
+        actual = result._signature
+        expected = length._signature * area._signature
+        assert actual == expected, f"Expected {expected}, got {actual}"
+
+    def test_area_mul_length(self):
+        """Test area multiplication with length: AREA * LENGTH."""
+        area = dims.AREA
+        length = dims.LENGTH
+        result = area * length
+
+        actual = result._signature
+        expected = area._signature * length._signature
+        assert actual == expected, f"Expected {expected}, got {actual}"
+
+class TestLenDiv:
+    pass
 
 class TestEdgeCasesAndErrorConditions:
     """Tests for edge cases and potential error conditions."""
@@ -432,7 +539,6 @@ class TestEdgeCasesAndErrorConditions:
         expected = BaseDimension.LENGTH**negative_exp
         assert abs(dim._signature - expected) < 1e-10
 
-
 class TestDivisionBehavior:
     """Specific tests for division behavior and integer division limitations."""
 
@@ -481,7 +587,6 @@ class TestDivisionBehavior:
         # 0.4 // 0.4 = 1 in Python (float division truncated to int)
         assert result2._signature == 1
 
-
 class TestPerformanceCharacteristics:
     """Tests focused on performance characteristics of the dimension system."""
 
@@ -528,7 +633,6 @@ class TestPerformanceCharacteristics:
 
         # Signature should remain unchanged
         assert dim._signature == original_signature
-
 
 class TestDimensionalSignatureIntegration:
     """Integration tests combining multiple dimension operations."""

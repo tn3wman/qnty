@@ -71,6 +71,22 @@ class DimensionSignature:
                 signature *= base**exponent
 
         return cls(signature)
+    
+    def __add__(self, other: "DimensionSignature") -> "DimensionSignature":
+        """Add dimensions if compatible."""
+        if not isinstance(other, DimensionSignature):
+            raise TypeError(f"Cannot add DimensionSignature with {type(other)}")
+        if not self.is_compatible(other):
+            raise ValueError("Cannot add incompatible dimensions")
+        return self
+    
+    def __sub__(self, other: "DimensionSignature") -> "DimensionSignature":
+        """Subtract dimensions if compatible."""
+        if not isinstance(other, DimensionSignature):
+            raise TypeError(f"Cannot subtract DimensionSignature with {type(other)}")
+        if not self.is_compatible(other):
+            raise ValueError("Cannot subtract incompatible dimensions")
+        return self
 
     def __mul__(self, other: "DimensionSignature") -> "DimensionSignature":
         """Multiply dimensions."""
