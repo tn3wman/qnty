@@ -10,8 +10,10 @@ DimVec = tuple[int,int,int,int,int,int,int]
 @dataclass(frozen=True)
 class Dimension:
     exps: DimVec
-    def __mul__(self, other): return Dimension(tuple(a+b for a,b in zip(self.exps, other.exps, strict=False)))
-    def __truediv__(self, other): return Dimension(tuple(a-b for a,b in zip(self.exps, other.exps, strict=False)))
+    def __mul__(self, other):
+        return Dimension(tuple(a+b for a,b in zip(self.exps, other.exps, strict=False)))
+    def __truediv__(self, other):
+        return Dimension(tuple(a-b for a,b in zip(self.exps, other.exps, strict=False)))
     def __pow__(self, p:int):
         result = tuple(a*p for a in self.exps)
         if len(result) != 7:
