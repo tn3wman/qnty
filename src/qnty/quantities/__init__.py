@@ -5,7 +5,7 @@ Core Quantities Package
 High-performance quantity and variable systems.
 """
 
-from .base_qnty import Quantity
+from .base_qnty import Quantity, Q
 from .field_qnty import FieldQnty
 
 # Register types with TypeRegistry for performance optimization

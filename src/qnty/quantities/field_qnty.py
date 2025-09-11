@@ -830,12 +830,12 @@ class UnitConverter:
         """Get unit constant from unit string."""
         # Try to get from field_units module directly using the variable type
         try:
-            from ..units import field_units
+            from ..units import units
 
             # Get the units class for this variable type
             var_type = self.variable.__class__.__name__
-            if hasattr(field_units, f"{var_type}Units"):
-                units_class = getattr(field_units, f"{var_type}Units")
+            if hasattr(units, f"{var_type}Units"):
+                units_class = getattr(units, f"{var_type}Units")
                 # Try direct lookup first
                 if hasattr(units_class, unit_str):
                     return getattr(units_class, unit_str)

@@ -10,7 +10,7 @@ from abc import ABC, abstractmethod
 
 from ..constants import CONDITION_EVALUATION_THRESHOLD, DIVISION_BY_ZERO_THRESHOLD, FLOAT_EQUALITY_TOLERANCE
 from ..quantities import FieldQnty, Quantity
-from ..units.field_units import DimensionlessUnits
+from ..units.units import DimensionlessUnits
 from ..utils.caching.manager import get_cache_manager
 from ..utils.protocols import register_expression_type, register_variable_type
 from ..utils.scope_discovery import ScopeDiscoveryService
@@ -234,11 +234,11 @@ class BinaryOperation(Expression):
         # Handle cases where evaluation returns plain float (e.g., from trig functions)
         # Convert to dimensionless Quantity for consistent handling
         if isinstance(left_val, int | float):
-            from ..units.field_units import DimensionlessUnits
+            from ..units.units import DimensionlessUnits
 
             left_val = Quantity(left_val, DimensionlessUnits.dimensionless)
         if isinstance(right_val, int | float):
-            from ..units.field_units import DimensionlessUnits
+            from ..units.units import DimensionlessUnits
 
             right_val = Quantity(right_val, DimensionlessUnits.dimensionless)
 
@@ -545,20 +545,20 @@ class UnaryFunction(Expression):
 
     def _to_radians_if_angle(self, quantity: "Quantity") -> float:
         """Convert angle quantities to radians for trigonometric functions."""
-        from ..dimensions import field_dims
+        from ..dimensions import dimensions
 
         # Check if this is an angle dimension by comparing dimension signature
         # Need to handle the case where angle dimensions might not exactly match due to implementation details
         try:
             # Import angle plane dimension for comparison
-            angle_plane_dim = field_dims.ANGLE_PLANE
+            angle_plane_dim = dimensions.ANGLE_PLANE
 
             # If this looks like an angle (has angle dimension or unit name suggests it)
             if (hasattr(quantity, "_dimension_sig") and quantity._dimension_sig == angle_plane_dim) or (
                 hasattr(quantity, "unit") and hasattr(quantity.unit, "name") and any(angle_word in str(quantity.unit.name).lower() for angle_word in ["degree", "radian", "grad", "gon"])
             ):
                 # Import the radian unit for conversion
-                from ..units.field_units import AnglePlaneUnits
+                from ..units.units import AnglePlaneUnits
 
                 # Convert to radians and return the numeric value
                 radian_quantity = quantity.to(AnglePlaneUnits.radian)
@@ -572,7 +572,7 @@ class UnaryFunction(Expression):
 
     def _create_dimensionless_quantity(self, value: float) -> "Quantity":
         """Create a dimensionless quantity from a float value."""
-        from ..units.field_units import DimensionlessUnits
+        from ..units.units import DimensionlessUnits
 
         return Quantity(value, DimensionlessUnits.dimensionless)
 

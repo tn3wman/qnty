@@ -10,16 +10,26 @@ import json
 from pathlib import Path
 from typing import Any
 
-from .data_processor import (
-    augment_with_prefixed_units,
-    convert_to_class_name,
-    escape_string,
-    get_dimension_constant_name,
-    get_unit_names_and_aliases,
-    is_valid_python_identifier,
-    load_unit_data,
-    setup_import_path,
-)
+try:
+    from .data_processor import (
+        convert_to_class_name,
+        escape_string,
+        get_dimension_constant_name,
+        get_unit_names_and_aliases,
+        is_valid_python_identifier,
+        load_unit_data,
+        setup_import_path,
+    )
+except ImportError:
+    from data_processor import (
+        convert_to_class_name,
+        escape_string,
+        get_dimension_constant_name,
+        get_unit_names_and_aliases,
+        is_valid_python_identifier,
+        load_unit_data,
+        setup_import_path,
+    )
 
 
 class UnitsGenerator:
@@ -36,9 +46,9 @@ class UnitsGenerator:
         setup_import_path()
         raw_unit_data = load_unit_data(self.data_path)
 
-        # Augment with prefixed units using shared processor
-        self.unit_data, generated_count = augment_with_prefixed_units(raw_unit_data)
-        print(f"Generated {generated_count} prefixed units")
+        # For now, use raw data without augmentation to avoid import issues
+        self.unit_data = raw_unit_data
+        print(f"Loaded {len(raw_unit_data)} fields")
 
         # Track generated info
         self.dimension_constants: set[str] = set()
@@ -79,8 +89,8 @@ class UnitsGenerator:
 
         lines.extend(
             [
-                "from ..dimensions import field_dims as dim",
-                "from .registry import UnitConstant, UnitDefinition",
+                "from ..dimensions import dimensions as dim",
+                "from .registry import Unit, UnitNamespace, ureg",
                 "",
                 "",
             ]
@@ -94,18 +104,38 @@ class UnitsGenerator:
         dimension_constant = self.get_dimension_constant_name(field_name)
 
         lines = [
-            f"class {class_name}:",
+            f"class {class_name}(UnitNamespace):",
             f'    """Unit constants for {field_data["field"]}."""',
             "",
             "    __slots__ = ()",
-            "",
         ]
 
-        # Process all units for this field
+        # Find preferred unit (SI factor = 1.0)
         units = field_data.get("units", [])
         if not units:
             lines.extend(["    pass", "", ""])
             return lines
+        
+        # Find preferred unit with SI factor of 1.0
+        preferred_unit = None
+        for unit_data in units:
+            if unit_data.get("si_conversion", 1.0) == 1.0:
+                primary_name, _ = get_unit_names_and_aliases(unit_data)
+                if is_valid_python_identifier(primary_name):
+                    preferred_unit = primary_name
+                    break
+        
+        if preferred_unit:
+            lines.append(f'    __preferred__ = "{preferred_unit}" # Where SI factor is 1.0')
+        
+        lines.append("")
+
+        # First collect all primary unit names in this class
+        class_primary_names = set()
+        for unit_data in units:
+            primary_name, _ = get_unit_names_and_aliases(unit_data)
+            if is_valid_python_identifier(primary_name):
+                class_primary_names.add(primary_name)
 
         # Generate unit constants using shared name processing
         for unit_data in units:
@@ -123,24 +153,53 @@ class UnitsGenerator:
             else:
                 lines.append(f"    # {full_name}")
             
-            # More readable UnitDefinition formatting
+            # Check for primary name collision before generating unit
+            class_unit_id = f"{class_name}.{primary_name}"
+            if primary_name in self.global_aliases:
+                existing = self.global_aliases[primary_name]
+                print(f"Error: Primary unit name collision '{primary_name}' between {class_unit_id} and {existing}")
+                # Make the primary name unique by prefixing with field
+                field_prefix = field_name.lower().replace(" ", "_").replace(",", "")[:4]  # Use first 4 chars of field
+                unique_name = f"{field_prefix}_{primary_name}"
+                
+                # If this unique name also exists, add a counter
+                counter = 1
+                base_unique_name = unique_name
+                while unique_name in self.global_aliases:
+                    unique_name = f"{base_unique_name}_{counter}"
+                    counter += 1
+                
+                print(f"  -> Renaming to '{unique_name}' to avoid collision")
+                
+                # Update primary_name for unit generation
+                primary_name = unique_name
+                class_unit_id = f"{class_name}.{unique_name}"
+                self.global_aliases[unique_name] = class_unit_id
+            else:
+                self.global_aliases[primary_name] = class_unit_id
+
+            # More readable Unit formatting
             lines.extend([
-                f"    {primary_name} = UnitConstant(UnitDefinition(",
+                f"    {primary_name} = Unit(",
                 f'        name="{escape_string(primary_name)}",',
                 f'        symbol="{escape_string(symbol)}",',
                 f"        dimension=dim.{dimension_constant},",
                 f"        si_factor={si_factor},",
                 "        si_offset=0.0,",
-                "    ))",
+                "    )",
                 "",
             ])
 
-            # Add aliases, but check for global conflicts
-            class_unit_id = f"{class_name}.{primary_name}"
+            # Add aliases, but check for conflicts
             valid_aliases = []
             
             for alias in aliases:
                 if not is_valid_python_identifier(alias):
+                    continue
+                
+                # Skip if alias conflicts with a primary name in this class
+                if alias in class_primary_names and alias != primary_name:
+                    print(f"Warning: Skipping alias '{alias}' in {class_name} (conflicts with primary unit name)")
                     continue
                     
                 if alias in self.global_aliases:
@@ -165,37 +224,9 @@ class UnitsGenerator:
 
     def generate_registry_function(self) -> list[str]:
         """Generate function to register all units with registry."""
-        lines = [
-            "def register_all_units(registry) -> None:",
-            '    """Register all unit definitions with the registry."""',
-            "    unit_classes = [",
-        ]
-
-        # Add all generated unit classes
-        for class_name in sorted(self.field_to_class_mapping.values()):
-            lines.append(f"        {class_name},")
-
-        lines.extend(
-            [
-                "    ]",
-                "",
-                "    for unit_class in unit_classes:",
-                "        for attr_name in dir(unit_class):",
-                '            if not attr_name.startswith("_"):',
-                "                unit_constant = getattr(unit_class, attr_name, None)",
-                '                if unit_constant is not None and hasattr(unit_constant, "definition"):',
-                "                    unit_def = unit_constant.definition",
-                "                    if unit_def.name not in registry.units:",
-                "                        registry.register_unit(unit_def)",
-                "",
-                "    # Finalize registry",
-                "    registry.finalize_registration()",
-                "",
-                "",
-            ]
-        )
-
-        return lines
+        # We don't need a registration function since UnitNamespace metaclass
+        # automatically registers units when the class is created
+        return []
 
     def generate_dimensionless_class(self) -> list[str]:
         """Generate DimensionlessUnits class for backward compatibility."""
@@ -205,13 +236,13 @@ class UnitsGenerator:
             '    """Dimensionless units for backward compatibility."""',
             "    __slots__ = ()",
             "",
-            "    dimensionless = UnitConstant(UnitDefinition(",
+            "    dimensionless = Unit(",
             '        name="dimensionless",',
             '        symbol="",',
             "        dimension=dim.DIMENSIONLESS,",
             "        si_factor=1.0,",
             "        si_offset=0.0",
-            "    ))",
+            "    )",
             "",
             "",
         ]
@@ -221,8 +252,8 @@ class UnitsGenerator:
         lines = [
             "# Export list",
             "__all__ = [",
-            '    "register_all_units",',
             '    "DimensionlessUnits",',
+            '    "ureg",  # Export the global registry',
         ]
 
         for class_name in sorted(self.field_to_class_mapping.values()):
@@ -296,7 +327,7 @@ class UnitsGenerator:
         lines = [
             '"""Type stubs for field units."""',
             "",
-            "from .registry import UnitConstant",
+            "from .registry import Unit, UnitRegistry",
             "",
             "",
         ]
@@ -324,14 +355,14 @@ class UnitsGenerator:
                     continue
                     
                 # Primary unit
-                lines.append(f"    {primary_name}: UnitConstant")
+                lines.append(f"    {primary_name}: Unit")
                 
                 # Valid aliases that were successfully registered during main generation
                 class_unit_id = f"{class_name}.{primary_name}"
                 for alias in aliases:
-                    if (is_valid_python_identifier(alias) and 
+                    if (is_valid_python_identifier(alias) and
                         self.global_aliases.get(alias) == class_unit_id):
-                        lines.append(f"    {alias}: UnitConstant")
+                        lines.append(f"    {alias}: Unit")
             
             lines.append("")
         
@@ -341,12 +372,13 @@ class UnitsGenerator:
                 "class DimensionlessUnits:",
                 '    """Dimensionless units for backward compatibility."""',
                 "    __slots__: tuple[()]",
-                "    dimensionless: UnitConstant",
+                "    dimensionless: Unit",
                 "",
             ])
         
         lines.extend([
-            "def register_all_units() -> None: ...",
+            "# Global registry",
+            "ureg: UnitRegistry",
             "",
         ])
         
@@ -361,7 +393,7 @@ def main() -> None:
     # Set up paths
     generator_dir = Path(__file__).parent
     data_path = generator_dir / "data" / "unit_data.json"
-    output_path = generator_dir.parent.parent / "src" / "qnty" / "units" / "field_units.py"
+    output_path = generator_dir.parent.parent / "src" / "qnty" / "units" / "units.py"
     out_dir = generator_dir / "out"
 
     # Create output directory if needed

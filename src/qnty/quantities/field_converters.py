@@ -13,7 +13,7 @@ from typing import TYPE_CHECKING, Final
 if TYPE_CHECKING:
     from ..quantities.field_qnty import FieldQnty
 
-from ..units import field_units
+from ..units import units
 from .base_qnty import Quantity
 
 # ===== BASE CONVERTER CLASSES =====
@@ -31,7 +31,7 @@ class UnitConverter:
             # Get the dimension-specific units class
             class_name = self.variable.__class__.__name__
             units_class_name = f"{class_name}Units"
-            units_class = getattr(field_units, units_class_name, None)
+            units_class = getattr(units, units_class_name, None)
             if units_class and hasattr(units_class, unit_name):
                 return getattr(units_class, unit_name)
         # Raise error with suggestions
@@ -76,7 +76,7 @@ class ToUnitAbsorbedDoseConverter(UnitConverter):
     @property
     def erg_per_gram(self) -> "FieldQnty":
         """Convert to erg per gram units."""
-        unit_const: Final = field_units.AbsorbedDoseUnits.erg_per_gram
+        unit_const: Final = units.AbsorbedDoseUnits.erg_per_gram
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -92,7 +92,7 @@ class ToUnitAbsorbedDoseConverter(UnitConverter):
     @property
     def gram_rad(self) -> "FieldQnty":
         """Convert to gram-rad units."""
-        unit_const: Final = field_units.AbsorbedDoseUnits.gram_rad
+        unit_const: Final = units.AbsorbedDoseUnits.gram_rad
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -103,7 +103,7 @@ class ToUnitAbsorbedDoseConverter(UnitConverter):
     @property
     def gray(self) -> "FieldQnty":
         """Convert to gray units."""
-        unit_const: Final = field_units.AbsorbedDoseUnits.gray
+        unit_const: Final = units.AbsorbedDoseUnits.gray
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -114,13 +114,13 @@ class ToUnitAbsorbedDoseConverter(UnitConverter):
     @property
     def rad(self) -> "FieldQnty":
         """Convert to rad units."""
-        unit_const: Final = field_units.AbsorbedDoseUnits.rad
+        unit_const: Final = units.AbsorbedDoseUnits.rad
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def milligray(self) -> "FieldQnty":
         """Convert to milligray units."""
-        unit_const: Final = field_units.AbsorbedDoseUnits.milligray
+        unit_const: Final = units.AbsorbedDoseUnits.milligray
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -131,7 +131,7 @@ class ToUnitAbsorbedDoseConverter(UnitConverter):
     @property
     def microgray(self) -> "FieldQnty":
         """Convert to microgray units."""
-        unit_const: Final = field_units.AbsorbedDoseUnits.microgray
+        unit_const: Final = units.AbsorbedDoseUnits.microgray
         return self._convert_quantity(unit_const, modify_original=True)
 
 
@@ -148,7 +148,7 @@ class ToUnitAccelerationConverter(UnitConverter):
     @property
     def meter_per_second_squared(self) -> "FieldQnty":
         """Convert to meter per second squared units."""
-        unit_const: Final = field_units.AccelerationUnits.meter_per_second_squared
+        unit_const: Final = units.AccelerationUnits.meter_per_second_squared
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -164,7 +164,7 @@ class ToUnitAccelerationConverter(UnitConverter):
     @property
     def foot_per_second_squared(self) -> "FieldQnty":
         """Convert to foot per second squared units."""
-        unit_const: Final = field_units.AccelerationUnits.foot_per_second_squared
+        unit_const: Final = units.AccelerationUnits.foot_per_second_squared
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -196,7 +196,7 @@ class ToUnitActivationEnergyConverter(UnitConverter):
     @property
     def btu_per_pound_mole(self) -> "FieldQnty":
         """Convert to Btu per pound mole units."""
-        unit_const: Final = field_units.ActivationEnergyUnits.btu_per_pound_mole
+        unit_const: Final = units.ActivationEnergyUnits.btu_per_pound_mole
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -212,7 +212,7 @@ class ToUnitActivationEnergyConverter(UnitConverter):
     @property
     def calorie_mean_per_gram_mole(self) -> "FieldQnty":
         """Convert to calorie (mean) per gram mole units."""
-        unit_const: Final = field_units.ActivationEnergyUnits.calorie_mean_per_gram_mole
+        unit_const: Final = units.ActivationEnergyUnits.calorie_mean_per_gram_mole
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -228,7 +228,7 @@ class ToUnitActivationEnergyConverter(UnitConverter):
     @property
     def joule_per_gram_mole(self) -> "FieldQnty":
         """Convert to joule per gram mole units."""
-        unit_const: Final = field_units.ActivationEnergyUnits.joule_per_gram_mole
+        unit_const: Final = units.ActivationEnergyUnits.joule_per_gram_mole
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -239,7 +239,7 @@ class ToUnitActivationEnergyConverter(UnitConverter):
     @property
     def joule_per_kilogram_mole(self) -> "FieldQnty":
         """Convert to joule per kilogram mole units."""
-        unit_const: Final = field_units.ActivationEnergyUnits.joule_per_kilogram_mole
+        unit_const: Final = units.ActivationEnergyUnits.joule_per_kilogram_mole
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -250,7 +250,7 @@ class ToUnitActivationEnergyConverter(UnitConverter):
     @property
     def kilocalorie_per_kilogram_mole(self) -> "FieldQnty":
         """Convert to kilocalorie per kilogram mole units."""
-        unit_const: Final = field_units.ActivationEnergyUnits.kilocalorie_per_kilogram_mole
+        unit_const: Final = units.ActivationEnergyUnits.kilocalorie_per_kilogram_mole
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -272,7 +272,7 @@ class ToUnitAmountOfSubstanceConverter(UnitConverter):
     @property
     def kilogram_mol(self) -> "FieldQnty":
         """Convert to kilogram mol or kmol units."""
-        unit_const: Final = field_units.AmountOfSubstanceUnits.kilogram_mol
+        unit_const: Final = units.AmountOfSubstanceUnits.kilogram_mol
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -283,7 +283,7 @@ class ToUnitAmountOfSubstanceConverter(UnitConverter):
     @property
     def mole(self) -> "FieldQnty":
         """Convert to mole (gram) units."""
-        unit_const: Final = field_units.AmountOfSubstanceUnits.mole
+        unit_const: Final = units.AmountOfSubstanceUnits.mole
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -294,7 +294,7 @@ class ToUnitAmountOfSubstanceConverter(UnitConverter):
     @property
     def pound_mole(self) -> "FieldQnty":
         """Convert to pound-mole units."""
-        unit_const: Final = field_units.AmountOfSubstanceUnits.pound_mole
+        unit_const: Final = units.AmountOfSubstanceUnits.pound_mole
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -310,7 +310,7 @@ class ToUnitAmountOfSubstanceConverter(UnitConverter):
     @property
     def millimole(self) -> "FieldQnty":
         """Convert to millimole (gram) units."""
-        unit_const: Final = field_units.AmountOfSubstanceUnits.millimole
+        unit_const: Final = units.AmountOfSubstanceUnits.millimole
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -321,7 +321,7 @@ class ToUnitAmountOfSubstanceConverter(UnitConverter):
     @property
     def micromole(self) -> "FieldQnty":
         """Convert to micromole (gram) units."""
-        unit_const: Final = field_units.AmountOfSubstanceUnits.micromole
+        unit_const: Final = units.AmountOfSubstanceUnits.micromole
         return self._convert_quantity(unit_const, modify_original=True)
 
 
@@ -338,7 +338,7 @@ class ToUnitAnglePlaneConverter(UnitConverter):
     @property
     def degree(self) -> "FieldQnty":
         """Convert to degree units."""
-        unit_const: Final = field_units.AnglePlaneUnits.degree
+        unit_const: Final = units.AnglePlaneUnits.degree
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -349,19 +349,19 @@ class ToUnitAnglePlaneConverter(UnitConverter):
     @property
     def gon(self) -> "FieldQnty":
         """Convert to gon units."""
-        unit_const: Final = field_units.AnglePlaneUnits.gon
+        unit_const: Final = units.AnglePlaneUnits.gon
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def grade(self) -> "FieldQnty":
         """Convert to grade units."""
-        unit_const: Final = field_units.AnglePlaneUnits.grade
+        unit_const: Final = units.AnglePlaneUnits.grade
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def minute_new(self) -> "FieldQnty":
         """Convert to minute (new) units."""
-        unit_const: Final = field_units.AnglePlaneUnits.minute_new
+        unit_const: Final = units.AnglePlaneUnits.minute_new
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -372,7 +372,7 @@ class ToUnitAnglePlaneConverter(UnitConverter):
     @property
     def minute_of_angle(self) -> "FieldQnty":
         """Convert to minute of angle units."""
-        unit_const: Final = field_units.AnglePlaneUnits.minute_of_angle
+        unit_const: Final = units.AnglePlaneUnits.minute_of_angle
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -383,19 +383,19 @@ class ToUnitAnglePlaneConverter(UnitConverter):
     @property
     def percent(self) -> "FieldQnty":
         """Convert to percent units."""
-        unit_const: Final = field_units.AnglePlaneUnits.percent
+        unit_const: Final = units.AnglePlaneUnits.percent
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def plane_angle(self) -> "FieldQnty":
         """Convert to plane angle units."""
-        unit_const: Final = field_units.AnglePlaneUnits.plane_angle
+        unit_const: Final = units.AnglePlaneUnits.plane_angle
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def quadrant(self) -> "FieldQnty":
         """Convert to quadrant units."""
-        unit_const: Final = field_units.AnglePlaneUnits.quadrant
+        unit_const: Final = units.AnglePlaneUnits.quadrant
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -406,7 +406,7 @@ class ToUnitAnglePlaneConverter(UnitConverter):
     @property
     def radian(self) -> "FieldQnty":
         """Convert to radian units."""
-        unit_const: Final = field_units.AnglePlaneUnits.radian
+        unit_const: Final = units.AnglePlaneUnits.radian
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -417,7 +417,7 @@ class ToUnitAnglePlaneConverter(UnitConverter):
     @property
     def right_angle(self) -> "FieldQnty":
         """Convert to right angle units."""
-        unit_const: Final = field_units.AnglePlaneUnits.right_angle
+        unit_const: Final = units.AnglePlaneUnits.right_angle
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -428,7 +428,7 @@ class ToUnitAnglePlaneConverter(UnitConverter):
     @property
     def round(self) -> "FieldQnty":
         """Convert to round units."""
-        unit_const: Final = field_units.AnglePlaneUnits.round
+        unit_const: Final = units.AnglePlaneUnits.round
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -449,7 +449,7 @@ class ToUnitAnglePlaneConverter(UnitConverter):
     @property
     def second_new(self) -> "FieldQnty":
         """Convert to second (new) units."""
-        unit_const: Final = field_units.AnglePlaneUnits.second_new
+        unit_const: Final = units.AnglePlaneUnits.second_new
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -460,13 +460,13 @@ class ToUnitAnglePlaneConverter(UnitConverter):
     @property
     def second_of_angle(self) -> "FieldQnty":
         """Convert to second of angle units."""
-        unit_const: Final = field_units.AnglePlaneUnits.second_of_angle
+        unit_const: Final = units.AnglePlaneUnits.second_of_angle
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def thousandth_us(self) -> "FieldQnty":
         """Convert to thousandth (US) units."""
-        unit_const: Final = field_units.AnglePlaneUnits.thousandth_us
+        unit_const: Final = units.AnglePlaneUnits.thousandth_us
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -477,7 +477,7 @@ class ToUnitAnglePlaneConverter(UnitConverter):
     @property
     def turn(self) -> "FieldQnty":
         """Convert to turn units."""
-        unit_const: Final = field_units.AnglePlaneUnits.turn
+        unit_const: Final = units.AnglePlaneUnits.turn
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -504,13 +504,13 @@ class ToUnitAngleSolidConverter(UnitConverter):
     @property
     def spat(self) -> "FieldQnty":
         """Convert to spat units."""
-        unit_const: Final = field_units.AngleSolidUnits.spat
+        unit_const: Final = units.AngleSolidUnits.spat
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def square_degree(self) -> "FieldQnty":
         """Convert to square degree units."""
-        unit_const: Final = field_units.AngleSolidUnits.square_degree
+        unit_const: Final = units.AngleSolidUnits.square_degree
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -521,7 +521,7 @@ class ToUnitAngleSolidConverter(UnitConverter):
     @property
     def square_gon(self) -> "FieldQnty":
         """Convert to square gon units."""
-        unit_const: Final = field_units.AngleSolidUnits.square_gon
+        unit_const: Final = units.AngleSolidUnits.square_gon
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -532,7 +532,7 @@ class ToUnitAngleSolidConverter(UnitConverter):
     @property
     def steradian(self) -> "FieldQnty":
         """Convert to steradian units."""
-        unit_const: Final = field_units.AngleSolidUnits.steradian
+        unit_const: Final = units.AngleSolidUnits.steradian
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -554,7 +554,7 @@ class ToUnitAngularAccelerationConverter(UnitConverter):
     @property
     def radian_per_second_squared(self) -> "FieldQnty":
         """Convert to radian per second squared units."""
-        unit_const: Final = field_units.AngularAccelerationUnits.radian_per_second_squared
+        unit_const: Final = units.AngularAccelerationUnits.radian_per_second_squared
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -565,7 +565,7 @@ class ToUnitAngularAccelerationConverter(UnitConverter):
     @property
     def revolution_per_second_squared(self) -> "FieldQnty":
         """Convert to revolution per second squared units."""
-        unit_const: Final = field_units.AngularAccelerationUnits.revolution_per_second_squared
+        unit_const: Final = units.AngularAccelerationUnits.revolution_per_second_squared
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -576,7 +576,7 @@ class ToUnitAngularAccelerationConverter(UnitConverter):
     @property
     def rpm_or_revolution_per_minute(self) -> "FieldQnty":
         """Convert to rpm (or revolution per minute) per minute units."""
-        unit_const: Final = field_units.AngularAccelerationUnits.rpm_or_revolution_per_minute
+        unit_const: Final = units.AngularAccelerationUnits.rpm_or_revolution_per_minute
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -608,7 +608,7 @@ class ToUnitAngularMomentumConverter(UnitConverter):
     @property
     def gram_centimeter_squared_per_second(self) -> "FieldQnty":
         """Convert to gram centimeter squared per second units."""
-        unit_const: Final = field_units.AngularMomentumUnits.gram_centimeter_squared_per_second
+        unit_const: Final = units.AngularMomentumUnits.gram_centimeter_squared_per_second
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -619,7 +619,7 @@ class ToUnitAngularMomentumConverter(UnitConverter):
     @property
     def kilogram_meter_squared_per_second(self) -> "FieldQnty":
         """Convert to kilogram meter squared per second units."""
-        unit_const: Final = field_units.AngularMomentumUnits.kilogram_meter_squared_per_second
+        unit_const: Final = units.AngularMomentumUnits.kilogram_meter_squared_per_second
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -630,7 +630,7 @@ class ToUnitAngularMomentumConverter(UnitConverter):
     @property
     def pound_force_square_foot_per_second(self) -> "FieldQnty":
         """Convert to pound force square foot per second units."""
-        unit_const: Final = field_units.AngularMomentumUnits.pound_force_square_foot_per_second
+        unit_const: Final = units.AngularMomentumUnits.pound_force_square_foot_per_second
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -652,7 +652,7 @@ class ToUnitAreaConverter(UnitConverter):
     @property
     def acre_general(self) -> "FieldQnty":
         """Convert to acre (general) units."""
-        unit_const: Final = field_units.AreaUnits.acre_general
+        unit_const: Final = units.AreaUnits.acre_general
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -663,7 +663,7 @@ class ToUnitAreaConverter(UnitConverter):
     @property
     def are(self) -> "FieldQnty":
         """Convert to are units."""
-        unit_const: Final = field_units.AreaUnits.are
+        unit_const: Final = units.AreaUnits.are
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -674,7 +674,7 @@ class ToUnitAreaConverter(UnitConverter):
     @property
     def arpent_quebec(self) -> "FieldQnty":
         """Convert to arpent (Quebec) units."""
-        unit_const: Final = field_units.AreaUnits.arpent_quebec
+        unit_const: Final = units.AreaUnits.arpent_quebec
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -685,7 +685,7 @@ class ToUnitAreaConverter(UnitConverter):
     @property
     def barn(self) -> "FieldQnty":
         """Convert to barn units."""
-        unit_const: Final = field_units.AreaUnits.barn
+        unit_const: Final = units.AreaUnits.barn
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -696,7 +696,7 @@ class ToUnitAreaConverter(UnitConverter):
     @property
     def circular_inch(self) -> "FieldQnty":
         """Convert to circular inch units."""
-        unit_const: Final = field_units.AreaUnits.circular_inch
+        unit_const: Final = units.AreaUnits.circular_inch
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -707,7 +707,7 @@ class ToUnitAreaConverter(UnitConverter):
     @property
     def circular_mil(self) -> "FieldQnty":
         """Convert to circular mil units."""
-        unit_const: Final = field_units.AreaUnits.circular_mil
+        unit_const: Final = units.AreaUnits.circular_mil
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -718,7 +718,7 @@ class ToUnitAreaConverter(UnitConverter):
     @property
     def hectare(self) -> "FieldQnty":
         """Convert to hectare units."""
-        unit_const: Final = field_units.AreaUnits.hectare
+        unit_const: Final = units.AreaUnits.hectare
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -729,13 +729,13 @@ class ToUnitAreaConverter(UnitConverter):
     @property
     def shed(self) -> "FieldQnty":
         """Convert to shed units."""
-        unit_const: Final = field_units.AreaUnits.shed
+        unit_const: Final = units.AreaUnits.shed
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def square_centimeter(self) -> "FieldQnty":
         """Convert to square centimeter units."""
-        unit_const: Final = field_units.AreaUnits.square_centimeter
+        unit_const: Final = units.AreaUnits.square_centimeter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -746,7 +746,7 @@ class ToUnitAreaConverter(UnitConverter):
     @property
     def square_chain_ramsden(self) -> "FieldQnty":
         """Convert to square chain (Ramsden) units."""
-        unit_const: Final = field_units.AreaUnits.square_chain_ramsden
+        unit_const: Final = units.AreaUnits.square_chain_ramsden
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -757,7 +757,7 @@ class ToUnitAreaConverter(UnitConverter):
     @property
     def square_chain_survey_gunters(self) -> "FieldQnty":
         """Convert to square chain (Survey, Gunter's) units."""
-        unit_const: Final = field_units.AreaUnits.square_chain_survey_gunters
+        unit_const: Final = units.AreaUnits.square_chain_survey_gunters
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -768,7 +768,7 @@ class ToUnitAreaConverter(UnitConverter):
     @property
     def square_decimeter(self) -> "FieldQnty":
         """Convert to square decimeter units."""
-        unit_const: Final = field_units.AreaUnits.square_decimeter
+        unit_const: Final = units.AreaUnits.square_decimeter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -779,7 +779,7 @@ class ToUnitAreaConverter(UnitConverter):
     @property
     def square_fermi(self) -> "FieldQnty":
         """Convert to square fermi units."""
-        unit_const: Final = field_units.AreaUnits.square_fermi
+        unit_const: Final = units.AreaUnits.square_fermi
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -790,7 +790,7 @@ class ToUnitAreaConverter(UnitConverter):
     @property
     def square_foot(self) -> "FieldQnty":
         """Convert to square foot units."""
-        unit_const: Final = field_units.AreaUnits.square_foot
+        unit_const: Final = units.AreaUnits.square_foot
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -811,7 +811,7 @@ class ToUnitAreaConverter(UnitConverter):
     @property
     def square_hectometer(self) -> "FieldQnty":
         """Convert to square hectometer units."""
-        unit_const: Final = field_units.AreaUnits.square_hectometer
+        unit_const: Final = units.AreaUnits.square_hectometer
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -822,7 +822,7 @@ class ToUnitAreaConverter(UnitConverter):
     @property
     def square_inch(self) -> "FieldQnty":
         """Convert to square inch units."""
-        unit_const: Final = field_units.AreaUnits.square_inch
+        unit_const: Final = units.AreaUnits.square_inch
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -843,7 +843,7 @@ class ToUnitAreaConverter(UnitConverter):
     @property
     def square_kilometer(self) -> "FieldQnty":
         """Convert to square kilometer units."""
-        unit_const: Final = field_units.AreaUnits.square_kilometer
+        unit_const: Final = units.AreaUnits.square_kilometer
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -854,7 +854,7 @@ class ToUnitAreaConverter(UnitConverter):
     @property
     def square_league_statute(self) -> "FieldQnty":
         """Convert to square league (statute) units."""
-        unit_const: Final = field_units.AreaUnits.square_league_statute
+        unit_const: Final = units.AreaUnits.square_league_statute
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -865,7 +865,7 @@ class ToUnitAreaConverter(UnitConverter):
     @property
     def square_meter(self) -> "FieldQnty":
         """Convert to square meter units."""
-        unit_const: Final = field_units.AreaUnits.square_meter
+        unit_const: Final = units.AreaUnits.square_meter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -876,7 +876,7 @@ class ToUnitAreaConverter(UnitConverter):
     @property
     def square_micron(self) -> "FieldQnty":
         """Convert to square micron units."""
-        unit_const: Final = field_units.AreaUnits.square_micron
+        unit_const: Final = units.AreaUnits.square_micron
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -897,7 +897,7 @@ class ToUnitAreaConverter(UnitConverter):
     @property
     def square_mile_statute(self) -> "FieldQnty":
         """Convert to square mile (statute) units."""
-        unit_const: Final = field_units.AreaUnits.square_mile_statute
+        unit_const: Final = units.AreaUnits.square_mile_statute
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -908,7 +908,7 @@ class ToUnitAreaConverter(UnitConverter):
     @property
     def square_mile_us_survey(self) -> "FieldQnty":
         """Convert to square mile (US survey) units."""
-        unit_const: Final = field_units.AreaUnits.square_mile_us_survey
+        unit_const: Final = units.AreaUnits.square_mile_us_survey
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -919,7 +919,7 @@ class ToUnitAreaConverter(UnitConverter):
     @property
     def square_millimeter(self) -> "FieldQnty":
         """Convert to square millimeter units."""
-        unit_const: Final = field_units.AreaUnits.square_millimeter
+        unit_const: Final = units.AreaUnits.square_millimeter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -930,7 +930,7 @@ class ToUnitAreaConverter(UnitConverter):
     @property
     def square_nanometer(self) -> "FieldQnty":
         """Convert to square nanometer units."""
-        unit_const: Final = field_units.AreaUnits.square_nanometer
+        unit_const: Final = units.AreaUnits.square_nanometer
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -941,7 +941,7 @@ class ToUnitAreaConverter(UnitConverter):
     @property
     def square_yard(self) -> "FieldQnty":
         """Convert to square yard units."""
-        unit_const: Final = field_units.AreaUnits.square_yard
+        unit_const: Final = units.AreaUnits.square_yard
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -952,7 +952,7 @@ class ToUnitAreaConverter(UnitConverter):
     @property
     def township_us(self) -> "FieldQnty":
         """Convert to township (US) units."""
-        unit_const: Final = field_units.AreaUnits.township_us
+        unit_const: Final = units.AreaUnits.township_us
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -974,7 +974,7 @@ class ToUnitAreaPerUnitVolumeConverter(UnitConverter):
     @property
     def square_centimeter_per_cubic_centimeter(self) -> "FieldQnty":
         """Convert to square centimeter per cubic centimeter units."""
-        unit_const: Final = field_units.AreaPerUnitVolumeUnits.square_centimeter_per_cubic_centimeter
+        unit_const: Final = units.AreaPerUnitVolumeUnits.square_centimeter_per_cubic_centimeter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -985,7 +985,7 @@ class ToUnitAreaPerUnitVolumeConverter(UnitConverter):
     @property
     def square_foot_per_cubic_foot(self) -> "FieldQnty":
         """Convert to square foot per cubic foot units."""
-        unit_const: Final = field_units.AreaPerUnitVolumeUnits.square_foot_per_cubic_foot
+        unit_const: Final = units.AreaPerUnitVolumeUnits.square_foot_per_cubic_foot
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -1006,7 +1006,7 @@ class ToUnitAreaPerUnitVolumeConverter(UnitConverter):
     @property
     def square_inch_per_cubic_inch(self) -> "FieldQnty":
         """Convert to square inch per cubic inch units."""
-        unit_const: Final = field_units.AreaPerUnitVolumeUnits.square_inch_per_cubic_inch
+        unit_const: Final = units.AreaPerUnitVolumeUnits.square_inch_per_cubic_inch
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -1027,7 +1027,7 @@ class ToUnitAreaPerUnitVolumeConverter(UnitConverter):
     @property
     def square_meter_per_cubic_meter(self) -> "FieldQnty":
         """Convert to square meter per cubic meter units."""
-        unit_const: Final = field_units.AreaPerUnitVolumeUnits.square_meter_per_cubic_meter
+        unit_const: Final = units.AreaPerUnitVolumeUnits.square_meter_per_cubic_meter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -1059,7 +1059,7 @@ class ToUnitAtomicWeightConverter(UnitConverter):
     @property
     def atomic_mass_unit_12c(self) -> "FieldQnty":
         """Convert to atomic mass unit (12C) units."""
-        unit_const: Final = field_units.AtomicWeightUnits.atomic_mass_unit_12c
+        unit_const: Final = units.AtomicWeightUnits.atomic_mass_unit_12c
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -1070,7 +1070,7 @@ class ToUnitAtomicWeightConverter(UnitConverter):
     @property
     def grams_per_mole(self) -> "FieldQnty":
         """Convert to grams per mole units."""
-        unit_const: Final = field_units.AtomicWeightUnits.grams_per_mole
+        unit_const: Final = units.AtomicWeightUnits.grams_per_mole
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -1081,7 +1081,7 @@ class ToUnitAtomicWeightConverter(UnitConverter):
     @property
     def kilograms_per_kilomole(self) -> "FieldQnty":
         """Convert to kilograms per kilomole units."""
-        unit_const: Final = field_units.AtomicWeightUnits.kilograms_per_kilomole
+        unit_const: Final = units.AtomicWeightUnits.kilograms_per_kilomole
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -1092,7 +1092,7 @@ class ToUnitAtomicWeightConverter(UnitConverter):
     @property
     def pounds_per_pound_mole(self) -> "FieldQnty":
         """Convert to pounds per pound mole units."""
-        unit_const: Final = field_units.AtomicWeightUnits.pounds_per_pound_mole
+        unit_const: Final = units.AtomicWeightUnits.pounds_per_pound_mole
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -1124,7 +1124,7 @@ class ToUnitConcentrationConverter(UnitConverter):
     @property
     def grains_of_i_per_cubic_foot(self) -> "FieldQnty":
         """Convert to grains of "i" per cubic foot units."""
-        unit_const: Final = field_units.ConcentrationUnits.grains_of_i_per_cubic_foot
+        unit_const: Final = units.ConcentrationUnits.grains_of_i_per_cubic_foot
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -1145,7 +1145,7 @@ class ToUnitConcentrationConverter(UnitConverter):
     @property
     def grains_of_i_per_gallon_us(self) -> "FieldQnty":
         """Convert to grains of "i" per gallon (US) units."""
-        unit_const: Final = field_units.ConcentrationUnits.grains_of_i_per_gallon_us
+        unit_const: Final = units.ConcentrationUnits.grains_of_i_per_gallon_us
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -1167,19 +1167,19 @@ class ToUnitDimensionlessConverter(UnitConverter):
     @property
     def dimensionless(self) -> "FieldQnty":
         """Convert to dimensionless units."""
-        unit_const: Final = field_units.DimensionlessUnits.dimensionless
+        unit_const: Final = units.DimensionlessUnits.dimensionless
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def ratio(self) -> "FieldQnty":
         """Convert to ratio units."""
-        unit_const: Final = field_units.DimensionlessUnits.ratio
+        unit_const: Final = units.DimensionlessUnits.ratio
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def parts_per_million(self) -> "FieldQnty":
         """Convert to parts per million units."""
-        unit_const: Final = field_units.DimensionlessUnits.parts_per_million
+        unit_const: Final = units.DimensionlessUnits.parts_per_million
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -1190,7 +1190,7 @@ class ToUnitDimensionlessConverter(UnitConverter):
     @property
     def parts_per_billion(self) -> "FieldQnty":
         """Convert to parts per billion units."""
-        unit_const: Final = field_units.DimensionlessUnits.parts_per_billion
+        unit_const: Final = units.DimensionlessUnits.parts_per_billion
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -1212,7 +1212,7 @@ class ToUnitDynamicFluidityConverter(UnitConverter):
     @property
     def meter_seconds_per_kilogram(self) -> "FieldQnty":
         """Convert to meter-seconds per kilogram units."""
-        unit_const: Final = field_units.DynamicFluidityUnits.meter_seconds_per_kilogram
+        unit_const: Final = units.DynamicFluidityUnits.meter_seconds_per_kilogram
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -1223,13 +1223,13 @@ class ToUnitDynamicFluidityConverter(UnitConverter):
     @property
     def rhe(self) -> "FieldQnty":
         """Convert to rhe units."""
-        unit_const: Final = field_units.DynamicFluidityUnits.rhe
+        unit_const: Final = units.DynamicFluidityUnits.rhe
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def square_foot_per_pound_second(self) -> "FieldQnty":
         """Convert to square foot per pound second units."""
-        unit_const: Final = field_units.DynamicFluidityUnits.square_foot_per_pound_second
+        unit_const: Final = units.DynamicFluidityUnits.square_foot_per_pound_second
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -1240,7 +1240,7 @@ class ToUnitDynamicFluidityConverter(UnitConverter):
     @property
     def square_meters_per_newton_per_second(self) -> "FieldQnty":
         """Convert to square meters per newton per second units."""
-        unit_const: Final = field_units.DynamicFluidityUnits.square_meters_per_newton_per_second
+        unit_const: Final = units.DynamicFluidityUnits.square_meters_per_newton_per_second
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -1262,13 +1262,13 @@ class ToUnitElectricCapacitanceConverter(UnitConverter):
     @property
     def cm(self) -> "FieldQnty":
         """Convert to "cm" units."""
-        unit_const: Final = field_units.ElectricCapacitanceUnits.cm
+        unit_const: Final = units.ElectricCapacitanceUnits.cm
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def abfarad(self) -> "FieldQnty":
         """Convert to abfarad units."""
-        unit_const: Final = field_units.ElectricCapacitanceUnits.abfarad
+        unit_const: Final = units.ElectricCapacitanceUnits.abfarad
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -1279,7 +1279,7 @@ class ToUnitElectricCapacitanceConverter(UnitConverter):
     @property
     def farad(self) -> "FieldQnty":
         """Convert to farad units."""
-        unit_const: Final = field_units.ElectricCapacitanceUnits.farad
+        unit_const: Final = units.ElectricCapacitanceUnits.farad
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -1290,7 +1290,7 @@ class ToUnitElectricCapacitanceConverter(UnitConverter):
     @property
     def farad_intl(self) -> "FieldQnty":
         """Convert to farad (intl) units."""
-        unit_const: Final = field_units.ElectricCapacitanceUnits.farad_intl
+        unit_const: Final = units.ElectricCapacitanceUnits.farad_intl
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -1301,19 +1301,19 @@ class ToUnitElectricCapacitanceConverter(UnitConverter):
     @property
     def jar(self) -> "FieldQnty":
         """Convert to jar units."""
-        unit_const: Final = field_units.ElectricCapacitanceUnits.jar
+        unit_const: Final = units.ElectricCapacitanceUnits.jar
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def puff(self) -> "FieldQnty":
         """Convert to puff units."""
-        unit_const: Final = field_units.ElectricCapacitanceUnits.puff
+        unit_const: Final = units.ElectricCapacitanceUnits.puff
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def statfarad(self) -> "FieldQnty":
         """Convert to statfarad units."""
-        unit_const: Final = field_units.ElectricCapacitanceUnits.statfarad
+        unit_const: Final = units.ElectricCapacitanceUnits.statfarad
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -1324,7 +1324,7 @@ class ToUnitElectricCapacitanceConverter(UnitConverter):
     @property
     def millifarad(self) -> "FieldQnty":
         """Convert to millifarad units."""
-        unit_const: Final = field_units.ElectricCapacitanceUnits.millifarad
+        unit_const: Final = units.ElectricCapacitanceUnits.millifarad
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -1335,13 +1335,13 @@ class ToUnitElectricCapacitanceConverter(UnitConverter):
     @property
     def microfarad(self) -> "FieldQnty":
         """Convert to microfarad units."""
-        unit_const: Final = field_units.ElectricCapacitanceUnits.microfarad
+        unit_const: Final = units.ElectricCapacitanceUnits.microfarad
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def nanofarad(self) -> "FieldQnty":
         """Convert to nanofarad units."""
-        unit_const: Final = field_units.ElectricCapacitanceUnits.nanofarad
+        unit_const: Final = units.ElectricCapacitanceUnits.nanofarad
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -1352,7 +1352,7 @@ class ToUnitElectricCapacitanceConverter(UnitConverter):
     @property
     def picofarad(self) -> "FieldQnty":
         """Convert to picofarad units."""
-        unit_const: Final = field_units.ElectricCapacitanceUnits.picofarad
+        unit_const: Final = units.ElectricCapacitanceUnits.picofarad
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -1374,7 +1374,7 @@ class ToUnitElectricChargeConverter(UnitConverter):
     @property
     def abcoulomb(self) -> "FieldQnty":
         """Convert to abcoulomb units."""
-        unit_const: Final = field_units.ElectricChargeUnits.abcoulomb
+        unit_const: Final = units.ElectricChargeUnits.abcoulomb
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -1385,7 +1385,7 @@ class ToUnitElectricChargeConverter(UnitConverter):
     @property
     def ampere_hour(self) -> "FieldQnty":
         """Convert to ampere-hour units."""
-        unit_const: Final = field_units.ElectricChargeUnits.ampere_hour
+        unit_const: Final = units.ElectricChargeUnits.ampere_hour
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -1396,7 +1396,7 @@ class ToUnitElectricChargeConverter(UnitConverter):
     @property
     def coulomb(self) -> "FieldQnty":
         """Convert to coulomb units."""
-        unit_const: Final = field_units.ElectricChargeUnits.coulomb
+        unit_const: Final = units.ElectricChargeUnits.coulomb
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -1407,7 +1407,7 @@ class ToUnitElectricChargeConverter(UnitConverter):
     @property
     def faraday_c12(self) -> "FieldQnty":
         """Convert to faraday (C12) units."""
-        unit_const: Final = field_units.ElectricChargeUnits.faraday_c12
+        unit_const: Final = units.ElectricChargeUnits.faraday_c12
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -1418,7 +1418,7 @@ class ToUnitElectricChargeConverter(UnitConverter):
     @property
     def franklin(self) -> "FieldQnty":
         """Convert to franklin units."""
-        unit_const: Final = field_units.ElectricChargeUnits.franklin
+        unit_const: Final = units.ElectricChargeUnits.franklin
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -1429,7 +1429,7 @@ class ToUnitElectricChargeConverter(UnitConverter):
     @property
     def statcoulomb(self) -> "FieldQnty":
         """Convert to statcoulomb units."""
-        unit_const: Final = field_units.ElectricChargeUnits.statcoulomb
+        unit_const: Final = units.ElectricChargeUnits.statcoulomb
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -1440,7 +1440,7 @@ class ToUnitElectricChargeConverter(UnitConverter):
     @property
     def u_a_charge(self) -> "FieldQnty":
         """Convert to u.a. charge units."""
-        unit_const: Final = field_units.ElectricChargeUnits.u_a_charge
+        unit_const: Final = units.ElectricChargeUnits.u_a_charge
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -1451,7 +1451,7 @@ class ToUnitElectricChargeConverter(UnitConverter):
     @property
     def kilocoulomb(self) -> "FieldQnty":
         """Convert to kilocoulomb units."""
-        unit_const: Final = field_units.ElectricChargeUnits.kilocoulomb
+        unit_const: Final = units.ElectricChargeUnits.kilocoulomb
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -1462,7 +1462,7 @@ class ToUnitElectricChargeConverter(UnitConverter):
     @property
     def millicoulomb(self) -> "FieldQnty":
         """Convert to millicoulomb units."""
-        unit_const: Final = field_units.ElectricChargeUnits.millicoulomb
+        unit_const: Final = units.ElectricChargeUnits.millicoulomb
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -1473,13 +1473,13 @@ class ToUnitElectricChargeConverter(UnitConverter):
     @property
     def microcoulomb(self) -> "FieldQnty":
         """Convert to microcoulomb units."""
-        unit_const: Final = field_units.ElectricChargeUnits.microcoulomb
+        unit_const: Final = units.ElectricChargeUnits.microcoulomb
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def nanocoulomb(self) -> "FieldQnty":
         """Convert to nanocoulomb units."""
-        unit_const: Final = field_units.ElectricChargeUnits.nanocoulomb
+        unit_const: Final = units.ElectricChargeUnits.nanocoulomb
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -1490,7 +1490,7 @@ class ToUnitElectricChargeConverter(UnitConverter):
     @property
     def picocoulomb(self) -> "FieldQnty":
         """Convert to picocoulomb units."""
-        unit_const: Final = field_units.ElectricChargeUnits.picocoulomb
+        unit_const: Final = units.ElectricChargeUnits.picocoulomb
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -1512,7 +1512,7 @@ class ToUnitElectricCurrentIntensityConverter(UnitConverter):
     @property
     def abampere(self) -> "FieldQnty":
         """Convert to abampere units."""
-        unit_const: Final = field_units.ElectricCurrentIntensityUnits.abampere
+        unit_const: Final = units.ElectricCurrentIntensityUnits.abampere
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -1523,7 +1523,7 @@ class ToUnitElectricCurrentIntensityConverter(UnitConverter):
     @property
     def ampere_intl_mean(self) -> "FieldQnty":
         """Convert to ampere (intl mean) units."""
-        unit_const: Final = field_units.ElectricCurrentIntensityUnits.ampere_intl_mean
+        unit_const: Final = units.ElectricCurrentIntensityUnits.ampere_intl_mean
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -1534,7 +1534,7 @@ class ToUnitElectricCurrentIntensityConverter(UnitConverter):
     @property
     def ampere_intl_us(self) -> "FieldQnty":
         """Convert to ampere (intl US) units."""
-        unit_const: Final = field_units.ElectricCurrentIntensityUnits.ampere_intl_us
+        unit_const: Final = units.ElectricCurrentIntensityUnits.ampere_intl_us
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -1545,7 +1545,7 @@ class ToUnitElectricCurrentIntensityConverter(UnitConverter):
     @property
     def ampere_or_amp(self) -> "FieldQnty":
         """Convert to ampere or amp units."""
-        unit_const: Final = field_units.ElectricCurrentIntensityUnits.ampere_or_amp
+        unit_const: Final = units.ElectricCurrentIntensityUnits.ampere_or_amp
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -1556,13 +1556,13 @@ class ToUnitElectricCurrentIntensityConverter(UnitConverter):
     @property
     def biot(self) -> "FieldQnty":
         """Convert to biot units."""
-        unit_const: Final = field_units.ElectricCurrentIntensityUnits.biot
+        unit_const: Final = units.ElectricCurrentIntensityUnits.biot
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def statampere(self) -> "FieldQnty":
         """Convert to statampere units."""
-        unit_const: Final = field_units.ElectricCurrentIntensityUnits.statampere
+        unit_const: Final = units.ElectricCurrentIntensityUnits.statampere
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -1573,7 +1573,7 @@ class ToUnitElectricCurrentIntensityConverter(UnitConverter):
     @property
     def u_a_or_current(self) -> "FieldQnty":
         """Convert to u.a. or current units."""
-        unit_const: Final = field_units.ElectricCurrentIntensityUnits.u_a_or_current
+        unit_const: Final = units.ElectricCurrentIntensityUnits.u_a_or_current
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -1595,7 +1595,7 @@ class ToUnitElectricDipoleMomentConverter(UnitConverter):
     @property
     def ampere_meter_second(self) -> "FieldQnty":
         """Convert to ampere meter second units."""
-        unit_const: Final = field_units.ElectricDipoleMomentUnits.ampere_meter_second
+        unit_const: Final = units.ElectricDipoleMomentUnits.ampere_meter_second
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -1606,7 +1606,7 @@ class ToUnitElectricDipoleMomentConverter(UnitConverter):
     @property
     def coulomb_meter(self) -> "FieldQnty":
         """Convert to coulomb meter units."""
-        unit_const: Final = field_units.ElectricDipoleMomentUnits.coulomb_meter
+        unit_const: Final = units.ElectricDipoleMomentUnits.coulomb_meter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -1617,7 +1617,7 @@ class ToUnitElectricDipoleMomentConverter(UnitConverter):
     @property
     def debye(self) -> "FieldQnty":
         """Convert to debye units."""
-        unit_const: Final = field_units.ElectricDipoleMomentUnits.debye
+        unit_const: Final = units.ElectricDipoleMomentUnits.debye
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -1628,7 +1628,7 @@ class ToUnitElectricDipoleMomentConverter(UnitConverter):
     @property
     def electron_meter(self) -> "FieldQnty":
         """Convert to electron meter units."""
-        unit_const: Final = field_units.ElectricDipoleMomentUnits.electron_meter
+        unit_const: Final = units.ElectricDipoleMomentUnits.electron_meter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -1650,7 +1650,7 @@ class ToUnitElectricFieldStrengthConverter(UnitConverter):
     @property
     def volt_per_centimeter(self) -> "FieldQnty":
         """Convert to volt per centimeter units."""
-        unit_const: Final = field_units.ElectricFieldStrengthUnits.volt_per_centimeter
+        unit_const: Final = units.ElectricFieldStrengthUnits.volt_per_centimeter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -1661,7 +1661,7 @@ class ToUnitElectricFieldStrengthConverter(UnitConverter):
     @property
     def volt_per_meter(self) -> "FieldQnty":
         """Convert to volt per meter units."""
-        unit_const: Final = field_units.ElectricFieldStrengthUnits.volt_per_meter
+        unit_const: Final = units.ElectricFieldStrengthUnits.volt_per_meter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -1683,7 +1683,7 @@ class ToUnitElectricInductanceConverter(UnitConverter):
     @property
     def abhenry(self) -> "FieldQnty":
         """Convert to abhenry units."""
-        unit_const: Final = field_units.ElectricInductanceUnits.abhenry
+        unit_const: Final = units.ElectricInductanceUnits.abhenry
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -1694,13 +1694,13 @@ class ToUnitElectricInductanceConverter(UnitConverter):
     @property
     def cm(self) -> "FieldQnty":
         """Convert to cm units."""
-        unit_const: Final = field_units.ElectricInductanceUnits.cm
+        unit_const: Final = units.ElectricInductanceUnits.cm
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def henry(self) -> "FieldQnty":
         """Convert to henry units."""
-        unit_const: Final = field_units.ElectricInductanceUnits.henry
+        unit_const: Final = units.ElectricInductanceUnits.henry
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -1711,7 +1711,7 @@ class ToUnitElectricInductanceConverter(UnitConverter):
     @property
     def henry_intl_mean(self) -> "FieldQnty":
         """Convert to henry (intl mean) units."""
-        unit_const: Final = field_units.ElectricInductanceUnits.henry_intl_mean
+        unit_const: Final = units.ElectricInductanceUnits.henry_intl_mean
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -1722,7 +1722,7 @@ class ToUnitElectricInductanceConverter(UnitConverter):
     @property
     def henry_intl_us(self) -> "FieldQnty":
         """Convert to henry (intl US) units."""
-        unit_const: Final = field_units.ElectricInductanceUnits.henry_intl_us
+        unit_const: Final = units.ElectricInductanceUnits.henry_intl_us
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -1733,13 +1733,13 @@ class ToUnitElectricInductanceConverter(UnitConverter):
     @property
     def mic(self) -> "FieldQnty":
         """Convert to mic units."""
-        unit_const: Final = field_units.ElectricInductanceUnits.mic
+        unit_const: Final = units.ElectricInductanceUnits.mic
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def stathenry(self) -> "FieldQnty":
         """Convert to stathenry units."""
-        unit_const: Final = field_units.ElectricInductanceUnits.stathenry
+        unit_const: Final = units.ElectricInductanceUnits.stathenry
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -1750,7 +1750,7 @@ class ToUnitElectricInductanceConverter(UnitConverter):
     @property
     def millihenry(self) -> "FieldQnty":
         """Convert to millihenry units."""
-        unit_const: Final = field_units.ElectricInductanceUnits.millihenry
+        unit_const: Final = units.ElectricInductanceUnits.millihenry
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -1761,13 +1761,13 @@ class ToUnitElectricInductanceConverter(UnitConverter):
     @property
     def microhenry(self) -> "FieldQnty":
         """Convert to microhenry units."""
-        unit_const: Final = field_units.ElectricInductanceUnits.microhenry
+        unit_const: Final = units.ElectricInductanceUnits.microhenry
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def nanohenry(self) -> "FieldQnty":
         """Convert to nanohenry units."""
-        unit_const: Final = field_units.ElectricInductanceUnits.nanohenry
+        unit_const: Final = units.ElectricInductanceUnits.nanohenry
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -1789,7 +1789,7 @@ class ToUnitElectricPotentialConverter(UnitConverter):
     @property
     def abvolt(self) -> "FieldQnty":
         """Convert to abvolt units."""
-        unit_const: Final = field_units.ElectricPotentialUnits.abvolt
+        unit_const: Final = units.ElectricPotentialUnits.abvolt
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -1800,7 +1800,7 @@ class ToUnitElectricPotentialConverter(UnitConverter):
     @property
     def statvolt(self) -> "FieldQnty":
         """Convert to statvolt units."""
-        unit_const: Final = field_units.ElectricPotentialUnits.statvolt
+        unit_const: Final = units.ElectricPotentialUnits.statvolt
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -1811,7 +1811,7 @@ class ToUnitElectricPotentialConverter(UnitConverter):
     @property
     def u_a_potential(self) -> "FieldQnty":
         """Convert to u.a. potential units."""
-        unit_const: Final = field_units.ElectricPotentialUnits.u_a_potential
+        unit_const: Final = units.ElectricPotentialUnits.u_a_potential
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -1822,7 +1822,7 @@ class ToUnitElectricPotentialConverter(UnitConverter):
     @property
     def volt(self) -> "FieldQnty":
         """Convert to volt units."""
-        unit_const: Final = field_units.ElectricPotentialUnits.volt
+        unit_const: Final = units.ElectricPotentialUnits.volt
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -1833,7 +1833,7 @@ class ToUnitElectricPotentialConverter(UnitConverter):
     @property
     def volt_intl_mean(self) -> "FieldQnty":
         """Convert to volt (intl mean) units."""
-        unit_const: Final = field_units.ElectricPotentialUnits.volt_intl_mean
+        unit_const: Final = units.ElectricPotentialUnits.volt_intl_mean
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -1844,7 +1844,7 @@ class ToUnitElectricPotentialConverter(UnitConverter):
     @property
     def volt_us(self) -> "FieldQnty":
         """Convert to volt (US) units."""
-        unit_const: Final = field_units.ElectricPotentialUnits.volt_us
+        unit_const: Final = units.ElectricPotentialUnits.volt_us
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -1855,7 +1855,7 @@ class ToUnitElectricPotentialConverter(UnitConverter):
     @property
     def kilovolt(self) -> "FieldQnty":
         """Convert to kilovolt units."""
-        unit_const: Final = field_units.ElectricPotentialUnits.kilovolt
+        unit_const: Final = units.ElectricPotentialUnits.kilovolt
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -1866,7 +1866,7 @@ class ToUnitElectricPotentialConverter(UnitConverter):
     @property
     def millivolt(self) -> "FieldQnty":
         """Convert to millivolt units."""
-        unit_const: Final = field_units.ElectricPotentialUnits.millivolt
+        unit_const: Final = units.ElectricPotentialUnits.millivolt
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -1877,13 +1877,13 @@ class ToUnitElectricPotentialConverter(UnitConverter):
     @property
     def microvolt(self) -> "FieldQnty":
         """Convert to microvolt units."""
-        unit_const: Final = field_units.ElectricPotentialUnits.microvolt
+        unit_const: Final = units.ElectricPotentialUnits.microvolt
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def nanovolt(self) -> "FieldQnty":
         """Convert to nanovolt units."""
-        unit_const: Final = field_units.ElectricPotentialUnits.nanovolt
+        unit_const: Final = units.ElectricPotentialUnits.nanovolt
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -1894,7 +1894,7 @@ class ToUnitElectricPotentialConverter(UnitConverter):
     @property
     def picovolt(self) -> "FieldQnty":
         """Convert to picovolt units."""
-        unit_const: Final = field_units.ElectricPotentialUnits.picovolt
+        unit_const: Final = units.ElectricPotentialUnits.picovolt
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -1916,7 +1916,7 @@ class ToUnitElectricResistanceConverter(UnitConverter):
     @property
     def abohm(self) -> "FieldQnty":
         """Convert to abohm units."""
-        unit_const: Final = field_units.ElectricResistanceUnits.abohm
+        unit_const: Final = units.ElectricResistanceUnits.abohm
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -1927,7 +1927,7 @@ class ToUnitElectricResistanceConverter(UnitConverter):
     @property
     def jacobi(self) -> "FieldQnty":
         """Convert to jacobi units."""
-        unit_const: Final = field_units.ElectricResistanceUnits.jacobi
+        unit_const: Final = units.ElectricResistanceUnits.jacobi
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -1938,7 +1938,7 @@ class ToUnitElectricResistanceConverter(UnitConverter):
     @property
     def lenz(self) -> "FieldQnty":
         """Convert to lenz units."""
-        unit_const: Final = field_units.ElectricResistanceUnits.lenz
+        unit_const: Final = units.ElectricResistanceUnits.lenz
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -1949,7 +1949,7 @@ class ToUnitElectricResistanceConverter(UnitConverter):
     @property
     def ohm(self) -> "FieldQnty":
         """Convert to ohm units."""
-        unit_const: Final = field_units.ElectricResistanceUnits.ohm
+        unit_const: Final = units.ElectricResistanceUnits.ohm
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -1960,7 +1960,7 @@ class ToUnitElectricResistanceConverter(UnitConverter):
     @property
     def ohm_intl_mean(self) -> "FieldQnty":
         """Convert to ohm (intl mean) units."""
-        unit_const: Final = field_units.ElectricResistanceUnits.ohm_intl_mean
+        unit_const: Final = units.ElectricResistanceUnits.ohm_intl_mean
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -1971,7 +1971,7 @@ class ToUnitElectricResistanceConverter(UnitConverter):
     @property
     def ohm_intl_us(self) -> "FieldQnty":
         """Convert to ohm (intl US) units."""
-        unit_const: Final = field_units.ElectricResistanceUnits.ohm_intl_us
+        unit_const: Final = units.ElectricResistanceUnits.ohm_intl_us
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -1982,7 +1982,7 @@ class ToUnitElectricResistanceConverter(UnitConverter):
     @property
     def ohm_legal(self) -> "FieldQnty":
         """Convert to ohm (legal) units."""
-        unit_const: Final = field_units.ElectricResistanceUnits.ohm_legal
+        unit_const: Final = units.ElectricResistanceUnits.ohm_legal
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -1993,13 +1993,13 @@ class ToUnitElectricResistanceConverter(UnitConverter):
     @property
     def preece(self) -> "FieldQnty":
         """Convert to preece units."""
-        unit_const: Final = field_units.ElectricResistanceUnits.preece
+        unit_const: Final = units.ElectricResistanceUnits.preece
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def statohm(self) -> "FieldQnty":
         """Convert to statohm units."""
-        unit_const: Final = field_units.ElectricResistanceUnits.statohm
+        unit_const: Final = units.ElectricResistanceUnits.statohm
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2010,13 +2010,13 @@ class ToUnitElectricResistanceConverter(UnitConverter):
     @property
     def wheatstone(self) -> "FieldQnty":
         """Convert to wheatstone units."""
-        unit_const: Final = field_units.ElectricResistanceUnits.wheatstone
+        unit_const: Final = units.ElectricResistanceUnits.wheatstone
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def kiloohm(self) -> "FieldQnty":
         """Convert to kiloohm units."""
-        unit_const: Final = field_units.ElectricResistanceUnits.kiloohm
+        unit_const: Final = units.ElectricResistanceUnits.kiloohm
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2027,7 +2027,7 @@ class ToUnitElectricResistanceConverter(UnitConverter):
     @property
     def megaohm(self) -> "FieldQnty":
         """Convert to megaohm units."""
-        unit_const: Final = field_units.ElectricResistanceUnits.megaohm
+        unit_const: Final = units.ElectricResistanceUnits.megaohm
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2038,7 +2038,7 @@ class ToUnitElectricResistanceConverter(UnitConverter):
     @property
     def milliohm(self) -> "FieldQnty":
         """Convert to milliohm units."""
-        unit_const: Final = field_units.ElectricResistanceUnits.milliohm
+        unit_const: Final = units.ElectricResistanceUnits.milliohm
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2060,7 +2060,7 @@ class ToUnitElectricalConductanceConverter(UnitConverter):
     @property
     def emu_cgs(self) -> "FieldQnty":
         """Convert to emu cgs units."""
-        unit_const: Final = field_units.ElectricalConductanceUnits.emu_cgs
+        unit_const: Final = units.ElectricalConductanceUnits.emu_cgs
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2071,7 +2071,7 @@ class ToUnitElectricalConductanceConverter(UnitConverter):
     @property
     def esu_cgs(self) -> "FieldQnty":
         """Convert to esu cgs units."""
-        unit_const: Final = field_units.ElectricalConductanceUnits.esu_cgs
+        unit_const: Final = units.ElectricalConductanceUnits.esu_cgs
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2082,13 +2082,13 @@ class ToUnitElectricalConductanceConverter(UnitConverter):
     @property
     def mho(self) -> "FieldQnty":
         """Convert to mho units."""
-        unit_const: Final = field_units.ElectricalConductanceUnits.mho
+        unit_const: Final = units.ElectricalConductanceUnits.mho
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def microsiemens(self) -> "FieldQnty":
         """Convert to microsiemens units."""
-        unit_const: Final = field_units.ElectricalConductanceUnits.microsiemens
+        unit_const: Final = units.ElectricalConductanceUnits.microsiemens
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2099,7 +2099,7 @@ class ToUnitElectricalConductanceConverter(UnitConverter):
     @property
     def siemens(self) -> "FieldQnty":
         """Convert to siemens units."""
-        unit_const: Final = field_units.ElectricalConductanceUnits.siemens
+        unit_const: Final = units.ElectricalConductanceUnits.siemens
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2110,7 +2110,7 @@ class ToUnitElectricalConductanceConverter(UnitConverter):
     @property
     def millisiemens(self) -> "FieldQnty":
         """Convert to millisiemens units."""
-        unit_const: Final = field_units.ElectricalConductanceUnits.millisiemens
+        unit_const: Final = units.ElectricalConductanceUnits.millisiemens
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2132,7 +2132,7 @@ class ToUnitElectricalPermittivityConverter(UnitConverter):
     @property
     def farad_per_meter(self) -> "FieldQnty":
         """Convert to farad per meter units."""
-        unit_const: Final = field_units.ElectricalPermittivityUnits.farad_per_meter
+        unit_const: Final = units.ElectricalPermittivityUnits.farad_per_meter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2154,7 +2154,7 @@ class ToUnitElectricalResistivityConverter(UnitConverter):
     @property
     def circular_mil_ohm_per_foot(self) -> "FieldQnty":
         """Convert to circular mil-ohm per foot units."""
-        unit_const: Final = field_units.ElectricalResistivityUnits.circular_mil_ohm_per_foot
+        unit_const: Final = units.ElectricalResistivityUnits.circular_mil_ohm_per_foot
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2165,7 +2165,7 @@ class ToUnitElectricalResistivityConverter(UnitConverter):
     @property
     def emu_cgs(self) -> "FieldQnty":
         """Convert to emu cgs units."""
-        unit_const: Final = field_units.ElectricalResistivityUnits.emu_cgs
+        unit_const: Final = units.ElectricalResistivityUnits.emu_cgs
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2176,7 +2176,7 @@ class ToUnitElectricalResistivityConverter(UnitConverter):
     @property
     def microhm_inch(self) -> "FieldQnty":
         """Convert to microhm-inch units."""
-        unit_const: Final = field_units.ElectricalResistivityUnits.microhm_inch
+        unit_const: Final = units.ElectricalResistivityUnits.microhm_inch
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2187,7 +2187,7 @@ class ToUnitElectricalResistivityConverter(UnitConverter):
     @property
     def ohm_centimeter(self) -> "FieldQnty":
         """Convert to ohm-centimeter units."""
-        unit_const: Final = field_units.ElectricalResistivityUnits.ohm_centimeter
+        unit_const: Final = units.ElectricalResistivityUnits.ohm_centimeter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2198,7 +2198,7 @@ class ToUnitElectricalResistivityConverter(UnitConverter):
     @property
     def ohm_meter(self) -> "FieldQnty":
         """Convert to ohm-meter units."""
-        unit_const: Final = field_units.ElectricalResistivityUnits.ohm_meter
+        unit_const: Final = units.ElectricalResistivityUnits.ohm_meter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2220,7 +2220,7 @@ class ToUnitEnergyFluxConverter(UnitConverter):
     @property
     def btu_per_square_foot_per_hour(self) -> "FieldQnty":
         """Convert to Btu per square foot per hour units."""
-        unit_const: Final = field_units.EnergyFluxUnits.btu_per_square_foot_per_hour
+        unit_const: Final = units.EnergyFluxUnits.btu_per_square_foot_per_hour
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2231,7 +2231,7 @@ class ToUnitEnergyFluxConverter(UnitConverter):
     @property
     def calorie_per_square_centimeter_per_second(self) -> "FieldQnty":
         """Convert to calorie per square centimeter per second units."""
-        unit_const: Final = field_units.EnergyFluxUnits.calorie_per_square_centimeter_per_second
+        unit_const: Final = units.EnergyFluxUnits.calorie_per_square_centimeter_per_second
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2247,7 +2247,7 @@ class ToUnitEnergyFluxConverter(UnitConverter):
     @property
     def celsius_heat_units_chu(self) -> "FieldQnty":
         """Convert to Celsius heat units (Chu) per square foot per hour units."""
-        unit_const: Final = field_units.EnergyFluxUnits.celsius_heat_units_chu
+        unit_const: Final = units.EnergyFluxUnits.celsius_heat_units_chu
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2258,7 +2258,7 @@ class ToUnitEnergyFluxConverter(UnitConverter):
     @property
     def kilocalorie_per_square_foot_per_hour(self) -> "FieldQnty":
         """Convert to kilocalorie per square foot per hour units."""
-        unit_const: Final = field_units.EnergyFluxUnits.kilocalorie_per_square_foot_per_hour
+        unit_const: Final = units.EnergyFluxUnits.kilocalorie_per_square_foot_per_hour
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2269,7 +2269,7 @@ class ToUnitEnergyFluxConverter(UnitConverter):
     @property
     def kilocalorie_per_square_meter_per_hour(self) -> "FieldQnty":
         """Convert to kilocalorie per square meter per hour units."""
-        unit_const: Final = field_units.EnergyFluxUnits.kilocalorie_per_square_meter_per_hour
+        unit_const: Final = units.EnergyFluxUnits.kilocalorie_per_square_meter_per_hour
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2280,7 +2280,7 @@ class ToUnitEnergyFluxConverter(UnitConverter):
     @property
     def watt_per_square_meter(self) -> "FieldQnty":
         """Convert to watt per square meter units."""
-        unit_const: Final = field_units.EnergyFluxUnits.watt_per_square_meter
+        unit_const: Final = units.EnergyFluxUnits.watt_per_square_meter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2302,7 +2302,7 @@ class ToUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def barrel_oil_equivalent_or_equivalent_barrel(self) -> "FieldQnty":
         """Convert to barrel oil equivalent or equivalent barrel units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.barrel_oil_equivalent_or_equivalent_barrel
+        unit_const: Final = units.EnergyHeatWorkUnits.barrel_oil_equivalent_or_equivalent_barrel
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2323,7 +2323,7 @@ class ToUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def billion_electronvolt(self) -> "FieldQnty":
         """Convert to billion electronvolt units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.billion_electronvolt
+        unit_const: Final = units.EnergyHeatWorkUnits.billion_electronvolt
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2334,7 +2334,7 @@ class ToUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def british_thermal_unit_4circ_mathrmc(self) -> "FieldQnty":
         """Convert to British thermal unit ( $4^{\\circ} \\mathrm{C}$ ) units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.british_thermal_unit_4circ_mathrmc
+        unit_const: Final = units.EnergyHeatWorkUnits.british_thermal_unit_4circ_mathrmc
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2345,7 +2345,7 @@ class ToUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def british_thermal_unit_60circ_mathrmf(self) -> "FieldQnty":
         """Convert to British thermal unit ( $60^{\\circ} \\mathrm{F}$ ) units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.british_thermal_unit_60circ_mathrmf
+        unit_const: Final = units.EnergyHeatWorkUnits.british_thermal_unit_60circ_mathrmf
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2356,7 +2356,7 @@ class ToUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def british_thermal_unit_international_steam_tables(self) -> "FieldQnty":
         """Convert to British thermal unit (international steam tables) units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.british_thermal_unit_international_steam_tables
+        unit_const: Final = units.EnergyHeatWorkUnits.british_thermal_unit_international_steam_tables
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2367,7 +2367,7 @@ class ToUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def british_thermal_unit_isotc_12(self) -> "FieldQnty":
         """Convert to British thermal unit (ISO/TC 12) units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.british_thermal_unit_isotc_12
+        unit_const: Final = units.EnergyHeatWorkUnits.british_thermal_unit_isotc_12
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2378,7 +2378,7 @@ class ToUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def british_thermal_unit_mean(self) -> "FieldQnty":
         """Convert to British thermal unit (mean) units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.british_thermal_unit_mean
+        unit_const: Final = units.EnergyHeatWorkUnits.british_thermal_unit_mean
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2399,7 +2399,7 @@ class ToUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def british_thermal_unit_thermochemical(self) -> "FieldQnty":
         """Convert to British thermal unit (thermochemical) units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.british_thermal_unit_thermochemical
+        unit_const: Final = units.EnergyHeatWorkUnits.british_thermal_unit_thermochemical
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2410,7 +2410,7 @@ class ToUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def calorie_20circ_mathrmc(self) -> "FieldQnty":
         """Convert to calorie ( $20^{\\circ} \\mathrm{C}$ ) units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.calorie_20circ_mathrmc
+        unit_const: Final = units.EnergyHeatWorkUnits.calorie_20circ_mathrmc
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2421,7 +2421,7 @@ class ToUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def calorie_4circ_mathrmc(self) -> "FieldQnty":
         """Convert to calorie ( $4^{\\circ} \\mathrm{C}$ ) units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.calorie_4circ_mathrmc
+        unit_const: Final = units.EnergyHeatWorkUnits.calorie_4circ_mathrmc
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2432,7 +2432,7 @@ class ToUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def calorie_international_steam_tables(self) -> "FieldQnty":
         """Convert to calorie (international steam tables) units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.calorie_international_steam_tables
+        unit_const: Final = units.EnergyHeatWorkUnits.calorie_international_steam_tables
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2443,7 +2443,7 @@ class ToUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def calorie_mean(self) -> "FieldQnty":
         """Convert to calorie (mean) units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.calorie_mean
+        unit_const: Final = units.EnergyHeatWorkUnits.calorie_mean
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2454,7 +2454,7 @@ class ToUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def calorie_nutritional(self) -> "FieldQnty":
         """Convert to Calorie (nutritional) units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.calorie_nutritional
+        unit_const: Final = units.EnergyHeatWorkUnits.calorie_nutritional
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2465,7 +2465,7 @@ class ToUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def calorie_thermochemical(self) -> "FieldQnty":
         """Convert to calorie (thermochemical) units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.calorie_thermochemical
+        unit_const: Final = units.EnergyHeatWorkUnits.calorie_thermochemical
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2476,7 +2476,7 @@ class ToUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def celsius_heat_unit(self) -> "FieldQnty":
         """Convert to Celsius heat unit units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.celsius_heat_unit
+        unit_const: Final = units.EnergyHeatWorkUnits.celsius_heat_unit
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2487,7 +2487,7 @@ class ToUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def celsius_heat_unit_15_circ_mathrmc(self) -> "FieldQnty":
         """Convert to Celsius heat unit ( $15{ }^{\\circ} \\mathrm{C}$ ) units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.celsius_heat_unit_15_circ_mathrmc
+        unit_const: Final = units.EnergyHeatWorkUnits.celsius_heat_unit_15_circ_mathrmc
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2498,7 +2498,7 @@ class ToUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def electron_volt(self) -> "FieldQnty":
         """Convert to electron volt units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.electron_volt
+        unit_const: Final = units.EnergyHeatWorkUnits.electron_volt
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2509,13 +2509,13 @@ class ToUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def erg(self) -> "FieldQnty":
         """Convert to erg units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.erg
+        unit_const: Final = units.EnergyHeatWorkUnits.erg
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def foot_pound_force_duty(self) -> "FieldQnty":
         """Convert to foot pound force (duty) units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.foot_pound_force_duty
+        unit_const: Final = units.EnergyHeatWorkUnits.foot_pound_force_duty
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2526,7 +2526,7 @@ class ToUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def foot_poundal(self) -> "FieldQnty":
         """Convert to foot-poundal units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.foot_poundal
+        unit_const: Final = units.EnergyHeatWorkUnits.foot_poundal
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2537,7 +2537,7 @@ class ToUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def frigorie(self) -> "FieldQnty":
         """Convert to frigorie units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.frigorie
+        unit_const: Final = units.EnergyHeatWorkUnits.frigorie
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2548,7 +2548,7 @@ class ToUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def hartree_atomic_unit_of_energy(self) -> "FieldQnty":
         """Convert to hartree (atomic unit of energy) units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.hartree_atomic_unit_of_energy
+        unit_const: Final = units.EnergyHeatWorkUnits.hartree_atomic_unit_of_energy
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2559,7 +2559,7 @@ class ToUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def joule(self) -> "FieldQnty":
         """Convert to joule units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.joule
+        unit_const: Final = units.EnergyHeatWorkUnits.joule
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2570,7 +2570,7 @@ class ToUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def joule_international(self) -> "FieldQnty":
         """Convert to joule (international) units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.joule_international
+        unit_const: Final = units.EnergyHeatWorkUnits.joule_international
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2581,7 +2581,7 @@ class ToUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def kilocalorie_thermal(self) -> "FieldQnty":
         """Convert to kilocalorie (thermal) units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.kilocalorie_thermal
+        unit_const: Final = units.EnergyHeatWorkUnits.kilocalorie_thermal
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2592,7 +2592,7 @@ class ToUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def kilogram_force_meter(self) -> "FieldQnty":
         """Convert to kilogram force meter units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.kilogram_force_meter
+        unit_const: Final = units.EnergyHeatWorkUnits.kilogram_force_meter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2603,7 +2603,7 @@ class ToUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def kiloton_tnt(self) -> "FieldQnty":
         """Convert to kiloton (TNT) units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.kiloton_tnt
+        unit_const: Final = units.EnergyHeatWorkUnits.kiloton_tnt
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2614,7 +2614,7 @@ class ToUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def kilowatt_hour(self) -> "FieldQnty":
         """Convert to kilowatt hour units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.kilowatt_hour
+        unit_const: Final = units.EnergyHeatWorkUnits.kilowatt_hour
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2625,7 +2625,7 @@ class ToUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def liter_atmosphere(self) -> "FieldQnty":
         """Convert to liter atmosphere units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.liter_atmosphere
+        unit_const: Final = units.EnergyHeatWorkUnits.liter_atmosphere
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2636,7 +2636,7 @@ class ToUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def megaton_tnt(self) -> "FieldQnty":
         """Convert to megaton (TNT) units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.megaton_tnt
+        unit_const: Final = units.EnergyHeatWorkUnits.megaton_tnt
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2647,7 +2647,7 @@ class ToUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def pound_centigrade_unit_15circ_mathrmc(self) -> "FieldQnty":
         """Convert to pound centigrade unit ( $15^{\\circ} \\mathrm{C}$ ) units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.pound_centigrade_unit_15circ_mathrmc
+        unit_const: Final = units.EnergyHeatWorkUnits.pound_centigrade_unit_15circ_mathrmc
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2658,13 +2658,13 @@ class ToUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def prout(self) -> "FieldQnty":
         """Convert to prout units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.prout
+        unit_const: Final = units.EnergyHeatWorkUnits.prout
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def q_unit(self) -> "FieldQnty":
         """Convert to Q unit units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.q_unit
+        unit_const: Final = units.EnergyHeatWorkUnits.q_unit
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2675,7 +2675,7 @@ class ToUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def quad_quadrillion_btu(self) -> "FieldQnty":
         """Convert to quad (quadrillion Btu) units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.quad_quadrillion_btu
+        unit_const: Final = units.EnergyHeatWorkUnits.quad_quadrillion_btu
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2686,7 +2686,7 @@ class ToUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def rydberg(self) -> "FieldQnty":
         """Convert to rydberg units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.rydberg
+        unit_const: Final = units.EnergyHeatWorkUnits.rydberg
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2697,7 +2697,7 @@ class ToUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def therm_eeg(self) -> "FieldQnty":
         """Convert to therm (EEG) units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.therm_eeg
+        unit_const: Final = units.EnergyHeatWorkUnits.therm_eeg
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2708,7 +2708,7 @@ class ToUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def therm_refineries(self) -> "FieldQnty":
         """Convert to therm (refineries) units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.therm_refineries
+        unit_const: Final = units.EnergyHeatWorkUnits.therm_refineries
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2729,7 +2729,7 @@ class ToUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def therm_us(self) -> "FieldQnty":
         """Convert to therm (US) units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.therm_us
+        unit_const: Final = units.EnergyHeatWorkUnits.therm_us
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2740,7 +2740,7 @@ class ToUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def ton_coal_equivalent(self) -> "FieldQnty":
         """Convert to ton coal equivalent units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.ton_coal_equivalent
+        unit_const: Final = units.EnergyHeatWorkUnits.ton_coal_equivalent
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2751,7 +2751,7 @@ class ToUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def ton_oil_equivalent(self) -> "FieldQnty":
         """Convert to ton oil equivalent units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.ton_oil_equivalent
+        unit_const: Final = units.EnergyHeatWorkUnits.ton_oil_equivalent
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2762,7 +2762,7 @@ class ToUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def kilojoule(self) -> "FieldQnty":
         """Convert to kilojoule units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.kilojoule
+        unit_const: Final = units.EnergyHeatWorkUnits.kilojoule
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2773,7 +2773,7 @@ class ToUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def megajoule(self) -> "FieldQnty":
         """Convert to megajoule units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.megajoule
+        unit_const: Final = units.EnergyHeatWorkUnits.megajoule
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2784,7 +2784,7 @@ class ToUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def gigajoule(self) -> "FieldQnty":
         """Convert to gigajoule units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.gigajoule
+        unit_const: Final = units.EnergyHeatWorkUnits.gigajoule
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2806,7 +2806,7 @@ class ToUnitEnergyPerUnitAreaConverter(UnitConverter):
     @property
     def british_thermal_unit_per_square_foot(self) -> "FieldQnty":
         """Convert to British thermal unit per square foot units."""
-        unit_const: Final = field_units.EnergyPerUnitAreaUnits.british_thermal_unit_per_square_foot
+        unit_const: Final = units.EnergyPerUnitAreaUnits.british_thermal_unit_per_square_foot
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2827,7 +2827,7 @@ class ToUnitEnergyPerUnitAreaConverter(UnitConverter):
     @property
     def joule_per_square_meter(self) -> "FieldQnty":
         """Convert to joule per square meter units."""
-        unit_const: Final = field_units.EnergyPerUnitAreaUnits.joule_per_square_meter
+        unit_const: Final = units.EnergyPerUnitAreaUnits.joule_per_square_meter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2838,7 +2838,7 @@ class ToUnitEnergyPerUnitAreaConverter(UnitConverter):
     @property
     def langley(self) -> "FieldQnty":
         """Convert to Langley units."""
-        unit_const: Final = field_units.EnergyPerUnitAreaUnits.langley
+        unit_const: Final = units.EnergyPerUnitAreaUnits.langley
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2860,13 +2860,13 @@ class ToUnitForceConverter(UnitConverter):
     @property
     def crinal(self) -> "FieldQnty":
         """Convert to crinal units."""
-        unit_const: Final = field_units.ForceUnits.crinal
+        unit_const: Final = units.ForceUnits.crinal
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def dyne(self) -> "FieldQnty":
         """Convert to dyne units."""
-        unit_const: Final = field_units.ForceUnits.dyne
+        unit_const: Final = units.ForceUnits.dyne
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2877,13 +2877,13 @@ class ToUnitForceConverter(UnitConverter):
     @property
     def funal(self) -> "FieldQnty":
         """Convert to funal units."""
-        unit_const: Final = field_units.ForceUnits.funal
+        unit_const: Final = units.ForceUnits.funal
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def kilogram_force(self) -> "FieldQnty":
         """Convert to kilogram force units."""
-        unit_const: Final = field_units.ForceUnits.kilogram_force
+        unit_const: Final = units.ForceUnits.kilogram_force
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2894,7 +2894,7 @@ class ToUnitForceConverter(UnitConverter):
     @property
     def kip_force(self) -> "FieldQnty":
         """Convert to kip force units."""
-        unit_const: Final = field_units.ForceUnits.kip_force
+        unit_const: Final = units.ForceUnits.kip_force
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2905,7 +2905,7 @@ class ToUnitForceConverter(UnitConverter):
     @property
     def newton(self) -> "FieldQnty":
         """Convert to newton units."""
-        unit_const: Final = field_units.ForceUnits.newton
+        unit_const: Final = units.ForceUnits.newton
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2916,7 +2916,7 @@ class ToUnitForceConverter(UnitConverter):
     @property
     def ounce_force(self) -> "FieldQnty":
         """Convert to ounce force units."""
-        unit_const: Final = field_units.ForceUnits.ounce_force
+        unit_const: Final = units.ForceUnits.ounce_force
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2937,7 +2937,7 @@ class ToUnitForceConverter(UnitConverter):
     @property
     def pond(self) -> "FieldQnty":
         """Convert to pond units."""
-        unit_const: Final = field_units.ForceUnits.pond
+        unit_const: Final = units.ForceUnits.pond
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2948,7 +2948,7 @@ class ToUnitForceConverter(UnitConverter):
     @property
     def pound_force(self) -> "FieldQnty":
         """Convert to pound force units."""
-        unit_const: Final = field_units.ForceUnits.pound_force
+        unit_const: Final = units.ForceUnits.pound_force
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2969,7 +2969,7 @@ class ToUnitForceConverter(UnitConverter):
     @property
     def poundal(self) -> "FieldQnty":
         """Convert to poundal units."""
-        unit_const: Final = field_units.ForceUnits.poundal
+        unit_const: Final = units.ForceUnits.poundal
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2980,7 +2980,7 @@ class ToUnitForceConverter(UnitConverter):
     @property
     def slug_force(self) -> "FieldQnty":
         """Convert to slug force units."""
-        unit_const: Final = field_units.ForceUnits.slug_force
+        unit_const: Final = units.ForceUnits.slug_force
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -2991,7 +2991,7 @@ class ToUnitForceConverter(UnitConverter):
     @property
     def sth_ne(self) -> "FieldQnty":
         """Convert to sthène units."""
-        unit_const: Final = field_units.ForceUnits.sth_ne
+        unit_const: Final = units.ForceUnits.sth_ne
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3002,7 +3002,7 @@ class ToUnitForceConverter(UnitConverter):
     @property
     def ton_force_long(self) -> "FieldQnty":
         """Convert to ton (force, long) units."""
-        unit_const: Final = field_units.ForceUnits.ton_force_long
+        unit_const: Final = units.ForceUnits.ton_force_long
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3013,7 +3013,7 @@ class ToUnitForceConverter(UnitConverter):
     @property
     def ton_force_metric(self) -> "FieldQnty":
         """Convert to ton (force, metric) units."""
-        unit_const: Final = field_units.ForceUnits.ton_force_metric
+        unit_const: Final = units.ForceUnits.ton_force_metric
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3024,7 +3024,7 @@ class ToUnitForceConverter(UnitConverter):
     @property
     def ton_force_short(self) -> "FieldQnty":
         """Convert to ton (force, short) units."""
-        unit_const: Final = field_units.ForceUnits.ton_force_short
+        unit_const: Final = units.ForceUnits.ton_force_short
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3035,7 +3035,7 @@ class ToUnitForceConverter(UnitConverter):
     @property
     def kilonewton(self) -> "FieldQnty":
         """Convert to kilonewton units."""
-        unit_const: Final = field_units.ForceUnits.kilonewton
+        unit_const: Final = units.ForceUnits.kilonewton
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3046,7 +3046,7 @@ class ToUnitForceConverter(UnitConverter):
     @property
     def millinewton(self) -> "FieldQnty":
         """Convert to millinewton units."""
-        unit_const: Final = field_units.ForceUnits.millinewton
+        unit_const: Final = units.ForceUnits.millinewton
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3068,7 +3068,7 @@ class ToUnitForceBodyConverter(UnitConverter):
     @property
     def dyne_per_cubic_centimeter(self) -> "FieldQnty":
         """Convert to dyne per cubic centimeter units."""
-        unit_const: Final = field_units.ForceBodyUnits.dyne_per_cubic_centimeter
+        unit_const: Final = units.ForceBodyUnits.dyne_per_cubic_centimeter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3089,7 +3089,7 @@ class ToUnitForceBodyConverter(UnitConverter):
     @property
     def kilogram_force_per_cubic_centimeter(self) -> "FieldQnty":
         """Convert to kilogram force per cubic centimeter units."""
-        unit_const: Final = field_units.ForceBodyUnits.kilogram_force_per_cubic_centimeter
+        unit_const: Final = units.ForceBodyUnits.kilogram_force_per_cubic_centimeter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3100,7 +3100,7 @@ class ToUnitForceBodyConverter(UnitConverter):
     @property
     def kilogram_force_per_cubic_meter(self) -> "FieldQnty":
         """Convert to kilogram force per cubic meter units."""
-        unit_const: Final = field_units.ForceBodyUnits.kilogram_force_per_cubic_meter
+        unit_const: Final = units.ForceBodyUnits.kilogram_force_per_cubic_meter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3111,7 +3111,7 @@ class ToUnitForceBodyConverter(UnitConverter):
     @property
     def newton_per_cubic_meter(self) -> "FieldQnty":
         """Convert to newton per cubic meter units."""
-        unit_const: Final = field_units.ForceBodyUnits.newton_per_cubic_meter
+        unit_const: Final = units.ForceBodyUnits.newton_per_cubic_meter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3122,7 +3122,7 @@ class ToUnitForceBodyConverter(UnitConverter):
     @property
     def pound_force_per_cubic_foot(self) -> "FieldQnty":
         """Convert to pound force per cubic foot units."""
-        unit_const: Final = field_units.ForceBodyUnits.pound_force_per_cubic_foot
+        unit_const: Final = units.ForceBodyUnits.pound_force_per_cubic_foot
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3133,7 +3133,7 @@ class ToUnitForceBodyConverter(UnitConverter):
     @property
     def pound_force_per_cubic_inch(self) -> "FieldQnty":
         """Convert to pound force per cubic inch units."""
-        unit_const: Final = field_units.ForceBodyUnits.pound_force_per_cubic_inch
+        unit_const: Final = units.ForceBodyUnits.pound_force_per_cubic_inch
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3144,7 +3144,7 @@ class ToUnitForceBodyConverter(UnitConverter):
     @property
     def ton_force_per_cubic_foot(self) -> "FieldQnty":
         """Convert to ton force per cubic foot units."""
-        unit_const: Final = field_units.ForceBodyUnits.ton_force_per_cubic_foot
+        unit_const: Final = units.ForceBodyUnits.ton_force_per_cubic_foot
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3166,7 +3166,7 @@ class ToUnitForcePerUnitMassConverter(UnitConverter):
     @property
     def dyne_per_gram(self) -> "FieldQnty":
         """Convert to dyne per gram units."""
-        unit_const: Final = field_units.ForcePerUnitMassUnits.dyne_per_gram
+        unit_const: Final = units.ForcePerUnitMassUnits.dyne_per_gram
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3177,7 +3177,7 @@ class ToUnitForcePerUnitMassConverter(UnitConverter):
     @property
     def kilogram_force_per_kilogram(self) -> "FieldQnty":
         """Convert to kilogram force per kilogram units."""
-        unit_const: Final = field_units.ForcePerUnitMassUnits.kilogram_force_per_kilogram
+        unit_const: Final = units.ForcePerUnitMassUnits.kilogram_force_per_kilogram
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3188,7 +3188,7 @@ class ToUnitForcePerUnitMassConverter(UnitConverter):
     @property
     def newton_per_kilogram(self) -> "FieldQnty":
         """Convert to newton per kilogram units."""
-        unit_const: Final = field_units.ForcePerUnitMassUnits.newton_per_kilogram
+        unit_const: Final = units.ForcePerUnitMassUnits.newton_per_kilogram
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3199,7 +3199,7 @@ class ToUnitForcePerUnitMassConverter(UnitConverter):
     @property
     def pound_force_per_pound_mass(self) -> "FieldQnty":
         """Convert to pound force per pound mass units."""
-        unit_const: Final = field_units.ForcePerUnitMassUnits.pound_force_per_pound_mass
+        unit_const: Final = units.ForcePerUnitMassUnits.pound_force_per_pound_mass
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3220,7 +3220,7 @@ class ToUnitForcePerUnitMassConverter(UnitConverter):
     @property
     def pound_force_per_slug(self) -> "FieldQnty":
         """Convert to pound force per slug units."""
-        unit_const: Final = field_units.ForcePerUnitMassUnits.pound_force_per_slug
+        unit_const: Final = units.ForcePerUnitMassUnits.pound_force_per_slug
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3242,7 +3242,7 @@ class ToUnitFrequencyVoltageRatioConverter(UnitConverter):
     @property
     def cycles_per_second_per_volt(self) -> "FieldQnty":
         """Convert to cycles per second per volt units."""
-        unit_const: Final = field_units.FrequencyVoltageRatioUnits.cycles_per_second_per_volt
+        unit_const: Final = units.FrequencyVoltageRatioUnits.cycles_per_second_per_volt
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3253,7 +3253,7 @@ class ToUnitFrequencyVoltageRatioConverter(UnitConverter):
     @property
     def hertz_per_volt(self) -> "FieldQnty":
         """Convert to hertz per volt units."""
-        unit_const: Final = field_units.FrequencyVoltageRatioUnits.hertz_per_volt
+        unit_const: Final = units.FrequencyVoltageRatioUnits.hertz_per_volt
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3264,7 +3264,7 @@ class ToUnitFrequencyVoltageRatioConverter(UnitConverter):
     @property
     def terahertz_per_volt(self) -> "FieldQnty":
         """Convert to terahertz per volt units."""
-        unit_const: Final = field_units.FrequencyVoltageRatioUnits.terahertz_per_volt
+        unit_const: Final = units.FrequencyVoltageRatioUnits.terahertz_per_volt
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3286,13 +3286,13 @@ class ToUnitFuelConsumptionConverter(UnitConverter):
     @property
     def unit_100_km_per_liter(self) -> "FieldQnty":
         """Convert to 100 km per liter units."""
-        unit_const: Final = field_units.FuelConsumptionUnits.unit_100_km_per_liter
+        unit_const: Final = units.FuelConsumptionUnits.unit_100_km_per_liter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def gallons_uk(self) -> "FieldQnty":
         """Convert to gallons (UK) per 100 miles units."""
-        unit_const: Final = field_units.FuelConsumptionUnits.gallons_uk
+        unit_const: Final = units.FuelConsumptionUnits.gallons_uk
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3303,7 +3303,7 @@ class ToUnitFuelConsumptionConverter(UnitConverter):
     @property
     def gallons_us(self) -> "FieldQnty":
         """Convert to gallons (US) per 100 miles units."""
-        unit_const: Final = field_units.FuelConsumptionUnits.gallons_us
+        unit_const: Final = units.FuelConsumptionUnits.gallons_us
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3314,7 +3314,7 @@ class ToUnitFuelConsumptionConverter(UnitConverter):
     @property
     def kilometers_per_gallon_uk(self) -> "FieldQnty":
         """Convert to kilometers per gallon (UK) units."""
-        unit_const: Final = field_units.FuelConsumptionUnits.kilometers_per_gallon_uk
+        unit_const: Final = units.FuelConsumptionUnits.kilometers_per_gallon_uk
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3325,7 +3325,7 @@ class ToUnitFuelConsumptionConverter(UnitConverter):
     @property
     def kilometers_per_gallon_us(self) -> "FieldQnty":
         """Convert to kilometers per gallon (US) units."""
-        unit_const: Final = field_units.FuelConsumptionUnits.kilometers_per_gallon_us
+        unit_const: Final = units.FuelConsumptionUnits.kilometers_per_gallon_us
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3336,7 +3336,7 @@ class ToUnitFuelConsumptionConverter(UnitConverter):
     @property
     def kilometers_per_liter(self) -> "FieldQnty":
         """Convert to kilometers per liter units."""
-        unit_const: Final = field_units.FuelConsumptionUnits.kilometers_per_liter
+        unit_const: Final = units.FuelConsumptionUnits.kilometers_per_liter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3347,13 +3347,13 @@ class ToUnitFuelConsumptionConverter(UnitConverter):
     @property
     def liters_per_100_km(self) -> "FieldQnty":
         """Convert to liters per 100 km units."""
-        unit_const: Final = field_units.FuelConsumptionUnits.liters_per_100_km
+        unit_const: Final = units.FuelConsumptionUnits.liters_per_100_km
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def liters_per_kilometer(self) -> "FieldQnty":
         """Convert to liters per kilometer units."""
-        unit_const: Final = field_units.FuelConsumptionUnits.liters_per_kilometer
+        unit_const: Final = units.FuelConsumptionUnits.liters_per_kilometer
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3364,7 +3364,7 @@ class ToUnitFuelConsumptionConverter(UnitConverter):
     @property
     def meters_per_gallon_uk(self) -> "FieldQnty":
         """Convert to meters per gallon (UK) units."""
-        unit_const: Final = field_units.FuelConsumptionUnits.meters_per_gallon_uk
+        unit_const: Final = units.FuelConsumptionUnits.meters_per_gallon_uk
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3375,7 +3375,7 @@ class ToUnitFuelConsumptionConverter(UnitConverter):
     @property
     def meters_per_gallon_us(self) -> "FieldQnty":
         """Convert to meters per gallon (US) units."""
-        unit_const: Final = field_units.FuelConsumptionUnits.meters_per_gallon_us
+        unit_const: Final = units.FuelConsumptionUnits.meters_per_gallon_us
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3386,7 +3386,7 @@ class ToUnitFuelConsumptionConverter(UnitConverter):
     @property
     def miles_per_gallon_uk(self) -> "FieldQnty":
         """Convert to miles per gallon (UK) units."""
-        unit_const: Final = field_units.FuelConsumptionUnits.miles_per_gallon_uk
+        unit_const: Final = units.FuelConsumptionUnits.miles_per_gallon_uk
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3407,7 +3407,7 @@ class ToUnitFuelConsumptionConverter(UnitConverter):
     @property
     def miles_per_gallon_us(self) -> "FieldQnty":
         """Convert to miles per gallon (US) units."""
-        unit_const: Final = field_units.FuelConsumptionUnits.miles_per_gallon_us
+        unit_const: Final = units.FuelConsumptionUnits.miles_per_gallon_us
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3428,7 +3428,7 @@ class ToUnitFuelConsumptionConverter(UnitConverter):
     @property
     def miles_per_liter(self) -> "FieldQnty":
         """Convert to miles per liter units."""
-        unit_const: Final = field_units.FuelConsumptionUnits.miles_per_liter
+        unit_const: Final = units.FuelConsumptionUnits.miles_per_liter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3450,7 +3450,7 @@ class ToUnitHeatOfCombustionConverter(UnitConverter):
     @property
     def british_thermal_unit_per_pound(self) -> "FieldQnty":
         """Convert to British thermal unit per pound units."""
-        unit_const: Final = field_units.HeatOfCombustionUnits.british_thermal_unit_per_pound
+        unit_const: Final = units.HeatOfCombustionUnits.british_thermal_unit_per_pound
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3461,7 +3461,7 @@ class ToUnitHeatOfCombustionConverter(UnitConverter):
     @property
     def calorie_per_gram(self) -> "FieldQnty":
         """Convert to calorie per gram units."""
-        unit_const: Final = field_units.HeatOfCombustionUnits.calorie_per_gram
+        unit_const: Final = units.HeatOfCombustionUnits.calorie_per_gram
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3472,7 +3472,7 @@ class ToUnitHeatOfCombustionConverter(UnitConverter):
     @property
     def chu_per_pound(self) -> "FieldQnty":
         """Convert to Chu per pound units."""
-        unit_const: Final = field_units.HeatOfCombustionUnits.chu_per_pound
+        unit_const: Final = units.HeatOfCombustionUnits.chu_per_pound
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3483,7 +3483,7 @@ class ToUnitHeatOfCombustionConverter(UnitConverter):
     @property
     def joule_per_kilogram(self) -> "FieldQnty":
         """Convert to joule per kilogram units."""
-        unit_const: Final = field_units.HeatOfCombustionUnits.joule_per_kilogram
+        unit_const: Final = units.HeatOfCombustionUnits.joule_per_kilogram
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3505,7 +3505,7 @@ class ToUnitHeatOfFusionConverter(UnitConverter):
     @property
     def british_thermal_unit_mean(self) -> "FieldQnty":
         """Convert to British thermal unit (mean) per pound units."""
-        unit_const: Final = field_units.HeatOfFusionUnits.british_thermal_unit_mean
+        unit_const: Final = units.HeatOfFusionUnits.british_thermal_unit_mean
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3516,7 +3516,7 @@ class ToUnitHeatOfFusionConverter(UnitConverter):
     @property
     def british_thermal_unit_per_pound(self) -> "FieldQnty":
         """Convert to British thermal unit per pound units."""
-        unit_const: Final = field_units.HeatOfFusionUnits.british_thermal_unit_per_pound
+        unit_const: Final = units.HeatOfFusionUnits.british_thermal_unit_per_pound
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3527,7 +3527,7 @@ class ToUnitHeatOfFusionConverter(UnitConverter):
     @property
     def calorie_per_gram(self) -> "FieldQnty":
         """Convert to calorie per gram units."""
-        unit_const: Final = field_units.HeatOfFusionUnits.calorie_per_gram
+        unit_const: Final = units.HeatOfFusionUnits.calorie_per_gram
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3538,7 +3538,7 @@ class ToUnitHeatOfFusionConverter(UnitConverter):
     @property
     def chu_per_pound(self) -> "FieldQnty":
         """Convert to Chu per pound units."""
-        unit_const: Final = field_units.HeatOfFusionUnits.chu_per_pound
+        unit_const: Final = units.HeatOfFusionUnits.chu_per_pound
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3549,7 +3549,7 @@ class ToUnitHeatOfFusionConverter(UnitConverter):
     @property
     def joule_per_kilogram(self) -> "FieldQnty":
         """Convert to joule per kilogram units."""
-        unit_const: Final = field_units.HeatOfFusionUnits.joule_per_kilogram
+        unit_const: Final = units.HeatOfFusionUnits.joule_per_kilogram
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3571,7 +3571,7 @@ class ToUnitHeatOfVaporizationConverter(UnitConverter):
     @property
     def british_thermal_unit_per_pound(self) -> "FieldQnty":
         """Convert to British thermal unit per pound units."""
-        unit_const: Final = field_units.HeatOfVaporizationUnits.british_thermal_unit_per_pound
+        unit_const: Final = units.HeatOfVaporizationUnits.british_thermal_unit_per_pound
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3582,7 +3582,7 @@ class ToUnitHeatOfVaporizationConverter(UnitConverter):
     @property
     def calorie_per_gram(self) -> "FieldQnty":
         """Convert to calorie per gram units."""
-        unit_const: Final = field_units.HeatOfVaporizationUnits.calorie_per_gram
+        unit_const: Final = units.HeatOfVaporizationUnits.calorie_per_gram
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3593,7 +3593,7 @@ class ToUnitHeatOfVaporizationConverter(UnitConverter):
     @property
     def chu_per_pound(self) -> "FieldQnty":
         """Convert to Chu per pound units."""
-        unit_const: Final = field_units.HeatOfVaporizationUnits.chu_per_pound
+        unit_const: Final = units.HeatOfVaporizationUnits.chu_per_pound
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3604,7 +3604,7 @@ class ToUnitHeatOfVaporizationConverter(UnitConverter):
     @property
     def joule_per_kilogram(self) -> "FieldQnty":
         """Convert to joule per kilogram units."""
-        unit_const: Final = field_units.HeatOfVaporizationUnits.joule_per_kilogram
+        unit_const: Final = units.HeatOfVaporizationUnits.joule_per_kilogram
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3626,7 +3626,7 @@ class ToUnitHeatTransferCoefficientConverter(UnitConverter):
     @property
     def btu_per_square_foot_per_hour_per_degree_fahrenheit_or_rankine(self) -> "FieldQnty":
         """Convert to Btu per square foot per hour per degree Fahrenheit (or Rankine) units."""
-        unit_const: Final = field_units.HeatTransferCoefficientUnits.btu_per_square_foot_per_hour_per_degree_fahrenheit_or_rankine
+        unit_const: Final = units.HeatTransferCoefficientUnits.btu_per_square_foot_per_hour_per_degree_fahrenheit_or_rankine
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3637,7 +3637,7 @@ class ToUnitHeatTransferCoefficientConverter(UnitConverter):
     @property
     def watt_per_square_meter_per_degree_celsius_or_kelvin(self) -> "FieldQnty":
         """Convert to watt per square meter per degree Celsius (or kelvin) units."""
-        unit_const: Final = field_units.HeatTransferCoefficientUnits.watt_per_square_meter_per_degree_celsius_or_kelvin
+        unit_const: Final = units.HeatTransferCoefficientUnits.watt_per_square_meter_per_degree_celsius_or_kelvin
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3659,7 +3659,7 @@ class ToUnitIlluminanceConverter(UnitConverter):
     @property
     def foot_candle(self) -> "FieldQnty":
         """Convert to foot-candle units."""
-        unit_const: Final = field_units.IlluminanceUnits.foot_candle
+        unit_const: Final = units.IlluminanceUnits.foot_candle
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3680,7 +3680,7 @@ class ToUnitIlluminanceConverter(UnitConverter):
     @property
     def lux(self) -> "FieldQnty":
         """Convert to lux units."""
-        unit_const: Final = field_units.IlluminanceUnits.lux
+        unit_const: Final = units.IlluminanceUnits.lux
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3691,13 +3691,13 @@ class ToUnitIlluminanceConverter(UnitConverter):
     @property
     def nox(self) -> "FieldQnty":
         """Convert to nox units."""
-        unit_const: Final = field_units.IlluminanceUnits.nox
+        unit_const: Final = units.IlluminanceUnits.nox
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def phot(self) -> "FieldQnty":
         """Convert to phot units."""
-        unit_const: Final = field_units.IlluminanceUnits.phot
+        unit_const: Final = units.IlluminanceUnits.phot
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3708,7 +3708,7 @@ class ToUnitIlluminanceConverter(UnitConverter):
     @property
     def skot(self) -> "FieldQnty":
         """Convert to skot units."""
-        unit_const: Final = field_units.IlluminanceUnits.skot
+        unit_const: Final = units.IlluminanceUnits.skot
         return self._convert_quantity(unit_const, modify_original=True)
 
 
@@ -3725,7 +3725,7 @@ class ToUnitKineticEnergyOfTurbulenceConverter(UnitConverter):
     @property
     def square_foot_per_second_squared(self) -> "FieldQnty":
         """Convert to square foot per second squared units."""
-        unit_const: Final = field_units.KineticEnergyOfTurbulenceUnits.square_foot_per_second_squared
+        unit_const: Final = units.KineticEnergyOfTurbulenceUnits.square_foot_per_second_squared
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3746,7 +3746,7 @@ class ToUnitKineticEnergyOfTurbulenceConverter(UnitConverter):
     @property
     def square_meters_per_second_squared(self) -> "FieldQnty":
         """Convert to square meters per second squared units."""
-        unit_const: Final = field_units.KineticEnergyOfTurbulenceUnits.square_meters_per_second_squared
+        unit_const: Final = units.KineticEnergyOfTurbulenceUnits.square_meters_per_second_squared
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3768,7 +3768,7 @@ class ToUnitLengthConverter(UnitConverter):
     @property
     def ngstr_m(self) -> "FieldQnty":
         """Convert to ångström units."""
-        unit_const: Final = field_units.LengthUnits.ngstr_m
+        unit_const: Final = units.LengthUnits.ngstr_m
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3779,7 +3779,7 @@ class ToUnitLengthConverter(UnitConverter):
     @property
     def arpent_quebec(self) -> "FieldQnty":
         """Convert to arpent (Quebec) units."""
-        unit_const: Final = field_units.LengthUnits.arpent_quebec
+        unit_const: Final = units.LengthUnits.arpent_quebec
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3790,7 +3790,7 @@ class ToUnitLengthConverter(UnitConverter):
     @property
     def astronomic_unit(self) -> "FieldQnty":
         """Convert to astronomic unit units."""
-        unit_const: Final = field_units.LengthUnits.astronomic_unit
+        unit_const: Final = units.LengthUnits.astronomic_unit
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3801,7 +3801,7 @@ class ToUnitLengthConverter(UnitConverter):
     @property
     def attometer(self) -> "FieldQnty":
         """Convert to attometer units."""
-        unit_const: Final = field_units.LengthUnits.attometer
+        unit_const: Final = units.LengthUnits.attometer
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3812,7 +3812,7 @@ class ToUnitLengthConverter(UnitConverter):
     @property
     def calibre_centinch(self) -> "FieldQnty":
         """Convert to calibre (centinch) units."""
-        unit_const: Final = field_units.LengthUnits.calibre_centinch
+        unit_const: Final = units.LengthUnits.calibre_centinch
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3823,7 +3823,7 @@ class ToUnitLengthConverter(UnitConverter):
     @property
     def centimeter(self) -> "FieldQnty":
         """Convert to centimeter units."""
-        unit_const: Final = field_units.LengthUnits.centimeter
+        unit_const: Final = units.LengthUnits.centimeter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3834,7 +3834,7 @@ class ToUnitLengthConverter(UnitConverter):
     @property
     def chain_engrs_or_ramsden(self) -> "FieldQnty":
         """Convert to chain (Engr's or Ramsden) units."""
-        unit_const: Final = field_units.LengthUnits.chain_engrs_or_ramsden
+        unit_const: Final = units.LengthUnits.chain_engrs_or_ramsden
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3855,7 +3855,7 @@ class ToUnitLengthConverter(UnitConverter):
     @property
     def chain_gunters(self) -> "FieldQnty":
         """Convert to chain (Gunter's) units."""
-        unit_const: Final = field_units.LengthUnits.chain_gunters
+        unit_const: Final = units.LengthUnits.chain_gunters
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3866,7 +3866,7 @@ class ToUnitLengthConverter(UnitConverter):
     @property
     def chain_surveyors(self) -> "FieldQnty":
         """Convert to chain (surveyors) units."""
-        unit_const: Final = field_units.LengthUnits.chain_surveyors
+        unit_const: Final = units.LengthUnits.chain_surveyors
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3877,7 +3877,7 @@ class ToUnitLengthConverter(UnitConverter):
     @property
     def cubit_uk(self) -> "FieldQnty":
         """Convert to cubit (UK) units."""
-        unit_const: Final = field_units.LengthUnits.cubit_uk
+        unit_const: Final = units.LengthUnits.cubit_uk
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3888,13 +3888,13 @@ class ToUnitLengthConverter(UnitConverter):
     @property
     def ell(self) -> "FieldQnty":
         """Convert to ell units."""
-        unit_const: Final = field_units.LengthUnits.ell
+        unit_const: Final = units.LengthUnits.ell
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def fathom(self) -> "FieldQnty":
         """Convert to fathom units."""
-        unit_const: Final = field_units.LengthUnits.fathom
+        unit_const: Final = units.LengthUnits.fathom
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3905,7 +3905,7 @@ class ToUnitLengthConverter(UnitConverter):
     @property
     def femtometre(self) -> "FieldQnty":
         """Convert to femtometre units."""
-        unit_const: Final = field_units.LengthUnits.femtometre
+        unit_const: Final = units.LengthUnits.femtometre
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3916,7 +3916,7 @@ class ToUnitLengthConverter(UnitConverter):
     @property
     def fermi(self) -> "FieldQnty":
         """Convert to fermi units."""
-        unit_const: Final = field_units.LengthUnits.fermi
+        unit_const: Final = units.LengthUnits.fermi
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3927,7 +3927,7 @@ class ToUnitLengthConverter(UnitConverter):
     @property
     def foot(self) -> "FieldQnty":
         """Convert to foot units."""
-        unit_const: Final = field_units.LengthUnits.foot
+        unit_const: Final = units.LengthUnits.foot
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3938,7 +3938,7 @@ class ToUnitLengthConverter(UnitConverter):
     @property
     def furlong_uk_and_us(self) -> "FieldQnty":
         """Convert to furlong (UK and US) units."""
-        unit_const: Final = field_units.LengthUnits.furlong_uk_and_us
+        unit_const: Final = units.LengthUnits.furlong_uk_and_us
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3949,7 +3949,7 @@ class ToUnitLengthConverter(UnitConverter):
     @property
     def inch(self) -> "FieldQnty":
         """Convert to inch units."""
-        unit_const: Final = field_units.LengthUnits.inch
+        unit_const: Final = units.LengthUnits.inch
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3960,7 +3960,7 @@ class ToUnitLengthConverter(UnitConverter):
     @property
     def kilometer(self) -> "FieldQnty":
         """Convert to kilometer units."""
-        unit_const: Final = field_units.LengthUnits.kilometer
+        unit_const: Final = units.LengthUnits.kilometer
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3971,7 +3971,7 @@ class ToUnitLengthConverter(UnitConverter):
     @property
     def league_us_statute(self) -> "FieldQnty":
         """Convert to league (US, statute) units."""
-        unit_const: Final = field_units.LengthUnits.league_us_statute
+        unit_const: Final = units.LengthUnits.league_us_statute
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -3982,19 +3982,19 @@ class ToUnitLengthConverter(UnitConverter):
     @property
     def lieue_metric(self) -> "FieldQnty":
         """Convert to lieue (metric) units."""
-        unit_const: Final = field_units.LengthUnits.lieue_metric
+        unit_const: Final = units.LengthUnits.lieue_metric
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def ligne_metric(self) -> "FieldQnty":
         """Convert to ligne (metric) units."""
-        unit_const: Final = field_units.LengthUnits.ligne_metric
+        unit_const: Final = units.LengthUnits.ligne_metric
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def line_us(self) -> "FieldQnty":
         """Convert to line (US) units."""
-        unit_const: Final = field_units.LengthUnits.line_us
+        unit_const: Final = units.LengthUnits.line_us
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -4005,7 +4005,7 @@ class ToUnitLengthConverter(UnitConverter):
     @property
     def link_surveyors(self) -> "FieldQnty":
         """Convert to link (surveyors) units."""
-        unit_const: Final = field_units.LengthUnits.link_surveyors
+        unit_const: Final = units.LengthUnits.link_surveyors
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -4016,7 +4016,7 @@ class ToUnitLengthConverter(UnitConverter):
     @property
     def meter(self) -> "FieldQnty":
         """Convert to meter units."""
-        unit_const: Final = field_units.LengthUnits.meter
+        unit_const: Final = units.LengthUnits.meter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -4027,7 +4027,7 @@ class ToUnitLengthConverter(UnitConverter):
     @property
     def micrometer(self) -> "FieldQnty":
         """Convert to micrometer units."""
-        unit_const: Final = field_units.LengthUnits.micrometer
+        unit_const: Final = units.LengthUnits.micrometer
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -4038,7 +4038,7 @@ class ToUnitLengthConverter(UnitConverter):
     @property
     def micron(self) -> "FieldQnty":
         """Convert to micron units."""
-        unit_const: Final = field_units.LengthUnits.micron
+        unit_const: Final = units.LengthUnits.micron
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -4049,13 +4049,13 @@ class ToUnitLengthConverter(UnitConverter):
     @property
     def mil(self) -> "FieldQnty":
         """Convert to mil units."""
-        unit_const: Final = field_units.LengthUnits.mil
+        unit_const: Final = units.LengthUnits.mil
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def mile_geographical(self) -> "FieldQnty":
         """Convert to mile (geographical) units."""
-        unit_const: Final = field_units.LengthUnits.mile_geographical
+        unit_const: Final = units.LengthUnits.mile_geographical
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -4066,7 +4066,7 @@ class ToUnitLengthConverter(UnitConverter):
     @property
     def mile_us_nautical(self) -> "FieldQnty":
         """Convert to mile (US, nautical) units."""
-        unit_const: Final = field_units.LengthUnits.mile_us_nautical
+        unit_const: Final = units.LengthUnits.mile_us_nautical
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -4077,13 +4077,13 @@ class ToUnitLengthConverter(UnitConverter):
     @property
     def mile_us_statute(self) -> "FieldQnty":
         """Convert to mile (US, statute) units."""
-        unit_const: Final = field_units.LengthUnits.mile_us_statute
+        unit_const: Final = units.LengthUnits.mile_us_statute
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def mile_us_survey(self) -> "FieldQnty":
         """Convert to mile (US, survey) units."""
-        unit_const: Final = field_units.LengthUnits.mile_us_survey
+        unit_const: Final = units.LengthUnits.mile_us_survey
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -4094,7 +4094,7 @@ class ToUnitLengthConverter(UnitConverter):
     @property
     def millimeter(self) -> "FieldQnty":
         """Convert to millimeter units."""
-        unit_const: Final = field_units.LengthUnits.millimeter
+        unit_const: Final = units.LengthUnits.millimeter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -4105,7 +4105,7 @@ class ToUnitLengthConverter(UnitConverter):
     @property
     def millimicron(self) -> "FieldQnty":
         """Convert to millimicron units."""
-        unit_const: Final = field_units.LengthUnits.millimicron
+        unit_const: Final = units.LengthUnits.millimicron
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -4116,7 +4116,7 @@ class ToUnitLengthConverter(UnitConverter):
     @property
     def nanometer_or_nanon(self) -> "FieldQnty":
         """Convert to nanometer or nanon units."""
-        unit_const: Final = field_units.LengthUnits.nanometer_or_nanon
+        unit_const: Final = units.LengthUnits.nanometer_or_nanon
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -4127,7 +4127,7 @@ class ToUnitLengthConverter(UnitConverter):
     @property
     def parsec(self) -> "FieldQnty":
         """Convert to parsec units."""
-        unit_const: Final = field_units.LengthUnits.parsec
+        unit_const: Final = units.LengthUnits.parsec
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -4138,7 +4138,7 @@ class ToUnitLengthConverter(UnitConverter):
     @property
     def perche(self) -> "FieldQnty":
         """Convert to perche units."""
-        unit_const: Final = field_units.LengthUnits.perche
+        unit_const: Final = units.LengthUnits.perche
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -4149,13 +4149,13 @@ class ToUnitLengthConverter(UnitConverter):
     @property
     def pica(self) -> "FieldQnty":
         """Convert to pica units."""
-        unit_const: Final = field_units.LengthUnits.pica
+        unit_const: Final = units.LengthUnits.pica
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def picometer(self) -> "FieldQnty":
         """Convert to picometer units."""
-        unit_const: Final = field_units.LengthUnits.picometer
+        unit_const: Final = units.LengthUnits.picometer
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -4166,7 +4166,7 @@ class ToUnitLengthConverter(UnitConverter):
     @property
     def point_didot(self) -> "FieldQnty":
         """Convert to point (Didot) units."""
-        unit_const: Final = field_units.LengthUnits.point_didot
+        unit_const: Final = units.LengthUnits.point_didot
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -4177,7 +4177,7 @@ class ToUnitLengthConverter(UnitConverter):
     @property
     def point_us(self) -> "FieldQnty":
         """Convert to point (US) units."""
-        unit_const: Final = field_units.LengthUnits.point_us
+        unit_const: Final = units.LengthUnits.point_us
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -4188,19 +4188,19 @@ class ToUnitLengthConverter(UnitConverter):
     @property
     def rod_or_pole(self) -> "FieldQnty":
         """Convert to rod or pole units."""
-        unit_const: Final = field_units.LengthUnits.rod_or_pole
+        unit_const: Final = units.LengthUnits.rod_or_pole
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def span(self) -> "FieldQnty":
         """Convert to span units."""
-        unit_const: Final = field_units.LengthUnits.span
+        unit_const: Final = units.LengthUnits.span
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def thou_millinch(self) -> "FieldQnty":
         """Convert to thou (millinch) units."""
-        unit_const: Final = field_units.LengthUnits.thou_millinch
+        unit_const: Final = units.LengthUnits.thou_millinch
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -4211,13 +4211,13 @@ class ToUnitLengthConverter(UnitConverter):
     @property
     def toise_metric(self) -> "FieldQnty":
         """Convert to toise (metric) units."""
-        unit_const: Final = field_units.LengthUnits.toise_metric
+        unit_const: Final = units.LengthUnits.toise_metric
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def yard(self) -> "FieldQnty":
         """Convert to yard units."""
-        unit_const: Final = field_units.LengthUnits.yard
+        unit_const: Final = units.LengthUnits.yard
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -4228,7 +4228,7 @@ class ToUnitLengthConverter(UnitConverter):
     @property
     def nanometer(self) -> "FieldQnty":
         """Convert to nanometer units."""
-        unit_const: Final = field_units.LengthUnits.nanometer
+        unit_const: Final = units.LengthUnits.nanometer
         return self._convert_quantity(unit_const, modify_original=True)
 
 
@@ -4245,13 +4245,13 @@ class ToUnitLinearMassDensityConverter(UnitConverter):
     @property
     def denier(self) -> "FieldQnty":
         """Convert to denier units."""
-        unit_const: Final = field_units.LinearMassDensityUnits.denier
+        unit_const: Final = units.LinearMassDensityUnits.denier
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def kilogram_per_centimeter(self) -> "FieldQnty":
         """Convert to kilogram per centimeter units."""
-        unit_const: Final = field_units.LinearMassDensityUnits.kilogram_per_centimeter
+        unit_const: Final = units.LinearMassDensityUnits.kilogram_per_centimeter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -4262,7 +4262,7 @@ class ToUnitLinearMassDensityConverter(UnitConverter):
     @property
     def kilogram_per_meter(self) -> "FieldQnty":
         """Convert to kilogram per meter units."""
-        unit_const: Final = field_units.LinearMassDensityUnits.kilogram_per_meter
+        unit_const: Final = units.LinearMassDensityUnits.kilogram_per_meter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -4273,7 +4273,7 @@ class ToUnitLinearMassDensityConverter(UnitConverter):
     @property
     def pound_per_foot(self) -> "FieldQnty":
         """Convert to pound per foot units."""
-        unit_const: Final = field_units.LinearMassDensityUnits.pound_per_foot
+        unit_const: Final = units.LinearMassDensityUnits.pound_per_foot
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -4284,7 +4284,7 @@ class ToUnitLinearMassDensityConverter(UnitConverter):
     @property
     def pound_per_inch(self) -> "FieldQnty":
         """Convert to pound per inch units."""
-        unit_const: Final = field_units.LinearMassDensityUnits.pound_per_inch
+        unit_const: Final = units.LinearMassDensityUnits.pound_per_inch
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -4295,7 +4295,7 @@ class ToUnitLinearMassDensityConverter(UnitConverter):
     @property
     def pound_per_yard(self) -> "FieldQnty":
         """Convert to pound per yard units."""
-        unit_const: Final = field_units.LinearMassDensityUnits.pound_per_yard
+        unit_const: Final = units.LinearMassDensityUnits.pound_per_yard
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -4306,7 +4306,7 @@ class ToUnitLinearMassDensityConverter(UnitConverter):
     @property
     def ton_metric(self) -> "FieldQnty":
         """Convert to ton (metric) per kilometer units."""
-        unit_const: Final = field_units.LinearMassDensityUnits.ton_metric
+        unit_const: Final = units.LinearMassDensityUnits.ton_metric
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -4338,7 +4338,7 @@ class ToUnitLinearMomentumConverter(UnitConverter):
     @property
     def foot_pounds_force_per_hour(self) -> "FieldQnty":
         """Convert to foot pounds force per hour units."""
-        unit_const: Final = field_units.LinearMomentumUnits.foot_pounds_force_per_hour
+        unit_const: Final = units.LinearMomentumUnits.foot_pounds_force_per_hour
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -4359,7 +4359,7 @@ class ToUnitLinearMomentumConverter(UnitConverter):
     @property
     def foot_pounds_force_per_minute(self) -> "FieldQnty":
         """Convert to foot pounds force per minute units."""
-        unit_const: Final = field_units.LinearMomentumUnits.foot_pounds_force_per_minute
+        unit_const: Final = units.LinearMomentumUnits.foot_pounds_force_per_minute
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -4380,7 +4380,7 @@ class ToUnitLinearMomentumConverter(UnitConverter):
     @property
     def foot_pounds_force_per_second(self) -> "FieldQnty":
         """Convert to foot pounds force per second units."""
-        unit_const: Final = field_units.LinearMomentumUnits.foot_pounds_force_per_second
+        unit_const: Final = units.LinearMomentumUnits.foot_pounds_force_per_second
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -4401,7 +4401,7 @@ class ToUnitLinearMomentumConverter(UnitConverter):
     @property
     def gram_centimeters_per_second(self) -> "FieldQnty":
         """Convert to gram centimeters per second units."""
-        unit_const: Final = field_units.LinearMomentumUnits.gram_centimeters_per_second
+        unit_const: Final = units.LinearMomentumUnits.gram_centimeters_per_second
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -4412,7 +4412,7 @@ class ToUnitLinearMomentumConverter(UnitConverter):
     @property
     def kilogram_meters_per_second(self) -> "FieldQnty":
         """Convert to kilogram meters per second units."""
-        unit_const: Final = field_units.LinearMomentumUnits.kilogram_meters_per_second
+        unit_const: Final = units.LinearMomentumUnits.kilogram_meters_per_second
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -4434,7 +4434,7 @@ class ToUnitLuminanceSelfConverter(UnitConverter):
     @property
     def apostilb(self) -> "FieldQnty":
         """Convert to apostilb units."""
-        unit_const: Final = field_units.LuminanceSelfUnits.apostilb
+        unit_const: Final = units.LuminanceSelfUnits.apostilb
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -4445,7 +4445,7 @@ class ToUnitLuminanceSelfConverter(UnitConverter):
     @property
     def blondel(self) -> "FieldQnty":
         """Convert to blondel units."""
-        unit_const: Final = field_units.LuminanceSelfUnits.blondel
+        unit_const: Final = units.LuminanceSelfUnits.blondel
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -4456,7 +4456,7 @@ class ToUnitLuminanceSelfConverter(UnitConverter):
     @property
     def candela_per_square_meter(self) -> "FieldQnty":
         """Convert to candela per square meter units."""
-        unit_const: Final = field_units.LuminanceSelfUnits.candela_per_square_meter
+        unit_const: Final = units.LuminanceSelfUnits.candela_per_square_meter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -4467,7 +4467,7 @@ class ToUnitLuminanceSelfConverter(UnitConverter):
     @property
     def foot_lambert(self) -> "FieldQnty":
         """Convert to foot-lambert units."""
-        unit_const: Final = field_units.LuminanceSelfUnits.foot_lambert
+        unit_const: Final = units.LuminanceSelfUnits.foot_lambert
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -4478,7 +4478,7 @@ class ToUnitLuminanceSelfConverter(UnitConverter):
     @property
     def lambert(self) -> "FieldQnty":
         """Convert to lambert units."""
-        unit_const: Final = field_units.LuminanceSelfUnits.lambert
+        unit_const: Final = units.LuminanceSelfUnits.lambert
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -4489,19 +4489,19 @@ class ToUnitLuminanceSelfConverter(UnitConverter):
     @property
     def luxon(self) -> "FieldQnty":
         """Convert to luxon units."""
-        unit_const: Final = field_units.LuminanceSelfUnits.luxon
+        unit_const: Final = units.LuminanceSelfUnits.luxon
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def nit(self) -> "FieldQnty":
         """Convert to nit units."""
-        unit_const: Final = field_units.LuminanceSelfUnits.nit
+        unit_const: Final = units.LuminanceSelfUnits.nit
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def stilb(self) -> "FieldQnty":
         """Convert to stilb units."""
-        unit_const: Final = field_units.LuminanceSelfUnits.stilb
+        unit_const: Final = units.LuminanceSelfUnits.stilb
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -4512,7 +4512,7 @@ class ToUnitLuminanceSelfConverter(UnitConverter):
     @property
     def troland(self) -> "FieldQnty":
         """Convert to troland units."""
-        unit_const: Final = field_units.LuminanceSelfUnits.troland
+        unit_const: Final = units.LuminanceSelfUnits.troland
         return self._convert_quantity(unit_const, modify_original=True)
 
 
@@ -4529,7 +4529,7 @@ class ToUnitLuminousFluxConverter(UnitConverter):
     @property
     def candela_steradian(self) -> "FieldQnty":
         """Convert to candela steradian units."""
-        unit_const: Final = field_units.LuminousFluxUnits.candela_steradian
+        unit_const: Final = units.LuminousFluxUnits.candela_steradian
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -4540,7 +4540,7 @@ class ToUnitLuminousFluxConverter(UnitConverter):
     @property
     def lumen(self) -> "FieldQnty":
         """Convert to lumen units."""
-        unit_const: Final = field_units.LuminousFluxUnits.lumen
+        unit_const: Final = units.LuminousFluxUnits.lumen
         return self._convert_quantity(unit_const, modify_original=True)
 
 
@@ -4557,7 +4557,7 @@ class ToUnitLuminousIntensityConverter(UnitConverter):
     @property
     def candela(self) -> "FieldQnty":
         """Convert to candela units."""
-        unit_const: Final = field_units.LuminousIntensityUnits.candela
+        unit_const: Final = units.LuminousIntensityUnits.candela
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -4568,7 +4568,7 @@ class ToUnitLuminousIntensityConverter(UnitConverter):
     @property
     def candle_international(self) -> "FieldQnty":
         """Convert to candle (international) units."""
-        unit_const: Final = field_units.LuminousIntensityUnits.candle_international
+        unit_const: Final = units.LuminousIntensityUnits.candle_international
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -4579,13 +4579,13 @@ class ToUnitLuminousIntensityConverter(UnitConverter):
     @property
     def carcel(self) -> "FieldQnty":
         """Convert to carcel units."""
-        unit_const: Final = field_units.LuminousIntensityUnits.carcel
+        unit_const: Final = units.LuminousIntensityUnits.carcel
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def hefner_unit(self) -> "FieldQnty":
         """Convert to Hefner unit units."""
-        unit_const: Final = field_units.LuminousIntensityUnits.hefner_unit
+        unit_const: Final = units.LuminousIntensityUnits.hefner_unit
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -4607,7 +4607,7 @@ class ToUnitMagneticFieldConverter(UnitConverter):
     @property
     def ampere_per_meter(self) -> "FieldQnty":
         """Convert to ampere per meter units."""
-        unit_const: Final = field_units.MagneticFieldUnits.ampere_per_meter
+        unit_const: Final = units.MagneticFieldUnits.ampere_per_meter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -4618,13 +4618,13 @@ class ToUnitMagneticFieldConverter(UnitConverter):
     @property
     def lenz(self) -> "FieldQnty":
         """Convert to lenz units."""
-        unit_const: Final = field_units.MagneticFieldUnits.lenz
+        unit_const: Final = units.MagneticFieldUnits.lenz
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def oersted(self) -> "FieldQnty":
         """Convert to oersted units."""
-        unit_const: Final = field_units.MagneticFieldUnits.oersted
+        unit_const: Final = units.MagneticFieldUnits.oersted
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -4635,7 +4635,7 @@ class ToUnitMagneticFieldConverter(UnitConverter):
     @property
     def praoersted(self) -> "FieldQnty":
         """Convert to praoersted units."""
-        unit_const: Final = field_units.MagneticFieldUnits.praoersted
+        unit_const: Final = units.MagneticFieldUnits.praoersted
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -4657,7 +4657,7 @@ class ToUnitMagneticFluxConverter(UnitConverter):
     @property
     def kapp_line(self) -> "FieldQnty":
         """Convert to kapp line units."""
-        unit_const: Final = field_units.MagneticFluxUnits.kapp_line
+        unit_const: Final = units.MagneticFluxUnits.kapp_line
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -4668,13 +4668,13 @@ class ToUnitMagneticFluxConverter(UnitConverter):
     @property
     def line(self) -> "FieldQnty":
         """Convert to line units."""
-        unit_const: Final = field_units.MagneticFluxUnits.line
+        unit_const: Final = units.MagneticFluxUnits.line
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def maxwell(self) -> "FieldQnty":
         """Convert to maxwell units."""
-        unit_const: Final = field_units.MagneticFluxUnits.maxwell
+        unit_const: Final = units.MagneticFluxUnits.maxwell
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -4685,13 +4685,13 @@ class ToUnitMagneticFluxConverter(UnitConverter):
     @property
     def unit_pole(self) -> "FieldQnty":
         """Convert to unit pole units."""
-        unit_const: Final = field_units.MagneticFluxUnits.unit_pole
+        unit_const: Final = units.MagneticFluxUnits.unit_pole
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def weber(self) -> "FieldQnty":
         """Convert to weber units."""
-        unit_const: Final = field_units.MagneticFluxUnits.weber
+        unit_const: Final = units.MagneticFluxUnits.weber
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -4702,7 +4702,7 @@ class ToUnitMagneticFluxConverter(UnitConverter):
     @property
     def milliweber(self) -> "FieldQnty":
         """Convert to milliweber units."""
-        unit_const: Final = field_units.MagneticFluxUnits.milliweber
+        unit_const: Final = units.MagneticFluxUnits.milliweber
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -4713,7 +4713,7 @@ class ToUnitMagneticFluxConverter(UnitConverter):
     @property
     def microweber(self) -> "FieldQnty":
         """Convert to microweber units."""
-        unit_const: Final = field_units.MagneticFluxUnits.microweber
+        unit_const: Final = units.MagneticFluxUnits.microweber
         return self._convert_quantity(unit_const, modify_original=True)
 
 
@@ -4730,13 +4730,13 @@ class ToUnitMagneticInductionFieldStrengthConverter(UnitConverter):
     @property
     def gamma(self) -> "FieldQnty":
         """Convert to gamma units."""
-        unit_const: Final = field_units.MagneticInductionFieldStrengthUnits.gamma
+        unit_const: Final = units.MagneticInductionFieldStrengthUnits.gamma
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def gauss(self) -> "FieldQnty":
         """Convert to gauss units."""
-        unit_const: Final = field_units.MagneticInductionFieldStrengthUnits.gauss
+        unit_const: Final = units.MagneticInductionFieldStrengthUnits.gauss
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -4747,7 +4747,7 @@ class ToUnitMagneticInductionFieldStrengthConverter(UnitConverter):
     @property
     def line_per_square_centimeter(self) -> "FieldQnty":
         """Convert to line per square centimeter units."""
-        unit_const: Final = field_units.MagneticInductionFieldStrengthUnits.line_per_square_centimeter
+        unit_const: Final = units.MagneticInductionFieldStrengthUnits.line_per_square_centimeter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -4758,7 +4758,7 @@ class ToUnitMagneticInductionFieldStrengthConverter(UnitConverter):
     @property
     def maxwell_per_square_centimeter(self) -> "FieldQnty":
         """Convert to maxwell per square centimeter units."""
-        unit_const: Final = field_units.MagneticInductionFieldStrengthUnits.maxwell_per_square_centimeter
+        unit_const: Final = units.MagneticInductionFieldStrengthUnits.maxwell_per_square_centimeter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -4769,7 +4769,7 @@ class ToUnitMagneticInductionFieldStrengthConverter(UnitConverter):
     @property
     def tesla(self) -> "FieldQnty":
         """Convert to tesla units."""
-        unit_const: Final = field_units.MagneticInductionFieldStrengthUnits.tesla
+        unit_const: Final = units.MagneticInductionFieldStrengthUnits.tesla
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -4780,13 +4780,13 @@ class ToUnitMagneticInductionFieldStrengthConverter(UnitConverter):
     @property
     def u_a(self) -> "FieldQnty":
         """Convert to u.a. units."""
-        unit_const: Final = field_units.MagneticInductionFieldStrengthUnits.u_a
+        unit_const: Final = units.MagneticInductionFieldStrengthUnits.u_a
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def weber_per_square_meter(self) -> "FieldQnty":
         """Convert to weber per square meter units."""
-        unit_const: Final = field_units.MagneticInductionFieldStrengthUnits.weber_per_square_meter
+        unit_const: Final = units.MagneticInductionFieldStrengthUnits.weber_per_square_meter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -4797,7 +4797,7 @@ class ToUnitMagneticInductionFieldStrengthConverter(UnitConverter):
     @property
     def millitesla(self) -> "FieldQnty":
         """Convert to millitesla units."""
-        unit_const: Final = field_units.MagneticInductionFieldStrengthUnits.millitesla
+        unit_const: Final = units.MagneticInductionFieldStrengthUnits.millitesla
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -4808,13 +4808,13 @@ class ToUnitMagneticInductionFieldStrengthConverter(UnitConverter):
     @property
     def microtesla(self) -> "FieldQnty":
         """Convert to microtesla units."""
-        unit_const: Final = field_units.MagneticInductionFieldStrengthUnits.microtesla
+        unit_const: Final = units.MagneticInductionFieldStrengthUnits.microtesla
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def nanotesla(self) -> "FieldQnty":
         """Convert to nanotesla units."""
-        unit_const: Final = field_units.MagneticInductionFieldStrengthUnits.nanotesla
+        unit_const: Final = units.MagneticInductionFieldStrengthUnits.nanotesla
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -4836,7 +4836,7 @@ class ToUnitMagneticMomentConverter(UnitConverter):
     @property
     def bohr_magneton(self) -> "FieldQnty":
         """Convert to Bohr magneton units."""
-        unit_const: Final = field_units.MagneticMomentUnits.bohr_magneton
+        unit_const: Final = units.MagneticMomentUnits.bohr_magneton
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -4847,7 +4847,7 @@ class ToUnitMagneticMomentConverter(UnitConverter):
     @property
     def joule_per_tesla(self) -> "FieldQnty":
         """Convert to joule per tesla units."""
-        unit_const: Final = field_units.MagneticMomentUnits.joule_per_tesla
+        unit_const: Final = units.MagneticMomentUnits.joule_per_tesla
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -4858,7 +4858,7 @@ class ToUnitMagneticMomentConverter(UnitConverter):
     @property
     def nuclear_magneton(self) -> "FieldQnty":
         """Convert to nuclear magneton units."""
-        unit_const: Final = field_units.MagneticMomentUnits.nuclear_magneton
+        unit_const: Final = units.MagneticMomentUnits.nuclear_magneton
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -4880,7 +4880,7 @@ class ToUnitMagneticPermeabilityConverter(UnitConverter):
     @property
     def henrys_per_meter(self) -> "FieldQnty":
         """Convert to henrys per meter units."""
-        unit_const: Final = field_units.MagneticPermeabilityUnits.henrys_per_meter
+        unit_const: Final = units.MagneticPermeabilityUnits.henrys_per_meter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -4891,7 +4891,7 @@ class ToUnitMagneticPermeabilityConverter(UnitConverter):
     @property
     def newton_per_square_ampere(self) -> "FieldQnty":
         """Convert to newton per square ampere units."""
-        unit_const: Final = field_units.MagneticPermeabilityUnits.newton_per_square_ampere
+        unit_const: Final = units.MagneticPermeabilityUnits.newton_per_square_ampere
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -4913,7 +4913,7 @@ class ToUnitMagnetomotiveForceConverter(UnitConverter):
     @property
     def abampere_turn(self) -> "FieldQnty":
         """Convert to abampere-turn units."""
-        unit_const: Final = field_units.MagnetomotiveForceUnits.abampere_turn
+        unit_const: Final = units.MagnetomotiveForceUnits.abampere_turn
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -4924,7 +4924,7 @@ class ToUnitMagnetomotiveForceConverter(UnitConverter):
     @property
     def ampere(self) -> "FieldQnty":
         """Convert to ampere units."""
-        unit_const: Final = field_units.MagnetomotiveForceUnits.ampere
+        unit_const: Final = units.MagnetomotiveForceUnits.ampere
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -4935,7 +4935,7 @@ class ToUnitMagnetomotiveForceConverter(UnitConverter):
     @property
     def ampere_turn(self) -> "FieldQnty":
         """Convert to ampere-turn units."""
-        unit_const: Final = field_units.MagnetomotiveForceUnits.ampere_turn
+        unit_const: Final = units.MagnetomotiveForceUnits.ampere_turn
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -4946,7 +4946,7 @@ class ToUnitMagnetomotiveForceConverter(UnitConverter):
     @property
     def gilbert(self) -> "FieldQnty":
         """Convert to gilbert units."""
-        unit_const: Final = field_units.MagnetomotiveForceUnits.gilbert
+        unit_const: Final = units.MagnetomotiveForceUnits.gilbert
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -4957,7 +4957,7 @@ class ToUnitMagnetomotiveForceConverter(UnitConverter):
     @property
     def kiloampere(self) -> "FieldQnty":
         """Convert to kiloampere units."""
-        unit_const: Final = field_units.MagnetomotiveForceUnits.kiloampere
+        unit_const: Final = units.MagnetomotiveForceUnits.kiloampere
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -4968,7 +4968,7 @@ class ToUnitMagnetomotiveForceConverter(UnitConverter):
     @property
     def milliampere(self) -> "FieldQnty":
         """Convert to milliampere units."""
-        unit_const: Final = field_units.MagnetomotiveForceUnits.milliampere
+        unit_const: Final = units.MagnetomotiveForceUnits.milliampere
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -4979,13 +4979,13 @@ class ToUnitMagnetomotiveForceConverter(UnitConverter):
     @property
     def microampere(self) -> "FieldQnty":
         """Convert to microampere units."""
-        unit_const: Final = field_units.MagnetomotiveForceUnits.microampere
+        unit_const: Final = units.MagnetomotiveForceUnits.microampere
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def nanoampere(self) -> "FieldQnty":
         """Convert to nanoampere units."""
-        unit_const: Final = field_units.MagnetomotiveForceUnits.nanoampere
+        unit_const: Final = units.MagnetomotiveForceUnits.nanoampere
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -4996,7 +4996,7 @@ class ToUnitMagnetomotiveForceConverter(UnitConverter):
     @property
     def picoampere(self) -> "FieldQnty":
         """Convert to picoampere units."""
-        unit_const: Final = field_units.MagnetomotiveForceUnits.picoampere
+        unit_const: Final = units.MagnetomotiveForceUnits.picoampere
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -5018,7 +5018,7 @@ class ToUnitMassConverter(UnitConverter):
     @property
     def slug(self) -> "FieldQnty":
         """Convert to slug units."""
-        unit_const: Final = field_units.MassUnits.slug
+        unit_const: Final = units.MassUnits.slug
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -5029,7 +5029,7 @@ class ToUnitMassConverter(UnitConverter):
     @property
     def atomic_mass_unit_12_mathrmc(self) -> "FieldQnty":
         """Convert to atomic mass unit ( ${ }^{12} \\mathrm{C}$ ) units."""
-        unit_const: Final = field_units.MassUnits.atomic_mass_unit_12_mathrmc
+        unit_const: Final = units.MassUnits.atomic_mass_unit_12_mathrmc
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -5050,7 +5050,7 @@ class ToUnitMassConverter(UnitConverter):
     @property
     def carat_metric(self) -> "FieldQnty":
         """Convert to carat (metric) units."""
-        unit_const: Final = field_units.MassUnits.carat_metric
+        unit_const: Final = units.MassUnits.carat_metric
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -5061,7 +5061,7 @@ class ToUnitMassConverter(UnitConverter):
     @property
     def cental(self) -> "FieldQnty":
         """Convert to cental units."""
-        unit_const: Final = field_units.MassUnits.cental
+        unit_const: Final = units.MassUnits.cental
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -5072,7 +5072,7 @@ class ToUnitMassConverter(UnitConverter):
     @property
     def centigram(self) -> "FieldQnty":
         """Convert to centigram units."""
-        unit_const: Final = field_units.MassUnits.centigram
+        unit_const: Final = units.MassUnits.centigram
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -5083,7 +5083,7 @@ class ToUnitMassConverter(UnitConverter):
     @property
     def clove_uk(self) -> "FieldQnty":
         """Convert to clove (UK) units."""
-        unit_const: Final = field_units.MassUnits.clove_uk
+        unit_const: Final = units.MassUnits.clove_uk
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -5094,7 +5094,7 @@ class ToUnitMassConverter(UnitConverter):
     @property
     def drachm_apothecary(self) -> "FieldQnty":
         """Convert to drachm (apothecary) units."""
-        unit_const: Final = field_units.MassUnits.drachm_apothecary
+        unit_const: Final = units.MassUnits.drachm_apothecary
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -5105,7 +5105,7 @@ class ToUnitMassConverter(UnitConverter):
     @property
     def dram_avoirdupois(self) -> "FieldQnty":
         """Convert to dram (avoirdupois) units."""
-        unit_const: Final = field_units.MassUnits.dram_avoirdupois
+        unit_const: Final = units.MassUnits.dram_avoirdupois
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -5116,7 +5116,7 @@ class ToUnitMassConverter(UnitConverter):
     @property
     def dram_troy(self) -> "FieldQnty":
         """Convert to dram (troy) units."""
-        unit_const: Final = field_units.MassUnits.dram_troy
+        unit_const: Final = units.MassUnits.dram_troy
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -5127,7 +5127,7 @@ class ToUnitMassConverter(UnitConverter):
     @property
     def grain(self) -> "FieldQnty":
         """Convert to grain units."""
-        unit_const: Final = field_units.MassUnits.grain
+        unit_const: Final = units.MassUnits.grain
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -5138,7 +5138,7 @@ class ToUnitMassConverter(UnitConverter):
     @property
     def gram(self) -> "FieldQnty":
         """Convert to gram units."""
-        unit_const: Final = field_units.MassUnits.gram
+        unit_const: Final = units.MassUnits.gram
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -5149,7 +5149,7 @@ class ToUnitMassConverter(UnitConverter):
     @property
     def hundredweight_long_or_gross(self) -> "FieldQnty":
         """Convert to hundredweight, long or gross units."""
-        unit_const: Final = field_units.MassUnits.hundredweight_long_or_gross
+        unit_const: Final = units.MassUnits.hundredweight_long_or_gross
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -5160,7 +5160,7 @@ class ToUnitMassConverter(UnitConverter):
     @property
     def hundredweight_short_or_net(self) -> "FieldQnty":
         """Convert to hundredweight, short or net units."""
-        unit_const: Final = field_units.MassUnits.hundredweight_short_or_net
+        unit_const: Final = units.MassUnits.hundredweight_short_or_net
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -5171,7 +5171,7 @@ class ToUnitMassConverter(UnitConverter):
     @property
     def kilogram(self) -> "FieldQnty":
         """Convert to kilogram units."""
-        unit_const: Final = field_units.MassUnits.kilogram
+        unit_const: Final = units.MassUnits.kilogram
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -5182,13 +5182,13 @@ class ToUnitMassConverter(UnitConverter):
     @property
     def kip(self) -> "FieldQnty":
         """Convert to kip units."""
-        unit_const: Final = field_units.MassUnits.kip
+        unit_const: Final = units.MassUnits.kip
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def microgram(self) -> "FieldQnty":
         """Convert to microgram units."""
-        unit_const: Final = field_units.MassUnits.microgram
+        unit_const: Final = units.MassUnits.microgram
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -5199,7 +5199,7 @@ class ToUnitMassConverter(UnitConverter):
     @property
     def milligram(self) -> "FieldQnty":
         """Convert to milligram units."""
-        unit_const: Final = field_units.MassUnits.milligram
+        unit_const: Final = units.MassUnits.milligram
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -5210,7 +5210,7 @@ class ToUnitMassConverter(UnitConverter):
     @property
     def ounce_apothecary(self) -> "FieldQnty":
         """Convert to ounce (apothecary) units."""
-        unit_const: Final = field_units.MassUnits.ounce_apothecary
+        unit_const: Final = units.MassUnits.ounce_apothecary
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -5221,7 +5221,7 @@ class ToUnitMassConverter(UnitConverter):
     @property
     def ounce_avoirdupois(self) -> "FieldQnty":
         """Convert to ounce (avoirdupois) units."""
-        unit_const: Final = field_units.MassUnits.ounce_avoirdupois
+        unit_const: Final = units.MassUnits.ounce_avoirdupois
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -5232,7 +5232,7 @@ class ToUnitMassConverter(UnitConverter):
     @property
     def ounce_troy(self) -> "FieldQnty":
         """Convert to ounce (troy) units."""
-        unit_const: Final = field_units.MassUnits.ounce_troy
+        unit_const: Final = units.MassUnits.ounce_troy
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -5243,7 +5243,7 @@ class ToUnitMassConverter(UnitConverter):
     @property
     def pennyweight_troy(self) -> "FieldQnty":
         """Convert to pennyweight (troy) units."""
-        unit_const: Final = field_units.MassUnits.pennyweight_troy
+        unit_const: Final = units.MassUnits.pennyweight_troy
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -5254,7 +5254,7 @@ class ToUnitMassConverter(UnitConverter):
     @property
     def pood_russia(self) -> "FieldQnty":
         """Convert to pood, (Russia) units."""
-        unit_const: Final = field_units.MassUnits.pood_russia
+        unit_const: Final = units.MassUnits.pood_russia
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -5265,7 +5265,7 @@ class ToUnitMassConverter(UnitConverter):
     @property
     def pound_apothecary(self) -> "FieldQnty":
         """Convert to pound (apothecary) units."""
-        unit_const: Final = field_units.MassUnits.pound_apothecary
+        unit_const: Final = units.MassUnits.pound_apothecary
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -5276,7 +5276,7 @@ class ToUnitMassConverter(UnitConverter):
     @property
     def pound_avoirdupois(self) -> "FieldQnty":
         """Convert to pound (avoirdupois) units."""
-        unit_const: Final = field_units.MassUnits.pound_avoirdupois
+        unit_const: Final = units.MassUnits.pound_avoirdupois
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -5287,7 +5287,7 @@ class ToUnitMassConverter(UnitConverter):
     @property
     def pound_troy(self) -> "FieldQnty":
         """Convert to pound (troy) units."""
-        unit_const: Final = field_units.MassUnits.pound_troy
+        unit_const: Final = units.MassUnits.pound_troy
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -5298,7 +5298,7 @@ class ToUnitMassConverter(UnitConverter):
     @property
     def pound_mass(self) -> "FieldQnty":
         """Convert to pound mass units."""
-        unit_const: Final = field_units.MassUnits.pound_mass
+        unit_const: Final = units.MassUnits.pound_mass
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -5309,7 +5309,7 @@ class ToUnitMassConverter(UnitConverter):
     @property
     def quarter_uk(self) -> "FieldQnty":
         """Convert to quarter (UK) units."""
-        unit_const: Final = field_units.MassUnits.quarter_uk
+        unit_const: Final = units.MassUnits.quarter_uk
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -5320,7 +5320,7 @@ class ToUnitMassConverter(UnitConverter):
     @property
     def quintal_metric(self) -> "FieldQnty":
         """Convert to quintal, metric units."""
-        unit_const: Final = field_units.MassUnits.quintal_metric
+        unit_const: Final = units.MassUnits.quintal_metric
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -5331,7 +5331,7 @@ class ToUnitMassConverter(UnitConverter):
     @property
     def quital_us(self) -> "FieldQnty":
         """Convert to quital, US units."""
-        unit_const: Final = field_units.MassUnits.quital_us
+        unit_const: Final = units.MassUnits.quital_us
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -5342,7 +5342,7 @@ class ToUnitMassConverter(UnitConverter):
     @property
     def scruple_avoirdupois(self) -> "FieldQnty":
         """Convert to scruple (avoirdupois) units."""
-        unit_const: Final = field_units.MassUnits.scruple_avoirdupois
+        unit_const: Final = units.MassUnits.scruple_avoirdupois
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -5353,7 +5353,7 @@ class ToUnitMassConverter(UnitConverter):
     @property
     def stone_uk(self) -> "FieldQnty":
         """Convert to stone (UK) units."""
-        unit_const: Final = field_units.MassUnits.stone_uk
+        unit_const: Final = units.MassUnits.stone_uk
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -5364,7 +5364,7 @@ class ToUnitMassConverter(UnitConverter):
     @property
     def ton_metric(self) -> "FieldQnty":
         """Convert to ton, metric units."""
-        unit_const: Final = field_units.MassUnits.ton_metric
+        unit_const: Final = units.MassUnits.ton_metric
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -5375,7 +5375,7 @@ class ToUnitMassConverter(UnitConverter):
     @property
     def ton_us_long(self) -> "FieldQnty":
         """Convert to ton, US, long units."""
-        unit_const: Final = field_units.MassUnits.ton_us_long
+        unit_const: Final = units.MassUnits.ton_us_long
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -5386,7 +5386,7 @@ class ToUnitMassConverter(UnitConverter):
     @property
     def ton_us_short(self) -> "FieldQnty":
         """Convert to ton, US, short units."""
-        unit_const: Final = field_units.MassUnits.ton_us_short
+        unit_const: Final = units.MassUnits.ton_us_short
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -5408,7 +5408,7 @@ class ToUnitMassDensityConverter(UnitConverter):
     @property
     def gram_per_cubic_centimeter(self) -> "FieldQnty":
         """Convert to gram per cubic centimeter units."""
-        unit_const: Final = field_units.MassDensityUnits.gram_per_cubic_centimeter
+        unit_const: Final = units.MassDensityUnits.gram_per_cubic_centimeter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -5429,7 +5429,7 @@ class ToUnitMassDensityConverter(UnitConverter):
     @property
     def gram_per_cubic_decimeter(self) -> "FieldQnty":
         """Convert to gram per cubic decimeter units."""
-        unit_const: Final = field_units.MassDensityUnits.gram_per_cubic_decimeter
+        unit_const: Final = units.MassDensityUnits.gram_per_cubic_decimeter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -5440,7 +5440,7 @@ class ToUnitMassDensityConverter(UnitConverter):
     @property
     def gram_per_cubic_meter(self) -> "FieldQnty":
         """Convert to gram per cubic meter units."""
-        unit_const: Final = field_units.MassDensityUnits.gram_per_cubic_meter
+        unit_const: Final = units.MassDensityUnits.gram_per_cubic_meter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -5451,7 +5451,7 @@ class ToUnitMassDensityConverter(UnitConverter):
     @property
     def gram_per_liter(self) -> "FieldQnty":
         """Convert to gram per liter units."""
-        unit_const: Final = field_units.MassDensityUnits.gram_per_liter
+        unit_const: Final = units.MassDensityUnits.gram_per_liter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -5472,7 +5472,7 @@ class ToUnitMassDensityConverter(UnitConverter):
     @property
     def kilogram_per_cubic_meter(self) -> "FieldQnty":
         """Convert to kilogram per cubic meter units."""
-        unit_const: Final = field_units.MassDensityUnits.kilogram_per_cubic_meter
+        unit_const: Final = units.MassDensityUnits.kilogram_per_cubic_meter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -5483,7 +5483,7 @@ class ToUnitMassDensityConverter(UnitConverter):
     @property
     def ounce_avdp(self) -> "FieldQnty":
         """Convert to ounce (avdp) per US gallon units."""
-        unit_const: Final = field_units.MassDensityUnits.ounce_avdp
+        unit_const: Final = units.MassDensityUnits.ounce_avdp
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -5494,7 +5494,7 @@ class ToUnitMassDensityConverter(UnitConverter):
     @property
     def pound_avdp(self) -> "FieldQnty":
         """Convert to pound (avdp) per cubic foot units."""
-        unit_const: Final = field_units.MassDensityUnits.pound_avdp
+        unit_const: Final = units.MassDensityUnits.pound_avdp
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -5515,7 +5515,7 @@ class ToUnitMassDensityConverter(UnitConverter):
     @property
     def pound_mass(self) -> "FieldQnty":
         """Convert to pound (mass) per cubic inch units."""
-        unit_const: Final = field_units.MassDensityUnits.pound_mass
+        unit_const: Final = units.MassDensityUnits.pound_mass
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -5536,7 +5536,7 @@ class ToUnitMassDensityConverter(UnitConverter):
     @property
     def ton_metric(self) -> "FieldQnty":
         """Convert to ton (metric) per cubic meter units."""
-        unit_const: Final = field_units.MassDensityUnits.ton_metric
+        unit_const: Final = units.MassDensityUnits.ton_metric
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -5568,7 +5568,7 @@ class ToUnitMassFlowRateConverter(UnitConverter):
     @property
     def kilograms_per_day(self) -> "FieldQnty":
         """Convert to kilograms per day units."""
-        unit_const: Final = field_units.MassFlowRateUnits.kilograms_per_day
+        unit_const: Final = units.MassFlowRateUnits.kilograms_per_day
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -5579,7 +5579,7 @@ class ToUnitMassFlowRateConverter(UnitConverter):
     @property
     def kilograms_per_hour(self) -> "FieldQnty":
         """Convert to kilograms per hour units."""
-        unit_const: Final = field_units.MassFlowRateUnits.kilograms_per_hour
+        unit_const: Final = units.MassFlowRateUnits.kilograms_per_hour
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -5590,7 +5590,7 @@ class ToUnitMassFlowRateConverter(UnitConverter):
     @property
     def kilograms_per_minute(self) -> "FieldQnty":
         """Convert to kilograms per minute units."""
-        unit_const: Final = field_units.MassFlowRateUnits.kilograms_per_minute
+        unit_const: Final = units.MassFlowRateUnits.kilograms_per_minute
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -5601,7 +5601,7 @@ class ToUnitMassFlowRateConverter(UnitConverter):
     @property
     def kilograms_per_second(self) -> "FieldQnty":
         """Convert to kilograms per second units."""
-        unit_const: Final = field_units.MassFlowRateUnits.kilograms_per_second
+        unit_const: Final = units.MassFlowRateUnits.kilograms_per_second
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -5612,7 +5612,7 @@ class ToUnitMassFlowRateConverter(UnitConverter):
     @property
     def metric_tons_per_day(self) -> "FieldQnty":
         """Convert to metric tons per day units."""
-        unit_const: Final = field_units.MassFlowRateUnits.metric_tons_per_day
+        unit_const: Final = units.MassFlowRateUnits.metric_tons_per_day
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -5633,7 +5633,7 @@ class ToUnitMassFlowRateConverter(UnitConverter):
     @property
     def metric_tons_per_hour(self) -> "FieldQnty":
         """Convert to metric tons per hour units."""
-        unit_const: Final = field_units.MassFlowRateUnits.metric_tons_per_hour
+        unit_const: Final = units.MassFlowRateUnits.metric_tons_per_hour
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -5649,13 +5649,13 @@ class ToUnitMassFlowRateConverter(UnitConverter):
     @property
     def metric_tons_per_minute(self) -> "FieldQnty":
         """Convert to metric tons per minute units."""
-        unit_const: Final = field_units.MassFlowRateUnits.metric_tons_per_minute
+        unit_const: Final = units.MassFlowRateUnits.metric_tons_per_minute
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def metric_tons_per_second(self) -> "FieldQnty":
         """Convert to metric tons per second units."""
-        unit_const: Final = field_units.MassFlowRateUnits.metric_tons_per_second
+        unit_const: Final = units.MassFlowRateUnits.metric_tons_per_second
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -5666,7 +5666,7 @@ class ToUnitMassFlowRateConverter(UnitConverter):
     @property
     def metric_tons_per_year_365_d(self) -> "FieldQnty":
         """Convert to metric tons per year (365 d) units."""
-        unit_const: Final = field_units.MassFlowRateUnits.metric_tons_per_year_365_d
+        unit_const: Final = units.MassFlowRateUnits.metric_tons_per_year_365_d
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -5687,7 +5687,7 @@ class ToUnitMassFlowRateConverter(UnitConverter):
     @property
     def pounds_per_day(self) -> "FieldQnty":
         """Convert to pounds per day units."""
-        unit_const: Final = field_units.MassFlowRateUnits.pounds_per_day
+        unit_const: Final = units.MassFlowRateUnits.pounds_per_day
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -5713,7 +5713,7 @@ class ToUnitMassFlowRateConverter(UnitConverter):
     @property
     def pounds_per_hour(self) -> "FieldQnty":
         """Convert to pounds per hour units."""
-        unit_const: Final = field_units.MassFlowRateUnits.pounds_per_hour
+        unit_const: Final = units.MassFlowRateUnits.pounds_per_hour
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -5739,7 +5739,7 @@ class ToUnitMassFlowRateConverter(UnitConverter):
     @property
     def pounds_per_minute(self) -> "FieldQnty":
         """Convert to pounds per minute units."""
-        unit_const: Final = field_units.MassFlowRateUnits.pounds_per_minute
+        unit_const: Final = units.MassFlowRateUnits.pounds_per_minute
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -5760,7 +5760,7 @@ class ToUnitMassFlowRateConverter(UnitConverter):
     @property
     def pounds_per_second(self) -> "FieldQnty":
         """Convert to pounds per second units."""
-        unit_const: Final = field_units.MassFlowRateUnits.pounds_per_second
+        unit_const: Final = units.MassFlowRateUnits.pounds_per_second
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -5797,7 +5797,7 @@ class ToUnitMassFluxConverter(UnitConverter):
     @property
     def kilogram_per_square_meter_per_day(self) -> "FieldQnty":
         """Convert to kilogram per square meter per day units."""
-        unit_const: Final = field_units.MassFluxUnits.kilogram_per_square_meter_per_day
+        unit_const: Final = units.MassFluxUnits.kilogram_per_square_meter_per_day
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -5808,7 +5808,7 @@ class ToUnitMassFluxConverter(UnitConverter):
     @property
     def kilogram_per_square_meter_per_hour(self) -> "FieldQnty":
         """Convert to kilogram per square meter per hour units."""
-        unit_const: Final = field_units.MassFluxUnits.kilogram_per_square_meter_per_hour
+        unit_const: Final = units.MassFluxUnits.kilogram_per_square_meter_per_hour
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -5819,7 +5819,7 @@ class ToUnitMassFluxConverter(UnitConverter):
     @property
     def kilogram_per_square_meter_per_minute(self) -> "FieldQnty":
         """Convert to kilogram per square meter per minute units."""
-        unit_const: Final = field_units.MassFluxUnits.kilogram_per_square_meter_per_minute
+        unit_const: Final = units.MassFluxUnits.kilogram_per_square_meter_per_minute
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -5830,7 +5830,7 @@ class ToUnitMassFluxConverter(UnitConverter):
     @property
     def kilogram_per_square_meter_per_second(self) -> "FieldQnty":
         """Convert to kilogram per square meter per second units."""
-        unit_const: Final = field_units.MassFluxUnits.kilogram_per_square_meter_per_second
+        unit_const: Final = units.MassFluxUnits.kilogram_per_square_meter_per_second
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -5841,7 +5841,7 @@ class ToUnitMassFluxConverter(UnitConverter):
     @property
     def pound_per_square_foot_per_day(self) -> "FieldQnty":
         """Convert to pound per square foot per day units."""
-        unit_const: Final = field_units.MassFluxUnits.pound_per_square_foot_per_day
+        unit_const: Final = units.MassFluxUnits.pound_per_square_foot_per_day
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -5862,7 +5862,7 @@ class ToUnitMassFluxConverter(UnitConverter):
     @property
     def pound_per_square_foot_per_hour(self) -> "FieldQnty":
         """Convert to pound per square foot per hour units."""
-        unit_const: Final = field_units.MassFluxUnits.pound_per_square_foot_per_hour
+        unit_const: Final = units.MassFluxUnits.pound_per_square_foot_per_hour
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -5883,7 +5883,7 @@ class ToUnitMassFluxConverter(UnitConverter):
     @property
     def pound_per_square_foot_per_minute(self) -> "FieldQnty":
         """Convert to pound per square foot per minute units."""
-        unit_const: Final = field_units.MassFluxUnits.pound_per_square_foot_per_minute
+        unit_const: Final = units.MassFluxUnits.pound_per_square_foot_per_minute
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -5904,7 +5904,7 @@ class ToUnitMassFluxConverter(UnitConverter):
     @property
     def pound_per_square_foot_per_second(self) -> "FieldQnty":
         """Convert to pound per square foot per second units."""
-        unit_const: Final = field_units.MassFluxUnits.pound_per_square_foot_per_second
+        unit_const: Final = units.MassFluxUnits.pound_per_square_foot_per_second
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -5936,7 +5936,7 @@ class ToUnitMassFractionOfIConverter(UnitConverter):
     @property
     def grains_of_i_per_pound_total(self) -> "FieldQnty":
         """Convert to grains of "i" per pound total units."""
-        unit_const: Final = field_units.MassFractionOfIUnits.grains_of_i_per_pound_total
+        unit_const: Final = units.MassFractionOfIUnits.grains_of_i_per_pound_total
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -5947,7 +5947,7 @@ class ToUnitMassFractionOfIConverter(UnitConverter):
     @property
     def gram_of_i_per_kilogram_total(self) -> "FieldQnty":
         """Convert to gram of "i" per kilogram total units."""
-        unit_const: Final = field_units.MassFractionOfIUnits.gram_of_i_per_kilogram_total
+        unit_const: Final = units.MassFractionOfIUnits.gram_of_i_per_kilogram_total
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -5958,7 +5958,7 @@ class ToUnitMassFractionOfIConverter(UnitConverter):
     @property
     def kilogram_of_i_per_kilogram_total(self) -> "FieldQnty":
         """Convert to kilogram of "i" per kilogram total units."""
-        unit_const: Final = field_units.MassFractionOfIUnits.kilogram_of_i_per_kilogram_total
+        unit_const: Final = units.MassFractionOfIUnits.kilogram_of_i_per_kilogram_total
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -5969,7 +5969,7 @@ class ToUnitMassFractionOfIConverter(UnitConverter):
     @property
     def pound_of_i_per_pound_total(self) -> "FieldQnty":
         """Convert to pound of "i" per pound total units."""
-        unit_const: Final = field_units.MassFractionOfIUnits.pound_of_i_per_pound_total
+        unit_const: Final = units.MassFractionOfIUnits.pound_of_i_per_pound_total
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -5991,7 +5991,7 @@ class ToUnitMassTransferCoefficientConverter(UnitConverter):
     @property
     def gram_per_square_centimeter_per_second(self) -> "FieldQnty":
         """Convert to gram per square centimeter per second units."""
-        unit_const: Final = field_units.MassTransferCoefficientUnits.gram_per_square_centimeter_per_second
+        unit_const: Final = units.MassTransferCoefficientUnits.gram_per_square_centimeter_per_second
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -6002,7 +6002,7 @@ class ToUnitMassTransferCoefficientConverter(UnitConverter):
     @property
     def kilogram_per_square_meter_per_second(self) -> "FieldQnty":
         """Convert to kilogram per square meter per second units."""
-        unit_const: Final = field_units.MassTransferCoefficientUnits.kilogram_per_square_meter_per_second
+        unit_const: Final = units.MassTransferCoefficientUnits.kilogram_per_square_meter_per_second
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -6013,7 +6013,7 @@ class ToUnitMassTransferCoefficientConverter(UnitConverter):
     @property
     def pounds_force_per_cubic_foot_per_hour(self) -> "FieldQnty":
         """Convert to pounds force per cubic foot per hour units."""
-        unit_const: Final = field_units.MassTransferCoefficientUnits.pounds_force_per_cubic_foot_per_hour
+        unit_const: Final = units.MassTransferCoefficientUnits.pounds_force_per_cubic_foot_per_hour
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -6034,7 +6034,7 @@ class ToUnitMassTransferCoefficientConverter(UnitConverter):
     @property
     def pounds_mass_per_square_foot_per_hour(self) -> "FieldQnty":
         """Convert to pounds mass per square foot per hour units."""
-        unit_const: Final = field_units.MassTransferCoefficientUnits.pounds_mass_per_square_foot_per_hour
+        unit_const: Final = units.MassTransferCoefficientUnits.pounds_mass_per_square_foot_per_hour
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -6055,7 +6055,7 @@ class ToUnitMassTransferCoefficientConverter(UnitConverter):
     @property
     def pounds_mass_per_square_foot_per_second(self) -> "FieldQnty":
         """Convert to pounds mass per square foot per second units."""
-        unit_const: Final = field_units.MassTransferCoefficientUnits.pounds_mass_per_square_foot_per_second
+        unit_const: Final = units.MassTransferCoefficientUnits.pounds_mass_per_square_foot_per_second
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -6087,7 +6087,7 @@ class ToUnitMolalityOfSoluteIConverter(UnitConverter):
     @property
     def gram_moles_of_i_per_kilogram(self) -> "FieldQnty":
         """Convert to gram moles of "i" per kilogram units."""
-        unit_const: Final = field_units.MolalityOfSoluteIUnits.gram_moles_of_i_per_kilogram
+        unit_const: Final = units.MolalityOfSoluteIUnits.gram_moles_of_i_per_kilogram
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -6098,7 +6098,7 @@ class ToUnitMolalityOfSoluteIConverter(UnitConverter):
     @property
     def kilogram_mols_of_i_per_kilogram(self) -> "FieldQnty":
         """Convert to kilogram mols of "i" per kilogram units."""
-        unit_const: Final = field_units.MolalityOfSoluteIUnits.kilogram_mols_of_i_per_kilogram
+        unit_const: Final = units.MolalityOfSoluteIUnits.kilogram_mols_of_i_per_kilogram
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -6109,13 +6109,13 @@ class ToUnitMolalityOfSoluteIConverter(UnitConverter):
     @property
     def kmols_of_i_per_kilogram(self) -> "FieldQnty":
         """Convert to kmols of "i" per kilogram units."""
-        unit_const: Final = field_units.MolalityOfSoluteIUnits.kmols_of_i_per_kilogram
+        unit_const: Final = units.MolalityOfSoluteIUnits.kmols_of_i_per_kilogram
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def mols_of_i_per_gram(self) -> "FieldQnty":
         """Convert to mols of "i" per gram units."""
-        unit_const: Final = field_units.MolalityOfSoluteIUnits.mols_of_i_per_gram
+        unit_const: Final = units.MolalityOfSoluteIUnits.mols_of_i_per_gram
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -6126,7 +6126,7 @@ class ToUnitMolalityOfSoluteIConverter(UnitConverter):
     @property
     def pound_moles_of_i_per_pound_mass(self) -> "FieldQnty":
         """Convert to pound moles of "i" per pound mass units."""
-        unit_const: Final = field_units.MolalityOfSoluteIUnits.pound_moles_of_i_per_pound_mass
+        unit_const: Final = units.MolalityOfSoluteIUnits.pound_moles_of_i_per_pound_mass
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -6148,7 +6148,7 @@ class ToUnitMolarConcentrationByMassConverter(UnitConverter):
     @property
     def gram_mole_or_mole_per_gram(self) -> "FieldQnty":
         """Convert to gram mole or mole per gram units."""
-        unit_const: Final = field_units.MolarConcentrationByMassUnits.gram_mole_or_mole_per_gram
+        unit_const: Final = units.MolarConcentrationByMassUnits.gram_mole_or_mole_per_gram
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -6159,7 +6159,7 @@ class ToUnitMolarConcentrationByMassConverter(UnitConverter):
     @property
     def gram_mole_or_mole_per_kilogram(self) -> "FieldQnty":
         """Convert to gram mole or mole per kilogram units."""
-        unit_const: Final = field_units.MolarConcentrationByMassUnits.gram_mole_or_mole_per_kilogram
+        unit_const: Final = units.MolarConcentrationByMassUnits.gram_mole_or_mole_per_kilogram
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -6170,7 +6170,7 @@ class ToUnitMolarConcentrationByMassConverter(UnitConverter):
     @property
     def kilogram_mole_or_kmol_per_kilogram(self) -> "FieldQnty":
         """Convert to kilogram mole or kmol per kilogram units."""
-        unit_const: Final = field_units.MolarConcentrationByMassUnits.kilogram_mole_or_kmol_per_kilogram
+        unit_const: Final = units.MolarConcentrationByMassUnits.kilogram_mole_or_kmol_per_kilogram
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -6181,7 +6181,7 @@ class ToUnitMolarConcentrationByMassConverter(UnitConverter):
     @property
     def micromole_per_gram(self) -> "FieldQnty":
         """Convert to micromole per gram units."""
-        unit_const: Final = field_units.MolarConcentrationByMassUnits.micromole_per_gram
+        unit_const: Final = units.MolarConcentrationByMassUnits.micromole_per_gram
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -6192,7 +6192,7 @@ class ToUnitMolarConcentrationByMassConverter(UnitConverter):
     @property
     def millimole_per_gram(self) -> "FieldQnty":
         """Convert to millimole per gram units."""
-        unit_const: Final = field_units.MolarConcentrationByMassUnits.millimole_per_gram
+        unit_const: Final = units.MolarConcentrationByMassUnits.millimole_per_gram
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -6203,7 +6203,7 @@ class ToUnitMolarConcentrationByMassConverter(UnitConverter):
     @property
     def picomole_per_gram(self) -> "FieldQnty":
         """Convert to picomole per gram units."""
-        unit_const: Final = field_units.MolarConcentrationByMassUnits.picomole_per_gram
+        unit_const: Final = units.MolarConcentrationByMassUnits.picomole_per_gram
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -6214,7 +6214,7 @@ class ToUnitMolarConcentrationByMassConverter(UnitConverter):
     @property
     def pound_mole_per_pound(self) -> "FieldQnty":
         """Convert to pound mole per pound units."""
-        unit_const: Final = field_units.MolarConcentrationByMassUnits.pound_mole_per_pound
+        unit_const: Final = units.MolarConcentrationByMassUnits.pound_mole_per_pound
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -6246,7 +6246,7 @@ class ToUnitMolarFlowRateConverter(UnitConverter):
     @property
     def gram_mole_per_day(self) -> "FieldQnty":
         """Convert to gram mole per day units."""
-        unit_const: Final = field_units.MolarFlowRateUnits.gram_mole_per_day
+        unit_const: Final = units.MolarFlowRateUnits.gram_mole_per_day
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -6257,7 +6257,7 @@ class ToUnitMolarFlowRateConverter(UnitConverter):
     @property
     def gram_mole_per_hour(self) -> "FieldQnty":
         """Convert to gram mole per hour units."""
-        unit_const: Final = field_units.MolarFlowRateUnits.gram_mole_per_hour
+        unit_const: Final = units.MolarFlowRateUnits.gram_mole_per_hour
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -6268,7 +6268,7 @@ class ToUnitMolarFlowRateConverter(UnitConverter):
     @property
     def gram_mole_per_minute(self) -> "FieldQnty":
         """Convert to gram mole per minute units."""
-        unit_const: Final = field_units.MolarFlowRateUnits.gram_mole_per_minute
+        unit_const: Final = units.MolarFlowRateUnits.gram_mole_per_minute
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -6279,7 +6279,7 @@ class ToUnitMolarFlowRateConverter(UnitConverter):
     @property
     def gram_mole_per_second(self) -> "FieldQnty":
         """Convert to gram mole per second units."""
-        unit_const: Final = field_units.MolarFlowRateUnits.gram_mole_per_second
+        unit_const: Final = units.MolarFlowRateUnits.gram_mole_per_second
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -6290,7 +6290,7 @@ class ToUnitMolarFlowRateConverter(UnitConverter):
     @property
     def kilogram_mole_or_kmol_per_day(self) -> "FieldQnty":
         """Convert to kilogram mole or kmol per day units."""
-        unit_const: Final = field_units.MolarFlowRateUnits.kilogram_mole_or_kmol_per_day
+        unit_const: Final = units.MolarFlowRateUnits.kilogram_mole_or_kmol_per_day
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -6301,7 +6301,7 @@ class ToUnitMolarFlowRateConverter(UnitConverter):
     @property
     def kilogram_mole_or_kmol_per_hour(self) -> "FieldQnty":
         """Convert to kilogram mole or kmol per hour units."""
-        unit_const: Final = field_units.MolarFlowRateUnits.kilogram_mole_or_kmol_per_hour
+        unit_const: Final = units.MolarFlowRateUnits.kilogram_mole_or_kmol_per_hour
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -6312,7 +6312,7 @@ class ToUnitMolarFlowRateConverter(UnitConverter):
     @property
     def kilogram_mole_or_kmol_per_minute(self) -> "FieldQnty":
         """Convert to kilogram mole or kmol per minute units."""
-        unit_const: Final = field_units.MolarFlowRateUnits.kilogram_mole_or_kmol_per_minute
+        unit_const: Final = units.MolarFlowRateUnits.kilogram_mole_or_kmol_per_minute
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -6323,7 +6323,7 @@ class ToUnitMolarFlowRateConverter(UnitConverter):
     @property
     def kilogram_mole_or_kmol_per_second(self) -> "FieldQnty":
         """Convert to kilogram mole or kmol per second units."""
-        unit_const: Final = field_units.MolarFlowRateUnits.kilogram_mole_or_kmol_per_second
+        unit_const: Final = units.MolarFlowRateUnits.kilogram_mole_or_kmol_per_second
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -6334,7 +6334,7 @@ class ToUnitMolarFlowRateConverter(UnitConverter):
     @property
     def pound_mole_or_lb_mol_per_day(self) -> "FieldQnty":
         """Convert to pound mole or lb-mol per day units."""
-        unit_const: Final = field_units.MolarFlowRateUnits.pound_mole_or_lb_mol_per_day
+        unit_const: Final = units.MolarFlowRateUnits.pound_mole_or_lb_mol_per_day
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -6355,7 +6355,7 @@ class ToUnitMolarFlowRateConverter(UnitConverter):
     @property
     def pound_mole_or_lb_mol_per_hour(self) -> "FieldQnty":
         """Convert to pound mole or lb-mol per hour units."""
-        unit_const: Final = field_units.MolarFlowRateUnits.pound_mole_or_lb_mol_per_hour
+        unit_const: Final = units.MolarFlowRateUnits.pound_mole_or_lb_mol_per_hour
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -6376,7 +6376,7 @@ class ToUnitMolarFlowRateConverter(UnitConverter):
     @property
     def pound_mole_or_lb_mol_per_minute(self) -> "FieldQnty":
         """Convert to pound mole or lb-mol per minute units."""
-        unit_const: Final = field_units.MolarFlowRateUnits.pound_mole_or_lb_mol_per_minute
+        unit_const: Final = units.MolarFlowRateUnits.pound_mole_or_lb_mol_per_minute
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -6397,7 +6397,7 @@ class ToUnitMolarFlowRateConverter(UnitConverter):
     @property
     def pound_mole_or_lb_mol_per_second(self) -> "FieldQnty":
         """Convert to pound mole or lb-mol per second units."""
-        unit_const: Final = field_units.MolarFlowRateUnits.pound_mole_or_lb_mol_per_second
+        unit_const: Final = units.MolarFlowRateUnits.pound_mole_or_lb_mol_per_second
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -6429,7 +6429,7 @@ class ToUnitMolarFluxConverter(UnitConverter):
     @property
     def kmol_per_square_meter_per_day(self) -> "FieldQnty":
         """Convert to kmol per square meter per day units."""
-        unit_const: Final = field_units.MolarFluxUnits.kmol_per_square_meter_per_day
+        unit_const: Final = units.MolarFluxUnits.kmol_per_square_meter_per_day
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -6440,7 +6440,7 @@ class ToUnitMolarFluxConverter(UnitConverter):
     @property
     def kmol_per_square_meter_per_hour(self) -> "FieldQnty":
         """Convert to kmol per square meter per hour units."""
-        unit_const: Final = field_units.MolarFluxUnits.kmol_per_square_meter_per_hour
+        unit_const: Final = units.MolarFluxUnits.kmol_per_square_meter_per_hour
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -6451,7 +6451,7 @@ class ToUnitMolarFluxConverter(UnitConverter):
     @property
     def kmol_per_square_meter_per_minute(self) -> "FieldQnty":
         """Convert to kmol per square meter per minute units."""
-        unit_const: Final = field_units.MolarFluxUnits.kmol_per_square_meter_per_minute
+        unit_const: Final = units.MolarFluxUnits.kmol_per_square_meter_per_minute
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -6462,7 +6462,7 @@ class ToUnitMolarFluxConverter(UnitConverter):
     @property
     def kmol_per_square_meter_per_second(self) -> "FieldQnty":
         """Convert to kmol per square meter per second units."""
-        unit_const: Final = field_units.MolarFluxUnits.kmol_per_square_meter_per_second
+        unit_const: Final = units.MolarFluxUnits.kmol_per_square_meter_per_second
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -6473,7 +6473,7 @@ class ToUnitMolarFluxConverter(UnitConverter):
     @property
     def pound_mole_per_square_foot_per_day(self) -> "FieldQnty":
         """Convert to pound mole per square foot per day units."""
-        unit_const: Final = field_units.MolarFluxUnits.pound_mole_per_square_foot_per_day
+        unit_const: Final = units.MolarFluxUnits.pound_mole_per_square_foot_per_day
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -6494,7 +6494,7 @@ class ToUnitMolarFluxConverter(UnitConverter):
     @property
     def pound_mole_per_square_foot_per_hour(self) -> "FieldQnty":
         """Convert to pound mole per square foot per hour units."""
-        unit_const: Final = field_units.MolarFluxUnits.pound_mole_per_square_foot_per_hour
+        unit_const: Final = units.MolarFluxUnits.pound_mole_per_square_foot_per_hour
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -6515,7 +6515,7 @@ class ToUnitMolarFluxConverter(UnitConverter):
     @property
     def pound_mole_per_square_foot_per_minute(self) -> "FieldQnty":
         """Convert to pound mole per square foot per minute units."""
-        unit_const: Final = field_units.MolarFluxUnits.pound_mole_per_square_foot_per_minute
+        unit_const: Final = units.MolarFluxUnits.pound_mole_per_square_foot_per_minute
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -6536,7 +6536,7 @@ class ToUnitMolarFluxConverter(UnitConverter):
     @property
     def pound_mole_per_square_foot_per_second(self) -> "FieldQnty":
         """Convert to pound mole per square foot per second units."""
-        unit_const: Final = field_units.MolarFluxUnits.pound_mole_per_square_foot_per_second
+        unit_const: Final = units.MolarFluxUnits.pound_mole_per_square_foot_per_second
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -6568,7 +6568,7 @@ class ToUnitMolarHeatCapacityConverter(UnitConverter):
     @property
     def btu_per_pound_mole_per_degree_fahrenheit_or_degree_rankine(self) -> "FieldQnty":
         """Convert to Btu per pound mole per degree Fahrenheit (or degree Rankine) units."""
-        unit_const: Final = field_units.MolarHeatCapacityUnits.btu_per_pound_mole_per_degree_fahrenheit_or_degree_rankine
+        unit_const: Final = units.MolarHeatCapacityUnits.btu_per_pound_mole_per_degree_fahrenheit_or_degree_rankine
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -6579,7 +6579,7 @@ class ToUnitMolarHeatCapacityConverter(UnitConverter):
     @property
     def calories_per_gram_mole_per_kelvin_or_degree_celsius(self) -> "FieldQnty":
         """Convert to calories per gram mole per kelvin (or degree Celsius) units."""
-        unit_const: Final = field_units.MolarHeatCapacityUnits.calories_per_gram_mole_per_kelvin_or_degree_celsius
+        unit_const: Final = units.MolarHeatCapacityUnits.calories_per_gram_mole_per_kelvin_or_degree_celsius
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -6590,7 +6590,7 @@ class ToUnitMolarHeatCapacityConverter(UnitConverter):
     @property
     def joule_per_gram_mole_per_kelvin_or_degree_celsius(self) -> "FieldQnty":
         """Convert to joule per gram mole per kelvin (or degree Celsius) units."""
-        unit_const: Final = field_units.MolarHeatCapacityUnits.joule_per_gram_mole_per_kelvin_or_degree_celsius
+        unit_const: Final = units.MolarHeatCapacityUnits.joule_per_gram_mole_per_kelvin_or_degree_celsius
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -6612,7 +6612,7 @@ class ToUnitMolarityOfIConverter(UnitConverter):
     @property
     def gram_moles_of_i_per_cubic_meter(self) -> "FieldQnty":
         """Convert to gram moles of "i" per cubic meter units."""
-        unit_const: Final = field_units.MolarityOfIUnits.gram_moles_of_i_per_cubic_meter
+        unit_const: Final = units.MolarityOfIUnits.gram_moles_of_i_per_cubic_meter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -6633,7 +6633,7 @@ class ToUnitMolarityOfIConverter(UnitConverter):
     @property
     def gram_moles_of_i_per_liter(self) -> "FieldQnty":
         """Convert to gram moles of "i" per liter units."""
-        unit_const: Final = field_units.MolarityOfIUnits.gram_moles_of_i_per_liter
+        unit_const: Final = units.MolarityOfIUnits.gram_moles_of_i_per_liter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -6644,7 +6644,7 @@ class ToUnitMolarityOfIConverter(UnitConverter):
     @property
     def kilogram_moles_of_i_per_cubic_meter(self) -> "FieldQnty":
         """Convert to kilogram moles of "i" per cubic meter units."""
-        unit_const: Final = field_units.MolarityOfIUnits.kilogram_moles_of_i_per_cubic_meter
+        unit_const: Final = units.MolarityOfIUnits.kilogram_moles_of_i_per_cubic_meter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -6655,7 +6655,7 @@ class ToUnitMolarityOfIConverter(UnitConverter):
     @property
     def kilogram_moles_of_i_per_liter(self) -> "FieldQnty":
         """Convert to kilogram moles of "i" per liter units."""
-        unit_const: Final = field_units.MolarityOfIUnits.kilogram_moles_of_i_per_liter
+        unit_const: Final = units.MolarityOfIUnits.kilogram_moles_of_i_per_liter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -6666,7 +6666,7 @@ class ToUnitMolarityOfIConverter(UnitConverter):
     @property
     def pound_moles_of_i_per_cubic_foot(self) -> "FieldQnty":
         """Convert to pound moles of "i" per cubic foot units."""
-        unit_const: Final = field_units.MolarityOfIUnits.pound_moles_of_i_per_cubic_foot
+        unit_const: Final = units.MolarityOfIUnits.pound_moles_of_i_per_cubic_foot
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -6687,7 +6687,7 @@ class ToUnitMolarityOfIConverter(UnitConverter):
     @property
     def pound_moles_of_i_per_gallon_us(self) -> "FieldQnty":
         """Convert to pound moles of " $i$ " per gallon (US) units."""
-        unit_const: Final = field_units.MolarityOfIUnits.pound_moles_of_i_per_gallon_us
+        unit_const: Final = units.MolarityOfIUnits.pound_moles_of_i_per_gallon_us
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -6719,7 +6719,7 @@ class ToUnitMoleFractionOfIConverter(UnitConverter):
     @property
     def gram_mole_of_i_per_gram_mole_total(self) -> "FieldQnty":
         """Convert to gram mole of "i" per gram mole total units."""
-        unit_const: Final = field_units.MoleFractionOfIUnits.gram_mole_of_i_per_gram_mole_total
+        unit_const: Final = units.MoleFractionOfIUnits.gram_mole_of_i_per_gram_mole_total
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -6730,7 +6730,7 @@ class ToUnitMoleFractionOfIConverter(UnitConverter):
     @property
     def kilogram_mole_of_i_per_kilogram_mole_total(self) -> "FieldQnty":
         """Convert to kilogram mole of "i" per kilogram mole total units."""
-        unit_const: Final = field_units.MoleFractionOfIUnits.kilogram_mole_of_i_per_kilogram_mole_total
+        unit_const: Final = units.MoleFractionOfIUnits.kilogram_mole_of_i_per_kilogram_mole_total
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -6741,13 +6741,13 @@ class ToUnitMoleFractionOfIConverter(UnitConverter):
     @property
     def kilomole_of_i_per_kilomole_total(self) -> "FieldQnty":
         """Convert to kilomole of "i" per kilomole total units."""
-        unit_const: Final = field_units.MoleFractionOfIUnits.kilomole_of_i_per_kilomole_total
+        unit_const: Final = units.MoleFractionOfIUnits.kilomole_of_i_per_kilomole_total
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def pound_mole_of_i_per_pound_mole_total(self) -> "FieldQnty":
         """Convert to pound mole of "i" per pound mole total units."""
-        unit_const: Final = field_units.MoleFractionOfIUnits.pound_mole_of_i_per_pound_mole_total
+        unit_const: Final = units.MoleFractionOfIUnits.pound_mole_of_i_per_pound_mole_total
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -6769,7 +6769,7 @@ class ToUnitMomentOfInertiaConverter(UnitConverter):
     @property
     def gram_force_centimeter_square_second(self) -> "FieldQnty":
         """Convert to gram force centimeter square second units."""
-        unit_const: Final = field_units.MomentOfInertiaUnits.gram_force_centimeter_square_second
+        unit_const: Final = units.MomentOfInertiaUnits.gram_force_centimeter_square_second
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -6780,7 +6780,7 @@ class ToUnitMomentOfInertiaConverter(UnitConverter):
     @property
     def gram_square_centimeter(self) -> "FieldQnty":
         """Convert to gram square centimeter units."""
-        unit_const: Final = field_units.MomentOfInertiaUnits.gram_square_centimeter
+        unit_const: Final = units.MomentOfInertiaUnits.gram_square_centimeter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -6791,7 +6791,7 @@ class ToUnitMomentOfInertiaConverter(UnitConverter):
     @property
     def kilogram_force_centimeter_square_second(self) -> "FieldQnty":
         """Convert to kilogram force centimeter square second units."""
-        unit_const: Final = field_units.MomentOfInertiaUnits.kilogram_force_centimeter_square_second
+        unit_const: Final = units.MomentOfInertiaUnits.kilogram_force_centimeter_square_second
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -6802,7 +6802,7 @@ class ToUnitMomentOfInertiaConverter(UnitConverter):
     @property
     def kilogram_force_meter_square_second(self) -> "FieldQnty":
         """Convert to kilogram force meter square second units."""
-        unit_const: Final = field_units.MomentOfInertiaUnits.kilogram_force_meter_square_second
+        unit_const: Final = units.MomentOfInertiaUnits.kilogram_force_meter_square_second
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -6813,7 +6813,7 @@ class ToUnitMomentOfInertiaConverter(UnitConverter):
     @property
     def kilogram_square_centimeter(self) -> "FieldQnty":
         """Convert to kilogram square centimeter units."""
-        unit_const: Final = field_units.MomentOfInertiaUnits.kilogram_square_centimeter
+        unit_const: Final = units.MomentOfInertiaUnits.kilogram_square_centimeter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -6824,7 +6824,7 @@ class ToUnitMomentOfInertiaConverter(UnitConverter):
     @property
     def kilogram_square_meter(self) -> "FieldQnty":
         """Convert to kilogram square meter units."""
-        unit_const: Final = field_units.MomentOfInertiaUnits.kilogram_square_meter
+        unit_const: Final = units.MomentOfInertiaUnits.kilogram_square_meter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -6835,7 +6835,7 @@ class ToUnitMomentOfInertiaConverter(UnitConverter):
     @property
     def ounce_force_inch_square_second(self) -> "FieldQnty":
         """Convert to ounce force inch square second units."""
-        unit_const: Final = field_units.MomentOfInertiaUnits.ounce_force_inch_square_second
+        unit_const: Final = units.MomentOfInertiaUnits.ounce_force_inch_square_second
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -6846,7 +6846,7 @@ class ToUnitMomentOfInertiaConverter(UnitConverter):
     @property
     def ounce_mass_square_inch(self) -> "FieldQnty":
         """Convert to ounce mass square inch units."""
-        unit_const: Final = field_units.MomentOfInertiaUnits.ounce_mass_square_inch
+        unit_const: Final = units.MomentOfInertiaUnits.ounce_mass_square_inch
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -6857,7 +6857,7 @@ class ToUnitMomentOfInertiaConverter(UnitConverter):
     @property
     def pound_mass_square_foot(self) -> "FieldQnty":
         """Convert to pound mass square foot units."""
-        unit_const: Final = field_units.MomentOfInertiaUnits.pound_mass_square_foot
+        unit_const: Final = units.MomentOfInertiaUnits.pound_mass_square_foot
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -6878,7 +6878,7 @@ class ToUnitMomentOfInertiaConverter(UnitConverter):
     @property
     def pound_mass_square_inch(self) -> "FieldQnty":
         """Convert to pound mass square inch units."""
-        unit_const: Final = field_units.MomentOfInertiaUnits.pound_mass_square_inch
+        unit_const: Final = units.MomentOfInertiaUnits.pound_mass_square_inch
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -6900,7 +6900,7 @@ class ToUnitMomentumFlowRateConverter(UnitConverter):
     @property
     def foot_pounds_per_square_hour(self) -> "FieldQnty":
         """Convert to foot pounds per square hour units."""
-        unit_const: Final = field_units.MomentumFlowRateUnits.foot_pounds_per_square_hour
+        unit_const: Final = units.MomentumFlowRateUnits.foot_pounds_per_square_hour
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -6921,7 +6921,7 @@ class ToUnitMomentumFlowRateConverter(UnitConverter):
     @property
     def foot_pounds_per_square_minute(self) -> "FieldQnty":
         """Convert to foot pounds per square minute units."""
-        unit_const: Final = field_units.MomentumFlowRateUnits.foot_pounds_per_square_minute
+        unit_const: Final = units.MomentumFlowRateUnits.foot_pounds_per_square_minute
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -6932,7 +6932,7 @@ class ToUnitMomentumFlowRateConverter(UnitConverter):
     @property
     def foot_pounds_per_square_second(self) -> "FieldQnty":
         """Convert to foot pounds per square second units."""
-        unit_const: Final = field_units.MomentumFlowRateUnits.foot_pounds_per_square_second
+        unit_const: Final = units.MomentumFlowRateUnits.foot_pounds_per_square_second
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -6953,7 +6953,7 @@ class ToUnitMomentumFlowRateConverter(UnitConverter):
     @property
     def gram_centimeters_per_square_second(self) -> "FieldQnty":
         """Convert to gram centimeters per square second units."""
-        unit_const: Final = field_units.MomentumFlowRateUnits.gram_centimeters_per_square_second
+        unit_const: Final = units.MomentumFlowRateUnits.gram_centimeters_per_square_second
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -6964,7 +6964,7 @@ class ToUnitMomentumFlowRateConverter(UnitConverter):
     @property
     def kilogram_meters_per_square_second(self) -> "FieldQnty":
         """Convert to kilogram meters per square second units."""
-        unit_const: Final = field_units.MomentumFlowRateUnits.kilogram_meters_per_square_second
+        unit_const: Final = units.MomentumFlowRateUnits.kilogram_meters_per_square_second
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -6986,7 +6986,7 @@ class ToUnitMomentumFluxConverter(UnitConverter):
     @property
     def dyne_per_square_centimeter(self) -> "FieldQnty":
         """Convert to dyne per square centimeter units."""
-        unit_const: Final = field_units.MomentumFluxUnits.dyne_per_square_centimeter
+        unit_const: Final = units.MomentumFluxUnits.dyne_per_square_centimeter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -6997,7 +6997,7 @@ class ToUnitMomentumFluxConverter(UnitConverter):
     @property
     def gram_per_centimeter_per_square_second(self) -> "FieldQnty":
         """Convert to gram per centimeter per square second units."""
-        unit_const: Final = field_units.MomentumFluxUnits.gram_per_centimeter_per_square_second
+        unit_const: Final = units.MomentumFluxUnits.gram_per_centimeter_per_square_second
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -7008,7 +7008,7 @@ class ToUnitMomentumFluxConverter(UnitConverter):
     @property
     def newton_per_square_meter(self) -> "FieldQnty":
         """Convert to newton per square meter units."""
-        unit_const: Final = field_units.MomentumFluxUnits.newton_per_square_meter
+        unit_const: Final = units.MomentumFluxUnits.newton_per_square_meter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -7019,7 +7019,7 @@ class ToUnitMomentumFluxConverter(UnitConverter):
     @property
     def pound_force_per_square_foot(self) -> "FieldQnty":
         """Convert to pound force per square foot units."""
-        unit_const: Final = field_units.MomentumFluxUnits.pound_force_per_square_foot
+        unit_const: Final = units.MomentumFluxUnits.pound_force_per_square_foot
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -7030,7 +7030,7 @@ class ToUnitMomentumFluxConverter(UnitConverter):
     @property
     def pound_mass_per_foot_per_square_second(self) -> "FieldQnty":
         """Convert to pound mass per foot per square second units."""
-        unit_const: Final = field_units.MomentumFluxUnits.pound_mass_per_foot_per_square_second
+        unit_const: Final = units.MomentumFluxUnits.pound_mass_per_foot_per_square_second
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -7062,7 +7062,7 @@ class ToUnitNormalityOfSolutionConverter(UnitConverter):
     @property
     def gram_equivalents_per_cubic_meter(self) -> "FieldQnty":
         """Convert to gram equivalents per cubic meter units."""
-        unit_const: Final = field_units.NormalityOfSolutionUnits.gram_equivalents_per_cubic_meter
+        unit_const: Final = units.NormalityOfSolutionUnits.gram_equivalents_per_cubic_meter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -7073,7 +7073,7 @@ class ToUnitNormalityOfSolutionConverter(UnitConverter):
     @property
     def gram_equivalents_per_liter(self) -> "FieldQnty":
         """Convert to gram equivalents per liter units."""
-        unit_const: Final = field_units.NormalityOfSolutionUnits.gram_equivalents_per_liter
+        unit_const: Final = units.NormalityOfSolutionUnits.gram_equivalents_per_liter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -7084,7 +7084,7 @@ class ToUnitNormalityOfSolutionConverter(UnitConverter):
     @property
     def pound_equivalents_per_cubic_foot(self) -> "FieldQnty":
         """Convert to pound equivalents per cubic foot units."""
-        unit_const: Final = field_units.NormalityOfSolutionUnits.pound_equivalents_per_cubic_foot
+        unit_const: Final = units.NormalityOfSolutionUnits.pound_equivalents_per_cubic_foot
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -7105,7 +7105,7 @@ class ToUnitNormalityOfSolutionConverter(UnitConverter):
     @property
     def pound_equivalents_per_gallon(self) -> "FieldQnty":
         """Convert to pound equivalents per gallon units."""
-        unit_const: Final = field_units.NormalityOfSolutionUnits.pound_equivalents_per_gallon
+        unit_const: Final = units.NormalityOfSolutionUnits.pound_equivalents_per_gallon
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -7127,7 +7127,7 @@ class ToUnitParticleDensityConverter(UnitConverter):
     @property
     def particles_per_cubic_centimeter(self) -> "FieldQnty":
         """Convert to particles per cubic centimeter units."""
-        unit_const: Final = field_units.ParticleDensityUnits.particles_per_cubic_centimeter
+        unit_const: Final = units.ParticleDensityUnits.particles_per_cubic_centimeter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -7148,7 +7148,7 @@ class ToUnitParticleDensityConverter(UnitConverter):
     @property
     def particles_per_cubic_foot(self) -> "FieldQnty":
         """Convert to particles per cubic foot units."""
-        unit_const: Final = field_units.ParticleDensityUnits.particles_per_cubic_foot
+        unit_const: Final = units.ParticleDensityUnits.particles_per_cubic_foot
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -7169,7 +7169,7 @@ class ToUnitParticleDensityConverter(UnitConverter):
     @property
     def particles_per_cubic_meter(self) -> "FieldQnty":
         """Convert to particles per cubic meter units."""
-        unit_const: Final = field_units.ParticleDensityUnits.particles_per_cubic_meter
+        unit_const: Final = units.ParticleDensityUnits.particles_per_cubic_meter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -7180,7 +7180,7 @@ class ToUnitParticleDensityConverter(UnitConverter):
     @property
     def particles_per_gallon_us(self) -> "FieldQnty":
         """Convert to particles per gallon (US) units."""
-        unit_const: Final = field_units.ParticleDensityUnits.particles_per_gallon_us
+        unit_const: Final = units.ParticleDensityUnits.particles_per_gallon_us
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -7191,7 +7191,7 @@ class ToUnitParticleDensityConverter(UnitConverter):
     @property
     def particles_per_liter(self) -> "FieldQnty":
         """Convert to particles per liter units."""
-        unit_const: Final = field_units.ParticleDensityUnits.particles_per_liter
+        unit_const: Final = units.ParticleDensityUnits.particles_per_liter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -7202,7 +7202,7 @@ class ToUnitParticleDensityConverter(UnitConverter):
     @property
     def particles_per_milliliter(self) -> "FieldQnty":
         """Convert to particles per milliliter units."""
-        unit_const: Final = field_units.ParticleDensityUnits.particles_per_milliliter
+        unit_const: Final = units.ParticleDensityUnits.particles_per_milliliter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -7224,7 +7224,7 @@ class ToUnitPercentConverter(UnitConverter):
     @property
     def percent(self) -> "FieldQnty":
         """Convert to percent units."""
-        unit_const: Final = field_units.PercentUnits.percent
+        unit_const: Final = units.PercentUnits.percent
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -7235,13 +7235,13 @@ class ToUnitPercentConverter(UnitConverter):
     @property
     def per_mille(self) -> "FieldQnty":
         """Convert to per mille units."""
-        unit_const: Final = field_units.PercentUnits.per_mille
+        unit_const: Final = units.PercentUnits.per_mille
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def basis_point(self) -> "FieldQnty":
         """Convert to basis point units."""
-        unit_const: Final = field_units.PercentUnits.basis_point
+        unit_const: Final = units.PercentUnits.basis_point
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -7268,13 +7268,13 @@ class ToUnitPermeabilityConverter(UnitConverter):
     @property
     def darcy(self) -> "FieldQnty":
         """Convert to darcy units."""
-        unit_const: Final = field_units.PermeabilityUnits.darcy
+        unit_const: Final = units.PermeabilityUnits.darcy
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def square_feet(self) -> "FieldQnty":
         """Convert to square feet units."""
-        unit_const: Final = field_units.PermeabilityUnits.square_feet
+        unit_const: Final = units.PermeabilityUnits.square_feet
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -7295,7 +7295,7 @@ class ToUnitPermeabilityConverter(UnitConverter):
     @property
     def square_meters(self) -> "FieldQnty":
         """Convert to square meters units."""
-        unit_const: Final = field_units.PermeabilityUnits.square_meters
+        unit_const: Final = units.PermeabilityUnits.square_meters
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -7317,7 +7317,7 @@ class ToUnitPhotonEmissionRateConverter(UnitConverter):
     @property
     def rayleigh(self) -> "FieldQnty":
         """Convert to rayleigh units."""
-        unit_const: Final = field_units.PhotonEmissionRateUnits.rayleigh
+        unit_const: Final = units.PhotonEmissionRateUnits.rayleigh
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -7328,7 +7328,7 @@ class ToUnitPhotonEmissionRateConverter(UnitConverter):
     @property
     def reciprocal_square_meter_second(self) -> "FieldQnty":
         """Convert to reciprocal square meter second units."""
-        unit_const: Final = field_units.PhotonEmissionRateUnits.reciprocal_square_meter_second
+        unit_const: Final = units.PhotonEmissionRateUnits.reciprocal_square_meter_second
         return self._convert_quantity(unit_const, modify_original=True)
 
 
@@ -7345,7 +7345,7 @@ class ToUnitPowerPerUnitMassConverter(UnitConverter):
     @property
     def british_thermal_unit_per_hour_per_pound_mass(self) -> "FieldQnty":
         """Convert to British thermal unit per hour per pound mass units."""
-        unit_const: Final = field_units.PowerPerUnitMassUnits.british_thermal_unit_per_hour_per_pound_mass
+        unit_const: Final = units.PowerPerUnitMassUnits.british_thermal_unit_per_hour_per_pound_mass
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -7366,7 +7366,7 @@ class ToUnitPowerPerUnitMassConverter(UnitConverter):
     @property
     def calorie_per_second_per_gram(self) -> "FieldQnty":
         """Convert to calorie per second per gram units."""
-        unit_const: Final = field_units.PowerPerUnitMassUnits.calorie_per_second_per_gram
+        unit_const: Final = units.PowerPerUnitMassUnits.calorie_per_second_per_gram
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -7387,7 +7387,7 @@ class ToUnitPowerPerUnitMassConverter(UnitConverter):
     @property
     def kilocalorie_per_hour_per_kilogram(self) -> "FieldQnty":
         """Convert to kilocalorie per hour per kilogram units."""
-        unit_const: Final = field_units.PowerPerUnitMassUnits.kilocalorie_per_hour_per_kilogram
+        unit_const: Final = units.PowerPerUnitMassUnits.kilocalorie_per_hour_per_kilogram
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -7408,7 +7408,7 @@ class ToUnitPowerPerUnitMassConverter(UnitConverter):
     @property
     def watt_per_kilogram(self) -> "FieldQnty":
         """Convert to watt per kilogram units."""
-        unit_const: Final = field_units.PowerPerUnitMassUnits.watt_per_kilogram
+        unit_const: Final = units.PowerPerUnitMassUnits.watt_per_kilogram
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -7430,7 +7430,7 @@ class ToUnitPowerPerUnitVolumeConverter(UnitConverter):
     @property
     def british_thermal_unit_per_hour_per_cubic_foot(self) -> "FieldQnty":
         """Convert to British thermal unit per hour per cubic foot units."""
-        unit_const: Final = field_units.PowerPerUnitVolumeUnits.british_thermal_unit_per_hour_per_cubic_foot
+        unit_const: Final = units.PowerPerUnitVolumeUnits.british_thermal_unit_per_hour_per_cubic_foot
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -7451,7 +7451,7 @@ class ToUnitPowerPerUnitVolumeConverter(UnitConverter):
     @property
     def calorie_per_second_per_cubic_centimeter(self) -> "FieldQnty":
         """Convert to calorie per second per cubic centimeter units."""
-        unit_const: Final = field_units.PowerPerUnitVolumeUnits.calorie_per_second_per_cubic_centimeter
+        unit_const: Final = units.PowerPerUnitVolumeUnits.calorie_per_second_per_cubic_centimeter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -7472,7 +7472,7 @@ class ToUnitPowerPerUnitVolumeConverter(UnitConverter):
     @property
     def chu_per_hour_per_cubic_foot(self) -> "FieldQnty":
         """Convert to Chu per hour per cubic foot units."""
-        unit_const: Final = field_units.PowerPerUnitVolumeUnits.chu_per_hour_per_cubic_foot
+        unit_const: Final = units.PowerPerUnitVolumeUnits.chu_per_hour_per_cubic_foot
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -7493,7 +7493,7 @@ class ToUnitPowerPerUnitVolumeConverter(UnitConverter):
     @property
     def kilocalorie_per_hour_per_cubic_centimeter(self) -> "FieldQnty":
         """Convert to kilocalorie per hour per cubic centimeter units."""
-        unit_const: Final = field_units.PowerPerUnitVolumeUnits.kilocalorie_per_hour_per_cubic_centimeter
+        unit_const: Final = units.PowerPerUnitVolumeUnits.kilocalorie_per_hour_per_cubic_centimeter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -7514,7 +7514,7 @@ class ToUnitPowerPerUnitVolumeConverter(UnitConverter):
     @property
     def kilocalorie_per_hour_per_cubic_foot(self) -> "FieldQnty":
         """Convert to kilocalorie per hour per cubic foot units."""
-        unit_const: Final = field_units.PowerPerUnitVolumeUnits.kilocalorie_per_hour_per_cubic_foot
+        unit_const: Final = units.PowerPerUnitVolumeUnits.kilocalorie_per_hour_per_cubic_foot
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -7535,7 +7535,7 @@ class ToUnitPowerPerUnitVolumeConverter(UnitConverter):
     @property
     def kilocalorie_per_second_per_cubic_centimeter(self) -> "FieldQnty":
         """Convert to kilocalorie per second per cubic centimeter units."""
-        unit_const: Final = field_units.PowerPerUnitVolumeUnits.kilocalorie_per_second_per_cubic_centimeter
+        unit_const: Final = units.PowerPerUnitVolumeUnits.kilocalorie_per_second_per_cubic_centimeter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -7556,7 +7556,7 @@ class ToUnitPowerPerUnitVolumeConverter(UnitConverter):
     @property
     def watt_per_cubic_meter(self) -> "FieldQnty":
         """Convert to watt per cubic meter units."""
-        unit_const: Final = field_units.PowerPerUnitVolumeUnits.watt_per_cubic_meter
+        unit_const: Final = units.PowerPerUnitVolumeUnits.watt_per_cubic_meter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -7578,7 +7578,7 @@ class ToUnitPowerThermalDutyConverter(UnitConverter):
     @property
     def abwatt_emu_of_power(self) -> "FieldQnty":
         """Convert to abwatt (emu of power) units."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.abwatt_emu_of_power
+        unit_const: Final = units.PowerThermalDutyUnits.abwatt_emu_of_power
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -7589,7 +7589,7 @@ class ToUnitPowerThermalDutyConverter(UnitConverter):
     @property
     def boiler_horsepower(self) -> "FieldQnty":
         """Convert to boiler horsepower units."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.boiler_horsepower
+        unit_const: Final = units.PowerThermalDutyUnits.boiler_horsepower
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -7600,7 +7600,7 @@ class ToUnitPowerThermalDutyConverter(UnitConverter):
     @property
     def british_thermal_unit_mean(self) -> "FieldQnty":
         """Convert to British thermal unit (mean) per hour units."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.british_thermal_unit_mean
+        unit_const: Final = units.PowerThermalDutyUnits.british_thermal_unit_mean
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -7621,7 +7621,7 @@ class ToUnitPowerThermalDutyConverter(UnitConverter):
     @property
     def british_thermal_unit_thermochemical(self) -> "FieldQnty":
         """Convert to British thermal unit (thermochemical) per hour units."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.british_thermal_unit_thermochemical
+        unit_const: Final = units.PowerThermalDutyUnits.british_thermal_unit_thermochemical
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -7637,7 +7637,7 @@ class ToUnitPowerThermalDutyConverter(UnitConverter):
     @property
     def calorie_mean(self) -> "FieldQnty":
         """Convert to calorie (mean) per hour units."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.calorie_mean
+        unit_const: Final = units.PowerThermalDutyUnits.calorie_mean
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -7648,7 +7648,7 @@ class ToUnitPowerThermalDutyConverter(UnitConverter):
     @property
     def calorie_thermochemical(self) -> "FieldQnty":
         """Convert to calorie (thermochemical) per hour units."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.calorie_thermochemical
+        unit_const: Final = units.PowerThermalDutyUnits.calorie_thermochemical
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -7659,13 +7659,13 @@ class ToUnitPowerThermalDutyConverter(UnitConverter):
     @property
     def donkey(self) -> "FieldQnty":
         """Convert to donkey units."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.donkey
+        unit_const: Final = units.PowerThermalDutyUnits.donkey
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def erg_per_second(self) -> "FieldQnty":
         """Convert to erg per second units."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.erg_per_second
+        unit_const: Final = units.PowerThermalDutyUnits.erg_per_second
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -7676,7 +7676,7 @@ class ToUnitPowerThermalDutyConverter(UnitConverter):
     @property
     def foot_pondal_per_second(self) -> "FieldQnty":
         """Convert to foot pondal per second units."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.foot_pondal_per_second
+        unit_const: Final = units.PowerThermalDutyUnits.foot_pondal_per_second
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -7687,7 +7687,7 @@ class ToUnitPowerThermalDutyConverter(UnitConverter):
     @property
     def foot_pound_force_per_hour(self) -> "FieldQnty":
         """Convert to foot pound force per hour units."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.foot_pound_force_per_hour
+        unit_const: Final = units.PowerThermalDutyUnits.foot_pound_force_per_hour
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -7698,7 +7698,7 @@ class ToUnitPowerThermalDutyConverter(UnitConverter):
     @property
     def foot_pound_force_per_minute(self) -> "FieldQnty":
         """Convert to foot pound force per minute units."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.foot_pound_force_per_minute
+        unit_const: Final = units.PowerThermalDutyUnits.foot_pound_force_per_minute
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -7709,7 +7709,7 @@ class ToUnitPowerThermalDutyConverter(UnitConverter):
     @property
     def foot_pound_force_per_second(self) -> "FieldQnty":
         """Convert to foot pound force per second units."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.foot_pound_force_per_second
+        unit_const: Final = units.PowerThermalDutyUnits.foot_pound_force_per_second
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -7720,7 +7720,7 @@ class ToUnitPowerThermalDutyConverter(UnitConverter):
     @property
     def horsepower_550_mathrmft_mathrmlb_mathrmf_mathrms(self) -> "FieldQnty":
         """Convert to horsepower ( $550 \\mathrm{ft} \\mathrm{lb}_{\\mathrm{f}} / \\mathrm{s}$ ) units."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.horsepower_550_mathrmft_mathrmlb_mathrmf_mathrms
+        unit_const: Final = units.PowerThermalDutyUnits.horsepower_550_mathrmft_mathrmlb_mathrmf_mathrms
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -7731,7 +7731,7 @@ class ToUnitPowerThermalDutyConverter(UnitConverter):
     @property
     def horsepower_electric(self) -> "FieldQnty":
         """Convert to horsepower (electric) units."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.horsepower_electric
+        unit_const: Final = units.PowerThermalDutyUnits.horsepower_electric
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -7742,7 +7742,7 @@ class ToUnitPowerThermalDutyConverter(UnitConverter):
     @property
     def horsepower_uk(self) -> "FieldQnty":
         """Convert to horsepower (UK) units."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.horsepower_uk
+        unit_const: Final = units.PowerThermalDutyUnits.horsepower_uk
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -7753,7 +7753,7 @@ class ToUnitPowerThermalDutyConverter(UnitConverter):
     @property
     def kcal_per_hour(self) -> "FieldQnty":
         """Convert to kcal per hour units."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.kcal_per_hour
+        unit_const: Final = units.PowerThermalDutyUnits.kcal_per_hour
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -7764,7 +7764,7 @@ class ToUnitPowerThermalDutyConverter(UnitConverter):
     @property
     def kilogram_force_meter_per_second(self) -> "FieldQnty":
         """Convert to kilogram force meter per second units."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.kilogram_force_meter_per_second
+        unit_const: Final = units.PowerThermalDutyUnits.kilogram_force_meter_per_second
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -7775,7 +7775,7 @@ class ToUnitPowerThermalDutyConverter(UnitConverter):
     @property
     def kilowatt(self) -> "FieldQnty":
         """Convert to kilowatt units."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.kilowatt
+        unit_const: Final = units.PowerThermalDutyUnits.kilowatt
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -7786,7 +7786,7 @@ class ToUnitPowerThermalDutyConverter(UnitConverter):
     @property
     def megawatt(self) -> "FieldQnty":
         """Convert to megawatt units."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.megawatt
+        unit_const: Final = units.PowerThermalDutyUnits.megawatt
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -7797,7 +7797,7 @@ class ToUnitPowerThermalDutyConverter(UnitConverter):
     @property
     def metric_horsepower(self) -> "FieldQnty":
         """Convert to metric horsepower units."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.metric_horsepower
+        unit_const: Final = units.PowerThermalDutyUnits.metric_horsepower
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -7808,7 +7808,7 @@ class ToUnitPowerThermalDutyConverter(UnitConverter):
     @property
     def million_british_thermal_units_per_hour_petroleum(self) -> "FieldQnty":
         """Convert to million British thermal units per hour (petroleum) units."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.million_british_thermal_units_per_hour_petroleum
+        unit_const: Final = units.PowerThermalDutyUnits.million_british_thermal_units_per_hour_petroleum
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -7819,7 +7819,7 @@ class ToUnitPowerThermalDutyConverter(UnitConverter):
     @property
     def million_kilocalorie_per_hour(self) -> "FieldQnty":
         """Convert to million kilocalorie per hour units."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.million_kilocalorie_per_hour
+        unit_const: Final = units.PowerThermalDutyUnits.million_kilocalorie_per_hour
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -7830,13 +7830,13 @@ class ToUnitPowerThermalDutyConverter(UnitConverter):
     @property
     def prony(self) -> "FieldQnty":
         """Convert to prony units."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.prony
+        unit_const: Final = units.PowerThermalDutyUnits.prony
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def ton_of_refrigeration_us(self) -> "FieldQnty":
         """Convert to ton of refrigeration (US) units."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.ton_of_refrigeration_us
+        unit_const: Final = units.PowerThermalDutyUnits.ton_of_refrigeration_us
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -7847,7 +7847,7 @@ class ToUnitPowerThermalDutyConverter(UnitConverter):
     @property
     def ton_or_refrigeration_uk(self) -> "FieldQnty":
         """Convert to ton or refrigeration (UK) units."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.ton_or_refrigeration_uk
+        unit_const: Final = units.PowerThermalDutyUnits.ton_or_refrigeration_uk
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -7858,7 +7858,7 @@ class ToUnitPowerThermalDutyConverter(UnitConverter):
     @property
     def volt_ampere(self) -> "FieldQnty":
         """Convert to volt-ampere units."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.volt_ampere
+        unit_const: Final = units.PowerThermalDutyUnits.volt_ampere
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -7869,7 +7869,7 @@ class ToUnitPowerThermalDutyConverter(UnitConverter):
     @property
     def water_horsepower(self) -> "FieldQnty":
         """Convert to water horsepower units."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.water_horsepower
+        unit_const: Final = units.PowerThermalDutyUnits.water_horsepower
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -7880,7 +7880,7 @@ class ToUnitPowerThermalDutyConverter(UnitConverter):
     @property
     def watt(self) -> "FieldQnty":
         """Convert to watt units."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.watt
+        unit_const: Final = units.PowerThermalDutyUnits.watt
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -7891,7 +7891,7 @@ class ToUnitPowerThermalDutyConverter(UnitConverter):
     @property
     def watt_international_mean(self) -> "FieldQnty":
         """Convert to watt (international, mean) units."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.watt_international_mean
+        unit_const: Final = units.PowerThermalDutyUnits.watt_international_mean
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -7902,7 +7902,7 @@ class ToUnitPowerThermalDutyConverter(UnitConverter):
     @property
     def watt_international_us(self) -> "FieldQnty":
         """Convert to watt (international, US) units."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.watt_international_us
+        unit_const: Final = units.PowerThermalDutyUnits.watt_international_us
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -7913,7 +7913,7 @@ class ToUnitPowerThermalDutyConverter(UnitConverter):
     @property
     def gigawatt(self) -> "FieldQnty":
         """Convert to gigawatt units."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.gigawatt
+        unit_const: Final = units.PowerThermalDutyUnits.gigawatt
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -7924,7 +7924,7 @@ class ToUnitPowerThermalDutyConverter(UnitConverter):
     @property
     def milliwatt(self) -> "FieldQnty":
         """Convert to milliwatt units."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.milliwatt
+        unit_const: Final = units.PowerThermalDutyUnits.milliwatt
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -7935,7 +7935,7 @@ class ToUnitPowerThermalDutyConverter(UnitConverter):
     @property
     def microwatt(self) -> "FieldQnty":
         """Convert to microwatt units."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.microwatt
+        unit_const: Final = units.PowerThermalDutyUnits.microwatt
         return self._convert_quantity(unit_const, modify_original=True)
 
 
@@ -7952,7 +7952,7 @@ class ToUnitPressureConverter(UnitConverter):
     @property
     def atmosphere_standard(self) -> "FieldQnty":
         """Convert to atmosphere, standard units."""
-        unit_const: Final = field_units.PressureUnits.atmosphere_standard
+        unit_const: Final = units.PressureUnits.atmosphere_standard
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -7963,19 +7963,19 @@ class ToUnitPressureConverter(UnitConverter):
     @property
     def bar(self) -> "FieldQnty":
         """Convert to bar units."""
-        unit_const: Final = field_units.PressureUnits.bar
+        unit_const: Final = units.PressureUnits.bar
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def barye(self) -> "FieldQnty":
         """Convert to barye units."""
-        unit_const: Final = field_units.PressureUnits.barye
+        unit_const: Final = units.PressureUnits.barye
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def dyne_per_square_centimeter(self) -> "FieldQnty":
         """Convert to dyne per square centimeter units."""
-        unit_const: Final = field_units.PressureUnits.dyne_per_square_centimeter
+        unit_const: Final = units.PressureUnits.dyne_per_square_centimeter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -7986,7 +7986,7 @@ class ToUnitPressureConverter(UnitConverter):
     @property
     def foot_of_mercury_60_circ_mathrmf(self) -> "FieldQnty":
         """Convert to foot of mercury ( $60{ }^{\\circ} \\mathrm{F}$ ) units."""
-        unit_const: Final = field_units.PressureUnits.foot_of_mercury_60_circ_mathrmf
+        unit_const: Final = units.PressureUnits.foot_of_mercury_60_circ_mathrmf
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -7997,7 +7997,7 @@ class ToUnitPressureConverter(UnitConverter):
     @property
     def foot_of_water_60_circ_mathrmf(self) -> "FieldQnty":
         """Convert to foot of water ( $60{ }^{\\circ} \\mathrm{F}$ ) units."""
-        unit_const: Final = field_units.PressureUnits.foot_of_water_60_circ_mathrmf
+        unit_const: Final = units.PressureUnits.foot_of_water_60_circ_mathrmf
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -8008,7 +8008,7 @@ class ToUnitPressureConverter(UnitConverter):
     @property
     def gigapascal(self) -> "FieldQnty":
         """Convert to gigapascal units."""
-        unit_const: Final = field_units.PressureUnits.gigapascal
+        unit_const: Final = units.PressureUnits.gigapascal
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -8019,7 +8019,7 @@ class ToUnitPressureConverter(UnitConverter):
     @property
     def hectopascal(self) -> "FieldQnty":
         """Convert to hectopascal units."""
-        unit_const: Final = field_units.PressureUnits.hectopascal
+        unit_const: Final = units.PressureUnits.hectopascal
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -8030,7 +8030,7 @@ class ToUnitPressureConverter(UnitConverter):
     @property
     def inch_of_mercury_60_circ_mathrmf(self) -> "FieldQnty":
         """Convert to inch of mercury ( $60{ }^{\\circ} \\mathrm{F}$ ) units."""
-        unit_const: Final = field_units.PressureUnits.inch_of_mercury_60_circ_mathrmf
+        unit_const: Final = units.PressureUnits.inch_of_mercury_60_circ_mathrmf
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -8041,7 +8041,7 @@ class ToUnitPressureConverter(UnitConverter):
     @property
     def inch_of_water_60_circ_mathrmf(self) -> "FieldQnty":
         """Convert to inch of water ( $60{ }^{\\circ} \\mathrm{F}$ ) units."""
-        unit_const: Final = field_units.PressureUnits.inch_of_water_60_circ_mathrmf
+        unit_const: Final = units.PressureUnits.inch_of_water_60_circ_mathrmf
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -8052,7 +8052,7 @@ class ToUnitPressureConverter(UnitConverter):
     @property
     def kilogram_force_per_square_centimeter(self) -> "FieldQnty":
         """Convert to kilogram force per square centimeter units."""
-        unit_const: Final = field_units.PressureUnits.kilogram_force_per_square_centimeter
+        unit_const: Final = units.PressureUnits.kilogram_force_per_square_centimeter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -8073,7 +8073,7 @@ class ToUnitPressureConverter(UnitConverter):
     @property
     def kilogram_force_per_square_meter(self) -> "FieldQnty":
         """Convert to kilogram force per square meter units."""
-        unit_const: Final = field_units.PressureUnits.kilogram_force_per_square_meter
+        unit_const: Final = units.PressureUnits.kilogram_force_per_square_meter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -8084,7 +8084,7 @@ class ToUnitPressureConverter(UnitConverter):
     @property
     def kip_force_per_square_inch(self) -> "FieldQnty":
         """Convert to kip force per square inch units."""
-        unit_const: Final = field_units.PressureUnits.kip_force_per_square_inch
+        unit_const: Final = units.PressureUnits.kip_force_per_square_inch
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -8110,7 +8110,7 @@ class ToUnitPressureConverter(UnitConverter):
     @property
     def megapascal(self) -> "FieldQnty":
         """Convert to megapascal units."""
-        unit_const: Final = field_units.PressureUnits.megapascal
+        unit_const: Final = units.PressureUnits.megapascal
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -8121,7 +8121,7 @@ class ToUnitPressureConverter(UnitConverter):
     @property
     def meter_of_water_4circ_mathrmc(self) -> "FieldQnty":
         """Convert to meter of water ( $4^{\\circ} \\mathrm{C}$ ) units."""
-        unit_const: Final = field_units.PressureUnits.meter_of_water_4circ_mathrmc
+        unit_const: Final = units.PressureUnits.meter_of_water_4circ_mathrmc
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -8132,7 +8132,7 @@ class ToUnitPressureConverter(UnitConverter):
     @property
     def microbar(self) -> "FieldQnty":
         """Convert to microbar units."""
-        unit_const: Final = field_units.PressureUnits.microbar
+        unit_const: Final = units.PressureUnits.microbar
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -8143,7 +8143,7 @@ class ToUnitPressureConverter(UnitConverter):
     @property
     def millibar(self) -> "FieldQnty":
         """Convert to millibar units."""
-        unit_const: Final = field_units.PressureUnits.millibar
+        unit_const: Final = units.PressureUnits.millibar
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -8154,7 +8154,7 @@ class ToUnitPressureConverter(UnitConverter):
     @property
     def millimeter_of_mercury_4circ_mathrmc(self) -> "FieldQnty":
         """Convert to millimeter of mercury ( $4^{\\circ} \\mathrm{C}$ ) units."""
-        unit_const: Final = field_units.PressureUnits.millimeter_of_mercury_4circ_mathrmc
+        unit_const: Final = units.PressureUnits.millimeter_of_mercury_4circ_mathrmc
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -8165,7 +8165,7 @@ class ToUnitPressureConverter(UnitConverter):
     @property
     def millimeter_of_water_4circ_mathrmc(self) -> "FieldQnty":
         """Convert to millimeter of water ( $4^{\\circ} \\mathrm{C}$ ) units."""
-        unit_const: Final = field_units.PressureUnits.millimeter_of_water_4circ_mathrmc
+        unit_const: Final = units.PressureUnits.millimeter_of_water_4circ_mathrmc
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -8176,7 +8176,7 @@ class ToUnitPressureConverter(UnitConverter):
     @property
     def newton_per_square_meter(self) -> "FieldQnty":
         """Convert to newton per square meter units."""
-        unit_const: Final = field_units.PressureUnits.newton_per_square_meter
+        unit_const: Final = units.PressureUnits.newton_per_square_meter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -8187,7 +8187,7 @@ class ToUnitPressureConverter(UnitConverter):
     @property
     def ounce_force_per_square_inch(self) -> "FieldQnty":
         """Convert to ounce force per square inch units."""
-        unit_const: Final = field_units.PressureUnits.ounce_force_per_square_inch
+        unit_const: Final = units.PressureUnits.ounce_force_per_square_inch
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -8208,7 +8208,7 @@ class ToUnitPressureConverter(UnitConverter):
     @property
     def pascal(self) -> "FieldQnty":
         """Convert to pascal units."""
-        unit_const: Final = field_units.PressureUnits.pascal
+        unit_const: Final = units.PressureUnits.pascal
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -8219,7 +8219,7 @@ class ToUnitPressureConverter(UnitConverter):
     @property
     def pi_ze(self) -> "FieldQnty":
         """Convert to pièze units."""
-        unit_const: Final = field_units.PressureUnits.pi_ze
+        unit_const: Final = units.PressureUnits.pi_ze
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -8230,7 +8230,7 @@ class ToUnitPressureConverter(UnitConverter):
     @property
     def pound_force_per_square_foot(self) -> "FieldQnty":
         """Convert to pound force per square foot units."""
-        unit_const: Final = field_units.PressureUnits.pound_force_per_square_foot
+        unit_const: Final = units.PressureUnits.pound_force_per_square_foot
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -8246,7 +8246,7 @@ class ToUnitPressureConverter(UnitConverter):
     @property
     def pound_force_per_square_inch(self) -> "FieldQnty":
         """Convert to pound force per square inch units."""
-        unit_const: Final = field_units.PressureUnits.pound_force_per_square_inch
+        unit_const: Final = units.PressureUnits.pound_force_per_square_inch
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -8257,7 +8257,7 @@ class ToUnitPressureConverter(UnitConverter):
     @property
     def torr(self) -> "FieldQnty":
         """Convert to torr units."""
-        unit_const: Final = field_units.PressureUnits.torr
+        unit_const: Final = units.PressureUnits.torr
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -8273,7 +8273,7 @@ class ToUnitPressureConverter(UnitConverter):
     @property
     def kilopascal(self) -> "FieldQnty":
         """Convert to kilopascal units."""
-        unit_const: Final = field_units.PressureUnits.kilopascal
+        unit_const: Final = units.PressureUnits.kilopascal
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -8295,13 +8295,13 @@ class ToUnitRadiationDoseEquivalentConverter(UnitConverter):
     @property
     def rem(self) -> "FieldQnty":
         """Convert to rem units."""
-        unit_const: Final = field_units.RadiationDoseEquivalentUnits.rem
+        unit_const: Final = units.RadiationDoseEquivalentUnits.rem
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def sievert(self) -> "FieldQnty":
         """Convert to sievert units."""
-        unit_const: Final = field_units.RadiationDoseEquivalentUnits.sievert
+        unit_const: Final = units.RadiationDoseEquivalentUnits.sievert
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -8312,7 +8312,7 @@ class ToUnitRadiationDoseEquivalentConverter(UnitConverter):
     @property
     def millisievert(self) -> "FieldQnty":
         """Convert to millisievert units."""
-        unit_const: Final = field_units.RadiationDoseEquivalentUnits.millisievert
+        unit_const: Final = units.RadiationDoseEquivalentUnits.millisievert
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -8323,7 +8323,7 @@ class ToUnitRadiationDoseEquivalentConverter(UnitConverter):
     @property
     def microsievert(self) -> "FieldQnty":
         """Convert to microsievert units."""
-        unit_const: Final = field_units.RadiationDoseEquivalentUnits.microsievert
+        unit_const: Final = units.RadiationDoseEquivalentUnits.microsievert
         return self._convert_quantity(unit_const, modify_original=True)
 
 
@@ -8340,7 +8340,7 @@ class ToUnitRadiationExposureConverter(UnitConverter):
     @property
     def coulomb_per_kilogram(self) -> "FieldQnty":
         """Convert to coulomb per kilogram units."""
-        unit_const: Final = field_units.RadiationExposureUnits.coulomb_per_kilogram
+        unit_const: Final = units.RadiationExposureUnits.coulomb_per_kilogram
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -8351,7 +8351,7 @@ class ToUnitRadiationExposureConverter(UnitConverter):
     @property
     def d_unit(self) -> "FieldQnty":
         """Convert to D unit units."""
-        unit_const: Final = field_units.RadiationExposureUnits.d_unit
+        unit_const: Final = units.RadiationExposureUnits.d_unit
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -8362,7 +8362,7 @@ class ToUnitRadiationExposureConverter(UnitConverter):
     @property
     def pastille_dose_b_unit(self) -> "FieldQnty":
         """Convert to pastille dose (B unit) units."""
-        unit_const: Final = field_units.RadiationExposureUnits.pastille_dose_b_unit
+        unit_const: Final = units.RadiationExposureUnits.pastille_dose_b_unit
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -8373,7 +8373,7 @@ class ToUnitRadiationExposureConverter(UnitConverter):
     @property
     def r_entgen(self) -> "FieldQnty":
         """Convert to röentgen units."""
-        unit_const: Final = field_units.RadiationExposureUnits.r_entgen
+        unit_const: Final = units.RadiationExposureUnits.r_entgen
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -8395,7 +8395,7 @@ class ToUnitRadioactivityConverter(UnitConverter):
     @property
     def becquerel(self) -> "FieldQnty":
         """Convert to becquerel units."""
-        unit_const: Final = field_units.RadioactivityUnits.becquerel
+        unit_const: Final = units.RadioactivityUnits.becquerel
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -8406,7 +8406,7 @@ class ToUnitRadioactivityConverter(UnitConverter):
     @property
     def curie(self) -> "FieldQnty":
         """Convert to curie units."""
-        unit_const: Final = field_units.RadioactivityUnits.curie
+        unit_const: Final = units.RadioactivityUnits.curie
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -8417,7 +8417,7 @@ class ToUnitRadioactivityConverter(UnitConverter):
     @property
     def mache_unit(self) -> "FieldQnty":
         """Convert to Mache unit units."""
-        unit_const: Final = field_units.RadioactivityUnits.mache_unit
+        unit_const: Final = units.RadioactivityUnits.mache_unit
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -8428,7 +8428,7 @@ class ToUnitRadioactivityConverter(UnitConverter):
     @property
     def rutherford(self) -> "FieldQnty":
         """Convert to rutherford units."""
-        unit_const: Final = field_units.RadioactivityUnits.rutherford
+        unit_const: Final = units.RadioactivityUnits.rutherford
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -8439,13 +8439,13 @@ class ToUnitRadioactivityConverter(UnitConverter):
     @property
     def stat(self) -> "FieldQnty":
         """Convert to stat units."""
-        unit_const: Final = field_units.RadioactivityUnits.stat
+        unit_const: Final = units.RadioactivityUnits.stat
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def kilobecquerel(self) -> "FieldQnty":
         """Convert to kilobecquerel units."""
-        unit_const: Final = field_units.RadioactivityUnits.kilobecquerel
+        unit_const: Final = units.RadioactivityUnits.kilobecquerel
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -8456,7 +8456,7 @@ class ToUnitRadioactivityConverter(UnitConverter):
     @property
     def megabecquerel(self) -> "FieldQnty":
         """Convert to megabecquerel units."""
-        unit_const: Final = field_units.RadioactivityUnits.megabecquerel
+        unit_const: Final = units.RadioactivityUnits.megabecquerel
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -8467,7 +8467,7 @@ class ToUnitRadioactivityConverter(UnitConverter):
     @property
     def gigabecquerel(self) -> "FieldQnty":
         """Convert to gigabecquerel units."""
-        unit_const: Final = field_units.RadioactivityUnits.gigabecquerel
+        unit_const: Final = units.RadioactivityUnits.gigabecquerel
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -8489,7 +8489,7 @@ class ToUnitSecondMomentOfAreaConverter(UnitConverter):
     @property
     def inch_quadrupled(self) -> "FieldQnty":
         """Convert to inch quadrupled units."""
-        unit_const: Final = field_units.SecondMomentOfAreaUnits.inch_quadrupled
+        unit_const: Final = units.SecondMomentOfAreaUnits.inch_quadrupled
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -8500,7 +8500,7 @@ class ToUnitSecondMomentOfAreaConverter(UnitConverter):
     @property
     def centimeter_quadrupled(self) -> "FieldQnty":
         """Convert to centimeter quadrupled units."""
-        unit_const: Final = field_units.SecondMomentOfAreaUnits.centimeter_quadrupled
+        unit_const: Final = units.SecondMomentOfAreaUnits.centimeter_quadrupled
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -8511,7 +8511,7 @@ class ToUnitSecondMomentOfAreaConverter(UnitConverter):
     @property
     def foot_quadrupled(self) -> "FieldQnty":
         """Convert to foot quadrupled units."""
-        unit_const: Final = field_units.SecondMomentOfAreaUnits.foot_quadrupled
+        unit_const: Final = units.SecondMomentOfAreaUnits.foot_quadrupled
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -8522,7 +8522,7 @@ class ToUnitSecondMomentOfAreaConverter(UnitConverter):
     @property
     def meter_quadrupled(self) -> "FieldQnty":
         """Convert to meter quadrupled units."""
-        unit_const: Final = field_units.SecondMomentOfAreaUnits.meter_quadrupled
+        unit_const: Final = units.SecondMomentOfAreaUnits.meter_quadrupled
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -8544,7 +8544,7 @@ class ToUnitSecondRadiationConstantPlanckConverter(UnitConverter):
     @property
     def meter_kelvin(self) -> "FieldQnty":
         """Convert to meter kelvin units."""
-        unit_const: Final = field_units.SecondRadiationConstantPlanckUnits.meter_kelvin
+        unit_const: Final = units.SecondRadiationConstantPlanckUnits.meter_kelvin
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -8566,7 +8566,7 @@ class ToUnitSpecificEnthalpyConverter(UnitConverter):
     @property
     def british_thermal_unit_mean(self) -> "FieldQnty":
         """Convert to British thermal unit (mean) per pound units."""
-        unit_const: Final = field_units.SpecificEnthalpyUnits.british_thermal_unit_mean
+        unit_const: Final = units.SpecificEnthalpyUnits.british_thermal_unit_mean
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -8577,7 +8577,7 @@ class ToUnitSpecificEnthalpyConverter(UnitConverter):
     @property
     def british_thermal_unit_per_pound(self) -> "FieldQnty":
         """Convert to British thermal unit per pound units."""
-        unit_const: Final = field_units.SpecificEnthalpyUnits.british_thermal_unit_per_pound
+        unit_const: Final = units.SpecificEnthalpyUnits.british_thermal_unit_per_pound
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -8588,7 +8588,7 @@ class ToUnitSpecificEnthalpyConverter(UnitConverter):
     @property
     def calorie_per_gram(self) -> "FieldQnty":
         """Convert to calorie per gram units."""
-        unit_const: Final = field_units.SpecificEnthalpyUnits.calorie_per_gram
+        unit_const: Final = units.SpecificEnthalpyUnits.calorie_per_gram
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -8599,7 +8599,7 @@ class ToUnitSpecificEnthalpyConverter(UnitConverter):
     @property
     def chu_per_pound(self) -> "FieldQnty":
         """Convert to Chu per pound units."""
-        unit_const: Final = field_units.SpecificEnthalpyUnits.chu_per_pound
+        unit_const: Final = units.SpecificEnthalpyUnits.chu_per_pound
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -8610,7 +8610,7 @@ class ToUnitSpecificEnthalpyConverter(UnitConverter):
     @property
     def joule_per_kilogram(self) -> "FieldQnty":
         """Convert to joule per kilogram units."""
-        unit_const: Final = field_units.SpecificEnthalpyUnits.joule_per_kilogram
+        unit_const: Final = units.SpecificEnthalpyUnits.joule_per_kilogram
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -8621,7 +8621,7 @@ class ToUnitSpecificEnthalpyConverter(UnitConverter):
     @property
     def kilojoule_per_kilogram(self) -> "FieldQnty":
         """Convert to kilojoule per kilogram units."""
-        unit_const: Final = field_units.SpecificEnthalpyUnits.kilojoule_per_kilogram
+        unit_const: Final = units.SpecificEnthalpyUnits.kilojoule_per_kilogram
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -8643,7 +8643,7 @@ class ToUnitSpecificGravityConverter(UnitConverter):
     @property
     def dimensionless(self) -> "FieldQnty":
         """Convert to Dimensionless units."""
-        unit_const: Final = field_units.SpecificGravityUnits.dimensionless
+        unit_const: Final = units.SpecificGravityUnits.dimensionless
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -8665,7 +8665,7 @@ class ToUnitSpecificHeatCapacityConstantPressureConverter(UnitConverter):
     @property
     def btu_per_pound_per_degree_fahrenheit_or_degree_rankine(self) -> "FieldQnty":
         """Convert to Btu per pound per degree Fahrenheit (or degree Rankine) units."""
-        unit_const: Final = field_units.SpecificHeatCapacityConstantPressureUnits.btu_per_pound_per_degree_fahrenheit_or_degree_rankine
+        unit_const: Final = units.SpecificHeatCapacityConstantPressureUnits.btu_per_pound_per_degree_fahrenheit_or_degree_rankine
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -8676,7 +8676,7 @@ class ToUnitSpecificHeatCapacityConstantPressureConverter(UnitConverter):
     @property
     def calories_per_gram_per_kelvin_or_degree_celsius(self) -> "FieldQnty":
         """Convert to calories per gram per kelvin (or degree Celsius) units."""
-        unit_const: Final = field_units.SpecificHeatCapacityConstantPressureUnits.calories_per_gram_per_kelvin_or_degree_celsius
+        unit_const: Final = units.SpecificHeatCapacityConstantPressureUnits.calories_per_gram_per_kelvin_or_degree_celsius
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -8687,7 +8687,7 @@ class ToUnitSpecificHeatCapacityConstantPressureConverter(UnitConverter):
     @property
     def joules_per_kilogram_per_kelvin_or_degree_celsius(self) -> "FieldQnty":
         """Convert to joules per kilogram per kelvin (or degree Celsius) units."""
-        unit_const: Final = field_units.SpecificHeatCapacityConstantPressureUnits.joules_per_kilogram_per_kelvin_or_degree_celsius
+        unit_const: Final = units.SpecificHeatCapacityConstantPressureUnits.joules_per_kilogram_per_kelvin_or_degree_celsius
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -8709,7 +8709,7 @@ class ToUnitSpecificLengthConverter(UnitConverter):
     @property
     def centimeter_per_gram(self) -> "FieldQnty":
         """Convert to centimeter per gram units."""
-        unit_const: Final = field_units.SpecificLengthUnits.centimeter_per_gram
+        unit_const: Final = units.SpecificLengthUnits.centimeter_per_gram
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -8720,7 +8720,7 @@ class ToUnitSpecificLengthConverter(UnitConverter):
     @property
     def cotton_count(self) -> "FieldQnty":
         """Convert to cotton count units."""
-        unit_const: Final = field_units.SpecificLengthUnits.cotton_count
+        unit_const: Final = units.SpecificLengthUnits.cotton_count
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -8731,7 +8731,7 @@ class ToUnitSpecificLengthConverter(UnitConverter):
     @property
     def ft_per_pound(self) -> "FieldQnty":
         """Convert to ft per pound units."""
-        unit_const: Final = field_units.SpecificLengthUnits.ft_per_pound
+        unit_const: Final = units.SpecificLengthUnits.ft_per_pound
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -8742,7 +8742,7 @@ class ToUnitSpecificLengthConverter(UnitConverter):
     @property
     def meters_per_kilogram(self) -> "FieldQnty":
         """Convert to meters per kilogram units."""
-        unit_const: Final = field_units.SpecificLengthUnits.meters_per_kilogram
+        unit_const: Final = units.SpecificLengthUnits.meters_per_kilogram
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -8753,7 +8753,7 @@ class ToUnitSpecificLengthConverter(UnitConverter):
     @property
     def newton_meter(self) -> "FieldQnty":
         """Convert to newton meter units."""
-        unit_const: Final = field_units.SpecificLengthUnits.newton_meter
+        unit_const: Final = units.SpecificLengthUnits.newton_meter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -8764,7 +8764,7 @@ class ToUnitSpecificLengthConverter(UnitConverter):
     @property
     def worsted(self) -> "FieldQnty":
         """Convert to worsted units."""
-        unit_const: Final = field_units.SpecificLengthUnits.worsted
+        unit_const: Final = units.SpecificLengthUnits.worsted
         return self._convert_quantity(unit_const, modify_original=True)
 
 
@@ -8781,7 +8781,7 @@ class ToUnitSpecificSurfaceConverter(UnitConverter):
     @property
     def square_centimeter_per_gram(self) -> "FieldQnty":
         """Convert to square centimeter per gram units."""
-        unit_const: Final = field_units.SpecificSurfaceUnits.square_centimeter_per_gram
+        unit_const: Final = units.SpecificSurfaceUnits.square_centimeter_per_gram
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -8792,7 +8792,7 @@ class ToUnitSpecificSurfaceConverter(UnitConverter):
     @property
     def square_foot_per_kilogram(self) -> "FieldQnty":
         """Convert to square foot per kilogram units."""
-        unit_const: Final = field_units.SpecificSurfaceUnits.square_foot_per_kilogram
+        unit_const: Final = units.SpecificSurfaceUnits.square_foot_per_kilogram
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -8813,7 +8813,7 @@ class ToUnitSpecificSurfaceConverter(UnitConverter):
     @property
     def square_foot_per_pound(self) -> "FieldQnty":
         """Convert to square foot per pound units."""
-        unit_const: Final = field_units.SpecificSurfaceUnits.square_foot_per_pound
+        unit_const: Final = units.SpecificSurfaceUnits.square_foot_per_pound
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -8834,7 +8834,7 @@ class ToUnitSpecificSurfaceConverter(UnitConverter):
     @property
     def square_meter_per_gram(self) -> "FieldQnty":
         """Convert to square meter per gram units."""
-        unit_const: Final = field_units.SpecificSurfaceUnits.square_meter_per_gram
+        unit_const: Final = units.SpecificSurfaceUnits.square_meter_per_gram
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -8845,7 +8845,7 @@ class ToUnitSpecificSurfaceConverter(UnitConverter):
     @property
     def square_meter_per_kilogram(self) -> "FieldQnty":
         """Convert to square meter per kilogram units."""
-        unit_const: Final = field_units.SpecificSurfaceUnits.square_meter_per_kilogram
+        unit_const: Final = units.SpecificSurfaceUnits.square_meter_per_kilogram
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -8867,7 +8867,7 @@ class ToUnitSpecificVolumeConverter(UnitConverter):
     @property
     def cubic_centimeter_per_gram(self) -> "FieldQnty":
         """Convert to cubic centimeter per gram units."""
-        unit_const: Final = field_units.SpecificVolumeUnits.cubic_centimeter_per_gram
+        unit_const: Final = units.SpecificVolumeUnits.cubic_centimeter_per_gram
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -8888,7 +8888,7 @@ class ToUnitSpecificVolumeConverter(UnitConverter):
     @property
     def cubic_foot_per_kilogram(self) -> "FieldQnty":
         """Convert to cubic foot per kilogram units."""
-        unit_const: Final = field_units.SpecificVolumeUnits.cubic_foot_per_kilogram
+        unit_const: Final = units.SpecificVolumeUnits.cubic_foot_per_kilogram
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -8909,7 +8909,7 @@ class ToUnitSpecificVolumeConverter(UnitConverter):
     @property
     def cubic_foot_per_pound(self) -> "FieldQnty":
         """Convert to cubic foot per pound units."""
-        unit_const: Final = field_units.SpecificVolumeUnits.cubic_foot_per_pound
+        unit_const: Final = units.SpecificVolumeUnits.cubic_foot_per_pound
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -8930,7 +8930,7 @@ class ToUnitSpecificVolumeConverter(UnitConverter):
     @property
     def cubic_meter_per_kilogram(self) -> "FieldQnty":
         """Convert to cubic meter per kilogram units."""
-        unit_const: Final = field_units.SpecificVolumeUnits.cubic_meter_per_kilogram
+        unit_const: Final = units.SpecificVolumeUnits.cubic_meter_per_kilogram
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -8952,7 +8952,7 @@ class ToUnitStressConverter(UnitConverter):
     @property
     def dyne_per_square_centimeter(self) -> "FieldQnty":
         """Convert to dyne per square centimeter units."""
-        unit_const: Final = field_units.StressUnits.dyne_per_square_centimeter
+        unit_const: Final = units.StressUnits.dyne_per_square_centimeter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -8963,7 +8963,7 @@ class ToUnitStressConverter(UnitConverter):
     @property
     def gigapascal(self) -> "FieldQnty":
         """Convert to gigapascal units."""
-        unit_const: Final = field_units.StressUnits.gigapascal
+        unit_const: Final = units.StressUnits.gigapascal
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -8974,7 +8974,7 @@ class ToUnitStressConverter(UnitConverter):
     @property
     def hectopascal(self) -> "FieldQnty":
         """Convert to hectopascal units."""
-        unit_const: Final = field_units.StressUnits.hectopascal
+        unit_const: Final = units.StressUnits.hectopascal
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -8985,7 +8985,7 @@ class ToUnitStressConverter(UnitConverter):
     @property
     def kilogram_force_per_square_centimeter(self) -> "FieldQnty":
         """Convert to kilogram force per square centimeter units."""
-        unit_const: Final = field_units.StressUnits.kilogram_force_per_square_centimeter
+        unit_const: Final = units.StressUnits.kilogram_force_per_square_centimeter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -9006,7 +9006,7 @@ class ToUnitStressConverter(UnitConverter):
     @property
     def kilogram_force_per_square_meter(self) -> "FieldQnty":
         """Convert to kilogram force per square meter units."""
-        unit_const: Final = field_units.StressUnits.kilogram_force_per_square_meter
+        unit_const: Final = units.StressUnits.kilogram_force_per_square_meter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -9017,7 +9017,7 @@ class ToUnitStressConverter(UnitConverter):
     @property
     def kip_force_per_square_inch(self) -> "FieldQnty":
         """Convert to kip force per square inch units."""
-        unit_const: Final = field_units.StressUnits.kip_force_per_square_inch
+        unit_const: Final = units.StressUnits.kip_force_per_square_inch
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -9043,7 +9043,7 @@ class ToUnitStressConverter(UnitConverter):
     @property
     def megapascal(self) -> "FieldQnty":
         """Convert to megapascal units."""
-        unit_const: Final = field_units.StressUnits.megapascal
+        unit_const: Final = units.StressUnits.megapascal
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -9054,7 +9054,7 @@ class ToUnitStressConverter(UnitConverter):
     @property
     def newton_per_square_meter(self) -> "FieldQnty":
         """Convert to newton per square meter units."""
-        unit_const: Final = field_units.StressUnits.newton_per_square_meter
+        unit_const: Final = units.StressUnits.newton_per_square_meter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -9065,7 +9065,7 @@ class ToUnitStressConverter(UnitConverter):
     @property
     def ounce_force_per_square_inch(self) -> "FieldQnty":
         """Convert to ounce force per square inch units."""
-        unit_const: Final = field_units.StressUnits.ounce_force_per_square_inch
+        unit_const: Final = units.StressUnits.ounce_force_per_square_inch
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -9091,7 +9091,7 @@ class ToUnitStressConverter(UnitConverter):
     @property
     def pascal(self) -> "FieldQnty":
         """Convert to pascal units."""
-        unit_const: Final = field_units.StressUnits.pascal
+        unit_const: Final = units.StressUnits.pascal
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -9102,7 +9102,7 @@ class ToUnitStressConverter(UnitConverter):
     @property
     def pound_force_per_square_foot(self) -> "FieldQnty":
         """Convert to pound force per square foot units."""
-        unit_const: Final = field_units.StressUnits.pound_force_per_square_foot
+        unit_const: Final = units.StressUnits.pound_force_per_square_foot
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -9128,7 +9128,7 @@ class ToUnitStressConverter(UnitConverter):
     @property
     def pound_force_per_square_inch(self) -> "FieldQnty":
         """Convert to pound force per square inch units."""
-        unit_const: Final = field_units.StressUnits.pound_force_per_square_inch
+        unit_const: Final = units.StressUnits.pound_force_per_square_inch
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -9150,7 +9150,7 @@ class ToUnitSurfaceMassDensityConverter(UnitConverter):
     @property
     def gram_per_square_centimeter(self) -> "FieldQnty":
         """Convert to gram per square centimeter units."""
-        unit_const: Final = field_units.SurfaceMassDensityUnits.gram_per_square_centimeter
+        unit_const: Final = units.SurfaceMassDensityUnits.gram_per_square_centimeter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -9161,7 +9161,7 @@ class ToUnitSurfaceMassDensityConverter(UnitConverter):
     @property
     def gram_per_square_meter(self) -> "FieldQnty":
         """Convert to gram per square meter units."""
-        unit_const: Final = field_units.SurfaceMassDensityUnits.gram_per_square_meter
+        unit_const: Final = units.SurfaceMassDensityUnits.gram_per_square_meter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -9172,7 +9172,7 @@ class ToUnitSurfaceMassDensityConverter(UnitConverter):
     @property
     def kilogram_per_square_meter(self) -> "FieldQnty":
         """Convert to kilogram per square meter units."""
-        unit_const: Final = field_units.SurfaceMassDensityUnits.kilogram_per_square_meter
+        unit_const: Final = units.SurfaceMassDensityUnits.kilogram_per_square_meter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -9183,7 +9183,7 @@ class ToUnitSurfaceMassDensityConverter(UnitConverter):
     @property
     def pound_mass(self) -> "FieldQnty":
         """Convert to pound (mass) per square foot units."""
-        unit_const: Final = field_units.SurfaceMassDensityUnits.pound_mass
+        unit_const: Final = units.SurfaceMassDensityUnits.pound_mass
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -9205,7 +9205,7 @@ class ToUnitSurfaceTensionConverter(UnitConverter):
     @property
     def dyne_per_centimeter(self) -> "FieldQnty":
         """Convert to dyne per centimeter units."""
-        unit_const: Final = field_units.SurfaceTensionUnits.dyne_per_centimeter
+        unit_const: Final = units.SurfaceTensionUnits.dyne_per_centimeter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -9216,7 +9216,7 @@ class ToUnitSurfaceTensionConverter(UnitConverter):
     @property
     def gram_force_per_centimeter(self) -> "FieldQnty":
         """Convert to gram force per centimeter units."""
-        unit_const: Final = field_units.SurfaceTensionUnits.gram_force_per_centimeter
+        unit_const: Final = units.SurfaceTensionUnits.gram_force_per_centimeter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -9227,7 +9227,7 @@ class ToUnitSurfaceTensionConverter(UnitConverter):
     @property
     def newton_per_meter(self) -> "FieldQnty":
         """Convert to newton per meter units."""
-        unit_const: Final = field_units.SurfaceTensionUnits.newton_per_meter
+        unit_const: Final = units.SurfaceTensionUnits.newton_per_meter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -9238,7 +9238,7 @@ class ToUnitSurfaceTensionConverter(UnitConverter):
     @property
     def pound_force_per_foot(self) -> "FieldQnty":
         """Convert to pound force per foot units."""
-        unit_const: Final = field_units.SurfaceTensionUnits.pound_force_per_foot
+        unit_const: Final = units.SurfaceTensionUnits.pound_force_per_foot
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -9249,7 +9249,7 @@ class ToUnitSurfaceTensionConverter(UnitConverter):
     @property
     def pound_force_per_inch(self) -> "FieldQnty":
         """Convert to pound force per inch units."""
-        unit_const: Final = field_units.SurfaceTensionUnits.pound_force_per_inch
+        unit_const: Final = units.SurfaceTensionUnits.pound_force_per_inch
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -9271,7 +9271,7 @@ class ToUnitTemperatureConverter(UnitConverter):
     @property
     def degree_celsius_unit_size(self) -> "FieldQnty":
         """Convert to degree Celsius (unit size) units."""
-        unit_const: Final = field_units.TemperatureUnits.degree_celsius_unit_size
+        unit_const: Final = units.TemperatureUnits.degree_celsius_unit_size
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -9282,7 +9282,7 @@ class ToUnitTemperatureConverter(UnitConverter):
     @property
     def degree_fahrenheit_unit_size(self) -> "FieldQnty":
         """Convert to degree Fahrenheit (unit size) units."""
-        unit_const: Final = field_units.TemperatureUnits.degree_fahrenheit_unit_size
+        unit_const: Final = units.TemperatureUnits.degree_fahrenheit_unit_size
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -9293,7 +9293,7 @@ class ToUnitTemperatureConverter(UnitConverter):
     @property
     def degree_r_aumur_unit_size(self) -> "FieldQnty":
         """Convert to degree Réaumur (unit size) units."""
-        unit_const: Final = field_units.TemperatureUnits.degree_r_aumur_unit_size
+        unit_const: Final = units.TemperatureUnits.degree_r_aumur_unit_size
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -9304,7 +9304,7 @@ class ToUnitTemperatureConverter(UnitConverter):
     @property
     def kelvin_absolute_scale(self) -> "FieldQnty":
         """Convert to kelvin (absolute scale) units."""
-        unit_const: Final = field_units.TemperatureUnits.kelvin_absolute_scale
+        unit_const: Final = units.TemperatureUnits.kelvin_absolute_scale
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -9315,7 +9315,7 @@ class ToUnitTemperatureConverter(UnitConverter):
     @property
     def rankine_absolute_scale(self) -> "FieldQnty":
         """Convert to Rankine (absolute scale) units."""
-        unit_const: Final = field_units.TemperatureUnits.rankine_absolute_scale
+        unit_const: Final = units.TemperatureUnits.rankine_absolute_scale
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -9337,7 +9337,7 @@ class ToUnitThermalConductivityConverter(UnitConverter):
     @property
     def btu_it(self) -> "FieldQnty":
         """Convert to Btu (IT) per inch per hour per degree Fahrenheit units."""
-        unit_const: Final = field_units.ThermalConductivityUnits.btu_it
+        unit_const: Final = units.ThermalConductivityUnits.btu_it
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -9348,7 +9348,7 @@ class ToUnitThermalConductivityConverter(UnitConverter):
     @property
     def btu_therm(self) -> "FieldQnty":
         """Convert to Btu (therm) per foot per hour per degree Fahrenheit units."""
-        unit_const: Final = field_units.ThermalConductivityUnits.btu_therm
+        unit_const: Final = units.ThermalConductivityUnits.btu_therm
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -9359,7 +9359,7 @@ class ToUnitThermalConductivityConverter(UnitConverter):
     @property
     def calorie_therm(self) -> "FieldQnty":
         """Convert to calorie (therm) per centimeter per second per degree Celsius units."""
-        unit_const: Final = field_units.ThermalConductivityUnits.calorie_therm
+        unit_const: Final = units.ThermalConductivityUnits.calorie_therm
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -9370,7 +9370,7 @@ class ToUnitThermalConductivityConverter(UnitConverter):
     @property
     def joule_per_second_per_centimeter_per_kelvin(self) -> "FieldQnty":
         """Convert to joule per second per centimeter per kelvin units."""
-        unit_const: Final = field_units.ThermalConductivityUnits.joule_per_second_per_centimeter_per_kelvin
+        unit_const: Final = units.ThermalConductivityUnits.joule_per_second_per_centimeter_per_kelvin
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -9381,7 +9381,7 @@ class ToUnitThermalConductivityConverter(UnitConverter):
     @property
     def watt_per_centimeter_per_kelvin(self) -> "FieldQnty":
         """Convert to watt per centimeter per kelvin units."""
-        unit_const: Final = field_units.ThermalConductivityUnits.watt_per_centimeter_per_kelvin
+        unit_const: Final = units.ThermalConductivityUnits.watt_per_centimeter_per_kelvin
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -9392,7 +9392,7 @@ class ToUnitThermalConductivityConverter(UnitConverter):
     @property
     def watt_per_meter_per_kelvin(self) -> "FieldQnty":
         """Convert to watt per meter per kelvin units."""
-        unit_const: Final = field_units.ThermalConductivityUnits.watt_per_meter_per_kelvin
+        unit_const: Final = units.ThermalConductivityUnits.watt_per_meter_per_kelvin
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -9414,13 +9414,13 @@ class ToUnitTimeConverter(UnitConverter):
     @property
     def blink(self) -> "FieldQnty":
         """Convert to blink units."""
-        unit_const: Final = field_units.TimeUnits.blink
+        unit_const: Final = units.TimeUnits.blink
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def century(self) -> "FieldQnty":
         """Convert to century units."""
-        unit_const: Final = field_units.TimeUnits.century
+        unit_const: Final = units.TimeUnits.century
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -9431,13 +9431,13 @@ class ToUnitTimeConverter(UnitConverter):
     @property
     def chronon_or_tempon(self) -> "FieldQnty":
         """Convert to chronon or tempon units."""
-        unit_const: Final = field_units.TimeUnits.chronon_or_tempon
+        unit_const: Final = units.TimeUnits.chronon_or_tempon
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def gigan_or_eon(self) -> "FieldQnty":
         """Convert to gigan or eon units."""
-        unit_const: Final = field_units.TimeUnits.gigan_or_eon
+        unit_const: Final = units.TimeUnits.gigan_or_eon
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -9458,7 +9458,7 @@ class ToUnitTimeConverter(UnitConverter):
     @property
     def hour(self) -> "FieldQnty":
         """Convert to hour units."""
-        unit_const: Final = field_units.TimeUnits.hour
+        unit_const: Final = units.TimeUnits.hour
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -9479,7 +9479,7 @@ class ToUnitTimeConverter(UnitConverter):
     @property
     def julian_year(self) -> "FieldQnty":
         """Convert to Julian year units."""
-        unit_const: Final = field_units.TimeUnits.julian_year
+        unit_const: Final = units.TimeUnits.julian_year
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -9500,7 +9500,7 @@ class ToUnitTimeConverter(UnitConverter):
     @property
     def mean_solar_day(self) -> "FieldQnty":
         """Convert to mean solar day units."""
-        unit_const: Final = field_units.TimeUnits.mean_solar_day
+        unit_const: Final = units.TimeUnits.mean_solar_day
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -9521,13 +9521,13 @@ class ToUnitTimeConverter(UnitConverter):
     @property
     def millenium(self) -> "FieldQnty":
         """Convert to millenium units."""
-        unit_const: Final = field_units.TimeUnits.millenium
+        unit_const: Final = units.TimeUnits.millenium
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def minute(self) -> "FieldQnty":
         """Convert to minute units."""
-        unit_const: Final = field_units.TimeUnits.minute
+        unit_const: Final = units.TimeUnits.minute
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -9538,7 +9538,7 @@ class ToUnitTimeConverter(UnitConverter):
     @property
     def second(self) -> "FieldQnty":
         """Convert to second units."""
-        unit_const: Final = field_units.TimeUnits.second
+        unit_const: Final = units.TimeUnits.second
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -9549,13 +9549,13 @@ class ToUnitTimeConverter(UnitConverter):
     @property
     def shake(self) -> "FieldQnty":
         """Convert to shake units."""
-        unit_const: Final = field_units.TimeUnits.shake
+        unit_const: Final = units.TimeUnits.shake
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def sidereal_year_1900_ad(self) -> "FieldQnty":
         """Convert to sidereal year (1900 AD) units."""
-        unit_const: Final = field_units.TimeUnits.sidereal_year_1900_ad
+        unit_const: Final = units.TimeUnits.sidereal_year_1900_ad
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -9571,7 +9571,7 @@ class ToUnitTimeConverter(UnitConverter):
     @property
     def tropical_year(self) -> "FieldQnty":
         """Convert to tropical year units."""
-        unit_const: Final = field_units.TimeUnits.tropical_year
+        unit_const: Final = units.TimeUnits.tropical_year
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -9582,13 +9582,13 @@ class ToUnitTimeConverter(UnitConverter):
     @property
     def wink(self) -> "FieldQnty":
         """Convert to wink units."""
-        unit_const: Final = field_units.TimeUnits.wink
+        unit_const: Final = units.TimeUnits.wink
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def year(self) -> "FieldQnty":
         """Convert to year units."""
-        unit_const: Final = field_units.TimeUnits.year
+        unit_const: Final = units.TimeUnits.year
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -9609,7 +9609,7 @@ class ToUnitTimeConverter(UnitConverter):
     @property
     def millisecond(self) -> "FieldQnty":
         """Convert to millisecond units."""
-        unit_const: Final = field_units.TimeUnits.millisecond
+        unit_const: Final = units.TimeUnits.millisecond
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -9620,13 +9620,13 @@ class ToUnitTimeConverter(UnitConverter):
     @property
     def microsecond(self) -> "FieldQnty":
         """Convert to microsecond units."""
-        unit_const: Final = field_units.TimeUnits.microsecond
+        unit_const: Final = units.TimeUnits.microsecond
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def nanosecond(self) -> "FieldQnty":
         """Convert to nanosecond units."""
-        unit_const: Final = field_units.TimeUnits.nanosecond
+        unit_const: Final = units.TimeUnits.nanosecond
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -9637,7 +9637,7 @@ class ToUnitTimeConverter(UnitConverter):
     @property
     def picosecond(self) -> "FieldQnty":
         """Convert to picosecond units."""
-        unit_const: Final = field_units.TimeUnits.picosecond
+        unit_const: Final = units.TimeUnits.picosecond
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -9659,7 +9659,7 @@ class ToUnitTorqueConverter(UnitConverter):
     @property
     def centimeter_kilogram_force(self) -> "FieldQnty":
         """Convert to centimeter kilogram force units."""
-        unit_const: Final = field_units.TorqueUnits.centimeter_kilogram_force
+        unit_const: Final = units.TorqueUnits.centimeter_kilogram_force
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -9670,7 +9670,7 @@ class ToUnitTorqueConverter(UnitConverter):
     @property
     def dyne_centimeter(self) -> "FieldQnty":
         """Convert to dyne centimeter units."""
-        unit_const: Final = field_units.TorqueUnits.dyne_centimeter
+        unit_const: Final = units.TorqueUnits.dyne_centimeter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -9681,7 +9681,7 @@ class ToUnitTorqueConverter(UnitConverter):
     @property
     def foot_kilogram_force(self) -> "FieldQnty":
         """Convert to foot kilogram force units."""
-        unit_const: Final = field_units.TorqueUnits.foot_kilogram_force
+        unit_const: Final = units.TorqueUnits.foot_kilogram_force
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -9692,7 +9692,7 @@ class ToUnitTorqueConverter(UnitConverter):
     @property
     def foot_pound_force(self) -> "FieldQnty":
         """Convert to foot pound force units."""
-        unit_const: Final = field_units.TorqueUnits.foot_pound_force
+        unit_const: Final = units.TorqueUnits.foot_pound_force
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -9703,7 +9703,7 @@ class ToUnitTorqueConverter(UnitConverter):
     @property
     def foot_poundal(self) -> "FieldQnty":
         """Convert to foot poundal units."""
-        unit_const: Final = field_units.TorqueUnits.foot_poundal
+        unit_const: Final = units.TorqueUnits.foot_poundal
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -9714,7 +9714,7 @@ class ToUnitTorqueConverter(UnitConverter):
     @property
     def in_pound_force(self) -> "FieldQnty":
         """Convert to in pound force units."""
-        unit_const: Final = field_units.TorqueUnits.in_pound_force
+        unit_const: Final = units.TorqueUnits.in_pound_force
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -9725,7 +9725,7 @@ class ToUnitTorqueConverter(UnitConverter):
     @property
     def inch_ounce_force(self) -> "FieldQnty":
         """Convert to inch ounce force units."""
-        unit_const: Final = field_units.TorqueUnits.inch_ounce_force
+        unit_const: Final = units.TorqueUnits.inch_ounce_force
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -9736,7 +9736,7 @@ class ToUnitTorqueConverter(UnitConverter):
     @property
     def meter_kilogram_force(self) -> "FieldQnty":
         """Convert to meter kilogram force units."""
-        unit_const: Final = field_units.TorqueUnits.meter_kilogram_force
+        unit_const: Final = units.TorqueUnits.meter_kilogram_force
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -9747,7 +9747,7 @@ class ToUnitTorqueConverter(UnitConverter):
     @property
     def newton_centimeter(self) -> "FieldQnty":
         """Convert to newton centimeter units."""
-        unit_const: Final = field_units.TorqueUnits.newton_centimeter
+        unit_const: Final = units.TorqueUnits.newton_centimeter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -9758,7 +9758,7 @@ class ToUnitTorqueConverter(UnitConverter):
     @property
     def newton_meter(self) -> "FieldQnty":
         """Convert to newton meter units."""
-        unit_const: Final = field_units.TorqueUnits.newton_meter
+        unit_const: Final = units.TorqueUnits.newton_meter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -9780,7 +9780,7 @@ class ToUnitTurbulenceEnergyDissipationRateConverter(UnitConverter):
     @property
     def square_foot_per_cubic_second(self) -> "FieldQnty":
         """Convert to square foot per cubic second units."""
-        unit_const: Final = field_units.TurbulenceEnergyDissipationRateUnits.square_foot_per_cubic_second
+        unit_const: Final = units.TurbulenceEnergyDissipationRateUnits.square_foot_per_cubic_second
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -9801,7 +9801,7 @@ class ToUnitTurbulenceEnergyDissipationRateConverter(UnitConverter):
     @property
     def square_meter_per_cubic_second(self) -> "FieldQnty":
         """Convert to square meter per cubic second units."""
-        unit_const: Final = field_units.TurbulenceEnergyDissipationRateUnits.square_meter_per_cubic_second
+        unit_const: Final = units.TurbulenceEnergyDissipationRateUnits.square_meter_per_cubic_second
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -9823,7 +9823,7 @@ class ToUnitVelocityAngularConverter(UnitConverter):
     @property
     def degree_per_minute(self) -> "FieldQnty":
         """Convert to degree per minute units."""
-        unit_const: Final = field_units.VelocityAngularUnits.degree_per_minute
+        unit_const: Final = units.VelocityAngularUnits.degree_per_minute
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -9844,7 +9844,7 @@ class ToUnitVelocityAngularConverter(UnitConverter):
     @property
     def degree_per_second(self) -> "FieldQnty":
         """Convert to degree per second units."""
-        unit_const: Final = field_units.VelocityAngularUnits.degree_per_second
+        unit_const: Final = units.VelocityAngularUnits.degree_per_second
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -9865,7 +9865,7 @@ class ToUnitVelocityAngularConverter(UnitConverter):
     @property
     def grade_per_minute(self) -> "FieldQnty":
         """Convert to grade per minute units."""
-        unit_const: Final = field_units.VelocityAngularUnits.grade_per_minute
+        unit_const: Final = units.VelocityAngularUnits.grade_per_minute
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -9886,7 +9886,7 @@ class ToUnitVelocityAngularConverter(UnitConverter):
     @property
     def radian_per_minute(self) -> "FieldQnty":
         """Convert to radian per minute units."""
-        unit_const: Final = field_units.VelocityAngularUnits.radian_per_minute
+        unit_const: Final = units.VelocityAngularUnits.radian_per_minute
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -9897,7 +9897,7 @@ class ToUnitVelocityAngularConverter(UnitConverter):
     @property
     def radian_per_second(self) -> "FieldQnty":
         """Convert to radian per second units."""
-        unit_const: Final = field_units.VelocityAngularUnits.radian_per_second
+        unit_const: Final = units.VelocityAngularUnits.radian_per_second
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -9908,7 +9908,7 @@ class ToUnitVelocityAngularConverter(UnitConverter):
     @property
     def revolution_per_minute(self) -> "FieldQnty":
         """Convert to revolution per minute units."""
-        unit_const: Final = field_units.VelocityAngularUnits.revolution_per_minute
+        unit_const: Final = units.VelocityAngularUnits.revolution_per_minute
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -9929,7 +9929,7 @@ class ToUnitVelocityAngularConverter(UnitConverter):
     @property
     def revolution_per_second(self) -> "FieldQnty":
         """Convert to revolution per second units."""
-        unit_const: Final = field_units.VelocityAngularUnits.revolution_per_second
+        unit_const: Final = units.VelocityAngularUnits.revolution_per_second
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -9950,7 +9950,7 @@ class ToUnitVelocityAngularConverter(UnitConverter):
     @property
     def turn_per_minute(self) -> "FieldQnty":
         """Convert to turn per minute units."""
-        unit_const: Final = field_units.VelocityAngularUnits.turn_per_minute
+        unit_const: Final = units.VelocityAngularUnits.turn_per_minute
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -9972,7 +9972,7 @@ class ToUnitVelocityLinearConverter(UnitConverter):
     @property
     def foot_per_hour(self) -> "FieldQnty":
         """Convert to foot per hour units."""
-        unit_const: Final = field_units.VelocityLinearUnits.foot_per_hour
+        unit_const: Final = units.VelocityLinearUnits.foot_per_hour
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -9998,7 +9998,7 @@ class ToUnitVelocityLinearConverter(UnitConverter):
     @property
     def foot_per_minute(self) -> "FieldQnty":
         """Convert to foot per minute units."""
-        unit_const: Final = field_units.VelocityLinearUnits.foot_per_minute
+        unit_const: Final = units.VelocityLinearUnits.foot_per_minute
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -10019,7 +10019,7 @@ class ToUnitVelocityLinearConverter(UnitConverter):
     @property
     def foot_per_second(self) -> "FieldQnty":
         """Convert to foot per second units."""
-        unit_const: Final = field_units.VelocityLinearUnits.foot_per_second
+        unit_const: Final = units.VelocityLinearUnits.foot_per_second
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -10040,7 +10040,7 @@ class ToUnitVelocityLinearConverter(UnitConverter):
     @property
     def inch_per_second(self) -> "FieldQnty":
         """Convert to inch per second units."""
-        unit_const: Final = field_units.VelocityLinearUnits.inch_per_second
+        unit_const: Final = units.VelocityLinearUnits.inch_per_second
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -10061,7 +10061,7 @@ class ToUnitVelocityLinearConverter(UnitConverter):
     @property
     def international_knot(self) -> "FieldQnty":
         """Convert to international knot units."""
-        unit_const: Final = field_units.VelocityLinearUnits.international_knot
+        unit_const: Final = units.VelocityLinearUnits.international_knot
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -10072,7 +10072,7 @@ class ToUnitVelocityLinearConverter(UnitConverter):
     @property
     def kilometer_per_hour(self) -> "FieldQnty":
         """Convert to kilometer per hour units."""
-        unit_const: Final = field_units.VelocityLinearUnits.kilometer_per_hour
+        unit_const: Final = units.VelocityLinearUnits.kilometer_per_hour
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -10083,7 +10083,7 @@ class ToUnitVelocityLinearConverter(UnitConverter):
     @property
     def kilometer_per_second(self) -> "FieldQnty":
         """Convert to kilometer per second units."""
-        unit_const: Final = field_units.VelocityLinearUnits.kilometer_per_second
+        unit_const: Final = units.VelocityLinearUnits.kilometer_per_second
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -10094,7 +10094,7 @@ class ToUnitVelocityLinearConverter(UnitConverter):
     @property
     def meter_per_second(self) -> "FieldQnty":
         """Convert to meter per second units."""
-        unit_const: Final = field_units.VelocityLinearUnits.meter_per_second
+        unit_const: Final = units.VelocityLinearUnits.meter_per_second
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -10105,7 +10105,7 @@ class ToUnitVelocityLinearConverter(UnitConverter):
     @property
     def mile_per_hour(self) -> "FieldQnty":
         """Convert to mile per hour units."""
-        unit_const: Final = field_units.VelocityLinearUnits.mile_per_hour
+        unit_const: Final = units.VelocityLinearUnits.mile_per_hour
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -10142,7 +10142,7 @@ class ToUnitViscosityDynamicConverter(UnitConverter):
     @property
     def centipoise(self) -> "FieldQnty":
         """Convert to centipoise units."""
-        unit_const: Final = field_units.ViscosityDynamicUnits.centipoise
+        unit_const: Final = units.ViscosityDynamicUnits.centipoise
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -10163,7 +10163,7 @@ class ToUnitViscosityDynamicConverter(UnitConverter):
     @property
     def dyne_second_per_square_centimeter(self) -> "FieldQnty":
         """Convert to dyne second per square centimeter units."""
-        unit_const: Final = field_units.ViscosityDynamicUnits.dyne_second_per_square_centimeter
+        unit_const: Final = units.ViscosityDynamicUnits.dyne_second_per_square_centimeter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -10174,7 +10174,7 @@ class ToUnitViscosityDynamicConverter(UnitConverter):
     @property
     def kilopound_second_per_square_meter(self) -> "FieldQnty":
         """Convert to kilopound second per square meter units."""
-        unit_const: Final = field_units.ViscosityDynamicUnits.kilopound_second_per_square_meter
+        unit_const: Final = units.ViscosityDynamicUnits.kilopound_second_per_square_meter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -10185,7 +10185,7 @@ class ToUnitViscosityDynamicConverter(UnitConverter):
     @property
     def millipoise(self) -> "FieldQnty":
         """Convert to millipoise units."""
-        unit_const: Final = field_units.ViscosityDynamicUnits.millipoise
+        unit_const: Final = units.ViscosityDynamicUnits.millipoise
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -10206,7 +10206,7 @@ class ToUnitViscosityDynamicConverter(UnitConverter):
     @property
     def newton_second_per_square_meter(self) -> "FieldQnty":
         """Convert to newton second per square meter units."""
-        unit_const: Final = field_units.ViscosityDynamicUnits.newton_second_per_square_meter
+        unit_const: Final = units.ViscosityDynamicUnits.newton_second_per_square_meter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -10217,7 +10217,7 @@ class ToUnitViscosityDynamicConverter(UnitConverter):
     @property
     def pascal_second(self) -> "FieldQnty":
         """Convert to pascal second units."""
-        unit_const: Final = field_units.ViscosityDynamicUnits.pascal_second
+        unit_const: Final = units.ViscosityDynamicUnits.pascal_second
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -10238,7 +10238,7 @@ class ToUnitViscosityDynamicConverter(UnitConverter):
     @property
     def poise(self) -> "FieldQnty":
         """Convert to poise units."""
-        unit_const: Final = field_units.ViscosityDynamicUnits.poise
+        unit_const: Final = units.ViscosityDynamicUnits.poise
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -10259,7 +10259,7 @@ class ToUnitViscosityDynamicConverter(UnitConverter):
     @property
     def pound_force_hour_per_square_foot(self) -> "FieldQnty":
         """Convert to pound force hour per square foot units."""
-        unit_const: Final = field_units.ViscosityDynamicUnits.pound_force_hour_per_square_foot
+        unit_const: Final = units.ViscosityDynamicUnits.pound_force_hour_per_square_foot
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -10280,7 +10280,7 @@ class ToUnitViscosityDynamicConverter(UnitConverter):
     @property
     def pound_force_second_per_square_foot(self) -> "FieldQnty":
         """Convert to pound force second per square foot units."""
-        unit_const: Final = field_units.ViscosityDynamicUnits.pound_force_second_per_square_foot
+        unit_const: Final = units.ViscosityDynamicUnits.pound_force_second_per_square_foot
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -10312,7 +10312,7 @@ class ToUnitViscosityKinematicConverter(UnitConverter):
     @property
     def centistokes(self) -> "FieldQnty":
         """Convert to centistokes units."""
-        unit_const: Final = field_units.ViscosityKinematicUnits.centistokes
+        unit_const: Final = units.ViscosityKinematicUnits.centistokes
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -10323,7 +10323,7 @@ class ToUnitViscosityKinematicConverter(UnitConverter):
     @property
     def millistokes(self) -> "FieldQnty":
         """Convert to millistokes units."""
-        unit_const: Final = field_units.ViscosityKinematicUnits.millistokes
+        unit_const: Final = units.ViscosityKinematicUnits.millistokes
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -10334,7 +10334,7 @@ class ToUnitViscosityKinematicConverter(UnitConverter):
     @property
     def square_centimeter_per_second(self) -> "FieldQnty":
         """Convert to square centimeter per second units."""
-        unit_const: Final = field_units.ViscosityKinematicUnits.square_centimeter_per_second
+        unit_const: Final = units.ViscosityKinematicUnits.square_centimeter_per_second
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -10345,7 +10345,7 @@ class ToUnitViscosityKinematicConverter(UnitConverter):
     @property
     def square_foot_per_hour(self) -> "FieldQnty":
         """Convert to square foot per hour units."""
-        unit_const: Final = field_units.ViscosityKinematicUnits.square_foot_per_hour
+        unit_const: Final = units.ViscosityKinematicUnits.square_foot_per_hour
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -10366,7 +10366,7 @@ class ToUnitViscosityKinematicConverter(UnitConverter):
     @property
     def square_foot_per_second(self) -> "FieldQnty":
         """Convert to square foot per second units."""
-        unit_const: Final = field_units.ViscosityKinematicUnits.square_foot_per_second
+        unit_const: Final = units.ViscosityKinematicUnits.square_foot_per_second
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -10377,7 +10377,7 @@ class ToUnitViscosityKinematicConverter(UnitConverter):
     @property
     def square_meters_per_second(self) -> "FieldQnty":
         """Convert to square meters per second units."""
-        unit_const: Final = field_units.ViscosityKinematicUnits.square_meters_per_second
+        unit_const: Final = units.ViscosityKinematicUnits.square_meters_per_second
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -10388,7 +10388,7 @@ class ToUnitViscosityKinematicConverter(UnitConverter):
     @property
     def stokes(self) -> "FieldQnty":
         """Convert to stokes units."""
-        unit_const: Final = field_units.ViscosityKinematicUnits.stokes
+        unit_const: Final = units.ViscosityKinematicUnits.stokes
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -10410,7 +10410,7 @@ class ToUnitVolumeConverter(UnitConverter):
     @property
     def acre_foot(self) -> "FieldQnty":
         """Convert to acre foot units."""
-        unit_const: Final = field_units.VolumeUnits.acre_foot
+        unit_const: Final = units.VolumeUnits.acre_foot
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -10421,7 +10421,7 @@ class ToUnitVolumeConverter(UnitConverter):
     @property
     def acre_inch(self) -> "FieldQnty":
         """Convert to acre inch units."""
-        unit_const: Final = field_units.VolumeUnits.acre_inch
+        unit_const: Final = units.VolumeUnits.acre_inch
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -10432,7 +10432,7 @@ class ToUnitVolumeConverter(UnitConverter):
     @property
     def barrel_us_liquid(self) -> "FieldQnty":
         """Convert to barrel (US Liquid) units."""
-        unit_const: Final = field_units.VolumeUnits.barrel_us_liquid
+        unit_const: Final = units.VolumeUnits.barrel_us_liquid
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -10443,7 +10443,7 @@ class ToUnitVolumeConverter(UnitConverter):
     @property
     def barrel_us_petro(self) -> "FieldQnty":
         """Convert to barrel (US, Petro) units."""
-        unit_const: Final = field_units.VolumeUnits.barrel_us_petro
+        unit_const: Final = units.VolumeUnits.barrel_us_petro
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -10454,7 +10454,7 @@ class ToUnitVolumeConverter(UnitConverter):
     @property
     def board_foot_measure(self) -> "FieldQnty":
         """Convert to board foot measure units."""
-        unit_const: Final = field_units.VolumeUnits.board_foot_measure
+        unit_const: Final = units.VolumeUnits.board_foot_measure
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -10475,7 +10475,7 @@ class ToUnitVolumeConverter(UnitConverter):
     @property
     def bushel_us_dry(self) -> "FieldQnty":
         """Convert to bushel (US Dry) units."""
-        unit_const: Final = field_units.VolumeUnits.bushel_us_dry
+        unit_const: Final = units.VolumeUnits.bushel_us_dry
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -10486,7 +10486,7 @@ class ToUnitVolumeConverter(UnitConverter):
     @property
     def centiliter(self) -> "FieldQnty":
         """Convert to centiliter units."""
-        unit_const: Final = field_units.VolumeUnits.centiliter
+        unit_const: Final = units.VolumeUnits.centiliter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -10507,7 +10507,7 @@ class ToUnitVolumeConverter(UnitConverter):
     @property
     def cord(self) -> "FieldQnty":
         """Convert to cord units."""
-        unit_const: Final = field_units.VolumeUnits.cord
+        unit_const: Final = units.VolumeUnits.cord
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -10523,7 +10523,7 @@ class ToUnitVolumeConverter(UnitConverter):
     @property
     def cord_foot(self) -> "FieldQnty":
         """Convert to cord foot units."""
-        unit_const: Final = field_units.VolumeUnits.cord_foot
+        unit_const: Final = units.VolumeUnits.cord_foot
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -10534,7 +10534,7 @@ class ToUnitVolumeConverter(UnitConverter):
     @property
     def cubic_centimeter(self) -> "FieldQnty":
         """Convert to cubic centimeter units."""
-        unit_const: Final = field_units.VolumeUnits.cubic_centimeter
+        unit_const: Final = units.VolumeUnits.cubic_centimeter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -10555,7 +10555,7 @@ class ToUnitVolumeConverter(UnitConverter):
     @property
     def cubic_decameter(self) -> "FieldQnty":
         """Convert to cubic decameter units."""
-        unit_const: Final = field_units.VolumeUnits.cubic_decameter
+        unit_const: Final = units.VolumeUnits.cubic_decameter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -10566,7 +10566,7 @@ class ToUnitVolumeConverter(UnitConverter):
     @property
     def cubic_decimeter(self) -> "FieldQnty":
         """Convert to cubic decimeter units."""
-        unit_const: Final = field_units.VolumeUnits.cubic_decimeter
+        unit_const: Final = units.VolumeUnits.cubic_decimeter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -10577,7 +10577,7 @@ class ToUnitVolumeConverter(UnitConverter):
     @property
     def cubic_foot(self) -> "FieldQnty":
         """Convert to cubic foot units."""
-        unit_const: Final = field_units.VolumeUnits.cubic_foot
+        unit_const: Final = units.VolumeUnits.cubic_foot
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -10598,7 +10598,7 @@ class ToUnitVolumeConverter(UnitConverter):
     @property
     def cubic_inch(self) -> "FieldQnty":
         """Convert to cubic inch units."""
-        unit_const: Final = field_units.VolumeUnits.cubic_inch
+        unit_const: Final = units.VolumeUnits.cubic_inch
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -10619,7 +10619,7 @@ class ToUnitVolumeConverter(UnitConverter):
     @property
     def cubic_kilometer(self) -> "FieldQnty":
         """Convert to cubic kilometer units."""
-        unit_const: Final = field_units.VolumeUnits.cubic_kilometer
+        unit_const: Final = units.VolumeUnits.cubic_kilometer
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -10630,7 +10630,7 @@ class ToUnitVolumeConverter(UnitConverter):
     @property
     def cubic_meter(self) -> "FieldQnty":
         """Convert to cubic meter units."""
-        unit_const: Final = field_units.VolumeUnits.cubic_meter
+        unit_const: Final = units.VolumeUnits.cubic_meter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -10641,7 +10641,7 @@ class ToUnitVolumeConverter(UnitConverter):
     @property
     def cubic_micrometer(self) -> "FieldQnty":
         """Convert to cubic micrometer units."""
-        unit_const: Final = field_units.VolumeUnits.cubic_micrometer
+        unit_const: Final = units.VolumeUnits.cubic_micrometer
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -10652,7 +10652,7 @@ class ToUnitVolumeConverter(UnitConverter):
     @property
     def cubic_mile_us_intl(self) -> "FieldQnty":
         """Convert to cubic mile (US, Intl) units."""
-        unit_const: Final = field_units.VolumeUnits.cubic_mile_us_intl
+        unit_const: Final = units.VolumeUnits.cubic_mile_us_intl
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -10663,7 +10663,7 @@ class ToUnitVolumeConverter(UnitConverter):
     @property
     def cubic_millimeter(self) -> "FieldQnty":
         """Convert to cubic millimeter units."""
-        unit_const: Final = field_units.VolumeUnits.cubic_millimeter
+        unit_const: Final = units.VolumeUnits.cubic_millimeter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -10674,7 +10674,7 @@ class ToUnitVolumeConverter(UnitConverter):
     @property
     def cubic_yard(self) -> "FieldQnty":
         """Convert to cubic yard units."""
-        unit_const: Final = field_units.VolumeUnits.cubic_yard
+        unit_const: Final = units.VolumeUnits.cubic_yard
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -10695,7 +10695,7 @@ class ToUnitVolumeConverter(UnitConverter):
     @property
     def decast_re(self) -> "FieldQnty":
         """Convert to decastére units."""
-        unit_const: Final = field_units.VolumeUnits.decast_re
+        unit_const: Final = units.VolumeUnits.decast_re
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -10706,7 +10706,7 @@ class ToUnitVolumeConverter(UnitConverter):
     @property
     def deciliter(self) -> "FieldQnty":
         """Convert to deciliter units."""
-        unit_const: Final = field_units.VolumeUnits.deciliter
+        unit_const: Final = units.VolumeUnits.deciliter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -10727,7 +10727,7 @@ class ToUnitVolumeConverter(UnitConverter):
     @property
     def fluid_drachm_uk(self) -> "FieldQnty":
         """Convert to fluid drachm (UK) units."""
-        unit_const: Final = field_units.VolumeUnits.fluid_drachm_uk
+        unit_const: Final = units.VolumeUnits.fluid_drachm_uk
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -10738,7 +10738,7 @@ class ToUnitVolumeConverter(UnitConverter):
     @property
     def fluid_dram_us(self) -> "FieldQnty":
         """Convert to fluid dram (US) units."""
-        unit_const: Final = field_units.VolumeUnits.fluid_dram_us
+        unit_const: Final = units.VolumeUnits.fluid_dram_us
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -10749,7 +10749,7 @@ class ToUnitVolumeConverter(UnitConverter):
     @property
     def fluid_ounce_us(self) -> "FieldQnty":
         """Convert to fluid ounce (US) units."""
-        unit_const: Final = field_units.VolumeUnits.fluid_ounce_us
+        unit_const: Final = units.VolumeUnits.fluid_ounce_us
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -10760,7 +10760,7 @@ class ToUnitVolumeConverter(UnitConverter):
     @property
     def gallon_imperial_uk(self) -> "FieldQnty":
         """Convert to gallon (Imperial UK) units."""
-        unit_const: Final = field_units.VolumeUnits.gallon_imperial_uk
+        unit_const: Final = units.VolumeUnits.gallon_imperial_uk
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -10781,7 +10781,7 @@ class ToUnitVolumeConverter(UnitConverter):
     @property
     def gallon_us_dry(self) -> "FieldQnty":
         """Convert to gallon (US Dry) units."""
-        unit_const: Final = field_units.VolumeUnits.gallon_us_dry
+        unit_const: Final = units.VolumeUnits.gallon_us_dry
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -10792,7 +10792,7 @@ class ToUnitVolumeConverter(UnitConverter):
     @property
     def gallon_us_liquid(self) -> "FieldQnty":
         """Convert to gallon (US Liquid) units."""
-        unit_const: Final = field_units.VolumeUnits.gallon_us_liquid
+        unit_const: Final = units.VolumeUnits.gallon_us_liquid
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -10803,13 +10803,13 @@ class ToUnitVolumeConverter(UnitConverter):
     @property
     def last(self) -> "FieldQnty":
         """Convert to last units."""
-        unit_const: Final = field_units.VolumeUnits.last
+        unit_const: Final = units.VolumeUnits.last
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def liter(self) -> "FieldQnty":
         """Convert to liter units."""
-        unit_const: Final = field_units.VolumeUnits.liter
+        unit_const: Final = units.VolumeUnits.liter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -10830,7 +10830,7 @@ class ToUnitVolumeConverter(UnitConverter):
     @property
     def microliter(self) -> "FieldQnty":
         """Convert to microliter units."""
-        unit_const: Final = field_units.VolumeUnits.microliter
+        unit_const: Final = units.VolumeUnits.microliter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -10851,7 +10851,7 @@ class ToUnitVolumeConverter(UnitConverter):
     @property
     def milliliter(self) -> "FieldQnty":
         """Convert to milliliter units."""
-        unit_const: Final = field_units.VolumeUnits.milliliter
+        unit_const: Final = units.VolumeUnits.milliliter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -10862,13 +10862,13 @@ class ToUnitVolumeConverter(UnitConverter):
     @property
     def mohr_centicube(self) -> "FieldQnty":
         """Convert to Mohr centicube units."""
-        unit_const: Final = field_units.VolumeUnits.mohr_centicube
+        unit_const: Final = units.VolumeUnits.mohr_centicube
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def pint_uk(self) -> "FieldQnty":
         """Convert to pint (UK) units."""
-        unit_const: Final = field_units.VolumeUnits.pint_uk
+        unit_const: Final = units.VolumeUnits.pint_uk
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -10879,7 +10879,7 @@ class ToUnitVolumeConverter(UnitConverter):
     @property
     def pint_us_dry(self) -> "FieldQnty":
         """Convert to pint (US Dry) units."""
-        unit_const: Final = field_units.VolumeUnits.pint_us_dry
+        unit_const: Final = units.VolumeUnits.pint_us_dry
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -10890,7 +10890,7 @@ class ToUnitVolumeConverter(UnitConverter):
     @property
     def pint_us_liquid(self) -> "FieldQnty":
         """Convert to pint (US Liquid) units."""
-        unit_const: Final = field_units.VolumeUnits.pint_us_liquid
+        unit_const: Final = units.VolumeUnits.pint_us_liquid
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -10901,7 +10901,7 @@ class ToUnitVolumeConverter(UnitConverter):
     @property
     def quart_us_dry(self) -> "FieldQnty":
         """Convert to quart (US Dry) units."""
-        unit_const: Final = field_units.VolumeUnits.quart_us_dry
+        unit_const: Final = units.VolumeUnits.quart_us_dry
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -10912,7 +10912,7 @@ class ToUnitVolumeConverter(UnitConverter):
     @property
     def st_re(self) -> "FieldQnty":
         """Convert to stére units."""
-        unit_const: Final = field_units.VolumeUnits.st_re
+        unit_const: Final = units.VolumeUnits.st_re
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -10923,7 +10923,7 @@ class ToUnitVolumeConverter(UnitConverter):
     @property
     def tablespoon_metric(self) -> "FieldQnty":
         """Convert to tablespoon (Metric) units."""
-        unit_const: Final = field_units.VolumeUnits.tablespoon_metric
+        unit_const: Final = units.VolumeUnits.tablespoon_metric
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -10934,7 +10934,7 @@ class ToUnitVolumeConverter(UnitConverter):
     @property
     def tablespoon_us(self) -> "FieldQnty":
         """Convert to tablespoon (US) units."""
-        unit_const: Final = field_units.VolumeUnits.tablespoon_us
+        unit_const: Final = units.VolumeUnits.tablespoon_us
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -10945,7 +10945,7 @@ class ToUnitVolumeConverter(UnitConverter):
     @property
     def teaspoon_us(self) -> "FieldQnty":
         """Convert to teaspoon (US) units."""
-        unit_const: Final = field_units.VolumeUnits.teaspoon_us
+        unit_const: Final = units.VolumeUnits.teaspoon_us
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -10967,7 +10967,7 @@ class ToUnitVolumeFractionOfIConverter(UnitConverter):
     @property
     def cubic_centimeters_of_i_per_cubic_meter_total(self) -> "FieldQnty":
         """Convert to cubic centimeters of "i" per cubic meter total units."""
-        unit_const: Final = field_units.VolumeFractionOfIUnits.cubic_centimeters_of_i_per_cubic_meter_total
+        unit_const: Final = units.VolumeFractionOfIUnits.cubic_centimeters_of_i_per_cubic_meter_total
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -10988,7 +10988,7 @@ class ToUnitVolumeFractionOfIConverter(UnitConverter):
     @property
     def cubic_foot_of_i_per_cubic_foot_total(self) -> "FieldQnty":
         """Convert to cubic foot of "i" per cubic foot total units."""
-        unit_const: Final = field_units.VolumeFractionOfIUnits.cubic_foot_of_i_per_cubic_foot_total
+        unit_const: Final = units.VolumeFractionOfIUnits.cubic_foot_of_i_per_cubic_foot_total
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -11009,7 +11009,7 @@ class ToUnitVolumeFractionOfIConverter(UnitConverter):
     @property
     def cubic_meters_of_i_per_cubic_meter_total(self) -> "FieldQnty":
         """Convert to cubic meters of " i " per cubic meter total units."""
-        unit_const: Final = field_units.VolumeFractionOfIUnits.cubic_meters_of_i_per_cubic_meter_total
+        unit_const: Final = units.VolumeFractionOfIUnits.cubic_meters_of_i_per_cubic_meter_total
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -11020,7 +11020,7 @@ class ToUnitVolumeFractionOfIConverter(UnitConverter):
     @property
     def gallons_of_i_per_gallon_total(self) -> "FieldQnty":
         """Convert to gallons of "i" per gallon total units."""
-        unit_const: Final = field_units.VolumeFractionOfIUnits.gallons_of_i_per_gallon_total
+        unit_const: Final = units.VolumeFractionOfIUnits.gallons_of_i_per_gallon_total
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -11042,7 +11042,7 @@ class ToUnitVolumetricCalorificHeatingValueConverter(UnitConverter):
     @property
     def british_thermal_unit_per_cubic_foot(self) -> "FieldQnty":
         """Convert to British thermal unit per cubic foot units."""
-        unit_const: Final = field_units.VolumetricCalorificHeatingValueUnits.british_thermal_unit_per_cubic_foot
+        unit_const: Final = units.VolumetricCalorificHeatingValueUnits.british_thermal_unit_per_cubic_foot
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -11063,7 +11063,7 @@ class ToUnitVolumetricCalorificHeatingValueConverter(UnitConverter):
     @property
     def british_thermal_unit_per_gallon_uk(self) -> "FieldQnty":
         """Convert to British thermal unit per gallon (UK) units."""
-        unit_const: Final = field_units.VolumetricCalorificHeatingValueUnits.british_thermal_unit_per_gallon_uk
+        unit_const: Final = units.VolumetricCalorificHeatingValueUnits.british_thermal_unit_per_gallon_uk
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -11074,7 +11074,7 @@ class ToUnitVolumetricCalorificHeatingValueConverter(UnitConverter):
     @property
     def british_thermal_unit_per_gallon_us(self) -> "FieldQnty":
         """Convert to British thermal unit per gallon (US) units."""
-        unit_const: Final = field_units.VolumetricCalorificHeatingValueUnits.british_thermal_unit_per_gallon_us
+        unit_const: Final = units.VolumetricCalorificHeatingValueUnits.british_thermal_unit_per_gallon_us
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -11085,7 +11085,7 @@ class ToUnitVolumetricCalorificHeatingValueConverter(UnitConverter):
     @property
     def calorie_per_cubic_centimeter(self) -> "FieldQnty":
         """Convert to calorie per cubic centimeter units."""
-        unit_const: Final = field_units.VolumetricCalorificHeatingValueUnits.calorie_per_cubic_centimeter
+        unit_const: Final = units.VolumetricCalorificHeatingValueUnits.calorie_per_cubic_centimeter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -11106,7 +11106,7 @@ class ToUnitVolumetricCalorificHeatingValueConverter(UnitConverter):
     @property
     def chu_per_cubic_foot(self) -> "FieldQnty":
         """Convert to Chu per cubic foot units."""
-        unit_const: Final = field_units.VolumetricCalorificHeatingValueUnits.chu_per_cubic_foot
+        unit_const: Final = units.VolumetricCalorificHeatingValueUnits.chu_per_cubic_foot
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -11127,7 +11127,7 @@ class ToUnitVolumetricCalorificHeatingValueConverter(UnitConverter):
     @property
     def joule_per_cubic_meter(self) -> "FieldQnty":
         """Convert to joule per cubic meter units."""
-        unit_const: Final = field_units.VolumetricCalorificHeatingValueUnits.joule_per_cubic_meter
+        unit_const: Final = units.VolumetricCalorificHeatingValueUnits.joule_per_cubic_meter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -11138,7 +11138,7 @@ class ToUnitVolumetricCalorificHeatingValueConverter(UnitConverter):
     @property
     def kilocalorie_per_cubic_foot(self) -> "FieldQnty":
         """Convert to kilocalorie per cubic foot units."""
-        unit_const: Final = field_units.VolumetricCalorificHeatingValueUnits.kilocalorie_per_cubic_foot
+        unit_const: Final = units.VolumetricCalorificHeatingValueUnits.kilocalorie_per_cubic_foot
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -11159,7 +11159,7 @@ class ToUnitVolumetricCalorificHeatingValueConverter(UnitConverter):
     @property
     def kilocalorie_per_cubic_meter(self) -> "FieldQnty":
         """Convert to kilocalorie per cubic meter units."""
-        unit_const: Final = field_units.VolumetricCalorificHeatingValueUnits.kilocalorie_per_cubic_meter
+        unit_const: Final = units.VolumetricCalorificHeatingValueUnits.kilocalorie_per_cubic_meter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -11170,7 +11170,7 @@ class ToUnitVolumetricCalorificHeatingValueConverter(UnitConverter):
     @property
     def therm_100_k_btu(self) -> "FieldQnty":
         """Convert to therm ( 100 K Btu ) per cubic foot units."""
-        unit_const: Final = field_units.VolumetricCalorificHeatingValueUnits.therm_100_k_btu
+        unit_const: Final = units.VolumetricCalorificHeatingValueUnits.therm_100_k_btu
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -11192,7 +11192,7 @@ class ToUnitVolumetricCoefficientOfExpansionConverter(UnitConverter):
     @property
     def gram_per_cubic_centimeter_per_kelvin_or_degree_celsius(self) -> "FieldQnty":
         """Convert to gram per cubic centimeter per kelvin (or degree Celsius) units."""
-        unit_const: Final = field_units.VolumetricCoefficientOfExpansionUnits.gram_per_cubic_centimeter_per_kelvin_or_degree_celsius
+        unit_const: Final = units.VolumetricCoefficientOfExpansionUnits.gram_per_cubic_centimeter_per_kelvin_or_degree_celsius
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -11213,7 +11213,7 @@ class ToUnitVolumetricCoefficientOfExpansionConverter(UnitConverter):
     @property
     def kilogram_per_cubic_meter_per_kelvin_or_degree_celsius(self) -> "FieldQnty":
         """Convert to kilogram per cubic meter per kelvin (or degree Celsius) units."""
-        unit_const: Final = field_units.VolumetricCoefficientOfExpansionUnits.kilogram_per_cubic_meter_per_kelvin_or_degree_celsius
+        unit_const: Final = units.VolumetricCoefficientOfExpansionUnits.kilogram_per_cubic_meter_per_kelvin_or_degree_celsius
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -11234,7 +11234,7 @@ class ToUnitVolumetricCoefficientOfExpansionConverter(UnitConverter):
     @property
     def pound_per_cubic_foot_per_degree_fahrenheit_or_degree_rankine(self) -> "FieldQnty":
         """Convert to pound per cubic foot per degree Fahrenheit (or degree Rankine) units."""
-        unit_const: Final = field_units.VolumetricCoefficientOfExpansionUnits.pound_per_cubic_foot_per_degree_fahrenheit_or_degree_rankine
+        unit_const: Final = units.VolumetricCoefficientOfExpansionUnits.pound_per_cubic_foot_per_degree_fahrenheit_or_degree_rankine
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -11255,7 +11255,7 @@ class ToUnitVolumetricCoefficientOfExpansionConverter(UnitConverter):
     @property
     def pound_per_cubic_foot_per_kelvin_or_degree_celsius(self) -> "FieldQnty":
         """Convert to pound per cubic foot per kelvin (or degree Celsius) units."""
-        unit_const: Final = field_units.VolumetricCoefficientOfExpansionUnits.pound_per_cubic_foot_per_kelvin_or_degree_celsius
+        unit_const: Final = units.VolumetricCoefficientOfExpansionUnits.pound_per_cubic_foot_per_kelvin_or_degree_celsius
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -11287,7 +11287,7 @@ class ToUnitVolumetricFlowRateConverter(UnitConverter):
     @property
     def cubic_feet_per_day(self) -> "FieldQnty":
         """Convert to cubic feet per day units."""
-        unit_const: Final = field_units.VolumetricFlowRateUnits.cubic_feet_per_day
+        unit_const: Final = units.VolumetricFlowRateUnits.cubic_feet_per_day
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -11313,7 +11313,7 @@ class ToUnitVolumetricFlowRateConverter(UnitConverter):
     @property
     def cubic_feet_per_hour(self) -> "FieldQnty":
         """Convert to cubic feet per hour units."""
-        unit_const: Final = field_units.VolumetricFlowRateUnits.cubic_feet_per_hour
+        unit_const: Final = units.VolumetricFlowRateUnits.cubic_feet_per_hour
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -11339,7 +11339,7 @@ class ToUnitVolumetricFlowRateConverter(UnitConverter):
     @property
     def cubic_feet_per_minute(self) -> "FieldQnty":
         """Convert to cubic feet per minute units."""
-        unit_const: Final = field_units.VolumetricFlowRateUnits.cubic_feet_per_minute
+        unit_const: Final = units.VolumetricFlowRateUnits.cubic_feet_per_minute
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -11365,7 +11365,7 @@ class ToUnitVolumetricFlowRateConverter(UnitConverter):
     @property
     def cubic_feet_per_second(self) -> "FieldQnty":
         """Convert to cubic feet per second units."""
-        unit_const: Final = field_units.VolumetricFlowRateUnits.cubic_feet_per_second
+        unit_const: Final = units.VolumetricFlowRateUnits.cubic_feet_per_second
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -11391,7 +11391,7 @@ class ToUnitVolumetricFlowRateConverter(UnitConverter):
     @property
     def cubic_meters_per_day(self) -> "FieldQnty":
         """Convert to cubic meters per day units."""
-        unit_const: Final = field_units.VolumetricFlowRateUnits.cubic_meters_per_day
+        unit_const: Final = units.VolumetricFlowRateUnits.cubic_meters_per_day
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -11402,7 +11402,7 @@ class ToUnitVolumetricFlowRateConverter(UnitConverter):
     @property
     def cubic_meters_per_hour(self) -> "FieldQnty":
         """Convert to cubic meters per hour units."""
-        unit_const: Final = field_units.VolumetricFlowRateUnits.cubic_meters_per_hour
+        unit_const: Final = units.VolumetricFlowRateUnits.cubic_meters_per_hour
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -11413,7 +11413,7 @@ class ToUnitVolumetricFlowRateConverter(UnitConverter):
     @property
     def cubic_meters_per_minute(self) -> "FieldQnty":
         """Convert to cubic meters per minute units."""
-        unit_const: Final = field_units.VolumetricFlowRateUnits.cubic_meters_per_minute
+        unit_const: Final = units.VolumetricFlowRateUnits.cubic_meters_per_minute
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -11424,7 +11424,7 @@ class ToUnitVolumetricFlowRateConverter(UnitConverter):
     @property
     def cubic_meters_per_second(self) -> "FieldQnty":
         """Convert to cubic meters per second units."""
-        unit_const: Final = field_units.VolumetricFlowRateUnits.cubic_meters_per_second
+        unit_const: Final = units.VolumetricFlowRateUnits.cubic_meters_per_second
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -11435,7 +11435,7 @@ class ToUnitVolumetricFlowRateConverter(UnitConverter):
     @property
     def gallons_per_day(self) -> "FieldQnty":
         """Convert to gallons per day units."""
-        unit_const: Final = field_units.VolumetricFlowRateUnits.gallons_per_day
+        unit_const: Final = units.VolumetricFlowRateUnits.gallons_per_day
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -11461,7 +11461,7 @@ class ToUnitVolumetricFlowRateConverter(UnitConverter):
     @property
     def gallons_per_hour(self) -> "FieldQnty":
         """Convert to gallons per hour units."""
-        unit_const: Final = field_units.VolumetricFlowRateUnits.gallons_per_hour
+        unit_const: Final = units.VolumetricFlowRateUnits.gallons_per_hour
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -11487,7 +11487,7 @@ class ToUnitVolumetricFlowRateConverter(UnitConverter):
     @property
     def gallons_per_minute(self) -> "FieldQnty":
         """Convert to gallons per minute units."""
-        unit_const: Final = field_units.VolumetricFlowRateUnits.gallons_per_minute
+        unit_const: Final = units.VolumetricFlowRateUnits.gallons_per_minute
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -11508,7 +11508,7 @@ class ToUnitVolumetricFlowRateConverter(UnitConverter):
     @property
     def gallons_per_second(self) -> "FieldQnty":
         """Convert to gallons per second units."""
-        unit_const: Final = field_units.VolumetricFlowRateUnits.gallons_per_second
+        unit_const: Final = units.VolumetricFlowRateUnits.gallons_per_second
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -11534,7 +11534,7 @@ class ToUnitVolumetricFlowRateConverter(UnitConverter):
     @property
     def liters_per_day(self) -> "FieldQnty":
         """Convert to liters per day units."""
-        unit_const: Final = field_units.VolumetricFlowRateUnits.liters_per_day
+        unit_const: Final = units.VolumetricFlowRateUnits.liters_per_day
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -11545,7 +11545,7 @@ class ToUnitVolumetricFlowRateConverter(UnitConverter):
     @property
     def liters_per_hour(self) -> "FieldQnty":
         """Convert to liters per hour units."""
-        unit_const: Final = field_units.VolumetricFlowRateUnits.liters_per_hour
+        unit_const: Final = units.VolumetricFlowRateUnits.liters_per_hour
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -11556,13 +11556,13 @@ class ToUnitVolumetricFlowRateConverter(UnitConverter):
     @property
     def liters_per_minute(self) -> "FieldQnty":
         """Convert to liters per minute units."""
-        unit_const: Final = field_units.VolumetricFlowRateUnits.liters_per_minute
+        unit_const: Final = units.VolumetricFlowRateUnits.liters_per_minute
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def liters_per_second(self) -> "FieldQnty":
         """Convert to liters per second units."""
-        unit_const: Final = field_units.VolumetricFlowRateUnits.liters_per_second
+        unit_const: Final = units.VolumetricFlowRateUnits.liters_per_second
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -11584,7 +11584,7 @@ class ToUnitVolumetricFluxConverter(UnitConverter):
     @property
     def cubic_feet_per_square_foot_per_day(self) -> "FieldQnty":
         """Convert to cubic feet per square foot per day units."""
-        unit_const: Final = field_units.VolumetricFluxUnits.cubic_feet_per_square_foot_per_day
+        unit_const: Final = units.VolumetricFluxUnits.cubic_feet_per_square_foot_per_day
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -11605,7 +11605,7 @@ class ToUnitVolumetricFluxConverter(UnitConverter):
     @property
     def cubic_feet_per_square_foot_per_hour(self) -> "FieldQnty":
         """Convert to cubic feet per square foot per hour units."""
-        unit_const: Final = field_units.VolumetricFluxUnits.cubic_feet_per_square_foot_per_hour
+        unit_const: Final = units.VolumetricFluxUnits.cubic_feet_per_square_foot_per_hour
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -11626,7 +11626,7 @@ class ToUnitVolumetricFluxConverter(UnitConverter):
     @property
     def cubic_feet_per_square_foot_per_minute(self) -> "FieldQnty":
         """Convert to cubic feet per square foot per minute units."""
-        unit_const: Final = field_units.VolumetricFluxUnits.cubic_feet_per_square_foot_per_minute
+        unit_const: Final = units.VolumetricFluxUnits.cubic_feet_per_square_foot_per_minute
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -11647,7 +11647,7 @@ class ToUnitVolumetricFluxConverter(UnitConverter):
     @property
     def cubic_feet_per_square_foot_per_second(self) -> "FieldQnty":
         """Convert to cubic feet per square foot per second units."""
-        unit_const: Final = field_units.VolumetricFluxUnits.cubic_feet_per_square_foot_per_second
+        unit_const: Final = units.VolumetricFluxUnits.cubic_feet_per_square_foot_per_second
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -11668,7 +11668,7 @@ class ToUnitVolumetricFluxConverter(UnitConverter):
     @property
     def cubic_meters_per_square_meter_per_day(self) -> "FieldQnty":
         """Convert to cubic meters per square meter per day units."""
-        unit_const: Final = field_units.VolumetricFluxUnits.cubic_meters_per_square_meter_per_day
+        unit_const: Final = units.VolumetricFluxUnits.cubic_meters_per_square_meter_per_day
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -11679,7 +11679,7 @@ class ToUnitVolumetricFluxConverter(UnitConverter):
     @property
     def cubic_meters_per_square_meter_per_hour(self) -> "FieldQnty":
         """Convert to cubic meters per square meter per hour units."""
-        unit_const: Final = field_units.VolumetricFluxUnits.cubic_meters_per_square_meter_per_hour
+        unit_const: Final = units.VolumetricFluxUnits.cubic_meters_per_square_meter_per_hour
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -11690,7 +11690,7 @@ class ToUnitVolumetricFluxConverter(UnitConverter):
     @property
     def cubic_meters_per_square_meter_per_minute(self) -> "FieldQnty":
         """Convert to cubic meters per square meter per minute units."""
-        unit_const: Final = field_units.VolumetricFluxUnits.cubic_meters_per_square_meter_per_minute
+        unit_const: Final = units.VolumetricFluxUnits.cubic_meters_per_square_meter_per_minute
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -11701,7 +11701,7 @@ class ToUnitVolumetricFluxConverter(UnitConverter):
     @property
     def cubic_meters_per_square_meter_per_second(self) -> "FieldQnty":
         """Convert to cubic meters per square meter per second units."""
-        unit_const: Final = field_units.VolumetricFluxUnits.cubic_meters_per_square_meter_per_second
+        unit_const: Final = units.VolumetricFluxUnits.cubic_meters_per_square_meter_per_second
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -11712,7 +11712,7 @@ class ToUnitVolumetricFluxConverter(UnitConverter):
     @property
     def gallons_per_square_foot_per_day(self) -> "FieldQnty":
         """Convert to gallons per square foot per day units."""
-        unit_const: Final = field_units.VolumetricFluxUnits.gallons_per_square_foot_per_day
+        unit_const: Final = units.VolumetricFluxUnits.gallons_per_square_foot_per_day
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -11733,7 +11733,7 @@ class ToUnitVolumetricFluxConverter(UnitConverter):
     @property
     def gallons_per_square_foot_per_hour(self) -> "FieldQnty":
         """Convert to gallons per square foot per hour units."""
-        unit_const: Final = field_units.VolumetricFluxUnits.gallons_per_square_foot_per_hour
+        unit_const: Final = units.VolumetricFluxUnits.gallons_per_square_foot_per_hour
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -11754,7 +11754,7 @@ class ToUnitVolumetricFluxConverter(UnitConverter):
     @property
     def gallons_per_square_foot_per_minute(self) -> "FieldQnty":
         """Convert to gallons per square foot per minute units."""
-        unit_const: Final = field_units.VolumetricFluxUnits.gallons_per_square_foot_per_minute
+        unit_const: Final = units.VolumetricFluxUnits.gallons_per_square_foot_per_minute
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -11780,7 +11780,7 @@ class ToUnitVolumetricFluxConverter(UnitConverter):
     @property
     def gallons_per_square_foot_per_second(self) -> "FieldQnty":
         """Convert to gallons per square foot per second units."""
-        unit_const: Final = field_units.VolumetricFluxUnits.gallons_per_square_foot_per_second
+        unit_const: Final = units.VolumetricFluxUnits.gallons_per_square_foot_per_second
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -11801,25 +11801,25 @@ class ToUnitVolumetricFluxConverter(UnitConverter):
     @property
     def liters_per_square_meter_per_day(self) -> "FieldQnty":
         """Convert to liters per square meter per day units."""
-        unit_const: Final = field_units.VolumetricFluxUnits.liters_per_square_meter_per_day
+        unit_const: Final = units.VolumetricFluxUnits.liters_per_square_meter_per_day
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def liters_per_square_meter_per_hour(self) -> "FieldQnty":
         """Convert to liters per square meter per hour units."""
-        unit_const: Final = field_units.VolumetricFluxUnits.liters_per_square_meter_per_hour
+        unit_const: Final = units.VolumetricFluxUnits.liters_per_square_meter_per_hour
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def liters_per_square_meter_per_minute(self) -> "FieldQnty":
         """Convert to liters per square meter per minute units."""
-        unit_const: Final = field_units.VolumetricFluxUnits.liters_per_square_meter_per_minute
+        unit_const: Final = units.VolumetricFluxUnits.liters_per_square_meter_per_minute
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
     def liters_per_square_meter_per_second(self) -> "FieldQnty":
         """Convert to liters per square meter per second units."""
-        unit_const: Final = field_units.VolumetricFluxUnits.liters_per_square_meter_per_second
+        unit_const: Final = units.VolumetricFluxUnits.liters_per_square_meter_per_second
         return self._convert_quantity(unit_const, modify_original=True)
 
 
@@ -11836,7 +11836,7 @@ class ToUnitVolumetricMassFlowRateConverter(UnitConverter):
     @property
     def gram_per_second_per_cubic_centimeter(self) -> "FieldQnty":
         """Convert to gram per second per cubic centimeter units."""
-        unit_const: Final = field_units.VolumetricMassFlowRateUnits.gram_per_second_per_cubic_centimeter
+        unit_const: Final = units.VolumetricMassFlowRateUnits.gram_per_second_per_cubic_centimeter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -11862,7 +11862,7 @@ class ToUnitVolumetricMassFlowRateConverter(UnitConverter):
     @property
     def kilogram_per_hour_per_cubic_foot(self) -> "FieldQnty":
         """Convert to kilogram per hour per cubic foot units."""
-        unit_const: Final = field_units.VolumetricMassFlowRateUnits.kilogram_per_hour_per_cubic_foot
+        unit_const: Final = units.VolumetricMassFlowRateUnits.kilogram_per_hour_per_cubic_foot
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -11883,7 +11883,7 @@ class ToUnitVolumetricMassFlowRateConverter(UnitConverter):
     @property
     def kilogram_per_hour_per_cubic_meter(self) -> "FieldQnty":
         """Convert to kilogram per hour per cubic meter units."""
-        unit_const: Final = field_units.VolumetricMassFlowRateUnits.kilogram_per_hour_per_cubic_meter
+        unit_const: Final = units.VolumetricMassFlowRateUnits.kilogram_per_hour_per_cubic_meter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -11904,7 +11904,7 @@ class ToUnitVolumetricMassFlowRateConverter(UnitConverter):
     @property
     def kilogram_per_second_per_cubic_meter(self) -> "FieldQnty":
         """Convert to kilogram per second per cubic meter units."""
-        unit_const: Final = field_units.VolumetricMassFlowRateUnits.kilogram_per_second_per_cubic_meter
+        unit_const: Final = units.VolumetricMassFlowRateUnits.kilogram_per_second_per_cubic_meter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -11925,7 +11925,7 @@ class ToUnitVolumetricMassFlowRateConverter(UnitConverter):
     @property
     def pound_per_hour_per_cubic_foot(self) -> "FieldQnty":
         """Convert to pound per hour per cubic foot units."""
-        unit_const: Final = field_units.VolumetricMassFlowRateUnits.pound_per_hour_per_cubic_foot
+        unit_const: Final = units.VolumetricMassFlowRateUnits.pound_per_hour_per_cubic_foot
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -11951,7 +11951,7 @@ class ToUnitVolumetricMassFlowRateConverter(UnitConverter):
     @property
     def pound_per_minute_per_cubic_foot(self) -> "FieldQnty":
         """Convert to pound per minute per cubic foot units."""
-        unit_const: Final = field_units.VolumetricMassFlowRateUnits.pound_per_minute_per_cubic_foot
+        unit_const: Final = units.VolumetricMassFlowRateUnits.pound_per_minute_per_cubic_foot
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -11972,7 +11972,7 @@ class ToUnitVolumetricMassFlowRateConverter(UnitConverter):
     @property
     def pound_per_second_per_cubic_foot(self) -> "FieldQnty":
         """Convert to pound per second per cubic foot units."""
-        unit_const: Final = field_units.VolumetricMassFlowRateUnits.pound_per_second_per_cubic_foot
+        unit_const: Final = units.VolumetricMassFlowRateUnits.pound_per_second_per_cubic_foot
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -12004,7 +12004,7 @@ class ToUnitWavenumberConverter(UnitConverter):
     @property
     def diopter(self) -> "FieldQnty":
         """Convert to diopter units."""
-        unit_const: Final = field_units.WavenumberUnits.diopter
+        unit_const: Final = units.WavenumberUnits.diopter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -12015,7 +12015,7 @@ class ToUnitWavenumberConverter(UnitConverter):
     @property
     def kayser(self) -> "FieldQnty":
         """Convert to kayser units."""
-        unit_const: Final = field_units.WavenumberUnits.kayser
+        unit_const: Final = units.WavenumberUnits.kayser
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -12026,7 +12026,7 @@ class ToUnitWavenumberConverter(UnitConverter):
     @property
     def reciprocal_meter(self) -> "FieldQnty":
         """Convert to reciprocal meter units."""
-        unit_const: Final = field_units.WavenumberUnits.reciprocal_meter
+        unit_const: Final = units.WavenumberUnits.reciprocal_meter
         return self._convert_quantity(unit_const, modify_original=True)
 
     @property
@@ -12052,7 +12052,7 @@ class AsUnitAbsorbedDoseConverter(UnitConverter):
     @property
     def erg_per_gram(self) -> "FieldQnty":
         """Convert to erg per gram units, returning new variable."""
-        unit_const: Final = field_units.AbsorbedDoseUnits.erg_per_gram
+        unit_const: Final = units.AbsorbedDoseUnits.erg_per_gram
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -12068,7 +12068,7 @@ class AsUnitAbsorbedDoseConverter(UnitConverter):
     @property
     def gram_rad(self) -> "FieldQnty":
         """Convert to gram-rad units, returning new variable."""
-        unit_const: Final = field_units.AbsorbedDoseUnits.gram_rad
+        unit_const: Final = units.AbsorbedDoseUnits.gram_rad
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -12079,7 +12079,7 @@ class AsUnitAbsorbedDoseConverter(UnitConverter):
     @property
     def gray(self) -> "FieldQnty":
         """Convert to gray units, returning new variable."""
-        unit_const: Final = field_units.AbsorbedDoseUnits.gray
+        unit_const: Final = units.AbsorbedDoseUnits.gray
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -12090,13 +12090,13 @@ class AsUnitAbsorbedDoseConverter(UnitConverter):
     @property
     def rad(self) -> "FieldQnty":
         """Convert to rad units, returning new variable."""
-        unit_const: Final = field_units.AbsorbedDoseUnits.rad
+        unit_const: Final = units.AbsorbedDoseUnits.rad
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def milligray(self) -> "FieldQnty":
         """Convert to milligray units, returning new variable."""
-        unit_const: Final = field_units.AbsorbedDoseUnits.milligray
+        unit_const: Final = units.AbsorbedDoseUnits.milligray
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -12107,7 +12107,7 @@ class AsUnitAbsorbedDoseConverter(UnitConverter):
     @property
     def microgray(self) -> "FieldQnty":
         """Convert to microgray units, returning new variable."""
-        unit_const: Final = field_units.AbsorbedDoseUnits.microgray
+        unit_const: Final = units.AbsorbedDoseUnits.microgray
         return self._convert_quantity(unit_const, modify_original=False)
 
 
@@ -12124,7 +12124,7 @@ class AsUnitAccelerationConverter(UnitConverter):
     @property
     def meter_per_second_squared(self) -> "FieldQnty":
         """Convert to meter per second squared units, returning new variable."""
-        unit_const: Final = field_units.AccelerationUnits.meter_per_second_squared
+        unit_const: Final = units.AccelerationUnits.meter_per_second_squared
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -12140,7 +12140,7 @@ class AsUnitAccelerationConverter(UnitConverter):
     @property
     def foot_per_second_squared(self) -> "FieldQnty":
         """Convert to foot per second squared units, returning new variable."""
-        unit_const: Final = field_units.AccelerationUnits.foot_per_second_squared
+        unit_const: Final = units.AccelerationUnits.foot_per_second_squared
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -12172,7 +12172,7 @@ class AsUnitActivationEnergyConverter(UnitConverter):
     @property
     def btu_per_pound_mole(self) -> "FieldQnty":
         """Convert to Btu per pound mole units, returning new variable."""
-        unit_const: Final = field_units.ActivationEnergyUnits.btu_per_pound_mole
+        unit_const: Final = units.ActivationEnergyUnits.btu_per_pound_mole
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -12188,7 +12188,7 @@ class AsUnitActivationEnergyConverter(UnitConverter):
     @property
     def calorie_mean_per_gram_mole(self) -> "FieldQnty":
         """Convert to calorie (mean) per gram mole units, returning new variable."""
-        unit_const: Final = field_units.ActivationEnergyUnits.calorie_mean_per_gram_mole
+        unit_const: Final = units.ActivationEnergyUnits.calorie_mean_per_gram_mole
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -12204,7 +12204,7 @@ class AsUnitActivationEnergyConverter(UnitConverter):
     @property
     def joule_per_gram_mole(self) -> "FieldQnty":
         """Convert to joule per gram mole units, returning new variable."""
-        unit_const: Final = field_units.ActivationEnergyUnits.joule_per_gram_mole
+        unit_const: Final = units.ActivationEnergyUnits.joule_per_gram_mole
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -12215,7 +12215,7 @@ class AsUnitActivationEnergyConverter(UnitConverter):
     @property
     def joule_per_kilogram_mole(self) -> "FieldQnty":
         """Convert to joule per kilogram mole units, returning new variable."""
-        unit_const: Final = field_units.ActivationEnergyUnits.joule_per_kilogram_mole
+        unit_const: Final = units.ActivationEnergyUnits.joule_per_kilogram_mole
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -12226,7 +12226,7 @@ class AsUnitActivationEnergyConverter(UnitConverter):
     @property
     def kilocalorie_per_kilogram_mole(self) -> "FieldQnty":
         """Convert to kilocalorie per kilogram mole units, returning new variable."""
-        unit_const: Final = field_units.ActivationEnergyUnits.kilocalorie_per_kilogram_mole
+        unit_const: Final = units.ActivationEnergyUnits.kilocalorie_per_kilogram_mole
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -12248,7 +12248,7 @@ class AsUnitAmountOfSubstanceConverter(UnitConverter):
     @property
     def kilogram_mol(self) -> "FieldQnty":
         """Convert to kilogram mol or kmol units, returning new variable."""
-        unit_const: Final = field_units.AmountOfSubstanceUnits.kilogram_mol
+        unit_const: Final = units.AmountOfSubstanceUnits.kilogram_mol
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -12259,7 +12259,7 @@ class AsUnitAmountOfSubstanceConverter(UnitConverter):
     @property
     def mole(self) -> "FieldQnty":
         """Convert to mole (gram) units, returning new variable."""
-        unit_const: Final = field_units.AmountOfSubstanceUnits.mole
+        unit_const: Final = units.AmountOfSubstanceUnits.mole
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -12270,7 +12270,7 @@ class AsUnitAmountOfSubstanceConverter(UnitConverter):
     @property
     def pound_mole(self) -> "FieldQnty":
         """Convert to pound-mole units, returning new variable."""
-        unit_const: Final = field_units.AmountOfSubstanceUnits.pound_mole
+        unit_const: Final = units.AmountOfSubstanceUnits.pound_mole
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -12286,7 +12286,7 @@ class AsUnitAmountOfSubstanceConverter(UnitConverter):
     @property
     def millimole(self) -> "FieldQnty":
         """Convert to millimole (gram) units, returning new variable."""
-        unit_const: Final = field_units.AmountOfSubstanceUnits.millimole
+        unit_const: Final = units.AmountOfSubstanceUnits.millimole
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -12297,7 +12297,7 @@ class AsUnitAmountOfSubstanceConverter(UnitConverter):
     @property
     def micromole(self) -> "FieldQnty":
         """Convert to micromole (gram) units, returning new variable."""
-        unit_const: Final = field_units.AmountOfSubstanceUnits.micromole
+        unit_const: Final = units.AmountOfSubstanceUnits.micromole
         return self._convert_quantity(unit_const, modify_original=False)
 
 
@@ -12314,7 +12314,7 @@ class AsUnitAnglePlaneConverter(UnitConverter):
     @property
     def degree(self) -> "FieldQnty":
         """Convert to degree units, returning new variable."""
-        unit_const: Final = field_units.AnglePlaneUnits.degree
+        unit_const: Final = units.AnglePlaneUnits.degree
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -12325,19 +12325,19 @@ class AsUnitAnglePlaneConverter(UnitConverter):
     @property
     def gon(self) -> "FieldQnty":
         """Convert to gon units, returning new variable."""
-        unit_const: Final = field_units.AnglePlaneUnits.gon
+        unit_const: Final = units.AnglePlaneUnits.gon
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def grade(self) -> "FieldQnty":
         """Convert to grade units, returning new variable."""
-        unit_const: Final = field_units.AnglePlaneUnits.grade
+        unit_const: Final = units.AnglePlaneUnits.grade
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def minute_new(self) -> "FieldQnty":
         """Convert to minute (new) units, returning new variable."""
-        unit_const: Final = field_units.AnglePlaneUnits.minute_new
+        unit_const: Final = units.AnglePlaneUnits.minute_new
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -12348,7 +12348,7 @@ class AsUnitAnglePlaneConverter(UnitConverter):
     @property
     def minute_of_angle(self) -> "FieldQnty":
         """Convert to minute of angle units, returning new variable."""
-        unit_const: Final = field_units.AnglePlaneUnits.minute_of_angle
+        unit_const: Final = units.AnglePlaneUnits.minute_of_angle
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -12359,19 +12359,19 @@ class AsUnitAnglePlaneConverter(UnitConverter):
     @property
     def percent(self) -> "FieldQnty":
         """Convert to percent units, returning new variable."""
-        unit_const: Final = field_units.AnglePlaneUnits.percent
+        unit_const: Final = units.AnglePlaneUnits.percent
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def plane_angle(self) -> "FieldQnty":
         """Convert to plane angle units, returning new variable."""
-        unit_const: Final = field_units.AnglePlaneUnits.plane_angle
+        unit_const: Final = units.AnglePlaneUnits.plane_angle
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def quadrant(self) -> "FieldQnty":
         """Convert to quadrant units, returning new variable."""
-        unit_const: Final = field_units.AnglePlaneUnits.quadrant
+        unit_const: Final = units.AnglePlaneUnits.quadrant
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -12382,7 +12382,7 @@ class AsUnitAnglePlaneConverter(UnitConverter):
     @property
     def radian(self) -> "FieldQnty":
         """Convert to radian units, returning new variable."""
-        unit_const: Final = field_units.AnglePlaneUnits.radian
+        unit_const: Final = units.AnglePlaneUnits.radian
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -12393,7 +12393,7 @@ class AsUnitAnglePlaneConverter(UnitConverter):
     @property
     def right_angle(self) -> "FieldQnty":
         """Convert to right angle units, returning new variable."""
-        unit_const: Final = field_units.AnglePlaneUnits.right_angle
+        unit_const: Final = units.AnglePlaneUnits.right_angle
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -12404,7 +12404,7 @@ class AsUnitAnglePlaneConverter(UnitConverter):
     @property
     def round(self) -> "FieldQnty":
         """Convert to round units, returning new variable."""
-        unit_const: Final = field_units.AnglePlaneUnits.round
+        unit_const: Final = units.AnglePlaneUnits.round
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -12425,7 +12425,7 @@ class AsUnitAnglePlaneConverter(UnitConverter):
     @property
     def second_new(self) -> "FieldQnty":
         """Convert to second (new) units, returning new variable."""
-        unit_const: Final = field_units.AnglePlaneUnits.second_new
+        unit_const: Final = units.AnglePlaneUnits.second_new
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -12436,13 +12436,13 @@ class AsUnitAnglePlaneConverter(UnitConverter):
     @property
     def second_of_angle(self) -> "FieldQnty":
         """Convert to second of angle units, returning new variable."""
-        unit_const: Final = field_units.AnglePlaneUnits.second_of_angle
+        unit_const: Final = units.AnglePlaneUnits.second_of_angle
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def thousandth_us(self) -> "FieldQnty":
         """Convert to thousandth (US) units, returning new variable."""
-        unit_const: Final = field_units.AnglePlaneUnits.thousandth_us
+        unit_const: Final = units.AnglePlaneUnits.thousandth_us
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -12453,7 +12453,7 @@ class AsUnitAnglePlaneConverter(UnitConverter):
     @property
     def turn(self) -> "FieldQnty":
         """Convert to turn units, returning new variable."""
-        unit_const: Final = field_units.AnglePlaneUnits.turn
+        unit_const: Final = units.AnglePlaneUnits.turn
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -12480,13 +12480,13 @@ class AsUnitAngleSolidConverter(UnitConverter):
     @property
     def spat(self) -> "FieldQnty":
         """Convert to spat units, returning new variable."""
-        unit_const: Final = field_units.AngleSolidUnits.spat
+        unit_const: Final = units.AngleSolidUnits.spat
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def square_degree(self) -> "FieldQnty":
         """Convert to square degree units, returning new variable."""
-        unit_const: Final = field_units.AngleSolidUnits.square_degree
+        unit_const: Final = units.AngleSolidUnits.square_degree
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -12497,7 +12497,7 @@ class AsUnitAngleSolidConverter(UnitConverter):
     @property
     def square_gon(self) -> "FieldQnty":
         """Convert to square gon units, returning new variable."""
-        unit_const: Final = field_units.AngleSolidUnits.square_gon
+        unit_const: Final = units.AngleSolidUnits.square_gon
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -12508,7 +12508,7 @@ class AsUnitAngleSolidConverter(UnitConverter):
     @property
     def steradian(self) -> "FieldQnty":
         """Convert to steradian units, returning new variable."""
-        unit_const: Final = field_units.AngleSolidUnits.steradian
+        unit_const: Final = units.AngleSolidUnits.steradian
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -12530,7 +12530,7 @@ class AsUnitAngularAccelerationConverter(UnitConverter):
     @property
     def radian_per_second_squared(self) -> "FieldQnty":
         """Convert to radian per second squared units, returning new variable."""
-        unit_const: Final = field_units.AngularAccelerationUnits.radian_per_second_squared
+        unit_const: Final = units.AngularAccelerationUnits.radian_per_second_squared
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -12541,7 +12541,7 @@ class AsUnitAngularAccelerationConverter(UnitConverter):
     @property
     def revolution_per_second_squared(self) -> "FieldQnty":
         """Convert to revolution per second squared units, returning new variable."""
-        unit_const: Final = field_units.AngularAccelerationUnits.revolution_per_second_squared
+        unit_const: Final = units.AngularAccelerationUnits.revolution_per_second_squared
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -12552,7 +12552,7 @@ class AsUnitAngularAccelerationConverter(UnitConverter):
     @property
     def rpm_or_revolution_per_minute(self) -> "FieldQnty":
         """Convert to rpm (or revolution per minute) per minute units, returning new variable."""
-        unit_const: Final = field_units.AngularAccelerationUnits.rpm_or_revolution_per_minute
+        unit_const: Final = units.AngularAccelerationUnits.rpm_or_revolution_per_minute
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -12584,7 +12584,7 @@ class AsUnitAngularMomentumConverter(UnitConverter):
     @property
     def gram_centimeter_squared_per_second(self) -> "FieldQnty":
         """Convert to gram centimeter squared per second units, returning new variable."""
-        unit_const: Final = field_units.AngularMomentumUnits.gram_centimeter_squared_per_second
+        unit_const: Final = units.AngularMomentumUnits.gram_centimeter_squared_per_second
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -12595,7 +12595,7 @@ class AsUnitAngularMomentumConverter(UnitConverter):
     @property
     def kilogram_meter_squared_per_second(self) -> "FieldQnty":
         """Convert to kilogram meter squared per second units, returning new variable."""
-        unit_const: Final = field_units.AngularMomentumUnits.kilogram_meter_squared_per_second
+        unit_const: Final = units.AngularMomentumUnits.kilogram_meter_squared_per_second
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -12606,7 +12606,7 @@ class AsUnitAngularMomentumConverter(UnitConverter):
     @property
     def pound_force_square_foot_per_second(self) -> "FieldQnty":
         """Convert to pound force square foot per second units, returning new variable."""
-        unit_const: Final = field_units.AngularMomentumUnits.pound_force_square_foot_per_second
+        unit_const: Final = units.AngularMomentumUnits.pound_force_square_foot_per_second
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -12628,7 +12628,7 @@ class AsUnitAreaConverter(UnitConverter):
     @property
     def acre_general(self) -> "FieldQnty":
         """Convert to acre (general) units, returning new variable."""
-        unit_const: Final = field_units.AreaUnits.acre_general
+        unit_const: Final = units.AreaUnits.acre_general
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -12639,7 +12639,7 @@ class AsUnitAreaConverter(UnitConverter):
     @property
     def are(self) -> "FieldQnty":
         """Convert to are units, returning new variable."""
-        unit_const: Final = field_units.AreaUnits.are
+        unit_const: Final = units.AreaUnits.are
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -12650,7 +12650,7 @@ class AsUnitAreaConverter(UnitConverter):
     @property
     def arpent_quebec(self) -> "FieldQnty":
         """Convert to arpent (Quebec) units, returning new variable."""
-        unit_const: Final = field_units.AreaUnits.arpent_quebec
+        unit_const: Final = units.AreaUnits.arpent_quebec
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -12661,7 +12661,7 @@ class AsUnitAreaConverter(UnitConverter):
     @property
     def barn(self) -> "FieldQnty":
         """Convert to barn units, returning new variable."""
-        unit_const: Final = field_units.AreaUnits.barn
+        unit_const: Final = units.AreaUnits.barn
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -12672,7 +12672,7 @@ class AsUnitAreaConverter(UnitConverter):
     @property
     def circular_inch(self) -> "FieldQnty":
         """Convert to circular inch units, returning new variable."""
-        unit_const: Final = field_units.AreaUnits.circular_inch
+        unit_const: Final = units.AreaUnits.circular_inch
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -12683,7 +12683,7 @@ class AsUnitAreaConverter(UnitConverter):
     @property
     def circular_mil(self) -> "FieldQnty":
         """Convert to circular mil units, returning new variable."""
-        unit_const: Final = field_units.AreaUnits.circular_mil
+        unit_const: Final = units.AreaUnits.circular_mil
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -12694,7 +12694,7 @@ class AsUnitAreaConverter(UnitConverter):
     @property
     def hectare(self) -> "FieldQnty":
         """Convert to hectare units, returning new variable."""
-        unit_const: Final = field_units.AreaUnits.hectare
+        unit_const: Final = units.AreaUnits.hectare
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -12705,13 +12705,13 @@ class AsUnitAreaConverter(UnitConverter):
     @property
     def shed(self) -> "FieldQnty":
         """Convert to shed units, returning new variable."""
-        unit_const: Final = field_units.AreaUnits.shed
+        unit_const: Final = units.AreaUnits.shed
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def square_centimeter(self) -> "FieldQnty":
         """Convert to square centimeter units, returning new variable."""
-        unit_const: Final = field_units.AreaUnits.square_centimeter
+        unit_const: Final = units.AreaUnits.square_centimeter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -12722,7 +12722,7 @@ class AsUnitAreaConverter(UnitConverter):
     @property
     def square_chain_ramsden(self) -> "FieldQnty":
         """Convert to square chain (Ramsden) units, returning new variable."""
-        unit_const: Final = field_units.AreaUnits.square_chain_ramsden
+        unit_const: Final = units.AreaUnits.square_chain_ramsden
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -12733,7 +12733,7 @@ class AsUnitAreaConverter(UnitConverter):
     @property
     def square_chain_survey_gunters(self) -> "FieldQnty":
         """Convert to square chain (Survey, Gunter's) units, returning new variable."""
-        unit_const: Final = field_units.AreaUnits.square_chain_survey_gunters
+        unit_const: Final = units.AreaUnits.square_chain_survey_gunters
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -12744,7 +12744,7 @@ class AsUnitAreaConverter(UnitConverter):
     @property
     def square_decimeter(self) -> "FieldQnty":
         """Convert to square decimeter units, returning new variable."""
-        unit_const: Final = field_units.AreaUnits.square_decimeter
+        unit_const: Final = units.AreaUnits.square_decimeter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -12755,7 +12755,7 @@ class AsUnitAreaConverter(UnitConverter):
     @property
     def square_fermi(self) -> "FieldQnty":
         """Convert to square fermi units, returning new variable."""
-        unit_const: Final = field_units.AreaUnits.square_fermi
+        unit_const: Final = units.AreaUnits.square_fermi
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -12766,7 +12766,7 @@ class AsUnitAreaConverter(UnitConverter):
     @property
     def square_foot(self) -> "FieldQnty":
         """Convert to square foot units, returning new variable."""
-        unit_const: Final = field_units.AreaUnits.square_foot
+        unit_const: Final = units.AreaUnits.square_foot
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -12787,7 +12787,7 @@ class AsUnitAreaConverter(UnitConverter):
     @property
     def square_hectometer(self) -> "FieldQnty":
         """Convert to square hectometer units, returning new variable."""
-        unit_const: Final = field_units.AreaUnits.square_hectometer
+        unit_const: Final = units.AreaUnits.square_hectometer
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -12798,7 +12798,7 @@ class AsUnitAreaConverter(UnitConverter):
     @property
     def square_inch(self) -> "FieldQnty":
         """Convert to square inch units, returning new variable."""
-        unit_const: Final = field_units.AreaUnits.square_inch
+        unit_const: Final = units.AreaUnits.square_inch
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -12819,7 +12819,7 @@ class AsUnitAreaConverter(UnitConverter):
     @property
     def square_kilometer(self) -> "FieldQnty":
         """Convert to square kilometer units, returning new variable."""
-        unit_const: Final = field_units.AreaUnits.square_kilometer
+        unit_const: Final = units.AreaUnits.square_kilometer
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -12830,7 +12830,7 @@ class AsUnitAreaConverter(UnitConverter):
     @property
     def square_league_statute(self) -> "FieldQnty":
         """Convert to square league (statute) units, returning new variable."""
-        unit_const: Final = field_units.AreaUnits.square_league_statute
+        unit_const: Final = units.AreaUnits.square_league_statute
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -12841,7 +12841,7 @@ class AsUnitAreaConverter(UnitConverter):
     @property
     def square_meter(self) -> "FieldQnty":
         """Convert to square meter units, returning new variable."""
-        unit_const: Final = field_units.AreaUnits.square_meter
+        unit_const: Final = units.AreaUnits.square_meter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -12852,7 +12852,7 @@ class AsUnitAreaConverter(UnitConverter):
     @property
     def square_micron(self) -> "FieldQnty":
         """Convert to square micron units, returning new variable."""
-        unit_const: Final = field_units.AreaUnits.square_micron
+        unit_const: Final = units.AreaUnits.square_micron
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -12873,7 +12873,7 @@ class AsUnitAreaConverter(UnitConverter):
     @property
     def square_mile_statute(self) -> "FieldQnty":
         """Convert to square mile (statute) units, returning new variable."""
-        unit_const: Final = field_units.AreaUnits.square_mile_statute
+        unit_const: Final = units.AreaUnits.square_mile_statute
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -12884,7 +12884,7 @@ class AsUnitAreaConverter(UnitConverter):
     @property
     def square_mile_us_survey(self) -> "FieldQnty":
         """Convert to square mile (US survey) units, returning new variable."""
-        unit_const: Final = field_units.AreaUnits.square_mile_us_survey
+        unit_const: Final = units.AreaUnits.square_mile_us_survey
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -12895,7 +12895,7 @@ class AsUnitAreaConverter(UnitConverter):
     @property
     def square_millimeter(self) -> "FieldQnty":
         """Convert to square millimeter units, returning new variable."""
-        unit_const: Final = field_units.AreaUnits.square_millimeter
+        unit_const: Final = units.AreaUnits.square_millimeter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -12906,7 +12906,7 @@ class AsUnitAreaConverter(UnitConverter):
     @property
     def square_nanometer(self) -> "FieldQnty":
         """Convert to square nanometer units, returning new variable."""
-        unit_const: Final = field_units.AreaUnits.square_nanometer
+        unit_const: Final = units.AreaUnits.square_nanometer
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -12917,7 +12917,7 @@ class AsUnitAreaConverter(UnitConverter):
     @property
     def square_yard(self) -> "FieldQnty":
         """Convert to square yard units, returning new variable."""
-        unit_const: Final = field_units.AreaUnits.square_yard
+        unit_const: Final = units.AreaUnits.square_yard
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -12928,7 +12928,7 @@ class AsUnitAreaConverter(UnitConverter):
     @property
     def township_us(self) -> "FieldQnty":
         """Convert to township (US) units, returning new variable."""
-        unit_const: Final = field_units.AreaUnits.township_us
+        unit_const: Final = units.AreaUnits.township_us
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -12950,7 +12950,7 @@ class AsUnitAreaPerUnitVolumeConverter(UnitConverter):
     @property
     def square_centimeter_per_cubic_centimeter(self) -> "FieldQnty":
         """Convert to square centimeter per cubic centimeter units, returning new variable."""
-        unit_const: Final = field_units.AreaPerUnitVolumeUnits.square_centimeter_per_cubic_centimeter
+        unit_const: Final = units.AreaPerUnitVolumeUnits.square_centimeter_per_cubic_centimeter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -12961,7 +12961,7 @@ class AsUnitAreaPerUnitVolumeConverter(UnitConverter):
     @property
     def square_foot_per_cubic_foot(self) -> "FieldQnty":
         """Convert to square foot per cubic foot units, returning new variable."""
-        unit_const: Final = field_units.AreaPerUnitVolumeUnits.square_foot_per_cubic_foot
+        unit_const: Final = units.AreaPerUnitVolumeUnits.square_foot_per_cubic_foot
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -12982,7 +12982,7 @@ class AsUnitAreaPerUnitVolumeConverter(UnitConverter):
     @property
     def square_inch_per_cubic_inch(self) -> "FieldQnty":
         """Convert to square inch per cubic inch units, returning new variable."""
-        unit_const: Final = field_units.AreaPerUnitVolumeUnits.square_inch_per_cubic_inch
+        unit_const: Final = units.AreaPerUnitVolumeUnits.square_inch_per_cubic_inch
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -13003,7 +13003,7 @@ class AsUnitAreaPerUnitVolumeConverter(UnitConverter):
     @property
     def square_meter_per_cubic_meter(self) -> "FieldQnty":
         """Convert to square meter per cubic meter units, returning new variable."""
-        unit_const: Final = field_units.AreaPerUnitVolumeUnits.square_meter_per_cubic_meter
+        unit_const: Final = units.AreaPerUnitVolumeUnits.square_meter_per_cubic_meter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -13035,7 +13035,7 @@ class AsUnitAtomicWeightConverter(UnitConverter):
     @property
     def atomic_mass_unit_12c(self) -> "FieldQnty":
         """Convert to atomic mass unit (12C) units, returning new variable."""
-        unit_const: Final = field_units.AtomicWeightUnits.atomic_mass_unit_12c
+        unit_const: Final = units.AtomicWeightUnits.atomic_mass_unit_12c
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -13046,7 +13046,7 @@ class AsUnitAtomicWeightConverter(UnitConverter):
     @property
     def grams_per_mole(self) -> "FieldQnty":
         """Convert to grams per mole units, returning new variable."""
-        unit_const: Final = field_units.AtomicWeightUnits.grams_per_mole
+        unit_const: Final = units.AtomicWeightUnits.grams_per_mole
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -13057,7 +13057,7 @@ class AsUnitAtomicWeightConverter(UnitConverter):
     @property
     def kilograms_per_kilomole(self) -> "FieldQnty":
         """Convert to kilograms per kilomole units, returning new variable."""
-        unit_const: Final = field_units.AtomicWeightUnits.kilograms_per_kilomole
+        unit_const: Final = units.AtomicWeightUnits.kilograms_per_kilomole
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -13068,7 +13068,7 @@ class AsUnitAtomicWeightConverter(UnitConverter):
     @property
     def pounds_per_pound_mole(self) -> "FieldQnty":
         """Convert to pounds per pound mole units, returning new variable."""
-        unit_const: Final = field_units.AtomicWeightUnits.pounds_per_pound_mole
+        unit_const: Final = units.AtomicWeightUnits.pounds_per_pound_mole
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -13100,7 +13100,7 @@ class AsUnitConcentrationConverter(UnitConverter):
     @property
     def grains_of_i_per_cubic_foot(self) -> "FieldQnty":
         """Convert to grains of "i" per cubic foot units, returning new variable."""
-        unit_const: Final = field_units.ConcentrationUnits.grains_of_i_per_cubic_foot
+        unit_const: Final = units.ConcentrationUnits.grains_of_i_per_cubic_foot
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -13121,7 +13121,7 @@ class AsUnitConcentrationConverter(UnitConverter):
     @property
     def grains_of_i_per_gallon_us(self) -> "FieldQnty":
         """Convert to grains of "i" per gallon (US) units, returning new variable."""
-        unit_const: Final = field_units.ConcentrationUnits.grains_of_i_per_gallon_us
+        unit_const: Final = units.ConcentrationUnits.grains_of_i_per_gallon_us
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -13143,19 +13143,19 @@ class AsUnitDimensionlessConverter(UnitConverter):
     @property
     def dimensionless(self) -> "FieldQnty":
         """Convert to dimensionless units, returning new variable."""
-        unit_const: Final = field_units.DimensionlessUnits.dimensionless
+        unit_const: Final = units.DimensionlessUnits.dimensionless
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def ratio(self) -> "FieldQnty":
         """Convert to ratio units, returning new variable."""
-        unit_const: Final = field_units.DimensionlessUnits.ratio
+        unit_const: Final = units.DimensionlessUnits.ratio
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def parts_per_million(self) -> "FieldQnty":
         """Convert to parts per million units, returning new variable."""
-        unit_const: Final = field_units.DimensionlessUnits.parts_per_million
+        unit_const: Final = units.DimensionlessUnits.parts_per_million
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -13166,7 +13166,7 @@ class AsUnitDimensionlessConverter(UnitConverter):
     @property
     def parts_per_billion(self) -> "FieldQnty":
         """Convert to parts per billion units, returning new variable."""
-        unit_const: Final = field_units.DimensionlessUnits.parts_per_billion
+        unit_const: Final = units.DimensionlessUnits.parts_per_billion
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -13188,7 +13188,7 @@ class AsUnitDynamicFluidityConverter(UnitConverter):
     @property
     def meter_seconds_per_kilogram(self) -> "FieldQnty":
         """Convert to meter-seconds per kilogram units, returning new variable."""
-        unit_const: Final = field_units.DynamicFluidityUnits.meter_seconds_per_kilogram
+        unit_const: Final = units.DynamicFluidityUnits.meter_seconds_per_kilogram
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -13199,13 +13199,13 @@ class AsUnitDynamicFluidityConverter(UnitConverter):
     @property
     def rhe(self) -> "FieldQnty":
         """Convert to rhe units, returning new variable."""
-        unit_const: Final = field_units.DynamicFluidityUnits.rhe
+        unit_const: Final = units.DynamicFluidityUnits.rhe
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def square_foot_per_pound_second(self) -> "FieldQnty":
         """Convert to square foot per pound second units, returning new variable."""
-        unit_const: Final = field_units.DynamicFluidityUnits.square_foot_per_pound_second
+        unit_const: Final = units.DynamicFluidityUnits.square_foot_per_pound_second
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -13216,7 +13216,7 @@ class AsUnitDynamicFluidityConverter(UnitConverter):
     @property
     def square_meters_per_newton_per_second(self) -> "FieldQnty":
         """Convert to square meters per newton per second units, returning new variable."""
-        unit_const: Final = field_units.DynamicFluidityUnits.square_meters_per_newton_per_second
+        unit_const: Final = units.DynamicFluidityUnits.square_meters_per_newton_per_second
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -13238,13 +13238,13 @@ class AsUnitElectricCapacitanceConverter(UnitConverter):
     @property
     def cm(self) -> "FieldQnty":
         """Convert to "cm" units, returning new variable."""
-        unit_const: Final = field_units.ElectricCapacitanceUnits.cm
+        unit_const: Final = units.ElectricCapacitanceUnits.cm
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def abfarad(self) -> "FieldQnty":
         """Convert to abfarad units, returning new variable."""
-        unit_const: Final = field_units.ElectricCapacitanceUnits.abfarad
+        unit_const: Final = units.ElectricCapacitanceUnits.abfarad
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -13255,7 +13255,7 @@ class AsUnitElectricCapacitanceConverter(UnitConverter):
     @property
     def farad(self) -> "FieldQnty":
         """Convert to farad units, returning new variable."""
-        unit_const: Final = field_units.ElectricCapacitanceUnits.farad
+        unit_const: Final = units.ElectricCapacitanceUnits.farad
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -13266,7 +13266,7 @@ class AsUnitElectricCapacitanceConverter(UnitConverter):
     @property
     def farad_intl(self) -> "FieldQnty":
         """Convert to farad (intl) units, returning new variable."""
-        unit_const: Final = field_units.ElectricCapacitanceUnits.farad_intl
+        unit_const: Final = units.ElectricCapacitanceUnits.farad_intl
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -13277,19 +13277,19 @@ class AsUnitElectricCapacitanceConverter(UnitConverter):
     @property
     def jar(self) -> "FieldQnty":
         """Convert to jar units, returning new variable."""
-        unit_const: Final = field_units.ElectricCapacitanceUnits.jar
+        unit_const: Final = units.ElectricCapacitanceUnits.jar
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def puff(self) -> "FieldQnty":
         """Convert to puff units, returning new variable."""
-        unit_const: Final = field_units.ElectricCapacitanceUnits.puff
+        unit_const: Final = units.ElectricCapacitanceUnits.puff
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def statfarad(self) -> "FieldQnty":
         """Convert to statfarad units, returning new variable."""
-        unit_const: Final = field_units.ElectricCapacitanceUnits.statfarad
+        unit_const: Final = units.ElectricCapacitanceUnits.statfarad
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -13300,7 +13300,7 @@ class AsUnitElectricCapacitanceConverter(UnitConverter):
     @property
     def millifarad(self) -> "FieldQnty":
         """Convert to millifarad units, returning new variable."""
-        unit_const: Final = field_units.ElectricCapacitanceUnits.millifarad
+        unit_const: Final = units.ElectricCapacitanceUnits.millifarad
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -13311,13 +13311,13 @@ class AsUnitElectricCapacitanceConverter(UnitConverter):
     @property
     def microfarad(self) -> "FieldQnty":
         """Convert to microfarad units, returning new variable."""
-        unit_const: Final = field_units.ElectricCapacitanceUnits.microfarad
+        unit_const: Final = units.ElectricCapacitanceUnits.microfarad
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def nanofarad(self) -> "FieldQnty":
         """Convert to nanofarad units, returning new variable."""
-        unit_const: Final = field_units.ElectricCapacitanceUnits.nanofarad
+        unit_const: Final = units.ElectricCapacitanceUnits.nanofarad
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -13328,7 +13328,7 @@ class AsUnitElectricCapacitanceConverter(UnitConverter):
     @property
     def picofarad(self) -> "FieldQnty":
         """Convert to picofarad units, returning new variable."""
-        unit_const: Final = field_units.ElectricCapacitanceUnits.picofarad
+        unit_const: Final = units.ElectricCapacitanceUnits.picofarad
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -13350,7 +13350,7 @@ class AsUnitElectricChargeConverter(UnitConverter):
     @property
     def abcoulomb(self) -> "FieldQnty":
         """Convert to abcoulomb units, returning new variable."""
-        unit_const: Final = field_units.ElectricChargeUnits.abcoulomb
+        unit_const: Final = units.ElectricChargeUnits.abcoulomb
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -13361,7 +13361,7 @@ class AsUnitElectricChargeConverter(UnitConverter):
     @property
     def ampere_hour(self) -> "FieldQnty":
         """Convert to ampere-hour units, returning new variable."""
-        unit_const: Final = field_units.ElectricChargeUnits.ampere_hour
+        unit_const: Final = units.ElectricChargeUnits.ampere_hour
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -13372,7 +13372,7 @@ class AsUnitElectricChargeConverter(UnitConverter):
     @property
     def coulomb(self) -> "FieldQnty":
         """Convert to coulomb units, returning new variable."""
-        unit_const: Final = field_units.ElectricChargeUnits.coulomb
+        unit_const: Final = units.ElectricChargeUnits.coulomb
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -13383,7 +13383,7 @@ class AsUnitElectricChargeConverter(UnitConverter):
     @property
     def faraday_c12(self) -> "FieldQnty":
         """Convert to faraday (C12) units, returning new variable."""
-        unit_const: Final = field_units.ElectricChargeUnits.faraday_c12
+        unit_const: Final = units.ElectricChargeUnits.faraday_c12
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -13394,7 +13394,7 @@ class AsUnitElectricChargeConverter(UnitConverter):
     @property
     def franklin(self) -> "FieldQnty":
         """Convert to franklin units, returning new variable."""
-        unit_const: Final = field_units.ElectricChargeUnits.franklin
+        unit_const: Final = units.ElectricChargeUnits.franklin
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -13405,7 +13405,7 @@ class AsUnitElectricChargeConverter(UnitConverter):
     @property
     def statcoulomb(self) -> "FieldQnty":
         """Convert to statcoulomb units, returning new variable."""
-        unit_const: Final = field_units.ElectricChargeUnits.statcoulomb
+        unit_const: Final = units.ElectricChargeUnits.statcoulomb
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -13416,7 +13416,7 @@ class AsUnitElectricChargeConverter(UnitConverter):
     @property
     def u_a_charge(self) -> "FieldQnty":
         """Convert to u.a. charge units, returning new variable."""
-        unit_const: Final = field_units.ElectricChargeUnits.u_a_charge
+        unit_const: Final = units.ElectricChargeUnits.u_a_charge
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -13427,7 +13427,7 @@ class AsUnitElectricChargeConverter(UnitConverter):
     @property
     def kilocoulomb(self) -> "FieldQnty":
         """Convert to kilocoulomb units, returning new variable."""
-        unit_const: Final = field_units.ElectricChargeUnits.kilocoulomb
+        unit_const: Final = units.ElectricChargeUnits.kilocoulomb
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -13438,7 +13438,7 @@ class AsUnitElectricChargeConverter(UnitConverter):
     @property
     def millicoulomb(self) -> "FieldQnty":
         """Convert to millicoulomb units, returning new variable."""
-        unit_const: Final = field_units.ElectricChargeUnits.millicoulomb
+        unit_const: Final = units.ElectricChargeUnits.millicoulomb
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -13449,13 +13449,13 @@ class AsUnitElectricChargeConverter(UnitConverter):
     @property
     def microcoulomb(self) -> "FieldQnty":
         """Convert to microcoulomb units, returning new variable."""
-        unit_const: Final = field_units.ElectricChargeUnits.microcoulomb
+        unit_const: Final = units.ElectricChargeUnits.microcoulomb
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def nanocoulomb(self) -> "FieldQnty":
         """Convert to nanocoulomb units, returning new variable."""
-        unit_const: Final = field_units.ElectricChargeUnits.nanocoulomb
+        unit_const: Final = units.ElectricChargeUnits.nanocoulomb
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -13466,7 +13466,7 @@ class AsUnitElectricChargeConverter(UnitConverter):
     @property
     def picocoulomb(self) -> "FieldQnty":
         """Convert to picocoulomb units, returning new variable."""
-        unit_const: Final = field_units.ElectricChargeUnits.picocoulomb
+        unit_const: Final = units.ElectricChargeUnits.picocoulomb
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -13488,7 +13488,7 @@ class AsUnitElectricCurrentIntensityConverter(UnitConverter):
     @property
     def abampere(self) -> "FieldQnty":
         """Convert to abampere units, returning new variable."""
-        unit_const: Final = field_units.ElectricCurrentIntensityUnits.abampere
+        unit_const: Final = units.ElectricCurrentIntensityUnits.abampere
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -13499,7 +13499,7 @@ class AsUnitElectricCurrentIntensityConverter(UnitConverter):
     @property
     def ampere_intl_mean(self) -> "FieldQnty":
         """Convert to ampere (intl mean) units, returning new variable."""
-        unit_const: Final = field_units.ElectricCurrentIntensityUnits.ampere_intl_mean
+        unit_const: Final = units.ElectricCurrentIntensityUnits.ampere_intl_mean
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -13510,7 +13510,7 @@ class AsUnitElectricCurrentIntensityConverter(UnitConverter):
     @property
     def ampere_intl_us(self) -> "FieldQnty":
         """Convert to ampere (intl US) units, returning new variable."""
-        unit_const: Final = field_units.ElectricCurrentIntensityUnits.ampere_intl_us
+        unit_const: Final = units.ElectricCurrentIntensityUnits.ampere_intl_us
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -13521,7 +13521,7 @@ class AsUnitElectricCurrentIntensityConverter(UnitConverter):
     @property
     def ampere_or_amp(self) -> "FieldQnty":
         """Convert to ampere or amp units, returning new variable."""
-        unit_const: Final = field_units.ElectricCurrentIntensityUnits.ampere_or_amp
+        unit_const: Final = units.ElectricCurrentIntensityUnits.ampere_or_amp
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -13532,13 +13532,13 @@ class AsUnitElectricCurrentIntensityConverter(UnitConverter):
     @property
     def biot(self) -> "FieldQnty":
         """Convert to biot units, returning new variable."""
-        unit_const: Final = field_units.ElectricCurrentIntensityUnits.biot
+        unit_const: Final = units.ElectricCurrentIntensityUnits.biot
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def statampere(self) -> "FieldQnty":
         """Convert to statampere units, returning new variable."""
-        unit_const: Final = field_units.ElectricCurrentIntensityUnits.statampere
+        unit_const: Final = units.ElectricCurrentIntensityUnits.statampere
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -13549,7 +13549,7 @@ class AsUnitElectricCurrentIntensityConverter(UnitConverter):
     @property
     def u_a_or_current(self) -> "FieldQnty":
         """Convert to u.a. or current units, returning new variable."""
-        unit_const: Final = field_units.ElectricCurrentIntensityUnits.u_a_or_current
+        unit_const: Final = units.ElectricCurrentIntensityUnits.u_a_or_current
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -13571,7 +13571,7 @@ class AsUnitElectricDipoleMomentConverter(UnitConverter):
     @property
     def ampere_meter_second(self) -> "FieldQnty":
         """Convert to ampere meter second units, returning new variable."""
-        unit_const: Final = field_units.ElectricDipoleMomentUnits.ampere_meter_second
+        unit_const: Final = units.ElectricDipoleMomentUnits.ampere_meter_second
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -13582,7 +13582,7 @@ class AsUnitElectricDipoleMomentConverter(UnitConverter):
     @property
     def coulomb_meter(self) -> "FieldQnty":
         """Convert to coulomb meter units, returning new variable."""
-        unit_const: Final = field_units.ElectricDipoleMomentUnits.coulomb_meter
+        unit_const: Final = units.ElectricDipoleMomentUnits.coulomb_meter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -13593,7 +13593,7 @@ class AsUnitElectricDipoleMomentConverter(UnitConverter):
     @property
     def debye(self) -> "FieldQnty":
         """Convert to debye units, returning new variable."""
-        unit_const: Final = field_units.ElectricDipoleMomentUnits.debye
+        unit_const: Final = units.ElectricDipoleMomentUnits.debye
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -13604,7 +13604,7 @@ class AsUnitElectricDipoleMomentConverter(UnitConverter):
     @property
     def electron_meter(self) -> "FieldQnty":
         """Convert to electron meter units, returning new variable."""
-        unit_const: Final = field_units.ElectricDipoleMomentUnits.electron_meter
+        unit_const: Final = units.ElectricDipoleMomentUnits.electron_meter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -13626,7 +13626,7 @@ class AsUnitElectricFieldStrengthConverter(UnitConverter):
     @property
     def volt_per_centimeter(self) -> "FieldQnty":
         """Convert to volt per centimeter units, returning new variable."""
-        unit_const: Final = field_units.ElectricFieldStrengthUnits.volt_per_centimeter
+        unit_const: Final = units.ElectricFieldStrengthUnits.volt_per_centimeter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -13637,7 +13637,7 @@ class AsUnitElectricFieldStrengthConverter(UnitConverter):
     @property
     def volt_per_meter(self) -> "FieldQnty":
         """Convert to volt per meter units, returning new variable."""
-        unit_const: Final = field_units.ElectricFieldStrengthUnits.volt_per_meter
+        unit_const: Final = units.ElectricFieldStrengthUnits.volt_per_meter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -13659,7 +13659,7 @@ class AsUnitElectricInductanceConverter(UnitConverter):
     @property
     def abhenry(self) -> "FieldQnty":
         """Convert to abhenry units, returning new variable."""
-        unit_const: Final = field_units.ElectricInductanceUnits.abhenry
+        unit_const: Final = units.ElectricInductanceUnits.abhenry
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -13670,13 +13670,13 @@ class AsUnitElectricInductanceConverter(UnitConverter):
     @property
     def cm(self) -> "FieldQnty":
         """Convert to cm units, returning new variable."""
-        unit_const: Final = field_units.ElectricInductanceUnits.cm
+        unit_const: Final = units.ElectricInductanceUnits.cm
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def henry(self) -> "FieldQnty":
         """Convert to henry units, returning new variable."""
-        unit_const: Final = field_units.ElectricInductanceUnits.henry
+        unit_const: Final = units.ElectricInductanceUnits.henry
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -13687,7 +13687,7 @@ class AsUnitElectricInductanceConverter(UnitConverter):
     @property
     def henry_intl_mean(self) -> "FieldQnty":
         """Convert to henry (intl mean) units, returning new variable."""
-        unit_const: Final = field_units.ElectricInductanceUnits.henry_intl_mean
+        unit_const: Final = units.ElectricInductanceUnits.henry_intl_mean
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -13698,7 +13698,7 @@ class AsUnitElectricInductanceConverter(UnitConverter):
     @property
     def henry_intl_us(self) -> "FieldQnty":
         """Convert to henry (intl US) units, returning new variable."""
-        unit_const: Final = field_units.ElectricInductanceUnits.henry_intl_us
+        unit_const: Final = units.ElectricInductanceUnits.henry_intl_us
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -13709,13 +13709,13 @@ class AsUnitElectricInductanceConverter(UnitConverter):
     @property
     def mic(self) -> "FieldQnty":
         """Convert to mic units, returning new variable."""
-        unit_const: Final = field_units.ElectricInductanceUnits.mic
+        unit_const: Final = units.ElectricInductanceUnits.mic
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def stathenry(self) -> "FieldQnty":
         """Convert to stathenry units, returning new variable."""
-        unit_const: Final = field_units.ElectricInductanceUnits.stathenry
+        unit_const: Final = units.ElectricInductanceUnits.stathenry
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -13726,7 +13726,7 @@ class AsUnitElectricInductanceConverter(UnitConverter):
     @property
     def millihenry(self) -> "FieldQnty":
         """Convert to millihenry units, returning new variable."""
-        unit_const: Final = field_units.ElectricInductanceUnits.millihenry
+        unit_const: Final = units.ElectricInductanceUnits.millihenry
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -13737,13 +13737,13 @@ class AsUnitElectricInductanceConverter(UnitConverter):
     @property
     def microhenry(self) -> "FieldQnty":
         """Convert to microhenry units, returning new variable."""
-        unit_const: Final = field_units.ElectricInductanceUnits.microhenry
+        unit_const: Final = units.ElectricInductanceUnits.microhenry
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def nanohenry(self) -> "FieldQnty":
         """Convert to nanohenry units, returning new variable."""
-        unit_const: Final = field_units.ElectricInductanceUnits.nanohenry
+        unit_const: Final = units.ElectricInductanceUnits.nanohenry
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -13765,7 +13765,7 @@ class AsUnitElectricPotentialConverter(UnitConverter):
     @property
     def abvolt(self) -> "FieldQnty":
         """Convert to abvolt units, returning new variable."""
-        unit_const: Final = field_units.ElectricPotentialUnits.abvolt
+        unit_const: Final = units.ElectricPotentialUnits.abvolt
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -13776,7 +13776,7 @@ class AsUnitElectricPotentialConverter(UnitConverter):
     @property
     def statvolt(self) -> "FieldQnty":
         """Convert to statvolt units, returning new variable."""
-        unit_const: Final = field_units.ElectricPotentialUnits.statvolt
+        unit_const: Final = units.ElectricPotentialUnits.statvolt
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -13787,7 +13787,7 @@ class AsUnitElectricPotentialConverter(UnitConverter):
     @property
     def u_a_potential(self) -> "FieldQnty":
         """Convert to u.a. potential units, returning new variable."""
-        unit_const: Final = field_units.ElectricPotentialUnits.u_a_potential
+        unit_const: Final = units.ElectricPotentialUnits.u_a_potential
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -13798,7 +13798,7 @@ class AsUnitElectricPotentialConverter(UnitConverter):
     @property
     def volt(self) -> "FieldQnty":
         """Convert to volt units, returning new variable."""
-        unit_const: Final = field_units.ElectricPotentialUnits.volt
+        unit_const: Final = units.ElectricPotentialUnits.volt
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -13809,7 +13809,7 @@ class AsUnitElectricPotentialConverter(UnitConverter):
     @property
     def volt_intl_mean(self) -> "FieldQnty":
         """Convert to volt (intl mean) units, returning new variable."""
-        unit_const: Final = field_units.ElectricPotentialUnits.volt_intl_mean
+        unit_const: Final = units.ElectricPotentialUnits.volt_intl_mean
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -13820,7 +13820,7 @@ class AsUnitElectricPotentialConverter(UnitConverter):
     @property
     def volt_us(self) -> "FieldQnty":
         """Convert to volt (US) units, returning new variable."""
-        unit_const: Final = field_units.ElectricPotentialUnits.volt_us
+        unit_const: Final = units.ElectricPotentialUnits.volt_us
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -13831,7 +13831,7 @@ class AsUnitElectricPotentialConverter(UnitConverter):
     @property
     def kilovolt(self) -> "FieldQnty":
         """Convert to kilovolt units, returning new variable."""
-        unit_const: Final = field_units.ElectricPotentialUnits.kilovolt
+        unit_const: Final = units.ElectricPotentialUnits.kilovolt
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -13842,7 +13842,7 @@ class AsUnitElectricPotentialConverter(UnitConverter):
     @property
     def millivolt(self) -> "FieldQnty":
         """Convert to millivolt units, returning new variable."""
-        unit_const: Final = field_units.ElectricPotentialUnits.millivolt
+        unit_const: Final = units.ElectricPotentialUnits.millivolt
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -13853,13 +13853,13 @@ class AsUnitElectricPotentialConverter(UnitConverter):
     @property
     def microvolt(self) -> "FieldQnty":
         """Convert to microvolt units, returning new variable."""
-        unit_const: Final = field_units.ElectricPotentialUnits.microvolt
+        unit_const: Final = units.ElectricPotentialUnits.microvolt
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def nanovolt(self) -> "FieldQnty":
         """Convert to nanovolt units, returning new variable."""
-        unit_const: Final = field_units.ElectricPotentialUnits.nanovolt
+        unit_const: Final = units.ElectricPotentialUnits.nanovolt
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -13870,7 +13870,7 @@ class AsUnitElectricPotentialConverter(UnitConverter):
     @property
     def picovolt(self) -> "FieldQnty":
         """Convert to picovolt units, returning new variable."""
-        unit_const: Final = field_units.ElectricPotentialUnits.picovolt
+        unit_const: Final = units.ElectricPotentialUnits.picovolt
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -13892,7 +13892,7 @@ class AsUnitElectricResistanceConverter(UnitConverter):
     @property
     def abohm(self) -> "FieldQnty":
         """Convert to abohm units, returning new variable."""
-        unit_const: Final = field_units.ElectricResistanceUnits.abohm
+        unit_const: Final = units.ElectricResistanceUnits.abohm
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -13903,7 +13903,7 @@ class AsUnitElectricResistanceConverter(UnitConverter):
     @property
     def jacobi(self) -> "FieldQnty":
         """Convert to jacobi units, returning new variable."""
-        unit_const: Final = field_units.ElectricResistanceUnits.jacobi
+        unit_const: Final = units.ElectricResistanceUnits.jacobi
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -13914,7 +13914,7 @@ class AsUnitElectricResistanceConverter(UnitConverter):
     @property
     def lenz(self) -> "FieldQnty":
         """Convert to lenz units, returning new variable."""
-        unit_const: Final = field_units.ElectricResistanceUnits.lenz
+        unit_const: Final = units.ElectricResistanceUnits.lenz
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -13925,7 +13925,7 @@ class AsUnitElectricResistanceConverter(UnitConverter):
     @property
     def ohm(self) -> "FieldQnty":
         """Convert to ohm units, returning new variable."""
-        unit_const: Final = field_units.ElectricResistanceUnits.ohm
+        unit_const: Final = units.ElectricResistanceUnits.ohm
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -13936,7 +13936,7 @@ class AsUnitElectricResistanceConverter(UnitConverter):
     @property
     def ohm_intl_mean(self) -> "FieldQnty":
         """Convert to ohm (intl mean) units, returning new variable."""
-        unit_const: Final = field_units.ElectricResistanceUnits.ohm_intl_mean
+        unit_const: Final = units.ElectricResistanceUnits.ohm_intl_mean
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -13947,7 +13947,7 @@ class AsUnitElectricResistanceConverter(UnitConverter):
     @property
     def ohm_intl_us(self) -> "FieldQnty":
         """Convert to ohm (intl US) units, returning new variable."""
-        unit_const: Final = field_units.ElectricResistanceUnits.ohm_intl_us
+        unit_const: Final = units.ElectricResistanceUnits.ohm_intl_us
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -13958,7 +13958,7 @@ class AsUnitElectricResistanceConverter(UnitConverter):
     @property
     def ohm_legal(self) -> "FieldQnty":
         """Convert to ohm (legal) units, returning new variable."""
-        unit_const: Final = field_units.ElectricResistanceUnits.ohm_legal
+        unit_const: Final = units.ElectricResistanceUnits.ohm_legal
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -13969,13 +13969,13 @@ class AsUnitElectricResistanceConverter(UnitConverter):
     @property
     def preece(self) -> "FieldQnty":
         """Convert to preece units, returning new variable."""
-        unit_const: Final = field_units.ElectricResistanceUnits.preece
+        unit_const: Final = units.ElectricResistanceUnits.preece
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def statohm(self) -> "FieldQnty":
         """Convert to statohm units, returning new variable."""
-        unit_const: Final = field_units.ElectricResistanceUnits.statohm
+        unit_const: Final = units.ElectricResistanceUnits.statohm
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -13986,13 +13986,13 @@ class AsUnitElectricResistanceConverter(UnitConverter):
     @property
     def wheatstone(self) -> "FieldQnty":
         """Convert to wheatstone units, returning new variable."""
-        unit_const: Final = field_units.ElectricResistanceUnits.wheatstone
+        unit_const: Final = units.ElectricResistanceUnits.wheatstone
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def kiloohm(self) -> "FieldQnty":
         """Convert to kiloohm units, returning new variable."""
-        unit_const: Final = field_units.ElectricResistanceUnits.kiloohm
+        unit_const: Final = units.ElectricResistanceUnits.kiloohm
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14003,7 +14003,7 @@ class AsUnitElectricResistanceConverter(UnitConverter):
     @property
     def megaohm(self) -> "FieldQnty":
         """Convert to megaohm units, returning new variable."""
-        unit_const: Final = field_units.ElectricResistanceUnits.megaohm
+        unit_const: Final = units.ElectricResistanceUnits.megaohm
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14014,7 +14014,7 @@ class AsUnitElectricResistanceConverter(UnitConverter):
     @property
     def milliohm(self) -> "FieldQnty":
         """Convert to milliohm units, returning new variable."""
-        unit_const: Final = field_units.ElectricResistanceUnits.milliohm
+        unit_const: Final = units.ElectricResistanceUnits.milliohm
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14036,7 +14036,7 @@ class AsUnitElectricalConductanceConverter(UnitConverter):
     @property
     def emu_cgs(self) -> "FieldQnty":
         """Convert to emu cgs units, returning new variable."""
-        unit_const: Final = field_units.ElectricalConductanceUnits.emu_cgs
+        unit_const: Final = units.ElectricalConductanceUnits.emu_cgs
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14047,7 +14047,7 @@ class AsUnitElectricalConductanceConverter(UnitConverter):
     @property
     def esu_cgs(self) -> "FieldQnty":
         """Convert to esu cgs units, returning new variable."""
-        unit_const: Final = field_units.ElectricalConductanceUnits.esu_cgs
+        unit_const: Final = units.ElectricalConductanceUnits.esu_cgs
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14058,13 +14058,13 @@ class AsUnitElectricalConductanceConverter(UnitConverter):
     @property
     def mho(self) -> "FieldQnty":
         """Convert to mho units, returning new variable."""
-        unit_const: Final = field_units.ElectricalConductanceUnits.mho
+        unit_const: Final = units.ElectricalConductanceUnits.mho
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def microsiemens(self) -> "FieldQnty":
         """Convert to microsiemens units, returning new variable."""
-        unit_const: Final = field_units.ElectricalConductanceUnits.microsiemens
+        unit_const: Final = units.ElectricalConductanceUnits.microsiemens
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14075,7 +14075,7 @@ class AsUnitElectricalConductanceConverter(UnitConverter):
     @property
     def siemens(self) -> "FieldQnty":
         """Convert to siemens units, returning new variable."""
-        unit_const: Final = field_units.ElectricalConductanceUnits.siemens
+        unit_const: Final = units.ElectricalConductanceUnits.siemens
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14086,7 +14086,7 @@ class AsUnitElectricalConductanceConverter(UnitConverter):
     @property
     def millisiemens(self) -> "FieldQnty":
         """Convert to millisiemens units, returning new variable."""
-        unit_const: Final = field_units.ElectricalConductanceUnits.millisiemens
+        unit_const: Final = units.ElectricalConductanceUnits.millisiemens
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14108,7 +14108,7 @@ class AsUnitElectricalPermittivityConverter(UnitConverter):
     @property
     def farad_per_meter(self) -> "FieldQnty":
         """Convert to farad per meter units, returning new variable."""
-        unit_const: Final = field_units.ElectricalPermittivityUnits.farad_per_meter
+        unit_const: Final = units.ElectricalPermittivityUnits.farad_per_meter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14130,7 +14130,7 @@ class AsUnitElectricalResistivityConverter(UnitConverter):
     @property
     def circular_mil_ohm_per_foot(self) -> "FieldQnty":
         """Convert to circular mil-ohm per foot units, returning new variable."""
-        unit_const: Final = field_units.ElectricalResistivityUnits.circular_mil_ohm_per_foot
+        unit_const: Final = units.ElectricalResistivityUnits.circular_mil_ohm_per_foot
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14141,7 +14141,7 @@ class AsUnitElectricalResistivityConverter(UnitConverter):
     @property
     def emu_cgs(self) -> "FieldQnty":
         """Convert to emu cgs units, returning new variable."""
-        unit_const: Final = field_units.ElectricalResistivityUnits.emu_cgs
+        unit_const: Final = units.ElectricalResistivityUnits.emu_cgs
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14152,7 +14152,7 @@ class AsUnitElectricalResistivityConverter(UnitConverter):
     @property
     def microhm_inch(self) -> "FieldQnty":
         """Convert to microhm-inch units, returning new variable."""
-        unit_const: Final = field_units.ElectricalResistivityUnits.microhm_inch
+        unit_const: Final = units.ElectricalResistivityUnits.microhm_inch
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14163,7 +14163,7 @@ class AsUnitElectricalResistivityConverter(UnitConverter):
     @property
     def ohm_centimeter(self) -> "FieldQnty":
         """Convert to ohm-centimeter units, returning new variable."""
-        unit_const: Final = field_units.ElectricalResistivityUnits.ohm_centimeter
+        unit_const: Final = units.ElectricalResistivityUnits.ohm_centimeter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14174,7 +14174,7 @@ class AsUnitElectricalResistivityConverter(UnitConverter):
     @property
     def ohm_meter(self) -> "FieldQnty":
         """Convert to ohm-meter units, returning new variable."""
-        unit_const: Final = field_units.ElectricalResistivityUnits.ohm_meter
+        unit_const: Final = units.ElectricalResistivityUnits.ohm_meter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14196,7 +14196,7 @@ class AsUnitEnergyFluxConverter(UnitConverter):
     @property
     def btu_per_square_foot_per_hour(self) -> "FieldQnty":
         """Convert to Btu per square foot per hour units, returning new variable."""
-        unit_const: Final = field_units.EnergyFluxUnits.btu_per_square_foot_per_hour
+        unit_const: Final = units.EnergyFluxUnits.btu_per_square_foot_per_hour
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14207,7 +14207,7 @@ class AsUnitEnergyFluxConverter(UnitConverter):
     @property
     def calorie_per_square_centimeter_per_second(self) -> "FieldQnty":
         """Convert to calorie per square centimeter per second units, returning new variable."""
-        unit_const: Final = field_units.EnergyFluxUnits.calorie_per_square_centimeter_per_second
+        unit_const: Final = units.EnergyFluxUnits.calorie_per_square_centimeter_per_second
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14223,7 +14223,7 @@ class AsUnitEnergyFluxConverter(UnitConverter):
     @property
     def celsius_heat_units_chu(self) -> "FieldQnty":
         """Convert to Celsius heat units (Chu) per square foot per hour units, returning new variable."""
-        unit_const: Final = field_units.EnergyFluxUnits.celsius_heat_units_chu
+        unit_const: Final = units.EnergyFluxUnits.celsius_heat_units_chu
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14234,7 +14234,7 @@ class AsUnitEnergyFluxConverter(UnitConverter):
     @property
     def kilocalorie_per_square_foot_per_hour(self) -> "FieldQnty":
         """Convert to kilocalorie per square foot per hour units, returning new variable."""
-        unit_const: Final = field_units.EnergyFluxUnits.kilocalorie_per_square_foot_per_hour
+        unit_const: Final = units.EnergyFluxUnits.kilocalorie_per_square_foot_per_hour
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14245,7 +14245,7 @@ class AsUnitEnergyFluxConverter(UnitConverter):
     @property
     def kilocalorie_per_square_meter_per_hour(self) -> "FieldQnty":
         """Convert to kilocalorie per square meter per hour units, returning new variable."""
-        unit_const: Final = field_units.EnergyFluxUnits.kilocalorie_per_square_meter_per_hour
+        unit_const: Final = units.EnergyFluxUnits.kilocalorie_per_square_meter_per_hour
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14256,7 +14256,7 @@ class AsUnitEnergyFluxConverter(UnitConverter):
     @property
     def watt_per_square_meter(self) -> "FieldQnty":
         """Convert to watt per square meter units, returning new variable."""
-        unit_const: Final = field_units.EnergyFluxUnits.watt_per_square_meter
+        unit_const: Final = units.EnergyFluxUnits.watt_per_square_meter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14278,7 +14278,7 @@ class AsUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def barrel_oil_equivalent_or_equivalent_barrel(self) -> "FieldQnty":
         """Convert to barrel oil equivalent or equivalent barrel units, returning new variable."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.barrel_oil_equivalent_or_equivalent_barrel
+        unit_const: Final = units.EnergyHeatWorkUnits.barrel_oil_equivalent_or_equivalent_barrel
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14299,7 +14299,7 @@ class AsUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def billion_electronvolt(self) -> "FieldQnty":
         """Convert to billion electronvolt units, returning new variable."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.billion_electronvolt
+        unit_const: Final = units.EnergyHeatWorkUnits.billion_electronvolt
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14310,7 +14310,7 @@ class AsUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def british_thermal_unit_4circ_mathrmc(self) -> "FieldQnty":
         """Convert to British thermal unit ( $4^{\\circ} \\mathrm{C}$ ) units, returning new variable."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.british_thermal_unit_4circ_mathrmc
+        unit_const: Final = units.EnergyHeatWorkUnits.british_thermal_unit_4circ_mathrmc
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14321,7 +14321,7 @@ class AsUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def british_thermal_unit_60circ_mathrmf(self) -> "FieldQnty":
         """Convert to British thermal unit ( $60^{\\circ} \\mathrm{F}$ ) units, returning new variable."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.british_thermal_unit_60circ_mathrmf
+        unit_const: Final = units.EnergyHeatWorkUnits.british_thermal_unit_60circ_mathrmf
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14332,7 +14332,7 @@ class AsUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def british_thermal_unit_international_steam_tables(self) -> "FieldQnty":
         """Convert to British thermal unit (international steam tables) units, returning new variable."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.british_thermal_unit_international_steam_tables
+        unit_const: Final = units.EnergyHeatWorkUnits.british_thermal_unit_international_steam_tables
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14343,7 +14343,7 @@ class AsUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def british_thermal_unit_isotc_12(self) -> "FieldQnty":
         """Convert to British thermal unit (ISO/TC 12) units, returning new variable."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.british_thermal_unit_isotc_12
+        unit_const: Final = units.EnergyHeatWorkUnits.british_thermal_unit_isotc_12
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14354,7 +14354,7 @@ class AsUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def british_thermal_unit_mean(self) -> "FieldQnty":
         """Convert to British thermal unit (mean) units, returning new variable."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.british_thermal_unit_mean
+        unit_const: Final = units.EnergyHeatWorkUnits.british_thermal_unit_mean
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14375,7 +14375,7 @@ class AsUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def british_thermal_unit_thermochemical(self) -> "FieldQnty":
         """Convert to British thermal unit (thermochemical) units, returning new variable."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.british_thermal_unit_thermochemical
+        unit_const: Final = units.EnergyHeatWorkUnits.british_thermal_unit_thermochemical
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14386,7 +14386,7 @@ class AsUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def calorie_20circ_mathrmc(self) -> "FieldQnty":
         """Convert to calorie ( $20^{\\circ} \\mathrm{C}$ ) units, returning new variable."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.calorie_20circ_mathrmc
+        unit_const: Final = units.EnergyHeatWorkUnits.calorie_20circ_mathrmc
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14397,7 +14397,7 @@ class AsUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def calorie_4circ_mathrmc(self) -> "FieldQnty":
         """Convert to calorie ( $4^{\\circ} \\mathrm{C}$ ) units, returning new variable."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.calorie_4circ_mathrmc
+        unit_const: Final = units.EnergyHeatWorkUnits.calorie_4circ_mathrmc
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14408,7 +14408,7 @@ class AsUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def calorie_international_steam_tables(self) -> "FieldQnty":
         """Convert to calorie (international steam tables) units, returning new variable."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.calorie_international_steam_tables
+        unit_const: Final = units.EnergyHeatWorkUnits.calorie_international_steam_tables
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14419,7 +14419,7 @@ class AsUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def calorie_mean(self) -> "FieldQnty":
         """Convert to calorie (mean) units, returning new variable."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.calorie_mean
+        unit_const: Final = units.EnergyHeatWorkUnits.calorie_mean
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14430,7 +14430,7 @@ class AsUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def calorie_nutritional(self) -> "FieldQnty":
         """Convert to Calorie (nutritional) units, returning new variable."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.calorie_nutritional
+        unit_const: Final = units.EnergyHeatWorkUnits.calorie_nutritional
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14441,7 +14441,7 @@ class AsUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def calorie_thermochemical(self) -> "FieldQnty":
         """Convert to calorie (thermochemical) units, returning new variable."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.calorie_thermochemical
+        unit_const: Final = units.EnergyHeatWorkUnits.calorie_thermochemical
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14452,7 +14452,7 @@ class AsUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def celsius_heat_unit(self) -> "FieldQnty":
         """Convert to Celsius heat unit units, returning new variable."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.celsius_heat_unit
+        unit_const: Final = units.EnergyHeatWorkUnits.celsius_heat_unit
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14463,7 +14463,7 @@ class AsUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def celsius_heat_unit_15_circ_mathrmc(self) -> "FieldQnty":
         """Convert to Celsius heat unit ( $15{ }^{\\circ} \\mathrm{C}$ ) units, returning new variable."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.celsius_heat_unit_15_circ_mathrmc
+        unit_const: Final = units.EnergyHeatWorkUnits.celsius_heat_unit_15_circ_mathrmc
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14474,7 +14474,7 @@ class AsUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def electron_volt(self) -> "FieldQnty":
         """Convert to electron volt units, returning new variable."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.electron_volt
+        unit_const: Final = units.EnergyHeatWorkUnits.electron_volt
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14485,13 +14485,13 @@ class AsUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def erg(self) -> "FieldQnty":
         """Convert to erg units, returning new variable."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.erg
+        unit_const: Final = units.EnergyHeatWorkUnits.erg
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def foot_pound_force_duty(self) -> "FieldQnty":
         """Convert to foot pound force (duty) units, returning new variable."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.foot_pound_force_duty
+        unit_const: Final = units.EnergyHeatWorkUnits.foot_pound_force_duty
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14502,7 +14502,7 @@ class AsUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def foot_poundal(self) -> "FieldQnty":
         """Convert to foot-poundal units, returning new variable."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.foot_poundal
+        unit_const: Final = units.EnergyHeatWorkUnits.foot_poundal
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14513,7 +14513,7 @@ class AsUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def frigorie(self) -> "FieldQnty":
         """Convert to frigorie units, returning new variable."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.frigorie
+        unit_const: Final = units.EnergyHeatWorkUnits.frigorie
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14524,7 +14524,7 @@ class AsUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def hartree_atomic_unit_of_energy(self) -> "FieldQnty":
         """Convert to hartree (atomic unit of energy) units, returning new variable."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.hartree_atomic_unit_of_energy
+        unit_const: Final = units.EnergyHeatWorkUnits.hartree_atomic_unit_of_energy
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14535,7 +14535,7 @@ class AsUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def joule(self) -> "FieldQnty":
         """Convert to joule units, returning new variable."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.joule
+        unit_const: Final = units.EnergyHeatWorkUnits.joule
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14546,7 +14546,7 @@ class AsUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def joule_international(self) -> "FieldQnty":
         """Convert to joule (international) units, returning new variable."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.joule_international
+        unit_const: Final = units.EnergyHeatWorkUnits.joule_international
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14557,7 +14557,7 @@ class AsUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def kilocalorie_thermal(self) -> "FieldQnty":
         """Convert to kilocalorie (thermal) units, returning new variable."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.kilocalorie_thermal
+        unit_const: Final = units.EnergyHeatWorkUnits.kilocalorie_thermal
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14568,7 +14568,7 @@ class AsUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def kilogram_force_meter(self) -> "FieldQnty":
         """Convert to kilogram force meter units, returning new variable."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.kilogram_force_meter
+        unit_const: Final = units.EnergyHeatWorkUnits.kilogram_force_meter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14579,7 +14579,7 @@ class AsUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def kiloton_tnt(self) -> "FieldQnty":
         """Convert to kiloton (TNT) units, returning new variable."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.kiloton_tnt
+        unit_const: Final = units.EnergyHeatWorkUnits.kiloton_tnt
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14590,7 +14590,7 @@ class AsUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def kilowatt_hour(self) -> "FieldQnty":
         """Convert to kilowatt hour units, returning new variable."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.kilowatt_hour
+        unit_const: Final = units.EnergyHeatWorkUnits.kilowatt_hour
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14601,7 +14601,7 @@ class AsUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def liter_atmosphere(self) -> "FieldQnty":
         """Convert to liter atmosphere units, returning new variable."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.liter_atmosphere
+        unit_const: Final = units.EnergyHeatWorkUnits.liter_atmosphere
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14612,7 +14612,7 @@ class AsUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def megaton_tnt(self) -> "FieldQnty":
         """Convert to megaton (TNT) units, returning new variable."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.megaton_tnt
+        unit_const: Final = units.EnergyHeatWorkUnits.megaton_tnt
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14623,7 +14623,7 @@ class AsUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def pound_centigrade_unit_15circ_mathrmc(self) -> "FieldQnty":
         """Convert to pound centigrade unit ( $15^{\\circ} \\mathrm{C}$ ) units, returning new variable."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.pound_centigrade_unit_15circ_mathrmc
+        unit_const: Final = units.EnergyHeatWorkUnits.pound_centigrade_unit_15circ_mathrmc
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14634,13 +14634,13 @@ class AsUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def prout(self) -> "FieldQnty":
         """Convert to prout units, returning new variable."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.prout
+        unit_const: Final = units.EnergyHeatWorkUnits.prout
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def q_unit(self) -> "FieldQnty":
         """Convert to Q unit units, returning new variable."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.q_unit
+        unit_const: Final = units.EnergyHeatWorkUnits.q_unit
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14651,7 +14651,7 @@ class AsUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def quad_quadrillion_btu(self) -> "FieldQnty":
         """Convert to quad (quadrillion Btu) units, returning new variable."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.quad_quadrillion_btu
+        unit_const: Final = units.EnergyHeatWorkUnits.quad_quadrillion_btu
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14662,7 +14662,7 @@ class AsUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def rydberg(self) -> "FieldQnty":
         """Convert to rydberg units, returning new variable."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.rydberg
+        unit_const: Final = units.EnergyHeatWorkUnits.rydberg
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14673,7 +14673,7 @@ class AsUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def therm_eeg(self) -> "FieldQnty":
         """Convert to therm (EEG) units, returning new variable."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.therm_eeg
+        unit_const: Final = units.EnergyHeatWorkUnits.therm_eeg
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14684,7 +14684,7 @@ class AsUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def therm_refineries(self) -> "FieldQnty":
         """Convert to therm (refineries) units, returning new variable."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.therm_refineries
+        unit_const: Final = units.EnergyHeatWorkUnits.therm_refineries
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14705,7 +14705,7 @@ class AsUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def therm_us(self) -> "FieldQnty":
         """Convert to therm (US) units, returning new variable."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.therm_us
+        unit_const: Final = units.EnergyHeatWorkUnits.therm_us
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14716,7 +14716,7 @@ class AsUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def ton_coal_equivalent(self) -> "FieldQnty":
         """Convert to ton coal equivalent units, returning new variable."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.ton_coal_equivalent
+        unit_const: Final = units.EnergyHeatWorkUnits.ton_coal_equivalent
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14727,7 +14727,7 @@ class AsUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def ton_oil_equivalent(self) -> "FieldQnty":
         """Convert to ton oil equivalent units, returning new variable."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.ton_oil_equivalent
+        unit_const: Final = units.EnergyHeatWorkUnits.ton_oil_equivalent
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14738,7 +14738,7 @@ class AsUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def kilojoule(self) -> "FieldQnty":
         """Convert to kilojoule units, returning new variable."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.kilojoule
+        unit_const: Final = units.EnergyHeatWorkUnits.kilojoule
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14749,7 +14749,7 @@ class AsUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def megajoule(self) -> "FieldQnty":
         """Convert to megajoule units, returning new variable."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.megajoule
+        unit_const: Final = units.EnergyHeatWorkUnits.megajoule
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14760,7 +14760,7 @@ class AsUnitEnergyHeatWorkConverter(UnitConverter):
     @property
     def gigajoule(self) -> "FieldQnty":
         """Convert to gigajoule units, returning new variable."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.gigajoule
+        unit_const: Final = units.EnergyHeatWorkUnits.gigajoule
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14782,7 +14782,7 @@ class AsUnitEnergyPerUnitAreaConverter(UnitConverter):
     @property
     def british_thermal_unit_per_square_foot(self) -> "FieldQnty":
         """Convert to British thermal unit per square foot units, returning new variable."""
-        unit_const: Final = field_units.EnergyPerUnitAreaUnits.british_thermal_unit_per_square_foot
+        unit_const: Final = units.EnergyPerUnitAreaUnits.british_thermal_unit_per_square_foot
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14803,7 +14803,7 @@ class AsUnitEnergyPerUnitAreaConverter(UnitConverter):
     @property
     def joule_per_square_meter(self) -> "FieldQnty":
         """Convert to joule per square meter units, returning new variable."""
-        unit_const: Final = field_units.EnergyPerUnitAreaUnits.joule_per_square_meter
+        unit_const: Final = units.EnergyPerUnitAreaUnits.joule_per_square_meter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14814,7 +14814,7 @@ class AsUnitEnergyPerUnitAreaConverter(UnitConverter):
     @property
     def langley(self) -> "FieldQnty":
         """Convert to Langley units, returning new variable."""
-        unit_const: Final = field_units.EnergyPerUnitAreaUnits.langley
+        unit_const: Final = units.EnergyPerUnitAreaUnits.langley
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14836,13 +14836,13 @@ class AsUnitForceConverter(UnitConverter):
     @property
     def crinal(self) -> "FieldQnty":
         """Convert to crinal units, returning new variable."""
-        unit_const: Final = field_units.ForceUnits.crinal
+        unit_const: Final = units.ForceUnits.crinal
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def dyne(self) -> "FieldQnty":
         """Convert to dyne units, returning new variable."""
-        unit_const: Final = field_units.ForceUnits.dyne
+        unit_const: Final = units.ForceUnits.dyne
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14853,13 +14853,13 @@ class AsUnitForceConverter(UnitConverter):
     @property
     def funal(self) -> "FieldQnty":
         """Convert to funal units, returning new variable."""
-        unit_const: Final = field_units.ForceUnits.funal
+        unit_const: Final = units.ForceUnits.funal
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def kilogram_force(self) -> "FieldQnty":
         """Convert to kilogram force units, returning new variable."""
-        unit_const: Final = field_units.ForceUnits.kilogram_force
+        unit_const: Final = units.ForceUnits.kilogram_force
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14870,7 +14870,7 @@ class AsUnitForceConverter(UnitConverter):
     @property
     def kip_force(self) -> "FieldQnty":
         """Convert to kip force units, returning new variable."""
-        unit_const: Final = field_units.ForceUnits.kip_force
+        unit_const: Final = units.ForceUnits.kip_force
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14881,7 +14881,7 @@ class AsUnitForceConverter(UnitConverter):
     @property
     def newton(self) -> "FieldQnty":
         """Convert to newton units, returning new variable."""
-        unit_const: Final = field_units.ForceUnits.newton
+        unit_const: Final = units.ForceUnits.newton
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14892,7 +14892,7 @@ class AsUnitForceConverter(UnitConverter):
     @property
     def ounce_force(self) -> "FieldQnty":
         """Convert to ounce force units, returning new variable."""
-        unit_const: Final = field_units.ForceUnits.ounce_force
+        unit_const: Final = units.ForceUnits.ounce_force
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14913,7 +14913,7 @@ class AsUnitForceConverter(UnitConverter):
     @property
     def pond(self) -> "FieldQnty":
         """Convert to pond units, returning new variable."""
-        unit_const: Final = field_units.ForceUnits.pond
+        unit_const: Final = units.ForceUnits.pond
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14924,7 +14924,7 @@ class AsUnitForceConverter(UnitConverter):
     @property
     def pound_force(self) -> "FieldQnty":
         """Convert to pound force units, returning new variable."""
-        unit_const: Final = field_units.ForceUnits.pound_force
+        unit_const: Final = units.ForceUnits.pound_force
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14945,7 +14945,7 @@ class AsUnitForceConverter(UnitConverter):
     @property
     def poundal(self) -> "FieldQnty":
         """Convert to poundal units, returning new variable."""
-        unit_const: Final = field_units.ForceUnits.poundal
+        unit_const: Final = units.ForceUnits.poundal
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14956,7 +14956,7 @@ class AsUnitForceConverter(UnitConverter):
     @property
     def slug_force(self) -> "FieldQnty":
         """Convert to slug force units, returning new variable."""
-        unit_const: Final = field_units.ForceUnits.slug_force
+        unit_const: Final = units.ForceUnits.slug_force
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14967,7 +14967,7 @@ class AsUnitForceConverter(UnitConverter):
     @property
     def sth_ne(self) -> "FieldQnty":
         """Convert to sthène units, returning new variable."""
-        unit_const: Final = field_units.ForceUnits.sth_ne
+        unit_const: Final = units.ForceUnits.sth_ne
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14978,7 +14978,7 @@ class AsUnitForceConverter(UnitConverter):
     @property
     def ton_force_long(self) -> "FieldQnty":
         """Convert to ton (force, long) units, returning new variable."""
-        unit_const: Final = field_units.ForceUnits.ton_force_long
+        unit_const: Final = units.ForceUnits.ton_force_long
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -14989,7 +14989,7 @@ class AsUnitForceConverter(UnitConverter):
     @property
     def ton_force_metric(self) -> "FieldQnty":
         """Convert to ton (force, metric) units, returning new variable."""
-        unit_const: Final = field_units.ForceUnits.ton_force_metric
+        unit_const: Final = units.ForceUnits.ton_force_metric
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15000,7 +15000,7 @@ class AsUnitForceConverter(UnitConverter):
     @property
     def ton_force_short(self) -> "FieldQnty":
         """Convert to ton (force, short) units, returning new variable."""
-        unit_const: Final = field_units.ForceUnits.ton_force_short
+        unit_const: Final = units.ForceUnits.ton_force_short
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15011,7 +15011,7 @@ class AsUnitForceConverter(UnitConverter):
     @property
     def kilonewton(self) -> "FieldQnty":
         """Convert to kilonewton units, returning new variable."""
-        unit_const: Final = field_units.ForceUnits.kilonewton
+        unit_const: Final = units.ForceUnits.kilonewton
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15022,7 +15022,7 @@ class AsUnitForceConverter(UnitConverter):
     @property
     def millinewton(self) -> "FieldQnty":
         """Convert to millinewton units, returning new variable."""
-        unit_const: Final = field_units.ForceUnits.millinewton
+        unit_const: Final = units.ForceUnits.millinewton
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15044,7 +15044,7 @@ class AsUnitForceBodyConverter(UnitConverter):
     @property
     def dyne_per_cubic_centimeter(self) -> "FieldQnty":
         """Convert to dyne per cubic centimeter units, returning new variable."""
-        unit_const: Final = field_units.ForceBodyUnits.dyne_per_cubic_centimeter
+        unit_const: Final = units.ForceBodyUnits.dyne_per_cubic_centimeter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15065,7 +15065,7 @@ class AsUnitForceBodyConverter(UnitConverter):
     @property
     def kilogram_force_per_cubic_centimeter(self) -> "FieldQnty":
         """Convert to kilogram force per cubic centimeter units, returning new variable."""
-        unit_const: Final = field_units.ForceBodyUnits.kilogram_force_per_cubic_centimeter
+        unit_const: Final = units.ForceBodyUnits.kilogram_force_per_cubic_centimeter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15076,7 +15076,7 @@ class AsUnitForceBodyConverter(UnitConverter):
     @property
     def kilogram_force_per_cubic_meter(self) -> "FieldQnty":
         """Convert to kilogram force per cubic meter units, returning new variable."""
-        unit_const: Final = field_units.ForceBodyUnits.kilogram_force_per_cubic_meter
+        unit_const: Final = units.ForceBodyUnits.kilogram_force_per_cubic_meter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15087,7 +15087,7 @@ class AsUnitForceBodyConverter(UnitConverter):
     @property
     def newton_per_cubic_meter(self) -> "FieldQnty":
         """Convert to newton per cubic meter units, returning new variable."""
-        unit_const: Final = field_units.ForceBodyUnits.newton_per_cubic_meter
+        unit_const: Final = units.ForceBodyUnits.newton_per_cubic_meter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15098,7 +15098,7 @@ class AsUnitForceBodyConverter(UnitConverter):
     @property
     def pound_force_per_cubic_foot(self) -> "FieldQnty":
         """Convert to pound force per cubic foot units, returning new variable."""
-        unit_const: Final = field_units.ForceBodyUnits.pound_force_per_cubic_foot
+        unit_const: Final = units.ForceBodyUnits.pound_force_per_cubic_foot
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15109,7 +15109,7 @@ class AsUnitForceBodyConverter(UnitConverter):
     @property
     def pound_force_per_cubic_inch(self) -> "FieldQnty":
         """Convert to pound force per cubic inch units, returning new variable."""
-        unit_const: Final = field_units.ForceBodyUnits.pound_force_per_cubic_inch
+        unit_const: Final = units.ForceBodyUnits.pound_force_per_cubic_inch
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15120,7 +15120,7 @@ class AsUnitForceBodyConverter(UnitConverter):
     @property
     def ton_force_per_cubic_foot(self) -> "FieldQnty":
         """Convert to ton force per cubic foot units, returning new variable."""
-        unit_const: Final = field_units.ForceBodyUnits.ton_force_per_cubic_foot
+        unit_const: Final = units.ForceBodyUnits.ton_force_per_cubic_foot
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15142,7 +15142,7 @@ class AsUnitForcePerUnitMassConverter(UnitConverter):
     @property
     def dyne_per_gram(self) -> "FieldQnty":
         """Convert to dyne per gram units, returning new variable."""
-        unit_const: Final = field_units.ForcePerUnitMassUnits.dyne_per_gram
+        unit_const: Final = units.ForcePerUnitMassUnits.dyne_per_gram
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15153,7 +15153,7 @@ class AsUnitForcePerUnitMassConverter(UnitConverter):
     @property
     def kilogram_force_per_kilogram(self) -> "FieldQnty":
         """Convert to kilogram force per kilogram units, returning new variable."""
-        unit_const: Final = field_units.ForcePerUnitMassUnits.kilogram_force_per_kilogram
+        unit_const: Final = units.ForcePerUnitMassUnits.kilogram_force_per_kilogram
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15164,7 +15164,7 @@ class AsUnitForcePerUnitMassConverter(UnitConverter):
     @property
     def newton_per_kilogram(self) -> "FieldQnty":
         """Convert to newton per kilogram units, returning new variable."""
-        unit_const: Final = field_units.ForcePerUnitMassUnits.newton_per_kilogram
+        unit_const: Final = units.ForcePerUnitMassUnits.newton_per_kilogram
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15175,7 +15175,7 @@ class AsUnitForcePerUnitMassConverter(UnitConverter):
     @property
     def pound_force_per_pound_mass(self) -> "FieldQnty":
         """Convert to pound force per pound mass units, returning new variable."""
-        unit_const: Final = field_units.ForcePerUnitMassUnits.pound_force_per_pound_mass
+        unit_const: Final = units.ForcePerUnitMassUnits.pound_force_per_pound_mass
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15196,7 +15196,7 @@ class AsUnitForcePerUnitMassConverter(UnitConverter):
     @property
     def pound_force_per_slug(self) -> "FieldQnty":
         """Convert to pound force per slug units, returning new variable."""
-        unit_const: Final = field_units.ForcePerUnitMassUnits.pound_force_per_slug
+        unit_const: Final = units.ForcePerUnitMassUnits.pound_force_per_slug
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15218,7 +15218,7 @@ class AsUnitFrequencyVoltageRatioConverter(UnitConverter):
     @property
     def cycles_per_second_per_volt(self) -> "FieldQnty":
         """Convert to cycles per second per volt units, returning new variable."""
-        unit_const: Final = field_units.FrequencyVoltageRatioUnits.cycles_per_second_per_volt
+        unit_const: Final = units.FrequencyVoltageRatioUnits.cycles_per_second_per_volt
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15229,7 +15229,7 @@ class AsUnitFrequencyVoltageRatioConverter(UnitConverter):
     @property
     def hertz_per_volt(self) -> "FieldQnty":
         """Convert to hertz per volt units, returning new variable."""
-        unit_const: Final = field_units.FrequencyVoltageRatioUnits.hertz_per_volt
+        unit_const: Final = units.FrequencyVoltageRatioUnits.hertz_per_volt
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15240,7 +15240,7 @@ class AsUnitFrequencyVoltageRatioConverter(UnitConverter):
     @property
     def terahertz_per_volt(self) -> "FieldQnty":
         """Convert to terahertz per volt units, returning new variable."""
-        unit_const: Final = field_units.FrequencyVoltageRatioUnits.terahertz_per_volt
+        unit_const: Final = units.FrequencyVoltageRatioUnits.terahertz_per_volt
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15262,13 +15262,13 @@ class AsUnitFuelConsumptionConverter(UnitConverter):
     @property
     def unit_100_km_per_liter(self) -> "FieldQnty":
         """Convert to 100 km per liter units, returning new variable."""
-        unit_const: Final = field_units.FuelConsumptionUnits.unit_100_km_per_liter
+        unit_const: Final = units.FuelConsumptionUnits.unit_100_km_per_liter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def gallons_uk(self) -> "FieldQnty":
         """Convert to gallons (UK) per 100 miles units, returning new variable."""
-        unit_const: Final = field_units.FuelConsumptionUnits.gallons_uk
+        unit_const: Final = units.FuelConsumptionUnits.gallons_uk
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15279,7 +15279,7 @@ class AsUnitFuelConsumptionConverter(UnitConverter):
     @property
     def gallons_us(self) -> "FieldQnty":
         """Convert to gallons (US) per 100 miles units, returning new variable."""
-        unit_const: Final = field_units.FuelConsumptionUnits.gallons_us
+        unit_const: Final = units.FuelConsumptionUnits.gallons_us
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15290,7 +15290,7 @@ class AsUnitFuelConsumptionConverter(UnitConverter):
     @property
     def kilometers_per_gallon_uk(self) -> "FieldQnty":
         """Convert to kilometers per gallon (UK) units, returning new variable."""
-        unit_const: Final = field_units.FuelConsumptionUnits.kilometers_per_gallon_uk
+        unit_const: Final = units.FuelConsumptionUnits.kilometers_per_gallon_uk
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15301,7 +15301,7 @@ class AsUnitFuelConsumptionConverter(UnitConverter):
     @property
     def kilometers_per_gallon_us(self) -> "FieldQnty":
         """Convert to kilometers per gallon (US) units, returning new variable."""
-        unit_const: Final = field_units.FuelConsumptionUnits.kilometers_per_gallon_us
+        unit_const: Final = units.FuelConsumptionUnits.kilometers_per_gallon_us
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15312,7 +15312,7 @@ class AsUnitFuelConsumptionConverter(UnitConverter):
     @property
     def kilometers_per_liter(self) -> "FieldQnty":
         """Convert to kilometers per liter units, returning new variable."""
-        unit_const: Final = field_units.FuelConsumptionUnits.kilometers_per_liter
+        unit_const: Final = units.FuelConsumptionUnits.kilometers_per_liter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15323,13 +15323,13 @@ class AsUnitFuelConsumptionConverter(UnitConverter):
     @property
     def liters_per_100_km(self) -> "FieldQnty":
         """Convert to liters per 100 km units, returning new variable."""
-        unit_const: Final = field_units.FuelConsumptionUnits.liters_per_100_km
+        unit_const: Final = units.FuelConsumptionUnits.liters_per_100_km
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def liters_per_kilometer(self) -> "FieldQnty":
         """Convert to liters per kilometer units, returning new variable."""
-        unit_const: Final = field_units.FuelConsumptionUnits.liters_per_kilometer
+        unit_const: Final = units.FuelConsumptionUnits.liters_per_kilometer
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15340,7 +15340,7 @@ class AsUnitFuelConsumptionConverter(UnitConverter):
     @property
     def meters_per_gallon_uk(self) -> "FieldQnty":
         """Convert to meters per gallon (UK) units, returning new variable."""
-        unit_const: Final = field_units.FuelConsumptionUnits.meters_per_gallon_uk
+        unit_const: Final = units.FuelConsumptionUnits.meters_per_gallon_uk
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15351,7 +15351,7 @@ class AsUnitFuelConsumptionConverter(UnitConverter):
     @property
     def meters_per_gallon_us(self) -> "FieldQnty":
         """Convert to meters per gallon (US) units, returning new variable."""
-        unit_const: Final = field_units.FuelConsumptionUnits.meters_per_gallon_us
+        unit_const: Final = units.FuelConsumptionUnits.meters_per_gallon_us
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15362,7 +15362,7 @@ class AsUnitFuelConsumptionConverter(UnitConverter):
     @property
     def miles_per_gallon_uk(self) -> "FieldQnty":
         """Convert to miles per gallon (UK) units, returning new variable."""
-        unit_const: Final = field_units.FuelConsumptionUnits.miles_per_gallon_uk
+        unit_const: Final = units.FuelConsumptionUnits.miles_per_gallon_uk
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15383,7 +15383,7 @@ class AsUnitFuelConsumptionConverter(UnitConverter):
     @property
     def miles_per_gallon_us(self) -> "FieldQnty":
         """Convert to miles per gallon (US) units, returning new variable."""
-        unit_const: Final = field_units.FuelConsumptionUnits.miles_per_gallon_us
+        unit_const: Final = units.FuelConsumptionUnits.miles_per_gallon_us
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15404,7 +15404,7 @@ class AsUnitFuelConsumptionConverter(UnitConverter):
     @property
     def miles_per_liter(self) -> "FieldQnty":
         """Convert to miles per liter units, returning new variable."""
-        unit_const: Final = field_units.FuelConsumptionUnits.miles_per_liter
+        unit_const: Final = units.FuelConsumptionUnits.miles_per_liter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15426,7 +15426,7 @@ class AsUnitHeatOfCombustionConverter(UnitConverter):
     @property
     def british_thermal_unit_per_pound(self) -> "FieldQnty":
         """Convert to British thermal unit per pound units, returning new variable."""
-        unit_const: Final = field_units.HeatOfCombustionUnits.british_thermal_unit_per_pound
+        unit_const: Final = units.HeatOfCombustionUnits.british_thermal_unit_per_pound
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15437,7 +15437,7 @@ class AsUnitHeatOfCombustionConverter(UnitConverter):
     @property
     def calorie_per_gram(self) -> "FieldQnty":
         """Convert to calorie per gram units, returning new variable."""
-        unit_const: Final = field_units.HeatOfCombustionUnits.calorie_per_gram
+        unit_const: Final = units.HeatOfCombustionUnits.calorie_per_gram
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15448,7 +15448,7 @@ class AsUnitHeatOfCombustionConverter(UnitConverter):
     @property
     def chu_per_pound(self) -> "FieldQnty":
         """Convert to Chu per pound units, returning new variable."""
-        unit_const: Final = field_units.HeatOfCombustionUnits.chu_per_pound
+        unit_const: Final = units.HeatOfCombustionUnits.chu_per_pound
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15459,7 +15459,7 @@ class AsUnitHeatOfCombustionConverter(UnitConverter):
     @property
     def joule_per_kilogram(self) -> "FieldQnty":
         """Convert to joule per kilogram units, returning new variable."""
-        unit_const: Final = field_units.HeatOfCombustionUnits.joule_per_kilogram
+        unit_const: Final = units.HeatOfCombustionUnits.joule_per_kilogram
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15481,7 +15481,7 @@ class AsUnitHeatOfFusionConverter(UnitConverter):
     @property
     def british_thermal_unit_mean(self) -> "FieldQnty":
         """Convert to British thermal unit (mean) per pound units, returning new variable."""
-        unit_const: Final = field_units.HeatOfFusionUnits.british_thermal_unit_mean
+        unit_const: Final = units.HeatOfFusionUnits.british_thermal_unit_mean
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15492,7 +15492,7 @@ class AsUnitHeatOfFusionConverter(UnitConverter):
     @property
     def british_thermal_unit_per_pound(self) -> "FieldQnty":
         """Convert to British thermal unit per pound units, returning new variable."""
-        unit_const: Final = field_units.HeatOfFusionUnits.british_thermal_unit_per_pound
+        unit_const: Final = units.HeatOfFusionUnits.british_thermal_unit_per_pound
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15503,7 +15503,7 @@ class AsUnitHeatOfFusionConverter(UnitConverter):
     @property
     def calorie_per_gram(self) -> "FieldQnty":
         """Convert to calorie per gram units, returning new variable."""
-        unit_const: Final = field_units.HeatOfFusionUnits.calorie_per_gram
+        unit_const: Final = units.HeatOfFusionUnits.calorie_per_gram
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15514,7 +15514,7 @@ class AsUnitHeatOfFusionConverter(UnitConverter):
     @property
     def chu_per_pound(self) -> "FieldQnty":
         """Convert to Chu per pound units, returning new variable."""
-        unit_const: Final = field_units.HeatOfFusionUnits.chu_per_pound
+        unit_const: Final = units.HeatOfFusionUnits.chu_per_pound
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15525,7 +15525,7 @@ class AsUnitHeatOfFusionConverter(UnitConverter):
     @property
     def joule_per_kilogram(self) -> "FieldQnty":
         """Convert to joule per kilogram units, returning new variable."""
-        unit_const: Final = field_units.HeatOfFusionUnits.joule_per_kilogram
+        unit_const: Final = units.HeatOfFusionUnits.joule_per_kilogram
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15547,7 +15547,7 @@ class AsUnitHeatOfVaporizationConverter(UnitConverter):
     @property
     def british_thermal_unit_per_pound(self) -> "FieldQnty":
         """Convert to British thermal unit per pound units, returning new variable."""
-        unit_const: Final = field_units.HeatOfVaporizationUnits.british_thermal_unit_per_pound
+        unit_const: Final = units.HeatOfVaporizationUnits.british_thermal_unit_per_pound
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15558,7 +15558,7 @@ class AsUnitHeatOfVaporizationConverter(UnitConverter):
     @property
     def calorie_per_gram(self) -> "FieldQnty":
         """Convert to calorie per gram units, returning new variable."""
-        unit_const: Final = field_units.HeatOfVaporizationUnits.calorie_per_gram
+        unit_const: Final = units.HeatOfVaporizationUnits.calorie_per_gram
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15569,7 +15569,7 @@ class AsUnitHeatOfVaporizationConverter(UnitConverter):
     @property
     def chu_per_pound(self) -> "FieldQnty":
         """Convert to Chu per pound units, returning new variable."""
-        unit_const: Final = field_units.HeatOfVaporizationUnits.chu_per_pound
+        unit_const: Final = units.HeatOfVaporizationUnits.chu_per_pound
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15580,7 +15580,7 @@ class AsUnitHeatOfVaporizationConverter(UnitConverter):
     @property
     def joule_per_kilogram(self) -> "FieldQnty":
         """Convert to joule per kilogram units, returning new variable."""
-        unit_const: Final = field_units.HeatOfVaporizationUnits.joule_per_kilogram
+        unit_const: Final = units.HeatOfVaporizationUnits.joule_per_kilogram
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15602,7 +15602,7 @@ class AsUnitHeatTransferCoefficientConverter(UnitConverter):
     @property
     def btu_per_square_foot_per_hour_per_degree_fahrenheit_or_rankine(self) -> "FieldQnty":
         """Convert to Btu per square foot per hour per degree Fahrenheit (or Rankine) units, returning new variable."""
-        unit_const: Final = field_units.HeatTransferCoefficientUnits.btu_per_square_foot_per_hour_per_degree_fahrenheit_or_rankine
+        unit_const: Final = units.HeatTransferCoefficientUnits.btu_per_square_foot_per_hour_per_degree_fahrenheit_or_rankine
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15613,7 +15613,7 @@ class AsUnitHeatTransferCoefficientConverter(UnitConverter):
     @property
     def watt_per_square_meter_per_degree_celsius_or_kelvin(self) -> "FieldQnty":
         """Convert to watt per square meter per degree Celsius (or kelvin) units, returning new variable."""
-        unit_const: Final = field_units.HeatTransferCoefficientUnits.watt_per_square_meter_per_degree_celsius_or_kelvin
+        unit_const: Final = units.HeatTransferCoefficientUnits.watt_per_square_meter_per_degree_celsius_or_kelvin
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15635,7 +15635,7 @@ class AsUnitIlluminanceConverter(UnitConverter):
     @property
     def foot_candle(self) -> "FieldQnty":
         """Convert to foot-candle units, returning new variable."""
-        unit_const: Final = field_units.IlluminanceUnits.foot_candle
+        unit_const: Final = units.IlluminanceUnits.foot_candle
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15656,7 +15656,7 @@ class AsUnitIlluminanceConverter(UnitConverter):
     @property
     def lux(self) -> "FieldQnty":
         """Convert to lux units, returning new variable."""
-        unit_const: Final = field_units.IlluminanceUnits.lux
+        unit_const: Final = units.IlluminanceUnits.lux
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15667,13 +15667,13 @@ class AsUnitIlluminanceConverter(UnitConverter):
     @property
     def nox(self) -> "FieldQnty":
         """Convert to nox units, returning new variable."""
-        unit_const: Final = field_units.IlluminanceUnits.nox
+        unit_const: Final = units.IlluminanceUnits.nox
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def phot(self) -> "FieldQnty":
         """Convert to phot units, returning new variable."""
-        unit_const: Final = field_units.IlluminanceUnits.phot
+        unit_const: Final = units.IlluminanceUnits.phot
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15684,7 +15684,7 @@ class AsUnitIlluminanceConverter(UnitConverter):
     @property
     def skot(self) -> "FieldQnty":
         """Convert to skot units, returning new variable."""
-        unit_const: Final = field_units.IlluminanceUnits.skot
+        unit_const: Final = units.IlluminanceUnits.skot
         return self._convert_quantity(unit_const, modify_original=False)
 
 
@@ -15701,7 +15701,7 @@ class AsUnitKineticEnergyOfTurbulenceConverter(UnitConverter):
     @property
     def square_foot_per_second_squared(self) -> "FieldQnty":
         """Convert to square foot per second squared units, returning new variable."""
-        unit_const: Final = field_units.KineticEnergyOfTurbulenceUnits.square_foot_per_second_squared
+        unit_const: Final = units.KineticEnergyOfTurbulenceUnits.square_foot_per_second_squared
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15722,7 +15722,7 @@ class AsUnitKineticEnergyOfTurbulenceConverter(UnitConverter):
     @property
     def square_meters_per_second_squared(self) -> "FieldQnty":
         """Convert to square meters per second squared units, returning new variable."""
-        unit_const: Final = field_units.KineticEnergyOfTurbulenceUnits.square_meters_per_second_squared
+        unit_const: Final = units.KineticEnergyOfTurbulenceUnits.square_meters_per_second_squared
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15744,7 +15744,7 @@ class AsUnitLengthConverter(UnitConverter):
     @property
     def ngstr_m(self) -> "FieldQnty":
         """Convert to ångström units, returning new variable."""
-        unit_const: Final = field_units.LengthUnits.ngstr_m
+        unit_const: Final = units.LengthUnits.ngstr_m
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15755,7 +15755,7 @@ class AsUnitLengthConverter(UnitConverter):
     @property
     def arpent_quebec(self) -> "FieldQnty":
         """Convert to arpent (Quebec) units, returning new variable."""
-        unit_const: Final = field_units.LengthUnits.arpent_quebec
+        unit_const: Final = units.LengthUnits.arpent_quebec
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15766,7 +15766,7 @@ class AsUnitLengthConverter(UnitConverter):
     @property
     def astronomic_unit(self) -> "FieldQnty":
         """Convert to astronomic unit units, returning new variable."""
-        unit_const: Final = field_units.LengthUnits.astronomic_unit
+        unit_const: Final = units.LengthUnits.astronomic_unit
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15777,7 +15777,7 @@ class AsUnitLengthConverter(UnitConverter):
     @property
     def attometer(self) -> "FieldQnty":
         """Convert to attometer units, returning new variable."""
-        unit_const: Final = field_units.LengthUnits.attometer
+        unit_const: Final = units.LengthUnits.attometer
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15788,7 +15788,7 @@ class AsUnitLengthConverter(UnitConverter):
     @property
     def calibre_centinch(self) -> "FieldQnty":
         """Convert to calibre (centinch) units, returning new variable."""
-        unit_const: Final = field_units.LengthUnits.calibre_centinch
+        unit_const: Final = units.LengthUnits.calibre_centinch
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15799,7 +15799,7 @@ class AsUnitLengthConverter(UnitConverter):
     @property
     def centimeter(self) -> "FieldQnty":
         """Convert to centimeter units, returning new variable."""
-        unit_const: Final = field_units.LengthUnits.centimeter
+        unit_const: Final = units.LengthUnits.centimeter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15810,7 +15810,7 @@ class AsUnitLengthConverter(UnitConverter):
     @property
     def chain_engrs_or_ramsden(self) -> "FieldQnty":
         """Convert to chain (Engr's or Ramsden) units, returning new variable."""
-        unit_const: Final = field_units.LengthUnits.chain_engrs_or_ramsden
+        unit_const: Final = units.LengthUnits.chain_engrs_or_ramsden
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15831,7 +15831,7 @@ class AsUnitLengthConverter(UnitConverter):
     @property
     def chain_gunters(self) -> "FieldQnty":
         """Convert to chain (Gunter's) units, returning new variable."""
-        unit_const: Final = field_units.LengthUnits.chain_gunters
+        unit_const: Final = units.LengthUnits.chain_gunters
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15842,7 +15842,7 @@ class AsUnitLengthConverter(UnitConverter):
     @property
     def chain_surveyors(self) -> "FieldQnty":
         """Convert to chain (surveyors) units, returning new variable."""
-        unit_const: Final = field_units.LengthUnits.chain_surveyors
+        unit_const: Final = units.LengthUnits.chain_surveyors
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15853,7 +15853,7 @@ class AsUnitLengthConverter(UnitConverter):
     @property
     def cubit_uk(self) -> "FieldQnty":
         """Convert to cubit (UK) units, returning new variable."""
-        unit_const: Final = field_units.LengthUnits.cubit_uk
+        unit_const: Final = units.LengthUnits.cubit_uk
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15864,13 +15864,13 @@ class AsUnitLengthConverter(UnitConverter):
     @property
     def ell(self) -> "FieldQnty":
         """Convert to ell units, returning new variable."""
-        unit_const: Final = field_units.LengthUnits.ell
+        unit_const: Final = units.LengthUnits.ell
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def fathom(self) -> "FieldQnty":
         """Convert to fathom units, returning new variable."""
-        unit_const: Final = field_units.LengthUnits.fathom
+        unit_const: Final = units.LengthUnits.fathom
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15881,7 +15881,7 @@ class AsUnitLengthConverter(UnitConverter):
     @property
     def femtometre(self) -> "FieldQnty":
         """Convert to femtometre units, returning new variable."""
-        unit_const: Final = field_units.LengthUnits.femtometre
+        unit_const: Final = units.LengthUnits.femtometre
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15892,7 +15892,7 @@ class AsUnitLengthConverter(UnitConverter):
     @property
     def fermi(self) -> "FieldQnty":
         """Convert to fermi units, returning new variable."""
-        unit_const: Final = field_units.LengthUnits.fermi
+        unit_const: Final = units.LengthUnits.fermi
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15903,7 +15903,7 @@ class AsUnitLengthConverter(UnitConverter):
     @property
     def foot(self) -> "FieldQnty":
         """Convert to foot units, returning new variable."""
-        unit_const: Final = field_units.LengthUnits.foot
+        unit_const: Final = units.LengthUnits.foot
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15914,7 +15914,7 @@ class AsUnitLengthConverter(UnitConverter):
     @property
     def furlong_uk_and_us(self) -> "FieldQnty":
         """Convert to furlong (UK and US) units, returning new variable."""
-        unit_const: Final = field_units.LengthUnits.furlong_uk_and_us
+        unit_const: Final = units.LengthUnits.furlong_uk_and_us
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15925,7 +15925,7 @@ class AsUnitLengthConverter(UnitConverter):
     @property
     def inch(self) -> "FieldQnty":
         """Convert to inch units, returning new variable."""
-        unit_const: Final = field_units.LengthUnits.inch
+        unit_const: Final = units.LengthUnits.inch
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15936,7 +15936,7 @@ class AsUnitLengthConverter(UnitConverter):
     @property
     def kilometer(self) -> "FieldQnty":
         """Convert to kilometer units, returning new variable."""
-        unit_const: Final = field_units.LengthUnits.kilometer
+        unit_const: Final = units.LengthUnits.kilometer
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15947,7 +15947,7 @@ class AsUnitLengthConverter(UnitConverter):
     @property
     def league_us_statute(self) -> "FieldQnty":
         """Convert to league (US, statute) units, returning new variable."""
-        unit_const: Final = field_units.LengthUnits.league_us_statute
+        unit_const: Final = units.LengthUnits.league_us_statute
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15958,19 +15958,19 @@ class AsUnitLengthConverter(UnitConverter):
     @property
     def lieue_metric(self) -> "FieldQnty":
         """Convert to lieue (metric) units, returning new variable."""
-        unit_const: Final = field_units.LengthUnits.lieue_metric
+        unit_const: Final = units.LengthUnits.lieue_metric
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def ligne_metric(self) -> "FieldQnty":
         """Convert to ligne (metric) units, returning new variable."""
-        unit_const: Final = field_units.LengthUnits.ligne_metric
+        unit_const: Final = units.LengthUnits.ligne_metric
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def line_us(self) -> "FieldQnty":
         """Convert to line (US) units, returning new variable."""
-        unit_const: Final = field_units.LengthUnits.line_us
+        unit_const: Final = units.LengthUnits.line_us
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15981,7 +15981,7 @@ class AsUnitLengthConverter(UnitConverter):
     @property
     def link_surveyors(self) -> "FieldQnty":
         """Convert to link (surveyors) units, returning new variable."""
-        unit_const: Final = field_units.LengthUnits.link_surveyors
+        unit_const: Final = units.LengthUnits.link_surveyors
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -15992,7 +15992,7 @@ class AsUnitLengthConverter(UnitConverter):
     @property
     def meter(self) -> "FieldQnty":
         """Convert to meter units, returning new variable."""
-        unit_const: Final = field_units.LengthUnits.meter
+        unit_const: Final = units.LengthUnits.meter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -16003,7 +16003,7 @@ class AsUnitLengthConverter(UnitConverter):
     @property
     def micrometer(self) -> "FieldQnty":
         """Convert to micrometer units, returning new variable."""
-        unit_const: Final = field_units.LengthUnits.micrometer
+        unit_const: Final = units.LengthUnits.micrometer
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -16014,7 +16014,7 @@ class AsUnitLengthConverter(UnitConverter):
     @property
     def micron(self) -> "FieldQnty":
         """Convert to micron units, returning new variable."""
-        unit_const: Final = field_units.LengthUnits.micron
+        unit_const: Final = units.LengthUnits.micron
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -16025,13 +16025,13 @@ class AsUnitLengthConverter(UnitConverter):
     @property
     def mil(self) -> "FieldQnty":
         """Convert to mil units, returning new variable."""
-        unit_const: Final = field_units.LengthUnits.mil
+        unit_const: Final = units.LengthUnits.mil
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def mile_geographical(self) -> "FieldQnty":
         """Convert to mile (geographical) units, returning new variable."""
-        unit_const: Final = field_units.LengthUnits.mile_geographical
+        unit_const: Final = units.LengthUnits.mile_geographical
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -16042,7 +16042,7 @@ class AsUnitLengthConverter(UnitConverter):
     @property
     def mile_us_nautical(self) -> "FieldQnty":
         """Convert to mile (US, nautical) units, returning new variable."""
-        unit_const: Final = field_units.LengthUnits.mile_us_nautical
+        unit_const: Final = units.LengthUnits.mile_us_nautical
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -16053,13 +16053,13 @@ class AsUnitLengthConverter(UnitConverter):
     @property
     def mile_us_statute(self) -> "FieldQnty":
         """Convert to mile (US, statute) units, returning new variable."""
-        unit_const: Final = field_units.LengthUnits.mile_us_statute
+        unit_const: Final = units.LengthUnits.mile_us_statute
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def mile_us_survey(self) -> "FieldQnty":
         """Convert to mile (US, survey) units, returning new variable."""
-        unit_const: Final = field_units.LengthUnits.mile_us_survey
+        unit_const: Final = units.LengthUnits.mile_us_survey
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -16070,7 +16070,7 @@ class AsUnitLengthConverter(UnitConverter):
     @property
     def millimeter(self) -> "FieldQnty":
         """Convert to millimeter units, returning new variable."""
-        unit_const: Final = field_units.LengthUnits.millimeter
+        unit_const: Final = units.LengthUnits.millimeter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -16081,7 +16081,7 @@ class AsUnitLengthConverter(UnitConverter):
     @property
     def millimicron(self) -> "FieldQnty":
         """Convert to millimicron units, returning new variable."""
-        unit_const: Final = field_units.LengthUnits.millimicron
+        unit_const: Final = units.LengthUnits.millimicron
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -16092,7 +16092,7 @@ class AsUnitLengthConverter(UnitConverter):
     @property
     def nanometer_or_nanon(self) -> "FieldQnty":
         """Convert to nanometer or nanon units, returning new variable."""
-        unit_const: Final = field_units.LengthUnits.nanometer_or_nanon
+        unit_const: Final = units.LengthUnits.nanometer_or_nanon
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -16103,7 +16103,7 @@ class AsUnitLengthConverter(UnitConverter):
     @property
     def parsec(self) -> "FieldQnty":
         """Convert to parsec units, returning new variable."""
-        unit_const: Final = field_units.LengthUnits.parsec
+        unit_const: Final = units.LengthUnits.parsec
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -16114,7 +16114,7 @@ class AsUnitLengthConverter(UnitConverter):
     @property
     def perche(self) -> "FieldQnty":
         """Convert to perche units, returning new variable."""
-        unit_const: Final = field_units.LengthUnits.perche
+        unit_const: Final = units.LengthUnits.perche
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -16125,13 +16125,13 @@ class AsUnitLengthConverter(UnitConverter):
     @property
     def pica(self) -> "FieldQnty":
         """Convert to pica units, returning new variable."""
-        unit_const: Final = field_units.LengthUnits.pica
+        unit_const: Final = units.LengthUnits.pica
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def picometer(self) -> "FieldQnty":
         """Convert to picometer units, returning new variable."""
-        unit_const: Final = field_units.LengthUnits.picometer
+        unit_const: Final = units.LengthUnits.picometer
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -16142,7 +16142,7 @@ class AsUnitLengthConverter(UnitConverter):
     @property
     def point_didot(self) -> "FieldQnty":
         """Convert to point (Didot) units, returning new variable."""
-        unit_const: Final = field_units.LengthUnits.point_didot
+        unit_const: Final = units.LengthUnits.point_didot
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -16153,7 +16153,7 @@ class AsUnitLengthConverter(UnitConverter):
     @property
     def point_us(self) -> "FieldQnty":
         """Convert to point (US) units, returning new variable."""
-        unit_const: Final = field_units.LengthUnits.point_us
+        unit_const: Final = units.LengthUnits.point_us
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -16164,19 +16164,19 @@ class AsUnitLengthConverter(UnitConverter):
     @property
     def rod_or_pole(self) -> "FieldQnty":
         """Convert to rod or pole units, returning new variable."""
-        unit_const: Final = field_units.LengthUnits.rod_or_pole
+        unit_const: Final = units.LengthUnits.rod_or_pole
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def span(self) -> "FieldQnty":
         """Convert to span units, returning new variable."""
-        unit_const: Final = field_units.LengthUnits.span
+        unit_const: Final = units.LengthUnits.span
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def thou_millinch(self) -> "FieldQnty":
         """Convert to thou (millinch) units, returning new variable."""
-        unit_const: Final = field_units.LengthUnits.thou_millinch
+        unit_const: Final = units.LengthUnits.thou_millinch
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -16187,13 +16187,13 @@ class AsUnitLengthConverter(UnitConverter):
     @property
     def toise_metric(self) -> "FieldQnty":
         """Convert to toise (metric) units, returning new variable."""
-        unit_const: Final = field_units.LengthUnits.toise_metric
+        unit_const: Final = units.LengthUnits.toise_metric
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def yard(self) -> "FieldQnty":
         """Convert to yard units, returning new variable."""
-        unit_const: Final = field_units.LengthUnits.yard
+        unit_const: Final = units.LengthUnits.yard
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -16204,7 +16204,7 @@ class AsUnitLengthConverter(UnitConverter):
     @property
     def nanometer(self) -> "FieldQnty":
         """Convert to nanometer units, returning new variable."""
-        unit_const: Final = field_units.LengthUnits.nanometer
+        unit_const: Final = units.LengthUnits.nanometer
         return self._convert_quantity(unit_const, modify_original=False)
 
 
@@ -16221,13 +16221,13 @@ class AsUnitLinearMassDensityConverter(UnitConverter):
     @property
     def denier(self) -> "FieldQnty":
         """Convert to denier units, returning new variable."""
-        unit_const: Final = field_units.LinearMassDensityUnits.denier
+        unit_const: Final = units.LinearMassDensityUnits.denier
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def kilogram_per_centimeter(self) -> "FieldQnty":
         """Convert to kilogram per centimeter units, returning new variable."""
-        unit_const: Final = field_units.LinearMassDensityUnits.kilogram_per_centimeter
+        unit_const: Final = units.LinearMassDensityUnits.kilogram_per_centimeter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -16238,7 +16238,7 @@ class AsUnitLinearMassDensityConverter(UnitConverter):
     @property
     def kilogram_per_meter(self) -> "FieldQnty":
         """Convert to kilogram per meter units, returning new variable."""
-        unit_const: Final = field_units.LinearMassDensityUnits.kilogram_per_meter
+        unit_const: Final = units.LinearMassDensityUnits.kilogram_per_meter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -16249,7 +16249,7 @@ class AsUnitLinearMassDensityConverter(UnitConverter):
     @property
     def pound_per_foot(self) -> "FieldQnty":
         """Convert to pound per foot units, returning new variable."""
-        unit_const: Final = field_units.LinearMassDensityUnits.pound_per_foot
+        unit_const: Final = units.LinearMassDensityUnits.pound_per_foot
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -16260,7 +16260,7 @@ class AsUnitLinearMassDensityConverter(UnitConverter):
     @property
     def pound_per_inch(self) -> "FieldQnty":
         """Convert to pound per inch units, returning new variable."""
-        unit_const: Final = field_units.LinearMassDensityUnits.pound_per_inch
+        unit_const: Final = units.LinearMassDensityUnits.pound_per_inch
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -16271,7 +16271,7 @@ class AsUnitLinearMassDensityConverter(UnitConverter):
     @property
     def pound_per_yard(self) -> "FieldQnty":
         """Convert to pound per yard units, returning new variable."""
-        unit_const: Final = field_units.LinearMassDensityUnits.pound_per_yard
+        unit_const: Final = units.LinearMassDensityUnits.pound_per_yard
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -16282,7 +16282,7 @@ class AsUnitLinearMassDensityConverter(UnitConverter):
     @property
     def ton_metric(self) -> "FieldQnty":
         """Convert to ton (metric) per kilometer units, returning new variable."""
-        unit_const: Final = field_units.LinearMassDensityUnits.ton_metric
+        unit_const: Final = units.LinearMassDensityUnits.ton_metric
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -16314,7 +16314,7 @@ class AsUnitLinearMomentumConverter(UnitConverter):
     @property
     def foot_pounds_force_per_hour(self) -> "FieldQnty":
         """Convert to foot pounds force per hour units, returning new variable."""
-        unit_const: Final = field_units.LinearMomentumUnits.foot_pounds_force_per_hour
+        unit_const: Final = units.LinearMomentumUnits.foot_pounds_force_per_hour
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -16335,7 +16335,7 @@ class AsUnitLinearMomentumConverter(UnitConverter):
     @property
     def foot_pounds_force_per_minute(self) -> "FieldQnty":
         """Convert to foot pounds force per minute units, returning new variable."""
-        unit_const: Final = field_units.LinearMomentumUnits.foot_pounds_force_per_minute
+        unit_const: Final = units.LinearMomentumUnits.foot_pounds_force_per_minute
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -16356,7 +16356,7 @@ class AsUnitLinearMomentumConverter(UnitConverter):
     @property
     def foot_pounds_force_per_second(self) -> "FieldQnty":
         """Convert to foot pounds force per second units, returning new variable."""
-        unit_const: Final = field_units.LinearMomentumUnits.foot_pounds_force_per_second
+        unit_const: Final = units.LinearMomentumUnits.foot_pounds_force_per_second
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -16377,7 +16377,7 @@ class AsUnitLinearMomentumConverter(UnitConverter):
     @property
     def gram_centimeters_per_second(self) -> "FieldQnty":
         """Convert to gram centimeters per second units, returning new variable."""
-        unit_const: Final = field_units.LinearMomentumUnits.gram_centimeters_per_second
+        unit_const: Final = units.LinearMomentumUnits.gram_centimeters_per_second
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -16388,7 +16388,7 @@ class AsUnitLinearMomentumConverter(UnitConverter):
     @property
     def kilogram_meters_per_second(self) -> "FieldQnty":
         """Convert to kilogram meters per second units, returning new variable."""
-        unit_const: Final = field_units.LinearMomentumUnits.kilogram_meters_per_second
+        unit_const: Final = units.LinearMomentumUnits.kilogram_meters_per_second
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -16410,7 +16410,7 @@ class AsUnitLuminanceSelfConverter(UnitConverter):
     @property
     def apostilb(self) -> "FieldQnty":
         """Convert to apostilb units, returning new variable."""
-        unit_const: Final = field_units.LuminanceSelfUnits.apostilb
+        unit_const: Final = units.LuminanceSelfUnits.apostilb
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -16421,7 +16421,7 @@ class AsUnitLuminanceSelfConverter(UnitConverter):
     @property
     def blondel(self) -> "FieldQnty":
         """Convert to blondel units, returning new variable."""
-        unit_const: Final = field_units.LuminanceSelfUnits.blondel
+        unit_const: Final = units.LuminanceSelfUnits.blondel
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -16432,7 +16432,7 @@ class AsUnitLuminanceSelfConverter(UnitConverter):
     @property
     def candela_per_square_meter(self) -> "FieldQnty":
         """Convert to candela per square meter units, returning new variable."""
-        unit_const: Final = field_units.LuminanceSelfUnits.candela_per_square_meter
+        unit_const: Final = units.LuminanceSelfUnits.candela_per_square_meter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -16443,7 +16443,7 @@ class AsUnitLuminanceSelfConverter(UnitConverter):
     @property
     def foot_lambert(self) -> "FieldQnty":
         """Convert to foot-lambert units, returning new variable."""
-        unit_const: Final = field_units.LuminanceSelfUnits.foot_lambert
+        unit_const: Final = units.LuminanceSelfUnits.foot_lambert
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -16454,7 +16454,7 @@ class AsUnitLuminanceSelfConverter(UnitConverter):
     @property
     def lambert(self) -> "FieldQnty":
         """Convert to lambert units, returning new variable."""
-        unit_const: Final = field_units.LuminanceSelfUnits.lambert
+        unit_const: Final = units.LuminanceSelfUnits.lambert
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -16465,19 +16465,19 @@ class AsUnitLuminanceSelfConverter(UnitConverter):
     @property
     def luxon(self) -> "FieldQnty":
         """Convert to luxon units, returning new variable."""
-        unit_const: Final = field_units.LuminanceSelfUnits.luxon
+        unit_const: Final = units.LuminanceSelfUnits.luxon
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def nit(self) -> "FieldQnty":
         """Convert to nit units, returning new variable."""
-        unit_const: Final = field_units.LuminanceSelfUnits.nit
+        unit_const: Final = units.LuminanceSelfUnits.nit
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def stilb(self) -> "FieldQnty":
         """Convert to stilb units, returning new variable."""
-        unit_const: Final = field_units.LuminanceSelfUnits.stilb
+        unit_const: Final = units.LuminanceSelfUnits.stilb
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -16488,7 +16488,7 @@ class AsUnitLuminanceSelfConverter(UnitConverter):
     @property
     def troland(self) -> "FieldQnty":
         """Convert to troland units, returning new variable."""
-        unit_const: Final = field_units.LuminanceSelfUnits.troland
+        unit_const: Final = units.LuminanceSelfUnits.troland
         return self._convert_quantity(unit_const, modify_original=False)
 
 
@@ -16505,7 +16505,7 @@ class AsUnitLuminousFluxConverter(UnitConverter):
     @property
     def candela_steradian(self) -> "FieldQnty":
         """Convert to candela steradian units, returning new variable."""
-        unit_const: Final = field_units.LuminousFluxUnits.candela_steradian
+        unit_const: Final = units.LuminousFluxUnits.candela_steradian
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -16516,7 +16516,7 @@ class AsUnitLuminousFluxConverter(UnitConverter):
     @property
     def lumen(self) -> "FieldQnty":
         """Convert to lumen units, returning new variable."""
-        unit_const: Final = field_units.LuminousFluxUnits.lumen
+        unit_const: Final = units.LuminousFluxUnits.lumen
         return self._convert_quantity(unit_const, modify_original=False)
 
 
@@ -16533,7 +16533,7 @@ class AsUnitLuminousIntensityConverter(UnitConverter):
     @property
     def candela(self) -> "FieldQnty":
         """Convert to candela units, returning new variable."""
-        unit_const: Final = field_units.LuminousIntensityUnits.candela
+        unit_const: Final = units.LuminousIntensityUnits.candela
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -16544,7 +16544,7 @@ class AsUnitLuminousIntensityConverter(UnitConverter):
     @property
     def candle_international(self) -> "FieldQnty":
         """Convert to candle (international) units, returning new variable."""
-        unit_const: Final = field_units.LuminousIntensityUnits.candle_international
+        unit_const: Final = units.LuminousIntensityUnits.candle_international
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -16555,13 +16555,13 @@ class AsUnitLuminousIntensityConverter(UnitConverter):
     @property
     def carcel(self) -> "FieldQnty":
         """Convert to carcel units, returning new variable."""
-        unit_const: Final = field_units.LuminousIntensityUnits.carcel
+        unit_const: Final = units.LuminousIntensityUnits.carcel
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def hefner_unit(self) -> "FieldQnty":
         """Convert to Hefner unit units, returning new variable."""
-        unit_const: Final = field_units.LuminousIntensityUnits.hefner_unit
+        unit_const: Final = units.LuminousIntensityUnits.hefner_unit
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -16583,7 +16583,7 @@ class AsUnitMagneticFieldConverter(UnitConverter):
     @property
     def ampere_per_meter(self) -> "FieldQnty":
         """Convert to ampere per meter units, returning new variable."""
-        unit_const: Final = field_units.MagneticFieldUnits.ampere_per_meter
+        unit_const: Final = units.MagneticFieldUnits.ampere_per_meter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -16594,13 +16594,13 @@ class AsUnitMagneticFieldConverter(UnitConverter):
     @property
     def lenz(self) -> "FieldQnty":
         """Convert to lenz units, returning new variable."""
-        unit_const: Final = field_units.MagneticFieldUnits.lenz
+        unit_const: Final = units.MagneticFieldUnits.lenz
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def oersted(self) -> "FieldQnty":
         """Convert to oersted units, returning new variable."""
-        unit_const: Final = field_units.MagneticFieldUnits.oersted
+        unit_const: Final = units.MagneticFieldUnits.oersted
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -16611,7 +16611,7 @@ class AsUnitMagneticFieldConverter(UnitConverter):
     @property
     def praoersted(self) -> "FieldQnty":
         """Convert to praoersted units, returning new variable."""
-        unit_const: Final = field_units.MagneticFieldUnits.praoersted
+        unit_const: Final = units.MagneticFieldUnits.praoersted
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -16633,7 +16633,7 @@ class AsUnitMagneticFluxConverter(UnitConverter):
     @property
     def kapp_line(self) -> "FieldQnty":
         """Convert to kapp line units, returning new variable."""
-        unit_const: Final = field_units.MagneticFluxUnits.kapp_line
+        unit_const: Final = units.MagneticFluxUnits.kapp_line
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -16644,13 +16644,13 @@ class AsUnitMagneticFluxConverter(UnitConverter):
     @property
     def line(self) -> "FieldQnty":
         """Convert to line units, returning new variable."""
-        unit_const: Final = field_units.MagneticFluxUnits.line
+        unit_const: Final = units.MagneticFluxUnits.line
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def maxwell(self) -> "FieldQnty":
         """Convert to maxwell units, returning new variable."""
-        unit_const: Final = field_units.MagneticFluxUnits.maxwell
+        unit_const: Final = units.MagneticFluxUnits.maxwell
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -16661,13 +16661,13 @@ class AsUnitMagneticFluxConverter(UnitConverter):
     @property
     def unit_pole(self) -> "FieldQnty":
         """Convert to unit pole units, returning new variable."""
-        unit_const: Final = field_units.MagneticFluxUnits.unit_pole
+        unit_const: Final = units.MagneticFluxUnits.unit_pole
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def weber(self) -> "FieldQnty":
         """Convert to weber units, returning new variable."""
-        unit_const: Final = field_units.MagneticFluxUnits.weber
+        unit_const: Final = units.MagneticFluxUnits.weber
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -16678,7 +16678,7 @@ class AsUnitMagneticFluxConverter(UnitConverter):
     @property
     def milliweber(self) -> "FieldQnty":
         """Convert to milliweber units, returning new variable."""
-        unit_const: Final = field_units.MagneticFluxUnits.milliweber
+        unit_const: Final = units.MagneticFluxUnits.milliweber
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -16689,7 +16689,7 @@ class AsUnitMagneticFluxConverter(UnitConverter):
     @property
     def microweber(self) -> "FieldQnty":
         """Convert to microweber units, returning new variable."""
-        unit_const: Final = field_units.MagneticFluxUnits.microweber
+        unit_const: Final = units.MagneticFluxUnits.microweber
         return self._convert_quantity(unit_const, modify_original=False)
 
 
@@ -16706,13 +16706,13 @@ class AsUnitMagneticInductionFieldStrengthConverter(UnitConverter):
     @property
     def gamma(self) -> "FieldQnty":
         """Convert to gamma units, returning new variable."""
-        unit_const: Final = field_units.MagneticInductionFieldStrengthUnits.gamma
+        unit_const: Final = units.MagneticInductionFieldStrengthUnits.gamma
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def gauss(self) -> "FieldQnty":
         """Convert to gauss units, returning new variable."""
-        unit_const: Final = field_units.MagneticInductionFieldStrengthUnits.gauss
+        unit_const: Final = units.MagneticInductionFieldStrengthUnits.gauss
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -16723,7 +16723,7 @@ class AsUnitMagneticInductionFieldStrengthConverter(UnitConverter):
     @property
     def line_per_square_centimeter(self) -> "FieldQnty":
         """Convert to line per square centimeter units, returning new variable."""
-        unit_const: Final = field_units.MagneticInductionFieldStrengthUnits.line_per_square_centimeter
+        unit_const: Final = units.MagneticInductionFieldStrengthUnits.line_per_square_centimeter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -16734,7 +16734,7 @@ class AsUnitMagneticInductionFieldStrengthConverter(UnitConverter):
     @property
     def maxwell_per_square_centimeter(self) -> "FieldQnty":
         """Convert to maxwell per square centimeter units, returning new variable."""
-        unit_const: Final = field_units.MagneticInductionFieldStrengthUnits.maxwell_per_square_centimeter
+        unit_const: Final = units.MagneticInductionFieldStrengthUnits.maxwell_per_square_centimeter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -16745,7 +16745,7 @@ class AsUnitMagneticInductionFieldStrengthConverter(UnitConverter):
     @property
     def tesla(self) -> "FieldQnty":
         """Convert to tesla units, returning new variable."""
-        unit_const: Final = field_units.MagneticInductionFieldStrengthUnits.tesla
+        unit_const: Final = units.MagneticInductionFieldStrengthUnits.tesla
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -16756,13 +16756,13 @@ class AsUnitMagneticInductionFieldStrengthConverter(UnitConverter):
     @property
     def u_a(self) -> "FieldQnty":
         """Convert to u.a. units, returning new variable."""
-        unit_const: Final = field_units.MagneticInductionFieldStrengthUnits.u_a
+        unit_const: Final = units.MagneticInductionFieldStrengthUnits.u_a
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def weber_per_square_meter(self) -> "FieldQnty":
         """Convert to weber per square meter units, returning new variable."""
-        unit_const: Final = field_units.MagneticInductionFieldStrengthUnits.weber_per_square_meter
+        unit_const: Final = units.MagneticInductionFieldStrengthUnits.weber_per_square_meter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -16773,7 +16773,7 @@ class AsUnitMagneticInductionFieldStrengthConverter(UnitConverter):
     @property
     def millitesla(self) -> "FieldQnty":
         """Convert to millitesla units, returning new variable."""
-        unit_const: Final = field_units.MagneticInductionFieldStrengthUnits.millitesla
+        unit_const: Final = units.MagneticInductionFieldStrengthUnits.millitesla
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -16784,13 +16784,13 @@ class AsUnitMagneticInductionFieldStrengthConverter(UnitConverter):
     @property
     def microtesla(self) -> "FieldQnty":
         """Convert to microtesla units, returning new variable."""
-        unit_const: Final = field_units.MagneticInductionFieldStrengthUnits.microtesla
+        unit_const: Final = units.MagneticInductionFieldStrengthUnits.microtesla
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def nanotesla(self) -> "FieldQnty":
         """Convert to nanotesla units, returning new variable."""
-        unit_const: Final = field_units.MagneticInductionFieldStrengthUnits.nanotesla
+        unit_const: Final = units.MagneticInductionFieldStrengthUnits.nanotesla
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -16812,7 +16812,7 @@ class AsUnitMagneticMomentConverter(UnitConverter):
     @property
     def bohr_magneton(self) -> "FieldQnty":
         """Convert to Bohr magneton units, returning new variable."""
-        unit_const: Final = field_units.MagneticMomentUnits.bohr_magneton
+        unit_const: Final = units.MagneticMomentUnits.bohr_magneton
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -16823,7 +16823,7 @@ class AsUnitMagneticMomentConverter(UnitConverter):
     @property
     def joule_per_tesla(self) -> "FieldQnty":
         """Convert to joule per tesla units, returning new variable."""
-        unit_const: Final = field_units.MagneticMomentUnits.joule_per_tesla
+        unit_const: Final = units.MagneticMomentUnits.joule_per_tesla
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -16834,7 +16834,7 @@ class AsUnitMagneticMomentConverter(UnitConverter):
     @property
     def nuclear_magneton(self) -> "FieldQnty":
         """Convert to nuclear magneton units, returning new variable."""
-        unit_const: Final = field_units.MagneticMomentUnits.nuclear_magneton
+        unit_const: Final = units.MagneticMomentUnits.nuclear_magneton
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -16856,7 +16856,7 @@ class AsUnitMagneticPermeabilityConverter(UnitConverter):
     @property
     def henrys_per_meter(self) -> "FieldQnty":
         """Convert to henrys per meter units, returning new variable."""
-        unit_const: Final = field_units.MagneticPermeabilityUnits.henrys_per_meter
+        unit_const: Final = units.MagneticPermeabilityUnits.henrys_per_meter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -16867,7 +16867,7 @@ class AsUnitMagneticPermeabilityConverter(UnitConverter):
     @property
     def newton_per_square_ampere(self) -> "FieldQnty":
         """Convert to newton per square ampere units, returning new variable."""
-        unit_const: Final = field_units.MagneticPermeabilityUnits.newton_per_square_ampere
+        unit_const: Final = units.MagneticPermeabilityUnits.newton_per_square_ampere
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -16889,7 +16889,7 @@ class AsUnitMagnetomotiveForceConverter(UnitConverter):
     @property
     def abampere_turn(self) -> "FieldQnty":
         """Convert to abampere-turn units, returning new variable."""
-        unit_const: Final = field_units.MagnetomotiveForceUnits.abampere_turn
+        unit_const: Final = units.MagnetomotiveForceUnits.abampere_turn
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -16900,7 +16900,7 @@ class AsUnitMagnetomotiveForceConverter(UnitConverter):
     @property
     def ampere(self) -> "FieldQnty":
         """Convert to ampere units, returning new variable."""
-        unit_const: Final = field_units.MagnetomotiveForceUnits.ampere
+        unit_const: Final = units.MagnetomotiveForceUnits.ampere
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -16911,7 +16911,7 @@ class AsUnitMagnetomotiveForceConverter(UnitConverter):
     @property
     def ampere_turn(self) -> "FieldQnty":
         """Convert to ampere-turn units, returning new variable."""
-        unit_const: Final = field_units.MagnetomotiveForceUnits.ampere_turn
+        unit_const: Final = units.MagnetomotiveForceUnits.ampere_turn
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -16922,7 +16922,7 @@ class AsUnitMagnetomotiveForceConverter(UnitConverter):
     @property
     def gilbert(self) -> "FieldQnty":
         """Convert to gilbert units, returning new variable."""
-        unit_const: Final = field_units.MagnetomotiveForceUnits.gilbert
+        unit_const: Final = units.MagnetomotiveForceUnits.gilbert
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -16933,7 +16933,7 @@ class AsUnitMagnetomotiveForceConverter(UnitConverter):
     @property
     def kiloampere(self) -> "FieldQnty":
         """Convert to kiloampere units, returning new variable."""
-        unit_const: Final = field_units.MagnetomotiveForceUnits.kiloampere
+        unit_const: Final = units.MagnetomotiveForceUnits.kiloampere
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -16944,7 +16944,7 @@ class AsUnitMagnetomotiveForceConverter(UnitConverter):
     @property
     def milliampere(self) -> "FieldQnty":
         """Convert to milliampere units, returning new variable."""
-        unit_const: Final = field_units.MagnetomotiveForceUnits.milliampere
+        unit_const: Final = units.MagnetomotiveForceUnits.milliampere
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -16955,13 +16955,13 @@ class AsUnitMagnetomotiveForceConverter(UnitConverter):
     @property
     def microampere(self) -> "FieldQnty":
         """Convert to microampere units, returning new variable."""
-        unit_const: Final = field_units.MagnetomotiveForceUnits.microampere
+        unit_const: Final = units.MagnetomotiveForceUnits.microampere
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def nanoampere(self) -> "FieldQnty":
         """Convert to nanoampere units, returning new variable."""
-        unit_const: Final = field_units.MagnetomotiveForceUnits.nanoampere
+        unit_const: Final = units.MagnetomotiveForceUnits.nanoampere
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -16972,7 +16972,7 @@ class AsUnitMagnetomotiveForceConverter(UnitConverter):
     @property
     def picoampere(self) -> "FieldQnty":
         """Convert to picoampere units, returning new variable."""
-        unit_const: Final = field_units.MagnetomotiveForceUnits.picoampere
+        unit_const: Final = units.MagnetomotiveForceUnits.picoampere
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -16994,7 +16994,7 @@ class AsUnitMassConverter(UnitConverter):
     @property
     def slug(self) -> "FieldQnty":
         """Convert to slug units, returning new variable."""
-        unit_const: Final = field_units.MassUnits.slug
+        unit_const: Final = units.MassUnits.slug
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -17005,7 +17005,7 @@ class AsUnitMassConverter(UnitConverter):
     @property
     def atomic_mass_unit_12_mathrmc(self) -> "FieldQnty":
         """Convert to atomic mass unit ( ${ }^{12} \\mathrm{C}$ ) units, returning new variable."""
-        unit_const: Final = field_units.MassUnits.atomic_mass_unit_12_mathrmc
+        unit_const: Final = units.MassUnits.atomic_mass_unit_12_mathrmc
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -17026,7 +17026,7 @@ class AsUnitMassConverter(UnitConverter):
     @property
     def carat_metric(self) -> "FieldQnty":
         """Convert to carat (metric) units, returning new variable."""
-        unit_const: Final = field_units.MassUnits.carat_metric
+        unit_const: Final = units.MassUnits.carat_metric
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -17037,7 +17037,7 @@ class AsUnitMassConverter(UnitConverter):
     @property
     def cental(self) -> "FieldQnty":
         """Convert to cental units, returning new variable."""
-        unit_const: Final = field_units.MassUnits.cental
+        unit_const: Final = units.MassUnits.cental
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -17048,7 +17048,7 @@ class AsUnitMassConverter(UnitConverter):
     @property
     def centigram(self) -> "FieldQnty":
         """Convert to centigram units, returning new variable."""
-        unit_const: Final = field_units.MassUnits.centigram
+        unit_const: Final = units.MassUnits.centigram
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -17059,7 +17059,7 @@ class AsUnitMassConverter(UnitConverter):
     @property
     def clove_uk(self) -> "FieldQnty":
         """Convert to clove (UK) units, returning new variable."""
-        unit_const: Final = field_units.MassUnits.clove_uk
+        unit_const: Final = units.MassUnits.clove_uk
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -17070,7 +17070,7 @@ class AsUnitMassConverter(UnitConverter):
     @property
     def drachm_apothecary(self) -> "FieldQnty":
         """Convert to drachm (apothecary) units, returning new variable."""
-        unit_const: Final = field_units.MassUnits.drachm_apothecary
+        unit_const: Final = units.MassUnits.drachm_apothecary
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -17081,7 +17081,7 @@ class AsUnitMassConverter(UnitConverter):
     @property
     def dram_avoirdupois(self) -> "FieldQnty":
         """Convert to dram (avoirdupois) units, returning new variable."""
-        unit_const: Final = field_units.MassUnits.dram_avoirdupois
+        unit_const: Final = units.MassUnits.dram_avoirdupois
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -17092,7 +17092,7 @@ class AsUnitMassConverter(UnitConverter):
     @property
     def dram_troy(self) -> "FieldQnty":
         """Convert to dram (troy) units, returning new variable."""
-        unit_const: Final = field_units.MassUnits.dram_troy
+        unit_const: Final = units.MassUnits.dram_troy
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -17103,7 +17103,7 @@ class AsUnitMassConverter(UnitConverter):
     @property
     def grain(self) -> "FieldQnty":
         """Convert to grain units, returning new variable."""
-        unit_const: Final = field_units.MassUnits.grain
+        unit_const: Final = units.MassUnits.grain
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -17114,7 +17114,7 @@ class AsUnitMassConverter(UnitConverter):
     @property
     def gram(self) -> "FieldQnty":
         """Convert to gram units, returning new variable."""
-        unit_const: Final = field_units.MassUnits.gram
+        unit_const: Final = units.MassUnits.gram
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -17125,7 +17125,7 @@ class AsUnitMassConverter(UnitConverter):
     @property
     def hundredweight_long_or_gross(self) -> "FieldQnty":
         """Convert to hundredweight, long or gross units, returning new variable."""
-        unit_const: Final = field_units.MassUnits.hundredweight_long_or_gross
+        unit_const: Final = units.MassUnits.hundredweight_long_or_gross
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -17136,7 +17136,7 @@ class AsUnitMassConverter(UnitConverter):
     @property
     def hundredweight_short_or_net(self) -> "FieldQnty":
         """Convert to hundredweight, short or net units, returning new variable."""
-        unit_const: Final = field_units.MassUnits.hundredweight_short_or_net
+        unit_const: Final = units.MassUnits.hundredweight_short_or_net
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -17147,7 +17147,7 @@ class AsUnitMassConverter(UnitConverter):
     @property
     def kilogram(self) -> "FieldQnty":
         """Convert to kilogram units, returning new variable."""
-        unit_const: Final = field_units.MassUnits.kilogram
+        unit_const: Final = units.MassUnits.kilogram
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -17158,13 +17158,13 @@ class AsUnitMassConverter(UnitConverter):
     @property
     def kip(self) -> "FieldQnty":
         """Convert to kip units, returning new variable."""
-        unit_const: Final = field_units.MassUnits.kip
+        unit_const: Final = units.MassUnits.kip
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def microgram(self) -> "FieldQnty":
         """Convert to microgram units, returning new variable."""
-        unit_const: Final = field_units.MassUnits.microgram
+        unit_const: Final = units.MassUnits.microgram
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -17175,7 +17175,7 @@ class AsUnitMassConverter(UnitConverter):
     @property
     def milligram(self) -> "FieldQnty":
         """Convert to milligram units, returning new variable."""
-        unit_const: Final = field_units.MassUnits.milligram
+        unit_const: Final = units.MassUnits.milligram
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -17186,7 +17186,7 @@ class AsUnitMassConverter(UnitConverter):
     @property
     def ounce_apothecary(self) -> "FieldQnty":
         """Convert to ounce (apothecary) units, returning new variable."""
-        unit_const: Final = field_units.MassUnits.ounce_apothecary
+        unit_const: Final = units.MassUnits.ounce_apothecary
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -17197,7 +17197,7 @@ class AsUnitMassConverter(UnitConverter):
     @property
     def ounce_avoirdupois(self) -> "FieldQnty":
         """Convert to ounce (avoirdupois) units, returning new variable."""
-        unit_const: Final = field_units.MassUnits.ounce_avoirdupois
+        unit_const: Final = units.MassUnits.ounce_avoirdupois
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -17208,7 +17208,7 @@ class AsUnitMassConverter(UnitConverter):
     @property
     def ounce_troy(self) -> "FieldQnty":
         """Convert to ounce (troy) units, returning new variable."""
-        unit_const: Final = field_units.MassUnits.ounce_troy
+        unit_const: Final = units.MassUnits.ounce_troy
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -17219,7 +17219,7 @@ class AsUnitMassConverter(UnitConverter):
     @property
     def pennyweight_troy(self) -> "FieldQnty":
         """Convert to pennyweight (troy) units, returning new variable."""
-        unit_const: Final = field_units.MassUnits.pennyweight_troy
+        unit_const: Final = units.MassUnits.pennyweight_troy
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -17230,7 +17230,7 @@ class AsUnitMassConverter(UnitConverter):
     @property
     def pood_russia(self) -> "FieldQnty":
         """Convert to pood, (Russia) units, returning new variable."""
-        unit_const: Final = field_units.MassUnits.pood_russia
+        unit_const: Final = units.MassUnits.pood_russia
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -17241,7 +17241,7 @@ class AsUnitMassConverter(UnitConverter):
     @property
     def pound_apothecary(self) -> "FieldQnty":
         """Convert to pound (apothecary) units, returning new variable."""
-        unit_const: Final = field_units.MassUnits.pound_apothecary
+        unit_const: Final = units.MassUnits.pound_apothecary
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -17252,7 +17252,7 @@ class AsUnitMassConverter(UnitConverter):
     @property
     def pound_avoirdupois(self) -> "FieldQnty":
         """Convert to pound (avoirdupois) units, returning new variable."""
-        unit_const: Final = field_units.MassUnits.pound_avoirdupois
+        unit_const: Final = units.MassUnits.pound_avoirdupois
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -17263,7 +17263,7 @@ class AsUnitMassConverter(UnitConverter):
     @property
     def pound_troy(self) -> "FieldQnty":
         """Convert to pound (troy) units, returning new variable."""
-        unit_const: Final = field_units.MassUnits.pound_troy
+        unit_const: Final = units.MassUnits.pound_troy
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -17274,7 +17274,7 @@ class AsUnitMassConverter(UnitConverter):
     @property
     def pound_mass(self) -> "FieldQnty":
         """Convert to pound mass units, returning new variable."""
-        unit_const: Final = field_units.MassUnits.pound_mass
+        unit_const: Final = units.MassUnits.pound_mass
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -17285,7 +17285,7 @@ class AsUnitMassConverter(UnitConverter):
     @property
     def quarter_uk(self) -> "FieldQnty":
         """Convert to quarter (UK) units, returning new variable."""
-        unit_const: Final = field_units.MassUnits.quarter_uk
+        unit_const: Final = units.MassUnits.quarter_uk
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -17296,7 +17296,7 @@ class AsUnitMassConverter(UnitConverter):
     @property
     def quintal_metric(self) -> "FieldQnty":
         """Convert to quintal, metric units, returning new variable."""
-        unit_const: Final = field_units.MassUnits.quintal_metric
+        unit_const: Final = units.MassUnits.quintal_metric
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -17307,7 +17307,7 @@ class AsUnitMassConverter(UnitConverter):
     @property
     def quital_us(self) -> "FieldQnty":
         """Convert to quital, US units, returning new variable."""
-        unit_const: Final = field_units.MassUnits.quital_us
+        unit_const: Final = units.MassUnits.quital_us
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -17318,7 +17318,7 @@ class AsUnitMassConverter(UnitConverter):
     @property
     def scruple_avoirdupois(self) -> "FieldQnty":
         """Convert to scruple (avoirdupois) units, returning new variable."""
-        unit_const: Final = field_units.MassUnits.scruple_avoirdupois
+        unit_const: Final = units.MassUnits.scruple_avoirdupois
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -17329,7 +17329,7 @@ class AsUnitMassConverter(UnitConverter):
     @property
     def stone_uk(self) -> "FieldQnty":
         """Convert to stone (UK) units, returning new variable."""
-        unit_const: Final = field_units.MassUnits.stone_uk
+        unit_const: Final = units.MassUnits.stone_uk
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -17340,7 +17340,7 @@ class AsUnitMassConverter(UnitConverter):
     @property
     def ton_metric(self) -> "FieldQnty":
         """Convert to ton, metric units, returning new variable."""
-        unit_const: Final = field_units.MassUnits.ton_metric
+        unit_const: Final = units.MassUnits.ton_metric
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -17351,7 +17351,7 @@ class AsUnitMassConverter(UnitConverter):
     @property
     def ton_us_long(self) -> "FieldQnty":
         """Convert to ton, US, long units, returning new variable."""
-        unit_const: Final = field_units.MassUnits.ton_us_long
+        unit_const: Final = units.MassUnits.ton_us_long
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -17362,7 +17362,7 @@ class AsUnitMassConverter(UnitConverter):
     @property
     def ton_us_short(self) -> "FieldQnty":
         """Convert to ton, US, short units, returning new variable."""
-        unit_const: Final = field_units.MassUnits.ton_us_short
+        unit_const: Final = units.MassUnits.ton_us_short
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -17384,7 +17384,7 @@ class AsUnitMassDensityConverter(UnitConverter):
     @property
     def gram_per_cubic_centimeter(self) -> "FieldQnty":
         """Convert to gram per cubic centimeter units, returning new variable."""
-        unit_const: Final = field_units.MassDensityUnits.gram_per_cubic_centimeter
+        unit_const: Final = units.MassDensityUnits.gram_per_cubic_centimeter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -17405,7 +17405,7 @@ class AsUnitMassDensityConverter(UnitConverter):
     @property
     def gram_per_cubic_decimeter(self) -> "FieldQnty":
         """Convert to gram per cubic decimeter units, returning new variable."""
-        unit_const: Final = field_units.MassDensityUnits.gram_per_cubic_decimeter
+        unit_const: Final = units.MassDensityUnits.gram_per_cubic_decimeter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -17416,7 +17416,7 @@ class AsUnitMassDensityConverter(UnitConverter):
     @property
     def gram_per_cubic_meter(self) -> "FieldQnty":
         """Convert to gram per cubic meter units, returning new variable."""
-        unit_const: Final = field_units.MassDensityUnits.gram_per_cubic_meter
+        unit_const: Final = units.MassDensityUnits.gram_per_cubic_meter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -17427,7 +17427,7 @@ class AsUnitMassDensityConverter(UnitConverter):
     @property
     def gram_per_liter(self) -> "FieldQnty":
         """Convert to gram per liter units, returning new variable."""
-        unit_const: Final = field_units.MassDensityUnits.gram_per_liter
+        unit_const: Final = units.MassDensityUnits.gram_per_liter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -17448,7 +17448,7 @@ class AsUnitMassDensityConverter(UnitConverter):
     @property
     def kilogram_per_cubic_meter(self) -> "FieldQnty":
         """Convert to kilogram per cubic meter units, returning new variable."""
-        unit_const: Final = field_units.MassDensityUnits.kilogram_per_cubic_meter
+        unit_const: Final = units.MassDensityUnits.kilogram_per_cubic_meter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -17459,7 +17459,7 @@ class AsUnitMassDensityConverter(UnitConverter):
     @property
     def ounce_avdp(self) -> "FieldQnty":
         """Convert to ounce (avdp) per US gallon units, returning new variable."""
-        unit_const: Final = field_units.MassDensityUnits.ounce_avdp
+        unit_const: Final = units.MassDensityUnits.ounce_avdp
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -17470,7 +17470,7 @@ class AsUnitMassDensityConverter(UnitConverter):
     @property
     def pound_avdp(self) -> "FieldQnty":
         """Convert to pound (avdp) per cubic foot units, returning new variable."""
-        unit_const: Final = field_units.MassDensityUnits.pound_avdp
+        unit_const: Final = units.MassDensityUnits.pound_avdp
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -17491,7 +17491,7 @@ class AsUnitMassDensityConverter(UnitConverter):
     @property
     def pound_mass(self) -> "FieldQnty":
         """Convert to pound (mass) per cubic inch units, returning new variable."""
-        unit_const: Final = field_units.MassDensityUnits.pound_mass
+        unit_const: Final = units.MassDensityUnits.pound_mass
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -17512,7 +17512,7 @@ class AsUnitMassDensityConverter(UnitConverter):
     @property
     def ton_metric(self) -> "FieldQnty":
         """Convert to ton (metric) per cubic meter units, returning new variable."""
-        unit_const: Final = field_units.MassDensityUnits.ton_metric
+        unit_const: Final = units.MassDensityUnits.ton_metric
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -17544,7 +17544,7 @@ class AsUnitMassFlowRateConverter(UnitConverter):
     @property
     def kilograms_per_day(self) -> "FieldQnty":
         """Convert to kilograms per day units, returning new variable."""
-        unit_const: Final = field_units.MassFlowRateUnits.kilograms_per_day
+        unit_const: Final = units.MassFlowRateUnits.kilograms_per_day
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -17555,7 +17555,7 @@ class AsUnitMassFlowRateConverter(UnitConverter):
     @property
     def kilograms_per_hour(self) -> "FieldQnty":
         """Convert to kilograms per hour units, returning new variable."""
-        unit_const: Final = field_units.MassFlowRateUnits.kilograms_per_hour
+        unit_const: Final = units.MassFlowRateUnits.kilograms_per_hour
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -17566,7 +17566,7 @@ class AsUnitMassFlowRateConverter(UnitConverter):
     @property
     def kilograms_per_minute(self) -> "FieldQnty":
         """Convert to kilograms per minute units, returning new variable."""
-        unit_const: Final = field_units.MassFlowRateUnits.kilograms_per_minute
+        unit_const: Final = units.MassFlowRateUnits.kilograms_per_minute
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -17577,7 +17577,7 @@ class AsUnitMassFlowRateConverter(UnitConverter):
     @property
     def kilograms_per_second(self) -> "FieldQnty":
         """Convert to kilograms per second units, returning new variable."""
-        unit_const: Final = field_units.MassFlowRateUnits.kilograms_per_second
+        unit_const: Final = units.MassFlowRateUnits.kilograms_per_second
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -17588,7 +17588,7 @@ class AsUnitMassFlowRateConverter(UnitConverter):
     @property
     def metric_tons_per_day(self) -> "FieldQnty":
         """Convert to metric tons per day units, returning new variable."""
-        unit_const: Final = field_units.MassFlowRateUnits.metric_tons_per_day
+        unit_const: Final = units.MassFlowRateUnits.metric_tons_per_day
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -17609,7 +17609,7 @@ class AsUnitMassFlowRateConverter(UnitConverter):
     @property
     def metric_tons_per_hour(self) -> "FieldQnty":
         """Convert to metric tons per hour units, returning new variable."""
-        unit_const: Final = field_units.MassFlowRateUnits.metric_tons_per_hour
+        unit_const: Final = units.MassFlowRateUnits.metric_tons_per_hour
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -17625,13 +17625,13 @@ class AsUnitMassFlowRateConverter(UnitConverter):
     @property
     def metric_tons_per_minute(self) -> "FieldQnty":
         """Convert to metric tons per minute units, returning new variable."""
-        unit_const: Final = field_units.MassFlowRateUnits.metric_tons_per_minute
+        unit_const: Final = units.MassFlowRateUnits.metric_tons_per_minute
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def metric_tons_per_second(self) -> "FieldQnty":
         """Convert to metric tons per second units, returning new variable."""
-        unit_const: Final = field_units.MassFlowRateUnits.metric_tons_per_second
+        unit_const: Final = units.MassFlowRateUnits.metric_tons_per_second
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -17642,7 +17642,7 @@ class AsUnitMassFlowRateConverter(UnitConverter):
     @property
     def metric_tons_per_year_365_d(self) -> "FieldQnty":
         """Convert to metric tons per year (365 d) units, returning new variable."""
-        unit_const: Final = field_units.MassFlowRateUnits.metric_tons_per_year_365_d
+        unit_const: Final = units.MassFlowRateUnits.metric_tons_per_year_365_d
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -17663,7 +17663,7 @@ class AsUnitMassFlowRateConverter(UnitConverter):
     @property
     def pounds_per_day(self) -> "FieldQnty":
         """Convert to pounds per day units, returning new variable."""
-        unit_const: Final = field_units.MassFlowRateUnits.pounds_per_day
+        unit_const: Final = units.MassFlowRateUnits.pounds_per_day
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -17689,7 +17689,7 @@ class AsUnitMassFlowRateConverter(UnitConverter):
     @property
     def pounds_per_hour(self) -> "FieldQnty":
         """Convert to pounds per hour units, returning new variable."""
-        unit_const: Final = field_units.MassFlowRateUnits.pounds_per_hour
+        unit_const: Final = units.MassFlowRateUnits.pounds_per_hour
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -17715,7 +17715,7 @@ class AsUnitMassFlowRateConverter(UnitConverter):
     @property
     def pounds_per_minute(self) -> "FieldQnty":
         """Convert to pounds per minute units, returning new variable."""
-        unit_const: Final = field_units.MassFlowRateUnits.pounds_per_minute
+        unit_const: Final = units.MassFlowRateUnits.pounds_per_minute
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -17736,7 +17736,7 @@ class AsUnitMassFlowRateConverter(UnitConverter):
     @property
     def pounds_per_second(self) -> "FieldQnty":
         """Convert to pounds per second units, returning new variable."""
-        unit_const: Final = field_units.MassFlowRateUnits.pounds_per_second
+        unit_const: Final = units.MassFlowRateUnits.pounds_per_second
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -17773,7 +17773,7 @@ class AsUnitMassFluxConverter(UnitConverter):
     @property
     def kilogram_per_square_meter_per_day(self) -> "FieldQnty":
         """Convert to kilogram per square meter per day units, returning new variable."""
-        unit_const: Final = field_units.MassFluxUnits.kilogram_per_square_meter_per_day
+        unit_const: Final = units.MassFluxUnits.kilogram_per_square_meter_per_day
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -17784,7 +17784,7 @@ class AsUnitMassFluxConverter(UnitConverter):
     @property
     def kilogram_per_square_meter_per_hour(self) -> "FieldQnty":
         """Convert to kilogram per square meter per hour units, returning new variable."""
-        unit_const: Final = field_units.MassFluxUnits.kilogram_per_square_meter_per_hour
+        unit_const: Final = units.MassFluxUnits.kilogram_per_square_meter_per_hour
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -17795,7 +17795,7 @@ class AsUnitMassFluxConverter(UnitConverter):
     @property
     def kilogram_per_square_meter_per_minute(self) -> "FieldQnty":
         """Convert to kilogram per square meter per minute units, returning new variable."""
-        unit_const: Final = field_units.MassFluxUnits.kilogram_per_square_meter_per_minute
+        unit_const: Final = units.MassFluxUnits.kilogram_per_square_meter_per_minute
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -17806,7 +17806,7 @@ class AsUnitMassFluxConverter(UnitConverter):
     @property
     def kilogram_per_square_meter_per_second(self) -> "FieldQnty":
         """Convert to kilogram per square meter per second units, returning new variable."""
-        unit_const: Final = field_units.MassFluxUnits.kilogram_per_square_meter_per_second
+        unit_const: Final = units.MassFluxUnits.kilogram_per_square_meter_per_second
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -17817,7 +17817,7 @@ class AsUnitMassFluxConverter(UnitConverter):
     @property
     def pound_per_square_foot_per_day(self) -> "FieldQnty":
         """Convert to pound per square foot per day units, returning new variable."""
-        unit_const: Final = field_units.MassFluxUnits.pound_per_square_foot_per_day
+        unit_const: Final = units.MassFluxUnits.pound_per_square_foot_per_day
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -17838,7 +17838,7 @@ class AsUnitMassFluxConverter(UnitConverter):
     @property
     def pound_per_square_foot_per_hour(self) -> "FieldQnty":
         """Convert to pound per square foot per hour units, returning new variable."""
-        unit_const: Final = field_units.MassFluxUnits.pound_per_square_foot_per_hour
+        unit_const: Final = units.MassFluxUnits.pound_per_square_foot_per_hour
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -17859,7 +17859,7 @@ class AsUnitMassFluxConverter(UnitConverter):
     @property
     def pound_per_square_foot_per_minute(self) -> "FieldQnty":
         """Convert to pound per square foot per minute units, returning new variable."""
-        unit_const: Final = field_units.MassFluxUnits.pound_per_square_foot_per_minute
+        unit_const: Final = units.MassFluxUnits.pound_per_square_foot_per_minute
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -17880,7 +17880,7 @@ class AsUnitMassFluxConverter(UnitConverter):
     @property
     def pound_per_square_foot_per_second(self) -> "FieldQnty":
         """Convert to pound per square foot per second units, returning new variable."""
-        unit_const: Final = field_units.MassFluxUnits.pound_per_square_foot_per_second
+        unit_const: Final = units.MassFluxUnits.pound_per_square_foot_per_second
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -17912,7 +17912,7 @@ class AsUnitMassFractionOfIConverter(UnitConverter):
     @property
     def grains_of_i_per_pound_total(self) -> "FieldQnty":
         """Convert to grains of "i" per pound total units, returning new variable."""
-        unit_const: Final = field_units.MassFractionOfIUnits.grains_of_i_per_pound_total
+        unit_const: Final = units.MassFractionOfIUnits.grains_of_i_per_pound_total
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -17923,7 +17923,7 @@ class AsUnitMassFractionOfIConverter(UnitConverter):
     @property
     def gram_of_i_per_kilogram_total(self) -> "FieldQnty":
         """Convert to gram of "i" per kilogram total units, returning new variable."""
-        unit_const: Final = field_units.MassFractionOfIUnits.gram_of_i_per_kilogram_total
+        unit_const: Final = units.MassFractionOfIUnits.gram_of_i_per_kilogram_total
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -17934,7 +17934,7 @@ class AsUnitMassFractionOfIConverter(UnitConverter):
     @property
     def kilogram_of_i_per_kilogram_total(self) -> "FieldQnty":
         """Convert to kilogram of "i" per kilogram total units, returning new variable."""
-        unit_const: Final = field_units.MassFractionOfIUnits.kilogram_of_i_per_kilogram_total
+        unit_const: Final = units.MassFractionOfIUnits.kilogram_of_i_per_kilogram_total
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -17945,7 +17945,7 @@ class AsUnitMassFractionOfIConverter(UnitConverter):
     @property
     def pound_of_i_per_pound_total(self) -> "FieldQnty":
         """Convert to pound of "i" per pound total units, returning new variable."""
-        unit_const: Final = field_units.MassFractionOfIUnits.pound_of_i_per_pound_total
+        unit_const: Final = units.MassFractionOfIUnits.pound_of_i_per_pound_total
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -17967,7 +17967,7 @@ class AsUnitMassTransferCoefficientConverter(UnitConverter):
     @property
     def gram_per_square_centimeter_per_second(self) -> "FieldQnty":
         """Convert to gram per square centimeter per second units, returning new variable."""
-        unit_const: Final = field_units.MassTransferCoefficientUnits.gram_per_square_centimeter_per_second
+        unit_const: Final = units.MassTransferCoefficientUnits.gram_per_square_centimeter_per_second
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -17978,7 +17978,7 @@ class AsUnitMassTransferCoefficientConverter(UnitConverter):
     @property
     def kilogram_per_square_meter_per_second(self) -> "FieldQnty":
         """Convert to kilogram per square meter per second units, returning new variable."""
-        unit_const: Final = field_units.MassTransferCoefficientUnits.kilogram_per_square_meter_per_second
+        unit_const: Final = units.MassTransferCoefficientUnits.kilogram_per_square_meter_per_second
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -17989,7 +17989,7 @@ class AsUnitMassTransferCoefficientConverter(UnitConverter):
     @property
     def pounds_force_per_cubic_foot_per_hour(self) -> "FieldQnty":
         """Convert to pounds force per cubic foot per hour units, returning new variable."""
-        unit_const: Final = field_units.MassTransferCoefficientUnits.pounds_force_per_cubic_foot_per_hour
+        unit_const: Final = units.MassTransferCoefficientUnits.pounds_force_per_cubic_foot_per_hour
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -18010,7 +18010,7 @@ class AsUnitMassTransferCoefficientConverter(UnitConverter):
     @property
     def pounds_mass_per_square_foot_per_hour(self) -> "FieldQnty":
         """Convert to pounds mass per square foot per hour units, returning new variable."""
-        unit_const: Final = field_units.MassTransferCoefficientUnits.pounds_mass_per_square_foot_per_hour
+        unit_const: Final = units.MassTransferCoefficientUnits.pounds_mass_per_square_foot_per_hour
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -18031,7 +18031,7 @@ class AsUnitMassTransferCoefficientConverter(UnitConverter):
     @property
     def pounds_mass_per_square_foot_per_second(self) -> "FieldQnty":
         """Convert to pounds mass per square foot per second units, returning new variable."""
-        unit_const: Final = field_units.MassTransferCoefficientUnits.pounds_mass_per_square_foot_per_second
+        unit_const: Final = units.MassTransferCoefficientUnits.pounds_mass_per_square_foot_per_second
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -18063,7 +18063,7 @@ class AsUnitMolalityOfSoluteIConverter(UnitConverter):
     @property
     def gram_moles_of_i_per_kilogram(self) -> "FieldQnty":
         """Convert to gram moles of "i" per kilogram units, returning new variable."""
-        unit_const: Final = field_units.MolalityOfSoluteIUnits.gram_moles_of_i_per_kilogram
+        unit_const: Final = units.MolalityOfSoluteIUnits.gram_moles_of_i_per_kilogram
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -18074,7 +18074,7 @@ class AsUnitMolalityOfSoluteIConverter(UnitConverter):
     @property
     def kilogram_mols_of_i_per_kilogram(self) -> "FieldQnty":
         """Convert to kilogram mols of "i" per kilogram units, returning new variable."""
-        unit_const: Final = field_units.MolalityOfSoluteIUnits.kilogram_mols_of_i_per_kilogram
+        unit_const: Final = units.MolalityOfSoluteIUnits.kilogram_mols_of_i_per_kilogram
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -18085,13 +18085,13 @@ class AsUnitMolalityOfSoluteIConverter(UnitConverter):
     @property
     def kmols_of_i_per_kilogram(self) -> "FieldQnty":
         """Convert to kmols of "i" per kilogram units, returning new variable."""
-        unit_const: Final = field_units.MolalityOfSoluteIUnits.kmols_of_i_per_kilogram
+        unit_const: Final = units.MolalityOfSoluteIUnits.kmols_of_i_per_kilogram
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def mols_of_i_per_gram(self) -> "FieldQnty":
         """Convert to mols of "i" per gram units, returning new variable."""
-        unit_const: Final = field_units.MolalityOfSoluteIUnits.mols_of_i_per_gram
+        unit_const: Final = units.MolalityOfSoluteIUnits.mols_of_i_per_gram
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -18102,7 +18102,7 @@ class AsUnitMolalityOfSoluteIConverter(UnitConverter):
     @property
     def pound_moles_of_i_per_pound_mass(self) -> "FieldQnty":
         """Convert to pound moles of "i" per pound mass units, returning new variable."""
-        unit_const: Final = field_units.MolalityOfSoluteIUnits.pound_moles_of_i_per_pound_mass
+        unit_const: Final = units.MolalityOfSoluteIUnits.pound_moles_of_i_per_pound_mass
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -18124,7 +18124,7 @@ class AsUnitMolarConcentrationByMassConverter(UnitConverter):
     @property
     def gram_mole_or_mole_per_gram(self) -> "FieldQnty":
         """Convert to gram mole or mole per gram units, returning new variable."""
-        unit_const: Final = field_units.MolarConcentrationByMassUnits.gram_mole_or_mole_per_gram
+        unit_const: Final = units.MolarConcentrationByMassUnits.gram_mole_or_mole_per_gram
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -18135,7 +18135,7 @@ class AsUnitMolarConcentrationByMassConverter(UnitConverter):
     @property
     def gram_mole_or_mole_per_kilogram(self) -> "FieldQnty":
         """Convert to gram mole or mole per kilogram units, returning new variable."""
-        unit_const: Final = field_units.MolarConcentrationByMassUnits.gram_mole_or_mole_per_kilogram
+        unit_const: Final = units.MolarConcentrationByMassUnits.gram_mole_or_mole_per_kilogram
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -18146,7 +18146,7 @@ class AsUnitMolarConcentrationByMassConverter(UnitConverter):
     @property
     def kilogram_mole_or_kmol_per_kilogram(self) -> "FieldQnty":
         """Convert to kilogram mole or kmol per kilogram units, returning new variable."""
-        unit_const: Final = field_units.MolarConcentrationByMassUnits.kilogram_mole_or_kmol_per_kilogram
+        unit_const: Final = units.MolarConcentrationByMassUnits.kilogram_mole_or_kmol_per_kilogram
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -18157,7 +18157,7 @@ class AsUnitMolarConcentrationByMassConverter(UnitConverter):
     @property
     def micromole_per_gram(self) -> "FieldQnty":
         """Convert to micromole per gram units, returning new variable."""
-        unit_const: Final = field_units.MolarConcentrationByMassUnits.micromole_per_gram
+        unit_const: Final = units.MolarConcentrationByMassUnits.micromole_per_gram
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -18168,7 +18168,7 @@ class AsUnitMolarConcentrationByMassConverter(UnitConverter):
     @property
     def millimole_per_gram(self) -> "FieldQnty":
         """Convert to millimole per gram units, returning new variable."""
-        unit_const: Final = field_units.MolarConcentrationByMassUnits.millimole_per_gram
+        unit_const: Final = units.MolarConcentrationByMassUnits.millimole_per_gram
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -18179,7 +18179,7 @@ class AsUnitMolarConcentrationByMassConverter(UnitConverter):
     @property
     def picomole_per_gram(self) -> "FieldQnty":
         """Convert to picomole per gram units, returning new variable."""
-        unit_const: Final = field_units.MolarConcentrationByMassUnits.picomole_per_gram
+        unit_const: Final = units.MolarConcentrationByMassUnits.picomole_per_gram
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -18190,7 +18190,7 @@ class AsUnitMolarConcentrationByMassConverter(UnitConverter):
     @property
     def pound_mole_per_pound(self) -> "FieldQnty":
         """Convert to pound mole per pound units, returning new variable."""
-        unit_const: Final = field_units.MolarConcentrationByMassUnits.pound_mole_per_pound
+        unit_const: Final = units.MolarConcentrationByMassUnits.pound_mole_per_pound
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -18222,7 +18222,7 @@ class AsUnitMolarFlowRateConverter(UnitConverter):
     @property
     def gram_mole_per_day(self) -> "FieldQnty":
         """Convert to gram mole per day units, returning new variable."""
-        unit_const: Final = field_units.MolarFlowRateUnits.gram_mole_per_day
+        unit_const: Final = units.MolarFlowRateUnits.gram_mole_per_day
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -18233,7 +18233,7 @@ class AsUnitMolarFlowRateConverter(UnitConverter):
     @property
     def gram_mole_per_hour(self) -> "FieldQnty":
         """Convert to gram mole per hour units, returning new variable."""
-        unit_const: Final = field_units.MolarFlowRateUnits.gram_mole_per_hour
+        unit_const: Final = units.MolarFlowRateUnits.gram_mole_per_hour
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -18244,7 +18244,7 @@ class AsUnitMolarFlowRateConverter(UnitConverter):
     @property
     def gram_mole_per_minute(self) -> "FieldQnty":
         """Convert to gram mole per minute units, returning new variable."""
-        unit_const: Final = field_units.MolarFlowRateUnits.gram_mole_per_minute
+        unit_const: Final = units.MolarFlowRateUnits.gram_mole_per_minute
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -18255,7 +18255,7 @@ class AsUnitMolarFlowRateConverter(UnitConverter):
     @property
     def gram_mole_per_second(self) -> "FieldQnty":
         """Convert to gram mole per second units, returning new variable."""
-        unit_const: Final = field_units.MolarFlowRateUnits.gram_mole_per_second
+        unit_const: Final = units.MolarFlowRateUnits.gram_mole_per_second
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -18266,7 +18266,7 @@ class AsUnitMolarFlowRateConverter(UnitConverter):
     @property
     def kilogram_mole_or_kmol_per_day(self) -> "FieldQnty":
         """Convert to kilogram mole or kmol per day units, returning new variable."""
-        unit_const: Final = field_units.MolarFlowRateUnits.kilogram_mole_or_kmol_per_day
+        unit_const: Final = units.MolarFlowRateUnits.kilogram_mole_or_kmol_per_day
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -18277,7 +18277,7 @@ class AsUnitMolarFlowRateConverter(UnitConverter):
     @property
     def kilogram_mole_or_kmol_per_hour(self) -> "FieldQnty":
         """Convert to kilogram mole or kmol per hour units, returning new variable."""
-        unit_const: Final = field_units.MolarFlowRateUnits.kilogram_mole_or_kmol_per_hour
+        unit_const: Final = units.MolarFlowRateUnits.kilogram_mole_or_kmol_per_hour
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -18288,7 +18288,7 @@ class AsUnitMolarFlowRateConverter(UnitConverter):
     @property
     def kilogram_mole_or_kmol_per_minute(self) -> "FieldQnty":
         """Convert to kilogram mole or kmol per minute units, returning new variable."""
-        unit_const: Final = field_units.MolarFlowRateUnits.kilogram_mole_or_kmol_per_minute
+        unit_const: Final = units.MolarFlowRateUnits.kilogram_mole_or_kmol_per_minute
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -18299,7 +18299,7 @@ class AsUnitMolarFlowRateConverter(UnitConverter):
     @property
     def kilogram_mole_or_kmol_per_second(self) -> "FieldQnty":
         """Convert to kilogram mole or kmol per second units, returning new variable."""
-        unit_const: Final = field_units.MolarFlowRateUnits.kilogram_mole_or_kmol_per_second
+        unit_const: Final = units.MolarFlowRateUnits.kilogram_mole_or_kmol_per_second
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -18310,7 +18310,7 @@ class AsUnitMolarFlowRateConverter(UnitConverter):
     @property
     def pound_mole_or_lb_mol_per_day(self) -> "FieldQnty":
         """Convert to pound mole or lb-mol per day units, returning new variable."""
-        unit_const: Final = field_units.MolarFlowRateUnits.pound_mole_or_lb_mol_per_day
+        unit_const: Final = units.MolarFlowRateUnits.pound_mole_or_lb_mol_per_day
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -18331,7 +18331,7 @@ class AsUnitMolarFlowRateConverter(UnitConverter):
     @property
     def pound_mole_or_lb_mol_per_hour(self) -> "FieldQnty":
         """Convert to pound mole or lb-mol per hour units, returning new variable."""
-        unit_const: Final = field_units.MolarFlowRateUnits.pound_mole_or_lb_mol_per_hour
+        unit_const: Final = units.MolarFlowRateUnits.pound_mole_or_lb_mol_per_hour
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -18352,7 +18352,7 @@ class AsUnitMolarFlowRateConverter(UnitConverter):
     @property
     def pound_mole_or_lb_mol_per_minute(self) -> "FieldQnty":
         """Convert to pound mole or lb-mol per minute units, returning new variable."""
-        unit_const: Final = field_units.MolarFlowRateUnits.pound_mole_or_lb_mol_per_minute
+        unit_const: Final = units.MolarFlowRateUnits.pound_mole_or_lb_mol_per_minute
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -18373,7 +18373,7 @@ class AsUnitMolarFlowRateConverter(UnitConverter):
     @property
     def pound_mole_or_lb_mol_per_second(self) -> "FieldQnty":
         """Convert to pound mole or lb-mol per second units, returning new variable."""
-        unit_const: Final = field_units.MolarFlowRateUnits.pound_mole_or_lb_mol_per_second
+        unit_const: Final = units.MolarFlowRateUnits.pound_mole_or_lb_mol_per_second
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -18405,7 +18405,7 @@ class AsUnitMolarFluxConverter(UnitConverter):
     @property
     def kmol_per_square_meter_per_day(self) -> "FieldQnty":
         """Convert to kmol per square meter per day units, returning new variable."""
-        unit_const: Final = field_units.MolarFluxUnits.kmol_per_square_meter_per_day
+        unit_const: Final = units.MolarFluxUnits.kmol_per_square_meter_per_day
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -18416,7 +18416,7 @@ class AsUnitMolarFluxConverter(UnitConverter):
     @property
     def kmol_per_square_meter_per_hour(self) -> "FieldQnty":
         """Convert to kmol per square meter per hour units, returning new variable."""
-        unit_const: Final = field_units.MolarFluxUnits.kmol_per_square_meter_per_hour
+        unit_const: Final = units.MolarFluxUnits.kmol_per_square_meter_per_hour
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -18427,7 +18427,7 @@ class AsUnitMolarFluxConverter(UnitConverter):
     @property
     def kmol_per_square_meter_per_minute(self) -> "FieldQnty":
         """Convert to kmol per square meter per minute units, returning new variable."""
-        unit_const: Final = field_units.MolarFluxUnits.kmol_per_square_meter_per_minute
+        unit_const: Final = units.MolarFluxUnits.kmol_per_square_meter_per_minute
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -18438,7 +18438,7 @@ class AsUnitMolarFluxConverter(UnitConverter):
     @property
     def kmol_per_square_meter_per_second(self) -> "FieldQnty":
         """Convert to kmol per square meter per second units, returning new variable."""
-        unit_const: Final = field_units.MolarFluxUnits.kmol_per_square_meter_per_second
+        unit_const: Final = units.MolarFluxUnits.kmol_per_square_meter_per_second
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -18449,7 +18449,7 @@ class AsUnitMolarFluxConverter(UnitConverter):
     @property
     def pound_mole_per_square_foot_per_day(self) -> "FieldQnty":
         """Convert to pound mole per square foot per day units, returning new variable."""
-        unit_const: Final = field_units.MolarFluxUnits.pound_mole_per_square_foot_per_day
+        unit_const: Final = units.MolarFluxUnits.pound_mole_per_square_foot_per_day
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -18470,7 +18470,7 @@ class AsUnitMolarFluxConverter(UnitConverter):
     @property
     def pound_mole_per_square_foot_per_hour(self) -> "FieldQnty":
         """Convert to pound mole per square foot per hour units, returning new variable."""
-        unit_const: Final = field_units.MolarFluxUnits.pound_mole_per_square_foot_per_hour
+        unit_const: Final = units.MolarFluxUnits.pound_mole_per_square_foot_per_hour
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -18491,7 +18491,7 @@ class AsUnitMolarFluxConverter(UnitConverter):
     @property
     def pound_mole_per_square_foot_per_minute(self) -> "FieldQnty":
         """Convert to pound mole per square foot per minute units, returning new variable."""
-        unit_const: Final = field_units.MolarFluxUnits.pound_mole_per_square_foot_per_minute
+        unit_const: Final = units.MolarFluxUnits.pound_mole_per_square_foot_per_minute
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -18512,7 +18512,7 @@ class AsUnitMolarFluxConverter(UnitConverter):
     @property
     def pound_mole_per_square_foot_per_second(self) -> "FieldQnty":
         """Convert to pound mole per square foot per second units, returning new variable."""
-        unit_const: Final = field_units.MolarFluxUnits.pound_mole_per_square_foot_per_second
+        unit_const: Final = units.MolarFluxUnits.pound_mole_per_square_foot_per_second
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -18544,7 +18544,7 @@ class AsUnitMolarHeatCapacityConverter(UnitConverter):
     @property
     def btu_per_pound_mole_per_degree_fahrenheit_or_degree_rankine(self) -> "FieldQnty":
         """Convert to Btu per pound mole per degree Fahrenheit (or degree Rankine) units, returning new variable."""
-        unit_const: Final = field_units.MolarHeatCapacityUnits.btu_per_pound_mole_per_degree_fahrenheit_or_degree_rankine
+        unit_const: Final = units.MolarHeatCapacityUnits.btu_per_pound_mole_per_degree_fahrenheit_or_degree_rankine
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -18555,7 +18555,7 @@ class AsUnitMolarHeatCapacityConverter(UnitConverter):
     @property
     def calories_per_gram_mole_per_kelvin_or_degree_celsius(self) -> "FieldQnty":
         """Convert to calories per gram mole per kelvin (or degree Celsius) units, returning new variable."""
-        unit_const: Final = field_units.MolarHeatCapacityUnits.calories_per_gram_mole_per_kelvin_or_degree_celsius
+        unit_const: Final = units.MolarHeatCapacityUnits.calories_per_gram_mole_per_kelvin_or_degree_celsius
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -18566,7 +18566,7 @@ class AsUnitMolarHeatCapacityConverter(UnitConverter):
     @property
     def joule_per_gram_mole_per_kelvin_or_degree_celsius(self) -> "FieldQnty":
         """Convert to joule per gram mole per kelvin (or degree Celsius) units, returning new variable."""
-        unit_const: Final = field_units.MolarHeatCapacityUnits.joule_per_gram_mole_per_kelvin_or_degree_celsius
+        unit_const: Final = units.MolarHeatCapacityUnits.joule_per_gram_mole_per_kelvin_or_degree_celsius
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -18588,7 +18588,7 @@ class AsUnitMolarityOfIConverter(UnitConverter):
     @property
     def gram_moles_of_i_per_cubic_meter(self) -> "FieldQnty":
         """Convert to gram moles of "i" per cubic meter units, returning new variable."""
-        unit_const: Final = field_units.MolarityOfIUnits.gram_moles_of_i_per_cubic_meter
+        unit_const: Final = units.MolarityOfIUnits.gram_moles_of_i_per_cubic_meter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -18609,7 +18609,7 @@ class AsUnitMolarityOfIConverter(UnitConverter):
     @property
     def gram_moles_of_i_per_liter(self) -> "FieldQnty":
         """Convert to gram moles of "i" per liter units, returning new variable."""
-        unit_const: Final = field_units.MolarityOfIUnits.gram_moles_of_i_per_liter
+        unit_const: Final = units.MolarityOfIUnits.gram_moles_of_i_per_liter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -18620,7 +18620,7 @@ class AsUnitMolarityOfIConverter(UnitConverter):
     @property
     def kilogram_moles_of_i_per_cubic_meter(self) -> "FieldQnty":
         """Convert to kilogram moles of "i" per cubic meter units, returning new variable."""
-        unit_const: Final = field_units.MolarityOfIUnits.kilogram_moles_of_i_per_cubic_meter
+        unit_const: Final = units.MolarityOfIUnits.kilogram_moles_of_i_per_cubic_meter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -18631,7 +18631,7 @@ class AsUnitMolarityOfIConverter(UnitConverter):
     @property
     def kilogram_moles_of_i_per_liter(self) -> "FieldQnty":
         """Convert to kilogram moles of "i" per liter units, returning new variable."""
-        unit_const: Final = field_units.MolarityOfIUnits.kilogram_moles_of_i_per_liter
+        unit_const: Final = units.MolarityOfIUnits.kilogram_moles_of_i_per_liter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -18642,7 +18642,7 @@ class AsUnitMolarityOfIConverter(UnitConverter):
     @property
     def pound_moles_of_i_per_cubic_foot(self) -> "FieldQnty":
         """Convert to pound moles of "i" per cubic foot units, returning new variable."""
-        unit_const: Final = field_units.MolarityOfIUnits.pound_moles_of_i_per_cubic_foot
+        unit_const: Final = units.MolarityOfIUnits.pound_moles_of_i_per_cubic_foot
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -18663,7 +18663,7 @@ class AsUnitMolarityOfIConverter(UnitConverter):
     @property
     def pound_moles_of_i_per_gallon_us(self) -> "FieldQnty":
         """Convert to pound moles of " $i$ " per gallon (US) units, returning new variable."""
-        unit_const: Final = field_units.MolarityOfIUnits.pound_moles_of_i_per_gallon_us
+        unit_const: Final = units.MolarityOfIUnits.pound_moles_of_i_per_gallon_us
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -18695,7 +18695,7 @@ class AsUnitMoleFractionOfIConverter(UnitConverter):
     @property
     def gram_mole_of_i_per_gram_mole_total(self) -> "FieldQnty":
         """Convert to gram mole of "i" per gram mole total units, returning new variable."""
-        unit_const: Final = field_units.MoleFractionOfIUnits.gram_mole_of_i_per_gram_mole_total
+        unit_const: Final = units.MoleFractionOfIUnits.gram_mole_of_i_per_gram_mole_total
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -18706,7 +18706,7 @@ class AsUnitMoleFractionOfIConverter(UnitConverter):
     @property
     def kilogram_mole_of_i_per_kilogram_mole_total(self) -> "FieldQnty":
         """Convert to kilogram mole of "i" per kilogram mole total units, returning new variable."""
-        unit_const: Final = field_units.MoleFractionOfIUnits.kilogram_mole_of_i_per_kilogram_mole_total
+        unit_const: Final = units.MoleFractionOfIUnits.kilogram_mole_of_i_per_kilogram_mole_total
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -18717,13 +18717,13 @@ class AsUnitMoleFractionOfIConverter(UnitConverter):
     @property
     def kilomole_of_i_per_kilomole_total(self) -> "FieldQnty":
         """Convert to kilomole of "i" per kilomole total units, returning new variable."""
-        unit_const: Final = field_units.MoleFractionOfIUnits.kilomole_of_i_per_kilomole_total
+        unit_const: Final = units.MoleFractionOfIUnits.kilomole_of_i_per_kilomole_total
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def pound_mole_of_i_per_pound_mole_total(self) -> "FieldQnty":
         """Convert to pound mole of "i" per pound mole total units, returning new variable."""
-        unit_const: Final = field_units.MoleFractionOfIUnits.pound_mole_of_i_per_pound_mole_total
+        unit_const: Final = units.MoleFractionOfIUnits.pound_mole_of_i_per_pound_mole_total
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -18745,7 +18745,7 @@ class AsUnitMomentOfInertiaConverter(UnitConverter):
     @property
     def gram_force_centimeter_square_second(self) -> "FieldQnty":
         """Convert to gram force centimeter square second units, returning new variable."""
-        unit_const: Final = field_units.MomentOfInertiaUnits.gram_force_centimeter_square_second
+        unit_const: Final = units.MomentOfInertiaUnits.gram_force_centimeter_square_second
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -18756,7 +18756,7 @@ class AsUnitMomentOfInertiaConverter(UnitConverter):
     @property
     def gram_square_centimeter(self) -> "FieldQnty":
         """Convert to gram square centimeter units, returning new variable."""
-        unit_const: Final = field_units.MomentOfInertiaUnits.gram_square_centimeter
+        unit_const: Final = units.MomentOfInertiaUnits.gram_square_centimeter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -18767,7 +18767,7 @@ class AsUnitMomentOfInertiaConverter(UnitConverter):
     @property
     def kilogram_force_centimeter_square_second(self) -> "FieldQnty":
         """Convert to kilogram force centimeter square second units, returning new variable."""
-        unit_const: Final = field_units.MomentOfInertiaUnits.kilogram_force_centimeter_square_second
+        unit_const: Final = units.MomentOfInertiaUnits.kilogram_force_centimeter_square_second
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -18778,7 +18778,7 @@ class AsUnitMomentOfInertiaConverter(UnitConverter):
     @property
     def kilogram_force_meter_square_second(self) -> "FieldQnty":
         """Convert to kilogram force meter square second units, returning new variable."""
-        unit_const: Final = field_units.MomentOfInertiaUnits.kilogram_force_meter_square_second
+        unit_const: Final = units.MomentOfInertiaUnits.kilogram_force_meter_square_second
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -18789,7 +18789,7 @@ class AsUnitMomentOfInertiaConverter(UnitConverter):
     @property
     def kilogram_square_centimeter(self) -> "FieldQnty":
         """Convert to kilogram square centimeter units, returning new variable."""
-        unit_const: Final = field_units.MomentOfInertiaUnits.kilogram_square_centimeter
+        unit_const: Final = units.MomentOfInertiaUnits.kilogram_square_centimeter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -18800,7 +18800,7 @@ class AsUnitMomentOfInertiaConverter(UnitConverter):
     @property
     def kilogram_square_meter(self) -> "FieldQnty":
         """Convert to kilogram square meter units, returning new variable."""
-        unit_const: Final = field_units.MomentOfInertiaUnits.kilogram_square_meter
+        unit_const: Final = units.MomentOfInertiaUnits.kilogram_square_meter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -18811,7 +18811,7 @@ class AsUnitMomentOfInertiaConverter(UnitConverter):
     @property
     def ounce_force_inch_square_second(self) -> "FieldQnty":
         """Convert to ounce force inch square second units, returning new variable."""
-        unit_const: Final = field_units.MomentOfInertiaUnits.ounce_force_inch_square_second
+        unit_const: Final = units.MomentOfInertiaUnits.ounce_force_inch_square_second
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -18822,7 +18822,7 @@ class AsUnitMomentOfInertiaConverter(UnitConverter):
     @property
     def ounce_mass_square_inch(self) -> "FieldQnty":
         """Convert to ounce mass square inch units, returning new variable."""
-        unit_const: Final = field_units.MomentOfInertiaUnits.ounce_mass_square_inch
+        unit_const: Final = units.MomentOfInertiaUnits.ounce_mass_square_inch
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -18833,7 +18833,7 @@ class AsUnitMomentOfInertiaConverter(UnitConverter):
     @property
     def pound_mass_square_foot(self) -> "FieldQnty":
         """Convert to pound mass square foot units, returning new variable."""
-        unit_const: Final = field_units.MomentOfInertiaUnits.pound_mass_square_foot
+        unit_const: Final = units.MomentOfInertiaUnits.pound_mass_square_foot
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -18854,7 +18854,7 @@ class AsUnitMomentOfInertiaConverter(UnitConverter):
     @property
     def pound_mass_square_inch(self) -> "FieldQnty":
         """Convert to pound mass square inch units, returning new variable."""
-        unit_const: Final = field_units.MomentOfInertiaUnits.pound_mass_square_inch
+        unit_const: Final = units.MomentOfInertiaUnits.pound_mass_square_inch
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -18876,7 +18876,7 @@ class AsUnitMomentumFlowRateConverter(UnitConverter):
     @property
     def foot_pounds_per_square_hour(self) -> "FieldQnty":
         """Convert to foot pounds per square hour units, returning new variable."""
-        unit_const: Final = field_units.MomentumFlowRateUnits.foot_pounds_per_square_hour
+        unit_const: Final = units.MomentumFlowRateUnits.foot_pounds_per_square_hour
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -18897,7 +18897,7 @@ class AsUnitMomentumFlowRateConverter(UnitConverter):
     @property
     def foot_pounds_per_square_minute(self) -> "FieldQnty":
         """Convert to foot pounds per square minute units, returning new variable."""
-        unit_const: Final = field_units.MomentumFlowRateUnits.foot_pounds_per_square_minute
+        unit_const: Final = units.MomentumFlowRateUnits.foot_pounds_per_square_minute
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -18908,7 +18908,7 @@ class AsUnitMomentumFlowRateConverter(UnitConverter):
     @property
     def foot_pounds_per_square_second(self) -> "FieldQnty":
         """Convert to foot pounds per square second units, returning new variable."""
-        unit_const: Final = field_units.MomentumFlowRateUnits.foot_pounds_per_square_second
+        unit_const: Final = units.MomentumFlowRateUnits.foot_pounds_per_square_second
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -18929,7 +18929,7 @@ class AsUnitMomentumFlowRateConverter(UnitConverter):
     @property
     def gram_centimeters_per_square_second(self) -> "FieldQnty":
         """Convert to gram centimeters per square second units, returning new variable."""
-        unit_const: Final = field_units.MomentumFlowRateUnits.gram_centimeters_per_square_second
+        unit_const: Final = units.MomentumFlowRateUnits.gram_centimeters_per_square_second
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -18940,7 +18940,7 @@ class AsUnitMomentumFlowRateConverter(UnitConverter):
     @property
     def kilogram_meters_per_square_second(self) -> "FieldQnty":
         """Convert to kilogram meters per square second units, returning new variable."""
-        unit_const: Final = field_units.MomentumFlowRateUnits.kilogram_meters_per_square_second
+        unit_const: Final = units.MomentumFlowRateUnits.kilogram_meters_per_square_second
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -18962,7 +18962,7 @@ class AsUnitMomentumFluxConverter(UnitConverter):
     @property
     def dyne_per_square_centimeter(self) -> "FieldQnty":
         """Convert to dyne per square centimeter units, returning new variable."""
-        unit_const: Final = field_units.MomentumFluxUnits.dyne_per_square_centimeter
+        unit_const: Final = units.MomentumFluxUnits.dyne_per_square_centimeter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -18973,7 +18973,7 @@ class AsUnitMomentumFluxConverter(UnitConverter):
     @property
     def gram_per_centimeter_per_square_second(self) -> "FieldQnty":
         """Convert to gram per centimeter per square second units, returning new variable."""
-        unit_const: Final = field_units.MomentumFluxUnits.gram_per_centimeter_per_square_second
+        unit_const: Final = units.MomentumFluxUnits.gram_per_centimeter_per_square_second
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -18984,7 +18984,7 @@ class AsUnitMomentumFluxConverter(UnitConverter):
     @property
     def newton_per_square_meter(self) -> "FieldQnty":
         """Convert to newton per square meter units, returning new variable."""
-        unit_const: Final = field_units.MomentumFluxUnits.newton_per_square_meter
+        unit_const: Final = units.MomentumFluxUnits.newton_per_square_meter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -18995,7 +18995,7 @@ class AsUnitMomentumFluxConverter(UnitConverter):
     @property
     def pound_force_per_square_foot(self) -> "FieldQnty":
         """Convert to pound force per square foot units, returning new variable."""
-        unit_const: Final = field_units.MomentumFluxUnits.pound_force_per_square_foot
+        unit_const: Final = units.MomentumFluxUnits.pound_force_per_square_foot
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -19006,7 +19006,7 @@ class AsUnitMomentumFluxConverter(UnitConverter):
     @property
     def pound_mass_per_foot_per_square_second(self) -> "FieldQnty":
         """Convert to pound mass per foot per square second units, returning new variable."""
-        unit_const: Final = field_units.MomentumFluxUnits.pound_mass_per_foot_per_square_second
+        unit_const: Final = units.MomentumFluxUnits.pound_mass_per_foot_per_square_second
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -19038,7 +19038,7 @@ class AsUnitNormalityOfSolutionConverter(UnitConverter):
     @property
     def gram_equivalents_per_cubic_meter(self) -> "FieldQnty":
         """Convert to gram equivalents per cubic meter units, returning new variable."""
-        unit_const: Final = field_units.NormalityOfSolutionUnits.gram_equivalents_per_cubic_meter
+        unit_const: Final = units.NormalityOfSolutionUnits.gram_equivalents_per_cubic_meter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -19049,7 +19049,7 @@ class AsUnitNormalityOfSolutionConverter(UnitConverter):
     @property
     def gram_equivalents_per_liter(self) -> "FieldQnty":
         """Convert to gram equivalents per liter units, returning new variable."""
-        unit_const: Final = field_units.NormalityOfSolutionUnits.gram_equivalents_per_liter
+        unit_const: Final = units.NormalityOfSolutionUnits.gram_equivalents_per_liter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -19060,7 +19060,7 @@ class AsUnitNormalityOfSolutionConverter(UnitConverter):
     @property
     def pound_equivalents_per_cubic_foot(self) -> "FieldQnty":
         """Convert to pound equivalents per cubic foot units, returning new variable."""
-        unit_const: Final = field_units.NormalityOfSolutionUnits.pound_equivalents_per_cubic_foot
+        unit_const: Final = units.NormalityOfSolutionUnits.pound_equivalents_per_cubic_foot
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -19081,7 +19081,7 @@ class AsUnitNormalityOfSolutionConverter(UnitConverter):
     @property
     def pound_equivalents_per_gallon(self) -> "FieldQnty":
         """Convert to pound equivalents per gallon units, returning new variable."""
-        unit_const: Final = field_units.NormalityOfSolutionUnits.pound_equivalents_per_gallon
+        unit_const: Final = units.NormalityOfSolutionUnits.pound_equivalents_per_gallon
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -19103,7 +19103,7 @@ class AsUnitParticleDensityConverter(UnitConverter):
     @property
     def particles_per_cubic_centimeter(self) -> "FieldQnty":
         """Convert to particles per cubic centimeter units, returning new variable."""
-        unit_const: Final = field_units.ParticleDensityUnits.particles_per_cubic_centimeter
+        unit_const: Final = units.ParticleDensityUnits.particles_per_cubic_centimeter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -19124,7 +19124,7 @@ class AsUnitParticleDensityConverter(UnitConverter):
     @property
     def particles_per_cubic_foot(self) -> "FieldQnty":
         """Convert to particles per cubic foot units, returning new variable."""
-        unit_const: Final = field_units.ParticleDensityUnits.particles_per_cubic_foot
+        unit_const: Final = units.ParticleDensityUnits.particles_per_cubic_foot
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -19145,7 +19145,7 @@ class AsUnitParticleDensityConverter(UnitConverter):
     @property
     def particles_per_cubic_meter(self) -> "FieldQnty":
         """Convert to particles per cubic meter units, returning new variable."""
-        unit_const: Final = field_units.ParticleDensityUnits.particles_per_cubic_meter
+        unit_const: Final = units.ParticleDensityUnits.particles_per_cubic_meter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -19156,7 +19156,7 @@ class AsUnitParticleDensityConverter(UnitConverter):
     @property
     def particles_per_gallon_us(self) -> "FieldQnty":
         """Convert to particles per gallon (US) units, returning new variable."""
-        unit_const: Final = field_units.ParticleDensityUnits.particles_per_gallon_us
+        unit_const: Final = units.ParticleDensityUnits.particles_per_gallon_us
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -19167,7 +19167,7 @@ class AsUnitParticleDensityConverter(UnitConverter):
     @property
     def particles_per_liter(self) -> "FieldQnty":
         """Convert to particles per liter units, returning new variable."""
-        unit_const: Final = field_units.ParticleDensityUnits.particles_per_liter
+        unit_const: Final = units.ParticleDensityUnits.particles_per_liter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -19178,7 +19178,7 @@ class AsUnitParticleDensityConverter(UnitConverter):
     @property
     def particles_per_milliliter(self) -> "FieldQnty":
         """Convert to particles per milliliter units, returning new variable."""
-        unit_const: Final = field_units.ParticleDensityUnits.particles_per_milliliter
+        unit_const: Final = units.ParticleDensityUnits.particles_per_milliliter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -19200,7 +19200,7 @@ class AsUnitPercentConverter(UnitConverter):
     @property
     def percent(self) -> "FieldQnty":
         """Convert to percent units, returning new variable."""
-        unit_const: Final = field_units.PercentUnits.percent
+        unit_const: Final = units.PercentUnits.percent
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -19211,13 +19211,13 @@ class AsUnitPercentConverter(UnitConverter):
     @property
     def per_mille(self) -> "FieldQnty":
         """Convert to per mille units, returning new variable."""
-        unit_const: Final = field_units.PercentUnits.per_mille
+        unit_const: Final = units.PercentUnits.per_mille
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def basis_point(self) -> "FieldQnty":
         """Convert to basis point units, returning new variable."""
-        unit_const: Final = field_units.PercentUnits.basis_point
+        unit_const: Final = units.PercentUnits.basis_point
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -19244,13 +19244,13 @@ class AsUnitPermeabilityConverter(UnitConverter):
     @property
     def darcy(self) -> "FieldQnty":
         """Convert to darcy units, returning new variable."""
-        unit_const: Final = field_units.PermeabilityUnits.darcy
+        unit_const: Final = units.PermeabilityUnits.darcy
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def square_feet(self) -> "FieldQnty":
         """Convert to square feet units, returning new variable."""
-        unit_const: Final = field_units.PermeabilityUnits.square_feet
+        unit_const: Final = units.PermeabilityUnits.square_feet
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -19271,7 +19271,7 @@ class AsUnitPermeabilityConverter(UnitConverter):
     @property
     def square_meters(self) -> "FieldQnty":
         """Convert to square meters units, returning new variable."""
-        unit_const: Final = field_units.PermeabilityUnits.square_meters
+        unit_const: Final = units.PermeabilityUnits.square_meters
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -19293,7 +19293,7 @@ class AsUnitPhotonEmissionRateConverter(UnitConverter):
     @property
     def rayleigh(self) -> "FieldQnty":
         """Convert to rayleigh units, returning new variable."""
-        unit_const: Final = field_units.PhotonEmissionRateUnits.rayleigh
+        unit_const: Final = units.PhotonEmissionRateUnits.rayleigh
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -19304,7 +19304,7 @@ class AsUnitPhotonEmissionRateConverter(UnitConverter):
     @property
     def reciprocal_square_meter_second(self) -> "FieldQnty":
         """Convert to reciprocal square meter second units, returning new variable."""
-        unit_const: Final = field_units.PhotonEmissionRateUnits.reciprocal_square_meter_second
+        unit_const: Final = units.PhotonEmissionRateUnits.reciprocal_square_meter_second
         return self._convert_quantity(unit_const, modify_original=False)
 
 
@@ -19321,7 +19321,7 @@ class AsUnitPowerPerUnitMassConverter(UnitConverter):
     @property
     def british_thermal_unit_per_hour_per_pound_mass(self) -> "FieldQnty":
         """Convert to British thermal unit per hour per pound mass units, returning new variable."""
-        unit_const: Final = field_units.PowerPerUnitMassUnits.british_thermal_unit_per_hour_per_pound_mass
+        unit_const: Final = units.PowerPerUnitMassUnits.british_thermal_unit_per_hour_per_pound_mass
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -19342,7 +19342,7 @@ class AsUnitPowerPerUnitMassConverter(UnitConverter):
     @property
     def calorie_per_second_per_gram(self) -> "FieldQnty":
         """Convert to calorie per second per gram units, returning new variable."""
-        unit_const: Final = field_units.PowerPerUnitMassUnits.calorie_per_second_per_gram
+        unit_const: Final = units.PowerPerUnitMassUnits.calorie_per_second_per_gram
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -19363,7 +19363,7 @@ class AsUnitPowerPerUnitMassConverter(UnitConverter):
     @property
     def kilocalorie_per_hour_per_kilogram(self) -> "FieldQnty":
         """Convert to kilocalorie per hour per kilogram units, returning new variable."""
-        unit_const: Final = field_units.PowerPerUnitMassUnits.kilocalorie_per_hour_per_kilogram
+        unit_const: Final = units.PowerPerUnitMassUnits.kilocalorie_per_hour_per_kilogram
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -19384,7 +19384,7 @@ class AsUnitPowerPerUnitMassConverter(UnitConverter):
     @property
     def watt_per_kilogram(self) -> "FieldQnty":
         """Convert to watt per kilogram units, returning new variable."""
-        unit_const: Final = field_units.PowerPerUnitMassUnits.watt_per_kilogram
+        unit_const: Final = units.PowerPerUnitMassUnits.watt_per_kilogram
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -19406,7 +19406,7 @@ class AsUnitPowerPerUnitVolumeConverter(UnitConverter):
     @property
     def british_thermal_unit_per_hour_per_cubic_foot(self) -> "FieldQnty":
         """Convert to British thermal unit per hour per cubic foot units, returning new variable."""
-        unit_const: Final = field_units.PowerPerUnitVolumeUnits.british_thermal_unit_per_hour_per_cubic_foot
+        unit_const: Final = units.PowerPerUnitVolumeUnits.british_thermal_unit_per_hour_per_cubic_foot
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -19427,7 +19427,7 @@ class AsUnitPowerPerUnitVolumeConverter(UnitConverter):
     @property
     def calorie_per_second_per_cubic_centimeter(self) -> "FieldQnty":
         """Convert to calorie per second per cubic centimeter units, returning new variable."""
-        unit_const: Final = field_units.PowerPerUnitVolumeUnits.calorie_per_second_per_cubic_centimeter
+        unit_const: Final = units.PowerPerUnitVolumeUnits.calorie_per_second_per_cubic_centimeter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -19448,7 +19448,7 @@ class AsUnitPowerPerUnitVolumeConverter(UnitConverter):
     @property
     def chu_per_hour_per_cubic_foot(self) -> "FieldQnty":
         """Convert to Chu per hour per cubic foot units, returning new variable."""
-        unit_const: Final = field_units.PowerPerUnitVolumeUnits.chu_per_hour_per_cubic_foot
+        unit_const: Final = units.PowerPerUnitVolumeUnits.chu_per_hour_per_cubic_foot
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -19469,7 +19469,7 @@ class AsUnitPowerPerUnitVolumeConverter(UnitConverter):
     @property
     def kilocalorie_per_hour_per_cubic_centimeter(self) -> "FieldQnty":
         """Convert to kilocalorie per hour per cubic centimeter units, returning new variable."""
-        unit_const: Final = field_units.PowerPerUnitVolumeUnits.kilocalorie_per_hour_per_cubic_centimeter
+        unit_const: Final = units.PowerPerUnitVolumeUnits.kilocalorie_per_hour_per_cubic_centimeter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -19490,7 +19490,7 @@ class AsUnitPowerPerUnitVolumeConverter(UnitConverter):
     @property
     def kilocalorie_per_hour_per_cubic_foot(self) -> "FieldQnty":
         """Convert to kilocalorie per hour per cubic foot units, returning new variable."""
-        unit_const: Final = field_units.PowerPerUnitVolumeUnits.kilocalorie_per_hour_per_cubic_foot
+        unit_const: Final = units.PowerPerUnitVolumeUnits.kilocalorie_per_hour_per_cubic_foot
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -19511,7 +19511,7 @@ class AsUnitPowerPerUnitVolumeConverter(UnitConverter):
     @property
     def kilocalorie_per_second_per_cubic_centimeter(self) -> "FieldQnty":
         """Convert to kilocalorie per second per cubic centimeter units, returning new variable."""
-        unit_const: Final = field_units.PowerPerUnitVolumeUnits.kilocalorie_per_second_per_cubic_centimeter
+        unit_const: Final = units.PowerPerUnitVolumeUnits.kilocalorie_per_second_per_cubic_centimeter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -19532,7 +19532,7 @@ class AsUnitPowerPerUnitVolumeConverter(UnitConverter):
     @property
     def watt_per_cubic_meter(self) -> "FieldQnty":
         """Convert to watt per cubic meter units, returning new variable."""
-        unit_const: Final = field_units.PowerPerUnitVolumeUnits.watt_per_cubic_meter
+        unit_const: Final = units.PowerPerUnitVolumeUnits.watt_per_cubic_meter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -19554,7 +19554,7 @@ class AsUnitPowerThermalDutyConverter(UnitConverter):
     @property
     def abwatt_emu_of_power(self) -> "FieldQnty":
         """Convert to abwatt (emu of power) units, returning new variable."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.abwatt_emu_of_power
+        unit_const: Final = units.PowerThermalDutyUnits.abwatt_emu_of_power
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -19565,7 +19565,7 @@ class AsUnitPowerThermalDutyConverter(UnitConverter):
     @property
     def boiler_horsepower(self) -> "FieldQnty":
         """Convert to boiler horsepower units, returning new variable."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.boiler_horsepower
+        unit_const: Final = units.PowerThermalDutyUnits.boiler_horsepower
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -19576,7 +19576,7 @@ class AsUnitPowerThermalDutyConverter(UnitConverter):
     @property
     def british_thermal_unit_mean(self) -> "FieldQnty":
         """Convert to British thermal unit (mean) per hour units, returning new variable."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.british_thermal_unit_mean
+        unit_const: Final = units.PowerThermalDutyUnits.british_thermal_unit_mean
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -19597,7 +19597,7 @@ class AsUnitPowerThermalDutyConverter(UnitConverter):
     @property
     def british_thermal_unit_thermochemical(self) -> "FieldQnty":
         """Convert to British thermal unit (thermochemical) per hour units, returning new variable."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.british_thermal_unit_thermochemical
+        unit_const: Final = units.PowerThermalDutyUnits.british_thermal_unit_thermochemical
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -19613,7 +19613,7 @@ class AsUnitPowerThermalDutyConverter(UnitConverter):
     @property
     def calorie_mean(self) -> "FieldQnty":
         """Convert to calorie (mean) per hour units, returning new variable."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.calorie_mean
+        unit_const: Final = units.PowerThermalDutyUnits.calorie_mean
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -19624,7 +19624,7 @@ class AsUnitPowerThermalDutyConverter(UnitConverter):
     @property
     def calorie_thermochemical(self) -> "FieldQnty":
         """Convert to calorie (thermochemical) per hour units, returning new variable."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.calorie_thermochemical
+        unit_const: Final = units.PowerThermalDutyUnits.calorie_thermochemical
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -19635,13 +19635,13 @@ class AsUnitPowerThermalDutyConverter(UnitConverter):
     @property
     def donkey(self) -> "FieldQnty":
         """Convert to donkey units, returning new variable."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.donkey
+        unit_const: Final = units.PowerThermalDutyUnits.donkey
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def erg_per_second(self) -> "FieldQnty":
         """Convert to erg per second units, returning new variable."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.erg_per_second
+        unit_const: Final = units.PowerThermalDutyUnits.erg_per_second
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -19652,7 +19652,7 @@ class AsUnitPowerThermalDutyConverter(UnitConverter):
     @property
     def foot_pondal_per_second(self) -> "FieldQnty":
         """Convert to foot pondal per second units, returning new variable."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.foot_pondal_per_second
+        unit_const: Final = units.PowerThermalDutyUnits.foot_pondal_per_second
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -19663,7 +19663,7 @@ class AsUnitPowerThermalDutyConverter(UnitConverter):
     @property
     def foot_pound_force_per_hour(self) -> "FieldQnty":
         """Convert to foot pound force per hour units, returning new variable."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.foot_pound_force_per_hour
+        unit_const: Final = units.PowerThermalDutyUnits.foot_pound_force_per_hour
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -19674,7 +19674,7 @@ class AsUnitPowerThermalDutyConverter(UnitConverter):
     @property
     def foot_pound_force_per_minute(self) -> "FieldQnty":
         """Convert to foot pound force per minute units, returning new variable."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.foot_pound_force_per_minute
+        unit_const: Final = units.PowerThermalDutyUnits.foot_pound_force_per_minute
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -19685,7 +19685,7 @@ class AsUnitPowerThermalDutyConverter(UnitConverter):
     @property
     def foot_pound_force_per_second(self) -> "FieldQnty":
         """Convert to foot pound force per second units, returning new variable."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.foot_pound_force_per_second
+        unit_const: Final = units.PowerThermalDutyUnits.foot_pound_force_per_second
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -19696,7 +19696,7 @@ class AsUnitPowerThermalDutyConverter(UnitConverter):
     @property
     def horsepower_550_mathrmft_mathrmlb_mathrmf_mathrms(self) -> "FieldQnty":
         """Convert to horsepower ( $550 \\mathrm{ft} \\mathrm{lb}_{\\mathrm{f}} / \\mathrm{s}$ ) units, returning new variable."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.horsepower_550_mathrmft_mathrmlb_mathrmf_mathrms
+        unit_const: Final = units.PowerThermalDutyUnits.horsepower_550_mathrmft_mathrmlb_mathrmf_mathrms
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -19707,7 +19707,7 @@ class AsUnitPowerThermalDutyConverter(UnitConverter):
     @property
     def horsepower_electric(self) -> "FieldQnty":
         """Convert to horsepower (electric) units, returning new variable."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.horsepower_electric
+        unit_const: Final = units.PowerThermalDutyUnits.horsepower_electric
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -19718,7 +19718,7 @@ class AsUnitPowerThermalDutyConverter(UnitConverter):
     @property
     def horsepower_uk(self) -> "FieldQnty":
         """Convert to horsepower (UK) units, returning new variable."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.horsepower_uk
+        unit_const: Final = units.PowerThermalDutyUnits.horsepower_uk
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -19729,7 +19729,7 @@ class AsUnitPowerThermalDutyConverter(UnitConverter):
     @property
     def kcal_per_hour(self) -> "FieldQnty":
         """Convert to kcal per hour units, returning new variable."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.kcal_per_hour
+        unit_const: Final = units.PowerThermalDutyUnits.kcal_per_hour
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -19740,7 +19740,7 @@ class AsUnitPowerThermalDutyConverter(UnitConverter):
     @property
     def kilogram_force_meter_per_second(self) -> "FieldQnty":
         """Convert to kilogram force meter per second units, returning new variable."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.kilogram_force_meter_per_second
+        unit_const: Final = units.PowerThermalDutyUnits.kilogram_force_meter_per_second
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -19751,7 +19751,7 @@ class AsUnitPowerThermalDutyConverter(UnitConverter):
     @property
     def kilowatt(self) -> "FieldQnty":
         """Convert to kilowatt units, returning new variable."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.kilowatt
+        unit_const: Final = units.PowerThermalDutyUnits.kilowatt
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -19762,7 +19762,7 @@ class AsUnitPowerThermalDutyConverter(UnitConverter):
     @property
     def megawatt(self) -> "FieldQnty":
         """Convert to megawatt units, returning new variable."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.megawatt
+        unit_const: Final = units.PowerThermalDutyUnits.megawatt
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -19773,7 +19773,7 @@ class AsUnitPowerThermalDutyConverter(UnitConverter):
     @property
     def metric_horsepower(self) -> "FieldQnty":
         """Convert to metric horsepower units, returning new variable."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.metric_horsepower
+        unit_const: Final = units.PowerThermalDutyUnits.metric_horsepower
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -19784,7 +19784,7 @@ class AsUnitPowerThermalDutyConverter(UnitConverter):
     @property
     def million_british_thermal_units_per_hour_petroleum(self) -> "FieldQnty":
         """Convert to million British thermal units per hour (petroleum) units, returning new variable."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.million_british_thermal_units_per_hour_petroleum
+        unit_const: Final = units.PowerThermalDutyUnits.million_british_thermal_units_per_hour_petroleum
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -19795,7 +19795,7 @@ class AsUnitPowerThermalDutyConverter(UnitConverter):
     @property
     def million_kilocalorie_per_hour(self) -> "FieldQnty":
         """Convert to million kilocalorie per hour units, returning new variable."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.million_kilocalorie_per_hour
+        unit_const: Final = units.PowerThermalDutyUnits.million_kilocalorie_per_hour
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -19806,13 +19806,13 @@ class AsUnitPowerThermalDutyConverter(UnitConverter):
     @property
     def prony(self) -> "FieldQnty":
         """Convert to prony units, returning new variable."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.prony
+        unit_const: Final = units.PowerThermalDutyUnits.prony
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def ton_of_refrigeration_us(self) -> "FieldQnty":
         """Convert to ton of refrigeration (US) units, returning new variable."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.ton_of_refrigeration_us
+        unit_const: Final = units.PowerThermalDutyUnits.ton_of_refrigeration_us
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -19823,7 +19823,7 @@ class AsUnitPowerThermalDutyConverter(UnitConverter):
     @property
     def ton_or_refrigeration_uk(self) -> "FieldQnty":
         """Convert to ton or refrigeration (UK) units, returning new variable."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.ton_or_refrigeration_uk
+        unit_const: Final = units.PowerThermalDutyUnits.ton_or_refrigeration_uk
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -19834,7 +19834,7 @@ class AsUnitPowerThermalDutyConverter(UnitConverter):
     @property
     def volt_ampere(self) -> "FieldQnty":
         """Convert to volt-ampere units, returning new variable."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.volt_ampere
+        unit_const: Final = units.PowerThermalDutyUnits.volt_ampere
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -19845,7 +19845,7 @@ class AsUnitPowerThermalDutyConverter(UnitConverter):
     @property
     def water_horsepower(self) -> "FieldQnty":
         """Convert to water horsepower units, returning new variable."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.water_horsepower
+        unit_const: Final = units.PowerThermalDutyUnits.water_horsepower
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -19856,7 +19856,7 @@ class AsUnitPowerThermalDutyConverter(UnitConverter):
     @property
     def watt(self) -> "FieldQnty":
         """Convert to watt units, returning new variable."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.watt
+        unit_const: Final = units.PowerThermalDutyUnits.watt
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -19867,7 +19867,7 @@ class AsUnitPowerThermalDutyConverter(UnitConverter):
     @property
     def watt_international_mean(self) -> "FieldQnty":
         """Convert to watt (international, mean) units, returning new variable."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.watt_international_mean
+        unit_const: Final = units.PowerThermalDutyUnits.watt_international_mean
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -19878,7 +19878,7 @@ class AsUnitPowerThermalDutyConverter(UnitConverter):
     @property
     def watt_international_us(self) -> "FieldQnty":
         """Convert to watt (international, US) units, returning new variable."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.watt_international_us
+        unit_const: Final = units.PowerThermalDutyUnits.watt_international_us
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -19889,7 +19889,7 @@ class AsUnitPowerThermalDutyConverter(UnitConverter):
     @property
     def gigawatt(self) -> "FieldQnty":
         """Convert to gigawatt units, returning new variable."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.gigawatt
+        unit_const: Final = units.PowerThermalDutyUnits.gigawatt
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -19900,7 +19900,7 @@ class AsUnitPowerThermalDutyConverter(UnitConverter):
     @property
     def milliwatt(self) -> "FieldQnty":
         """Convert to milliwatt units, returning new variable."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.milliwatt
+        unit_const: Final = units.PowerThermalDutyUnits.milliwatt
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -19911,7 +19911,7 @@ class AsUnitPowerThermalDutyConverter(UnitConverter):
     @property
     def microwatt(self) -> "FieldQnty":
         """Convert to microwatt units, returning new variable."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.microwatt
+        unit_const: Final = units.PowerThermalDutyUnits.microwatt
         return self._convert_quantity(unit_const, modify_original=False)
 
 
@@ -19928,7 +19928,7 @@ class AsUnitPressureConverter(UnitConverter):
     @property
     def atmosphere_standard(self) -> "FieldQnty":
         """Convert to atmosphere, standard units, returning new variable."""
-        unit_const: Final = field_units.PressureUnits.atmosphere_standard
+        unit_const: Final = units.PressureUnits.atmosphere_standard
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -19939,19 +19939,19 @@ class AsUnitPressureConverter(UnitConverter):
     @property
     def bar(self) -> "FieldQnty":
         """Convert to bar units, returning new variable."""
-        unit_const: Final = field_units.PressureUnits.bar
+        unit_const: Final = units.PressureUnits.bar
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def barye(self) -> "FieldQnty":
         """Convert to barye units, returning new variable."""
-        unit_const: Final = field_units.PressureUnits.barye
+        unit_const: Final = units.PressureUnits.barye
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def dyne_per_square_centimeter(self) -> "FieldQnty":
         """Convert to dyne per square centimeter units, returning new variable."""
-        unit_const: Final = field_units.PressureUnits.dyne_per_square_centimeter
+        unit_const: Final = units.PressureUnits.dyne_per_square_centimeter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -19962,7 +19962,7 @@ class AsUnitPressureConverter(UnitConverter):
     @property
     def foot_of_mercury_60_circ_mathrmf(self) -> "FieldQnty":
         """Convert to foot of mercury ( $60{ }^{\\circ} \\mathrm{F}$ ) units, returning new variable."""
-        unit_const: Final = field_units.PressureUnits.foot_of_mercury_60_circ_mathrmf
+        unit_const: Final = units.PressureUnits.foot_of_mercury_60_circ_mathrmf
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -19973,7 +19973,7 @@ class AsUnitPressureConverter(UnitConverter):
     @property
     def foot_of_water_60_circ_mathrmf(self) -> "FieldQnty":
         """Convert to foot of water ( $60{ }^{\\circ} \\mathrm{F}$ ) units, returning new variable."""
-        unit_const: Final = field_units.PressureUnits.foot_of_water_60_circ_mathrmf
+        unit_const: Final = units.PressureUnits.foot_of_water_60_circ_mathrmf
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -19984,7 +19984,7 @@ class AsUnitPressureConverter(UnitConverter):
     @property
     def gigapascal(self) -> "FieldQnty":
         """Convert to gigapascal units, returning new variable."""
-        unit_const: Final = field_units.PressureUnits.gigapascal
+        unit_const: Final = units.PressureUnits.gigapascal
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -19995,7 +19995,7 @@ class AsUnitPressureConverter(UnitConverter):
     @property
     def hectopascal(self) -> "FieldQnty":
         """Convert to hectopascal units, returning new variable."""
-        unit_const: Final = field_units.PressureUnits.hectopascal
+        unit_const: Final = units.PressureUnits.hectopascal
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -20006,7 +20006,7 @@ class AsUnitPressureConverter(UnitConverter):
     @property
     def inch_of_mercury_60_circ_mathrmf(self) -> "FieldQnty":
         """Convert to inch of mercury ( $60{ }^{\\circ} \\mathrm{F}$ ) units, returning new variable."""
-        unit_const: Final = field_units.PressureUnits.inch_of_mercury_60_circ_mathrmf
+        unit_const: Final = units.PressureUnits.inch_of_mercury_60_circ_mathrmf
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -20017,7 +20017,7 @@ class AsUnitPressureConverter(UnitConverter):
     @property
     def inch_of_water_60_circ_mathrmf(self) -> "FieldQnty":
         """Convert to inch of water ( $60{ }^{\\circ} \\mathrm{F}$ ) units, returning new variable."""
-        unit_const: Final = field_units.PressureUnits.inch_of_water_60_circ_mathrmf
+        unit_const: Final = units.PressureUnits.inch_of_water_60_circ_mathrmf
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -20028,7 +20028,7 @@ class AsUnitPressureConverter(UnitConverter):
     @property
     def kilogram_force_per_square_centimeter(self) -> "FieldQnty":
         """Convert to kilogram force per square centimeter units, returning new variable."""
-        unit_const: Final = field_units.PressureUnits.kilogram_force_per_square_centimeter
+        unit_const: Final = units.PressureUnits.kilogram_force_per_square_centimeter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -20049,7 +20049,7 @@ class AsUnitPressureConverter(UnitConverter):
     @property
     def kilogram_force_per_square_meter(self) -> "FieldQnty":
         """Convert to kilogram force per square meter units, returning new variable."""
-        unit_const: Final = field_units.PressureUnits.kilogram_force_per_square_meter
+        unit_const: Final = units.PressureUnits.kilogram_force_per_square_meter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -20060,7 +20060,7 @@ class AsUnitPressureConverter(UnitConverter):
     @property
     def kip_force_per_square_inch(self) -> "FieldQnty":
         """Convert to kip force per square inch units, returning new variable."""
-        unit_const: Final = field_units.PressureUnits.kip_force_per_square_inch
+        unit_const: Final = units.PressureUnits.kip_force_per_square_inch
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -20086,7 +20086,7 @@ class AsUnitPressureConverter(UnitConverter):
     @property
     def megapascal(self) -> "FieldQnty":
         """Convert to megapascal units, returning new variable."""
-        unit_const: Final = field_units.PressureUnits.megapascal
+        unit_const: Final = units.PressureUnits.megapascal
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -20097,7 +20097,7 @@ class AsUnitPressureConverter(UnitConverter):
     @property
     def meter_of_water_4circ_mathrmc(self) -> "FieldQnty":
         """Convert to meter of water ( $4^{\\circ} \\mathrm{C}$ ) units, returning new variable."""
-        unit_const: Final = field_units.PressureUnits.meter_of_water_4circ_mathrmc
+        unit_const: Final = units.PressureUnits.meter_of_water_4circ_mathrmc
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -20108,7 +20108,7 @@ class AsUnitPressureConverter(UnitConverter):
     @property
     def microbar(self) -> "FieldQnty":
         """Convert to microbar units, returning new variable."""
-        unit_const: Final = field_units.PressureUnits.microbar
+        unit_const: Final = units.PressureUnits.microbar
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -20119,7 +20119,7 @@ class AsUnitPressureConverter(UnitConverter):
     @property
     def millibar(self) -> "FieldQnty":
         """Convert to millibar units, returning new variable."""
-        unit_const: Final = field_units.PressureUnits.millibar
+        unit_const: Final = units.PressureUnits.millibar
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -20130,7 +20130,7 @@ class AsUnitPressureConverter(UnitConverter):
     @property
     def millimeter_of_mercury_4circ_mathrmc(self) -> "FieldQnty":
         """Convert to millimeter of mercury ( $4^{\\circ} \\mathrm{C}$ ) units, returning new variable."""
-        unit_const: Final = field_units.PressureUnits.millimeter_of_mercury_4circ_mathrmc
+        unit_const: Final = units.PressureUnits.millimeter_of_mercury_4circ_mathrmc
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -20141,7 +20141,7 @@ class AsUnitPressureConverter(UnitConverter):
     @property
     def millimeter_of_water_4circ_mathrmc(self) -> "FieldQnty":
         """Convert to millimeter of water ( $4^{\\circ} \\mathrm{C}$ ) units, returning new variable."""
-        unit_const: Final = field_units.PressureUnits.millimeter_of_water_4circ_mathrmc
+        unit_const: Final = units.PressureUnits.millimeter_of_water_4circ_mathrmc
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -20152,7 +20152,7 @@ class AsUnitPressureConverter(UnitConverter):
     @property
     def newton_per_square_meter(self) -> "FieldQnty":
         """Convert to newton per square meter units, returning new variable."""
-        unit_const: Final = field_units.PressureUnits.newton_per_square_meter
+        unit_const: Final = units.PressureUnits.newton_per_square_meter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -20163,7 +20163,7 @@ class AsUnitPressureConverter(UnitConverter):
     @property
     def ounce_force_per_square_inch(self) -> "FieldQnty":
         """Convert to ounce force per square inch units, returning new variable."""
-        unit_const: Final = field_units.PressureUnits.ounce_force_per_square_inch
+        unit_const: Final = units.PressureUnits.ounce_force_per_square_inch
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -20184,7 +20184,7 @@ class AsUnitPressureConverter(UnitConverter):
     @property
     def pascal(self) -> "FieldQnty":
         """Convert to pascal units, returning new variable."""
-        unit_const: Final = field_units.PressureUnits.pascal
+        unit_const: Final = units.PressureUnits.pascal
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -20195,7 +20195,7 @@ class AsUnitPressureConverter(UnitConverter):
     @property
     def pi_ze(self) -> "FieldQnty":
         """Convert to pièze units, returning new variable."""
-        unit_const: Final = field_units.PressureUnits.pi_ze
+        unit_const: Final = units.PressureUnits.pi_ze
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -20206,7 +20206,7 @@ class AsUnitPressureConverter(UnitConverter):
     @property
     def pound_force_per_square_foot(self) -> "FieldQnty":
         """Convert to pound force per square foot units, returning new variable."""
-        unit_const: Final = field_units.PressureUnits.pound_force_per_square_foot
+        unit_const: Final = units.PressureUnits.pound_force_per_square_foot
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -20222,7 +20222,7 @@ class AsUnitPressureConverter(UnitConverter):
     @property
     def pound_force_per_square_inch(self) -> "FieldQnty":
         """Convert to pound force per square inch units, returning new variable."""
-        unit_const: Final = field_units.PressureUnits.pound_force_per_square_inch
+        unit_const: Final = units.PressureUnits.pound_force_per_square_inch
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -20233,7 +20233,7 @@ class AsUnitPressureConverter(UnitConverter):
     @property
     def torr(self) -> "FieldQnty":
         """Convert to torr units, returning new variable."""
-        unit_const: Final = field_units.PressureUnits.torr
+        unit_const: Final = units.PressureUnits.torr
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -20249,7 +20249,7 @@ class AsUnitPressureConverter(UnitConverter):
     @property
     def kilopascal(self) -> "FieldQnty":
         """Convert to kilopascal units, returning new variable."""
-        unit_const: Final = field_units.PressureUnits.kilopascal
+        unit_const: Final = units.PressureUnits.kilopascal
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -20271,13 +20271,13 @@ class AsUnitRadiationDoseEquivalentConverter(UnitConverter):
     @property
     def rem(self) -> "FieldQnty":
         """Convert to rem units, returning new variable."""
-        unit_const: Final = field_units.RadiationDoseEquivalentUnits.rem
+        unit_const: Final = units.RadiationDoseEquivalentUnits.rem
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def sievert(self) -> "FieldQnty":
         """Convert to sievert units, returning new variable."""
-        unit_const: Final = field_units.RadiationDoseEquivalentUnits.sievert
+        unit_const: Final = units.RadiationDoseEquivalentUnits.sievert
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -20288,7 +20288,7 @@ class AsUnitRadiationDoseEquivalentConverter(UnitConverter):
     @property
     def millisievert(self) -> "FieldQnty":
         """Convert to millisievert units, returning new variable."""
-        unit_const: Final = field_units.RadiationDoseEquivalentUnits.millisievert
+        unit_const: Final = units.RadiationDoseEquivalentUnits.millisievert
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -20299,7 +20299,7 @@ class AsUnitRadiationDoseEquivalentConverter(UnitConverter):
     @property
     def microsievert(self) -> "FieldQnty":
         """Convert to microsievert units, returning new variable."""
-        unit_const: Final = field_units.RadiationDoseEquivalentUnits.microsievert
+        unit_const: Final = units.RadiationDoseEquivalentUnits.microsievert
         return self._convert_quantity(unit_const, modify_original=False)
 
 
@@ -20316,7 +20316,7 @@ class AsUnitRadiationExposureConverter(UnitConverter):
     @property
     def coulomb_per_kilogram(self) -> "FieldQnty":
         """Convert to coulomb per kilogram units, returning new variable."""
-        unit_const: Final = field_units.RadiationExposureUnits.coulomb_per_kilogram
+        unit_const: Final = units.RadiationExposureUnits.coulomb_per_kilogram
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -20327,7 +20327,7 @@ class AsUnitRadiationExposureConverter(UnitConverter):
     @property
     def d_unit(self) -> "FieldQnty":
         """Convert to D unit units, returning new variable."""
-        unit_const: Final = field_units.RadiationExposureUnits.d_unit
+        unit_const: Final = units.RadiationExposureUnits.d_unit
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -20338,7 +20338,7 @@ class AsUnitRadiationExposureConverter(UnitConverter):
     @property
     def pastille_dose_b_unit(self) -> "FieldQnty":
         """Convert to pastille dose (B unit) units, returning new variable."""
-        unit_const: Final = field_units.RadiationExposureUnits.pastille_dose_b_unit
+        unit_const: Final = units.RadiationExposureUnits.pastille_dose_b_unit
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -20349,7 +20349,7 @@ class AsUnitRadiationExposureConverter(UnitConverter):
     @property
     def r_entgen(self) -> "FieldQnty":
         """Convert to röentgen units, returning new variable."""
-        unit_const: Final = field_units.RadiationExposureUnits.r_entgen
+        unit_const: Final = units.RadiationExposureUnits.r_entgen
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -20371,7 +20371,7 @@ class AsUnitRadioactivityConverter(UnitConverter):
     @property
     def becquerel(self) -> "FieldQnty":
         """Convert to becquerel units, returning new variable."""
-        unit_const: Final = field_units.RadioactivityUnits.becquerel
+        unit_const: Final = units.RadioactivityUnits.becquerel
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -20382,7 +20382,7 @@ class AsUnitRadioactivityConverter(UnitConverter):
     @property
     def curie(self) -> "FieldQnty":
         """Convert to curie units, returning new variable."""
-        unit_const: Final = field_units.RadioactivityUnits.curie
+        unit_const: Final = units.RadioactivityUnits.curie
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -20393,7 +20393,7 @@ class AsUnitRadioactivityConverter(UnitConverter):
     @property
     def mache_unit(self) -> "FieldQnty":
         """Convert to Mache unit units, returning new variable."""
-        unit_const: Final = field_units.RadioactivityUnits.mache_unit
+        unit_const: Final = units.RadioactivityUnits.mache_unit
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -20404,7 +20404,7 @@ class AsUnitRadioactivityConverter(UnitConverter):
     @property
     def rutherford(self) -> "FieldQnty":
         """Convert to rutherford units, returning new variable."""
-        unit_const: Final = field_units.RadioactivityUnits.rutherford
+        unit_const: Final = units.RadioactivityUnits.rutherford
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -20415,13 +20415,13 @@ class AsUnitRadioactivityConverter(UnitConverter):
     @property
     def stat(self) -> "FieldQnty":
         """Convert to stat units, returning new variable."""
-        unit_const: Final = field_units.RadioactivityUnits.stat
+        unit_const: Final = units.RadioactivityUnits.stat
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def kilobecquerel(self) -> "FieldQnty":
         """Convert to kilobecquerel units, returning new variable."""
-        unit_const: Final = field_units.RadioactivityUnits.kilobecquerel
+        unit_const: Final = units.RadioactivityUnits.kilobecquerel
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -20432,7 +20432,7 @@ class AsUnitRadioactivityConverter(UnitConverter):
     @property
     def megabecquerel(self) -> "FieldQnty":
         """Convert to megabecquerel units, returning new variable."""
-        unit_const: Final = field_units.RadioactivityUnits.megabecquerel
+        unit_const: Final = units.RadioactivityUnits.megabecquerel
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -20443,7 +20443,7 @@ class AsUnitRadioactivityConverter(UnitConverter):
     @property
     def gigabecquerel(self) -> "FieldQnty":
         """Convert to gigabecquerel units, returning new variable."""
-        unit_const: Final = field_units.RadioactivityUnits.gigabecquerel
+        unit_const: Final = units.RadioactivityUnits.gigabecquerel
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -20465,7 +20465,7 @@ class AsUnitSecondMomentOfAreaConverter(UnitConverter):
     @property
     def inch_quadrupled(self) -> "FieldQnty":
         """Convert to inch quadrupled units, returning new variable."""
-        unit_const: Final = field_units.SecondMomentOfAreaUnits.inch_quadrupled
+        unit_const: Final = units.SecondMomentOfAreaUnits.inch_quadrupled
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -20476,7 +20476,7 @@ class AsUnitSecondMomentOfAreaConverter(UnitConverter):
     @property
     def centimeter_quadrupled(self) -> "FieldQnty":
         """Convert to centimeter quadrupled units, returning new variable."""
-        unit_const: Final = field_units.SecondMomentOfAreaUnits.centimeter_quadrupled
+        unit_const: Final = units.SecondMomentOfAreaUnits.centimeter_quadrupled
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -20487,7 +20487,7 @@ class AsUnitSecondMomentOfAreaConverter(UnitConverter):
     @property
     def foot_quadrupled(self) -> "FieldQnty":
         """Convert to foot quadrupled units, returning new variable."""
-        unit_const: Final = field_units.SecondMomentOfAreaUnits.foot_quadrupled
+        unit_const: Final = units.SecondMomentOfAreaUnits.foot_quadrupled
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -20498,7 +20498,7 @@ class AsUnitSecondMomentOfAreaConverter(UnitConverter):
     @property
     def meter_quadrupled(self) -> "FieldQnty":
         """Convert to meter quadrupled units, returning new variable."""
-        unit_const: Final = field_units.SecondMomentOfAreaUnits.meter_quadrupled
+        unit_const: Final = units.SecondMomentOfAreaUnits.meter_quadrupled
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -20520,7 +20520,7 @@ class AsUnitSecondRadiationConstantPlanckConverter(UnitConverter):
     @property
     def meter_kelvin(self) -> "FieldQnty":
         """Convert to meter kelvin units, returning new variable."""
-        unit_const: Final = field_units.SecondRadiationConstantPlanckUnits.meter_kelvin
+        unit_const: Final = units.SecondRadiationConstantPlanckUnits.meter_kelvin
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -20542,7 +20542,7 @@ class AsUnitSpecificEnthalpyConverter(UnitConverter):
     @property
     def british_thermal_unit_mean(self) -> "FieldQnty":
         """Convert to British thermal unit (mean) per pound units, returning new variable."""
-        unit_const: Final = field_units.SpecificEnthalpyUnits.british_thermal_unit_mean
+        unit_const: Final = units.SpecificEnthalpyUnits.british_thermal_unit_mean
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -20553,7 +20553,7 @@ class AsUnitSpecificEnthalpyConverter(UnitConverter):
     @property
     def british_thermal_unit_per_pound(self) -> "FieldQnty":
         """Convert to British thermal unit per pound units, returning new variable."""
-        unit_const: Final = field_units.SpecificEnthalpyUnits.british_thermal_unit_per_pound
+        unit_const: Final = units.SpecificEnthalpyUnits.british_thermal_unit_per_pound
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -20564,7 +20564,7 @@ class AsUnitSpecificEnthalpyConverter(UnitConverter):
     @property
     def calorie_per_gram(self) -> "FieldQnty":
         """Convert to calorie per gram units, returning new variable."""
-        unit_const: Final = field_units.SpecificEnthalpyUnits.calorie_per_gram
+        unit_const: Final = units.SpecificEnthalpyUnits.calorie_per_gram
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -20575,7 +20575,7 @@ class AsUnitSpecificEnthalpyConverter(UnitConverter):
     @property
     def chu_per_pound(self) -> "FieldQnty":
         """Convert to Chu per pound units, returning new variable."""
-        unit_const: Final = field_units.SpecificEnthalpyUnits.chu_per_pound
+        unit_const: Final = units.SpecificEnthalpyUnits.chu_per_pound
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -20586,7 +20586,7 @@ class AsUnitSpecificEnthalpyConverter(UnitConverter):
     @property
     def joule_per_kilogram(self) -> "FieldQnty":
         """Convert to joule per kilogram units, returning new variable."""
-        unit_const: Final = field_units.SpecificEnthalpyUnits.joule_per_kilogram
+        unit_const: Final = units.SpecificEnthalpyUnits.joule_per_kilogram
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -20597,7 +20597,7 @@ class AsUnitSpecificEnthalpyConverter(UnitConverter):
     @property
     def kilojoule_per_kilogram(self) -> "FieldQnty":
         """Convert to kilojoule per kilogram units, returning new variable."""
-        unit_const: Final = field_units.SpecificEnthalpyUnits.kilojoule_per_kilogram
+        unit_const: Final = units.SpecificEnthalpyUnits.kilojoule_per_kilogram
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -20619,7 +20619,7 @@ class AsUnitSpecificGravityConverter(UnitConverter):
     @property
     def dimensionless(self) -> "FieldQnty":
         """Convert to Dimensionless units, returning new variable."""
-        unit_const: Final = field_units.SpecificGravityUnits.dimensionless
+        unit_const: Final = units.SpecificGravityUnits.dimensionless
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -20641,7 +20641,7 @@ class AsUnitSpecificHeatCapacityConstantPressureConverter(UnitConverter):
     @property
     def btu_per_pound_per_degree_fahrenheit_or_degree_rankine(self) -> "FieldQnty":
         """Convert to Btu per pound per degree Fahrenheit (or degree Rankine) units, returning new variable."""
-        unit_const: Final = field_units.SpecificHeatCapacityConstantPressureUnits.btu_per_pound_per_degree_fahrenheit_or_degree_rankine
+        unit_const: Final = units.SpecificHeatCapacityConstantPressureUnits.btu_per_pound_per_degree_fahrenheit_or_degree_rankine
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -20652,7 +20652,7 @@ class AsUnitSpecificHeatCapacityConstantPressureConverter(UnitConverter):
     @property
     def calories_per_gram_per_kelvin_or_degree_celsius(self) -> "FieldQnty":
         """Convert to calories per gram per kelvin (or degree Celsius) units, returning new variable."""
-        unit_const: Final = field_units.SpecificHeatCapacityConstantPressureUnits.calories_per_gram_per_kelvin_or_degree_celsius
+        unit_const: Final = units.SpecificHeatCapacityConstantPressureUnits.calories_per_gram_per_kelvin_or_degree_celsius
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -20663,7 +20663,7 @@ class AsUnitSpecificHeatCapacityConstantPressureConverter(UnitConverter):
     @property
     def joules_per_kilogram_per_kelvin_or_degree_celsius(self) -> "FieldQnty":
         """Convert to joules per kilogram per kelvin (or degree Celsius) units, returning new variable."""
-        unit_const: Final = field_units.SpecificHeatCapacityConstantPressureUnits.joules_per_kilogram_per_kelvin_or_degree_celsius
+        unit_const: Final = units.SpecificHeatCapacityConstantPressureUnits.joules_per_kilogram_per_kelvin_or_degree_celsius
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -20685,7 +20685,7 @@ class AsUnitSpecificLengthConverter(UnitConverter):
     @property
     def centimeter_per_gram(self) -> "FieldQnty":
         """Convert to centimeter per gram units, returning new variable."""
-        unit_const: Final = field_units.SpecificLengthUnits.centimeter_per_gram
+        unit_const: Final = units.SpecificLengthUnits.centimeter_per_gram
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -20696,7 +20696,7 @@ class AsUnitSpecificLengthConverter(UnitConverter):
     @property
     def cotton_count(self) -> "FieldQnty":
         """Convert to cotton count units, returning new variable."""
-        unit_const: Final = field_units.SpecificLengthUnits.cotton_count
+        unit_const: Final = units.SpecificLengthUnits.cotton_count
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -20707,7 +20707,7 @@ class AsUnitSpecificLengthConverter(UnitConverter):
     @property
     def ft_per_pound(self) -> "FieldQnty":
         """Convert to ft per pound units, returning new variable."""
-        unit_const: Final = field_units.SpecificLengthUnits.ft_per_pound
+        unit_const: Final = units.SpecificLengthUnits.ft_per_pound
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -20718,7 +20718,7 @@ class AsUnitSpecificLengthConverter(UnitConverter):
     @property
     def meters_per_kilogram(self) -> "FieldQnty":
         """Convert to meters per kilogram units, returning new variable."""
-        unit_const: Final = field_units.SpecificLengthUnits.meters_per_kilogram
+        unit_const: Final = units.SpecificLengthUnits.meters_per_kilogram
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -20729,7 +20729,7 @@ class AsUnitSpecificLengthConverter(UnitConverter):
     @property
     def newton_meter(self) -> "FieldQnty":
         """Convert to newton meter units, returning new variable."""
-        unit_const: Final = field_units.SpecificLengthUnits.newton_meter
+        unit_const: Final = units.SpecificLengthUnits.newton_meter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -20740,7 +20740,7 @@ class AsUnitSpecificLengthConverter(UnitConverter):
     @property
     def worsted(self) -> "FieldQnty":
         """Convert to worsted units, returning new variable."""
-        unit_const: Final = field_units.SpecificLengthUnits.worsted
+        unit_const: Final = units.SpecificLengthUnits.worsted
         return self._convert_quantity(unit_const, modify_original=False)
 
 
@@ -20757,7 +20757,7 @@ class AsUnitSpecificSurfaceConverter(UnitConverter):
     @property
     def square_centimeter_per_gram(self) -> "FieldQnty":
         """Convert to square centimeter per gram units, returning new variable."""
-        unit_const: Final = field_units.SpecificSurfaceUnits.square_centimeter_per_gram
+        unit_const: Final = units.SpecificSurfaceUnits.square_centimeter_per_gram
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -20768,7 +20768,7 @@ class AsUnitSpecificSurfaceConverter(UnitConverter):
     @property
     def square_foot_per_kilogram(self) -> "FieldQnty":
         """Convert to square foot per kilogram units, returning new variable."""
-        unit_const: Final = field_units.SpecificSurfaceUnits.square_foot_per_kilogram
+        unit_const: Final = units.SpecificSurfaceUnits.square_foot_per_kilogram
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -20789,7 +20789,7 @@ class AsUnitSpecificSurfaceConverter(UnitConverter):
     @property
     def square_foot_per_pound(self) -> "FieldQnty":
         """Convert to square foot per pound units, returning new variable."""
-        unit_const: Final = field_units.SpecificSurfaceUnits.square_foot_per_pound
+        unit_const: Final = units.SpecificSurfaceUnits.square_foot_per_pound
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -20810,7 +20810,7 @@ class AsUnitSpecificSurfaceConverter(UnitConverter):
     @property
     def square_meter_per_gram(self) -> "FieldQnty":
         """Convert to square meter per gram units, returning new variable."""
-        unit_const: Final = field_units.SpecificSurfaceUnits.square_meter_per_gram
+        unit_const: Final = units.SpecificSurfaceUnits.square_meter_per_gram
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -20821,7 +20821,7 @@ class AsUnitSpecificSurfaceConverter(UnitConverter):
     @property
     def square_meter_per_kilogram(self) -> "FieldQnty":
         """Convert to square meter per kilogram units, returning new variable."""
-        unit_const: Final = field_units.SpecificSurfaceUnits.square_meter_per_kilogram
+        unit_const: Final = units.SpecificSurfaceUnits.square_meter_per_kilogram
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -20843,7 +20843,7 @@ class AsUnitSpecificVolumeConverter(UnitConverter):
     @property
     def cubic_centimeter_per_gram(self) -> "FieldQnty":
         """Convert to cubic centimeter per gram units, returning new variable."""
-        unit_const: Final = field_units.SpecificVolumeUnits.cubic_centimeter_per_gram
+        unit_const: Final = units.SpecificVolumeUnits.cubic_centimeter_per_gram
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -20864,7 +20864,7 @@ class AsUnitSpecificVolumeConverter(UnitConverter):
     @property
     def cubic_foot_per_kilogram(self) -> "FieldQnty":
         """Convert to cubic foot per kilogram units, returning new variable."""
-        unit_const: Final = field_units.SpecificVolumeUnits.cubic_foot_per_kilogram
+        unit_const: Final = units.SpecificVolumeUnits.cubic_foot_per_kilogram
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -20885,7 +20885,7 @@ class AsUnitSpecificVolumeConverter(UnitConverter):
     @property
     def cubic_foot_per_pound(self) -> "FieldQnty":
         """Convert to cubic foot per pound units, returning new variable."""
-        unit_const: Final = field_units.SpecificVolumeUnits.cubic_foot_per_pound
+        unit_const: Final = units.SpecificVolumeUnits.cubic_foot_per_pound
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -20906,7 +20906,7 @@ class AsUnitSpecificVolumeConverter(UnitConverter):
     @property
     def cubic_meter_per_kilogram(self) -> "FieldQnty":
         """Convert to cubic meter per kilogram units, returning new variable."""
-        unit_const: Final = field_units.SpecificVolumeUnits.cubic_meter_per_kilogram
+        unit_const: Final = units.SpecificVolumeUnits.cubic_meter_per_kilogram
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -20928,7 +20928,7 @@ class AsUnitStressConverter(UnitConverter):
     @property
     def dyne_per_square_centimeter(self) -> "FieldQnty":
         """Convert to dyne per square centimeter units, returning new variable."""
-        unit_const: Final = field_units.StressUnits.dyne_per_square_centimeter
+        unit_const: Final = units.StressUnits.dyne_per_square_centimeter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -20939,7 +20939,7 @@ class AsUnitStressConverter(UnitConverter):
     @property
     def gigapascal(self) -> "FieldQnty":
         """Convert to gigapascal units, returning new variable."""
-        unit_const: Final = field_units.StressUnits.gigapascal
+        unit_const: Final = units.StressUnits.gigapascal
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -20950,7 +20950,7 @@ class AsUnitStressConverter(UnitConverter):
     @property
     def hectopascal(self) -> "FieldQnty":
         """Convert to hectopascal units, returning new variable."""
-        unit_const: Final = field_units.StressUnits.hectopascal
+        unit_const: Final = units.StressUnits.hectopascal
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -20961,7 +20961,7 @@ class AsUnitStressConverter(UnitConverter):
     @property
     def kilogram_force_per_square_centimeter(self) -> "FieldQnty":
         """Convert to kilogram force per square centimeter units, returning new variable."""
-        unit_const: Final = field_units.StressUnits.kilogram_force_per_square_centimeter
+        unit_const: Final = units.StressUnits.kilogram_force_per_square_centimeter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -20982,7 +20982,7 @@ class AsUnitStressConverter(UnitConverter):
     @property
     def kilogram_force_per_square_meter(self) -> "FieldQnty":
         """Convert to kilogram force per square meter units, returning new variable."""
-        unit_const: Final = field_units.StressUnits.kilogram_force_per_square_meter
+        unit_const: Final = units.StressUnits.kilogram_force_per_square_meter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -20993,7 +20993,7 @@ class AsUnitStressConverter(UnitConverter):
     @property
     def kip_force_per_square_inch(self) -> "FieldQnty":
         """Convert to kip force per square inch units, returning new variable."""
-        unit_const: Final = field_units.StressUnits.kip_force_per_square_inch
+        unit_const: Final = units.StressUnits.kip_force_per_square_inch
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -21019,7 +21019,7 @@ class AsUnitStressConverter(UnitConverter):
     @property
     def megapascal(self) -> "FieldQnty":
         """Convert to megapascal units, returning new variable."""
-        unit_const: Final = field_units.StressUnits.megapascal
+        unit_const: Final = units.StressUnits.megapascal
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -21030,7 +21030,7 @@ class AsUnitStressConverter(UnitConverter):
     @property
     def newton_per_square_meter(self) -> "FieldQnty":
         """Convert to newton per square meter units, returning new variable."""
-        unit_const: Final = field_units.StressUnits.newton_per_square_meter
+        unit_const: Final = units.StressUnits.newton_per_square_meter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -21041,7 +21041,7 @@ class AsUnitStressConverter(UnitConverter):
     @property
     def ounce_force_per_square_inch(self) -> "FieldQnty":
         """Convert to ounce force per square inch units, returning new variable."""
-        unit_const: Final = field_units.StressUnits.ounce_force_per_square_inch
+        unit_const: Final = units.StressUnits.ounce_force_per_square_inch
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -21067,7 +21067,7 @@ class AsUnitStressConverter(UnitConverter):
     @property
     def pascal(self) -> "FieldQnty":
         """Convert to pascal units, returning new variable."""
-        unit_const: Final = field_units.StressUnits.pascal
+        unit_const: Final = units.StressUnits.pascal
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -21078,7 +21078,7 @@ class AsUnitStressConverter(UnitConverter):
     @property
     def pound_force_per_square_foot(self) -> "FieldQnty":
         """Convert to pound force per square foot units, returning new variable."""
-        unit_const: Final = field_units.StressUnits.pound_force_per_square_foot
+        unit_const: Final = units.StressUnits.pound_force_per_square_foot
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -21104,7 +21104,7 @@ class AsUnitStressConverter(UnitConverter):
     @property
     def pound_force_per_square_inch(self) -> "FieldQnty":
         """Convert to pound force per square inch units, returning new variable."""
-        unit_const: Final = field_units.StressUnits.pound_force_per_square_inch
+        unit_const: Final = units.StressUnits.pound_force_per_square_inch
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -21126,7 +21126,7 @@ class AsUnitSurfaceMassDensityConverter(UnitConverter):
     @property
     def gram_per_square_centimeter(self) -> "FieldQnty":
         """Convert to gram per square centimeter units, returning new variable."""
-        unit_const: Final = field_units.SurfaceMassDensityUnits.gram_per_square_centimeter
+        unit_const: Final = units.SurfaceMassDensityUnits.gram_per_square_centimeter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -21137,7 +21137,7 @@ class AsUnitSurfaceMassDensityConverter(UnitConverter):
     @property
     def gram_per_square_meter(self) -> "FieldQnty":
         """Convert to gram per square meter units, returning new variable."""
-        unit_const: Final = field_units.SurfaceMassDensityUnits.gram_per_square_meter
+        unit_const: Final = units.SurfaceMassDensityUnits.gram_per_square_meter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -21148,7 +21148,7 @@ class AsUnitSurfaceMassDensityConverter(UnitConverter):
     @property
     def kilogram_per_square_meter(self) -> "FieldQnty":
         """Convert to kilogram per square meter units, returning new variable."""
-        unit_const: Final = field_units.SurfaceMassDensityUnits.kilogram_per_square_meter
+        unit_const: Final = units.SurfaceMassDensityUnits.kilogram_per_square_meter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -21159,7 +21159,7 @@ class AsUnitSurfaceMassDensityConverter(UnitConverter):
     @property
     def pound_mass(self) -> "FieldQnty":
         """Convert to pound (mass) per square foot units, returning new variable."""
-        unit_const: Final = field_units.SurfaceMassDensityUnits.pound_mass
+        unit_const: Final = units.SurfaceMassDensityUnits.pound_mass
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -21181,7 +21181,7 @@ class AsUnitSurfaceTensionConverter(UnitConverter):
     @property
     def dyne_per_centimeter(self) -> "FieldQnty":
         """Convert to dyne per centimeter units, returning new variable."""
-        unit_const: Final = field_units.SurfaceTensionUnits.dyne_per_centimeter
+        unit_const: Final = units.SurfaceTensionUnits.dyne_per_centimeter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -21192,7 +21192,7 @@ class AsUnitSurfaceTensionConverter(UnitConverter):
     @property
     def gram_force_per_centimeter(self) -> "FieldQnty":
         """Convert to gram force per centimeter units, returning new variable."""
-        unit_const: Final = field_units.SurfaceTensionUnits.gram_force_per_centimeter
+        unit_const: Final = units.SurfaceTensionUnits.gram_force_per_centimeter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -21203,7 +21203,7 @@ class AsUnitSurfaceTensionConverter(UnitConverter):
     @property
     def newton_per_meter(self) -> "FieldQnty":
         """Convert to newton per meter units, returning new variable."""
-        unit_const: Final = field_units.SurfaceTensionUnits.newton_per_meter
+        unit_const: Final = units.SurfaceTensionUnits.newton_per_meter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -21214,7 +21214,7 @@ class AsUnitSurfaceTensionConverter(UnitConverter):
     @property
     def pound_force_per_foot(self) -> "FieldQnty":
         """Convert to pound force per foot units, returning new variable."""
-        unit_const: Final = field_units.SurfaceTensionUnits.pound_force_per_foot
+        unit_const: Final = units.SurfaceTensionUnits.pound_force_per_foot
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -21225,7 +21225,7 @@ class AsUnitSurfaceTensionConverter(UnitConverter):
     @property
     def pound_force_per_inch(self) -> "FieldQnty":
         """Convert to pound force per inch units, returning new variable."""
-        unit_const: Final = field_units.SurfaceTensionUnits.pound_force_per_inch
+        unit_const: Final = units.SurfaceTensionUnits.pound_force_per_inch
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -21247,7 +21247,7 @@ class AsUnitTemperatureConverter(UnitConverter):
     @property
     def degree_celsius_unit_size(self) -> "FieldQnty":
         """Convert to degree Celsius (unit size) units, returning new variable."""
-        unit_const: Final = field_units.TemperatureUnits.degree_celsius_unit_size
+        unit_const: Final = units.TemperatureUnits.degree_celsius_unit_size
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -21258,7 +21258,7 @@ class AsUnitTemperatureConverter(UnitConverter):
     @property
     def degree_fahrenheit_unit_size(self) -> "FieldQnty":
         """Convert to degree Fahrenheit (unit size) units, returning new variable."""
-        unit_const: Final = field_units.TemperatureUnits.degree_fahrenheit_unit_size
+        unit_const: Final = units.TemperatureUnits.degree_fahrenheit_unit_size
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -21269,7 +21269,7 @@ class AsUnitTemperatureConverter(UnitConverter):
     @property
     def degree_r_aumur_unit_size(self) -> "FieldQnty":
         """Convert to degree Réaumur (unit size) units, returning new variable."""
-        unit_const: Final = field_units.TemperatureUnits.degree_r_aumur_unit_size
+        unit_const: Final = units.TemperatureUnits.degree_r_aumur_unit_size
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -21280,7 +21280,7 @@ class AsUnitTemperatureConverter(UnitConverter):
     @property
     def kelvin_absolute_scale(self) -> "FieldQnty":
         """Convert to kelvin (absolute scale) units, returning new variable."""
-        unit_const: Final = field_units.TemperatureUnits.kelvin_absolute_scale
+        unit_const: Final = units.TemperatureUnits.kelvin_absolute_scale
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -21291,7 +21291,7 @@ class AsUnitTemperatureConverter(UnitConverter):
     @property
     def rankine_absolute_scale(self) -> "FieldQnty":
         """Convert to Rankine (absolute scale) units, returning new variable."""
-        unit_const: Final = field_units.TemperatureUnits.rankine_absolute_scale
+        unit_const: Final = units.TemperatureUnits.rankine_absolute_scale
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -21313,7 +21313,7 @@ class AsUnitThermalConductivityConverter(UnitConverter):
     @property
     def btu_it(self) -> "FieldQnty":
         """Convert to Btu (IT) per inch per hour per degree Fahrenheit units, returning new variable."""
-        unit_const: Final = field_units.ThermalConductivityUnits.btu_it
+        unit_const: Final = units.ThermalConductivityUnits.btu_it
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -21324,7 +21324,7 @@ class AsUnitThermalConductivityConverter(UnitConverter):
     @property
     def btu_therm(self) -> "FieldQnty":
         """Convert to Btu (therm) per foot per hour per degree Fahrenheit units, returning new variable."""
-        unit_const: Final = field_units.ThermalConductivityUnits.btu_therm
+        unit_const: Final = units.ThermalConductivityUnits.btu_therm
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -21335,7 +21335,7 @@ class AsUnitThermalConductivityConverter(UnitConverter):
     @property
     def calorie_therm(self) -> "FieldQnty":
         """Convert to calorie (therm) per centimeter per second per degree Celsius units, returning new variable."""
-        unit_const: Final = field_units.ThermalConductivityUnits.calorie_therm
+        unit_const: Final = units.ThermalConductivityUnits.calorie_therm
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -21346,7 +21346,7 @@ class AsUnitThermalConductivityConverter(UnitConverter):
     @property
     def joule_per_second_per_centimeter_per_kelvin(self) -> "FieldQnty":
         """Convert to joule per second per centimeter per kelvin units, returning new variable."""
-        unit_const: Final = field_units.ThermalConductivityUnits.joule_per_second_per_centimeter_per_kelvin
+        unit_const: Final = units.ThermalConductivityUnits.joule_per_second_per_centimeter_per_kelvin
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -21357,7 +21357,7 @@ class AsUnitThermalConductivityConverter(UnitConverter):
     @property
     def watt_per_centimeter_per_kelvin(self) -> "FieldQnty":
         """Convert to watt per centimeter per kelvin units, returning new variable."""
-        unit_const: Final = field_units.ThermalConductivityUnits.watt_per_centimeter_per_kelvin
+        unit_const: Final = units.ThermalConductivityUnits.watt_per_centimeter_per_kelvin
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -21368,7 +21368,7 @@ class AsUnitThermalConductivityConverter(UnitConverter):
     @property
     def watt_per_meter_per_kelvin(self) -> "FieldQnty":
         """Convert to watt per meter per kelvin units, returning new variable."""
-        unit_const: Final = field_units.ThermalConductivityUnits.watt_per_meter_per_kelvin
+        unit_const: Final = units.ThermalConductivityUnits.watt_per_meter_per_kelvin
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -21390,13 +21390,13 @@ class AsUnitTimeConverter(UnitConverter):
     @property
     def blink(self) -> "FieldQnty":
         """Convert to blink units, returning new variable."""
-        unit_const: Final = field_units.TimeUnits.blink
+        unit_const: Final = units.TimeUnits.blink
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def century(self) -> "FieldQnty":
         """Convert to century units, returning new variable."""
-        unit_const: Final = field_units.TimeUnits.century
+        unit_const: Final = units.TimeUnits.century
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -21407,13 +21407,13 @@ class AsUnitTimeConverter(UnitConverter):
     @property
     def chronon_or_tempon(self) -> "FieldQnty":
         """Convert to chronon or tempon units, returning new variable."""
-        unit_const: Final = field_units.TimeUnits.chronon_or_tempon
+        unit_const: Final = units.TimeUnits.chronon_or_tempon
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def gigan_or_eon(self) -> "FieldQnty":
         """Convert to gigan or eon units, returning new variable."""
-        unit_const: Final = field_units.TimeUnits.gigan_or_eon
+        unit_const: Final = units.TimeUnits.gigan_or_eon
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -21434,7 +21434,7 @@ class AsUnitTimeConverter(UnitConverter):
     @property
     def hour(self) -> "FieldQnty":
         """Convert to hour units, returning new variable."""
-        unit_const: Final = field_units.TimeUnits.hour
+        unit_const: Final = units.TimeUnits.hour
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -21455,7 +21455,7 @@ class AsUnitTimeConverter(UnitConverter):
     @property
     def julian_year(self) -> "FieldQnty":
         """Convert to Julian year units, returning new variable."""
-        unit_const: Final = field_units.TimeUnits.julian_year
+        unit_const: Final = units.TimeUnits.julian_year
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -21476,7 +21476,7 @@ class AsUnitTimeConverter(UnitConverter):
     @property
     def mean_solar_day(self) -> "FieldQnty":
         """Convert to mean solar day units, returning new variable."""
-        unit_const: Final = field_units.TimeUnits.mean_solar_day
+        unit_const: Final = units.TimeUnits.mean_solar_day
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -21497,13 +21497,13 @@ class AsUnitTimeConverter(UnitConverter):
     @property
     def millenium(self) -> "FieldQnty":
         """Convert to millenium units, returning new variable."""
-        unit_const: Final = field_units.TimeUnits.millenium
+        unit_const: Final = units.TimeUnits.millenium
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def minute(self) -> "FieldQnty":
         """Convert to minute units, returning new variable."""
-        unit_const: Final = field_units.TimeUnits.minute
+        unit_const: Final = units.TimeUnits.minute
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -21514,7 +21514,7 @@ class AsUnitTimeConverter(UnitConverter):
     @property
     def second(self) -> "FieldQnty":
         """Convert to second units, returning new variable."""
-        unit_const: Final = field_units.TimeUnits.second
+        unit_const: Final = units.TimeUnits.second
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -21525,13 +21525,13 @@ class AsUnitTimeConverter(UnitConverter):
     @property
     def shake(self) -> "FieldQnty":
         """Convert to shake units, returning new variable."""
-        unit_const: Final = field_units.TimeUnits.shake
+        unit_const: Final = units.TimeUnits.shake
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def sidereal_year_1900_ad(self) -> "FieldQnty":
         """Convert to sidereal year (1900 AD) units, returning new variable."""
-        unit_const: Final = field_units.TimeUnits.sidereal_year_1900_ad
+        unit_const: Final = units.TimeUnits.sidereal_year_1900_ad
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -21547,7 +21547,7 @@ class AsUnitTimeConverter(UnitConverter):
     @property
     def tropical_year(self) -> "FieldQnty":
         """Convert to tropical year units, returning new variable."""
-        unit_const: Final = field_units.TimeUnits.tropical_year
+        unit_const: Final = units.TimeUnits.tropical_year
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -21558,13 +21558,13 @@ class AsUnitTimeConverter(UnitConverter):
     @property
     def wink(self) -> "FieldQnty":
         """Convert to wink units, returning new variable."""
-        unit_const: Final = field_units.TimeUnits.wink
+        unit_const: Final = units.TimeUnits.wink
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def year(self) -> "FieldQnty":
         """Convert to year units, returning new variable."""
-        unit_const: Final = field_units.TimeUnits.year
+        unit_const: Final = units.TimeUnits.year
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -21585,7 +21585,7 @@ class AsUnitTimeConverter(UnitConverter):
     @property
     def millisecond(self) -> "FieldQnty":
         """Convert to millisecond units, returning new variable."""
-        unit_const: Final = field_units.TimeUnits.millisecond
+        unit_const: Final = units.TimeUnits.millisecond
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -21596,13 +21596,13 @@ class AsUnitTimeConverter(UnitConverter):
     @property
     def microsecond(self) -> "FieldQnty":
         """Convert to microsecond units, returning new variable."""
-        unit_const: Final = field_units.TimeUnits.microsecond
+        unit_const: Final = units.TimeUnits.microsecond
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def nanosecond(self) -> "FieldQnty":
         """Convert to nanosecond units, returning new variable."""
-        unit_const: Final = field_units.TimeUnits.nanosecond
+        unit_const: Final = units.TimeUnits.nanosecond
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -21613,7 +21613,7 @@ class AsUnitTimeConverter(UnitConverter):
     @property
     def picosecond(self) -> "FieldQnty":
         """Convert to picosecond units, returning new variable."""
-        unit_const: Final = field_units.TimeUnits.picosecond
+        unit_const: Final = units.TimeUnits.picosecond
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -21635,7 +21635,7 @@ class AsUnitTorqueConverter(UnitConverter):
     @property
     def centimeter_kilogram_force(self) -> "FieldQnty":
         """Convert to centimeter kilogram force units, returning new variable."""
-        unit_const: Final = field_units.TorqueUnits.centimeter_kilogram_force
+        unit_const: Final = units.TorqueUnits.centimeter_kilogram_force
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -21646,7 +21646,7 @@ class AsUnitTorqueConverter(UnitConverter):
     @property
     def dyne_centimeter(self) -> "FieldQnty":
         """Convert to dyne centimeter units, returning new variable."""
-        unit_const: Final = field_units.TorqueUnits.dyne_centimeter
+        unit_const: Final = units.TorqueUnits.dyne_centimeter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -21657,7 +21657,7 @@ class AsUnitTorqueConverter(UnitConverter):
     @property
     def foot_kilogram_force(self) -> "FieldQnty":
         """Convert to foot kilogram force units, returning new variable."""
-        unit_const: Final = field_units.TorqueUnits.foot_kilogram_force
+        unit_const: Final = units.TorqueUnits.foot_kilogram_force
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -21668,7 +21668,7 @@ class AsUnitTorqueConverter(UnitConverter):
     @property
     def foot_pound_force(self) -> "FieldQnty":
         """Convert to foot pound force units, returning new variable."""
-        unit_const: Final = field_units.TorqueUnits.foot_pound_force
+        unit_const: Final = units.TorqueUnits.foot_pound_force
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -21679,7 +21679,7 @@ class AsUnitTorqueConverter(UnitConverter):
     @property
     def foot_poundal(self) -> "FieldQnty":
         """Convert to foot poundal units, returning new variable."""
-        unit_const: Final = field_units.TorqueUnits.foot_poundal
+        unit_const: Final = units.TorqueUnits.foot_poundal
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -21690,7 +21690,7 @@ class AsUnitTorqueConverter(UnitConverter):
     @property
     def in_pound_force(self) -> "FieldQnty":
         """Convert to in pound force units, returning new variable."""
-        unit_const: Final = field_units.TorqueUnits.in_pound_force
+        unit_const: Final = units.TorqueUnits.in_pound_force
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -21701,7 +21701,7 @@ class AsUnitTorqueConverter(UnitConverter):
     @property
     def inch_ounce_force(self) -> "FieldQnty":
         """Convert to inch ounce force units, returning new variable."""
-        unit_const: Final = field_units.TorqueUnits.inch_ounce_force
+        unit_const: Final = units.TorqueUnits.inch_ounce_force
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -21712,7 +21712,7 @@ class AsUnitTorqueConverter(UnitConverter):
     @property
     def meter_kilogram_force(self) -> "FieldQnty":
         """Convert to meter kilogram force units, returning new variable."""
-        unit_const: Final = field_units.TorqueUnits.meter_kilogram_force
+        unit_const: Final = units.TorqueUnits.meter_kilogram_force
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -21723,7 +21723,7 @@ class AsUnitTorqueConverter(UnitConverter):
     @property
     def newton_centimeter(self) -> "FieldQnty":
         """Convert to newton centimeter units, returning new variable."""
-        unit_const: Final = field_units.TorqueUnits.newton_centimeter
+        unit_const: Final = units.TorqueUnits.newton_centimeter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -21734,7 +21734,7 @@ class AsUnitTorqueConverter(UnitConverter):
     @property
     def newton_meter(self) -> "FieldQnty":
         """Convert to newton meter units, returning new variable."""
-        unit_const: Final = field_units.TorqueUnits.newton_meter
+        unit_const: Final = units.TorqueUnits.newton_meter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -21756,7 +21756,7 @@ class AsUnitTurbulenceEnergyDissipationRateConverter(UnitConverter):
     @property
     def square_foot_per_cubic_second(self) -> "FieldQnty":
         """Convert to square foot per cubic second units, returning new variable."""
-        unit_const: Final = field_units.TurbulenceEnergyDissipationRateUnits.square_foot_per_cubic_second
+        unit_const: Final = units.TurbulenceEnergyDissipationRateUnits.square_foot_per_cubic_second
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -21777,7 +21777,7 @@ class AsUnitTurbulenceEnergyDissipationRateConverter(UnitConverter):
     @property
     def square_meter_per_cubic_second(self) -> "FieldQnty":
         """Convert to square meter per cubic second units, returning new variable."""
-        unit_const: Final = field_units.TurbulenceEnergyDissipationRateUnits.square_meter_per_cubic_second
+        unit_const: Final = units.TurbulenceEnergyDissipationRateUnits.square_meter_per_cubic_second
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -21799,7 +21799,7 @@ class AsUnitVelocityAngularConverter(UnitConverter):
     @property
     def degree_per_minute(self) -> "FieldQnty":
         """Convert to degree per minute units, returning new variable."""
-        unit_const: Final = field_units.VelocityAngularUnits.degree_per_minute
+        unit_const: Final = units.VelocityAngularUnits.degree_per_minute
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -21820,7 +21820,7 @@ class AsUnitVelocityAngularConverter(UnitConverter):
     @property
     def degree_per_second(self) -> "FieldQnty":
         """Convert to degree per second units, returning new variable."""
-        unit_const: Final = field_units.VelocityAngularUnits.degree_per_second
+        unit_const: Final = units.VelocityAngularUnits.degree_per_second
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -21841,7 +21841,7 @@ class AsUnitVelocityAngularConverter(UnitConverter):
     @property
     def grade_per_minute(self) -> "FieldQnty":
         """Convert to grade per minute units, returning new variable."""
-        unit_const: Final = field_units.VelocityAngularUnits.grade_per_minute
+        unit_const: Final = units.VelocityAngularUnits.grade_per_minute
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -21862,7 +21862,7 @@ class AsUnitVelocityAngularConverter(UnitConverter):
     @property
     def radian_per_minute(self) -> "FieldQnty":
         """Convert to radian per minute units, returning new variable."""
-        unit_const: Final = field_units.VelocityAngularUnits.radian_per_minute
+        unit_const: Final = units.VelocityAngularUnits.radian_per_minute
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -21873,7 +21873,7 @@ class AsUnitVelocityAngularConverter(UnitConverter):
     @property
     def radian_per_second(self) -> "FieldQnty":
         """Convert to radian per second units, returning new variable."""
-        unit_const: Final = field_units.VelocityAngularUnits.radian_per_second
+        unit_const: Final = units.VelocityAngularUnits.radian_per_second
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -21884,7 +21884,7 @@ class AsUnitVelocityAngularConverter(UnitConverter):
     @property
     def revolution_per_minute(self) -> "FieldQnty":
         """Convert to revolution per minute units, returning new variable."""
-        unit_const: Final = field_units.VelocityAngularUnits.revolution_per_minute
+        unit_const: Final = units.VelocityAngularUnits.revolution_per_minute
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -21905,7 +21905,7 @@ class AsUnitVelocityAngularConverter(UnitConverter):
     @property
     def revolution_per_second(self) -> "FieldQnty":
         """Convert to revolution per second units, returning new variable."""
-        unit_const: Final = field_units.VelocityAngularUnits.revolution_per_second
+        unit_const: Final = units.VelocityAngularUnits.revolution_per_second
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -21926,7 +21926,7 @@ class AsUnitVelocityAngularConverter(UnitConverter):
     @property
     def turn_per_minute(self) -> "FieldQnty":
         """Convert to turn per minute units, returning new variable."""
-        unit_const: Final = field_units.VelocityAngularUnits.turn_per_minute
+        unit_const: Final = units.VelocityAngularUnits.turn_per_minute
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -21948,7 +21948,7 @@ class AsUnitVelocityLinearConverter(UnitConverter):
     @property
     def foot_per_hour(self) -> "FieldQnty":
         """Convert to foot per hour units, returning new variable."""
-        unit_const: Final = field_units.VelocityLinearUnits.foot_per_hour
+        unit_const: Final = units.VelocityLinearUnits.foot_per_hour
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -21974,7 +21974,7 @@ class AsUnitVelocityLinearConverter(UnitConverter):
     @property
     def foot_per_minute(self) -> "FieldQnty":
         """Convert to foot per minute units, returning new variable."""
-        unit_const: Final = field_units.VelocityLinearUnits.foot_per_minute
+        unit_const: Final = units.VelocityLinearUnits.foot_per_minute
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -21995,7 +21995,7 @@ class AsUnitVelocityLinearConverter(UnitConverter):
     @property
     def foot_per_second(self) -> "FieldQnty":
         """Convert to foot per second units, returning new variable."""
-        unit_const: Final = field_units.VelocityLinearUnits.foot_per_second
+        unit_const: Final = units.VelocityLinearUnits.foot_per_second
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -22016,7 +22016,7 @@ class AsUnitVelocityLinearConverter(UnitConverter):
     @property
     def inch_per_second(self) -> "FieldQnty":
         """Convert to inch per second units, returning new variable."""
-        unit_const: Final = field_units.VelocityLinearUnits.inch_per_second
+        unit_const: Final = units.VelocityLinearUnits.inch_per_second
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -22037,7 +22037,7 @@ class AsUnitVelocityLinearConverter(UnitConverter):
     @property
     def international_knot(self) -> "FieldQnty":
         """Convert to international knot units, returning new variable."""
-        unit_const: Final = field_units.VelocityLinearUnits.international_knot
+        unit_const: Final = units.VelocityLinearUnits.international_knot
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -22048,7 +22048,7 @@ class AsUnitVelocityLinearConverter(UnitConverter):
     @property
     def kilometer_per_hour(self) -> "FieldQnty":
         """Convert to kilometer per hour units, returning new variable."""
-        unit_const: Final = field_units.VelocityLinearUnits.kilometer_per_hour
+        unit_const: Final = units.VelocityLinearUnits.kilometer_per_hour
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -22059,7 +22059,7 @@ class AsUnitVelocityLinearConverter(UnitConverter):
     @property
     def kilometer_per_second(self) -> "FieldQnty":
         """Convert to kilometer per second units, returning new variable."""
-        unit_const: Final = field_units.VelocityLinearUnits.kilometer_per_second
+        unit_const: Final = units.VelocityLinearUnits.kilometer_per_second
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -22070,7 +22070,7 @@ class AsUnitVelocityLinearConverter(UnitConverter):
     @property
     def meter_per_second(self) -> "FieldQnty":
         """Convert to meter per second units, returning new variable."""
-        unit_const: Final = field_units.VelocityLinearUnits.meter_per_second
+        unit_const: Final = units.VelocityLinearUnits.meter_per_second
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -22081,7 +22081,7 @@ class AsUnitVelocityLinearConverter(UnitConverter):
     @property
     def mile_per_hour(self) -> "FieldQnty":
         """Convert to mile per hour units, returning new variable."""
-        unit_const: Final = field_units.VelocityLinearUnits.mile_per_hour
+        unit_const: Final = units.VelocityLinearUnits.mile_per_hour
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -22118,7 +22118,7 @@ class AsUnitViscosityDynamicConverter(UnitConverter):
     @property
     def centipoise(self) -> "FieldQnty":
         """Convert to centipoise units, returning new variable."""
-        unit_const: Final = field_units.ViscosityDynamicUnits.centipoise
+        unit_const: Final = units.ViscosityDynamicUnits.centipoise
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -22139,7 +22139,7 @@ class AsUnitViscosityDynamicConverter(UnitConverter):
     @property
     def dyne_second_per_square_centimeter(self) -> "FieldQnty":
         """Convert to dyne second per square centimeter units, returning new variable."""
-        unit_const: Final = field_units.ViscosityDynamicUnits.dyne_second_per_square_centimeter
+        unit_const: Final = units.ViscosityDynamicUnits.dyne_second_per_square_centimeter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -22150,7 +22150,7 @@ class AsUnitViscosityDynamicConverter(UnitConverter):
     @property
     def kilopound_second_per_square_meter(self) -> "FieldQnty":
         """Convert to kilopound second per square meter units, returning new variable."""
-        unit_const: Final = field_units.ViscosityDynamicUnits.kilopound_second_per_square_meter
+        unit_const: Final = units.ViscosityDynamicUnits.kilopound_second_per_square_meter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -22161,7 +22161,7 @@ class AsUnitViscosityDynamicConverter(UnitConverter):
     @property
     def millipoise(self) -> "FieldQnty":
         """Convert to millipoise units, returning new variable."""
-        unit_const: Final = field_units.ViscosityDynamicUnits.millipoise
+        unit_const: Final = units.ViscosityDynamicUnits.millipoise
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -22182,7 +22182,7 @@ class AsUnitViscosityDynamicConverter(UnitConverter):
     @property
     def newton_second_per_square_meter(self) -> "FieldQnty":
         """Convert to newton second per square meter units, returning new variable."""
-        unit_const: Final = field_units.ViscosityDynamicUnits.newton_second_per_square_meter
+        unit_const: Final = units.ViscosityDynamicUnits.newton_second_per_square_meter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -22193,7 +22193,7 @@ class AsUnitViscosityDynamicConverter(UnitConverter):
     @property
     def pascal_second(self) -> "FieldQnty":
         """Convert to pascal second units, returning new variable."""
-        unit_const: Final = field_units.ViscosityDynamicUnits.pascal_second
+        unit_const: Final = units.ViscosityDynamicUnits.pascal_second
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -22214,7 +22214,7 @@ class AsUnitViscosityDynamicConverter(UnitConverter):
     @property
     def poise(self) -> "FieldQnty":
         """Convert to poise units, returning new variable."""
-        unit_const: Final = field_units.ViscosityDynamicUnits.poise
+        unit_const: Final = units.ViscosityDynamicUnits.poise
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -22235,7 +22235,7 @@ class AsUnitViscosityDynamicConverter(UnitConverter):
     @property
     def pound_force_hour_per_square_foot(self) -> "FieldQnty":
         """Convert to pound force hour per square foot units, returning new variable."""
-        unit_const: Final = field_units.ViscosityDynamicUnits.pound_force_hour_per_square_foot
+        unit_const: Final = units.ViscosityDynamicUnits.pound_force_hour_per_square_foot
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -22256,7 +22256,7 @@ class AsUnitViscosityDynamicConverter(UnitConverter):
     @property
     def pound_force_second_per_square_foot(self) -> "FieldQnty":
         """Convert to pound force second per square foot units, returning new variable."""
-        unit_const: Final = field_units.ViscosityDynamicUnits.pound_force_second_per_square_foot
+        unit_const: Final = units.ViscosityDynamicUnits.pound_force_second_per_square_foot
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -22288,7 +22288,7 @@ class AsUnitViscosityKinematicConverter(UnitConverter):
     @property
     def centistokes(self) -> "FieldQnty":
         """Convert to centistokes units, returning new variable."""
-        unit_const: Final = field_units.ViscosityKinematicUnits.centistokes
+        unit_const: Final = units.ViscosityKinematicUnits.centistokes
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -22299,7 +22299,7 @@ class AsUnitViscosityKinematicConverter(UnitConverter):
     @property
     def millistokes(self) -> "FieldQnty":
         """Convert to millistokes units, returning new variable."""
-        unit_const: Final = field_units.ViscosityKinematicUnits.millistokes
+        unit_const: Final = units.ViscosityKinematicUnits.millistokes
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -22310,7 +22310,7 @@ class AsUnitViscosityKinematicConverter(UnitConverter):
     @property
     def square_centimeter_per_second(self) -> "FieldQnty":
         """Convert to square centimeter per second units, returning new variable."""
-        unit_const: Final = field_units.ViscosityKinematicUnits.square_centimeter_per_second
+        unit_const: Final = units.ViscosityKinematicUnits.square_centimeter_per_second
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -22321,7 +22321,7 @@ class AsUnitViscosityKinematicConverter(UnitConverter):
     @property
     def square_foot_per_hour(self) -> "FieldQnty":
         """Convert to square foot per hour units, returning new variable."""
-        unit_const: Final = field_units.ViscosityKinematicUnits.square_foot_per_hour
+        unit_const: Final = units.ViscosityKinematicUnits.square_foot_per_hour
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -22342,7 +22342,7 @@ class AsUnitViscosityKinematicConverter(UnitConverter):
     @property
     def square_foot_per_second(self) -> "FieldQnty":
         """Convert to square foot per second units, returning new variable."""
-        unit_const: Final = field_units.ViscosityKinematicUnits.square_foot_per_second
+        unit_const: Final = units.ViscosityKinematicUnits.square_foot_per_second
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -22353,7 +22353,7 @@ class AsUnitViscosityKinematicConverter(UnitConverter):
     @property
     def square_meters_per_second(self) -> "FieldQnty":
         """Convert to square meters per second units, returning new variable."""
-        unit_const: Final = field_units.ViscosityKinematicUnits.square_meters_per_second
+        unit_const: Final = units.ViscosityKinematicUnits.square_meters_per_second
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -22364,7 +22364,7 @@ class AsUnitViscosityKinematicConverter(UnitConverter):
     @property
     def stokes(self) -> "FieldQnty":
         """Convert to stokes units, returning new variable."""
-        unit_const: Final = field_units.ViscosityKinematicUnits.stokes
+        unit_const: Final = units.ViscosityKinematicUnits.stokes
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -22386,7 +22386,7 @@ class AsUnitVolumeConverter(UnitConverter):
     @property
     def acre_foot(self) -> "FieldQnty":
         """Convert to acre foot units, returning new variable."""
-        unit_const: Final = field_units.VolumeUnits.acre_foot
+        unit_const: Final = units.VolumeUnits.acre_foot
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -22397,7 +22397,7 @@ class AsUnitVolumeConverter(UnitConverter):
     @property
     def acre_inch(self) -> "FieldQnty":
         """Convert to acre inch units, returning new variable."""
-        unit_const: Final = field_units.VolumeUnits.acre_inch
+        unit_const: Final = units.VolumeUnits.acre_inch
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -22408,7 +22408,7 @@ class AsUnitVolumeConverter(UnitConverter):
     @property
     def barrel_us_liquid(self) -> "FieldQnty":
         """Convert to barrel (US Liquid) units, returning new variable."""
-        unit_const: Final = field_units.VolumeUnits.barrel_us_liquid
+        unit_const: Final = units.VolumeUnits.barrel_us_liquid
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -22419,7 +22419,7 @@ class AsUnitVolumeConverter(UnitConverter):
     @property
     def barrel_us_petro(self) -> "FieldQnty":
         """Convert to barrel (US, Petro) units, returning new variable."""
-        unit_const: Final = field_units.VolumeUnits.barrel_us_petro
+        unit_const: Final = units.VolumeUnits.barrel_us_petro
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -22430,7 +22430,7 @@ class AsUnitVolumeConverter(UnitConverter):
     @property
     def board_foot_measure(self) -> "FieldQnty":
         """Convert to board foot measure units, returning new variable."""
-        unit_const: Final = field_units.VolumeUnits.board_foot_measure
+        unit_const: Final = units.VolumeUnits.board_foot_measure
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -22451,7 +22451,7 @@ class AsUnitVolumeConverter(UnitConverter):
     @property
     def bushel_us_dry(self) -> "FieldQnty":
         """Convert to bushel (US Dry) units, returning new variable."""
-        unit_const: Final = field_units.VolumeUnits.bushel_us_dry
+        unit_const: Final = units.VolumeUnits.bushel_us_dry
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -22462,7 +22462,7 @@ class AsUnitVolumeConverter(UnitConverter):
     @property
     def centiliter(self) -> "FieldQnty":
         """Convert to centiliter units, returning new variable."""
-        unit_const: Final = field_units.VolumeUnits.centiliter
+        unit_const: Final = units.VolumeUnits.centiliter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -22483,7 +22483,7 @@ class AsUnitVolumeConverter(UnitConverter):
     @property
     def cord(self) -> "FieldQnty":
         """Convert to cord units, returning new variable."""
-        unit_const: Final = field_units.VolumeUnits.cord
+        unit_const: Final = units.VolumeUnits.cord
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -22499,7 +22499,7 @@ class AsUnitVolumeConverter(UnitConverter):
     @property
     def cord_foot(self) -> "FieldQnty":
         """Convert to cord foot units, returning new variable."""
-        unit_const: Final = field_units.VolumeUnits.cord_foot
+        unit_const: Final = units.VolumeUnits.cord_foot
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -22510,7 +22510,7 @@ class AsUnitVolumeConverter(UnitConverter):
     @property
     def cubic_centimeter(self) -> "FieldQnty":
         """Convert to cubic centimeter units, returning new variable."""
-        unit_const: Final = field_units.VolumeUnits.cubic_centimeter
+        unit_const: Final = units.VolumeUnits.cubic_centimeter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -22531,7 +22531,7 @@ class AsUnitVolumeConverter(UnitConverter):
     @property
     def cubic_decameter(self) -> "FieldQnty":
         """Convert to cubic decameter units, returning new variable."""
-        unit_const: Final = field_units.VolumeUnits.cubic_decameter
+        unit_const: Final = units.VolumeUnits.cubic_decameter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -22542,7 +22542,7 @@ class AsUnitVolumeConverter(UnitConverter):
     @property
     def cubic_decimeter(self) -> "FieldQnty":
         """Convert to cubic decimeter units, returning new variable."""
-        unit_const: Final = field_units.VolumeUnits.cubic_decimeter
+        unit_const: Final = units.VolumeUnits.cubic_decimeter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -22553,7 +22553,7 @@ class AsUnitVolumeConverter(UnitConverter):
     @property
     def cubic_foot(self) -> "FieldQnty":
         """Convert to cubic foot units, returning new variable."""
-        unit_const: Final = field_units.VolumeUnits.cubic_foot
+        unit_const: Final = units.VolumeUnits.cubic_foot
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -22574,7 +22574,7 @@ class AsUnitVolumeConverter(UnitConverter):
     @property
     def cubic_inch(self) -> "FieldQnty":
         """Convert to cubic inch units, returning new variable."""
-        unit_const: Final = field_units.VolumeUnits.cubic_inch
+        unit_const: Final = units.VolumeUnits.cubic_inch
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -22595,7 +22595,7 @@ class AsUnitVolumeConverter(UnitConverter):
     @property
     def cubic_kilometer(self) -> "FieldQnty":
         """Convert to cubic kilometer units, returning new variable."""
-        unit_const: Final = field_units.VolumeUnits.cubic_kilometer
+        unit_const: Final = units.VolumeUnits.cubic_kilometer
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -22606,7 +22606,7 @@ class AsUnitVolumeConverter(UnitConverter):
     @property
     def cubic_meter(self) -> "FieldQnty":
         """Convert to cubic meter units, returning new variable."""
-        unit_const: Final = field_units.VolumeUnits.cubic_meter
+        unit_const: Final = units.VolumeUnits.cubic_meter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -22617,7 +22617,7 @@ class AsUnitVolumeConverter(UnitConverter):
     @property
     def cubic_micrometer(self) -> "FieldQnty":
         """Convert to cubic micrometer units, returning new variable."""
-        unit_const: Final = field_units.VolumeUnits.cubic_micrometer
+        unit_const: Final = units.VolumeUnits.cubic_micrometer
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -22628,7 +22628,7 @@ class AsUnitVolumeConverter(UnitConverter):
     @property
     def cubic_mile_us_intl(self) -> "FieldQnty":
         """Convert to cubic mile (US, Intl) units, returning new variable."""
-        unit_const: Final = field_units.VolumeUnits.cubic_mile_us_intl
+        unit_const: Final = units.VolumeUnits.cubic_mile_us_intl
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -22639,7 +22639,7 @@ class AsUnitVolumeConverter(UnitConverter):
     @property
     def cubic_millimeter(self) -> "FieldQnty":
         """Convert to cubic millimeter units, returning new variable."""
-        unit_const: Final = field_units.VolumeUnits.cubic_millimeter
+        unit_const: Final = units.VolumeUnits.cubic_millimeter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -22650,7 +22650,7 @@ class AsUnitVolumeConverter(UnitConverter):
     @property
     def cubic_yard(self) -> "FieldQnty":
         """Convert to cubic yard units, returning new variable."""
-        unit_const: Final = field_units.VolumeUnits.cubic_yard
+        unit_const: Final = units.VolumeUnits.cubic_yard
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -22671,7 +22671,7 @@ class AsUnitVolumeConverter(UnitConverter):
     @property
     def decast_re(self) -> "FieldQnty":
         """Convert to decastére units, returning new variable."""
-        unit_const: Final = field_units.VolumeUnits.decast_re
+        unit_const: Final = units.VolumeUnits.decast_re
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -22682,7 +22682,7 @@ class AsUnitVolumeConverter(UnitConverter):
     @property
     def deciliter(self) -> "FieldQnty":
         """Convert to deciliter units, returning new variable."""
-        unit_const: Final = field_units.VolumeUnits.deciliter
+        unit_const: Final = units.VolumeUnits.deciliter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -22703,7 +22703,7 @@ class AsUnitVolumeConverter(UnitConverter):
     @property
     def fluid_drachm_uk(self) -> "FieldQnty":
         """Convert to fluid drachm (UK) units, returning new variable."""
-        unit_const: Final = field_units.VolumeUnits.fluid_drachm_uk
+        unit_const: Final = units.VolumeUnits.fluid_drachm_uk
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -22714,7 +22714,7 @@ class AsUnitVolumeConverter(UnitConverter):
     @property
     def fluid_dram_us(self) -> "FieldQnty":
         """Convert to fluid dram (US) units, returning new variable."""
-        unit_const: Final = field_units.VolumeUnits.fluid_dram_us
+        unit_const: Final = units.VolumeUnits.fluid_dram_us
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -22725,7 +22725,7 @@ class AsUnitVolumeConverter(UnitConverter):
     @property
     def fluid_ounce_us(self) -> "FieldQnty":
         """Convert to fluid ounce (US) units, returning new variable."""
-        unit_const: Final = field_units.VolumeUnits.fluid_ounce_us
+        unit_const: Final = units.VolumeUnits.fluid_ounce_us
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -22736,7 +22736,7 @@ class AsUnitVolumeConverter(UnitConverter):
     @property
     def gallon_imperial_uk(self) -> "FieldQnty":
         """Convert to gallon (Imperial UK) units, returning new variable."""
-        unit_const: Final = field_units.VolumeUnits.gallon_imperial_uk
+        unit_const: Final = units.VolumeUnits.gallon_imperial_uk
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -22757,7 +22757,7 @@ class AsUnitVolumeConverter(UnitConverter):
     @property
     def gallon_us_dry(self) -> "FieldQnty":
         """Convert to gallon (US Dry) units, returning new variable."""
-        unit_const: Final = field_units.VolumeUnits.gallon_us_dry
+        unit_const: Final = units.VolumeUnits.gallon_us_dry
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -22768,7 +22768,7 @@ class AsUnitVolumeConverter(UnitConverter):
     @property
     def gallon_us_liquid(self) -> "FieldQnty":
         """Convert to gallon (US Liquid) units, returning new variable."""
-        unit_const: Final = field_units.VolumeUnits.gallon_us_liquid
+        unit_const: Final = units.VolumeUnits.gallon_us_liquid
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -22779,13 +22779,13 @@ class AsUnitVolumeConverter(UnitConverter):
     @property
     def last(self) -> "FieldQnty":
         """Convert to last units, returning new variable."""
-        unit_const: Final = field_units.VolumeUnits.last
+        unit_const: Final = units.VolumeUnits.last
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def liter(self) -> "FieldQnty":
         """Convert to liter units, returning new variable."""
-        unit_const: Final = field_units.VolumeUnits.liter
+        unit_const: Final = units.VolumeUnits.liter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -22806,7 +22806,7 @@ class AsUnitVolumeConverter(UnitConverter):
     @property
     def microliter(self) -> "FieldQnty":
         """Convert to microliter units, returning new variable."""
-        unit_const: Final = field_units.VolumeUnits.microliter
+        unit_const: Final = units.VolumeUnits.microliter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -22827,7 +22827,7 @@ class AsUnitVolumeConverter(UnitConverter):
     @property
     def milliliter(self) -> "FieldQnty":
         """Convert to milliliter units, returning new variable."""
-        unit_const: Final = field_units.VolumeUnits.milliliter
+        unit_const: Final = units.VolumeUnits.milliliter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -22838,13 +22838,13 @@ class AsUnitVolumeConverter(UnitConverter):
     @property
     def mohr_centicube(self) -> "FieldQnty":
         """Convert to Mohr centicube units, returning new variable."""
-        unit_const: Final = field_units.VolumeUnits.mohr_centicube
+        unit_const: Final = units.VolumeUnits.mohr_centicube
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def pint_uk(self) -> "FieldQnty":
         """Convert to pint (UK) units, returning new variable."""
-        unit_const: Final = field_units.VolumeUnits.pint_uk
+        unit_const: Final = units.VolumeUnits.pint_uk
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -22855,7 +22855,7 @@ class AsUnitVolumeConverter(UnitConverter):
     @property
     def pint_us_dry(self) -> "FieldQnty":
         """Convert to pint (US Dry) units, returning new variable."""
-        unit_const: Final = field_units.VolumeUnits.pint_us_dry
+        unit_const: Final = units.VolumeUnits.pint_us_dry
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -22866,7 +22866,7 @@ class AsUnitVolumeConverter(UnitConverter):
     @property
     def pint_us_liquid(self) -> "FieldQnty":
         """Convert to pint (US Liquid) units, returning new variable."""
-        unit_const: Final = field_units.VolumeUnits.pint_us_liquid
+        unit_const: Final = units.VolumeUnits.pint_us_liquid
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -22877,7 +22877,7 @@ class AsUnitVolumeConverter(UnitConverter):
     @property
     def quart_us_dry(self) -> "FieldQnty":
         """Convert to quart (US Dry) units, returning new variable."""
-        unit_const: Final = field_units.VolumeUnits.quart_us_dry
+        unit_const: Final = units.VolumeUnits.quart_us_dry
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -22888,7 +22888,7 @@ class AsUnitVolumeConverter(UnitConverter):
     @property
     def st_re(self) -> "FieldQnty":
         """Convert to stére units, returning new variable."""
-        unit_const: Final = field_units.VolumeUnits.st_re
+        unit_const: Final = units.VolumeUnits.st_re
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -22899,7 +22899,7 @@ class AsUnitVolumeConverter(UnitConverter):
     @property
     def tablespoon_metric(self) -> "FieldQnty":
         """Convert to tablespoon (Metric) units, returning new variable."""
-        unit_const: Final = field_units.VolumeUnits.tablespoon_metric
+        unit_const: Final = units.VolumeUnits.tablespoon_metric
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -22910,7 +22910,7 @@ class AsUnitVolumeConverter(UnitConverter):
     @property
     def tablespoon_us(self) -> "FieldQnty":
         """Convert to tablespoon (US) units, returning new variable."""
-        unit_const: Final = field_units.VolumeUnits.tablespoon_us
+        unit_const: Final = units.VolumeUnits.tablespoon_us
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -22921,7 +22921,7 @@ class AsUnitVolumeConverter(UnitConverter):
     @property
     def teaspoon_us(self) -> "FieldQnty":
         """Convert to teaspoon (US) units, returning new variable."""
-        unit_const: Final = field_units.VolumeUnits.teaspoon_us
+        unit_const: Final = units.VolumeUnits.teaspoon_us
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -22943,7 +22943,7 @@ class AsUnitVolumeFractionOfIConverter(UnitConverter):
     @property
     def cubic_centimeters_of_i_per_cubic_meter_total(self) -> "FieldQnty":
         """Convert to cubic centimeters of "i" per cubic meter total units, returning new variable."""
-        unit_const: Final = field_units.VolumeFractionOfIUnits.cubic_centimeters_of_i_per_cubic_meter_total
+        unit_const: Final = units.VolumeFractionOfIUnits.cubic_centimeters_of_i_per_cubic_meter_total
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -22964,7 +22964,7 @@ class AsUnitVolumeFractionOfIConverter(UnitConverter):
     @property
     def cubic_foot_of_i_per_cubic_foot_total(self) -> "FieldQnty":
         """Convert to cubic foot of "i" per cubic foot total units, returning new variable."""
-        unit_const: Final = field_units.VolumeFractionOfIUnits.cubic_foot_of_i_per_cubic_foot_total
+        unit_const: Final = units.VolumeFractionOfIUnits.cubic_foot_of_i_per_cubic_foot_total
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -22985,7 +22985,7 @@ class AsUnitVolumeFractionOfIConverter(UnitConverter):
     @property
     def cubic_meters_of_i_per_cubic_meter_total(self) -> "FieldQnty":
         """Convert to cubic meters of " i " per cubic meter total units, returning new variable."""
-        unit_const: Final = field_units.VolumeFractionOfIUnits.cubic_meters_of_i_per_cubic_meter_total
+        unit_const: Final = units.VolumeFractionOfIUnits.cubic_meters_of_i_per_cubic_meter_total
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -22996,7 +22996,7 @@ class AsUnitVolumeFractionOfIConverter(UnitConverter):
     @property
     def gallons_of_i_per_gallon_total(self) -> "FieldQnty":
         """Convert to gallons of "i" per gallon total units, returning new variable."""
-        unit_const: Final = field_units.VolumeFractionOfIUnits.gallons_of_i_per_gallon_total
+        unit_const: Final = units.VolumeFractionOfIUnits.gallons_of_i_per_gallon_total
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -23018,7 +23018,7 @@ class AsUnitVolumetricCalorificHeatingValueConverter(UnitConverter):
     @property
     def british_thermal_unit_per_cubic_foot(self) -> "FieldQnty":
         """Convert to British thermal unit per cubic foot units, returning new variable."""
-        unit_const: Final = field_units.VolumetricCalorificHeatingValueUnits.british_thermal_unit_per_cubic_foot
+        unit_const: Final = units.VolumetricCalorificHeatingValueUnits.british_thermal_unit_per_cubic_foot
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -23039,7 +23039,7 @@ class AsUnitVolumetricCalorificHeatingValueConverter(UnitConverter):
     @property
     def british_thermal_unit_per_gallon_uk(self) -> "FieldQnty":
         """Convert to British thermal unit per gallon (UK) units, returning new variable."""
-        unit_const: Final = field_units.VolumetricCalorificHeatingValueUnits.british_thermal_unit_per_gallon_uk
+        unit_const: Final = units.VolumetricCalorificHeatingValueUnits.british_thermal_unit_per_gallon_uk
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -23050,7 +23050,7 @@ class AsUnitVolumetricCalorificHeatingValueConverter(UnitConverter):
     @property
     def british_thermal_unit_per_gallon_us(self) -> "FieldQnty":
         """Convert to British thermal unit per gallon (US) units, returning new variable."""
-        unit_const: Final = field_units.VolumetricCalorificHeatingValueUnits.british_thermal_unit_per_gallon_us
+        unit_const: Final = units.VolumetricCalorificHeatingValueUnits.british_thermal_unit_per_gallon_us
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -23061,7 +23061,7 @@ class AsUnitVolumetricCalorificHeatingValueConverter(UnitConverter):
     @property
     def calorie_per_cubic_centimeter(self) -> "FieldQnty":
         """Convert to calorie per cubic centimeter units, returning new variable."""
-        unit_const: Final = field_units.VolumetricCalorificHeatingValueUnits.calorie_per_cubic_centimeter
+        unit_const: Final = units.VolumetricCalorificHeatingValueUnits.calorie_per_cubic_centimeter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -23082,7 +23082,7 @@ class AsUnitVolumetricCalorificHeatingValueConverter(UnitConverter):
     @property
     def chu_per_cubic_foot(self) -> "FieldQnty":
         """Convert to Chu per cubic foot units, returning new variable."""
-        unit_const: Final = field_units.VolumetricCalorificHeatingValueUnits.chu_per_cubic_foot
+        unit_const: Final = units.VolumetricCalorificHeatingValueUnits.chu_per_cubic_foot
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -23103,7 +23103,7 @@ class AsUnitVolumetricCalorificHeatingValueConverter(UnitConverter):
     @property
     def joule_per_cubic_meter(self) -> "FieldQnty":
         """Convert to joule per cubic meter units, returning new variable."""
-        unit_const: Final = field_units.VolumetricCalorificHeatingValueUnits.joule_per_cubic_meter
+        unit_const: Final = units.VolumetricCalorificHeatingValueUnits.joule_per_cubic_meter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -23114,7 +23114,7 @@ class AsUnitVolumetricCalorificHeatingValueConverter(UnitConverter):
     @property
     def kilocalorie_per_cubic_foot(self) -> "FieldQnty":
         """Convert to kilocalorie per cubic foot units, returning new variable."""
-        unit_const: Final = field_units.VolumetricCalorificHeatingValueUnits.kilocalorie_per_cubic_foot
+        unit_const: Final = units.VolumetricCalorificHeatingValueUnits.kilocalorie_per_cubic_foot
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -23135,7 +23135,7 @@ class AsUnitVolumetricCalorificHeatingValueConverter(UnitConverter):
     @property
     def kilocalorie_per_cubic_meter(self) -> "FieldQnty":
         """Convert to kilocalorie per cubic meter units, returning new variable."""
-        unit_const: Final = field_units.VolumetricCalorificHeatingValueUnits.kilocalorie_per_cubic_meter
+        unit_const: Final = units.VolumetricCalorificHeatingValueUnits.kilocalorie_per_cubic_meter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -23146,7 +23146,7 @@ class AsUnitVolumetricCalorificHeatingValueConverter(UnitConverter):
     @property
     def therm_100_k_btu(self) -> "FieldQnty":
         """Convert to therm ( 100 K Btu ) per cubic foot units, returning new variable."""
-        unit_const: Final = field_units.VolumetricCalorificHeatingValueUnits.therm_100_k_btu
+        unit_const: Final = units.VolumetricCalorificHeatingValueUnits.therm_100_k_btu
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -23168,7 +23168,7 @@ class AsUnitVolumetricCoefficientOfExpansionConverter(UnitConverter):
     @property
     def gram_per_cubic_centimeter_per_kelvin_or_degree_celsius(self) -> "FieldQnty":
         """Convert to gram per cubic centimeter per kelvin (or degree Celsius) units, returning new variable."""
-        unit_const: Final = field_units.VolumetricCoefficientOfExpansionUnits.gram_per_cubic_centimeter_per_kelvin_or_degree_celsius
+        unit_const: Final = units.VolumetricCoefficientOfExpansionUnits.gram_per_cubic_centimeter_per_kelvin_or_degree_celsius
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -23189,7 +23189,7 @@ class AsUnitVolumetricCoefficientOfExpansionConverter(UnitConverter):
     @property
     def kilogram_per_cubic_meter_per_kelvin_or_degree_celsius(self) -> "FieldQnty":
         """Convert to kilogram per cubic meter per kelvin (or degree Celsius) units, returning new variable."""
-        unit_const: Final = field_units.VolumetricCoefficientOfExpansionUnits.kilogram_per_cubic_meter_per_kelvin_or_degree_celsius
+        unit_const: Final = units.VolumetricCoefficientOfExpansionUnits.kilogram_per_cubic_meter_per_kelvin_or_degree_celsius
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -23210,7 +23210,7 @@ class AsUnitVolumetricCoefficientOfExpansionConverter(UnitConverter):
     @property
     def pound_per_cubic_foot_per_degree_fahrenheit_or_degree_rankine(self) -> "FieldQnty":
         """Convert to pound per cubic foot per degree Fahrenheit (or degree Rankine) units, returning new variable."""
-        unit_const: Final = field_units.VolumetricCoefficientOfExpansionUnits.pound_per_cubic_foot_per_degree_fahrenheit_or_degree_rankine
+        unit_const: Final = units.VolumetricCoefficientOfExpansionUnits.pound_per_cubic_foot_per_degree_fahrenheit_or_degree_rankine
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -23231,7 +23231,7 @@ class AsUnitVolumetricCoefficientOfExpansionConverter(UnitConverter):
     @property
     def pound_per_cubic_foot_per_kelvin_or_degree_celsius(self) -> "FieldQnty":
         """Convert to pound per cubic foot per kelvin (or degree Celsius) units, returning new variable."""
-        unit_const: Final = field_units.VolumetricCoefficientOfExpansionUnits.pound_per_cubic_foot_per_kelvin_or_degree_celsius
+        unit_const: Final = units.VolumetricCoefficientOfExpansionUnits.pound_per_cubic_foot_per_kelvin_or_degree_celsius
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -23263,7 +23263,7 @@ class AsUnitVolumetricFlowRateConverter(UnitConverter):
     @property
     def cubic_feet_per_day(self) -> "FieldQnty":
         """Convert to cubic feet per day units, returning new variable."""
-        unit_const: Final = field_units.VolumetricFlowRateUnits.cubic_feet_per_day
+        unit_const: Final = units.VolumetricFlowRateUnits.cubic_feet_per_day
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -23289,7 +23289,7 @@ class AsUnitVolumetricFlowRateConverter(UnitConverter):
     @property
     def cubic_feet_per_hour(self) -> "FieldQnty":
         """Convert to cubic feet per hour units, returning new variable."""
-        unit_const: Final = field_units.VolumetricFlowRateUnits.cubic_feet_per_hour
+        unit_const: Final = units.VolumetricFlowRateUnits.cubic_feet_per_hour
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -23315,7 +23315,7 @@ class AsUnitVolumetricFlowRateConverter(UnitConverter):
     @property
     def cubic_feet_per_minute(self) -> "FieldQnty":
         """Convert to cubic feet per minute units, returning new variable."""
-        unit_const: Final = field_units.VolumetricFlowRateUnits.cubic_feet_per_minute
+        unit_const: Final = units.VolumetricFlowRateUnits.cubic_feet_per_minute
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -23341,7 +23341,7 @@ class AsUnitVolumetricFlowRateConverter(UnitConverter):
     @property
     def cubic_feet_per_second(self) -> "FieldQnty":
         """Convert to cubic feet per second units, returning new variable."""
-        unit_const: Final = field_units.VolumetricFlowRateUnits.cubic_feet_per_second
+        unit_const: Final = units.VolumetricFlowRateUnits.cubic_feet_per_second
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -23367,7 +23367,7 @@ class AsUnitVolumetricFlowRateConverter(UnitConverter):
     @property
     def cubic_meters_per_day(self) -> "FieldQnty":
         """Convert to cubic meters per day units, returning new variable."""
-        unit_const: Final = field_units.VolumetricFlowRateUnits.cubic_meters_per_day
+        unit_const: Final = units.VolumetricFlowRateUnits.cubic_meters_per_day
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -23378,7 +23378,7 @@ class AsUnitVolumetricFlowRateConverter(UnitConverter):
     @property
     def cubic_meters_per_hour(self) -> "FieldQnty":
         """Convert to cubic meters per hour units, returning new variable."""
-        unit_const: Final = field_units.VolumetricFlowRateUnits.cubic_meters_per_hour
+        unit_const: Final = units.VolumetricFlowRateUnits.cubic_meters_per_hour
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -23389,7 +23389,7 @@ class AsUnitVolumetricFlowRateConverter(UnitConverter):
     @property
     def cubic_meters_per_minute(self) -> "FieldQnty":
         """Convert to cubic meters per minute units, returning new variable."""
-        unit_const: Final = field_units.VolumetricFlowRateUnits.cubic_meters_per_minute
+        unit_const: Final = units.VolumetricFlowRateUnits.cubic_meters_per_minute
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -23400,7 +23400,7 @@ class AsUnitVolumetricFlowRateConverter(UnitConverter):
     @property
     def cubic_meters_per_second(self) -> "FieldQnty":
         """Convert to cubic meters per second units, returning new variable."""
-        unit_const: Final = field_units.VolumetricFlowRateUnits.cubic_meters_per_second
+        unit_const: Final = units.VolumetricFlowRateUnits.cubic_meters_per_second
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -23411,7 +23411,7 @@ class AsUnitVolumetricFlowRateConverter(UnitConverter):
     @property
     def gallons_per_day(self) -> "FieldQnty":
         """Convert to gallons per day units, returning new variable."""
-        unit_const: Final = field_units.VolumetricFlowRateUnits.gallons_per_day
+        unit_const: Final = units.VolumetricFlowRateUnits.gallons_per_day
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -23437,7 +23437,7 @@ class AsUnitVolumetricFlowRateConverter(UnitConverter):
     @property
     def gallons_per_hour(self) -> "FieldQnty":
         """Convert to gallons per hour units, returning new variable."""
-        unit_const: Final = field_units.VolumetricFlowRateUnits.gallons_per_hour
+        unit_const: Final = units.VolumetricFlowRateUnits.gallons_per_hour
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -23463,7 +23463,7 @@ class AsUnitVolumetricFlowRateConverter(UnitConverter):
     @property
     def gallons_per_minute(self) -> "FieldQnty":
         """Convert to gallons per minute units, returning new variable."""
-        unit_const: Final = field_units.VolumetricFlowRateUnits.gallons_per_minute
+        unit_const: Final = units.VolumetricFlowRateUnits.gallons_per_minute
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -23484,7 +23484,7 @@ class AsUnitVolumetricFlowRateConverter(UnitConverter):
     @property
     def gallons_per_second(self) -> "FieldQnty":
         """Convert to gallons per second units, returning new variable."""
-        unit_const: Final = field_units.VolumetricFlowRateUnits.gallons_per_second
+        unit_const: Final = units.VolumetricFlowRateUnits.gallons_per_second
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -23510,7 +23510,7 @@ class AsUnitVolumetricFlowRateConverter(UnitConverter):
     @property
     def liters_per_day(self) -> "FieldQnty":
         """Convert to liters per day units, returning new variable."""
-        unit_const: Final = field_units.VolumetricFlowRateUnits.liters_per_day
+        unit_const: Final = units.VolumetricFlowRateUnits.liters_per_day
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -23521,7 +23521,7 @@ class AsUnitVolumetricFlowRateConverter(UnitConverter):
     @property
     def liters_per_hour(self) -> "FieldQnty":
         """Convert to liters per hour units, returning new variable."""
-        unit_const: Final = field_units.VolumetricFlowRateUnits.liters_per_hour
+        unit_const: Final = units.VolumetricFlowRateUnits.liters_per_hour
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -23532,13 +23532,13 @@ class AsUnitVolumetricFlowRateConverter(UnitConverter):
     @property
     def liters_per_minute(self) -> "FieldQnty":
         """Convert to liters per minute units, returning new variable."""
-        unit_const: Final = field_units.VolumetricFlowRateUnits.liters_per_minute
+        unit_const: Final = units.VolumetricFlowRateUnits.liters_per_minute
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def liters_per_second(self) -> "FieldQnty":
         """Convert to liters per second units, returning new variable."""
-        unit_const: Final = field_units.VolumetricFlowRateUnits.liters_per_second
+        unit_const: Final = units.VolumetricFlowRateUnits.liters_per_second
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -23560,7 +23560,7 @@ class AsUnitVolumetricFluxConverter(UnitConverter):
     @property
     def cubic_feet_per_square_foot_per_day(self) -> "FieldQnty":
         """Convert to cubic feet per square foot per day units, returning new variable."""
-        unit_const: Final = field_units.VolumetricFluxUnits.cubic_feet_per_square_foot_per_day
+        unit_const: Final = units.VolumetricFluxUnits.cubic_feet_per_square_foot_per_day
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -23581,7 +23581,7 @@ class AsUnitVolumetricFluxConverter(UnitConverter):
     @property
     def cubic_feet_per_square_foot_per_hour(self) -> "FieldQnty":
         """Convert to cubic feet per square foot per hour units, returning new variable."""
-        unit_const: Final = field_units.VolumetricFluxUnits.cubic_feet_per_square_foot_per_hour
+        unit_const: Final = units.VolumetricFluxUnits.cubic_feet_per_square_foot_per_hour
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -23602,7 +23602,7 @@ class AsUnitVolumetricFluxConverter(UnitConverter):
     @property
     def cubic_feet_per_square_foot_per_minute(self) -> "FieldQnty":
         """Convert to cubic feet per square foot per minute units, returning new variable."""
-        unit_const: Final = field_units.VolumetricFluxUnits.cubic_feet_per_square_foot_per_minute
+        unit_const: Final = units.VolumetricFluxUnits.cubic_feet_per_square_foot_per_minute
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -23623,7 +23623,7 @@ class AsUnitVolumetricFluxConverter(UnitConverter):
     @property
     def cubic_feet_per_square_foot_per_second(self) -> "FieldQnty":
         """Convert to cubic feet per square foot per second units, returning new variable."""
-        unit_const: Final = field_units.VolumetricFluxUnits.cubic_feet_per_square_foot_per_second
+        unit_const: Final = units.VolumetricFluxUnits.cubic_feet_per_square_foot_per_second
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -23644,7 +23644,7 @@ class AsUnitVolumetricFluxConverter(UnitConverter):
     @property
     def cubic_meters_per_square_meter_per_day(self) -> "FieldQnty":
         """Convert to cubic meters per square meter per day units, returning new variable."""
-        unit_const: Final = field_units.VolumetricFluxUnits.cubic_meters_per_square_meter_per_day
+        unit_const: Final = units.VolumetricFluxUnits.cubic_meters_per_square_meter_per_day
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -23655,7 +23655,7 @@ class AsUnitVolumetricFluxConverter(UnitConverter):
     @property
     def cubic_meters_per_square_meter_per_hour(self) -> "FieldQnty":
         """Convert to cubic meters per square meter per hour units, returning new variable."""
-        unit_const: Final = field_units.VolumetricFluxUnits.cubic_meters_per_square_meter_per_hour
+        unit_const: Final = units.VolumetricFluxUnits.cubic_meters_per_square_meter_per_hour
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -23666,7 +23666,7 @@ class AsUnitVolumetricFluxConverter(UnitConverter):
     @property
     def cubic_meters_per_square_meter_per_minute(self) -> "FieldQnty":
         """Convert to cubic meters per square meter per minute units, returning new variable."""
-        unit_const: Final = field_units.VolumetricFluxUnits.cubic_meters_per_square_meter_per_minute
+        unit_const: Final = units.VolumetricFluxUnits.cubic_meters_per_square_meter_per_minute
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -23677,7 +23677,7 @@ class AsUnitVolumetricFluxConverter(UnitConverter):
     @property
     def cubic_meters_per_square_meter_per_second(self) -> "FieldQnty":
         """Convert to cubic meters per square meter per second units, returning new variable."""
-        unit_const: Final = field_units.VolumetricFluxUnits.cubic_meters_per_square_meter_per_second
+        unit_const: Final = units.VolumetricFluxUnits.cubic_meters_per_square_meter_per_second
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -23688,7 +23688,7 @@ class AsUnitVolumetricFluxConverter(UnitConverter):
     @property
     def gallons_per_square_foot_per_day(self) -> "FieldQnty":
         """Convert to gallons per square foot per day units, returning new variable."""
-        unit_const: Final = field_units.VolumetricFluxUnits.gallons_per_square_foot_per_day
+        unit_const: Final = units.VolumetricFluxUnits.gallons_per_square_foot_per_day
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -23709,7 +23709,7 @@ class AsUnitVolumetricFluxConverter(UnitConverter):
     @property
     def gallons_per_square_foot_per_hour(self) -> "FieldQnty":
         """Convert to gallons per square foot per hour units, returning new variable."""
-        unit_const: Final = field_units.VolumetricFluxUnits.gallons_per_square_foot_per_hour
+        unit_const: Final = units.VolumetricFluxUnits.gallons_per_square_foot_per_hour
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -23730,7 +23730,7 @@ class AsUnitVolumetricFluxConverter(UnitConverter):
     @property
     def gallons_per_square_foot_per_minute(self) -> "FieldQnty":
         """Convert to gallons per square foot per minute units, returning new variable."""
-        unit_const: Final = field_units.VolumetricFluxUnits.gallons_per_square_foot_per_minute
+        unit_const: Final = units.VolumetricFluxUnits.gallons_per_square_foot_per_minute
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -23756,7 +23756,7 @@ class AsUnitVolumetricFluxConverter(UnitConverter):
     @property
     def gallons_per_square_foot_per_second(self) -> "FieldQnty":
         """Convert to gallons per square foot per second units, returning new variable."""
-        unit_const: Final = field_units.VolumetricFluxUnits.gallons_per_square_foot_per_second
+        unit_const: Final = units.VolumetricFluxUnits.gallons_per_square_foot_per_second
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -23777,25 +23777,25 @@ class AsUnitVolumetricFluxConverter(UnitConverter):
     @property
     def liters_per_square_meter_per_day(self) -> "FieldQnty":
         """Convert to liters per square meter per day units, returning new variable."""
-        unit_const: Final = field_units.VolumetricFluxUnits.liters_per_square_meter_per_day
+        unit_const: Final = units.VolumetricFluxUnits.liters_per_square_meter_per_day
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def liters_per_square_meter_per_hour(self) -> "FieldQnty":
         """Convert to liters per square meter per hour units, returning new variable."""
-        unit_const: Final = field_units.VolumetricFluxUnits.liters_per_square_meter_per_hour
+        unit_const: Final = units.VolumetricFluxUnits.liters_per_square_meter_per_hour
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def liters_per_square_meter_per_minute(self) -> "FieldQnty":
         """Convert to liters per square meter per minute units, returning new variable."""
-        unit_const: Final = field_units.VolumetricFluxUnits.liters_per_square_meter_per_minute
+        unit_const: Final = units.VolumetricFluxUnits.liters_per_square_meter_per_minute
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
     def liters_per_square_meter_per_second(self) -> "FieldQnty":
         """Convert to liters per square meter per second units, returning new variable."""
-        unit_const: Final = field_units.VolumetricFluxUnits.liters_per_square_meter_per_second
+        unit_const: Final = units.VolumetricFluxUnits.liters_per_square_meter_per_second
         return self._convert_quantity(unit_const, modify_original=False)
 
 
@@ -23812,7 +23812,7 @@ class AsUnitVolumetricMassFlowRateConverter(UnitConverter):
     @property
     def gram_per_second_per_cubic_centimeter(self) -> "FieldQnty":
         """Convert to gram per second per cubic centimeter units, returning new variable."""
-        unit_const: Final = field_units.VolumetricMassFlowRateUnits.gram_per_second_per_cubic_centimeter
+        unit_const: Final = units.VolumetricMassFlowRateUnits.gram_per_second_per_cubic_centimeter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -23838,7 +23838,7 @@ class AsUnitVolumetricMassFlowRateConverter(UnitConverter):
     @property
     def kilogram_per_hour_per_cubic_foot(self) -> "FieldQnty":
         """Convert to kilogram per hour per cubic foot units, returning new variable."""
-        unit_const: Final = field_units.VolumetricMassFlowRateUnits.kilogram_per_hour_per_cubic_foot
+        unit_const: Final = units.VolumetricMassFlowRateUnits.kilogram_per_hour_per_cubic_foot
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -23859,7 +23859,7 @@ class AsUnitVolumetricMassFlowRateConverter(UnitConverter):
     @property
     def kilogram_per_hour_per_cubic_meter(self) -> "FieldQnty":
         """Convert to kilogram per hour per cubic meter units, returning new variable."""
-        unit_const: Final = field_units.VolumetricMassFlowRateUnits.kilogram_per_hour_per_cubic_meter
+        unit_const: Final = units.VolumetricMassFlowRateUnits.kilogram_per_hour_per_cubic_meter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -23880,7 +23880,7 @@ class AsUnitVolumetricMassFlowRateConverter(UnitConverter):
     @property
     def kilogram_per_second_per_cubic_meter(self) -> "FieldQnty":
         """Convert to kilogram per second per cubic meter units, returning new variable."""
-        unit_const: Final = field_units.VolumetricMassFlowRateUnits.kilogram_per_second_per_cubic_meter
+        unit_const: Final = units.VolumetricMassFlowRateUnits.kilogram_per_second_per_cubic_meter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -23901,7 +23901,7 @@ class AsUnitVolumetricMassFlowRateConverter(UnitConverter):
     @property
     def pound_per_hour_per_cubic_foot(self) -> "FieldQnty":
         """Convert to pound per hour per cubic foot units, returning new variable."""
-        unit_const: Final = field_units.VolumetricMassFlowRateUnits.pound_per_hour_per_cubic_foot
+        unit_const: Final = units.VolumetricMassFlowRateUnits.pound_per_hour_per_cubic_foot
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -23927,7 +23927,7 @@ class AsUnitVolumetricMassFlowRateConverter(UnitConverter):
     @property
     def pound_per_minute_per_cubic_foot(self) -> "FieldQnty":
         """Convert to pound per minute per cubic foot units, returning new variable."""
-        unit_const: Final = field_units.VolumetricMassFlowRateUnits.pound_per_minute_per_cubic_foot
+        unit_const: Final = units.VolumetricMassFlowRateUnits.pound_per_minute_per_cubic_foot
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -23948,7 +23948,7 @@ class AsUnitVolumetricMassFlowRateConverter(UnitConverter):
     @property
     def pound_per_second_per_cubic_foot(self) -> "FieldQnty":
         """Convert to pound per second per cubic foot units, returning new variable."""
-        unit_const: Final = field_units.VolumetricMassFlowRateUnits.pound_per_second_per_cubic_foot
+        unit_const: Final = units.VolumetricMassFlowRateUnits.pound_per_second_per_cubic_foot
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -23980,7 +23980,7 @@ class AsUnitWavenumberConverter(UnitConverter):
     @property
     def diopter(self) -> "FieldQnty":
         """Convert to diopter units, returning new variable."""
-        unit_const: Final = field_units.WavenumberUnits.diopter
+        unit_const: Final = units.WavenumberUnits.diopter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -23991,7 +23991,7 @@ class AsUnitWavenumberConverter(UnitConverter):
     @property
     def kayser(self) -> "FieldQnty":
         """Convert to kayser units, returning new variable."""
-        unit_const: Final = field_units.WavenumberUnits.kayser
+        unit_const: Final = units.WavenumberUnits.kayser
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property
@@ -24002,7 +24002,7 @@ class AsUnitWavenumberConverter(UnitConverter):
     @property
     def reciprocal_meter(self) -> "FieldQnty":
         """Convert to reciprocal meter units, returning new variable."""
-        unit_const: Final = field_units.WavenumberUnits.reciprocal_meter
+        unit_const: Final = units.WavenumberUnits.reciprocal_meter
         return self._convert_quantity(unit_const, modify_original=False)
 
     @property

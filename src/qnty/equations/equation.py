@@ -114,9 +114,9 @@ class Equation:
                 units_class_name = f"{class_name}Units"
 
                 # Import field_units dynamically to avoid circular imports
-                from ..units import field_units
+                from ..units import units
 
-                units_class = getattr(field_units, units_class_name, None)
+                units_class = getattr(units, units_class_name, None)
                 if units_class and hasattr(units_class, preferred_unit_name):
                     target_unit_constant = getattr(units_class, preferred_unit_name)
                     _logger.debug(f"Found preferred unit constant: {preferred_unit_name}")

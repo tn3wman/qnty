@@ -3091,11 +3091,10 @@
       {
         "name": "mile (geographical)",
         "normalized_name": "mile_geographical",
-        "notation": "mi",
+        "notation": "mi_geog",
         "si_conversion": 7421.59,
         "imperial_conversion": 24349.0,
         "aliases": [
-          "mi"
         ]
       },
       {
@@ -3109,11 +3108,10 @@
       {
         "name": "mile (US, statute)",
         "normalized_name": "mile_us_statute",
-        "notation": "mi",
+        "notation": "mi_us",
         "si_conversion": 1609.344,
         "imperial_conversion": 5280.0,
         "aliases": [
-          "mi"
         ]
       },
       {
@@ -3319,7 +3317,7 @@
       },
       {
         "name": "ton (metric) per kilometer",
-        "normalized_name": "ton_metric",
+        "normalized_name": "ton_metric_km",
         "notation": "t/km or MT/km",
         "si_conversion": 1.0,
         "imperial_conversion": 0.67204,
@@ -3330,7 +3328,7 @@
       },
       {
         "name": "ton (metric) per meter",
-        "normalized_name": "ton_metric",
+        "normalized_name": "ton_metric_m",
         "notation": "t/m or MT/m",
         "si_conversion": 1000.0,
         "imperial_conversion": 672.04,
@@ -4287,7 +4285,7 @@
       },
       {
         "name": "ton (metric) per cubic meter",
-        "normalized_name": "ton_metric",
+        "normalized_name": "ton_metric_m3",
         "notation": "$\\mathrm{t} / \\mathrm{m}^{3}$ or MT $/ \\mathrm{m}^{3}$",
         "si_conversion": 1000.0,
         "imperial_conversion": 62.428,

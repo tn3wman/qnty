@@ -10,8 +10,8 @@ import math
 
 import pytest
 
-from qnty.dimensions.base import BaseDimension
-from qnty.dimensions.field_dims import (
+from qnty.dimension import BaseDimension
+from qnty.dimensions.dimensions import (
     ACCELERATION,
     AREA,
     DIMENSIONLESS,
@@ -22,10 +22,10 @@ from qnty.dimensions.field_dims import (
     TIME,
     VOLUME,
 )
-from qnty.dimensions.field_dims import (
+from qnty.dimensions.dimensions import (
     ENERGY_HEAT_WORK as ENERGY,
 )
-from qnty.dimensions.field_dims import (
+from qnty.dimensions.dimensions import (
     VELOCITY_LINEAR as VELOCITY,
 )
 from qnty.dimensions.signature import DimensionSignature

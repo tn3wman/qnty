@@ -1,177 +1,122 @@
-"""
-Unit System
-===========
-
-Unit definitions, constants and registry for the high-performance unit system.
-"""
-
+import re
+from collections.abc import Iterable
 from dataclasses import dataclass
 
-from ..dimensions import DimensionSignature
-from .prefixes import SIPrefix, StandardPrefixes
+from ..dimensions import Dimension
 
 
-@dataclass(frozen=True, slots=True)
-class UnitDefinition:
-    """Immutable unit definition for the unit system."""
-
-    name: str
-    symbol: str
-    dimension: DimensionSignature
-    si_factor: float
+# ---------- Unit + Registry ----------
+@dataclass(frozen=True)
+class Unit:
+    name: str                 # canonical Python-safe name (e.g., "erg_per_gram")
+    symbol: str               # display symbol (e.g., "erg/g")
+    dimension: Dimension
+    si_factor: float          # SI_value = value * si_factor + si_offset
     si_offset: float = 0.0
-    base_unit_name: str | None = None  # Base unit without prefix
-    prefix: SIPrefix | None = None  # SI prefix if applicable
+    aliases: tuple[str, ...] = ()   # optional extra aliases
 
-    @classmethod
-    def with_prefix(cls, base_def: "UnitDefinition", prefix: SIPrefix) -> "UnitDefinition":
-        """Create a new unit definition with an SI prefix."""
-        return cls(
-            name=prefix.apply_to_name(base_def.name),
-            symbol=prefix.apply_to_symbol(base_def.symbol),
-            dimension=base_def.dimension,
-            si_factor=base_def.si_factor * prefix.factor,
-            si_offset=base_def.si_offset,
-            base_unit_name=base_def.name,
-            prefix=prefix,
-        )
+_SUP = str.maketrans("⁰¹²³⁴⁵⁶⁷⁸⁹·", "0123456789.")
 
+# Common unit aliases mapping
+_ALIASES: dict[str, str] = {
+    # Add common unit aliases here as needed
+    "metre": "meter",
+    "metres": "meter",
+    "litre": "liter",
+    "litres": "liter",
+}
 
-class UnitConstant:
-    """Unit constant that provides type safety."""
+def _norm_token(s: str) -> str:
+    s = s.strip().casefold()
+    s = s.translate(_SUP).replace("^", "")
+    s = s.replace("·","*")
+    for ch in [" ","_","-"]:
+        s = s.replace(ch, "")
+    s = _ALIASES.get(s, s)
+    if s.endswith("s") and len(s) > 1:
+        s = s[:-1]
+    return s
 
-    __slots__ = ("definition", "name", "symbol", "dimension", "si_factor", "_hash_cache")
-
-    def __init__(self, definition: UnitDefinition):
-        self.definition = definition
-        self.name = definition.name
-        self.symbol = definition.symbol
-        self.dimension = definition.dimension
-        self.si_factor = definition.si_factor
-        self._hash_cache = hash(self.name)
-
-    def __str__(self) -> str:
-        return self.symbol
-
-    def __eq__(self, other) -> bool:
-        """Equality check for unit constants."""
-        return isinstance(other, UnitConstant) and self.name == other.name
-
-    def __hash__(self) -> int:
-        """Enable unit constants as dictionary keys."""
-        return self._hash_cache
+# token like 'm2', 'm^2', 'm²', 'cm2', 'N', 'ft2'
+_EXTRACT = re.compile(r"(?P<unit>[a-zµΩ]+)(?P<exp>[0-9]+)?", re.IGNORECASE)  # Ω example if you add electrical units
 
 
-class Registry:
-    """Unit registry with pre-computed conversion tables."""
-
-    __slots__ = ("units", "conversion_table", "dimensional_groups", "_finalized", "base_units", "prefixable_units", "_conversion_cache", "_dimension_cache")
-
+class UnitRegistry:
     def __init__(self):
-        self.units: dict[str, UnitDefinition] = {}
-        self.conversion_table: dict[tuple[str, str], float] = {}  # (from_unit, to_unit) -> factor
-        self.dimensional_groups: dict[int | float, list[UnitDefinition]] = {}
-        self._finalized = False
-        self.base_units: dict[str, UnitDefinition] = {}  # Track base units for prefix generation
-        self.prefixable_units: set[str] = set()  # Track which units can have prefixes
-        # Cache for frequently used conversions
-        self._conversion_cache: dict[tuple[str, str], float] = {}
-        # Cache for common dimension mappings
-        self._dimension_cache: dict[int | float, UnitConstant] = {}
+        self._by_key: dict[str, Unit] = {}
+        self._preferred: dict[Dimension, Unit] = {}
 
-    def register_unit(self, unit_def: UnitDefinition) -> None:
-        """Register a single unit definition."""
-        if self._finalized:
-            raise RuntimeError("Cannot register units after registry is finalized")
+    @staticmethod
+    def _norm(s: str) -> str:
+        return s.strip().casefold().replace(" ", "").replace("_","").replace("-","").replace("^","")
 
-        self.units[unit_def.name] = unit_def
+    def register(self, unit: Unit, aliases: Iterable[str] = ()):
+        # Always include canonical name and symbol
+        names = set(aliases) | {unit.name, unit.symbol}
+        for a in names:
+            key = self._norm(a)
+            # Skip empty or minimal symbols to avoid collisions
+            if not key:
+                continue
+            prev = self._by_key.get(key)
+            if prev and prev is not unit:
+                # Only raise collision error if same dimension, different SI factor, AND same unit name
+                # (identical units with different conversions = real collision)
+                # Allow different units with same dimension and symbol but different SI factors
+                if (prev.dimension == unit.dimension and 
+                    prev.si_factor != unit.si_factor and 
+                    prev.name == unit.name):
+                    raise ValueError(f"Alias collision: {a!r} - same dimension '{prev.dimension}' and name '{prev.name}' but different SI factors ({prev.si_factor} vs {unit.si_factor}). Units: '{prev.name}' vs '{unit.name}'")
+            self._by_key[key] = unit
 
-        # Group by dimension
-        dim_sig = unit_def.dimension._signature
-        if dim_sig in self.dimensional_groups:
-            self.dimensional_groups[dim_sig].append(unit_def)
-        else:
-            self.dimensional_groups[dim_sig] = [unit_def]
+    def set_preferred(self, unit: Unit):
+        self._preferred[unit.dimension] = unit
 
-    def register_with_prefixes(self, unit_def: UnitDefinition, prefixes: list[StandardPrefixes] | None = None) -> None:
-        """
-        Register a unit and automatically generate prefixed variants.
+    def preferred_for(self, dim: Dimension) -> Unit | None:
+        return self._preferred.get(dim)
 
-        Args:
-            unit_def: The base unit definition
-            prefixes: List of StandardPrefixes enum values to apply. If None, uses common prefixes.
-        """
-        if self._finalized:
-            raise RuntimeError("Cannot register units after registry is finalized")
+    def get(self, alias: str) -> Unit:
+        key = self._norm(alias)
+        if key not in self._by_key:
+            raise KeyError(f"Unknown unit alias: {alias!r}")
+        return self._by_key[key]
 
-        # Register base unit
-        self.register_unit(unit_def)
-        self.base_units[unit_def.name] = unit_def
-        self.prefixable_units.add(unit_def.name)
+# Global registry instance
+ureg = UnitRegistry()
 
-        # Generate and register prefixed variants
-        if prefixes:
-            for prefix_enum in prefixes:
-                prefix = prefix_enum.value
-                if prefix.name:  # Skip NONE prefix (empty name)
-                    prefixed_unit = UnitDefinition.with_prefix(unit_def, prefix)
-                    self.register_unit(prefixed_unit)
+# ---------- UnitNamespace metaclass ----------
+class UnitNamespaceMeta(type):
+    """
+    On class creation:
+      • find all Unit instances
+      • register each to the global registry under (name, symbol, attribute-name, and Unit.aliases)
+      • if __preferred__ is set to attribute name(s), mark those as preferred for their dimensions
+      • freeze the class (attributes are constants)
+    """
+    def __new__(mcls, name, bases, ns, **kwargs):
+        cls = super().__new__(mcls, name, bases, ns)
+        # Collect Units in the class dict
+        units: dict[str, Unit] = {k: v for k, v in ns.items() if isinstance(v, Unit)}
+        # Register each unit. Also register by the attribute name.
+        for attr, unit in units.items():
+            # Include attribute name as an alias
+            all_aliases = (unit.aliases or ()) + (attr,)
+            # Also include symbol (registry.register already includes symbol and name)
+            ureg.register(unit, aliases=all_aliases)
 
-    def finalize_registration(self) -> None:
-        """Called after all units registered to precompute conversions."""
-        if not self._finalized:
-            self._precompute_conversions()
-            self._finalized = True
+        # Handle preferred(s): allow a single name or an iterable of names
+        preferred = ns.get("__preferred__", ())
+        if isinstance(preferred, str):
+            preferred = (preferred,)
+        for pref_attr in preferred:
+            if pref_attr in units:
+                ureg.set_preferred(units[pref_attr])
 
-    def _precompute_conversions(self) -> None:
-        """Pre-compute all unit conversions for fast lookup."""
-        self.conversion_table.clear()
-        self._conversion_cache.clear()
+        # Make attributes effectively read-only
+        def _blocked_setattr(self, k, v):
+            raise AttributeError(f"{name} is frozen; define units in the class body.")
+        cls.__setattr__ = _blocked_setattr  # type: ignore
+        return cls
 
-        for group in self.dimensional_groups.values():
-            if len(group) <= 1:
-                continue  # Skip groups with single units
-
-            # Compute conversion factors for all unit pairs
-            for from_unit in group:
-                for to_unit in group:
-                    if from_unit != to_unit:
-                        factor = from_unit.si_factor / to_unit.si_factor
-                        self.conversion_table[(from_unit.name, to_unit.name)] = factor
-
-    def convert(self, value: float, from_unit: UnitConstant, to_unit: UnitConstant) -> float:
-        """Convert a value between units with optimized lookups."""
-        # ULTRA-FAST PATH: Same unit - no conversion needed (most common case)
-        if from_unit.name == to_unit.name:
-            return value
-
-        # OPTIMIZATION: Extract names once to avoid repeated attribute access
-        from_name = from_unit.name
-        to_name = to_unit.name
-        key = (from_name, to_name)
-
-        # STREAMLINED CACHE: Direct dictionary access with batched operations
-        conversion_cache = self._conversion_cache
-        if key in conversion_cache:
-            return value * conversion_cache[key]
-
-        # OPTIMIZED LOOKUP: Direct table access
-        conversion_table = self.conversion_table
-        if key in conversion_table:
-            factor = conversion_table[key]
-            # Cache frequently used conversions - direct assignment for speed
-            if len(conversion_cache) < 50:
-                conversion_cache[key] = factor
-            return value * factor
-
-        # FAST FALLBACK: Direct SI factor calculation with caching
-        from_si = from_unit.si_factor
-        to_si = to_unit.si_factor
-        factor = from_si / to_si
-        if len(conversion_cache) < 50:
-            conversion_cache[key] = factor
-        return value * factor
-
-
-# Global unit registry
-registry = Registry()
+class UnitNamespace(metaclass=UnitNamespaceMeta):
+    __slots__ = ()

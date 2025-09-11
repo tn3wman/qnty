@@ -10,7 +10,7 @@ DO NOT EDIT MANUALLY - changes will be overwritten.
 
 from typing import Final
 
-from ..units import field_units
+from ..units import units
 from .base_qnty import Quantity, TypeSafeSetter
 
 # ===== SETTER CLASSES =====
@@ -25,7 +25,7 @@ class AbsorbedDoseSetter(TypeSafeSetter):
     @property
     def erg_per_gram(self):
         """Set value using erg per gram units."""
-        unit_const: Final = field_units.AbsorbedDoseUnits.erg_per_gram
+        unit_const: Final = units.AbsorbedDoseUnits.erg_per_gram
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -42,7 +42,7 @@ class AbsorbedDoseSetter(TypeSafeSetter):
     @property
     def gram_rad(self):
         """Set value using gram-rad units."""
-        unit_const: Final = field_units.AbsorbedDoseUnits.gram_rad
+        unit_const: Final = units.AbsorbedDoseUnits.gram_rad
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -54,7 +54,7 @@ class AbsorbedDoseSetter(TypeSafeSetter):
     @property
     def gray(self):
         """Set value using gray units."""
-        unit_const: Final = field_units.AbsorbedDoseUnits.gray
+        unit_const: Final = units.AbsorbedDoseUnits.gray
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -66,14 +66,14 @@ class AbsorbedDoseSetter(TypeSafeSetter):
     @property
     def rad(self):
         """Set value using rad units."""
-        unit_const: Final = field_units.AbsorbedDoseUnits.rad
+        unit_const: Final = units.AbsorbedDoseUnits.rad
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def milligray(self):
         """Set value using milligray units."""
-        unit_const: Final = field_units.AbsorbedDoseUnits.milligray
+        unit_const: Final = units.AbsorbedDoseUnits.milligray
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -85,7 +85,7 @@ class AbsorbedDoseSetter(TypeSafeSetter):
     @property
     def microgray(self):
         """Set value using microgray units."""
-        unit_const: Final = field_units.AbsorbedDoseUnits.microgray
+        unit_const: Final = units.AbsorbedDoseUnits.microgray
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -98,7 +98,7 @@ class AccelerationSetter(TypeSafeSetter):
     @property
     def meter_per_second_squared(self):
         """Set value using meter per second squared units."""
-        unit_const: Final = field_units.AccelerationUnits.meter_per_second_squared
+        unit_const: Final = units.AccelerationUnits.meter_per_second_squared
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -115,7 +115,7 @@ class AccelerationSetter(TypeSafeSetter):
     @property
     def foot_per_second_squared(self):
         """Set value using foot per second squared units."""
-        unit_const: Final = field_units.AccelerationUnits.foot_per_second_squared
+        unit_const: Final = units.AccelerationUnits.foot_per_second_squared
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -143,7 +143,7 @@ class ActivationEnergySetter(TypeSafeSetter):
     @property
     def btu_per_pound_mole(self):
         """Set value using Btu per pound mole units."""
-        unit_const: Final = field_units.ActivationEnergyUnits.btu_per_pound_mole
+        unit_const: Final = units.ActivationEnergyUnits.btu_per_pound_mole
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -160,7 +160,7 @@ class ActivationEnergySetter(TypeSafeSetter):
     @property
     def calorie_mean_per_gram_mole(self):
         """Set value using calorie (mean) per gram mole units."""
-        unit_const: Final = field_units.ActivationEnergyUnits.calorie_mean_per_gram_mole
+        unit_const: Final = units.ActivationEnergyUnits.calorie_mean_per_gram_mole
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -177,7 +177,7 @@ class ActivationEnergySetter(TypeSafeSetter):
     @property
     def joule_per_gram_mole(self):
         """Set value using joule per gram mole units."""
-        unit_const: Final = field_units.ActivationEnergyUnits.joule_per_gram_mole
+        unit_const: Final = units.ActivationEnergyUnits.joule_per_gram_mole
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -189,7 +189,7 @@ class ActivationEnergySetter(TypeSafeSetter):
     @property
     def joule_per_kilogram_mole(self):
         """Set value using joule per kilogram mole units."""
-        unit_const: Final = field_units.ActivationEnergyUnits.joule_per_kilogram_mole
+        unit_const: Final = units.ActivationEnergyUnits.joule_per_kilogram_mole
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -201,7 +201,7 @@ class ActivationEnergySetter(TypeSafeSetter):
     @property
     def kilocalorie_per_kilogram_mole(self):
         """Set value using kilocalorie per kilogram mole units."""
-        unit_const: Final = field_units.ActivationEnergyUnits.kilocalorie_per_kilogram_mole
+        unit_const: Final = units.ActivationEnergyUnits.kilocalorie_per_kilogram_mole
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -219,7 +219,7 @@ class AmountOfSubstanceSetter(TypeSafeSetter):
     @property
     def kilogram_mol(self):
         """Set value using kilogram mol or kmol units."""
-        unit_const: Final = field_units.AmountOfSubstanceUnits.kilogram_mol
+        unit_const: Final = units.AmountOfSubstanceUnits.kilogram_mol
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -231,7 +231,7 @@ class AmountOfSubstanceSetter(TypeSafeSetter):
     @property
     def mole(self):
         """Set value using mole (gram) units."""
-        unit_const: Final = field_units.AmountOfSubstanceUnits.mole
+        unit_const: Final = units.AmountOfSubstanceUnits.mole
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -243,7 +243,7 @@ class AmountOfSubstanceSetter(TypeSafeSetter):
     @property
     def pound_mole(self):
         """Set value using pound-mole units."""
-        unit_const: Final = field_units.AmountOfSubstanceUnits.pound_mole
+        unit_const: Final = units.AmountOfSubstanceUnits.pound_mole
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -260,7 +260,7 @@ class AmountOfSubstanceSetter(TypeSafeSetter):
     @property
     def millimole(self):
         """Set value using millimole (gram) units."""
-        unit_const: Final = field_units.AmountOfSubstanceUnits.millimole
+        unit_const: Final = units.AmountOfSubstanceUnits.millimole
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -272,7 +272,7 @@ class AmountOfSubstanceSetter(TypeSafeSetter):
     @property
     def micromole(self):
         """Set value using micromole (gram) units."""
-        unit_const: Final = field_units.AmountOfSubstanceUnits.micromole
+        unit_const: Final = units.AmountOfSubstanceUnits.micromole
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -285,7 +285,7 @@ class AnglePlaneSetter(TypeSafeSetter):
     @property
     def degree(self):
         """Set value using degree units."""
-        unit_const: Final = field_units.AnglePlaneUnits.degree
+        unit_const: Final = units.AnglePlaneUnits.degree
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -297,21 +297,21 @@ class AnglePlaneSetter(TypeSafeSetter):
     @property
     def gon(self):
         """Set value using gon units."""
-        unit_const: Final = field_units.AnglePlaneUnits.gon
+        unit_const: Final = units.AnglePlaneUnits.gon
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def grade(self):
         """Set value using grade units."""
-        unit_const: Final = field_units.AnglePlaneUnits.grade
+        unit_const: Final = units.AnglePlaneUnits.grade
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def minute_new(self):
         """Set value using minute (new) units."""
-        unit_const: Final = field_units.AnglePlaneUnits.minute_new
+        unit_const: Final = units.AnglePlaneUnits.minute_new
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -323,7 +323,7 @@ class AnglePlaneSetter(TypeSafeSetter):
     @property
     def minute_of_angle(self):
         """Set value using minute of angle units."""
-        unit_const: Final = field_units.AnglePlaneUnits.minute_of_angle
+        unit_const: Final = units.AnglePlaneUnits.minute_of_angle
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -335,21 +335,21 @@ class AnglePlaneSetter(TypeSafeSetter):
     @property
     def percent(self):
         """Set value using percent units."""
-        unit_const: Final = field_units.AnglePlaneUnits.percent
+        unit_const: Final = units.AnglePlaneUnits.percent
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def plane_angle(self):
         """Set value using plane angle units."""
-        unit_const: Final = field_units.AnglePlaneUnits.plane_angle
+        unit_const: Final = units.AnglePlaneUnits.plane_angle
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def quadrant(self):
         """Set value using quadrant units."""
-        unit_const: Final = field_units.AnglePlaneUnits.quadrant
+        unit_const: Final = units.AnglePlaneUnits.quadrant
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -361,7 +361,7 @@ class AnglePlaneSetter(TypeSafeSetter):
     @property
     def radian(self):
         """Set value using radian units."""
-        unit_const: Final = field_units.AnglePlaneUnits.radian
+        unit_const: Final = units.AnglePlaneUnits.radian
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -373,7 +373,7 @@ class AnglePlaneSetter(TypeSafeSetter):
     @property
     def right_angle(self):
         """Set value using right angle units."""
-        unit_const: Final = field_units.AnglePlaneUnits.right_angle
+        unit_const: Final = units.AnglePlaneUnits.right_angle
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -385,7 +385,7 @@ class AnglePlaneSetter(TypeSafeSetter):
     @property
     def round(self):
         """Set value using round units."""
-        unit_const: Final = field_units.AnglePlaneUnits.round
+        unit_const: Final = units.AnglePlaneUnits.round
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -407,7 +407,7 @@ class AnglePlaneSetter(TypeSafeSetter):
     @property
     def second_new(self):
         """Set value using second (new) units."""
-        unit_const: Final = field_units.AnglePlaneUnits.second_new
+        unit_const: Final = units.AnglePlaneUnits.second_new
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -419,14 +419,14 @@ class AnglePlaneSetter(TypeSafeSetter):
     @property
     def second_of_angle(self):
         """Set value using second of angle units."""
-        unit_const: Final = field_units.AnglePlaneUnits.second_of_angle
+        unit_const: Final = units.AnglePlaneUnits.second_of_angle
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def thousandth_us(self):
         """Set value using thousandth (US) units."""
-        unit_const: Final = field_units.AnglePlaneUnits.thousandth_us
+        unit_const: Final = units.AnglePlaneUnits.thousandth_us
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -438,7 +438,7 @@ class AnglePlaneSetter(TypeSafeSetter):
     @property
     def turn(self):
         """Set value using turn units."""
-        unit_const: Final = field_units.AnglePlaneUnits.turn
+        unit_const: Final = units.AnglePlaneUnits.turn
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -461,14 +461,14 @@ class AngleSolidSetter(TypeSafeSetter):
     @property
     def spat(self):
         """Set value using spat units."""
-        unit_const: Final = field_units.AngleSolidUnits.spat
+        unit_const: Final = units.AngleSolidUnits.spat
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def square_degree(self):
         """Set value using square degree units."""
-        unit_const: Final = field_units.AngleSolidUnits.square_degree
+        unit_const: Final = units.AngleSolidUnits.square_degree
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -480,7 +480,7 @@ class AngleSolidSetter(TypeSafeSetter):
     @property
     def square_gon(self):
         """Set value using square gon units."""
-        unit_const: Final = field_units.AngleSolidUnits.square_gon
+        unit_const: Final = units.AngleSolidUnits.square_gon
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -492,7 +492,7 @@ class AngleSolidSetter(TypeSafeSetter):
     @property
     def steradian(self):
         """Set value using steradian units."""
-        unit_const: Final = field_units.AngleSolidUnits.steradian
+        unit_const: Final = units.AngleSolidUnits.steradian
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -510,7 +510,7 @@ class AngularAccelerationSetter(TypeSafeSetter):
     @property
     def radian_per_second_squared(self):
         """Set value using radian per second squared units."""
-        unit_const: Final = field_units.AngularAccelerationUnits.radian_per_second_squared
+        unit_const: Final = units.AngularAccelerationUnits.radian_per_second_squared
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -522,7 +522,7 @@ class AngularAccelerationSetter(TypeSafeSetter):
     @property
     def revolution_per_second_squared(self):
         """Set value using revolution per second squared units."""
-        unit_const: Final = field_units.AngularAccelerationUnits.revolution_per_second_squared
+        unit_const: Final = units.AngularAccelerationUnits.revolution_per_second_squared
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -534,7 +534,7 @@ class AngularAccelerationSetter(TypeSafeSetter):
     @property
     def rpm_or_revolution_per_minute(self):
         """Set value using rpm (or revolution per minute) per minute units."""
-        unit_const: Final = field_units.AngularAccelerationUnits.rpm_or_revolution_per_minute
+        unit_const: Final = units.AngularAccelerationUnits.rpm_or_revolution_per_minute
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -562,7 +562,7 @@ class AngularMomentumSetter(TypeSafeSetter):
     @property
     def gram_centimeter_squared_per_second(self):
         """Set value using gram centimeter squared per second units."""
-        unit_const: Final = field_units.AngularMomentumUnits.gram_centimeter_squared_per_second
+        unit_const: Final = units.AngularMomentumUnits.gram_centimeter_squared_per_second
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -574,7 +574,7 @@ class AngularMomentumSetter(TypeSafeSetter):
     @property
     def kilogram_meter_squared_per_second(self):
         """Set value using kilogram meter squared per second units."""
-        unit_const: Final = field_units.AngularMomentumUnits.kilogram_meter_squared_per_second
+        unit_const: Final = units.AngularMomentumUnits.kilogram_meter_squared_per_second
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -586,7 +586,7 @@ class AngularMomentumSetter(TypeSafeSetter):
     @property
     def pound_force_square_foot_per_second(self):
         """Set value using pound force square foot per second units."""
-        unit_const: Final = field_units.AngularMomentumUnits.pound_force_square_foot_per_second
+        unit_const: Final = units.AngularMomentumUnits.pound_force_square_foot_per_second
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -604,7 +604,7 @@ class AreaSetter(TypeSafeSetter):
     @property
     def acre_general(self):
         """Set value using acre (general) units."""
-        unit_const: Final = field_units.AreaUnits.acre_general
+        unit_const: Final = units.AreaUnits.acre_general
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -616,7 +616,7 @@ class AreaSetter(TypeSafeSetter):
     @property
     def are(self):
         """Set value using are units."""
-        unit_const: Final = field_units.AreaUnits.are
+        unit_const: Final = units.AreaUnits.are
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -628,7 +628,7 @@ class AreaSetter(TypeSafeSetter):
     @property
     def arpent_quebec(self):
         """Set value using arpent (Quebec) units."""
-        unit_const: Final = field_units.AreaUnits.arpent_quebec
+        unit_const: Final = units.AreaUnits.arpent_quebec
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -640,7 +640,7 @@ class AreaSetter(TypeSafeSetter):
     @property
     def barn(self):
         """Set value using barn units."""
-        unit_const: Final = field_units.AreaUnits.barn
+        unit_const: Final = units.AreaUnits.barn
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -652,7 +652,7 @@ class AreaSetter(TypeSafeSetter):
     @property
     def circular_inch(self):
         """Set value using circular inch units."""
-        unit_const: Final = field_units.AreaUnits.circular_inch
+        unit_const: Final = units.AreaUnits.circular_inch
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -664,7 +664,7 @@ class AreaSetter(TypeSafeSetter):
     @property
     def circular_mil(self):
         """Set value using circular mil units."""
-        unit_const: Final = field_units.AreaUnits.circular_mil
+        unit_const: Final = units.AreaUnits.circular_mil
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -676,7 +676,7 @@ class AreaSetter(TypeSafeSetter):
     @property
     def hectare(self):
         """Set value using hectare units."""
-        unit_const: Final = field_units.AreaUnits.hectare
+        unit_const: Final = units.AreaUnits.hectare
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -688,14 +688,14 @@ class AreaSetter(TypeSafeSetter):
     @property
     def shed(self):
         """Set value using shed units."""
-        unit_const: Final = field_units.AreaUnits.shed
+        unit_const: Final = units.AreaUnits.shed
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def square_centimeter(self):
         """Set value using square centimeter units."""
-        unit_const: Final = field_units.AreaUnits.square_centimeter
+        unit_const: Final = units.AreaUnits.square_centimeter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -707,7 +707,7 @@ class AreaSetter(TypeSafeSetter):
     @property
     def square_chain_ramsden(self):
         """Set value using square chain (Ramsden) units."""
-        unit_const: Final = field_units.AreaUnits.square_chain_ramsden
+        unit_const: Final = units.AreaUnits.square_chain_ramsden
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -719,7 +719,7 @@ class AreaSetter(TypeSafeSetter):
     @property
     def square_chain_survey_gunters(self):
         """Set value using square chain (Survey, Gunter's) units."""
-        unit_const: Final = field_units.AreaUnits.square_chain_survey_gunters
+        unit_const: Final = units.AreaUnits.square_chain_survey_gunters
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -731,7 +731,7 @@ class AreaSetter(TypeSafeSetter):
     @property
     def square_decimeter(self):
         """Set value using square decimeter units."""
-        unit_const: Final = field_units.AreaUnits.square_decimeter
+        unit_const: Final = units.AreaUnits.square_decimeter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -743,7 +743,7 @@ class AreaSetter(TypeSafeSetter):
     @property
     def square_fermi(self):
         """Set value using square fermi units."""
-        unit_const: Final = field_units.AreaUnits.square_fermi
+        unit_const: Final = units.AreaUnits.square_fermi
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -755,7 +755,7 @@ class AreaSetter(TypeSafeSetter):
     @property
     def square_foot(self):
         """Set value using square foot units."""
-        unit_const: Final = field_units.AreaUnits.square_foot
+        unit_const: Final = units.AreaUnits.square_foot
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -777,7 +777,7 @@ class AreaSetter(TypeSafeSetter):
     @property
     def square_hectometer(self):
         """Set value using square hectometer units."""
-        unit_const: Final = field_units.AreaUnits.square_hectometer
+        unit_const: Final = units.AreaUnits.square_hectometer
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -789,7 +789,7 @@ class AreaSetter(TypeSafeSetter):
     @property
     def square_inch(self):
         """Set value using square inch units."""
-        unit_const: Final = field_units.AreaUnits.square_inch
+        unit_const: Final = units.AreaUnits.square_inch
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -811,7 +811,7 @@ class AreaSetter(TypeSafeSetter):
     @property
     def square_kilometer(self):
         """Set value using square kilometer units."""
-        unit_const: Final = field_units.AreaUnits.square_kilometer
+        unit_const: Final = units.AreaUnits.square_kilometer
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -823,7 +823,7 @@ class AreaSetter(TypeSafeSetter):
     @property
     def square_league_statute(self):
         """Set value using square league (statute) units."""
-        unit_const: Final = field_units.AreaUnits.square_league_statute
+        unit_const: Final = units.AreaUnits.square_league_statute
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -835,7 +835,7 @@ class AreaSetter(TypeSafeSetter):
     @property
     def square_meter(self):
         """Set value using square meter units."""
-        unit_const: Final = field_units.AreaUnits.square_meter
+        unit_const: Final = units.AreaUnits.square_meter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -847,7 +847,7 @@ class AreaSetter(TypeSafeSetter):
     @property
     def square_micron(self):
         """Set value using square micron units."""
-        unit_const: Final = field_units.AreaUnits.square_micron
+        unit_const: Final = units.AreaUnits.square_micron
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -869,7 +869,7 @@ class AreaSetter(TypeSafeSetter):
     @property
     def square_mile_statute(self):
         """Set value using square mile (statute) units."""
-        unit_const: Final = field_units.AreaUnits.square_mile_statute
+        unit_const: Final = units.AreaUnits.square_mile_statute
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -881,7 +881,7 @@ class AreaSetter(TypeSafeSetter):
     @property
     def square_mile_us_survey(self):
         """Set value using square mile (US survey) units."""
-        unit_const: Final = field_units.AreaUnits.square_mile_us_survey
+        unit_const: Final = units.AreaUnits.square_mile_us_survey
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -893,7 +893,7 @@ class AreaSetter(TypeSafeSetter):
     @property
     def square_millimeter(self):
         """Set value using square millimeter units."""
-        unit_const: Final = field_units.AreaUnits.square_millimeter
+        unit_const: Final = units.AreaUnits.square_millimeter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -905,7 +905,7 @@ class AreaSetter(TypeSafeSetter):
     @property
     def square_nanometer(self):
         """Set value using square nanometer units."""
-        unit_const: Final = field_units.AreaUnits.square_nanometer
+        unit_const: Final = units.AreaUnits.square_nanometer
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -917,7 +917,7 @@ class AreaSetter(TypeSafeSetter):
     @property
     def square_yard(self):
         """Set value using square yard units."""
-        unit_const: Final = field_units.AreaUnits.square_yard
+        unit_const: Final = units.AreaUnits.square_yard
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -929,7 +929,7 @@ class AreaSetter(TypeSafeSetter):
     @property
     def township_us(self):
         """Set value using township (US) units."""
-        unit_const: Final = field_units.AreaUnits.township_us
+        unit_const: Final = units.AreaUnits.township_us
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -947,7 +947,7 @@ class AreaPerUnitVolumeSetter(TypeSafeSetter):
     @property
     def square_centimeter_per_cubic_centimeter(self):
         """Set value using square centimeter per cubic centimeter units."""
-        unit_const: Final = field_units.AreaPerUnitVolumeUnits.square_centimeter_per_cubic_centimeter
+        unit_const: Final = units.AreaPerUnitVolumeUnits.square_centimeter_per_cubic_centimeter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -959,7 +959,7 @@ class AreaPerUnitVolumeSetter(TypeSafeSetter):
     @property
     def square_foot_per_cubic_foot(self):
         """Set value using square foot per cubic foot units."""
-        unit_const: Final = field_units.AreaPerUnitVolumeUnits.square_foot_per_cubic_foot
+        unit_const: Final = units.AreaPerUnitVolumeUnits.square_foot_per_cubic_foot
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -981,7 +981,7 @@ class AreaPerUnitVolumeSetter(TypeSafeSetter):
     @property
     def square_inch_per_cubic_inch(self):
         """Set value using square inch per cubic inch units."""
-        unit_const: Final = field_units.AreaPerUnitVolumeUnits.square_inch_per_cubic_inch
+        unit_const: Final = units.AreaPerUnitVolumeUnits.square_inch_per_cubic_inch
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -1003,7 +1003,7 @@ class AreaPerUnitVolumeSetter(TypeSafeSetter):
     @property
     def square_meter_per_cubic_meter(self):
         """Set value using square meter per cubic meter units."""
-        unit_const: Final = field_units.AreaPerUnitVolumeUnits.square_meter_per_cubic_meter
+        unit_const: Final = units.AreaPerUnitVolumeUnits.square_meter_per_cubic_meter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -1031,7 +1031,7 @@ class AtomicWeightSetter(TypeSafeSetter):
     @property
     def atomic_mass_unit_12c(self):
         """Set value using atomic mass unit (12C) units."""
-        unit_const: Final = field_units.AtomicWeightUnits.atomic_mass_unit_12c
+        unit_const: Final = units.AtomicWeightUnits.atomic_mass_unit_12c
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -1043,7 +1043,7 @@ class AtomicWeightSetter(TypeSafeSetter):
     @property
     def grams_per_mole(self):
         """Set value using grams per mole units."""
-        unit_const: Final = field_units.AtomicWeightUnits.grams_per_mole
+        unit_const: Final = units.AtomicWeightUnits.grams_per_mole
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -1055,7 +1055,7 @@ class AtomicWeightSetter(TypeSafeSetter):
     @property
     def kilograms_per_kilomole(self):
         """Set value using kilograms per kilomole units."""
-        unit_const: Final = field_units.AtomicWeightUnits.kilograms_per_kilomole
+        unit_const: Final = units.AtomicWeightUnits.kilograms_per_kilomole
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -1067,7 +1067,7 @@ class AtomicWeightSetter(TypeSafeSetter):
     @property
     def pounds_per_pound_mole(self):
         """Set value using pounds per pound mole units."""
-        unit_const: Final = field_units.AtomicWeightUnits.pounds_per_pound_mole
+        unit_const: Final = units.AtomicWeightUnits.pounds_per_pound_mole
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -1095,7 +1095,7 @@ class ConcentrationSetter(TypeSafeSetter):
     @property
     def grains_of_i_per_cubic_foot(self):
         """Set value using grains of "i" per cubic foot units."""
-        unit_const: Final = field_units.ConcentrationUnits.grains_of_i_per_cubic_foot
+        unit_const: Final = units.ConcentrationUnits.grains_of_i_per_cubic_foot
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -1117,7 +1117,7 @@ class ConcentrationSetter(TypeSafeSetter):
     @property
     def grains_of_i_per_gallon_us(self):
         """Set value using grains of "i" per gallon (US) units."""
-        unit_const: Final = field_units.ConcentrationUnits.grains_of_i_per_gallon_us
+        unit_const: Final = units.ConcentrationUnits.grains_of_i_per_gallon_us
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -1135,21 +1135,21 @@ class DimensionlessSetter(TypeSafeSetter):
     @property
     def dimensionless(self):
         """Set value using dimensionless units."""
-        unit_const: Final = field_units.DimensionlessUnits.dimensionless
+        unit_const: Final = units.DimensionlessUnits.dimensionless
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def ratio(self):
         """Set value using ratio units."""
-        unit_const: Final = field_units.DimensionlessUnits.ratio
+        unit_const: Final = units.DimensionlessUnits.ratio
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def parts_per_million(self):
         """Set value using parts per million units."""
-        unit_const: Final = field_units.DimensionlessUnits.parts_per_million
+        unit_const: Final = units.DimensionlessUnits.parts_per_million
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -1161,7 +1161,7 @@ class DimensionlessSetter(TypeSafeSetter):
     @property
     def parts_per_billion(self):
         """Set value using parts per billion units."""
-        unit_const: Final = field_units.DimensionlessUnits.parts_per_billion
+        unit_const: Final = units.DimensionlessUnits.parts_per_billion
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -1179,7 +1179,7 @@ class DynamicFluiditySetter(TypeSafeSetter):
     @property
     def meter_seconds_per_kilogram(self):
         """Set value using meter-seconds per kilogram units."""
-        unit_const: Final = field_units.DynamicFluidityUnits.meter_seconds_per_kilogram
+        unit_const: Final = units.DynamicFluidityUnits.meter_seconds_per_kilogram
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -1191,14 +1191,14 @@ class DynamicFluiditySetter(TypeSafeSetter):
     @property
     def rhe(self):
         """Set value using rhe units."""
-        unit_const: Final = field_units.DynamicFluidityUnits.rhe
+        unit_const: Final = units.DynamicFluidityUnits.rhe
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def square_foot_per_pound_second(self):
         """Set value using square foot per pound second units."""
-        unit_const: Final = field_units.DynamicFluidityUnits.square_foot_per_pound_second
+        unit_const: Final = units.DynamicFluidityUnits.square_foot_per_pound_second
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -1210,7 +1210,7 @@ class DynamicFluiditySetter(TypeSafeSetter):
     @property
     def square_meters_per_newton_per_second(self):
         """Set value using square meters per newton per second units."""
-        unit_const: Final = field_units.DynamicFluidityUnits.square_meters_per_newton_per_second
+        unit_const: Final = units.DynamicFluidityUnits.square_meters_per_newton_per_second
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -1228,14 +1228,14 @@ class ElectricCapacitanceSetter(TypeSafeSetter):
     @property
     def cm(self):
         """Set value using "cm" units."""
-        unit_const: Final = field_units.ElectricCapacitanceUnits.cm
+        unit_const: Final = units.ElectricCapacitanceUnits.cm
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def abfarad(self):
         """Set value using abfarad units."""
-        unit_const: Final = field_units.ElectricCapacitanceUnits.abfarad
+        unit_const: Final = units.ElectricCapacitanceUnits.abfarad
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -1247,7 +1247,7 @@ class ElectricCapacitanceSetter(TypeSafeSetter):
     @property
     def farad(self):
         """Set value using farad units."""
-        unit_const: Final = field_units.ElectricCapacitanceUnits.farad
+        unit_const: Final = units.ElectricCapacitanceUnits.farad
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -1259,7 +1259,7 @@ class ElectricCapacitanceSetter(TypeSafeSetter):
     @property
     def farad_intl(self):
         """Set value using farad (intl) units."""
-        unit_const: Final = field_units.ElectricCapacitanceUnits.farad_intl
+        unit_const: Final = units.ElectricCapacitanceUnits.farad_intl
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -1271,21 +1271,21 @@ class ElectricCapacitanceSetter(TypeSafeSetter):
     @property
     def jar(self):
         """Set value using jar units."""
-        unit_const: Final = field_units.ElectricCapacitanceUnits.jar
+        unit_const: Final = units.ElectricCapacitanceUnits.jar
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def puff(self):
         """Set value using puff units."""
-        unit_const: Final = field_units.ElectricCapacitanceUnits.puff
+        unit_const: Final = units.ElectricCapacitanceUnits.puff
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def statfarad(self):
         """Set value using statfarad units."""
-        unit_const: Final = field_units.ElectricCapacitanceUnits.statfarad
+        unit_const: Final = units.ElectricCapacitanceUnits.statfarad
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -1297,7 +1297,7 @@ class ElectricCapacitanceSetter(TypeSafeSetter):
     @property
     def millifarad(self):
         """Set value using millifarad units."""
-        unit_const: Final = field_units.ElectricCapacitanceUnits.millifarad
+        unit_const: Final = units.ElectricCapacitanceUnits.millifarad
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -1309,14 +1309,14 @@ class ElectricCapacitanceSetter(TypeSafeSetter):
     @property
     def microfarad(self):
         """Set value using microfarad units."""
-        unit_const: Final = field_units.ElectricCapacitanceUnits.microfarad
+        unit_const: Final = units.ElectricCapacitanceUnits.microfarad
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def nanofarad(self):
         """Set value using nanofarad units."""
-        unit_const: Final = field_units.ElectricCapacitanceUnits.nanofarad
+        unit_const: Final = units.ElectricCapacitanceUnits.nanofarad
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -1328,7 +1328,7 @@ class ElectricCapacitanceSetter(TypeSafeSetter):
     @property
     def picofarad(self):
         """Set value using picofarad units."""
-        unit_const: Final = field_units.ElectricCapacitanceUnits.picofarad
+        unit_const: Final = units.ElectricCapacitanceUnits.picofarad
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -1346,7 +1346,7 @@ class ElectricChargeSetter(TypeSafeSetter):
     @property
     def abcoulomb(self):
         """Set value using abcoulomb units."""
-        unit_const: Final = field_units.ElectricChargeUnits.abcoulomb
+        unit_const: Final = units.ElectricChargeUnits.abcoulomb
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -1358,7 +1358,7 @@ class ElectricChargeSetter(TypeSafeSetter):
     @property
     def ampere_hour(self):
         """Set value using ampere-hour units."""
-        unit_const: Final = field_units.ElectricChargeUnits.ampere_hour
+        unit_const: Final = units.ElectricChargeUnits.ampere_hour
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -1370,7 +1370,7 @@ class ElectricChargeSetter(TypeSafeSetter):
     @property
     def coulomb(self):
         """Set value using coulomb units."""
-        unit_const: Final = field_units.ElectricChargeUnits.coulomb
+        unit_const: Final = units.ElectricChargeUnits.coulomb
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -1382,7 +1382,7 @@ class ElectricChargeSetter(TypeSafeSetter):
     @property
     def faraday_c12(self):
         """Set value using faraday (C12) units."""
-        unit_const: Final = field_units.ElectricChargeUnits.faraday_c12
+        unit_const: Final = units.ElectricChargeUnits.faraday_c12
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -1394,7 +1394,7 @@ class ElectricChargeSetter(TypeSafeSetter):
     @property
     def franklin(self):
         """Set value using franklin units."""
-        unit_const: Final = field_units.ElectricChargeUnits.franklin
+        unit_const: Final = units.ElectricChargeUnits.franklin
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -1406,7 +1406,7 @@ class ElectricChargeSetter(TypeSafeSetter):
     @property
     def statcoulomb(self):
         """Set value using statcoulomb units."""
-        unit_const: Final = field_units.ElectricChargeUnits.statcoulomb
+        unit_const: Final = units.ElectricChargeUnits.statcoulomb
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -1418,7 +1418,7 @@ class ElectricChargeSetter(TypeSafeSetter):
     @property
     def u_a_charge(self):
         """Set value using u.a. charge units."""
-        unit_const: Final = field_units.ElectricChargeUnits.u_a_charge
+        unit_const: Final = units.ElectricChargeUnits.u_a_charge
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -1430,7 +1430,7 @@ class ElectricChargeSetter(TypeSafeSetter):
     @property
     def kilocoulomb(self):
         """Set value using kilocoulomb units."""
-        unit_const: Final = field_units.ElectricChargeUnits.kilocoulomb
+        unit_const: Final = units.ElectricChargeUnits.kilocoulomb
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -1442,7 +1442,7 @@ class ElectricChargeSetter(TypeSafeSetter):
     @property
     def millicoulomb(self):
         """Set value using millicoulomb units."""
-        unit_const: Final = field_units.ElectricChargeUnits.millicoulomb
+        unit_const: Final = units.ElectricChargeUnits.millicoulomb
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -1454,14 +1454,14 @@ class ElectricChargeSetter(TypeSafeSetter):
     @property
     def microcoulomb(self):
         """Set value using microcoulomb units."""
-        unit_const: Final = field_units.ElectricChargeUnits.microcoulomb
+        unit_const: Final = units.ElectricChargeUnits.microcoulomb
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def nanocoulomb(self):
         """Set value using nanocoulomb units."""
-        unit_const: Final = field_units.ElectricChargeUnits.nanocoulomb
+        unit_const: Final = units.ElectricChargeUnits.nanocoulomb
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -1473,7 +1473,7 @@ class ElectricChargeSetter(TypeSafeSetter):
     @property
     def picocoulomb(self):
         """Set value using picocoulomb units."""
-        unit_const: Final = field_units.ElectricChargeUnits.picocoulomb
+        unit_const: Final = units.ElectricChargeUnits.picocoulomb
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -1491,7 +1491,7 @@ class ElectricCurrentIntensitySetter(TypeSafeSetter):
     @property
     def abampere(self):
         """Set value using abampere units."""
-        unit_const: Final = field_units.ElectricCurrentIntensityUnits.abampere
+        unit_const: Final = units.ElectricCurrentIntensityUnits.abampere
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -1503,7 +1503,7 @@ class ElectricCurrentIntensitySetter(TypeSafeSetter):
     @property
     def ampere_intl_mean(self):
         """Set value using ampere (intl mean) units."""
-        unit_const: Final = field_units.ElectricCurrentIntensityUnits.ampere_intl_mean
+        unit_const: Final = units.ElectricCurrentIntensityUnits.ampere_intl_mean
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -1515,7 +1515,7 @@ class ElectricCurrentIntensitySetter(TypeSafeSetter):
     @property
     def ampere_intl_us(self):
         """Set value using ampere (intl US) units."""
-        unit_const: Final = field_units.ElectricCurrentIntensityUnits.ampere_intl_us
+        unit_const: Final = units.ElectricCurrentIntensityUnits.ampere_intl_us
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -1527,7 +1527,7 @@ class ElectricCurrentIntensitySetter(TypeSafeSetter):
     @property
     def ampere_or_amp(self):
         """Set value using ampere or amp units."""
-        unit_const: Final = field_units.ElectricCurrentIntensityUnits.ampere_or_amp
+        unit_const: Final = units.ElectricCurrentIntensityUnits.ampere_or_amp
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -1539,14 +1539,14 @@ class ElectricCurrentIntensitySetter(TypeSafeSetter):
     @property
     def biot(self):
         """Set value using biot units."""
-        unit_const: Final = field_units.ElectricCurrentIntensityUnits.biot
+        unit_const: Final = units.ElectricCurrentIntensityUnits.biot
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def statampere(self):
         """Set value using statampere units."""
-        unit_const: Final = field_units.ElectricCurrentIntensityUnits.statampere
+        unit_const: Final = units.ElectricCurrentIntensityUnits.statampere
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -1558,7 +1558,7 @@ class ElectricCurrentIntensitySetter(TypeSafeSetter):
     @property
     def u_a_or_current(self):
         """Set value using u.a. or current units."""
-        unit_const: Final = field_units.ElectricCurrentIntensityUnits.u_a_or_current
+        unit_const: Final = units.ElectricCurrentIntensityUnits.u_a_or_current
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -1576,7 +1576,7 @@ class ElectricDipoleMomentSetter(TypeSafeSetter):
     @property
     def ampere_meter_second(self):
         """Set value using ampere meter second units."""
-        unit_const: Final = field_units.ElectricDipoleMomentUnits.ampere_meter_second
+        unit_const: Final = units.ElectricDipoleMomentUnits.ampere_meter_second
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -1588,7 +1588,7 @@ class ElectricDipoleMomentSetter(TypeSafeSetter):
     @property
     def coulomb_meter(self):
         """Set value using coulomb meter units."""
-        unit_const: Final = field_units.ElectricDipoleMomentUnits.coulomb_meter
+        unit_const: Final = units.ElectricDipoleMomentUnits.coulomb_meter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -1600,7 +1600,7 @@ class ElectricDipoleMomentSetter(TypeSafeSetter):
     @property
     def debye(self):
         """Set value using debye units."""
-        unit_const: Final = field_units.ElectricDipoleMomentUnits.debye
+        unit_const: Final = units.ElectricDipoleMomentUnits.debye
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -1612,7 +1612,7 @@ class ElectricDipoleMomentSetter(TypeSafeSetter):
     @property
     def electron_meter(self):
         """Set value using electron meter units."""
-        unit_const: Final = field_units.ElectricDipoleMomentUnits.electron_meter
+        unit_const: Final = units.ElectricDipoleMomentUnits.electron_meter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -1630,7 +1630,7 @@ class ElectricFieldStrengthSetter(TypeSafeSetter):
     @property
     def volt_per_centimeter(self):
         """Set value using volt per centimeter units."""
-        unit_const: Final = field_units.ElectricFieldStrengthUnits.volt_per_centimeter
+        unit_const: Final = units.ElectricFieldStrengthUnits.volt_per_centimeter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -1642,7 +1642,7 @@ class ElectricFieldStrengthSetter(TypeSafeSetter):
     @property
     def volt_per_meter(self):
         """Set value using volt per meter units."""
-        unit_const: Final = field_units.ElectricFieldStrengthUnits.volt_per_meter
+        unit_const: Final = units.ElectricFieldStrengthUnits.volt_per_meter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -1660,7 +1660,7 @@ class ElectricInductanceSetter(TypeSafeSetter):
     @property
     def abhenry(self):
         """Set value using abhenry units."""
-        unit_const: Final = field_units.ElectricInductanceUnits.abhenry
+        unit_const: Final = units.ElectricInductanceUnits.abhenry
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -1672,14 +1672,14 @@ class ElectricInductanceSetter(TypeSafeSetter):
     @property
     def cm(self):
         """Set value using cm units."""
-        unit_const: Final = field_units.ElectricInductanceUnits.cm
+        unit_const: Final = units.ElectricInductanceUnits.cm
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def henry(self):
         """Set value using henry units."""
-        unit_const: Final = field_units.ElectricInductanceUnits.henry
+        unit_const: Final = units.ElectricInductanceUnits.henry
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -1691,7 +1691,7 @@ class ElectricInductanceSetter(TypeSafeSetter):
     @property
     def henry_intl_mean(self):
         """Set value using henry (intl mean) units."""
-        unit_const: Final = field_units.ElectricInductanceUnits.henry_intl_mean
+        unit_const: Final = units.ElectricInductanceUnits.henry_intl_mean
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -1703,7 +1703,7 @@ class ElectricInductanceSetter(TypeSafeSetter):
     @property
     def henry_intl_us(self):
         """Set value using henry (intl US) units."""
-        unit_const: Final = field_units.ElectricInductanceUnits.henry_intl_us
+        unit_const: Final = units.ElectricInductanceUnits.henry_intl_us
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -1715,14 +1715,14 @@ class ElectricInductanceSetter(TypeSafeSetter):
     @property
     def mic(self):
         """Set value using mic units."""
-        unit_const: Final = field_units.ElectricInductanceUnits.mic
+        unit_const: Final = units.ElectricInductanceUnits.mic
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def stathenry(self):
         """Set value using stathenry units."""
-        unit_const: Final = field_units.ElectricInductanceUnits.stathenry
+        unit_const: Final = units.ElectricInductanceUnits.stathenry
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -1734,7 +1734,7 @@ class ElectricInductanceSetter(TypeSafeSetter):
     @property
     def millihenry(self):
         """Set value using millihenry units."""
-        unit_const: Final = field_units.ElectricInductanceUnits.millihenry
+        unit_const: Final = units.ElectricInductanceUnits.millihenry
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -1746,14 +1746,14 @@ class ElectricInductanceSetter(TypeSafeSetter):
     @property
     def microhenry(self):
         """Set value using microhenry units."""
-        unit_const: Final = field_units.ElectricInductanceUnits.microhenry
+        unit_const: Final = units.ElectricInductanceUnits.microhenry
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def nanohenry(self):
         """Set value using nanohenry units."""
-        unit_const: Final = field_units.ElectricInductanceUnits.nanohenry
+        unit_const: Final = units.ElectricInductanceUnits.nanohenry
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -1771,7 +1771,7 @@ class ElectricPotentialSetter(TypeSafeSetter):
     @property
     def abvolt(self):
         """Set value using abvolt units."""
-        unit_const: Final = field_units.ElectricPotentialUnits.abvolt
+        unit_const: Final = units.ElectricPotentialUnits.abvolt
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -1783,7 +1783,7 @@ class ElectricPotentialSetter(TypeSafeSetter):
     @property
     def statvolt(self):
         """Set value using statvolt units."""
-        unit_const: Final = field_units.ElectricPotentialUnits.statvolt
+        unit_const: Final = units.ElectricPotentialUnits.statvolt
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -1795,7 +1795,7 @@ class ElectricPotentialSetter(TypeSafeSetter):
     @property
     def u_a_potential(self):
         """Set value using u.a. potential units."""
-        unit_const: Final = field_units.ElectricPotentialUnits.u_a_potential
+        unit_const: Final = units.ElectricPotentialUnits.u_a_potential
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -1807,7 +1807,7 @@ class ElectricPotentialSetter(TypeSafeSetter):
     @property
     def volt(self):
         """Set value using volt units."""
-        unit_const: Final = field_units.ElectricPotentialUnits.volt
+        unit_const: Final = units.ElectricPotentialUnits.volt
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -1819,7 +1819,7 @@ class ElectricPotentialSetter(TypeSafeSetter):
     @property
     def volt_intl_mean(self):
         """Set value using volt (intl mean) units."""
-        unit_const: Final = field_units.ElectricPotentialUnits.volt_intl_mean
+        unit_const: Final = units.ElectricPotentialUnits.volt_intl_mean
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -1831,7 +1831,7 @@ class ElectricPotentialSetter(TypeSafeSetter):
     @property
     def volt_us(self):
         """Set value using volt (US) units."""
-        unit_const: Final = field_units.ElectricPotentialUnits.volt_us
+        unit_const: Final = units.ElectricPotentialUnits.volt_us
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -1843,7 +1843,7 @@ class ElectricPotentialSetter(TypeSafeSetter):
     @property
     def kilovolt(self):
         """Set value using kilovolt units."""
-        unit_const: Final = field_units.ElectricPotentialUnits.kilovolt
+        unit_const: Final = units.ElectricPotentialUnits.kilovolt
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -1855,7 +1855,7 @@ class ElectricPotentialSetter(TypeSafeSetter):
     @property
     def millivolt(self):
         """Set value using millivolt units."""
-        unit_const: Final = field_units.ElectricPotentialUnits.millivolt
+        unit_const: Final = units.ElectricPotentialUnits.millivolt
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -1867,14 +1867,14 @@ class ElectricPotentialSetter(TypeSafeSetter):
     @property
     def microvolt(self):
         """Set value using microvolt units."""
-        unit_const: Final = field_units.ElectricPotentialUnits.microvolt
+        unit_const: Final = units.ElectricPotentialUnits.microvolt
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def nanovolt(self):
         """Set value using nanovolt units."""
-        unit_const: Final = field_units.ElectricPotentialUnits.nanovolt
+        unit_const: Final = units.ElectricPotentialUnits.nanovolt
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -1886,7 +1886,7 @@ class ElectricPotentialSetter(TypeSafeSetter):
     @property
     def picovolt(self):
         """Set value using picovolt units."""
-        unit_const: Final = field_units.ElectricPotentialUnits.picovolt
+        unit_const: Final = units.ElectricPotentialUnits.picovolt
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -1904,7 +1904,7 @@ class ElectricResistanceSetter(TypeSafeSetter):
     @property
     def abohm(self):
         """Set value using abohm units."""
-        unit_const: Final = field_units.ElectricResistanceUnits.abohm
+        unit_const: Final = units.ElectricResistanceUnits.abohm
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -1916,7 +1916,7 @@ class ElectricResistanceSetter(TypeSafeSetter):
     @property
     def jacobi(self):
         """Set value using jacobi units."""
-        unit_const: Final = field_units.ElectricResistanceUnits.jacobi
+        unit_const: Final = units.ElectricResistanceUnits.jacobi
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -1928,7 +1928,7 @@ class ElectricResistanceSetter(TypeSafeSetter):
     @property
     def lenz(self):
         """Set value using lenz units."""
-        unit_const: Final = field_units.ElectricResistanceUnits.lenz
+        unit_const: Final = units.ElectricResistanceUnits.lenz
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -1940,7 +1940,7 @@ class ElectricResistanceSetter(TypeSafeSetter):
     @property
     def ohm(self):
         """Set value using ohm units."""
-        unit_const: Final = field_units.ElectricResistanceUnits.ohm
+        unit_const: Final = units.ElectricResistanceUnits.ohm
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -1952,7 +1952,7 @@ class ElectricResistanceSetter(TypeSafeSetter):
     @property
     def ohm_intl_mean(self):
         """Set value using ohm (intl mean) units."""
-        unit_const: Final = field_units.ElectricResistanceUnits.ohm_intl_mean
+        unit_const: Final = units.ElectricResistanceUnits.ohm_intl_mean
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -1964,7 +1964,7 @@ class ElectricResistanceSetter(TypeSafeSetter):
     @property
     def ohm_intl_us(self):
         """Set value using ohm (intl US) units."""
-        unit_const: Final = field_units.ElectricResistanceUnits.ohm_intl_us
+        unit_const: Final = units.ElectricResistanceUnits.ohm_intl_us
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -1976,7 +1976,7 @@ class ElectricResistanceSetter(TypeSafeSetter):
     @property
     def ohm_legal(self):
         """Set value using ohm (legal) units."""
-        unit_const: Final = field_units.ElectricResistanceUnits.ohm_legal
+        unit_const: Final = units.ElectricResistanceUnits.ohm_legal
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -1988,14 +1988,14 @@ class ElectricResistanceSetter(TypeSafeSetter):
     @property
     def preece(self):
         """Set value using preece units."""
-        unit_const: Final = field_units.ElectricResistanceUnits.preece
+        unit_const: Final = units.ElectricResistanceUnits.preece
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def statohm(self):
         """Set value using statohm units."""
-        unit_const: Final = field_units.ElectricResistanceUnits.statohm
+        unit_const: Final = units.ElectricResistanceUnits.statohm
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2007,14 +2007,14 @@ class ElectricResistanceSetter(TypeSafeSetter):
     @property
     def wheatstone(self):
         """Set value using wheatstone units."""
-        unit_const: Final = field_units.ElectricResistanceUnits.wheatstone
+        unit_const: Final = units.ElectricResistanceUnits.wheatstone
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def kiloohm(self):
         """Set value using kiloohm units."""
-        unit_const: Final = field_units.ElectricResistanceUnits.kiloohm
+        unit_const: Final = units.ElectricResistanceUnits.kiloohm
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2026,7 +2026,7 @@ class ElectricResistanceSetter(TypeSafeSetter):
     @property
     def megaohm(self):
         """Set value using megaohm units."""
-        unit_const: Final = field_units.ElectricResistanceUnits.megaohm
+        unit_const: Final = units.ElectricResistanceUnits.megaohm
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2038,7 +2038,7 @@ class ElectricResistanceSetter(TypeSafeSetter):
     @property
     def milliohm(self):
         """Set value using milliohm units."""
-        unit_const: Final = field_units.ElectricResistanceUnits.milliohm
+        unit_const: Final = units.ElectricResistanceUnits.milliohm
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2056,7 +2056,7 @@ class ElectricalConductanceSetter(TypeSafeSetter):
     @property
     def emu_cgs(self):
         """Set value using emu cgs units."""
-        unit_const: Final = field_units.ElectricalConductanceUnits.emu_cgs
+        unit_const: Final = units.ElectricalConductanceUnits.emu_cgs
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2068,7 +2068,7 @@ class ElectricalConductanceSetter(TypeSafeSetter):
     @property
     def esu_cgs(self):
         """Set value using esu cgs units."""
-        unit_const: Final = field_units.ElectricalConductanceUnits.esu_cgs
+        unit_const: Final = units.ElectricalConductanceUnits.esu_cgs
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2080,14 +2080,14 @@ class ElectricalConductanceSetter(TypeSafeSetter):
     @property
     def mho(self):
         """Set value using mho units."""
-        unit_const: Final = field_units.ElectricalConductanceUnits.mho
+        unit_const: Final = units.ElectricalConductanceUnits.mho
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def microsiemens(self):
         """Set value using microsiemens units."""
-        unit_const: Final = field_units.ElectricalConductanceUnits.microsiemens
+        unit_const: Final = units.ElectricalConductanceUnits.microsiemens
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2099,7 +2099,7 @@ class ElectricalConductanceSetter(TypeSafeSetter):
     @property
     def siemens(self):
         """Set value using siemens units."""
-        unit_const: Final = field_units.ElectricalConductanceUnits.siemens
+        unit_const: Final = units.ElectricalConductanceUnits.siemens
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2111,7 +2111,7 @@ class ElectricalConductanceSetter(TypeSafeSetter):
     @property
     def millisiemens(self):
         """Set value using millisiemens units."""
-        unit_const: Final = field_units.ElectricalConductanceUnits.millisiemens
+        unit_const: Final = units.ElectricalConductanceUnits.millisiemens
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2129,7 +2129,7 @@ class ElectricalPermittivitySetter(TypeSafeSetter):
     @property
     def farad_per_meter(self):
         """Set value using farad per meter units."""
-        unit_const: Final = field_units.ElectricalPermittivityUnits.farad_per_meter
+        unit_const: Final = units.ElectricalPermittivityUnits.farad_per_meter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2147,7 +2147,7 @@ class ElectricalResistivitySetter(TypeSafeSetter):
     @property
     def circular_mil_ohm_per_foot(self):
         """Set value using circular mil-ohm per foot units."""
-        unit_const: Final = field_units.ElectricalResistivityUnits.circular_mil_ohm_per_foot
+        unit_const: Final = units.ElectricalResistivityUnits.circular_mil_ohm_per_foot
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2159,7 +2159,7 @@ class ElectricalResistivitySetter(TypeSafeSetter):
     @property
     def emu_cgs(self):
         """Set value using emu cgs units."""
-        unit_const: Final = field_units.ElectricalResistivityUnits.emu_cgs
+        unit_const: Final = units.ElectricalResistivityUnits.emu_cgs
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2171,7 +2171,7 @@ class ElectricalResistivitySetter(TypeSafeSetter):
     @property
     def microhm_inch(self):
         """Set value using microhm-inch units."""
-        unit_const: Final = field_units.ElectricalResistivityUnits.microhm_inch
+        unit_const: Final = units.ElectricalResistivityUnits.microhm_inch
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2183,7 +2183,7 @@ class ElectricalResistivitySetter(TypeSafeSetter):
     @property
     def ohm_centimeter(self):
         """Set value using ohm-centimeter units."""
-        unit_const: Final = field_units.ElectricalResistivityUnits.ohm_centimeter
+        unit_const: Final = units.ElectricalResistivityUnits.ohm_centimeter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2195,7 +2195,7 @@ class ElectricalResistivitySetter(TypeSafeSetter):
     @property
     def ohm_meter(self):
         """Set value using ohm-meter units."""
-        unit_const: Final = field_units.ElectricalResistivityUnits.ohm_meter
+        unit_const: Final = units.ElectricalResistivityUnits.ohm_meter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2213,7 +2213,7 @@ class EnergyFluxSetter(TypeSafeSetter):
     @property
     def btu_per_square_foot_per_hour(self):
         """Set value using Btu per square foot per hour units."""
-        unit_const: Final = field_units.EnergyFluxUnits.btu_per_square_foot_per_hour
+        unit_const: Final = units.EnergyFluxUnits.btu_per_square_foot_per_hour
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2225,7 +2225,7 @@ class EnergyFluxSetter(TypeSafeSetter):
     @property
     def calorie_per_square_centimeter_per_second(self):
         """Set value using calorie per square centimeter per second units."""
-        unit_const: Final = field_units.EnergyFluxUnits.calorie_per_square_centimeter_per_second
+        unit_const: Final = units.EnergyFluxUnits.calorie_per_square_centimeter_per_second
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2242,7 +2242,7 @@ class EnergyFluxSetter(TypeSafeSetter):
     @property
     def celsius_heat_units_chu(self):
         """Set value using Celsius heat units (Chu) per square foot per hour units."""
-        unit_const: Final = field_units.EnergyFluxUnits.celsius_heat_units_chu
+        unit_const: Final = units.EnergyFluxUnits.celsius_heat_units_chu
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2254,7 +2254,7 @@ class EnergyFluxSetter(TypeSafeSetter):
     @property
     def kilocalorie_per_square_foot_per_hour(self):
         """Set value using kilocalorie per square foot per hour units."""
-        unit_const: Final = field_units.EnergyFluxUnits.kilocalorie_per_square_foot_per_hour
+        unit_const: Final = units.EnergyFluxUnits.kilocalorie_per_square_foot_per_hour
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2266,7 +2266,7 @@ class EnergyFluxSetter(TypeSafeSetter):
     @property
     def kilocalorie_per_square_meter_per_hour(self):
         """Set value using kilocalorie per square meter per hour units."""
-        unit_const: Final = field_units.EnergyFluxUnits.kilocalorie_per_square_meter_per_hour
+        unit_const: Final = units.EnergyFluxUnits.kilocalorie_per_square_meter_per_hour
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2278,7 +2278,7 @@ class EnergyFluxSetter(TypeSafeSetter):
     @property
     def watt_per_square_meter(self):
         """Set value using watt per square meter units."""
-        unit_const: Final = field_units.EnergyFluxUnits.watt_per_square_meter
+        unit_const: Final = units.EnergyFluxUnits.watt_per_square_meter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2296,7 +2296,7 @@ class EnergyHeatWorkSetter(TypeSafeSetter):
     @property
     def barrel_oil_equivalent_or_equivalent_barrel(self):
         """Set value using barrel oil equivalent or equivalent barrel units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.barrel_oil_equivalent_or_equivalent_barrel
+        unit_const: Final = units.EnergyHeatWorkUnits.barrel_oil_equivalent_or_equivalent_barrel
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2318,7 +2318,7 @@ class EnergyHeatWorkSetter(TypeSafeSetter):
     @property
     def billion_electronvolt(self):
         """Set value using billion electronvolt units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.billion_electronvolt
+        unit_const: Final = units.EnergyHeatWorkUnits.billion_electronvolt
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2330,7 +2330,7 @@ class EnergyHeatWorkSetter(TypeSafeSetter):
     @property
     def british_thermal_unit_4circ_mathrmc(self):
         """Set value using British thermal unit ( $4^{\\circ} \\mathrm{C}$ ) units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.british_thermal_unit_4circ_mathrmc
+        unit_const: Final = units.EnergyHeatWorkUnits.british_thermal_unit_4circ_mathrmc
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2342,7 +2342,7 @@ class EnergyHeatWorkSetter(TypeSafeSetter):
     @property
     def british_thermal_unit_60circ_mathrmf(self):
         """Set value using British thermal unit ( $60^{\\circ} \\mathrm{F}$ ) units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.british_thermal_unit_60circ_mathrmf
+        unit_const: Final = units.EnergyHeatWorkUnits.british_thermal_unit_60circ_mathrmf
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2354,7 +2354,7 @@ class EnergyHeatWorkSetter(TypeSafeSetter):
     @property
     def british_thermal_unit_international_steam_tables(self):
         """Set value using British thermal unit (international steam tables) units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.british_thermal_unit_international_steam_tables
+        unit_const: Final = units.EnergyHeatWorkUnits.british_thermal_unit_international_steam_tables
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2366,7 +2366,7 @@ class EnergyHeatWorkSetter(TypeSafeSetter):
     @property
     def british_thermal_unit_isotc_12(self):
         """Set value using British thermal unit (ISO/TC 12) units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.british_thermal_unit_isotc_12
+        unit_const: Final = units.EnergyHeatWorkUnits.british_thermal_unit_isotc_12
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2378,7 +2378,7 @@ class EnergyHeatWorkSetter(TypeSafeSetter):
     @property
     def british_thermal_unit_mean(self):
         """Set value using British thermal unit (mean) units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.british_thermal_unit_mean
+        unit_const: Final = units.EnergyHeatWorkUnits.british_thermal_unit_mean
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2400,7 +2400,7 @@ class EnergyHeatWorkSetter(TypeSafeSetter):
     @property
     def british_thermal_unit_thermochemical(self):
         """Set value using British thermal unit (thermochemical) units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.british_thermal_unit_thermochemical
+        unit_const: Final = units.EnergyHeatWorkUnits.british_thermal_unit_thermochemical
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2412,7 +2412,7 @@ class EnergyHeatWorkSetter(TypeSafeSetter):
     @property
     def calorie_20circ_mathrmc(self):
         """Set value using calorie ( $20^{\\circ} \\mathrm{C}$ ) units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.calorie_20circ_mathrmc
+        unit_const: Final = units.EnergyHeatWorkUnits.calorie_20circ_mathrmc
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2424,7 +2424,7 @@ class EnergyHeatWorkSetter(TypeSafeSetter):
     @property
     def calorie_4circ_mathrmc(self):
         """Set value using calorie ( $4^{\\circ} \\mathrm{C}$ ) units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.calorie_4circ_mathrmc
+        unit_const: Final = units.EnergyHeatWorkUnits.calorie_4circ_mathrmc
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2436,7 +2436,7 @@ class EnergyHeatWorkSetter(TypeSafeSetter):
     @property
     def calorie_international_steam_tables(self):
         """Set value using calorie (international steam tables) units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.calorie_international_steam_tables
+        unit_const: Final = units.EnergyHeatWorkUnits.calorie_international_steam_tables
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2448,7 +2448,7 @@ class EnergyHeatWorkSetter(TypeSafeSetter):
     @property
     def calorie_mean(self):
         """Set value using calorie (mean) units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.calorie_mean
+        unit_const: Final = units.EnergyHeatWorkUnits.calorie_mean
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2460,7 +2460,7 @@ class EnergyHeatWorkSetter(TypeSafeSetter):
     @property
     def calorie_nutritional(self):
         """Set value using Calorie (nutritional) units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.calorie_nutritional
+        unit_const: Final = units.EnergyHeatWorkUnits.calorie_nutritional
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2472,7 +2472,7 @@ class EnergyHeatWorkSetter(TypeSafeSetter):
     @property
     def calorie_thermochemical(self):
         """Set value using calorie (thermochemical) units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.calorie_thermochemical
+        unit_const: Final = units.EnergyHeatWorkUnits.calorie_thermochemical
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2484,7 +2484,7 @@ class EnergyHeatWorkSetter(TypeSafeSetter):
     @property
     def celsius_heat_unit(self):
         """Set value using Celsius heat unit units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.celsius_heat_unit
+        unit_const: Final = units.EnergyHeatWorkUnits.celsius_heat_unit
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2496,7 +2496,7 @@ class EnergyHeatWorkSetter(TypeSafeSetter):
     @property
     def celsius_heat_unit_15_circ_mathrmc(self):
         """Set value using Celsius heat unit ( $15{ }^{\\circ} \\mathrm{C}$ ) units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.celsius_heat_unit_15_circ_mathrmc
+        unit_const: Final = units.EnergyHeatWorkUnits.celsius_heat_unit_15_circ_mathrmc
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2508,7 +2508,7 @@ class EnergyHeatWorkSetter(TypeSafeSetter):
     @property
     def electron_volt(self):
         """Set value using electron volt units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.electron_volt
+        unit_const: Final = units.EnergyHeatWorkUnits.electron_volt
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2520,14 +2520,14 @@ class EnergyHeatWorkSetter(TypeSafeSetter):
     @property
     def erg(self):
         """Set value using erg units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.erg
+        unit_const: Final = units.EnergyHeatWorkUnits.erg
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def foot_pound_force_duty(self):
         """Set value using foot pound force (duty) units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.foot_pound_force_duty
+        unit_const: Final = units.EnergyHeatWorkUnits.foot_pound_force_duty
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2539,7 +2539,7 @@ class EnergyHeatWorkSetter(TypeSafeSetter):
     @property
     def foot_poundal(self):
         """Set value using foot-poundal units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.foot_poundal
+        unit_const: Final = units.EnergyHeatWorkUnits.foot_poundal
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2551,7 +2551,7 @@ class EnergyHeatWorkSetter(TypeSafeSetter):
     @property
     def frigorie(self):
         """Set value using frigorie units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.frigorie
+        unit_const: Final = units.EnergyHeatWorkUnits.frigorie
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2563,7 +2563,7 @@ class EnergyHeatWorkSetter(TypeSafeSetter):
     @property
     def hartree_atomic_unit_of_energy(self):
         """Set value using hartree (atomic unit of energy) units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.hartree_atomic_unit_of_energy
+        unit_const: Final = units.EnergyHeatWorkUnits.hartree_atomic_unit_of_energy
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2575,7 +2575,7 @@ class EnergyHeatWorkSetter(TypeSafeSetter):
     @property
     def joule(self):
         """Set value using joule units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.joule
+        unit_const: Final = units.EnergyHeatWorkUnits.joule
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2587,7 +2587,7 @@ class EnergyHeatWorkSetter(TypeSafeSetter):
     @property
     def joule_international(self):
         """Set value using joule (international) units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.joule_international
+        unit_const: Final = units.EnergyHeatWorkUnits.joule_international
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2599,7 +2599,7 @@ class EnergyHeatWorkSetter(TypeSafeSetter):
     @property
     def kilocalorie_thermal(self):
         """Set value using kilocalorie (thermal) units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.kilocalorie_thermal
+        unit_const: Final = units.EnergyHeatWorkUnits.kilocalorie_thermal
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2611,7 +2611,7 @@ class EnergyHeatWorkSetter(TypeSafeSetter):
     @property
     def kilogram_force_meter(self):
         """Set value using kilogram force meter units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.kilogram_force_meter
+        unit_const: Final = units.EnergyHeatWorkUnits.kilogram_force_meter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2623,7 +2623,7 @@ class EnergyHeatWorkSetter(TypeSafeSetter):
     @property
     def kiloton_tnt(self):
         """Set value using kiloton (TNT) units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.kiloton_tnt
+        unit_const: Final = units.EnergyHeatWorkUnits.kiloton_tnt
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2635,7 +2635,7 @@ class EnergyHeatWorkSetter(TypeSafeSetter):
     @property
     def kilowatt_hour(self):
         """Set value using kilowatt hour units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.kilowatt_hour
+        unit_const: Final = units.EnergyHeatWorkUnits.kilowatt_hour
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2647,7 +2647,7 @@ class EnergyHeatWorkSetter(TypeSafeSetter):
     @property
     def liter_atmosphere(self):
         """Set value using liter atmosphere units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.liter_atmosphere
+        unit_const: Final = units.EnergyHeatWorkUnits.liter_atmosphere
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2659,7 +2659,7 @@ class EnergyHeatWorkSetter(TypeSafeSetter):
     @property
     def megaton_tnt(self):
         """Set value using megaton (TNT) units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.megaton_tnt
+        unit_const: Final = units.EnergyHeatWorkUnits.megaton_tnt
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2671,7 +2671,7 @@ class EnergyHeatWorkSetter(TypeSafeSetter):
     @property
     def pound_centigrade_unit_15circ_mathrmc(self):
         """Set value using pound centigrade unit ( $15^{\\circ} \\mathrm{C}$ ) units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.pound_centigrade_unit_15circ_mathrmc
+        unit_const: Final = units.EnergyHeatWorkUnits.pound_centigrade_unit_15circ_mathrmc
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2683,14 +2683,14 @@ class EnergyHeatWorkSetter(TypeSafeSetter):
     @property
     def prout(self):
         """Set value using prout units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.prout
+        unit_const: Final = units.EnergyHeatWorkUnits.prout
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def q_unit(self):
         """Set value using Q unit units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.q_unit
+        unit_const: Final = units.EnergyHeatWorkUnits.q_unit
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2702,7 +2702,7 @@ class EnergyHeatWorkSetter(TypeSafeSetter):
     @property
     def quad_quadrillion_btu(self):
         """Set value using quad (quadrillion Btu) units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.quad_quadrillion_btu
+        unit_const: Final = units.EnergyHeatWorkUnits.quad_quadrillion_btu
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2714,7 +2714,7 @@ class EnergyHeatWorkSetter(TypeSafeSetter):
     @property
     def rydberg(self):
         """Set value using rydberg units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.rydberg
+        unit_const: Final = units.EnergyHeatWorkUnits.rydberg
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2726,7 +2726,7 @@ class EnergyHeatWorkSetter(TypeSafeSetter):
     @property
     def therm_eeg(self):
         """Set value using therm (EEG) units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.therm_eeg
+        unit_const: Final = units.EnergyHeatWorkUnits.therm_eeg
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2738,7 +2738,7 @@ class EnergyHeatWorkSetter(TypeSafeSetter):
     @property
     def therm_refineries(self):
         """Set value using therm (refineries) units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.therm_refineries
+        unit_const: Final = units.EnergyHeatWorkUnits.therm_refineries
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2760,7 +2760,7 @@ class EnergyHeatWorkSetter(TypeSafeSetter):
     @property
     def therm_us(self):
         """Set value using therm (US) units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.therm_us
+        unit_const: Final = units.EnergyHeatWorkUnits.therm_us
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2772,7 +2772,7 @@ class EnergyHeatWorkSetter(TypeSafeSetter):
     @property
     def ton_coal_equivalent(self):
         """Set value using ton coal equivalent units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.ton_coal_equivalent
+        unit_const: Final = units.EnergyHeatWorkUnits.ton_coal_equivalent
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2784,7 +2784,7 @@ class EnergyHeatWorkSetter(TypeSafeSetter):
     @property
     def ton_oil_equivalent(self):
         """Set value using ton oil equivalent units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.ton_oil_equivalent
+        unit_const: Final = units.EnergyHeatWorkUnits.ton_oil_equivalent
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2796,7 +2796,7 @@ class EnergyHeatWorkSetter(TypeSafeSetter):
     @property
     def kilojoule(self):
         """Set value using kilojoule units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.kilojoule
+        unit_const: Final = units.EnergyHeatWorkUnits.kilojoule
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2808,7 +2808,7 @@ class EnergyHeatWorkSetter(TypeSafeSetter):
     @property
     def megajoule(self):
         """Set value using megajoule units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.megajoule
+        unit_const: Final = units.EnergyHeatWorkUnits.megajoule
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2820,7 +2820,7 @@ class EnergyHeatWorkSetter(TypeSafeSetter):
     @property
     def gigajoule(self):
         """Set value using gigajoule units."""
-        unit_const: Final = field_units.EnergyHeatWorkUnits.gigajoule
+        unit_const: Final = units.EnergyHeatWorkUnits.gigajoule
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2838,7 +2838,7 @@ class EnergyPerUnitAreaSetter(TypeSafeSetter):
     @property
     def british_thermal_unit_per_square_foot(self):
         """Set value using British thermal unit per square foot units."""
-        unit_const: Final = field_units.EnergyPerUnitAreaUnits.british_thermal_unit_per_square_foot
+        unit_const: Final = units.EnergyPerUnitAreaUnits.british_thermal_unit_per_square_foot
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2860,7 +2860,7 @@ class EnergyPerUnitAreaSetter(TypeSafeSetter):
     @property
     def joule_per_square_meter(self):
         """Set value using joule per square meter units."""
-        unit_const: Final = field_units.EnergyPerUnitAreaUnits.joule_per_square_meter
+        unit_const: Final = units.EnergyPerUnitAreaUnits.joule_per_square_meter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2872,7 +2872,7 @@ class EnergyPerUnitAreaSetter(TypeSafeSetter):
     @property
     def langley(self):
         """Set value using Langley units."""
-        unit_const: Final = field_units.EnergyPerUnitAreaUnits.langley
+        unit_const: Final = units.EnergyPerUnitAreaUnits.langley
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2890,14 +2890,14 @@ class ForceSetter(TypeSafeSetter):
     @property
     def crinal(self):
         """Set value using crinal units."""
-        unit_const: Final = field_units.ForceUnits.crinal
+        unit_const: Final = units.ForceUnits.crinal
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def dyne(self):
         """Set value using dyne units."""
-        unit_const: Final = field_units.ForceUnits.dyne
+        unit_const: Final = units.ForceUnits.dyne
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2909,14 +2909,14 @@ class ForceSetter(TypeSafeSetter):
     @property
     def funal(self):
         """Set value using funal units."""
-        unit_const: Final = field_units.ForceUnits.funal
+        unit_const: Final = units.ForceUnits.funal
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def kilogram_force(self):
         """Set value using kilogram force units."""
-        unit_const: Final = field_units.ForceUnits.kilogram_force
+        unit_const: Final = units.ForceUnits.kilogram_force
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2928,7 +2928,7 @@ class ForceSetter(TypeSafeSetter):
     @property
     def kip_force(self):
         """Set value using kip force units."""
-        unit_const: Final = field_units.ForceUnits.kip_force
+        unit_const: Final = units.ForceUnits.kip_force
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2940,7 +2940,7 @@ class ForceSetter(TypeSafeSetter):
     @property
     def newton(self):
         """Set value using newton units."""
-        unit_const: Final = field_units.ForceUnits.newton
+        unit_const: Final = units.ForceUnits.newton
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2952,7 +2952,7 @@ class ForceSetter(TypeSafeSetter):
     @property
     def ounce_force(self):
         """Set value using ounce force units."""
-        unit_const: Final = field_units.ForceUnits.ounce_force
+        unit_const: Final = units.ForceUnits.ounce_force
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2974,7 +2974,7 @@ class ForceSetter(TypeSafeSetter):
     @property
     def pond(self):
         """Set value using pond units."""
-        unit_const: Final = field_units.ForceUnits.pond
+        unit_const: Final = units.ForceUnits.pond
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -2986,7 +2986,7 @@ class ForceSetter(TypeSafeSetter):
     @property
     def pound_force(self):
         """Set value using pound force units."""
-        unit_const: Final = field_units.ForceUnits.pound_force
+        unit_const: Final = units.ForceUnits.pound_force
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3008,7 +3008,7 @@ class ForceSetter(TypeSafeSetter):
     @property
     def poundal(self):
         """Set value using poundal units."""
-        unit_const: Final = field_units.ForceUnits.poundal
+        unit_const: Final = units.ForceUnits.poundal
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3020,7 +3020,7 @@ class ForceSetter(TypeSafeSetter):
     @property
     def slug_force(self):
         """Set value using slug force units."""
-        unit_const: Final = field_units.ForceUnits.slug_force
+        unit_const: Final = units.ForceUnits.slug_force
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3032,7 +3032,7 @@ class ForceSetter(TypeSafeSetter):
     @property
     def sth_ne(self):
         """Set value using sthène units."""
-        unit_const: Final = field_units.ForceUnits.sth_ne
+        unit_const: Final = units.ForceUnits.sth_ne
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3044,7 +3044,7 @@ class ForceSetter(TypeSafeSetter):
     @property
     def ton_force_long(self):
         """Set value using ton (force, long) units."""
-        unit_const: Final = field_units.ForceUnits.ton_force_long
+        unit_const: Final = units.ForceUnits.ton_force_long
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3056,7 +3056,7 @@ class ForceSetter(TypeSafeSetter):
     @property
     def ton_force_metric(self):
         """Set value using ton (force, metric) units."""
-        unit_const: Final = field_units.ForceUnits.ton_force_metric
+        unit_const: Final = units.ForceUnits.ton_force_metric
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3068,7 +3068,7 @@ class ForceSetter(TypeSafeSetter):
     @property
     def ton_force_short(self):
         """Set value using ton (force, short) units."""
-        unit_const: Final = field_units.ForceUnits.ton_force_short
+        unit_const: Final = units.ForceUnits.ton_force_short
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3080,7 +3080,7 @@ class ForceSetter(TypeSafeSetter):
     @property
     def kilonewton(self):
         """Set value using kilonewton units."""
-        unit_const: Final = field_units.ForceUnits.kilonewton
+        unit_const: Final = units.ForceUnits.kilonewton
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3092,7 +3092,7 @@ class ForceSetter(TypeSafeSetter):
     @property
     def millinewton(self):
         """Set value using millinewton units."""
-        unit_const: Final = field_units.ForceUnits.millinewton
+        unit_const: Final = units.ForceUnits.millinewton
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3110,7 +3110,7 @@ class ForceBodySetter(TypeSafeSetter):
     @property
     def dyne_per_cubic_centimeter(self):
         """Set value using dyne per cubic centimeter units."""
-        unit_const: Final = field_units.ForceBodyUnits.dyne_per_cubic_centimeter
+        unit_const: Final = units.ForceBodyUnits.dyne_per_cubic_centimeter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3132,7 +3132,7 @@ class ForceBodySetter(TypeSafeSetter):
     @property
     def kilogram_force_per_cubic_centimeter(self):
         """Set value using kilogram force per cubic centimeter units."""
-        unit_const: Final = field_units.ForceBodyUnits.kilogram_force_per_cubic_centimeter
+        unit_const: Final = units.ForceBodyUnits.kilogram_force_per_cubic_centimeter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3144,7 +3144,7 @@ class ForceBodySetter(TypeSafeSetter):
     @property
     def kilogram_force_per_cubic_meter(self):
         """Set value using kilogram force per cubic meter units."""
-        unit_const: Final = field_units.ForceBodyUnits.kilogram_force_per_cubic_meter
+        unit_const: Final = units.ForceBodyUnits.kilogram_force_per_cubic_meter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3156,7 +3156,7 @@ class ForceBodySetter(TypeSafeSetter):
     @property
     def newton_per_cubic_meter(self):
         """Set value using newton per cubic meter units."""
-        unit_const: Final = field_units.ForceBodyUnits.newton_per_cubic_meter
+        unit_const: Final = units.ForceBodyUnits.newton_per_cubic_meter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3168,7 +3168,7 @@ class ForceBodySetter(TypeSafeSetter):
     @property
     def pound_force_per_cubic_foot(self):
         """Set value using pound force per cubic foot units."""
-        unit_const: Final = field_units.ForceBodyUnits.pound_force_per_cubic_foot
+        unit_const: Final = units.ForceBodyUnits.pound_force_per_cubic_foot
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3180,7 +3180,7 @@ class ForceBodySetter(TypeSafeSetter):
     @property
     def pound_force_per_cubic_inch(self):
         """Set value using pound force per cubic inch units."""
-        unit_const: Final = field_units.ForceBodyUnits.pound_force_per_cubic_inch
+        unit_const: Final = units.ForceBodyUnits.pound_force_per_cubic_inch
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3192,7 +3192,7 @@ class ForceBodySetter(TypeSafeSetter):
     @property
     def ton_force_per_cubic_foot(self):
         """Set value using ton force per cubic foot units."""
-        unit_const: Final = field_units.ForceBodyUnits.ton_force_per_cubic_foot
+        unit_const: Final = units.ForceBodyUnits.ton_force_per_cubic_foot
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3210,7 +3210,7 @@ class ForcePerUnitMassSetter(TypeSafeSetter):
     @property
     def dyne_per_gram(self):
         """Set value using dyne per gram units."""
-        unit_const: Final = field_units.ForcePerUnitMassUnits.dyne_per_gram
+        unit_const: Final = units.ForcePerUnitMassUnits.dyne_per_gram
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3222,7 +3222,7 @@ class ForcePerUnitMassSetter(TypeSafeSetter):
     @property
     def kilogram_force_per_kilogram(self):
         """Set value using kilogram force per kilogram units."""
-        unit_const: Final = field_units.ForcePerUnitMassUnits.kilogram_force_per_kilogram
+        unit_const: Final = units.ForcePerUnitMassUnits.kilogram_force_per_kilogram
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3234,7 +3234,7 @@ class ForcePerUnitMassSetter(TypeSafeSetter):
     @property
     def newton_per_kilogram(self):
         """Set value using newton per kilogram units."""
-        unit_const: Final = field_units.ForcePerUnitMassUnits.newton_per_kilogram
+        unit_const: Final = units.ForcePerUnitMassUnits.newton_per_kilogram
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3246,7 +3246,7 @@ class ForcePerUnitMassSetter(TypeSafeSetter):
     @property
     def pound_force_per_pound_mass(self):
         """Set value using pound force per pound mass units."""
-        unit_const: Final = field_units.ForcePerUnitMassUnits.pound_force_per_pound_mass
+        unit_const: Final = units.ForcePerUnitMassUnits.pound_force_per_pound_mass
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3268,7 +3268,7 @@ class ForcePerUnitMassSetter(TypeSafeSetter):
     @property
     def pound_force_per_slug(self):
         """Set value using pound force per slug units."""
-        unit_const: Final = field_units.ForcePerUnitMassUnits.pound_force_per_slug
+        unit_const: Final = units.ForcePerUnitMassUnits.pound_force_per_slug
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3286,7 +3286,7 @@ class FrequencyVoltageRatioSetter(TypeSafeSetter):
     @property
     def cycles_per_second_per_volt(self):
         """Set value using cycles per second per volt units."""
-        unit_const: Final = field_units.FrequencyVoltageRatioUnits.cycles_per_second_per_volt
+        unit_const: Final = units.FrequencyVoltageRatioUnits.cycles_per_second_per_volt
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3298,7 +3298,7 @@ class FrequencyVoltageRatioSetter(TypeSafeSetter):
     @property
     def hertz_per_volt(self):
         """Set value using hertz per volt units."""
-        unit_const: Final = field_units.FrequencyVoltageRatioUnits.hertz_per_volt
+        unit_const: Final = units.FrequencyVoltageRatioUnits.hertz_per_volt
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3310,7 +3310,7 @@ class FrequencyVoltageRatioSetter(TypeSafeSetter):
     @property
     def terahertz_per_volt(self):
         """Set value using terahertz per volt units."""
-        unit_const: Final = field_units.FrequencyVoltageRatioUnits.terahertz_per_volt
+        unit_const: Final = units.FrequencyVoltageRatioUnits.terahertz_per_volt
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3328,14 +3328,14 @@ class FuelConsumptionSetter(TypeSafeSetter):
     @property
     def unit_100_km_per_liter(self):
         """Set value using 100 km per liter units."""
-        unit_const: Final = field_units.FuelConsumptionUnits.unit_100_km_per_liter
+        unit_const: Final = units.FuelConsumptionUnits.unit_100_km_per_liter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def gallons_uk(self):
         """Set value using gallons (UK) per 100 miles units."""
-        unit_const: Final = field_units.FuelConsumptionUnits.gallons_uk
+        unit_const: Final = units.FuelConsumptionUnits.gallons_uk
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3347,7 +3347,7 @@ class FuelConsumptionSetter(TypeSafeSetter):
     @property
     def gallons_us(self):
         """Set value using gallons (US) per 100 miles units."""
-        unit_const: Final = field_units.FuelConsumptionUnits.gallons_us
+        unit_const: Final = units.FuelConsumptionUnits.gallons_us
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3359,7 +3359,7 @@ class FuelConsumptionSetter(TypeSafeSetter):
     @property
     def kilometers_per_gallon_uk(self):
         """Set value using kilometers per gallon (UK) units."""
-        unit_const: Final = field_units.FuelConsumptionUnits.kilometers_per_gallon_uk
+        unit_const: Final = units.FuelConsumptionUnits.kilometers_per_gallon_uk
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3371,7 +3371,7 @@ class FuelConsumptionSetter(TypeSafeSetter):
     @property
     def kilometers_per_gallon_us(self):
         """Set value using kilometers per gallon (US) units."""
-        unit_const: Final = field_units.FuelConsumptionUnits.kilometers_per_gallon_us
+        unit_const: Final = units.FuelConsumptionUnits.kilometers_per_gallon_us
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3383,7 +3383,7 @@ class FuelConsumptionSetter(TypeSafeSetter):
     @property
     def kilometers_per_liter(self):
         """Set value using kilometers per liter units."""
-        unit_const: Final = field_units.FuelConsumptionUnits.kilometers_per_liter
+        unit_const: Final = units.FuelConsumptionUnits.kilometers_per_liter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3395,14 +3395,14 @@ class FuelConsumptionSetter(TypeSafeSetter):
     @property
     def liters_per_100_km(self):
         """Set value using liters per 100 km units."""
-        unit_const: Final = field_units.FuelConsumptionUnits.liters_per_100_km
+        unit_const: Final = units.FuelConsumptionUnits.liters_per_100_km
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def liters_per_kilometer(self):
         """Set value using liters per kilometer units."""
-        unit_const: Final = field_units.FuelConsumptionUnits.liters_per_kilometer
+        unit_const: Final = units.FuelConsumptionUnits.liters_per_kilometer
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3414,7 +3414,7 @@ class FuelConsumptionSetter(TypeSafeSetter):
     @property
     def meters_per_gallon_uk(self):
         """Set value using meters per gallon (UK) units."""
-        unit_const: Final = field_units.FuelConsumptionUnits.meters_per_gallon_uk
+        unit_const: Final = units.FuelConsumptionUnits.meters_per_gallon_uk
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3426,7 +3426,7 @@ class FuelConsumptionSetter(TypeSafeSetter):
     @property
     def meters_per_gallon_us(self):
         """Set value using meters per gallon (US) units."""
-        unit_const: Final = field_units.FuelConsumptionUnits.meters_per_gallon_us
+        unit_const: Final = units.FuelConsumptionUnits.meters_per_gallon_us
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3438,7 +3438,7 @@ class FuelConsumptionSetter(TypeSafeSetter):
     @property
     def miles_per_gallon_uk(self):
         """Set value using miles per gallon (UK) units."""
-        unit_const: Final = field_units.FuelConsumptionUnits.miles_per_gallon_uk
+        unit_const: Final = units.FuelConsumptionUnits.miles_per_gallon_uk
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3460,7 +3460,7 @@ class FuelConsumptionSetter(TypeSafeSetter):
     @property
     def miles_per_gallon_us(self):
         """Set value using miles per gallon (US) units."""
-        unit_const: Final = field_units.FuelConsumptionUnits.miles_per_gallon_us
+        unit_const: Final = units.FuelConsumptionUnits.miles_per_gallon_us
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3482,7 +3482,7 @@ class FuelConsumptionSetter(TypeSafeSetter):
     @property
     def miles_per_liter(self):
         """Set value using miles per liter units."""
-        unit_const: Final = field_units.FuelConsumptionUnits.miles_per_liter
+        unit_const: Final = units.FuelConsumptionUnits.miles_per_liter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3500,7 +3500,7 @@ class HeatOfCombustionSetter(TypeSafeSetter):
     @property
     def british_thermal_unit_per_pound(self):
         """Set value using British thermal unit per pound units."""
-        unit_const: Final = field_units.HeatOfCombustionUnits.british_thermal_unit_per_pound
+        unit_const: Final = units.HeatOfCombustionUnits.british_thermal_unit_per_pound
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3512,7 +3512,7 @@ class HeatOfCombustionSetter(TypeSafeSetter):
     @property
     def calorie_per_gram(self):
         """Set value using calorie per gram units."""
-        unit_const: Final = field_units.HeatOfCombustionUnits.calorie_per_gram
+        unit_const: Final = units.HeatOfCombustionUnits.calorie_per_gram
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3524,7 +3524,7 @@ class HeatOfCombustionSetter(TypeSafeSetter):
     @property
     def chu_per_pound(self):
         """Set value using Chu per pound units."""
-        unit_const: Final = field_units.HeatOfCombustionUnits.chu_per_pound
+        unit_const: Final = units.HeatOfCombustionUnits.chu_per_pound
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3536,7 +3536,7 @@ class HeatOfCombustionSetter(TypeSafeSetter):
     @property
     def joule_per_kilogram(self):
         """Set value using joule per kilogram units."""
-        unit_const: Final = field_units.HeatOfCombustionUnits.joule_per_kilogram
+        unit_const: Final = units.HeatOfCombustionUnits.joule_per_kilogram
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3554,7 +3554,7 @@ class HeatOfFusionSetter(TypeSafeSetter):
     @property
     def british_thermal_unit_mean(self):
         """Set value using British thermal unit (mean) per pound units."""
-        unit_const: Final = field_units.HeatOfFusionUnits.british_thermal_unit_mean
+        unit_const: Final = units.HeatOfFusionUnits.british_thermal_unit_mean
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3566,7 +3566,7 @@ class HeatOfFusionSetter(TypeSafeSetter):
     @property
     def british_thermal_unit_per_pound(self):
         """Set value using British thermal unit per pound units."""
-        unit_const: Final = field_units.HeatOfFusionUnits.british_thermal_unit_per_pound
+        unit_const: Final = units.HeatOfFusionUnits.british_thermal_unit_per_pound
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3578,7 +3578,7 @@ class HeatOfFusionSetter(TypeSafeSetter):
     @property
     def calorie_per_gram(self):
         """Set value using calorie per gram units."""
-        unit_const: Final = field_units.HeatOfFusionUnits.calorie_per_gram
+        unit_const: Final = units.HeatOfFusionUnits.calorie_per_gram
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3590,7 +3590,7 @@ class HeatOfFusionSetter(TypeSafeSetter):
     @property
     def chu_per_pound(self):
         """Set value using Chu per pound units."""
-        unit_const: Final = field_units.HeatOfFusionUnits.chu_per_pound
+        unit_const: Final = units.HeatOfFusionUnits.chu_per_pound
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3602,7 +3602,7 @@ class HeatOfFusionSetter(TypeSafeSetter):
     @property
     def joule_per_kilogram(self):
         """Set value using joule per kilogram units."""
-        unit_const: Final = field_units.HeatOfFusionUnits.joule_per_kilogram
+        unit_const: Final = units.HeatOfFusionUnits.joule_per_kilogram
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3620,7 +3620,7 @@ class HeatOfVaporizationSetter(TypeSafeSetter):
     @property
     def british_thermal_unit_per_pound(self):
         """Set value using British thermal unit per pound units."""
-        unit_const: Final = field_units.HeatOfVaporizationUnits.british_thermal_unit_per_pound
+        unit_const: Final = units.HeatOfVaporizationUnits.british_thermal_unit_per_pound
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3632,7 +3632,7 @@ class HeatOfVaporizationSetter(TypeSafeSetter):
     @property
     def calorie_per_gram(self):
         """Set value using calorie per gram units."""
-        unit_const: Final = field_units.HeatOfVaporizationUnits.calorie_per_gram
+        unit_const: Final = units.HeatOfVaporizationUnits.calorie_per_gram
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3644,7 +3644,7 @@ class HeatOfVaporizationSetter(TypeSafeSetter):
     @property
     def chu_per_pound(self):
         """Set value using Chu per pound units."""
-        unit_const: Final = field_units.HeatOfVaporizationUnits.chu_per_pound
+        unit_const: Final = units.HeatOfVaporizationUnits.chu_per_pound
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3656,7 +3656,7 @@ class HeatOfVaporizationSetter(TypeSafeSetter):
     @property
     def joule_per_kilogram(self):
         """Set value using joule per kilogram units."""
-        unit_const: Final = field_units.HeatOfVaporizationUnits.joule_per_kilogram
+        unit_const: Final = units.HeatOfVaporizationUnits.joule_per_kilogram
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3674,7 +3674,7 @@ class HeatTransferCoefficientSetter(TypeSafeSetter):
     @property
     def btu_per_square_foot_per_hour_per_degree_fahrenheit_or_rankine(self):
         """Set value using Btu per square foot per hour per degree Fahrenheit (or Rankine) units."""
-        unit_const: Final = field_units.HeatTransferCoefficientUnits.btu_per_square_foot_per_hour_per_degree_fahrenheit_or_rankine
+        unit_const: Final = units.HeatTransferCoefficientUnits.btu_per_square_foot_per_hour_per_degree_fahrenheit_or_rankine
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3686,7 +3686,7 @@ class HeatTransferCoefficientSetter(TypeSafeSetter):
     @property
     def watt_per_square_meter_per_degree_celsius_or_kelvin(self):
         """Set value using watt per square meter per degree Celsius (or kelvin) units."""
-        unit_const: Final = field_units.HeatTransferCoefficientUnits.watt_per_square_meter_per_degree_celsius_or_kelvin
+        unit_const: Final = units.HeatTransferCoefficientUnits.watt_per_square_meter_per_degree_celsius_or_kelvin
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3704,7 +3704,7 @@ class IlluminanceSetter(TypeSafeSetter):
     @property
     def foot_candle(self):
         """Set value using foot-candle units."""
-        unit_const: Final = field_units.IlluminanceUnits.foot_candle
+        unit_const: Final = units.IlluminanceUnits.foot_candle
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3726,7 +3726,7 @@ class IlluminanceSetter(TypeSafeSetter):
     @property
     def lux(self):
         """Set value using lux units."""
-        unit_const: Final = field_units.IlluminanceUnits.lux
+        unit_const: Final = units.IlluminanceUnits.lux
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3738,14 +3738,14 @@ class IlluminanceSetter(TypeSafeSetter):
     @property
     def nox(self):
         """Set value using nox units."""
-        unit_const: Final = field_units.IlluminanceUnits.nox
+        unit_const: Final = units.IlluminanceUnits.nox
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def phot(self):
         """Set value using phot units."""
-        unit_const: Final = field_units.IlluminanceUnits.phot
+        unit_const: Final = units.IlluminanceUnits.phot
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3757,7 +3757,7 @@ class IlluminanceSetter(TypeSafeSetter):
     @property
     def skot(self):
         """Set value using skot units."""
-        unit_const: Final = field_units.IlluminanceUnits.skot
+        unit_const: Final = units.IlluminanceUnits.skot
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3770,7 +3770,7 @@ class KineticEnergyOfTurbulenceSetter(TypeSafeSetter):
     @property
     def square_foot_per_second_squared(self):
         """Set value using square foot per second squared units."""
-        unit_const: Final = field_units.KineticEnergyOfTurbulenceUnits.square_foot_per_second_squared
+        unit_const: Final = units.KineticEnergyOfTurbulenceUnits.square_foot_per_second_squared
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3792,7 +3792,7 @@ class KineticEnergyOfTurbulenceSetter(TypeSafeSetter):
     @property
     def square_meters_per_second_squared(self):
         """Set value using square meters per second squared units."""
-        unit_const: Final = field_units.KineticEnergyOfTurbulenceUnits.square_meters_per_second_squared
+        unit_const: Final = units.KineticEnergyOfTurbulenceUnits.square_meters_per_second_squared
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3810,7 +3810,7 @@ class LengthSetter(TypeSafeSetter):
     @property
     def ngstr_m(self):
         """Set value using ångström units."""
-        unit_const: Final = field_units.LengthUnits.ngstr_m
+        unit_const: Final = units.LengthUnits.ngstr_m
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3822,7 +3822,7 @@ class LengthSetter(TypeSafeSetter):
     @property
     def arpent_quebec(self):
         """Set value using arpent (Quebec) units."""
-        unit_const: Final = field_units.LengthUnits.arpent_quebec
+        unit_const: Final = units.LengthUnits.arpent_quebec
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3834,7 +3834,7 @@ class LengthSetter(TypeSafeSetter):
     @property
     def astronomic_unit(self):
         """Set value using astronomic unit units."""
-        unit_const: Final = field_units.LengthUnits.astronomic_unit
+        unit_const: Final = units.LengthUnits.astronomic_unit
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3846,7 +3846,7 @@ class LengthSetter(TypeSafeSetter):
     @property
     def attometer(self):
         """Set value using attometer units."""
-        unit_const: Final = field_units.LengthUnits.attometer
+        unit_const: Final = units.LengthUnits.attometer
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3858,7 +3858,7 @@ class LengthSetter(TypeSafeSetter):
     @property
     def calibre_centinch(self):
         """Set value using calibre (centinch) units."""
-        unit_const: Final = field_units.LengthUnits.calibre_centinch
+        unit_const: Final = units.LengthUnits.calibre_centinch
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3870,7 +3870,7 @@ class LengthSetter(TypeSafeSetter):
     @property
     def centimeter(self):
         """Set value using centimeter units."""
-        unit_const: Final = field_units.LengthUnits.centimeter
+        unit_const: Final = units.LengthUnits.centimeter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3882,7 +3882,7 @@ class LengthSetter(TypeSafeSetter):
     @property
     def chain_engrs_or_ramsden(self):
         """Set value using chain (Engr's or Ramsden) units."""
-        unit_const: Final = field_units.LengthUnits.chain_engrs_or_ramsden
+        unit_const: Final = units.LengthUnits.chain_engrs_or_ramsden
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3904,7 +3904,7 @@ class LengthSetter(TypeSafeSetter):
     @property
     def chain_gunters(self):
         """Set value using chain (Gunter's) units."""
-        unit_const: Final = field_units.LengthUnits.chain_gunters
+        unit_const: Final = units.LengthUnits.chain_gunters
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3916,7 +3916,7 @@ class LengthSetter(TypeSafeSetter):
     @property
     def chain_surveyors(self):
         """Set value using chain (surveyors) units."""
-        unit_const: Final = field_units.LengthUnits.chain_surveyors
+        unit_const: Final = units.LengthUnits.chain_surveyors
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3928,7 +3928,7 @@ class LengthSetter(TypeSafeSetter):
     @property
     def cubit_uk(self):
         """Set value using cubit (UK) units."""
-        unit_const: Final = field_units.LengthUnits.cubit_uk
+        unit_const: Final = units.LengthUnits.cubit_uk
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3940,14 +3940,14 @@ class LengthSetter(TypeSafeSetter):
     @property
     def ell(self):
         """Set value using ell units."""
-        unit_const: Final = field_units.LengthUnits.ell
+        unit_const: Final = units.LengthUnits.ell
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def fathom(self):
         """Set value using fathom units."""
-        unit_const: Final = field_units.LengthUnits.fathom
+        unit_const: Final = units.LengthUnits.fathom
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3959,7 +3959,7 @@ class LengthSetter(TypeSafeSetter):
     @property
     def femtometre(self):
         """Set value using femtometre units."""
-        unit_const: Final = field_units.LengthUnits.femtometre
+        unit_const: Final = units.LengthUnits.femtometre
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3971,7 +3971,7 @@ class LengthSetter(TypeSafeSetter):
     @property
     def fermi(self):
         """Set value using fermi units."""
-        unit_const: Final = field_units.LengthUnits.fermi
+        unit_const: Final = units.LengthUnits.fermi
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3983,7 +3983,7 @@ class LengthSetter(TypeSafeSetter):
     @property
     def foot(self):
         """Set value using foot units."""
-        unit_const: Final = field_units.LengthUnits.foot
+        unit_const: Final = units.LengthUnits.foot
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -3995,7 +3995,7 @@ class LengthSetter(TypeSafeSetter):
     @property
     def furlong_uk_and_us(self):
         """Set value using furlong (UK and US) units."""
-        unit_const: Final = field_units.LengthUnits.furlong_uk_and_us
+        unit_const: Final = units.LengthUnits.furlong_uk_and_us
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -4007,7 +4007,7 @@ class LengthSetter(TypeSafeSetter):
     @property
     def inch(self):
         """Set value using inch units."""
-        unit_const: Final = field_units.LengthUnits.inch
+        unit_const: Final = units.LengthUnits.inch
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -4019,7 +4019,7 @@ class LengthSetter(TypeSafeSetter):
     @property
     def kilometer(self):
         """Set value using kilometer units."""
-        unit_const: Final = field_units.LengthUnits.kilometer
+        unit_const: Final = units.LengthUnits.kilometer
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -4031,7 +4031,7 @@ class LengthSetter(TypeSafeSetter):
     @property
     def league_us_statute(self):
         """Set value using league (US, statute) units."""
-        unit_const: Final = field_units.LengthUnits.league_us_statute
+        unit_const: Final = units.LengthUnits.league_us_statute
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -4043,21 +4043,21 @@ class LengthSetter(TypeSafeSetter):
     @property
     def lieue_metric(self):
         """Set value using lieue (metric) units."""
-        unit_const: Final = field_units.LengthUnits.lieue_metric
+        unit_const: Final = units.LengthUnits.lieue_metric
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def ligne_metric(self):
         """Set value using ligne (metric) units."""
-        unit_const: Final = field_units.LengthUnits.ligne_metric
+        unit_const: Final = units.LengthUnits.ligne_metric
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def line_us(self):
         """Set value using line (US) units."""
-        unit_const: Final = field_units.LengthUnits.line_us
+        unit_const: Final = units.LengthUnits.line_us
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -4069,7 +4069,7 @@ class LengthSetter(TypeSafeSetter):
     @property
     def link_surveyors(self):
         """Set value using link (surveyors) units."""
-        unit_const: Final = field_units.LengthUnits.link_surveyors
+        unit_const: Final = units.LengthUnits.link_surveyors
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -4081,7 +4081,7 @@ class LengthSetter(TypeSafeSetter):
     @property
     def meter(self):
         """Set value using meter units."""
-        unit_const: Final = field_units.LengthUnits.meter
+        unit_const: Final = units.LengthUnits.meter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -4093,7 +4093,7 @@ class LengthSetter(TypeSafeSetter):
     @property
     def micrometer(self):
         """Set value using micrometer units."""
-        unit_const: Final = field_units.LengthUnits.micrometer
+        unit_const: Final = units.LengthUnits.micrometer
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -4105,7 +4105,7 @@ class LengthSetter(TypeSafeSetter):
     @property
     def micron(self):
         """Set value using micron units."""
-        unit_const: Final = field_units.LengthUnits.micron
+        unit_const: Final = units.LengthUnits.micron
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -4117,14 +4117,14 @@ class LengthSetter(TypeSafeSetter):
     @property
     def mil(self):
         """Set value using mil units."""
-        unit_const: Final = field_units.LengthUnits.mil
+        unit_const: Final = units.LengthUnits.mil
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def mile_geographical(self):
         """Set value using mile (geographical) units."""
-        unit_const: Final = field_units.LengthUnits.mile_geographical
+        unit_const: Final = units.LengthUnits.mile_geographical
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -4136,7 +4136,7 @@ class LengthSetter(TypeSafeSetter):
     @property
     def mile_us_nautical(self):
         """Set value using mile (US, nautical) units."""
-        unit_const: Final = field_units.LengthUnits.mile_us_nautical
+        unit_const: Final = units.LengthUnits.mile_us_nautical
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -4148,14 +4148,14 @@ class LengthSetter(TypeSafeSetter):
     @property
     def mile_us_statute(self):
         """Set value using mile (US, statute) units."""
-        unit_const: Final = field_units.LengthUnits.mile_us_statute
+        unit_const: Final = units.LengthUnits.mile_us_statute
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def mile_us_survey(self):
         """Set value using mile (US, survey) units."""
-        unit_const: Final = field_units.LengthUnits.mile_us_survey
+        unit_const: Final = units.LengthUnits.mile_us_survey
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -4167,7 +4167,7 @@ class LengthSetter(TypeSafeSetter):
     @property
     def millimeter(self):
         """Set value using millimeter units."""
-        unit_const: Final = field_units.LengthUnits.millimeter
+        unit_const: Final = units.LengthUnits.millimeter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -4179,7 +4179,7 @@ class LengthSetter(TypeSafeSetter):
     @property
     def millimicron(self):
         """Set value using millimicron units."""
-        unit_const: Final = field_units.LengthUnits.millimicron
+        unit_const: Final = units.LengthUnits.millimicron
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -4191,7 +4191,7 @@ class LengthSetter(TypeSafeSetter):
     @property
     def nanometer_or_nanon(self):
         """Set value using nanometer or nanon units."""
-        unit_const: Final = field_units.LengthUnits.nanometer_or_nanon
+        unit_const: Final = units.LengthUnits.nanometer_or_nanon
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -4203,7 +4203,7 @@ class LengthSetter(TypeSafeSetter):
     @property
     def parsec(self):
         """Set value using parsec units."""
-        unit_const: Final = field_units.LengthUnits.parsec
+        unit_const: Final = units.LengthUnits.parsec
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -4215,7 +4215,7 @@ class LengthSetter(TypeSafeSetter):
     @property
     def perche(self):
         """Set value using perche units."""
-        unit_const: Final = field_units.LengthUnits.perche
+        unit_const: Final = units.LengthUnits.perche
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -4227,14 +4227,14 @@ class LengthSetter(TypeSafeSetter):
     @property
     def pica(self):
         """Set value using pica units."""
-        unit_const: Final = field_units.LengthUnits.pica
+        unit_const: Final = units.LengthUnits.pica
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def picometer(self):
         """Set value using picometer units."""
-        unit_const: Final = field_units.LengthUnits.picometer
+        unit_const: Final = units.LengthUnits.picometer
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -4246,7 +4246,7 @@ class LengthSetter(TypeSafeSetter):
     @property
     def point_didot(self):
         """Set value using point (Didot) units."""
-        unit_const: Final = field_units.LengthUnits.point_didot
+        unit_const: Final = units.LengthUnits.point_didot
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -4258,7 +4258,7 @@ class LengthSetter(TypeSafeSetter):
     @property
     def point_us(self):
         """Set value using point (US) units."""
-        unit_const: Final = field_units.LengthUnits.point_us
+        unit_const: Final = units.LengthUnits.point_us
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -4270,21 +4270,21 @@ class LengthSetter(TypeSafeSetter):
     @property
     def rod_or_pole(self):
         """Set value using rod or pole units."""
-        unit_const: Final = field_units.LengthUnits.rod_or_pole
+        unit_const: Final = units.LengthUnits.rod_or_pole
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def span(self):
         """Set value using span units."""
-        unit_const: Final = field_units.LengthUnits.span
+        unit_const: Final = units.LengthUnits.span
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def thou_millinch(self):
         """Set value using thou (millinch) units."""
-        unit_const: Final = field_units.LengthUnits.thou_millinch
+        unit_const: Final = units.LengthUnits.thou_millinch
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -4296,14 +4296,14 @@ class LengthSetter(TypeSafeSetter):
     @property
     def toise_metric(self):
         """Set value using toise (metric) units."""
-        unit_const: Final = field_units.LengthUnits.toise_metric
+        unit_const: Final = units.LengthUnits.toise_metric
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def yard(self):
         """Set value using yard units."""
-        unit_const: Final = field_units.LengthUnits.yard
+        unit_const: Final = units.LengthUnits.yard
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -4315,7 +4315,7 @@ class LengthSetter(TypeSafeSetter):
     @property
     def nanometer(self):
         """Set value using nanometer units."""
-        unit_const: Final = field_units.LengthUnits.nanometer
+        unit_const: Final = units.LengthUnits.nanometer
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -4328,14 +4328,14 @@ class LinearMassDensitySetter(TypeSafeSetter):
     @property
     def denier(self):
         """Set value using denier units."""
-        unit_const: Final = field_units.LinearMassDensityUnits.denier
+        unit_const: Final = units.LinearMassDensityUnits.denier
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def kilogram_per_centimeter(self):
         """Set value using kilogram per centimeter units."""
-        unit_const: Final = field_units.LinearMassDensityUnits.kilogram_per_centimeter
+        unit_const: Final = units.LinearMassDensityUnits.kilogram_per_centimeter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -4347,7 +4347,7 @@ class LinearMassDensitySetter(TypeSafeSetter):
     @property
     def kilogram_per_meter(self):
         """Set value using kilogram per meter units."""
-        unit_const: Final = field_units.LinearMassDensityUnits.kilogram_per_meter
+        unit_const: Final = units.LinearMassDensityUnits.kilogram_per_meter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -4359,7 +4359,7 @@ class LinearMassDensitySetter(TypeSafeSetter):
     @property
     def pound_per_foot(self):
         """Set value using pound per foot units."""
-        unit_const: Final = field_units.LinearMassDensityUnits.pound_per_foot
+        unit_const: Final = units.LinearMassDensityUnits.pound_per_foot
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -4371,7 +4371,7 @@ class LinearMassDensitySetter(TypeSafeSetter):
     @property
     def pound_per_inch(self):
         """Set value using pound per inch units."""
-        unit_const: Final = field_units.LinearMassDensityUnits.pound_per_inch
+        unit_const: Final = units.LinearMassDensityUnits.pound_per_inch
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -4383,7 +4383,7 @@ class LinearMassDensitySetter(TypeSafeSetter):
     @property
     def pound_per_yard(self):
         """Set value using pound per yard units."""
-        unit_const: Final = field_units.LinearMassDensityUnits.pound_per_yard
+        unit_const: Final = units.LinearMassDensityUnits.pound_per_yard
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -4395,7 +4395,7 @@ class LinearMassDensitySetter(TypeSafeSetter):
     @property
     def ton_metric(self):
         """Set value using ton (metric) per kilometer units."""
-        unit_const: Final = field_units.LinearMassDensityUnits.ton_metric
+        unit_const: Final = units.LinearMassDensityUnits.ton_metric
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -4423,7 +4423,7 @@ class LinearMomentumSetter(TypeSafeSetter):
     @property
     def foot_pounds_force_per_hour(self):
         """Set value using foot pounds force per hour units."""
-        unit_const: Final = field_units.LinearMomentumUnits.foot_pounds_force_per_hour
+        unit_const: Final = units.LinearMomentumUnits.foot_pounds_force_per_hour
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -4445,7 +4445,7 @@ class LinearMomentumSetter(TypeSafeSetter):
     @property
     def foot_pounds_force_per_minute(self):
         """Set value using foot pounds force per minute units."""
-        unit_const: Final = field_units.LinearMomentumUnits.foot_pounds_force_per_minute
+        unit_const: Final = units.LinearMomentumUnits.foot_pounds_force_per_minute
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -4467,7 +4467,7 @@ class LinearMomentumSetter(TypeSafeSetter):
     @property
     def foot_pounds_force_per_second(self):
         """Set value using foot pounds force per second units."""
-        unit_const: Final = field_units.LinearMomentumUnits.foot_pounds_force_per_second
+        unit_const: Final = units.LinearMomentumUnits.foot_pounds_force_per_second
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -4489,7 +4489,7 @@ class LinearMomentumSetter(TypeSafeSetter):
     @property
     def gram_centimeters_per_second(self):
         """Set value using gram centimeters per second units."""
-        unit_const: Final = field_units.LinearMomentumUnits.gram_centimeters_per_second
+        unit_const: Final = units.LinearMomentumUnits.gram_centimeters_per_second
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -4501,7 +4501,7 @@ class LinearMomentumSetter(TypeSafeSetter):
     @property
     def kilogram_meters_per_second(self):
         """Set value using kilogram meters per second units."""
-        unit_const: Final = field_units.LinearMomentumUnits.kilogram_meters_per_second
+        unit_const: Final = units.LinearMomentumUnits.kilogram_meters_per_second
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -4519,7 +4519,7 @@ class LuminanceSelfSetter(TypeSafeSetter):
     @property
     def apostilb(self):
         """Set value using apostilb units."""
-        unit_const: Final = field_units.LuminanceSelfUnits.apostilb
+        unit_const: Final = units.LuminanceSelfUnits.apostilb
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -4531,7 +4531,7 @@ class LuminanceSelfSetter(TypeSafeSetter):
     @property
     def blondel(self):
         """Set value using blondel units."""
-        unit_const: Final = field_units.LuminanceSelfUnits.blondel
+        unit_const: Final = units.LuminanceSelfUnits.blondel
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -4543,7 +4543,7 @@ class LuminanceSelfSetter(TypeSafeSetter):
     @property
     def candela_per_square_meter(self):
         """Set value using candela per square meter units."""
-        unit_const: Final = field_units.LuminanceSelfUnits.candela_per_square_meter
+        unit_const: Final = units.LuminanceSelfUnits.candela_per_square_meter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -4555,7 +4555,7 @@ class LuminanceSelfSetter(TypeSafeSetter):
     @property
     def foot_lambert(self):
         """Set value using foot-lambert units."""
-        unit_const: Final = field_units.LuminanceSelfUnits.foot_lambert
+        unit_const: Final = units.LuminanceSelfUnits.foot_lambert
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -4567,7 +4567,7 @@ class LuminanceSelfSetter(TypeSafeSetter):
     @property
     def lambert(self):
         """Set value using lambert units."""
-        unit_const: Final = field_units.LuminanceSelfUnits.lambert
+        unit_const: Final = units.LuminanceSelfUnits.lambert
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -4579,21 +4579,21 @@ class LuminanceSelfSetter(TypeSafeSetter):
     @property
     def luxon(self):
         """Set value using luxon units."""
-        unit_const: Final = field_units.LuminanceSelfUnits.luxon
+        unit_const: Final = units.LuminanceSelfUnits.luxon
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def nit(self):
         """Set value using nit units."""
-        unit_const: Final = field_units.LuminanceSelfUnits.nit
+        unit_const: Final = units.LuminanceSelfUnits.nit
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def stilb(self):
         """Set value using stilb units."""
-        unit_const: Final = field_units.LuminanceSelfUnits.stilb
+        unit_const: Final = units.LuminanceSelfUnits.stilb
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -4605,7 +4605,7 @@ class LuminanceSelfSetter(TypeSafeSetter):
     @property
     def troland(self):
         """Set value using troland units."""
-        unit_const: Final = field_units.LuminanceSelfUnits.troland
+        unit_const: Final = units.LuminanceSelfUnits.troland
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -4618,7 +4618,7 @@ class LuminousFluxSetter(TypeSafeSetter):
     @property
     def candela_steradian(self):
         """Set value using candela steradian units."""
-        unit_const: Final = field_units.LuminousFluxUnits.candela_steradian
+        unit_const: Final = units.LuminousFluxUnits.candela_steradian
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -4630,7 +4630,7 @@ class LuminousFluxSetter(TypeSafeSetter):
     @property
     def lumen(self):
         """Set value using lumen units."""
-        unit_const: Final = field_units.LuminousFluxUnits.lumen
+        unit_const: Final = units.LuminousFluxUnits.lumen
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -4643,7 +4643,7 @@ class LuminousIntensitySetter(TypeSafeSetter):
     @property
     def candela(self):
         """Set value using candela units."""
-        unit_const: Final = field_units.LuminousIntensityUnits.candela
+        unit_const: Final = units.LuminousIntensityUnits.candela
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -4655,7 +4655,7 @@ class LuminousIntensitySetter(TypeSafeSetter):
     @property
     def candle_international(self):
         """Set value using candle (international) units."""
-        unit_const: Final = field_units.LuminousIntensityUnits.candle_international
+        unit_const: Final = units.LuminousIntensityUnits.candle_international
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -4667,14 +4667,14 @@ class LuminousIntensitySetter(TypeSafeSetter):
     @property
     def carcel(self):
         """Set value using carcel units."""
-        unit_const: Final = field_units.LuminousIntensityUnits.carcel
+        unit_const: Final = units.LuminousIntensityUnits.carcel
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def hefner_unit(self):
         """Set value using Hefner unit units."""
-        unit_const: Final = field_units.LuminousIntensityUnits.hefner_unit
+        unit_const: Final = units.LuminousIntensityUnits.hefner_unit
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -4692,7 +4692,7 @@ class MagneticFieldSetter(TypeSafeSetter):
     @property
     def ampere_per_meter(self):
         """Set value using ampere per meter units."""
-        unit_const: Final = field_units.MagneticFieldUnits.ampere_per_meter
+        unit_const: Final = units.MagneticFieldUnits.ampere_per_meter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -4704,14 +4704,14 @@ class MagneticFieldSetter(TypeSafeSetter):
     @property
     def lenz(self):
         """Set value using lenz units."""
-        unit_const: Final = field_units.MagneticFieldUnits.lenz
+        unit_const: Final = units.MagneticFieldUnits.lenz
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def oersted(self):
         """Set value using oersted units."""
-        unit_const: Final = field_units.MagneticFieldUnits.oersted
+        unit_const: Final = units.MagneticFieldUnits.oersted
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -4723,7 +4723,7 @@ class MagneticFieldSetter(TypeSafeSetter):
     @property
     def praoersted(self):
         """Set value using praoersted units."""
-        unit_const: Final = field_units.MagneticFieldUnits.praoersted
+        unit_const: Final = units.MagneticFieldUnits.praoersted
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -4741,7 +4741,7 @@ class MagneticFluxSetter(TypeSafeSetter):
     @property
     def kapp_line(self):
         """Set value using kapp line units."""
-        unit_const: Final = field_units.MagneticFluxUnits.kapp_line
+        unit_const: Final = units.MagneticFluxUnits.kapp_line
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -4753,14 +4753,14 @@ class MagneticFluxSetter(TypeSafeSetter):
     @property
     def line(self):
         """Set value using line units."""
-        unit_const: Final = field_units.MagneticFluxUnits.line
+        unit_const: Final = units.MagneticFluxUnits.line
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def maxwell(self):
         """Set value using maxwell units."""
-        unit_const: Final = field_units.MagneticFluxUnits.maxwell
+        unit_const: Final = units.MagneticFluxUnits.maxwell
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -4772,14 +4772,14 @@ class MagneticFluxSetter(TypeSafeSetter):
     @property
     def unit_pole(self):
         """Set value using unit pole units."""
-        unit_const: Final = field_units.MagneticFluxUnits.unit_pole
+        unit_const: Final = units.MagneticFluxUnits.unit_pole
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def weber(self):
         """Set value using weber units."""
-        unit_const: Final = field_units.MagneticFluxUnits.weber
+        unit_const: Final = units.MagneticFluxUnits.weber
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -4791,7 +4791,7 @@ class MagneticFluxSetter(TypeSafeSetter):
     @property
     def milliweber(self):
         """Set value using milliweber units."""
-        unit_const: Final = field_units.MagneticFluxUnits.milliweber
+        unit_const: Final = units.MagneticFluxUnits.milliweber
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -4803,7 +4803,7 @@ class MagneticFluxSetter(TypeSafeSetter):
     @property
     def microweber(self):
         """Set value using microweber units."""
-        unit_const: Final = field_units.MagneticFluxUnits.microweber
+        unit_const: Final = units.MagneticFluxUnits.microweber
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -4816,14 +4816,14 @@ class MagneticInductionFieldStrengthSetter(TypeSafeSetter):
     @property
     def gamma(self):
         """Set value using gamma units."""
-        unit_const: Final = field_units.MagneticInductionFieldStrengthUnits.gamma
+        unit_const: Final = units.MagneticInductionFieldStrengthUnits.gamma
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def gauss(self):
         """Set value using gauss units."""
-        unit_const: Final = field_units.MagneticInductionFieldStrengthUnits.gauss
+        unit_const: Final = units.MagneticInductionFieldStrengthUnits.gauss
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -4835,7 +4835,7 @@ class MagneticInductionFieldStrengthSetter(TypeSafeSetter):
     @property
     def line_per_square_centimeter(self):
         """Set value using line per square centimeter units."""
-        unit_const: Final = field_units.MagneticInductionFieldStrengthUnits.line_per_square_centimeter
+        unit_const: Final = units.MagneticInductionFieldStrengthUnits.line_per_square_centimeter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -4847,7 +4847,7 @@ class MagneticInductionFieldStrengthSetter(TypeSafeSetter):
     @property
     def maxwell_per_square_centimeter(self):
         """Set value using maxwell per square centimeter units."""
-        unit_const: Final = field_units.MagneticInductionFieldStrengthUnits.maxwell_per_square_centimeter
+        unit_const: Final = units.MagneticInductionFieldStrengthUnits.maxwell_per_square_centimeter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -4859,7 +4859,7 @@ class MagneticInductionFieldStrengthSetter(TypeSafeSetter):
     @property
     def tesla(self):
         """Set value using tesla units."""
-        unit_const: Final = field_units.MagneticInductionFieldStrengthUnits.tesla
+        unit_const: Final = units.MagneticInductionFieldStrengthUnits.tesla
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -4871,14 +4871,14 @@ class MagneticInductionFieldStrengthSetter(TypeSafeSetter):
     @property
     def u_a(self):
         """Set value using u.a. units."""
-        unit_const: Final = field_units.MagneticInductionFieldStrengthUnits.u_a
+        unit_const: Final = units.MagneticInductionFieldStrengthUnits.u_a
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def weber_per_square_meter(self):
         """Set value using weber per square meter units."""
-        unit_const: Final = field_units.MagneticInductionFieldStrengthUnits.weber_per_square_meter
+        unit_const: Final = units.MagneticInductionFieldStrengthUnits.weber_per_square_meter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -4890,7 +4890,7 @@ class MagneticInductionFieldStrengthSetter(TypeSafeSetter):
     @property
     def millitesla(self):
         """Set value using millitesla units."""
-        unit_const: Final = field_units.MagneticInductionFieldStrengthUnits.millitesla
+        unit_const: Final = units.MagneticInductionFieldStrengthUnits.millitesla
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -4902,14 +4902,14 @@ class MagneticInductionFieldStrengthSetter(TypeSafeSetter):
     @property
     def microtesla(self):
         """Set value using microtesla units."""
-        unit_const: Final = field_units.MagneticInductionFieldStrengthUnits.microtesla
+        unit_const: Final = units.MagneticInductionFieldStrengthUnits.microtesla
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def nanotesla(self):
         """Set value using nanotesla units."""
-        unit_const: Final = field_units.MagneticInductionFieldStrengthUnits.nanotesla
+        unit_const: Final = units.MagneticInductionFieldStrengthUnits.nanotesla
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -4927,7 +4927,7 @@ class MagneticMomentSetter(TypeSafeSetter):
     @property
     def bohr_magneton(self):
         """Set value using Bohr magneton units."""
-        unit_const: Final = field_units.MagneticMomentUnits.bohr_magneton
+        unit_const: Final = units.MagneticMomentUnits.bohr_magneton
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -4939,7 +4939,7 @@ class MagneticMomentSetter(TypeSafeSetter):
     @property
     def joule_per_tesla(self):
         """Set value using joule per tesla units."""
-        unit_const: Final = field_units.MagneticMomentUnits.joule_per_tesla
+        unit_const: Final = units.MagneticMomentUnits.joule_per_tesla
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -4951,7 +4951,7 @@ class MagneticMomentSetter(TypeSafeSetter):
     @property
     def nuclear_magneton(self):
         """Set value using nuclear magneton units."""
-        unit_const: Final = field_units.MagneticMomentUnits.nuclear_magneton
+        unit_const: Final = units.MagneticMomentUnits.nuclear_magneton
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -4969,7 +4969,7 @@ class MagneticPermeabilitySetter(TypeSafeSetter):
     @property
     def henrys_per_meter(self):
         """Set value using henrys per meter units."""
-        unit_const: Final = field_units.MagneticPermeabilityUnits.henrys_per_meter
+        unit_const: Final = units.MagneticPermeabilityUnits.henrys_per_meter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -4981,7 +4981,7 @@ class MagneticPermeabilitySetter(TypeSafeSetter):
     @property
     def newton_per_square_ampere(self):
         """Set value using newton per square ampere units."""
-        unit_const: Final = field_units.MagneticPermeabilityUnits.newton_per_square_ampere
+        unit_const: Final = units.MagneticPermeabilityUnits.newton_per_square_ampere
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -4999,7 +4999,7 @@ class MagnetomotiveForceSetter(TypeSafeSetter):
     @property
     def abampere_turn(self):
         """Set value using abampere-turn units."""
-        unit_const: Final = field_units.MagnetomotiveForceUnits.abampere_turn
+        unit_const: Final = units.MagnetomotiveForceUnits.abampere_turn
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -5011,7 +5011,7 @@ class MagnetomotiveForceSetter(TypeSafeSetter):
     @property
     def ampere(self):
         """Set value using ampere units."""
-        unit_const: Final = field_units.MagnetomotiveForceUnits.ampere
+        unit_const: Final = units.MagnetomotiveForceUnits.ampere
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -5023,7 +5023,7 @@ class MagnetomotiveForceSetter(TypeSafeSetter):
     @property
     def ampere_turn(self):
         """Set value using ampere-turn units."""
-        unit_const: Final = field_units.MagnetomotiveForceUnits.ampere_turn
+        unit_const: Final = units.MagnetomotiveForceUnits.ampere_turn
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -5035,7 +5035,7 @@ class MagnetomotiveForceSetter(TypeSafeSetter):
     @property
     def gilbert(self):
         """Set value using gilbert units."""
-        unit_const: Final = field_units.MagnetomotiveForceUnits.gilbert
+        unit_const: Final = units.MagnetomotiveForceUnits.gilbert
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -5047,7 +5047,7 @@ class MagnetomotiveForceSetter(TypeSafeSetter):
     @property
     def kiloampere(self):
         """Set value using kiloampere units."""
-        unit_const: Final = field_units.MagnetomotiveForceUnits.kiloampere
+        unit_const: Final = units.MagnetomotiveForceUnits.kiloampere
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -5059,7 +5059,7 @@ class MagnetomotiveForceSetter(TypeSafeSetter):
     @property
     def milliampere(self):
         """Set value using milliampere units."""
-        unit_const: Final = field_units.MagnetomotiveForceUnits.milliampere
+        unit_const: Final = units.MagnetomotiveForceUnits.milliampere
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -5071,14 +5071,14 @@ class MagnetomotiveForceSetter(TypeSafeSetter):
     @property
     def microampere(self):
         """Set value using microampere units."""
-        unit_const: Final = field_units.MagnetomotiveForceUnits.microampere
+        unit_const: Final = units.MagnetomotiveForceUnits.microampere
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def nanoampere(self):
         """Set value using nanoampere units."""
-        unit_const: Final = field_units.MagnetomotiveForceUnits.nanoampere
+        unit_const: Final = units.MagnetomotiveForceUnits.nanoampere
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -5090,7 +5090,7 @@ class MagnetomotiveForceSetter(TypeSafeSetter):
     @property
     def picoampere(self):
         """Set value using picoampere units."""
-        unit_const: Final = field_units.MagnetomotiveForceUnits.picoampere
+        unit_const: Final = units.MagnetomotiveForceUnits.picoampere
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -5108,7 +5108,7 @@ class MassSetter(TypeSafeSetter):
     @property
     def slug(self):
         """Set value using slug units."""
-        unit_const: Final = field_units.MassUnits.slug
+        unit_const: Final = units.MassUnits.slug
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -5120,7 +5120,7 @@ class MassSetter(TypeSafeSetter):
     @property
     def atomic_mass_unit_12_mathrmc(self):
         """Set value using atomic mass unit ( ${ }^{12} \\mathrm{C}$ ) units."""
-        unit_const: Final = field_units.MassUnits.atomic_mass_unit_12_mathrmc
+        unit_const: Final = units.MassUnits.atomic_mass_unit_12_mathrmc
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -5142,7 +5142,7 @@ class MassSetter(TypeSafeSetter):
     @property
     def carat_metric(self):
         """Set value using carat (metric) units."""
-        unit_const: Final = field_units.MassUnits.carat_metric
+        unit_const: Final = units.MassUnits.carat_metric
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -5154,7 +5154,7 @@ class MassSetter(TypeSafeSetter):
     @property
     def cental(self):
         """Set value using cental units."""
-        unit_const: Final = field_units.MassUnits.cental
+        unit_const: Final = units.MassUnits.cental
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -5166,7 +5166,7 @@ class MassSetter(TypeSafeSetter):
     @property
     def centigram(self):
         """Set value using centigram units."""
-        unit_const: Final = field_units.MassUnits.centigram
+        unit_const: Final = units.MassUnits.centigram
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -5178,7 +5178,7 @@ class MassSetter(TypeSafeSetter):
     @property
     def clove_uk(self):
         """Set value using clove (UK) units."""
-        unit_const: Final = field_units.MassUnits.clove_uk
+        unit_const: Final = units.MassUnits.clove_uk
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -5190,7 +5190,7 @@ class MassSetter(TypeSafeSetter):
     @property
     def drachm_apothecary(self):
         """Set value using drachm (apothecary) units."""
-        unit_const: Final = field_units.MassUnits.drachm_apothecary
+        unit_const: Final = units.MassUnits.drachm_apothecary
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -5202,7 +5202,7 @@ class MassSetter(TypeSafeSetter):
     @property
     def dram_avoirdupois(self):
         """Set value using dram (avoirdupois) units."""
-        unit_const: Final = field_units.MassUnits.dram_avoirdupois
+        unit_const: Final = units.MassUnits.dram_avoirdupois
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -5214,7 +5214,7 @@ class MassSetter(TypeSafeSetter):
     @property
     def dram_troy(self):
         """Set value using dram (troy) units."""
-        unit_const: Final = field_units.MassUnits.dram_troy
+        unit_const: Final = units.MassUnits.dram_troy
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -5226,7 +5226,7 @@ class MassSetter(TypeSafeSetter):
     @property
     def grain(self):
         """Set value using grain units."""
-        unit_const: Final = field_units.MassUnits.grain
+        unit_const: Final = units.MassUnits.grain
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -5238,7 +5238,7 @@ class MassSetter(TypeSafeSetter):
     @property
     def gram(self):
         """Set value using gram units."""
-        unit_const: Final = field_units.MassUnits.gram
+        unit_const: Final = units.MassUnits.gram
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -5250,7 +5250,7 @@ class MassSetter(TypeSafeSetter):
     @property
     def hundredweight_long_or_gross(self):
         """Set value using hundredweight, long or gross units."""
-        unit_const: Final = field_units.MassUnits.hundredweight_long_or_gross
+        unit_const: Final = units.MassUnits.hundredweight_long_or_gross
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -5262,7 +5262,7 @@ class MassSetter(TypeSafeSetter):
     @property
     def hundredweight_short_or_net(self):
         """Set value using hundredweight, short or net units."""
-        unit_const: Final = field_units.MassUnits.hundredweight_short_or_net
+        unit_const: Final = units.MassUnits.hundredweight_short_or_net
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -5274,7 +5274,7 @@ class MassSetter(TypeSafeSetter):
     @property
     def kilogram(self):
         """Set value using kilogram units."""
-        unit_const: Final = field_units.MassUnits.kilogram
+        unit_const: Final = units.MassUnits.kilogram
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -5286,14 +5286,14 @@ class MassSetter(TypeSafeSetter):
     @property
     def kip(self):
         """Set value using kip units."""
-        unit_const: Final = field_units.MassUnits.kip
+        unit_const: Final = units.MassUnits.kip
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def microgram(self):
         """Set value using microgram units."""
-        unit_const: Final = field_units.MassUnits.microgram
+        unit_const: Final = units.MassUnits.microgram
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -5305,7 +5305,7 @@ class MassSetter(TypeSafeSetter):
     @property
     def milligram(self):
         """Set value using milligram units."""
-        unit_const: Final = field_units.MassUnits.milligram
+        unit_const: Final = units.MassUnits.milligram
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -5317,7 +5317,7 @@ class MassSetter(TypeSafeSetter):
     @property
     def ounce_apothecary(self):
         """Set value using ounce (apothecary) units."""
-        unit_const: Final = field_units.MassUnits.ounce_apothecary
+        unit_const: Final = units.MassUnits.ounce_apothecary
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -5329,7 +5329,7 @@ class MassSetter(TypeSafeSetter):
     @property
     def ounce_avoirdupois(self):
         """Set value using ounce (avoirdupois) units."""
-        unit_const: Final = field_units.MassUnits.ounce_avoirdupois
+        unit_const: Final = units.MassUnits.ounce_avoirdupois
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -5341,7 +5341,7 @@ class MassSetter(TypeSafeSetter):
     @property
     def ounce_troy(self):
         """Set value using ounce (troy) units."""
-        unit_const: Final = field_units.MassUnits.ounce_troy
+        unit_const: Final = units.MassUnits.ounce_troy
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -5353,7 +5353,7 @@ class MassSetter(TypeSafeSetter):
     @property
     def pennyweight_troy(self):
         """Set value using pennyweight (troy) units."""
-        unit_const: Final = field_units.MassUnits.pennyweight_troy
+        unit_const: Final = units.MassUnits.pennyweight_troy
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -5365,7 +5365,7 @@ class MassSetter(TypeSafeSetter):
     @property
     def pood_russia(self):
         """Set value using pood, (Russia) units."""
-        unit_const: Final = field_units.MassUnits.pood_russia
+        unit_const: Final = units.MassUnits.pood_russia
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -5377,7 +5377,7 @@ class MassSetter(TypeSafeSetter):
     @property
     def pound_apothecary(self):
         """Set value using pound (apothecary) units."""
-        unit_const: Final = field_units.MassUnits.pound_apothecary
+        unit_const: Final = units.MassUnits.pound_apothecary
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -5389,7 +5389,7 @@ class MassSetter(TypeSafeSetter):
     @property
     def pound_avoirdupois(self):
         """Set value using pound (avoirdupois) units."""
-        unit_const: Final = field_units.MassUnits.pound_avoirdupois
+        unit_const: Final = units.MassUnits.pound_avoirdupois
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -5401,7 +5401,7 @@ class MassSetter(TypeSafeSetter):
     @property
     def pound_troy(self):
         """Set value using pound (troy) units."""
-        unit_const: Final = field_units.MassUnits.pound_troy
+        unit_const: Final = units.MassUnits.pound_troy
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -5413,7 +5413,7 @@ class MassSetter(TypeSafeSetter):
     @property
     def pound_mass(self):
         """Set value using pound mass units."""
-        unit_const: Final = field_units.MassUnits.pound_mass
+        unit_const: Final = units.MassUnits.pound_mass
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -5425,7 +5425,7 @@ class MassSetter(TypeSafeSetter):
     @property
     def quarter_uk(self):
         """Set value using quarter (UK) units."""
-        unit_const: Final = field_units.MassUnits.quarter_uk
+        unit_const: Final = units.MassUnits.quarter_uk
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -5437,7 +5437,7 @@ class MassSetter(TypeSafeSetter):
     @property
     def quintal_metric(self):
         """Set value using quintal, metric units."""
-        unit_const: Final = field_units.MassUnits.quintal_metric
+        unit_const: Final = units.MassUnits.quintal_metric
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -5449,7 +5449,7 @@ class MassSetter(TypeSafeSetter):
     @property
     def quital_us(self):
         """Set value using quital, US units."""
-        unit_const: Final = field_units.MassUnits.quital_us
+        unit_const: Final = units.MassUnits.quital_us
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -5461,7 +5461,7 @@ class MassSetter(TypeSafeSetter):
     @property
     def scruple_avoirdupois(self):
         """Set value using scruple (avoirdupois) units."""
-        unit_const: Final = field_units.MassUnits.scruple_avoirdupois
+        unit_const: Final = units.MassUnits.scruple_avoirdupois
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -5473,7 +5473,7 @@ class MassSetter(TypeSafeSetter):
     @property
     def stone_uk(self):
         """Set value using stone (UK) units."""
-        unit_const: Final = field_units.MassUnits.stone_uk
+        unit_const: Final = units.MassUnits.stone_uk
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -5485,7 +5485,7 @@ class MassSetter(TypeSafeSetter):
     @property
     def ton_metric(self):
         """Set value using ton, metric units."""
-        unit_const: Final = field_units.MassUnits.ton_metric
+        unit_const: Final = units.MassUnits.ton_metric
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -5497,7 +5497,7 @@ class MassSetter(TypeSafeSetter):
     @property
     def ton_us_long(self):
         """Set value using ton, US, long units."""
-        unit_const: Final = field_units.MassUnits.ton_us_long
+        unit_const: Final = units.MassUnits.ton_us_long
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -5509,7 +5509,7 @@ class MassSetter(TypeSafeSetter):
     @property
     def ton_us_short(self):
         """Set value using ton, US, short units."""
-        unit_const: Final = field_units.MassUnits.ton_us_short
+        unit_const: Final = units.MassUnits.ton_us_short
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -5527,7 +5527,7 @@ class MassDensitySetter(TypeSafeSetter):
     @property
     def gram_per_cubic_centimeter(self):
         """Set value using gram per cubic centimeter units."""
-        unit_const: Final = field_units.MassDensityUnits.gram_per_cubic_centimeter
+        unit_const: Final = units.MassDensityUnits.gram_per_cubic_centimeter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -5549,7 +5549,7 @@ class MassDensitySetter(TypeSafeSetter):
     @property
     def gram_per_cubic_decimeter(self):
         """Set value using gram per cubic decimeter units."""
-        unit_const: Final = field_units.MassDensityUnits.gram_per_cubic_decimeter
+        unit_const: Final = units.MassDensityUnits.gram_per_cubic_decimeter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -5561,7 +5561,7 @@ class MassDensitySetter(TypeSafeSetter):
     @property
     def gram_per_cubic_meter(self):
         """Set value using gram per cubic meter units."""
-        unit_const: Final = field_units.MassDensityUnits.gram_per_cubic_meter
+        unit_const: Final = units.MassDensityUnits.gram_per_cubic_meter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -5573,7 +5573,7 @@ class MassDensitySetter(TypeSafeSetter):
     @property
     def gram_per_liter(self):
         """Set value using gram per liter units."""
-        unit_const: Final = field_units.MassDensityUnits.gram_per_liter
+        unit_const: Final = units.MassDensityUnits.gram_per_liter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -5595,7 +5595,7 @@ class MassDensitySetter(TypeSafeSetter):
     @property
     def kilogram_per_cubic_meter(self):
         """Set value using kilogram per cubic meter units."""
-        unit_const: Final = field_units.MassDensityUnits.kilogram_per_cubic_meter
+        unit_const: Final = units.MassDensityUnits.kilogram_per_cubic_meter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -5607,7 +5607,7 @@ class MassDensitySetter(TypeSafeSetter):
     @property
     def ounce_avdp(self):
         """Set value using ounce (avdp) per US gallon units."""
-        unit_const: Final = field_units.MassDensityUnits.ounce_avdp
+        unit_const: Final = units.MassDensityUnits.ounce_avdp
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -5619,7 +5619,7 @@ class MassDensitySetter(TypeSafeSetter):
     @property
     def pound_avdp(self):
         """Set value using pound (avdp) per cubic foot units."""
-        unit_const: Final = field_units.MassDensityUnits.pound_avdp
+        unit_const: Final = units.MassDensityUnits.pound_avdp
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -5641,7 +5641,7 @@ class MassDensitySetter(TypeSafeSetter):
     @property
     def pound_mass(self):
         """Set value using pound (mass) per cubic inch units."""
-        unit_const: Final = field_units.MassDensityUnits.pound_mass
+        unit_const: Final = units.MassDensityUnits.pound_mass
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -5663,7 +5663,7 @@ class MassDensitySetter(TypeSafeSetter):
     @property
     def ton_metric(self):
         """Set value using ton (metric) per cubic meter units."""
-        unit_const: Final = field_units.MassDensityUnits.ton_metric
+        unit_const: Final = units.MassDensityUnits.ton_metric
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -5691,7 +5691,7 @@ class MassFlowRateSetter(TypeSafeSetter):
     @property
     def kilograms_per_day(self):
         """Set value using kilograms per day units."""
-        unit_const: Final = field_units.MassFlowRateUnits.kilograms_per_day
+        unit_const: Final = units.MassFlowRateUnits.kilograms_per_day
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -5703,7 +5703,7 @@ class MassFlowRateSetter(TypeSafeSetter):
     @property
     def kilograms_per_hour(self):
         """Set value using kilograms per hour units."""
-        unit_const: Final = field_units.MassFlowRateUnits.kilograms_per_hour
+        unit_const: Final = units.MassFlowRateUnits.kilograms_per_hour
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -5715,7 +5715,7 @@ class MassFlowRateSetter(TypeSafeSetter):
     @property
     def kilograms_per_minute(self):
         """Set value using kilograms per minute units."""
-        unit_const: Final = field_units.MassFlowRateUnits.kilograms_per_minute
+        unit_const: Final = units.MassFlowRateUnits.kilograms_per_minute
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -5727,7 +5727,7 @@ class MassFlowRateSetter(TypeSafeSetter):
     @property
     def kilograms_per_second(self):
         """Set value using kilograms per second units."""
-        unit_const: Final = field_units.MassFlowRateUnits.kilograms_per_second
+        unit_const: Final = units.MassFlowRateUnits.kilograms_per_second
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -5739,7 +5739,7 @@ class MassFlowRateSetter(TypeSafeSetter):
     @property
     def metric_tons_per_day(self):
         """Set value using metric tons per day units."""
-        unit_const: Final = field_units.MassFlowRateUnits.metric_tons_per_day
+        unit_const: Final = units.MassFlowRateUnits.metric_tons_per_day
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -5761,7 +5761,7 @@ class MassFlowRateSetter(TypeSafeSetter):
     @property
     def metric_tons_per_hour(self):
         """Set value using metric tons per hour units."""
-        unit_const: Final = field_units.MassFlowRateUnits.metric_tons_per_hour
+        unit_const: Final = units.MassFlowRateUnits.metric_tons_per_hour
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -5778,14 +5778,14 @@ class MassFlowRateSetter(TypeSafeSetter):
     @property
     def metric_tons_per_minute(self):
         """Set value using metric tons per minute units."""
-        unit_const: Final = field_units.MassFlowRateUnits.metric_tons_per_minute
+        unit_const: Final = units.MassFlowRateUnits.metric_tons_per_minute
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def metric_tons_per_second(self):
         """Set value using metric tons per second units."""
-        unit_const: Final = field_units.MassFlowRateUnits.metric_tons_per_second
+        unit_const: Final = units.MassFlowRateUnits.metric_tons_per_second
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -5797,7 +5797,7 @@ class MassFlowRateSetter(TypeSafeSetter):
     @property
     def metric_tons_per_year_365_d(self):
         """Set value using metric tons per year (365 d) units."""
-        unit_const: Final = field_units.MassFlowRateUnits.metric_tons_per_year_365_d
+        unit_const: Final = units.MassFlowRateUnits.metric_tons_per_year_365_d
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -5819,7 +5819,7 @@ class MassFlowRateSetter(TypeSafeSetter):
     @property
     def pounds_per_day(self):
         """Set value using pounds per day units."""
-        unit_const: Final = field_units.MassFlowRateUnits.pounds_per_day
+        unit_const: Final = units.MassFlowRateUnits.pounds_per_day
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -5846,7 +5846,7 @@ class MassFlowRateSetter(TypeSafeSetter):
     @property
     def pounds_per_hour(self):
         """Set value using pounds per hour units."""
-        unit_const: Final = field_units.MassFlowRateUnits.pounds_per_hour
+        unit_const: Final = units.MassFlowRateUnits.pounds_per_hour
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -5873,7 +5873,7 @@ class MassFlowRateSetter(TypeSafeSetter):
     @property
     def pounds_per_minute(self):
         """Set value using pounds per minute units."""
-        unit_const: Final = field_units.MassFlowRateUnits.pounds_per_minute
+        unit_const: Final = units.MassFlowRateUnits.pounds_per_minute
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -5895,7 +5895,7 @@ class MassFlowRateSetter(TypeSafeSetter):
     @property
     def pounds_per_second(self):
         """Set value using pounds per second units."""
-        unit_const: Final = field_units.MassFlowRateUnits.pounds_per_second
+        unit_const: Final = units.MassFlowRateUnits.pounds_per_second
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -5928,7 +5928,7 @@ class MassFluxSetter(TypeSafeSetter):
     @property
     def kilogram_per_square_meter_per_day(self):
         """Set value using kilogram per square meter per day units."""
-        unit_const: Final = field_units.MassFluxUnits.kilogram_per_square_meter_per_day
+        unit_const: Final = units.MassFluxUnits.kilogram_per_square_meter_per_day
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -5940,7 +5940,7 @@ class MassFluxSetter(TypeSafeSetter):
     @property
     def kilogram_per_square_meter_per_hour(self):
         """Set value using kilogram per square meter per hour units."""
-        unit_const: Final = field_units.MassFluxUnits.kilogram_per_square_meter_per_hour
+        unit_const: Final = units.MassFluxUnits.kilogram_per_square_meter_per_hour
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -5952,7 +5952,7 @@ class MassFluxSetter(TypeSafeSetter):
     @property
     def kilogram_per_square_meter_per_minute(self):
         """Set value using kilogram per square meter per minute units."""
-        unit_const: Final = field_units.MassFluxUnits.kilogram_per_square_meter_per_minute
+        unit_const: Final = units.MassFluxUnits.kilogram_per_square_meter_per_minute
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -5964,7 +5964,7 @@ class MassFluxSetter(TypeSafeSetter):
     @property
     def kilogram_per_square_meter_per_second(self):
         """Set value using kilogram per square meter per second units."""
-        unit_const: Final = field_units.MassFluxUnits.kilogram_per_square_meter_per_second
+        unit_const: Final = units.MassFluxUnits.kilogram_per_square_meter_per_second
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -5976,7 +5976,7 @@ class MassFluxSetter(TypeSafeSetter):
     @property
     def pound_per_square_foot_per_day(self):
         """Set value using pound per square foot per day units."""
-        unit_const: Final = field_units.MassFluxUnits.pound_per_square_foot_per_day
+        unit_const: Final = units.MassFluxUnits.pound_per_square_foot_per_day
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -5998,7 +5998,7 @@ class MassFluxSetter(TypeSafeSetter):
     @property
     def pound_per_square_foot_per_hour(self):
         """Set value using pound per square foot per hour units."""
-        unit_const: Final = field_units.MassFluxUnits.pound_per_square_foot_per_hour
+        unit_const: Final = units.MassFluxUnits.pound_per_square_foot_per_hour
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -6020,7 +6020,7 @@ class MassFluxSetter(TypeSafeSetter):
     @property
     def pound_per_square_foot_per_minute(self):
         """Set value using pound per square foot per minute units."""
-        unit_const: Final = field_units.MassFluxUnits.pound_per_square_foot_per_minute
+        unit_const: Final = units.MassFluxUnits.pound_per_square_foot_per_minute
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -6042,7 +6042,7 @@ class MassFluxSetter(TypeSafeSetter):
     @property
     def pound_per_square_foot_per_second(self):
         """Set value using pound per square foot per second units."""
-        unit_const: Final = field_units.MassFluxUnits.pound_per_square_foot_per_second
+        unit_const: Final = units.MassFluxUnits.pound_per_square_foot_per_second
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -6070,7 +6070,7 @@ class MassFractionOfISetter(TypeSafeSetter):
     @property
     def grains_of_i_per_pound_total(self):
         """Set value using grains of "i" per pound total units."""
-        unit_const: Final = field_units.MassFractionOfIUnits.grains_of_i_per_pound_total
+        unit_const: Final = units.MassFractionOfIUnits.grains_of_i_per_pound_total
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -6082,7 +6082,7 @@ class MassFractionOfISetter(TypeSafeSetter):
     @property
     def gram_of_i_per_kilogram_total(self):
         """Set value using gram of "i" per kilogram total units."""
-        unit_const: Final = field_units.MassFractionOfIUnits.gram_of_i_per_kilogram_total
+        unit_const: Final = units.MassFractionOfIUnits.gram_of_i_per_kilogram_total
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -6094,7 +6094,7 @@ class MassFractionOfISetter(TypeSafeSetter):
     @property
     def kilogram_of_i_per_kilogram_total(self):
         """Set value using kilogram of "i" per kilogram total units."""
-        unit_const: Final = field_units.MassFractionOfIUnits.kilogram_of_i_per_kilogram_total
+        unit_const: Final = units.MassFractionOfIUnits.kilogram_of_i_per_kilogram_total
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -6106,7 +6106,7 @@ class MassFractionOfISetter(TypeSafeSetter):
     @property
     def pound_of_i_per_pound_total(self):
         """Set value using pound of "i" per pound total units."""
-        unit_const: Final = field_units.MassFractionOfIUnits.pound_of_i_per_pound_total
+        unit_const: Final = units.MassFractionOfIUnits.pound_of_i_per_pound_total
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -6124,7 +6124,7 @@ class MassTransferCoefficientSetter(TypeSafeSetter):
     @property
     def gram_per_square_centimeter_per_second(self):
         """Set value using gram per square centimeter per second units."""
-        unit_const: Final = field_units.MassTransferCoefficientUnits.gram_per_square_centimeter_per_second
+        unit_const: Final = units.MassTransferCoefficientUnits.gram_per_square_centimeter_per_second
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -6136,7 +6136,7 @@ class MassTransferCoefficientSetter(TypeSafeSetter):
     @property
     def kilogram_per_square_meter_per_second(self):
         """Set value using kilogram per square meter per second units."""
-        unit_const: Final = field_units.MassTransferCoefficientUnits.kilogram_per_square_meter_per_second
+        unit_const: Final = units.MassTransferCoefficientUnits.kilogram_per_square_meter_per_second
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -6148,7 +6148,7 @@ class MassTransferCoefficientSetter(TypeSafeSetter):
     @property
     def pounds_force_per_cubic_foot_per_hour(self):
         """Set value using pounds force per cubic foot per hour units."""
-        unit_const: Final = field_units.MassTransferCoefficientUnits.pounds_force_per_cubic_foot_per_hour
+        unit_const: Final = units.MassTransferCoefficientUnits.pounds_force_per_cubic_foot_per_hour
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -6170,7 +6170,7 @@ class MassTransferCoefficientSetter(TypeSafeSetter):
     @property
     def pounds_mass_per_square_foot_per_hour(self):
         """Set value using pounds mass per square foot per hour units."""
-        unit_const: Final = field_units.MassTransferCoefficientUnits.pounds_mass_per_square_foot_per_hour
+        unit_const: Final = units.MassTransferCoefficientUnits.pounds_mass_per_square_foot_per_hour
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -6192,7 +6192,7 @@ class MassTransferCoefficientSetter(TypeSafeSetter):
     @property
     def pounds_mass_per_square_foot_per_second(self):
         """Set value using pounds mass per square foot per second units."""
-        unit_const: Final = field_units.MassTransferCoefficientUnits.pounds_mass_per_square_foot_per_second
+        unit_const: Final = units.MassTransferCoefficientUnits.pounds_mass_per_square_foot_per_second
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -6220,7 +6220,7 @@ class MolalityOfSoluteISetter(TypeSafeSetter):
     @property
     def gram_moles_of_i_per_kilogram(self):
         """Set value using gram moles of "i" per kilogram units."""
-        unit_const: Final = field_units.MolalityOfSoluteIUnits.gram_moles_of_i_per_kilogram
+        unit_const: Final = units.MolalityOfSoluteIUnits.gram_moles_of_i_per_kilogram
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -6232,7 +6232,7 @@ class MolalityOfSoluteISetter(TypeSafeSetter):
     @property
     def kilogram_mols_of_i_per_kilogram(self):
         """Set value using kilogram mols of "i" per kilogram units."""
-        unit_const: Final = field_units.MolalityOfSoluteIUnits.kilogram_mols_of_i_per_kilogram
+        unit_const: Final = units.MolalityOfSoluteIUnits.kilogram_mols_of_i_per_kilogram
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -6244,14 +6244,14 @@ class MolalityOfSoluteISetter(TypeSafeSetter):
     @property
     def kmols_of_i_per_kilogram(self):
         """Set value using kmols of "i" per kilogram units."""
-        unit_const: Final = field_units.MolalityOfSoluteIUnits.kmols_of_i_per_kilogram
+        unit_const: Final = units.MolalityOfSoluteIUnits.kmols_of_i_per_kilogram
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def mols_of_i_per_gram(self):
         """Set value using mols of "i" per gram units."""
-        unit_const: Final = field_units.MolalityOfSoluteIUnits.mols_of_i_per_gram
+        unit_const: Final = units.MolalityOfSoluteIUnits.mols_of_i_per_gram
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -6263,7 +6263,7 @@ class MolalityOfSoluteISetter(TypeSafeSetter):
     @property
     def pound_moles_of_i_per_pound_mass(self):
         """Set value using pound moles of "i" per pound mass units."""
-        unit_const: Final = field_units.MolalityOfSoluteIUnits.pound_moles_of_i_per_pound_mass
+        unit_const: Final = units.MolalityOfSoluteIUnits.pound_moles_of_i_per_pound_mass
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -6281,7 +6281,7 @@ class MolarConcentrationByMassSetter(TypeSafeSetter):
     @property
     def gram_mole_or_mole_per_gram(self):
         """Set value using gram mole or mole per gram units."""
-        unit_const: Final = field_units.MolarConcentrationByMassUnits.gram_mole_or_mole_per_gram
+        unit_const: Final = units.MolarConcentrationByMassUnits.gram_mole_or_mole_per_gram
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -6293,7 +6293,7 @@ class MolarConcentrationByMassSetter(TypeSafeSetter):
     @property
     def gram_mole_or_mole_per_kilogram(self):
         """Set value using gram mole or mole per kilogram units."""
-        unit_const: Final = field_units.MolarConcentrationByMassUnits.gram_mole_or_mole_per_kilogram
+        unit_const: Final = units.MolarConcentrationByMassUnits.gram_mole_or_mole_per_kilogram
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -6305,7 +6305,7 @@ class MolarConcentrationByMassSetter(TypeSafeSetter):
     @property
     def kilogram_mole_or_kmol_per_kilogram(self):
         """Set value using kilogram mole or kmol per kilogram units."""
-        unit_const: Final = field_units.MolarConcentrationByMassUnits.kilogram_mole_or_kmol_per_kilogram
+        unit_const: Final = units.MolarConcentrationByMassUnits.kilogram_mole_or_kmol_per_kilogram
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -6317,7 +6317,7 @@ class MolarConcentrationByMassSetter(TypeSafeSetter):
     @property
     def micromole_per_gram(self):
         """Set value using micromole per gram units."""
-        unit_const: Final = field_units.MolarConcentrationByMassUnits.micromole_per_gram
+        unit_const: Final = units.MolarConcentrationByMassUnits.micromole_per_gram
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -6329,7 +6329,7 @@ class MolarConcentrationByMassSetter(TypeSafeSetter):
     @property
     def millimole_per_gram(self):
         """Set value using millimole per gram units."""
-        unit_const: Final = field_units.MolarConcentrationByMassUnits.millimole_per_gram
+        unit_const: Final = units.MolarConcentrationByMassUnits.millimole_per_gram
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -6341,7 +6341,7 @@ class MolarConcentrationByMassSetter(TypeSafeSetter):
     @property
     def picomole_per_gram(self):
         """Set value using picomole per gram units."""
-        unit_const: Final = field_units.MolarConcentrationByMassUnits.picomole_per_gram
+        unit_const: Final = units.MolarConcentrationByMassUnits.picomole_per_gram
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -6353,7 +6353,7 @@ class MolarConcentrationByMassSetter(TypeSafeSetter):
     @property
     def pound_mole_per_pound(self):
         """Set value using pound mole per pound units."""
-        unit_const: Final = field_units.MolarConcentrationByMassUnits.pound_mole_per_pound
+        unit_const: Final = units.MolarConcentrationByMassUnits.pound_mole_per_pound
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -6381,7 +6381,7 @@ class MolarFlowRateSetter(TypeSafeSetter):
     @property
     def gram_mole_per_day(self):
         """Set value using gram mole per day units."""
-        unit_const: Final = field_units.MolarFlowRateUnits.gram_mole_per_day
+        unit_const: Final = units.MolarFlowRateUnits.gram_mole_per_day
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -6393,7 +6393,7 @@ class MolarFlowRateSetter(TypeSafeSetter):
     @property
     def gram_mole_per_hour(self):
         """Set value using gram mole per hour units."""
-        unit_const: Final = field_units.MolarFlowRateUnits.gram_mole_per_hour
+        unit_const: Final = units.MolarFlowRateUnits.gram_mole_per_hour
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -6405,7 +6405,7 @@ class MolarFlowRateSetter(TypeSafeSetter):
     @property
     def gram_mole_per_minute(self):
         """Set value using gram mole per minute units."""
-        unit_const: Final = field_units.MolarFlowRateUnits.gram_mole_per_minute
+        unit_const: Final = units.MolarFlowRateUnits.gram_mole_per_minute
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -6417,7 +6417,7 @@ class MolarFlowRateSetter(TypeSafeSetter):
     @property
     def gram_mole_per_second(self):
         """Set value using gram mole per second units."""
-        unit_const: Final = field_units.MolarFlowRateUnits.gram_mole_per_second
+        unit_const: Final = units.MolarFlowRateUnits.gram_mole_per_second
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -6429,7 +6429,7 @@ class MolarFlowRateSetter(TypeSafeSetter):
     @property
     def kilogram_mole_or_kmol_per_day(self):
         """Set value using kilogram mole or kmol per day units."""
-        unit_const: Final = field_units.MolarFlowRateUnits.kilogram_mole_or_kmol_per_day
+        unit_const: Final = units.MolarFlowRateUnits.kilogram_mole_or_kmol_per_day
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -6441,7 +6441,7 @@ class MolarFlowRateSetter(TypeSafeSetter):
     @property
     def kilogram_mole_or_kmol_per_hour(self):
         """Set value using kilogram mole or kmol per hour units."""
-        unit_const: Final = field_units.MolarFlowRateUnits.kilogram_mole_or_kmol_per_hour
+        unit_const: Final = units.MolarFlowRateUnits.kilogram_mole_or_kmol_per_hour
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -6453,7 +6453,7 @@ class MolarFlowRateSetter(TypeSafeSetter):
     @property
     def kilogram_mole_or_kmol_per_minute(self):
         """Set value using kilogram mole or kmol per minute units."""
-        unit_const: Final = field_units.MolarFlowRateUnits.kilogram_mole_or_kmol_per_minute
+        unit_const: Final = units.MolarFlowRateUnits.kilogram_mole_or_kmol_per_minute
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -6465,7 +6465,7 @@ class MolarFlowRateSetter(TypeSafeSetter):
     @property
     def kilogram_mole_or_kmol_per_second(self):
         """Set value using kilogram mole or kmol per second units."""
-        unit_const: Final = field_units.MolarFlowRateUnits.kilogram_mole_or_kmol_per_second
+        unit_const: Final = units.MolarFlowRateUnits.kilogram_mole_or_kmol_per_second
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -6477,7 +6477,7 @@ class MolarFlowRateSetter(TypeSafeSetter):
     @property
     def pound_mole_or_lb_mol_per_day(self):
         """Set value using pound mole or lb-mol per day units."""
-        unit_const: Final = field_units.MolarFlowRateUnits.pound_mole_or_lb_mol_per_day
+        unit_const: Final = units.MolarFlowRateUnits.pound_mole_or_lb_mol_per_day
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -6499,7 +6499,7 @@ class MolarFlowRateSetter(TypeSafeSetter):
     @property
     def pound_mole_or_lb_mol_per_hour(self):
         """Set value using pound mole or lb-mol per hour units."""
-        unit_const: Final = field_units.MolarFlowRateUnits.pound_mole_or_lb_mol_per_hour
+        unit_const: Final = units.MolarFlowRateUnits.pound_mole_or_lb_mol_per_hour
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -6521,7 +6521,7 @@ class MolarFlowRateSetter(TypeSafeSetter):
     @property
     def pound_mole_or_lb_mol_per_minute(self):
         """Set value using pound mole or lb-mol per minute units."""
-        unit_const: Final = field_units.MolarFlowRateUnits.pound_mole_or_lb_mol_per_minute
+        unit_const: Final = units.MolarFlowRateUnits.pound_mole_or_lb_mol_per_minute
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -6543,7 +6543,7 @@ class MolarFlowRateSetter(TypeSafeSetter):
     @property
     def pound_mole_or_lb_mol_per_second(self):
         """Set value using pound mole or lb-mol per second units."""
-        unit_const: Final = field_units.MolarFlowRateUnits.pound_mole_or_lb_mol_per_second
+        unit_const: Final = units.MolarFlowRateUnits.pound_mole_or_lb_mol_per_second
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -6571,7 +6571,7 @@ class MolarFluxSetter(TypeSafeSetter):
     @property
     def kmol_per_square_meter_per_day(self):
         """Set value using kmol per square meter per day units."""
-        unit_const: Final = field_units.MolarFluxUnits.kmol_per_square_meter_per_day
+        unit_const: Final = units.MolarFluxUnits.kmol_per_square_meter_per_day
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -6583,7 +6583,7 @@ class MolarFluxSetter(TypeSafeSetter):
     @property
     def kmol_per_square_meter_per_hour(self):
         """Set value using kmol per square meter per hour units."""
-        unit_const: Final = field_units.MolarFluxUnits.kmol_per_square_meter_per_hour
+        unit_const: Final = units.MolarFluxUnits.kmol_per_square_meter_per_hour
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -6595,7 +6595,7 @@ class MolarFluxSetter(TypeSafeSetter):
     @property
     def kmol_per_square_meter_per_minute(self):
         """Set value using kmol per square meter per minute units."""
-        unit_const: Final = field_units.MolarFluxUnits.kmol_per_square_meter_per_minute
+        unit_const: Final = units.MolarFluxUnits.kmol_per_square_meter_per_minute
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -6607,7 +6607,7 @@ class MolarFluxSetter(TypeSafeSetter):
     @property
     def kmol_per_square_meter_per_second(self):
         """Set value using kmol per square meter per second units."""
-        unit_const: Final = field_units.MolarFluxUnits.kmol_per_square_meter_per_second
+        unit_const: Final = units.MolarFluxUnits.kmol_per_square_meter_per_second
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -6619,7 +6619,7 @@ class MolarFluxSetter(TypeSafeSetter):
     @property
     def pound_mole_per_square_foot_per_day(self):
         """Set value using pound mole per square foot per day units."""
-        unit_const: Final = field_units.MolarFluxUnits.pound_mole_per_square_foot_per_day
+        unit_const: Final = units.MolarFluxUnits.pound_mole_per_square_foot_per_day
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -6641,7 +6641,7 @@ class MolarFluxSetter(TypeSafeSetter):
     @property
     def pound_mole_per_square_foot_per_hour(self):
         """Set value using pound mole per square foot per hour units."""
-        unit_const: Final = field_units.MolarFluxUnits.pound_mole_per_square_foot_per_hour
+        unit_const: Final = units.MolarFluxUnits.pound_mole_per_square_foot_per_hour
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -6663,7 +6663,7 @@ class MolarFluxSetter(TypeSafeSetter):
     @property
     def pound_mole_per_square_foot_per_minute(self):
         """Set value using pound mole per square foot per minute units."""
-        unit_const: Final = field_units.MolarFluxUnits.pound_mole_per_square_foot_per_minute
+        unit_const: Final = units.MolarFluxUnits.pound_mole_per_square_foot_per_minute
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -6685,7 +6685,7 @@ class MolarFluxSetter(TypeSafeSetter):
     @property
     def pound_mole_per_square_foot_per_second(self):
         """Set value using pound mole per square foot per second units."""
-        unit_const: Final = field_units.MolarFluxUnits.pound_mole_per_square_foot_per_second
+        unit_const: Final = units.MolarFluxUnits.pound_mole_per_square_foot_per_second
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -6713,7 +6713,7 @@ class MolarHeatCapacitySetter(TypeSafeSetter):
     @property
     def btu_per_pound_mole_per_degree_fahrenheit_or_degree_rankine(self):
         """Set value using Btu per pound mole per degree Fahrenheit (or degree Rankine) units."""
-        unit_const: Final = field_units.MolarHeatCapacityUnits.btu_per_pound_mole_per_degree_fahrenheit_or_degree_rankine
+        unit_const: Final = units.MolarHeatCapacityUnits.btu_per_pound_mole_per_degree_fahrenheit_or_degree_rankine
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -6725,7 +6725,7 @@ class MolarHeatCapacitySetter(TypeSafeSetter):
     @property
     def calories_per_gram_mole_per_kelvin_or_degree_celsius(self):
         """Set value using calories per gram mole per kelvin (or degree Celsius) units."""
-        unit_const: Final = field_units.MolarHeatCapacityUnits.calories_per_gram_mole_per_kelvin_or_degree_celsius
+        unit_const: Final = units.MolarHeatCapacityUnits.calories_per_gram_mole_per_kelvin_or_degree_celsius
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -6737,7 +6737,7 @@ class MolarHeatCapacitySetter(TypeSafeSetter):
     @property
     def joule_per_gram_mole_per_kelvin_or_degree_celsius(self):
         """Set value using joule per gram mole per kelvin (or degree Celsius) units."""
-        unit_const: Final = field_units.MolarHeatCapacityUnits.joule_per_gram_mole_per_kelvin_or_degree_celsius
+        unit_const: Final = units.MolarHeatCapacityUnits.joule_per_gram_mole_per_kelvin_or_degree_celsius
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -6755,7 +6755,7 @@ class MolarityOfISetter(TypeSafeSetter):
     @property
     def gram_moles_of_i_per_cubic_meter(self):
         """Set value using gram moles of "i" per cubic meter units."""
-        unit_const: Final = field_units.MolarityOfIUnits.gram_moles_of_i_per_cubic_meter
+        unit_const: Final = units.MolarityOfIUnits.gram_moles_of_i_per_cubic_meter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -6777,7 +6777,7 @@ class MolarityOfISetter(TypeSafeSetter):
     @property
     def gram_moles_of_i_per_liter(self):
         """Set value using gram moles of "i" per liter units."""
-        unit_const: Final = field_units.MolarityOfIUnits.gram_moles_of_i_per_liter
+        unit_const: Final = units.MolarityOfIUnits.gram_moles_of_i_per_liter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -6789,7 +6789,7 @@ class MolarityOfISetter(TypeSafeSetter):
     @property
     def kilogram_moles_of_i_per_cubic_meter(self):
         """Set value using kilogram moles of "i" per cubic meter units."""
-        unit_const: Final = field_units.MolarityOfIUnits.kilogram_moles_of_i_per_cubic_meter
+        unit_const: Final = units.MolarityOfIUnits.kilogram_moles_of_i_per_cubic_meter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -6801,7 +6801,7 @@ class MolarityOfISetter(TypeSafeSetter):
     @property
     def kilogram_moles_of_i_per_liter(self):
         """Set value using kilogram moles of "i" per liter units."""
-        unit_const: Final = field_units.MolarityOfIUnits.kilogram_moles_of_i_per_liter
+        unit_const: Final = units.MolarityOfIUnits.kilogram_moles_of_i_per_liter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -6813,7 +6813,7 @@ class MolarityOfISetter(TypeSafeSetter):
     @property
     def pound_moles_of_i_per_cubic_foot(self):
         """Set value using pound moles of "i" per cubic foot units."""
-        unit_const: Final = field_units.MolarityOfIUnits.pound_moles_of_i_per_cubic_foot
+        unit_const: Final = units.MolarityOfIUnits.pound_moles_of_i_per_cubic_foot
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -6835,7 +6835,7 @@ class MolarityOfISetter(TypeSafeSetter):
     @property
     def pound_moles_of_i_per_gallon_us(self):
         """Set value using pound moles of " $i$ " per gallon (US) units."""
-        unit_const: Final = field_units.MolarityOfIUnits.pound_moles_of_i_per_gallon_us
+        unit_const: Final = units.MolarityOfIUnits.pound_moles_of_i_per_gallon_us
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -6863,7 +6863,7 @@ class MoleFractionOfISetter(TypeSafeSetter):
     @property
     def gram_mole_of_i_per_gram_mole_total(self):
         """Set value using gram mole of "i" per gram mole total units."""
-        unit_const: Final = field_units.MoleFractionOfIUnits.gram_mole_of_i_per_gram_mole_total
+        unit_const: Final = units.MoleFractionOfIUnits.gram_mole_of_i_per_gram_mole_total
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -6875,7 +6875,7 @@ class MoleFractionOfISetter(TypeSafeSetter):
     @property
     def kilogram_mole_of_i_per_kilogram_mole_total(self):
         """Set value using kilogram mole of "i" per kilogram mole total units."""
-        unit_const: Final = field_units.MoleFractionOfIUnits.kilogram_mole_of_i_per_kilogram_mole_total
+        unit_const: Final = units.MoleFractionOfIUnits.kilogram_mole_of_i_per_kilogram_mole_total
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -6887,14 +6887,14 @@ class MoleFractionOfISetter(TypeSafeSetter):
     @property
     def kilomole_of_i_per_kilomole_total(self):
         """Set value using kilomole of "i" per kilomole total units."""
-        unit_const: Final = field_units.MoleFractionOfIUnits.kilomole_of_i_per_kilomole_total
+        unit_const: Final = units.MoleFractionOfIUnits.kilomole_of_i_per_kilomole_total
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def pound_mole_of_i_per_pound_mole_total(self):
         """Set value using pound mole of "i" per pound mole total units."""
-        unit_const: Final = field_units.MoleFractionOfIUnits.pound_mole_of_i_per_pound_mole_total
+        unit_const: Final = units.MoleFractionOfIUnits.pound_mole_of_i_per_pound_mole_total
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -6912,7 +6912,7 @@ class MomentOfInertiaSetter(TypeSafeSetter):
     @property
     def gram_force_centimeter_square_second(self):
         """Set value using gram force centimeter square second units."""
-        unit_const: Final = field_units.MomentOfInertiaUnits.gram_force_centimeter_square_second
+        unit_const: Final = units.MomentOfInertiaUnits.gram_force_centimeter_square_second
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -6924,7 +6924,7 @@ class MomentOfInertiaSetter(TypeSafeSetter):
     @property
     def gram_square_centimeter(self):
         """Set value using gram square centimeter units."""
-        unit_const: Final = field_units.MomentOfInertiaUnits.gram_square_centimeter
+        unit_const: Final = units.MomentOfInertiaUnits.gram_square_centimeter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -6936,7 +6936,7 @@ class MomentOfInertiaSetter(TypeSafeSetter):
     @property
     def kilogram_force_centimeter_square_second(self):
         """Set value using kilogram force centimeter square second units."""
-        unit_const: Final = field_units.MomentOfInertiaUnits.kilogram_force_centimeter_square_second
+        unit_const: Final = units.MomentOfInertiaUnits.kilogram_force_centimeter_square_second
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -6948,7 +6948,7 @@ class MomentOfInertiaSetter(TypeSafeSetter):
     @property
     def kilogram_force_meter_square_second(self):
         """Set value using kilogram force meter square second units."""
-        unit_const: Final = field_units.MomentOfInertiaUnits.kilogram_force_meter_square_second
+        unit_const: Final = units.MomentOfInertiaUnits.kilogram_force_meter_square_second
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -6960,7 +6960,7 @@ class MomentOfInertiaSetter(TypeSafeSetter):
     @property
     def kilogram_square_centimeter(self):
         """Set value using kilogram square centimeter units."""
-        unit_const: Final = field_units.MomentOfInertiaUnits.kilogram_square_centimeter
+        unit_const: Final = units.MomentOfInertiaUnits.kilogram_square_centimeter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -6972,7 +6972,7 @@ class MomentOfInertiaSetter(TypeSafeSetter):
     @property
     def kilogram_square_meter(self):
         """Set value using kilogram square meter units."""
-        unit_const: Final = field_units.MomentOfInertiaUnits.kilogram_square_meter
+        unit_const: Final = units.MomentOfInertiaUnits.kilogram_square_meter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -6984,7 +6984,7 @@ class MomentOfInertiaSetter(TypeSafeSetter):
     @property
     def ounce_force_inch_square_second(self):
         """Set value using ounce force inch square second units."""
-        unit_const: Final = field_units.MomentOfInertiaUnits.ounce_force_inch_square_second
+        unit_const: Final = units.MomentOfInertiaUnits.ounce_force_inch_square_second
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -6996,7 +6996,7 @@ class MomentOfInertiaSetter(TypeSafeSetter):
     @property
     def ounce_mass_square_inch(self):
         """Set value using ounce mass square inch units."""
-        unit_const: Final = field_units.MomentOfInertiaUnits.ounce_mass_square_inch
+        unit_const: Final = units.MomentOfInertiaUnits.ounce_mass_square_inch
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -7008,7 +7008,7 @@ class MomentOfInertiaSetter(TypeSafeSetter):
     @property
     def pound_mass_square_foot(self):
         """Set value using pound mass square foot units."""
-        unit_const: Final = field_units.MomentOfInertiaUnits.pound_mass_square_foot
+        unit_const: Final = units.MomentOfInertiaUnits.pound_mass_square_foot
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -7030,7 +7030,7 @@ class MomentOfInertiaSetter(TypeSafeSetter):
     @property
     def pound_mass_square_inch(self):
         """Set value using pound mass square inch units."""
-        unit_const: Final = field_units.MomentOfInertiaUnits.pound_mass_square_inch
+        unit_const: Final = units.MomentOfInertiaUnits.pound_mass_square_inch
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -7048,7 +7048,7 @@ class MomentumFlowRateSetter(TypeSafeSetter):
     @property
     def foot_pounds_per_square_hour(self):
         """Set value using foot pounds per square hour units."""
-        unit_const: Final = field_units.MomentumFlowRateUnits.foot_pounds_per_square_hour
+        unit_const: Final = units.MomentumFlowRateUnits.foot_pounds_per_square_hour
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -7070,7 +7070,7 @@ class MomentumFlowRateSetter(TypeSafeSetter):
     @property
     def foot_pounds_per_square_minute(self):
         """Set value using foot pounds per square minute units."""
-        unit_const: Final = field_units.MomentumFlowRateUnits.foot_pounds_per_square_minute
+        unit_const: Final = units.MomentumFlowRateUnits.foot_pounds_per_square_minute
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -7082,7 +7082,7 @@ class MomentumFlowRateSetter(TypeSafeSetter):
     @property
     def foot_pounds_per_square_second(self):
         """Set value using foot pounds per square second units."""
-        unit_const: Final = field_units.MomentumFlowRateUnits.foot_pounds_per_square_second
+        unit_const: Final = units.MomentumFlowRateUnits.foot_pounds_per_square_second
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -7104,7 +7104,7 @@ class MomentumFlowRateSetter(TypeSafeSetter):
     @property
     def gram_centimeters_per_square_second(self):
         """Set value using gram centimeters per square second units."""
-        unit_const: Final = field_units.MomentumFlowRateUnits.gram_centimeters_per_square_second
+        unit_const: Final = units.MomentumFlowRateUnits.gram_centimeters_per_square_second
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -7116,7 +7116,7 @@ class MomentumFlowRateSetter(TypeSafeSetter):
     @property
     def kilogram_meters_per_square_second(self):
         """Set value using kilogram meters per square second units."""
-        unit_const: Final = field_units.MomentumFlowRateUnits.kilogram_meters_per_square_second
+        unit_const: Final = units.MomentumFlowRateUnits.kilogram_meters_per_square_second
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -7134,7 +7134,7 @@ class MomentumFluxSetter(TypeSafeSetter):
     @property
     def dyne_per_square_centimeter(self):
         """Set value using dyne per square centimeter units."""
-        unit_const: Final = field_units.MomentumFluxUnits.dyne_per_square_centimeter
+        unit_const: Final = units.MomentumFluxUnits.dyne_per_square_centimeter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -7146,7 +7146,7 @@ class MomentumFluxSetter(TypeSafeSetter):
     @property
     def gram_per_centimeter_per_square_second(self):
         """Set value using gram per centimeter per square second units."""
-        unit_const: Final = field_units.MomentumFluxUnits.gram_per_centimeter_per_square_second
+        unit_const: Final = units.MomentumFluxUnits.gram_per_centimeter_per_square_second
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -7158,7 +7158,7 @@ class MomentumFluxSetter(TypeSafeSetter):
     @property
     def newton_per_square_meter(self):
         """Set value using newton per square meter units."""
-        unit_const: Final = field_units.MomentumFluxUnits.newton_per_square_meter
+        unit_const: Final = units.MomentumFluxUnits.newton_per_square_meter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -7170,7 +7170,7 @@ class MomentumFluxSetter(TypeSafeSetter):
     @property
     def pound_force_per_square_foot(self):
         """Set value using pound force per square foot units."""
-        unit_const: Final = field_units.MomentumFluxUnits.pound_force_per_square_foot
+        unit_const: Final = units.MomentumFluxUnits.pound_force_per_square_foot
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -7182,7 +7182,7 @@ class MomentumFluxSetter(TypeSafeSetter):
     @property
     def pound_mass_per_foot_per_square_second(self):
         """Set value using pound mass per foot per square second units."""
-        unit_const: Final = field_units.MomentumFluxUnits.pound_mass_per_foot_per_square_second
+        unit_const: Final = units.MomentumFluxUnits.pound_mass_per_foot_per_square_second
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -7210,7 +7210,7 @@ class NormalityOfSolutionSetter(TypeSafeSetter):
     @property
     def gram_equivalents_per_cubic_meter(self):
         """Set value using gram equivalents per cubic meter units."""
-        unit_const: Final = field_units.NormalityOfSolutionUnits.gram_equivalents_per_cubic_meter
+        unit_const: Final = units.NormalityOfSolutionUnits.gram_equivalents_per_cubic_meter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -7222,7 +7222,7 @@ class NormalityOfSolutionSetter(TypeSafeSetter):
     @property
     def gram_equivalents_per_liter(self):
         """Set value using gram equivalents per liter units."""
-        unit_const: Final = field_units.NormalityOfSolutionUnits.gram_equivalents_per_liter
+        unit_const: Final = units.NormalityOfSolutionUnits.gram_equivalents_per_liter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -7234,7 +7234,7 @@ class NormalityOfSolutionSetter(TypeSafeSetter):
     @property
     def pound_equivalents_per_cubic_foot(self):
         """Set value using pound equivalents per cubic foot units."""
-        unit_const: Final = field_units.NormalityOfSolutionUnits.pound_equivalents_per_cubic_foot
+        unit_const: Final = units.NormalityOfSolutionUnits.pound_equivalents_per_cubic_foot
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -7256,7 +7256,7 @@ class NormalityOfSolutionSetter(TypeSafeSetter):
     @property
     def pound_equivalents_per_gallon(self):
         """Set value using pound equivalents per gallon units."""
-        unit_const: Final = field_units.NormalityOfSolutionUnits.pound_equivalents_per_gallon
+        unit_const: Final = units.NormalityOfSolutionUnits.pound_equivalents_per_gallon
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -7274,7 +7274,7 @@ class ParticleDensitySetter(TypeSafeSetter):
     @property
     def particles_per_cubic_centimeter(self):
         """Set value using particles per cubic centimeter units."""
-        unit_const: Final = field_units.ParticleDensityUnits.particles_per_cubic_centimeter
+        unit_const: Final = units.ParticleDensityUnits.particles_per_cubic_centimeter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -7296,7 +7296,7 @@ class ParticleDensitySetter(TypeSafeSetter):
     @property
     def particles_per_cubic_foot(self):
         """Set value using particles per cubic foot units."""
-        unit_const: Final = field_units.ParticleDensityUnits.particles_per_cubic_foot
+        unit_const: Final = units.ParticleDensityUnits.particles_per_cubic_foot
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -7318,7 +7318,7 @@ class ParticleDensitySetter(TypeSafeSetter):
     @property
     def particles_per_cubic_meter(self):
         """Set value using particles per cubic meter units."""
-        unit_const: Final = field_units.ParticleDensityUnits.particles_per_cubic_meter
+        unit_const: Final = units.ParticleDensityUnits.particles_per_cubic_meter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -7330,7 +7330,7 @@ class ParticleDensitySetter(TypeSafeSetter):
     @property
     def particles_per_gallon_us(self):
         """Set value using particles per gallon (US) units."""
-        unit_const: Final = field_units.ParticleDensityUnits.particles_per_gallon_us
+        unit_const: Final = units.ParticleDensityUnits.particles_per_gallon_us
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -7342,7 +7342,7 @@ class ParticleDensitySetter(TypeSafeSetter):
     @property
     def particles_per_liter(self):
         """Set value using particles per liter units."""
-        unit_const: Final = field_units.ParticleDensityUnits.particles_per_liter
+        unit_const: Final = units.ParticleDensityUnits.particles_per_liter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -7354,7 +7354,7 @@ class ParticleDensitySetter(TypeSafeSetter):
     @property
     def particles_per_milliliter(self):
         """Set value using particles per milliliter units."""
-        unit_const: Final = field_units.ParticleDensityUnits.particles_per_milliliter
+        unit_const: Final = units.ParticleDensityUnits.particles_per_milliliter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -7372,7 +7372,7 @@ class PercentSetter(TypeSafeSetter):
     @property
     def percent(self):
         """Set value using percent units."""
-        unit_const: Final = field_units.PercentUnits.percent
+        unit_const: Final = units.PercentUnits.percent
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -7384,14 +7384,14 @@ class PercentSetter(TypeSafeSetter):
     @property
     def per_mille(self):
         """Set value using per mille units."""
-        unit_const: Final = field_units.PercentUnits.per_mille
+        unit_const: Final = units.PercentUnits.per_mille
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def basis_point(self):
         """Set value using basis point units."""
-        unit_const: Final = field_units.PercentUnits.basis_point
+        unit_const: Final = units.PercentUnits.basis_point
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -7414,14 +7414,14 @@ class PermeabilitySetter(TypeSafeSetter):
     @property
     def darcy(self):
         """Set value using darcy units."""
-        unit_const: Final = field_units.PermeabilityUnits.darcy
+        unit_const: Final = units.PermeabilityUnits.darcy
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def square_feet(self):
         """Set value using square feet units."""
-        unit_const: Final = field_units.PermeabilityUnits.square_feet
+        unit_const: Final = units.PermeabilityUnits.square_feet
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -7443,7 +7443,7 @@ class PermeabilitySetter(TypeSafeSetter):
     @property
     def square_meters(self):
         """Set value using square meters units."""
-        unit_const: Final = field_units.PermeabilityUnits.square_meters
+        unit_const: Final = units.PermeabilityUnits.square_meters
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -7461,7 +7461,7 @@ class PhotonEmissionRateSetter(TypeSafeSetter):
     @property
     def rayleigh(self):
         """Set value using rayleigh units."""
-        unit_const: Final = field_units.PhotonEmissionRateUnits.rayleigh
+        unit_const: Final = units.PhotonEmissionRateUnits.rayleigh
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -7473,7 +7473,7 @@ class PhotonEmissionRateSetter(TypeSafeSetter):
     @property
     def reciprocal_square_meter_second(self):
         """Set value using reciprocal square meter second units."""
-        unit_const: Final = field_units.PhotonEmissionRateUnits.reciprocal_square_meter_second
+        unit_const: Final = units.PhotonEmissionRateUnits.reciprocal_square_meter_second
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -7486,7 +7486,7 @@ class PowerPerUnitMassSetter(TypeSafeSetter):
     @property
     def british_thermal_unit_per_hour_per_pound_mass(self):
         """Set value using British thermal unit per hour per pound mass units."""
-        unit_const: Final = field_units.PowerPerUnitMassUnits.british_thermal_unit_per_hour_per_pound_mass
+        unit_const: Final = units.PowerPerUnitMassUnits.british_thermal_unit_per_hour_per_pound_mass
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -7508,7 +7508,7 @@ class PowerPerUnitMassSetter(TypeSafeSetter):
     @property
     def calorie_per_second_per_gram(self):
         """Set value using calorie per second per gram units."""
-        unit_const: Final = field_units.PowerPerUnitMassUnits.calorie_per_second_per_gram
+        unit_const: Final = units.PowerPerUnitMassUnits.calorie_per_second_per_gram
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -7530,7 +7530,7 @@ class PowerPerUnitMassSetter(TypeSafeSetter):
     @property
     def kilocalorie_per_hour_per_kilogram(self):
         """Set value using kilocalorie per hour per kilogram units."""
-        unit_const: Final = field_units.PowerPerUnitMassUnits.kilocalorie_per_hour_per_kilogram
+        unit_const: Final = units.PowerPerUnitMassUnits.kilocalorie_per_hour_per_kilogram
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -7552,7 +7552,7 @@ class PowerPerUnitMassSetter(TypeSafeSetter):
     @property
     def watt_per_kilogram(self):
         """Set value using watt per kilogram units."""
-        unit_const: Final = field_units.PowerPerUnitMassUnits.watt_per_kilogram
+        unit_const: Final = units.PowerPerUnitMassUnits.watt_per_kilogram
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -7570,7 +7570,7 @@ class PowerPerUnitVolumeSetter(TypeSafeSetter):
     @property
     def british_thermal_unit_per_hour_per_cubic_foot(self):
         """Set value using British thermal unit per hour per cubic foot units."""
-        unit_const: Final = field_units.PowerPerUnitVolumeUnits.british_thermal_unit_per_hour_per_cubic_foot
+        unit_const: Final = units.PowerPerUnitVolumeUnits.british_thermal_unit_per_hour_per_cubic_foot
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -7592,7 +7592,7 @@ class PowerPerUnitVolumeSetter(TypeSafeSetter):
     @property
     def calorie_per_second_per_cubic_centimeter(self):
         """Set value using calorie per second per cubic centimeter units."""
-        unit_const: Final = field_units.PowerPerUnitVolumeUnits.calorie_per_second_per_cubic_centimeter
+        unit_const: Final = units.PowerPerUnitVolumeUnits.calorie_per_second_per_cubic_centimeter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -7614,7 +7614,7 @@ class PowerPerUnitVolumeSetter(TypeSafeSetter):
     @property
     def chu_per_hour_per_cubic_foot(self):
         """Set value using Chu per hour per cubic foot units."""
-        unit_const: Final = field_units.PowerPerUnitVolumeUnits.chu_per_hour_per_cubic_foot
+        unit_const: Final = units.PowerPerUnitVolumeUnits.chu_per_hour_per_cubic_foot
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -7636,7 +7636,7 @@ class PowerPerUnitVolumeSetter(TypeSafeSetter):
     @property
     def kilocalorie_per_hour_per_cubic_centimeter(self):
         """Set value using kilocalorie per hour per cubic centimeter units."""
-        unit_const: Final = field_units.PowerPerUnitVolumeUnits.kilocalorie_per_hour_per_cubic_centimeter
+        unit_const: Final = units.PowerPerUnitVolumeUnits.kilocalorie_per_hour_per_cubic_centimeter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -7658,7 +7658,7 @@ class PowerPerUnitVolumeSetter(TypeSafeSetter):
     @property
     def kilocalorie_per_hour_per_cubic_foot(self):
         """Set value using kilocalorie per hour per cubic foot units."""
-        unit_const: Final = field_units.PowerPerUnitVolumeUnits.kilocalorie_per_hour_per_cubic_foot
+        unit_const: Final = units.PowerPerUnitVolumeUnits.kilocalorie_per_hour_per_cubic_foot
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -7680,7 +7680,7 @@ class PowerPerUnitVolumeSetter(TypeSafeSetter):
     @property
     def kilocalorie_per_second_per_cubic_centimeter(self):
         """Set value using kilocalorie per second per cubic centimeter units."""
-        unit_const: Final = field_units.PowerPerUnitVolumeUnits.kilocalorie_per_second_per_cubic_centimeter
+        unit_const: Final = units.PowerPerUnitVolumeUnits.kilocalorie_per_second_per_cubic_centimeter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -7702,7 +7702,7 @@ class PowerPerUnitVolumeSetter(TypeSafeSetter):
     @property
     def watt_per_cubic_meter(self):
         """Set value using watt per cubic meter units."""
-        unit_const: Final = field_units.PowerPerUnitVolumeUnits.watt_per_cubic_meter
+        unit_const: Final = units.PowerPerUnitVolumeUnits.watt_per_cubic_meter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -7720,7 +7720,7 @@ class PowerThermalDutySetter(TypeSafeSetter):
     @property
     def abwatt_emu_of_power(self):
         """Set value using abwatt (emu of power) units."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.abwatt_emu_of_power
+        unit_const: Final = units.PowerThermalDutyUnits.abwatt_emu_of_power
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -7732,7 +7732,7 @@ class PowerThermalDutySetter(TypeSafeSetter):
     @property
     def boiler_horsepower(self):
         """Set value using boiler horsepower units."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.boiler_horsepower
+        unit_const: Final = units.PowerThermalDutyUnits.boiler_horsepower
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -7744,7 +7744,7 @@ class PowerThermalDutySetter(TypeSafeSetter):
     @property
     def british_thermal_unit_mean(self):
         """Set value using British thermal unit (mean) per hour units."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.british_thermal_unit_mean
+        unit_const: Final = units.PowerThermalDutyUnits.british_thermal_unit_mean
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -7766,7 +7766,7 @@ class PowerThermalDutySetter(TypeSafeSetter):
     @property
     def british_thermal_unit_thermochemical(self):
         """Set value using British thermal unit (thermochemical) per hour units."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.british_thermal_unit_thermochemical
+        unit_const: Final = units.PowerThermalDutyUnits.british_thermal_unit_thermochemical
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -7783,7 +7783,7 @@ class PowerThermalDutySetter(TypeSafeSetter):
     @property
     def calorie_mean(self):
         """Set value using calorie (mean) per hour units."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.calorie_mean
+        unit_const: Final = units.PowerThermalDutyUnits.calorie_mean
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -7795,7 +7795,7 @@ class PowerThermalDutySetter(TypeSafeSetter):
     @property
     def calorie_thermochemical(self):
         """Set value using calorie (thermochemical) per hour units."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.calorie_thermochemical
+        unit_const: Final = units.PowerThermalDutyUnits.calorie_thermochemical
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -7807,14 +7807,14 @@ class PowerThermalDutySetter(TypeSafeSetter):
     @property
     def donkey(self):
         """Set value using donkey units."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.donkey
+        unit_const: Final = units.PowerThermalDutyUnits.donkey
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def erg_per_second(self):
         """Set value using erg per second units."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.erg_per_second
+        unit_const: Final = units.PowerThermalDutyUnits.erg_per_second
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -7826,7 +7826,7 @@ class PowerThermalDutySetter(TypeSafeSetter):
     @property
     def foot_pondal_per_second(self):
         """Set value using foot pondal per second units."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.foot_pondal_per_second
+        unit_const: Final = units.PowerThermalDutyUnits.foot_pondal_per_second
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -7838,7 +7838,7 @@ class PowerThermalDutySetter(TypeSafeSetter):
     @property
     def foot_pound_force_per_hour(self):
         """Set value using foot pound force per hour units."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.foot_pound_force_per_hour
+        unit_const: Final = units.PowerThermalDutyUnits.foot_pound_force_per_hour
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -7850,7 +7850,7 @@ class PowerThermalDutySetter(TypeSafeSetter):
     @property
     def foot_pound_force_per_minute(self):
         """Set value using foot pound force per minute units."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.foot_pound_force_per_minute
+        unit_const: Final = units.PowerThermalDutyUnits.foot_pound_force_per_minute
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -7862,7 +7862,7 @@ class PowerThermalDutySetter(TypeSafeSetter):
     @property
     def foot_pound_force_per_second(self):
         """Set value using foot pound force per second units."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.foot_pound_force_per_second
+        unit_const: Final = units.PowerThermalDutyUnits.foot_pound_force_per_second
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -7874,7 +7874,7 @@ class PowerThermalDutySetter(TypeSafeSetter):
     @property
     def horsepower_550_mathrmft_mathrmlb_mathrmf_mathrms(self):
         """Set value using horsepower ( $550 \\mathrm{ft} \\mathrm{lb}_{\\mathrm{f}} / \\mathrm{s}$ ) units."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.horsepower_550_mathrmft_mathrmlb_mathrmf_mathrms
+        unit_const: Final = units.PowerThermalDutyUnits.horsepower_550_mathrmft_mathrmlb_mathrmf_mathrms
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -7886,7 +7886,7 @@ class PowerThermalDutySetter(TypeSafeSetter):
     @property
     def horsepower_electric(self):
         """Set value using horsepower (electric) units."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.horsepower_electric
+        unit_const: Final = units.PowerThermalDutyUnits.horsepower_electric
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -7898,7 +7898,7 @@ class PowerThermalDutySetter(TypeSafeSetter):
     @property
     def horsepower_uk(self):
         """Set value using horsepower (UK) units."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.horsepower_uk
+        unit_const: Final = units.PowerThermalDutyUnits.horsepower_uk
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -7910,7 +7910,7 @@ class PowerThermalDutySetter(TypeSafeSetter):
     @property
     def kcal_per_hour(self):
         """Set value using kcal per hour units."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.kcal_per_hour
+        unit_const: Final = units.PowerThermalDutyUnits.kcal_per_hour
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -7922,7 +7922,7 @@ class PowerThermalDutySetter(TypeSafeSetter):
     @property
     def kilogram_force_meter_per_second(self):
         """Set value using kilogram force meter per second units."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.kilogram_force_meter_per_second
+        unit_const: Final = units.PowerThermalDutyUnits.kilogram_force_meter_per_second
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -7934,7 +7934,7 @@ class PowerThermalDutySetter(TypeSafeSetter):
     @property
     def kilowatt(self):
         """Set value using kilowatt units."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.kilowatt
+        unit_const: Final = units.PowerThermalDutyUnits.kilowatt
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -7946,7 +7946,7 @@ class PowerThermalDutySetter(TypeSafeSetter):
     @property
     def megawatt(self):
         """Set value using megawatt units."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.megawatt
+        unit_const: Final = units.PowerThermalDutyUnits.megawatt
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -7958,7 +7958,7 @@ class PowerThermalDutySetter(TypeSafeSetter):
     @property
     def metric_horsepower(self):
         """Set value using metric horsepower units."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.metric_horsepower
+        unit_const: Final = units.PowerThermalDutyUnits.metric_horsepower
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -7970,7 +7970,7 @@ class PowerThermalDutySetter(TypeSafeSetter):
     @property
     def million_british_thermal_units_per_hour_petroleum(self):
         """Set value using million British thermal units per hour (petroleum) units."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.million_british_thermal_units_per_hour_petroleum
+        unit_const: Final = units.PowerThermalDutyUnits.million_british_thermal_units_per_hour_petroleum
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -7982,7 +7982,7 @@ class PowerThermalDutySetter(TypeSafeSetter):
     @property
     def million_kilocalorie_per_hour(self):
         """Set value using million kilocalorie per hour units."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.million_kilocalorie_per_hour
+        unit_const: Final = units.PowerThermalDutyUnits.million_kilocalorie_per_hour
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -7994,14 +7994,14 @@ class PowerThermalDutySetter(TypeSafeSetter):
     @property
     def prony(self):
         """Set value using prony units."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.prony
+        unit_const: Final = units.PowerThermalDutyUnits.prony
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def ton_of_refrigeration_us(self):
         """Set value using ton of refrigeration (US) units."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.ton_of_refrigeration_us
+        unit_const: Final = units.PowerThermalDutyUnits.ton_of_refrigeration_us
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8013,7 +8013,7 @@ class PowerThermalDutySetter(TypeSafeSetter):
     @property
     def ton_or_refrigeration_uk(self):
         """Set value using ton or refrigeration (UK) units."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.ton_or_refrigeration_uk
+        unit_const: Final = units.PowerThermalDutyUnits.ton_or_refrigeration_uk
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8025,7 +8025,7 @@ class PowerThermalDutySetter(TypeSafeSetter):
     @property
     def volt_ampere(self):
         """Set value using volt-ampere units."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.volt_ampere
+        unit_const: Final = units.PowerThermalDutyUnits.volt_ampere
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8037,7 +8037,7 @@ class PowerThermalDutySetter(TypeSafeSetter):
     @property
     def water_horsepower(self):
         """Set value using water horsepower units."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.water_horsepower
+        unit_const: Final = units.PowerThermalDutyUnits.water_horsepower
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8049,7 +8049,7 @@ class PowerThermalDutySetter(TypeSafeSetter):
     @property
     def watt(self):
         """Set value using watt units."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.watt
+        unit_const: Final = units.PowerThermalDutyUnits.watt
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8061,7 +8061,7 @@ class PowerThermalDutySetter(TypeSafeSetter):
     @property
     def watt_international_mean(self):
         """Set value using watt (international, mean) units."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.watt_international_mean
+        unit_const: Final = units.PowerThermalDutyUnits.watt_international_mean
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8073,7 +8073,7 @@ class PowerThermalDutySetter(TypeSafeSetter):
     @property
     def watt_international_us(self):
         """Set value using watt (international, US) units."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.watt_international_us
+        unit_const: Final = units.PowerThermalDutyUnits.watt_international_us
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8085,7 +8085,7 @@ class PowerThermalDutySetter(TypeSafeSetter):
     @property
     def gigawatt(self):
         """Set value using gigawatt units."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.gigawatt
+        unit_const: Final = units.PowerThermalDutyUnits.gigawatt
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8097,7 +8097,7 @@ class PowerThermalDutySetter(TypeSafeSetter):
     @property
     def milliwatt(self):
         """Set value using milliwatt units."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.milliwatt
+        unit_const: Final = units.PowerThermalDutyUnits.milliwatt
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8109,7 +8109,7 @@ class PowerThermalDutySetter(TypeSafeSetter):
     @property
     def microwatt(self):
         """Set value using microwatt units."""
-        unit_const: Final = field_units.PowerThermalDutyUnits.microwatt
+        unit_const: Final = units.PowerThermalDutyUnits.microwatt
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8122,7 +8122,7 @@ class PressureSetter(TypeSafeSetter):
     @property
     def atmosphere_standard(self):
         """Set value using atmosphere, standard units."""
-        unit_const: Final = field_units.PressureUnits.atmosphere_standard
+        unit_const: Final = units.PressureUnits.atmosphere_standard
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8134,21 +8134,21 @@ class PressureSetter(TypeSafeSetter):
     @property
     def bar(self):
         """Set value using bar units."""
-        unit_const: Final = field_units.PressureUnits.bar
+        unit_const: Final = units.PressureUnits.bar
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def barye(self):
         """Set value using barye units."""
-        unit_const: Final = field_units.PressureUnits.barye
+        unit_const: Final = units.PressureUnits.barye
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def dyne_per_square_centimeter(self):
         """Set value using dyne per square centimeter units."""
-        unit_const: Final = field_units.PressureUnits.dyne_per_square_centimeter
+        unit_const: Final = units.PressureUnits.dyne_per_square_centimeter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8160,7 +8160,7 @@ class PressureSetter(TypeSafeSetter):
     @property
     def foot_of_mercury_60_circ_mathrmf(self):
         """Set value using foot of mercury ( $60{ }^{\\circ} \\mathrm{F}$ ) units."""
-        unit_const: Final = field_units.PressureUnits.foot_of_mercury_60_circ_mathrmf
+        unit_const: Final = units.PressureUnits.foot_of_mercury_60_circ_mathrmf
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8172,7 +8172,7 @@ class PressureSetter(TypeSafeSetter):
     @property
     def foot_of_water_60_circ_mathrmf(self):
         """Set value using foot of water ( $60{ }^{\\circ} \\mathrm{F}$ ) units."""
-        unit_const: Final = field_units.PressureUnits.foot_of_water_60_circ_mathrmf
+        unit_const: Final = units.PressureUnits.foot_of_water_60_circ_mathrmf
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8184,7 +8184,7 @@ class PressureSetter(TypeSafeSetter):
     @property
     def gigapascal(self):
         """Set value using gigapascal units."""
-        unit_const: Final = field_units.PressureUnits.gigapascal
+        unit_const: Final = units.PressureUnits.gigapascal
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8196,7 +8196,7 @@ class PressureSetter(TypeSafeSetter):
     @property
     def hectopascal(self):
         """Set value using hectopascal units."""
-        unit_const: Final = field_units.PressureUnits.hectopascal
+        unit_const: Final = units.PressureUnits.hectopascal
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8208,7 +8208,7 @@ class PressureSetter(TypeSafeSetter):
     @property
     def inch_of_mercury_60_circ_mathrmf(self):
         """Set value using inch of mercury ( $60{ }^{\\circ} \\mathrm{F}$ ) units."""
-        unit_const: Final = field_units.PressureUnits.inch_of_mercury_60_circ_mathrmf
+        unit_const: Final = units.PressureUnits.inch_of_mercury_60_circ_mathrmf
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8220,7 +8220,7 @@ class PressureSetter(TypeSafeSetter):
     @property
     def inch_of_water_60_circ_mathrmf(self):
         """Set value using inch of water ( $60{ }^{\\circ} \\mathrm{F}$ ) units."""
-        unit_const: Final = field_units.PressureUnits.inch_of_water_60_circ_mathrmf
+        unit_const: Final = units.PressureUnits.inch_of_water_60_circ_mathrmf
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8232,7 +8232,7 @@ class PressureSetter(TypeSafeSetter):
     @property
     def kilogram_force_per_square_centimeter(self):
         """Set value using kilogram force per square centimeter units."""
-        unit_const: Final = field_units.PressureUnits.kilogram_force_per_square_centimeter
+        unit_const: Final = units.PressureUnits.kilogram_force_per_square_centimeter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8254,7 +8254,7 @@ class PressureSetter(TypeSafeSetter):
     @property
     def kilogram_force_per_square_meter(self):
         """Set value using kilogram force per square meter units."""
-        unit_const: Final = field_units.PressureUnits.kilogram_force_per_square_meter
+        unit_const: Final = units.PressureUnits.kilogram_force_per_square_meter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8266,7 +8266,7 @@ class PressureSetter(TypeSafeSetter):
     @property
     def kip_force_per_square_inch(self):
         """Set value using kip force per square inch units."""
-        unit_const: Final = field_units.PressureUnits.kip_force_per_square_inch
+        unit_const: Final = units.PressureUnits.kip_force_per_square_inch
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8293,7 +8293,7 @@ class PressureSetter(TypeSafeSetter):
     @property
     def megapascal(self):
         """Set value using megapascal units."""
-        unit_const: Final = field_units.PressureUnits.megapascal
+        unit_const: Final = units.PressureUnits.megapascal
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8305,7 +8305,7 @@ class PressureSetter(TypeSafeSetter):
     @property
     def meter_of_water_4circ_mathrmc(self):
         """Set value using meter of water ( $4^{\\circ} \\mathrm{C}$ ) units."""
-        unit_const: Final = field_units.PressureUnits.meter_of_water_4circ_mathrmc
+        unit_const: Final = units.PressureUnits.meter_of_water_4circ_mathrmc
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8317,7 +8317,7 @@ class PressureSetter(TypeSafeSetter):
     @property
     def microbar(self):
         """Set value using microbar units."""
-        unit_const: Final = field_units.PressureUnits.microbar
+        unit_const: Final = units.PressureUnits.microbar
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8329,7 +8329,7 @@ class PressureSetter(TypeSafeSetter):
     @property
     def millibar(self):
         """Set value using millibar units."""
-        unit_const: Final = field_units.PressureUnits.millibar
+        unit_const: Final = units.PressureUnits.millibar
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8341,7 +8341,7 @@ class PressureSetter(TypeSafeSetter):
     @property
     def millimeter_of_mercury_4circ_mathrmc(self):
         """Set value using millimeter of mercury ( $4^{\\circ} \\mathrm{C}$ ) units."""
-        unit_const: Final = field_units.PressureUnits.millimeter_of_mercury_4circ_mathrmc
+        unit_const: Final = units.PressureUnits.millimeter_of_mercury_4circ_mathrmc
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8353,7 +8353,7 @@ class PressureSetter(TypeSafeSetter):
     @property
     def millimeter_of_water_4circ_mathrmc(self):
         """Set value using millimeter of water ( $4^{\\circ} \\mathrm{C}$ ) units."""
-        unit_const: Final = field_units.PressureUnits.millimeter_of_water_4circ_mathrmc
+        unit_const: Final = units.PressureUnits.millimeter_of_water_4circ_mathrmc
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8365,7 +8365,7 @@ class PressureSetter(TypeSafeSetter):
     @property
     def newton_per_square_meter(self):
         """Set value using newton per square meter units."""
-        unit_const: Final = field_units.PressureUnits.newton_per_square_meter
+        unit_const: Final = units.PressureUnits.newton_per_square_meter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8377,7 +8377,7 @@ class PressureSetter(TypeSafeSetter):
     @property
     def ounce_force_per_square_inch(self):
         """Set value using ounce force per square inch units."""
-        unit_const: Final = field_units.PressureUnits.ounce_force_per_square_inch
+        unit_const: Final = units.PressureUnits.ounce_force_per_square_inch
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8399,7 +8399,7 @@ class PressureSetter(TypeSafeSetter):
     @property
     def pascal(self):
         """Set value using pascal units."""
-        unit_const: Final = field_units.PressureUnits.pascal
+        unit_const: Final = units.PressureUnits.pascal
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8411,7 +8411,7 @@ class PressureSetter(TypeSafeSetter):
     @property
     def pi_ze(self):
         """Set value using pièze units."""
-        unit_const: Final = field_units.PressureUnits.pi_ze
+        unit_const: Final = units.PressureUnits.pi_ze
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8423,7 +8423,7 @@ class PressureSetter(TypeSafeSetter):
     @property
     def pound_force_per_square_foot(self):
         """Set value using pound force per square foot units."""
-        unit_const: Final = field_units.PressureUnits.pound_force_per_square_foot
+        unit_const: Final = units.PressureUnits.pound_force_per_square_foot
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8440,7 +8440,7 @@ class PressureSetter(TypeSafeSetter):
     @property
     def pound_force_per_square_inch(self):
         """Set value using pound force per square inch units."""
-        unit_const: Final = field_units.PressureUnits.pound_force_per_square_inch
+        unit_const: Final = units.PressureUnits.pound_force_per_square_inch
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8452,7 +8452,7 @@ class PressureSetter(TypeSafeSetter):
     @property
     def torr(self):
         """Set value using torr units."""
-        unit_const: Final = field_units.PressureUnits.torr
+        unit_const: Final = units.PressureUnits.torr
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8469,7 +8469,7 @@ class PressureSetter(TypeSafeSetter):
     @property
     def kilopascal(self):
         """Set value using kilopascal units."""
-        unit_const: Final = field_units.PressureUnits.kilopascal
+        unit_const: Final = units.PressureUnits.kilopascal
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8487,14 +8487,14 @@ class RadiationDoseEquivalentSetter(TypeSafeSetter):
     @property
     def rem(self):
         """Set value using rem units."""
-        unit_const: Final = field_units.RadiationDoseEquivalentUnits.rem
+        unit_const: Final = units.RadiationDoseEquivalentUnits.rem
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def sievert(self):
         """Set value using sievert units."""
-        unit_const: Final = field_units.RadiationDoseEquivalentUnits.sievert
+        unit_const: Final = units.RadiationDoseEquivalentUnits.sievert
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8506,7 +8506,7 @@ class RadiationDoseEquivalentSetter(TypeSafeSetter):
     @property
     def millisievert(self):
         """Set value using millisievert units."""
-        unit_const: Final = field_units.RadiationDoseEquivalentUnits.millisievert
+        unit_const: Final = units.RadiationDoseEquivalentUnits.millisievert
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8518,7 +8518,7 @@ class RadiationDoseEquivalentSetter(TypeSafeSetter):
     @property
     def microsievert(self):
         """Set value using microsievert units."""
-        unit_const: Final = field_units.RadiationDoseEquivalentUnits.microsievert
+        unit_const: Final = units.RadiationDoseEquivalentUnits.microsievert
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8531,7 +8531,7 @@ class RadiationExposureSetter(TypeSafeSetter):
     @property
     def coulomb_per_kilogram(self):
         """Set value using coulomb per kilogram units."""
-        unit_const: Final = field_units.RadiationExposureUnits.coulomb_per_kilogram
+        unit_const: Final = units.RadiationExposureUnits.coulomb_per_kilogram
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8543,7 +8543,7 @@ class RadiationExposureSetter(TypeSafeSetter):
     @property
     def d_unit(self):
         """Set value using D unit units."""
-        unit_const: Final = field_units.RadiationExposureUnits.d_unit
+        unit_const: Final = units.RadiationExposureUnits.d_unit
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8555,7 +8555,7 @@ class RadiationExposureSetter(TypeSafeSetter):
     @property
     def pastille_dose_b_unit(self):
         """Set value using pastille dose (B unit) units."""
-        unit_const: Final = field_units.RadiationExposureUnits.pastille_dose_b_unit
+        unit_const: Final = units.RadiationExposureUnits.pastille_dose_b_unit
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8567,7 +8567,7 @@ class RadiationExposureSetter(TypeSafeSetter):
     @property
     def r_entgen(self):
         """Set value using röentgen units."""
-        unit_const: Final = field_units.RadiationExposureUnits.r_entgen
+        unit_const: Final = units.RadiationExposureUnits.r_entgen
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8585,7 +8585,7 @@ class RadioactivitySetter(TypeSafeSetter):
     @property
     def becquerel(self):
         """Set value using becquerel units."""
-        unit_const: Final = field_units.RadioactivityUnits.becquerel
+        unit_const: Final = units.RadioactivityUnits.becquerel
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8597,7 +8597,7 @@ class RadioactivitySetter(TypeSafeSetter):
     @property
     def curie(self):
         """Set value using curie units."""
-        unit_const: Final = field_units.RadioactivityUnits.curie
+        unit_const: Final = units.RadioactivityUnits.curie
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8609,7 +8609,7 @@ class RadioactivitySetter(TypeSafeSetter):
     @property
     def mache_unit(self):
         """Set value using Mache unit units."""
-        unit_const: Final = field_units.RadioactivityUnits.mache_unit
+        unit_const: Final = units.RadioactivityUnits.mache_unit
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8621,7 +8621,7 @@ class RadioactivitySetter(TypeSafeSetter):
     @property
     def rutherford(self):
         """Set value using rutherford units."""
-        unit_const: Final = field_units.RadioactivityUnits.rutherford
+        unit_const: Final = units.RadioactivityUnits.rutherford
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8633,14 +8633,14 @@ class RadioactivitySetter(TypeSafeSetter):
     @property
     def stat(self):
         """Set value using stat units."""
-        unit_const: Final = field_units.RadioactivityUnits.stat
+        unit_const: Final = units.RadioactivityUnits.stat
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def kilobecquerel(self):
         """Set value using kilobecquerel units."""
-        unit_const: Final = field_units.RadioactivityUnits.kilobecquerel
+        unit_const: Final = units.RadioactivityUnits.kilobecquerel
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8652,7 +8652,7 @@ class RadioactivitySetter(TypeSafeSetter):
     @property
     def megabecquerel(self):
         """Set value using megabecquerel units."""
-        unit_const: Final = field_units.RadioactivityUnits.megabecquerel
+        unit_const: Final = units.RadioactivityUnits.megabecquerel
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8664,7 +8664,7 @@ class RadioactivitySetter(TypeSafeSetter):
     @property
     def gigabecquerel(self):
         """Set value using gigabecquerel units."""
-        unit_const: Final = field_units.RadioactivityUnits.gigabecquerel
+        unit_const: Final = units.RadioactivityUnits.gigabecquerel
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8682,7 +8682,7 @@ class SecondMomentOfAreaSetter(TypeSafeSetter):
     @property
     def inch_quadrupled(self):
         """Set value using inch quadrupled units."""
-        unit_const: Final = field_units.SecondMomentOfAreaUnits.inch_quadrupled
+        unit_const: Final = units.SecondMomentOfAreaUnits.inch_quadrupled
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8694,7 +8694,7 @@ class SecondMomentOfAreaSetter(TypeSafeSetter):
     @property
     def centimeter_quadrupled(self):
         """Set value using centimeter quadrupled units."""
-        unit_const: Final = field_units.SecondMomentOfAreaUnits.centimeter_quadrupled
+        unit_const: Final = units.SecondMomentOfAreaUnits.centimeter_quadrupled
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8706,7 +8706,7 @@ class SecondMomentOfAreaSetter(TypeSafeSetter):
     @property
     def foot_quadrupled(self):
         """Set value using foot quadrupled units."""
-        unit_const: Final = field_units.SecondMomentOfAreaUnits.foot_quadrupled
+        unit_const: Final = units.SecondMomentOfAreaUnits.foot_quadrupled
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8718,7 +8718,7 @@ class SecondMomentOfAreaSetter(TypeSafeSetter):
     @property
     def meter_quadrupled(self):
         """Set value using meter quadrupled units."""
-        unit_const: Final = field_units.SecondMomentOfAreaUnits.meter_quadrupled
+        unit_const: Final = units.SecondMomentOfAreaUnits.meter_quadrupled
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8736,7 +8736,7 @@ class SecondRadiationConstantPlanckSetter(TypeSafeSetter):
     @property
     def meter_kelvin(self):
         """Set value using meter kelvin units."""
-        unit_const: Final = field_units.SecondRadiationConstantPlanckUnits.meter_kelvin
+        unit_const: Final = units.SecondRadiationConstantPlanckUnits.meter_kelvin
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8754,7 +8754,7 @@ class SpecificEnthalpySetter(TypeSafeSetter):
     @property
     def british_thermal_unit_mean(self):
         """Set value using British thermal unit (mean) per pound units."""
-        unit_const: Final = field_units.SpecificEnthalpyUnits.british_thermal_unit_mean
+        unit_const: Final = units.SpecificEnthalpyUnits.british_thermal_unit_mean
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8766,7 +8766,7 @@ class SpecificEnthalpySetter(TypeSafeSetter):
     @property
     def british_thermal_unit_per_pound(self):
         """Set value using British thermal unit per pound units."""
-        unit_const: Final = field_units.SpecificEnthalpyUnits.british_thermal_unit_per_pound
+        unit_const: Final = units.SpecificEnthalpyUnits.british_thermal_unit_per_pound
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8778,7 +8778,7 @@ class SpecificEnthalpySetter(TypeSafeSetter):
     @property
     def calorie_per_gram(self):
         """Set value using calorie per gram units."""
-        unit_const: Final = field_units.SpecificEnthalpyUnits.calorie_per_gram
+        unit_const: Final = units.SpecificEnthalpyUnits.calorie_per_gram
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8790,7 +8790,7 @@ class SpecificEnthalpySetter(TypeSafeSetter):
     @property
     def chu_per_pound(self):
         """Set value using Chu per pound units."""
-        unit_const: Final = field_units.SpecificEnthalpyUnits.chu_per_pound
+        unit_const: Final = units.SpecificEnthalpyUnits.chu_per_pound
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8802,7 +8802,7 @@ class SpecificEnthalpySetter(TypeSafeSetter):
     @property
     def joule_per_kilogram(self):
         """Set value using joule per kilogram units."""
-        unit_const: Final = field_units.SpecificEnthalpyUnits.joule_per_kilogram
+        unit_const: Final = units.SpecificEnthalpyUnits.joule_per_kilogram
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8814,7 +8814,7 @@ class SpecificEnthalpySetter(TypeSafeSetter):
     @property
     def kilojoule_per_kilogram(self):
         """Set value using kilojoule per kilogram units."""
-        unit_const: Final = field_units.SpecificEnthalpyUnits.kilojoule_per_kilogram
+        unit_const: Final = units.SpecificEnthalpyUnits.kilojoule_per_kilogram
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8832,7 +8832,7 @@ class SpecificGravitySetter(TypeSafeSetter):
     @property
     def dimensionless(self):
         """Set value using Dimensionless units."""
-        unit_const: Final = field_units.SpecificGravityUnits.dimensionless
+        unit_const: Final = units.SpecificGravityUnits.dimensionless
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8850,7 +8850,7 @@ class SpecificHeatCapacityConstantPressureSetter(TypeSafeSetter):
     @property
     def btu_per_pound_per_degree_fahrenheit_or_degree_rankine(self):
         """Set value using Btu per pound per degree Fahrenheit (or degree Rankine) units."""
-        unit_const: Final = field_units.SpecificHeatCapacityConstantPressureUnits.btu_per_pound_per_degree_fahrenheit_or_degree_rankine
+        unit_const: Final = units.SpecificHeatCapacityConstantPressureUnits.btu_per_pound_per_degree_fahrenheit_or_degree_rankine
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8862,7 +8862,7 @@ class SpecificHeatCapacityConstantPressureSetter(TypeSafeSetter):
     @property
     def calories_per_gram_per_kelvin_or_degree_celsius(self):
         """Set value using calories per gram per kelvin (or degree Celsius) units."""
-        unit_const: Final = field_units.SpecificHeatCapacityConstantPressureUnits.calories_per_gram_per_kelvin_or_degree_celsius
+        unit_const: Final = units.SpecificHeatCapacityConstantPressureUnits.calories_per_gram_per_kelvin_or_degree_celsius
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8874,7 +8874,7 @@ class SpecificHeatCapacityConstantPressureSetter(TypeSafeSetter):
     @property
     def joules_per_kilogram_per_kelvin_or_degree_celsius(self):
         """Set value using joules per kilogram per kelvin (or degree Celsius) units."""
-        unit_const: Final = field_units.SpecificHeatCapacityConstantPressureUnits.joules_per_kilogram_per_kelvin_or_degree_celsius
+        unit_const: Final = units.SpecificHeatCapacityConstantPressureUnits.joules_per_kilogram_per_kelvin_or_degree_celsius
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8892,7 +8892,7 @@ class SpecificLengthSetter(TypeSafeSetter):
     @property
     def centimeter_per_gram(self):
         """Set value using centimeter per gram units."""
-        unit_const: Final = field_units.SpecificLengthUnits.centimeter_per_gram
+        unit_const: Final = units.SpecificLengthUnits.centimeter_per_gram
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8904,7 +8904,7 @@ class SpecificLengthSetter(TypeSafeSetter):
     @property
     def cotton_count(self):
         """Set value using cotton count units."""
-        unit_const: Final = field_units.SpecificLengthUnits.cotton_count
+        unit_const: Final = units.SpecificLengthUnits.cotton_count
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8916,7 +8916,7 @@ class SpecificLengthSetter(TypeSafeSetter):
     @property
     def ft_per_pound(self):
         """Set value using ft per pound units."""
-        unit_const: Final = field_units.SpecificLengthUnits.ft_per_pound
+        unit_const: Final = units.SpecificLengthUnits.ft_per_pound
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8928,7 +8928,7 @@ class SpecificLengthSetter(TypeSafeSetter):
     @property
     def meters_per_kilogram(self):
         """Set value using meters per kilogram units."""
-        unit_const: Final = field_units.SpecificLengthUnits.meters_per_kilogram
+        unit_const: Final = units.SpecificLengthUnits.meters_per_kilogram
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8940,7 +8940,7 @@ class SpecificLengthSetter(TypeSafeSetter):
     @property
     def newton_meter(self):
         """Set value using newton meter units."""
-        unit_const: Final = field_units.SpecificLengthUnits.newton_meter
+        unit_const: Final = units.SpecificLengthUnits.newton_meter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8952,7 +8952,7 @@ class SpecificLengthSetter(TypeSafeSetter):
     @property
     def worsted(self):
         """Set value using worsted units."""
-        unit_const: Final = field_units.SpecificLengthUnits.worsted
+        unit_const: Final = units.SpecificLengthUnits.worsted
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8965,7 +8965,7 @@ class SpecificSurfaceSetter(TypeSafeSetter):
     @property
     def square_centimeter_per_gram(self):
         """Set value using square centimeter per gram units."""
-        unit_const: Final = field_units.SpecificSurfaceUnits.square_centimeter_per_gram
+        unit_const: Final = units.SpecificSurfaceUnits.square_centimeter_per_gram
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8977,7 +8977,7 @@ class SpecificSurfaceSetter(TypeSafeSetter):
     @property
     def square_foot_per_kilogram(self):
         """Set value using square foot per kilogram units."""
-        unit_const: Final = field_units.SpecificSurfaceUnits.square_foot_per_kilogram
+        unit_const: Final = units.SpecificSurfaceUnits.square_foot_per_kilogram
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -8999,7 +8999,7 @@ class SpecificSurfaceSetter(TypeSafeSetter):
     @property
     def square_foot_per_pound(self):
         """Set value using square foot per pound units."""
-        unit_const: Final = field_units.SpecificSurfaceUnits.square_foot_per_pound
+        unit_const: Final = units.SpecificSurfaceUnits.square_foot_per_pound
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -9021,7 +9021,7 @@ class SpecificSurfaceSetter(TypeSafeSetter):
     @property
     def square_meter_per_gram(self):
         """Set value using square meter per gram units."""
-        unit_const: Final = field_units.SpecificSurfaceUnits.square_meter_per_gram
+        unit_const: Final = units.SpecificSurfaceUnits.square_meter_per_gram
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -9033,7 +9033,7 @@ class SpecificSurfaceSetter(TypeSafeSetter):
     @property
     def square_meter_per_kilogram(self):
         """Set value using square meter per kilogram units."""
-        unit_const: Final = field_units.SpecificSurfaceUnits.square_meter_per_kilogram
+        unit_const: Final = units.SpecificSurfaceUnits.square_meter_per_kilogram
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -9051,7 +9051,7 @@ class SpecificVolumeSetter(TypeSafeSetter):
     @property
     def cubic_centimeter_per_gram(self):
         """Set value using cubic centimeter per gram units."""
-        unit_const: Final = field_units.SpecificVolumeUnits.cubic_centimeter_per_gram
+        unit_const: Final = units.SpecificVolumeUnits.cubic_centimeter_per_gram
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -9073,7 +9073,7 @@ class SpecificVolumeSetter(TypeSafeSetter):
     @property
     def cubic_foot_per_kilogram(self):
         """Set value using cubic foot per kilogram units."""
-        unit_const: Final = field_units.SpecificVolumeUnits.cubic_foot_per_kilogram
+        unit_const: Final = units.SpecificVolumeUnits.cubic_foot_per_kilogram
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -9095,7 +9095,7 @@ class SpecificVolumeSetter(TypeSafeSetter):
     @property
     def cubic_foot_per_pound(self):
         """Set value using cubic foot per pound units."""
-        unit_const: Final = field_units.SpecificVolumeUnits.cubic_foot_per_pound
+        unit_const: Final = units.SpecificVolumeUnits.cubic_foot_per_pound
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -9117,7 +9117,7 @@ class SpecificVolumeSetter(TypeSafeSetter):
     @property
     def cubic_meter_per_kilogram(self):
         """Set value using cubic meter per kilogram units."""
-        unit_const: Final = field_units.SpecificVolumeUnits.cubic_meter_per_kilogram
+        unit_const: Final = units.SpecificVolumeUnits.cubic_meter_per_kilogram
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -9135,7 +9135,7 @@ class StressSetter(TypeSafeSetter):
     @property
     def dyne_per_square_centimeter(self):
         """Set value using dyne per square centimeter units."""
-        unit_const: Final = field_units.StressUnits.dyne_per_square_centimeter
+        unit_const: Final = units.StressUnits.dyne_per_square_centimeter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -9147,7 +9147,7 @@ class StressSetter(TypeSafeSetter):
     @property
     def gigapascal(self):
         """Set value using gigapascal units."""
-        unit_const: Final = field_units.StressUnits.gigapascal
+        unit_const: Final = units.StressUnits.gigapascal
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -9159,7 +9159,7 @@ class StressSetter(TypeSafeSetter):
     @property
     def hectopascal(self):
         """Set value using hectopascal units."""
-        unit_const: Final = field_units.StressUnits.hectopascal
+        unit_const: Final = units.StressUnits.hectopascal
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -9171,7 +9171,7 @@ class StressSetter(TypeSafeSetter):
     @property
     def kilogram_force_per_square_centimeter(self):
         """Set value using kilogram force per square centimeter units."""
-        unit_const: Final = field_units.StressUnits.kilogram_force_per_square_centimeter
+        unit_const: Final = units.StressUnits.kilogram_force_per_square_centimeter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -9193,7 +9193,7 @@ class StressSetter(TypeSafeSetter):
     @property
     def kilogram_force_per_square_meter(self):
         """Set value using kilogram force per square meter units."""
-        unit_const: Final = field_units.StressUnits.kilogram_force_per_square_meter
+        unit_const: Final = units.StressUnits.kilogram_force_per_square_meter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -9205,7 +9205,7 @@ class StressSetter(TypeSafeSetter):
     @property
     def kip_force_per_square_inch(self):
         """Set value using kip force per square inch units."""
-        unit_const: Final = field_units.StressUnits.kip_force_per_square_inch
+        unit_const: Final = units.StressUnits.kip_force_per_square_inch
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -9232,7 +9232,7 @@ class StressSetter(TypeSafeSetter):
     @property
     def megapascal(self):
         """Set value using megapascal units."""
-        unit_const: Final = field_units.StressUnits.megapascal
+        unit_const: Final = units.StressUnits.megapascal
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -9244,7 +9244,7 @@ class StressSetter(TypeSafeSetter):
     @property
     def newton_per_square_meter(self):
         """Set value using newton per square meter units."""
-        unit_const: Final = field_units.StressUnits.newton_per_square_meter
+        unit_const: Final = units.StressUnits.newton_per_square_meter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -9256,7 +9256,7 @@ class StressSetter(TypeSafeSetter):
     @property
     def ounce_force_per_square_inch(self):
         """Set value using ounce force per square inch units."""
-        unit_const: Final = field_units.StressUnits.ounce_force_per_square_inch
+        unit_const: Final = units.StressUnits.ounce_force_per_square_inch
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -9283,7 +9283,7 @@ class StressSetter(TypeSafeSetter):
     @property
     def pascal(self):
         """Set value using pascal units."""
-        unit_const: Final = field_units.StressUnits.pascal
+        unit_const: Final = units.StressUnits.pascal
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -9295,7 +9295,7 @@ class StressSetter(TypeSafeSetter):
     @property
     def pound_force_per_square_foot(self):
         """Set value using pound force per square foot units."""
-        unit_const: Final = field_units.StressUnits.pound_force_per_square_foot
+        unit_const: Final = units.StressUnits.pound_force_per_square_foot
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -9322,7 +9322,7 @@ class StressSetter(TypeSafeSetter):
     @property
     def pound_force_per_square_inch(self):
         """Set value using pound force per square inch units."""
-        unit_const: Final = field_units.StressUnits.pound_force_per_square_inch
+        unit_const: Final = units.StressUnits.pound_force_per_square_inch
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -9340,7 +9340,7 @@ class SurfaceMassDensitySetter(TypeSafeSetter):
     @property
     def gram_per_square_centimeter(self):
         """Set value using gram per square centimeter units."""
-        unit_const: Final = field_units.SurfaceMassDensityUnits.gram_per_square_centimeter
+        unit_const: Final = units.SurfaceMassDensityUnits.gram_per_square_centimeter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -9352,7 +9352,7 @@ class SurfaceMassDensitySetter(TypeSafeSetter):
     @property
     def gram_per_square_meter(self):
         """Set value using gram per square meter units."""
-        unit_const: Final = field_units.SurfaceMassDensityUnits.gram_per_square_meter
+        unit_const: Final = units.SurfaceMassDensityUnits.gram_per_square_meter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -9364,7 +9364,7 @@ class SurfaceMassDensitySetter(TypeSafeSetter):
     @property
     def kilogram_per_square_meter(self):
         """Set value using kilogram per square meter units."""
-        unit_const: Final = field_units.SurfaceMassDensityUnits.kilogram_per_square_meter
+        unit_const: Final = units.SurfaceMassDensityUnits.kilogram_per_square_meter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -9376,7 +9376,7 @@ class SurfaceMassDensitySetter(TypeSafeSetter):
     @property
     def pound_mass(self):
         """Set value using pound (mass) per square foot units."""
-        unit_const: Final = field_units.SurfaceMassDensityUnits.pound_mass
+        unit_const: Final = units.SurfaceMassDensityUnits.pound_mass
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -9394,7 +9394,7 @@ class SurfaceTensionSetter(TypeSafeSetter):
     @property
     def dyne_per_centimeter(self):
         """Set value using dyne per centimeter units."""
-        unit_const: Final = field_units.SurfaceTensionUnits.dyne_per_centimeter
+        unit_const: Final = units.SurfaceTensionUnits.dyne_per_centimeter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -9406,7 +9406,7 @@ class SurfaceTensionSetter(TypeSafeSetter):
     @property
     def gram_force_per_centimeter(self):
         """Set value using gram force per centimeter units."""
-        unit_const: Final = field_units.SurfaceTensionUnits.gram_force_per_centimeter
+        unit_const: Final = units.SurfaceTensionUnits.gram_force_per_centimeter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -9418,7 +9418,7 @@ class SurfaceTensionSetter(TypeSafeSetter):
     @property
     def newton_per_meter(self):
         """Set value using newton per meter units."""
-        unit_const: Final = field_units.SurfaceTensionUnits.newton_per_meter
+        unit_const: Final = units.SurfaceTensionUnits.newton_per_meter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -9430,7 +9430,7 @@ class SurfaceTensionSetter(TypeSafeSetter):
     @property
     def pound_force_per_foot(self):
         """Set value using pound force per foot units."""
-        unit_const: Final = field_units.SurfaceTensionUnits.pound_force_per_foot
+        unit_const: Final = units.SurfaceTensionUnits.pound_force_per_foot
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -9442,7 +9442,7 @@ class SurfaceTensionSetter(TypeSafeSetter):
     @property
     def pound_force_per_inch(self):
         """Set value using pound force per inch units."""
-        unit_const: Final = field_units.SurfaceTensionUnits.pound_force_per_inch
+        unit_const: Final = units.SurfaceTensionUnits.pound_force_per_inch
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -9460,7 +9460,7 @@ class TemperatureSetter(TypeSafeSetter):
     @property
     def degree_celsius_unit_size(self):
         """Set value using degree Celsius (unit size) units."""
-        unit_const: Final = field_units.TemperatureUnits.degree_celsius_unit_size
+        unit_const: Final = units.TemperatureUnits.degree_celsius_unit_size
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -9472,7 +9472,7 @@ class TemperatureSetter(TypeSafeSetter):
     @property
     def degree_fahrenheit_unit_size(self):
         """Set value using degree Fahrenheit (unit size) units."""
-        unit_const: Final = field_units.TemperatureUnits.degree_fahrenheit_unit_size
+        unit_const: Final = units.TemperatureUnits.degree_fahrenheit_unit_size
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -9484,7 +9484,7 @@ class TemperatureSetter(TypeSafeSetter):
     @property
     def degree_r_aumur_unit_size(self):
         """Set value using degree Réaumur (unit size) units."""
-        unit_const: Final = field_units.TemperatureUnits.degree_r_aumur_unit_size
+        unit_const: Final = units.TemperatureUnits.degree_r_aumur_unit_size
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -9496,7 +9496,7 @@ class TemperatureSetter(TypeSafeSetter):
     @property
     def kelvin_absolute_scale(self):
         """Set value using kelvin (absolute scale) units."""
-        unit_const: Final = field_units.TemperatureUnits.kelvin_absolute_scale
+        unit_const: Final = units.TemperatureUnits.kelvin_absolute_scale
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -9508,7 +9508,7 @@ class TemperatureSetter(TypeSafeSetter):
     @property
     def rankine_absolute_scale(self):
         """Set value using Rankine (absolute scale) units."""
-        unit_const: Final = field_units.TemperatureUnits.rankine_absolute_scale
+        unit_const: Final = units.TemperatureUnits.rankine_absolute_scale
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -9526,7 +9526,7 @@ class ThermalConductivitySetter(TypeSafeSetter):
     @property
     def btu_it(self):
         """Set value using Btu (IT) per inch per hour per degree Fahrenheit units."""
-        unit_const: Final = field_units.ThermalConductivityUnits.btu_it
+        unit_const: Final = units.ThermalConductivityUnits.btu_it
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -9538,7 +9538,7 @@ class ThermalConductivitySetter(TypeSafeSetter):
     @property
     def btu_therm(self):
         """Set value using Btu (therm) per foot per hour per degree Fahrenheit units."""
-        unit_const: Final = field_units.ThermalConductivityUnits.btu_therm
+        unit_const: Final = units.ThermalConductivityUnits.btu_therm
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -9550,7 +9550,7 @@ class ThermalConductivitySetter(TypeSafeSetter):
     @property
     def calorie_therm(self):
         """Set value using calorie (therm) per centimeter per second per degree Celsius units."""
-        unit_const: Final = field_units.ThermalConductivityUnits.calorie_therm
+        unit_const: Final = units.ThermalConductivityUnits.calorie_therm
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -9562,7 +9562,7 @@ class ThermalConductivitySetter(TypeSafeSetter):
     @property
     def joule_per_second_per_centimeter_per_kelvin(self):
         """Set value using joule per second per centimeter per kelvin units."""
-        unit_const: Final = field_units.ThermalConductivityUnits.joule_per_second_per_centimeter_per_kelvin
+        unit_const: Final = units.ThermalConductivityUnits.joule_per_second_per_centimeter_per_kelvin
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -9574,7 +9574,7 @@ class ThermalConductivitySetter(TypeSafeSetter):
     @property
     def watt_per_centimeter_per_kelvin(self):
         """Set value using watt per centimeter per kelvin units."""
-        unit_const: Final = field_units.ThermalConductivityUnits.watt_per_centimeter_per_kelvin
+        unit_const: Final = units.ThermalConductivityUnits.watt_per_centimeter_per_kelvin
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -9586,7 +9586,7 @@ class ThermalConductivitySetter(TypeSafeSetter):
     @property
     def watt_per_meter_per_kelvin(self):
         """Set value using watt per meter per kelvin units."""
-        unit_const: Final = field_units.ThermalConductivityUnits.watt_per_meter_per_kelvin
+        unit_const: Final = units.ThermalConductivityUnits.watt_per_meter_per_kelvin
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -9604,14 +9604,14 @@ class TimeSetter(TypeSafeSetter):
     @property
     def blink(self):
         """Set value using blink units."""
-        unit_const: Final = field_units.TimeUnits.blink
+        unit_const: Final = units.TimeUnits.blink
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def century(self):
         """Set value using century units."""
-        unit_const: Final = field_units.TimeUnits.century
+        unit_const: Final = units.TimeUnits.century
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -9623,14 +9623,14 @@ class TimeSetter(TypeSafeSetter):
     @property
     def chronon_or_tempon(self):
         """Set value using chronon or tempon units."""
-        unit_const: Final = field_units.TimeUnits.chronon_or_tempon
+        unit_const: Final = units.TimeUnits.chronon_or_tempon
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def gigan_or_eon(self):
         """Set value using gigan or eon units."""
-        unit_const: Final = field_units.TimeUnits.gigan_or_eon
+        unit_const: Final = units.TimeUnits.gigan_or_eon
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -9652,7 +9652,7 @@ class TimeSetter(TypeSafeSetter):
     @property
     def hour(self):
         """Set value using hour units."""
-        unit_const: Final = field_units.TimeUnits.hour
+        unit_const: Final = units.TimeUnits.hour
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -9674,7 +9674,7 @@ class TimeSetter(TypeSafeSetter):
     @property
     def julian_year(self):
         """Set value using Julian year units."""
-        unit_const: Final = field_units.TimeUnits.julian_year
+        unit_const: Final = units.TimeUnits.julian_year
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -9696,7 +9696,7 @@ class TimeSetter(TypeSafeSetter):
     @property
     def mean_solar_day(self):
         """Set value using mean solar day units."""
-        unit_const: Final = field_units.TimeUnits.mean_solar_day
+        unit_const: Final = units.TimeUnits.mean_solar_day
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -9718,14 +9718,14 @@ class TimeSetter(TypeSafeSetter):
     @property
     def millenium(self):
         """Set value using millenium units."""
-        unit_const: Final = field_units.TimeUnits.millenium
+        unit_const: Final = units.TimeUnits.millenium
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def minute(self):
         """Set value using minute units."""
-        unit_const: Final = field_units.TimeUnits.minute
+        unit_const: Final = units.TimeUnits.minute
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -9737,7 +9737,7 @@ class TimeSetter(TypeSafeSetter):
     @property
     def second(self):
         """Set value using second units."""
-        unit_const: Final = field_units.TimeUnits.second
+        unit_const: Final = units.TimeUnits.second
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -9749,14 +9749,14 @@ class TimeSetter(TypeSafeSetter):
     @property
     def shake(self):
         """Set value using shake units."""
-        unit_const: Final = field_units.TimeUnits.shake
+        unit_const: Final = units.TimeUnits.shake
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def sidereal_year_1900_ad(self):
         """Set value using sidereal year (1900 AD) units."""
-        unit_const: Final = field_units.TimeUnits.sidereal_year_1900_ad
+        unit_const: Final = units.TimeUnits.sidereal_year_1900_ad
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -9773,7 +9773,7 @@ class TimeSetter(TypeSafeSetter):
     @property
     def tropical_year(self):
         """Set value using tropical year units."""
-        unit_const: Final = field_units.TimeUnits.tropical_year
+        unit_const: Final = units.TimeUnits.tropical_year
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -9785,14 +9785,14 @@ class TimeSetter(TypeSafeSetter):
     @property
     def wink(self):
         """Set value using wink units."""
-        unit_const: Final = field_units.TimeUnits.wink
+        unit_const: Final = units.TimeUnits.wink
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def year(self):
         """Set value using year units."""
-        unit_const: Final = field_units.TimeUnits.year
+        unit_const: Final = units.TimeUnits.year
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -9814,7 +9814,7 @@ class TimeSetter(TypeSafeSetter):
     @property
     def millisecond(self):
         """Set value using millisecond units."""
-        unit_const: Final = field_units.TimeUnits.millisecond
+        unit_const: Final = units.TimeUnits.millisecond
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -9826,14 +9826,14 @@ class TimeSetter(TypeSafeSetter):
     @property
     def microsecond(self):
         """Set value using microsecond units."""
-        unit_const: Final = field_units.TimeUnits.microsecond
+        unit_const: Final = units.TimeUnits.microsecond
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def nanosecond(self):
         """Set value using nanosecond units."""
-        unit_const: Final = field_units.TimeUnits.nanosecond
+        unit_const: Final = units.TimeUnits.nanosecond
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -9845,7 +9845,7 @@ class TimeSetter(TypeSafeSetter):
     @property
     def picosecond(self):
         """Set value using picosecond units."""
-        unit_const: Final = field_units.TimeUnits.picosecond
+        unit_const: Final = units.TimeUnits.picosecond
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -9863,7 +9863,7 @@ class TorqueSetter(TypeSafeSetter):
     @property
     def centimeter_kilogram_force(self):
         """Set value using centimeter kilogram force units."""
-        unit_const: Final = field_units.TorqueUnits.centimeter_kilogram_force
+        unit_const: Final = units.TorqueUnits.centimeter_kilogram_force
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -9875,7 +9875,7 @@ class TorqueSetter(TypeSafeSetter):
     @property
     def dyne_centimeter(self):
         """Set value using dyne centimeter units."""
-        unit_const: Final = field_units.TorqueUnits.dyne_centimeter
+        unit_const: Final = units.TorqueUnits.dyne_centimeter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -9887,7 +9887,7 @@ class TorqueSetter(TypeSafeSetter):
     @property
     def foot_kilogram_force(self):
         """Set value using foot kilogram force units."""
-        unit_const: Final = field_units.TorqueUnits.foot_kilogram_force
+        unit_const: Final = units.TorqueUnits.foot_kilogram_force
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -9899,7 +9899,7 @@ class TorqueSetter(TypeSafeSetter):
     @property
     def foot_pound_force(self):
         """Set value using foot pound force units."""
-        unit_const: Final = field_units.TorqueUnits.foot_pound_force
+        unit_const: Final = units.TorqueUnits.foot_pound_force
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -9911,7 +9911,7 @@ class TorqueSetter(TypeSafeSetter):
     @property
     def foot_poundal(self):
         """Set value using foot poundal units."""
-        unit_const: Final = field_units.TorqueUnits.foot_poundal
+        unit_const: Final = units.TorqueUnits.foot_poundal
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -9923,7 +9923,7 @@ class TorqueSetter(TypeSafeSetter):
     @property
     def in_pound_force(self):
         """Set value using in pound force units."""
-        unit_const: Final = field_units.TorqueUnits.in_pound_force
+        unit_const: Final = units.TorqueUnits.in_pound_force
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -9935,7 +9935,7 @@ class TorqueSetter(TypeSafeSetter):
     @property
     def inch_ounce_force(self):
         """Set value using inch ounce force units."""
-        unit_const: Final = field_units.TorqueUnits.inch_ounce_force
+        unit_const: Final = units.TorqueUnits.inch_ounce_force
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -9947,7 +9947,7 @@ class TorqueSetter(TypeSafeSetter):
     @property
     def meter_kilogram_force(self):
         """Set value using meter kilogram force units."""
-        unit_const: Final = field_units.TorqueUnits.meter_kilogram_force
+        unit_const: Final = units.TorqueUnits.meter_kilogram_force
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -9959,7 +9959,7 @@ class TorqueSetter(TypeSafeSetter):
     @property
     def newton_centimeter(self):
         """Set value using newton centimeter units."""
-        unit_const: Final = field_units.TorqueUnits.newton_centimeter
+        unit_const: Final = units.TorqueUnits.newton_centimeter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -9971,7 +9971,7 @@ class TorqueSetter(TypeSafeSetter):
     @property
     def newton_meter(self):
         """Set value using newton meter units."""
-        unit_const: Final = field_units.TorqueUnits.newton_meter
+        unit_const: Final = units.TorqueUnits.newton_meter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -9989,7 +9989,7 @@ class TurbulenceEnergyDissipationRateSetter(TypeSafeSetter):
     @property
     def square_foot_per_cubic_second(self):
         """Set value using square foot per cubic second units."""
-        unit_const: Final = field_units.TurbulenceEnergyDissipationRateUnits.square_foot_per_cubic_second
+        unit_const: Final = units.TurbulenceEnergyDissipationRateUnits.square_foot_per_cubic_second
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -10011,7 +10011,7 @@ class TurbulenceEnergyDissipationRateSetter(TypeSafeSetter):
     @property
     def square_meter_per_cubic_second(self):
         """Set value using square meter per cubic second units."""
-        unit_const: Final = field_units.TurbulenceEnergyDissipationRateUnits.square_meter_per_cubic_second
+        unit_const: Final = units.TurbulenceEnergyDissipationRateUnits.square_meter_per_cubic_second
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -10029,7 +10029,7 @@ class VelocityAngularSetter(TypeSafeSetter):
     @property
     def degree_per_minute(self):
         """Set value using degree per minute units."""
-        unit_const: Final = field_units.VelocityAngularUnits.degree_per_minute
+        unit_const: Final = units.VelocityAngularUnits.degree_per_minute
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -10051,7 +10051,7 @@ class VelocityAngularSetter(TypeSafeSetter):
     @property
     def degree_per_second(self):
         """Set value using degree per second units."""
-        unit_const: Final = field_units.VelocityAngularUnits.degree_per_second
+        unit_const: Final = units.VelocityAngularUnits.degree_per_second
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -10073,7 +10073,7 @@ class VelocityAngularSetter(TypeSafeSetter):
     @property
     def grade_per_minute(self):
         """Set value using grade per minute units."""
-        unit_const: Final = field_units.VelocityAngularUnits.grade_per_minute
+        unit_const: Final = units.VelocityAngularUnits.grade_per_minute
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -10095,7 +10095,7 @@ class VelocityAngularSetter(TypeSafeSetter):
     @property
     def radian_per_minute(self):
         """Set value using radian per minute units."""
-        unit_const: Final = field_units.VelocityAngularUnits.radian_per_minute
+        unit_const: Final = units.VelocityAngularUnits.radian_per_minute
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -10107,7 +10107,7 @@ class VelocityAngularSetter(TypeSafeSetter):
     @property
     def radian_per_second(self):
         """Set value using radian per second units."""
-        unit_const: Final = field_units.VelocityAngularUnits.radian_per_second
+        unit_const: Final = units.VelocityAngularUnits.radian_per_second
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -10119,7 +10119,7 @@ class VelocityAngularSetter(TypeSafeSetter):
     @property
     def revolution_per_minute(self):
         """Set value using revolution per minute units."""
-        unit_const: Final = field_units.VelocityAngularUnits.revolution_per_minute
+        unit_const: Final = units.VelocityAngularUnits.revolution_per_minute
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -10141,7 +10141,7 @@ class VelocityAngularSetter(TypeSafeSetter):
     @property
     def revolution_per_second(self):
         """Set value using revolution per second units."""
-        unit_const: Final = field_units.VelocityAngularUnits.revolution_per_second
+        unit_const: Final = units.VelocityAngularUnits.revolution_per_second
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -10163,7 +10163,7 @@ class VelocityAngularSetter(TypeSafeSetter):
     @property
     def turn_per_minute(self):
         """Set value using turn per minute units."""
-        unit_const: Final = field_units.VelocityAngularUnits.turn_per_minute
+        unit_const: Final = units.VelocityAngularUnits.turn_per_minute
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -10181,7 +10181,7 @@ class VelocityLinearSetter(TypeSafeSetter):
     @property
     def foot_per_hour(self):
         """Set value using foot per hour units."""
-        unit_const: Final = field_units.VelocityLinearUnits.foot_per_hour
+        unit_const: Final = units.VelocityLinearUnits.foot_per_hour
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -10208,7 +10208,7 @@ class VelocityLinearSetter(TypeSafeSetter):
     @property
     def foot_per_minute(self):
         """Set value using foot per minute units."""
-        unit_const: Final = field_units.VelocityLinearUnits.foot_per_minute
+        unit_const: Final = units.VelocityLinearUnits.foot_per_minute
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -10230,7 +10230,7 @@ class VelocityLinearSetter(TypeSafeSetter):
     @property
     def foot_per_second(self):
         """Set value using foot per second units."""
-        unit_const: Final = field_units.VelocityLinearUnits.foot_per_second
+        unit_const: Final = units.VelocityLinearUnits.foot_per_second
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -10252,7 +10252,7 @@ class VelocityLinearSetter(TypeSafeSetter):
     @property
     def inch_per_second(self):
         """Set value using inch per second units."""
-        unit_const: Final = field_units.VelocityLinearUnits.inch_per_second
+        unit_const: Final = units.VelocityLinearUnits.inch_per_second
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -10274,7 +10274,7 @@ class VelocityLinearSetter(TypeSafeSetter):
     @property
     def international_knot(self):
         """Set value using international knot units."""
-        unit_const: Final = field_units.VelocityLinearUnits.international_knot
+        unit_const: Final = units.VelocityLinearUnits.international_knot
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -10286,7 +10286,7 @@ class VelocityLinearSetter(TypeSafeSetter):
     @property
     def kilometer_per_hour(self):
         """Set value using kilometer per hour units."""
-        unit_const: Final = field_units.VelocityLinearUnits.kilometer_per_hour
+        unit_const: Final = units.VelocityLinearUnits.kilometer_per_hour
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -10298,7 +10298,7 @@ class VelocityLinearSetter(TypeSafeSetter):
     @property
     def kilometer_per_second(self):
         """Set value using kilometer per second units."""
-        unit_const: Final = field_units.VelocityLinearUnits.kilometer_per_second
+        unit_const: Final = units.VelocityLinearUnits.kilometer_per_second
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -10310,7 +10310,7 @@ class VelocityLinearSetter(TypeSafeSetter):
     @property
     def meter_per_second(self):
         """Set value using meter per second units."""
-        unit_const: Final = field_units.VelocityLinearUnits.meter_per_second
+        unit_const: Final = units.VelocityLinearUnits.meter_per_second
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -10322,7 +10322,7 @@ class VelocityLinearSetter(TypeSafeSetter):
     @property
     def mile_per_hour(self):
         """Set value using mile per hour units."""
-        unit_const: Final = field_units.VelocityLinearUnits.mile_per_hour
+        unit_const: Final = units.VelocityLinearUnits.mile_per_hour
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -10355,7 +10355,7 @@ class ViscosityDynamicSetter(TypeSafeSetter):
     @property
     def centipoise(self):
         """Set value using centipoise units."""
-        unit_const: Final = field_units.ViscosityDynamicUnits.centipoise
+        unit_const: Final = units.ViscosityDynamicUnits.centipoise
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -10377,7 +10377,7 @@ class ViscosityDynamicSetter(TypeSafeSetter):
     @property
     def dyne_second_per_square_centimeter(self):
         """Set value using dyne second per square centimeter units."""
-        unit_const: Final = field_units.ViscosityDynamicUnits.dyne_second_per_square_centimeter
+        unit_const: Final = units.ViscosityDynamicUnits.dyne_second_per_square_centimeter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -10389,7 +10389,7 @@ class ViscosityDynamicSetter(TypeSafeSetter):
     @property
     def kilopound_second_per_square_meter(self):
         """Set value using kilopound second per square meter units."""
-        unit_const: Final = field_units.ViscosityDynamicUnits.kilopound_second_per_square_meter
+        unit_const: Final = units.ViscosityDynamicUnits.kilopound_second_per_square_meter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -10401,7 +10401,7 @@ class ViscosityDynamicSetter(TypeSafeSetter):
     @property
     def millipoise(self):
         """Set value using millipoise units."""
-        unit_const: Final = field_units.ViscosityDynamicUnits.millipoise
+        unit_const: Final = units.ViscosityDynamicUnits.millipoise
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -10423,7 +10423,7 @@ class ViscosityDynamicSetter(TypeSafeSetter):
     @property
     def newton_second_per_square_meter(self):
         """Set value using newton second per square meter units."""
-        unit_const: Final = field_units.ViscosityDynamicUnits.newton_second_per_square_meter
+        unit_const: Final = units.ViscosityDynamicUnits.newton_second_per_square_meter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -10435,7 +10435,7 @@ class ViscosityDynamicSetter(TypeSafeSetter):
     @property
     def pascal_second(self):
         """Set value using pascal second units."""
-        unit_const: Final = field_units.ViscosityDynamicUnits.pascal_second
+        unit_const: Final = units.ViscosityDynamicUnits.pascal_second
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -10457,7 +10457,7 @@ class ViscosityDynamicSetter(TypeSafeSetter):
     @property
     def poise(self):
         """Set value using poise units."""
-        unit_const: Final = field_units.ViscosityDynamicUnits.poise
+        unit_const: Final = units.ViscosityDynamicUnits.poise
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -10479,7 +10479,7 @@ class ViscosityDynamicSetter(TypeSafeSetter):
     @property
     def pound_force_hour_per_square_foot(self):
         """Set value using pound force hour per square foot units."""
-        unit_const: Final = field_units.ViscosityDynamicUnits.pound_force_hour_per_square_foot
+        unit_const: Final = units.ViscosityDynamicUnits.pound_force_hour_per_square_foot
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -10501,7 +10501,7 @@ class ViscosityDynamicSetter(TypeSafeSetter):
     @property
     def pound_force_second_per_square_foot(self):
         """Set value using pound force second per square foot units."""
-        unit_const: Final = field_units.ViscosityDynamicUnits.pound_force_second_per_square_foot
+        unit_const: Final = units.ViscosityDynamicUnits.pound_force_second_per_square_foot
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -10529,7 +10529,7 @@ class ViscosityKinematicSetter(TypeSafeSetter):
     @property
     def centistokes(self):
         """Set value using centistokes units."""
-        unit_const: Final = field_units.ViscosityKinematicUnits.centistokes
+        unit_const: Final = units.ViscosityKinematicUnits.centistokes
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -10541,7 +10541,7 @@ class ViscosityKinematicSetter(TypeSafeSetter):
     @property
     def millistokes(self):
         """Set value using millistokes units."""
-        unit_const: Final = field_units.ViscosityKinematicUnits.millistokes
+        unit_const: Final = units.ViscosityKinematicUnits.millistokes
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -10553,7 +10553,7 @@ class ViscosityKinematicSetter(TypeSafeSetter):
     @property
     def square_centimeter_per_second(self):
         """Set value using square centimeter per second units."""
-        unit_const: Final = field_units.ViscosityKinematicUnits.square_centimeter_per_second
+        unit_const: Final = units.ViscosityKinematicUnits.square_centimeter_per_second
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -10565,7 +10565,7 @@ class ViscosityKinematicSetter(TypeSafeSetter):
     @property
     def square_foot_per_hour(self):
         """Set value using square foot per hour units."""
-        unit_const: Final = field_units.ViscosityKinematicUnits.square_foot_per_hour
+        unit_const: Final = units.ViscosityKinematicUnits.square_foot_per_hour
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -10587,7 +10587,7 @@ class ViscosityKinematicSetter(TypeSafeSetter):
     @property
     def square_foot_per_second(self):
         """Set value using square foot per second units."""
-        unit_const: Final = field_units.ViscosityKinematicUnits.square_foot_per_second
+        unit_const: Final = units.ViscosityKinematicUnits.square_foot_per_second
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -10599,7 +10599,7 @@ class ViscosityKinematicSetter(TypeSafeSetter):
     @property
     def square_meters_per_second(self):
         """Set value using square meters per second units."""
-        unit_const: Final = field_units.ViscosityKinematicUnits.square_meters_per_second
+        unit_const: Final = units.ViscosityKinematicUnits.square_meters_per_second
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -10611,7 +10611,7 @@ class ViscosityKinematicSetter(TypeSafeSetter):
     @property
     def stokes(self):
         """Set value using stokes units."""
-        unit_const: Final = field_units.ViscosityKinematicUnits.stokes
+        unit_const: Final = units.ViscosityKinematicUnits.stokes
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -10629,7 +10629,7 @@ class VolumeSetter(TypeSafeSetter):
     @property
     def acre_foot(self):
         """Set value using acre foot units."""
-        unit_const: Final = field_units.VolumeUnits.acre_foot
+        unit_const: Final = units.VolumeUnits.acre_foot
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -10641,7 +10641,7 @@ class VolumeSetter(TypeSafeSetter):
     @property
     def acre_inch(self):
         """Set value using acre inch units."""
-        unit_const: Final = field_units.VolumeUnits.acre_inch
+        unit_const: Final = units.VolumeUnits.acre_inch
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -10653,7 +10653,7 @@ class VolumeSetter(TypeSafeSetter):
     @property
     def barrel_us_liquid(self):
         """Set value using barrel (US Liquid) units."""
-        unit_const: Final = field_units.VolumeUnits.barrel_us_liquid
+        unit_const: Final = units.VolumeUnits.barrel_us_liquid
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -10665,7 +10665,7 @@ class VolumeSetter(TypeSafeSetter):
     @property
     def barrel_us_petro(self):
         """Set value using barrel (US, Petro) units."""
-        unit_const: Final = field_units.VolumeUnits.barrel_us_petro
+        unit_const: Final = units.VolumeUnits.barrel_us_petro
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -10677,7 +10677,7 @@ class VolumeSetter(TypeSafeSetter):
     @property
     def board_foot_measure(self):
         """Set value using board foot measure units."""
-        unit_const: Final = field_units.VolumeUnits.board_foot_measure
+        unit_const: Final = units.VolumeUnits.board_foot_measure
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -10699,7 +10699,7 @@ class VolumeSetter(TypeSafeSetter):
     @property
     def bushel_us_dry(self):
         """Set value using bushel (US Dry) units."""
-        unit_const: Final = field_units.VolumeUnits.bushel_us_dry
+        unit_const: Final = units.VolumeUnits.bushel_us_dry
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -10711,7 +10711,7 @@ class VolumeSetter(TypeSafeSetter):
     @property
     def centiliter(self):
         """Set value using centiliter units."""
-        unit_const: Final = field_units.VolumeUnits.centiliter
+        unit_const: Final = units.VolumeUnits.centiliter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -10733,7 +10733,7 @@ class VolumeSetter(TypeSafeSetter):
     @property
     def cord(self):
         """Set value using cord units."""
-        unit_const: Final = field_units.VolumeUnits.cord
+        unit_const: Final = units.VolumeUnits.cord
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -10750,7 +10750,7 @@ class VolumeSetter(TypeSafeSetter):
     @property
     def cord_foot(self):
         """Set value using cord foot units."""
-        unit_const: Final = field_units.VolumeUnits.cord_foot
+        unit_const: Final = units.VolumeUnits.cord_foot
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -10762,7 +10762,7 @@ class VolumeSetter(TypeSafeSetter):
     @property
     def cubic_centimeter(self):
         """Set value using cubic centimeter units."""
-        unit_const: Final = field_units.VolumeUnits.cubic_centimeter
+        unit_const: Final = units.VolumeUnits.cubic_centimeter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -10784,7 +10784,7 @@ class VolumeSetter(TypeSafeSetter):
     @property
     def cubic_decameter(self):
         """Set value using cubic decameter units."""
-        unit_const: Final = field_units.VolumeUnits.cubic_decameter
+        unit_const: Final = units.VolumeUnits.cubic_decameter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -10796,7 +10796,7 @@ class VolumeSetter(TypeSafeSetter):
     @property
     def cubic_decimeter(self):
         """Set value using cubic decimeter units."""
-        unit_const: Final = field_units.VolumeUnits.cubic_decimeter
+        unit_const: Final = units.VolumeUnits.cubic_decimeter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -10808,7 +10808,7 @@ class VolumeSetter(TypeSafeSetter):
     @property
     def cubic_foot(self):
         """Set value using cubic foot units."""
-        unit_const: Final = field_units.VolumeUnits.cubic_foot
+        unit_const: Final = units.VolumeUnits.cubic_foot
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -10830,7 +10830,7 @@ class VolumeSetter(TypeSafeSetter):
     @property
     def cubic_inch(self):
         """Set value using cubic inch units."""
-        unit_const: Final = field_units.VolumeUnits.cubic_inch
+        unit_const: Final = units.VolumeUnits.cubic_inch
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -10852,7 +10852,7 @@ class VolumeSetter(TypeSafeSetter):
     @property
     def cubic_kilometer(self):
         """Set value using cubic kilometer units."""
-        unit_const: Final = field_units.VolumeUnits.cubic_kilometer
+        unit_const: Final = units.VolumeUnits.cubic_kilometer
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -10864,7 +10864,7 @@ class VolumeSetter(TypeSafeSetter):
     @property
     def cubic_meter(self):
         """Set value using cubic meter units."""
-        unit_const: Final = field_units.VolumeUnits.cubic_meter
+        unit_const: Final = units.VolumeUnits.cubic_meter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -10876,7 +10876,7 @@ class VolumeSetter(TypeSafeSetter):
     @property
     def cubic_micrometer(self):
         """Set value using cubic micrometer units."""
-        unit_const: Final = field_units.VolumeUnits.cubic_micrometer
+        unit_const: Final = units.VolumeUnits.cubic_micrometer
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -10888,7 +10888,7 @@ class VolumeSetter(TypeSafeSetter):
     @property
     def cubic_mile_us_intl(self):
         """Set value using cubic mile (US, Intl) units."""
-        unit_const: Final = field_units.VolumeUnits.cubic_mile_us_intl
+        unit_const: Final = units.VolumeUnits.cubic_mile_us_intl
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -10900,7 +10900,7 @@ class VolumeSetter(TypeSafeSetter):
     @property
     def cubic_millimeter(self):
         """Set value using cubic millimeter units."""
-        unit_const: Final = field_units.VolumeUnits.cubic_millimeter
+        unit_const: Final = units.VolumeUnits.cubic_millimeter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -10912,7 +10912,7 @@ class VolumeSetter(TypeSafeSetter):
     @property
     def cubic_yard(self):
         """Set value using cubic yard units."""
-        unit_const: Final = field_units.VolumeUnits.cubic_yard
+        unit_const: Final = units.VolumeUnits.cubic_yard
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -10934,7 +10934,7 @@ class VolumeSetter(TypeSafeSetter):
     @property
     def decast_re(self):
         """Set value using decastére units."""
-        unit_const: Final = field_units.VolumeUnits.decast_re
+        unit_const: Final = units.VolumeUnits.decast_re
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -10946,7 +10946,7 @@ class VolumeSetter(TypeSafeSetter):
     @property
     def deciliter(self):
         """Set value using deciliter units."""
-        unit_const: Final = field_units.VolumeUnits.deciliter
+        unit_const: Final = units.VolumeUnits.deciliter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -10968,7 +10968,7 @@ class VolumeSetter(TypeSafeSetter):
     @property
     def fluid_drachm_uk(self):
         """Set value using fluid drachm (UK) units."""
-        unit_const: Final = field_units.VolumeUnits.fluid_drachm_uk
+        unit_const: Final = units.VolumeUnits.fluid_drachm_uk
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -10980,7 +10980,7 @@ class VolumeSetter(TypeSafeSetter):
     @property
     def fluid_dram_us(self):
         """Set value using fluid dram (US) units."""
-        unit_const: Final = field_units.VolumeUnits.fluid_dram_us
+        unit_const: Final = units.VolumeUnits.fluid_dram_us
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -10992,7 +10992,7 @@ class VolumeSetter(TypeSafeSetter):
     @property
     def fluid_ounce_us(self):
         """Set value using fluid ounce (US) units."""
-        unit_const: Final = field_units.VolumeUnits.fluid_ounce_us
+        unit_const: Final = units.VolumeUnits.fluid_ounce_us
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -11004,7 +11004,7 @@ class VolumeSetter(TypeSafeSetter):
     @property
     def gallon_imperial_uk(self):
         """Set value using gallon (Imperial UK) units."""
-        unit_const: Final = field_units.VolumeUnits.gallon_imperial_uk
+        unit_const: Final = units.VolumeUnits.gallon_imperial_uk
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -11026,7 +11026,7 @@ class VolumeSetter(TypeSafeSetter):
     @property
     def gallon_us_dry(self):
         """Set value using gallon (US Dry) units."""
-        unit_const: Final = field_units.VolumeUnits.gallon_us_dry
+        unit_const: Final = units.VolumeUnits.gallon_us_dry
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -11038,7 +11038,7 @@ class VolumeSetter(TypeSafeSetter):
     @property
     def gallon_us_liquid(self):
         """Set value using gallon (US Liquid) units."""
-        unit_const: Final = field_units.VolumeUnits.gallon_us_liquid
+        unit_const: Final = units.VolumeUnits.gallon_us_liquid
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -11050,14 +11050,14 @@ class VolumeSetter(TypeSafeSetter):
     @property
     def last(self):
         """Set value using last units."""
-        unit_const: Final = field_units.VolumeUnits.last
+        unit_const: Final = units.VolumeUnits.last
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def liter(self):
         """Set value using liter units."""
-        unit_const: Final = field_units.VolumeUnits.liter
+        unit_const: Final = units.VolumeUnits.liter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -11079,7 +11079,7 @@ class VolumeSetter(TypeSafeSetter):
     @property
     def microliter(self):
         """Set value using microliter units."""
-        unit_const: Final = field_units.VolumeUnits.microliter
+        unit_const: Final = units.VolumeUnits.microliter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -11101,7 +11101,7 @@ class VolumeSetter(TypeSafeSetter):
     @property
     def milliliter(self):
         """Set value using milliliter units."""
-        unit_const: Final = field_units.VolumeUnits.milliliter
+        unit_const: Final = units.VolumeUnits.milliliter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -11113,14 +11113,14 @@ class VolumeSetter(TypeSafeSetter):
     @property
     def mohr_centicube(self):
         """Set value using Mohr centicube units."""
-        unit_const: Final = field_units.VolumeUnits.mohr_centicube
+        unit_const: Final = units.VolumeUnits.mohr_centicube
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def pint_uk(self):
         """Set value using pint (UK) units."""
-        unit_const: Final = field_units.VolumeUnits.pint_uk
+        unit_const: Final = units.VolumeUnits.pint_uk
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -11132,7 +11132,7 @@ class VolumeSetter(TypeSafeSetter):
     @property
     def pint_us_dry(self):
         """Set value using pint (US Dry) units."""
-        unit_const: Final = field_units.VolumeUnits.pint_us_dry
+        unit_const: Final = units.VolumeUnits.pint_us_dry
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -11144,7 +11144,7 @@ class VolumeSetter(TypeSafeSetter):
     @property
     def pint_us_liquid(self):
         """Set value using pint (US Liquid) units."""
-        unit_const: Final = field_units.VolumeUnits.pint_us_liquid
+        unit_const: Final = units.VolumeUnits.pint_us_liquid
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -11156,7 +11156,7 @@ class VolumeSetter(TypeSafeSetter):
     @property
     def quart_us_dry(self):
         """Set value using quart (US Dry) units."""
-        unit_const: Final = field_units.VolumeUnits.quart_us_dry
+        unit_const: Final = units.VolumeUnits.quart_us_dry
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -11168,7 +11168,7 @@ class VolumeSetter(TypeSafeSetter):
     @property
     def st_re(self):
         """Set value using stére units."""
-        unit_const: Final = field_units.VolumeUnits.st_re
+        unit_const: Final = units.VolumeUnits.st_re
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -11180,7 +11180,7 @@ class VolumeSetter(TypeSafeSetter):
     @property
     def tablespoon_metric(self):
         """Set value using tablespoon (Metric) units."""
-        unit_const: Final = field_units.VolumeUnits.tablespoon_metric
+        unit_const: Final = units.VolumeUnits.tablespoon_metric
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -11192,7 +11192,7 @@ class VolumeSetter(TypeSafeSetter):
     @property
     def tablespoon_us(self):
         """Set value using tablespoon (US) units."""
-        unit_const: Final = field_units.VolumeUnits.tablespoon_us
+        unit_const: Final = units.VolumeUnits.tablespoon_us
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -11204,7 +11204,7 @@ class VolumeSetter(TypeSafeSetter):
     @property
     def teaspoon_us(self):
         """Set value using teaspoon (US) units."""
-        unit_const: Final = field_units.VolumeUnits.teaspoon_us
+        unit_const: Final = units.VolumeUnits.teaspoon_us
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -11222,7 +11222,7 @@ class VolumeFractionOfISetter(TypeSafeSetter):
     @property
     def cubic_centimeters_of_i_per_cubic_meter_total(self):
         """Set value using cubic centimeters of "i" per cubic meter total units."""
-        unit_const: Final = field_units.VolumeFractionOfIUnits.cubic_centimeters_of_i_per_cubic_meter_total
+        unit_const: Final = units.VolumeFractionOfIUnits.cubic_centimeters_of_i_per_cubic_meter_total
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -11244,7 +11244,7 @@ class VolumeFractionOfISetter(TypeSafeSetter):
     @property
     def cubic_foot_of_i_per_cubic_foot_total(self):
         """Set value using cubic foot of "i" per cubic foot total units."""
-        unit_const: Final = field_units.VolumeFractionOfIUnits.cubic_foot_of_i_per_cubic_foot_total
+        unit_const: Final = units.VolumeFractionOfIUnits.cubic_foot_of_i_per_cubic_foot_total
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -11266,7 +11266,7 @@ class VolumeFractionOfISetter(TypeSafeSetter):
     @property
     def cubic_meters_of_i_per_cubic_meter_total(self):
         """Set value using cubic meters of " i " per cubic meter total units."""
-        unit_const: Final = field_units.VolumeFractionOfIUnits.cubic_meters_of_i_per_cubic_meter_total
+        unit_const: Final = units.VolumeFractionOfIUnits.cubic_meters_of_i_per_cubic_meter_total
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -11278,7 +11278,7 @@ class VolumeFractionOfISetter(TypeSafeSetter):
     @property
     def gallons_of_i_per_gallon_total(self):
         """Set value using gallons of "i" per gallon total units."""
-        unit_const: Final = field_units.VolumeFractionOfIUnits.gallons_of_i_per_gallon_total
+        unit_const: Final = units.VolumeFractionOfIUnits.gallons_of_i_per_gallon_total
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -11296,7 +11296,7 @@ class VolumetricCalorificHeatingValueSetter(TypeSafeSetter):
     @property
     def british_thermal_unit_per_cubic_foot(self):
         """Set value using British thermal unit per cubic foot units."""
-        unit_const: Final = field_units.VolumetricCalorificHeatingValueUnits.british_thermal_unit_per_cubic_foot
+        unit_const: Final = units.VolumetricCalorificHeatingValueUnits.british_thermal_unit_per_cubic_foot
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -11318,7 +11318,7 @@ class VolumetricCalorificHeatingValueSetter(TypeSafeSetter):
     @property
     def british_thermal_unit_per_gallon_uk(self):
         """Set value using British thermal unit per gallon (UK) units."""
-        unit_const: Final = field_units.VolumetricCalorificHeatingValueUnits.british_thermal_unit_per_gallon_uk
+        unit_const: Final = units.VolumetricCalorificHeatingValueUnits.british_thermal_unit_per_gallon_uk
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -11330,7 +11330,7 @@ class VolumetricCalorificHeatingValueSetter(TypeSafeSetter):
     @property
     def british_thermal_unit_per_gallon_us(self):
         """Set value using British thermal unit per gallon (US) units."""
-        unit_const: Final = field_units.VolumetricCalorificHeatingValueUnits.british_thermal_unit_per_gallon_us
+        unit_const: Final = units.VolumetricCalorificHeatingValueUnits.british_thermal_unit_per_gallon_us
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -11342,7 +11342,7 @@ class VolumetricCalorificHeatingValueSetter(TypeSafeSetter):
     @property
     def calorie_per_cubic_centimeter(self):
         """Set value using calorie per cubic centimeter units."""
-        unit_const: Final = field_units.VolumetricCalorificHeatingValueUnits.calorie_per_cubic_centimeter
+        unit_const: Final = units.VolumetricCalorificHeatingValueUnits.calorie_per_cubic_centimeter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -11364,7 +11364,7 @@ class VolumetricCalorificHeatingValueSetter(TypeSafeSetter):
     @property
     def chu_per_cubic_foot(self):
         """Set value using Chu per cubic foot units."""
-        unit_const: Final = field_units.VolumetricCalorificHeatingValueUnits.chu_per_cubic_foot
+        unit_const: Final = units.VolumetricCalorificHeatingValueUnits.chu_per_cubic_foot
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -11386,7 +11386,7 @@ class VolumetricCalorificHeatingValueSetter(TypeSafeSetter):
     @property
     def joule_per_cubic_meter(self):
         """Set value using joule per cubic meter units."""
-        unit_const: Final = field_units.VolumetricCalorificHeatingValueUnits.joule_per_cubic_meter
+        unit_const: Final = units.VolumetricCalorificHeatingValueUnits.joule_per_cubic_meter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -11398,7 +11398,7 @@ class VolumetricCalorificHeatingValueSetter(TypeSafeSetter):
     @property
     def kilocalorie_per_cubic_foot(self):
         """Set value using kilocalorie per cubic foot units."""
-        unit_const: Final = field_units.VolumetricCalorificHeatingValueUnits.kilocalorie_per_cubic_foot
+        unit_const: Final = units.VolumetricCalorificHeatingValueUnits.kilocalorie_per_cubic_foot
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -11420,7 +11420,7 @@ class VolumetricCalorificHeatingValueSetter(TypeSafeSetter):
     @property
     def kilocalorie_per_cubic_meter(self):
         """Set value using kilocalorie per cubic meter units."""
-        unit_const: Final = field_units.VolumetricCalorificHeatingValueUnits.kilocalorie_per_cubic_meter
+        unit_const: Final = units.VolumetricCalorificHeatingValueUnits.kilocalorie_per_cubic_meter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -11432,7 +11432,7 @@ class VolumetricCalorificHeatingValueSetter(TypeSafeSetter):
     @property
     def therm_100_k_btu(self):
         """Set value using therm ( 100 K Btu ) per cubic foot units."""
-        unit_const: Final = field_units.VolumetricCalorificHeatingValueUnits.therm_100_k_btu
+        unit_const: Final = units.VolumetricCalorificHeatingValueUnits.therm_100_k_btu
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -11450,7 +11450,7 @@ class VolumetricCoefficientOfExpansionSetter(TypeSafeSetter):
     @property
     def gram_per_cubic_centimeter_per_kelvin_or_degree_celsius(self):
         """Set value using gram per cubic centimeter per kelvin (or degree Celsius) units."""
-        unit_const: Final = field_units.VolumetricCoefficientOfExpansionUnits.gram_per_cubic_centimeter_per_kelvin_or_degree_celsius
+        unit_const: Final = units.VolumetricCoefficientOfExpansionUnits.gram_per_cubic_centimeter_per_kelvin_or_degree_celsius
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -11472,7 +11472,7 @@ class VolumetricCoefficientOfExpansionSetter(TypeSafeSetter):
     @property
     def kilogram_per_cubic_meter_per_kelvin_or_degree_celsius(self):
         """Set value using kilogram per cubic meter per kelvin (or degree Celsius) units."""
-        unit_const: Final = field_units.VolumetricCoefficientOfExpansionUnits.kilogram_per_cubic_meter_per_kelvin_or_degree_celsius
+        unit_const: Final = units.VolumetricCoefficientOfExpansionUnits.kilogram_per_cubic_meter_per_kelvin_or_degree_celsius
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -11494,7 +11494,7 @@ class VolumetricCoefficientOfExpansionSetter(TypeSafeSetter):
     @property
     def pound_per_cubic_foot_per_degree_fahrenheit_or_degree_rankine(self):
         """Set value using pound per cubic foot per degree Fahrenheit (or degree Rankine) units."""
-        unit_const: Final = field_units.VolumetricCoefficientOfExpansionUnits.pound_per_cubic_foot_per_degree_fahrenheit_or_degree_rankine
+        unit_const: Final = units.VolumetricCoefficientOfExpansionUnits.pound_per_cubic_foot_per_degree_fahrenheit_or_degree_rankine
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -11516,7 +11516,7 @@ class VolumetricCoefficientOfExpansionSetter(TypeSafeSetter):
     @property
     def pound_per_cubic_foot_per_kelvin_or_degree_celsius(self):
         """Set value using pound per cubic foot per kelvin (or degree Celsius) units."""
-        unit_const: Final = field_units.VolumetricCoefficientOfExpansionUnits.pound_per_cubic_foot_per_kelvin_or_degree_celsius
+        unit_const: Final = units.VolumetricCoefficientOfExpansionUnits.pound_per_cubic_foot_per_kelvin_or_degree_celsius
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -11544,7 +11544,7 @@ class VolumetricFlowRateSetter(TypeSafeSetter):
     @property
     def cubic_feet_per_day(self):
         """Set value using cubic feet per day units."""
-        unit_const: Final = field_units.VolumetricFlowRateUnits.cubic_feet_per_day
+        unit_const: Final = units.VolumetricFlowRateUnits.cubic_feet_per_day
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -11571,7 +11571,7 @@ class VolumetricFlowRateSetter(TypeSafeSetter):
     @property
     def cubic_feet_per_hour(self):
         """Set value using cubic feet per hour units."""
-        unit_const: Final = field_units.VolumetricFlowRateUnits.cubic_feet_per_hour
+        unit_const: Final = units.VolumetricFlowRateUnits.cubic_feet_per_hour
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -11598,7 +11598,7 @@ class VolumetricFlowRateSetter(TypeSafeSetter):
     @property
     def cubic_feet_per_minute(self):
         """Set value using cubic feet per minute units."""
-        unit_const: Final = field_units.VolumetricFlowRateUnits.cubic_feet_per_minute
+        unit_const: Final = units.VolumetricFlowRateUnits.cubic_feet_per_minute
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -11625,7 +11625,7 @@ class VolumetricFlowRateSetter(TypeSafeSetter):
     @property
     def cubic_feet_per_second(self):
         """Set value using cubic feet per second units."""
-        unit_const: Final = field_units.VolumetricFlowRateUnits.cubic_feet_per_second
+        unit_const: Final = units.VolumetricFlowRateUnits.cubic_feet_per_second
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -11652,7 +11652,7 @@ class VolumetricFlowRateSetter(TypeSafeSetter):
     @property
     def cubic_meters_per_day(self):
         """Set value using cubic meters per day units."""
-        unit_const: Final = field_units.VolumetricFlowRateUnits.cubic_meters_per_day
+        unit_const: Final = units.VolumetricFlowRateUnits.cubic_meters_per_day
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -11664,7 +11664,7 @@ class VolumetricFlowRateSetter(TypeSafeSetter):
     @property
     def cubic_meters_per_hour(self):
         """Set value using cubic meters per hour units."""
-        unit_const: Final = field_units.VolumetricFlowRateUnits.cubic_meters_per_hour
+        unit_const: Final = units.VolumetricFlowRateUnits.cubic_meters_per_hour
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -11676,7 +11676,7 @@ class VolumetricFlowRateSetter(TypeSafeSetter):
     @property
     def cubic_meters_per_minute(self):
         """Set value using cubic meters per minute units."""
-        unit_const: Final = field_units.VolumetricFlowRateUnits.cubic_meters_per_minute
+        unit_const: Final = units.VolumetricFlowRateUnits.cubic_meters_per_minute
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -11688,7 +11688,7 @@ class VolumetricFlowRateSetter(TypeSafeSetter):
     @property
     def cubic_meters_per_second(self):
         """Set value using cubic meters per second units."""
-        unit_const: Final = field_units.VolumetricFlowRateUnits.cubic_meters_per_second
+        unit_const: Final = units.VolumetricFlowRateUnits.cubic_meters_per_second
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -11700,7 +11700,7 @@ class VolumetricFlowRateSetter(TypeSafeSetter):
     @property
     def gallons_per_day(self):
         """Set value using gallons per day units."""
-        unit_const: Final = field_units.VolumetricFlowRateUnits.gallons_per_day
+        unit_const: Final = units.VolumetricFlowRateUnits.gallons_per_day
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -11727,7 +11727,7 @@ class VolumetricFlowRateSetter(TypeSafeSetter):
     @property
     def gallons_per_hour(self):
         """Set value using gallons per hour units."""
-        unit_const: Final = field_units.VolumetricFlowRateUnits.gallons_per_hour
+        unit_const: Final = units.VolumetricFlowRateUnits.gallons_per_hour
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -11754,7 +11754,7 @@ class VolumetricFlowRateSetter(TypeSafeSetter):
     @property
     def gallons_per_minute(self):
         """Set value using gallons per minute units."""
-        unit_const: Final = field_units.VolumetricFlowRateUnits.gallons_per_minute
+        unit_const: Final = units.VolumetricFlowRateUnits.gallons_per_minute
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -11776,7 +11776,7 @@ class VolumetricFlowRateSetter(TypeSafeSetter):
     @property
     def gallons_per_second(self):
         """Set value using gallons per second units."""
-        unit_const: Final = field_units.VolumetricFlowRateUnits.gallons_per_second
+        unit_const: Final = units.VolumetricFlowRateUnits.gallons_per_second
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -11803,7 +11803,7 @@ class VolumetricFlowRateSetter(TypeSafeSetter):
     @property
     def liters_per_day(self):
         """Set value using liters per day units."""
-        unit_const: Final = field_units.VolumetricFlowRateUnits.liters_per_day
+        unit_const: Final = units.VolumetricFlowRateUnits.liters_per_day
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -11815,7 +11815,7 @@ class VolumetricFlowRateSetter(TypeSafeSetter):
     @property
     def liters_per_hour(self):
         """Set value using liters per hour units."""
-        unit_const: Final = field_units.VolumetricFlowRateUnits.liters_per_hour
+        unit_const: Final = units.VolumetricFlowRateUnits.liters_per_hour
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -11827,14 +11827,14 @@ class VolumetricFlowRateSetter(TypeSafeSetter):
     @property
     def liters_per_minute(self):
         """Set value using liters per minute units."""
-        unit_const: Final = field_units.VolumetricFlowRateUnits.liters_per_minute
+        unit_const: Final = units.VolumetricFlowRateUnits.liters_per_minute
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def liters_per_second(self):
         """Set value using liters per second units."""
-        unit_const: Final = field_units.VolumetricFlowRateUnits.liters_per_second
+        unit_const: Final = units.VolumetricFlowRateUnits.liters_per_second
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -11852,7 +11852,7 @@ class VolumetricFluxSetter(TypeSafeSetter):
     @property
     def cubic_feet_per_square_foot_per_day(self):
         """Set value using cubic feet per square foot per day units."""
-        unit_const: Final = field_units.VolumetricFluxUnits.cubic_feet_per_square_foot_per_day
+        unit_const: Final = units.VolumetricFluxUnits.cubic_feet_per_square_foot_per_day
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -11874,7 +11874,7 @@ class VolumetricFluxSetter(TypeSafeSetter):
     @property
     def cubic_feet_per_square_foot_per_hour(self):
         """Set value using cubic feet per square foot per hour units."""
-        unit_const: Final = field_units.VolumetricFluxUnits.cubic_feet_per_square_foot_per_hour
+        unit_const: Final = units.VolumetricFluxUnits.cubic_feet_per_square_foot_per_hour
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -11896,7 +11896,7 @@ class VolumetricFluxSetter(TypeSafeSetter):
     @property
     def cubic_feet_per_square_foot_per_minute(self):
         """Set value using cubic feet per square foot per minute units."""
-        unit_const: Final = field_units.VolumetricFluxUnits.cubic_feet_per_square_foot_per_minute
+        unit_const: Final = units.VolumetricFluxUnits.cubic_feet_per_square_foot_per_minute
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -11918,7 +11918,7 @@ class VolumetricFluxSetter(TypeSafeSetter):
     @property
     def cubic_feet_per_square_foot_per_second(self):
         """Set value using cubic feet per square foot per second units."""
-        unit_const: Final = field_units.VolumetricFluxUnits.cubic_feet_per_square_foot_per_second
+        unit_const: Final = units.VolumetricFluxUnits.cubic_feet_per_square_foot_per_second
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -11940,7 +11940,7 @@ class VolumetricFluxSetter(TypeSafeSetter):
     @property
     def cubic_meters_per_square_meter_per_day(self):
         """Set value using cubic meters per square meter per day units."""
-        unit_const: Final = field_units.VolumetricFluxUnits.cubic_meters_per_square_meter_per_day
+        unit_const: Final = units.VolumetricFluxUnits.cubic_meters_per_square_meter_per_day
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -11952,7 +11952,7 @@ class VolumetricFluxSetter(TypeSafeSetter):
     @property
     def cubic_meters_per_square_meter_per_hour(self):
         """Set value using cubic meters per square meter per hour units."""
-        unit_const: Final = field_units.VolumetricFluxUnits.cubic_meters_per_square_meter_per_hour
+        unit_const: Final = units.VolumetricFluxUnits.cubic_meters_per_square_meter_per_hour
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -11964,7 +11964,7 @@ class VolumetricFluxSetter(TypeSafeSetter):
     @property
     def cubic_meters_per_square_meter_per_minute(self):
         """Set value using cubic meters per square meter per minute units."""
-        unit_const: Final = field_units.VolumetricFluxUnits.cubic_meters_per_square_meter_per_minute
+        unit_const: Final = units.VolumetricFluxUnits.cubic_meters_per_square_meter_per_minute
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -11976,7 +11976,7 @@ class VolumetricFluxSetter(TypeSafeSetter):
     @property
     def cubic_meters_per_square_meter_per_second(self):
         """Set value using cubic meters per square meter per second units."""
-        unit_const: Final = field_units.VolumetricFluxUnits.cubic_meters_per_square_meter_per_second
+        unit_const: Final = units.VolumetricFluxUnits.cubic_meters_per_square_meter_per_second
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -11988,7 +11988,7 @@ class VolumetricFluxSetter(TypeSafeSetter):
     @property
     def gallons_per_square_foot_per_day(self):
         """Set value using gallons per square foot per day units."""
-        unit_const: Final = field_units.VolumetricFluxUnits.gallons_per_square_foot_per_day
+        unit_const: Final = units.VolumetricFluxUnits.gallons_per_square_foot_per_day
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -12010,7 +12010,7 @@ class VolumetricFluxSetter(TypeSafeSetter):
     @property
     def gallons_per_square_foot_per_hour(self):
         """Set value using gallons per square foot per hour units."""
-        unit_const: Final = field_units.VolumetricFluxUnits.gallons_per_square_foot_per_hour
+        unit_const: Final = units.VolumetricFluxUnits.gallons_per_square_foot_per_hour
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -12032,7 +12032,7 @@ class VolumetricFluxSetter(TypeSafeSetter):
     @property
     def gallons_per_square_foot_per_minute(self):
         """Set value using gallons per square foot per minute units."""
-        unit_const: Final = field_units.VolumetricFluxUnits.gallons_per_square_foot_per_minute
+        unit_const: Final = units.VolumetricFluxUnits.gallons_per_square_foot_per_minute
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -12059,7 +12059,7 @@ class VolumetricFluxSetter(TypeSafeSetter):
     @property
     def gallons_per_square_foot_per_second(self):
         """Set value using gallons per square foot per second units."""
-        unit_const: Final = field_units.VolumetricFluxUnits.gallons_per_square_foot_per_second
+        unit_const: Final = units.VolumetricFluxUnits.gallons_per_square_foot_per_second
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -12081,28 +12081,28 @@ class VolumetricFluxSetter(TypeSafeSetter):
     @property
     def liters_per_square_meter_per_day(self):
         """Set value using liters per square meter per day units."""
-        unit_const: Final = field_units.VolumetricFluxUnits.liters_per_square_meter_per_day
+        unit_const: Final = units.VolumetricFluxUnits.liters_per_square_meter_per_day
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def liters_per_square_meter_per_hour(self):
         """Set value using liters per square meter per hour units."""
-        unit_const: Final = field_units.VolumetricFluxUnits.liters_per_square_meter_per_hour
+        unit_const: Final = units.VolumetricFluxUnits.liters_per_square_meter_per_hour
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def liters_per_square_meter_per_minute(self):
         """Set value using liters per square meter per minute units."""
-        unit_const: Final = field_units.VolumetricFluxUnits.liters_per_square_meter_per_minute
+        unit_const: Final = units.VolumetricFluxUnits.liters_per_square_meter_per_minute
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
     @property
     def liters_per_square_meter_per_second(self):
         """Set value using liters per square meter per second units."""
-        unit_const: Final = field_units.VolumetricFluxUnits.liters_per_square_meter_per_second
+        unit_const: Final = units.VolumetricFluxUnits.liters_per_square_meter_per_second
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -12115,7 +12115,7 @@ class VolumetricMassFlowRateSetter(TypeSafeSetter):
     @property
     def gram_per_second_per_cubic_centimeter(self):
         """Set value using gram per second per cubic centimeter units."""
-        unit_const: Final = field_units.VolumetricMassFlowRateUnits.gram_per_second_per_cubic_centimeter
+        unit_const: Final = units.VolumetricMassFlowRateUnits.gram_per_second_per_cubic_centimeter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -12142,7 +12142,7 @@ class VolumetricMassFlowRateSetter(TypeSafeSetter):
     @property
     def kilogram_per_hour_per_cubic_foot(self):
         """Set value using kilogram per hour per cubic foot units."""
-        unit_const: Final = field_units.VolumetricMassFlowRateUnits.kilogram_per_hour_per_cubic_foot
+        unit_const: Final = units.VolumetricMassFlowRateUnits.kilogram_per_hour_per_cubic_foot
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -12164,7 +12164,7 @@ class VolumetricMassFlowRateSetter(TypeSafeSetter):
     @property
     def kilogram_per_hour_per_cubic_meter(self):
         """Set value using kilogram per hour per cubic meter units."""
-        unit_const: Final = field_units.VolumetricMassFlowRateUnits.kilogram_per_hour_per_cubic_meter
+        unit_const: Final = units.VolumetricMassFlowRateUnits.kilogram_per_hour_per_cubic_meter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -12186,7 +12186,7 @@ class VolumetricMassFlowRateSetter(TypeSafeSetter):
     @property
     def kilogram_per_second_per_cubic_meter(self):
         """Set value using kilogram per second per cubic meter units."""
-        unit_const: Final = field_units.VolumetricMassFlowRateUnits.kilogram_per_second_per_cubic_meter
+        unit_const: Final = units.VolumetricMassFlowRateUnits.kilogram_per_second_per_cubic_meter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -12208,7 +12208,7 @@ class VolumetricMassFlowRateSetter(TypeSafeSetter):
     @property
     def pound_per_hour_per_cubic_foot(self):
         """Set value using pound per hour per cubic foot units."""
-        unit_const: Final = field_units.VolumetricMassFlowRateUnits.pound_per_hour_per_cubic_foot
+        unit_const: Final = units.VolumetricMassFlowRateUnits.pound_per_hour_per_cubic_foot
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -12235,7 +12235,7 @@ class VolumetricMassFlowRateSetter(TypeSafeSetter):
     @property
     def pound_per_minute_per_cubic_foot(self):
         """Set value using pound per minute per cubic foot units."""
-        unit_const: Final = field_units.VolumetricMassFlowRateUnits.pound_per_minute_per_cubic_foot
+        unit_const: Final = units.VolumetricMassFlowRateUnits.pound_per_minute_per_cubic_foot
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -12257,7 +12257,7 @@ class VolumetricMassFlowRateSetter(TypeSafeSetter):
     @property
     def pound_per_second_per_cubic_foot(self):
         """Set value using pound per second per cubic foot units."""
-        unit_const: Final = field_units.VolumetricMassFlowRateUnits.pound_per_second_per_cubic_foot
+        unit_const: Final = units.VolumetricMassFlowRateUnits.pound_per_second_per_cubic_foot
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -12285,7 +12285,7 @@ class WavenumberSetter(TypeSafeSetter):
     @property
     def diopter(self):
         """Set value using diopter units."""
-        unit_const: Final = field_units.WavenumberUnits.diopter
+        unit_const: Final = units.WavenumberUnits.diopter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -12297,7 +12297,7 @@ class WavenumberSetter(TypeSafeSetter):
     @property
     def kayser(self):
         """Set value using kayser units."""
-        unit_const: Final = field_units.WavenumberUnits.kayser
+        unit_const: Final = units.WavenumberUnits.kayser
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
@@ -12309,7 +12309,7 @@ class WavenumberSetter(TypeSafeSetter):
     @property
     def reciprocal_meter(self):
         """Set value using reciprocal meter units."""
-        unit_const: Final = field_units.WavenumberUnits.reciprocal_meter
+        unit_const: Final = units.WavenumberUnits.reciprocal_meter
         self.variable.quantity = Quantity(self.value, unit_const)
         return self.variable
 
