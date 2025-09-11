@@ -2,9 +2,9 @@
 
 from .registry import UnitConstant
 
+
 class AbsorbedDoseUnits:
     """Unit constants for Absorbed Radiation Dose."""
-
     __slots__: tuple[()]
 
     erg_per_gram: UnitConstant
@@ -21,7 +21,6 @@ class AbsorbedDoseUnits:
 
 class AccelerationUnits:
     """Unit constants for Acceleration."""
-
     __slots__: tuple[()]
 
     meter_per_second_squared: UnitConstant
@@ -34,7 +33,6 @@ class AccelerationUnits:
 
 class ActivationEnergyUnits:
     """Unit constants for Activation Energy."""
-
     __slots__: tuple[()]
 
     btu_per_pound_mole: UnitConstant
@@ -52,7 +50,6 @@ class ActivationEnergyUnits:
 
 class AmountOfSubstanceUnits:
     """Unit constants for Amount of Substance."""
-
     __slots__: tuple[()]
 
     kilogram_mol: UnitConstant
@@ -69,7 +66,6 @@ class AmountOfSubstanceUnits:
 
 class AnglePlaneUnits:
     """Unit constants for Angle, Plane."""
-
     __slots__: tuple[()]
 
     degree: UnitConstant
@@ -103,7 +99,6 @@ class AnglePlaneUnits:
 
 class AngleSolidUnits:
     """Unit constants for Angle, Solid."""
-
     __slots__: tuple[()]
 
     spat: UnitConstant
@@ -116,7 +111,6 @@ class AngleSolidUnits:
 
 class AngularAccelerationUnits:
     """Unit constants for Angular Acceleration."""
-
     __slots__: tuple[()]
 
     radian_per_second_squared: UnitConstant
@@ -130,7 +124,6 @@ class AngularAccelerationUnits:
 
 class AngularMomentumUnits:
     """Unit constants for Angular Momentum."""
-
     __slots__: tuple[()]
 
     gram_centimeter_squared_per_second: UnitConstant
@@ -142,7 +135,6 @@ class AngularMomentumUnits:
 
 class AreaUnits:
     """Unit constants for Area."""
-
     __slots__: tuple[()]
 
     acre_general: UnitConstant
@@ -205,7 +197,6 @@ class AreaUnits:
 
 class AreaPerUnitVolumeUnits:
     """Unit constants for Area per Unit Volume."""
-
     __slots__: tuple[()]
 
     square_centimeter_per_cubic_centimeter: UnitConstant
@@ -225,7 +216,6 @@ class AreaPerUnitVolumeUnits:
 
 class AtomicWeightUnits:
     """Unit constants for Atomic Weight."""
-
     __slots__: tuple[()]
 
     atomic_mass_unit_12c: UnitConstant
@@ -241,7 +231,6 @@ class AtomicWeightUnits:
 
 class ConcentrationUnits:
     """Unit constants for Concentration."""
-
     __slots__: tuple[()]
 
     grains_of_i_per_cubic_foot: UnitConstant
@@ -253,7 +242,6 @@ class ConcentrationUnits:
 
 class DimensionlessUnits:
     """Unit constants for Dimensionless."""
-
     __slots__: tuple[()]
 
     dimensionless: UnitConstant
@@ -265,7 +253,6 @@ class DimensionlessUnits:
 
 class DynamicFluidityUnits:
     """Unit constants for Dynamic Fluidity."""
-
     __slots__: tuple[()]
 
     meter_seconds_per_kilogram: UnitConstant
@@ -278,7 +265,6 @@ class DynamicFluidityUnits:
 
 class ElectricCapacitanceUnits:
     """Unit constants for Electric Capacitance."""
-
     __slots__: tuple[()]
 
     cm: UnitConstant
@@ -302,7 +288,6 @@ class ElectricCapacitanceUnits:
 
 class ElectricChargeUnits:
     """Unit constants for Electric Charge."""
-
     __slots__: tuple[()]
 
     abcoulomb: UnitConstant
@@ -328,7 +313,6 @@ class ElectricChargeUnits:
 
 class ElectricCurrentIntensityUnits:
     """Unit constants for Electric Current Intensity."""
-
     __slots__: tuple[()]
 
     abampere: UnitConstant
@@ -344,7 +328,6 @@ class ElectricCurrentIntensityUnits:
 
 class ElectricDipoleMomentUnits:
     """Unit constants for Electric Dipole Moment."""
-
     __slots__: tuple[()]
 
     ampere_meter_second: UnitConstant
@@ -358,7 +341,6 @@ class ElectricDipoleMomentUnits:
 
 class ElectricFieldStrengthUnits:
     """Unit constants for Electric Field Strength."""
-
     __slots__: tuple[()]
 
     volt_per_centimeter: UnitConstant
@@ -368,7 +350,6 @@ class ElectricFieldStrengthUnits:
 
 class ElectricInductanceUnits:
     """Unit constants for Electric Inductance."""
-
     __slots__: tuple[()]
 
     abhenry: UnitConstant
@@ -389,7 +370,6 @@ class ElectricInductanceUnits:
 
 class ElectricPotentialUnits:
     """Unit constants for Electric Potential."""
-
     __slots__: tuple[()]
 
     abvolt: UnitConstant
@@ -413,7 +393,6 @@ class ElectricPotentialUnits:
 
 class ElectricResistanceUnits:
     """Unit constants for Electric Resistance."""
-
     __slots__: tuple[()]
 
     abohm: UnitConstant
@@ -441,7 +420,6 @@ class ElectricResistanceUnits:
 
 class ElectricalConductanceUnits:
     """Unit constants for Electrical Conductance."""
-
     __slots__: tuple[()]
 
     emu_cgs: UnitConstant
@@ -458,7 +436,6 @@ class ElectricalConductanceUnits:
 
 class ElectricalPermittivityUnits:
     """Unit constants for Electrical Permittivity."""
-
     __slots__: tuple[()]
 
     farad_per_meter: UnitConstant
@@ -466,7 +443,6 @@ class ElectricalPermittivityUnits:
 
 class ElectricalResistivityUnits:
     """Unit constants for Electrical Resistivity."""
-
     __slots__: tuple[()]
 
     circular_mil_ohm_per_foot: UnitConstant
@@ -482,7 +458,6 @@ class ElectricalResistivityUnits:
 
 class EnergyFluxUnits:
     """Unit constants for Energy Flux."""
-
     __slots__: tuple[()]
 
     btu_per_square_foot_per_hour: UnitConstant
@@ -501,7 +476,6 @@ class EnergyFluxUnits:
 
 class EnergyHeatWorkUnits:
     """Unit constants for Energy, Heat, Work."""
-
     __slots__: tuple[()]
 
     barrel_oil_equivalent_or_equivalent_barrel: UnitConstant
@@ -597,7 +571,6 @@ class EnergyHeatWorkUnits:
 
 class EnergyPerUnitAreaUnits:
     """Unit constants for Energy per Unit Area."""
-
     __slots__: tuple[()]
 
     british_thermal_unit_per_square_foot: UnitConstant
@@ -611,7 +584,6 @@ class EnergyPerUnitAreaUnits:
 
 class ForceUnits:
     """Unit constants for Force."""
-
     __slots__: tuple[()]
 
     crinal: UnitConstant
@@ -653,7 +625,6 @@ class ForceUnits:
 
 class ForceBodyUnits:
     """Unit constants for Force (Body)."""
-
     __slots__: tuple[()]
 
     dyne_per_cubic_centimeter: UnitConstant
@@ -675,7 +646,6 @@ class ForceBodyUnits:
 
 class ForcePerUnitMassUnits:
     """Unit constants for Force per Unit Mass."""
-
     __slots__: tuple[()]
 
     dyne_per_gram: UnitConstant
@@ -693,7 +663,6 @@ class ForcePerUnitMassUnits:
 
 class FrequencyVoltageRatioUnits:
     """Unit constants for Frequency Voltage Ratio."""
-
     __slots__: tuple[()]
 
     cycles_per_second_per_volt: UnitConstant
@@ -705,7 +674,6 @@ class FrequencyVoltageRatioUnits:
 
 class FuelConsumptionUnits:
     """Unit constants for Fuel Consumption."""
-
     __slots__: tuple[()]
 
     unit_100_km_per_liter: UnitConstant
@@ -739,7 +707,6 @@ class FuelConsumptionUnits:
 
 class HeatOfCombustionUnits:
     """Unit constants for Heat of Combustion."""
-
     __slots__: tuple[()]
 
     british_thermal_unit_per_pound: UnitConstant
@@ -753,7 +720,6 @@ class HeatOfCombustionUnits:
 
 class HeatOfFusionUnits:
     """Unit constants for Heat of Fusion."""
-
     __slots__: tuple[()]
 
     british_thermal_unit_mean: UnitConstant
@@ -765,7 +731,6 @@ class HeatOfFusionUnits:
 
 class HeatOfVaporizationUnits:
     """Unit constants for Heat of Vaporization."""
-
     __slots__: tuple[()]
 
     british_thermal_unit_per_pound: UnitConstant
@@ -775,7 +740,6 @@ class HeatOfVaporizationUnits:
 
 class HeatTransferCoefficientUnits:
     """Unit constants for Heat Transfer Coefficient."""
-
     __slots__: tuple[()]
 
     btu_per_square_foot_per_hour_per_degree_fahrenheit_or_rankine: UnitConstant
@@ -785,7 +749,6 @@ class HeatTransferCoefficientUnits:
 
 class IlluminanceUnits:
     """Unit constants for Illuminance."""
-
     __slots__: tuple[()]
 
     foot_candle: UnitConstant
@@ -801,7 +764,6 @@ class IlluminanceUnits:
 
 class KineticEnergyOfTurbulenceUnits:
     """Unit constants for Kinetic Energy of Turbulence."""
-
     __slots__: tuple[()]
 
     square_foot_per_second_squared: UnitConstant
@@ -813,7 +775,6 @@ class KineticEnergyOfTurbulenceUnits:
 
 class LengthUnits:
     """Unit constants for Length."""
-
     __slots__: tuple[()]
 
     ngstr_m: UnitConstant
@@ -900,7 +861,6 @@ class LengthUnits:
 
 class LinearMassDensityUnits:
     """Unit constants for Linear Mass Density."""
-
     __slots__: tuple[()]
 
     denier: UnitConstant
@@ -925,7 +885,6 @@ class LinearMassDensityUnits:
 
 class LinearMomentumUnits:
     """Unit constants for Linear Momentum."""
-
     __slots__: tuple[()]
 
     foot_pounds_force_per_hour: UnitConstant
@@ -947,7 +906,6 @@ class LinearMomentumUnits:
 
 class LuminanceSelfUnits:
     """Unit constants for Luminance (self)."""
-
     __slots__: tuple[()]
 
     apostilb: UnitConstant
@@ -969,7 +927,6 @@ class LuminanceSelfUnits:
 
 class LuminousFluxUnits:
     """Unit constants for Luminous Flux."""
-
     __slots__: tuple[()]
 
     candela_steradian: UnitConstant
@@ -978,7 +935,6 @@ class LuminousFluxUnits:
 
 class LuminousIntensityUnits:
     """Unit constants for Luminous Intensity."""
-
     __slots__: tuple[()]
 
     candela: UnitConstant
@@ -991,7 +947,6 @@ class LuminousIntensityUnits:
 
 class MagneticFieldUnits:
     """Unit constants for Magnetic Field."""
-
     __slots__: tuple[()]
 
     ampere_per_meter: UnitConstant
@@ -1003,7 +958,6 @@ class MagneticFieldUnits:
 
 class MagneticFluxUnits:
     """Unit constants for Magnetic Flux."""
-
     __slots__: tuple[()]
 
     kapp_line: UnitConstant
@@ -1019,7 +973,6 @@ class MagneticFluxUnits:
 
 class MagneticInductionFieldStrengthUnits:
     """Unit constants for Magnetic Induction Field Strength."""
-
     __slots__: tuple[()]
 
     gamma: UnitConstant
@@ -1041,7 +994,6 @@ class MagneticInductionFieldStrengthUnits:
 
 class MagneticMomentUnits:
     """Unit constants for Magnetic Moment."""
-
     __slots__: tuple[()]
 
     bohr_magneton: UnitConstant
@@ -1053,7 +1005,6 @@ class MagneticMomentUnits:
 
 class MagneticPermeabilityUnits:
     """Unit constants for Magnetic Permeability."""
-
     __slots__: tuple[()]
 
     henrys_per_meter: UnitConstant
@@ -1063,7 +1014,6 @@ class MagneticPermeabilityUnits:
 
 class MagnetomotiveForceUnits:
     """Unit constants for Magnetomotive Force."""
-
     __slots__: tuple[()]
 
     abampere_turn: UnitConstant
@@ -1084,7 +1034,6 @@ class MagnetomotiveForceUnits:
 
 class MassUnits:
     """Unit constants for Mass."""
-
     __slots__: tuple[()]
 
     slug: UnitConstant
@@ -1157,9 +1106,11 @@ class MassUnits:
 
 class MassDensityUnits:
     """Unit constants for Mass Density."""
-
     __slots__: tuple[()]
 
+    ounce_per_milliliter: UnitConstant
+    oz_mL: UnitConstant
+    oz_per_mL: UnitConstant
     gram_per_cubic_centimeter: UnitConstant
     g_cc_or_g_ml: UnitConstant
     g_cc: UnitConstant
@@ -1193,7 +1144,6 @@ class MassDensityUnits:
 
 class MassFlowRateUnits:
     """Unit constants for Mass Flow Rate."""
-
     __slots__: tuple[()]
 
     kilograms_per_day: UnitConstant
@@ -1240,7 +1190,6 @@ class MassFlowRateUnits:
 
 class MassFluxUnits:
     """Unit constants for Mass Flux."""
-
     __slots__: tuple[()]
 
     kilogram_per_square_meter_per_day: UnitConstant
@@ -1270,7 +1219,6 @@ class MassFluxUnits:
 
 class MassFractionOfIUnits:
     """Unit constants for Mass Fraction of "i"."""
-
     __slots__: tuple[()]
 
     grains_of_i_per_pound_total: UnitConstant
@@ -1284,7 +1232,6 @@ class MassFractionOfIUnits:
 
 class MassTransferCoefficientUnits:
     """Unit constants for Mass Transfer Coefficient."""
-
     __slots__: tuple[()]
 
     gram_per_square_centimeter_per_second: UnitConstant
@@ -1300,7 +1247,6 @@ class MassTransferCoefficientUnits:
 
 class MolalityOfSoluteIUnits:
     """Unit constants for Molality of Solute "i"."""
-
     __slots__: tuple[()]
 
     gram_moles_of_i_per_kilogram: UnitConstant
@@ -1315,7 +1261,6 @@ class MolalityOfSoluteIUnits:
 
 class MolarConcentrationByMassUnits:
     """Unit constants for Molar Concentration by Mass."""
-
     __slots__: tuple[()]
 
     gram_mole_or_mole_per_gram: UnitConstant
@@ -1337,7 +1282,6 @@ class MolarConcentrationByMassUnits:
 
 class MolarFlowRateUnits:
     """Unit constants for Molar Flow Rate."""
-
     __slots__: tuple[()]
 
     gram_mole_per_day: UnitConstant
@@ -1375,7 +1319,6 @@ class MolarFlowRateUnits:
 
 class MolarFluxUnits:
     """Unit constants for Molar Flux."""
-
     __slots__: tuple[()]
 
     kmol_per_square_meter_per_day: UnitConstant
@@ -1405,7 +1348,6 @@ class MolarFluxUnits:
 
 class MolarHeatCapacityUnits:
     """Unit constants for Molar Heat Capacity."""
-
     __slots__: tuple[()]
 
     btu_per_pound_mole_per_degree_fahrenheit_or_degree_rankine: UnitConstant
@@ -1417,7 +1359,6 @@ class MolarHeatCapacityUnits:
 
 class MolarityOfIUnits:
     """Unit constants for Molarity of "i"."""
-
     __slots__: tuple[()]
 
     gram_moles_of_i_per_cubic_meter: UnitConstant
@@ -1441,7 +1382,6 @@ class MolarityOfIUnits:
 
 class MoleFractionOfIUnits:
     """Unit constants for Mole Fraction of "i"."""
-
     __slots__: tuple[()]
 
     gram_mole_of_i_per_gram_mole_total: UnitConstant
@@ -1454,7 +1394,6 @@ class MoleFractionOfIUnits:
 
 class MomentOfInertiaUnits:
     """Unit constants for Moment of Inertia."""
-
     __slots__: tuple[()]
 
     gram_force_centimeter_square_second: UnitConstant
@@ -1482,7 +1421,6 @@ class MomentOfInertiaUnits:
 
 class MomentumFlowRateUnits:
     """Unit constants for Momentum Flow Rate."""
-
     __slots__: tuple[()]
 
     foot_pounds_per_square_hour: UnitConstant
@@ -1502,7 +1440,6 @@ class MomentumFlowRateUnits:
 
 class MomentumFluxUnits:
     """Unit constants for Momentum Flux."""
-
     __slots__: tuple[()]
 
     dyne_per_square_centimeter: UnitConstant
@@ -1519,7 +1456,6 @@ class MomentumFluxUnits:
 
 class NormalityOfSolutionUnits:
     """Unit constants for Normality of Solution."""
-
     __slots__: tuple[()]
 
     gram_equivalents_per_cubic_meter: UnitConstant
@@ -1535,7 +1471,6 @@ class NormalityOfSolutionUnits:
 
 class ParticleDensityUnits:
     """Unit constants for Particle Density."""
-
     __slots__: tuple[()]
 
     particles_per_cubic_centimeter: UnitConstant
@@ -1557,7 +1492,6 @@ class ParticleDensityUnits:
 
 class PercentUnits:
     """Unit constants for Percent."""
-
     __slots__: tuple[()]
 
     percent: UnitConstant
@@ -1568,7 +1502,6 @@ class PercentUnits:
 
 class PermeabilityUnits:
     """Unit constants for Permeability."""
-
     __slots__: tuple[()]
 
     darcy: UnitConstant
@@ -1578,7 +1511,6 @@ class PermeabilityUnits:
 
 class PhotonEmissionRateUnits:
     """Unit constants for Photon Emission Rate."""
-
     __slots__: tuple[()]
 
     rayleigh: UnitConstant
@@ -1587,7 +1519,6 @@ class PhotonEmissionRateUnits:
 
 class PowerPerUnitMassUnits:
     """Unit constants for Power per Unit Mass or Specific Power."""
-
     __slots__: tuple[()]
 
     british_thermal_unit_per_hour_per_pound_mass: UnitConstant
@@ -1607,7 +1538,6 @@ class PowerPerUnitMassUnits:
 
 class PowerPerUnitVolumeUnits:
     """Unit constants for Power per Unit Volume or Power Density."""
-
     __slots__: tuple[()]
 
     british_thermal_unit_per_hour_per_cubic_foot: UnitConstant
@@ -1639,7 +1569,6 @@ class PowerPerUnitVolumeUnits:
 
 class PowerThermalDutyUnits:
     """Unit constants for Power, Thermal Duty."""
-
     __slots__: tuple[()]
 
     abwatt_emu_of_power: UnitConstant
@@ -1718,7 +1647,6 @@ class PowerThermalDutyUnits:
 
 class PressureUnits:
     """Unit constants for Pressure."""
-
     __slots__: tuple[()]
 
     atmosphere_standard: UnitConstant
@@ -1783,7 +1711,6 @@ class PressureUnits:
 
 class RadiationDoseEquivalentUnits:
     """Unit constants for Radiation Dose Equivalent."""
-
     __slots__: tuple[()]
 
     rem: UnitConstant
@@ -1795,7 +1722,6 @@ class RadiationDoseEquivalentUnits:
 
 class RadiationExposureUnits:
     """Unit constants for Radiation Exposure."""
-
     __slots__: tuple[()]
 
     coulomb_per_kilogram: UnitConstant
@@ -1808,7 +1734,6 @@ class RadiationExposureUnits:
 
 class RadioactivityUnits:
     """Unit constants for Radioactivity."""
-
     __slots__: tuple[()]
 
     becquerel: UnitConstant
@@ -1829,7 +1754,6 @@ class RadioactivityUnits:
 
 class SecondMomentOfAreaUnits:
     """Unit constants for Second Moment of Area."""
-
     __slots__: tuple[()]
 
     inch_quadrupled: UnitConstant
@@ -1843,7 +1767,6 @@ class SecondMomentOfAreaUnits:
 
 class SecondRadiationConstantPlanckUnits:
     """Unit constants for Second Radiation Constant (Planck)."""
-
     __slots__: tuple[()]
 
     meter_kelvin: UnitConstant
@@ -1851,7 +1774,6 @@ class SecondRadiationConstantPlanckUnits:
 
 class SpecificEnthalpyUnits:
     """Unit constants for Specific Enthalpy."""
-
     __slots__: tuple[()]
 
     british_thermal_unit_mean: UnitConstant
@@ -1864,7 +1786,6 @@ class SpecificEnthalpyUnits:
 
 class SpecificGravityUnits:
     """Unit constants for Specific Gravity."""
-
     __slots__: tuple[()]
 
     dimensionless: UnitConstant
@@ -1872,7 +1793,6 @@ class SpecificGravityUnits:
 
 class SpecificHeatCapacityConstantPressureUnits:
     """Unit constants for Specific Heat Capacity (Constant Pressure)."""
-
     __slots__: tuple[()]
 
     btu_per_pound_per_degree_fahrenheit_or_degree_rankine: UnitConstant
@@ -1884,7 +1804,6 @@ class SpecificHeatCapacityConstantPressureUnits:
 
 class SpecificLengthUnits:
     """Unit constants for Specific Length."""
-
     __slots__: tuple[()]
 
     centimeter_per_gram: UnitConstant
@@ -1900,7 +1819,6 @@ class SpecificLengthUnits:
 
 class SpecificSurfaceUnits:
     """Unit constants for Specific Surface."""
-
     __slots__: tuple[()]
 
     square_centimeter_per_gram: UnitConstant
@@ -1920,7 +1838,6 @@ class SpecificSurfaceUnits:
 
 class SpecificVolumeUnits:
     """Unit constants for Specific Volume."""
-
     __slots__: tuple[()]
 
     cubic_centimeter_per_gram: UnitConstant
@@ -1940,7 +1857,6 @@ class SpecificVolumeUnits:
 
 class StressUnits:
     """Unit constants for Stress."""
-
     __slots__: tuple[()]
 
     dyne_per_square_centimeter: UnitConstant
@@ -1961,7 +1877,6 @@ class StressUnits:
 
 class SurfaceMassDensityUnits:
     """Unit constants for Surface Mass Density."""
-
     __slots__: tuple[()]
 
     gram_per_square_centimeter: UnitConstant
@@ -1974,7 +1889,6 @@ class SurfaceMassDensityUnits:
 
 class SurfaceTensionUnits:
     """Unit constants for Surface Tension."""
-
     __slots__: tuple[()]
 
     dyne_per_centimeter: UnitConstant
@@ -1990,7 +1904,6 @@ class SurfaceTensionUnits:
 
 class TemperatureUnits:
     """Unit constants for Temperature."""
-
     __slots__: tuple[()]
 
     degree_celsius_unit_size: UnitConstant
@@ -2006,7 +1919,6 @@ class TemperatureUnits:
 
 class ThermalConductivityUnits:
     """Unit constants for Thermal Conductivity."""
-
     __slots__: tuple[()]
 
     btu_it: UnitConstant
@@ -2026,7 +1938,6 @@ class ThermalConductivityUnits:
 
 class TimeUnits:
     """Unit constants for Time."""
-
     __slots__: tuple[()]
 
     blink: UnitConstant
@@ -2073,7 +1984,6 @@ class TimeUnits:
 
 class TorqueUnits:
     """Unit constants for Torque."""
-
     __slots__: tuple[()]
 
     centimeter_kilogram_force: UnitConstant
@@ -2096,7 +2006,6 @@ class TorqueUnits:
 
 class TurbulenceEnergyDissipationRateUnits:
     """Unit constants for Turbulence Energy Dissipation Rate."""
-
     __slots__: tuple[()]
 
     square_foot_per_cubic_second: UnitConstant
@@ -2108,7 +2017,6 @@ class TurbulenceEnergyDissipationRateUnits:
 
 class VelocityAngularUnits:
     """Unit constants for Velocity, Angular."""
-
     __slots__: tuple[()]
 
     degree_per_minute: UnitConstant
@@ -2140,7 +2048,6 @@ class VelocityAngularUnits:
 
 class VelocityLinearUnits:
     """Unit constants for Velocity, Linear."""
-
     __slots__: tuple[()]
 
     foot_per_hour: UnitConstant
@@ -2176,7 +2083,6 @@ class VelocityLinearUnits:
 
 class ViscosityDynamicUnits:
     """Unit constants for Viscosity, Dynamic."""
-
     __slots__: tuple[()]
 
     centipoise: UnitConstant
@@ -2212,7 +2118,6 @@ class ViscosityDynamicUnits:
 
 class ViscosityKinematicUnits:
     """Unit constants for Viscosity, Kinematic."""
-
     __slots__: tuple[()]
 
     centistokes: UnitConstant
@@ -2234,7 +2139,6 @@ class ViscosityKinematicUnits:
 
 class VolumeUnits:
     """Unit constants for Volume."""
-
     __slots__: tuple[()]
 
     acre_foot: UnitConstant
@@ -2336,7 +2240,6 @@ class VolumeUnits:
 
 class VolumeFractionOfIUnits:
     """Unit constants for Volume Fraction of "i"."""
-
     __slots__: tuple[()]
 
     cubic_centimeters_of_i_per_cubic_meter_total: UnitConstant
@@ -2354,7 +2257,6 @@ class VolumeFractionOfIUnits:
 
 class VolumetricCalorificHeatingValueUnits:
     """Unit constants for Volumetric Calorific (Heating) Value."""
-
     __slots__: tuple[()]
 
     british_thermal_unit_per_cubic_foot: UnitConstant
@@ -2386,7 +2288,6 @@ class VolumetricCalorificHeatingValueUnits:
 
 class VolumetricCoefficientOfExpansionUnits:
     """Unit constants for Volumetric Coefficient of Expansion."""
-
     __slots__: tuple[()]
 
     gram_per_cubic_centimeter_per_kelvin_or_degree_celsius: UnitConstant
@@ -2408,7 +2309,6 @@ class VolumetricCoefficientOfExpansionUnits:
 
 class VolumetricFlowRateUnits:
     """Unit constants for Volumetric Flow Rate."""
-
     __slots__: tuple[()]
 
     cubic_feet_per_day: UnitConstant
@@ -2468,7 +2368,6 @@ class VolumetricFlowRateUnits:
 
 class VolumetricFluxUnits:
     """Unit constants for Volumetric Flux."""
-
     __slots__: tuple[()]
 
     cubic_feet_per_square_foot_per_day: UnitConstant
@@ -2519,7 +2418,6 @@ class VolumetricFluxUnits:
 
 class VolumetricMassFlowRateUnits:
     """Unit constants for Volumetric Mass Flow Rate."""
-
     __slots__: tuple[()]
 
     gram_per_second_per_cubic_centimeter: UnitConstant
@@ -2555,7 +2453,6 @@ class VolumetricMassFlowRateUnits:
 
 class WavenumberUnits:
     """Unit constants for Wavenumber."""
-
     __slots__: tuple[()]
 
     diopter: UnitConstant
@@ -2564,3 +2461,4 @@ class WavenumberUnits:
     unit_1_m: UnitConstant
 
 def register_all_units() -> None: ...
+

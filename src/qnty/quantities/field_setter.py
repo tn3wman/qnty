@@ -16,7 +16,6 @@ from .base_qnty import Quantity, TypeSafeSetter
 # ===== SETTER CLASSES =====
 # Static setter class definitions with __slots__ optimization
 
-
 class AbsorbedDoseSetter(TypeSafeSetter):
     """AbsorbedDose-specific setter with optimized unit properties."""
 
@@ -5523,6 +5522,23 @@ class MassDensitySetter(TypeSafeSetter):
     """MassDensity-specific setter with optimized unit properties."""
 
     __slots__ = ()
+
+    @property
+    def ounce_per_milliliter(self):
+        """Set value using ounce_per_milliliter units."""
+        unit_const: Final = field_units.MassDensityUnits.ounce_per_milliliter
+        self.variable.quantity = Quantity(self.value, unit_const)
+        return self.variable
+
+    @property
+    def oz_mL(self):
+        """Set value using oz_mL units (alias for ounce_per_milliliter)."""
+        return self.ounce_per_milliliter
+
+    @property
+    def oz_per_mL(self):
+        """Set value using oz_per_mL units (alias for ounce_per_milliliter)."""
+        return self.ounce_per_milliliter
 
     @property
     def gram_per_cubic_centimeter(self):
@@ -12317,3 +12333,5 @@ class WavenumberSetter(TypeSafeSetter):
     def unit_1_m(self):
         """Set value using unit_1_m units (alias for reciprocal_meter)."""
         return self.reciprocal_meter
+
+

@@ -4202,6 +4202,17 @@
     "imperial_base_unit": "$\\mathrm{lb} / \\mathrm{ft}^{3}$",
     "units": [
       {
+        "name": "ounce_per_milliliter",
+        "normalized_name": "ounce_per_milliliter",
+        "notation": "oz/mL",
+        "si_conversion": 28349.5,
+        "imperial_conversion": 1769.8,
+        "aliases": [
+          "oz/mL",
+          "oz_per_mL"
+        ]
+      },
+      {
         "name": "gram per cubic centimeter",
         "normalized_name": "gram_per_cubic_centimeter",
         "notation": "g/cc or g/ml",
@@ -7628,7 +7639,7 @@
         "name": "poise",
         "normalized_name": "poise",
         "notation": "P or Po",
-        "si_conversion": 1.0,
+        "si_conversion": 1,
         "imperial_conversion": 0.0020885,
         "aliases": [
           "P",

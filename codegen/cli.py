@@ -28,12 +28,21 @@ def run_generator(generator_name: str, script_path: Path) -> tuple[bool, str]:
         print(f"{'=' * 60}")
 
         # Run the generator script as a module to allow relative imports
-        module_name = f"qnty.tools.generators.{script_path.stem}"
+        # We need to add the project root to the Python path
+        project_root = script_path.parents[2]  # codegen/generators -> codegen -> project root
+        module_name = f"codegen.generators.{script_path.stem}"
+        
+        # Set PYTHONPATH to include project root
+        import os
+        env = os.environ.copy()
+        env['PYTHONPATH'] = str(project_root) + os.pathsep + env.get('PYTHONPATH', '')
+        
         result = subprocess.run(
             [sys.executable, "-m", module_name],
             capture_output=True,
             text=True,
-            cwd=script_path.parents[4],  # Run from project root
+            cwd=project_root,
+            env=env,
         )
 
         # Print the output
@@ -67,10 +76,11 @@ def main() -> int:
 
     # Define generators in dependency order
     generators: list[tuple[str, str]] = [
-        ("Dimensions Generator", "dimensions_gen.py"),
-        ("Units Generator", "units_gen.py"),
-        ("Setters Generator", "setters_gen.py"),
+        ("Dimensions Generator", "field_dims.py"),
+        ("Units Generator", "field_units.py"),
+        ("Setters Generator", "field_setter.py"),
         ("Field Variables Generator", "field_vars.py"),
+        ("Field Converters Generator", "field_converters.py"),
     ]
 
     # Track results
@@ -106,11 +116,11 @@ def main() -> int:
     else:
         print("SUCCESS: All generators completed successfully!")
         print("\nGenerated files:")
-        print("  - src/qnty/generated/dimensions.py")
-        print("  - src/qnty/generated/units.py")
-        print("  - src/qnty/generated/setters.py")
-        print("  - src/qnty/generated/quantities.py")
-        print("  - src/qnty/generated/quantities.pyi")
+        print("  - src/qnty/dimensions/field_dims.py")
+        print("  - src/qnty/units/field_units.py")
+        print("  - src/qnty/quantities/field_setter.py")
+        print("  - src/qnty/quantities/field_vars.py")
+        print("  - src/qnty/units/field_converters.py")
         return 0
 
 

@@ -271,7 +271,7 @@ def main():
     print(f"  Total units (with prefixes): {stats['total_units']}")
     print(f"  Generated prefixed units: {stats['generated_prefixed_units']}")
 
-    print("✅ Generated quantities/field_converters.py")
+    print("SUCCESS: Generated quantities/field_converters.py")
 
 
 if __name__ == "__main__":
