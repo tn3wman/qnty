@@ -85,7 +85,7 @@ Acceleration = L / (T**2)
 Force     = M * Acceleration            # M L T^-2
 Pressure  = Force / (L**2)              # M L^-1 T^-2
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, slots=True)
 class Unit:
     name: str
     factor_to_si: float
