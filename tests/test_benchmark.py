@@ -13,7 +13,7 @@ import pint
 import unyt
 from astropy.units import imperial
 
-from qnty import Length
+# from qnty import Length
 from qnty.quantities import Q
 from qnty.units import DimensionlessUnits, LengthUnits, PressureUnits
 
@@ -42,8 +42,7 @@ qnty_S = Q(137.895, PressureUnits.MPa)
 qnty_E = Q(0.8, DimensionlessUnits.dimensionless)
 qnty_W = Q(1.0, DimensionlessUnits.dimensionless)
 qnty_Y = Q(0.4, DimensionlessUnits.dimensionless)
-qnty_length_var = Length("beam_length")
-qnty_length_var.set(100.0).millimeter
+qnty_length = Q(100.0, LengthUnits.millimeter)  # For type-safe variable test
 qnty_q1_50mm = Q(50.0, LengthUnits.millimeter)
 qnty_q2_2in = Q(2.0, LengthUnits.inch)
 qnty_q3_05m = Q(0.5, LengthUnits.meter)
@@ -372,8 +371,8 @@ def test_benchmark_suite(capsys):
 
     # ========== TEST 6: Type-Safe Variables ==========
     def qnty_typesafe():
-        assert qnty_length_var.quantity is not None
-        return qnty_length_var.quantity.to(LengthUnits.meter)
+        assert qnty_length is not None
+        return qnty_length.to(LengthUnits.meter)
 
     def pint_typesafe():
         # Pint doesn't have type-safe variables, so we simulate

@@ -282,6 +282,7 @@ The project uses a sophisticated code generation pipeline located in `src/qnty/c
 python -m qnty.codegen.cli                # Generate everything
 python -m qnty.codegen.generators.dimensions_gen  # Update dimensions only
 python -m qnty.codegen.generators.units_gen       # Update units only
+python -c "import os; os.chdir('src/qnty/units'); from qnty.units.core import write_units_stub; write_units_stub('units.pyi')"  # Generate units.pyi
 python -m qnty.codegen.generators.quantities_gen  # Update quantities only
 ```
 

@@ -306,6 +306,8 @@ class UnitNamespaceMeta(type):
                 )
                 setattr(cls, attr, unit)
                 created[attr] = unit
+            elif isinstance(val, Unit):
+                created[attr] = val
 
         # Handle preferred by canonical name, if provided
         if preferred_name:

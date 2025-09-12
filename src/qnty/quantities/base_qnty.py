@@ -1,41 +1,68 @@
-# from dataclasses import dataclass
+from dataclasses import dataclass
 
-# from ..dimensions import D, Dimension
-# from ..units import Unit, ureg
+from ..dimensions import Dimension
+from ..units import Unit, ureg
 
 
-# # ---------- Quantity (stored in SI) ----------
-# @dataclass(frozen=True)
-# class Quantity:
-#     value: float
-#     dim: Dimension
-#     def __mul__(self, o: "Quantity|float") -> "Quantity":
-#         if isinstance(o, Quantity):
-#             return Quantity(self.value*o.value, self.dim*o.dim)
-#         return Quantity(self.value*float(o), self.dim)
-#     def __truediv__(self, o: "Quantity|float") -> "Quantity":
-#         if isinstance(o, Quantity):
-#             return Quantity(self.value/o.value, self.dim/o.dim)
-#         return Quantity(self.value/float(o), self.dim)
-#     def __pow__(self, p: int) -> "Quantity":
-#         return Quantity(self.value**p, self.dim**p)
-#     def __add__(self, o: "Quantity") -> "Quantity":
-#         if self.dim != o.dim: raise TypeError("Dimension mismatch in addition")
-#         return Quantity(self.value + o.value, self.dim)
-#     def __sub__(self, o: "Quantity") -> "Quantity":
-#         if self.dim != o.dim: raise TypeError("Dimension mismatch in subtraction")
-#         return Quantity(self.value - o.value, self.dim)
-#     def to(self, unit: Unit) -> float:
-#         if unit.dimension != self.dim: raise TypeError("Conversion dimension mismatch")
-#         return (self.value - unit.si_offset)/unit.si_factor
-#     def __repr__(self) -> str:
-#         pu = ureg.preferred_for(self.dim)
-#         if pu:
-#             return f"{self.to(pu):.6g} {pu.symbol}"
-#         return f"{self.value:.6g} [Dim={self.dim.exps}]"
+@dataclass(frozen=True, slots=True)
+class Quantity:
+    """
+    Immutable physical quantity stored in SI units.
+    Supports arithmetic and automatic pretty-printing
+    using preferred units from the UnitRegistry.
+    """
+    value: float         # numerical value in SI base units
+    dim: Dimension       # physical dimension (e.g., M*L/T^2)
 
-# def Q(val: float, unit: Unit) -> Quantity:
-#     return Quantity(unit.si_factor*val + unit.si_offset, unit.dimension)
+    # ----- arithmetic -----
+    def __mul__(self, other: "Quantity | float | int") -> "Quantity":
+        if isinstance(other, Quantity):
+            return Quantity(self.value * other.value, self.dim * other.dim)
+        return Quantity(self.value * float(other), self.dim)
+
+    def __truediv__(self, other: "Quantity | float | int") -> "Quantity":
+        if isinstance(other, Quantity):
+            return Quantity(self.value / other.value, self.dim / other.dim)
+        return Quantity(self.value / float(other), self.dim)
+
+    def __pow__(self, k: int) -> "Quantity":
+        return Quantity(self.value ** k, self.dim ** k)
+
+    def __add__(self, other: "Quantity") -> "Quantity":
+        if self.dim != other.dim:
+            raise TypeError("Dimension mismatch in addition")
+        return Quantity(self.value + other.value, self.dim)
+
+    def __sub__(self, other: "Quantity") -> "Quantity":
+        if self.dim != other.dim:
+            raise TypeError("Dimension mismatch in subtraction")
+        return Quantity(self.value - other.value, self.dim)
+
+    # ----- conversion & display -----
+    def to(self, unit: Unit) -> float:
+        """
+        Convert to the given unit and return the numerical value.
+        Raises TypeError if the unit dimension is incompatible.
+        """
+        if unit.dim != self.dim:
+            raise TypeError(f"Cannot convert {self.dim} to {unit.dim}")
+        return (self.value - unit.si_offset) / unit.si_factor
+
+    def __repr__(self) -> str:
+        """
+        Pretty-print in the preferred unit if one is registered;
+        otherwise show the raw SI value and dimension.
+        """
+        pref = ureg.preferred_for(self.dim)
+        if pref:
+            return f"{self.to(pref):.6g} {pref.symbol}"
+        return f"{self.value:.6g} [Dim={self.dim}]"
+
+
+def Q(val: float, unit: Unit) -> Quantity:
+    """Create an immutable Quantity from a value in the given unit."""
+    return Quantity(unit.si_factor * val + unit.si_offset, unit.dim)
+
 
 
 # class BooleanQuantity(Quantity):

@@ -5,7 +5,7 @@
 # High-performance quantity and variable systems.
 # """
 
-# from .base_qnty import Quantity, Q
+from .base_qnty import Q, Quantity
 # from .field_qnty import FieldQnty
 
 # # Register types with TypeRegistry for performance optimization
