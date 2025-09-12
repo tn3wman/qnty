@@ -12,7 +12,7 @@ D = add_dimension(
 L = add_dimension((1,0,0,0,0,0,0), aliases=("LENGTH",))
 M = add_dimension((0,1,0,0,0,0,0), aliases=("MASS",))
 T = add_dimension((0,0,1,0,0,0,0), aliases=("TIME",))
-I = add_dimension((0,0,0,1,0,0,0), aliases=("CURRENT",)) # noqa: E741
+A = add_dimension((0,0,0,1,0,0,0), aliases=("CURRENT",))
 Θ = add_dimension((0,0,0,0,1,0,0), aliases=("TEMPERATURE",))
 N = add_dimension((0,0,0,0,0,1,0), aliases=("AMOUNT",))
 J = add_dimension((0,0,0,0,0,0,1), aliases=("LUMINOUS_INTENSITY",))

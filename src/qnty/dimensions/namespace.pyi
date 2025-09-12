@@ -9,7 +9,7 @@ class Dimensions:
     D: Final[Dimension]
     Energy: Final[Dimension]
     Force: Final[Dimension]
-    I: Final[Dimension]
+    A: Final[Dimension]
     J: Final[Dimension]
     L: Final[Dimension]
     M: Final[Dimension]
