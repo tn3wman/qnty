@@ -1,121 +1,41 @@
-"""
-Dimension System Stub
-=====================
-
-This file contains dimension constants for all engineering fields.
-
-THIS FILE IS AUTO-GENERATED - DO NOT EDIT MANUALLY
-changes will be overwritten
-see codegen/generate_dimensions.py
-"""
+from typing import Final
 
 from .core import Dimension
 
-# All dynamically generated dimension constants
-ABSORBED_DOSE: Dimension
-ACCELERATION: Dimension
-ACTIVATION_ENERGY: Dimension
-AMOUNT_OF_SUBSTANCE: Dimension
-ANGLE_PLANE: Dimension
-ANGLE_SOLID: Dimension
-ANGULAR_ACCELERATION: Dimension
-ANGULAR_MOMENTUM: Dimension
-AREA: Dimension
-AREA_PER_UNIT_VOLUME: Dimension
-ATOMIC_WEIGHT: Dimension
-CONCENTRATION: Dimension
-DIMENSIONLESS: Dimension
-DYNAMIC_FLUIDITY: Dimension
-ELECTRICAL_CONDUCTANCE: Dimension
-ELECTRICAL_PERMITTIVITY: Dimension
-ELECTRICAL_RESISTIVITY: Dimension
-ELECTRIC_CAPACITANCE: Dimension
-ELECTRIC_CHARGE: Dimension
-ELECTRIC_CURRENT_INTENSITY: Dimension
-ELECTRIC_DIPOLE_MOMENT: Dimension
-ELECTRIC_FIELD_STRENGTH: Dimension
-ELECTRIC_INDUCTANCE: Dimension
-ELECTRIC_POTENTIAL: Dimension
-ELECTRIC_RESISTANCE: Dimension
-ENERGY_FLUX: Dimension
-ENERGY_HEAT_WORK: Dimension
-ENERGY_PER_UNIT_AREA: Dimension
-FORCE: Dimension
-FORCE_BODY: Dimension
-FORCE_PER_UNIT_MASS: Dimension
-FREQUENCY_VOLTAGE_RATIO: Dimension
-FUEL_CONSUMPTION: Dimension
-HEAT_OF_COMBUSTION: Dimension
-HEAT_OF_FUSION: Dimension
-HEAT_OF_VAPORIZATION: Dimension
-HEAT_TRANSFER_COEFFICIENT: Dimension
-ILLUMINANCE: Dimension
-KINETIC_ENERGY_OF_TURBULENCE: Dimension
-LENGTH: Dimension
-LINEAR_MASS_DENSITY: Dimension
-LINEAR_MOMENTUM: Dimension
-LUMINANCE_SELF: Dimension
-LUMINOUS_FLUX: Dimension
-LUMINOUS_INTENSITY: Dimension
-MAGNETIC_FIELD: Dimension
-MAGNETIC_FLUX: Dimension
-MAGNETIC_INDUCTION_FIELD_STRENGTH: Dimension
-MAGNETIC_MOMENT: Dimension
-MAGNETIC_PERMEABILITY: Dimension
-MAGNETOMOTIVE_FORCE: Dimension
-MASS: Dimension
-MASS_DENSITY: Dimension
-MASS_FLOW_RATE: Dimension
-MASS_FLUX: Dimension
-MASS_FRACTION_OF_I: Dimension
-MASS_TRANSFER_COEFFICIENT: Dimension
-MOLALITY_OF_SOLUTE_I: Dimension
-MOLARITY_OF_I: Dimension
-MOLAR_CONCENTRATION_BY_MASS: Dimension
-MOLAR_FLOW_RATE: Dimension
-MOLAR_FLUX: Dimension
-MOLAR_HEAT_CAPACITY: Dimension
-MOLE_FRACTION_OF_I: Dimension
-MOMENTUM_FLOW_RATE: Dimension
-MOMENTUM_FLUX: Dimension
-MOMENT_OF_INERTIA: Dimension
-NORMALITY_OF_SOLUTION: Dimension
-PARTICLE_DENSITY: Dimension
-PERCENT: Dimension
-PERMEABILITY: Dimension
-PHOTON_EMISSION_RATE: Dimension
-POWER_PER_UNIT_MASS: Dimension
-POWER_PER_UNIT_VOLUME: Dimension
-POWER_THERMAL_DUTY: Dimension
-PRESSURE: Dimension
-RADIATION_DOSE_EQUIVALENT: Dimension
-RADIATION_EXPOSURE: Dimension
-RADIOACTIVITY: Dimension
-SECOND_MOMENT_OF_AREA: Dimension
-SECOND_RADIATION_CONSTANT_PLANCK: Dimension
-SPECIFIC_ENTHALPY: Dimension
-SPECIFIC_GRAVITY: Dimension
-SPECIFIC_HEAT_CAPACITY_CONSTANT_PRESSURE: Dimension
-SPECIFIC_LENGTH: Dimension
-SPECIFIC_SURFACE: Dimension
-SPECIFIC_VOLUME: Dimension
-STRESS: Dimension
-SURFACE_MASS_DENSITY: Dimension
-SURFACE_TENSION: Dimension
-TEMPERATURE: Dimension
-THERMAL_CONDUCTIVITY: Dimension
-TIME: Dimension
-TORQUE: Dimension
-TURBULENCE_ENERGY_DISSIPATION_RATE: Dimension
-VELOCITY_ANGULAR: Dimension
-VELOCITY_LINEAR: Dimension
-VISCOSITY_DYNAMIC: Dimension
-VISCOSITY_KINEMATIC: Dimension
-VOLUME: Dimension
-VOLUMETRIC_CALORIFIC_HEATING_VALUE: Dimension
-VOLUMETRIC_COEFFICIENT_OF_EXPANSION: Dimension
-VOLUMETRIC_FLOW_RATE: Dimension
-VOLUMETRIC_FLUX: Dimension
-VOLUMETRIC_MASS_FLOW_RATE: Dimension
-VOLUME_FRACTION_OF_I: Dimension
-WAVENUMBER: Dimension
+class Dimensions:
+    ABSORBED_RADIATION_DOSE: Final[Dimension]
+    ACCELERATION: Final[Dimension]
+    Area: Final[Dimension]
+    D: Final[Dimension]
+    Energy: Final[Dimension]
+    Force: Final[Dimension]
+    I: Final[Dimension]
+    J: Final[Dimension]
+    L: Final[Dimension]
+    M: Final[Dimension]
+    N: Final[Dimension]
+    Power: Final[Dimension]
+    Pressure: Final[Dimension]
+    T: Final[Dimension]
+    Volume: Final[Dimension]
+    Θ: Final[Dimension]
+    AMOUNT: Final[Dimension]  # alias for N
+    AREA: Final[Dimension]  # alias for Area
+    AbsorbedRadiationDose: Final[Dimension]  # alias for ABSORBED_RADIATION_DOSE
+    Acceleration: Final[Dimension]  # alias for ACCELERATION
+    CURRENT: Final[Dimension]  # alias for I
+    DIMENSIONLESS: Final[Dimension]  # alias for D
+    DLESS: Final[Dimension]  # alias for D
+    ENERGY: Final[Dimension]  # alias for Energy
+    FORCE: Final[Dimension]  # alias for Force
+    LENGTH: Final[Dimension]  # alias for L
+    LUMINOUS_INTENSITY: Final[Dimension]  # alias for J
+    MASS: Final[Dimension]  # alias for M
+    POWER: Final[Dimension]  # alias for Power
+    PRESSURE: Final[Dimension]  # alias for Pressure
+    SCALAR: Final[Dimension]  # alias for D
+    TEMPERATURE: Final[Dimension]  # alias for Θ
+    TIME: Final[Dimension]  # alias for T
+    VOLUME: Final[Dimension]  # alias for Volume
+
+dim: Final[Dimensions]
