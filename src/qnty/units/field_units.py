@@ -9885,7 +9885,7 @@ class VolumetricFlowRateUnits:
         name="gallons_per_minute",
         symbol="gal/min or gpm",
         dimension=dim.VOLUMETRIC_FLOW_RATE,
-        si_factor=3.785,
+        si_factor=6.30902e-05,
         si_offset=0.0,
     ))
 

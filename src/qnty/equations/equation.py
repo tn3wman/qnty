@@ -8,12 +8,15 @@ Mathematical equations for qnty variables with solving capabilities.
 from __future__ import annotations
 
 import logging
-from typing import cast
+from typing import TYPE_CHECKING, cast
 
 from ..constants import SOLVER_DEFAULT_TOLERANCE
 from ..expressions import Expression, VariableReference
 from ..quantities import FieldQnty
 from ..utils.scope_discovery import ScopeDiscoveryService
+
+if TYPE_CHECKING:
+    from ..quantities import Quantity
 
 _logger = logging.getLogger(__name__)
 
@@ -77,6 +80,119 @@ class Equation:
         # General case: can solve if target_var is the only unknown
         unknown_vars = self.get_unknown_variables(known_vars)
         return unknown_vars == {target_var}
+    
+    def _solve_algebraically(self, target_var: str, variable_values: dict[str, FieldQnty]) -> "Quantity | None":
+        """
+        Attempt to solve equation algebraically for target_var.
+        Handles common algebraic manipulations.
+        """
+        from ..expressions import BinaryOperation, VariableReference
+        
+        # Case 1: LHS is a simple variable (X = expression)
+        # But we need to solve for a variable in the RHS
+        if isinstance(self.lhs, VariableReference):
+            lhs_var = self.lhs.name
+            if lhs_var in variable_values and variable_values[lhs_var].is_known:
+                # LHS is known, need to solve RHS = LHS for target_var
+                return self._solve_expression_for_var(self.rhs, target_var, self.lhs.evaluate(variable_values), variable_values)
+        
+        # Case 2: RHS is a simple variable (expression = X)
+        # And we need to solve for a variable in the LHS
+        if isinstance(self.rhs, VariableReference):
+            rhs_var = self.rhs.name
+            if rhs_var in variable_values and variable_values[rhs_var].is_known:
+                # RHS is known, need to solve LHS = RHS for target_var
+                return self._solve_expression_for_var(self.lhs, target_var, self.rhs.evaluate(variable_values), variable_values)
+        
+        # Case 3: Both sides are expressions
+        # Try to isolate target_var
+        return self._isolate_variable(target_var, variable_values)
+    
+    def _solve_expression_for_var(self, expr: Expression, target_var: str, known_value: "Quantity", variable_values: dict[str, FieldQnty]) -> "Quantity | None":
+        """
+        Solve expression = known_value for target_var.
+        Handles common patterns like A + B = C, A * B = C, etc.
+        """
+        from ..expressions import BinaryOperation, VariableReference
+        
+        if not isinstance(expr, BinaryOperation):
+            return None
+        
+        # Handle binary operations
+        left_has_target = target_var in expr.left.get_variables()
+        right_has_target = target_var in expr.right.get_variables()
+        
+        # Target should be in exactly one side
+        if left_has_target and right_has_target:
+            return None  # Too complex
+        
+        if not left_has_target and not right_has_target:
+            return None  # Target not in expression
+        
+        # Evaluate the side without the target
+        if left_has_target:
+            # Target is on left, evaluate right
+            right_val = expr.right.evaluate(variable_values)
+            # Now solve: left op right_val = known_value for target in left
+            return self._invert_operation(expr.operator, expr.left, right_val, known_value, target_var, variable_values, is_left=True)
+        else:
+            # Target is on right, evaluate left
+            left_val = expr.left.evaluate(variable_values)
+            # Now solve: left_val op right = known_value for target in right
+            return self._invert_operation(expr.operator, expr.right, left_val, known_value, target_var, variable_values, is_left=False)
+    
+    def _invert_operation(self, operator: str, target_expr: Expression, other_val: "Quantity", result_val: "Quantity", 
+                          target_var: str, variable_values: dict[str, FieldQnty], is_left: bool) -> "Quantity | None":
+        """
+        Invert a binary operation to solve for target_var.
+        
+        If is_left=True: solve target_expr op other_val = result_val for target_var in target_expr
+        If is_left=False: solve other_val op target_expr = result_val for target_var in target_expr
+        """
+        from ..expressions import VariableReference
+        
+        # Simple case: target_expr is just the variable we're looking for
+        if isinstance(target_expr, VariableReference) and target_expr.name == target_var:
+            if operator == "+":
+                # A + B = C => A = C - B
+                return result_val - other_val
+            elif operator == "-":
+                if is_left:
+                    # A - B = C => A = C + B
+                    return result_val + other_val
+                else:
+                    # B - A = C => A = B - C
+                    return other_val - result_val
+            elif operator == "*":
+                # A * B = C => A = C / B
+                return result_val / other_val
+            elif operator == "/":
+                if is_left:
+                    # A / B = C => A = C * B
+                    return result_val * other_val
+                else:
+                    # B / A = C => A = B / C
+                    return other_val / result_val
+            elif operator == "**":
+                if is_left:
+                    # A ** B = C => A = C ** (1/B)
+                    # Only works if B is a constant
+                    if hasattr(other_val, 'value'):
+                        import math
+                        return result_val ** (1.0 / other_val.value)
+                # B ** A = C is more complex, skip for now
+        
+        # Recursively solve if target_expr is also a binary operation
+        return self._solve_expression_for_var(target_expr, target_var, result_val, variable_values)
+    
+    def _isolate_variable(self, target_var: str, variable_values: dict[str, FieldQnty]) -> "Quantity | None":
+        """
+        Try to isolate target_var when both LHS and RHS are complex expressions.
+        This is a simplified version that handles basic cases.
+        """
+        # For now, we don't handle complex equation rearrangement
+        # This could be expanded in the future with a proper algebraic solver
+        return None
 
     def solve_for(self, target_var: str, variable_values: dict[str, FieldQnty]) -> FieldQnty:
         """
@@ -86,12 +202,16 @@ class Equation:
         if target_var not in self.variables:
             raise ValueError(f"Variable '{target_var}' not found in equation")
 
-        # Only handle direct assignment: target = expression
-        if not (isinstance(self.lhs, VariableReference) and self.lhs.name == target_var):
-            raise NotImplementedError(f"Cannot solve for {target_var} in equation {self}. Only direct assignment equations (var = expression) are supported.")
-
-        # Direct assignment: target_var = rhs
-        result_qty = self.rhs.evaluate(variable_values)
+        # Case 1: Direct assignment: target = expression
+        if isinstance(self.lhs, VariableReference) and self.lhs.name == target_var:
+            # Direct assignment: target_var = rhs
+            result_qty = self.rhs.evaluate(variable_values)
+        
+        # Case 2: Try algebraic manipulation for simple cases
+        else:
+            result_qty = self._solve_algebraically(target_var, variable_values)
+            if result_qty is None:
+                raise NotImplementedError(f"Cannot solve for {target_var} in equation {self}. Algebraic manipulation not supported for this equation form.")
 
         # Get the variable object to update
         var_obj = variable_values.get(target_var)

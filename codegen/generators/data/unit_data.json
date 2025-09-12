@@ -8463,7 +8463,7 @@
         "name": "gallons per minute",
         "normalized_name": "gallons_per_minute",
         "notation": "gal/min or gpm",
-        "si_conversion": 3.785,
+        "si_conversion": 6.30902e-5,
         "imperial_conversion": 1.0,
         "aliases": [
           "gal/min",
