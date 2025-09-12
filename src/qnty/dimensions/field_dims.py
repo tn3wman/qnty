@@ -123,3 +123,4 @@ _SIGNATURES: dict[str, int | float] = {
 # Generate all dimension constants programmatically to avoid duplication
 for _name, _signature in _SIGNATURES.items():
     globals()[_name] = DimensionSignature(_signature)
+

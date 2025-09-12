@@ -28,12 +28,13 @@ def run_generator(generator_name: str, script_path: Path) -> tuple[bool, str]:
         print(f"{'=' * 60}")
 
         # Run the generator script as a module to allow relative imports
-        module_name = f"qnty.tools.generators.{script_path.stem}"
+        # Run from codegen directory with generators.module_name path
+        module_name = f"generators.{script_path.stem}"
         result = subprocess.run(
             [sys.executable, "-m", module_name],
             capture_output=True,
             text=True,
-            cwd=script_path.parents[4],  # Run from project root
+            cwd=script_path.parents[1],  # Run from codegen directory
         )
 
         # Print the output
@@ -67,9 +68,10 @@ def main() -> int:
 
     # Define generators in dependency order
     generators: list[tuple[str, str]] = [
-        ("Dimensions Generator", "dimensions_gen.py"),
-        ("Units Generator", "units_gen.py"),
-        ("Setters Generator", "setters_gen.py"),
+        ("Field Dimensions Generator", "field_dims.py"),
+        ("Field Units Generator", "field_units.py"),
+        ("Field Converters Generator", "field_converters.py"),
+        ("Field Setters Generator", "field_setter.py"),
         ("Field Variables Generator", "field_vars.py"),
     ]
 
@@ -106,11 +108,12 @@ def main() -> int:
     else:
         print("SUCCESS: All generators completed successfully!")
         print("\nGenerated files:")
-        print("  - src/qnty/generated/dimensions.py")
-        print("  - src/qnty/generated/units.py")
-        print("  - src/qnty/generated/setters.py")
-        print("  - src/qnty/generated/quantities.py")
-        print("  - src/qnty/generated/quantities.pyi")
+        print("  - src/qnty/dimensions/field_dims.py")
+        print("  - src/qnty/units/units.py")
+        print("  - src/qnty/units/converters.py")
+        print("  - src/qnty/quantities/field_setter.py")
+        print("  - src/qnty/quantities/field_vars.py")
+        print("  - src/qnty/quantities/field_vars.pyi")
         return 0
 
 
