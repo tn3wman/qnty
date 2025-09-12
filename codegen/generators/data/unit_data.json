@@ -4202,6 +4202,17 @@
     "imperial_base_unit": "$\\mathrm{lb} / \\mathrm{ft}^{3}$",
     "units": [
       {
+        "name": "ounce_per_milliliter",
+        "normalized_name": "ounce_per_milliliter",
+        "notation": "oz/mL",
+        "si_conversion": 28349.5,
+        "imperial_conversion": 1769.8,
+        "aliases": [
+          "oz/mL",
+          "oz_per_mL"
+        ]
+      },
+      {
         "name": "gram per cubic centimeter",
         "normalized_name": "gram_per_cubic_centimeter",
         "notation": "g/cc or g/ml",
@@ -7564,14 +7575,14 @@
       "length": -1,
       "time": -1
     },
-    "si_base_unit": "P",
+    "si_base_unit": "pascal_second",
     "imperial_base_unit": "$\\mathrm{lb}_{\\mathrm{f}} \\mathrm{s} / \\mathrm{ft}^{2}$",
     "units": [
       {
         "name": "centipoise",
         "normalized_name": "centipoise",
         "notation": "cP or cPo",
-        "si_conversion": 0.01,
+        "si_conversion": 0.001,
         "imperial_conversion": 2.0885e-05,
         "aliases": [
           "cP",
@@ -7582,7 +7593,7 @@
         "name": "dyne second per square centimeter",
         "normalized_name": "dyne_second_per_square_centimeter",
         "notation": "dyn s/ $\\mathrm{cm}^{2}$",
-        "si_conversion": 1.0,
+        "si_conversion": 0.10,
         "imperial_conversion": 0.0020885,
         "aliases": []
       },
@@ -7590,7 +7601,7 @@
         "name": "kilopound second per square meter",
         "normalized_name": "kilopound_second_per_square_meter",
         "notation": "kip $\\mathrm{s} / \\mathrm{m}^{2}$",
-        "si_conversion": 98.0665,
+        "si_conversion": 9.80665,
         "imperial_conversion": 0.20482,
         "aliases": []
       },
@@ -7598,7 +7609,7 @@
         "name": "millipoise",
         "normalized_name": "millipoise",
         "notation": "mP or mPo",
-        "si_conversion": 0.001,
+        "si_conversion": 0.0001,
         "imperial_conversion": 2.0884999999999996e-06,
         "aliases": [
           "mP",
@@ -7609,7 +7620,7 @@
         "name": "newton second per square meter",
         "normalized_name": "newton_second_per_square_meter",
         "notation": "$\\mathrm{N} \\mathrm{s} / \\mathrm{m}^{2}$",
-        "si_conversion": 10.0,
+        "si_conversion": 1.0,
         "imperial_conversion": 0.020885,
         "aliases": []
       },
@@ -7617,7 +7628,7 @@
         "name": "pascal second",
         "normalized_name": "pascal_second",
         "notation": "Pa s or PI",
-        "si_conversion": 10.0,
+        "si_conversion": 1.0,
         "imperial_conversion": 0.020885,
         "aliases": [
           "Pa s",
@@ -7628,7 +7639,7 @@
         "name": "poise",
         "normalized_name": "poise",
         "notation": "P or Po",
-        "si_conversion": 1.0,
+        "si_conversion": 0.10,
         "imperial_conversion": 0.0020885,
         "aliases": [
           "P",
@@ -7639,7 +7650,7 @@
         "name": "pound force hour per square foot",
         "normalized_name": "pound_force_hour_per_square_foot",
         "notation": "$\\mathrm{lb}_{\\mathrm{f}} \\mathrm{h} / \\mathrm{ft}^{2}$ or $\\mathrm{lb} \\mathrm{hr} / \\mathrm{sq}$ ft",
-        "si_conversion": 1723690.0,
+        "si_conversion": 172369.0,
         "imperial_conversion": 3600.0,
         "aliases": [
           "lb_{f h / ft^{2",
@@ -7650,7 +7661,7 @@
         "name": "pound force second per square foot",
         "normalized_name": "pound_force_second_per_square_foot",
         "notation": "$\\mathrm{lb}_{\\mathrm{f}} \\mathrm{s} / \\mathrm{ft}^{2}$ or $\\mathrm{lb} \\mathrm{sec} / \\mathrm{sq}$ ft",
-        "si_conversion": 478.803,
+        "si_conversion": 47.8803,
         "imperial_conversion": 1.0,
         "aliases": [
           "lb_{f s / ft^{2",

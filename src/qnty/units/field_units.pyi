@@ -1108,6 +1108,9 @@ class MassDensityUnits:
     """Unit constants for Mass Density."""
     __slots__: tuple[()]
 
+    ounce_per_milliliter: UnitConstant
+    oz_mL: UnitConstant
+    oz_per_mL: UnitConstant
     gram_per_cubic_centimeter: UnitConstant
     g_cc_or_g_ml: UnitConstant
     g_cc: UnitConstant

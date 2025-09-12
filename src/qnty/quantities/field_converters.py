@@ -5402,6 +5402,22 @@ class ToUnitMassDensityConverter(UnitConverter):
         return self._convert_quantity(unit_constant, modify_original=True)
 
     @property
+    def ounce_per_milliliter(self) -> 'FieldQnty':
+        """Convert to ounce_per_milliliter units."""
+        unit_const: Final = field_units.MassDensityUnits.ounce_per_milliliter
+        return self._convert_quantity(unit_const, modify_original=True)
+
+    @property
+    def oz_mL(self) -> 'FieldQnty':
+        """Convert to oz_mL units (alias for ounce_per_milliliter)."""
+        return self.ounce_per_milliliter
+
+    @property
+    def oz_per_mL(self) -> 'FieldQnty':
+        """Convert to oz_per_mL units (alias for ounce_per_milliliter)."""
+        return self.ounce_per_milliliter
+
+    @property
     def gram_per_cubic_centimeter(self) -> 'FieldQnty':
         """Convert to gram per cubic centimeter units."""
         unit_const: Final = field_units.MassDensityUnits.gram_per_cubic_centimeter
@@ -17375,6 +17391,22 @@ class AsUnitMassDensityConverter(UnitConverter):
         """Convert to specified unit using string notation, returning new variable."""
         unit_constant = self._get_unit_constant(unit_str)
         return self._convert_quantity(unit_constant, modify_original=False)
+
+    @property
+    def ounce_per_milliliter(self) -> 'FieldQnty':
+        """Convert to ounce_per_milliliter units, returning new variable."""
+        unit_const: Final = field_units.MassDensityUnits.ounce_per_milliliter
+        return self._convert_quantity(unit_const, modify_original=False)
+
+    @property
+    def oz_mL(self) -> 'FieldQnty':
+        """Convert to oz_mL units (alias for ounce_per_milliliter), returning new variable."""
+        return self.ounce_per_milliliter
+
+    @property
+    def oz_per_mL(self) -> 'FieldQnty':
+        """Convert to oz_per_mL units (alias for ounce_per_milliliter), returning new variable."""
+        return self.ounce_per_milliliter
 
     @property
     def gram_per_cubic_centimeter(self) -> 'FieldQnty':

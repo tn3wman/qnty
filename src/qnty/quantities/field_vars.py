@@ -6000,9 +6000,9 @@ class MassDensity(FieldQnty):
     Examples:
     ---------
     >>> unknown = MassDensity("pressure")  # Unknown mass density
-    >>> known = MassDensity(100, "gram_per_cubic_centimeter", "inlet_pressure")  # Known mass density
+    >>> known = MassDensity(100, "ounce_per_milliliter", "inlet_pressure")  # Known mass density
     
-    Available units: "gram_per_cubic_centimeter", "gram_per_cubic_decimeter", "gram_per_cubic_meter"
+    Available units: "ounce_per_milliliter", "gram_per_cubic_centimeter", "gram_per_cubic_decimeter"
     """
 
     __slots__ = ()
