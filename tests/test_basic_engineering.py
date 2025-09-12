@@ -1,4 +1,3 @@
-from re import A
 import pytest
 
 import qnty as qt
@@ -49,7 +48,7 @@ def _solve_problem_1(method):
     if method == "solve_from":
         nu.solve_from(mu / rho)
     elif method == "equation":
-        nu_eqn = nu.equals(mu / rho)
+        _nu_eqn = nu.equals(mu / rho)
         nu.solve()
     
     return {"mu": mu, "rho": rho, "nu": nu}
@@ -107,15 +106,15 @@ def _solve_problem_2(method):
         V_2_5.solve_from(Q_2_5 / A_2_5)
 
     elif method == "equation":
-        A_1_eqn = A_1.equals(3.14 * (D_1 / 2) ** 2)
-        A_1_5_eqn = A_1_5.equals(3.14 * (D_1_5 / 2) ** 2)
-        A_2_5_eqn = A_2_5.equals(3.14 * (D_2_5 / 2) ** 2)
+        _A_1_eqn = A_1.equals(3.14 * (D_1 / 2) ** 2)
+        _A_1_5_eqn = A_1_5.equals(3.14 * (D_1_5 / 2) ** 2)
+        _A_2_5_eqn = A_2_5.equals(3.14 * (D_2_5 / 2) ** 2)
 
-        Q_1_5_eqn = Q_1_5.equals(A_1_5 * V_1_5)
-        Q_1_eqn = Q_1.equals(Q_2_5 - Q_1_5)
+        _Q_1_5_eqn = Q_1_5.equals(A_1_5 * V_1_5)
+        _Q_1_eqn = Q_1.equals(Q_2_5 - Q_1_5)
 
-        V_1_eqn = V_1.equals(Q_1 / A_1)
-        V_2_5_eqn = V_2_5.equals(Q_2_5 / A_2_5)
+        _V_1_eqn = V_1.equals(Q_1 / A_1)
+        _V_2_5_eqn = V_2_5.equals(Q_2_5 / A_2_5)
 
         A_1.solve()
         A_1_5.solve()
