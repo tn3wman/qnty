@@ -9,7 +9,7 @@ instead of numeric values (1.0/0.0).
 from typing import cast
 
 from qnty import Length, Pressure, Temperature
-from qnty.quantities.base_qnty import BooleanQuantity
+from qnty.quantities.core import BooleanQuantity
 
 
 class TestBooleanComparisons:

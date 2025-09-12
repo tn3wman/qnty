@@ -5,7 +5,7 @@ Core Dimensions Module
 """
 
 from .core import Dimension
-from .namespace import *
+from .dimension_catalog import *
 
 
 def __getattr__(name: str):

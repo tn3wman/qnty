@@ -29,4 +29,4 @@ Energy = add_derived(M * L**2 / (T**2), aliases=("ENERGY",))
 Power = add_derived(M * L**2 / (T**3), aliases=("POWER",))
 
 if __name__ == "__main__":
-    write_dimensions_stub("namespace.pyi")
+    write_dimensions_stub("dreg.pyi")
