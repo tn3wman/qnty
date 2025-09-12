@@ -1,7 +1,6 @@
-import qnty as qt
 import pytest
 
-
+import qnty as qt
 
 
 def test_problem_1(capsys):

@@ -8862,7 +8862,7 @@ class ViscosityDynamicUnits:
         name="centipoise",
         symbol="cP or cPo",
         dimension=dim.VISCOSITY_DYNAMIC,
-        si_factor=0.01,
+        si_factor=0.001,
         si_offset=0.0,
     ))
 
@@ -8875,7 +8875,7 @@ class ViscosityDynamicUnits:
         name="dyne_second_per_square_centimeter",
         symbol="dyn s/ $\\mathrm{cm}^{2}$",
         dimension=dim.VISCOSITY_DYNAMIC,
-        si_factor=1.0,
+        si_factor=0.1,
         si_offset=0.0,
     ))
 
@@ -8886,7 +8886,7 @@ class ViscosityDynamicUnits:
         name="kilopound_second_per_square_meter",
         symbol="kip $\\mathrm{s} / \\mathrm{m}^{2}$",
         dimension=dim.VISCOSITY_DYNAMIC,
-        si_factor=98.0665,
+        si_factor=9.80665,
         si_offset=0.0,
     ))
 
@@ -8897,7 +8897,7 @@ class ViscosityDynamicUnits:
         name="millipoise",
         symbol="mP or mPo",
         dimension=dim.VISCOSITY_DYNAMIC,
-        si_factor=0.001,
+        si_factor=0.0001,
         si_offset=0.0,
     ))
 
@@ -8910,7 +8910,7 @@ class ViscosityDynamicUnits:
         name="newton_second_per_square_meter",
         symbol="$\\mathrm{N} \\mathrm{s} / \\mathrm{m}^{2}$",
         dimension=dim.VISCOSITY_DYNAMIC,
-        si_factor=10.0,
+        si_factor=1.0,
         si_offset=0.0,
     ))
 
@@ -8921,7 +8921,7 @@ class ViscosityDynamicUnits:
         name="pascal_second",
         symbol="Pa s or PI",
         dimension=dim.VISCOSITY_DYNAMIC,
-        si_factor=10.0,
+        si_factor=1.0,
         si_offset=0.0,
     ))
 
@@ -8934,7 +8934,7 @@ class ViscosityDynamicUnits:
         name="poise",
         symbol="P or Po",
         dimension=dim.VISCOSITY_DYNAMIC,
-        si_factor=1,
+        si_factor=0.1,
         si_offset=0.0,
     ))
 
@@ -8947,7 +8947,7 @@ class ViscosityDynamicUnits:
         name="pound_force_hour_per_square_foot",
         symbol="$\\mathrm{lb}_{\\mathrm{f}} \\mathrm{h} / \\mathrm{ft}^{2}$ or $\\mathrm{lb} \\mathrm{hr} / \\mathrm{sq}$ ft",
         dimension=dim.VISCOSITY_DYNAMIC,
-        si_factor=1723690.0,
+        si_factor=172369.0,
         si_offset=0.0,
     ))
 
@@ -8960,7 +8960,7 @@ class ViscosityDynamicUnits:
         name="pound_force_second_per_square_foot",
         symbol="$\\mathrm{lb}_{\\mathrm{f}} \\mathrm{s} / \\mathrm{ft}^{2}$ or $\\mathrm{lb} \\mathrm{sec} / \\mathrm{sq}$ ft",
         dimension=dim.VISCOSITY_DYNAMIC,
-        si_factor=478.803,
+        si_factor=47.8803,
         si_offset=0.0,
     ))
 
