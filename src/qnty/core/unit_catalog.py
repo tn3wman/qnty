@@ -1,4 +1,3 @@
-from math import e
 from typing import TYPE_CHECKING, Final
 
 from .dimension_catalog import dim
@@ -59,10 +58,14 @@ gram = add_unit(
 )
 
 # US customary mass units
-pound_mass = add_unit(
-    dim.M, symbol="lbm", si_factor=0.45359237,
-    # aliases=("lb", "lbm", "lbs", "pounds"),
+# Canonical mass unit: pound (lb). Include common aliases and legacy "pound_mass" name.
+pound = add_unit(
+    dim.M, symbol="lb", si_factor=0.45359237,
+    aliases=("lb", "lbm", "lbs", "pounds", "pound_mass"),
 )
+
+# Backward-compatible name
+pound_mass = pound
 
 slug = add_unit(
     dim.M, symbol="slug", si_factor=14.59390293720636,
@@ -199,7 +202,7 @@ newton = attach_composed(
 # US customary force unit
 pound_force = add_unit(
     dim.Force, symbol="lbf", si_factor=4.4482216152605,
-    # aliases=("poundforce", "lbf"),
+    aliases=("poundforce", "lbf"),
 )
 
 
@@ -211,6 +214,11 @@ pascal = attach_composed(
     aliases=("pascals","Pa",),
 )
 
+pound_force_per_square_inch = attach_composed(
+    u.pound_force / (u.inch**2), name="pound_force_per_square_inch", symbol="psi",
+    aliases=("psi", "lbf/in2", "lbf/in²",),
+)
+
 class PressureUnits(UnitNamespace):
     __slots__ = ()
     __preferred__ = "Pa"
@@ -218,6 +226,7 @@ class PressureUnits(UnitNamespace):
     Pa: Final[Unit] = pascal
     pascal: Final[Unit] = pascal
     pascals: Final[Unit] = pascal
+    pound_force_per_square_inch: Final[Unit] = pound_force_per_square_inch
 
 
 # =======================

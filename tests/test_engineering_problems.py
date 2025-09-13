@@ -8,6 +8,7 @@ import pytest
 import qnty as qt
 from qnty.core import Q
 from qnty.core import unit_catalog as uc
+from qnty.algebra import equation, solve
 
 # Problem definitions - single source of truth
 PROBLEMS = {
@@ -15,7 +16,7 @@ PROBLEMS = {
         "description": "Kinematic viscosity from dynamic viscosity and density",
         "variables": {
             "mu": ("ViscosityDynamic", 1000, "poise"),
-            "rho": ("MassDensity", 0.05, "oz_mL"),
+            "rho": ("MassDensity", 0.05, "oz/ml"),
             "nu": ("ViscosityKinematic", None, None)  # Unknown
         },
         "equations": [
@@ -27,55 +28,55 @@ PROBLEMS = {
             "nu": (0.76, "ft2/s")
         },
         "debug": {
-            # "print_results": True,
+            "print_results": True,
             "assert_values": True
         }
     },
     
-    # "pipe_flow": {
-    #     "description": "Multi-pipe flow with conservation",
-    #     "variables": {
-    #         "D_1": ("Length", 1.049, "inch"),
-    #         "D_1_5": ("Length", 1.610, "inch"),
-    #         "D_2_5": ("Length", 2.469, "inch"),
-    #         "V_1": ("VelocityLinear", None, None),
-    #         "V_1_5": ("VelocityLinear", 4, "ft_s"),
-    #         "V_2_5": ("VelocityLinear", None, None),
-    #         "Q_1": ("VolumetricFlowRate", None, None),
-    #         "Q_1_5": ("VolumetricFlowRate", None, None),
-    #         "Q_2_5": ("VolumetricFlowRate", 50, "gpm"),
-    #         "A_1": ("Area", None, None),
-    #         "A_1_5": ("Area", None, None),
-    #         "A_2_5": ("Area", None, None)
-    #     },
-    #     "equations": [
-    #         ("A_1", "3.14 * (D_1 / 2) ** 2"),
-    #         ("A_1_5", "3.14 * (D_1_5 / 2) ** 2"),
-    #         ("A_2_5", "3.14 * (D_2_5 / 2) ** 2"),
-    #         ("Q_1_5", "V_1_5 * A_1_5"),
-    #         ("Q_1", "Q_2_5 - Q_1_5"),  # Conservation equation - tests algebraic solving
-    #         ("V_1", "Q_1 / A_1"),
-    #         ("V_2_5", "Q_2_5 / A_2_5")
-    #     ],
-    #     "expected": {
-    #         "D_1": (1.049, "inch"),
-    #         "D_1_5": (1.610, "inch"),
-    #         "D_2_5": (2.469, "inch"),
-    #         "V_1": (9.17, "ft_s"),
-    #         "V_1_5": (4.0, "ft_s"),
-    #         "V_2_5": (3.35, "ft_s"),
-    #         "Q_1": (3.29, "ft_3_min"),
-    #         "Q_1_5": (3.39, "ft_3_min"),
-    #         "Q_2_5": (6.68, "ft_3_min"),
-    #         "A_1": (0.005999, "ft_2"),
-    #         "A_1_5": (0.01413, "ft_2"),
-    #         "A_2_5": (0.03323, "ft_2")
-    #     },
-    #     "debug": {
-    #         # "print_results": True,
-    #         "assert_values": True
-    #     }
-    # }
+    "pipe_flow": {
+        "description": "Multi-pipe flow with conservation",
+        "variables": {
+            "D_1": ("Length", 1.049, "inch"),
+            "D_1_5": ("Length", 1.610, "inch"),
+            "D_2_5": ("Length", 2.469, "inch"),
+            "V_1": ("VelocityLinear", None, None),
+            "V_1_5": ("VelocityLinear", 4, "ft_s"),
+            "V_2_5": ("VelocityLinear", None, None),
+            "Q_1": ("VolumetricFlowRate", None, None),
+            "Q_1_5": ("VolumetricFlowRate", None, None),
+            "Q_2_5": ("VolumetricFlowRate", 50, "gpm"),
+            "A_1": ("Area", None, None),
+            "A_1_5": ("Area", None, None),
+            "A_2_5": ("Area", None, None)
+        },
+        "equations": [
+            ("A_1", "3.14 * (D_1 / 2) ** 2"),
+            ("A_1_5", "3.14 * (D_1_5 / 2) ** 2"),
+            ("A_2_5", "3.14 * (D_2_5 / 2) ** 2"),
+            ("Q_1_5", "V_1_5 * A_1_5"),
+            ("Q_1", "Q_2_5 - Q_1_5"),  # Conservation equation - tests algebraic solving
+            ("V_1", "Q_1 / A_1"),
+            ("V_2_5", "Q_2_5 / A_2_5")
+        ],
+        "expected": {
+            "D_1": (1.049, "inch"),
+            "D_1_5": (1.610, "inch"),
+            "D_2_5": (2.469, "inch"),
+            "V_1": (9.17, "ft_s"),
+            "V_1_5": (4.0, "ft_s"),
+            "V_2_5": (3.35, "ft_s"),
+            "Q_1": (3.29, "ft_3_min"),
+            "Q_1_5": (3.39, "ft_3_min"),
+            "Q_2_5": (6.68, "ft_3_min"),
+            "A_1": (0.005999, "ft_2"),
+            "A_1_5": (0.01413, "ft_2"),
+            "A_2_5": (0.03323, "ft_2")
+        },
+        "debug": {
+            # "print_results": True,
+            "assert_values": True
+        }
+    }
 }
 
 
@@ -113,43 +114,47 @@ def create_variables(var_specs):
     for name, (var_type, value, unit) in var_specs.items():
         var_class = getattr(qt, var_type)
         var = var_class(name)
-        
+
         if value is not None:
             if unit is not None:
                 # Use fluent API: var.set(value).unit_name
-                var = getattr(var.set(value), unit)
+                # Convert "/" to "_per_" for attribute access
+                unit_attr = unit.replace("/", "_per_").replace("*", "_").replace("-", "_")
+                var = getattr(var.set(value), unit_attr)
             else:
-                var.quantity = Q(value, uc.DimensionlessUnits.dimensionless)
-            var.is_known = True
+                # Set dimensionless value directly
+                var.value = value
+                var.preferred = uc.DimensionlessUnits.dimensionless
+            var._is_known = True
         else:
-            var.is_known = False
-            
+            var._is_known = False
+
         variables[name] = var
     return variables
 
 
 def solve_with_problem_class(variables, equation_specs):
     """Solve using Problem class approach."""
-    # Create Problem class the proper way
-    class Problem(qt.Problem):
+    # Create Problem class dynamically
+    class TestProblem(qt.Problem):
         pass
-    
+
     # Add variables as class attributes
     for name, var in variables.items():
-        setattr(Problem, name, var)
-    
-    # Add equations as class attributes
+        setattr(TestProblem, name, var)
+
+    # Add equations as class attributes using new equation() syntax
     for i, (target_var, expression) in enumerate(equation_specs):
         # Convert string expression to actual equation
         lhs = variables[target_var]
         rhs = eval(expression, {"__builtins__": {}}, variables)
-        equation = lhs.equals(rhs)
-        setattr(Problem, f"eq_{i}", equation)
-    
+        eq = equation(lhs, rhs)
+        setattr(TestProblem, f"eq_{i}", eq)
+
     # Create and solve
-    problem = Problem()
+    problem = TestProblem()
     problem.solve()
-    
+
     # Extract results
     result = {}
     for name in variables:
@@ -159,30 +164,30 @@ def solve_with_problem_class(variables, equation_specs):
 
 def solve_with_equations(variables, equation_specs):
     """Solve using equation method approach."""
-    # Create and solve equations in order
+    # Create and solve equations in order using new solve() function
     for target_var, expression in equation_specs:
         lhs = variables[target_var]
         rhs = eval(expression, {"__builtins__": {}}, variables)
-        _equation = lhs.equals(rhs)
-        # The equation is created and should auto-solve when possible
-        try:
-            variables[target_var].solve()
-        except Exception:
-            # If solve() fails, the equation might have solved automatically
+        # Use the new solve() function from algebra module
+        success = solve(lhs, rhs)
+        if not success:
+            # If solve() fails, try alternative approaches
             pass
-    
+
     return variables
 
 
 def solve_with_solve_from(variables, equation_specs):
-    """Solve using solve_from method approach."""
-    # Execute solve_from in order
+    """Solve using solve() function approach (updated from solve_from)."""
+    # Execute solve() function in order
     for target_var, expression in equation_specs:
         rhs = eval(expression, {"__builtins__": {}}, variables)
-        result = variables[target_var].solve_from(rhs)
-        # solve_from returns the updated variable, make sure to use it
-        variables[target_var] = result
-    
+        # Use the new solve() function from algebra module
+        success = solve(variables[target_var], rhs)
+        if not success:
+            # If solve() fails, try alternative approaches
+            pass
+
     return variables
 
 
@@ -204,39 +209,52 @@ def solve_problem(problem_name, method):
 
 def verify_results(variables, expected, debug_config, capsys, test_name):
     """Verify results match expected values and optionally print them."""
+    from qnty.core.unit import ureg
+
     actuals = {}
     print_results = debug_config.get("print_results", False)
     assert_values = debug_config.get("assert_values", True)
-    
+
     for name, (expected_value, target_unit) in expected.items():
-        if name in variables and variables[name].quantity is not None:
-            actual = variables[name].to_unit(target_unit)
-            actuals[name] = actual
-            
+        if name in variables and variables[name].value is not None:
+            # Get the expected unit
+            expected_unit_obj = ureg.resolve(target_unit)
+            if expected_unit_obj is None:
+                raise ValueError(f"Unknown unit: {target_unit}")
+
+            # Convert the actual value from SI to expected unit for comparison
+            actual_value_in_expected_unit = variables[name].value / expected_unit_obj.si_factor
+            actuals[name] = actual_value_in_expected_unit
+
             # Only assert if enabled for this problem
             if assert_values:
-                assert pytest.approx(actual.value, rel=0.01) == expected_value, f"{name}: got {actual.value}, expected {expected_value}"
-            
+                assert pytest.approx(expected_value, rel=0.01) == actual_value_in_expected_unit, f"{name}: got {actual_value_in_expected_unit}, expected {expected_value}"
+
         elif name in variables:
             if print_results:
-                print(f"Warning: {name} has no quantity")
+                print(f"Warning: {name} has no value")
         else:
             if print_results:
                 print(f"Warning: {name} doesn't exist in variables")
-    
+
     # Print results only if enabled for this problem
     if print_results:
         with capsys.disabled():
             print(f"\n{test_name} results:")
             for name in sorted(variables.keys()):
-                if variables[name].quantity is not None:
+                var = variables[name]
+                if var.value is not None:
                     if name in expected:
                         target_unit = expected[name][1]
-                        converted = variables[name].to_unit(target_unit)
-                        print(f"  {converted}")
+                        expected_unit_obj = ureg.resolve(target_unit)
+                        if expected_unit_obj:
+                            actual_value_in_expected_unit = var.value / expected_unit_obj.si_factor
+                            print(f"  {name}: {actual_value_in_expected_unit} {target_unit}")
+                        else:
+                            print(f"  {name}: {var.value} (unknown unit)")
                     else:
-                        print(f"  {variables[name].quantity}")
-            
+                        print(f"  {name}: {var.value}")
+
             # Show assertion status
             if not assert_values:
                 print(f"  [NOTE: Assertions disabled for {test_name}]")

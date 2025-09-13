@@ -481,21 +481,27 @@ class CompositionMixin:
 
         # Single pass through class attributes to collect variables
         for attr_name, attr_value in self._get_class_attributes():
-            if isinstance(attr_value, FieldQuantity):
-                # Set symbol based on attribute name (T_bar, P, etc.)
-                attr_value.symbol = attr_name
+            # Handle both direct FieldQuantity objects and wrapped ones
+            actual_var = attr_value
+            if hasattr(attr_value, '_wrapped') and isinstance(attr_value._wrapped, FieldQuantity):
+                actual_var = attr_value._wrapped
+            elif not isinstance(attr_value, FieldQuantity):
+                continue
 
-                # Skip if we've already processed this symbol
-                if attr_value.symbol in processed_symbols:
-                    continue
-                processed_symbols.add(attr_value.symbol)
+            # Set symbol based on attribute name (T_bar, P, etc.)
+            actual_var._symbol = attr_name
 
-                # Clone variable to avoid shared state between instances
-                cloned_var = self._clone_variable(attr_value)
-                self.add_variable(cloned_var)
-                # Set the same cloned variable object as instance attribute
-                # Use super() to bypass our custom __setattr__ during initialization
-                super().__setattr__(attr_name, cloned_var)
+            # Skip if we've already processed this symbol
+            if actual_var.symbol in processed_symbols:
+                continue
+            processed_symbols.add(actual_var.symbol)
+
+            # Clone variable to avoid shared state between instances
+            cloned_var = self._clone_variable(actual_var)
+            self.add_variable(cloned_var)
+            # Set the same cloned variable object as instance attribute
+            # Use super() to bypass our custom __setattr__ during initialization
+            super().__setattr__(attr_name, cloned_var)
 
     def _extract_equations(self):
         """Extract and process equations from class-level definitions."""
@@ -966,7 +972,7 @@ class ProxiedNamespace(dict):
         try:
             if self._is_sub_problem(key, value):
                 self._create_and_store_proxy(key, value)
-            elif self._is_variable_with_auto_symbol(value):
+            elif self._is_variable(value):
                 self._set_variable_symbol_and_store(key, value)
             else:
                 super().__setitem__(key, value)
@@ -1005,24 +1011,18 @@ class ProxiedNamespace(dict):
 
         return self._attr_cache[cache_key]
 
-    def _is_variable_with_auto_symbol(self, value: Any) -> bool:
+    def _is_variable(self, value: Any) -> bool:
         """
-        Determine if a value is a Variable that needs automatic symbol assignment.
+        Determine if a value is a Variable (Quantity) that needs processing.
 
         Args:
             value: The value being assigned
 
         Returns:
-            True if this is a Variable that needs automatic symbol assignment
+            True if this is a Variable that should be processed
         """
-        # Import Variable here to avoid circular imports
         try:
-            if not isinstance(value, FieldQuantity):
-                return False
-            # Auto-assign symbol if:
-            # 1. Symbol is explicitly "<auto>", OR
-            # 2. Symbol equals the variable name (default behavior, no explicit symbol set)
-            return value.symbol == "<auto>" or value.symbol == value.name
+            return isinstance(value, FieldQuantity)
         except ImportError:
             return False
 
@@ -1035,12 +1035,38 @@ class ProxiedNamespace(dict):
             value: The Variable object
         """
         try:
-            # Set the symbol to the attribute name
-            value.symbol = key
-            # Store the modified variable
-            super().__setitem__(key, value)
+            # Set the symbol to the attribute name (use private attribute)
+            value._symbol = key
+            # Add expression-building capability to the variable and get wrapped version
+            enhanced_variable = self._add_expression_methods(value)
+            # Store the enhanced variable
+            super().__setitem__(key, enhanced_variable)
         except Exception as e:
             raise NamespaceError(f"Failed to set symbol for variable '{key}': {e}") from e
+
+    def _add_expression_methods(self, variable):
+        """
+        Wrap the variable with expression-building methods that create DelayedExpression objects.
+        This allows expressions like 'D - 2 * T' to work during Problem class definition
+        even when variables have no values.
+        """
+        class ExpressionEnabledWrapper(ArithmeticOperationsMixin):
+            def __init__(self, wrapped_var):
+                self._wrapped = wrapped_var
+
+            def __getattr__(self, name):
+                # Delegate all attribute access to the wrapped variable
+                return getattr(self._wrapped, name)
+
+            def __setattr__(self, name, value):
+                # Handle wrapper attributes normally
+                if name == '_wrapped':
+                    super().__setattr__(name, value)
+                else:
+                    # Delegate to wrapped variable
+                    setattr(self._wrapped, name, value)
+
+        return ExpressionEnabledWrapper(variable)
 
     def _create_and_store_proxy(self, key: str, value: Any) -> None:
         """

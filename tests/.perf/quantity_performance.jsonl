@@ -1,0 +1,4 @@
+{"timestamp": "2025-09-13T16:34:34-0500", "python_version": "3.13.7", "iterations": 20000, "ops_per_loop": 6, "time_s": 0.40004550002049655, "time_per_loop_ns": 20002.275001024827, "time_per_op_ns": 3333.7125001708046, "quantity_calls": 220001}
+{"timestamp": "2025-09-13T16:35:41-0500", "python_version": "3.13.7", "iterations": 20000, "ops_per_loop": 6, "time_s": 0.3991047500167042, "time_per_loop_ns": 19955.23750083521, "time_per_op_ns": 3325.872916805868, "quantity_calls": 220001}
+{"timestamp": "2025-09-13T16:36:11-0500", "python_version": "3.13.7", "iterations": 20000, "ops_per_loop": 6, "time_s": 0.39756187493912876, "time_per_loop_ns": 19878.093746956438, "time_per_op_ns": 3313.01562449274, "quantity_calls": 220001}
+{"timestamp": "2025-09-13T17:21:56-0500", "python_version": "3.13.7", "iterations": 20000, "ops_per_loop": 6, "time_s": 0.40424816601444036, "time_per_loop_ns": 20212.408300722018, "time_per_op_ns": 3368.734716787003, "quantity_calls": 220001}

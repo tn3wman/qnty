@@ -13,21 +13,23 @@ from .dimension import Dimension
 # =======================
 # Utilities
 # =======================
+_NORM_DELETE_MAP = str.maketrans({
+    " ": None,
+    "_": None,
+    "-": None,
+    "^": None,
+    "·": None,
+})
+
+
 def _norm(s: str) -> str:
     """
     Aggressive normalization used for name/alias keys:
     - casefold
     - remove spaces, underscores, dashes, carets, middle dot
+    Optimized with translate to reduce function calls.
     """
-    return (
-        s.strip()
-        .casefold()
-        .replace(" ", "")
-        .replace("_", "")
-        .replace("-", "")
-        .replace("^", "")
-        .replace("·", "")
-    )
+    return s.strip().casefold().translate(_NORM_DELETE_MAP)
 
 
 _SUP: Final[dict[int, str]] = {2: "²", 3: "³"}
@@ -208,7 +210,7 @@ class UnitRegistry:
     # ----- lookup / resolution -----
     def resolve(self, name_or_symbol: str, *, dim: Dimension | None = None) -> Unit | None:
         """
-        Resolve by normalized name/alias first, then by symbol.
+        Resolve by symbol first (fast path), then by normalized name/alias.
         If `dim` is provided, only return a unit that matches that dimension.
         """
         # Check cache first for performance
@@ -221,9 +223,10 @@ class UnitRegistry:
         if cache_key in self._resolve_cache:
             return None
 
-        nk = _norm(name_or_symbol)
-
-        u = self._by_name.get(nk)
+        # Fast path: try symbols (avoid normalization)
+        u = self._intern_by_symbol.get(name_or_symbol)
+        if u is None:
+            u = self._by_symbol.get(name_or_symbol)
         if u is not None:
             if dim is None or u.dim == dim:
                 self._resolve_cache[cache_key] = u
@@ -231,11 +234,15 @@ class UnitRegistry:
             self._resolve_cache[cache_key] = None
             return None
 
-        # try symbols (prefer first-wins map for stability, then last-wins)
-        u = self._intern_by_symbol.get(name_or_symbol) or self._by_symbol.get(name_or_symbol)
-        if u is not None and (dim is None or u.dim == dim):
-            self._resolve_cache[cache_key] = u
-            return u
+        # Fallback: normalized name/alias lookup
+        nk = _norm(name_or_symbol)
+        u = self._by_name.get(nk)
+        if u is not None:
+            if dim is None or u.dim == dim:
+                self._resolve_cache[cache_key] = u
+                return u
+            self._resolve_cache[cache_key] = None
+            return None
 
         # Cache the miss
         self._resolve_cache[cache_key] = None

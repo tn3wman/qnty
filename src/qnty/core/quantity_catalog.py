@@ -18,6 +18,10 @@ class Dimensionless:
     """Dimensionless quantity with automatic boilerplate."""
     pass
 
+@quantity(uc.PressureUnits)
+class Pressure:
+    """Pressure quantity with automatic boilerplate."""
+    pass
 
 @quantity(uc.MassDensityUnits)
 class MassDensity:

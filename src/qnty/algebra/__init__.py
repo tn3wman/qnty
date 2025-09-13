@@ -5,6 +5,41 @@ from .nodes import BinaryOperation, ConditionalExpression, Constant, Expression,
 from .system import EquationSystem
 
 
+def equation(lhs, rhs, name: str | None = None) -> Equation:
+    """
+    Create an equation: lhs = rhs
+
+    This is the preferred way to create equations for Problem classes.
+
+    Args:
+        lhs: The left-hand side quantity (the variable being defined)
+        rhs: The right-hand side expression
+        name: Optional name for the equation
+
+    Returns:
+        Equation object that can be used in Problem classes
+
+    Examples:
+        >>> from qnty import Length
+        >>> from qnty.algebra import equation
+        >>> T = Length("T")
+        >>> T_bar = Length("T_bar").set(0.147).inch
+        >>> U_m = Dimensionless("U_m").set(0.125).dimensionless
+        >>> T_eq = equation(T, T_bar * (1 - U_m))
+    """
+    eq_name = name or f"{lhs.name}_equation"
+    # Handle DelayedExpression objects from Problem class
+    if hasattr(rhs, 'resolve'):
+        # This is a DelayedExpression - defer resolution until we have proper context
+        # For now, store the DelayedExpression and let the Problem class handle resolution
+        rhs_expr = rhs  # Pass through DelayedExpression as-is for now
+    else:
+        # Convert RHS to Expression if needed using wrap_operand
+        rhs_expr = wrap_operand(rhs)
+
+    return Equation(eq_name, lhs, rhs_expr)
+
+
 def solve(quantity, expression) -> bool:
     """
     Solve an expression for a quantity.
@@ -87,6 +122,7 @@ __all__ = [
     "wrap_operand",
     # Solving
     "solve",
+    "equation",
     # Scope discovery
     "ScopeDiscoveryService",
     "Equation", "EquationSystem"

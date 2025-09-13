@@ -216,21 +216,78 @@ class Quantity(Generic[D]):
         result_value = self.value ** k
         return Quantity(name=f"{result_value}", dim=self.dim ** k, value=result_value)
 
-    def __add__(self, other: Quantity) -> Quantity:
-        if self.dim != other.dim:
-            raise TypeError("Dimension mismatch in addition")
-        if self.value is None or other.value is None:
+    def __add__(self, other: Quantity | float | int) -> Quantity:
+        if isinstance(other, Quantity):
+            if self.dim != other.dim:
+                raise TypeError("Dimension mismatch in addition")
+            if self.value is None or other.value is None:
+                raise ValueError("Cannot perform arithmetic on unknown quantities")
+            result_value = self.value + other.value
+            return Quantity(name=f"{result_value}", dim=self.dim, value=result_value)
+        # Handle numeric types - only for dimensionless quantities
+        # TODO: ensure dimensionless angles are handled correctly later
+        if not self.dim.is_dimensionless():
+            raise TypeError(f"Cannot add dimensionless number to dimensional quantity {self.dim}")
+        if self.value is None:
             raise ValueError("Cannot perform arithmetic on unknown quantities")
-        result_value = self.value + other.value
+        result_value = self.value + float(other)
         return Quantity(name=f"{result_value}", dim=self.dim, value=result_value)
 
-    def __sub__(self, other: Quantity) -> Quantity:
-        if self.dim != other.dim:
-            raise TypeError("Dimension mismatch in subtraction")
-        if self.value is None or other.value is None:
+    def __sub__(self, other: Quantity | float | int) -> Quantity:
+        if isinstance(other, Quantity):
+            if self.dim != other.dim:
+                raise TypeError("Dimension mismatch in subtraction")
+            if self.value is None or other.value is None:
+                raise ValueError("Cannot perform arithmetic on unknown quantities")
+            result_value = self.value - other.value
+            return Quantity(name=f"{result_value}", dim=self.dim, value=result_value)
+        # Handle numeric types - only for dimensionless quantities
+        # TODO: ensure dimensionless angles are handled correctly later
+        if not self.dim.is_dimensionless():
+            raise TypeError(f"Cannot subtract dimensionless number from dimensional quantity {self.dim}")
+        if self.value is None:
             raise ValueError("Cannot perform arithmetic on unknown quantities")
-        result_value = self.value - other.value
+        result_value = self.value - float(other)
         return Quantity(name=f"{result_value}", dim=self.dim, value=result_value)
+
+    # Reverse arithmetic operations
+    def __radd__(self, other: float | int) -> Quantity:
+        """Handle: number + quantity"""
+        # Only allowed for dimensionless quantities
+        # TODO: ensure dimensionless angles are handled correctly later
+        if not self.dim.is_dimensionless():
+            raise TypeError(f"Cannot add dimensional quantity {self.dim} to dimensionless number")
+        if self.value is None:
+            raise ValueError("Cannot perform arithmetic on unknown quantities")
+        result_value = float(other) + self.value
+        return Quantity(name=f"{result_value}", dim=self.dim, value=result_value)
+
+    def __rsub__(self, other: float | int) -> Quantity:
+        """Handle: number - quantity"""
+        # Only allowed for dimensionless quantities
+        # TODO: ensure dimensionless angles are handled correctly later
+        if not self.dim.is_dimensionless():
+            raise TypeError(f"Cannot subtract dimensional quantity {self.dim} from dimensionless number")
+        if self.value is None:
+            raise ValueError("Cannot perform arithmetic on unknown quantities")
+        result_value = float(other) - self.value
+        return Quantity(name=f"{result_value}", dim=self.dim, value=result_value)
+
+    def __rmul__(self, other: float | int) -> Quantity:
+        """Handle: number * quantity"""
+        if self.value is None:
+            raise ValueError("Cannot perform arithmetic on unknown quantities")
+        result_value = float(other) * self.value
+        return Quantity(name=f"{result_value}", dim=self.dim, value=result_value)
+
+    def __rtruediv__(self, other: float | int) -> Quantity:
+        """Handle: number / quantity"""
+        if self.value is None:
+            raise ValueError("Cannot perform arithmetic on unknown quantities")
+        result_value = float(other) / self.value
+        # Result dimension is 1/self.dim
+        result_dim = self.dim ** -1
+        return Quantity(name=f"{result_value}", dim=result_dim, value=result_value)
 
     # ---- Comparison operators ----
     def __eq__(self, other: object) -> bool:

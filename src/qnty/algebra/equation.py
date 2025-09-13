@@ -253,8 +253,11 @@ class Equation:
                 _logger.debug(f"Unit conversion failed for {target_var} to {target_unit_constant}: {e}. Using calculated unit.")
 
         # Update the variable and return it
-        var_obj.quantity = result_qty
-        var_obj.is_known = True
+        if result_qty.value is not None:
+            var_obj.value = result_qty.value
+            if hasattr(result_qty, 'preferred') and result_qty.preferred is not None:
+                var_obj.preferred = result_qty.preferred
+        var_obj._is_known = True
         return var_obj
 
     def check_residual(self, variable_values: dict[str, FieldQuantity], tolerance: float = SOLVER_DEFAULT_TOLERANCE) -> bool:

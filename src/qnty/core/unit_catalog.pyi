@@ -52,6 +52,7 @@ class Units:
     foot: Final[Unit]
     feet: Final[Unit]  # alias for foot
     ft: Final[Unit]  # alias for foot
+    inch: Final[Unit]
 
 
     # Mass

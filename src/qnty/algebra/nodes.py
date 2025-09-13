@@ -785,8 +785,9 @@ def _get_dimensionless_quantity(value: float) -> Quantity:
     if cached_qty is not None:
         return cached_qty
 
-    # Create quantity with cached unit
-    qty = Quantity(value, _get_cached_dimensionless())
+    # Create quantity with cached unit using Q function
+    from ..core.quantity import Q
+    qty = Q(value, _get_cached_dimensionless())
 
     # Cache common values locally for ultra-fast access
     if value in (-1.0, 0.0, 0.5, 1.0, 2.0) or (isinstance(value, float) and -10 <= value <= 10 and value == int(value)):
@@ -819,7 +820,11 @@ def wrap_operand(operand: "OperandType") -> Expression:
     # Third most common: field quantities/variables (20-30% of calls)
     # Use getattr with hasattr-style check to reduce calls
     if hasattr(operand, "quantity") and hasattr(operand, "symbol"):
-        return VariableReference(operand)  # type: ignore[arg-type]
+        # Check if this is an unknown variable or a computed constant
+        if hasattr(operand, "value") and operand.value is not None:
+            return Constant(operand)  # type: ignore[arg-type]
+        else:
+            return VariableReference(operand)  # type: ignore[arg-type]
 
     # Handle other Expression types (Constant, VariableReference, etc.)
     if isinstance(operand, Expression):

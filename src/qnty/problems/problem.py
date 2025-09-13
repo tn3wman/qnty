@@ -234,8 +234,8 @@ class Problem(ValidationMixin):
             # Track original is_known state and unit for re-solving
             self._original_variable_states[variable.symbol] = variable.is_known
             # Store the unit from original quantity to preserve unit info
-            if variable.quantity is not None:
-                self._original_variable_units[variable.symbol] = variable.quantity.unit
+            if hasattr(variable, 'preferred') and variable.preferred is not None:
+                self._original_variable_units[variable.symbol] = variable.preferred
         # Set parent problem reference for dependency invalidation
         if hasattr(variable, "_parent_problem"):
             variable._parent_problem = self  # type: ignore[assignment]
@@ -310,8 +310,10 @@ class Problem(ValidationMixin):
         """Mark variables as known and set their values."""
         for symbol, quantity in symbol_values.items():
             if symbol in self.variables:
-                # Set the quantity first, then mark as known
-                self.variables[symbol].quantity = quantity
+                # Set the quantity value and unit, then mark as known
+                self.variables[symbol].value = quantity.value
+                if hasattr(quantity, 'preferred') and quantity.preferred is not None:
+                    self.variables[symbol].preferred = quantity.preferred
                 self.variables[symbol].mark_known()
             else:
                 raise VariableNotFoundError(f"Variable '{symbol}' not found in problem '{self.name}'")
@@ -352,7 +354,8 @@ class Problem(ValidationMixin):
         """Create a placeholder variable for a missing symbol."""
         placeholder_var = FieldQuantity(name=f"Auto-created: {symbol}", expected_dimension=DimensionlessUnits.dimensionless.dimension, is_known=False)
         placeholder_var.symbol = symbol
-        placeholder_var.quantity = Quantity(0.0, DimensionlessUnits.dimensionless)
+        placeholder_var.value = 0.0
+        placeholder_var.preferred = DimensionlessUnits.dimensionless
         self.add_variable(placeholder_var)
         self.logger.debug(f"Auto-created placeholder variable: {symbol}")
 
@@ -367,14 +370,15 @@ class Problem(ValidationMixin):
         cloned = variable_type(variable.name)
 
         # Copy over the attributes from the original
-        cloned.symbol = variable.symbol
-        cloned.expected_dimension = variable.expected_dimension
-        cloned.quantity = variable.quantity  # Keep reference to same quantity - units must not be copied
-        cloned.is_known = variable.is_known
+        cloned._symbol = variable.symbol
 
-        # Copy unit preference if it exists
-        if hasattr(variable, "_preferred_unit"):
-            cloned._preferred_unit = variable._preferred_unit
+        # Copy the value if it exists
+        if variable.value is not None:
+            cloned.value = variable.value
+
+        # Copy the preferred unit if it exists
+        if hasattr(variable, 'preferred') and variable.preferred is not None:
+            cloned.preferred = variable.preferred
 
         # Ensure the cloned variable has fresh validation checks
         if hasattr(variable, "validation_checks") and hasattr(cloned, "validation_checks"):
@@ -400,16 +404,23 @@ class Problem(ValidationMixin):
                         converted_value = solved_var.quantity.to(original_unit).value
                         from ..quantities.base_qnty import Quantity
 
-                        original_var.quantity = Quantity(converted_value, original_unit)
-                        original_var.is_known = True
+                        original_var.value = converted_value
+                        original_var.preferred = original_unit
+                        original_var._is_known = True
                     except Exception:
                         # If conversion fails, use the solved quantity as-is
-                        original_var.quantity = solved_var.quantity
-                        original_var.is_known = solved_var.is_known
+                        if solved_var.quantity and solved_var.quantity.value is not None:
+                            original_var.value = solved_var.quantity.value
+                            if hasattr(solved_var.quantity, 'preferred'):
+                                original_var.preferred = solved_var.quantity.preferred
+                        original_var._is_known = solved_var.is_known
                 else:
                     # For originally known variables or if no unit conversion needed
-                    original_var.quantity = solved_var.quantity
-                    original_var.is_known = solved_var.is_known
+                    if solved_var.quantity and solved_var.quantity.value is not None:
+                        original_var.value = solved_var.quantity.value
+                        if hasattr(solved_var.quantity, 'preferred'):
+                            original_var.preferred = solved_var.quantity.preferred
+                    original_var._is_known = solved_var.is_known
 
     def _sync_variables_to_instance_attributes(self):
         """
@@ -500,13 +511,19 @@ class Problem(ValidationMixin):
 
         This resolves issues where expression trees contain VariableReferences pointing to
         proxy Variables from class creation time instead of the actual Variables in the problem.
+        Also unwraps ExpressionEnabledWrapper objects.
         """
         try:
             # Fix the RHS expression
             fixed_rhs = self._fix_expression_variables(equation.rhs)
 
-            # Create new equation with fixed RHS (LHS should already be correct)
-            return Equation(equation.name, equation.lhs, fixed_rhs)
+            # Fix the LHS if it's wrapped in ExpressionEnabledWrapper
+            fixed_lhs = equation.lhs
+            if hasattr(equation.lhs, '_wrapped'):
+                fixed_lhs = equation.lhs._wrapped
+
+            # Create new equation with fixed LHS and RHS
+            return Equation(equation.name, fixed_lhs, fixed_rhs)
 
         except Exception as e:
             self.logger.debug(f"Error fixing variable references in equation {equation.name}: {e}")
@@ -515,7 +532,26 @@ class Problem(ValidationMixin):
     def _fix_expression_variables(self, expr):
         """
         Recursively fix VariableReferences in an expression tree to point to correct Variables.
+        Also resolves DelayedExpression objects using the Problem's variable context.
         """
+        # Handle DelayedExpression objects by resolving them
+        if hasattr(expr, 'resolve') and hasattr(expr, 'operation'):
+            # This is a DelayedExpression - resolve it with our variables context
+            # Create a context dict that unwraps ExpressionEnabledWrapper objects
+            context = {}
+            for symbol, var in self.variables.items():
+                # If it's wrapped, unwrap it to get the actual variable
+                if hasattr(var, '_wrapped'):
+                    context[symbol] = var._wrapped
+                else:
+                    context[symbol] = var
+            resolved_expr = expr.resolve(context)
+            if resolved_expr is not None:
+                # Recursively fix the resolved expression
+                return self._fix_expression_variables(resolved_expr)
+            else:
+                self.logger.warning(f"Failed to resolve DelayedExpression: {expr}")
+                return expr
 
         if isinstance(expr, VariableReference):
             # Check if this VariableReference points to the wrong Variable
@@ -686,10 +722,10 @@ class Problem(ValidationMixin):
         for symbol, var in self.variables.items():
             if symbol in self._original_variable_states:
                 original_state = self._original_variable_states[symbol]
-                var.is_known = original_state
+                var._is_known = original_state
                 # If variable was originally unknown, reset it to None so solver can update it
                 if not original_state:
-                    var.quantity = None
+                    var.value = None
 
     def copy(self):
         """Create a copy of this problem."""
