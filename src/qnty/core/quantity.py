@@ -144,7 +144,88 @@ class Quantity(Generic[D]):
             raise ValueError("Cannot perform arithmetic on unknown quantities")
         result_value = self.value - other.value
         return Quantity(name=f"{result_value}", dim=self.dim, value=result_value)
-    
+
+    # ---- Comparison operators ----
+    def __eq__(self, other: object) -> bool:
+        """Check equality between quantities, accounting for units."""
+        if not isinstance(other, Quantity):
+            return NotImplemented
+
+        # Check dimension compatibility
+        if self.dim != other.dim:
+            return False
+
+        # If either value is unknown, they're not equal
+        if self.value is None or other.value is None:
+            return False
+
+        # Compare SI values (both are stored in SI units internally)
+        # Use a small tolerance for floating point comparison
+        return abs(self.value - other.value) < 1e-10
+
+    def __ne__(self, other: object) -> bool:
+        """Check inequality between quantities."""
+        result = self.__eq__(other)
+        if result is NotImplemented:
+            return NotImplemented
+        return not result
+
+    def __lt__(self, other: Quantity) -> bool:
+        """Check if this quantity is less than another."""
+        if not isinstance(other, Quantity):
+            return NotImplemented
+
+        if self.dim != other.dim:
+            raise TypeError(f"Cannot compare quantities with different dimensions: {self.dim} vs {other.dim}")
+
+        if self.value is None or other.value is None:
+            raise ValueError("Cannot compare unknown quantities")
+
+        # Compare SI values
+        return self.value < other.value
+
+    def __le__(self, other: Quantity) -> bool:
+        """Check if this quantity is less than or equal to another."""
+        if not isinstance(other, Quantity):
+            return NotImplemented
+
+        if self.dim != other.dim:
+            raise TypeError(f"Cannot compare quantities with different dimensions: {self.dim} vs {other.dim}")
+
+        if self.value is None or other.value is None:
+            raise ValueError("Cannot compare unknown quantities")
+
+        # Compare SI values
+        return self.value <= other.value
+
+    def __gt__(self, other: Quantity) -> bool:
+        """Check if this quantity is greater than another."""
+        if not isinstance(other, Quantity):
+            return NotImplemented
+
+        if self.dim != other.dim:
+            raise TypeError(f"Cannot compare quantities with different dimensions: {self.dim} vs {other.dim}")
+
+        if self.value is None or other.value is None:
+            raise ValueError("Cannot compare unknown quantities")
+
+        # Compare SI values
+        return self.value > other.value
+
+    def __ge__(self, other: Quantity) -> bool:
+        """Check if this quantity is greater than or equal to another."""
+        if not isinstance(other, Quantity):
+            return NotImplemented
+
+        if self.dim != other.dim:
+            raise TypeError(f"Cannot compare quantities with different dimensions: {self.dim} vs {other.dim}")
+
+        if self.value is None or other.value is None:
+            raise ValueError("Cannot compare unknown quantities")
+
+        # Compare SI values
+        return self.value >= other.value
+
     def __float__(self) -> float:
         if not self.dim.is_dimensionless():
             raise TypeError("Cannot convert non-dimensionless quantity to float")
