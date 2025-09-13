@@ -85,6 +85,9 @@ class PrimeIntBackend:
     
 # --- Tuple backend (direct exponent vectors) ---
 class TupleBackend:
+    """Direct exponent vectors (immutable tuples)."""
+    __slots__ = ()
+    
     def encode(self, v: DimVec) -> DimVec:
         return v
     def mul(self, a: DimVec, b: DimVec) -> DimVec:
@@ -95,6 +98,7 @@ class TupleBackend:
         return tuple(x*k for x in a)
 
 BACKEND: DimBackend = PrimeIntBackend()
+# BACKEND: DimBackend = TupleBackend()
 
 # =======================
 # Dimension (frozen)

@@ -17,12 +17,18 @@ meter_per_square_second = attach_composed(
     aliases=("meter_per_square_second","meters_per_square_second","m/s2",),
 )
 
-class Acceleration(UnitNamespace):
+foot_per_square_second = attach_composed(
+    u.foot / (u.second**2), name="foot_per_square_second", symbol="ft/s²",
+    aliases=("foot_per_square_second","feet_per_square_second","foot_per_second_squared","feet_per_second_squared","ft/s2",),
+)
+
+class AccelerationUnits(UnitNamespace):
     __slots__ = ()
     # Preferred must reference the attribute name, not the symbol
     __preferred__ = "meter_per_square_second"
 
     meter_per_square_second: Final[Unit] = meter_per_square_second
+    foot_per_square_second: Final[Unit] = foot_per_square_second
 
 # =======================
 # AREA

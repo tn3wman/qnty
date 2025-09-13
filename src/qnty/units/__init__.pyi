@@ -49,6 +49,10 @@ class Units:
     micro_meter: Final[Unit]  # alias for meter
     nano_meter: Final[Unit]  # alias for meter
 
+    foot: Final[Unit]
+    feet: Final[Unit]  # alias for foot
+    ft: Final[Unit]  # alias for foot
+
 
     # Mass
     kilo_gram: Final[Unit]  # alias for gram
@@ -90,6 +94,8 @@ class Units:
     # =======================
     # Acceleration
     meter_per_square_second: Final[Unit]
+    foot_per_square_second: Final[Unit]
+    foot_per_second_squared: Final[Unit]  # alias for foot_per_square_second
 
     # =======================
     # DERIVED UNITS
@@ -120,5 +126,9 @@ class PressureUnits(UnitNamespace):
     pascal: Final[Unit]
     pascals: Final[Unit]
     Pa: Final[Unit]
+
+class AccelerationUnits(UnitNamespace):
+    meter_per_square_second: Final[Unit]
+    foot_per_square_second: Final[Unit]
 
 u: Units

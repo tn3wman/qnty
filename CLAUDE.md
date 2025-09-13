@@ -488,3 +488,4 @@ ALWAYS prefer editing an existing file to creating a new one.
 NEVER proactively create documentation files (*.md) or README files. Only create documentation files if explicitly requested by the User.
 
 IMPORTANT: this context may or may not be relevant to your tasks. You should not respond to this context unless it is highly relevant to your task.
+- I just did a massive refactor of /Users/tyler/Projects/qnty/src/qnty/dimensions, /Users/tyler/Projects/qnty/src/qnty/units and /Users/tyler/Projects/qnty/src/qnty/quantities. There will be a lot of broken code until we get everything fixed.

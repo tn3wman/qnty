@@ -34,6 +34,11 @@ inch = add_unit(
     aliases=("inches",),
 )
 
+foot = add_unit(
+    dim.L, symbol="ft", si_factor=0.3048,
+    aliases=("feet","ft",),
+)
+
 class LengthUnits(UnitNamespace):
     __slots__ = ()
     __preferred__ = "meter"
@@ -41,6 +46,7 @@ class LengthUnits(UnitNamespace):
     meter: Final[Unit] = meter
     millimeter: Final[Unit] = u.milli_meter
     inch: Final[Unit] = inch
+    foot: Final[Unit] = foot
 
 # ==============
 # MASS
