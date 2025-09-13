@@ -1,6 +1,6 @@
 from typing import Final
 
-from .core import Unit, UnitNamespace
+from .unit import Unit, UnitNamespace
 
 class Units:
     # =======================

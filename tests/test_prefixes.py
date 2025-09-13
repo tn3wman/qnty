@@ -9,7 +9,7 @@ import pytest
 
 from qnty.dimensions import ENERGY_HEAT_WORK, LENGTH, PRESSURE
 from qnty.units.prefixes import COMMON_LENGTH_PREFIXES, COMMON_PRESSURE_PREFIXES, StandardPrefixes, get_prefix_by_factor, get_prefix_by_name, get_prefix_by_symbol
-from qnty.units.core import Registry, UnitDefinition
+from qnty.core.unit import Registry, UnitDefinition
 
 
 class TestSIPrefixDefinition:

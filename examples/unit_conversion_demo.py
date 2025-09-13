@@ -5,7 +5,7 @@ print("Unit Conversion Demo")
 print("=" * 40)
 
 # Create some variables
-L = qt.Length(5, "m", "Length")
+L = qt.Acceleration("Gravity").set(9.81).meter_per_square_second
 W = qt.Length(3, "m", "Width")
 A = qt.Area("Area")
 

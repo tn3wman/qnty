@@ -1,4 +1,4 @@
-from qnty.dimensions.core import add_derived, add_dimension, write_dimensions_stub
+from qnty.core.dimension import add_derived, add_dimension, write_dimensions_stub, dim
 
 # Canonical dimensionless (all zeros) — prime code becomes (1, 1)
 D = add_dimension(

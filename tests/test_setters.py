@@ -8,12 +8,12 @@ with the broader OptiUnit system.
 
 import pytest
 
-from qnty.dimensions.dimension_catalog import LENGTH, PRESSURE
-from qnty.quantities import FieldQnty
-from qnty.quantities.core import Quantity, TypeSafeSetter
+from qnty.core.dimension_catalog import LENGTH, PRESSURE
+from qnty.quantities import FieldQuantity
+from qnty.core.quantity import Quantity, TypeSafeSetter
 from qnty.quantities.field_setter import LengthSetter, PressureSetter
 from qnty.quantities.field_vars import Length, Pressure
-from qnty.units.core import LengthUnits, PressureUnits
+from qnty.core.unit import LengthUnits, PressureUnits
 
 
 class TestTypeSafeSetterInitialization:
@@ -26,7 +26,7 @@ class TestTypeSafeSetterInitialization:
 
         assert setter.variable == length_var
         assert setter.value == 100.0
-        assert isinstance(setter.variable, FieldQnty)
+        assert isinstance(setter.variable, FieldQuantity)
 
     def test_typesafe_setter_with_different_types(self):
         """Test TypeSafeSetter with different variable types."""
@@ -511,8 +511,8 @@ class TestSetterIntegration:
     def test_setter_with_variable_polymorphism(self):
         """Test setters work with variable polymorphism."""
         # Create variables as base UnifiedVariable references
-        length_var: FieldQnty = Length("poly_length")
-        pressure_var: FieldQnty = Pressure("poly_pressure")
+        length_var: FieldQuantity = Length("poly_length")
+        pressure_var: FieldQuantity = Pressure("poly_pressure")
 
         # TypeSafeSetter should work with polymorphic variables
         TypeSafeSetter(length_var, 100.0).with_unit(LengthUnits.meter)

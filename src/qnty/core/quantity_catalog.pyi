@@ -3,9 +3,10 @@ from __future__ import annotations
 
 from typing import overload
 
-from ..units.core import Unit
-from .core import FieldQuantity, FieldSetter, UnitApplier, UnitChanger
+from .unit import Unit
+from .quantity import FieldQuantity, FieldSetter, UnitApplier, UnitChanger
 
+class Dimensionless(FieldQuantity[Dimensionless]): ...
 
 class AccelerationSetter(FieldSetter[Acceleration]):
     @property

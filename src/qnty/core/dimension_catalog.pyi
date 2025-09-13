@@ -1,6 +1,6 @@
 from typing import Final
 
-from .core import Dimension
+from .dimension import Dimension
 
 class Dimensions:
     ABSORBED_RADIATION_DOSE: Final[Dimension]

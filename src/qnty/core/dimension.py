@@ -126,6 +126,14 @@ class Dimension:
     def __repr__(self) -> str:
         num, den = self.code
         return f"Dim{self.exps} [{num}/{den}]"
+    
+        # --- handy predicates ---
+    def is_dimensionless(self) -> bool:
+        return all(e == 0 for e in self.exps)
+
+    def is_angle(self) -> bool:
+        # If you treat radians as a distinct base (Theta index)
+        return self.exps == (0, 0, 0, 0, 1, 0, 0)
 
 # =======================
 # Global namespace (sealed) + registry + helpers

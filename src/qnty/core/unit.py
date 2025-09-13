@@ -7,7 +7,7 @@ from collections.abc import Iterable
 from dataclasses import dataclass
 from typing import Final, Generic, SupportsIndex, TypeVar
 
-from ..dimensions import Dimension
+from .dimension import Dimension
 
 
 # =======================

@@ -1,9 +1,9 @@
 from dataclasses import dataclass
 from typing import Generic, Self, TypeVar, overload
 
-from ..dimensions import Dimension
-from ..units import u
-from ..units.core import Unit, ureg
+from .unit import u
+from .dimension import Dimension
+from .unit import Unit, ureg
 
 D = TypeVar("D")
 
@@ -40,6 +40,13 @@ class Quantity(Generic[D]):
         if self.dim != other.dim:
             raise TypeError("Dimension mismatch in subtraction")
         return Quantity(self.value - other.value, self.dim)
+    
+    def __float__(self) -> float:
+        if not self.dim.is_dimensionless():
+            raise TypeError("Cannot convert non-dimensionless quantity to float")
+        if self.dim.is_angle():
+            raise TypeError("NOT IMPLEMENTED YET")
+        return self.value
 
     # ----- conversion & display -----
     def to(self, unit: Unit[D]) -> float:

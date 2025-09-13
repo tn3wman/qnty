@@ -12,9 +12,9 @@ from __future__ import annotations
 import inspect
 from pathlib import Path
 
-import qnty.quantities.core as core
-import qnty.quantities.quantity_catalog as qcat
-from qnty.units.core import Unit, _unit_aliases
+import qnty.core.quantity as quantity
+import qnty.core.quantity_catalog as qcat
+from qnty.core.unit import Unit, _unit_aliases
 
 
 OUT_PATH = Path(qcat.__file__).with_suffix(".pyi")
@@ -40,8 +40,8 @@ def alias_names_for(canonical: str) -> list[str]:
 def find_quantities() -> list[type]:
     qty_types: list[type] = []
     for _name, obj in vars(qcat).items():
-        if inspect.isclass(obj) and issubclass(obj, core.FieldQuantity):
-            if obj is core.FieldQuantity:
+        if inspect.isclass(obj) and issubclass(obj, quantity.FieldQuantity):
+            if obj is quantity.FieldQuantity:
                 continue
             # We only support quantities that declare UNIT_NS and SETTER_CLS
             if hasattr(obj, "UNIT_NS") and hasattr(obj, "SETTER_CLS"):
