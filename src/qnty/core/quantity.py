@@ -90,8 +90,6 @@ class Quantity(Generic[D]):
             preferred=unit
         )
 
-
-
     @property
     def to_unit(self) -> UnitApplier[D]:
         """Convert to different unit via attribute access."""
@@ -155,22 +153,6 @@ class Quantity(Generic[D]):
         if self.value is None:
             raise ValueError("Cannot convert unknown quantity to float")
         return self.value
-
-    # ----- conversion & display -----
-    # def to(self, unit: Unit[D]) -> float:
-    #     if unit.dim != self.dim:
-    #         raise TypeError(f"Cannot convert {self.dim} to {unit.dim}")
-    #     return (self.value - unit.si_offset) / unit.si_factor
-
-    # def __repr__(self) -> str:
-    #     """
-    #     Pretty-print in the preferred unit if one is registered;
-    #     otherwise show the raw SI value and dimension.
-    #     """
-    #     pref = ureg.preferred_for(self.dim)
-    #     if pref:
-    #         return f"{self.to(pref):.6g} {pref.symbol}"
-    #     return f"{self.value:.6g} [Dim={self.dim}]"
 
     # ---- Display ----
     def __str__(self) -> str:
