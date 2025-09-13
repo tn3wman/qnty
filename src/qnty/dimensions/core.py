@@ -32,17 +32,17 @@ def zeros(n: int = N_BASE) -> DimVec:
     return (0,) * n
 
 class DimBackend(Protocol):
-    def encode(self, v: DimVec) -> tuple[int, int]: ...
-    def mul(self, c1: tuple[int, int], c2: tuple[int, int]) -> tuple[int, int]: ...
-    def div(self, c1: tuple[int, int], c2: tuple[int, int]) -> tuple[int, int]: ...
-    def pow(self, c: tuple[int, int], k: int) -> tuple[int, int]: ...
+    def encode(self, v: DimVec) -> tuple[int, ...]: ...
+    def mul(self, a: tuple[int, ...], b: tuple[int, ...]) -> tuple[int, ...]: ...
+    def div(self, a: tuple[int, ...], b: tuple[int, ...]) -> tuple[int, ...]: ...
+    def pow(self, a: tuple[int, ...], k: int) -> tuple[int, ...]: ...
 
 class PrimeIntBackend:
     """Compact prime code: (num:int, den:int) with GCD reduction."""
 
     __slots__ = ()
 
-    def encode(self, v: DimVec) -> tuple[int, int]:
+    def encode(self, v: DimVec) -> tuple[int, ...]:
         # all zeros → (1,1) i.e., truly dimensionless
         num = den = 1
         for p, e in zip(PRIMES, v, strict=False):
@@ -55,22 +55,22 @@ class PrimeIntBackend:
                     den *= p**de
         return self._reduce(num, den)
 
-    def mul(self, c1: tuple[int, int], c2: tuple[int, int]) -> tuple[int, int]:
-        return self._reduce(c1[0] * c2[0], c1[1] * c2[1])
+    def mul(self, a: tuple[int, ...], b: tuple[int, ...]) -> tuple[int, ...]:
+        return self._reduce(a[0] * b[0], a[1] * b[1])
 
-    def div(self, c1: tuple[int, int], c2: tuple[int, int]) -> tuple[int, int]:
-        return self._reduce(c1[0] * c2[1], c1[1] * c2[0])
+    def div(self, a: tuple[int, ...], b: tuple[int, ...]) -> tuple[int, ...]:
+        return self._reduce(a[0] * b[1], a[1] * b[0])
 
-    def pow(self, c: tuple[int, int], k: int) -> tuple[int, int]:
+    def pow(self, a: tuple[int, ...], k: int) -> tuple[int, ...]:
         if k == 0:
             return (1, 1)
         if k > 0:
-            return self._reduce(pow(c[0], k), pow(c[1], k))
+            return self._reduce(pow(a[0], k), pow(a[1], k))
         k = -k
-        return self._reduce(pow(c[1], k), pow(c[0], k))
+        return self._reduce(pow(a[1], k), pow(a[0], k))
 
     @staticmethod
-    def _reduce(num: int, den: int) -> tuple[int, int]:
+    def _reduce(num: int, den: int) -> tuple[int, ...]:
         if den < 0:
             num, den = -num, -den
         if den == 1 or num == 0:
@@ -106,7 +106,7 @@ BACKEND: DimBackend = PrimeIntBackend()
 @dataclass(frozen=True, slots=True)
 class Dimension:
     exps: DimVec  # canonical tuple (immutable)
-    code: tuple[int, int]  # compact prime code (immutable ints)
+    code: tuple[int, ...]  # compact prime code (immutable ints)
 
     def __mul__(self, o: Dimension) -> Dimension:
         return Dimension(vadd(self.exps, o.exps), BACKEND.mul(self.code, o.code))
