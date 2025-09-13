@@ -17,3 +17,20 @@ class Length:
 class Dimensionless:
     """Dimensionless quantity with automatic boilerplate."""
     pass
+
+
+@quantity(uc.MassDensityUnits)
+class MassDensity:
+    """Mass density quantity with automatic boilerplate."""
+    pass
+
+@quantity(uc.ViscosityDynamicUnits)
+class ViscosityDynamic:
+    """Dynamic viscosity quantity with automatic boilerplate."""
+    pass
+
+@quantity(uc.ViscosityKinematicUnits)
+class ViscosityKinematic:
+    """Kinematic viscosity quantity with automatic boilerplate."""
+    pass
+

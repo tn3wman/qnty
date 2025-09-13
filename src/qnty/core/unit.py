@@ -117,6 +117,7 @@ class UnitRegistry:
         "_preferred",          # dim -> Unit
         "_attr_exposed",       # names/aliases exposed via __getattr__/__dir__
         "_sealed",             # registry sealed flag
+        "_resolve_cache",      # cache for resolve() method (performance optimization)
     )
 
     def __init__(self) -> None:
@@ -127,6 +128,7 @@ class UnitRegistry:
         self._preferred: dict[Dimension, Unit] = {}
         self._attr_exposed: dict[str, Unit] = {}
         self._sealed: bool = False
+        self._resolve_cache: dict[tuple[str, Dimension | None], Unit | None] = {}
 
     # ----- sealing -----
     @property
@@ -209,19 +211,34 @@ class UnitRegistry:
         Resolve by normalized name/alias first, then by symbol.
         If `dim` is provided, only return a unit that matches that dimension.
         """
+        # Check cache first for performance
+        cache_key = (name_or_symbol, dim)
+        cached_result = self._resolve_cache.get(cache_key)
+        if cached_result is not None:
+            return cached_result
+
+        # Handle None result in cache (cache misses too)
+        if cache_key in self._resolve_cache:
+            return None
+
         nk = _norm(name_or_symbol)
 
         u = self._by_name.get(nk)
         if u is not None:
             if dim is None or u.dim == dim:
+                self._resolve_cache[cache_key] = u
                 return u
+            self._resolve_cache[cache_key] = None
             return None
 
         # try symbols (prefer first-wins map for stability, then last-wins)
         u = self._intern_by_symbol.get(name_or_symbol) or self._by_symbol.get(name_or_symbol)
         if u is not None and (dim is None or u.dim == dim):
+            self._resolve_cache[cache_key] = u
             return u
 
+        # Cache the miss
+        self._resolve_cache[cache_key] = None
         return None
 
     def preferred_for(self, dim: Dimension) -> Unit | None:

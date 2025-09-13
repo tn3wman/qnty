@@ -7,8 +7,6 @@ This script tests the solve functionality that replaces the automatic solver.
 
 import sys
 
-sys.path.insert(0, "src")
-
 from qnty import Dimensionless, Length, Pressure
 
 

@@ -5,6 +5,10 @@ from .dimension import Dimension
 class Dimensions:
     ABSORBED_RADIATION_DOSE: Final[Dimension]
     ACCELERATION: Final[Dimension]
+    MASS_DENSITY: Final[Dimension]
+    VISCOSITY_DYNAMIC: Final[Dimension]
+    VISCOSITY_KINEMATIC: Final[Dimension]
+    
     Area: Final[Dimension]
     D: Final[Dimension]
     Energy: Final[Dimension]

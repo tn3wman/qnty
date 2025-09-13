@@ -69,6 +69,14 @@ class Units:
     micro_gram: Final[Unit]  # alias for gram
     nano_gram: Final[Unit]  # alias for gram
 
+    ounce : Final[Unit]
+    ounces : Final[Unit]  # alias for ounce
+    oz: Final[Unit]  # alias for ounce
+    pound_mass: Final[Unit]
+    lbm: Final[Unit]  # alias for pound_mass
+    slug: Final[Unit]
+    slugs: Final[Unit]  # alias for slug
+
 
     hg: Final[Unit]  # alias for gram
     hm: Final[Unit]  # alias for meter
@@ -97,6 +105,16 @@ class Units:
     foot_per_square_second: Final[Unit]
     foot_per_second_squared: Final[Unit]  # alias for foot_per_square_second
 
+    # Volume
+    liter: Final[Unit]
+    liters: Final[Unit]  # alias for liter
+    litre: Final[Unit]  # alias for liter
+    litres: Final[Unit]  # alias for liter
+    cubic_meter: Final[Unit]
+    cubic_meters: Final[Unit]  # alias for cubic_meter
+    m3: Final[Unit]  # alias for cubic_meter
+    milli_liter: Final[Unit]
+
     # =======================
     # DERIVED UNITS
     # =======================
@@ -105,6 +123,8 @@ class Units:
     N: Final[Unit]  # alias for newton
     newton : Final[Unit]
     newtons : Final[Unit]  # alias for newton
+    lbf: Final[Unit]  # alias for pound_force
+    pound_force : Final[Unit]
 
     # Pressure
     Pa: Final[Unit]  # alias for pascal
@@ -130,5 +150,19 @@ class PressureUnits(UnitNamespace):
 class AccelerationUnits(UnitNamespace):
     meter_per_square_second: Final[Unit]
     foot_per_square_second: Final[Unit]
+
+class MassDensityUnits(UnitNamespace):
+    kilogram_per_cubic_meter: Final[Unit]
+    pound_mass_per_cubic_foot: Final[Unit]
+    ounce_per_milliliter: Final[Unit]
+
+class ViscosityDynamicUnits(UnitNamespace):
+    pascal_second: Final[Unit]
+    poise: Final[Unit]
+    pound_force_second_per_square_foot: Final[Unit]
+
+class ViscosityKinematicUnits(UnitNamespace):
+    square_meter_per_second: Final[Unit]
+    foot_squared_per_second: Final[Unit]
 
 u: Units

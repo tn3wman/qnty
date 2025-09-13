@@ -58,6 +58,22 @@ gram = add_unit(
     allow_prefix=True, expose_prefixed_to_u=True
 )
 
+# US customary mass units
+pound_mass = add_unit(
+    dim.M, symbol="lbm", si_factor=0.45359237,
+    # aliases=("lb", "lbm", "lbs", "pounds"),
+)
+
+slug = add_unit(
+    dim.M, symbol="slug", si_factor=14.59390293720636,
+    aliases=("slugs",),
+)
+
+ounce = add_unit(
+    dim.M, symbol="oz", si_factor=0.028349523125,
+    aliases=("ounces",),
+)
+
 # ==============
 # TEMPERATURE
 # ==============
@@ -145,6 +161,17 @@ cubic_meter = attach_composed(
     aliases=("cubic_meter","cubic_meters","m3",),
 )
 
+# TODO: Add option to add prefixes to composed units
+liter = attach_composed(
+    u.deci_meter**3, name="liter", symbol="L",
+    aliases=("liters","litre","litres",),
+)
+
+milli_liter = attach_composed(
+    u.centi_meter**3, name="milli_liter", symbol="mL",
+    aliases=("milliliters", "millilitre","millilitres"),
+)
+
 # =======================
 # SOLID ANGLE
 # =======================
@@ -167,6 +194,12 @@ cubic_meter = attach_composed(
 newton = attach_composed(
     u.kg * u.meter / (u.second**2), name="newton", symbol="N",
     aliases=("newtons","N",),
+)
+
+# US customary force unit
+pound_force = add_unit(
+    dim.Force, symbol="lbf", si_factor=4.4482216152605,
+    # aliases=("poundforce", "lbf"),
 )
 
 
@@ -216,5 +249,75 @@ class PressureUnits(UnitNamespace):
 # =======================
 
 
+# =======================
+# MASS DENSITY
+# =======================
+kilogram_per_cubic_meter = attach_composed(
+    u.kg / (u.meter**3), name="kilogram_per_cubic_meter", symbol="kg/m³",
+    aliases=("kg_per_m3", "kg/m3",),
+)
+
+pound_mass_per_cubic_foot = attach_composed(
+    u.pound_mass / (u.foot**3), name="pound_mass_per_cubic_foot", symbol="lbm/ft³",
+    aliases=("lbm_per_ft3", "lbm/ft3",),
+)
+
+ounce_per_milliliter = attach_composed(
+    u.ounce / u.milli_liter, name="ounce_per_milliliter", symbol="oz/mL",
+    aliases=("oz_per_mL", "oz/mL",),
+)
+
+class MassDensityUnits(UnitNamespace):
+    __slots__ = ()
+    __preferred__ = "kilogram_per_cubic_meter"
+
+    kilogram_per_cubic_meter: Final[Unit] = kilogram_per_cubic_meter
+    pound_mass_per_cubic_foot: Final[Unit] = pound_mass_per_cubic_foot
+    ounce_per_milliliter: Final[Unit] = ounce_per_milliliter
+
+
+
+pascal_second = attach_composed(
+    u.pascal * u.second, name="pascal_second", symbol="Pa·s",
+    aliases=("pascal_second","pascal_seconds","Pa·s","Pa.s",),
+)
+
+poise = attach_composed(
+    u.gram / (u.centi_meter * u.second), name="poise", symbol="P",
+    aliases=("poise","P",),
+)
+
+pound_force_second_per_square_foot = attach_composed(
+    u.pound_force * u.second / (u.foot**2), name="pound_force_second_per_square_foot", symbol="lbf·s/ft²",
+    aliases=("lbf·s/ft²","lbf*s/ft2",),
+)
+
+
+class ViscosityDynamicUnits(UnitNamespace):
+    __slots__ = ()
+    __preferred__ = "pascal_second"
+
+    pascal_second: Final[Unit] = pascal_second
+    poise: Final[Unit] = poise
+    pound_force_second_per_square_foot: Final[Unit] = pound_force_second_per_square_foot
+
+
+
+square_meter_per_second = attach_composed(
+    u.meter**2 / u.second, name="square_meter_per_second", symbol="m²/s",
+    aliases=("square_meter_per_second","square_meters_per_second","m2/s",),
+)
+foot_squared_per_second = attach_composed(
+    u.foot**2 / u.second, name="foot_squared_per_second", symbol="ft²/s",
+    aliases=("foot_squared_per_second","feet_squared_per_second","ft2/s",),
+)
+
+
+class ViscosityKinematicUnits(UnitNamespace):
+    __slots__ = ()
+    __preferred__ = "square_meter_per_second"
+
+    square_meter_per_second: Final[Unit] = square_meter_per_second
+    foot_squared_per_second: Final[Unit] = foot_squared_per_second
 
 

@@ -37,7 +37,7 @@ def basic_quantity_usage():
 
 def field_quantity_usage():
     """Demonstrates usage of quantities as fields in classes."""
-    x = Length("x").set(3).meter
+    x = Length("x_name").set(3).meter
     y = Length("y").set(4).meter
     z = Length("z").set(5).meter
 

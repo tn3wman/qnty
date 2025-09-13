@@ -61,6 +61,72 @@ class Expression(ABC):
         # Use centralized scope discovery service
         return ScopeDiscoveryService.can_auto_evaluate(self)
 
+    def solve_for(self, quantity) -> bool:
+        """
+        Solve this expression for the given quantity.
+
+        Args:
+            quantity: The Quantity to solve for (must have symbol, dim, value properties)
+
+        Returns:
+            True if solving succeeded, False otherwise
+        """
+        # First, try to evaluate the expression directly
+        try:
+            # Discover variables from scope
+            required_vars = self.get_variables()
+            variables = ScopeDiscoveryService.discover_variables(required_vars, enable_caching=True)
+
+            # Evaluate the expression
+            result = self.evaluate(variables)
+            if result and hasattr(result, 'value') and result.value is not None:
+                # Check dimension compatibility
+                if hasattr(quantity, 'dim') and hasattr(result, 'dim'):
+                    if quantity.dim != result.dim:
+                        raise TypeError(f"Dimension mismatch: cannot assign {result.dim} to {quantity.dim}")
+
+                # Assign the value
+                if hasattr(quantity, 'value'):
+                    quantity.value = result.value
+                    if hasattr(quantity, 'preferred') and hasattr(result, 'preferred'):
+                        quantity.preferred = result.preferred or getattr(quantity, 'preferred', None)
+                    return True
+        except Exception:
+            # If direct evaluation fails, try symbolic solving
+            pass
+
+        # Fall back to symbolic solving
+        return self._symbolic_solve_for(quantity)
+
+    def _symbolic_solve_for(self, quantity) -> bool:
+        """Fallback symbolic solving method."""
+        try:
+            from .equation import Equation
+
+            # Create an equation: quantity = self
+            equation = Equation(
+                name=f"solve_for_{getattr(quantity, 'name', 'unknown')}",
+                lhs=VariableReference(quantity),
+                rhs=self
+            )
+
+            # Try to solve for this variable
+            all_variables = ScopeDiscoveryService.find_variables_in_scope()
+            symbol = getattr(quantity, 'symbol', getattr(quantity, 'name', 'unknown'))
+            solved_value = equation.solve_for(symbol, all_variables)
+
+            if solved_value is not None and hasattr(solved_value, 'value') and solved_value.value is not None:
+                if hasattr(quantity, 'value'):
+                    quantity.value = solved_value.value
+                    if hasattr(quantity, 'preferred') and hasattr(solved_value, 'preferred'):
+                        quantity.preferred = solved_value.preferred or getattr(quantity, 'preferred', None)
+                    return True
+        except Exception:
+            # If symbolic solving fails, return False
+            pass
+
+        return False
+
     def __add__(self, other: "OperandType") -> "Expression":
         return BinaryOperation("+", self, wrap_operand(other))
 
@@ -281,7 +347,31 @@ class BinaryOperation(Expression):
 
     def _dispatch_operation(self, left_val: "Quantity", right_val: "Quantity") -> "Quantity":
         """Dispatch to the appropriate operation handler with fast lookup."""
-        # Fast path: check operator type with pre-compiled sets
+        # Ultra-fast path: delegate to Quantity arithmetic when both operands are concrete
+        if (hasattr(left_val, 'value') and hasattr(right_val, 'value') and
+            left_val.value is not None and right_val.value is not None and
+            hasattr(left_val, 'dim') and hasattr(right_val, 'dim')):
+
+            try:
+                # Try to delegate directly to Quantity arithmetic
+                if self.operator == "+":
+                    return left_val.__add__(right_val)
+                elif self.operator == "-":
+                    return left_val.__sub__(right_val)
+                elif self.operator == "*":
+                    return left_val.__mul__(right_val)
+                elif self.operator == "/":
+                    return left_val.__truediv__(right_val)
+                elif self.operator == "**":
+                    # For power, right operand should be a number
+                    if hasattr(right_val, 'dim') and right_val.dim.is_dimensionless():
+                        return left_val.__pow__(right_val.value)
+                # For comparison operators, fall through to normal handling
+            except (ValueError, TypeError):
+                # If Quantity arithmetic fails, fall back to Expression arithmetic
+                pass
+
+        # Normal path: check operator type with pre-compiled sets
         if self.operator in self._ARITHMETIC_OPS:
             return self._evaluate_arithmetic_dispatch(left_val, right_val)
         elif self.operator in self._COMPARISON_OPS:
@@ -735,7 +825,14 @@ def wrap_operand(operand: "OperandType") -> Expression:
     if isinstance(operand, Expression):
         return operand
 
-    # Check for base Quantity objects
+    # Check for new unified Quantity objects
+    if hasattr(operand, "value") and hasattr(operand, "dim") and hasattr(operand, "symbol"):
+        if operand.value is not None:
+            return Constant(operand)  # type: ignore[arg-type]
+        else:
+            return VariableReference(operand)  # type: ignore[arg-type]
+
+    # Check for base Quantity objects (legacy)
     if hasattr(operand, "value") and hasattr(operand, "unit") and hasattr(operand, "_dimension_sig"):
         return Constant(operand)  # type: ignore[arg-type]
 

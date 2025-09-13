@@ -4,7 +4,7 @@ Unified Quantity class that combines the functionality of both Quantity and Fiel
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any, Generic, Self, TypeVar, cast, overload
+from typing import TYPE_CHECKING, Generic, Self, TypeVar, cast, overload
 
 from .dimension import Dimension
 from .unit import Unit, ureg
@@ -27,6 +27,70 @@ class Quantity(Generic[D]):
     dim: Dimension
     value: float | None = None
     preferred: Unit[D] | None = None
+    _symbol: str | None = None
+
+    def __post_init__(self):
+        """Auto-detect symbol from variable assignment if not set."""
+        # Only auto-detect variable names when needed for equation solving,
+        # not for every quantity creation (performance optimization)
+        pass
+
+    def _detect_variable_name(self) -> str | None:
+        """Detect the variable name from the assignment context."""
+        import inspect
+        import re
+
+        try:
+            # Get the frame where this quantity was created
+            frame = inspect.currentframe()
+            if frame is None:
+                return None
+
+            # Go up the stack to find the assignment
+            for _ in range(10):  # Check up to 10 frames
+                frame = frame.f_back
+                if frame is None:
+                    break
+
+                # Get the code context
+                code = frame.f_code
+                local_vars = frame.f_locals
+
+                # Look for assignment patterns in the source
+                # This handles: var = Quantity(...), var = Q(...), var = Length(...).set(...).unit
+                try:
+                    import linecache
+                    line = linecache.getline(code.co_filename, frame.f_lineno).strip()
+
+                    # Match assignment patterns
+                    # Pattern 1: var = expression
+                    match = re.match(r'^([a-zA-Z_][a-zA-Z0-9_]*)\s*=', line)
+                    if match:
+                        var_name = match.group(1)
+                        # Verify this is actually our object being assigned
+                        # by checking if we're in the process of creating it
+                        return var_name
+
+                    # Pattern 2: self.var = expression (for class attributes)
+                    match = re.match(r'^self\.([a-zA-Z_][a-zA-Z0-9_]*)\s*=', line)
+                    if match:
+                        return match.group(1)
+
+                except Exception:
+                    continue
+
+        except Exception:
+            pass
+
+        return None
+
+    @property
+    def symbol(self) -> str:
+        """Get the symbol for this quantity (auto-detected or manually set)."""
+        if self._symbol is None:
+            # Lazy detection: only when symbol is actually needed
+            self._symbol = self._detect_variable_name()
+        return self._symbol or self.name
 
     # Factory methods for different use cases
     @classmethod
@@ -89,6 +153,29 @@ class Quantity(Generic[D]):
             value=self.value,
             preferred=unit
         )
+
+    def to(self, unit: Unit[D] | str) -> Quantity[D]:
+        """Direct conversion method for maximum performance."""
+        if isinstance(unit, str):
+            resolved = ureg.resolve(unit, dim=self.dim)
+            if resolved is None:
+                raise ValueError(f"Unknown unit '{unit}'")
+            unit = resolved
+
+        if self.value is None:
+            raise ValueError(f"Cannot convert unknown quantity '{self.name}' to unit")
+
+        # Fast conversion: (si_value - offset) / factor
+        converted_value = (self.value - unit.si_offset) / unit.si_factor
+
+        # Optimized Quantity creation
+        new_q = object.__new__(Quantity)
+        new_q.name = "converted"
+        new_q.dim = self.dim
+        new_q.value = converted_value
+        new_q.preferred = unit
+        new_q._symbol = None
+        return new_q
 
     @property
     def to_unit(self) -> UnitApplier[D]:
@@ -294,32 +381,18 @@ def Q(val: float, unit: Unit[D] | str | type) -> Quantity:
     # At this point, unit is guaranteed to be a Unit object, not a string or type
     assert not isinstance(unit, str | type)
 
-    # Create a registry mapping dimensions to quantity classes
-    dimension_to_class = {
-        quantity_catalog.Acceleration('').dim: quantity_catalog.Acceleration,
-        quantity_catalog.Length('').dim: quantity_catalog.Length,
-        quantity_catalog.Dimensionless('').dim: quantity_catalog.Dimensionless,
-    }
-
-    # Check if we have a specialized quantity class for this dimension
-    quantity_class = dimension_to_class.get(unit.dim)
-    if quantity_class:
-        # Create instance of the specialized class with value converted to SI
-        si_value = unit.si_factor * val + unit.si_offset
-        return quantity_class(
-            name="Q",
-            value=si_value,
-            preferred=unit
-        )
-
-    # Fallback to generic Quantity
+    # Fast path: use generic Quantity for better performance
+    # (specialized quantity classes can be created explicitly when needed)
     si_value = unit.si_factor * val + unit.si_offset
-    return Quantity(
-        name="Q",
-        dim=unit.dim,
-        value=si_value,
-        preferred=unit
-    )
+
+    # Optimized Quantity creation - bypass dataclass overhead
+    new_q = object.__new__(Quantity)
+    new_q.name = "Q"
+    new_q.dim = unit.dim
+    new_q.value = si_value
+    new_q.preferred = unit
+    new_q._symbol = None
+    return new_q
 
 
 # ---- Setter classes ----
@@ -363,11 +436,13 @@ class QuantitySetter(Generic[D]):
 
 class UnitApplier(Generic[D]):
     """Helper for .to_unit property."""
-    __slots__ = ("_q", "_dim")
+    __slots__ = ("_q", "_dim", "_unit_cache")
 
     def __init__(self, q: Quantity[D]):
         self._q = q
         self._dim = q.dim
+        # Cache for commonly used units to avoid repeated ureg.resolve calls
+        self._unit_cache = {}
 
     def __call__(self, unit: Unit[D] | str) -> Quantity[D]:
         if isinstance(unit, str):
@@ -380,18 +455,41 @@ class UnitApplier(Generic[D]):
         if self._q.value is None:
             raise ValueError(f"Cannot convert unknown quantity '{self._q.name}' to unit")
         converted_value = (self._q.value - unit.si_offset) / unit.si_factor
-        return Quantity(
-            name="converted",
-            dim=self._dim,
-            value=converted_value,
-            preferred=unit
-        )
+
+        # Optimized Quantity creation - bypass dataclass overhead
+        new_q = object.__new__(Quantity)
+        new_q.name = "converted"
+        new_q.dim = self._dim
+        new_q.value = converted_value
+        new_q.preferred = unit
+        new_q._symbol = None
+        return new_q
 
     def __getattr__(self, name: str) -> Quantity[D]:
-        unit = ureg.resolve(name, dim=self._dim)
+        # Check cache first for performance
+        unit = self._unit_cache.get(name)
         if unit is None:
-            raise AttributeError(f"No unit '{name}' for dimension {self._dim}")
-        return self(unit)
+            unit = ureg.resolve(name, dim=self._dim)
+            if unit is None:
+                raise AttributeError(f"No unit '{name}' for dimension {self._dim}")
+            # Cache the resolved unit for future use
+            self._unit_cache[name] = unit
+
+        # Inline conversion for maximum speed (avoid __call__ overhead)
+        if self._q.value is None:
+            raise ValueError(f"Cannot convert unknown quantity '{self._q.name}' to unit")
+
+        # Fast conversion: (si_value - offset) / factor
+        converted_value = (self._q.value - unit.si_offset) / unit.si_factor
+
+        # Optimized Quantity creation
+        new_q = object.__new__(Quantity)
+        new_q.name = "converted"
+        new_q.dim = self._dim
+        new_q.value = converted_value
+        new_q.preferred = unit
+        new_q._symbol = None
+        return new_q
 
 
 class UnitChanger(Generic[D]):
