@@ -115,3 +115,4 @@ Variables need symbol assignment for equation solving:
 t = Length("Pressure Design Thickness", is_known=False)
 t.symbol = "t"  # Required for equation.solve_for("t", variables)
 ```
+- My tests are currently useless until I finish a major refactor.

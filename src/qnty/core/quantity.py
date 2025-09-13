@@ -1,366 +1,380 @@
-from dataclasses import dataclass
-from typing import Generic, Self, TypeVar, overload
+"""
+Unified Quantity class that combines the functionality of both Quantity and FieldQuantity.
+"""
+from __future__ import annotations
 
-from .unit import u
+from dataclasses import dataclass
+from typing import TYPE_CHECKING, Any, Generic, Self, TypeVar, cast, overload
+
 from .dimension import Dimension
 from .unit import Unit, ureg
 
+if TYPE_CHECKING:
+    from . import quantity_catalog
+
 D = TypeVar("D")
 
-@dataclass(frozen=True, slots=True)
+@dataclass
 class Quantity(Generic[D]):
     """
-    Immutable physical quantity stored in SI units.
-    Supports arithmetic and automatic pretty-printing
-    using preferred units from the UnitRegistry.
+    A unified quantity that can be either:
+    - A concrete value with dimension (when value is set)
+    - A named placeholder (when value is None)
+
+    Supports arithmetic, unit conversions, and all FieldQuantity features.
     """
-    value: float         # numerical value in SI base units
-    dim: Dimension       # physical dimension (e.g., M*L/T^2)
+    name: str
+    dim: Dimension
+    value: float | None = None
+    preferred: Unit[D] | None = None
+
+    # Factory methods for different use cases
+    @classmethod
+    def from_value(cls, value: float, unit: Unit[D], name: str = "unnamed") -> Quantity[D]:
+        """Create a quantity from a value and unit (replaces Q function)."""
+        return cls(
+            name=name,
+            dim=unit.dim,
+            value=unit.si_factor * value + unit.si_offset
+        )
+
+    @classmethod
+    def unknown(cls, name: str, dim: Dimension, preferred: Unit[D] | None = None) -> Quantity[D]:
+        """Create an unknown/placeholder quantity."""
+        return cls(name=name, dim=dim, preferred=preferred)
+
+    # ---- Properties ----
+    @property
+    def is_known(self) -> bool:
+        return self.value is not None
+
+    @property
+    def quantity(self) -> Quantity[D] | None:
+        """Compatibility property for code expecting .q"""
+        return self if self.value is not None else None
+
+    # ---- Setting values ----
+    @overload
+    def set(self, value: float) -> QuantitySetter[D]: ...
+    @overload
+    def set(self, value: float, unit: Unit[D]) -> Self: ...
+    @overload
+    def set(self, value: float, unit: str) -> Self: ...
+
+    def set(self, value: float, unit: Unit[D] | str | None = None) -> QuantitySetter[D] | Self:
+        """Set the value of this quantity."""
+        if unit is None:
+            return QuantitySetter(self, value)
+
+        if isinstance(unit, str):
+            resolved = ureg.resolve(unit)
+            if resolved is None:
+                raise ValueError(f"Unknown unit '{unit}'")
+            unit = resolved
+
+        # Create new instance with value set
+        new_q = Quantity(
+            name=self.name,
+            dim=self.dim,
+            value=unit.si_factor * value + unit.si_offset,
+            preferred=self.preferred or unit
+        )
+        return new_q  # type: ignore
+
+    def prefer(self, unit: Unit[D]) -> Quantity[D]:
+        """Set preferred display unit."""
+        return Quantity(
+            name=self.name,
+            dim=self.dim,
+            value=self.value,
+            preferred=unit
+        )
+
+
+
+    @property
+    def to_unit(self) -> UnitApplier[D]:
+        """Convert to different unit via attribute access."""
+        return UnitApplier(self)
+
+    @property
+    def as_unit(self) -> UnitChanger[D]:
+        """Change display unit via attribute access."""
+        return UnitChanger(self)
 
     # ----- arithmetic -----
-    def __mul__(self, other: "Quantity | float | int") -> "Quantity":
+    def __mul__(self, other: Quantity | float | int) -> Quantity:
         if isinstance(other, Quantity):
-            return Quantity(self.value * other.value, self.dim * other.dim)
-        return Quantity(self.value * float(other), self.dim)
+            if self.value is None or other.value is None:
+                raise ValueError("Cannot perform arithmetic on unknown quantities")
+            result_value = self.value * other.value
+            return Quantity(name=f"{result_value}", dim=self.dim * other.dim, value=result_value)
+        if self.value is None:
+            raise ValueError("Cannot perform arithmetic on unknown quantities")
+        result_value = self.value * float(other)
+        return Quantity(name=f"{result_value}", dim=self.dim, value=result_value)
 
-    def __truediv__(self, other: "Quantity | float | int") -> "Quantity":
+    def __truediv__(self, other: Quantity | float | int) -> Quantity:
         if isinstance(other, Quantity):
-            return Quantity(self.value / other.value, self.dim / other.dim)
-        return Quantity(self.value / float(other), self.dim)
+            if self.value is None or other.value is None:
+                raise ValueError("Cannot perform arithmetic on unknown quantities")
+            result_value = self.value / other.value
+            return Quantity(name=f"{result_value}", dim=self.dim / other.dim, value=result_value)
+        if self.value is None:
+            raise ValueError("Cannot perform arithmetic on unknown quantities")
+        result_value = self.value / float(other)
+        return Quantity(name=f"{result_value}", dim=self.dim, value=result_value)
 
-    def __pow__(self, k: int) -> "Quantity":
-        return Quantity(self.value ** k, self.dim ** k)
+    def __pow__(self, k: int) -> Quantity:
+        if self.value is None:
+            raise ValueError("Cannot perform arithmetic on unknown quantities")
+        result_value = self.value ** k
+        return Quantity(name=f"{result_value}", dim=self.dim ** k, value=result_value)
 
-    def __add__(self, other: "Quantity") -> "Quantity":
+    def __add__(self, other: Quantity) -> Quantity:
         if self.dim != other.dim:
             raise TypeError("Dimension mismatch in addition")
-        return Quantity(self.value + other.value, self.dim)
+        if self.value is None or other.value is None:
+            raise ValueError("Cannot perform arithmetic on unknown quantities")
+        result_value = self.value + other.value
+        return Quantity(name=f"{result_value}", dim=self.dim, value=result_value)
 
-    def __sub__(self, other: "Quantity") -> "Quantity":
+    def __sub__(self, other: Quantity) -> Quantity:
         if self.dim != other.dim:
             raise TypeError("Dimension mismatch in subtraction")
-        return Quantity(self.value - other.value, self.dim)
+        if self.value is None or other.value is None:
+            raise ValueError("Cannot perform arithmetic on unknown quantities")
+        result_value = self.value - other.value
+        return Quantity(name=f"{result_value}", dim=self.dim, value=result_value)
     
     def __float__(self) -> float:
         if not self.dim.is_dimensionless():
             raise TypeError("Cannot convert non-dimensionless quantity to float")
         if self.dim.is_angle():
             raise TypeError("NOT IMPLEMENTED YET")
+        if self.value is None:
+            raise ValueError("Cannot convert unknown quantity to float")
         return self.value
 
     # ----- conversion & display -----
-    def to(self, unit: Unit[D]) -> float:
-        if unit.dim != self.dim:
-            raise TypeError(f"Cannot convert {self.dim} to {unit.dim}")
-        return (self.value - unit.si_offset) / unit.si_factor
+    # def to(self, unit: Unit[D]) -> float:
+    #     if unit.dim != self.dim:
+    #         raise TypeError(f"Cannot convert {self.dim} to {unit.dim}")
+    #     return (self.value - unit.si_offset) / unit.si_factor
+
+    # def __repr__(self) -> str:
+    #     """
+    #     Pretty-print in the preferred unit if one is registered;
+    #     otherwise show the raw SI value and dimension.
+    #     """
+    #     pref = ureg.preferred_for(self.dim)
+    #     if pref:
+    #         return f"{self.to(pref):.6g} {pref.symbol}"
+    #     return f"{self.value:.6g} [Dim={self.dim}]"
+
+    # ---- Display ----
+    def __str__(self) -> str:
+        if self.value is None:
+            return f"{self.name} (unknown)" if self.name else "Unknown quantity"
+
+        unit = self.preferred or ureg.preferred_for(self.dim) or ureg.si_unit_for(self.dim)
+        if unit is None:
+            return f"{self.value:.6g} [Dim={self.dim}]"
+        converted_quantity = self.to_unit(unit)
+        return f"{converted_quantity.value:.6g} {unit.symbol}"
 
     def __repr__(self) -> str:
-        """
-        Pretty-print in the preferred unit if one is registered;
-        otherwise show the raw SI value and dimension.
-        """
-        pref = ureg.preferred_for(self.dim)
-        if pref:
-            return f"{self.to(pref):.6g} {pref.symbol}"
-        return f"{self.value:.6g} [Dim={self.dim}]"
-
-
-def Q(val: float, unit: Unit[D]) -> Quantity[D]:
-    return Quantity(unit.si_factor * val + unit.si_offset, unit.dim)
-
-
-# =========================
-# FieldQuantity + Setter
-# =========================
-class FieldQuantity(Generic[D]):
-    """
-    A named quantity (optionally unknown) with an optional preferred display unit.
-    """
-    __slots__ = ("name", "q", "preferred")
-
-    def __init__(self, name: str, q: Quantity[D] | None = None, preferred: Unit[D] | None = None):
-        self.name = name
-        self.q = q
-        self.preferred = preferred
-
-    @property
-    def is_known(self) -> bool:
-        return self.q is not None
-
-    def prefer(self, unit: Unit[D]) -> "FieldQuantity[D]":
-        self.preferred = unit
-        return self
-
-    @overload
-    def set(self, value: float) -> "FieldSetter[D]": ...
-    @overload
-    def set(self, value: float, unit: Unit[D]) -> Self: ...
-    @overload
-    def set(self, value: float, unit: str) -> Self: ...
-    def set(self, value: float, unit: Unit[D] | str | None = None) -> "FieldSetter[D] | Self":
-        if unit is None:
-            return FieldSetter(self, value)
-        if isinstance(unit, str):
-            resolved = ureg.resolve(unit)
-            if resolved is None:
-                raise ValueError(f"Unknown unit '{unit}'")
-            self.q = Q(value, resolved)
-            return self
-        self.q = Q(value, unit)
-        return self
-
-
-    def value_in(self, unit: Unit[D] | None = None) -> float | None:
-        if self.q is None:
-            return None
-        u = unit or self.preferred or ureg.preferred_for(self.q.dim)
-        return self.q.value if u is None else self.q.to(u)
-
-    @property
-    def to_unit(self) -> "UnitApplier[D]":
-        return UnitApplier(self)
-
-    @property
-    def as_unit(self) -> "UnitChanger[D]":
-        return UnitChanger(self)
-
-    # ---- display ----
-    def __str__(self) -> str:  # user-friendly printing
-        if self.q is None:
-            return f"{self.name} (unknown)"
-        unit = self.preferred or ureg.si_unit_for(self.q.dim)  # fallback to a sensible SI unit
-        if unit is None:
-            return f"{self.q.value:.6g} [Dim={self.q.dim}]"
-        return f"{self.q.to(unit):.6g} {unit.symbol}"
-
-    def __repr__(self) -> str:  # mirror __str__ for console/debug parity
         return self.__str__()
 
-class FieldSetter(Generic[D]):
-    """
-    Returned by FieldQuantity.set(value) when no unit is given.
-    Supports .using("mps2"), .in_(u.mps2), and fluent .mps2 / .meter_per_second_squared, etc.
-    """
+
+# Compatibility function with automatic dimension detection and proper typing
+@overload
+def Q(val: float, unit: str) -> Quantity: ...
+
+@overload
+def Q(val: float, unit: Unit[D]) -> Quantity[D]: ...
+
+if TYPE_CHECKING:
+    from .unit_catalog import AccelerationUnits, DimensionlessUnits, LengthUnits
+
+    @overload
+    def Q(val: float, unit: type[AccelerationUnits]) -> quantity_catalog.Acceleration: ...
+
+    @overload
+    def Q(val: float, unit: type[LengthUnits]) -> quantity_catalog.Length: ...
+
+    @overload
+    def Q(val: float, unit: type[DimensionlessUnits]) -> quantity_catalog.Dimensionless: ...
+
+def Q(val: float, unit: Unit[D] | str | type) -> Quantity:
+    """Create a quantity from value and unit string with automatic dimension detection and proper quantity type."""
+    if isinstance(unit, str):
+        resolved_unit = ureg.resolve(unit)
+        if resolved_unit is None:
+            raise ValueError(f"Unknown unit '{unit}'")
+        unit = resolved_unit
+    elif isinstance(unit, type):
+        # Check if it's a UnitNamespace class
+        from .unit import UnitNamespace
+        if issubclass(unit, UnitNamespace):
+            # Get the preferred unit from the UnitNamespace class
+            preferred_name = getattr(unit, '__preferred__', None)
+            if preferred_name is None:
+                raise ValueError(f"UnitNamespace {unit.__name__} has no __preferred__ attribute")
+            unit = getattr(unit, preferred_name)
+        else:
+            raise ValueError(f"Invalid unit type: {type(unit)}")
+
+    # Import quantity classes here to avoid circular imports
+    from . import quantity_catalog
+
+    # At this point, unit is guaranteed to be a Unit object, not a string or type
+    assert not isinstance(unit, str | type)
+
+    # Create a registry mapping dimensions to quantity classes
+    dimension_to_class = {
+        quantity_catalog.Acceleration('').dim: quantity_catalog.Acceleration,
+        quantity_catalog.Length('').dim: quantity_catalog.Length,
+        quantity_catalog.Dimensionless('').dim: quantity_catalog.Dimensionless,
+    }
+
+    # Check if we have a specialized quantity class for this dimension
+    quantity_class = dimension_to_class.get(unit.dim)
+    if quantity_class:
+        # Create instance of the specialized class with value converted to SI
+        si_value = unit.si_factor * val + unit.si_offset
+        return quantity_class(
+            name="Q",
+            value=si_value,
+            preferred=unit
+        )
+
+    # Fallback to generic Quantity
+    si_value = unit.si_factor * val + unit.si_offset
+    return Quantity(
+        name="Q",
+        dim=unit.dim,
+        value=si_value,
+        preferred=unit
+    )
+
+
+# ---- Setter classes ----
+class QuantitySetter(Generic[D]):
+    """Fluent setter for quantities when unit not specified."""
     __slots__ = ("_owner", "_value", "_dim")
 
-    def __init__(self, owner: FieldQuantity[D], value: float, dim: "Dimension | None" = None):
+    def __init__(self, owner: Quantity[D], value: float):
         self._owner = owner
         self._value = float(value)
-        # When provided, restrict resolution to this dimension
-        self._dim = dim
+        self._dim = owner.dim
 
-    # ---- explicit helpers ----
-    def using(self, unit_name: str) -> FieldQuantity[D]:
+    def using(self, unit_name: str) -> Quantity[D]:
         """Set by unit name/alias string."""
-        unit = ureg.resolve(unit_name, dim=self._dim)  # must return a Unit or None
+        unit = ureg.resolve(unit_name, dim=self._dim)
         if unit is None:
             raise AttributeError(f"Unknown unit '{unit_name}'")
-        self._owner.set(self._value, unit)
-        return self._owner
+        return self._owner.set(self._value, unit)
 
-    def in_(self, unit: Unit[D]) -> "FieldQuantity[D]":
-        self._owner.set(self._value, unit)
-        return self._owner
+    def in_(self, unit: Unit[D]) -> Quantity[D]:
+        return self._owner.set(self._value, unit)
 
-    # ---- fluent attributes: .mps2, .meter_per_second_squared, etc. ----
-    def __getattr__(self, name: str) -> FieldQuantity[D]:
-        """
-        Resolve attribute name to a Unit (via registry) and apply immediately.
-        Returns the FieldQuantity so the chain can continue.
-        """
+    def __getattr__(self, name: str) -> Quantity[D]:
+        """Resolve attribute name to a Unit and apply."""
         unit = ureg.resolve(name, dim=self._dim)
         if unit is None:
             raise AttributeError(f"{type(self).__name__} has no attribute '{name}'")
-        self._owner.set(self._value, unit)  # dimension mismatch handled in Q/Quantity.to if needed
-        return self._owner
+        return self._owner.set(self._value, unit)
 
     def __dir__(self):
-        """
-        Improve IDE autocompletion by exposing known names/aliases
-        (if your editor uses __dir__). This is optional but nice.
-        """
         base = super().__dir__()
         try:
-            # Show only names for the expected dimension if known; else show all
-            if getattr(self, "_dim", None) is not None:
-                names = ureg.names_for(self._dim)  # type: ignore[arg-type]
+            if self._dim is not None:
+                names = ureg.names_for(self._dim)
             else:
                 names = ureg.all_names()
             return sorted(set(list(base) + list(names)))
         except Exception:
             return base
-        
+
 
 class UnitApplier(Generic[D]):
-    """Helper returned by `.to_unit` for ergonomic conversions via attribute or call.
+    """Helper for .to_unit property."""
+    __slots__ = ("_q", "_dim")
 
-    Usage:
-      q.to_unit.meter_per_square_second
-      q.to_unit("m/s²")
-    """
-    __slots__ = ("_owner", "_dim")
+    def __init__(self, q: Quantity[D]):
+        self._q = q
+        self._dim = q.dim
 
-    def __init__(self, owner: "FieldQuantity[D]", dim: "Dimension | None" = None):
-        self._owner = owner
-        self._dim = dim
-
-    def __call__(self, unit: Unit[D] | str) -> "FieldQuantity[D]":
+    def __call__(self, unit: Unit[D] | str) -> Quantity[D]:
         if isinstance(unit, str):
             resolved = ureg.resolve(unit, dim=self._dim)
             if resolved is None:
                 raise ValueError(f"Unknown unit '{unit}'")
             unit = resolved
-        # Validate dimension if known
-        if self._owner.q is not None and unit.dim != self._owner.q.dim:
-            raise TypeError(f"Cannot prefer unit of dimension {unit.dim} for quantity {self._owner.q.dim}")
-        # Return a new instance with the same value but preferred unit set
-        cls = type(self._owner)
-        return cls(self._owner.name, self._owner.q, unit)
 
-    def __getattr__(self, name: str) -> "FieldQuantity[D]":
+        # Convert from SI to target unit: (si_value - offset) / factor
+        if self._q.value is None:
+            raise ValueError(f"Cannot convert unknown quantity '{self._q.name}' to unit")
+        converted_value = (self._q.value - unit.si_offset) / unit.si_factor
+        return Quantity(
+            name="converted",
+            dim=self._dim,
+            value=converted_value,
+            preferred=unit
+        )
+
+    def __getattr__(self, name: str) -> Quantity[D]:
         unit = ureg.resolve(name, dim=self._dim)
         if unit is None:
-            raise AttributeError(f"{type(self).__name__} has no attribute '{name}'")
+            raise AttributeError(f"No unit '{name}' for dimension {self._dim}")
         return self(unit)
-
-    def __dir__(self):
-        base = super().__dir__()
-        try:
-            names = ureg.all_names()
-            return sorted(set(list(base) + names))
-        except Exception:
-            return base
 
 
 class UnitChanger(Generic[D]):
-    """Helper returned by `.as_unit` to keep the same numeric value but change the unit.
+    """Helper for .as_unit property."""
+    __slots__ = ("_q", "_dim")
 
-    - If unknown, just change preferred.
-    - If known, compute a new underlying SI value such that the displayed numeric remains the same in the chosen unit.
-    """
-    __slots__ = ("_owner", "_dim")
+    def __init__(self, q: Quantity[D]):
+        self._q = q
+        self._dim = q.dim
 
-    def __init__(self, owner: "FieldQuantity[D]", dim: "Dimension | None" = None):
-        self._owner = owner
-        self._dim = dim
-
-    def __call__(self, unit: Unit[D] | str) -> "FieldQuantity[D]":
+    def __call__(self, unit: Unit[D] | str) -> Quantity[D]:
         if isinstance(unit, str):
             resolved = ureg.resolve(unit, dim=self._dim)
             if resolved is None:
                 raise ValueError(f"Unknown unit '{unit}'")
             unit = resolved
-        if self._owner.q is not None and unit.dim != self._owner.q.dim:
-            raise TypeError(f"Cannot change to unit of dimension {unit.dim} from {self._owner.q.dim}")
-        # If unknown, only set preferred
-        if self._owner.q is None:
-            cls = type(self._owner)
-            return cls(self._owner.name, None, unit)
-        # Determine the currently displayed numeric value
-        current_pref = self._owner.preferred or ureg.si_unit_for(self._owner.q.dim)
-        if current_pref is not None:
-            numeric = self._owner.q.to(current_pref)
-        else:
-            numeric = self._owner.q.value
-        # Build new Quantity that displays the same numeric in the chosen unit
-        new_q = Q(numeric, unit)
-        cls = type(self._owner)
-        return cls(self._owner.name, new_q, unit)
 
-    def __getattr__(self, name: str) -> "FieldQuantity[D]":
+        # For as_unit, we want to keep the display value the same
+        # So if current display is "25 ft/s²", we want new display to be "25 m/s²"
+        if self._q.value is None:
+            raise ValueError(f"Cannot change unit of unknown quantity '{self._q.name}'")
+
+        current_unit = self._q.preferred or ureg.preferred_for(self._dim) or ureg.si_unit_for(self._dim)
+        if current_unit:
+            # Convert from SI to current display unit: (si_value - offset) / factor
+            display_value = (self._q.value - current_unit.si_offset) / current_unit.si_factor
+        else:
+            display_value = self._q.value
+
+        # Convert this display value to SI for storage
+        si_value = unit.si_factor * display_value + unit.si_offset
+
+        return Quantity(
+            name=self._q.name,
+            dim=self._dim,
+            value=si_value,
+            preferred=unit
+        )
+
+    def __getattr__(self, name: str) -> Quantity[D]:
         unit = ureg.resolve(name, dim=self._dim)
         if unit is None:
-            raise AttributeError(f"{type(self).__name__} has no attribute '{name}'")
+            raise AttributeError(f"No unit '{name}' for dimension {self._dim}")
         return self(unit)
 
-    def __dir__(self):
-        base = super().__dir__()
-        try:
-            names = ureg.all_names()
-            return sorted(set(list(base) + names))
-        except Exception:
-            return base
 
-# ---- generic binding helpers for any FieldQuantity subclass ----
-def _get_namespace_dim(ns_cls: type) -> Dimension:
-    for v in vars(ns_cls).values():
-        if isinstance(v, Unit):
-            return v.dim
-    raise RuntimeError("Unit namespace has no Unit attributes to derive dimension")
-
-
-def bind_quantity_namespace(
-    quantity_cls: type[FieldQuantity],
-    setter_cls: type[FieldSetter],
-    unit_namespace: type,
-) -> None:
-    """
-    Attach canonical unit properties from `unit_namespace` onto the provided
-    setter and proxy classes for the given quantity class.
-    """
-    # Build properties
-    def _make_setter_prop(unit_name: str):
-        def _prop(self):
-            return self.in_(getattr(u, unit_name))
-        return property(_prop)
-
-    def _make_proxy_prop(unit_name: str):
-        def _prop(self):
-            return self(getattr(u, unit_name))
-        return property(_prop)
-
-    for name, v in vars(unit_namespace).items():
-        if isinstance(v, Unit):
-            setattr(setter_cls, name, _make_setter_prop(name))
-            # Access nested helper classes on the quantity
-            to_cls = quantity_cls.ToUnit  # type: ignore[attr-defined]
-            as_cls = quantity_cls.AsUnit  # type: ignore[attr-defined]
-            setattr(to_cls, name, _make_proxy_prop(name))
-            setattr(as_cls, name, _make_proxy_prop(name))
-
-
-
-# class BooleanQuantity(Quantity):
-#     """A quantity that represents a boolean value but maintains Quantity compatibility.
-
-#     This class is used for comparison operations that need to return boolean results
-#     while maintaining the Expression interface requirement of returning Quantity objects.
-#     """
-
-#     __slots__ = ("_boolean_value",)
-
-#     def __init__(self, boolean_value: bool):
-#         """Initialize with a boolean value."""
-#         # Store the actual boolean value
-#         self._boolean_value = boolean_value
-
-#         # Initialize parent with numeric representation
-#         super().__init__(1.0 if boolean_value else 0.0, DIMENSIONLESS)
-
-#     def __str__(self) -> str:
-#         """Display as True/False instead of 1.0/0.0."""
-#         return str(self._boolean_value)
-
-#     def __repr__(self) -> str:
-#         """Display as BooleanQuantity(True/False)."""
-#         return f"BooleanQuantity({self._boolean_value})"
-
-#     def __bool__(self) -> bool:
-#         """Return the actual boolean value."""
-#         return self._boolean_value
-
-#     @property
-#     def boolean_value(self) -> bool:
-#         """Access the boolean value directly."""
-#         return self._boolean_value
-
-
-# class TypeSafeSetter:
-#     """Base class for type-safe setter objects."""
-    
-#     __slots__ = ("variable", "value")
-    
-#     def __init__(self, variable, value: float):
-#         """Initialize setter with variable and value."""
-#         self.variable = variable
-#         self.value = value
+# For backwards compatibility
+FieldQuantity = Quantity
+FieldSetter = QuantitySetter

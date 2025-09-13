@@ -14,9 +14,10 @@ import pint
 import unyt
 from astropy.units import imperial
 
+from qnty.core import unit_catalog as uc
+
 # from qnty import Length
 from qnty.core.quantity import Q
-from qnty.units import DimensionlessUnits, LengthUnits, PressureUnits
 
 # Pre-define all variables to exclude initialization from performance measurements
 ASTROPY_AVAILABLE = True
@@ -57,24 +58,24 @@ ureg = pint.UnitRegistry()
 ## ---------------------------------------------------------------------------
 
 # Qnty quantities
-qnty_meter = Q(TEST_VALUE, LengthUnits.meter)
-qnty_mm_100 = Q(100.0, LengthUnits.millimeter)
-qnty_inch_2 = Q(2.0, LengthUnits.inch)  # keep a mixed-unit source for mixed addition
-qnty_length_10 = Q(10.0, LengthUnits.meter)
-qnty_width_5 = Q(5.0, LengthUnits.meter)
-qnty_pressure = Q(PRESSURE_VALUE, PressureUnits.Pa)
-qnty_area_10mm = Q(10.0, LengthUnits.millimeter)
-qnty_P = Q(PRESSURE_VALUE, PressureUnits.Pa)
-qnty_D = Q(LENGTH_VALUE, LengthUnits.meter)
-qnty_S = Q(137.895e6, PressureUnits.Pa)  # 137.895 MPa expressed in Pa for all libs
-qnty_E = Q(0.8, DimensionlessUnits.dimensionless)
-qnty_W = Q(1.0, DimensionlessUnits.dimensionless)
-qnty_Y = Q(0.4, DimensionlessUnits.dimensionless)
-qnty_length = Q(100.0, LengthUnits.millimeter)  # For type-safe variable test
-qnty_q1_50mm = Q(50.0, LengthUnits.millimeter)
-qnty_q2_2in = Q(2.0, LengthUnits.inch)
-qnty_q3_05m = Q(0.5, LengthUnits.meter)
-qnty_zero_mm = Q(0, LengthUnits.millimeter)
+qnty_meter = Q(TEST_VALUE, uc.LengthUnits.meter)
+qnty_mm_100 = Q(100.0, uc.LengthUnits.millimeter)
+qnty_inch_2 = Q(2.0, uc.LengthUnits.inch)  # keep a mixed-unit source for mixed addition
+qnty_length_10 = Q(10.0, uc.LengthUnits.meter)
+qnty_width_5 = Q(5.0, uc.LengthUnits.meter)
+qnty_pressure = Q(PRESSURE_VALUE, uc.PressureUnits.Pa)
+qnty_area_10mm = Q(10.0, uc.LengthUnits.millimeter)
+qnty_P = Q(PRESSURE_VALUE, uc.PressureUnits.Pa)
+qnty_D = Q(LENGTH_VALUE, uc.LengthUnits.meter)
+qnty_S = Q(137.895e6, uc.PressureUnits.Pa)  # 137.895 MPa expressed in Pa for all libs
+qnty_E = Q(0.8, uc.DimensionlessUnits.dimensionless)
+qnty_W = Q(1.0, uc.DimensionlessUnits.dimensionless)
+qnty_Y = Q(0.4, uc.DimensionlessUnits.dimensionless)
+qnty_length = Q(100.0, uc.LengthUnits.millimeter)  # For type-safe variable test
+qnty_q1_50mm = Q(50.0, uc.LengthUnits.millimeter)
+qnty_q2_2in = Q(2.0, uc.LengthUnits.inch)
+qnty_q3_05m = Q(0.5, uc.LengthUnits.meter)
+qnty_zero_mm = Q(0, uc.LengthUnits.millimeter)
 
 # Pint quantities (mirroring above units)
 pint_meter = ureg.Quantity(TEST_VALUE, "meter")
@@ -137,14 +138,14 @@ astropy_q3_05m = 0.5 * u.m  # type: ignore
 astropy_zero_mm = 0 * u.mm  # type: ignore
 
 # Fluid dynamics pre-created quantities
-qnty_P1 = Q(PRESSURE_VALUE, PressureUnits.Pa)
-qnty_P2 = Q(1800.0, PressureUnits.Pa)
-qnty_D_fluid = Q(LENGTH_VALUE, LengthUnits.millimeter)
-qnty_L = Q(100.0, LengthUnits.meter)
-qnty_rho = Q(850.0, DimensionlessUnits.dimensionless)
-qnty_pi = Q(3.14159, DimensionlessUnits.dimensionless)
-qnty_2 = Q(2, DimensionlessUnits.dimensionless)
-qnty_4 = Q(4.0, DimensionlessUnits.dimensionless)
+qnty_P1 = Q(PRESSURE_VALUE, uc.PressureUnits.Pa)
+qnty_P2 = Q(1800.0, uc.PressureUnits.Pa)
+qnty_D_fluid = Q(LENGTH_VALUE, uc.LengthUnits.millimeter)
+qnty_L = Q(100.0, uc.LengthUnits.meter)
+qnty_rho = Q(850.0, uc.DimensionlessUnits.dimensionless)
+qnty_pi = Q(3.14159, uc.DimensionlessUnits.dimensionless)
+qnty_2 = Q(2, uc.DimensionlessUnits.dimensionless)
+qnty_4 = Q(4.0, uc.DimensionlessUnits.dimensionless)
 
 pint_P1 = ureg.Quantity(PRESSURE_VALUE, "psi")
 pint_P2 = ureg.Quantity(1800.0, "psi")
@@ -305,7 +306,7 @@ def test_benchmark_suite(capsys):
 
     # ========== TEST 1: Simple Unit Conversion ==========
     def qnty_conversion():
-        return qnty_meter.to(LengthUnits.millimeter)
+        return qnty_meter.to(uc.LengthUnits.millimeter)
 
     def pint_conversion():
         return pint_meter.to("millimeter")
@@ -381,7 +382,7 @@ def test_benchmark_suite(capsys):
 
     # ========== TEST 5: Complex Engineering Calculation (ASME) ==========
     def qnty_complex():
-        return (qnty_P * qnty_D) / (Q(2, DimensionlessUnits.dimensionless) * (qnty_S * qnty_E * qnty_W + qnty_P * qnty_Y))
+        return (qnty_P * qnty_D) / (Q(2, uc.DimensionlessUnits.dimensionless) * (qnty_S * qnty_E * qnty_W + qnty_P * qnty_Y))
 
     def pint_complex():
         return (pint_P * pint_D) / (2 * (pint_S * pint_E * pint_W + pint_P * pint_Y))  # type: ignore
@@ -401,7 +402,7 @@ def test_benchmark_suite(capsys):
     # ========== TEST 6: Type-Safe Variables ==========
     def qnty_typesafe():
         assert qnty_length is not None
-        return qnty_length.to(LengthUnits.meter)
+        return qnty_length.to(uc.LengthUnits.meter)
 
     def pint_typesafe():
         # Pint doesn't have type-safe variables, so we simulate
@@ -422,7 +423,7 @@ def test_benchmark_suite(capsys):
     # ========== TEST 7: Chained Operations ==========
     def qnty_chained():
         result = (qnty_q1_50mm + qnty_q2_2in) * 2 + qnty_q3_05m
-        return result.to(LengthUnits.millimeter)
+        return result.to(uc.LengthUnits.millimeter)
 
     def pint_chained():
         result = (pint_q1_50mm + pint_q2_2in) * 2 + pint_q3_05m  # type: ignore
@@ -444,7 +445,7 @@ def test_benchmark_suite(capsys):
 
     # ========== TEST 8: Many Small Operations (Optimized) ==========
     # Pre-create quantities for loop to avoid repeated object creation
-    qnty_loop_quantities = [Q(i, LengthUnits.millimeter) for i in range(10)]
+    qnty_loop_quantities = [Q(i, uc.LengthUnits.millimeter) for i in range(10)]
     pint_loop_quantities = [ureg.Quantity(i, "millimeter") for i in range(10)]
     unyt_loop_quantities = [unyt.unyt_quantity(i, "millimeter") for i in range(10)]
     astropy_loop_quantities = [i * u.mm for i in range(10)]  # type: ignore
