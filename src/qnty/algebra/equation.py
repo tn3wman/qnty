@@ -8,7 +8,9 @@ Mathematical equations for qnty variables with solving capabilities.
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, cast
+from dataclasses import dataclass
+from enum import Enum
+from typing import TYPE_CHECKING, Protocol, cast
 
 from ..constants import SOLVER_DEFAULT_TOLERANCE
 from ..core.quantity import FieldQuantity
@@ -24,26 +26,169 @@ _logger = logging.getLogger(__name__)
 _SCOPE_DISCOVERY_ENABLED = False  # Disabled by default due to high overhead
 
 
+class OperandSide(Enum):
+    """Which side of a binary operation contains a variable."""
+    LEFT = "left"
+    RIGHT = "right"
+    BOTH = "both"
+    NEITHER = "neither"
+
+
+@dataclass
+class BinaryOperationAnalysis:
+    """Analysis result for a binary operation."""
+    target_side: OperandSide
+    target_expr: Expression | None
+    other_expr: Expression | None
+
+
+class OperatorInverter(Protocol):
+    """Protocol for operator inversion functions."""
+    def __call__(self, result: Quantity, other: Quantity, is_left: bool) -> Quantity | None: ...
+
+
+class AlgebraicInverter:
+    """Handles algebraic inversions for solving equations."""
+
+    def __init__(self, equation: Equation):
+        self.equation = equation
+        self._inverters: dict[str, OperatorInverter] = {
+            "+": self._invert_addition,
+            "-": self._invert_subtraction,
+            "*": self._invert_multiplication,
+            "/": self._invert_division,
+            "**": self._invert_power,
+        }
+
+    def _invert_addition(self, result: Quantity, other: Quantity, is_left: bool) -> Quantity:
+        """Invert addition: A + B = C => A = C - B"""
+        del is_left  # Unused parameter for addition
+        return result - other
+
+    def _invert_subtraction(self, result: Quantity, other: Quantity, is_left: bool) -> Quantity:
+        """Invert subtraction based on position."""
+        if is_left:
+            # A - B = C => A = C + B
+            return result + other
+        else:
+            # B - A = C => A = B - C
+            return other - result
+
+    def _invert_multiplication(self, result: Quantity, other: Quantity, is_left: bool) -> Quantity:
+        """Invert multiplication: A * B = C => A = C / B"""
+        del is_left  # Unused parameter for multiplication
+        return result / other
+
+    def _invert_division(self, result: Quantity, other: Quantity, is_left: bool) -> Quantity:
+        """Invert division based on position."""
+        if is_left:
+            # A / B = C => A = C * B
+            return result * other
+        else:
+            # B / A = C => A = B / C
+            return other / result
+
+    def _invert_power(self, result: Quantity, other: Quantity, is_left: bool) -> Quantity | None:
+        """Invert power operation if possible."""
+        if not is_left:
+            return None  # B ** A = C is complex
+
+        # A ** B = C => A = C ** (1/B)
+        other_val = self.equation._get_quantity_value(other)
+        result_val = self.equation._get_quantity_value(result)
+
+        if other_val and result_val:
+            try:
+                exponent = 1.0 / other_val
+                new_value = result_val ** exponent
+                return self.equation._create_quantity_with_value(result, new_value, "power_result")
+            except (ZeroDivisionError, ValueError):
+                pass
+        return None
+
+    def invert(self, operator: str, result: Quantity, other: Quantity, is_left: bool) -> Quantity | None:
+        """Invert an operation to solve for unknown."""
+        inverter = self._inverters.get(operator)
+        if inverter:
+            try:
+                return inverter(result, other, is_left)
+            except Exception:
+                return None
+        return None
+
+
 class Equation:
     """
     Represents a mathematical equation with left-hand side equal to right-hand side.
     Optimized with __slots__ for memory efficiency.
     """
 
-    __slots__ = ("name", "lhs", "rhs", "_variables")
+    __slots__ = ("name", "lhs", "rhs", "_variables", "_inverter")
 
     def __init__(self, name: str, lhs: FieldQuantity | Expression, rhs: Expression):
         self.name = name
-
-        # Convert Variable to VariableReference if needed - use isinstance for performance
-        if isinstance(lhs, FieldQuantity):
-            self.lhs = VariableReference(lhs)
-        else:
-            # It's already an Expression
-            self.lhs = cast(Expression, lhs)
-
+        self.lhs = self._to_expression(lhs)
         self.rhs = rhs
         self._variables: set[str] | None = None  # Lazy initialization for better performance
+        self._inverter = AlgebraicInverter(self)  # Create inverter for algebraic operations
+
+    @staticmethod
+    def _to_expression(value: FieldQuantity | Expression) -> Expression:
+        """Convert a value to an Expression, wrapping FieldQuantity in VariableReference."""
+        if isinstance(value, FieldQuantity):
+            return VariableReference(value)
+        return cast(Expression, value)
+
+    def _is_variable_known(self, var_name: str, variable_values: dict[str, FieldQuantity]) -> bool:
+        """Check if a variable exists in variable_values and is marked as known."""
+        if var_name not in variable_values:
+            return False
+        var = variable_values[var_name]
+        return hasattr(var, "is_known") and var.is_known
+
+    def _get_known_variable(self, var_name: str, variable_values: dict[str, FieldQuantity]) -> FieldQuantity | None:
+        """Get a variable if it exists and is known, otherwise return None."""
+        if self._is_variable_known(var_name, variable_values):
+            return variable_values[var_name]
+        return None
+
+    @staticmethod
+    def _get_quantity_value(quantity: Quantity) -> float | None:
+        """Safely extract numeric value from a Quantity."""
+        if hasattr(quantity, "value") and quantity.value is not None:
+            return float(quantity.value)
+        return None
+
+    @staticmethod
+    def _has_valid_value(quantity: Quantity) -> bool:
+        """Check if a quantity has a valid numeric value."""
+        return hasattr(quantity, "value") and quantity.value is not None
+
+    def _create_quantity_with_value(self, template: Quantity, value: float, name: str = "result") -> Quantity | None:
+        """Create a new quantity with the given value, using template for type/dimension."""
+        try:
+            result_unit = self._get_effective_unit(template)
+            if result_unit is not None and hasattr(template, "dim"):
+                return type(template)(name=name, dim=template.dim, value=value, preferred=result_unit)
+            elif hasattr(template, "dim"):
+                return type(template)(name=name, dim=template.dim, value=value)
+        except (TypeError, AttributeError):
+            pass
+        return None
+
+    def _analyze_binary_operation(self, expr: BinaryOperation, target_var: str) -> BinaryOperationAnalysis:
+        """Analyze which side of a binary operation contains the target variable."""
+        left_has_target = target_var in expr.left.get_variables()
+        right_has_target = target_var in expr.right.get_variables()
+
+        if left_has_target and right_has_target:
+            return BinaryOperationAnalysis(OperandSide.BOTH, None, None)
+        elif left_has_target:
+            return BinaryOperationAnalysis(OperandSide.LEFT, expr.left, expr.right)
+        elif right_has_target:
+            return BinaryOperationAnalysis(OperandSide.RIGHT, expr.right, expr.left)
+        else:
+            return BinaryOperationAnalysis(OperandSide.NEITHER, None, None)
 
     def get_all_variables(self) -> set[str]:
         """Get all variable names used in this equation."""
@@ -89,16 +234,14 @@ class Equation:
         # Case 1: LHS is a simple variable (X = expression)
         # But we need to solve for a variable in the RHS
         if isinstance(self.lhs, VariableReference):
-            lhs_var = self.lhs.name
-            if lhs_var in variable_values and hasattr(variable_values[lhs_var], "is_known") and variable_values[lhs_var].is_known:
+            if self._is_variable_known(self.lhs.name, variable_values):
                 # LHS is known, need to solve RHS = LHS for target_var
                 return self._solve_expression_for_var(self.rhs, target_var, self.lhs.evaluate(variable_values), variable_values)
 
         # Case 2: RHS is a simple variable (expression = X)
         # And we need to solve for a variable in the LHS
         if isinstance(self.rhs, VariableReference):
-            rhs_var = self.rhs.name
-            if rhs_var in variable_values and hasattr(variable_values[rhs_var], "is_known") and variable_values[rhs_var].is_known:
+            if self._is_variable_known(self.rhs.name, variable_values):
                 # RHS is known, need to solve LHS = RHS for target_var
                 return self._solve_expression_for_var(self.lhs, target_var, self.rhs.evaluate(variable_values), variable_values)
 
@@ -114,28 +257,22 @@ class Equation:
         if not isinstance(expr, BinaryOperation):
             return None
 
-        # Handle binary operations
-        left_has_target = target_var in expr.left.get_variables()
-        right_has_target = target_var in expr.right.get_variables()
+        analysis = self._analyze_binary_operation(expr, target_var)
 
-        # Target should be in exactly one side
-        if left_has_target and right_has_target:
-            return None  # Too complex
+        if analysis.target_side in (OperandSide.BOTH, OperandSide.NEITHER):
+            return None  # Too complex or target not present
 
-        if not left_has_target and not right_has_target:
-            return None  # Target not in expression
+        # Evaluate the non-target side
+        if analysis.other_expr is None or analysis.target_expr is None:
+            return None
 
-        # Evaluate the side without the target
-        if left_has_target:
-            # Target is on left, evaluate right
-            right_val = expr.right.evaluate(variable_values)
-            # Now solve: left op right_val = known_value for target in left
-            return self._invert_operation(expr.operator, expr.left, right_val, known_value, target_var, variable_values, is_left=True)
-        else:
-            # Target is on right, evaluate left
-            left_val = expr.left.evaluate(variable_values)
-            # Now solve: left_val op right = known_value for target in right
-            return self._invert_operation(expr.operator, expr.right, left_val, known_value, target_var, variable_values, is_left=False)
+        other_val = analysis.other_expr.evaluate(variable_values)
+        is_left = analysis.target_side == OperandSide.LEFT
+
+        return self._invert_operation(
+            expr.operator, analysis.target_expr, other_val,
+            known_value, target_var, variable_values, is_left
+        )
 
     def _invert_operation(
         self, operator: str, target_expr: Expression, other_val: Quantity, result_val: Quantity, target_var: str, variable_values: dict[str, FieldQuantity], is_left: bool
@@ -148,54 +285,7 @@ class Equation:
         """
         # Simple case: target_expr is just the variable we're looking for
         if isinstance(target_expr, VariableReference) and target_expr.name == target_var:
-            if operator == "+":
-                # A + B = C => A = C - B
-                return result_val - other_val
-            elif operator == "-":
-                if is_left:
-                    # A - B = C => A = C + B
-                    return result_val + other_val
-                else:
-                    # B - A = C => A = B - C
-                    return other_val - result_val
-            elif operator == "*":
-                # A * B = C => A = C / B
-                return result_val / other_val
-            elif operator == "/":
-                if is_left:
-                    # A / B = C => A = C * B
-                    return result_val * other_val
-                else:
-                    # B / A = C => A = B / C
-                    return other_val / result_val
-            elif operator == "**":
-                if is_left:
-                    # A ** B = C => A = C ** (1/B)
-                    # Only works if B is a constant
-                    if hasattr(other_val, "value") and other_val.value is not None:
-                        try:
-                            exponent = 1.0 / other_val.value
-                            if hasattr(result_val, "value") and result_val.value is not None:
-                                # Manual power calculation for Quantity types
-                                new_value = result_val.value**exponent
-                                # Get the effective unit for the result
-                                result_unit = self._get_effective_unit(result_val)
-                                if result_unit is not None and hasattr(result_val, "dim"):
-                                    # Create quantity with proper constructor parameters
-                                    return type(result_val)(name="power_result", dim=result_val.dim, value=new_value, preferred=result_unit)
-                                elif hasattr(result_val, "dim"):
-                                    # Fallback: create new quantity with same dimension
-                                    return type(result_val)(name="power_result", dim=result_val.dim, value=new_value)
-                                else:
-                                    # Final fallback - skip power operation
-                                    raise TypeError(f"Cannot determine dimension for power result: {type(result_val)}")
-                            else:
-                                # Skip power operation for incompatible types
-                                # This is caught by the outer try/except
-                                raise TypeError(f"Cannot compute power for quantity type: {type(result_val)}")
-                        except (ZeroDivisionError, ValueError, TypeError, AttributeError):
-                            pass
-                # B ** A = C is more complex, skip for now
+            return self._inverter.invert(operator, result_val, other_val, is_left)
 
         # Recursively solve if target_expr is also a binary operation
         return self._solve_expression_for_var(target_expr, target_var, result_val, variable_values)
@@ -314,13 +404,17 @@ class Equation:
             lhs_unit = self._get_effective_unit(lhs_value)
             if lhs_unit is not None and hasattr(rhs_value, "to"):
                 rhs_converted = rhs_value.to(lhs_unit)
-                if hasattr(lhs_value, "value") and hasattr(rhs_converted, "value") and lhs_value.value is not None and rhs_converted.value is not None:
-                    residual = abs(lhs_value.value - rhs_converted.value)
+                lhs_val = self._get_quantity_value(lhs_value)
+                rhs_val = self._get_quantity_value(rhs_converted)
+                if lhs_val is not None and rhs_val is not None:
+                    residual = abs(lhs_val - rhs_val)
                 else:
                     residual = float("inf")
             else:
-                if hasattr(lhs_value, "value") and hasattr(rhs_value, "value") and lhs_value.value is not None and rhs_value.value is not None:
-                    residual = abs(lhs_value.value - rhs_value.value)
+                lhs_val = self._get_quantity_value(lhs_value)
+                rhs_val = self._get_quantity_value(rhs_value)
+                if lhs_val is not None and rhs_val is not None:
+                    residual = abs(lhs_val - rhs_val)
                 else:
                     residual = float("inf")
 
