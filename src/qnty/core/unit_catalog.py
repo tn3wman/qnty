@@ -1,5 +1,7 @@
 from typing import TYPE_CHECKING, Final
 
+from numpy import square
+
 from .dimension_catalog import dim
 from .unit import Unit, UnitNamespace, add_unit, attach_composed, u
 
@@ -18,6 +20,11 @@ second = add_unit(
     dim.T, symbol="s", si_factor=1.0,
     aliases=("seconds",),
     allow_prefix=True, expose_prefixed_to_u=True
+)
+
+minute = add_unit(
+    dim.T, symbol="min", si_factor=60.0,
+    aliases=("minutes",),
 )
 
 # ==============
@@ -127,6 +134,18 @@ meter_per_second = attach_composed(
     aliases=("meters_per_second","m/s",),
 )
 
+feet_per_second = attach_composed(
+    u.foot / u.second, name="feet_per_second", symbol="ft/s",
+    aliases=("ft_per_s","ft/s",),
+)
+
+class VelocityLinearUnits(UnitNamespace):
+    __slots__ = ()
+    __preferred__ = "meter_per_second"
+
+    meter_per_second: Final[Unit] = meter_per_second
+    feet_per_second: Final[Unit] = feet_per_second
+
 # =======================
 # ACCELERATION
 # =======================
@@ -156,9 +175,19 @@ square_meter = attach_composed(
     aliases=("square_meter","square_meters","m2",),
 )
 
-# =======================
-# VOLUME
-# =======================
+square_foot = attach_composed(
+    u.foot**2, name="square_foot", symbol="ft²",
+    aliases=("square_foot","square_feet","ft2",),
+)
+
+class AreaUnits(UnitNamespace):
+    __slots__ = ()
+    __preferred__ = "square_meter"
+
+    square_meter: Final[Unit] = square_meter
+    square_foot: Final[Unit] = square_foot
+
+# NOTE: VOLUME UNITS BELOW
 cubic_meter = attach_composed(
     u.meter**3, name="cubic_meter", symbol="m³",
     aliases=("cubic_meter","cubic_meters","m3",),
@@ -173,6 +202,16 @@ liter = attach_composed(
 milli_liter = attach_composed(
     u.centi_meter**3, name="milli_liter", symbol="mL",
     aliases=("milliliters", "millilitre","millilitres"),
+)
+
+gallon = add_unit(
+    dim.L**3, symbol="gal", si_factor=0.003785411784,
+    aliases=("gallons", "gal"),
+)
+
+cubic_foot = attach_composed(
+    u.foot**3, name="cubic_foot", symbol="ft³",
+    aliases=("cubic_foot","cubic_feet","ft3",),
 )
 
 # =======================
@@ -286,6 +325,32 @@ class MassDensityUnits(UnitNamespace):
 
 
 
+
+
+cubic_meter_per_second = attach_composed(
+    u.meter**3 / u.second, name="cubic_meter_per_second", symbol="m³/s",
+    aliases=("cubic_meter_per_second","cubic_meters_per_second","m3/s",),
+)
+
+gallon_per_minute = attach_composed(
+    u.gallon / u.minute, name="gallon_per_minute", symbol="gal/min",
+    aliases=("gpm",),
+)
+
+cubic_foot_per_minute = attach_composed(
+    u.cubic_foot / u.minute, name="cubic_foot_per_minute", symbol="ft³/min",
+    aliases=("cubic_foot_per_minute","cubic_feet_per_minute","ft³/min","ft3/min",),
+)
+
+
+class VolumetricFlowRateUnits(UnitNamespace):
+    __slots__ = ()
+    __preferred__ = "cubic_meter_per_second"
+
+    cubic_meter_per_second: Final[Unit] = cubic_meter_per_second
+    gallon_per_minute: Final[Unit] = gallon_per_minute
+    cubic_foot_per_minute: Final[Unit] = cubic_foot_per_minute
+
 pascal_second = attach_composed(
     u.pascal * u.second, name="pascal_second", symbol="Pa·s",
     aliases=("pascal_second","pascal_seconds","Pa·s","Pa.s",),
@@ -301,7 +366,6 @@ pound_force_second_per_square_foot = attach_composed(
     aliases=("lbf·s/ft²","lbf*s/ft2",),
 )
 
-
 class ViscosityDynamicUnits(UnitNamespace):
     __slots__ = ()
     __preferred__ = "pascal_second"
@@ -309,8 +373,6 @@ class ViscosityDynamicUnits(UnitNamespace):
     pascal_second: Final[Unit] = pascal_second
     poise: Final[Unit] = poise
     pound_force_second_per_square_foot: Final[Unit] = pound_force_second_per_square_foot
-
-
 
 square_meter_per_second = attach_composed(
     u.meter**2 / u.second, name="square_meter_per_second", symbol="m²/s",

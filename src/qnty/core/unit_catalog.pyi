@@ -15,6 +15,8 @@ class Units:
     hecto_second: Final[Unit]  # alias for second
     deca_second: Final[Unit]  # alias for second
     das: Final[Unit]  # alias for second
+    minute: Final[Unit]  # alias for second
+
 
     second: Final[Unit]
     seconds: Final[Unit]  # alias for second
@@ -115,6 +117,8 @@ class Units:
     cubic_meters: Final[Unit]  # alias for cubic_meter
     m3: Final[Unit]  # alias for cubic_meter
     milli_liter: Final[Unit]
+    gallon: Final[Unit]
+    cubic_foot: Final[Unit]
 
     # =======================
     # DERIVED UNITS
@@ -143,6 +147,14 @@ class LengthUnits(UnitNamespace):
     millimeter: Final[Unit]
     inch: Final[Unit]
 
+class AreaUnits(UnitNamespace):
+    square_meter: Final[Unit]
+    square_foot: Final[Unit]
+
+class VelocityLinearUnits(UnitNamespace):
+    meter_per_second: Final[Unit]
+    foot_per_second: Final[Unit]
+
 class PressureUnits(UnitNamespace):
     pascal: Final[Unit]
     pascals: Final[Unit]
@@ -156,6 +168,11 @@ class MassDensityUnits(UnitNamespace):
     kilogram_per_cubic_meter: Final[Unit]
     pound_mass_per_cubic_foot: Final[Unit]
     ounce_per_milliliter: Final[Unit]
+
+class VolumetricFlowRateUnits(UnitNamespace):
+    cubic_meter_per_second: Final[Unit]
+    gallon_per_minute: Final[Unit]
+    cubic_foot_per_minute: Final[Unit]
 
 class ViscosityDynamicUnits(UnitNamespace):
     pascal_second: Final[Unit]

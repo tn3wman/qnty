@@ -847,6 +847,20 @@ def wrap_operand(operand: "OperandType") -> Expression:
         if var is not None and hasattr(var, "quantity") and hasattr(var, "symbol"):
             return VariableReference(var)  # type: ignore[arg-type]
 
+    # Handle DelayedExpression objects that weren't resolved
+    if hasattr(operand, 'resolve') and hasattr(operand, 'operation'):
+        # This is a DelayedExpression - try to resolve it with empty context
+        # This is a fallback; ideally these should be resolved earlier
+        try:
+            resolved = operand.resolve({})
+            if resolved is not None:
+                return resolved
+        except Exception:
+            pass
+        # If resolution fails, raise an informative error
+        raise TypeError(f"DelayedExpression objects must be resolved before wrapping. "
+                       f"Call resolve(context) first or fix the resolution process.")
+
     # Fast failure for unknown types
     raise TypeError(f"Cannot convert {operand_type.__name__} to Expression")
 

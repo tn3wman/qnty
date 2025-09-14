@@ -354,6 +354,28 @@ class DelayedExpression(ArithmeticOperationsMixin):
         self.left = left
         self.right = right
 
+    @property
+    def value(self):
+        """
+        DelayedExpression objects don't have values until resolved.
+        Raise a more specific error to help with debugging.
+        """
+        raise AttributeError(
+            f"DelayedExpression objects must be resolved before accessing their value. "
+            f"Use resolve(context) to convert this to a proper expression first."
+        )
+
+    def evaluate(self, variable_values):
+        """
+        DelayedExpression objects should be resolved before evaluation.
+        This method raises an informative error to help debug issues.
+        """
+        raise RuntimeError(
+            f"DelayedExpression objects must be resolved before evaluation. "
+            f"This suggests that DelayedExpression.resolve() was not called properly "
+            f"or that an unresolved DelayedExpression made it into the expression tree."
+        )
+
     def resolve(self, context):
         """Resolve this expression to actual Variable/Expression objects."""
         left_resolved = self._resolve_operand(self.left, context)
@@ -379,6 +401,9 @@ class DelayedExpression(ArithmeticOperationsMixin):
         """Resolve a single operand to a Variable/Expression."""
         if isinstance(operand, DelayedVariableReference | DelayedExpression | DelayedFunction):
             return operand.resolve(context)
+        elif hasattr(operand, '_wrapped'):
+            # This is an ExpressionEnabledWrapper - unwrap it to get the actual variable
+            return operand._wrapped
         else:
             # It's a literal value or Variable
             return operand
@@ -1065,6 +1090,15 @@ class ProxiedNamespace(dict):
                 else:
                     # Delegate to wrapped variable
                     setattr(self._wrapped, name, value)
+
+            @property
+            def value(self):
+                """Delegate value access to wrapped variable."""
+                return getattr(self._wrapped, 'value', None)
+
+            def __float__(self):
+                """Delegate float conversion to wrapped variable."""
+                return float(self._wrapped)
 
         return ExpressionEnabledWrapper(variable)
 

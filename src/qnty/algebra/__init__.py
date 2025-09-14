@@ -30,9 +30,32 @@ def equation(lhs, rhs, name: str | None = None) -> Equation:
     eq_name = name or f"{lhs.name}_equation"
     # Handle DelayedExpression objects from Problem class
     if hasattr(rhs, 'resolve'):
-        # This is a DelayedExpression - defer resolution until we have proper context
-        # For now, store the DelayedExpression and let the Problem class handle resolution
-        rhs_expr = rhs  # Pass through DelayedExpression as-is for now
+        # This is a DelayedExpression - try to resolve it
+        # Create a minimal context with the operands themselves
+        context = {}
+
+        # Extract variables from the DelayedExpression recursively
+        def extract_variables(expr):
+            if hasattr(expr, 'left') and hasattr(expr, 'right'):
+                # This is a DelayedExpression
+                extract_variables(expr.left)
+                extract_variables(expr.right)
+            elif hasattr(expr, '_wrapped'):
+                # This is an ExpressionEnabledWrapper
+                context[getattr(expr._wrapped, 'name', 'unknown')] = expr._wrapped
+            elif hasattr(expr, 'name') and hasattr(expr, 'value') and hasattr(expr, 'dim'):
+                # This is a direct quantity/variable
+                context[expr.name] = expr
+
+        extract_variables(rhs)
+
+        # Try to resolve the DelayedExpression
+        resolved = rhs.resolve(context)
+        if resolved is not None:
+            rhs_expr = resolved
+        else:
+            # Resolution failed, pass through as-is but this will likely fail later
+            rhs_expr = rhs
     else:
         # Convert RHS to Expression if needed using wrap_operand
         rhs_expr = wrap_operand(rhs)

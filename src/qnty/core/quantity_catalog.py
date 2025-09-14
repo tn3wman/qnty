@@ -8,6 +8,11 @@ class Acceleration:
     """Acceleration quantity with automatic boilerplate."""
     pass
 
+@quantity(uc.AreaUnits)
+class Area:
+    """Area quantity with automatic boilerplate."""
+    pass
+
 @quantity(uc.LengthUnits)
 class Length:
     """Length quantity with automatic boilerplate."""
@@ -26,6 +31,16 @@ class Pressure:
 @quantity(uc.MassDensityUnits)
 class MassDensity:
     """Mass density quantity with automatic boilerplate."""
+    pass
+
+@quantity(uc.VelocityLinearUnits)
+class VelocityLinear:
+    """Linear velocity quantity with automatic boilerplate."""
+    pass
+
+@quantity(uc.VolumetricFlowRateUnits)
+class VolumetricFlowRate:
+    """Volumetric flow rate quantity with automatic boilerplate."""
     pass
 
 @quantity(uc.ViscosityDynamicUnits)
