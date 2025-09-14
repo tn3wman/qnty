@@ -80,55 +80,51 @@ class Equation:
         # General case: can solve if target_var is the only unknown
         unknown_vars = self.get_unknown_variables(known_vars)
         return unknown_vars == {target_var}
-    
-    def _solve_algebraically(self, target_var: str, variable_values: dict[str, FieldQuantity]) -> "Quantity | None":
+
+    def _solve_algebraically(self, target_var: str, variable_values: dict[str, FieldQuantity]) -> Quantity | None:
         """
         Attempt to solve equation algebraically for target_var.
         Handles common algebraic manipulations.
         """
-        from ..expressions import BinaryOperation, VariableReference
-        
         # Case 1: LHS is a simple variable (X = expression)
         # But we need to solve for a variable in the RHS
-        if isinstance(self.lhs, VariableReference):
+        if hasattr(self.lhs, "name"):
             lhs_var = self.lhs.name
-            if lhs_var in variable_values and variable_values[lhs_var].is_known:
+            if lhs_var in variable_values and hasattr(variable_values[lhs_var], "is_known") and variable_values[lhs_var].is_known:
                 # LHS is known, need to solve RHS = LHS for target_var
                 return self._solve_expression_for_var(self.rhs, target_var, self.lhs.evaluate(variable_values), variable_values)
-        
+
         # Case 2: RHS is a simple variable (expression = X)
         # And we need to solve for a variable in the LHS
-        if isinstance(self.rhs, VariableReference):
+        if hasattr(self.rhs, "name"):
             rhs_var = self.rhs.name
-            if rhs_var in variable_values and variable_values[rhs_var].is_known:
+            if rhs_var in variable_values and hasattr(variable_values[rhs_var], "is_known") and variable_values[rhs_var].is_known:
                 # RHS is known, need to solve LHS = RHS for target_var
                 return self._solve_expression_for_var(self.lhs, target_var, self.rhs.evaluate(variable_values), variable_values)
-        
+
         # Case 3: Both sides are expressions
         # Try to isolate target_var
         return self._isolate_variable(target_var, variable_values)
-    
-    def _solve_expression_for_var(self, expr: Expression, target_var: str, known_value: "Quantity", variable_values: dict[str, FieldQuantity]) -> "Quantity | None":
+
+    def _solve_expression_for_var(self, expr: Expression, target_var: str, known_value: Quantity, variable_values: dict[str, FieldQuantity]) -> Quantity | None:
         """
         Solve expression = known_value for target_var.
         Handles common patterns like A + B = C, A * B = C, etc.
         """
-        from ..expressions import BinaryOperation, VariableReference
-        
-        if not isinstance(expr, BinaryOperation):
+        if not hasattr(expr, "operator") or not hasattr(expr, "left") or not hasattr(expr, "right"):
             return None
-        
+
         # Handle binary operations
         left_has_target = target_var in expr.left.get_variables()
         right_has_target = target_var in expr.right.get_variables()
-        
+
         # Target should be in exactly one side
         if left_has_target and right_has_target:
             return None  # Too complex
-        
+
         if not left_has_target and not right_has_target:
             return None  # Target not in expression
-        
+
         # Evaluate the side without the target
         if left_has_target:
             # Target is on left, evaluate right
@@ -140,19 +136,18 @@ class Equation:
             left_val = expr.left.evaluate(variable_values)
             # Now solve: left_val op right = known_value for target in right
             return self._invert_operation(expr.operator, expr.right, left_val, known_value, target_var, variable_values, is_left=False)
-    
-    def _invert_operation(self, operator: str, target_expr: Expression, other_val: "Quantity", result_val: "Quantity", 
-                          target_var: str, variable_values: dict[str, FieldQuantity], is_left: bool) -> "Quantity | None":
+
+    def _invert_operation(
+        self, operator: str, target_expr: Expression, other_val: Quantity, result_val: Quantity, target_var: str, variable_values: dict[str, FieldQuantity], is_left: bool
+    ) -> Quantity | None:
         """
         Invert a binary operation to solve for target_var.
-        
+
         If is_left=True: solve target_expr op other_val = result_val for target_var in target_expr
         If is_left=False: solve other_val op target_expr = result_val for target_var in target_expr
         """
-        from ..expressions import VariableReference
-        
         # Simple case: target_expr is just the variable we're looking for
-        if isinstance(target_expr, VariableReference) and target_expr.name == target_var:
+        if hasattr(target_expr, "name") and target_expr.name == target_var:
             if operator == "+":
                 # A + B = C => A = C - B
                 return result_val - other_val
@@ -177,15 +172,23 @@ class Equation:
                 if is_left:
                     # A ** B = C => A = C ** (1/B)
                     # Only works if B is a constant
-                    if hasattr(other_val, 'value'):
-                        import math
-                        return result_val ** (1.0 / other_val.value)
+                    if hasattr(other_val, "value") and other_val.value is not None:
+                        try:
+                            exponent = 1.0 / other_val.value
+                            if hasattr(result_val, "__pow__"):
+                                return result_val.__pow__(exponent)
+                            elif hasattr(result_val, "value") and hasattr(result_val, "unit"):
+                                # Manual power calculation for Quantity types
+                                new_value = result_val.value**exponent
+                                return type(result_val)(new_value, result_val.unit)
+                        except (ZeroDivisionError, ValueError, TypeError, AttributeError):
+                            pass
                 # B ** A = C is more complex, skip for now
-        
+
         # Recursively solve if target_expr is also a binary operation
         return self._solve_expression_for_var(target_expr, target_var, result_val, variable_values)
-    
-    def _isolate_variable(self, target_var: str, variable_values: dict[str, FieldQuantity]) -> "Quantity | None":
+
+    def _isolate_variable(self, target_var: str, variable_values: dict[str, FieldQuantity]) -> Quantity | None:
         """
         Try to isolate target_var when both LHS and RHS are complex expressions.
         This is a simplified version that handles basic cases.
@@ -206,7 +209,7 @@ class Equation:
         if isinstance(self.lhs, VariableReference) and self.lhs.name == target_var:
             # Direct assignment: target_var = rhs
             result_qty = self.rhs.evaluate(variable_values)
-        
+
         # Case 2: Try algebraic manipulation for simple cases
         else:
             result_qty = self._solve_algebraically(target_var, variable_values)
@@ -222,8 +225,8 @@ class Equation:
         target_unit_constant = None
 
         # First priority: existing quantity unit
-        if var_obj.quantity is not None and var_obj.quantity.unit is not None:
-            target_unit_constant = var_obj.quantity.unit
+        if var_obj.quantity is not None and hasattr(var_obj.quantity, "unit"):
+            target_unit_constant = getattr(var_obj.quantity, "unit", None)
         # Second priority: preferred unit from constructor
         elif hasattr(var_obj, "preferred_unit") and var_obj.preferred_unit is not None:
             # Look up unit constant from string name
@@ -233,10 +236,10 @@ class Equation:
                 class_name = var_obj.__class__.__name__
                 units_class_name = f"{class_name}Units"
 
-                # Import field_units dynamically to avoid circular imports
-                from ..units import field_units
+                # Import unit catalog dynamically to avoid circular imports
+                from ..core import unit_catalog
 
-                units_class = getattr(field_units, units_class_name, None)
+                units_class = getattr(unit_catalog, units_class_name, None)
                 if units_class and hasattr(units_class, preferred_unit_name):
                     target_unit_constant = getattr(units_class, preferred_unit_name)
                     _logger.debug(f"Found preferred unit constant: {preferred_unit_name}")
@@ -255,9 +258,21 @@ class Equation:
         # Update the variable and return it
         if result_qty.value is not None:
             var_obj.value = result_qty.value
-            if hasattr(result_qty, 'preferred') and result_qty.preferred is not None:
-                var_obj.preferred = result_qty.preferred
-        var_obj._is_known = True
+            # Try to set quantity if possible
+            try:
+                if hasattr(result_qty, "unit"):
+                    var_obj.quantity = result_qty
+            except (AttributeError, TypeError):
+                pass  # Quantity assignment not supported
+
+        # Set known status using appropriate attribute
+        try:
+            if hasattr(var_obj, "_is_known"):
+                var_obj._is_known = True
+            elif hasattr(var_obj, "is_known"):
+                var_obj.is_known = True
+        except (AttributeError, TypeError):
+            pass  # Known status setting not supported
         return var_obj
 
     def check_residual(self, variable_values: dict[str, FieldQuantity], tolerance: float = SOLVER_DEFAULT_TOLERANCE) -> bool:
@@ -275,8 +290,17 @@ class Equation:
                 return False
 
             # Convert to same units for comparison
-            rhs_converted = rhs_value.to(lhs_value.unit)
-            residual = abs(lhs_value.value - rhs_converted.value)
+            if hasattr(lhs_value, "unit") and hasattr(rhs_value, "to"):
+                rhs_converted = rhs_value.to(lhs_value.unit)
+                if hasattr(lhs_value, "value") and hasattr(rhs_converted, "value") and lhs_value.value is not None and rhs_converted.value is not None:
+                    residual = abs(lhs_value.value - rhs_converted.value)
+                else:
+                    residual = float("inf")
+            else:
+                if hasattr(lhs_value, "value") and hasattr(rhs_value, "value") and lhs_value.value is not None and rhs_value.value is not None:
+                    residual = abs(lhs_value.value - rhs_value.value)
+                else:
+                    residual = float("inf")
 
             return residual < tolerance
         except (ValueError, TypeError, AttributeError, KeyError) as e:
