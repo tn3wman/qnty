@@ -34,15 +34,6 @@ class StraightPipeInternal(Problem):
     name = "Pressure Design of a Straight Pipe Under Internal Pressure"
     description = "Calculate the minimum wall thickness of a straight pipe under internal pressure."
 
-    # Known variables - using new simplified syntax
-    # P = Pressure(90, "psi", "Design Pressure")
-    # D = Length(0.84, "inch", "Outside Diameter")
-    # T_bar = Length(0.147, "inch", "Nominal Wall Thickness")
-    # U_m = Dimensionless(0.125, "Mill Undertolerance")
-    # c = Length(0.0, "inch", "Mechanical Allowances")
-    # S = Pressure(20000, "psi", "Allowable Stress")
-    # E = Dimensionless(0.8, "Quality Factor")
-    # W = Dimensionless(1, "Weld Joint Strength Reduction Factor")
     P = Pressure("Design Pressure").set(90).psi
     D = Length("Outside Diameter").set(0.84).inch
     T_bar = Length("Nominal Wall Thickness").set(0.147).inch
@@ -52,11 +43,7 @@ class StraightPipeInternal(Problem):
     E = Dimensionless("Quality Factor").set(0.8).dimensionless
     W = Dimensionless("Weld Joint Strength Reduction Factor").set(1).dimensionless
 
-    Y = Dimensionless("Y Coefficient").set(0.4).dimensionless  # Default value; will be updated by equation
-
-
-    # Unknown variables - using new simplified syntax
-    # Y = Dimensionless(0.4, "Y Coefficient")
+    Y = Dimensionless("Y Coefficient").set(0.4).dimensionless
 
     T = Length("Wall Thickness")
     d = Length("Inside Diameter")

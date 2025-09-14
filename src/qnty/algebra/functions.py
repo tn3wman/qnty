@@ -15,46 +15,49 @@ ExpressionOperand = Expression | FieldQuantity | Quantity | int | float
 ConditionalOperand = Expression | BinaryOperation
 
 
+def _should_preserve_symbolic_expression() -> bool:
+    """Check if we're in a context where symbolic expressions should be preserved."""
+    import inspect
+
+    frame = inspect.currentframe()
+    try:
+        while frame:
+            code = frame.f_code
+            filename = code.co_filename
+            # If we find a frame in Problem-related code or class definition,
+            # don't auto-evaluate to preserve symbolic expressions
+            if (
+                "<class" in code.co_name
+                or "problem" in filename.lower()
+                or "composition" in filename.lower()
+                or "_extract" in code.co_name.lower()
+                or "WeldedBranchConnection" in str(frame.f_locals.get("__qualname__", ""))
+            ):
+                return True
+            frame = frame.f_back
+        return False
+    finally:
+        del frame
+
+
 def _create_unary_function(name: str, docstring: str) -> "Callable[[ExpressionOperand], Expression | Quantity | float]":
     """Factory function for creating unary mathematical functions."""
 
     def func(expr: ExpressionOperand) -> Expression | Quantity | float:
-        import inspect
-
         wrapped_expr = wrap_operand(expr)
 
         # For known quantities (FieldQnty with known values), check context before auto-evaluating
         if hasattr(expr, "quantity") and getattr(expr, "quantity", None) is not None:
-            # Check if we're being called during Problem class definition
-            # Look for Problem-related frames in the call stack
-            frame = inspect.currentframe()
-            try:
-                while frame:
-                    code = frame.f_code
-                    filename = code.co_filename
-                    # If we find a frame in Problem-related code or class definition,
-                    # don't auto-evaluate to preserve symbolic expressions
-                    if (
-                        "<class" in code.co_name
-                        or "problem" in filename.lower()
-                        or "composition" in filename.lower()
-                        or "_extract" in code.co_name.lower()
-                        or "WeldedBranchConnection" in str(frame.f_locals.get("__qualname__", ""))
-                    ):
-                        break
-                    frame = frame.f_back
-                else:
-                    # No Problem class context found, safe to auto-evaluate
-                    try:
-                        unary_func = UnaryFunction(name, wrapped_expr)
-                        # Use an empty variable dict since we have the quantity directly
-                        result = unary_func.evaluate({})
-                        return result
-                    except (ValueError, TypeError, AttributeError):
-                        # Fall back to expression if evaluation fails
-                        pass
-            finally:
-                del frame
+            if not _should_preserve_symbolic_expression():
+                # No Problem class context found, safe to auto-evaluate
+                try:
+                    unary_func = UnaryFunction(name, wrapped_expr)
+                    # Use an empty variable dict since we have the quantity directly
+                    result = unary_func.evaluate({})
+                    return result
+                except (ValueError, TypeError, AttributeError):
+                    # Fall back to expression if evaluation fails
+                    pass
 
         # For unknown variables or expressions, return the UnaryFunction
         return UnaryFunction(name, wrapped_expr)

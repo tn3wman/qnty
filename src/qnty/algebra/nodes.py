@@ -300,13 +300,9 @@ class BinaryOperation(Expression):
         # Handle cases where evaluation returns plain float (e.g., from trig functions)
         # Convert to dimensionless Quantity for consistent handling
         if isinstance(left_val, int | float):
-            from ..core.unit_catalog import DimensionlessUnits
-
-            left_val = Quantity(name=str(left_val), dim=DimensionlessUnits.dimensionless.dim, value=float(left_val), preferred=DimensionlessUnits.dimensionless)
+            left_val = _create_dimensionless_quantity(float(left_val))
         if isinstance(right_val, int | float):
-            from ..core.unit_catalog import DimensionlessUnits
-
-            right_val = Quantity(name=str(right_val), dim=DimensionlessUnits.dimensionless.dim, value=float(right_val), preferred=DimensionlessUnits.dimensionless)
+            right_val = _create_dimensionless_quantity(float(right_val))
 
         return left_val, right_val
 
@@ -340,12 +336,7 @@ class BinaryOperation(Expression):
 
     def _is_dimensionless(self, quantity) -> bool:
         """Check if a quantity is dimensionless."""
-        if hasattr(quantity, "dim"):
-            return quantity.dim.is_dimensionless()
-        # Fallback for old quantities with _dimension_sig
-        elif hasattr(quantity, "_dimension_sig"):
-            return quantity._dimension_sig == 1
-        return False
+        return _DimensionUtils.is_dimensionless(quantity)
 
     def _create_quantity_from_existing(self, value: float, existing_quantity) -> "Quantity":
         """Create a new quantity with the same unit/dimension as an existing quantity."""
@@ -354,25 +345,11 @@ class BinaryOperation(Expression):
             return Quantity(name=str(value), dim=existing_quantity.dim, value=value, preferred=effective_unit)
         else:
             # Fallback to dimensionless
-            from ..core.unit_catalog import DimensionlessUnits
-            return Quantity(name=str(value), dim=DimensionlessUnits.dimensionless.dim, value=value, preferred=DimensionlessUnits.dimensionless)
+            return _create_dimensionless_quantity(value)
 
     def _get_effective_unit(self, quantity):
         """Get the effective unit for a quantity, handling both old and new Quantity objects."""
-        # New Quantity objects have preferred attribute
-        if hasattr(quantity, "preferred") and quantity.preferred is not None:
-            return quantity.preferred
-
-        # Old Quantity objects might have unit attribute
-        if hasattr(quantity, "unit"):
-            return quantity.unit
-
-        # Try to get preferred unit from dimension
-        if hasattr(quantity, "dim"):
-            from ..core.unit import ureg
-            return ureg.preferred_for(quantity.dim) or ureg.si_unit_for(quantity.dim)
-
-        return None
+        return _DimensionUtils.get_effective_unit(quantity)
 
     def _generate_cache_key(self) -> str:
         """Generate a cache key for constant expressions."""
@@ -432,9 +409,6 @@ class BinaryOperation(Expression):
         else:
             raise ValueError(f"Unknown arithmetic operator: {self.operator}")
 
-    def _evaluate_arithmetic(self, left_val: "Quantity", right_val: "Quantity") -> "Quantity":
-        """Legacy arithmetic evaluation method - redirects to new dispatch."""
-        return self._evaluate_arithmetic_dispatch(left_val, right_val)
 
     def _multiply(self, left_val: "Quantity", right_val: "Quantity") -> "Quantity":
         """Handle multiplication with ultra-fast path optimizations aligned with base_qnty."""
@@ -487,15 +461,13 @@ class BinaryOperation(Expression):
         result = self._perform_comparison(left_value, right_value)
 
         # Create dimensionless quantity for boolean result
-        from ..core.unit_catalog import DimensionlessUnits
-
-        return Quantity(name=str(result), dim=DimensionlessUnits.dimensionless.dim, value=float(result), preferred=DimensionlessUnits.dimensionless)
+        return _create_dimensionless_quantity(float(result), str(result))
 
     def _normalize_comparison_units(self, left_val: "Quantity", right_val: "Quantity") -> tuple["Quantity", "Quantity"]:
         """Normalize units for comparison operations."""
         try:
             if hasattr(left_val, "dim") and hasattr(right_val, "dim") and left_val.dim == right_val.dim:
-                left_unit = self._get_effective_unit(left_val)
+                left_unit = _DimensionUtils.get_effective_unit(left_val)
                 if left_unit is not None:
                     right_val = right_val.to(left_unit)
         except (ValueError, TypeError, AttributeError):
@@ -596,36 +568,8 @@ class UnaryFunction(Expression):
 
     def _create_dimensionless_quantity(self, value: float) -> "Quantity":
         """Create a dimensionless quantity from a float value."""
-        from ..core.unit_catalog import DimensionlessUnits
+        return _create_dimensionless_quantity(value)
 
-        return Quantity(name=str(value), dim=DimensionlessUnits.dimensionless.dim, value=value, preferred=DimensionlessUnits.dimensionless)
-
-    def _get_effective_unit(self, quantity):
-        """Get the effective unit for a quantity, handling both old and new Quantity objects."""
-        # New Quantity objects have preferred attribute
-        if hasattr(quantity, "preferred") and quantity.preferred is not None:
-            return quantity.preferred
-
-        # Old Quantity objects might have unit attribute
-        if hasattr(quantity, "unit"):
-            return quantity.unit
-
-        # Try to get preferred unit from dimension
-        if hasattr(quantity, "dim"):
-            from ..core.unit import ureg
-            return ureg.preferred_for(quantity.dim) or ureg.si_unit_for(quantity.dim)
-
-        return None
-
-    def _create_quantity_from_existing(self, value: float, existing_quantity) -> "Quantity":
-        """Create a new quantity with the same unit/dimension as an existing quantity."""
-        effective_unit = self._get_effective_unit(existing_quantity)
-        if effective_unit and hasattr(existing_quantity, "dim"):
-            return Quantity(name=str(value), dim=existing_quantity.dim, value=value, preferred=effective_unit)
-        else:
-            # Fallback to dimensionless
-            from ..core.unit_catalog import DimensionlessUnits
-            return Quantity(name=str(value), dim=DimensionlessUnits.dimensionless.dim, value=value, preferred=DimensionlessUnits.dimensionless)
 
     def get_variables(self) -> set[str]:
         return self.operand.get_variables()
@@ -708,19 +652,13 @@ _DIMENSIONLESS_CONSTANT = None
 
 # Type caches for hot path optimization
 _CONSTANT_TYPE = None
-_VARIABLE_REF_TYPE = None
-_QUANTITY_TYPE = None
-_FIELDQNTY_TYPE = None
 
 
 def _init_type_cache():
     """Initialize type cache for fast isinstance checks."""
-    global _CONSTANT_TYPE, _VARIABLE_REF_TYPE, _QUANTITY_TYPE, _FIELDQNTY_TYPE
+    global _CONSTANT_TYPE
     if _CONSTANT_TYPE is None:
         _CONSTANT_TYPE = Constant
-        _VARIABLE_REF_TYPE = VariableReference
-        _QUANTITY_TYPE = Quantity
-        _FIELDQNTY_TYPE = FieldQuantity
 
 
 def _is_constant_fast(obj) -> bool:
@@ -758,6 +696,53 @@ def _get_dimensionless_quantity(value: float) -> Quantity:
             _COMMON_DIMENSIONLESS_CACHE[value] = qty
 
     return qty
+
+
+def _create_dimensionless_quantity(value: float, name: str | None = None) -> Quantity:
+    """Create a dimensionless quantity with consistent structure and caching."""
+    if name is None:
+        name = str(value)
+
+    # Use cached dimensionless unit for consistency
+    dim_unit = _get_cached_dimensionless()
+    return Quantity(
+        name=name,
+        dim=dim_unit.dim,
+        value=float(value),
+        preferred=dim_unit
+    )
+
+
+class _DimensionUtils:
+    """Utility class for common dimension and unit operations."""
+
+    @staticmethod
+    def is_dimensionless(quantity) -> bool:
+        """Check if a quantity is dimensionless with fallback support."""
+        if hasattr(quantity, "dim"):
+            return quantity.dim.is_dimensionless()
+        # Fallback for old quantities with _dimension_sig
+        elif hasattr(quantity, "_dimension_sig"):
+            return quantity._dimension_sig == 1
+        return False
+
+    @staticmethod
+    def get_effective_unit(quantity):
+        """Get the effective unit for a quantity, handling both old and new Quantity objects."""
+        # New Quantity objects have preferred attribute
+        if hasattr(quantity, "preferred") and quantity.preferred is not None:
+            return quantity.preferred
+
+        # Old Quantity objects might have unit attribute
+        if hasattr(quantity, "unit"):
+            return quantity.unit
+
+        # Try to get preferred unit from dimension
+        if hasattr(quantity, "dim"):
+            from ..core.unit import ureg
+            return ureg.preferred_for(quantity.dim) or ureg.si_unit_for(quantity.dim)
+
+        return None
 
 
 def wrap_operand(operand: "OperandType") -> Expression:
@@ -833,12 +818,8 @@ def wrap_operand(operand: "OperandType") -> Expression:
 # Register expression and variable types with the TypeRegistry for optimal performance
 
 # Register expression types
-register_expression_type(Expression)
-register_expression_type(BinaryOperation)
-register_expression_type(VariableReference)
-register_expression_type(Constant)
-register_expression_type(UnaryFunction)
-register_expression_type(ConditionalExpression)
+for expr_type in [Expression, BinaryOperation, VariableReference, Constant, UnaryFunction, ConditionalExpression]:
+    register_expression_type(expr_type)
 
 # Register variable types - do this at module level to ensure it happens early
 try:
