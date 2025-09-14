@@ -29,21 +29,21 @@ def equation(lhs, rhs, name: str | None = None) -> Equation:
     """
     eq_name = name or f"{lhs.name}_equation"
     # Handle DelayedExpression objects from Problem class
-    if hasattr(rhs, 'resolve'):
+    if hasattr(rhs, "resolve"):
         # This is a DelayedExpression - try to resolve it
         # Create a minimal context with the operands themselves
         context = {}
 
         # Extract variables from the DelayedExpression recursively
         def extract_variables(expr):
-            if hasattr(expr, 'left') and hasattr(expr, 'right'):
+            if hasattr(expr, "left") and hasattr(expr, "right"):
                 # This is a DelayedExpression
                 extract_variables(expr.left)
                 extract_variables(expr.right)
-            elif hasattr(expr, '_wrapped'):
+            elif hasattr(expr, "_wrapped"):
                 # This is an ExpressionEnabledWrapper
-                context[getattr(expr._wrapped, 'name', 'unknown')] = expr._wrapped
-            elif hasattr(expr, 'name') and hasattr(expr, 'value') and hasattr(expr, 'dim'):
+                context[getattr(expr._wrapped, "name", "unknown")] = expr._wrapped
+            elif hasattr(expr, "name") and hasattr(expr, "value") and hasattr(expr, "dim"):
                 # This is a direct quantity/variable
                 context[expr.name] = expr
 
@@ -61,6 +61,31 @@ def equation(lhs, rhs, name: str | None = None) -> Equation:
         rhs_expr = wrap_operand(rhs)
 
     return Equation(eq_name, lhs, rhs_expr)
+
+
+def geq(lhs, rhs) -> BinaryOperation:
+    """Create a greater-than-or-equal comparison: lhs >= rhs"""
+    return BinaryOperation(">=", wrap_operand(lhs), wrap_operand(rhs))
+
+
+def gt(lhs, rhs) -> BinaryOperation:
+    """Create a greater-than comparison: lhs > rhs"""
+    return BinaryOperation(">", wrap_operand(lhs), wrap_operand(rhs))
+
+
+def leq(lhs, rhs) -> BinaryOperation:
+    """Create a less-than-or-equal comparison: lhs <= rhs"""
+    return BinaryOperation("<=", wrap_operand(lhs), wrap_operand(rhs))
+
+
+def lt(lhs, rhs) -> BinaryOperation:
+    """Create a less-than comparison: lhs < rhs"""
+    return BinaryOperation("<", wrap_operand(lhs), wrap_operand(rhs))
+
+
+def eq(lhs, rhs) -> BinaryOperation:
+    """Create an equality comparison: lhs == rhs"""
+    return BinaryOperation("==", wrap_operand(lhs), wrap_operand(rhs))
 
 
 def solve(quantity, expression) -> bool:
@@ -87,24 +112,24 @@ def solve(quantity, expression) -> bool:
         >>> print(x)  # Should show "x = 5 m"
     """
     # Handle direct assignment cases
-    if hasattr(expression, 'value') and hasattr(expression, 'dim'):
+    if hasattr(expression, "value") and hasattr(expression, "dim"):
         # Expression is another Quantity
         if expression.value is not None:
             # Check dimension compatibility
-            if hasattr(quantity, 'dim') and quantity.dim != expression.dim:
+            if hasattr(quantity, "dim") and quantity.dim != expression.dim:
                 raise TypeError(f"Dimension mismatch: cannot assign {expression.dim} to {quantity.dim}")
 
             # Direct assignment
-            if hasattr(quantity, 'value'):
+            if hasattr(quantity, "value"):
                 quantity.value = expression.value
-                if hasattr(quantity, 'preferred') and hasattr(expression, 'preferred'):
+                if hasattr(quantity, "preferred") and hasattr(expression, "preferred"):
                     quantity.preferred = expression.preferred or quantity.preferred
                 return True
         return False
 
     # Handle numeric values
     if isinstance(expression, (int, float)):
-        if hasattr(quantity, 'dim') and hasattr(quantity, 'value'):
+        if hasattr(quantity, "dim") and hasattr(quantity, "value"):
             if quantity.dim.is_dimensionless():
                 quantity.value = float(expression)
                 return True
@@ -119,6 +144,7 @@ def solve(quantity, expression) -> bool:
         return expression.solve_for(quantity)
 
     return False
+
 
 # Define public API
 __all__ = [
@@ -146,7 +172,14 @@ __all__ = [
     # Solving
     "solve",
     "equation",
+    # Comparisons
+    "geq",
+    "gt",
+    "leq",
+    "lt",
+    "eq",
     # Scope discovery
     "ScopeDiscoveryService",
-    "Equation", "EquationSystem"
+    "Equation",
+    "EquationSystem",
 ]

@@ -115,7 +115,8 @@ def add_rule(condition: Expression, message: str, warning_type: str = "VALIDATIO
     automatically collected by the metaclass.
 
     Args:
-        condition: A qnty Expression that evaluates to True when the check should trigger
+        condition: A qnty Expression that evaluates to True when the check should trigger.
+                  Use comparison functions like geq() for natural syntax.
         message: Descriptive message explaining what the check means
         warning_type: Category of check (e.g., "CODE_COMPLIANCE", "VALIDATION")
         severity: Severity level of the check
@@ -131,9 +132,9 @@ def add_rule(condition: Expression, message: str, warning_type: str = "VALIDATIO
             t = Length(0.1, "inch")
             D = Length(1.0, "inch")
 
-            # Checks defined at class level
-            thick_wall_check = add_check(
-                t.geq(D / 6),
+            # Checks defined at class level using comparison functions
+            thick_wall_check = add_rule(
+                geq(t, D / 6),
                 "Thick wall condition detected - requires special consideration",
                 warning_type="CODE_COMPLIANCE",
                 severity="WARNING"
