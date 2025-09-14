@@ -13,7 +13,7 @@ from typing import TYPE_CHECKING, cast
 from ..constants import SOLVER_DEFAULT_TOLERANCE
 from ..core.quantity import FieldQuantity
 from ..utils.scope_discovery import ScopeDiscoveryService
-from .nodes import Expression, VariableReference
+from .nodes import BinaryOperation, Expression, VariableReference
 
 if TYPE_CHECKING:
     from ..core.quantity import Quantity
@@ -88,7 +88,7 @@ class Equation:
         """
         # Case 1: LHS is a simple variable (X = expression)
         # But we need to solve for a variable in the RHS
-        if hasattr(self.lhs, "name"):
+        if isinstance(self.lhs, VariableReference):
             lhs_var = self.lhs.name
             if lhs_var in variable_values and hasattr(variable_values[lhs_var], "is_known") and variable_values[lhs_var].is_known:
                 # LHS is known, need to solve RHS = LHS for target_var
@@ -96,7 +96,7 @@ class Equation:
 
         # Case 2: RHS is a simple variable (expression = X)
         # And we need to solve for a variable in the LHS
-        if hasattr(self.rhs, "name"):
+        if isinstance(self.rhs, VariableReference):
             rhs_var = self.rhs.name
             if rhs_var in variable_values and hasattr(variable_values[rhs_var], "is_known") and variable_values[rhs_var].is_known:
                 # RHS is known, need to solve LHS = RHS for target_var
@@ -111,7 +111,7 @@ class Equation:
         Solve expression = known_value for target_var.
         Handles common patterns like A + B = C, A * B = C, etc.
         """
-        if not hasattr(expr, "operator") or not hasattr(expr, "left") or not hasattr(expr, "right"):
+        if not isinstance(expr, BinaryOperation):
             return None
 
         # Handle binary operations
@@ -147,7 +147,7 @@ class Equation:
         If is_left=False: solve other_val op target_expr = result_val for target_var in target_expr
         """
         # Simple case: target_expr is just the variable we're looking for
-        if hasattr(target_expr, "name") and target_expr.name == target_var:
+        if isinstance(target_expr, VariableReference) and target_expr.name == target_var:
             if operator == "+":
                 # A + B = C => A = C - B
                 return result_val - other_val
@@ -175,12 +175,24 @@ class Equation:
                     if hasattr(other_val, "value") and other_val.value is not None:
                         try:
                             exponent = 1.0 / other_val.value
-                            if hasattr(result_val, "__pow__"):
-                                return result_val.__pow__(exponent)
-                            elif hasattr(result_val, "value") and hasattr(result_val, "unit"):
+                            if hasattr(result_val, "value") and result_val.value is not None:
                                 # Manual power calculation for Quantity types
                                 new_value = result_val.value**exponent
-                                return type(result_val)(new_value, result_val.unit)
+                                # Get the effective unit for the result
+                                result_unit = self._get_effective_unit(result_val)
+                                if result_unit is not None and hasattr(result_val, "dim"):
+                                    # Create quantity with proper constructor parameters
+                                    return type(result_val)(name="power_result", dim=result_val.dim, value=new_value, preferred=result_unit)
+                                elif hasattr(result_val, "dim"):
+                                    # Fallback: create new quantity with same dimension
+                                    return type(result_val)(name="power_result", dim=result_val.dim, value=new_value)
+                                else:
+                                    # Final fallback - skip power operation
+                                    raise TypeError(f"Cannot determine dimension for power result: {type(result_val)}")
+                            else:
+                                # Skip power operation for incompatible types
+                                # This is caught by the outer try/except
+                                raise TypeError(f"Cannot compute power for quantity type: {type(result_val)}")
                         except (ZeroDivisionError, ValueError, TypeError, AttributeError):
                             pass
                 # B ** A = C is more complex, skip for now
@@ -193,6 +205,7 @@ class Equation:
         Try to isolate target_var when both LHS and RHS are complex expressions.
         This is a simplified version that handles basic cases.
         """
+        del target_var, variable_values  # Suppress unused parameter warnings
         # For now, we don't handle complex equation rearrangement
         # This could be expanded in the future with a proper algebraic solver
         return None
@@ -225,12 +238,15 @@ class Equation:
         target_unit_constant = None
 
         # First priority: existing quantity unit
-        if var_obj.quantity is not None and hasattr(var_obj.quantity, "unit"):
-            target_unit_constant = getattr(var_obj.quantity, "unit", None)
-        # Second priority: preferred unit from constructor
-        elif hasattr(var_obj, "preferred_unit") and var_obj.preferred_unit is not None:
+        if var_obj.quantity is not None:
+            target_unit_constant = self._get_effective_unit(var_obj.quantity)
+        # Second priority: preferred unit from the variable itself
+        elif hasattr(var_obj, "preferred") and var_obj.preferred is not None:
+            target_unit_constant = var_obj.preferred
+        # Third priority: preferred_unit attribute (legacy)
+        elif hasattr(var_obj, "preferred_unit") and getattr(var_obj, "preferred_unit", None) is not None:
             # Look up unit constant from string name
-            preferred_unit_name = var_obj.preferred_unit
+            preferred_unit_name = getattr(var_obj, "preferred_unit", None)
             try:
                 # Get the dimension-specific units class
                 class_name = var_obj.__class__.__name__
@@ -240,7 +256,7 @@ class Equation:
                 from ..core import unit_catalog
 
                 units_class = getattr(unit_catalog, units_class_name, None)
-                if units_class and hasattr(units_class, preferred_unit_name):
+                if units_class and preferred_unit_name and hasattr(units_class, preferred_unit_name):
                     target_unit_constant = getattr(units_class, preferred_unit_name)
                     _logger.debug(f"Found preferred unit constant: {preferred_unit_name}")
                 else:
@@ -258,19 +274,24 @@ class Equation:
         # Update the variable and return it
         if result_qty.value is not None:
             var_obj.value = result_qty.value
-            # Try to set quantity if possible
+
+            # For new Quantity objects, also update preferred if it came from result
+            if hasattr(var_obj, "preferred") and hasattr(result_qty, "preferred") and result_qty.preferred is not None:
+                var_obj.preferred = result_qty.preferred
+
+            # Try to set legacy quantity and known status attributes if they exist (for compatibility)
             try:
-                if hasattr(result_qty, "unit"):
-                    var_obj.quantity = result_qty
+                # Only attempt assignments if attributes actually exist and are settable
+                if hasattr(var_obj, "quantity") and not isinstance(getattr(type(var_obj), "quantity", None), property):
+                    var_obj.quantity = result_qty  # type: ignore[misc]
             except (AttributeError, TypeError):
                 pass  # Quantity assignment not supported
 
-        # Set known status using appropriate attribute
+        # For new Quantity objects, is_known is automatically derived from value != None
+        # So no need to set it explicitly. Legacy _is_known attribute is handled if it exists.
         try:
             if hasattr(var_obj, "_is_known"):
-                var_obj._is_known = True
-            elif hasattr(var_obj, "is_known"):
-                var_obj.is_known = True
+                var_obj._is_known = True  # type: ignore[misc]
         except (AttributeError, TypeError):
             pass  # Known status setting not supported
         return var_obj
@@ -290,8 +311,9 @@ class Equation:
                 return False
 
             # Convert to same units for comparison
-            if hasattr(lhs_value, "unit") and hasattr(rhs_value, "to"):
-                rhs_converted = rhs_value.to(lhs_value.unit)
+            lhs_unit = self._get_effective_unit(lhs_value)
+            if lhs_unit is not None and hasattr(rhs_value, "to"):
+                rhs_converted = rhs_value.to(lhs_unit)
                 if hasattr(lhs_value, "value") and hasattr(rhs_converted, "value") and lhs_value.value is not None and rhs_converted.value is not None:
                     residual = abs(lhs_value.value - rhs_converted.value)
                 else:
@@ -321,12 +343,32 @@ class Equation:
         # Use centralized scope discovery service
         return ScopeDiscoveryService.discover_variables(self.variables, enable_caching=True)
 
+    def _get_effective_unit(self, quantity):
+        """Get the effective unit for a quantity, handling both old and new Quantity objects."""
+        # New Quantity objects have preferred attribute
+        if hasattr(quantity, "preferred") and quantity.preferred is not None:
+            return quantity.preferred
+
+        # Old Quantity objects might have unit attribute
+        if hasattr(quantity, "unit"):
+            return quantity.unit
+
+        # Try to get preferred unit from dimension
+        if hasattr(quantity, "dim"):
+            from ..core.unit import ureg
+            return ureg.preferred_for(quantity.dim) or ureg.si_unit_for(quantity.dim)
+
+        return None
+
     def _are_dimensionally_compatible(self, lhs_value, rhs_value) -> bool:
         """Check if two quantities are dimensionally compatible."""
         try:
             # Try to convert - if successful, they're compatible
-            rhs_value.to(lhs_value.unit)
-            return True
+            lhs_unit = self._get_effective_unit(lhs_value)
+            if lhs_unit is not None:
+                rhs_value.to(lhs_unit)
+                return True
+            return False
         except (ValueError, TypeError, AttributeError):
             return False
 
