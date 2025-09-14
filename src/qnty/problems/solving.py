@@ -14,12 +14,13 @@ All consolidated into a focused solving system.
 
 from __future__ import annotations
 
+import ast
+import operator
 import re
 from logging import Logger
 from typing import Any
 
-from ..algebra import Equation
-from ..algebra import BinaryOperation, ConditionalExpression, Constant, UnaryFunction, VariableReference, cos, sin
+from ..algebra import BinaryOperation, ConditionalExpression, Constant, Equation, UnaryFunction, VariableReference, cos, sin
 from ..core.quantity import FieldQuantity
 
 # Type aliases for better readability
@@ -30,6 +31,130 @@ NamespaceMapping = dict[str, str]
 # Constants for pattern matching
 CONDITIONAL_PATTERNS: set[str] = {"cond("}
 FUNCTION_PATTERNS: set[str] = {"sin(", "cos(", "tan(", "log(", "exp(", "sqrt"}
+
+
+class SafeExpressionEvaluator:
+    """Safe mathematical expression evaluator using AST instead of eval()."""
+
+    ALLOWED_NODES = (
+        ast.Expression, ast.BinOp, ast.UnaryOp, ast.Constant,
+        ast.Name, ast.Load, ast.Store, ast.Del, ast.Add, ast.Sub, ast.Mult,
+        ast.Div, ast.Mod, ast.Pow, ast.LShift, ast.RShift, ast.BitOr, ast.BitXor,
+        ast.BitAnd, ast.FloorDiv, ast.UAdd, ast.USub, ast.Not, ast.Invert,
+        ast.Compare, ast.Eq, ast.NotEq, ast.Lt, ast.LtE, ast.Gt, ast.GtE,
+        ast.Is, ast.IsNot, ast.In, ast.NotIn, ast.BoolOp, ast.And, ast.Or,
+        ast.Call, ast.keyword, ast.Attribute
+    )
+
+    OPERATORS = {
+        ast.Add: operator.add,
+        ast.Sub: operator.sub,
+        ast.Mult: operator.mul,
+        ast.Div: operator.truediv,
+        ast.FloorDiv: operator.floordiv,
+        ast.Mod: operator.mod,
+        ast.Pow: operator.pow,
+        ast.LShift: operator.lshift,
+        ast.RShift: operator.rshift,
+        ast.BitOr: operator.or_,
+        ast.BitXor: operator.xor,
+        ast.BitAnd: operator.and_,
+        ast.UAdd: operator.pos,
+        ast.USub: operator.neg,
+        ast.Not: operator.not_,
+        ast.Invert: operator.invert,
+        ast.Eq: operator.eq,
+        ast.NotEq: operator.ne,
+        ast.Lt: operator.lt,
+        ast.LtE: operator.le,
+        ast.Gt: operator.gt,
+        ast.GtE: operator.ge,
+        ast.Is: operator.is_,
+        ast.IsNot: operator.is_not,
+        ast.In: lambda a, b: a in b,
+        ast.NotIn: lambda a, b: a not in b,
+    }
+
+    def __init__(self, variables: dict[str, Any], allowed_functions: dict[str, Any] | None = None):
+        self.variables = variables
+        self.allowed_functions = allowed_functions or {
+            "sin": sin,
+            "cos": cos,
+            "abs": abs,
+            "min": min,
+            "max": max,
+        }
+
+    def safe_eval(self, expr_string: str) -> Any:
+        """Safely evaluate a mathematical expression string."""
+        try:
+            tree = ast.parse(expr_string, mode='eval')
+            self._validate_ast(tree)
+            return self._eval_node(tree.body)
+        except (SyntaxError, ValueError, TypeError) as e:
+            raise ValueError(f"Invalid expression: {e}") from e
+
+    def _validate_ast(self, node: ast.AST) -> None:
+        """Validate that AST only contains allowed nodes."""
+        for child in ast.walk(node):
+            if not isinstance(child, self.ALLOWED_NODES):
+                raise ValueError(f"Disallowed node type: {type(child).__name__}")
+
+    def _eval_node(self, node: ast.AST) -> Any:
+        """Recursively evaluate AST nodes."""
+        if isinstance(node, ast.Constant):
+            return node.value
+        elif isinstance(node, ast.Name):
+            if node.id in self.variables:
+                return self.variables[node.id]
+            elif node.id in self.allowed_functions:
+                return self.allowed_functions[node.id]
+            else:
+                raise NameError(f"Unknown variable or function: {node.id}")
+        elif isinstance(node, ast.BinOp):
+            left = self._eval_node(node.left)
+            right = self._eval_node(node.right)
+            op = self.OPERATORS.get(type(node.op))
+            if op is None:
+                raise ValueError(f"Unsupported binary operator: {type(node.op).__name__}")
+            return op(left, right)
+        elif isinstance(node, ast.UnaryOp):
+            operand = self._eval_node(node.operand)
+            op = self.OPERATORS.get(type(node.op))
+            if op is None:
+                raise ValueError(f"Unsupported unary operator: {type(node.op).__name__}")
+            return op(operand)
+        elif isinstance(node, ast.Compare):
+            left = self._eval_node(node.left)
+            for op, comparator in zip(node.ops, node.comparators, strict=False):
+                right = self._eval_node(comparator)
+                comp_op = self.OPERATORS.get(type(op))
+                if comp_op is None:
+                    raise ValueError(f"Unsupported comparison operator: {type(op).__name__}")
+                if not comp_op(left, right):
+                    return False
+                left = right  # For chained comparisons
+            return True
+        elif isinstance(node, ast.BoolOp):
+            if isinstance(node.op, ast.And):
+                return all(self._eval_node(value) for value in node.values)
+            elif isinstance(node.op, ast.Or):
+                return any(self._eval_node(value) for value in node.values)
+        elif isinstance(node, ast.Call):
+            func_name = node.func.id if isinstance(node.func, ast.Name) else None
+            if func_name not in self.allowed_functions:
+                raise ValueError(f"Function not allowed: {func_name}")
+            func = self.allowed_functions[func_name]
+            args = [self._eval_node(arg) for arg in node.args]
+            kwargs = {kw.arg: self._eval_node(kw.value) for kw in node.keywords}
+            return func(*args, **kwargs)
+        elif isinstance(node, ast.Attribute):
+            obj = self._eval_node(node.value)
+            return getattr(obj, node.attr)
+        else:
+            raise ValueError(f"Unsupported node type: {type(node).__name__}")
+
+
 MATH_OPERATORS: set[str] = {"(", ")", "+", "-", "*", "/"}
 EXCLUDED_FUNCTION_NAMES: set[str] = {"sin", "cos", "max", "min", "exp", "log", "sqrt", "tan"}
 
@@ -187,19 +312,17 @@ class ExpressionParser:
                 eval_context[var_symbol] = var_obj
 
             # Add safe mathematical functions
-            eval_context.update(
-                {
-                    "sin": sin,
-                    "cos": cos,
-                    "abs": abs,
-                    "min": min,
-                    "max": max,
-                    "__builtins__": {},  # Disable built-ins for security
-                }
-            )
+            allowed_functions = {
+                "sin": sin,
+                "cos": cos,
+                "abs": abs,
+                "min": min,
+                "max": max,
+            }
 
-            # Safely evaluate the expression
-            result = eval(expr_string, eval_context, {})
+            # Use safe evaluator instead of eval()
+            evaluator = SafeExpressionEvaluator(eval_context, allowed_functions)
+            result = evaluator.safe_eval(expr_string)
             return result
 
         except Exception as e:
@@ -646,9 +769,19 @@ class CompositeExpressionRebuilder:
         try:
             # Create evaluation context with our variables
             eval_context: dict[str, Any] = dict(self.variables)
-            eval_context["__builtins__"] = {}  # Security
 
-            return eval(pattern, eval_context, {})
+            # Add safe mathematical functions
+            allowed_functions = {
+                "sin": sin,
+                "cos": cos,
+                "abs": abs,
+                "min": min,
+                "max": max,
+            }
+
+            # Use safe evaluator instead of eval()
+            evaluator = SafeExpressionEvaluator(eval_context, allowed_functions)
+            return evaluator.safe_eval(pattern)
 
         except Exception:
             return None

@@ -8,6 +8,7 @@ import pytest
 import qnty as qt
 from qnty.core import Q
 from qnty.core import unit_catalog as uc
+from qnty.problems.solving import SafeExpressionEvaluator
 # from qnty.algebra import solve  # Import removed to avoid affecting other tests
 
 # Problem definitions - single source of truth
@@ -141,7 +142,8 @@ def solve_with_problem_class(variables, equation_specs):
 
     for target_var, expression in equation_specs:
         # Evaluate the expression with current variable values
-        rhs = eval(expression, {"__builtins__": {}}, variables)
+        evaluator = SafeExpressionEvaluator(variables)
+        rhs = evaluator.safe_eval(expression)
         # Use the solve function to assign the result
         solve(variables[target_var], rhs)
 
@@ -155,7 +157,8 @@ def solve_with_equations(variables, equation_specs):
     # Create and solve equations in order using new solve() function
     for target_var, expression in equation_specs:
         lhs = variables[target_var]
-        rhs = eval(expression, {"__builtins__": {}}, variables)
+        evaluator = SafeExpressionEvaluator(variables)
+        rhs = evaluator.safe_eval(expression)
         # Use the new solve() function from algebra module
         success = solve(lhs, rhs)
         if not success:
@@ -171,7 +174,8 @@ def solve_with_solve_from(variables, equation_specs):
 
     # Execute solve() function in order
     for target_var, expression in equation_specs:
-        rhs = eval(expression, {"__builtins__": {}}, variables)
+        evaluator = SafeExpressionEvaluator(variables)
+        rhs = evaluator.safe_eval(expression)
         # Use the new solve() function from algebra module
         success = solve(variables[target_var], rhs)
         if not success:
