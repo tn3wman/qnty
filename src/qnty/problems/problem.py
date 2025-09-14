@@ -20,7 +20,7 @@ from qnty.utils.logging import get_logger
 
 from ..constants import SOLVER_DEFAULT_MAX_ITERATIONS, SOLVER_DEFAULT_TOLERANCE
 from ..algebra import Equation, EquationSystem
-from ..core.quantity import FieldQuantity, Quantity
+from ..core.quantity import Quantity
 from ..core.unit_catalog import DimensionlessUnits
 from .solving import EquationReconstructor
 
@@ -150,7 +150,7 @@ class Problem(ValidationMixin):
         self.description = description or getattr(self.__class__, "description", "")
 
         # Core storage
-        self.variables: dict[str, FieldQuantity] = {}
+        self.variables: dict[str, Quantity] = {}
         self.equations: list[Equation] = []
 
         # Internal systems
@@ -159,12 +159,12 @@ class Problem(ValidationMixin):
 
         # Solving state
         self.is_solved = False
-        self.solution: dict[str, FieldQuantity] = {}
+        self.solution: dict[str, Quantity] = {}
         self.solving_history: list[dict[str, Any]] = []
 
         # Performance optimization caches
-        self._known_variables_cache: dict[str, FieldQuantity] | None = None
-        self._unknown_variables_cache: dict[str, FieldQuantity] | None = None
+        self._known_variables_cache: dict[str, Quantity] | None = None
+        self._unknown_variables_cache: dict[str, Quantity] | None = None
         self._cache_dirty = True
 
         # Validation and warning system
@@ -211,7 +211,7 @@ class Problem(ValidationMixin):
 
     # ========== VARIABLE MANAGEMENT ==========
 
-    def add_variable(self, variable: FieldQuantity) -> None:
+    def add_variable(self, variable: Quantity) -> None:
         """
         Add a variable to the problem.
 
@@ -245,24 +245,24 @@ class Problem(ValidationMixin):
         self.is_solved = False
         self._invalidate_caches()
 
-    def add_variables(self, *variables: FieldQuantity) -> None:
+    def add_variables(self, *variables: Quantity) -> None:
         """Add multiple variables to the problem."""
         for var in variables:
             self.add_variable(var)
 
-    def get_variable(self, symbol: str) -> FieldQuantity:
+    def get_variable(self, symbol: str) -> Quantity:
         """Get a variable by its symbol."""
         if symbol not in self.variables:
             raise VariableNotFoundError(f"Variable '{symbol}' not found in problem '{self.name}'.")
         return self.variables[symbol]
 
-    def get_known_variables(self) -> dict[str, FieldQuantity]:
+    def get_known_variables(self) -> dict[str, Quantity]:
         """Get all known variables."""
         if self._cache_dirty or self._known_variables_cache is None:
             self._update_variable_caches()
         return self._known_variables_cache.copy() if self._known_variables_cache else {}
 
-    def get_unknown_variables(self) -> dict[str, FieldQuantity]:
+    def get_unknown_variables(self) -> dict[str, Quantity]:
         """Get all unknown variables."""
         if self._cache_dirty or self._unknown_variables_cache is None:
             self._update_variable_caches()
@@ -286,12 +286,12 @@ class Problem(ValidationMixin):
 
     # Properties for compatibility
     @property
-    def known_variables(self) -> dict[str, FieldQuantity]:
+    def known_variables(self) -> dict[str, Quantity]:
         """Get all variables marked as known."""
         return self.get_known_variables()
 
     @property
-    def unknown_variables(self) -> dict[str, FieldQuantity]:
+    def unknown_variables(self) -> dict[str, Quantity]:
         """Get all variables marked as unknown."""
         return self.get_unknown_variables()
 
@@ -299,7 +299,15 @@ class Problem(ValidationMixin):
         """Mark variables as unknown (to be solved for)."""
         for symbol in symbols:
             if symbol in self.variables:
-                self.variables[symbol].mark_unknown()
+                # Mark as unknown by clearing the value
+                var = self.variables[symbol]
+                new_var = var.__class__(
+                    name=var.name,
+                    value=None,
+                    preferred=var.preferred
+                )
+                new_var._symbol = var._symbol
+                self.variables[symbol] = new_var
             else:
                 raise VariableNotFoundError(f"Variable '{symbol}' not found in problem '{self.name}'")
         self.is_solved = False
@@ -314,7 +322,7 @@ class Problem(ValidationMixin):
                 self.variables[symbol].value = quantity.value
                 if hasattr(quantity, 'preferred') and quantity.preferred is not None:
                     self.variables[symbol].preferred = quantity.preferred
-                self.variables[symbol].mark_known()
+                # Value and preferred unit are already set above, quantity is now known
             else:
                 raise VariableNotFoundError(f"Variable '{symbol}' not found in problem '{self.name}'")
         self.is_solved = False
@@ -342,7 +350,14 @@ class Problem(ValidationMixin):
                 var = self.variables[dependent_symbol]
                 # Only mark as unknown if it was previously solved (known)
                 if var.is_known:
-                    var.mark_unknown()
+                    # Mark as unknown by clearing the value
+                    new_var = var.__class__(
+                        name=var.name,
+                        value=None,
+                        preferred=var.preferred
+                    )
+                    new_var._symbol = var._symbol
+                    self.variables[dependent_symbol] = new_var
                     # Recursively invalidate variables that depend on this one
                     self.invalidate_dependents(dependent_symbol)
 
@@ -352,40 +367,37 @@ class Problem(ValidationMixin):
 
     def _create_placeholder_variable(self, symbol: str) -> None:
         """Create a placeholder variable for a missing symbol."""
-        placeholder_var = FieldQuantity(name=f"Auto-created: {symbol}", expected_dimension=DimensionlessUnits.dimensionless.dimension, is_known=False)
-        placeholder_var.symbol = symbol
-        placeholder_var.value = 0.0
-        placeholder_var.preferred = DimensionlessUnits.dimensionless
+        # For placeholder variables, use the base Quantity class directly
+        # since we need to specify the dimension
+        from ..core.quantity import Quantity as BaseQuantity
+        placeholder_var = BaseQuantity(
+            name=f"Auto-created: {symbol}",
+            dim=DimensionlessUnits.dimensionless.dim,
+            value=None,
+            preferred=DimensionlessUnits.dimensionless,
+            _symbol=symbol
+        )
         self.add_variable(placeholder_var)
         self.logger.debug(f"Auto-created placeholder variable: {symbol}")
 
-    def _clone_variable(self, variable: FieldQuantity) -> FieldQuantity:
+    def _clone_variable(self, variable: Quantity) -> Quantity:
         """Create a copy of a variable to avoid shared state without corrupting global units."""
         # Create a new variable of the same exact type to preserve .equals() method
         # This ensures domain-specific variables (Length, Pressure, etc.) keep their type
         variable_type = type(variable)
 
-        # Create a new instance properly initialized
-        # Pass the name to the constructor which all FieldQnty subclasses accept
-        cloned = variable_type(variable.name)
+        # Create a new instance using the metaclass-generated constructor
+        cloned = variable_type(
+            name=variable.name,
+            value=variable.value,
+            preferred=variable.preferred
+        )
 
-        # Copy over the attributes from the original
-        cloned._symbol = variable.symbol
-
-        # Copy the value if it exists
-        if variable.value is not None:
-            cloned.value = variable.value
-
-        # Copy the preferred unit if it exists
-        if hasattr(variable, 'preferred') and variable.preferred is not None:
-            cloned.preferred = variable.preferred
-
-        # Ensure the cloned variable has fresh validation checks
-        if hasattr(variable, "validation_checks") and hasattr(cloned, "validation_checks"):
-            cloned.validation_checks = []
+        # Set the symbol after creation since it's not in the constructor
+        cloned._symbol = variable._symbol
         return cloned
 
-    def _update_variables_with_solution(self, solved_variables: dict[str, FieldQuantity]):
+    def _update_variables_with_solution(self, solved_variables: dict[str, Quantity]):
         """
         Update variables with solution, preserving original units for display.
         """
@@ -395,32 +407,42 @@ class Problem(ValidationMixin):
 
                 # If we have a solved quantity and an original unit to preserve
                 if (
-                    solved_var.quantity is not None and symbol in self._original_variable_units and symbol in self._original_variable_states and not self._original_variable_states[symbol]
+                    solved_var.value is not None and symbol in self._original_variable_units and symbol in self._original_variable_states and not self._original_variable_states[symbol]
                 ):  # Was originally unknown
                     # Convert solved quantity to original unit for display
                     original_unit = self._original_variable_units[symbol]
                     try:
                         # Convert the solved quantity to the original unit
-                        converted_value = solved_var.quantity.to(original_unit).value
-                        from ..quantities.base_qnty import Quantity
+                        converted_value = solved_var.to(original_unit).value
 
-                        original_var.value = converted_value
-                        original_var.preferred = original_unit
-                        original_var._is_known = True
+                        # Create new quantity with converted value
+                        new_var = original_var.__class__(
+                            name=original_var.name,
+                            value=converted_value,
+                            preferred=original_unit
+                        )
+                        new_var._symbol = original_var._symbol
+                        self.variables[symbol] = new_var
                     except Exception:
                         # If conversion fails, use the solved quantity as-is
-                        if solved_var.quantity and solved_var.quantity.value is not None:
-                            original_var.value = solved_var.quantity.value
-                            if hasattr(solved_var.quantity, 'preferred'):
-                                original_var.preferred = solved_var.quantity.preferred
-                        original_var._is_known = solved_var.is_known
+                        if solved_var.value is not None:
+                            new_var = original_var.__class__(
+                                name=original_var.name,
+                                value=solved_var.value,
+                                preferred=solved_var.preferred or original_var.preferred
+                            )
+                            new_var._symbol = original_var._symbol
+                            self.variables[symbol] = new_var
                 else:
                     # For originally known variables or if no unit conversion needed
-                    if solved_var.quantity and solved_var.quantity.value is not None:
-                        original_var.value = solved_var.quantity.value
-                        if hasattr(solved_var.quantity, 'preferred'):
-                            original_var.preferred = solved_var.quantity.preferred
-                    original_var._is_known = solved_var.is_known
+                    if solved_var.value is not None:
+                        new_var = original_var.__class__(
+                            name=original_var.name,
+                            value=solved_var.value,
+                            preferred=solved_var.preferred or original_var.preferred
+                        )
+                        new_var._symbol = original_var._symbol
+                        self.variables[symbol] = new_var
 
     def _sync_variables_to_instance_attributes(self):
         """
@@ -518,9 +540,7 @@ class Problem(ValidationMixin):
             fixed_rhs = self._fix_expression_variables(equation.rhs)
 
             # Fix the LHS if it's wrapped in ExpressionEnabledWrapper
-            fixed_lhs = equation.lhs
-            if hasattr(equation.lhs, '_wrapped'):
-                fixed_lhs = equation.lhs._wrapped
+            fixed_lhs = getattr(equation.lhs, '_wrapped', equation.lhs)
 
             # Create new equation with fixed LHS and RHS
             return Equation(equation.name, fixed_lhs, fixed_rhs)
@@ -540,11 +560,8 @@ class Problem(ValidationMixin):
             # Create a context dict that unwraps ExpressionEnabledWrapper objects
             context = {}
             for symbol, var in self.variables.items():
-                # If it's wrapped, unwrap it to get the actual variable
-                if hasattr(var, '_wrapped'):
-                    context[symbol] = var._wrapped
-                else:
-                    context[symbol] = var
+                # Variables are now Quantity objects, no wrapping needed
+                context[symbol] = var
             resolved_expr = expr.resolve(context)
             if resolved_expr is not None:
                 # Recursively fix the resolved expression
@@ -722,10 +739,15 @@ class Problem(ValidationMixin):
         for symbol, var in self.variables.items():
             if symbol in self._original_variable_states:
                 original_state = self._original_variable_states[symbol]
-                var._is_known = original_state
                 # If variable was originally unknown, reset it to None so solver can update it
                 if not original_state:
-                    var.value = None
+                    new_var = var.__class__(
+                        name=var.name,
+                        value=None,
+                        preferred=var.preferred
+                    )
+                    new_var._symbol = var._symbol
+                    self.variables[symbol] = new_var
 
     def copy(self):
         """Create a copy of this problem."""
@@ -748,7 +770,7 @@ class Problem(ValidationMixin):
             return
 
         # If setting a variable that exists in our variables dict, update both
-        if isinstance(value, FieldQuantity) and hasattr(self, "variables") and name in self.variables:
+        if isinstance(value, Quantity) and hasattr(self, "variables") and name in self.variables:
             self.variables[name] = value
 
         super().__setattr__(name, value)
@@ -773,10 +795,17 @@ class Problem(ValidationMixin):
 
     def __setitem__(self, key: str, value) -> None:
         """Allow dict-like assignment of variables."""
-        if isinstance(value, FieldQuantity):
+        if isinstance(value, Quantity):
             # Update the symbol to match the key if they differ
             if value.symbol != key:
-                value.symbol = key
+                # Create new quantity with updated symbol
+                new_value = value.__class__(
+                    name=value.name,
+                    value=value.value,
+                    preferred=value.preferred
+                )
+                new_value._symbol = key
+                value = new_value
             self.add_variable(value)
 
     # ========== CLASS-LEVEL EXTRACTION ==========

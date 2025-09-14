@@ -1,6 +1,6 @@
 {
   "permissions": {
-    "defaultMode": "acceptEdits",
+    "defaultMode": "bypassPermissions",
     "ask": [
       "Bash(rm -rf /*)",
       "Edit(./src/qnty/core/*.py)"

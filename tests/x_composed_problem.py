@@ -1,6 +1,7 @@
 import pytest
 
 import qnty as qt
+from qnty.algebra import equation
 from qnty.problems.rules import add_rule
 
 
@@ -68,11 +69,11 @@ class StraightPipeInternal(qt.Problem):
     P_max = qt.Pressure("Pressure, Maximum", "psi")
 
     # Equations
-    T_eqn = T.equals(T_bar * (1 - U_m))
-    d_eqn = d.equals(D - 2 * T)
-    t_eqn = t.equals((P * D) / (2 * (S * E * W + P * Y)))
-    t_m_eqn = t_m.equals(t + c)
-    P_max_eqn = P_max.equals((2 * (T - c) * S * E * W) / (D - 2 * (T - c) * Y))
+    T_eqn = equation(T, T_bar * (1 - U_m))
+    d_eqn = equation(d, D - 2 * T)
+    t_eqn = equation(t, (P * D) / (2 * (S * E * W + P * Y)))
+    t_m_eqn = equation(t_m, t + c)
+    P_max_eqn = equation(P_max, (2 * (T - c) * S * E * W) / (D - 2 * (T - c) * Y))
 
     # ASME B31.3 Section 304.1.1 Y coefficient logic
     # Explicit handling of both conditions per ASME B31.3

@@ -14,8 +14,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from ..algebra import Equation
-from ..algebra import BinaryOperation, ConditionalExpression, Constant, VariableReference, max_expr, min_expr, sin
+from ..algebra import BinaryOperation, ConditionalExpression, Constant, Equation, VariableReference, max_expr, min_expr, sin
 from ..algebra.nodes import wrap_operand
 from ..core.quantity import FieldQuantity
 from ..core.quantity_catalog import Dimensionless
@@ -164,15 +163,17 @@ class ConfigurableVariable:
             # Fallback to Dimensionless if no original variable provided
             self._variable = Dimensionless(name)
 
-        # Set the properties
-        self._variable.symbol = symbol
-        self._variable.quantity = quantity
-        self._variable.is_known = is_known
+        # Set the properties using private attributes (since properties may be read-only)
+        self._variable._symbol = symbol
+        # For the unified Quantity class, we set the value and preferred unit directly
+        if quantity is not None and hasattr(quantity, "value") and hasattr(quantity, "preferred"):
+            self._variable.value = quantity.value
+            self._variable.preferred = quantity.preferred
+        # Note: is_known is handled via the value being None or not in the unified Quantity API
+        _ = is_known  # Mark as used to avoid linting warnings
 
-        # Ensure the arithmetic mode is properly initialized
-        # The __init__ should have set it, but in case it didn't
-        if not hasattr(self._variable, "_arithmetic_mode"):
-            self._variable._arithmetic_mode = "expression"
+        # The unified Quantity class may not have _arithmetic_mode
+        # This is handled by the arithmetic operations in the class itself
 
         # Store proxy information
         self._proxy = proxy
@@ -182,11 +183,8 @@ class ConfigurableVariable:
         """Delegate all other attributes to the wrapped variable."""
         # Handle special case for _arithmetic_mode since it's accessed in __mul__ etc.
         if name == "_arithmetic_mode":
-            # First check if we have it directly
-            if hasattr(self._variable, "_arithmetic_mode"):
-                return self._variable._arithmetic_mode
-            # Otherwise default to 'expression'
-            return "expression"
+            # First check if we have it directly using getattr for safety
+            return getattr(self._variable, "_arithmetic_mode", "expression")
 
         return getattr(self._variable, name)
 
@@ -261,26 +259,54 @@ class ConfigurableVariable:
 
     def update(self, value=None, unit=None, quantity=None, is_known=None):
         """Override update method to track configuration changes."""
-        result = self._variable.update(value, unit, quantity, is_known)
+        update_method = getattr(self._variable, "update", None)
+        if update_method is not None:
+            result = update_method(value, unit, quantity, is_known)
+        else:
+            # Fallback for unified Quantity API
+            if value is not None and unit is not None:
+                self._variable = self._variable.set(value, unit)
+            result = self._variable
         if self._proxy and self._original_symbol:
-            # Track this configuration change
-            self._proxy.track_configuration(self._original_symbol, self._variable.quantity, self._variable.is_known)
+            # Track this configuration change (use property if available)
+            quantity_val = getattr(self._variable, "quantity", self._variable)
+            is_known_val = getattr(self._variable, "is_known", self._variable.value is not None)
+            self._proxy.track_configuration(self._original_symbol, quantity_val, is_known_val)
         return result
 
     def mark_known(self):
         """Override mark_known to track configuration changes."""
-        result = self._variable.mark_known()
+        mark_known_method = getattr(self._variable, "mark_known", None)
+        if mark_known_method is not None:
+            result = mark_known_method()
+        else:
+            # Fallback: in unified Quantity API, this might be handled differently
+            result = self._variable
         if self._proxy and self._original_symbol:
             # Track this configuration change
-            self._proxy.track_configuration(self._original_symbol, self._variable.quantity, self._variable.is_known)
+            quantity_val = getattr(self._variable, "quantity", self._variable)
+            is_known_val = getattr(self._variable, "is_known", self._variable.value is not None)
+            self._proxy.track_configuration(self._original_symbol, quantity_val, is_known_val)
         return result
 
     def mark_unknown(self):
         """Override mark_unknown to track configuration changes."""
-        result = self._variable.mark_unknown()
+        mark_unknown_method = getattr(self._variable, "mark_unknown", None)
+        if mark_unknown_method is not None:
+            result = mark_unknown_method()
+        else:
+            # Fallback: in unified Quantity API, create a new quantity with None value
+            # Create a new unknown quantity by setting value to None
+            result = self._variable.__class__(name=self._variable.name)
+            result.value = None
+            result.preferred = self._variable.preferred
+            result._symbol = self._variable._symbol
+            self._variable = result
         if self._proxy and self._original_symbol:
             # Track this configuration change
-            self._proxy.track_configuration(self._original_symbol, self._variable.quantity, self._variable.is_known)
+            quantity_val = getattr(self._variable, "quantity", self._variable)
+            is_known_val = getattr(self._variable, "is_known", self._variable.value is not None)
+            self._proxy.track_configuration(self._original_symbol, quantity_val, is_known_val)
         return result
 
 
@@ -360,20 +386,19 @@ class DelayedExpression(ArithmeticOperationsMixin):
         DelayedExpression objects don't have values until resolved.
         Raise a more specific error to help with debugging.
         """
-        raise AttributeError(
-            f"DelayedExpression objects must be resolved before accessing their value. "
-            f"Use resolve(context) to convert this to a proper expression first."
-        )
+        raise AttributeError("DelayedExpression objects must be resolved before accessing their value. Use resolve(context) to convert this to a proper expression first.")
 
     def evaluate(self, variable_values):
         """
         DelayedExpression objects should be resolved before evaluation.
         This method raises an informative error to help debug issues.
         """
+        # Mark variable as used to avoid linting warnings
+        _ = variable_values
         raise RuntimeError(
-            f"DelayedExpression objects must be resolved before evaluation. "
-            f"This suggests that DelayedExpression.resolve() was not called properly "
-            f"or that an unresolved DelayedExpression made it into the expression tree."
+            "DelayedExpression objects must be resolved before evaluation. "
+            "This suggests that DelayedExpression.resolve() was not called properly "
+            "or that an unresolved DelayedExpression made it into the expression tree."
         )
 
     def resolve(self, context):
@@ -401,7 +426,7 @@ class DelayedExpression(ArithmeticOperationsMixin):
         """Resolve a single operand to a Variable/Expression."""
         if isinstance(operand, DelayedVariableReference | DelayedExpression | DelayedFunction):
             return operand.resolve(context)
-        elif hasattr(operand, '_wrapped'):
+        elif hasattr(operand, "_wrapped"):
             # This is an ExpressionEnabledWrapper - unwrap it to get the actual variable
             return operand._wrapped
         else:
@@ -508,7 +533,7 @@ class CompositionMixin:
         for attr_name, attr_value in self._get_class_attributes():
             # Handle both direct FieldQuantity objects and wrapped ones
             actual_var = attr_value
-            if hasattr(attr_value, '_wrapped') and isinstance(attr_value._wrapped, FieldQuantity):
+            if hasattr(attr_value, "_wrapped") and isinstance(attr_value._wrapped, FieldQuantity):
                 actual_var = attr_value._wrapped
             elif not isinstance(attr_value, FieldQuantity):
                 continue
@@ -602,14 +627,18 @@ class CompositionMixin:
         """Create a namespaced variable with proper configuration."""
         namespaced_symbol = f"{namespace}_{var_symbol}"
         namespaced_var = self._clone_variable(var)
-        namespaced_var.symbol = namespaced_symbol
+        namespaced_var._symbol = namespaced_symbol
         namespaced_var.name = f"{var.name} ({namespace.title()})"
 
         # Apply proxy configuration if available
         if var_symbol in proxy_configs:
             config = proxy_configs[var_symbol]
-            namespaced_var.quantity = config["quantity"]
-            namespaced_var.is_known = config["is_known"]
+            # For the unified Quantity API, set value and preferred instead of quantity
+            quantity = config["quantity"]
+            if quantity is not None and hasattr(quantity, "value") and hasattr(quantity, "preferred"):
+                namespaced_var.value = quantity.value
+                namespaced_var.preferred = quantity.preferred
+            # is_known is handled by whether value is None or not
 
         return namespaced_var
 
@@ -648,8 +677,10 @@ class CompositionMixin:
         namespaced_lhs = self._namespace_expression_for_lhs(equation.lhs, symbol_mapping)
         namespaced_rhs = self._namespace_expression(equation.rhs, symbol_mapping)
 
-        if namespaced_lhs and namespaced_rhs and hasattr(namespaced_lhs, "equals"):
-            return namespaced_lhs.equals(namespaced_rhs)
+        if namespaced_lhs and namespaced_rhs:
+            equals_method = getattr(namespaced_lhs, "equals", None)
+            if equals_method is not None:
+                return equals_method(namespaced_rhs)
         return None
 
     def _namespace_expression(self, expr, symbol_mapping):
@@ -1075,6 +1106,7 @@ class ProxiedNamespace(dict):
         This allows expressions like 'D - 2 * T' to work during Problem class definition
         even when variables have no values.
         """
+
         class ExpressionEnabledWrapper(ArithmeticOperationsMixin):
             def __init__(self, wrapped_var):
                 self._wrapped = wrapped_var
@@ -1085,7 +1117,7 @@ class ProxiedNamespace(dict):
 
             def __setattr__(self, name, value):
                 # Handle wrapper attributes normally
-                if name == '_wrapped':
+                if name == "_wrapped":
                     super().__setattr__(name, value)
                 else:
                     # Delegate to wrapped variable
@@ -1094,7 +1126,7 @@ class ProxiedNamespace(dict):
             @property
             def value(self):
                 """Delegate value access to wrapped variable."""
-                return getattr(self._wrapped, 'value', None)
+                return getattr(self._wrapped, "value", None)
 
             def __float__(self):
                 """Delegate float conversion to wrapped variable."""
