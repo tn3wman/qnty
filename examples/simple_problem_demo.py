@@ -48,19 +48,19 @@ class StraightPipeInternal(Problem):
 
     # # ASME B31.3 Code Compliance Checks - defined at class level like variables and equations
     # TODO: Work on the validation system later
-    # thick_wall_check = add_rule(
-    #     t.geq(D / 6),
-    #     "Thick wall condition detected (t >= D/6). Per ASME B31.3, calculation requires special consideration of theory of failure, effects of fatigue, and thermal stress.",
-    #     warning_type="CODE_COMPLIANCE",
-    #     severity="WARNING",
-    # )
+    thick_wall_check = add_rule(
+        t.geq(D / 6),
+        "Thick wall condition detected (t >= D/6). Per ASME B31.3, calculation requires special consideration of theory of failure, effects of fatigue, and thermal stress.",
+        warning_type="CODE_COMPLIANCE",
+        severity="WARNING",
+    )
 
-    # pressure_ratio_check = add_rule(
-    #     P.gt((S * E) * 0.385),
-    #     "High pressure ratio detected (P/(S*E) > 0.385). Per ASME B31.3, calculation requires special consideration of theory of failure, effects of fatigue, and thermal stress.",
-    #     warning_type="CODE_COMPLIANCE",
-    #     severity="WARNING",
-    # )
+    pressure_ratio_check = add_rule(
+        P.gt((S * E) * 0.385),
+        "High pressure ratio detected (P/(S*E) > 0.385). Per ASME B31.3, calculation requires special consideration of theory of failure, effects of fatigue, and thermal stress.",
+        warning_type="CODE_COMPLIANCE",
+        severity="WARNING",
+    )
 
 def create_straight_pipe_internal():
     return StraightPipeInternal()

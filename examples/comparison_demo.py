@@ -18,19 +18,11 @@ def basic_comparisons():
     print("=== Basic Comparisons ===\n")
 
     # Create some pressure values
-    P1 = Pressure(100, "kilopascal", "Pressure 1")
-    P2 = Pressure(150, "kilopascal", "Pressure 2")
+    P1 = Pressure("Pressure 1").set(100).kilopascal
+    P2 = Pressure("Pressure 2").set(150).kilopascal
 
     print(f"P1 = {P1}")
     print(f"P2 = {P2}")
-    print()
-
-    # Using methods
-    print("Using comparison methods:")
-    print(f"  P1.lt(P2) = {P1.lt(P2)}")  # Less than
-    print(f"  P1.gt(P2) = {P1.gt(P2)}")  # Greater than
-    print(f"  P1.leq(P2) = {P1.leq(P2)}")  # Less than or equal
-    print(f"  P1.geq(P2) = {P1.geq(P2)}")  # Greater than or equal
     print()
 
     # Using operators

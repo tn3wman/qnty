@@ -10,7 +10,6 @@ from __future__ import annotations
 
 from typing import Any
 
-from .types import BinaryOperationProtocol, ConditionalExpressionProtocol, ConstantProtocol, ExpressionProtocol, UnaryFunctionProtocol, VariableReferenceProtocol
 
 
 class ExpressionFormatter:
@@ -42,7 +41,7 @@ class ExpressionFormatter:
     LEFT_ASSOCIATIVE_SPECIAL = {"-", "/"}
 
     @staticmethod
-    def format_binary_operation(binary_op: BinaryOperationProtocol, can_auto_evaluate: bool = False, auto_eval_variables: dict[str, Any] | None = None) -> str:
+    def format_binary_operation(binary_op: Any, can_auto_evaluate: bool = False, auto_eval_variables: dict[str, Any] | None = None) -> str:
         """
         Format binary operation with proper parenthesization.
 
@@ -71,14 +70,14 @@ class ExpressionFormatter:
         return f"{left_str} {binary_op.operator} {right_str}"
 
     @staticmethod
-    def _get_precedence_comparison(expr: ExpressionProtocol, operator: str) -> tuple[int, int]:
+    def _get_precedence_comparison(expr: Any, operator: str) -> tuple[int, int]:
         """Get expression precedence compared to operator precedence."""
         expr_precedence = ExpressionFormatter._get_expression_precedence(expr)
         operator_precedence = ExpressionFormatter.get_operator_precedence(operator)
         return expr_precedence, operator_precedence
 
     @staticmethod
-    def _maybe_parenthesize(expr: ExpressionProtocol, operator: str, expr_str: str, is_right_operand: bool = False) -> str:
+    def _maybe_parenthesize(expr: Any, operator: str, expr_str: str, is_right_operand: bool = False) -> str:
         """Add parentheses to operand if needed for precedence and associativity."""
         if not ExpressionFormatter._is_binary_operation(expr):
             return expr_str
@@ -99,22 +98,22 @@ class ExpressionFormatter:
         return f"({expr_str})" if needs_parentheses else expr_str
 
     @staticmethod
-    def format_unary_function(func: UnaryFunctionProtocol) -> str:
+    def format_unary_function(func: Any) -> str:
         """Format unary function call."""
         return f"{func.function_name}({func.operand})"
 
     @staticmethod
-    def format_conditional_expression(cond_expr: ConditionalExpressionProtocol) -> str:
+    def format_conditional_expression(cond_expr: Any) -> str:
         """Format conditional expression in if-then-else form."""
         return f"if({cond_expr.condition}, {cond_expr.true_expr}, {cond_expr.false_expr})"
 
     @staticmethod
-    def format_variable_reference(var_ref: VariableReferenceProtocol) -> str:
+    def format_variable_reference(var_ref: Any) -> str:
         """Format variable reference (just the name)."""
         return var_ref.name
 
     @staticmethod
-    def format_constant(constant: ConstantProtocol) -> str:
+    def format_constant(constant: Any) -> str:
         """Format constant value."""
         return str(constant.value)
 
@@ -124,7 +123,7 @@ class ExpressionFormatter:
         return ExpressionFormatter.OPERATOR_PRECEDENCE.get(operator, 0)
 
     @staticmethod
-    def _try_evaluate(expression: ExpressionProtocol, variables: dict[str, Any]) -> Any | None:
+    def _try_evaluate(expression: Any, variables: dict[str, Any]) -> Any | None:
         """
         Safely attempt to evaluate an expression.
 
@@ -142,7 +141,7 @@ class ExpressionFormatter:
             return None
 
     @staticmethod
-    def _get_expression_type(expr: ExpressionProtocol) -> str:
+    def _get_expression_type(expr: Any) -> str:
         """Determine expression type using duck typing."""
         if hasattr(expr, "operator") and hasattr(expr, "left") and hasattr(expr, "right"):
             return "binary_operation"
@@ -158,12 +157,12 @@ class ExpressionFormatter:
             return "unknown"
 
     @staticmethod
-    def _is_binary_operation(expr: ExpressionProtocol) -> bool:
+    def _is_binary_operation(expr: Any) -> bool:
         """Check if expression is a binary operation using duck typing."""
         return ExpressionFormatter._get_expression_type(expr) == "binary_operation"
 
     @staticmethod
-    def _get_expression_precedence(expr: ExpressionProtocol) -> int:
+    def _get_expression_precedence(expr: Any) -> int:
         """Get precedence of an expression if it's a binary operation."""
         if ExpressionFormatter._is_binary_operation(expr):
             # We know it's a binary operation from the check above, so it has an operator
