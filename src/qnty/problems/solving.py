@@ -21,10 +21,11 @@ from logging import Logger
 from typing import Any
 
 from ..algebra import BinaryOperation, ConditionalExpression, Constant, Equation, UnaryFunction, VariableReference, cos, sin
-from ..core.quantity import FieldQuantity
+from ..algebra import equation as create_equation
+from ..core.quantity import Quantity
 
 # Type aliases for better readability
-VariableDict = dict[str, FieldQuantity]
+VariableDict = dict[str, Quantity]
 ReconstructionResult = Equation | None
 NamespaceMapping = dict[str, str]
 
@@ -146,7 +147,7 @@ class SafeExpressionEvaluator:
                 raise ValueError(f"Function not allowed: {func_name}")
             func = self.allowed_functions[func_name]
             args = [self._eval_node(arg) for arg in node.args]
-            kwargs = {kw.arg: self._eval_node(kw.value) for kw in node.keywords}
+            kwargs = {kw.arg: self._eval_node(kw.value) for kw in node.keywords if kw.arg is not None}
             return func(*args, **kwargs)
         elif isinstance(node, ast.Attribute):
             obj = self._eval_node(node.value)
@@ -163,7 +164,7 @@ VARIABLE_PATTERN_DETAILED = re.compile(r"\b([a-zA-Z_][a-zA-Z0-9_]*)\b")
 VARIABLE_PATTERN = re.compile(r"\b[A-Za-z][A-Za-z0-9_]*\b")
 
 # Tuple of types for isinstance() checks
-VALID_EXPRESSION_TYPES = (VariableReference, FieldQuantity, int, float, BinaryOperation, ConditionalExpression, Constant, UnaryFunction)
+VALID_EXPRESSION_TYPES = (VariableReference, Quantity, int, float, BinaryOperation, ConditionalExpression, Constant, UnaryFunction)
 
 
 # ========== CUSTOM EXCEPTIONS ==========
@@ -790,7 +791,7 @@ class CompositeExpressionRebuilder:
         """Attempt fallback reconstruction methods."""
         try:
             # Try to get variables from the LHS and create a simple reconstruction
-            if isinstance(equation.lhs, FieldQuantity | VariableReference):
+            if isinstance(equation.lhs, Quantity | VariableReference):
                 symbol = getattr(equation.lhs, "symbol", None)
                 if isinstance(symbol, str) and symbol in self.variables:
                     lhs_var = self.variables[symbol]
@@ -811,7 +812,7 @@ class CompositeExpressionRebuilder:
             return var_symbol.split("_")[0]
         return None
 
-    def _create_simple_reconstruction(self, namespace: str, target_var: FieldQuantity) -> Any | None:
+    def _create_simple_reconstruction(self, namespace: str, target_var: Quantity) -> Any | None:
         """Create a simple reconstruction based on namespace variables."""
         try:
             # Find other variables in the same namespace
@@ -890,8 +891,8 @@ class DelayedExpressionResolver:
                 return None
 
             # Create new equation with resolved RHS
-            if isinstance(equation.lhs, FieldQuantity):
-                return equation.lhs.equals(resolved_rhs)
+            if isinstance(equation.lhs, Quantity):
+                return create_equation(equation.lhs, resolved_rhs)
 
             return None
 
@@ -1100,7 +1101,7 @@ class EquationReconstructor:
                         # Replace the original equation's RHS or LHS
                         lhs_var = self._get_lhs_variable(equation)
                         if lhs_var:
-                            return lhs_var.equals(reconstructed_expr)
+                            return create_equation(lhs_var, reconstructed_expr)
 
             return None
 
@@ -1140,7 +1141,7 @@ class EquationReconstructor:
             self.logger.debug(f"Error in expression reconstruction: {e}")
             return None
 
-    def _get_lhs_variable(self, equation: Equation) -> FieldQuantity | None:
+    def _get_lhs_variable(self, equation: Equation) -> Quantity | None:
         """
         Safely extract the left-hand side variable from an equation.
 
@@ -1157,7 +1158,7 @@ class EquationReconstructor:
                 if var_name in self.variables:
                     return self.variables[var_name]
             # Check if lhs is a FieldQnty with symbol attribute
-            elif isinstance(equation.lhs, FieldQuantity):
+            elif isinstance(equation.lhs, Quantity):
                 symbol = getattr(equation.lhs, "symbol", None)
                 if isinstance(symbol, str) and symbol in self.variables:
                     return self.variables[symbol]
@@ -1271,14 +1272,14 @@ class EquationReconstructor:
                 # This is a malformed expression from proxy evaluation
                 reconstructed_rhs = self.composite_rebuilder.reconstruct_malformed_proxy_expression(equation, malformed_vars)
                 if reconstructed_rhs:
-                    return lhs_var.equals(reconstructed_rhs)
+                    return create_equation(lhs_var, reconstructed_rhs)
                 return None
 
             # Reconstruct the RHS by parsing and rebuilding composite expressions
             reconstructed_rhs = self.expression_parser.parse_and_rebuild_expression(equation.rhs, missing_vars)
 
             if reconstructed_rhs:
-                return lhs_var.equals(reconstructed_rhs)
+                return create_equation(lhs_var, reconstructed_rhs)
 
             return None
 

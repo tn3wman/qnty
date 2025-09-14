@@ -10,7 +10,7 @@ This module combines the core Problem functionality including:
 from __future__ import annotations
 
 from collections.abc import Callable
-from copy import deepcopy
+from copy import copy, deepcopy
 from typing import Any
 
 from ..algebra import BinaryOperation, Constant, VariableReference
@@ -301,12 +301,8 @@ class Problem(ValidationMixin):
             if symbol in self.variables:
                 # Mark as unknown by clearing the value
                 var = self.variables[symbol]
-                new_var = var.__class__(
-                    name=var.name,
-                    value=None,
-                    preferred=var.preferred
-                )
-                new_var._symbol = var._symbol
+                new_var = copy(var)
+                new_var.value = None
                 self.variables[symbol] = new_var
             else:
                 raise VariableNotFoundError(f"Variable '{symbol}' not found in problem '{self.name}'")
@@ -351,12 +347,8 @@ class Problem(ValidationMixin):
                 # Only mark as unknown if it was previously solved (known)
                 if var.is_known:
                     # Mark as unknown by clearing the value
-                    new_var = var.__class__(
-                        name=var.name,
-                        value=None,
-                        preferred=var.preferred
-                    )
-                    new_var._symbol = var._symbol
+                    new_var = copy(var)
+                    new_var.value = None
                     self.variables[dependent_symbol] = new_var
                     # Recursively invalidate variables that depend on this one
                     self.invalidate_dependents(dependent_symbol)
@@ -382,19 +374,8 @@ class Problem(ValidationMixin):
 
     def _clone_variable(self, variable: Quantity) -> Quantity:
         """Create a copy of a variable to avoid shared state without corrupting global units."""
-        # Create a new variable of the same exact type to preserve .equals() method
-        # This ensures domain-specific variables (Length, Pressure, etc.) keep their type
-        variable_type = type(variable)
-
-        # Create a new instance using the metaclass-generated constructor
-        cloned = variable_type(
-            name=variable.name,
-            value=variable.value,
-            preferred=variable.preferred
-        )
-
-        # Set the symbol after creation since it's not in the constructor
-        cloned._symbol = variable._symbol
+        # Use deepcopy to preserve the exact type and all attributes
+        cloned = deepcopy(variable)
         return cloned
 
     def _update_variables_with_solution(self, solved_variables: dict[str, Quantity]):
@@ -416,32 +397,23 @@ class Problem(ValidationMixin):
                         converted_value = solved_var.to(original_unit).value
 
                         # Create new quantity with converted value
-                        new_var = original_var.__class__(
-                            name=original_var.name,
-                            value=converted_value,
-                            preferred=original_unit
-                        )
-                        new_var._symbol = original_var._symbol
+                        new_var = copy(original_var)
+                        new_var.value = converted_value
+                        new_var.preferred = original_unit
                         self.variables[symbol] = new_var
                     except Exception:
                         # If conversion fails, use the solved quantity as-is
                         if solved_var.value is not None:
-                            new_var = original_var.__class__(
-                                name=original_var.name,
-                                value=solved_var.value,
-                                preferred=solved_var.preferred or original_var.preferred
-                            )
-                            new_var._symbol = original_var._symbol
+                            new_var = copy(original_var)
+                            new_var.value = solved_var.value
+                            new_var.preferred = solved_var.preferred or original_var.preferred
                             self.variables[symbol] = new_var
                 else:
                     # For originally known variables or if no unit conversion needed
                     if solved_var.value is not None:
-                        new_var = original_var.__class__(
-                            name=original_var.name,
-                            value=solved_var.value,
-                            preferred=solved_var.preferred or original_var.preferred
-                        )
-                        new_var._symbol = original_var._symbol
+                        new_var = copy(original_var)
+                        new_var.value = solved_var.value
+                        new_var.preferred = solved_var.preferred or original_var.preferred
                         self.variables[symbol] = new_var
 
     def _sync_variables_to_instance_attributes(self):
@@ -741,12 +713,8 @@ class Problem(ValidationMixin):
                 original_state = self._original_variable_states[symbol]
                 # If variable was originally unknown, reset it to None so solver can update it
                 if not original_state:
-                    new_var = var.__class__(
-                        name=var.name,
-                        value=None,
-                        preferred=var.preferred
-                    )
-                    new_var._symbol = var._symbol
+                    new_var = copy(var)
+                    new_var.value = None
                     self.variables[symbol] = new_var
 
     def copy(self):
@@ -799,11 +767,7 @@ class Problem(ValidationMixin):
             # Update the symbol to match the key if they differ
             if value.symbol != key:
                 # Create new quantity with updated symbol
-                new_value = value.__class__(
-                    name=value.name,
-                    value=value.value,
-                    preferred=value.preferred
-                )
+                new_value = copy(value)
                 new_value._symbol = key
                 value = new_value
             self.add_variable(value)
