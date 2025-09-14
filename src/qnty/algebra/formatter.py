@@ -38,9 +38,6 @@ class ExpressionFormatter:
         "**": 3,  # Exponentiation (highest precedence)
     }
 
-    # Right-associative operators (most are left-associative by default)
-    RIGHT_ASSOCIATIVE = {"**"}
-
     # Left-associative operators that need special parenthesization
     LEFT_ASSOCIATIVE_SPECIAL = {"-", "/"}
 
@@ -68,44 +65,38 @@ class ExpressionFormatter:
         right_str = str(binary_op.right)
 
         # Apply parenthesization rules
-        left_str = ExpressionFormatter._maybe_parenthesize_left(binary_op.left, binary_op.operator, left_str)
-        right_str = ExpressionFormatter._maybe_parenthesize_right(binary_op.right, binary_op.operator, right_str)
+        left_str = ExpressionFormatter._maybe_parenthesize(binary_op.left, binary_op.operator, left_str, is_right_operand=False)
+        right_str = ExpressionFormatter._maybe_parenthesize(binary_op.right, binary_op.operator, right_str, is_right_operand=True)
 
         return f"{left_str} {binary_op.operator} {right_str}"
 
     @staticmethod
-    def _maybe_parenthesize_left(left_expr: ExpressionProtocol, operator: str, left_str: str) -> str:
-        """Add parentheses to left operand if needed for precedence."""
-        if not ExpressionFormatter._is_binary_operation(left_expr):
-            return left_str
-
-        left_precedence = ExpressionFormatter._get_expression_precedence(left_expr)
-        current_precedence = ExpressionFormatter.get_operator_precedence(operator)
-
-        # Left side needs parentheses only if its precedence is strictly lower
-        if left_precedence < current_precedence:
-            return f"({left_str})"
-
-        return left_str
+    def _get_precedence_comparison(expr: ExpressionProtocol, operator: str) -> tuple[int, int]:
+        """Get expression precedence compared to operator precedence."""
+        expr_precedence = ExpressionFormatter._get_expression_precedence(expr)
+        operator_precedence = ExpressionFormatter.get_operator_precedence(operator)
+        return expr_precedence, operator_precedence
 
     @staticmethod
-    def _maybe_parenthesize_right(right_expr: ExpressionProtocol, operator: str, right_str: str) -> str:
-        """Add parentheses to right operand if needed for precedence and associativity."""
-        if not ExpressionFormatter._is_binary_operation(right_expr):
-            return right_str
+    def _maybe_parenthesize(expr: ExpressionProtocol, operator: str, expr_str: str, is_right_operand: bool = False) -> str:
+        """Add parentheses to operand if needed for precedence and associativity."""
+        if not ExpressionFormatter._is_binary_operation(expr):
+            return expr_str
 
-        right_precedence = ExpressionFormatter._get_expression_precedence(right_expr)
-        current_precedence = ExpressionFormatter.get_operator_precedence(operator)
+        expr_precedence, current_precedence = ExpressionFormatter._get_precedence_comparison(expr, operator)
 
-        # Right side needs parentheses if:
-        # 1. Its precedence is strictly lower, OR
-        # 2. Same precedence AND current operator is left-associative (-, /)
-        needs_parentheses = right_precedence < current_precedence or (right_precedence == current_precedence and operator in ExpressionFormatter.LEFT_ASSOCIATIVE_SPECIAL)
+        if is_right_operand:
+            # Right side needs parentheses if:
+            # 1. Its precedence is strictly lower, OR
+            # 2. Same precedence AND current operator is left-associative (-, /)
+            needs_parentheses = expr_precedence < current_precedence or (
+                expr_precedence == current_precedence and operator in ExpressionFormatter.LEFT_ASSOCIATIVE_SPECIAL
+            )
+        else:
+            # Left side needs parentheses only if its precedence is strictly lower
+            needs_parentheses = expr_precedence < current_precedence
 
-        if needs_parentheses:
-            return f"({right_str})"
-
-        return right_str
+        return f"({expr_str})" if needs_parentheses else expr_str
 
     @staticmethod
     def format_unary_function(func: UnaryFunctionProtocol) -> str:
@@ -126,11 +117,6 @@ class ExpressionFormatter:
     def format_constant(constant: ConstantProtocol) -> str:
         """Format constant value."""
         return str(constant.value)
-
-    @staticmethod
-    def is_operator_right_associative(operator: str) -> bool:
-        """Check if operator is right-associative."""
-        return operator in ExpressionFormatter.RIGHT_ASSOCIATIVE
 
     @staticmethod
     def get_operator_precedence(operator: str) -> int:
@@ -156,9 +142,25 @@ class ExpressionFormatter:
             return None
 
     @staticmethod
+    def _get_expression_type(expr: ExpressionProtocol) -> str:
+        """Determine expression type using duck typing."""
+        if hasattr(expr, "operator") and hasattr(expr, "left") and hasattr(expr, "right"):
+            return "binary_operation"
+        elif hasattr(expr, "function_name") and hasattr(expr, "operand"):
+            return "unary_function"
+        elif hasattr(expr, "condition") and hasattr(expr, "true_expr") and hasattr(expr, "false_expr"):
+            return "conditional"
+        elif hasattr(expr, "name"):
+            return "variable_reference"
+        elif hasattr(expr, "value"):
+            return "constant"
+        else:
+            return "unknown"
+
+    @staticmethod
     def _is_binary_operation(expr: ExpressionProtocol) -> bool:
         """Check if expression is a binary operation using duck typing."""
-        return hasattr(expr, "operator") and hasattr(expr, "left") and hasattr(expr, "right")
+        return ExpressionFormatter._get_expression_type(expr) == "binary_operation"
 
     @staticmethod
     def _get_expression_precedence(expr: ExpressionProtocol) -> int:
@@ -168,21 +170,3 @@ class ExpressionFormatter:
             binary_op = expr  # type: ignore[assignment]
             return ExpressionFormatter.get_operator_precedence(binary_op.operator)  # type: ignore[attr-defined]
         return 0
-
-    @staticmethod
-    def format_expression_with_auto_eval(expr: ExpressionProtocol) -> str:
-        """
-        Format expression, attempting auto-evaluation if possible.
-
-        This is a convenience method that handles the common pattern of
-        trying to auto-evaluate before falling back to symbolic representation.
-        """
-        # Check if auto-evaluation is possible for binary operations
-        if ExpressionFormatter._is_binary_operation(expr) and hasattr(expr, "_can_auto_evaluate"):
-            # We know it's a binary operation with auto-evaluation capability
-            binary_op = expr  # type: ignore[assignment]
-            can_eval, variables = binary_op._can_auto_evaluate()  # type: ignore[attr-defined]
-            return ExpressionFormatter.format_binary_operation(binary_op, can_auto_evaluate=can_eval, auto_eval_variables=variables)  # type: ignore[arg-type]
-        else:
-            # For other expression types, just use their standard string representation
-            return str(expr)
