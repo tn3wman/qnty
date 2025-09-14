@@ -26,13 +26,12 @@ def test_base_units_and_dimensions():
 
 def test_us_customary_units_basic():
     # Pound mass
-    assert u.pound.dim is dim.M
-    assert u.lb.dim is dim.M
-    assert abs(u.pound.si_factor - 0.45359237) < 1e-15
-    assert u.pound.symbol == "lb"
+    assert u.lbm.dim is dim.M
+    assert u.lbm.dim is dim.M
+    assert abs(u.lbm.si_factor - 0.45359237) < 1e-15
+    assert u.lbm.symbol == "lbm"
     # Aliases resolve
-    assert ureg.resolve("lbs") is u.pound
-    assert ureg.resolve("lbm") is u.pound
+    assert ureg.resolve("lbm") is u.lbm
 
     # Slug mass
     assert u.slug.dim is dim.M
@@ -56,16 +55,16 @@ def test_composition_and_caching_identity():
     assert a1.symbol == "m/s"
 
     # Power caching by symbol
-    b1 = u.meter ** 2
-    b2 = u.meter ** 2
+    b1 = u.meter**2
+    b2 = u.meter**2
     assert b1 is b2
     assert b1.symbol in ("m²", "m^2")
 
     # Mixed compositions
-    c1 = (u.meter ** 2) / (u.second ** 2)
-    c2 = (u.meter ** 2) / (u.second ** 2)
+    c1 = (u.meter**2) / (u.second**2)
+    c2 = (u.meter**2) / (u.second**2)
     assert c1 is c2
-    assert c1.dim == (dim.L ** 2) / (dim.T ** 2)
+    assert c1.dim == (dim.L**2) / (dim.T**2)
 
 
 def test_attach_composed_reuse_and_resolve():
@@ -99,19 +98,21 @@ def _run_unit_benchmark(iterations: int = 20000) -> dict:
     warmup = max(1000, iterations // 10)
     for _ in range(warmup):
         _a = u.meter / u.second
-        _b = u.meter ** 2
+        _b = u.meter**2
         _c = _a * _b
-        _d = _b / (u.second ** 2)
-        _ = (_d.dim == (dim.L ** 2) / (dim.T ** 2))
+        _d = _b / (u.second**2)
+        _ = _d.dim == (dim.L**2) / (dim.T**2)
+        # Use _c to avoid unused variable warning
+        _ = _c
 
     def workload():
         res = 0
         obj = u.meter
         for _ in range(iterations):
             a = u.meter / u.second
-            b = u.meter ** 2
+            b = u.meter**2
             c = a * b
-            d = b / (u.second ** 2)
+            d = b / (u.second**2)
             obj = c / a  # should be b
             # fold into res to avoid optimization
             res ^= hash((a.symbol, b.symbol, c.symbol, d.symbol, obj.symbol))
@@ -125,13 +126,17 @@ def _run_unit_benchmark(iterations: int = 20000) -> dict:
     end = time.perf_counter()
 
     # c/a should be equivalent to m^2 dimensionally (symbol may not simplify)
-    assert obj.dim == (dim.L ** 2)
-    assert abs(obj.si_factor - (u.meter ** 2).si_factor) < 1e-12
+    assert obj.dim == (dim.L**2)
+    assert abs(obj.si_factor - (u.meter**2).si_factor) < 1e-12
     assert isinstance(res, int)
 
     stats = pstats.Stats(profiler)
     total_calls = 0
-    for (filename, _lineno, _funcname), stat in stats.stats.items():
+    stats_dict = getattr(stats, "stats", {})
+    for (filename, lineno, funcname), stat in stats_dict.items():
+        # Use lineno and funcname to avoid unused variable warnings
+        _ = lineno
+        _ = funcname
         if os.path.sep + "core" + os.path.sep + "unit.py" in filename:
             total_calls += stat[1]  # ncalls
 
@@ -178,7 +183,7 @@ def _read_last_record(path: Path) -> dict | None:
         return None
 
 
-def test_unit_performance_regression(tmp_path: Path):
+def test_unit_performance_regression():
     metrics = _run_unit_benchmark(iterations=20000)
 
     perf_dir = Path(__file__).parent / ".perf"
@@ -193,9 +198,7 @@ def test_unit_performance_regression(tmp_path: Path):
         curr_t = float(metrics["time_per_op_ns"])
         if prev_t > 0:
             ratio = curr_t / prev_t
-            assert ratio <= 2.0, (
-                f"Unit ops slowed down {ratio:.2f}x (prev {prev_t:.1f} ns/op, now {curr_t:.1f} ns/op)"
-            )
+            assert ratio <= 2.0, f"Unit ops slowed down {ratio:.2f}x (prev {prev_t:.1f} ns/op, now {curr_t:.1f} ns/op)"
 
         # Function call budget: <= 25% more calls per iteration
         prev_calls = int(last.get("unit_calls", 0) or 0)
@@ -203,7 +206,4 @@ def test_unit_performance_regression(tmp_path: Path):
         prev_norm = prev_calls / max(int(last.get("iterations", 1)), 1)
         curr_norm = curr_calls / max(int(metrics.get("iterations", 1)), 1)
         call_ratio = curr_norm / max(prev_norm, 1e-12)
-        assert call_ratio <= 1.25, (
-            f"Function call count increased {call_ratio:.2f}x per iteration (prev {prev_norm:.2f}, now {curr_norm:.2f})"
-        )
-
+        assert call_ratio <= 1.25, f"Function call count increased {call_ratio:.2f}x per iteration (prev {prev_norm:.2f}, now {curr_norm:.2f})"

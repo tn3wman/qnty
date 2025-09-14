@@ -1,6 +1,7 @@
 # units_core.py
 from __future__ import annotations
 
+import functools
 import inspect
 import re
 from collections.abc import Iterable
@@ -30,6 +31,12 @@ def _norm(s: str) -> str:
     Optimized with translate to reduce function calls.
     """
     return s.strip().casefold().translate(_NORM_DELETE_MAP)
+
+# Cached version for performance-critical paths
+@functools.lru_cache(maxsize=512)
+def _norm_cached(s: str) -> str:
+    """Cached version of _norm for performance optimization."""
+    return _norm(s)
 
 
 _SUP: Final[dict[int, str]] = {2: "²", 3: "³"}
@@ -234,8 +241,8 @@ class UnitRegistry:
             self._resolve_cache[cache_key] = None
             return None
 
-        # Fallback: normalized name/alias lookup
-        nk = _norm(name_or_symbol)
+        # Fallback: normalized name/alias lookup (use cached version)
+        nk = _norm_cached(name_or_symbol)
         u = self._by_name.get(nk)
         if u is not None:
             if dim is None or u.dim == dim:

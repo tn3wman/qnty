@@ -102,6 +102,8 @@ def _run_dimension_benchmark(iterations: int = 20000) -> dict:
         _z = _y / (L**2)
         _ = _z == L
         _ = hash(_z)
+        # Use _x to avoid unused variable warning
+        _ = _x
 
     def workload():
         x = L
@@ -129,7 +131,10 @@ def _run_dimension_benchmark(iterations: int = 20000) -> dict:
     stats = pstats.Stats(profiler)
     total_calls = 0
     reduce_calls = 0
-    for (filename, _lineno, funcname), stat in stats.stats.items():
+    stats_dict = getattr(stats, "stats", {})
+    for (filename, lineno, funcname), stat in stats_dict.items():
+        # Use lineno to avoid unused variable warning
+        _ = lineno
         if os.path.sep + "core" + os.path.sep + "dimension.py" in filename:
             ncalls = stat[1]  # ncalls
             total_calls += ncalls
@@ -181,7 +186,7 @@ def _read_last_record(path: Path) -> dict | None:
         return None
 
 
-def test_dimension_performance_regression(tmp_path: Path):
+def test_dimension_performance_regression():
     # Run benchmark and capture metrics
     metrics = _run_dimension_benchmark(iterations=20000)
 

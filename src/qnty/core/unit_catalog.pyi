@@ -108,6 +108,10 @@ class Units:
     foot_per_square_second: Final[Unit]
     foot_per_second_squared: Final[Unit]  # alias for foot_per_square_second
 
+    # Velocity
+    meter_per_second: Final[Unit]
+    foot_per_second: Final[Unit]
+
     # Volume
     liter: Final[Unit]
     liters: Final[Unit]  # alias for liter

@@ -1,8 +1,9 @@
 {
   "permissions": {
-    "defaultMode": "bypassPermissions",
+    "defaultMode": "acceptEdits",
     "ask": [
-      "Bash(rm -rf /*)"
+      "Bash(rm -rf /*)",
+      "Edit(./src/qnty/core/*.py)"
     ],
     "deny": [
       "Read(./.env)",

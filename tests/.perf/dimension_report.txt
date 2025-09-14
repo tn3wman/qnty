@@ -1,0 +1,181 @@
+================================================================================
+DIMENSION PERFORMANCE ANALYSIS REPORT
+================================================================================
+Generated: 2025-09-14T06:13:03.314210
+Backend: PrimeIntBackend
+Python: 3.13.7
+
+OPERATION PERFORMANCE
+----------------------------------------
+
+multiplication:
+  Time per op: 2920.08 ns
+  Total time: 0.0584 s (20000 iterations)
+  Function calls per op:
+    <genexpr>: 8.00
+    <lambda>: 1.00
+    vadd: 1.00
+    mul: 1.00
+    _reduce: 1.00
+
+power:
+  Time per op: 3009.59 ns
+  Total time: 0.0602 s (20000 iterations)
+  Function calls per op:
+    <genexpr>: 8.00
+    <lambda>: 1.00
+    __pow__: 1.00
+    pow: 1.00
+    vpow: 1.00
+
+large_power:
+  Time per op: 3084.70 ns
+  Total time: 0.0617 s (20000 iterations)
+  Function calls per op:
+    <genexpr>: 8.00
+    <lambda>: 1.00
+    __pow__: 1.00
+    pow: 1.00
+    vpow: 1.00
+
+division:
+  Time per op: 3359.60 ns
+  Total time: 0.0672 s (20000 iterations)
+  Function calls per op:
+    <genexpr>: 8.00
+    <lambda>: 1.00
+    vsub: 1.00
+    div: 1.00
+    _reduce: 1.00
+
+hash:
+  Time per op: 3397.32 ns
+  Total time: 0.0679 s (20000 iterations)
+  Function calls per op:
+    <genexpr>: 8.00
+    <lambda>: 1.00
+    vadd: 1.00
+    mul: 1.00
+    _reduce: 1.00
+
+dimensionless_check:
+  Time per op: 5067.54 ns
+  Total time: 0.1014 s (20000 iterations)
+  Function calls per op:
+    <genexpr>: 8.00
+    <lambda>: 1.00
+    vsub: 1.00
+    div: 1.00
+    _reduce: 1.00
+
+equality:
+  Time per op: 6829.33 ns
+  Total time: 0.1366 s (20000 iterations)
+  Function calls per op:
+    <genexpr>: 8.00
+    _reduce: 2.00
+    <lambda>: 1.00
+    __eq__: 1.00
+    vadd: 1.00
+
+complex_expr:
+  Time per op: 9613.47 ns
+  Total time: 0.1923 s (20000 iterations)
+  Function calls per op:
+    <genexpr>: 8.00
+    _reduce: 3.00
+    <lambda>: 1.00
+    __pow__: 1.00
+    pow: 1.00
+
+repeated_mul:
+  Time per op: 11078.16 ns
+  Total time: 0.2216 s (20000 iterations)
+  Function calls per op:
+    <genexpr>: 32.00
+    vadd: 4.00
+    mul: 4.00
+    _reduce: 4.00
+    __mul__: 4.00
+
+repeated_div:
+  Time per op: 12967.65 ns
+  Total time: 0.2594 s (20000 iterations)
+  Function calls per op:
+    <genexpr>: 32.00
+    vsub: 4.00
+    div: 4.00
+    _reduce: 4.00
+    __truediv__: 4.00
+
+cancellation:
+  Time per op: 13451.21 ns
+  Total time: 0.2690 s (20000 iterations)
+  Function calls per op:
+    <genexpr>: 8.00
+    _reduce: 4.00
+    vadd: 3.00
+    mul: 3.00
+    __mul__: 3.00
+
+nested_expr:
+  Time per op: 15698.31 ns
+  Total time: 0.3140 s (20000 iterations)
+  Function calls per op:
+    <genexpr>: 16.00
+    _reduce: 5.00
+    __pow__: 2.00
+    pow: 2.00
+    vadd: 2.00
+
+alternating_ops:
+  Time per op: 19617.11 ns
+  Total time: 0.3923 s (20000 iterations)
+  Function calls per op:
+    <genexpr>: 24.00
+    _reduce: 6.00
+    vadd: 3.00
+    vsub: 3.00
+    mul: 3.00
+
+========================================
+HISTORICAL TREND ANALYSIS
+----------------------------------------
+  Total samples: 15
+  Trend: increasing (magnitude: 2.943)
+  Recent avg: 3752.90 ns
+  Overall avg: 3742.13 ns
+  Std dev: 49.24 ns
+  Range: 3686.30 - 3898.84 ns
+  Performance change: 0.2%
+
+  Outliers detected: 1
+    2025-09-13T20:04:50-0500: 3898.84 ns
+
+========================================
+BOTTLENECK ANALYSIS
+----------------------------------------
+
+Slowest operations:
+  alternating_ops: 19617.11 ns
+  nested_expr: 15698.31 ns
+  cancellation: 13451.21 ns
+
+Most called functions:
+  <genexpr>: 3520000 total calls
+  _reduce: 680000 total calls
+  vadd: 320000 total calls
+  mul: 320000 total calls
+  __mul__: 320000 total calls
+
+========================================
+RECOMMENDATIONS
+----------------------------------------
+⚠️  Performance is degrading over time
+   Consider reviewing recent changes to dimension.py
+⚠️  Some operations are taking >5μs
+   Consider optimizing the _reduce() function or caching
+⚠️  Operations with heavy _reduce usage: complex_expr, nested_expr, cancellation, alternating_ops, repeated_mul, repeated_div
+   Consider optimizing GCD computation or caching reduced forms
+
+================================================================================

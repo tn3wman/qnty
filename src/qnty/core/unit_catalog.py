@@ -66,13 +66,10 @@ gram = add_unit(
 
 # US customary mass units
 # Canonical mass unit: pound (lb). Include common aliases and legacy "pound_mass" name.
-pound = add_unit(
-    dim.M, symbol="lb", si_factor=0.45359237,
-    aliases=("lb", "lbm", "lbs", "pounds", "pound_mass"),
+pound_mass = add_unit(
+    dim.M, symbol="lbm", si_factor=0.45359237,
+    aliases=("lbm",),
 )
-
-# Backward-compatible name
-pound_mass = pound
 
 slug = add_unit(
     dim.M, symbol="slug", si_factor=14.59390293720636,

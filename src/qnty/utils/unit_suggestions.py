@@ -81,12 +81,13 @@ class UnitSuggester:
     def _load_from_registry(self) -> None:
         """Fallback: load units from registry if available."""
         try:
-            from ..core.unit import registry
+            from ..core.unit import ureg
 
-            if hasattr(registry, "units"):
-                for unit_name in registry.units.keys():
-                    self._unit_names.append(unit_name)
-                    self._all_suggestions.append(unit_name)
+            # Get all unit names from the registry
+            all_names = ureg.all_names()
+            for unit_name in all_names:
+                self._unit_names.append(unit_name)
+                self._all_suggestions.append(unit_name)
 
             self._loaded = True
         except Exception:

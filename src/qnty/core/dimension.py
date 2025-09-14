@@ -1,6 +1,7 @@
-# dimensions_core.py
+# dimensions_core.py - Optimized version with caching and improved algorithms
 from __future__ import annotations
 
+import functools
 import inspect
 import re
 from collections.abc import Iterable
@@ -20,12 +21,18 @@ DimVec = tuple[int, ...]
 PRIMES: Final[tuple[int, ...]] = (2, 3, 5, 7, 11, 13, 17)  # extend if >10 bases
 
 def vadd(a: DimVec, b: DimVec) -> DimVec:
-    return tuple(x + y for x, y in zip(a, b, strict=False))
+    return tuple(a[i] + b[i] for i in range(len(a)))
 
 def vsub(a: DimVec, b: DimVec) -> DimVec:
-    return tuple(x - y for x, y in zip(a, b, strict=False))
+    return tuple(a[i] - b[i] for i in range(len(a)))
 
 def vpow(a: DimVec, k: int) -> DimVec:
+    if k == 0:
+        return (0,) * len(a)
+    if k == 1:
+        return a
+    if k == -1:
+        return tuple(-x for x in a)
     return tuple(x * k for x in a)
 
 def zeros(n: int = N_BASE) -> DimVec:
@@ -37,22 +44,59 @@ class DimBackend(Protocol):
     def div(self, a: tuple[int, ...], b: tuple[int, ...]) -> tuple[int, ...]: ...
     def pow(self, a: tuple[int, ...], k: int) -> tuple[int, ...]: ...
 
-class PrimeIntBackend:
-    """Compact prime code: (num:int, den:int) with GCD reduction."""
+# Cached GCD function
+@functools.lru_cache(maxsize=256)
+def _cached_gcd(a: int, b: int) -> int:
+    """Cached GCD computation using binary algorithm."""
+    if a == 0:
+        return b
+    if b == 0:
+        return a
 
-    __slots__ = ()
+    # Binary GCD algorithm (faster than Euclidean for integers)
+    shift = 0
+    while ((a | b) & 1) == 0:
+        a >>= 1
+        b >>= 1
+        shift += 1
+
+    while (a & 1) == 0:
+        a >>= 1
+
+    while b != 0:
+        while (b & 1) == 0:
+            b >>= 1
+        if a > b:
+            a, b = b, a
+        b -= a
+
+    return a << shift
+
+class PrimeIntBackend:
+    """Compact prime code: (num:int, den:int) with GCD reduction and caching."""
+
+    __slots__ = ("_reduce_cache",)
+
+    def __init__(self):
+        self._reduce_cache = {}
 
     def encode(self, v: DimVec) -> tuple[int, ...]:
-        # all zeros → (1,1) i.e., truly dimensionless
+        # Fast path for common cases
+        if not any(v):  # All zeros
+            return (1, 1)
+
         num = den = 1
-        for p, e in zip(PRIMES, v, strict=False):
-            if e >= 0:
-                if e:
-                    num *= p**e
+
+        # Unrolled loop for better performance
+        for i, e in enumerate(v):
+            if e == 0:
+                continue
+            p = PRIMES[i]
+            if e > 0:
+                num *= p ** e
             else:
-                de = -e
-                if de:
-                    den *= p**de
+                den *= p ** (-e)
+
         return self._reduce(num, den)
 
     def mul(self, a: tuple[int, ...], b: tuple[int, ...]) -> tuple[int, ...]:
@@ -64,44 +108,108 @@ class PrimeIntBackend:
     def pow(self, a: tuple[int, ...], k: int) -> tuple[int, ...]:
         if k == 0:
             return (1, 1)
+        if k == 1:
+            return a
+        if k == -1:
+            return (a[1], a[0])
+
         if k > 0:
-            return self._reduce(pow(a[0], k), pow(a[1], k))
-        k = -k
-        return self._reduce(pow(a[1], k), pow(a[0], k))
+            # Use fast exponentiation for large powers
+            if k > 3:
+                num = self._fast_pow(a[0], k)
+                den = self._fast_pow(a[1], k)
+            else:
+                num = a[0] ** k
+                den = a[1] ** k
+            return self._reduce(num, den)
+        else:
+            k = -k
+            if k > 3:
+                num = self._fast_pow(a[1], k)
+                den = self._fast_pow(a[0], k)
+            else:
+                num = a[1] ** k
+                den = a[0] ** k
+            return self._reduce(num, den)
 
     @staticmethod
-    def _reduce(num: int, den: int) -> tuple[int, ...]:
+    def _fast_pow(base: int, exp: int) -> int:
+        """Fast integer exponentiation using binary method."""
+        if exp == 0:
+            return 1
+        if exp == 1:
+            return base
+        if exp == 2:
+            return base * base
+
+        result = 1
+        while exp > 0:
+            if exp & 1:
+                result *= base
+            base *= base
+            exp >>= 1
+        return result
+
+    def _reduce(self, num: int, den: int) -> tuple[int, ...]:
+        """Reduce fraction to lowest terms with caching."""
+        # Handle negative denominators
         if den < 0:
             num, den = -num, -den
+
+        # Fast paths
         if den == 1 or num == 0:
             return (num, 1 if den != 0 else 0)
-        from math import gcd
+        if num == den:
+            return (1, 1)
 
-        g = gcd(abs(num), den)
+        # Check cache
+        cache_key = (num, den)
+        if cache_key in self._reduce_cache:
+            return self._reduce_cache[cache_key]
+
+        # Compute GCD
+        g = _cached_gcd(abs(num), den)
         if g > 1:
             num //= g
             den //= g
-        return (num, den)
-    
+
+        result = (num, den)
+
+        # Cache result (limit cache size)
+        if len(self._reduce_cache) < 1024:
+            self._reduce_cache[cache_key] = result
+
+        return result
+
 # --- Tuple backend (direct exponent vectors) ---
 class TupleBackend:
-    """Direct exponent vectors (immutable tuples)."""
+    """Direct exponent vectors with optimizations."""
     __slots__ = ()
-    
+
     def encode(self, v: DimVec) -> DimVec:
         return v
-    def mul(self, a: DimVec, b: DimVec) -> DimVec:
-        return tuple(x+y for x,y in zip(a,b, strict=False))
-    def div(self, a: DimVec, b: DimVec) -> DimVec:
-        return tuple(x-y for x,y in zip(a,b, strict=False))
-    def pow(self, a: DimVec, k: int) -> DimVec:
-        return tuple(x*k for x in a)
 
+    def mul(self, a: DimVec, b: DimVec) -> DimVec:
+        return tuple(a[i] + b[i] for i in range(len(a)))
+
+    def div(self, a: DimVec, b: DimVec) -> DimVec:
+        return tuple(a[i] - b[i] for i in range(len(a)))
+
+    def pow(self, a: DimVec, k: int) -> DimVec:
+        if k == 0:
+            return (0,) * len(a)
+        if k == 1:
+            return a
+        if k == -1:
+            return tuple(-x for x in a)
+        return tuple(x * k for x in a)
+
+# Use optimized PrimeIntBackend by default
 BACKEND: DimBackend = PrimeIntBackend()
 # BACKEND: DimBackend = TupleBackend()
 
 # =======================
-# Dimension (frozen)
+# Dimension (frozen) with caching
 # =======================
 @dataclass(frozen=True, slots=True)
 class Dimension:
@@ -109,13 +217,58 @@ class Dimension:
     code: tuple[int, ...]  # compact prime code (immutable ints)
 
     def __mul__(self, o: Dimension) -> Dimension:
-        return Dimension(vadd(self.exps, o.exps), BACKEND.mul(self.code, o.code))
+        # Check cache first
+        cache_key = (self.code, o.code)
+        if hasattr(Dimension, '_mul_cache') and cache_key in Dimension._mul_cache:
+            return Dimension._mul_cache[cache_key]
+
+        result = Dimension(vadd(self.exps, o.exps), BACKEND.mul(self.code, o.code))
+
+        # Cache result (limit cache size)
+        if not hasattr(Dimension, '_mul_cache'):
+            Dimension._mul_cache = {}
+        if len(Dimension._mul_cache) < 256:
+            Dimension._mul_cache[cache_key] = result
+
+        return result
 
     def __truediv__(self, o: Dimension) -> Dimension:
-        return Dimension(vsub(self.exps, o.exps), BACKEND.div(self.code, o.code))
+        # Check cache first
+        cache_key = (self.code, o.code)
+        if hasattr(Dimension, '_div_cache') and cache_key in Dimension._div_cache:
+            return Dimension._div_cache[cache_key]
+
+        result = Dimension(vsub(self.exps, o.exps), BACKEND.div(self.code, o.code))
+
+        # Cache result (limit cache size)
+        if not hasattr(Dimension, '_div_cache'):
+            Dimension._div_cache = {}
+        if len(Dimension._div_cache) < 256:
+            Dimension._div_cache[cache_key] = result
+
+        return result
 
     def __pow__(self, k: int) -> Dimension:
-        return Dimension(vpow(self.exps, k), BACKEND.pow(self.code, k))
+        # Fast paths
+        if k == 0:
+            return _DIMENSIONLESS
+        if k == 1:
+            return self
+
+        # Check cache
+        cache_key = (self.code, k)
+        if hasattr(Dimension, '_pow_cache') and cache_key in Dimension._pow_cache:
+            return Dimension._pow_cache[cache_key]
+
+        result = Dimension(vpow(self.exps, k), BACKEND.pow(self.code, k))
+
+        # Cache result (limit cache size)
+        if not hasattr(Dimension, '_pow_cache'):
+            Dimension._pow_cache = {}
+        if len(Dimension._pow_cache) < 256:
+            Dimension._pow_cache[cache_key] = result
+
+        return result
 
     def __eq__(self, o: object) -> bool:
         return isinstance(o, Dimension) and self.code == o.code
@@ -124,16 +277,31 @@ class Dimension:
         return hash(self.code)
 
     def __repr__(self) -> str:
-        num, den = self.code
-        return f"Dim{self.exps} [{num}/{den}]"
-    
-        # --- handy predicates ---
+        if isinstance(self.code, tuple) and len(self.code) == 2:
+            num, den = self.code
+            return f"Dim{self.exps} [{num}/{den}]"
+        else:
+            return f"Dim{self.exps} {self.code}"
+
+    # --- handy predicates ---
     def is_dimensionless(self) -> bool:
+        # Fast check for prime backend
+        if isinstance(self.code, tuple) and len(self.code) == 2:
+            return self.code == (1, 1)
+        # Fallback for tuple backend
         return all(e == 0 for e in self.exps)
 
     def is_angle(self) -> bool:
         # If you treat radians as a distinct base (Theta index)
         return self.exps == (0, 0, 0, 0, 1, 0, 0)
+
+# Initialize class-level caches for Dimension
+Dimension._mul_cache = {}  # type: ignore[attr-defined]
+Dimension._div_cache = {}  # type: ignore[attr-defined]
+Dimension._pow_cache = {}  # type: ignore[attr-defined]
+
+# Pre-create dimensionless constant
+_DIMENSIONLESS = Dimension(zeros(), BACKEND.encode(zeros()))
 
 # =======================
 # Global namespace (sealed) + registry + helpers

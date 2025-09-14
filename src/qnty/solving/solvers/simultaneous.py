@@ -13,8 +13,7 @@ except ImportError:
 from qnty.solving.order import Order
 
 from ...algebra import Equation
-from ...core.quantity import Quantity
-from ...core.quantity import FieldQuantity
+from ...core.quantity import FieldQuantity, Quantity
 from .base import BaseSolver, SolveResult
 
 
@@ -84,7 +83,9 @@ class SimultaneousEquationSolver(BaseSolver):
         has_cycles = analysis.get("has_cycles", False)
         return bool(has_cycles)
 
-    def solve(self, equations: list[Equation], variables: dict[str, FieldQuantity], dependency_graph: Order | None = None, max_iterations: int = 100, tolerance: float = DEFAULT_TOLERANCE) -> SolveResult:
+    def solve(
+        self, equations: list[Equation], variables: dict[str, FieldQuantity], dependency_graph: Order | None = None, max_iterations: int = 100, tolerance: float = DEFAULT_TOLERANCE
+    ) -> SolveResult:
         """
         Solve the n×n simultaneous system using matrix operations.
 
@@ -413,14 +414,20 @@ class SimultaneousEquationSolver(BaseSolver):
         original_variable = variables[variable_symbol]
         if original_variable.quantity is None:
             raise ValueError(f"Variable {variable_symbol} has no quantity")
-        result_unit = original_variable.quantity.unit
-        solution_quantity = Quantity(solution_value, result_unit)
+        result_unit = original_variable.preferred
+        if result_unit is None:
+            # Fallback to a default unit if no preferred unit
+            from ...core.unit import ureg
 
-        # Preserve the original variable name and create solved variable
-        original_name = original_variable.name
-        solved_variable = FieldQuantity(name=original_name, expected_dimension=solution_quantity.dimension, is_known=True)
-        solved_variable.quantity = solution_quantity
-        solved_variable.symbol = variable_symbol
+            result_unit = ureg.si_unit_for(original_variable.dim)
+            if result_unit is None:
+                raise ValueError(f"Cannot determine unit for variable {variable_symbol}")
+
+        solution_quantity = Quantity.from_value(solution_value, result_unit, name="solution")
+
+        # Create solved variable with correct constructor
+        solved_variable = FieldQuantity(name=original_variable.name, dim=original_variable.dim, value=solution_value, preferred=result_unit)
+        solved_variable._symbol = variable_symbol
         variables[variable_symbol] = solved_variable
 
         # Record solving step for tracking
@@ -446,9 +453,18 @@ class SimultaneousEquationSolver(BaseSolver):
             original_var = test_vars[var_name]
             if original_var.quantity is None:
                 raise ValueError(f"Variable {var_name} has no quantity")
-            test_var = FieldQuantity(name=f"test_{var_name}", expected_dimension=original_var.quantity.dimension, is_known=True)
-            test_var.quantity = Quantity(test_value, original_var.quantity.unit)
-            test_var.symbol = var_name
+
+            # Determine preferred unit
+            preferred_unit = original_var.preferred
+            if preferred_unit is None:
+                from ...core.unit import ureg
+
+                preferred_unit = ureg.si_unit_for(original_var.dim)
+                if preferred_unit is None:
+                    raise ValueError(f"Cannot determine unit for variable {var_name}")
+
+            test_var = FieldQuantity(name=f"test_{var_name}", dim=original_var.dim, value=test_value, preferred=preferred_unit)
+            test_var._symbol = var_name
             test_vars[var_name] = test_var
 
     def _extract_numerical_value(self, value: Any) -> float:
@@ -462,13 +478,13 @@ class SimultaneousEquationSolver(BaseSolver):
             Float representation of the value
         """
         # Check for Quantity type first (most common case)
-        if isinstance(value, Quantity):
+        if isinstance(value, Quantity) and value.value is not None:
             return float(value.value)
         # Handle primitive numeric types
         elif isinstance(value, int | float):
             return float(value)
         # Handle objects with .value attribute as last resort
-        elif hasattr(value, "value"):
+        elif hasattr(value, "value") and value.value is not None:
             return float(value.value)
         else:
             # Last resort: try direct conversion

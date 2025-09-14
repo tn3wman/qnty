@@ -503,9 +503,14 @@ class UnitApplier(Generic[D]):
 
     def __call__(self, unit: Unit[D] | str) -> Quantity[D]:
         if isinstance(unit, str):
-            resolved = ureg.resolve(unit, dim=self._dim)
+            # Check cache first for string units too
+            resolved = self._unit_cache.get(unit)
             if resolved is None:
-                raise ValueError(f"Unknown unit '{unit}'")
+                resolved = ureg.resolve(unit, dim=self._dim)
+                if resolved is None:
+                    raise ValueError(f"Unknown unit '{unit}'")
+                # Cache the resolved unit
+                self._unit_cache[unit] = resolved
             unit = resolved
 
         # Convert from SI to target unit: (si_value - offset) / factor
