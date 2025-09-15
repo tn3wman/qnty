@@ -705,6 +705,37 @@ class Problem(ValidationMixin):
         except Exception as e:
             self.logger.warning(f"Failed to ensure sub-problem equations integrated: {e}")
 
+    def _final_variable_reference_fix(self):
+        """
+        Final pass to fix variable references in all equations.
+        This ensures that all VariableReference objects point to the correct
+        variables in problem.variables, especially for equations created
+        after initial post-processing.
+        """
+        try:
+            fixed_count = 0
+            for i, equation in enumerate(self.equations):
+                # Fix variable references in both LHS and RHS
+                original_lhs = equation.lhs
+                original_rhs = equation.rhs
+
+                fixed_lhs = self._fix_expression_variables(original_lhs)
+                fixed_rhs = self._fix_expression_variables(original_rhs)
+
+                # Create new equation if any references were fixed
+                if fixed_lhs is not original_lhs or fixed_rhs is not original_rhs:
+                    from qnty.algebra.equation import Equation
+                    fixed_equation = Equation(equation.name, fixed_lhs, fixed_rhs)
+                    self.equations[i] = fixed_equation
+                    fixed_count += 1
+                    self.logger.debug(f"Fixed variable references in equation: {fixed_equation}")
+
+            if fixed_count > 0:
+                self.logger.info(f"Fixed variable references in {fixed_count} equations")
+
+        except Exception as e:
+            self.logger.warning(f"Failed to fix final variable references: {e}")
+
     def _namespace_equation(self, equation, namespace: str):
         """
         Create a namespaced version of an equation by prefixing all variable references.
@@ -895,6 +926,10 @@ class Problem(ValidationMixin):
         try:
             # Reset solution state and restore original variable states
             self.reset_solution()
+
+            # Fix any variable reference issues that may have occurred after configuration
+            # This ensures all equations reference the correct variable objects
+            self._final_variable_reference_fix()
 
             # Build dependency graph
             self._build_dependency_graph()
