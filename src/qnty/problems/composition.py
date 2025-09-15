@@ -12,10 +12,7 @@ Combined from composition.py and composition_mixin.py for focused functionality.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
-
-if TYPE_CHECKING:
-    from ..algebra.nodes import Expression
+from typing import Any
 
 from ..algebra import BinaryOperation, ConditionalExpression, Constant, Equation, VariableReference, min_expr
 from ..algebra.nodes import Expression, wrap_operand
@@ -30,6 +27,160 @@ COMMON_COMPOSITE_VARIABLES = ["P", "c", "S", "E", "W", "Y"]
 RESERVED_ATTRIBUTES: set[str] = {"name", "description"}
 PRIVATE_ATTRIBUTE_PREFIX = "_"
 SUB_PROBLEM_REQUIRED_ATTRIBUTES: tuple[str, ...] = ("variables", "equations")
+
+# Constants for variable type detection
+WRAPPED_VAR_ATTR = "_wrapped"
+PROXY_VAR_ATTR = "_variable"
+MAIN_VAR_ATTR = "_wrapped_var"
+SYMBOL_ATTR = "symbol"
+
+
+# ========== HELPER FUNCTIONS ==========
+
+
+def _has_symbol_attr(obj, attr_name: str) -> bool:
+    """Check if object has the specified attribute and that attribute has a symbol."""
+    return hasattr(obj, attr_name) and hasattr(getattr(obj, attr_name), SYMBOL_ATTR)
+
+
+def _get_symbol_from_obj(obj) -> str | None:
+    """Extract symbol from various object types using standardized patterns."""
+    if hasattr(obj, "get_variables"):
+        # It's an expression with variables
+        return None
+    elif _has_symbol_attr(obj, WRAPPED_VAR_ATTR):
+        # ExpressionEnabledWrapper
+        return getattr(obj, WRAPPED_VAR_ATTR).symbol
+    elif _has_symbol_attr(obj, PROXY_VAR_ATTR):
+        # SubProblemProxy/ConfigurableVariable
+        return getattr(obj, PROXY_VAR_ATTR).symbol
+    elif _has_symbol_attr(obj, MAIN_VAR_ATTR):
+        # MainVariableWrapper
+        return getattr(obj, MAIN_VAR_ATTR).symbol
+    elif hasattr(obj, SYMBOL_ATTR):
+        # Direct variable
+        return getattr(obj, SYMBOL_ATTR)
+    return None
+
+
+def _extract_variables_from_obj(obj, variables_set: set[str]) -> None:
+    """Extract variables from an object and add them to the variables set."""
+    if hasattr(obj, "get_variables"):
+        variables_set.update(obj.get_variables())
+    else:
+        symbol = _get_symbol_from_obj(obj)
+        if symbol:
+            variables_set.add(symbol)
+
+
+def _create_variable_reference_from_obj(obj, context: dict | None = None):
+    """Create a VariableReference from various object types."""
+    from ..algebra.nodes import VariableReference
+
+    if hasattr(obj, WRAPPED_VAR_ATTR) and not isinstance(obj, Expression):
+        # ExpressionEnabledWrapper
+        return VariableReference(getattr(obj, WRAPPED_VAR_ATTR))
+    elif isinstance(obj, ConfigurableVariable):
+        # ConfigurableVariable from SubProblemProxy
+        namespaced_symbol = obj._variable.symbol
+        if context and namespaced_symbol in context:
+            return VariableReference(context[namespaced_symbol])
+        else:
+            return VariableReference(obj._variable)
+    elif hasattr(obj, PROXY_VAR_ATTR) and not isinstance(obj, Expression):
+        # SubProblemProxy
+        return VariableReference(getattr(obj, PROXY_VAR_ATTR))
+    elif hasattr(obj, MAIN_VAR_ATTR) and not isinstance(obj, Expression):
+        # MainVariableWrapper
+        return VariableReference(getattr(obj, MAIN_VAR_ATTR))
+    elif hasattr(obj, SYMBOL_ATTR):
+        # Variable object
+        symbol = getattr(obj, SYMBOL_ATTR)
+        if context and symbol in context:
+            return VariableReference(context[symbol])
+        elif hasattr(obj, "dim") and hasattr(obj, "value") and hasattr(obj, "name") and not isinstance(obj, Expression):
+            return VariableReference(obj)
+        else:
+            return obj
+    else:
+        return obj
+
+
+def _create_arithmetic_operation(self_obj, other, operator: str, reverse: bool = False):
+    """Create arithmetic operation, using DelayedExpression or delegating to variable."""
+    if hasattr(self_obj, "_should_use_delayed_arithmetic") and self_obj._should_use_delayed_arithmetic():
+        if reverse:
+            return DelayedExpression(operator, other, self_obj)
+        else:
+            return DelayedExpression(operator, self_obj, other)
+    else:
+        # Delegate to the wrapped variable
+        method_map = {"+": "add", "-": "sub", "*": "mul", "/": "truediv", "**": "pow"}
+        method_name = method_map.get(operator, operator)
+        if reverse:
+            return getattr(self_obj._variable, f"__r{method_name}__")(other)
+        else:
+            return getattr(self_obj._variable, f"__{method_name}__")(other)
+
+
+def _check_lhs_name_pattern(equation, expected_suffix: str) -> str | None:
+    """Check if LHS variable name matches expected pattern and return the name."""
+    lhs_name = getattr(equation.lhs, "name", "")
+    if lhs_name == expected_suffix or lhs_name.endswith(f"_{expected_suffix}"):
+        return lhs_name
+    return None
+
+
+def _is_binary_operation(expr, operator: str) -> bool:
+    """Check if expression is a BinaryOperation with the specified operator."""
+    from ..algebra.nodes import BinaryOperation
+
+    return isinstance(expr, BinaryOperation) and expr.operator == operator
+
+
+def _is_constant_value(expr, expected_value: float, tolerance: float = 1e-10) -> bool:
+    """Check if expression is a Constant with the expected value."""
+    from ..algebra.nodes import Constant
+
+    if not isinstance(expr, Constant):
+        return False
+
+    value = getattr(expr.value, "value", expr.value)
+    if isinstance(value, int | float):
+        return abs(value - expected_value) < tolerance
+    return False
+
+
+def _create_dimensionless_constant(value: float, name: str | None = None):
+    """Create a dimensionless constant with the specified value."""
+    from qnty.core.quantity_catalog import Dimensionless
+
+    from ..algebra.nodes import Constant
+
+    if name is None:
+        name = str(value)
+
+    constant_var = Dimensionless(name)
+    constant_var.value = value
+    try:
+        from qnty.core.unit import ureg
+
+        constant_var.preferred = ureg.resolve("dimensionless")
+    except ImportError:
+        pass  # Fallback if ureg is not available
+
+    return Constant(constant_var)
+
+
+def _generate_variable_names(base_name: str, suffix: str, var_names: list[str]) -> dict[str, str]:
+    """Generate namespaced variable names based on base pattern."""
+    if base_name == suffix:
+        # No prefix case
+        return {var_name: var_name for var_name in var_names}
+    else:
+        # Prefixed case
+        prefix = base_name[: -len(suffix) - 1]  # Remove '_suffix'
+        return {var_name: f"{prefix}_{var_name}" for var_name in var_names}
 
 
 # ========== COMPOSITION CLASSES ==========
@@ -223,45 +374,28 @@ class ConfigurableVariable:
 
     # Delegate arithmetic and comparison operations to the wrapped variable
     def __add__(self, other):
-        # Check if we're in a class definition context and should use delayed expressions
-        if self._should_use_delayed_arithmetic():
-            return DelayedExpression("+", self, other)
-        return self._variable.__add__(other)
+        return _create_arithmetic_operation(self, other, "+")
 
     def __radd__(self, other):
-        if self._should_use_delayed_arithmetic():
-            return DelayedExpression("+", other, self)
-        return self._variable.__radd__(other)
+        return _create_arithmetic_operation(self, other, "+", reverse=True)
 
     def __sub__(self, other):
-        if self._should_use_delayed_arithmetic():
-            return DelayedExpression("-", self, other)
-        return self._variable.__sub__(other)
+        return _create_arithmetic_operation(self, other, "-")
 
     def __rsub__(self, other):
-        if self._should_use_delayed_arithmetic():
-            return DelayedExpression("-", other, self)
-        return self._variable.__rsub__(other)
+        return _create_arithmetic_operation(self, other, "-", reverse=True)
 
     def __mul__(self, other):
-        if self._should_use_delayed_arithmetic():
-            return DelayedExpression("*", self, other)
-        return self._variable.__mul__(other)
+        return _create_arithmetic_operation(self, other, "*")
 
     def __rmul__(self, other):
-        if self._should_use_delayed_arithmetic():
-            return DelayedExpression("*", other, self)
-        return self._variable.__rmul__(other)
+        return _create_arithmetic_operation(self, other, "*", reverse=True)
 
     def __truediv__(self, other):
-        if self._should_use_delayed_arithmetic():
-            return DelayedExpression("/", self, other)
-        return self._variable.__truediv__(other)
+        return _create_arithmetic_operation(self, other, "/")
 
     def __rtruediv__(self, other):
-        if self._should_use_delayed_arithmetic():
-            return DelayedExpression("/", other, self)
-        return self._variable.__rtruediv__(other)
+        return _create_arithmetic_operation(self, other, "/", reverse=True)
 
     def __pow__(self, other):
         return self._variable.__pow__(other)
@@ -452,31 +586,9 @@ class DelayedExpression(ArithmeticOperationsMixin):
         """Extract variables from the expression operands."""
         variables = set()
 
-        # Extract from left operand
-        if hasattr(self.left, "get_variables"):
-            variables.update(self.left.get_variables())
-        elif hasattr(self.left, "_wrapped") and hasattr(self.left._wrapped, "symbol"):
-            # ExpressionEnabledWrapper
-            variables.add(self.left._wrapped.symbol)
-        elif hasattr(self.left, "_variable") and hasattr(self.left._variable, "symbol"):
-            # SubProblemProxy
-            variables.add(self.left._variable.symbol)
-        elif hasattr(self.left, "symbol"):
-            # Direct variable
-            variables.add(self.left.symbol)
-
-        # Extract from right operand
-        if hasattr(self.right, "get_variables"):
-            variables.update(self.right.get_variables())
-        elif hasattr(self.right, "_wrapped") and hasattr(self.right._wrapped, "symbol"):
-            # ExpressionEnabledWrapper
-            variables.add(self.right._wrapped.symbol)
-        elif hasattr(self.right, "_variable") and hasattr(self.right._variable, "symbol"):
-            # SubProblemProxy
-            variables.add(self.right._variable.symbol)
-        elif hasattr(self.right, "symbol"):
-            # Direct variable
-            variables.add(self.right.symbol)
+        # Extract from both operands using helper function
+        _extract_variables_from_obj(self.left, variables)
+        _extract_variables_from_obj(self.right, variables)
 
         return variables
 
@@ -505,52 +617,8 @@ class DelayedExpression(ArithmeticOperationsMixin):
         """Resolve a single operand to a Variable/Expression."""
         if isinstance(operand, DelayedVariableReference | DelayedExpression | DelayedFunction):
             return operand.resolve(context)
-        elif hasattr(operand, "_wrapped") and not isinstance(operand, Expression):
-            # This is an ExpressionEnabledWrapper - create a VariableReference to the actual variable
-            from ..algebra.nodes import VariableReference
-
-            return VariableReference(operand._wrapped)
-        elif isinstance(operand, ConfigurableVariable):
-            # This is a ConfigurableVariable from SubProblemProxy - look up the namespaced variable in context
-            namespaced_symbol = operand._variable.symbol
-            if namespaced_symbol in context:
-                from ..algebra.nodes import VariableReference
-
-                return VariableReference(context[namespaced_symbol])
-            else:
-                # Fallback to the wrapped variable
-                from ..algebra.nodes import VariableReference
-
-                return VariableReference(operand._variable)
-        elif hasattr(operand, "_variable") and not isinstance(operand, Expression):
-            # This is a SubProblemProxy - create a VariableReference to the actual variable
-            from ..algebra.nodes import VariableReference
-
-            return VariableReference(operand._variable)
-        elif hasattr(operand, "_wrapped_var") and not isinstance(operand, Expression):
-            # This is a MainVariableWrapper - create a VariableReference to the actual variable
-            from ..algebra.nodes import VariableReference
-
-            return VariableReference(operand._wrapped_var)
-        elif hasattr(operand, "symbol"):
-            # It's a Variable - check if we have a canonical version in context and create VariableReference
-            symbol = getattr(operand, "symbol", None)
-            if symbol is not None:
-                from ..algebra.nodes import VariableReference
-
-                if symbol in context:
-                    return VariableReference(context[symbol])
-                else:
-                    # Create VariableReference to the original variable if it's a FieldQuantity
-                    if hasattr(operand, "dim") and hasattr(operand, "value") and hasattr(operand, "name") and not isinstance(operand, Expression):
-                        return VariableReference(operand)
-                    else:
-                        return operand
-            else:
-                return operand
         else:
-            # It's a literal value
-            return operand
+            return _create_variable_reference_from_obj(operand, context)
 
 
 class DelayedFunction(Expression, ArithmeticOperationsMixin):
@@ -566,17 +634,7 @@ class DelayedFunction(Expression, ArithmeticOperationsMixin):
         """Extract variables from function arguments."""
         variables = set()
         for arg in self.args:
-            if hasattr(arg, "get_variables"):
-                variables.update(arg.get_variables())
-            elif hasattr(arg, "_wrapped") and hasattr(arg._wrapped, "symbol"):
-                # ExpressionEnabledWrapper
-                variables.add(arg._wrapped.symbol)
-            elif hasattr(arg, "_variable") and hasattr(arg._variable, "symbol"):
-                # SubProblemProxy
-                variables.add(arg._variable.symbol)
-            elif hasattr(arg, "symbol"):
-                # Direct variable
-                variables.add(arg.symbol)
+            _extract_variables_from_obj(arg, variables)
         return variables
 
     def evaluate(self, variable_values):
@@ -612,31 +670,8 @@ class DelayedFunction(Expression, ArithmeticOperationsMixin):
                 if resolved_arg is None:
                     return None
                 resolved_args.append(resolved_arg)
-            elif hasattr(arg, "_wrapped") and not isinstance(arg, Expression):
-                # This is an ExpressionEnabledWrapper - create a VariableReference to the actual variable
-                from ..algebra.nodes import VariableReference
-
-                resolved_args.append(VariableReference(arg._wrapped))
-            elif hasattr(arg, "_wrapped_var") and not isinstance(arg, Expression):
-                # This is a NamespaceVariableWrapper - create a VariableReference to the actual variable
-                from ..algebra.nodes import VariableReference
-
-                resolved_args.append(VariableReference(arg._wrapped_var))
-            elif hasattr(arg, "_variable") and not isinstance(arg, Expression):
-                # This is a SubProblemProxy - create a VariableReference to the actual variable
-                from ..algebra.nodes import VariableReference
-
-                resolved_args.append(VariableReference(arg._variable))
-            elif hasattr(arg, "symbol"):
-                # This is a Variable - create a VariableReference, don't let wrap_operand turn it into a Constant
-                from ..algebra.nodes import VariableReference
-
-                if hasattr(arg, "dim") and hasattr(arg, "value") and hasattr(arg, "name") and not isinstance(arg, Expression):
-                    resolved_args.append(VariableReference(arg))
-                else:
-                    resolved_args.append(arg)
             else:
-                resolved_args.append(arg)
+                resolved_args.append(_create_variable_reference_from_obj(arg, context))
 
         # Call the appropriate function - create actual expressions, not more DelayedFunction objects
         if self.func_name == "sin":
@@ -821,75 +856,54 @@ class CompositionMixin:
 
     def _is_t_equation_pattern(self, equation) -> bool:
         """Check if this equation matches the T = T_bar * (1 - U_m) pattern."""
-        from ..algebra.nodes import BinaryOperation, Constant
+        from ..algebra.nodes import Constant
 
         # Check if LHS variable name ends with 'T' (like 'T', 'header_T', etc.)
-        lhs_name = getattr(equation.lhs, "name", "")
-        if not (lhs_name == "T" or lhs_name.endswith("_T")):
+        if not _check_lhs_name_pattern(equation, "T"):
             return False
 
         # Check if RHS is a multiplication: something * (1 - something)
-        rhs = equation.rhs
-        if not isinstance(rhs, BinaryOperation) or rhs.operator != "*":
+        if not _is_binary_operation(equation.rhs, "*"):
             return False
 
         # Check if right operand is (1 - something)
-        right_op = rhs.right
-        if not isinstance(right_op, BinaryOperation) or right_op.operator != "-":
+        right_op = equation.rhs.right
+        if not _is_binary_operation(right_op, "-"):
             return False
 
-        # Check if it's (1 - constant) pattern
+        # Check if it's (1 - constant) pattern with both operands as constants
         if not isinstance(right_op.left, Constant) or not isinstance(right_op.right, Constant):
             return False
 
         # Check if left constant is approximately 1
-        left_val = getattr(right_op.left.value, "value", right_op.left.value)
-        if isinstance(left_val, int | float):
-            return abs(left_val - 1.0) < 1e-10
-        return False
+        return _is_constant_value(right_op.left, 1.0)
 
     def _reconstruct_t_equation_pattern(self, equation):
         """Reconstruct T = T_bar * (1 - U_m) equation with variable references."""
         try:
-            from qnty.core.quantity_catalog import Dimensionless
-
             from ..algebra import equation as create_equation
-            from ..algebra.nodes import BinaryOperation, Constant, VariableReference
+            from ..algebra.nodes import BinaryOperation, VariableReference
 
             # Get the LHS variable name (T, header_T, branch_T, etc.)
             lhs_name = getattr(equation.lhs, "name", "")
 
-            # Determine the corresponding T_bar and U_m variable names
-            if lhs_name == "T":
-                t_bar_name = "T_bar"
-                u_m_name = "U_m"
-            else:
-                # For namespaced variables like header_T, branch_T
-                prefix = lhs_name[:-2]  # Remove '_T'
-                t_bar_name = f"{prefix}_T_bar"
-                u_m_name = f"{prefix}_U_m"
+            # Generate variable names using helper
+            var_names = _generate_variable_names(lhs_name, "T", ["T_bar", "U_m"])
+            t_bar_name = var_names["T_bar"]
+            u_m_name = var_names["U_m"]
 
             # Check if these variables exist in the problem
-            if lhs_name not in self.variables or t_bar_name not in self.variables or u_m_name not in self.variables:
+            required_vars = [lhs_name, t_bar_name, u_m_name]
+            if not all(var_name in self.variables for var_name in required_vars):
                 return None
 
-            # Get the variable objects
-            t_var = self.variables[lhs_name]
-            t_bar_var = self.variables[t_bar_name]
-            u_m_var = self.variables[u_m_name]
-
-            # Create variable references
-            t_ref = VariableReference(t_var)
-            t_bar_ref = VariableReference(t_bar_var)
-            u_m_ref = VariableReference(u_m_var)
+            # Get the variable objects and create references
+            t_ref = VariableReference(self.variables[lhs_name])
+            t_bar_ref = VariableReference(self.variables[t_bar_name])
+            u_m_ref = VariableReference(self.variables[u_m_name])
 
             # Create constant for 1
-            from qnty.core.unit import ureg
-
-            one_dimensionless = Dimensionless("one")
-            one_dimensionless.value = 1.0
-            one_dimensionless.preferred = ureg.resolve("dimensionless")
-            one = Constant(one_dimensionless)
+            one = _create_dimensionless_constant(1.0, "one")
 
             # Create expression: 1 - U_m
             one_minus_u_m = BinaryOperation("-", one, u_m_ref)
@@ -905,21 +919,19 @@ class CompositionMixin:
 
     def _is_pressure_thickness_pattern(self, equation) -> bool:
         """Check if this equation matches the pressure design thickness pattern with constants."""
-        from ..algebra.nodes import BinaryOperation, Constant
+        from ..algebra.nodes import Constant
 
         # Check if LHS variable name ends with 't' (like 't', 'header_t', 'branch_t')
-        lhs_name = getattr(equation.lhs, "name", "")
-        if not (lhs_name == "t" or lhs_name.endswith("_t")):
+        if not _check_lhs_name_pattern(equation, "t"):
             return False
 
         # Check if RHS has the pattern: constant_pressure * constant_diameter / (2 * (...))
-        rhs = equation.rhs
-        if not isinstance(rhs, BinaryOperation) or rhs.operator != "/":
+        if not _is_binary_operation(equation.rhs, "/"):
             return False
 
         # Check if numerator is pressure * diameter (both constants)
-        numerator = rhs.left
-        if not isinstance(numerator, BinaryOperation) or numerator.operator != "*":
+        numerator = equation.rhs.left
+        if not _is_binary_operation(numerator, "*"):
             return False
 
         # Check if both operands are constants (pressure and diameter)
@@ -927,18 +939,12 @@ class CompositionMixin:
             return False
 
         # Check if denominator is 2 * (...)
-        denominator = rhs.right
-        if not isinstance(denominator, BinaryOperation) or denominator.operator != "*":
+        denominator = equation.rhs.right
+        if not _is_binary_operation(denominator, "*"):
             return False
 
         # Check if left operand is constant 2
-        if not isinstance(denominator.left, Constant):
-            return False
-
-        left_val = getattr(denominator.left.value, "value", denominator.left.value)
-        if isinstance(left_val, int | float):
-            return abs(left_val - 2.0) < 1e-10
-        return False
+        return _is_constant_value(denominator.left, 2.0)
 
     def _reconstruct_pressure_thickness_pattern(self, equation):
         """Reconstruct pressure design thickness equation with variable references."""
