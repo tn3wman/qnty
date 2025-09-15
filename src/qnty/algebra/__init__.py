@@ -40,9 +40,17 @@ def equation(lhs, rhs, name: str | None = None) -> Equation:
                 # This is a DelayedExpression
                 extract_variables(expr.left)
                 extract_variables(expr.right)
+            elif hasattr(expr, "args"):
+                # This has args (like cond_expr, max_expr, etc.)
+                for arg in expr.args:
+                    extract_variables(arg)
             elif hasattr(expr, "_wrapped"):
                 # This is an ExpressionEnabledWrapper
                 context[getattr(expr._wrapped, "name", "unknown")] = expr._wrapped
+            elif hasattr(expr, "_variable"):
+                # This is a SubProblemProxy
+                var = expr._variable
+                context[getattr(var, "name", "unknown")] = var
             elif hasattr(expr, "name") and hasattr(expr, "value") and hasattr(expr, "dim"):
                 # This is a direct quantity/variable
                 context[expr.name] = expr

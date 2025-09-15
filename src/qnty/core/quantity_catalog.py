@@ -8,6 +8,11 @@ class Acceleration:
     """Acceleration quantity with automatic boilerplate."""
     pass
 
+@quantity(uc.AnglePlaneUnits)
+class AnglePlane:
+    """Angle plane quantity with automatic boilerplate."""
+    pass
+
 @quantity(uc.AreaUnits)
 class Area:
     """Area quantity with automatic boilerplate."""

@@ -14,6 +14,23 @@ from typing import Any, Literal
 from ..algebra import Expression
 from ..core.quantity import FieldQuantity, Quantity
 
+# Constants for warning types
+WARNING_TYPE_VALIDATION = "VALIDATION"
+WARNING_TYPE_CODE_COMPLIANCE = "CODE_COMPLIANCE"
+WARNING_TYPE_EVALUATION_ERROR = "EVALUATION_ERROR"
+
+# Constants for severity levels
+SEVERITY_INFO = "INFO"
+SEVERITY_WARNING = "WARNING"
+SEVERITY_ERROR = "ERROR"
+
+# Default values
+DEFAULT_WARNING_TYPE = WARNING_TYPE_VALIDATION
+DEFAULT_SEVERITY = SEVERITY_WARNING
+
+# Threshold for boolean conversion
+BOOLEAN_THRESHOLD = 0.5
+
 
 @dataclass
 class Rules:
@@ -27,8 +44,8 @@ class Rules:
 
     condition: Expression
     message: str
-    warning_type: str = "VALIDATION"
-    severity: Literal["INFO", "WARNING", "ERROR"] = "WARNING"
+    warning_type: str = DEFAULT_WARNING_TYPE
+    severity: Literal["INFO", "WARNING", "ERROR"] = DEFAULT_SEVERITY
     name: str | None = None
 
     def __post_init__(self):
@@ -51,20 +68,15 @@ class Rules:
             result = self._evaluate_expression(self.condition, variables)
 
             if result:
-                return {"type": self.warning_type, "severity": self.severity, "message": self.message, "check_name": self.name, "condition": str(self.condition)}
+                return self._create_warning_dict(
+                    warning_type=self.warning_type,
+                    severity=self.severity,
+                    message=self.message
+                )
 
         except Exception as e:
             # If evaluation fails, return an error warning
-
-            return {
-                "type": "EVALUATION_ERROR",
-                "severity": "ERROR",
-                "message": f"Failed to evaluate check '{self.name}': {str(e)}",
-                "check_name": self.name,
-                "condition": str(self.condition),
-                "debug_info": f"Expression type: {type(self.condition)}, Variables: {list(variables.keys())}",
-                "traceback": traceback.format_exc(),
-            }
+            return self._create_error_dict(e, variables)
 
         return None
 
@@ -97,16 +109,57 @@ class Rules:
         """
         # For qnty Quantity objects, check the value
         if isinstance(result, Quantity) and result.value is not None:
-            return bool(result.value > 0.5)
+            return bool(result.value > BOOLEAN_THRESHOLD)
 
         # Fallback for any numeric types
         try:
-            return bool(float(result) > 0.5)  # type: ignore[arg-type]
+            return bool(float(result) > BOOLEAN_THRESHOLD)  # type: ignore[arg-type]
         except (TypeError, ValueError) as e:
             raise ValueError(f"Cannot convert expression result to boolean: {result}") from e
 
+    def _create_warning_dict(self, warning_type: str, severity: str, message: str) -> dict[str, Any]:
+        """
+        Create a standardized warning dictionary.
 
-def add_rule(condition: Expression, message: str, warning_type: str = "VALIDATION", severity: Literal["INFO", "WARNING", "ERROR"] = "WARNING", name: str | None = None) -> Rules:
+        Args:
+            warning_type: Type of warning
+            severity: Severity level
+            message: Warning message
+
+        Returns:
+            Warning dictionary with standard fields
+        """
+        return {
+            "type": warning_type,
+            "severity": severity,
+            "message": message,
+            "check_name": self.name,
+            "condition": str(self.condition)
+        }
+
+    def _create_error_dict(self, exception: Exception, variables: dict[str, FieldQuantity]) -> dict[str, Any]:
+        """
+        Create a standardized error dictionary for evaluation failures.
+
+        Args:
+            exception: The exception that occurred
+            variables: Dictionary of variables for debugging context
+
+        Returns:
+            Error dictionary with debugging information
+        """
+        return {
+            "type": WARNING_TYPE_EVALUATION_ERROR,
+            "severity": SEVERITY_ERROR,
+            "message": f"Failed to evaluate check '{self.name}': {str(exception)}",
+            "check_name": self.name,
+            "condition": str(self.condition),
+            "debug_info": f"Expression type: {type(self.condition)}, Variables: {list(variables.keys())}",
+            "traceback": traceback.format_exc(),
+        }
+
+
+def add_rule(condition: Expression, message: str, warning_type: str = DEFAULT_WARNING_TYPE, severity: Literal["INFO", "WARNING", "ERROR"] = DEFAULT_SEVERITY, name: str | None = None) -> Rules:
     """
     Create a new engineering problem check.
 
@@ -143,4 +196,4 @@ def add_rule(condition: Expression, message: str, warning_type: str = "VALIDATIO
     return Rules(condition=condition, message=message, warning_type=warning_type, severity=severity, name=name)
 
 
-__all__ = ["add_rule"]
+__all__ = ["add_rule", "Rules"]

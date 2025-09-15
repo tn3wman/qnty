@@ -1,5 +1,7 @@
 from typing import Final
 
+from sympy import deg
+
 from .unit import Unit, UnitNamespace
 
 class Units:
@@ -9,6 +11,13 @@ class Units:
     dimensionless: Final[Unit]
     dless: Final[Unit]  # alias for dimensionless
     scalar: Final[Unit]  # alias for dimensionless
+
+    radian : Final[Unit]
+    radians : Final[Unit]  # alias for radian
+    degree : Final[Unit]
+    degrees : Final[Unit]  # alias for degree
+    deg : Final[Unit]  # alias for degree
+
 
     # Time
     kilo_second: Final[Unit]  # alias for second
@@ -144,6 +153,13 @@ class DimensionlessUnits(UnitNamespace):
     dimensionless: Final[Unit]
     dless: Final[Unit]
     scalar: Final[Unit]
+
+class AnglePlaneUnits(UnitNamespace):
+    radian: Final[Unit]
+    radians: Final[Unit]
+    degree: Final[Unit]
+    degrees: Final[Unit]
+    deg: Final[Unit]
 
 class LengthUnits(UnitNamespace):
     # Core SI

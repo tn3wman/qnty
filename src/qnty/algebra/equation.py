@@ -137,6 +137,12 @@ class Equation:
         """Convert a value to an Expression, wrapping FieldQuantity in VariableReference."""
         if isinstance(value, FieldQuantity):
             return VariableReference(value)
+        # Handle ConfigurableVariable from composition system
+        elif hasattr(value, '_variable') and hasattr(value, 'symbol') and not isinstance(value, Expression):
+            return VariableReference(value._variable)  # type: ignore[attr-defined]
+        # Handle ExpressionEnabledWrapper from composition system
+        elif hasattr(value, '_wrapped') and not isinstance(value, Expression):
+            return VariableReference(value._wrapped)  # type: ignore[attr-defined]
         return cast(Expression, value)
 
     def _is_variable_known(self, var_name: str, variable_values: dict[str, FieldQuantity]) -> bool:

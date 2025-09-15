@@ -1,7 +1,6 @@
 from typing import TYPE_CHECKING, Final
 
-from numpy import square
-
+import math
 from .dimension_catalog import dim
 from .unit import Unit, UnitNamespace, add_unit, attach_composed, u
 
@@ -12,6 +11,23 @@ dimensionless = add_unit(
     dim.D, symbol="", si_factor=1.0,
     aliases=("dless", "scalar",),
 )
+
+radian = add_unit(
+    dim.D, symbol="rad", si_factor=1.0,
+    aliases=("radians",),
+)
+
+degree = add_unit(
+    dim.D, symbol="°", si_factor=math.pi / 180.0,
+    aliases=("degrees", "deg",),
+)
+
+class AnglePlaneUnits(UnitNamespace):
+    __slots__ = ()
+    __preferred__ = "radian"
+
+    radian: Final[Unit] = radian
+    degree: Final[Unit] = degree
 
 # ==============
 # TIME
@@ -64,8 +80,6 @@ gram = add_unit(
     allow_prefix=True, expose_prefixed_to_u=True
 )
 
-# US customary mass units
-# Canonical mass unit: pound (lb). Include common aliases and legacy "pound_mass" name.
 pound_mass = add_unit(
     dim.M, symbol="lbm", si_factor=0.45359237,
     aliases=("lbm",),
