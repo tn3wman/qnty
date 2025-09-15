@@ -404,11 +404,9 @@ class Problem(ValidationMixin):
                     # Convert solved quantity to original unit for display
                     original_unit = self._original_variable_units[symbol]
                     try:
-                        # Convert the solved quantity to the original unit
-                        converted_value = solved_var.to(original_unit).value
-
-                        # Create new quantity with converted value
-                        self._update_variable_value(symbol, converted_value, original_unit)
+                        # The solved_var already has the correct SI value and we want to preserve the original_unit
+                        # Just use the SI value directly with the original unit as preferred
+                        self._update_variable_value(symbol, solved_var.value, original_unit)
                     except Exception:
                         # If conversion fails, use the solved quantity as-is
                         if solved_var.value is not None:
@@ -836,14 +834,29 @@ class Problem(ValidationMixin):
                 return expr
 
         if isinstance(expr, VariableReference):
-            # Check if this VariableReference points to the wrong Variable
-            # VariableReference uses the 'name' property for symbol access
-            symbol = getattr(expr, "symbol", None) or getattr(expr, "name", None)
-            if symbol and symbol in self.variables:
-                correct_var = self.variables[symbol]
-                if expr.variable is not correct_var:
+            # Only fix VariableReference if its current variable is not in problem.variables
+            # This prevents corrupting valid references to variables that have different symbols
+            current_var = expr.variable
+
+            # Check if the current variable exists in our variables dict
+            current_var_in_dict = any(var is current_var for var in self.variables.values())
+
+            if not current_var_in_dict:
+                # The current variable isn't in our dict - try to find it by symbol/name
+                var_symbol = getattr(current_var, "symbol", None)
+                var_name = getattr(expr, "name", None) or getattr(expr, "symbol", None)
+
+                # Try to find a replacement variable
+                replacement_var = None
+                if var_symbol and var_symbol in self.variables:
+                    replacement_var = self.variables[var_symbol]
+                elif var_name and var_name in self.variables:
+                    replacement_var = self.variables[var_name]
+
+                if replacement_var and replacement_var is not current_var:
                     # Create new VariableReference pointing to correct Variable
-                    return VariableReference(correct_var)
+                    return VariableReference(replacement_var)
+
             return expr
 
         elif isinstance(expr, BinaryOperation):
@@ -929,7 +942,8 @@ class Problem(ValidationMixin):
 
             # Fix any variable reference issues that may have occurred after configuration
             # This ensures all equations reference the correct variable objects
-            self._final_variable_reference_fix()
+            # NOTE: Commented out as it corrupts valid assignment equations like 'branch_P = P'
+            # self._final_variable_reference_fix()
 
             # Build dependency graph
             self._build_dependency_graph()
