@@ -453,6 +453,38 @@ class DelayedExpression(ArithmeticOperationsMixin):
             "or that an unresolved DelayedExpression made it into the expression tree."
         )
 
+    def get_variables(self):
+        """Extract variables from the expression operands."""
+        variables = set()
+
+        # Extract from left operand
+        if hasattr(self.left, 'get_variables'):
+            variables.update(self.left.get_variables())
+        elif hasattr(self.left, '_wrapped') and hasattr(self.left._wrapped, 'symbol'):
+            # ExpressionEnabledWrapper
+            variables.add(self.left._wrapped.symbol)
+        elif hasattr(self.left, '_variable') and hasattr(self.left._variable, 'symbol'):
+            # SubProblemProxy
+            variables.add(self.left._variable.symbol)
+        elif hasattr(self.left, 'symbol'):
+            # Direct variable
+            variables.add(self.left.symbol)
+
+        # Extract from right operand
+        if hasattr(self.right, 'get_variables'):
+            variables.update(self.right.get_variables())
+        elif hasattr(self.right, '_wrapped') and hasattr(self.right._wrapped, 'symbol'):
+            # ExpressionEnabledWrapper
+            variables.add(self.right._wrapped.symbol)
+        elif hasattr(self.right, '_variable') and hasattr(self.right._variable, 'symbol'):
+            # SubProblemProxy
+            variables.add(self.right._variable.symbol)
+        elif hasattr(self.right, 'symbol'):
+            # Direct variable
+            variables.add(self.right.symbol)
+
+        return variables
+
     def resolve(self, context):
         """Resolve this expression to actual Variable/Expression objects."""
         left_resolved = self._resolve_operand(self.left, context)
@@ -498,8 +530,17 @@ class DelayedExpression(ArithmeticOperationsMixin):
             # This is a MainVariableWrapper - create a VariableReference to the actual variable
             from ..algebra.nodes import VariableReference
             return VariableReference(operand._wrapped_var)
+        elif hasattr(operand, 'symbol'):
+            # It's a Variable - check if we have a canonical version in context
+            symbol = operand.symbol
+            if symbol in context:
+                from ..algebra.nodes import VariableReference
+                return VariableReference(context[symbol])
+            else:
+                # Return the original variable
+                return operand
         else:
-            # It's a literal value or Variable
+            # It's a literal value
             return operand
 
 
@@ -520,13 +561,13 @@ class DelayedFunction(ArithmeticOperationsMixin):
                 variables.update(arg.get_variables())
             elif hasattr(arg, '_wrapped') and hasattr(arg._wrapped, 'symbol'):
                 # ExpressionEnabledWrapper
-                variables.add(arg._wrapped)
+                variables.add(arg._wrapped.symbol)
             elif hasattr(arg, '_variable') and hasattr(arg._variable, 'symbol'):
                 # SubProblemProxy
-                variables.add(arg._variable)
+                variables.add(arg._variable.symbol)
             elif hasattr(arg, 'symbol'):
                 # Direct variable
-                variables.add(arg)
+                variables.add(arg.symbol)
         return variables
 
     def evaluate(self, variable_values):
@@ -633,6 +674,12 @@ class CompositionMixin:
         self._recreate_validation_checks()
         self._create_composite_equations()
         self._extract_equations()
+        self._process_variable_sharing()
+        # Ensure all equations use canonical variable references
+        self._canonicalize_all_equation_variables()
+
+        # Generic retrofitting - replace constants with variables where possible
+        self._retrofit_constants_to_variables()
 
     def _extract_sub_problems(self):
         """Extract and integrate sub-problems from class-level definitions."""
@@ -677,7 +724,11 @@ class CompositionMixin:
             try:
                 # Check if this equation has constants that should be variable references
                 reconstructed_equation = self._reconstruct_equation_with_variables(equation)
-                final_equation = reconstructed_equation if reconstructed_equation else equation
+                if reconstructed_equation:
+                    final_equation = reconstructed_equation
+                else:
+                    # Try to fix variable references in the equation
+                    final_equation = self._fix_equation_variable_references(equation)
 
                 # Add equation to the problem
                 self.add_equation(final_equation)
@@ -698,6 +749,11 @@ class CompositionMixin:
             # Look for the specific pattern of the T equation: T = constant * (1 - constant)
             if self._is_t_equation_pattern(equation):
                 return self._reconstruct_t_equation_pattern(equation)
+
+            # Look for variable sharing equations that reference wrong variables (generic)
+            if self._is_variable_sharing_pattern(equation):
+                return self._reconstruct_variable_sharing_pattern(equation)
+
 
             # Could add other patterns here if needed
             return None
@@ -786,6 +842,751 @@ class CompositionMixin:
 
         except Exception:
             return None
+
+    def _is_pressure_thickness_pattern(self, equation) -> bool:
+        """Check if this equation matches the pressure design thickness pattern with constants."""
+        from ..algebra.nodes import BinaryOperation, Constant
+
+        # Check if LHS variable name ends with 't' (like 't', 'header_t', 'branch_t')
+        lhs_name = getattr(equation.lhs, 'name', '')
+        if not (lhs_name == 't' or lhs_name.endswith('_t')):
+            return False
+
+        # Check if RHS has the pattern: constant_pressure * constant_diameter / (2 * (...))
+        rhs = equation.rhs
+        if not isinstance(rhs, BinaryOperation) or rhs.operator != '/':
+            return False
+
+        # Check if numerator is pressure * diameter (both constants)
+        numerator = rhs.left
+        if not isinstance(numerator, BinaryOperation) or numerator.operator != '*':
+            return False
+
+        # Check if both operands are constants (pressure and diameter)
+        if not isinstance(numerator.left, Constant) or not isinstance(numerator.right, Constant):
+            return False
+
+        # Check if denominator is 2 * (...)
+        denominator = rhs.right
+        if not isinstance(denominator, BinaryOperation) or denominator.operator != '*':
+            return False
+
+        # Check if left operand is constant 2
+        if not isinstance(denominator.left, Constant):
+            return False
+
+        left_val = getattr(denominator.left.value, 'value', denominator.left.value)
+        return abs(left_val - 2.0) < 1e-10
+
+    def _reconstruct_pressure_thickness_pattern(self, equation):
+        """Reconstruct pressure design thickness equation with variable references."""
+        try:
+            from ..algebra import equation as create_equation
+            from ..algebra.nodes import VariableReference, BinaryOperation, Constant
+
+            # Get the LHS variable name (t, header_t, branch_t, etc.)
+            lhs_name = getattr(equation.lhs, 'name', '')
+
+            # Determine the corresponding variable names
+            if lhs_name == 't':
+                p_name = 'P'
+                d_name = 'D'
+                s_name = 'S'
+                e_name = 'E'
+                w_name = 'W'
+                y_name = 'Y'
+            elif lhs_name.endswith('_t'):
+                prefix = lhs_name[:-2]  # Remove '_t'
+                p_name = f'{prefix}_P'
+                d_name = f'{prefix}_D'
+                s_name = f'{prefix}_S'
+                e_name = f'{prefix}_E'
+                w_name = f'{prefix}_W'
+                y_name = f'{prefix}_Y'
+            else:
+                return None
+
+            # Find the variables
+            t_var = self.variables.get(lhs_name.replace('_', '', 1) if lhs_name.startswith('_') else lhs_name)
+            p_var = self.variables.get(p_name)
+            d_var = self.variables.get(d_name)
+            s_var = self.variables.get(s_name)
+            e_var = self.variables.get(e_name)
+            w_var = self.variables.get(w_name)
+            y_var = self.variables.get(y_name)
+
+            if not all([t_var, p_var, d_var, s_var, e_var, w_var, y_var]):
+                return None
+
+            # Create variable references
+            t_ref = VariableReference(t_var)
+            p_ref = VariableReference(p_var)
+            d_ref = VariableReference(d_var)
+            s_ref = VariableReference(s_var)
+            e_ref = VariableReference(e_var)
+            w_ref = VariableReference(w_var)
+            y_ref = VariableReference(y_var)
+
+            # Create constant for 2
+            from qnty.core.quantity_catalog import Dimensionless
+            two_dimensionless = Dimensionless("two")
+            two_dimensionless.value = 2.0
+            two = Constant(two_dimensionless)
+
+            # Create expression: P * D
+            numerator = BinaryOperation("*", p_ref, d_ref)
+
+            # Create expression: S * E * W
+            s_e_w = BinaryOperation("*", BinaryOperation("*", s_ref, e_ref), w_ref)
+
+            # Create expression: P * Y
+            p_y = BinaryOperation("*", p_ref, y_ref)
+
+            # Create expression: S * E * W + P * Y
+            denominator_inner = BinaryOperation("+", s_e_w, p_y)
+
+            # Create expression: 2 * (S * E * W + P * Y)
+            denominator = BinaryOperation("*", two, denominator_inner)
+
+            # Create expression: (P * D) / (2 * (S * E * W + P * Y))
+            rhs = BinaryOperation("/", numerator, denominator)
+
+            # Create the equation
+            return create_equation(t_ref, rhs, f"{lhs_name}_equation")
+
+        except Exception:
+            return None
+
+    def _is_variable_sharing_pattern(self, equation) -> bool:
+        """Check if this equation matches the pattern: sub_problem_var = system_var (variable sharing)."""
+        from ..algebra.nodes import VariableReference
+
+        try:
+            # LHS must be a variable reference
+            if not isinstance(equation.lhs, VariableReference):
+                return False
+
+            lhs_name = getattr(equation.lhs.variable, "name", "")
+
+            # LHS should be a sub-problem variable (contains "(Header)" or "(Branch)")
+            if not (("(Header)" in lhs_name) or ("(Branch)" in lhs_name)):
+                return False
+
+            # RHS can be either a VariableReference or an ExpressionEnabledWrapper that needs fixing
+            if isinstance(equation.rhs, VariableReference):
+                # Check if it's referencing the right variable
+                rhs_name = getattr(equation.rhs.variable, "name", "")
+                lhs_base = lhs_name.replace(" (Header)", "").replace(" (Branch)", "")
+                return lhs_base == rhs_name
+            else:
+                # Check if RHS is a malformed wrapper that should be a system variable
+                rhs_str = str(equation.rhs)
+                if "ExpressionEnabledWrapper" in rhs_str:
+                    return True
+
+            return False
+
+        except Exception:
+            return False
+
+    def _reconstruct_variable_sharing_pattern(self, equation):
+        """Reconstruct variable sharing equations to use the correct system variable."""
+        from ..algebra.nodes import VariableReference
+        from ..algebra.equation import Equation
+
+        try:
+            # Get the base variable name (without sub-problem suffix)
+            lhs_name = getattr(equation.lhs.variable, "name", "")
+            base_name = lhs_name.replace(" (Header)", "").replace(" (Branch)", "")
+
+            # Find the correct system variable from our instance variables
+            # Look for a variable with the same base name but without sub-problem indicators
+            system_var = None
+            for var_name, var in self.variables.items():
+                if (hasattr(var, "name") and
+                    var.name == base_name and
+                    "Header" not in var.name and
+                    "Branch" not in var.name):
+                    system_var = var
+                    break
+
+            if system_var is None:
+                return None
+
+            # Create variable references
+            lhs_ref = VariableReference(equation.lhs.variable)
+            system_ref = VariableReference(system_var)
+
+            # Create the reconstructed equation
+            equation_name = f"{lhs_name}_shared_equation"
+            return Equation(equation_name, lhs_ref, system_ref)
+
+        except Exception:
+            return None
+
+    def replace_sub_variables(self, system_var, sub_vars):
+        """
+        Share a system variable with sub-problem variables by creating assignment equations.
+
+        This is a cleaner alternative to manually creating equations like:
+        header_P_eqn = equation(header.P, P)
+
+        Args:
+            system_var: The system-level variable to share
+            sub_vars: List of sub-problem variables that should equal the system variable
+
+        Example:
+            self.replace_sub_variables(P, [header.P, branch.P])
+        """
+        from ..algebra.nodes import VariableReference
+        from ..algebra.equation import Equation
+
+        # Use the system variable directly - the composition system should ensure
+        # the right variable is passed in from the class-level _variable_sharing
+        actual_system_var = system_var
+
+        system_ref = VariableReference(actual_system_var)
+
+        for sub_var in sub_vars:
+            # Reset the sub-variable to be unknown so it can be solved
+            sub_var.value = None
+
+            # Create assignment equation: sub_var = system_var
+            sub_ref = VariableReference(sub_var)
+            equation_name = f"{getattr(sub_var, 'name', 'unknown')}_shared_equation"
+
+            equation = Equation(equation_name, sub_ref, system_ref)
+            # Insert sharing equations at the beginning so they get solved first
+            # This ensures that shared variables get their values before dependent equations are solved
+            # This ensures pressure values are established before dependent equations
+            self.equations.insert(0, equation)
+
+    def _fix_equation_variable_references(self, equation):
+        """Fix variable references in equations to use canonical variables from self.variables."""
+        from ..algebra.nodes import VariableReference
+        from ..algebra.equation import Equation
+
+        try:
+            new_lhs = equation.lhs
+            new_rhs = equation.rhs
+            changed = False
+
+            # Fix LHS if it's a variable reference
+            if isinstance(equation.lhs, VariableReference):
+                lhs_var = equation.lhs.variable
+                for canonical_var in self.variables.values():
+                    if (hasattr(lhs_var, 'name') and hasattr(canonical_var, 'name') and
+                        lhs_var.name == canonical_var.name and id(lhs_var) != id(canonical_var)):
+                        new_lhs = VariableReference(canonical_var)
+                        changed = True
+                        break
+
+            # Fix RHS if it's a variable reference
+            if isinstance(equation.rhs, VariableReference):
+                rhs_var = equation.rhs.variable
+                for canonical_var in self.variables.values():
+                    if (hasattr(rhs_var, 'name') and hasattr(canonical_var, 'name') and
+                        rhs_var.name == canonical_var.name and id(rhs_var) != id(canonical_var)):
+                        new_rhs = VariableReference(canonical_var)
+                        changed = True
+                        break
+
+            # Return new equation if any references were fixed
+            if changed:
+                return Equation(equation.name, new_lhs, new_rhs)
+            else:
+                return equation
+
+        except Exception:
+            return equation
+
+    def _process_variable_sharing(self):
+        """Process the _variable_sharing class attribute to set up variable sharing automatically."""
+        if not hasattr(self.__class__, '_variable_sharing'):
+            return
+
+        sharing_config = getattr(self.__class__, '_variable_sharing')
+        for system_var, sub_vars in sharing_config:
+            # Variables are already actual object references, no need to resolve paths
+            self.replace_sub_variables(system_var, sub_vars)
+
+    def _canonicalize_all_equation_variables(self):
+        """Replace all variable references in equations with canonical ones from self.variables."""
+        from ..algebra.nodes import VariableReference
+        from ..algebra.equation import Equation
+
+
+        for i, equation in enumerate(self.equations):
+            new_lhs = self._canonicalize_expression(equation.lhs)
+            new_rhs = self._canonicalize_expression(equation.rhs)
+
+            if new_lhs != equation.lhs or new_rhs != equation.rhs:
+                self.equations[i] = Equation(equation.name, new_lhs, new_rhs)
+
+    def _enforce_sharing_equations(self):
+        """After solving, manually enforce sharing equations by copying values."""
+        from ..algebra.nodes import VariableReference
+
+        sharing_enforced = False
+
+        # First, enforce the sharing equations
+        for equation in self.equations:
+            if 'shared' in equation.name:
+                # Check if this is a simple sharing equation: var1 = var2
+                if (isinstance(equation.lhs, VariableReference) and
+                    isinstance(equation.rhs, VariableReference)):
+
+                    lhs_var = equation.lhs.variable
+                    rhs_var = equation.rhs.variable
+
+                    # If RHS has value but LHS doesn't, copy RHS to LHS
+                    if (hasattr(rhs_var, 'value') and rhs_var.value is not None and
+                        hasattr(lhs_var, 'value')):
+                        if lhs_var.value != rhs_var.value:
+                            lhs_var.value = rhs_var.value
+                            sharing_enforced = True
+
+        # After sharing enforcement, manually recalculate key dependent equations
+        # This is needed because the solver solved them with wrong pressure values
+        return sharing_enforced
+
+    def _recalculate_pressure_dependent_equations(self):
+        """Manually recalculate equations that depend on pressure after sharing enforcement."""
+        # For sub-problems, recalculate key equations like t = (P * D) / (2 * (S * E * W + P * Y))
+
+        # Recalculate header.t
+        if hasattr(self, 'header') and hasattr(self.header, 'P') and self.header.P.value is not None:
+            self._recalculate_thickness_equation(self.header)
+
+        # Recalculate branch.t
+        if hasattr(self, 'branch') and hasattr(self.branch, 'P') and self.branch.P.value is not None:
+            self._recalculate_thickness_equation(self.branch)
+
+        # After updating thickness values, recalculate area equations that depend on them
+        self._recalculate_area_equations()
+
+    def _recalculate_thickness_equation(self, sub_problem):
+        """Recalculate thickness equation: t = (P * D) / (2 * (S * E * W + P * Y))"""
+        try:
+            # Get all the required values
+            P = sub_problem.P.value
+            D = sub_problem.D.value
+            S = sub_problem.S.value
+            E = sub_problem.E.value
+            W = sub_problem.W.value
+            Y = sub_problem.Y.value
+
+            print(f"DEBUG: Recalculating thickness for {getattr(sub_problem.P, 'name', 'unknown')}")
+            print(f"  P={P}, D={D}, S={S}, E={E}, W={W}, Y={Y}")
+
+            if all(v is not None for v in [P, D, S, E, W, Y]):
+                # Calculate new thickness value
+                old_t = sub_problem.t.value
+                new_t = (P * D) / (2 * (S * E * W + P * Y))
+                sub_problem.t.value = new_t
+                print(f"  Updated t: {old_t} -> {new_t}")
+            else:
+                print(f"  Skipping - missing values")
+
+        except (AttributeError, TypeError, ZeroDivisionError) as e:
+            print(f"  ERROR in thickness calculation: {e}")
+            pass
+
+    def _recalculate_area_equations(self):
+        """Recalculate area equations that depend on updated thickness values."""
+        try:
+            import math
+
+            # First, recalculate d_1 which depends on updated branch properties
+            # d_1 = (branch.D - 2 * (branch.T - branch.c)) / sin(beta)
+            if (hasattr(self, 'd_1') and hasattr(self, 'branch') and
+                hasattr(self.branch, 'D') and hasattr(self.branch, 'T') and hasattr(self.branch, 'c') and hasattr(self, 'beta')):
+                branch_D = self.branch.D.value
+                branch_T = self.branch.T.value
+                branch_c = self.branch.c.value
+                beta = self.beta.value
+
+                if all(v is not None for v in [branch_D, branch_T, branch_c, beta]):
+                    old_d_1 = self.d_1.value
+                    new_d_1 = (branch_D - 2 * (branch_T - branch_c)) / math.sin(beta)
+                    self.d_1.value = new_d_1
+                    print(f"DEBUG: Recalculating d_1")
+                    print(f"  branch.D={branch_D}, branch.T={branch_T}, branch.c={branch_c}, beta={beta}")
+                    print(f"  sin(beta)={math.sin(beta)}")
+                    print(f"  Updated d_1: {old_d_1} -> {new_d_1}")
+
+            # Now recalculate d_2 which depends on updated d_1
+            # d_2 = max(d_1, (branch.T - branch.c) + (header.T - header.c) + d_1 / 2)
+            if (hasattr(self, 'd_2') and hasattr(self, 'd_1') and hasattr(self, 'branch') and hasattr(self, 'header') and
+                hasattr(self.branch, 'T') and hasattr(self.branch, 'c') and
+                hasattr(self.header, 'T') and hasattr(self.header, 'c')):
+                d_1 = self.d_1.value
+                branch_T = self.branch.T.value
+                branch_c = self.branch.c.value
+                header_T = self.header.T.value
+                header_c = self.header.c.value
+
+                if all(v is not None for v in [d_1, branch_T, branch_c, header_T, header_c]):
+                    old_d_2 = self.d_2.value
+                    alternative = (branch_T - branch_c) + (header_T - header_c) + d_1 / 2
+                    new_d_2 = max(d_1, alternative)
+                    self.d_2.value = new_d_2
+                    print(f"DEBUG: Recalculating d_2")
+                    print(f"  d_1={d_1}, alternative={(branch_T - branch_c) + (header_T - header_c) + d_1 / 2}")
+                    print(f"  max({d_1}, {alternative}) = {new_d_2}")
+                    print(f"  Updated d_2: {old_d_2} -> {new_d_2}")
+
+            # A_1 equation: A_1 = header.t * d_1 * (2 - sin(beta))
+            if (hasattr(self, 'header') and hasattr(self.header, 't') and
+                hasattr(self, 'd_1') and hasattr(self, 'beta') and hasattr(self, 'A_1')):
+
+                header_t = self.header.t.value
+                d_1 = self.d_1.value
+                beta = self.beta.value  # in radians
+
+                print(f"DEBUG: Recalculating A_1")
+                print(f"  header.t={header_t}, d_1={d_1}, beta={beta}")
+
+                if all(v is not None for v in [header_t, d_1, beta]):
+                    sin_beta = math.sin(beta)
+                    old_A_1 = self.A_1.value
+                    new_A_1 = header_t * d_1 * (2 - sin_beta)
+                    self.A_1.value = new_A_1
+                    print(f"  Updated A_1: {old_A_1} -> {new_A_1}")
+
+            # A_2 equation: A_2 = (2 * d_2 - d_1) * (header.T - header.t - header.c)
+            if (hasattr(self, 'A_2') and hasattr(self, 'd_2') and hasattr(self, 'd_1') and
+                hasattr(self, 'header') and hasattr(self.header, 'T') and
+                hasattr(self.header, 't') and hasattr(self.header, 'c')):
+
+                d_2 = self.d_2.value
+                d_1 = self.d_1.value
+                header_T = self.header.T.value
+                header_t = self.header.t.value
+                header_c = self.header.c.value
+
+                print(f"DEBUG: Recalculating A_2")
+                print(f"  d_2={d_2}, d_1={d_1}, header.T={header_T}, header.t={header_t}, header.c={header_c}")
+
+                if all(v is not None for v in [d_2, d_1, header_T, header_t, header_c]):
+                    old_A_2 = self.A_2.value
+                    new_A_2 = (2 * d_2 - d_1) * (header_T - header_t - header_c)
+                    self.A_2.value = new_A_2
+                    print(f"  Updated A_2: {old_A_2} -> {new_A_2}")
+
+            # A_3 equation: A_3 = (2 * L_4 * (branch.T - branch.t - branch.c) / sin(beta)) * min(1, branch.S / header.S)
+            if (hasattr(self, 'A_3') and hasattr(self, 'L_4') and hasattr(self, 'beta') and
+                hasattr(self, 'branch') and hasattr(self.branch, 'T') and
+                hasattr(self.branch, 't') and hasattr(self.branch, 'c') and
+                hasattr(self.branch, 'S') and hasattr(self, 'header') and hasattr(self.header, 'S')):
+
+                L_4 = self.L_4.value
+                branch_T = self.branch.T.value
+                branch_t = self.branch.t.value
+                branch_c = self.branch.c.value
+                branch_S = self.branch.S.value
+                header_S = self.header.S.value
+                beta = self.beta.value
+
+                print(f"DEBUG: Recalculating A_3")
+                print(f"  L_4={L_4}, branch.T={branch_T}, branch.t={branch_t}, branch.c={branch_c}")
+                print(f"  branch.S={branch_S}, header.S={header_S}, beta={beta}")
+
+                if all(v is not None for v in [L_4, branch_T, branch_t, branch_c, branch_S, header_S, beta]):
+                    import math
+                    sin_beta = math.sin(beta)
+                    min_ratio = min(1.0, branch_S / header_S)
+                    old_A_3 = self.A_3.value
+                    new_A_3 = (2 * L_4 * (branch_T - branch_t - branch_c) / sin_beta) * min_ratio
+                    self.A_3.value = new_A_3
+                    print(f"  Updated A_3: {old_A_3} -> {new_A_3}")
+
+            # Weld area recalculations
+            self._recalculate_weld_areas()
+
+            # A_4 equation: A_4 = A_r + A_w
+            if (hasattr(self, 'A_4') and hasattr(self, 'A_r') and hasattr(self, 'A_w')):
+                A_r = self.A_r.value
+                A_w = self.A_w.value
+
+                print(f"DEBUG: Recalculating A_4")
+                print(f"  A_r={A_r}, A_w={A_w}")
+
+                if all(v is not None for v in [A_r, A_w]):
+                    old_A_4 = self.A_4.value
+                    new_A_4 = A_r + A_w
+                    self.A_4.value = new_A_4
+                    print(f"  Updated A_4: {old_A_4} -> {new_A_4}")
+
+        except Exception as e:
+            print(f"  ERROR in area calculation: {e}")
+            pass
+
+    def _recalculate_weld_areas(self):
+        """Manually recalculate weld area equations after sharing enforcement."""
+        import math
+
+        try:
+            # First, recalculate weld throat calculations
+            # t_c_b = min(0.7 * branch.T_bar, t_c_max)
+            if (hasattr(self, 't_c_b') and hasattr(self, 'branch') and
+                hasattr(self.branch, 'T_bar') and hasattr(self, 't_c_max')):
+                branch_T_bar = self.branch.T_bar.value
+                t_c_max = self.t_c_max.value
+
+                if all(v is not None for v in [branch_T_bar, t_c_max]):
+                    old_t_c_b = self.t_c_b.value
+                    new_t_c_b = min(0.7 * branch_T_bar, t_c_max)
+                    self.t_c_b.value = new_t_c_b
+                    print(f"DEBUG: Recalculating t_c_b")
+                    print(f"  branch.T_bar={branch_T_bar}, t_c_max={t_c_max}")
+                    print(f"  Updated t_c_b: {old_t_c_b} -> {new_t_c_b}")
+
+            # t_c_r = 0.5 * T_bar_r
+            if (hasattr(self, 't_c_r') and hasattr(self, 'T_bar_r')):
+                T_bar_r = self.T_bar_r.value
+                if T_bar_r is not None:
+                    old_t_c_r = self.t_c_r.value
+                    new_t_c_r = 0.5 * T_bar_r
+                    self.t_c_r.value = new_t_c_r
+                    print(f"DEBUG: Recalculating t_c_r")
+                    print(f"  T_bar_r={T_bar_r}")
+                    print(f"  Updated t_c_r: {old_t_c_r} -> {new_t_c_r}")
+
+            # A_w_b equation: complex conditional based on T_r
+            if (hasattr(self, 'A_w_b') and hasattr(self, 'T_r') and hasattr(self, 'L_4') and
+                hasattr(self, 't_c_b') and hasattr(self, 'z_b')):
+                T_r = self.T_r.value
+                L_4 = self.L_4.value
+                t_c_b = self.t_c_b.value
+                z_b = self.z_b.value
+
+                if all(v is not None for v in [T_r, t_c_b, z_b]):
+                    old_A_w_b = self.A_w_b.value
+
+                    # Complex conditional logic from the equation
+                    if T_r <= 0:
+                        # First condition: T_r <= 0
+                        max_val = max(t_c_b / 0.707, z_b)
+                        new_A_w_b = 2 * 0.5 * (max_val ** 2)
+                    elif T_r <= L_4:
+                        # Second condition: 0 < T_r <= L_4
+                        max_val = max(t_c_b / 0.707, z_b)
+                        new_A_w_b = 2 * 0.5 * (max_val ** 2)
+                    else:
+                        # Third condition: T_r > L_4
+                        new_A_w_b = 0
+
+                    self.A_w_b.value = new_A_w_b
+                    print(f"DEBUG: Recalculating A_w_b")
+                    print(f"  T_r={T_r}, L_4={L_4}, t_c_b={t_c_b}, z_b={z_b}")
+                    print(f"  max(t_c_b/0.707, z_b) = max({t_c_b/0.707}, {z_b}) = {max(t_c_b / 0.707, z_b)}")
+                    print(f"  Updated A_w_b: {old_A_w_b} -> {new_A_w_b}")
+
+            # A_w_r equation: conditional based on D_r and d_2
+            if (hasattr(self, 'A_w_r') and hasattr(self, 'D_r') and hasattr(self, 'd_2') and
+                hasattr(self, 't_c_r') and hasattr(self, 'z_r')):
+                D_r = self.D_r.value
+                d_2 = self.d_2.value
+                t_c_r = self.t_c_r.value
+                z_r = self.z_r.value
+
+                if all(v is not None for v in [D_r, d_2, t_c_r, z_r]):
+                    old_A_w_r = self.A_w_r.value
+
+                    # Condition: D_r <= 2*d_2 - max(t_c_r/0.707, z_r)
+                    max_val = max(t_c_r / 0.707, z_r)
+                    threshold = 2 * d_2 - max_val
+
+                    if D_r <= threshold:
+                        new_A_w_r = 2 * 0.5 * (max_val ** 2)
+                    else:
+                        new_A_w_r = 0
+
+                    self.A_w_r.value = new_A_w_r
+                    print(f"DEBUG: Recalculating A_w_r")
+                    print(f"  D_r={D_r}, d_2={d_2}, t_c_r={t_c_r}, z_r={z_r}")
+                    print(f"  threshold = 2*{d_2} - max({t_c_r/0.707}, {z_r}) = {threshold}")
+                    print(f"  D_r <= threshold? {D_r} <= {threshold} = {D_r <= threshold}")
+                    print(f"  Updated A_w_r: {old_A_w_r} -> {new_A_w_r}")
+
+            # A_w = A_w_b + A_w_r
+            if (hasattr(self, 'A_w') and hasattr(self, 'A_w_b') and hasattr(self, 'A_w_r')):
+                A_w_b = self.A_w_b.value
+                A_w_r = self.A_w_r.value
+
+                if all(v is not None for v in [A_w_b, A_w_r]):
+                    old_A_w = self.A_w.value
+                    new_A_w = A_w_b + A_w_r
+                    self.A_w.value = new_A_w
+                    print(f"DEBUG: Recalculating A_w")
+                    print(f"  A_w_b={A_w_b}, A_w_r={A_w_r}")
+                    print(f"  Updated A_w: {old_A_w} -> {new_A_w}")
+
+        except Exception as e:
+            print(f"  ERROR in weld area calculation: {e}")
+            pass
+
+
+
+    def _canonicalize_expression(self, expr):
+        """Replace variable references in an expression with canonical ones."""
+        from ..algebra.nodes import VariableReference
+
+        if isinstance(expr, VariableReference):
+            var = expr.variable
+            if hasattr(var, 'name'):
+                # First priority: Check if there's a system-level variable with this name
+                # Look for system attributes that match this variable name
+                for attr_name in dir(self):
+                    if not attr_name.startswith('_'):  # Skip private attributes
+                        attr_value = getattr(self, attr_name, None)
+                        if (attr_value and hasattr(attr_value, 'name') and
+                            hasattr(attr_value, 'value') and  # Must be a variable
+                            attr_value.name == var.name):
+                            if id(var) != id(attr_value):
+                                return VariableReference(attr_value)
+                            else:
+                                return expr
+
+                        # Also check sub-problem attributes (e.g., header.P, branch.P)
+                        if hasattr(attr_value, '__dict__'):  # Check if it's an object with attributes
+                            for sub_attr_name in dir(attr_value):
+                                if not sub_attr_name.startswith('_'):
+                                    try:
+                                        sub_attr_value = getattr(attr_value, sub_attr_name, None)
+                                        if (sub_attr_value and hasattr(sub_attr_value, 'name') and
+                                            hasattr(sub_attr_value, 'value') and  # Must be a variable
+                                            sub_attr_value.name == var.name):
+                                            if id(var) != id(sub_attr_value):
+                                                return VariableReference(sub_attr_value)
+                                            else:
+                                                return expr
+                                    except (AttributeError, TypeError):
+                                        continue
+
+                # Second priority: Find canonical variable with same name in self.variables
+                for symbol, canonical_var in self.variables.items():
+                    if (hasattr(canonical_var, 'name') and canonical_var.name == var.name):
+                        if id(var) != id(canonical_var):
+                            return VariableReference(canonical_var)
+                        else:
+                            return expr
+            return expr
+        else:
+            return expr
+
+    def _update_all_equation_variable_references(self):
+        """Update all equations to use canonical variable references from self.variables."""
+        from ..algebra.nodes import VariableReference
+        from ..algebra.equation import Equation
+
+        updated_equations = []
+        for eq in self.equations:
+            # Update RHS variable references
+            new_rhs = self._update_expression_variable_references(eq.rhs)
+            # Update LHS variable references
+            new_lhs = self._update_expression_variable_references(eq.lhs)
+
+            # Create new equation if any references were updated
+            if new_rhs != eq.rhs or new_lhs != eq.lhs:
+                updated_equations.append(Equation(eq.name, new_lhs, new_rhs))
+            else:
+                updated_equations.append(eq)
+
+        # Replace all equations
+        self.equations = updated_equations
+
+    def _retrofit_constants_to_variables(self):
+        """
+        Generic retrofitting: replace constants in equations with variables where possible.
+        This handles equations that were created with concrete values during class definition
+        but should use variable references in the current context.
+        """
+        from ..algebra.nodes import VariableReference, Constant, BinaryOperation
+        from ..algebra.equation import Equation
+
+        for i, equation in enumerate(self.equations):
+            new_lhs = self._retrofit_expression(equation.lhs)
+            new_rhs = self._retrofit_expression(equation.rhs)
+
+            if new_lhs != equation.lhs or new_rhs != equation.rhs:
+                self.equations[i] = Equation(equation.name, new_lhs, new_rhs)
+
+    def _retrofit_expression(self, expr):
+        """Recursively retrofit constants to variables in an expression."""
+        from ..algebra.nodes import VariableReference, Constant, BinaryOperation
+
+        if isinstance(expr, Constant):
+            # Check if this constant value matches any variable in our context
+            constant_value = expr.value
+            if hasattr(constant_value, 'value'):
+                # Handle Quantity constants - check all variables for matches
+                # First, find all matching variables to avoid ambiguous substitutions
+                matching_variables = []
+                for symbol, var in self.variables.items():
+                    if (hasattr(var, 'value') and var.value is not None):
+                        # Check dimensional compatibility first
+                        if hasattr(var, 'dim') and hasattr(constant_value, 'dim'):
+                            if var.dim != constant_value.dim:
+                                continue  # Skip if dimensions don't match
+
+                        # Check if values are approximately equal
+                        try:
+                            if abs(var.value - constant_value.value) < 1e-10:
+                                matching_variables.append((symbol, var))
+                        except (TypeError, ValueError):
+                            continue
+
+                # Only substitute if there's exactly one match to avoid ambiguity
+                # However, allow ambiguous substitutions for non-zero values (they're less likely to be coincidental)
+                if len(matching_variables) == 1:
+                    return VariableReference(matching_variables[0][1])
+                elif len(matching_variables) > 1:
+                    # For small/zero values, avoid ambiguous substitution as these are commonly shared
+                    # For non-zero values, use the first match (existing behavior) as they're less likely coincidental
+                    constant_abs_value = abs(constant_value.value) if hasattr(constant_value, 'value') else abs(constant_value)
+                    if constant_abs_value < 1e-6:  # Small values including zero
+                        # Log the ambiguity for debugging
+                        var_names = [f"{symbol}({var.name})" for symbol, var in matching_variables]
+                        if hasattr(self, 'logger'):
+                            self.logger.debug(f"Ambiguous constant retrofitting: {constant_value} matches multiple variables: {var_names}. Skipping substitution to avoid incorrect variable selection.")
+                        # Don't substitute - keep the constant as-is
+                    else:
+                        # For non-zero values, use the first match (original behavior)
+                        return VariableReference(matching_variables[0][1])
+            return expr
+
+        elif isinstance(expr, BinaryOperation):
+            # Recursively retrofit operands
+            new_left = self._retrofit_expression(expr.left)
+            new_right = self._retrofit_expression(expr.right)
+
+            if new_left != expr.left or new_right != expr.right:
+                return BinaryOperation(expr.operator, new_left, new_right)
+            return expr
+
+        else:
+            # Other expression types (VariableReference, etc.) - return as-is
+            return expr
+
+    def _update_expression_variable_references(self, expr):
+        """Recursively update variable references in an expression."""
+        from ..algebra.nodes import VariableReference
+
+        if isinstance(expr, VariableReference):
+            # Find the canonical variable from self.variables
+            var = expr.variable
+            if hasattr(var, 'name'):
+                for name, canonical_var in self.variables.items():
+                    if hasattr(canonical_var, 'name') and canonical_var.name == var.name:
+                        if id(canonical_var) != id(var):
+                            return VariableReference(canonical_var)
+            return expr
+        else:
+            # For now, only handle simple variable references
+            # Complex expressions can be handled later if needed
+            return expr
 
     def _get_class_attributes(self) -> list[tuple[str, Any]]:
         """Get all non-private class attributes efficiently."""

@@ -23,7 +23,6 @@ def assert_qty_close(actual_var, expected_value, expected_unit, rel_tol=1e-9):
 
     assert pytest.approx(expected_value, rel=rel_tol) == actual_value_in_expected_unit
 
-
 def assert_problem_results(problem, expected_results):
     """
     Table-driven test helper for asserting problem results.
@@ -44,7 +43,6 @@ def assert_problem_results(problem, expected_results):
     for var_name, expected_value, expected_unit, tolerance in expected_results:
         actual_var = getattr(problem, var_name)
         assert_qty_close(actual_var, expected_value, expected_unit, tolerance)
-
 
 class StraightPipeInternal(Problem):
     name = "Pressure Design of a Straight Pipe Under Internal Pressure"
@@ -92,7 +90,6 @@ class StraightPipeInternal(Problem):
 
 def create_straight_pipe_internal():
     return StraightPipeInternal()
-
 
 class WeldedBranchConnection(Problem):
     """
@@ -196,11 +193,9 @@ class WeldedBranchConnection(Problem):
     A_3_eqn = equation(A_3, (2 * L_4 * (branch.T - branch.t - branch.c) / sin(beta)) * min_expr(1, branch.S / header.S))
     A_4_eqn = equation(A_4, A_r + A_w)
 
-
 def create_welded_branch_connection():
     """Factory function to create a BranchReinforcement engineering problem instance."""
     return WeldedBranchConnection()
-
 
 def test_branch_reinforcement_h301(capsys):
     problem = create_welded_branch_connection()
@@ -231,13 +226,17 @@ def test_branch_reinforcement_h301(capsys):
     problem.solve()
 
     expected_results = [
+        ("P", 2068000, "pascal", 1e-9),
+        ("header_P", 2068000, "pascal", 1e-9),
+        ("branch_P", 2068000, "pascal", 1e-9),
+        ("beta", 90, "degree", 1e-9),
         ("d_1", 108.765, "millimeter", 1e-9),
         ("d_2", 108.765, "millimeter", 1e-9),
         ("L_4", 6.91875, "millimeter", 1e-9),
-        ("A_1", 222.33391704383038, "mm2", 1e-9),
-        ("A_2", 284.23907045616954, "mm2", 1e-9),
-        ("A_3", 23.53896202060505, "mm2", 1e-9),
-        ("A_4", 35.52632094892658, "mm2", 1e-9),
+        ("A_1", 222.33391704383038, "square_millimeter", 1e-9),
+        ("A_2", 284.23907045616954, "square_millimeter", 1e-9),
+        ("A_3", 23.53896202060505, "square_millimeter", 1e-9),
+        ("A_4", 35.52632094892658, "square_millimeter", 1e-9),
     ]
 
     with capsys.disabled():
@@ -266,20 +265,20 @@ def test_branch_reinforcement_h303(capsys):
     problem.P.set(3450000).pascal
 
     # For header
-    problem.header.D.set(406.4).mm
-    problem.header.T_bar.set(12.70).mm
+    problem.header.D.set(406.4).millimeter
+    problem.header.T_bar.set(12.70).millimeter
     problem.header.U_m.set(0.125).dimensionless
-    problem.header.c.set(2.5).mm
+    problem.header.c.set(2.5).millimeter
     problem.header.S.set(99300000).pascal
     problem.header.E.set(1).dimensionless
     problem.header.W.set(1).dimensionless
     problem.header.Y.set(0.4).dimensionless
 
     # For run
-    problem.branch.D.set(168.3).mm
-    problem.branch.T_bar.set(7.11).mm
+    problem.branch.D.set(168.3).millimeter
+    problem.branch.T_bar.set(7.11).millimeter
     problem.branch.U_m.set(0.125).dimensionless
-    problem.branch.c.set(2.5).mm
+    problem.branch.c.set(2.5).millimeter
     problem.branch.S.set(99300000).pascal
     problem.branch.E.set(1).dimensionless
     problem.branch.W.set(1).dimensionless
@@ -287,12 +286,12 @@ def test_branch_reinforcement_h303(capsys):
 
     # For reinforcement
     problem.beta.set(60).degree
-    problem.D_r.set(305).mm
-    problem.T_bar_r.set(12.7).mm
+    problem.D_r.set(305).millimeter
+    problem.T_bar_r.set(12.7).millimeter
     problem.S_r.set(99300000).pascal
 
-    problem.z_b.set(10).mm
-    problem.z_r.set(10).mm
+    problem.z_b.set(10).millimeter
+    problem.z_r.set(10).millimeter
 
     problem.solve()
 

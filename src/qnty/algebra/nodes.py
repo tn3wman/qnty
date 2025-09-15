@@ -209,9 +209,9 @@ class VariableReference(Expression):
             if self.name in variable_values:
                 var = variable_values[self.name]
                 if var.quantity is not None:
-                    return var.quantity
+                    return self._get_si_quantity(var.quantity)
             elif self.variable.quantity is not None:
-                return self.variable.quantity
+                return self._get_si_quantity(self.variable.quantity)
 
             # If we reach here, no valid quantity was found
             available_vars = list(variable_values.keys()) if variable_values else []
@@ -220,6 +220,26 @@ class VariableReference(Expression):
             if isinstance(e, ValueError):
                 raise
             raise ValueError(f"Error evaluating variable '{self.name}': {e}") from e
+
+    def _get_si_quantity(self, quantity: "Quantity") -> "Quantity":
+        """
+        Convert a quantity to its SI representation for consistent variable evaluation.
+
+        This ensures that VariableReference = VariableReference assignments (like header.P = P)
+        transfer the SI value rather than the display value, preventing unit conversion issues.
+        """
+        try:
+            # Get the SI unit for this quantity's dimension
+            from ..core.unit import ureg
+            si_unit = ureg.si_unit_for(quantity.dim)
+            if si_unit is not None:
+                return quantity.to(si_unit)
+            else:
+                # If no SI unit found, return the original quantity
+                return quantity
+        except (ValueError, TypeError, AttributeError):
+            # If conversion fails for any reason, return the original quantity
+            return quantity
 
     def get_variables(self) -> set[str]:
         return {self.name}
@@ -446,9 +466,22 @@ class BinaryOperation(Expression):
             if not isinstance(right_val.value, int | float):
                 raise ValueError("Exponent must be dimensionless number")
 
-        # Power operations not fully supported yet - return left operand as fallback
-        # This prevents crashes while power operations are being implemented
-        return left_val
+            # Check if right operand is dimensionless by dimension
+            if hasattr(right_val, 'dim') and not right_val.dim.is_dimensionless():
+                raise ValueError("Exponent must be dimensionless")
+
+        # Delegate to Quantity's __pow__ method
+        try:
+            # Extract numeric exponent - Quantity.__pow__ expects int
+            exponent = right_val.value if hasattr(right_val, 'value') and right_val.value is not None else 1
+
+            # Convert to int if it's a whole number, otherwise raise error (for now)
+            if exponent != int(exponent):
+                raise ValueError(f"Non-integer exponents not yet supported: {exponent}")
+
+            return left_val ** int(exponent)
+        except (ValueError, TypeError, AttributeError) as e:
+            raise ValueError(f"Power operation failed: {e}") from e
 
     def _evaluate_comparison(self, left_val: "Quantity", right_val: "Quantity") -> "Quantity":
         """Evaluate comparison operations with optimized unit conversion."""

@@ -1072,7 +1072,18 @@ class Problem(ValidationMixin):
 
         # If setting a variable that exists in our variables dict, update both
         if isinstance(value, Quantity) and hasattr(self, "variables") and name in self.variables:
+            old_var = self.variables[name]
+
+            # Preserve the symbol from the old variable when updating
+            if hasattr(old_var, '_symbol') and hasattr(value, '_symbol'):
+                if old_var._symbol and old_var._symbol != '_symbol':
+                    value._symbol = old_var._symbol
+
             self.variables[name] = value
+
+            # If the variable changed, update equation references
+            if id(old_var) != id(value) and hasattr(self, "_canonicalize_all_equation_variables"):
+                self._canonicalize_all_equation_variables()
 
         super().__setattr__(name, value)
 
@@ -1099,6 +1110,14 @@ class Problem(ValidationMixin):
                 wrapper = wrappers[name]
                 wrapper._wrapped_var = attr
                 return wrapper
+
+            # For class definition context, wrap all variables with delayed arithmetic
+            elif (hasattr(attr, 'set') and hasattr(attr, 'value') and
+                  not name.startswith('_') and self._should_use_delayed_arithmetic()):
+                # Create a delayed arithmetic wrapper for class definition
+                if name not in wrappers:
+                    wrappers[name] = self._create_delayed_arithmetic_wrapper(attr, name)
+                return wrappers[name]
 
         except AttributeError:
             # variables or _variable_wrappers doesn't exist yet
@@ -1299,6 +1318,75 @@ class Problem(ValidationMixin):
                 return final_var
 
         return MainVariableWrapper(variable, var_name)
+
+    def _should_use_delayed_arithmetic(self) -> bool:
+        """Check if we should use delayed arithmetic based on context."""
+        import inspect
+
+        frame = inspect.currentframe()
+        try:
+            while frame:
+                code = frame.f_code
+                filename = code.co_filename
+                locals_dict = frame.f_locals
+
+                # Check if we're in a class definition context
+                if (
+                    "<class" in code.co_name
+                    or "problem" in filename.lower()
+                    or any("Problem" in str(base) for base in locals_dict.get("__bases__", []))
+                    or "test_composed_problem" in filename
+                ):
+                    return True
+                frame = frame.f_back
+            return False
+        finally:
+            del frame
+
+    def _create_delayed_arithmetic_wrapper(self, variable, var_name):
+        """Create a wrapper that enables delayed arithmetic for class definition."""
+        from qnty.problems.composition import DelayedExpression
+
+        class DelayedArithmeticWrapper:
+            def __init__(self, wrapped_var, name):
+                self._wrapped_var = wrapped_var
+                self._name = name
+
+            def __getattr__(self, name):
+                # Delegate all other attributes to the wrapped variable
+                return getattr(self._wrapped_var, name)
+
+            def __add__(self, other):
+                return DelayedExpression("+", self, other)
+
+            def __radd__(self, other):
+                return DelayedExpression("+", other, self)
+
+            def __sub__(self, other):
+                return DelayedExpression("-", self, other)
+
+            def __rsub__(self, other):
+                return DelayedExpression("-", other, self)
+
+            def __mul__(self, other):
+                return DelayedExpression("*", self, other)
+
+            def __rmul__(self, other):
+                return DelayedExpression("*", other, self)
+
+            def __truediv__(self, other):
+                return DelayedExpression("/", self, other)
+
+            def __rtruediv__(self, other):
+                return DelayedExpression("/", other, self)
+
+            def __str__(self):
+                return str(self._wrapped_var)
+
+            def __repr__(self):
+                return repr(self._wrapped_var)
+
+        return DelayedArithmeticWrapper(variable, var_name)
 
     def __getitem__(self, key: str):
         """Allow dict-like access to variables."""

@@ -360,6 +360,21 @@ class Equation:
             except (ImportError, AttributeError) as e:
                 _logger.debug(f"Failed to lookup preferred unit {preferred_unit_name}: {e}")
 
+        # Extract SI value before any unit conversion
+        si_value = None
+        if result_qty.value is not None:
+            # Convert to SI unit to get the SI value
+            try:
+                from ..core.unit import ureg
+                si_unit = ureg.si_unit_for(result_qty.dim)
+                if si_unit is not None:
+                    si_quantity = result_qty.to(si_unit)
+                    si_value = si_quantity.value
+                else:
+                    si_value = result_qty.value
+            except (ValueError, TypeError, AttributeError):
+                si_value = result_qty.value
+
         if target_unit_constant is not None:
             try:
                 result_qty = result_qty.to(target_unit_constant)
@@ -368,8 +383,9 @@ class Equation:
                 _logger.debug(f"Unit conversion failed for {target_var} to {target_unit_constant}: {e}. Using calculated unit.")
 
         # Update the variable and return it
-        if result_qty.value is not None:
-            var_obj.value = result_qty.value
+        if si_value is not None:
+            # Always store the SI value, not the converted value
+            var_obj.value = si_value
 
             # For new Quantity objects, also update preferred if it came from result
             if hasattr(var_obj, "preferred") and hasattr(result_qty, "preferred") and result_qty.preferred is not None:

@@ -28,42 +28,12 @@ def equation(lhs, rhs, name: str | None = None) -> Equation:
         >>> T_eq = equation(T, T_bar * (1 - U_m))
     """
     eq_name = name or f"{lhs.name}_equation"
+
     # Handle DelayedExpression objects from Problem class
     if hasattr(rhs, "resolve"):
-        # This is a DelayedExpression - try to resolve it
-        # Create a minimal context with the operands themselves
-        context = {}
-
-        # Extract variables from the DelayedExpression recursively
-        def extract_variables(expr):
-            if hasattr(expr, "left") and hasattr(expr, "right"):
-                # This is a DelayedExpression
-                extract_variables(expr.left)
-                extract_variables(expr.right)
-            elif hasattr(expr, "args"):
-                # This has args (like cond_expr, max_expr, etc.)
-                for arg in expr.args:
-                    extract_variables(arg)
-            elif hasattr(expr, "_wrapped"):
-                # This is an ExpressionEnabledWrapper
-                context[getattr(expr._wrapped, "name", "unknown")] = expr._wrapped
-            elif hasattr(expr, "_variable"):
-                # This is a SubProblemProxy
-                var = expr._variable
-                context[getattr(var, "name", "unknown")] = var
-            elif hasattr(expr, "name") and hasattr(expr, "value") and hasattr(expr, "dim"):
-                # This is a direct quantity/variable
-                context[expr.name] = expr
-
-        extract_variables(rhs)
-
-        # Try to resolve the DelayedExpression
-        resolved = rhs.resolve(context)
-        if resolved is not None:
-            rhs_expr = resolved
-        else:
-            # Resolution failed, pass through as-is but this will likely fail later
-            rhs_expr = rhs
+        # This is a DelayedExpression - store it as-is for later resolution
+        # during problem initialization when proper context is available
+        rhs_expr = rhs
     else:
         # Convert RHS to Expression if needed using wrap_operand
         rhs_expr = wrap_operand(rhs)
