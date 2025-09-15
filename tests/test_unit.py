@@ -38,8 +38,8 @@ def test_us_customary_units_basic():
     assert abs(u.slug.si_factor - 14.59390293720636) < 1e-12
 
     # Pound force
-    assert u.pound_force.dim is dim.Force
-    assert u.lbf.dim is dim.Force
+    assert u.pound_force.dim is dim.FORCE
+    assert u.lbf.dim is dim.FORCE
     assert abs(u.pound_force.si_factor - 4.4482216152605) < 1e-12
     assert u.pound_force.symbol == "lbf"
     # Aliases resolve

@@ -511,8 +511,9 @@ class DelayedExpression(ArithmeticOperationsMixin):
         if isinstance(operand, DelayedVariableReference | DelayedExpression | DelayedFunction):
             return operand.resolve(context)
         elif hasattr(operand, "_wrapped") and not isinstance(operand, Expression):
-            # This is an ExpressionEnabledWrapper - unwrap it to get the actual variable
-            return operand._wrapped
+            # This is an ExpressionEnabledWrapper - create a VariableReference to the actual variable
+            from ..algebra.nodes import VariableReference
+            return VariableReference(operand._wrapped)
         elif isinstance(operand, ConfigurableVariable):
             # This is a ConfigurableVariable from SubProblemProxy - look up the namespaced variable in context
             namespaced_symbol = operand._variable.symbol
@@ -524,21 +525,22 @@ class DelayedExpression(ArithmeticOperationsMixin):
                 from ..algebra.nodes import VariableReference
                 return VariableReference(operand._variable)
         elif hasattr(operand, "_variable") and not isinstance(operand, Expression):
-            # This is a SubProblemProxy - unwrap it to get the actual variable
-            return operand._variable
+            # This is a SubProblemProxy - create a VariableReference to the actual variable
+            from ..algebra.nodes import VariableReference
+            return VariableReference(operand._variable)
         elif hasattr(operand, "_wrapped_var") and not isinstance(operand, Expression):
             # This is a MainVariableWrapper - create a VariableReference to the actual variable
             from ..algebra.nodes import VariableReference
             return VariableReference(operand._wrapped_var)
         elif hasattr(operand, 'symbol'):
-            # It's a Variable - check if we have a canonical version in context
+            # It's a Variable - check if we have a canonical version in context and create VariableReference
             symbol = operand.symbol
+            from ..algebra.nodes import VariableReference
             if symbol in context:
-                from ..algebra.nodes import VariableReference
                 return VariableReference(context[symbol])
             else:
-                # Return the original variable
-                return operand
+                # Create VariableReference to the original variable
+                return VariableReference(operand)
         else:
             # It's a literal value
             return operand
@@ -595,15 +597,21 @@ class DelayedFunction(ArithmeticOperationsMixin):
                     return None
                 resolved_args.append(resolved_arg)
             elif hasattr(arg, '_wrapped') and not isinstance(arg, Expression):
-                # This is an ExpressionEnabledWrapper - unwrap it to get the actual variable
-                resolved_args.append(arg._wrapped)
+                # This is an ExpressionEnabledWrapper - create a VariableReference to the actual variable
+                from ..algebra.nodes import VariableReference
+                resolved_args.append(VariableReference(arg._wrapped))
             elif hasattr(arg, '_wrapped_var') and not isinstance(arg, Expression):
                 # This is a NamespaceVariableWrapper - create a VariableReference to the actual variable
                 from ..algebra.nodes import VariableReference
                 resolved_args.append(VariableReference(arg._wrapped_var))
             elif hasattr(arg, '_variable') and not isinstance(arg, Expression):
-                # This is a SubProblemProxy - unwrap it to get the actual variable
-                resolved_args.append(arg._variable)
+                # This is a SubProblemProxy - create a VariableReference to the actual variable
+                from ..algebra.nodes import VariableReference
+                resolved_args.append(VariableReference(arg._variable))
+            elif hasattr(arg, 'symbol'):
+                # This is a Variable - create a VariableReference, don't let wrap_operand turn it into a Constant
+                from ..algebra.nodes import VariableReference
+                resolved_args.append(VariableReference(arg))
             else:
                 resolved_args.append(arg)
 
@@ -1109,6 +1117,7 @@ class CompositionMixin:
         for system_var, sub_vars in sharing_config:
             # Variables are already actual object references, no need to resolve paths
             self.replace_sub_variables(system_var, sub_vars)
+
 
     def _canonicalize_all_equation_variables(self):
         """Replace all variable references in equations with canonical ones from self.variables."""

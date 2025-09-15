@@ -1,6 +1,6 @@
+import math
 from typing import TYPE_CHECKING, Final
 
-import math
 from .dimension_catalog import dim
 from .unit import Unit, UnitNamespace, add_unit, attach_composed, u
 
@@ -41,6 +41,21 @@ second = add_unit(
 minute = add_unit(
     dim.T, symbol="min", si_factor=60.0,
     aliases=("minutes",),
+)
+
+hour = add_unit(
+    dim.T, symbol="h", si_factor=3600.0,
+    aliases=("hr","hrs","hours",),
+)
+
+day = add_unit(
+    dim.T, symbol="d", si_factor=86400.0,
+    aliases=("days",),
+)
+
+year = add_unit(
+    dim.T, symbol="yr", si_factor=31557600.0,
+    aliases=("years",),
 )
 
 # ==============
@@ -257,7 +272,7 @@ newton = attach_composed(
 
 # US customary force unit
 pound_force = add_unit(
-    dim.Force, symbol="lbf", si_factor=4.4482216152605,
+    dim.FORCE, symbol="lbf", si_factor=4.4482216152605,
     aliases=("poundforce", "lbf"),
 )
 
@@ -409,3 +424,69 @@ class ViscosityKinematicUnits(UnitNamespace):
     foot_squared_per_second: Final[Unit] = foot_squared_per_second
 
 
+
+# region // E
+
+# region // ENERGY, HEAT, WORK
+# Note: Using add_unit instead of attach_composed to avoid conflict
+# between N·m (newton-meter) and nm (nano-meter) after normalization
+joule = add_unit(
+    dim.ENERGY, symbol="J", si_factor=1.0,
+    aliases=("joules","J",),
+)
+
+Btu = add_unit(
+    dim.ENERGY, symbol="Btu", si_factor=1055.05585262,
+    name="british_thermal_unit",
+    aliases=("Btu",),
+)
+
+MBtu = add_unit(
+    dim.ENERGY, symbol="MBtu", si_factor=1.05505585262e6,
+    name="thousand_british_thermal_unit",
+    aliases=("MBtu",),
+)
+
+MMBtu = add_unit(
+    dim.ENERGY, symbol="MMBtu", si_factor=0.00105505585262e9,
+    name="million_british_thermal_unit",
+    aliases=("MMBtu",),
+)
+
+class EnergyUnits(UnitNamespace):
+    __slots__ = ()
+    __preferred__ = "joule"
+    
+    joule: Final[Unit] = joule
+    Btu: Final[Unit] = Btu
+    MBtu: Final[Unit] = MBtu
+    MMBtu: Final[Unit] = MMBtu
+
+# endregion // ENERGY, HEAT, WORK
+
+# endregion // E
+
+# region // P
+
+# region // POWER THERMAL DUTY
+watt = attach_composed(
+    u.joule / u.second, name="watt", symbol="W",
+    aliases=("watts","W",),
+)
+
+Btu_per_hour = attach_composed(
+    u.Btu / u.hour, name="british_thermal_unit_per_hour", symbol="Btu/h",
+    aliases=("Btu_per_hour","Btu/h",),
+)
+
+class PowerThermalDutyUnits(UnitNamespace):
+    __slots__ = ()
+    __preferred__ = "watt"
+
+    watt: Final[Unit] = watt
+    Btu_per_hour: Final[Unit] = Btu_per_hour
+
+
+# endregion // POWER THERMAL DUTY
+
+# endregion // P

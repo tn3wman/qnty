@@ -103,3 +103,29 @@ def test_simple_problem():
     ]
 
     assert_problem_results(problem, expected_results)
+
+    problem.D.set(1.315).inch
+    problem.T_bar.set(0.179).inch
+
+    problem.solve()
+
+    expected_results = [
+        # Known variables (exact)
+        ("P", 90, "psi", None),
+        ("D", 1.315, "in", None),
+        ("T_bar", 0.179, "in", None),
+        ("U_m", 0.125, "dimensionless", None),
+        ("c", 0.0, "in", None),
+        ("S", 20000, "psi", None),
+        ("E", 0.8, "dimensionless", None),
+        ("W", 1, "dimensionless", None),
+        ("Y", 0.4, "dimensionless", None),
+        # Calculated variables (with tolerance)
+        ("T", 0.156625, "in", 1e-9),
+        ("d", 1.00175, "in", 1e-9),
+        ("t", 0.003690134696931903, "in", 1e-9),
+        ("t_m", 0.003690134696931903, "in", 1e-9),
+        ("P_max", 4212.826763049508, "psi", 1e-9),
+    ]
+
+    assert_problem_results(problem, expected_results)

@@ -3,6 +3,7 @@ from . import unit_catalog as uc
 from .quantity_meta import quantity
 
 
+# region // A
 @quantity(uc.AccelerationUnits)
 class Acceleration:
     """Acceleration quantity with automatic boilerplate."""
@@ -18,6 +19,8 @@ class Area:
     """Area quantity with automatic boilerplate."""
     pass
 
+# endregion // A
+
 @quantity(uc.LengthUnits)
 class Length:
     """Length quantity with automatic boilerplate."""
@@ -28,10 +31,19 @@ class Dimensionless:
     """Dimensionless quantity with automatic boilerplate."""
     pass
 
+# region // P
+
+@quantity(uc.PowerThermalDutyUnits)
+class PowerThermalDuty:
+    """Power thermal duty quantity with automatic boilerplate."""
+    pass
+
 @quantity(uc.PressureUnits)
 class Pressure:
     """Pressure quantity with automatic boilerplate."""
     pass
+
+# endregion // P
 
 @quantity(uc.MassDensityUnits)
 class MassDensity:

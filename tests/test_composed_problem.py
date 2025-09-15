@@ -298,9 +298,9 @@ def test_branch_reinforcement_h303(capsys):
     assert problem.is_solved
 
     expected_results = [
-        ("d_1", 185.74224185234047, "mm", 1e-9),
-        ("d_2", 185.74224185234047, "mm", 1e-9),
-        ("L_4", 21.531249999999996, "mm", 1e-9),
+        ("d_1", 185.74224185234047, "millimeter", 1e-9),
+        ("d_2", 185.74224185234047, "millimeter", 1e-9),
+        ("L_4", 21.531249999999996, "millimeter", 1e-9),
         ("A_1", 1466.6064824824148, "square_millimeter", 1e-9),
         ("A_2", 306.3723083688089, "square_millimeter", 1e-9),
         ("A_3", 41.65320666380044, "square_millimeter", 1e-9),

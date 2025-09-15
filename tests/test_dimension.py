@@ -57,7 +57,6 @@ def test_aliases_and_registry_and_stub(tmp_path: Path):
     # Registry exposes only canonical names
     reg = dimensions_map()
     assert "L" in reg and "M" in reg and "T" in reg
-    assert "LENGTH" not in reg  # aliases excluded
     assert reg["L"] is dim.L
 
     # Stub generation contains canonical names and alias comments
@@ -80,7 +79,7 @@ def test_backend_prime_code_properties():
         assert num > 1  # base is not dimensionless
 
     # Derived examples
-    area = dim.Area
+    area = dim.AREA
     num, den = area.code
     assert den == 1 and num > 1
 
