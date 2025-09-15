@@ -1,7 +1,6 @@
 import pytest
 
-from qnty import Area, Dimensionless, Length, Pressure, AnglePlane, Problem
-from qnty import sin, max_expr, min_expr, cond_expr
+from qnty import AnglePlane, Area, Dimensionless, Length, Pressure, Problem, cond_expr, max_expr, min_expr, sin
 from qnty.algebra import equation, geq, gt, leq
 from qnty.problems.rules import add_rule
 
@@ -105,10 +104,7 @@ class WeldedBranchConnection(Problem):
     description = "Reinforcement area calculations using composed sub-problems per ASME B31.3."
 
     # System-level variables
-    # P = qt.Pressure(90, "psi", "Design Pressure")
     P = Pressure("Design Pressure").set(90).pound_force_per_square_inch
-
-    # beta = qt.AnglePlane(90, "degree", "Branch Angle")
     beta = AnglePlane("Branch Angle").set(90).degree
 
     # Sub-problems - automatically integrated with namespace prefixes
@@ -122,35 +118,21 @@ class WeldedBranchConnection(Problem):
     branch_P_eqn = equation(branch.P, P)
 
     # # Known variables for reinforcement pad
-    # D_r = qt.Length("Outside Diameter, Reinforcement", "inch", 0)
-    # T_bar_r = qt.Length("Thickness, Reinforcement", "inch", 0)
-    # U_m_r = qt.Dimensionless("Mill Undertolerance, Reinforcement", 0)
-    # S_r = qt.Pressure("Allowable Stress, Reinforcement", "psi", 0)
     D_r = Length("Outside Diameter, Reinforcement").set(0).inch
     T_bar_r = Length("Thickness, Reinforcement").set(0).inch
     U_m_r = Dimensionless("Mill Undertolerance, Reinforcement").set(0).dimensionless
     S_r = Pressure("Allowable Stress, Reinforcement").set(0).pound_force_per_square_inch
 
     # # Unknown variables for reinforcement pad
-    # A_r = qt.Area("Reinforcement Ring Area", "square_inch")
-    # T_r = qt.Length("Nominal Thickness, Reinforcement", "inch")
     A_r = Area("Reinforcement Ring Area")
     T_r = Length("Nominal Thickness, Reinforcement")
 
     # # # Known variables for welds
-    # z_b = qt.Length("Weld Leg, Branch", "inch", 0)
-    # z_r = qt.Length("Weld Leg, Reinforcement", "inch", 0)
-    # t_c_max = qt.Length("Weld Throat, Max", "mm", 6)
     z_b = Length("Weld Leg, Branch").set(0).inch
     z_r = Length("Weld Leg, Reinforcement").set(0).inch
     t_c_max = Length("Weld Throat, Max").set(6).millimeter
 
     # # Unknown variables for welds
-    # t_c_b = qt.Length("Weld Throat, Branch", "inch")
-    # t_c_r = qt.Length("Weld Throat, Reinforcement", "inch")
-    # A_w_b = qt.Area("Weld Area, Branch", "square_inch")
-    # A_w_r = qt.Area("Weld Area, Reinforcement", "square_inch")
-    # A_w = qt.Area("Weld Area", "square_inch")
     t_c_b = Length("Weld Throat, Branch")
     t_c_r = Length("Weld Throat, Reinforcement")
     A_w_b = Area("Weld Area, Branch")
@@ -158,20 +140,12 @@ class WeldedBranchConnection(Problem):
     A_w = Area("Weld Area")
 
     # # Unknown variables for branch reinforcement zone
-    # d_1 = qt.Length("Effective Length Removed", "inch")
-    # d_2 = qt.Length("Reinforcement Zone Radius", "inch")
-    # L_4 = qt.Length("Reinforcement Zone Height", "inch")
     d_1 = Length("Effective Length Removed")
     d_2 = Length("Reinforcement Zone Radius")
     L_4 = Length("Reinforcement Zone Height")
 
 
     # # Unknown variables for required and available area
-    # A_1 = qt.Area("Reinforcement Area Required", "square_inch")
-    # A_2 = qt.Area("Reinforcement Area Run", "square_inch")
-    # A_3 = qt.Area("Reinforcement Area Branch", "square_inch")
-    # A_4 = qt.Area("Reinforcement Area Total", "square_inch")
-
     A_1 = Area("Reinforcement Area Required")
     A_2 = Area("Reinforcement Area Run")
     A_3 = Area("Reinforcement Area Branch")
@@ -185,43 +159,38 @@ class WeldedBranchConnection(Problem):
 
 
     # Calculations for reinforcement pad
-    # A_r_eqn = A_r.equals(qt.min_expr(T_r, L_4) * (qt.min_expr(D_r, 2 * d_2) - branch.D / qt.sin(beta)) * qt.min_expr(1, S_r / header.S))
-    # T_r_eqn = T_r.equals(T_bar_r * (1 - U_m_r))
     A_r_eqn = equation(A_r, min_expr(T_r, L_4) * (min_expr(D_r, 2 * d_2) - branch.D / sin(beta)) * min_expr(1, S_r / header.S))
     T_r_eqn = equation(T_r, T_bar_r * (1 - U_m_r))
 
     # Calculation for weld area
-    # t_c_b_eqn = t_c_b.equals(qt.min_expr(0.7 * branch.T_bar, t_c_max))
-    # t_c_r_eqn = t_c_r.equals(0.5 * T_bar_r)
     t_c_b_eqn = equation(t_c_b, min_expr(0.7 * branch.T_bar, t_c_max))
     t_c_r_eqn = equation(t_c_r, 0.5 * T_bar_r)
 
-    # A_w_b_eqn = A_w_b.equals(
-    #     qt.cond_expr(
-    #         T_r.leq(0),  # T_r doesn't exist, no reinforcement interference
-    #         2 * 0.5 * qt.max_expr((t_c_b / 0.707), z_b) ** 2,  # Calculate weld area
-    #         qt.cond_expr(
-    #             T_r.leq(L_4),  # T_r + weld leg fits within L_4
-    #             2 * 0.5 * qt.max_expr((t_c_b / 0.707), z_b) ** 2,  # Calculate weld area
-    #             0,  # T_r + weld leg exceeds L_4, no weld area
-    #         ),
-    #     )
-    # )
-    A_w_b_eqn = equation(A_w_b, cond_expr(leq(T_r, 0), 2 * 0.5 * max_expr((t_c_b / 0.707), z_b) ** 2, cond_expr(leq(T_r,L_4), 2 * 0.5 * max_expr((t_c_b / 0.707), z_b) ** 2, 0)))
+    A_w_b_eqn = equation(
+        A_w_b,
+        cond_expr(
+            leq(T_r, 0),
+            2 * 0.5 * max_expr((t_c_b / 0.707), z_b) ** 2,
+            cond_expr(
+                leq(T_r,L_4),
+                2 * 0.5 * max_expr((t_c_b / 0.707), z_b) ** 2,
+                0
+            )
+        )
+    )
 
+    A_w_r_eqn = equation(
+        A_w_r,
+        cond_expr(
+            leq(D_r, 2 * d_2 - max_expr((t_c_r / 0.707), z_r)),
+            2 * 0.5 * max_expr((t_c_r / 0.707), z_r) ** 2,
+            0
+        )
+    )
 
-
-    # A_w_r_eqn = A_w_r.equals(qt.cond_expr(D_r.leq(2 * d_2 - qt.max_expr((t_c_r / 0.707), z_r)), 2 * 0.5 * qt.max_expr((t_c_r / 0.707), z_r) ** 2, 0))
-    A_w_r_eqn = equation(A_w_r, cond_expr(leq(D_r, 2 * d_2 - max_expr((t_c_r / 0.707), z_r)), 2 * 0.5 * max_expr((t_c_r / 0.707), z_r) ** 2, 0))
-
-    # A_w_eqn = A_w.equals(A_w_b + A_w_r)
     A_w_eqn = equation(A_w, A_w_b + A_w_r)
 
     # Calculation for total area
-    # A_1_eqn = A_1.equals(header.t * d_1 * (2 - qt.sin(beta)))
-    # A_2_eqn = A_2.equals((2 * d_2 - d_1) * (header.T - header.t - header.c))
-    # A_3_eqn = A_3.equals((2 * L_4 * (branch.T - branch.t - branch.c) / qt.sin(beta)) * qt.min_expr(1, branch.S / header.S))
-    # A_4_eqn = A_4.equals(A_r + A_w)
     A_1_eqn = equation(A_1, header.t * d_1 * (2 - sin(beta)))
     A_2_eqn = equation(A_2, (2 * d_2 - d_1) * (header.T - header.t - header.c))
     A_3_eqn = equation(A_3, (2 * L_4 * (branch.T - branch.t - branch.c) / sin(beta)) * min_expr(1, branch.S / header.S))
@@ -244,7 +213,7 @@ def test_branch_reinforcement_h301(capsys):
     problem.header.T_bar.set(8.18).millimeter
     problem.header.U_m.set(0.125).dimensionless
     problem.header.c.set(2.5).millimeter
-    problem.header.S.set(110000000).pascal
+    problem.header.S.set(110000000).pascal # 110 MPa
     problem.header.E.set(1).dimensionless
     problem.header.W.set(1).dimensionless
     problem.header.Y.set(0.4).dimensionless
@@ -261,21 +230,15 @@ def test_branch_reinforcement_h301(capsys):
 
     problem.solve()
 
-    # problem.A_4.to_unit.square_millimeter
-
-    assert problem.is_solved
-
     expected_results = [
         ("d_1", 108.765, "millimeter", 1e-9),
         ("d_2", 108.765, "millimeter", 1e-9),
         ("L_4", 6.91875, "millimeter", 1e-9),
-        ("A_1", 222.33391704383038, "square_millimeter", 1e-9),
-        ("A_2", 284.23907045616954, "square_millimeter", 1e-9),
-        ("A_3", 23.53896202060505, "square_millimeter", 1e-9),
-        ("A_4", 35.52632094892658, "square_millimeter", 1e-9),
+        ("A_1", 222.33391704383038, "mm2", 1e-9),
+        ("A_2", 284.23907045616954, "mm2", 1e-9),
+        ("A_3", 23.53896202060505, "mm2", 1e-9),
+        ("A_4", 35.52632094892658, "mm2", 1e-9),
     ]
-
-    assert_problem_results(problem, expected_results)
 
     with capsys.disabled():
         print("")
@@ -289,6 +252,11 @@ def test_branch_reinforcement_h301(capsys):
         print(problem.A_w_r)
         print(problem.A_w)
         print(problem.A_4)
+
+    assert problem.is_solved
+
+    assert_problem_results(problem, expected_results)
+
 
 
 def test_branch_reinforcement_h303(capsys):

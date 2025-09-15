@@ -1,5 +1,6 @@
 from typing import Final
 
+from numpy import square
 from sympy import deg
 
 from .unit import Unit, UnitNamespace
@@ -117,6 +118,10 @@ class Units:
     foot_per_square_second: Final[Unit]
     foot_per_second_squared: Final[Unit]  # alias for foot_per_square_second
 
+    square_meter: Final[Unit]
+    square_foot: Final[Unit]
+    square_millimeter: Final[Unit]
+
     # Velocity
     meter_per_second: Final[Unit]
     foot_per_second: Final[Unit]
@@ -170,6 +175,7 @@ class LengthUnits(UnitNamespace):
 class AreaUnits(UnitNamespace):
     square_meter: Final[Unit]
     square_foot: Final[Unit]
+    square_millimeter: Final[Unit]
 
 class VelocityLinearUnits(UnitNamespace):
     meter_per_second: Final[Unit]

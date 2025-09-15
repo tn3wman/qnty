@@ -186,6 +186,11 @@ square_meter = attach_composed(
     aliases=("square_meter","square_meters","m2",),
 )
 
+square_millimeter = attach_composed(
+    u.milli_meter**2, name="square_millimeter", symbol="mm²",
+    aliases=("mm2",),
+)
+
 square_foot = attach_composed(
     u.foot**2, name="square_foot", symbol="ft²",
     aliases=("square_foot","square_feet","ft2",),
@@ -197,6 +202,7 @@ class AreaUnits(UnitNamespace):
 
     square_meter: Final[Unit] = square_meter
     square_foot: Final[Unit] = square_foot
+    square_millimeter: Final[Unit] = square_millimeter
 
 # NOTE: VOLUME UNITS BELOW
 cubic_meter = attach_composed(

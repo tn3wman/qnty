@@ -675,15 +675,117 @@ class CompositionMixin:
 
         for attr_name, equation in equations_to_process:
             try:
+                # Check if this equation has constants that should be variable references
+                reconstructed_equation = self._reconstruct_equation_with_variables(equation)
+                final_equation = reconstructed_equation if reconstructed_equation else equation
+
                 # Add equation to the problem
-                self.add_equation(equation)
+                self.add_equation(final_equation)
                 # Set the equation as an instance attribute
-                setattr(self, attr_name, equation)
+                setattr(self, attr_name, final_equation)
             except Exception as e:
                 # Log but continue - some equations might fail during class definition
                 self.logger.warning(f"Failed to process equation {attr_name}: {e}")
                 # Still set the original equation as attribute
                 setattr(self, attr_name, equation)
+
+    def _reconstruct_equation_with_variables(self, equation):
+        """
+        Reconstruct equations that have constant expressions back to variable references.
+        This handles cases where T_bar * (1 - U_m) was evaluated to constants during class definition.
+        """
+        try:
+            # Look for the specific pattern of the T equation: T = constant * (1 - constant)
+            if self._is_t_equation_pattern(equation):
+                return self._reconstruct_t_equation_pattern(equation)
+
+            # Could add other patterns here if needed
+            return None
+
+        except Exception:
+            return None
+
+    def _is_t_equation_pattern(self, equation) -> bool:
+        """Check if this equation matches the T = T_bar * (1 - U_m) pattern."""
+        from ..algebra.nodes import BinaryOperation, Constant
+
+        # Check if LHS variable name ends with 'T' (like 'T', 'header_T', etc.)
+        lhs_name = getattr(equation.lhs, 'name', '')
+        if not (lhs_name == 'T' or lhs_name.endswith('_T')):
+            return False
+
+        # Check if RHS is a multiplication: something * (1 - something)
+        rhs = equation.rhs
+        if not isinstance(rhs, BinaryOperation) or rhs.operator != '*':
+            return False
+
+        # Check if right operand is (1 - something)
+        right_op = rhs.right
+        if not isinstance(right_op, BinaryOperation) or right_op.operator != '-':
+            return False
+
+        # Check if it's (1 - constant) pattern
+        if not isinstance(right_op.left, Constant) or not isinstance(right_op.right, Constant):
+            return False
+
+        # Check if left constant is approximately 1
+        left_val = getattr(right_op.left.value, 'value', right_op.left.value)
+        return abs(left_val - 1.0) < 1e-10
+
+    def _reconstruct_t_equation_pattern(self, equation):
+        """Reconstruct T = T_bar * (1 - U_m) equation with variable references."""
+        try:
+            from ..algebra import equation as create_equation
+            from ..algebra.nodes import VariableReference, BinaryOperation, Constant
+            from qnty.core.quantity_catalog import Dimensionless
+
+            # Get the LHS variable name (T, header_T, branch_T, etc.)
+            lhs_name = getattr(equation.lhs, 'name', '')
+
+            # Determine the corresponding T_bar and U_m variable names
+            if lhs_name == 'T':
+                t_bar_name = 'T_bar'
+                u_m_name = 'U_m'
+            else:
+                # For namespaced variables like header_T, branch_T
+                prefix = lhs_name[:-2]  # Remove '_T'
+                t_bar_name = f"{prefix}_T_bar"
+                u_m_name = f"{prefix}_U_m"
+
+            # Check if these variables exist in the problem
+            if (lhs_name not in self.variables or
+                t_bar_name not in self.variables or
+                u_m_name not in self.variables):
+                return None
+
+            # Get the variable objects
+            t_var = self.variables[lhs_name]
+            t_bar_var = self.variables[t_bar_name]
+            u_m_var = self.variables[u_m_name]
+
+            # Create variable references
+            t_ref = VariableReference(t_var)
+            t_bar_ref = VariableReference(t_bar_var)
+            u_m_ref = VariableReference(u_m_var)
+
+            # Create constant for 1
+            from qnty.core.unit import ureg
+            one_dimensionless = Dimensionless("one")
+            one_dimensionless.value = 1.0
+            one_dimensionless.preferred = ureg.resolve('dimensionless')
+            one = Constant(one_dimensionless)
+
+            # Create expression: 1 - U_m
+            one_minus_u_m = BinaryOperation("-", one, u_m_ref)
+
+            # Create expression: T_bar * (1 - U_m)
+            rhs = BinaryOperation("*", t_bar_ref, one_minus_u_m)
+
+            # Create the equation
+            return create_equation(t_ref, rhs, f"{lhs_name}_equation")
+
+        except Exception:
+            return None
 
     def _get_class_attributes(self) -> list[tuple[str, Any]]:
         """Get all non-private class attributes efficiently."""
@@ -818,6 +920,7 @@ class CompositionMixin:
                 if self._should_skip_subproblem_equation(equation, namespace):
                     continue
 
+
                 # Check if equation is already namespaced (contains namespace prefix)
                 equation_str = str(equation)
                 if f"{namespace}_" in equation_str:
@@ -830,6 +933,7 @@ class CompositionMixin:
                         self.add_equation(namespaced_equation)
             except Exception as e:
                 self.logger.debug(f"Failed to namespace equation from {namespace}: {e}")
+
 
     def _create_namespaced_variable(self, var: FieldQuantity, var_symbol: str, namespace: str, proxy_configs: dict) -> FieldQuantity:
         """Create a namespaced variable with proper configuration."""
@@ -915,9 +1019,55 @@ class CompositionMixin:
         elif self._is_binary_function(expr):
             return self._namespace_binary_function(expr, symbol_mapping)
         elif isinstance(expr, Constant):
-            return expr
+            # Check if this constant corresponds to a variable that should be namespaced
+            return self._namespace_constant_if_needed(expr, symbol_mapping)
         else:
             return expr
+
+    def _namespace_constant_if_needed(self, expr: Constant, symbol_mapping: dict[str, str]):
+        """
+        Check if a Constant corresponds to a variable that should be namespaced.
+        This handles cases where expressions like T_bar * (1 - U_m) were evaluated to constants
+        at class definition time, but need to be converted back to variable references.
+        """
+        constant_value = expr.value
+
+        # Check each original symbol to see if any variable matches this constant value
+        for original_symbol, namespaced_symbol in symbol_mapping.items():
+            if namespaced_symbol not in self.variables:
+                continue
+
+            namespaced_var = self.variables[namespaced_symbol]
+
+            # Check if the constant's value matches this variable's value (within tolerance)
+            if self._values_match(constant_value, namespaced_var):
+                # Replace the constant with a variable reference
+                from ..algebra.nodes import VariableReference
+                return VariableReference(namespaced_var)
+
+        # No matching variable found, return the constant unchanged
+        return expr
+
+    def _values_match(self, constant_value, variable) -> bool:
+        """Check if a constant value matches a variable's value, handling units and tolerance."""
+        if not hasattr(variable, 'value') or variable.value is None:
+            return False
+
+        try:
+            # For quantity objects, compare the SI values
+            if hasattr(constant_value, 'value') and hasattr(variable, 'value'):
+                const_si_value = getattr(constant_value, 'value', constant_value)
+                var_si_value = variable.value
+            else:
+                const_si_value = constant_value
+                var_si_value = variable.value
+
+            # Use a reasonable tolerance for floating point comparison
+            tolerance = 1e-10
+            return abs(const_si_value - var_si_value) < tolerance
+
+        except (AttributeError, TypeError, ValueError):
+            return False
 
     def _namespace_variable_reference(self, expr: VariableReference, symbol_mapping: dict[str, str]) -> VariableReference:
         """Namespace a VariableReference object."""
