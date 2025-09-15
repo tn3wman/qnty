@@ -57,6 +57,7 @@ def _create_unary_function(name: str, docstring: str) -> "Callable[[ExpressionOp
         # Check if we should preserve symbolic expressions (in class definition context)
         if _should_preserve_symbolic_expression():
             from ..problems.composition import DelayedFunction
+
             return DelayedFunction(name, expr)
 
         wrapped_expr = wrap_operand(expr)
@@ -120,6 +121,7 @@ def cond_expr(
     # Check if we should preserve symbolic expressions (in class definition context)
     if _should_preserve_symbolic_expression():
         from ..problems.composition import DelayedFunction
+
         return DelayedFunction("cond_expr", condition, true_expr, false_expr)
     wrapped_condition = condition if isinstance(condition, Expression) else condition
     return ConditionalExpression(wrapped_condition, wrap_operand(true_expr), wrap_operand(false_expr))
@@ -130,6 +132,7 @@ def min_expr(*expressions: ExpressionOperand) -> Expression:
     # Check if we should preserve symbolic expressions (in class definition context)
     if _should_preserve_symbolic_expression():
         from ..problems.composition import DelayedFunction
+
         return DelayedFunction("min_expr", *expressions)
     return _create_comparison_expr(expressions, "min")
 
@@ -139,5 +142,6 @@ def max_expr(*expressions: ExpressionOperand) -> Expression:
     # Check if we should preserve symbolic expressions (in class definition context)
     if _should_preserve_symbolic_expression():
         from ..problems.composition import DelayedFunction
+
         return DelayedFunction("max_expr", *expressions)
     return _create_comparison_expr(expressions, "max")

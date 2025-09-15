@@ -9,8 +9,8 @@ import math
 from abc import ABC, abstractmethod
 
 from ..constants import CONDITION_EVALUATION_THRESHOLD, DIVISION_BY_ZERO_THRESHOLD, FLOAT_EQUALITY_TOLERANCE
+from ..core import u
 from ..core.quantity import FieldQuantity, Quantity
-from ..core.unit_catalog import DimensionlessUnits
 from ..utils.caching.manager import get_cache_manager
 from ..utils.protocols import register_expression_type, register_variable_type
 from ..utils.scope_discovery import ScopeDiscoveryService
@@ -79,17 +79,17 @@ class Expression(ABC):
 
             # Evaluate the expression
             result = self.evaluate(variables)
-            if result and hasattr(result, 'value') and result.value is not None:
+            if result and hasattr(result, "value") and result.value is not None:
                 # Check dimension compatibility
-                if hasattr(quantity, 'dim') and hasattr(result, 'dim'):
+                if hasattr(quantity, "dim") and hasattr(result, "dim"):
                     if quantity.dim != result.dim:
                         raise TypeError(f"Dimension mismatch: cannot assign {result.dim} to {quantity.dim}")
 
                 # Assign the value
-                if hasattr(quantity, 'value'):
+                if hasattr(quantity, "value"):
                     quantity.value = result.value
-                    if hasattr(quantity, 'preferred') and hasattr(result, 'preferred'):
-                        quantity.preferred = result.preferred or getattr(quantity, 'preferred', None)
+                    if hasattr(quantity, "preferred") and hasattr(result, "preferred"):
+                        quantity.preferred = result.preferred or getattr(quantity, "preferred", None)
                     return True
         except Exception:
             # If direct evaluation fails, try symbolic solving
@@ -104,22 +104,18 @@ class Expression(ABC):
             from .equation import Equation
 
             # Create an equation: quantity = self
-            equation = Equation(
-                name=f"solve_for_{getattr(quantity, 'name', 'unknown')}",
-                lhs=VariableReference(quantity),
-                rhs=self
-            )
+            equation = Equation(name=f"solve_for_{getattr(quantity, 'name', 'unknown')}", lhs=VariableReference(quantity), rhs=self)
 
             # Try to solve for this variable
             all_variables = ScopeDiscoveryService.find_variables_in_scope()
-            symbol = getattr(quantity, 'symbol', getattr(quantity, 'name', 'unknown'))
+            symbol = getattr(quantity, "symbol", getattr(quantity, "name", "unknown"))
             solved_value = equation.solve_for(symbol, all_variables)
 
-            if solved_value is not None and hasattr(solved_value, 'value') and solved_value.value is not None:
-                if hasattr(quantity, 'value'):
+            if solved_value is not None and hasattr(solved_value, "value") and solved_value.value is not None:
+                if hasattr(quantity, "value"):
                     quantity.value = solved_value.value
-                    if hasattr(quantity, 'preferred') and hasattr(solved_value, 'preferred'):
-                        quantity.preferred = solved_value.preferred or getattr(quantity, 'preferred', None)
+                    if hasattr(quantity, "preferred") and hasattr(solved_value, "preferred"):
+                        quantity.preferred = solved_value.preferred or getattr(quantity, "preferred", None)
                     return True
         except Exception:
             # If symbolic solving fails, return False
@@ -231,6 +227,7 @@ class VariableReference(Expression):
         try:
             # Get the SI unit for this quantity's dimension
             from ..core.unit import ureg
+
             si_unit = ureg.si_unit_for(quantity.dim)
             if si_unit is not None:
                 return quantity.to(si_unit)
@@ -381,10 +378,7 @@ class BinaryOperation(Expression):
     def _dispatch_operation(self, left_val: "Quantity", right_val: "Quantity") -> "Quantity":
         """Dispatch to the appropriate operation handler with fast lookup."""
         # Ultra-fast path: delegate to Quantity arithmetic when both operands are concrete
-        if (hasattr(left_val, 'value') and hasattr(right_val, 'value') and
-            left_val.value is not None and right_val.value is not None and
-            hasattr(left_val, 'dim') and hasattr(right_val, 'dim')):
-
+        if hasattr(left_val, "value") and hasattr(right_val, "value") and left_val.value is not None and right_val.value is not None and hasattr(left_val, "dim") and hasattr(right_val, "dim"):
             try:
                 # Try to delegate directly to Quantity arithmetic
                 if self.operator == "+":
@@ -397,7 +391,7 @@ class BinaryOperation(Expression):
                     return left_val.__truediv__(right_val)
                 elif self.operator == "**":
                     # For power, right operand should be a number
-                    if hasattr(right_val, 'dim') and right_val.dim.is_dimensionless() and hasattr(right_val, 'value'):
+                    if hasattr(right_val, "dim") and right_val.dim.is_dimensionless() and hasattr(right_val, "value"):
                         # Power operation not supported on new Quantity - use fallback
                         pass
                 # For comparison operators, fall through to normal handling
@@ -429,7 +423,6 @@ class BinaryOperation(Expression):
         else:
             raise ValueError(f"Unknown arithmetic operator: {self.operator}")
 
-
     def _multiply(self, left_val: "Quantity", right_val: "Quantity") -> "Quantity":
         """Handle multiplication with ultra-fast path optimizations aligned with base_qnty."""
         # For now, skip fast path optimizations to avoid compatibility issues
@@ -452,7 +445,7 @@ class BinaryOperation(Expression):
     def _divide(self, left_val: "Quantity", right_val: "Quantity") -> "Quantity":
         """Handle division with zero checking and optimizations."""
         # Check for division by zero first
-        if hasattr(right_val, 'value') and right_val.value is not None:
+        if hasattr(right_val, "value") and right_val.value is not None:
             if abs(right_val.value) < DIVISION_BY_ZERO_THRESHOLD:
                 raise ValueError(f"Division by zero in expression: {self}")
 
@@ -462,18 +455,18 @@ class BinaryOperation(Expression):
     def _power(self, left_val: "Quantity", right_val: "Quantity") -> "Quantity":
         """Handle power operations with special cases."""
         # Check if right operand is dimensionless
-        if hasattr(right_val, 'value') and right_val.value is not None:
+        if hasattr(right_val, "value") and right_val.value is not None:
             if not isinstance(right_val.value, int | float):
                 raise ValueError("Exponent must be dimensionless number")
 
             # Check if right operand is dimensionless by dimension
-            if hasattr(right_val, 'dim') and not right_val.dim.is_dimensionless():
+            if hasattr(right_val, "dim") and not right_val.dim.is_dimensionless():
                 raise ValueError("Exponent must be dimensionless")
 
         # Delegate to Quantity's __pow__ method
         try:
             # Extract numeric exponent - Quantity.__pow__ expects int
-            exponent = right_val.value if hasattr(right_val, 'value') and right_val.value is not None else 1
+            exponent = right_val.value if hasattr(right_val, "value") and right_val.value is not None else 1
 
             # Convert to int if it's a whole number, otherwise raise error (for now)
             if exponent != int(exponent):
@@ -489,8 +482,8 @@ class BinaryOperation(Expression):
         left_val, right_val = self._normalize_comparison_units(left_val, right_val)
 
         # Perform comparison using optimized dispatch
-        left_value = left_val.value if hasattr(left_val, 'value') and left_val.value is not None else 0.0
-        right_value = right_val.value if hasattr(right_val, 'value') and right_val.value is not None else 0.0
+        left_value = left_val.value if hasattr(left_val, "value") and left_val.value is not None else 0.0
+        right_value = right_val.value if hasattr(right_val, "value") and right_val.value is not None else 0.0
         result = self._perform_comparison(left_value, right_value)
 
         # Create dimensionless quantity for boolean result
@@ -573,8 +566,8 @@ class UnaryFunction(Expression):
             "sin": lambda x: math.sin(self._to_radians_if_angle(x)),
             "cos": lambda x: math.cos(self._to_radians_if_angle(x)),
             "tan": lambda x: math.tan(self._to_radians_if_angle(x)),
-            "sqrt": lambda x: x if not (hasattr(x, 'value') and x.value is not None) else self._create_dimensionless_quantity(math.sqrt(x.value)),
-            "abs": lambda x: x if not (hasattr(x, 'value') and x.value is not None) else self._create_dimensionless_quantity(abs(x.value)),
+            "sqrt": lambda x: x if not (hasattr(x, "value") and x.value is not None) else self._create_dimensionless_quantity(math.sqrt(x.value)),
+            "abs": lambda x: x if not (hasattr(x, "value") and x.value is not None) else self._create_dimensionless_quantity(abs(x.value)),
             "ln": lambda x: math.log(x.value),
             "log10": lambda x: math.log10(x.value),
             "exp": lambda x: math.exp(x.value),
@@ -602,7 +595,6 @@ class UnaryFunction(Expression):
     def _create_dimensionless_quantity(self, value: float) -> "Quantity":
         """Create a dimensionless quantity from a float value."""
         return _create_dimensionless_quantity(value)
-
 
     def get_variables(self) -> set[str]:
         return self.operand.get_variables()
@@ -645,7 +637,7 @@ class ConditionalExpression(Expression):
     def evaluate(self, variable_values: dict[str, "FieldQuantity"]) -> "Quantity":
         condition_val = self.condition.evaluate(variable_values)
         # Consider non-zero as True
-        condition_value = condition_val.value if hasattr(condition_val, 'value') and condition_val.value is not None else 0.0
+        condition_value = condition_val.value if hasattr(condition_val, "value") and condition_val.value is not None else 0.0
         if abs(condition_value) > CONDITION_EVALUATION_THRESHOLD:
             return self.true_expr.evaluate(variable_values)
         else:
@@ -664,7 +656,7 @@ class ConditionalExpression(Expression):
             try:
                 dummy_vars = {}
                 condition_val = simplified_condition.evaluate(dummy_vars)
-                condition_value = condition_val.value if hasattr(condition_val, 'value') and condition_val.value is not None else 0.0
+                condition_value = condition_val.value if hasattr(condition_val, "value") and condition_val.value is not None else 0.0
                 if abs(condition_value) > CONDITION_EVALUATION_THRESHOLD:
                     return simplified_true
                 else:
@@ -704,7 +696,7 @@ def _get_cached_dimensionless():
     """Get cached dimensionless constant for numeric values."""
     global _DIMENSIONLESS_CONSTANT
     if _DIMENSIONLESS_CONSTANT is None:
-        _DIMENSIONLESS_CONSTANT = DimensionlessUnits.dimensionless
+        _DIMENSIONLESS_CONSTANT = u.dimensionless
     return _DIMENSIONLESS_CONSTANT
 
 
@@ -721,6 +713,7 @@ def _get_dimensionless_quantity(value: float) -> Quantity:
 
     # Create quantity with cached unit using Q function
     from ..core.quantity import Q
+
     qty = Q(value, _get_cached_dimensionless())
 
     # Cache common values locally for ultra-fast access
@@ -738,12 +731,7 @@ def _create_dimensionless_quantity(value: float, name: str | None = None) -> Qua
 
     # Use cached dimensionless unit for consistency
     dim_unit = _get_cached_dimensionless()
-    return Quantity(
-        name=name,
-        dim=dim_unit.dim,
-        value=float(value),
-        preferred=dim_unit
-    )
+    return Quantity(name=name, dim=dim_unit.dim, value=float(value), preferred=dim_unit)
 
 
 class _DimensionUtils:
@@ -773,6 +761,7 @@ class _DimensionUtils:
         # Try to get preferred unit from dimension
         if hasattr(quantity, "dim"):
             from ..core.unit import ureg
+
             return ureg.preferred_for(quantity.dim) or ureg.si_unit_for(quantity.dim)
 
         return None
@@ -829,11 +818,11 @@ def wrap_operand(operand: "OperandType") -> Expression:
             return VariableReference(var)  # type: ignore[arg-type]
 
     # Handle DelayedExpression and DelayedFunction objects that weren't resolved
-    if hasattr(operand, 'resolve') and callable(getattr(operand, 'resolve', None)):
+    if hasattr(operand, "resolve") and callable(getattr(operand, "resolve", None)):
         # This is a DelayedExpression or DelayedFunction - try to resolve it with empty context
         # This is a fallback; ideally these should be resolved earlier
         try:
-            resolve_method = getattr(operand, 'resolve', None)
+            resolve_method = getattr(operand, "resolve", None)
             if resolve_method and callable(resolve_method):
                 resolved = resolve_method({})
                 if resolved is not None and isinstance(resolved, Expression):
@@ -841,13 +830,14 @@ def wrap_operand(operand: "OperandType") -> Expression:
         except Exception:
             pass
         # If resolution fails, raise an informative error
-        operand_type_name = getattr(type(operand), '__name__', 'DelayedObject')
-        raise TypeError(f"{operand_type_name} objects must be resolved before wrapping. "
-                       "Call resolve(context) first or fix the resolution process.")
+        operand_type_name = getattr(type(operand), "__name__", "DelayedObject")
+        raise TypeError(f"{operand_type_name} objects must be resolved before wrapping. Call resolve(context) first or fix the resolution process.")
 
     # Handle MainVariableWrapper objects
-    if hasattr(operand, '_wrapped_var'):
-        return wrap_operand(operand._wrapped_var)
+    if hasattr(operand, "_wrapped_var"):
+        # Use Any type annotation to handle dynamic wrapper objects
+        wrapped_var = operand._wrapped_var  # type: ignore[attr-defined]
+        return wrap_operand(wrapped_var)
 
     # Fast failure for unknown types
     raise TypeError(f"Cannot convert {operand_type.__name__} to Expression")

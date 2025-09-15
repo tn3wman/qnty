@@ -11,7 +11,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from copy import copy, deepcopy
-from typing import Any
+from typing import Any, cast
 
 from qnty.solving.order import Order
 from qnty.solving.solvers import SolverManager
@@ -255,16 +255,26 @@ class Problem(ValidationMixin):
         This ensures that when sub-problems are integrated with different namespaces,
         their variables don't interfere with each other.
         """
-        try:
-            # Try to create a new variable of the same type with just the name
-            cloned_var = type(variable)(variable.name)
-        except TypeError:
+        # For type safety, use a more explicit approach to handle different constructor signatures
+        from ..core.quantity import Quantity
+
+        # Check if this is a base Quantity type that requires dimension parameter
+        if isinstance(variable, Quantity) and type(variable) is Quantity:
+            # Base Quantity constructor requires name and dim
+            cloned_var = type(variable)(variable.name, variable.dim)
+        else:
+            # For typed quantity classes (Length, Pressure, etc.), try name-only constructor first
             try:
-                # Some quantity types might need dimension, try with None
-                cloned_var = type(variable)(variable.name, None)
+                # Use cast to tell type checker this constructor can accept just name
+                constructor = cast(Callable[[str], Quantity], type(variable))
+                cloned_var = constructor(variable.name)
             except TypeError:
-                # Fallback to deepcopy if constructor fails
-                return deepcopy(variable)
+                # If that fails, try with dimension parameter
+                try:
+                    cloned_var = type(variable)(variable.name, variable.dim)
+                except TypeError:
+                    # Final fallback to deepcopy
+                    return deepcopy(variable)
 
         # Copy over the essential attributes
         cloned_var._symbol = variable.symbol  # Will be updated by namespace creation
@@ -378,11 +388,12 @@ class Problem(ValidationMixin):
         # For placeholder variables, use the base Quantity class directly
         # since we need to specify the dimension
         from ..core.quantity import Quantity as BaseQuantity
+        dimensionless_unit = getattr(DimensionlessUnits, 'dimensionless')  # noqa: B009
         placeholder_var = BaseQuantity(
             name=f"Auto-created: {symbol}",
-            dim=DimensionlessUnits.dimensionless.dim,
+            dim=dimensionless_unit.dim,
             value=None,
-            preferred=DimensionlessUnits.dimensionless,
+            preferred=dimensionless_unit,
             _symbol=symbol
         )
         self.add_variable(placeholder_var)
@@ -533,7 +544,7 @@ class Problem(ValidationMixin):
             namespaced_alternatives = {}
             for auto_var in auto_created_vars:
                 # Look for variables with names like "namespace_symbol"
-                for var_name, var in self.variables.items():
+                for var_name, _ in self.variables.items():
                     if var_name.endswith(f"_{auto_var}") and var_name != auto_var:
                         namespaced_alternatives[auto_var] = var_name
 
@@ -589,7 +600,7 @@ class Problem(ValidationMixin):
     def _find_best_namespaced_alternative(self, auto_symbol: str) -> str | None:
         """Find the best namespaced alternative for an auto-created variable."""
         candidates = []
-        for var_name, var in self.variables.items():
+        for var_name, _ in self.variables.items():
             # Look for variables that end with "_auto_symbol"
             if var_name.endswith(f"_{auto_symbol}") and var_name != auto_symbol:
                 # Prefer variables from header namespace for main equations
@@ -891,7 +902,8 @@ class Problem(ValidationMixin):
             # Check if the constant's value is an ExpressionEnabledWrapper
             if hasattr(expr.value, '_wrapped'):
                 # Replace the Constant with a VariableReference to the unwrapped variable
-                return VariableReference(getattr(expr.value, '_wrapped'))
+                wrapped_var = getattr(expr.value, '_wrapped')  # noqa: B009
+                return VariableReference(wrapped_var)
             return expr
 
         elif hasattr(expr, '_wrapped'):
@@ -1174,8 +1186,8 @@ class Problem(ValidationMixin):
                 # For all other attributes, delegate to the wrapped variable
                 try:
                     return getattr(self._wrapped_var, name)
-                except AttributeError:
-                    raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
+                except AttributeError as err:
+                    raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'") from err
 
             def set(self, value, unit=None):
                 # Call the original set method

@@ -17,7 +17,7 @@ from typing import TYPE_CHECKING, Any
 if TYPE_CHECKING:
     from ..algebra.nodes import Expression
 
-from ..algebra import BinaryOperation, ConditionalExpression, Constant, Equation, VariableReference, max_expr, min_expr, sin
+from ..algebra import BinaryOperation, ConditionalExpression, Constant, Equation, VariableReference, min_expr
 from ..algebra.nodes import Expression, wrap_operand
 from ..core.quantity import FieldQuantity
 from ..core.quantity_catalog import Dimensionless
@@ -125,7 +125,7 @@ class SubProblemProxy:
                 namespaced_var = self._create_namespaced_variable(attr_value)
                 self._variable_cache[name] = namespaced_var
                 return namespaced_var
-            elif hasattr(attr_value, '_wrapped_var') and isinstance(attr_value._wrapped_var, FieldQuantity):
+            elif hasattr(attr_value, "_wrapped_var") and isinstance(attr_value._wrapped_var, FieldQuantity):
                 # This is a MainVariableWrapper - unwrap it to get the FieldQuantity
                 wrapped_var = attr_value._wrapped_var
                 namespaced_var = self._create_namespaced_variable(wrapped_var)
@@ -214,12 +214,7 @@ class ConfigurableVariable:
                 locals_dict = frame.f_locals
 
                 # Check if we're in a class definition context
-                if (
-                    "<class" in code.co_name
-                    or "problem" in filename.lower()
-                    or any("Problem" in str(base) for base in locals_dict.get("__bases__", []))
-                    or "test_composed_problem" in filename
-                ):
+                if "<class" in code.co_name or "problem" in filename.lower() or any("Problem" in str(base) for base in locals_dict.get("__bases__", [])) or "test_composed_problem" in filename:
                     return True
                 frame = frame.f_back
             return False
@@ -458,28 +453,28 @@ class DelayedExpression(ArithmeticOperationsMixin):
         variables = set()
 
         # Extract from left operand
-        if hasattr(self.left, 'get_variables'):
+        if hasattr(self.left, "get_variables"):
             variables.update(self.left.get_variables())
-        elif hasattr(self.left, '_wrapped') and hasattr(self.left._wrapped, 'symbol'):
+        elif hasattr(self.left, "_wrapped") and hasattr(self.left._wrapped, "symbol"):
             # ExpressionEnabledWrapper
             variables.add(self.left._wrapped.symbol)
-        elif hasattr(self.left, '_variable') and hasattr(self.left._variable, 'symbol'):
+        elif hasattr(self.left, "_variable") and hasattr(self.left._variable, "symbol"):
             # SubProblemProxy
             variables.add(self.left._variable.symbol)
-        elif hasattr(self.left, 'symbol'):
+        elif hasattr(self.left, "symbol"):
             # Direct variable
             variables.add(self.left.symbol)
 
         # Extract from right operand
-        if hasattr(self.right, 'get_variables'):
+        if hasattr(self.right, "get_variables"):
             variables.update(self.right.get_variables())
-        elif hasattr(self.right, '_wrapped') and hasattr(self.right._wrapped, 'symbol'):
+        elif hasattr(self.right, "_wrapped") and hasattr(self.right._wrapped, "symbol"):
             # ExpressionEnabledWrapper
             variables.add(self.right._wrapped.symbol)
-        elif hasattr(self.right, '_variable') and hasattr(self.right._variable, 'symbol'):
+        elif hasattr(self.right, "_variable") and hasattr(self.right._variable, "symbol"):
             # SubProblemProxy
             variables.add(self.right._variable.symbol)
-        elif hasattr(self.right, 'symbol'):
+        elif hasattr(self.right, "symbol"):
             # Direct variable
             variables.add(self.right.symbol)
 
@@ -513,40 +508,52 @@ class DelayedExpression(ArithmeticOperationsMixin):
         elif hasattr(operand, "_wrapped") and not isinstance(operand, Expression):
             # This is an ExpressionEnabledWrapper - create a VariableReference to the actual variable
             from ..algebra.nodes import VariableReference
+
             return VariableReference(operand._wrapped)
         elif isinstance(operand, ConfigurableVariable):
             # This is a ConfigurableVariable from SubProblemProxy - look up the namespaced variable in context
             namespaced_symbol = operand._variable.symbol
             if namespaced_symbol in context:
                 from ..algebra.nodes import VariableReference
+
                 return VariableReference(context[namespaced_symbol])
             else:
                 # Fallback to the wrapped variable
                 from ..algebra.nodes import VariableReference
+
                 return VariableReference(operand._variable)
         elif hasattr(operand, "_variable") and not isinstance(operand, Expression):
             # This is a SubProblemProxy - create a VariableReference to the actual variable
             from ..algebra.nodes import VariableReference
+
             return VariableReference(operand._variable)
         elif hasattr(operand, "_wrapped_var") and not isinstance(operand, Expression):
             # This is a MainVariableWrapper - create a VariableReference to the actual variable
             from ..algebra.nodes import VariableReference
+
             return VariableReference(operand._wrapped_var)
-        elif hasattr(operand, 'symbol'):
+        elif hasattr(operand, "symbol"):
             # It's a Variable - check if we have a canonical version in context and create VariableReference
-            symbol = operand.symbol
-            from ..algebra.nodes import VariableReference
-            if symbol in context:
-                return VariableReference(context[symbol])
+            symbol = getattr(operand, "symbol", None)
+            if symbol is not None:
+                from ..algebra.nodes import VariableReference
+
+                if symbol in context:
+                    return VariableReference(context[symbol])
+                else:
+                    # Create VariableReference to the original variable if it's a FieldQuantity
+                    if hasattr(operand, "dim") and hasattr(operand, "value") and hasattr(operand, "name") and not isinstance(operand, Expression):
+                        return VariableReference(operand)
+                    else:
+                        return operand
             else:
-                # Create VariableReference to the original variable
-                return VariableReference(operand)
+                return operand
         else:
             # It's a literal value
             return operand
 
 
-class DelayedFunction(ArithmeticOperationsMixin):
+class DelayedFunction(Expression, ArithmeticOperationsMixin):
     """
     Represents a function call that will be resolved later when context is available.
     """
@@ -559,15 +566,15 @@ class DelayedFunction(ArithmeticOperationsMixin):
         """Extract variables from function arguments."""
         variables = set()
         for arg in self.args:
-            if hasattr(arg, 'get_variables'):
+            if hasattr(arg, "get_variables"):
                 variables.update(arg.get_variables())
-            elif hasattr(arg, '_wrapped') and hasattr(arg._wrapped, 'symbol'):
+            elif hasattr(arg, "_wrapped") and hasattr(arg._wrapped, "symbol"):
                 # ExpressionEnabledWrapper
                 variables.add(arg._wrapped.symbol)
-            elif hasattr(arg, '_variable') and hasattr(arg._variable, 'symbol'):
+            elif hasattr(arg, "_variable") and hasattr(arg._variable, "symbol"):
                 # SubProblemProxy
                 variables.add(arg._variable.symbol)
-            elif hasattr(arg, 'symbol'):
+            elif hasattr(arg, "symbol"):
                 # Direct variable
                 variables.add(arg.symbol)
         return variables
@@ -579,12 +586,21 @@ class DelayedFunction(ArithmeticOperationsMixin):
         try:
             # Try to resolve with the variable values as context
             resolved = self.resolve(variable_values)
-            if resolved and hasattr(resolved, 'evaluate'):
+            if resolved and hasattr(resolved, "evaluate"):
                 return resolved.evaluate(variable_values)
         except Exception:
             pass
-        raise RuntimeError(f"DelayedFunction {self.func_name} could not be evaluated. "
-                         "It should be resolved to an Expression first.")
+        raise RuntimeError(f"DelayedFunction {self.func_name} could not be evaluated. It should be resolved to an Expression first.")
+
+    def simplify(self) -> Expression:
+        """Return self as simplification since DelayedFunction is already simplified for its purpose."""
+        return self
+
+    def __str__(self) -> str:
+        """String representation of the delayed function call."""
+        if len(self.args) == 1:
+            return f"{self.func_name}({self.args[0]})"
+        return f"{self.func_name}({', '.join(str(arg) for arg in self.args)})"
 
     def resolve(self, context):
         """Resolve function call with given context."""
@@ -596,37 +612,48 @@ class DelayedFunction(ArithmeticOperationsMixin):
                 if resolved_arg is None:
                     return None
                 resolved_args.append(resolved_arg)
-            elif hasattr(arg, '_wrapped') and not isinstance(arg, Expression):
+            elif hasattr(arg, "_wrapped") and not isinstance(arg, Expression):
                 # This is an ExpressionEnabledWrapper - create a VariableReference to the actual variable
                 from ..algebra.nodes import VariableReference
+
                 resolved_args.append(VariableReference(arg._wrapped))
-            elif hasattr(arg, '_wrapped_var') and not isinstance(arg, Expression):
+            elif hasattr(arg, "_wrapped_var") and not isinstance(arg, Expression):
                 # This is a NamespaceVariableWrapper - create a VariableReference to the actual variable
                 from ..algebra.nodes import VariableReference
+
                 resolved_args.append(VariableReference(arg._wrapped_var))
-            elif hasattr(arg, '_variable') and not isinstance(arg, Expression):
+            elif hasattr(arg, "_variable") and not isinstance(arg, Expression):
                 # This is a SubProblemProxy - create a VariableReference to the actual variable
                 from ..algebra.nodes import VariableReference
+
                 resolved_args.append(VariableReference(arg._variable))
-            elif hasattr(arg, 'symbol'):
+            elif hasattr(arg, "symbol"):
                 # This is a Variable - create a VariableReference, don't let wrap_operand turn it into a Constant
                 from ..algebra.nodes import VariableReference
-                resolved_args.append(VariableReference(arg))
+
+                if hasattr(arg, "dim") and hasattr(arg, "value") and hasattr(arg, "name") and not isinstance(arg, Expression):
+                    resolved_args.append(VariableReference(arg))
+                else:
+                    resolved_args.append(arg)
             else:
                 resolved_args.append(arg)
 
         # Call the appropriate function - create actual expressions, not more DelayedFunction objects
         if self.func_name == "sin":
             from ..algebra.nodes import UnaryFunction, wrap_operand
+
             return UnaryFunction("sin", wrap_operand(resolved_args[0]))
         elif self.func_name == "min_expr":
             from ..algebra.functions import _create_comparison_expr
+
             return _create_comparison_expr(tuple(resolved_args), "min")
         elif self.func_name == "max_expr":
             from ..algebra.functions import _create_comparison_expr
+
             return _create_comparison_expr(tuple(resolved_args), "max")
         elif self.func_name == "cond_expr":
             from ..algebra.nodes import ConditionalExpression, wrap_operand
+
             return ConditionalExpression(resolved_args[0], wrap_operand(resolved_args[1]), wrap_operand(resolved_args[2]))
         else:
             # Generic function call
@@ -656,6 +683,30 @@ class CompositionMixin:
     variables: dict[str, FieldQuantity]
     sub_problems: dict[str, Any]
     logger: Any
+
+    # Additional attributes that may be present on classes using this mixin
+    header: Any = None
+    branch: Any = None
+    beta: Any = None
+    d_1: Any = None
+    d_2: Any = None
+    A_1: Any = None
+    A_2: Any = None
+    A_3: Any = None
+    A_4: Any = None
+    A_r: Any = None
+    A_w: Any = None
+    L_4: Any = None
+    t_c_max: Any = None
+    t_c_b: Any = None
+    T_bar_r: Any = None
+    t_c_r: Any = None
+    T_r: Any = None
+    z_b: Any = None
+    A_w_b: Any = None
+    D_r: Any = None
+    z_r: Any = None
+    A_w_r: Any = None
 
     def add_variable(self, variable: FieldQuantity) -> None:
         """Will be provided by Problem class."""
@@ -762,7 +813,6 @@ class CompositionMixin:
             if self._is_variable_sharing_pattern(equation):
                 return self._reconstruct_variable_sharing_pattern(equation)
 
-
             # Could add other patterns here if needed
             return None
 
@@ -774,18 +824,18 @@ class CompositionMixin:
         from ..algebra.nodes import BinaryOperation, Constant
 
         # Check if LHS variable name ends with 'T' (like 'T', 'header_T', etc.)
-        lhs_name = getattr(equation.lhs, 'name', '')
-        if not (lhs_name == 'T' or lhs_name.endswith('_T')):
+        lhs_name = getattr(equation.lhs, "name", "")
+        if not (lhs_name == "T" or lhs_name.endswith("_T")):
             return False
 
         # Check if RHS is a multiplication: something * (1 - something)
         rhs = equation.rhs
-        if not isinstance(rhs, BinaryOperation) or rhs.operator != '*':
+        if not isinstance(rhs, BinaryOperation) or rhs.operator != "*":
             return False
 
         # Check if right operand is (1 - something)
         right_op = rhs.right
-        if not isinstance(right_op, BinaryOperation) or right_op.operator != '-':
+        if not isinstance(right_op, BinaryOperation) or right_op.operator != "-":
             return False
 
         # Check if it's (1 - constant) pattern
@@ -793,23 +843,26 @@ class CompositionMixin:
             return False
 
         # Check if left constant is approximately 1
-        left_val = getattr(right_op.left.value, 'value', right_op.left.value)
-        return abs(left_val - 1.0) < 1e-10
+        left_val = getattr(right_op.left.value, "value", right_op.left.value)
+        if isinstance(left_val, int | float):
+            return abs(left_val - 1.0) < 1e-10
+        return False
 
     def _reconstruct_t_equation_pattern(self, equation):
         """Reconstruct T = T_bar * (1 - U_m) equation with variable references."""
         try:
-            from ..algebra import equation as create_equation
-            from ..algebra.nodes import VariableReference, BinaryOperation, Constant
             from qnty.core.quantity_catalog import Dimensionless
 
+            from ..algebra import equation as create_equation
+            from ..algebra.nodes import BinaryOperation, Constant, VariableReference
+
             # Get the LHS variable name (T, header_T, branch_T, etc.)
-            lhs_name = getattr(equation.lhs, 'name', '')
+            lhs_name = getattr(equation.lhs, "name", "")
 
             # Determine the corresponding T_bar and U_m variable names
-            if lhs_name == 'T':
-                t_bar_name = 'T_bar'
-                u_m_name = 'U_m'
+            if lhs_name == "T":
+                t_bar_name = "T_bar"
+                u_m_name = "U_m"
             else:
                 # For namespaced variables like header_T, branch_T
                 prefix = lhs_name[:-2]  # Remove '_T'
@@ -817,9 +870,7 @@ class CompositionMixin:
                 u_m_name = f"{prefix}_U_m"
 
             # Check if these variables exist in the problem
-            if (lhs_name not in self.variables or
-                t_bar_name not in self.variables or
-                u_m_name not in self.variables):
+            if lhs_name not in self.variables or t_bar_name not in self.variables or u_m_name not in self.variables:
                 return None
 
             # Get the variable objects
@@ -834,9 +885,10 @@ class CompositionMixin:
 
             # Create constant for 1
             from qnty.core.unit import ureg
+
             one_dimensionless = Dimensionless("one")
             one_dimensionless.value = 1.0
-            one_dimensionless.preferred = ureg.resolve('dimensionless')
+            one_dimensionless.preferred = ureg.resolve("dimensionless")
             one = Constant(one_dimensionless)
 
             # Create expression: 1 - U_m
@@ -856,18 +908,18 @@ class CompositionMixin:
         from ..algebra.nodes import BinaryOperation, Constant
 
         # Check if LHS variable name ends with 't' (like 't', 'header_t', 'branch_t')
-        lhs_name = getattr(equation.lhs, 'name', '')
-        if not (lhs_name == 't' or lhs_name.endswith('_t')):
+        lhs_name = getattr(equation.lhs, "name", "")
+        if not (lhs_name == "t" or lhs_name.endswith("_t")):
             return False
 
         # Check if RHS has the pattern: constant_pressure * constant_diameter / (2 * (...))
         rhs = equation.rhs
-        if not isinstance(rhs, BinaryOperation) or rhs.operator != '/':
+        if not isinstance(rhs, BinaryOperation) or rhs.operator != "/":
             return False
 
         # Check if numerator is pressure * diameter (both constants)
         numerator = rhs.left
-        if not isinstance(numerator, BinaryOperation) or numerator.operator != '*':
+        if not isinstance(numerator, BinaryOperation) or numerator.operator != "*":
             return False
 
         # Check if both operands are constants (pressure and diameter)
@@ -876,46 +928,48 @@ class CompositionMixin:
 
         # Check if denominator is 2 * (...)
         denominator = rhs.right
-        if not isinstance(denominator, BinaryOperation) or denominator.operator != '*':
+        if not isinstance(denominator, BinaryOperation) or denominator.operator != "*":
             return False
 
         # Check if left operand is constant 2
         if not isinstance(denominator.left, Constant):
             return False
 
-        left_val = getattr(denominator.left.value, 'value', denominator.left.value)
-        return abs(left_val - 2.0) < 1e-10
+        left_val = getattr(denominator.left.value, "value", denominator.left.value)
+        if isinstance(left_val, int | float):
+            return abs(left_val - 2.0) < 1e-10
+        return False
 
     def _reconstruct_pressure_thickness_pattern(self, equation):
         """Reconstruct pressure design thickness equation with variable references."""
         try:
             from ..algebra import equation as create_equation
-            from ..algebra.nodes import VariableReference, BinaryOperation, Constant
+            from ..algebra.nodes import BinaryOperation, Constant, VariableReference
 
             # Get the LHS variable name (t, header_t, branch_t, etc.)
-            lhs_name = getattr(equation.lhs, 'name', '')
+            lhs_name = getattr(equation.lhs, "name", "")
 
             # Determine the corresponding variable names
-            if lhs_name == 't':
-                p_name = 'P'
-                d_name = 'D'
-                s_name = 'S'
-                e_name = 'E'
-                w_name = 'W'
-                y_name = 'Y'
-            elif lhs_name.endswith('_t'):
+            if lhs_name == "t":
+                p_name = "P"
+                d_name = "D"
+                s_name = "S"
+                e_name = "E"
+                w_name = "W"
+                y_name = "Y"
+            elif lhs_name.endswith("_t"):
                 prefix = lhs_name[:-2]  # Remove '_t'
-                p_name = f'{prefix}_P'
-                d_name = f'{prefix}_D'
-                s_name = f'{prefix}_S'
-                e_name = f'{prefix}_E'
-                w_name = f'{prefix}_W'
-                y_name = f'{prefix}_Y'
+                p_name = f"{prefix}_P"
+                d_name = f"{prefix}_D"
+                s_name = f"{prefix}_S"
+                e_name = f"{prefix}_E"
+                w_name = f"{prefix}_W"
+                y_name = f"{prefix}_Y"
             else:
                 return None
 
             # Find the variables
-            t_var = self.variables.get(lhs_name.replace('_', '', 1) if lhs_name.startswith('_') else lhs_name)
+            t_var = self.variables.get(lhs_name.replace("_", "", 1) if lhs_name.startswith("_") else lhs_name)
             p_var = self.variables.get(p_name)
             d_var = self.variables.get(d_name)
             s_var = self.variables.get(s_name)
@@ -925,6 +979,15 @@ class CompositionMixin:
 
             if not all([t_var, p_var, d_var, s_var, e_var, w_var, y_var]):
                 return None
+
+            # Type assertions for static type checking
+            assert t_var is not None
+            assert p_var is not None
+            assert d_var is not None
+            assert s_var is not None
+            assert e_var is not None
+            assert w_var is not None
+            assert y_var is not None
 
             # Create variable references
             t_ref = VariableReference(t_var)
@@ -937,6 +1000,7 @@ class CompositionMixin:
 
             # Create constant for 2
             from qnty.core.quantity_catalog import Dimensionless
+
             two_dimensionless = Dimensionless("two")
             two_dimensionless.value = 2.0
             two = Constant(two_dimensionless)
@@ -999,8 +1063,8 @@ class CompositionMixin:
 
     def _reconstruct_variable_sharing_pattern(self, equation):
         """Reconstruct variable sharing equations to use the correct system variable."""
-        from ..algebra.nodes import VariableReference
         from ..algebra.equation import Equation
+        from ..algebra.nodes import VariableReference
 
         try:
             # Get the base variable name (without sub-problem suffix)
@@ -1010,11 +1074,8 @@ class CompositionMixin:
             # Find the correct system variable from our instance variables
             # Look for a variable with the same base name but without sub-problem indicators
             system_var = None
-            for var_name, var in self.variables.items():
-                if (hasattr(var, "name") and
-                    var.name == base_name and
-                    "Header" not in var.name and
-                    "Branch" not in var.name):
+            for _, var in self.variables.items():
+                if hasattr(var, "name") and var.name == base_name and "Header" not in var.name and "Branch" not in var.name:
                     system_var = var
                     break
 
@@ -1046,8 +1107,8 @@ class CompositionMixin:
         Example:
             self.replace_sub_variables(P, [header.P, branch.P])
         """
-        from ..algebra.nodes import VariableReference
         from ..algebra.equation import Equation
+        from ..algebra.nodes import VariableReference
 
         # Use the system variable directly - the composition system should ensure
         # the right variable is passed in from the class-level _variable_sharing
@@ -1071,8 +1132,8 @@ class CompositionMixin:
 
     def _fix_equation_variable_references(self, equation):
         """Fix variable references in equations to use canonical variables from self.variables."""
-        from ..algebra.nodes import VariableReference
         from ..algebra.equation import Equation
+        from ..algebra.nodes import VariableReference
 
         try:
             new_lhs = equation.lhs
@@ -1083,8 +1144,7 @@ class CompositionMixin:
             if isinstance(equation.lhs, VariableReference):
                 lhs_var = equation.lhs.variable
                 for canonical_var in self.variables.values():
-                    if (hasattr(lhs_var, 'name') and hasattr(canonical_var, 'name') and
-                        lhs_var.name == canonical_var.name and id(lhs_var) != id(canonical_var)):
+                    if hasattr(lhs_var, "name") and hasattr(canonical_var, "name") and lhs_var.name == canonical_var.name and id(lhs_var) != id(canonical_var):
                         new_lhs = VariableReference(canonical_var)
                         changed = True
                         break
@@ -1093,8 +1153,7 @@ class CompositionMixin:
             if isinstance(equation.rhs, VariableReference):
                 rhs_var = equation.rhs.variable
                 for canonical_var in self.variables.values():
-                    if (hasattr(rhs_var, 'name') and hasattr(canonical_var, 'name') and
-                        rhs_var.name == canonical_var.name and id(rhs_var) != id(canonical_var)):
+                    if hasattr(rhs_var, "name") and hasattr(canonical_var, "name") and rhs_var.name == canonical_var.name and id(rhs_var) != id(canonical_var):
                         new_rhs = VariableReference(canonical_var)
                         changed = True
                         break
@@ -1110,20 +1169,17 @@ class CompositionMixin:
 
     def _process_variable_sharing(self):
         """Process the _variable_sharing class attribute to set up variable sharing automatically."""
-        if not hasattr(self.__class__, '_variable_sharing'):
+        if not hasattr(self.__class__, "_variable_sharing"):
             return
 
-        sharing_config = getattr(self.__class__, '_variable_sharing')
+        sharing_config = getattr(self.__class__, "_variable_sharing")  # noqa: B009
         for system_var, sub_vars in sharing_config:
             # Variables are already actual object references, no need to resolve paths
             self.replace_sub_variables(system_var, sub_vars)
 
-
     def _canonicalize_all_equation_variables(self):
         """Replace all variable references in equations with canonical ones from self.variables."""
-        from ..algebra.nodes import VariableReference
         from ..algebra.equation import Equation
-
 
         for i, equation in enumerate(self.equations):
             new_lhs = self._canonicalize_expression(equation.lhs)
@@ -1140,17 +1196,14 @@ class CompositionMixin:
 
         # First, enforce the sharing equations
         for equation in self.equations:
-            if 'shared' in equation.name:
+            if "shared" in equation.name:
                 # Check if this is a simple sharing equation: var1 = var2
-                if (isinstance(equation.lhs, VariableReference) and
-                    isinstance(equation.rhs, VariableReference)):
-
+                if isinstance(equation.lhs, VariableReference) and isinstance(equation.rhs, VariableReference):
                     lhs_var = equation.lhs.variable
                     rhs_var = equation.rhs.variable
 
                     # If RHS has value but LHS doesn't, copy RHS to LHS
-                    if (hasattr(rhs_var, 'value') and rhs_var.value is not None and
-                        hasattr(lhs_var, 'value')):
+                    if hasattr(rhs_var, "value") and rhs_var.value is not None and hasattr(lhs_var, "value"):
                         if lhs_var.value != rhs_var.value:
                             lhs_var.value = rhs_var.value
                             sharing_enforced = True
@@ -1164,11 +1217,11 @@ class CompositionMixin:
         # For sub-problems, recalculate key equations like t = (P * D) / (2 * (S * E * W + P * Y))
 
         # Recalculate header.t
-        if hasattr(self, 'header') and hasattr(self.header, 'P') and self.header.P.value is not None:
+        if hasattr(self, "header") and hasattr(self.header, "P") and self.header.P.value is not None:
             self._recalculate_thickness_equation(self.header)
 
         # Recalculate branch.t
-        if hasattr(self, 'branch') and hasattr(self.branch, 'P') and self.branch.P.value is not None:
+        if hasattr(self, "branch") and hasattr(self.branch, "P") and self.branch.P.value is not None:
             self._recalculate_thickness_equation(self.branch)
 
         # After updating thickness values, recalculate area equations that depend on them
@@ -1195,7 +1248,7 @@ class CompositionMixin:
                 sub_problem.t.value = new_t
                 print(f"  Updated t: {old_t} -> {new_t}")
             else:
-                print(f"  Skipping - missing values")
+                print("  Skipping - missing values")
 
         except (AttributeError, TypeError, ZeroDivisionError) as e:
             print(f"  ERROR in thickness calculation: {e}")
@@ -1208,8 +1261,7 @@ class CompositionMixin:
 
             # First, recalculate d_1 which depends on updated branch properties
             # d_1 = (branch.D - 2 * (branch.T - branch.c)) / sin(beta)
-            if (hasattr(self, 'd_1') and hasattr(self, 'branch') and
-                hasattr(self.branch, 'D') and hasattr(self.branch, 'T') and hasattr(self.branch, 'c') and hasattr(self, 'beta')):
+            if hasattr(self, "d_1") and hasattr(self, "branch") and hasattr(self.branch, "D") and hasattr(self.branch, "T") and hasattr(self.branch, "c") and hasattr(self, "beta"):
                 branch_D = self.branch.D.value
                 branch_T = self.branch.T.value
                 branch_c = self.branch.c.value
@@ -1219,16 +1271,23 @@ class CompositionMixin:
                     old_d_1 = self.d_1.value
                     new_d_1 = (branch_D - 2 * (branch_T - branch_c)) / math.sin(beta)
                     self.d_1.value = new_d_1
-                    print(f"DEBUG: Recalculating d_1")
+                    print("DEBUG: Recalculating d_1")
                     print(f"  branch.D={branch_D}, branch.T={branch_T}, branch.c={branch_c}, beta={beta}")
                     print(f"  sin(beta)={math.sin(beta)}")
                     print(f"  Updated d_1: {old_d_1} -> {new_d_1}")
 
             # Now recalculate d_2 which depends on updated d_1
             # d_2 = max(d_1, (branch.T - branch.c) + (header.T - header.c) + d_1 / 2)
-            if (hasattr(self, 'd_2') and hasattr(self, 'd_1') and hasattr(self, 'branch') and hasattr(self, 'header') and
-                hasattr(self.branch, 'T') and hasattr(self.branch, 'c') and
-                hasattr(self.header, 'T') and hasattr(self.header, 'c')):
+            if (
+                hasattr(self, "d_2")
+                and hasattr(self, "d_1")
+                and hasattr(self, "branch")
+                and hasattr(self, "header")
+                and hasattr(self.branch, "T")
+                and hasattr(self.branch, "c")
+                and hasattr(self.header, "T")
+                and hasattr(self.header, "c")
+            ):
                 d_1 = self.d_1.value
                 branch_T = self.branch.T.value
                 branch_c = self.branch.c.value
@@ -1240,20 +1299,18 @@ class CompositionMixin:
                     alternative = (branch_T - branch_c) + (header_T - header_c) + d_1 / 2
                     new_d_2 = max(d_1, alternative)
                     self.d_2.value = new_d_2
-                    print(f"DEBUG: Recalculating d_2")
+                    print("DEBUG: Recalculating d_2")
                     print(f"  d_1={d_1}, alternative={(branch_T - branch_c) + (header_T - header_c) + d_1 / 2}")
                     print(f"  max({d_1}, {alternative}) = {new_d_2}")
                     print(f"  Updated d_2: {old_d_2} -> {new_d_2}")
 
             # A_1 equation: A_1 = header.t * d_1 * (2 - sin(beta))
-            if (hasattr(self, 'header') and hasattr(self.header, 't') and
-                hasattr(self, 'd_1') and hasattr(self, 'beta') and hasattr(self, 'A_1')):
-
+            if hasattr(self, "header") and hasattr(self.header, "t") and hasattr(self, "d_1") and hasattr(self, "beta") and hasattr(self, "A_1"):
                 header_t = self.header.t.value
                 d_1 = self.d_1.value
                 beta = self.beta.value  # in radians
 
-                print(f"DEBUG: Recalculating A_1")
+                print("DEBUG: Recalculating A_1")
                 print(f"  header.t={header_t}, d_1={d_1}, beta={beta}")
 
                 if all(v is not None for v in [header_t, d_1, beta]):
@@ -1264,17 +1321,22 @@ class CompositionMixin:
                     print(f"  Updated A_1: {old_A_1} -> {new_A_1}")
 
             # A_2 equation: A_2 = (2 * d_2 - d_1) * (header.T - header.t - header.c)
-            if (hasattr(self, 'A_2') and hasattr(self, 'd_2') and hasattr(self, 'd_1') and
-                hasattr(self, 'header') and hasattr(self.header, 'T') and
-                hasattr(self.header, 't') and hasattr(self.header, 'c')):
-
+            if (
+                hasattr(self, "A_2")
+                and hasattr(self, "d_2")
+                and hasattr(self, "d_1")
+                and hasattr(self, "header")
+                and hasattr(self.header, "T")
+                and hasattr(self.header, "t")
+                and hasattr(self.header, "c")
+            ):
                 d_2 = self.d_2.value
                 d_1 = self.d_1.value
                 header_T = self.header.T.value
                 header_t = self.header.t.value
                 header_c = self.header.c.value
 
-                print(f"DEBUG: Recalculating A_2")
+                print("DEBUG: Recalculating A_2")
                 print(f"  d_2={d_2}, d_1={d_1}, header.T={header_T}, header.t={header_t}, header.c={header_c}")
 
                 if all(v is not None for v in [d_2, d_1, header_T, header_t, header_c]):
@@ -1284,11 +1346,18 @@ class CompositionMixin:
                     print(f"  Updated A_2: {old_A_2} -> {new_A_2}")
 
             # A_3 equation: A_3 = (2 * L_4 * (branch.T - branch.t - branch.c) / sin(beta)) * min(1, branch.S / header.S)
-            if (hasattr(self, 'A_3') and hasattr(self, 'L_4') and hasattr(self, 'beta') and
-                hasattr(self, 'branch') and hasattr(self.branch, 'T') and
-                hasattr(self.branch, 't') and hasattr(self.branch, 'c') and
-                hasattr(self.branch, 'S') and hasattr(self, 'header') and hasattr(self.header, 'S')):
-
+            if (
+                hasattr(self, "A_3")
+                and hasattr(self, "L_4")
+                and hasattr(self, "beta")
+                and hasattr(self, "branch")
+                and hasattr(self.branch, "T")
+                and hasattr(self.branch, "t")
+                and hasattr(self.branch, "c")
+                and hasattr(self.branch, "S")
+                and hasattr(self, "header")
+                and hasattr(self.header, "S")
+            ):
                 L_4 = self.L_4.value
                 branch_T = self.branch.T.value
                 branch_t = self.branch.t.value
@@ -1297,12 +1366,13 @@ class CompositionMixin:
                 header_S = self.header.S.value
                 beta = self.beta.value
 
-                print(f"DEBUG: Recalculating A_3")
+                print("DEBUG: Recalculating A_3")
                 print(f"  L_4={L_4}, branch.T={branch_T}, branch.t={branch_t}, branch.c={branch_c}")
                 print(f"  branch.S={branch_S}, header.S={header_S}, beta={beta}")
 
                 if all(v is not None for v in [L_4, branch_T, branch_t, branch_c, branch_S, header_S, beta]):
                     import math
+
                     sin_beta = math.sin(beta)
                     min_ratio = min(1.0, branch_S / header_S)
                     old_A_3 = self.A_3.value
@@ -1314,11 +1384,11 @@ class CompositionMixin:
             self._recalculate_weld_areas()
 
             # A_4 equation: A_4 = A_r + A_w
-            if (hasattr(self, 'A_4') and hasattr(self, 'A_r') and hasattr(self, 'A_w')):
+            if hasattr(self, "A_4") and hasattr(self, "A_r") and hasattr(self, "A_w"):
                 A_r = self.A_r.value
                 A_w = self.A_w.value
 
-                print(f"DEBUG: Recalculating A_4")
+                print("DEBUG: Recalculating A_4")
                 print(f"  A_r={A_r}, A_w={A_w}")
 
                 if all(v is not None for v in [A_r, A_w]):
@@ -1333,13 +1403,11 @@ class CompositionMixin:
 
     def _recalculate_weld_areas(self):
         """Manually recalculate weld area equations after sharing enforcement."""
-        import math
 
         try:
             # First, recalculate weld throat calculations
             # t_c_b = min(0.7 * branch.T_bar, t_c_max)
-            if (hasattr(self, 't_c_b') and hasattr(self, 'branch') and
-                hasattr(self.branch, 'T_bar') and hasattr(self, 't_c_max')):
+            if hasattr(self, "t_c_b") and hasattr(self, "branch") and hasattr(self.branch, "T_bar") and hasattr(self, "t_c_max"):
                 branch_T_bar = self.branch.T_bar.value
                 t_c_max = self.t_c_max.value
 
@@ -1347,24 +1415,23 @@ class CompositionMixin:
                     old_t_c_b = self.t_c_b.value
                     new_t_c_b = min(0.7 * branch_T_bar, t_c_max)
                     self.t_c_b.value = new_t_c_b
-                    print(f"DEBUG: Recalculating t_c_b")
+                    print("DEBUG: Recalculating t_c_b")
                     print(f"  branch.T_bar={branch_T_bar}, t_c_max={t_c_max}")
                     print(f"  Updated t_c_b: {old_t_c_b} -> {new_t_c_b}")
 
             # t_c_r = 0.5 * T_bar_r
-            if (hasattr(self, 't_c_r') and hasattr(self, 'T_bar_r')):
+            if hasattr(self, "t_c_r") and hasattr(self, "T_bar_r"):
                 T_bar_r = self.T_bar_r.value
                 if T_bar_r is not None:
                     old_t_c_r = self.t_c_r.value
                     new_t_c_r = 0.5 * T_bar_r
                     self.t_c_r.value = new_t_c_r
-                    print(f"DEBUG: Recalculating t_c_r")
+                    print("DEBUG: Recalculating t_c_r")
                     print(f"  T_bar_r={T_bar_r}")
                     print(f"  Updated t_c_r: {old_t_c_r} -> {new_t_c_r}")
 
             # A_w_b equation: complex conditional based on T_r
-            if (hasattr(self, 'A_w_b') and hasattr(self, 'T_r') and hasattr(self, 'L_4') and
-                hasattr(self, 't_c_b') and hasattr(self, 'z_b')):
+            if hasattr(self, "A_w_b") and hasattr(self, "T_r") and hasattr(self, "L_4") and hasattr(self, "t_c_b") and hasattr(self, "z_b"):
                 T_r = self.T_r.value
                 L_4 = self.L_4.value
                 t_c_b = self.t_c_b.value
@@ -1377,24 +1444,23 @@ class CompositionMixin:
                     if T_r <= 0:
                         # First condition: T_r <= 0
                         max_val = max(t_c_b / 0.707, z_b)
-                        new_A_w_b = 2 * 0.5 * (max_val ** 2)
+                        new_A_w_b = 2 * 0.5 * (max_val**2)
                     elif T_r <= L_4:
                         # Second condition: 0 < T_r <= L_4
                         max_val = max(t_c_b / 0.707, z_b)
-                        new_A_w_b = 2 * 0.5 * (max_val ** 2)
+                        new_A_w_b = 2 * 0.5 * (max_val**2)
                     else:
                         # Third condition: T_r > L_4
                         new_A_w_b = 0
 
                     self.A_w_b.value = new_A_w_b
-                    print(f"DEBUG: Recalculating A_w_b")
+                    print("DEBUG: Recalculating A_w_b")
                     print(f"  T_r={T_r}, L_4={L_4}, t_c_b={t_c_b}, z_b={z_b}")
-                    print(f"  max(t_c_b/0.707, z_b) = max({t_c_b/0.707}, {z_b}) = {max(t_c_b / 0.707, z_b)}")
+                    print(f"  max(t_c_b/0.707, z_b) = max({t_c_b / 0.707}, {z_b}) = {max(t_c_b / 0.707, z_b)}")
                     print(f"  Updated A_w_b: {old_A_w_b} -> {new_A_w_b}")
 
             # A_w_r equation: conditional based on D_r and d_2
-            if (hasattr(self, 'A_w_r') and hasattr(self, 'D_r') and hasattr(self, 'd_2') and
-                hasattr(self, 't_c_r') and hasattr(self, 'z_r')):
+            if hasattr(self, "A_w_r") and hasattr(self, "D_r") and hasattr(self, "d_2") and hasattr(self, "t_c_r") and hasattr(self, "z_r"):
                 D_r = self.D_r.value
                 d_2 = self.d_2.value
                 t_c_r = self.t_c_r.value
@@ -1408,19 +1474,19 @@ class CompositionMixin:
                     threshold = 2 * d_2 - max_val
 
                     if D_r <= threshold:
-                        new_A_w_r = 2 * 0.5 * (max_val ** 2)
+                        new_A_w_r = 2 * 0.5 * (max_val**2)
                     else:
                         new_A_w_r = 0
 
                     self.A_w_r.value = new_A_w_r
-                    print(f"DEBUG: Recalculating A_w_r")
+                    print("DEBUG: Recalculating A_w_r")
                     print(f"  D_r={D_r}, d_2={d_2}, t_c_r={t_c_r}, z_r={z_r}")
-                    print(f"  threshold = 2*{d_2} - max({t_c_r/0.707}, {z_r}) = {threshold}")
+                    print(f"  threshold = 2*{d_2} - max({t_c_r / 0.707}, {z_r}) = {threshold}")
                     print(f"  D_r <= threshold? {D_r} <= {threshold} = {D_r <= threshold}")
                     print(f"  Updated A_w_r: {old_A_w_r} -> {new_A_w_r}")
 
             # A_w = A_w_b + A_w_r
-            if (hasattr(self, 'A_w') and hasattr(self, 'A_w_b') and hasattr(self, 'A_w_r')):
+            if hasattr(self, "A_w") and hasattr(self, "A_w_b") and hasattr(self, "A_w_r"):
                 A_w_b = self.A_w_b.value
                 A_w_r = self.A_w_r.value
 
@@ -1428,7 +1494,7 @@ class CompositionMixin:
                     old_A_w = self.A_w.value
                     new_A_w = A_w_b + A_w_r
                     self.A_w.value = new_A_w
-                    print(f"DEBUG: Recalculating A_w")
+                    print("DEBUG: Recalculating A_w")
                     print(f"  A_w_b={A_w_b}, A_w_r={A_w_r}")
                     print(f"  Updated A_w: {old_A_w} -> {new_A_w}")
 
@@ -1436,37 +1502,41 @@ class CompositionMixin:
             print(f"  ERROR in weld area calculation: {e}")
             pass
 
-
-
     def _canonicalize_expression(self, expr):
         """Replace variable references in an expression with canonical ones."""
         from ..algebra.nodes import VariableReference
 
         if isinstance(expr, VariableReference):
             var = expr.variable
-            if hasattr(var, 'name'):
+            if hasattr(var, "name"):
                 # First priority: Check if there's a system-level variable with this name
                 # Look for system attributes that match this variable name
                 for attr_name in dir(self):
-                    if not attr_name.startswith('_'):  # Skip private attributes
+                    if not attr_name.startswith("_"):  # Skip private attributes
                         attr_value = getattr(self, attr_name, None)
-                        if (attr_value and hasattr(attr_value, 'name') and
-                            hasattr(attr_value, 'value') and  # Must be a variable
-                            attr_value.name == var.name):
+                        if (
+                            attr_value
+                            and hasattr(attr_value, "name")
+                            and hasattr(attr_value, "value")  # Must be a variable
+                            and attr_value.name == var.name
+                        ):
                             if id(var) != id(attr_value):
                                 return VariableReference(attr_value)
                             else:
                                 return expr
 
                         # Also check sub-problem attributes (e.g., header.P, branch.P)
-                        if hasattr(attr_value, '__dict__'):  # Check if it's an object with attributes
+                        if hasattr(attr_value, "__dict__"):  # Check if it's an object with attributes
                             for sub_attr_name in dir(attr_value):
-                                if not sub_attr_name.startswith('_'):
+                                if not sub_attr_name.startswith("_"):
                                     try:
                                         sub_attr_value = getattr(attr_value, sub_attr_name, None)
-                                        if (sub_attr_value and hasattr(sub_attr_value, 'name') and
-                                            hasattr(sub_attr_value, 'value') and  # Must be a variable
-                                            sub_attr_value.name == var.name):
+                                        if (
+                                            sub_attr_value
+                                            and hasattr(sub_attr_value, "name")
+                                            and hasattr(sub_attr_value, "value")  # Must be a variable
+                                            and sub_attr_value.name == var.name
+                                        ):
                                             if id(var) != id(sub_attr_value):
                                                 return VariableReference(sub_attr_value)
                                             else:
@@ -1475,8 +1545,8 @@ class CompositionMixin:
                                         continue
 
                 # Second priority: Find canonical variable with same name in self.variables
-                for symbol, canonical_var in self.variables.items():
-                    if (hasattr(canonical_var, 'name') and canonical_var.name == var.name):
+                for _, canonical_var in self.variables.items():
+                    if hasattr(canonical_var, "name") and canonical_var.name == var.name:
                         if id(var) != id(canonical_var):
                             return VariableReference(canonical_var)
                         else:
@@ -1487,7 +1557,6 @@ class CompositionMixin:
 
     def _update_all_equation_variable_references(self):
         """Update all equations to use canonical variable references from self.variables."""
-        from ..algebra.nodes import VariableReference
         from ..algebra.equation import Equation
 
         updated_equations = []
@@ -1512,7 +1581,6 @@ class CompositionMixin:
         This handles equations that were created with concrete values during class definition
         but should use variable references in the current context.
         """
-        from ..algebra.nodes import VariableReference, Constant, BinaryOperation
         from ..algebra.equation import Equation
 
         for i, equation in enumerate(self.equations):
@@ -1524,26 +1592,27 @@ class CompositionMixin:
 
     def _retrofit_expression(self, expr):
         """Recursively retrofit constants to variables in an expression."""
-        from ..algebra.nodes import VariableReference, Constant, BinaryOperation
+        from ..algebra.nodes import BinaryOperation, Constant, VariableReference
 
         if isinstance(expr, Constant):
             # Check if this constant value matches any variable in our context
             constant_value = expr.value
-            if hasattr(constant_value, 'value'):
+            if hasattr(constant_value, "value"):
                 # Handle Quantity constants - check all variables for matches
                 # First, find all matching variables to avoid ambiguous substitutions
                 matching_variables = []
                 for symbol, var in self.variables.items():
-                    if (hasattr(var, 'value') and var.value is not None):
+                    if hasattr(var, "value") and var.value is not None:
                         # Check dimensional compatibility first
-                        if hasattr(var, 'dim') and hasattr(constant_value, 'dim'):
+                        if hasattr(var, "dim") and hasattr(constant_value, "dim"):
                             if var.dim != constant_value.dim:
                                 continue  # Skip if dimensions don't match
 
                         # Check if values are approximately equal
                         try:
-                            if abs(var.value - constant_value.value) < 1e-10:
-                                matching_variables.append((symbol, var))
+                            if var.value is not None and constant_value.value is not None and isinstance(var.value, int | float) and isinstance(constant_value.value, int | float):
+                                if abs(var.value - constant_value.value) < 1e-10:
+                                    matching_variables.append((symbol, var))
                         except (TypeError, ValueError):
                             continue
 
@@ -1554,12 +1623,22 @@ class CompositionMixin:
                 elif len(matching_variables) > 1:
                     # For small/zero values, avoid ambiguous substitution as these are commonly shared
                     # For non-zero values, use the first match (existing behavior) as they're less likely coincidental
-                    constant_abs_value = abs(constant_value.value) if hasattr(constant_value, 'value') else abs(constant_value)
+                    if hasattr(constant_value, "value") and constant_value.value is not None:
+                        if isinstance(constant_value.value, int | float):
+                            constant_abs_value = abs(constant_value.value)
+                        else:
+                            constant_abs_value = 0
+                    elif isinstance(constant_value, int | float):
+                        constant_abs_value = abs(constant_value)
+                    else:
+                        constant_abs_value = 0
                     if constant_abs_value < 1e-6:  # Small values including zero
                         # Log the ambiguity for debugging
                         var_names = [f"{symbol}({var.name})" for symbol, var in matching_variables]
-                        if hasattr(self, 'logger'):
-                            self.logger.debug(f"Ambiguous constant retrofitting: {constant_value} matches multiple variables: {var_names}. Skipping substitution to avoid incorrect variable selection.")
+                        if hasattr(self, "logger"):
+                            self.logger.debug(
+                                f"Ambiguous constant retrofitting: {constant_value} matches multiple variables: {var_names}. Skipping substitution to avoid incorrect variable selection."
+                            )
                         # Don't substitute - keep the constant as-is
                     else:
                         # For non-zero values, use the first match (original behavior)
@@ -1586,9 +1665,9 @@ class CompositionMixin:
         if isinstance(expr, VariableReference):
             # Find the canonical variable from self.variables
             var = expr.variable
-            if hasattr(var, 'name'):
-                for name, canonical_var in self.variables.items():
-                    if hasattr(canonical_var, 'name') and canonical_var.name == var.name:
+            if hasattr(var, "name"):
+                for _, canonical_var in self.variables.items():
+                    if hasattr(canonical_var, "name") and canonical_var.name == var.name:
                         if id(canonical_var) != id(var):
                             return VariableReference(canonical_var)
             return expr
@@ -1624,6 +1703,7 @@ class CompositionMixin:
 
     def _create_namespace_object(self, sub_problem, namespace: str, proxy_configs: dict):
         """Create namespace object with all sub-problem variables."""
+
         # Create a proper namespace class that can handle attribute updates
         class SubProblemNamespace:
             def __init__(self, parent_problem, namespace_prefix):
@@ -1632,13 +1712,13 @@ class CompositionMixin:
 
             def __setattr__(self, name, value):
                 # Handle internal attributes normally
-                if name.startswith('_'):
+                if name.startswith("_"):
                     super().__setattr__(name, value)
                     return
 
                 # For variable attributes, update both the namespace and main problem
                 namespaced_name = f"{self._namespace_prefix}_{name}"
-                if hasattr(self, '_parent_problem') and namespaced_name in self._parent_problem.variables:
+                if hasattr(self, "_parent_problem") and namespaced_name in self._parent_problem.variables:
                     # Update the main problem's variables dictionary
                     self._parent_problem.variables[namespaced_name] = value
 
@@ -1663,6 +1743,7 @@ class CompositionMixin:
 
     def _create_namespace_variable_wrapper(self, variable, namespace_obj, var_symbol):
         """Create a wrapper that intercepts .set() calls and updates the namespace."""
+
         class NamespaceVariableWrapper(ArithmeticOperationsMixin):
             def __init__(self, wrapped_var, namespace, symbol):
                 self._wrapped_var = wrapped_var
@@ -1671,19 +1752,19 @@ class CompositionMixin:
 
             def __getattr__(self, name):
                 # Handle special attributes to avoid recursion issues during copy
-                if name in ('__setstate__', '__getstate__', '__reduce__', '__reduce_ex__', '__copy__', '__deepcopy__'):
+                if name in ("__setstate__", "__getstate__", "__reduce__", "__reduce_ex__", "__copy__", "__deepcopy__"):
                     # These are copy-related methods that might not exist - raise AttributeError
                     raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
 
                 # For all other attributes, delegate to the wrapped variable
                 try:
                     return getattr(self._wrapped_var, name)
-                except AttributeError:
-                    raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
+                except AttributeError as err:
+                    raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'") from err
 
             def __setattr__(self, name, value):
                 # Handle wrapper's own attributes
-                if name.startswith('_'):
+                if name.startswith("_"):
                     super().__setattr__(name, value)
                 else:
                     # Delegate to wrapped variable (this fixes the solver issue)
@@ -1730,7 +1811,6 @@ class CompositionMixin:
                 if self._should_skip_subproblem_equation(equation, namespace):
                     continue
 
-
                 # Check if equation is already namespaced (contains namespace prefix)
                 equation_str = str(equation)
                 if f"{namespace}_" in equation_str:
@@ -1743,7 +1823,6 @@ class CompositionMixin:
                         self.add_equation(namespaced_equation)
             except Exception as e:
                 self.logger.debug(f"Failed to namespace equation from {namespace}: {e}")
-
 
     def _create_namespaced_variable(self, var: FieldQuantity, var_symbol: str, namespace: str, proxy_configs: dict) -> FieldQuantity:
         """Create a namespaced variable with proper configuration."""
@@ -1805,6 +1884,7 @@ class CompositionMixin:
         if namespaced_lhs and namespaced_rhs:
             # Use the new API equation() function instead of .equals() method
             from ..algebra import equation as create_equation
+
             namespaced_equation_name = f"{equation.name}_namespaced"
             return create_equation(namespaced_lhs, namespaced_rhs, namespaced_equation_name)
         return None
@@ -1843,7 +1923,7 @@ class CompositionMixin:
         constant_value = expr.value
 
         # Check each original symbol to see if any variable matches this constant value
-        for original_symbol, namespaced_symbol in symbol_mapping.items():
+        for _, namespaced_symbol in symbol_mapping.items():
             if namespaced_symbol not in self.variables:
                 continue
 
@@ -1853,6 +1933,7 @@ class CompositionMixin:
             if self._values_match(constant_value, namespaced_var):
                 # Replace the constant with a variable reference
                 from ..algebra.nodes import VariableReference
+
                 return VariableReference(namespaced_var)
 
         # No matching variable found, return the constant unchanged
@@ -1860,13 +1941,13 @@ class CompositionMixin:
 
     def _values_match(self, constant_value, variable) -> bool:
         """Check if a constant value matches a variable's value, handling units and tolerance."""
-        if not hasattr(variable, 'value') or variable.value is None:
+        if not hasattr(variable, "value") or variable.value is None:
             return False
 
         try:
             # For quantity objects, compare the SI values
-            if hasattr(constant_value, 'value') and hasattr(variable, 'value'):
-                const_si_value = getattr(constant_value, 'value', constant_value)
+            if hasattr(constant_value, "value") and hasattr(variable, "value"):
+                const_si_value = getattr(constant_value, "value", constant_value)
                 var_si_value = variable.value
             else:
                 const_si_value = constant_value
