@@ -13,13 +13,15 @@ from .dimension import Dimension
 # =======================
 # Utilities
 # =======================
-_NORM_DELETE_MAP = str.maketrans({
-    " ": None,
-    "_": None,
-    "-": None,
-    "^": None,
-    "·": None,
-})
+_NORM_DELETE_MAP = str.maketrans(
+    {
+        " ": None,
+        "_": None,
+        "-": None,
+        "^": None,
+        "·": None,
+    }
+)
 
 
 def _norm(s: str) -> str:
@@ -30,6 +32,7 @@ def _norm(s: str) -> str:
     Optimized with translate to reduce function calls.
     """
     return s.strip().casefold().translate(_NORM_DELETE_MAP)
+
 
 # Cached version for performance-critical paths
 @functools.lru_cache(maxsize=512)
@@ -117,15 +120,16 @@ class UnitRegistry:
     supports interning by symbol (first-wins), and exposes dynamic attribute access
     for ergonomics (ureg.mps2).
     """
+
     __slots__ = (
-        "_by_name",            # normalized name/alias -> Unit
-        "_by_symbol",          # symbol -> Unit (last-wins, useful for tooling)
-        "_intern_by_symbol",   # symbol -> Unit (first-wins, for interning)
-        "_by_dim",             # dim -> {normalized name/alias -> Unit}
-        "_preferred",          # dim -> Unit
-        "_attr_exposed",       # names/aliases exposed via __getattr__/__dir__
-        "_sealed",             # registry sealed flag
-        "_resolve_cache",      # cache for resolve() method (performance optimization)
+        "_by_name",  # normalized name/alias -> Unit
+        "_by_symbol",  # symbol -> Unit (last-wins, useful for tooling)
+        "_intern_by_symbol",  # symbol -> Unit (first-wins, for interning)
+        "_by_dim",  # dim -> {normalized name/alias -> Unit}
+        "_preferred",  # dim -> Unit
+        "_attr_exposed",  # names/aliases exposed via __getattr__/__dir__
+        "_sealed",  # registry sealed flag
+        "_resolve_cache",  # cache for resolve() method (performance optimization)
     )
 
     def __init__(self) -> None:
@@ -181,7 +185,7 @@ class UnitRegistry:
 
         # symbol maps
         self._intern_by_symbol.setdefault(unit.symbol, unit)  # first-wins
-        self._by_symbol[unit.symbol] = unit                   # last-wins
+        self._by_symbol[unit.symbol] = unit  # last-wins
 
         if prefer:
             self._preferred[unit.dim] = unit
@@ -432,14 +436,8 @@ def attach_composed(
 
     if existing is not None:
         # Ensure the existing unit matches the composed one (same dimension and factor)
-        if (
-            existing.dim != unit.dim
-            or existing.si_factor != unit.si_factor
-            or existing.si_offset != unit.si_offset
-        ):
-            raise ValueError(
-                f"attach_composed: name '{name}' already registered for a different unit"
-            )
+        if existing.dim != unit.dim or existing.si_factor != unit.si_factor or existing.si_offset != unit.si_offset:
+            raise ValueError(f"attach_composed: name '{name}' already registered for a different unit")
 
         # Add any new aliases (including provided symbol or the composed symbol)
         extra_aliases = set(aliases)
@@ -597,7 +595,6 @@ class UnitNamespaceMeta(type):
 
 class UnitNamespace(metaclass=UnitNamespaceMeta):
     __slots__ = ()
-
 
 
 # =======================

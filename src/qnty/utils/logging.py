@@ -32,5 +32,3 @@ def get_logger(name: str = "qnty") -> logging.Logger:
 
     _LOGGER = logger
     return logger
-
-

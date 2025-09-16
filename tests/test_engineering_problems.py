@@ -73,10 +73,7 @@ PROBLEMS = {
     },
     "problem_3": {
         "description": "Example problem 3",
-        "variables": {
-            "COP": (qc.Dimensionless, None, None),
-            "Q_heating": (qc.PowerThermalDuty, 85000, u.british_thermal_unit_per_hour),
-            "W_compressor": (qc.PowerThermalDuty, 5900, u.W)},
+        "variables": {"COP": (qc.Dimensionless, None, None), "Q_heating": (qc.PowerThermalDuty, 85000, u.british_thermal_unit_per_hour), "W_compressor": (qc.PowerThermalDuty, 5900, u.W)},
         "equations": [("COP", "Q_heating / W_compressor")],
         "expected": {"COP": (4.2, u.dimensionless), "Q_heating": (85000, u.british_thermal_unit_per_hour), "W_compressor": (5900, u.W)},
         "debug": {
@@ -89,36 +86,27 @@ PROBLEMS = {
         "variables": {
             "R_e": (qc.Dimensionless, None, None),
             "rho": (qc.MassDensity, None, None),
-            "v": (qc.SpecificVolume, 14, u.ft3/u.lbm),
+            "v": (qc.SpecificVolume, 14, u.ft3 / u.lbm),
             "V": (qc.VelocityLinear, None, None),
             "D": (qc.Length, 4.026, u.inch),
-            "mu": (qc.ViscosityDynamic, 8042000, u.lbm/(u.ft*u.second)),
-            "m_dot": (qc.MassFlowRate, 100, u.lbm/u.hour),
+            "mu": (qc.ViscosityDynamic, 8.42e-6, u.lbm / (u.ft * u.second)),
+            "m_dot": (qc.MassFlowRate, 100, u.lbm / u.hour),
             "Q": (qc.VolumetricFlowRate, None, None),
             "A": (qc.Area, None, None),
         },
-        "equations": [
-            ("R_e", "rho * V * D / mu"),
-            ("rho", "1/v"),
-            ("Q", "m_dot / rho"),
-            ("A", "3.14 * (D / 2) ** 2"),
-            ("V", "Q / A")
-        ],
-        "expected" : {
+        "equations": [("R_e", "rho * V * D / mu"), ("rho", "1/v"), ("Q", "m_dot / rho"), ("A", "3.14 * (D / 2) ** 2"), ("V", "Q / A")],
+        "expected": {
             "R_e": (12522, u.dimensionless),
             "rho": (0.0714, u.pound_mass_per_cubic_foot),
-            "v": (14, u.ft2/u.lbm),
+            "v": (14, u.ft3 / u.lbm),
             "V": (4.4, u.feet_per_second),
             "D": (4.026, u.inch),
-            "mu": (8042000, u.pound_mass/(u.foot* u.second)),
-            "m_dot": (100, u.lbm/u.hour),
-            "Q": (0.3888, u.ft3/u.second),
-            "A": (0.08836, u.square_feet)
+            "mu": (8.42e-6, u.pound_mass / (u.foot * u.second)),
+            "m_dot": (100, u.lbm / u.hour),
+            "Q": (0.3888, u.ft3 / u.second),
+            "A": (0.08836, u.square_feet),
         },
-        "debug": {
-            "print_results": True,
-            "assert_values": True
-        },
+        "debug": {"print_results": False, "assert_values": True},
     },
 }
 
@@ -165,51 +153,73 @@ def create_variables(var_specs):
 
 def solve_with_problem_class(variables, equation_specs):
     """Solve using Problem class approach."""
-    # Instead of using the Problem class, just solve equations sequentially
-    # like the other methods. This avoids the symbolic expression issues.
-    from qnty.algebra import solve
+    from qnty.problems.solving import DependencyAwareSolver
 
-    for target_var, expression in equation_specs:
-        # Evaluate the expression with current variable values
-        evaluator = SafeExpressionEvaluator(variables)
-        rhs = evaluator.safe_eval(expression)
-        # Use the solve function to assign the result
-        solve(variables[target_var], rhs)
+    # Use dependency-aware solver for complex problems
+    solver = DependencyAwareSolver(variables)
+    success = solver.solve_equations_with_dependencies(equation_specs)
+
+    if not success:
+        # Fall back to original approach for simpler cases
+        from qnty.algebra import solve
+
+        for target_var, expression in equation_specs:
+            try:
+                evaluator = SafeExpressionEvaluator(variables)
+                rhs = evaluator.safe_eval(expression)
+                solve(variables[target_var], rhs)
+            except ValueError:
+                # Skip equations that can't be evaluated yet
+                pass
 
     return variables
 
 
 def solve_with_equations(variables, equation_specs):
     """Solve using equation method approach."""
-    from qnty.algebra import solve  # Import locally to avoid affecting other tests
+    from qnty.problems.solving import DependencyAwareSolver
 
-    # Create and solve equations in order using new solve() function
-    for target_var, expression in equation_specs:
-        lhs = variables[target_var]
-        evaluator = SafeExpressionEvaluator(variables)
-        rhs = evaluator.safe_eval(expression)
-        # Use the new solve() function from algebra module
-        success = solve(lhs, rhs)
-        if not success:
-            # If solve() fails, try alternative approaches
-            pass
+    # Use dependency-aware solver for complex problems
+    solver = DependencyAwareSolver(variables)
+    success = solver.solve_equations_with_dependencies(equation_specs)
+
+    if not success:
+        # Fall back to original approach for simpler cases
+        from qnty.algebra import solve
+
+        for target_var, expression in equation_specs:
+            try:
+                lhs = variables[target_var]
+                evaluator = SafeExpressionEvaluator(variables)
+                rhs = evaluator.safe_eval(expression)
+                solve(lhs, rhs)
+            except ValueError:
+                # Skip equations that can't be evaluated yet
+                pass
 
     return variables
 
 
 def solve_with_solve_from(variables, equation_specs):
     """Solve using solve() function approach (updated from solve_from)."""
-    from qnty.algebra import solve  # Import locally to avoid affecting other tests
+    from qnty.problems.solving import DependencyAwareSolver
 
-    # Execute solve() function in order
-    for target_var, expression in equation_specs:
-        evaluator = SafeExpressionEvaluator(variables)
-        rhs = evaluator.safe_eval(expression)
-        # Use the new solve() function from algebra module
-        success = solve(variables[target_var], rhs)
-        if not success:
-            # If solve() fails, try alternative approaches
-            pass
+    # Use dependency-aware solver for complex problems
+    solver = DependencyAwareSolver(variables)
+    success = solver.solve_equations_with_dependencies(equation_specs)
+
+    if not success:
+        # Fall back to original approach for simpler cases
+        from qnty.algebra import solve
+
+        for target_var, expression in equation_specs:
+            try:
+                evaluator = SafeExpressionEvaluator(variables)
+                rhs = evaluator.safe_eval(expression)
+                solve(variables[target_var], rhs)
+            except ValueError:
+                # Skip equations that can't be evaluated yet
+                pass
 
     return variables
 

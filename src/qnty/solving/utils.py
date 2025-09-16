@@ -61,9 +61,10 @@ class SolvingUtils:
         preferred_unit = variable.preferred
         if preferred_unit is None:
             from ..core.unit import ureg
+
             preferred_unit = ureg.si_unit_for(variable.dim)
             if preferred_unit is None:
-                var_name = variable_name or getattr(variable, 'name', 'unknown')
+                var_name = variable_name or getattr(variable, "name", "unknown")
                 raise ValueError(f"Cannot determine unit for variable {var_name}")
         return preferred_unit
 
@@ -81,7 +82,7 @@ class SolvingUtils:
             ValueError: If value cannot be converted to float
         """
         try:
-            if hasattr(value, 'value') and value.value is not None:
+            if hasattr(value, "value") and value.value is not None:
                 return float(value.value)
             elif isinstance(value, int | float):
                 return float(value)

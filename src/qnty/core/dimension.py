@@ -20,11 +20,14 @@ N_BASE: Final[int] = 7  # number of base axes (e.g., L,M,T,I,Θ,N,J)
 DimVec = tuple[int, ...]
 PRIMES: Final[tuple[int, ...]] = (2, 3, 5, 7, 11, 13, 17)  # extend if >10 bases
 
+
 def vadd(a: DimVec, b: DimVec) -> DimVec:
     return tuple(a[i] + b[i] for i in range(len(a)))
 
+
 def vsub(a: DimVec, b: DimVec) -> DimVec:
     return tuple(a[i] - b[i] for i in range(len(a)))
+
 
 def vpow(a: DimVec, k: int) -> DimVec:
     if k == 0:
@@ -35,14 +38,17 @@ def vpow(a: DimVec, k: int) -> DimVec:
         return tuple(-x for x in a)
     return tuple(x * k for x in a)
 
+
 def zeros(n: int = N_BASE) -> DimVec:
     return (0,) * n
+
 
 class DimBackend(Protocol):
     def encode(self, v: DimVec) -> tuple[int, ...]: ...
     def mul(self, a: tuple[int, ...], b: tuple[int, ...]) -> tuple[int, ...]: ...
     def div(self, a: tuple[int, ...], b: tuple[int, ...]) -> tuple[int, ...]: ...
     def pow(self, a: tuple[int, ...], k: int) -> tuple[int, ...]: ...
+
 
 # Cached GCD function
 @functools.lru_cache(maxsize=256)
@@ -72,6 +78,7 @@ def _cached_gcd(a: int, b: int) -> int:
 
     return a << shift
 
+
 class PrimeIntBackend:
     """Compact prime code: (num:int, den:int) with GCD reduction and caching."""
 
@@ -93,7 +100,7 @@ class PrimeIntBackend:
                 continue
             p = PRIMES[i]
             if e > 0:
-                num *= p ** e
+                num *= p**e
             else:
                 den *= p ** (-e)
 
@@ -181,9 +188,11 @@ class PrimeIntBackend:
 
         return result
 
+
 # --- Tuple backend (direct exponent vectors) ---
 class TupleBackend:
     """Direct exponent vectors with optimizations."""
+
     __slots__ = ()
 
     def encode(self, v: DimVec) -> DimVec:
@@ -204,9 +213,11 @@ class TupleBackend:
             return tuple(-x for x in a)
         return tuple(x * k for x in a)
 
+
 # Use optimized PrimeIntBackend by default
 BACKEND: DimBackend = PrimeIntBackend()
 # BACKEND: DimBackend = TupleBackend()
+
 
 # =======================
 # Dimension (frozen) with caching
@@ -219,13 +230,13 @@ class Dimension:
     def __mul__(self, o: Dimension) -> Dimension:
         # Check cache first
         cache_key = (self.code, o.code)
-        if hasattr(Dimension, '_mul_cache') and cache_key in Dimension._mul_cache:
+        if hasattr(Dimension, "_mul_cache") and cache_key in Dimension._mul_cache:
             return Dimension._mul_cache[cache_key]
 
         result = Dimension(vadd(self.exps, o.exps), BACKEND.mul(self.code, o.code))
 
         # Cache result (limit cache size)
-        if not hasattr(Dimension, '_mul_cache'):
+        if not hasattr(Dimension, "_mul_cache"):
             Dimension._mul_cache = {}
         if len(Dimension._mul_cache) < 256:
             Dimension._mul_cache[cache_key] = result
@@ -235,13 +246,13 @@ class Dimension:
     def __truediv__(self, o: Dimension) -> Dimension:
         # Check cache first
         cache_key = (self.code, o.code)
-        if hasattr(Dimension, '_div_cache') and cache_key in Dimension._div_cache:
+        if hasattr(Dimension, "_div_cache") and cache_key in Dimension._div_cache:
             return Dimension._div_cache[cache_key]
 
         result = Dimension(vsub(self.exps, o.exps), BACKEND.div(self.code, o.code))
 
         # Cache result (limit cache size)
-        if not hasattr(Dimension, '_div_cache'):
+        if not hasattr(Dimension, "_div_cache"):
             Dimension._div_cache = {}
         if len(Dimension._div_cache) < 256:
             Dimension._div_cache[cache_key] = result
@@ -257,13 +268,13 @@ class Dimension:
 
         # Check cache
         cache_key = (self.code, k)
-        if hasattr(Dimension, '_pow_cache') and cache_key in Dimension._pow_cache:
+        if hasattr(Dimension, "_pow_cache") and cache_key in Dimension._pow_cache:
             return Dimension._pow_cache[cache_key]
 
         result = Dimension(vpow(self.exps, k), BACKEND.pow(self.code, k))
 
         # Cache result (limit cache size)
-        if not hasattr(Dimension, '_pow_cache'):
+        if not hasattr(Dimension, "_pow_cache"):
             Dimension._pow_cache = {}
         if len(Dimension._pow_cache) < 256:
             Dimension._pow_cache[cache_key] = result
@@ -295,6 +306,7 @@ class Dimension:
         # If you treat radians as a distinct base (Theta index)
         return self.exps == (0, 0, 0, 0, 1, 0, 0)
 
+
 # Initialize class-level caches for Dimension
 Dimension._mul_cache = {}  # type: ignore[attr-defined]
 Dimension._div_cache = {}  # type: ignore[attr-defined]
@@ -302,6 +314,7 @@ Dimension._pow_cache = {}  # type: ignore[attr-defined]
 
 # Pre-create dimensionless constant
 _DIMENSIONLESS = Dimension(zeros(), BACKEND.encode(zeros()))
+
 
 # =======================
 # Global namespace (sealed) + registry + helpers
@@ -316,6 +329,7 @@ class Dimensions:
         if self.__sealed:
             raise AttributeError("dim is sealed; cannot modify.")
         object.__setattr__(self, k, v)
+
 
 # =======================
 # Optional: declarative catalog metaclass (frozen)
@@ -360,14 +374,17 @@ class DimensionNamespaceMeta(type):
         cls.__setattr__ = _blocked_setattr  # type: ignore[attr-defined]
         return cls
 
+
 class DimensionNamespace(metaclass=DimensionNamespaceMeta):
     __slots__ = ()
+
 
 dim = Dimensions()
 
 # registries
 _dim_registry: dict[str, Dimension] = {}  # canonical names -> Dimension
 _dim_aliases: dict[str, str] = {}  # alias -> canonical name
+
 
 def _caller_var_name(fn: str) -> str:
     """Best-effort LHS variable name from the calling source line."""
@@ -384,6 +401,7 @@ def _caller_var_name(fn: str) -> str:
     if not m:
         raise RuntimeError("Could not auto-detect variable name for registration")
     return m.group(1)
+
 
 def add_dimension(exps: DimVec, *, name: str | None = None, aliases: Iterable[str] = ()) -> Dimension:
     """Create a base Dimension from raw exponents, register on `dim`, support aliases."""
@@ -402,6 +420,7 @@ def add_dimension(exps: DimVec, *, name: str | None = None, aliases: Iterable[st
         _dim_aliases[a] = name
     return d
 
+
 def add_derived(d: Dimension, *, name: str | None = None, aliases: Iterable[str] = ()) -> Dimension:
     """Register an already-composed Dimension (using *, /, **)."""
     if name is None:
@@ -417,13 +436,16 @@ def add_derived(d: Dimension, *, name: str | None = None, aliases: Iterable[str]
         _dim_aliases[a] = name
     return d
 
+
 def seal_dimensions() -> None:
     """Freeze the dim namespace to prevent accidental modification."""
     object.__setattr__(dim, "_Dimensions__sealed", True)
 
+
 def dimensions_map() -> MappingProxyType[str, Dimension]:
     """Immutable view of canonical dimension registry (excludes aliases)."""
     return MappingProxyType(_dim_registry)
+
 
 def write_dimensions_stub(path: str = "dimensions.pyi") -> None:
     """Generate a .pyi stub so tools know all dim.<name> and alias attributes."""
@@ -438,6 +460,7 @@ def write_dimensions_stub(path: str = "dimensions.pyi") -> None:
             f.write(f"    {alias}: Final[Dimension]  # alias for {canonical}\n")
         f.write("\n")
         f.write("dim: Final[Dimensions]\n")
+
 
 # Seal once finished defining everything in this module
 def seal_dimensions_now() -> None:

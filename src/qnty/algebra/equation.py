@@ -463,6 +463,7 @@ class Equation:
     def _get_effective_unit(self, quantity):
         """Get the effective unit for a quantity, handling both old and new Quantity objects."""
         from ..utils.shared_utilities import ValidationHelper
+
         return ValidationHelper.get_effective_unit(quantity)
 
     def _are_dimensionally_compatible(self, lhs_value, rhs_value) -> bool:

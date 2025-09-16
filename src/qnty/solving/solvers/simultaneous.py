@@ -448,4 +448,3 @@ class SimultaneousEquationSolver(BaseSolver):
             test_var = FieldQuantity(name=f"test_{var_name}", dim=original_var.dim, value=test_value, preferred=preferred_unit)
             test_var._symbol = var_name
             test_vars[var_name] = test_var
-

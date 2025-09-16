@@ -104,9 +104,10 @@ class BaseSolver(ABC):
         preferred_unit = variable.preferred
         if preferred_unit is None:
             from ...core.unit import ureg
+
             preferred_unit = ureg.si_unit_for(variable.dim)
             if preferred_unit is None:
-                var_name = variable_name or getattr(variable, 'name', 'unknown')
+                var_name = variable_name or getattr(variable, "name", "unknown")
                 raise ValueError(f"Cannot determine unit for variable {var_name}")
         return preferred_unit
 
@@ -121,14 +122,7 @@ class BaseSolver(ABC):
         Returns:
             SolveResult indicating failure
         """
-        return SolveResult(
-            variables=variables,
-            steps=self.steps,
-            success=False,
-            message=message,
-            method=self.__class__.__name__,
-            iterations=iterations
-        )
+        return SolveResult(variables=variables, steps=self.steps, success=False, message=message, method=self.__class__.__name__, iterations=iterations)
 
     def _extract_numerical_value(self, value: Any) -> float:
         """Extract numerical value from various quantity types.
@@ -143,7 +137,7 @@ class BaseSolver(ABC):
             ValueError: If value cannot be converted to float
         """
         try:
-            if hasattr(value, 'value') and value.value is not None:
+            if hasattr(value, "value") and value.value is not None:
                 return float(value.value)
             elif isinstance(value, int | float):
                 return float(value)

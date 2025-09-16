@@ -788,6 +788,7 @@ class _DimensionUtils:
     def get_effective_unit(quantity):
         """Get the effective unit for a quantity, handling both old and new Quantity objects."""
         from ..utils.shared_utilities import ValidationHelper
+
         return ValidationHelper.get_effective_unit(quantity)
 
 
@@ -852,6 +853,7 @@ def wrap_operand(operand: "OperandType") -> Expression:
 
     # Handle DelayedExpression and DelayedFunction objects that weren't resolved
     from ..utils.shared_utilities import ValidationHelper
+
     if ValidationHelper.safe_get_callable(operand, "resolve"):
         # This is a DelayedExpression or DelayedFunction - try to resolve it with empty context
         # This is a fallback; ideally these should be resolved earlier

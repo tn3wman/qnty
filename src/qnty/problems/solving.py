@@ -215,6 +215,90 @@ class EquationReconstructionError(Exception):
 # ========== SHARED UTILITIES ==========
 
 
+class DependencyAwareSolver:
+    """Solver that handles equations with dependency ordering."""
+
+    def __init__(self, variables: VariableDict):
+        """Initialize the dependency-aware solver.
+
+        Args:
+            variables: Dictionary of variables available for solving
+        """
+        self.variables = variables
+
+    def can_evaluate_expression(self, expression_str: str) -> bool:
+        """Check if an expression can be evaluated with current known variables.
+
+        Args:
+            expression_str: The expression string to check
+
+        Returns:
+            True if all variables in the expression have known values
+        """
+        try:
+            # Extract variables from the expression
+            var_names = PatternMatchingHelper.extract_variables_from_expression_string(expression_str)
+
+            # Check if all variables have known values
+            for var_name in var_names:
+                if var_name in self.variables:
+                    var = self.variables[var_name]
+                    if hasattr(var, "value") and var.value is None:
+                        return False
+                else:
+                    return False  # Variable not found
+
+            return True
+        except Exception:
+            return False
+
+    def solve_equations_with_dependencies(self, equation_specs: list[tuple[str, str]]) -> bool:
+        """Solve equations in dependency order.
+
+        Args:
+            equation_specs: List of (target_var, expression) tuples
+
+        Returns:
+            True if all equations were solved successfully
+        """
+        from qnty.algebra import solve
+
+        # Track which equations have been solved
+        remaining_equations = list(equation_specs)
+        max_iterations = len(equation_specs) * 2  # Prevent infinite loops
+        iterations = 0
+
+        while remaining_equations and iterations < max_iterations:
+            iterations += 1
+            progress_made = False
+
+            # Try to solve equations that can be evaluated now
+            for i, (target_var, expression) in enumerate(remaining_equations):
+                if self.can_evaluate_expression(expression):
+                    try:
+                        # Evaluate the expression
+                        evaluator = SafeExpressionEvaluator(self.variables)
+                        rhs = evaluator.safe_eval(expression)
+
+                        # Solve for the target variable
+                        success = solve(self.variables[target_var], rhs)
+                        if success:
+                            # Remove this equation from remaining list
+                            remaining_equations.pop(i)
+                            progress_made = True
+                            break
+
+                    except Exception:
+                        # Skip this equation for now
+                        continue
+
+            # If no progress was made, we might have unsolvable dependencies
+            if not progress_made:
+                break
+
+        return len(remaining_equations) == 0
+
+
 class ExpressionEvaluationMixin:
     """Mixin providing shared expression evaluation utilities."""
 

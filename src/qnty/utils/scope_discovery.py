@@ -410,10 +410,12 @@ def _register_scope_cache():
     """Register scope discovery cache clearing with the unified cache manager."""
     try:
         from .caching.manager import get_cache_manager
+
         get_cache_manager().register_external_cache("scope_discovery", ScopeDiscoveryService.clear_cache)
     except ImportError:
         # Cache manager not available - proceed without registration
         pass
+
 
 # Auto-register on module import
 _register_scope_cache()

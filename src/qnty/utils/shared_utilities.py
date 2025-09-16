@@ -172,7 +172,6 @@ class VariableReferenceHelper:
 # ========== EXPRESSION TREE UTILITIES ==========
 
 
-
 # ========== NAMESPACE UTILITIES ==========
 
 
