@@ -1,8 +1,8 @@
 from typing import Any
 
-from ...equations import Equation
-from ...expressions import ConditionalExpression, VariableReference
-from ...quantities.field_qnty import FieldQnty
+from ...algebra import Equation
+from ...algebra import ConditionalExpression, VariableReference
+from ...core.quantity import FieldQuantity
 from ..order import Order
 from .base import BaseSolver, SolveResult
 
@@ -30,7 +30,7 @@ class IterativeSolver(BaseSolver):
         del equations, analysis
         return bool(unknowns and dependency_graph)
 
-    def solve(self, equations: list[Equation], variables: dict[str, FieldQnty], dependency_graph: Order | None = None, max_iterations: int = 100, tolerance: float = 1e-10) -> SolveResult:
+    def solve(self, equations: list[Equation], variables: dict[str, FieldQuantity], dependency_graph: Order | None = None, max_iterations: int = 100, tolerance: float = 1e-10) -> SolveResult:
         """
         Solve the system iteratively using dependency graph.
         """
@@ -88,7 +88,7 @@ class IterativeSolver(BaseSolver):
 
         return SolveResult(variables=working_vars, steps=self.steps, success=success, message=message, method="IterativeSolver", iterations=iteration + 1)
 
-    def _find_directly_solvable_variables(self, equations: list[Equation], working_vars: dict[str, FieldQnty], known_vars: set[str]) -> list[str]:
+    def _find_directly_solvable_variables(self, equations: list[Equation], working_vars: dict[str, FieldQuantity], known_vars: set[str]) -> list[str]:
         """Find variables that can be directly solved from equations."""
         solvable = []
         remaining_unknowns = [v for v in self._get_unknown_variables(working_vars) if v not in known_vars]
@@ -101,7 +101,7 @@ class IterativeSolver(BaseSolver):
 
         return solvable
 
-    def _solve_conditional_cycles(self, equations: list[Equation], working_vars: dict[str, FieldQnty], known_vars: set[str]) -> list[str]:
+    def _solve_conditional_cycles(self, equations: list[Equation], working_vars: dict[str, FieldQuantity], known_vars: set[str]) -> list[str]:
         """Attempt to solve conditional cycles in the equation system."""
         remaining_unknowns = [v for v in self._get_unknown_variables(working_vars) if v not in known_vars]
 
@@ -128,7 +128,7 @@ class IterativeSolver(BaseSolver):
         return isinstance(equation.lhs, VariableReference) and equation.lhs.name == var_symbol and isinstance(equation.rhs, ConditionalExpression)
 
     def _solve_single_variable(
-        self, var_symbol: str, equations: list[Equation], working_vars: dict[str, FieldQnty], known_vars: set[str], dependency_graph: Order, iteration: int, tolerance: float
+        self, var_symbol: str, equations: list[Equation], working_vars: dict[str, FieldQuantity], known_vars: set[str], dependency_graph: Order, iteration: int, tolerance: float
     ) -> bool:
         """Solve for a single variable and update the system state."""
         # Find equation that can solve for this variable

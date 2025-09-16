@@ -2,488 +2,124 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Project Overview
+## Commands
 
-Qnty (formerly OptiUnit) is a high-performance unit system library for Python that provides dimensional safety and fast unit conversions for engineering calculations. The library is designed around type safety and performance optimization using compile-time dimensional analysis.
+### Development Commands
+```bash
+# Install dependencies
+pip install -r requirements.txt
 
-### User-Focused API
+# Run all tests
+pytest
 
-The qnty library provides a simple, focused API for users:
+# Run specific test files
+pytest tests/test_dimension.py -v
+pytest tests/test_unit.py -v
+pytest tests/test_quantity.py -v
 
-1. **100+ Variable Types** (from `variables.py`): Length, Pressure, Temperature, Mass, Volume, Area, Force, etc.
-2. **Problem Class** (from `problem/`): Engineering problem container with automatic equation solving
-3. **Validation System** (`validate` from `validation.py`): Code compliance and engineering checks
-4. **Expression Methods**: Built into variables for mathematical operations (e.g., `pressure.geq(limit)`, `length * width`)
+# Run single test
+pytest tests/test_dimension.py::test_dimension_multiplication -v
 
-All other modules and classes are internal implementation details that users should not access directly.
+# Run benchmarks
+python tests/test_benchmark.py
 
-## Common Development Commands
+# Lint and format code
+ruff check src/ tests/
+ruff format src/ tests/
+```
 
-### Dependencies and Environment
-
-- Install dependencies: `pip install -r requirements.txt` or `poetry install`
-- Run all tests: `pytest`
-- Run specific test file: `pytest tests/test_dimension.py -v`
-- Run single test: `pytest tests/test_dimension.py::TestDimensionSignatureCreation::test_basic_dimension_creation -v`
-- Run benchmarks: `python tests/test_benchmark.py`
-
-### Code Quality
-
-- Lint code: `ruff check src/ tests/` (configured with line length of 200 characters in pyproject.toml)
-- Format code: `ruff format src/ tests/`  
-- Type checking: `mypy src/qnty/` (if mypy is installed)
-- The project uses Poetry for dependency management but also supports pip
-
-### Package Management
-
-- Package name: `qnty` (renamed from optiunit)
-- Source code located in `src/qnty/`
-- Uses Poetry build system with `poetry-core>=1.0.0`
-- Supports Python 3.11+ (up to 3.13)
-
-### Release Management
-
-- **Automated Release**: `python release.py` - Increments patch version, creates git tag, and pushes to origin
-- **Version Control**: Uses semantic versioning with Poetry version management
-- **Current Version**: 0.0.9 (as of latest update)
+### Testing Guidelines
+- Follow strict test authoring rules in `tests/CLAUDE.md`
+- Use hard-coded expected values (never compute from function under test)
+- Use `pytest.mark.parametrize` for table-driven tests
+- Include boundary cases and error conditions
+- Use `pytest.approx` for floating-point comparisons with tight tolerances
 
 ## Architecture Overview
 
-### Clean Dependency Hierarchy
-
-The codebase has been restructured with a modular architecture:
-
-```python
-dimensions → units → quantities → expressions → equations → problems → solving
-```
-
-This ensures clean dependencies and enables proper type checking throughout the system.
-
-### Consolidated Architecture
-
-The system uses a field-based architecture with consolidated components:
+Qnty is a high-performance unit system library for Python with dimensional safety. The architecture follows a strict dependency hierarchy to prevent circular imports:
 
 ```
-FieldQnty (Base quantity class)
-└── Domain Variables (Length, Pressure, etc.) - 100+ classes via field_vars
-
-Key Components:
-├── quantities/ (FieldQnty, base_qnty, field_setter, field_vars)
-├── dimensions/ (Dimensional analysis system)
-├── units/ (Unit definitions and registry)
-├── expressions/ (Mathematical expression system)
-├── equations/ (Equation handling)
-├── problems/ (Problem container with solving)
-└── solving/ (Solvers and solution management)
+dimension → unit → quantity → quantity_meta → catalogs → algebra → problems → solving
 ```
 
-### Modular Architecture
+### Core Module Structure (`src/qnty/core/`)
+- **`dimension.py`**: Prime number encoding for dimensional analysis using base dimensions (L,M,T,A,Θ,N,J)
+- **`unit.py`**: Unit registry with pre-computed conversion tables and SI prefix system
+- **`quantity.py`**: Unified Quantity class combining concrete values and named placeholders
+- **`quantity_meta.py`**: Metaclass system for automatic quantity class generation via `@quantity` decorator
+- **Generated Catalogs**: `dimension_catalog.py`, `unit_catalog.py`, `quantity_catalog.py` (auto-generated - do not edit)
 
-The system uses a layered approach with separate concerns:
+### Key Components
+- **Algebra System** (`src/qnty/algebra/`): Expression trees, equations, mathematical functions
+- **Problem System** (`src/qnty/problems/`): Engineering problem class with equation solving
+- **Solving System** (`src/qnty/solving/`): Iterative and simultaneous equation solvers
 
-- **Dimensions Layer** (`dimensions/`): Dimensional analysis system and signature handling
-- **Units Layer** (`units/`): Unit definitions, registry, and constants
-- **Quantities Layer** (`quantities/`): Field-based quantity system with FieldQnty core
-- **Expressions Layer** (`expressions/`): Mathematical expression system with nodes and functions
-- **Equations Layer** (`equations/`): Equation handling and system solving
-- **Problems Layer** (`problems/`): Consolidated problem system with solving capabilities
-- **Solving Layer** (`solving/`): Advanced solvers and solution management
-- **Code Generation** (`codegen/`): Automated code generation system for all generated files
-- **Utils Layer** (`utils/`): Caching, error handling, and logging utilities
-- **Extensions** (`extensions/`): Integration, plotting, and reporting extensions
+### Performance Features
+- Prime number encoding for O(1) dimensional compatibility checks
+- Pre-computed conversion tables via `si_factor`
+- `__slots__` used throughout for memory efficiency
+- Cached dimension signatures and SI factors
+- 18.9x average speedup over Pint library
 
-### Core Components
+## Development Patterns
 
-**Dimensional System (`dimensions/`)**
+### Import Guidelines
+- Use `TYPE_CHECKING` guards for type-only imports to avoid circular dependencies
+- Follow strict dependency hierarchy (never import from higher-level modules)
+- Import order: `dimension → unit → quantity → quantity_meta → catalogs`
 
-- `DimensionSignature`: Immutable dimension signatures with high-performance dimensional compatibility checks
-- `BaseDimension`: Core dimensional constants and operations
-- Enables efficient dimensional analysis throughout the system
+### Code Generation
+Three files are auto-generated from `codegen/generators/`:
+- `src/qnty/core/dimension_catalog.py`
+- `src/qnty/core/unit_catalog.py`
+- `src/qnty/core/quantity_catalog.py`
 
-**Units System (`units/`)**
-
-- `UnitDefinition`: Immutable dataclass for unit definitions with SI conversion factors
-- `UnitConstant`: Type-safe unit constants that provide performance optimizations
-- `registry`: Central registry with pre-computed conversion tables for fast unit conversions
-- Comprehensive SI prefix system for automatic unit generation
-
-**Field-Based Quantity System (`quantities/`)**
-
-- `FieldQnty` (`quantities/field_qnty.py`): Core field-based quantity class optimized for engineering calculations
-- `BaseQnty` (`quantities/base_qnty.py`): Base quantity functionality and operations
-- `FieldSetter` (`quantities/field_setter.py`): Field-based setter system for type-safe value assignment
-- **Variable Management**: Streamlined variable state management and operations
-- **Field Variables** (`quantities/field_vars.py`): 100+ domain-specific variable types
-
-**Domain-Specific Variables (`quantities/field_vars.py`)**
-
-- 100+ engineering variable types including `Length`, `Pressure`, `Temperature`, `Mass`, `Volume`, etc.
-- All extend `FieldQnty` with complete mathematical operation and expression capabilities
-- Field-based architecture for consistent behavior and performance optimization
-- **Comparison Methods**: Full support for comparison operators and conditional logic
-- **Type Safety**: Dimensional validation and unit compatibility checking
-
-**Mathematical Expression System (`expressions/`)**
-
-- `Expression`: Abstract base class for mathematical expression trees
-- `BinaryOperation`: Unified operation class handling arithmetic (`+`, `-`, `*`, `/`, `**`) and comparison (`<`, `<=`, `>`, `>=`, `==`, `!=`) operators
-- `VariableReference`, `Constant`: Core expression implementations
-- `UnaryFunction`, `ConditionalExpression`: Advanced expression types
-- `wrap_operand()`: Duck-typing utility to convert various types to expressions
-- Comprehensive mathematical function support (sin, cos, tan, sqrt, ln, exp, etc.)
-- **Auto-evaluation**: Expressions automatically evaluate and display results when all variables have known values
-
-**Equation System (`equations/`)**
-
-- `Equation`: Represents mathematical equations (lhs = rhs) with solving capabilities
-- `EquationSystem`: System of equations that can be solved together
-- Variables can participate in mathematical operations, returning expressions
-- Supports equation solving and residual checking for engineering calculations
-- **Auto-solving**: Equations automatically solve and display results when printed and only one unknown variable exists
-
-**Consolidated Problem System (`problems/`)**
-
-The Problem system has been consolidated into focused modules:
-
-- **`problem.py`**: Main Problem class with consolidated functionality combining variable management, equation processing, and solving
-- **`solving.py`**: Solution algorithms and equation reconstruction capabilities  
-- **`composition.py`**: Sub-problem composition and complex problem handling
-- **`validation.py`**: Problem validation and constraint checking
-- **`rules.py`**: Problem-specific rules and constraints management
-
-**Advanced Solving System (`solving/`)**
-
-- **`solvers/`**: Comprehensive solver implementations for different equation types
-- **`order.py`**: Solution ordering and dependency management
-- Core solving infrastructure with performance optimizations
-
-### Key Architecture Patterns
-
-**Clean Import Strategy**: The codebase uses several techniques to avoid circular imports:
-
-- Strict dependency hierarchy: `generated/dimensions → units → quantities → generated → expressions → equations → problem`
-- `TYPE_CHECKING` guards for type-only imports
-- Duck typing with `hasattr()` and `getattr()` checks to avoid importing classes
-- Delayed imports where necessary
-- Strategic use of try/except blocks for safe attribute access
-
-**Public API Design**: The library exposes a focused public API for users:
-
-```python
-# Core variable types (100+ available)
-from qnty import Length, Pressure, Temperature, Mass, Volume, Area, Force, etc.
-
-# Engineering problem system
-from qnty import Problem
-
-# Mathematical expressions
-from qnty import sin, cos, tan, sqrt, ln, log10, exp, abs_expr, min_expr, max_expr, cond_expr
-```
-
-**Restricted User Access**: Users should ONLY access these public components:
-
-- **All variables from `quantities/field_vars.py`**: Length, Pressure, Temperature, etc. (100+ engineering variable types)
-- **Problem class from `problems/`**: Main container for engineering problems with solving capabilities
-- **Mathematical expression functions**: Built-in mathematical operations and functions
-- **Expression methods**: Available through variables (e.g., `length * width`, `pressure.geq(limit)`)
-
-All other classes, modules, and functions are internal implementation details and should not be used directly by users.
-
-**Fluent API Design**: Variables use specialized setters that return the variable itself for method chaining:
-
-```python
-length_var = Length("beam_length")
-length_var.set(100.0).millimeters  # Returns Length instance
-```
-
-**Mathematical Expression Building**: Variables support arithmetic and comparison operations that return expressions:
-
-```python
-# Variables can be combined in mathematical expressions
-T = Length("Wall Thickness", is_known=False)
-T_bar = Length(0.147, "inches", "Nominal Wall Thickness")
-U_m = Dimensionless(0.125, "Mill Undertolerance")
-
-# Create equation: T = T_bar * (1 - U_m)
-equation = T.equals(T_bar * (1 - U_m))
-
-# Auto-solving: equations solve automatically when printed
-print(equation)  # Automatically solves for T and displays result
-
-# Comparison expressions for conditional logic
-constraint = T.geq(minimum_thickness)  # T >= minimum_thickness
-print(constraint)  # Automatically evaluates when variables are known
-```
-
-**Auto-Evaluation System**: The library includes sophisticated auto-evaluation capabilities:
-
-```python
-# Expressions auto-evaluate when all variables have known values
-length = Length(10, "mm", "beam_length") 
-width = Length(5, "mm", "beam_width")
-area_expr = length * width
-print(area_expr)  # Displays: 50.0 mm²
-
-# Equations auto-solve when exactly one variable is unknown
-thickness = Length("t", is_known=False)
-equation = thickness.equals(area_expr / width)
-print(equation)  # Automatically solves and displays: t = 10.0 mm
-```
-
-**Variable Management**: The system provides flexible variable state management:
-
-```python
-# Update variable properties flexibly  
-pressure = Pressure("p")
-pressure.update(value=100, unit="Pa")  # Set value with unit
-pressure.update(is_known=False)        # Mark as unknown
-pressure.update(quantity=other_var.quantity)  # Copy quantity
-
-# Mark variables as known/unknown
-pressure.mark_known()     # Mark as known
-pressure.mark_unknown()   # Mark as unknown
-```
-
-**Type Safety**: The system prevents dimensional errors at the type level:
-
-- `TypeSafeVariable.quantity` is `Optional[FastQuantity]` - always check for None before accessing attributes
-- Specialized variables (Length, Pressure) enforce their expected dimensions
-- Setters validate unit compatibility before assignment
-
-**Performance Optimization**:
-
-- Pre-computed conversion tables to avoid runtime calculations
-- Cached SI factors and dimension signatures for fast operations
-- Prime number encoding for dimensional analysis
-- `__slots__` usage for memory efficiency
-- Fast path optimizations for same-unit operations
-
-### Code Generation System
-
-The project uses a sophisticated code generation pipeline located in `src/qnty/codegen/`:
-
-- **`dimensions_gen.py`**: Generates `dimensions.py` with dimensional constants from parsed unit data
-- **`units_gen.py`**: Generates `units.py` with comprehensive unit class definitions  
-- **`quantities_gen.py`**: Generates `quantities.py` with type-safe variable classes
-- **`setters_gen.py`**: Generates setter classes with unit properties
-- **`stubs_gen.py`**: Generates type stubs for better IDE support
-- **`cli.py`**: Command-line interface that orchestrates the entire generation pipeline
-
-**Key Generation Features:**
-
-- Uses `codegen/generators/data/unit_data.json` as the single source of truth for 800+ engineering units
-- Automatically generates prefixed units (milli-, kilo-, etc.) for applicable base units
-- Maintains dimensional consistency across all generated code
-- Supports both manual edits and regeneration without conflicts
-
-**Running Generation Scripts:**
-
+To modify these files, update generators and run:
 ```bash
-python -m qnty.codegen.cli                # Generate everything
-python -m qnty.codegen.generators.dimensions_gen  # Update dimensions only
-python -m qnty.codegen.generators.units_gen       # Update units only
-python -m qnty.codegen.generators.quantities_gen  # Update quantities only
+python codegen/cli.py
 ```
 
-### CRITICAL: Code Generation Best Practices
-
-**⚠️ NEVER EDIT GENERATED FILES DIRECTLY ⚠️**
-
-Many files in the codebase are auto-generated and contain clear warnings in their headers:
-
+### Quantity Creation Pattern
 ```python
-"""
-Auto-generated by codegen/generators/[generator_name].py
-DO NOT EDIT MANUALLY - changes will be overwritten.
-"""
+from qnty.core.unit_catalog import LengthUnits
+from qnty.core.quantity_meta import quantity
+
+@quantity(LengthUnits)
+class Length:
+    """Length quantity with automatic boilerplate."""
+    pass
 ```
 
-**Key Generated Files:**
-- `src/qnty/quantities/field_vars.py` - 100+ quantity class definitions
-- `src/qnty/quantities/field_setter.py` - Setter classes with unit properties  
-- `src/qnty/dimensions/dimensions.py` - Dimensional constants
-- `src/qnty/units/units.py` - Unit definitions
-
-**Correct Development Process:**
-1. ✅ **Identify the generator**: Look for the generator file mentioned in the header
-2. ✅ **Update the generator**: Make changes to the generator logic
-3. ✅ **Regenerate files**: Run the appropriate codegen command
-4. ✅ **Test the changes**: Verify the generated code works correctly
-
-**Example Fix Process:**
-```bash
-# Problem: set(value, unit) method ignoring unit parameter in field_vars.py
-# ❌ WRONG: Edit field_vars.py directly
-# ✅ CORRECT: Update the generator
-
-# 1. Find the generator
-less src/qnty/quantities/field_vars.py  # Check header comment
-
-# 2. Update the generator logic
-vim codegen/generators/doc_generator.py  # Fix generate_set_method()
-
-# 3. Regenerate the file
-python -m qnty.codegen.cli
-
-# 4. Test the changes
-pytest tests/test_division_fix.py -v
-```
-
-**Common Generator Locations:**
-- `codegen/generators/doc_generator.py` - Generates field_vars.py with quantity classes
-- `codegen/generators/field_setter.py` - Generates setter classes
-- `codegen/generators/dimensions_gen.py` - Generates dimensional constants
-- `codegen/generators/units_gen.py` - Generates unit definitions
-
-This practice ensures all changes are preserved and can be regenerated consistently.
-
-### Critical Type System Updates
-
-Recent architectural improvements include enhanced dimensional signature handling:
-
-- **Mixed Type Signatures**: Dimensional signatures now support `int | float` types for precision in operations like `(Length * Pressure) / Length`
-- **True Division Fix**: Dimensional division now uses `/` instead of `//` to prevent precision loss in compound unit operations
-- **Registry Compatibility**: Updated `HighPerformanceRegistry` to handle mixed-type dimensional signatures
-
-### Key Dependencies
-
-- `numpy>=2.3.2`: Numerical computations  
-- `pytest>=8.4.1`: Testing framework (dev dependency)
-- `ruff>=0.1.0`: Code formatting and linting (dev dependency)
-- `Pint>=0.24.4`: Comparison/benchmarking against established unit library (benchmark dependency)
-
-### Reference Data
-
-- `codegen/generators/data/`: Contains comprehensive unit definition reference data for validation and testing
-- `codegen/generators/data/unit_data.json`: Single source of truth for all unit definitions
-- `codegen/generators/out/`: Generated mapping files for code generation pipeline
-
-## Testing and Benchmarking
-
-The project includes comprehensive test coverage with **146 tests** across 7 test files:
-
-- **Dimension tests**: `test_dimension.py` (50 tests) - Dimensional analysis and signature operations
-- **Equation tests**: `test_equations.py` (15 tests) - Mathematical equations, expressions, and auto-solving
-- **Setter tests**: `test_setters.py` (42 tests) - Fluent API and type safety for variable setters
-- **Prefix tests**: `test_prefixes.py` (13 tests) - SI prefix system and unit generation
-- **Type hinting tests**: `test_type_hinting.py` (1 test) - Type safety and generic type validation
-- **Examples tests**: `test_examples.py` (24 tests) - Comprehensive example validation and integration testing
-- **Benchmarks**: `test_benchmark.py` (1 test) - Performance comparisons against Pint library
-
-### Important Testing Notes
-
-- Always add `assert variable.quantity is not None` before accessing `.value`, `.unit`, `.dimension`, or `._dimension_sig` attributes
-- Use parametrized tests extensively for comprehensive coverage
-- Follow existing test patterns for consistency
-- Tests demonstrate significant performance advantages (18-25x faster than Pint)
-
-## Development Guidelines
-
-### Import Strategy
-
-**User-facing imports** (what users should use):
-
+### Problem Definition Pattern
 ```python
-# All variable types
-from qnty import Length, Pressure, Temperature, Mass, Volume, Area, Force
-# ... and 90+ other variable types
+from qnty import Problem, Length, Pressure
 
-# Engineering problem system
-from qnty import Problem
+class PipeThickness(Problem):
+    # Known parameters
+    pressure = Pressure(150, "psi", "Internal Pressure")
+    diameter = Length(6, "inch", "Pipe Diameter")
 
-# Mathematical expressions
-from qnty import sin, cos, tan, sqrt, ln, log10, exp, abs_expr, min_expr, max_expr, cond_expr
+    # Unknown to solve for
+    thickness = Length("thickness", is_known=False)
+
+    # Engineering equation
+    equation = thickness.equals((pressure * diameter) / (2 * allowable_stress))
 ```
 
-**Internal development** (for library development only):
+## Project Structure
+- **`src/qnty/`**: Main package
+  - `core/`: Foundation (dimensions, units, quantities)
+  - `algebra/`: Mathematical expressions and equations
+  - `problems/`: Engineering problem framework
+  - `solving/`: Equation solving algorithms
+  - `utils/`: Utilities and helpers
+- **`tests/`**: Comprehensive test suite (187 tests)
+- **`examples/`**: Real-world engineering examples
+- **`docs/`**: Documentation files
 
-```python
-# Internal systems - users should NOT import these
-from .quantities.field_qnty import FieldQnty
-from .quantities.base_qnty import BaseQnty
-from .units.registry import UnitDefinition, UnitConstant, registry
-from .expressions.nodes import Expression, wrap_operand
-from .equations.equation import Equation
-from .solving.solvers import SolverManager
-```
-
-**User API Boundaries**: The public API is intentionally minimal to ensure users only need to learn and use the essential components. All other modules contain implementation details that should remain hidden from users.
-
-### Type Safety Best Practices
-
-- Always check `variable.quantity is not None` before accessing quantity attributes
-- Use `getattr(obj, 'attr', default)` for safe attribute access on dynamic objects
-- Use try/except blocks with `setattr()` for safe dynamic attribute assignment
-- Prefer `TYPE_CHECKING` guards for type-only imports
-- Follow the established dependency hierarchy when adding new modules
-- Use `hasattr()` checks before accessing potentially missing attributes
-- The core quantity class is now `FieldQnty` with field-based architecture
-- Variable types extend `FieldQnty` through the field system in `field_vars.py`
-
-### Performance Considerations
-
-- The library achieves 18-25x performance improvements over established libraries
-- Maintain `__slots__` usage for memory efficiency
-- Cache frequently accessed values (SI factors, dimension signatures)
-- Use pre-computed lookup tables where possible
-- Optimize for the common case (same-unit operations, compatible dimensions)
-
-### Critical Development Patterns
-
-**Variable Symbol Management**: Variables need proper symbol assignment for equation solving:
-
-```python
-# Correct: Set symbols explicitly for equation system
-t = Length(0.0, "inch", "Pressure Design Thickness", is_known=False)
-t.symbol = "t"  # Required for equation.solve_for("t", variables)
-```
-
-**Dimensional Signature Precision**: When working with dimensional operations, ensure proper division handling:
-
-- Always use `/` (true division) for dimensional signatures, never `//` (floor division)
-- Mixed `int | float` dimensional signatures are supported for precision in compound operations
-
-**Expression String Representation**: The `BinaryOperation.__str__()` method handles operator precedence carefully:
-
-- Right-associative operations need parentheses when precedence is equal and operator is left-associative (`-`, `/`)
-- This ensures expressions like `(P * D) / (2 * (S * E * W + P * Y))` maintain mathematical correctness
-
-**Unit Registry Type Safety**: When modifying the registry system:
-
-- `_dimension_cache` and `dimensional_groups` must support `dict[int | float, ...]` types
-- This accommodates the mixed-type dimensional signatures from precision fixes
-
-**Auto-Evaluation System**: The expression and equation systems use Python's `inspect` module for automatic evaluation:
-
-- Expressions auto-evaluate when all referenced variables are available in the calling scope
-- Equations auto-solve when exactly one unknown variable exists
-- This eliminates the need for manual variable dictionary creation in most cases
-
-**Comparison Operations**: All comparison operators are handled by `BinaryOperation` instead of a separate class:
-
-- Comparisons return dimensionless quantities (1.0 for True, 0.0 for False)  
-- Unit conversion is automatic for same-dimension comparisons
-- Both method calls (`var.lt(other)`) and operators (`var < other`) are supported
-
-**Variable State Management**: New methods enable flexible variable property updates:
-
-- `update(value=..., unit=..., quantity=..., is_known=...)` for flexible updates
-- `mark_known()` and `mark_unknown()` for state changes
-- All methods support method chaining and return the variable instance
-
-**Problem System Composition**: The refactored Problem system supports complex sub-problem composition:
-
-- **Variable Namespacing**: Sub-problem variables are automatically namespaced (e.g., `header.P` becomes `header_P`)
-- **Expression Namespacing**: All expression types (BinaryOperation, ConditionalExpression, VariableReference) are properly namespaced
-- **ConfigurableVariable**: Proxy variables with arithmetic delegation for composed problems
-- **Type Preservation**: Variable cloning preserves original types using `type(variable)(variable.name)` pattern
-- **Automatic Composite Equations**: Common patterns like `P = min(header.P, branch.P)` are auto-generated
-
-## important-instruction-reminders
-
-Do what has been asked; nothing more, nothing less.
-NEVER create files unless they're absolutely necessary for achieving your goal.
-ALWAYS prefer editing an existing file to creating a new one.
-NEVER proactively create documentation files (*.md) or README files. Only create documentation files if explicitly requested by the User.
-
-IMPORTANT: this context may or may not be relevant to your tasks. You should not respond to this context unless it is highly relevant to your task.
+## Key Files to Understand
+- **Core Architecture**: `src/qnty/core/CLAUDE.md` (detailed core module documentation)
+- **Test Rules**: `tests/CLAUDE.md` (strict test authoring guidelines)
+- **Public API**: `src/qnty/__init__.py` (main exports)
+- **Performance**: `tests/test_benchmark.py` (performance comparisons)

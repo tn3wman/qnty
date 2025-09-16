@@ -27,7 +27,7 @@ from .composition import (
     delayed_min_expr,
     delayed_sin,
 )
-from .problem import EquationValidationError, SolverError, ValidationMixin, VariableNotFoundError
+from .problem import EquationValidationError, SolverError, VariableNotFoundError
 from .problem import Problem as BaseProblem
 from .solving import (
     CompositeExpressionRebuilder,
@@ -35,13 +35,10 @@ from .solving import (
     EquationReconstructionError,
     EquationReconstructor,
     ExpressionParser,
-    MalformedExpressionError,
     NamespaceMapper,
-    NamespaceMappingError,
-    PatternReconstructionError,
+    SafeExpressionEvaluator,
 )
-
-# ValidationMixin is already imported from .problem above
+from .validation import ValidationMixin
 
 # ========== INTEGRATED PROBLEM CLASS ==========
 
@@ -97,6 +94,14 @@ class Problem(BaseProblem, CompositionMixin, metaclass=ProblemMeta):
         # This is handled by the CompositionMixin via _extract_from_class_variables()
         self._extract_from_class_variables()
 
+        # Post-process equations to fix auto-created variable references
+        # This runs after all variables (including namespaced ones) are available
+        self._post_process_equations()
+
+        # Ensure sub-problem equations are integrated
+        # This is a fallback in case the normal integration process failed
+        self._ensure_sub_problem_equations_integrated()
+
 
 # ========== BACKWARD COMPATIBILITY ALIASES ==========
 
@@ -131,6 +136,7 @@ __all__ = [
     "NamespaceMapper",
     "CompositeExpressionRebuilder",
     "DelayedExpressionResolver",
+    "SafeExpressionEvaluator",
     # Exceptions
     "VariableNotFoundError",
     "EquationValidationError",
@@ -139,7 +145,4 @@ __all__ = [
     "SubProblemProxyError",
     "NamespaceError",
     "EquationReconstructionError",
-    "MalformedExpressionError",
-    "NamespaceMappingError",
-    "PatternReconstructionError",
 ]

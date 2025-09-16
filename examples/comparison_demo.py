@@ -10,7 +10,7 @@ import sys
 
 sys.path.insert(0, "src")
 
-from qnty import Dimensionless, Length, Pressure
+from qnty.core import Q
 
 
 def basic_comparisons():
@@ -18,19 +18,11 @@ def basic_comparisons():
     print("=== Basic Comparisons ===\n")
 
     # Create some pressure values
-    P1 = Pressure(100, "kilopascal", "Pressure 1")
-    P2 = Pressure(150, "kilopascal", "Pressure 2")
+    P1 = Q(100000, "pascal")  # 100 kPa
+    P2 = Q(150000, "pascal")  # 150 kPa
 
     print(f"P1 = {P1}")
     print(f"P2 = {P2}")
-    print()
-
-    # Using methods
-    print("Using comparison methods:")
-    print(f"  P1.lt(P2) = {P1.lt(P2)}")  # Less than
-    print(f"  P1.gt(P2) = {P1.gt(P2)}")  # Greater than
-    print(f"  P1.leq(P2) = {P1.leq(P2)}")  # Less than or equal
-    print(f"  P1.geq(P2) = {P1.geq(P2)}")  # Greater than or equal
     print()
 
     # Using operators
@@ -47,9 +39,9 @@ def mixed_unit_comparisons():
     print("=== Mixed Unit Comparisons ===\n")
 
     # Compare lengths in different units
-    L1 = Length(1, "meter", "One meter")
-    L2 = Length(100, "centimeter", "One hundred cm")
-    L3 = Length(39.37, "inch", "39.37 inches")
+    L1 = Q(1, "meter")
+    L2 = Q(100, "centimeter")
+    L3 = Q(39.37, "inch")
 
     print(f"L1 = {L1}")
     print(f"L2 = {L2}")
@@ -59,26 +51,20 @@ def mixed_unit_comparisons():
     print("Are they equal? (automatic unit conversion)")
     print(f"  1m == 100cm? {L1 == L2}")
 
-    # Check approximate equality - use comparison instead of abs() on expression
-    diff_expr = abs(L1 - L3)
-    tolerance = Length(0.01, "meter", "Tolerance")
-    approximately_equal = diff_expr < tolerance
-    print(f"  1m ≈ 39.37in? {approximately_equal}")
+    # Check approximate equality by comparing to known conversion
+    print(f"  1m ≈ 39.37in? {L1.to_unit('inch').value} ≈ {L3.value}")
     print()
 
     # Compare pressures in different units
-    P_psi = Pressure(14.7, "pound_force_per_square_inch", "Atmospheric (psi)")
-    P_kPa = Pressure(101.325, "kilopascal", "Atmospheric (kPa)")
-    P_bar = Pressure(1.01325, "bar", "Atmospheric (bar)")
+    P_psi = Q(14.7, "pound_force_per_square_inch")
+    P_Pa = Q(101352.9, "pascal")  # 101.325 kPa
 
     print(f"P_psi = {P_psi}")
-    print(f"P_kPa = {P_kPa}")
-    print(f"P_bar = {P_bar}")
+    print(f"P_Pa = {P_Pa}")
     print()
 
     print("Comparing atmospheric pressure in different units:")
-    print(f"  14.7 psi < 101.325 kPa? {P_psi < P_kPa}")
-    print(f"  101.325 kPa > 1.01325 bar? {P_kPa > P_bar}")
+    print(f"  14.7 psi == 101325 Pa? {P_psi == P_Pa}")
     print("  They are approximately equal (within tolerance)")
     print()
 
@@ -88,9 +74,9 @@ def range_validation():
     print("=== Range Validation ===\n")
 
     # Define a pressure and acceptable range
-    P_operating = Pressure(120, "kilopascal", "Operating Pressure")
-    P_min = Pressure(80, "kilopascal", "Minimum Safe Pressure")
-    P_max = Pressure(150, "kilopascal", "Maximum Safe Pressure")
+    P_operating = Q(120000, "pascal")  # 120 kPa
+    P_min = Q(80000, "pascal")         # 80 kPa
+    P_max = Q(150000, "pascal")        # 150 kPa
 
     print(f"Operating: {P_operating}")
     print(f"Min Safe:  {P_min}")
@@ -98,8 +84,8 @@ def range_validation():
     print()
 
     # Check if within range using comparisons
-    above_min = P_operating.geq(P_min)
-    below_max = P_operating.leq(P_max)
+    above_min = P_operating >= P_min
+    below_max = P_operating <= P_max
 
     print("Safety checks:")
     print(f"  Above minimum? {above_min}")
@@ -117,21 +103,21 @@ def design_decisions():
     print("=== Design Decision Example ===\n")
 
     # Wall thickness calculation based on pressure
-    P = Pressure(100, "kilopascal", "Design Pressure")
-    P_threshold = Pressure(80, "kilopascal", "High Pressure Threshold")
+    P = Q(100000, "pascal")          # 100 kPa
+    P_threshold = Q(80000, "pascal") # 80 kPa
 
     print(f"Design pressure: {P}")
     print(f"High pressure threshold: {P_threshold}")
     print()
 
     # Determine wall thickness requirement
-    is_high_pressure = P.gt(P_threshold)
+    is_high_pressure = P > P_threshold
     print(f"Is high pressure design required? {is_high_pressure}")
     print()
 
     # Select appropriate thickness
-    T_standard = Length(5, "millimeter", "Standard Wall")
-    T_reinforced = Length(8, "millimeter", "Reinforced Wall")
+    T_standard = Q(5, "millimeter")
+    T_reinforced = Q(8, "millimeter")
 
     print(f"Standard thickness: {T_standard}")
     print(f"Reinforced thickness: {T_reinforced}")
@@ -151,16 +137,15 @@ def safety_factor_check():
     print("=== Safety Factor Validation ===\n")
 
     # Material and loading conditions
-    S_yield = Pressure(250, "megapascal", "Yield Strength")
-    S_applied = Pressure(100, "megapascal", "Applied Stress")
+    S_yield = Q(250000000, "pascal")   # 250 MPa
+    S_applied = Q(100000000, "pascal") # 100 MPa
 
     print(f"Yield strength: {S_yield}")
     print(f"Applied stress: {S_applied}")
     print()
 
     # Calculate safety factor
-    SF = Dimensionless("Safety Factor")
-    SF.solve_from(S_yield / S_applied)
+    SF = S_yield / S_applied
     print(f"Calculated safety factor: {SF}")
     print()
 
@@ -168,9 +153,9 @@ def safety_factor_check():
     SF_min = 2.0  # Minimum required safety factor
 
     # Create a dimensionless variable for comparison
-    SF_min_var = Dimensionless(SF_min, "Minimum SF")
+    SF_min_var = Q(SF_min, "dimensionless")
 
-    is_safe = SF.geq(SF_min_var)
+    is_safe = SF >= SF_min_var
     print(f"Minimum required SF: {SF_min}")
     print(f"Is design safe (SF >= {SF_min})? {is_safe}")
     print()

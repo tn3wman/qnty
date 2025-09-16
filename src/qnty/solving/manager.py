@@ -2,8 +2,8 @@ import logging
 
 from qnty.solving.order import Order
 
-from ..equations import Equation
-from ..quantities import FieldQnty
+from ..algebra import Equation
+from ..core.quantity import FieldQuantity
 from .solvers.base import BaseSolver, SolveResult
 from .solvers.iterative import IterativeSolver
 from .solvers.simultaneous import SimultaneousEquationSolver
@@ -21,7 +21,7 @@ class SolverManager:
             IterativeSolver(logger),  # Fall back to iterative
         ]
 
-    def solve(self, equations: list[Equation], variables: dict[str, FieldQnty], dependency_graph: Order | None = None, max_iterations: int = 100, tolerance: float = 1e-10) -> SolveResult:
+    def solve(self, equations: list[Equation], variables: dict[str, FieldQuantity], dependency_graph: Order | None = None, max_iterations: int = 100, tolerance: float = 1e-10) -> SolveResult:
         """
         Solve the system using the best available solver.
 
@@ -64,7 +64,7 @@ class SolverManager:
         """Get list of available solver names."""
         return [solver.__class__.__name__ for solver in self.solvers]
 
-    def _try_solver(self, solver: BaseSolver, equations: list[Equation], variables: dict[str, FieldQnty], dependency_graph: Order | None, max_iterations: int, tolerance: float) -> SolveResult:
+    def _try_solver(self, solver: BaseSolver, equations: list[Equation], variables: dict[str, FieldQuantity], dependency_graph: Order | None, max_iterations: int, tolerance: float) -> SolveResult:
         """
         Try a specific solver and log results appropriately.
 

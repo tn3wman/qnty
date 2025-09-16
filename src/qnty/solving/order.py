@@ -1,7 +1,7 @@
 from collections import defaultdict, deque
 from typing import Any
 
-from ..equations import Equation
+from ..algebra import Equation
 
 
 class Order:
@@ -78,9 +78,24 @@ class Order:
                 queue.append(var)
 
         # Add variables with no remaining dependencies AND have solver equations
+        # Prioritize simple assignment equations first
+        simple_assignments = []
+        other_equations = []
+
         for var in self.variables:
             if var not in known_vars and temp_in_degree[var] == 0 and var in self.solvers:
-                queue.append(var)
+                # Check if this variable has a simple assignment equation (var1 = var2)
+                has_simple_assignment = any(self._is_simple_assignment(eq) for eq in self.solvers[var])
+                if has_simple_assignment:
+                    simple_assignments.append(var)
+                else:
+                    other_equations.append(var)
+
+        # Add simple assignments first, then other equations
+        for var in simple_assignments:
+            queue.append(var)
+        for var in other_equations:
+            queue.append(var)
 
         solving_order = []
 
@@ -90,17 +105,47 @@ class Order:
 
             # Remove this variable's influence on dependent variables
             if current_var in temp_graph:
+                newly_available_simple = []
+                newly_available_other = []
+
                 for dependent_var in temp_graph[current_var]:
                     temp_in_degree[dependent_var] -= 1
 
-                    # If dependent variable has no more dependencies AND has solvers, add it to queue
+                    # If dependent variable has no more dependencies AND has solvers, categorize it
                     if temp_in_degree[dependent_var] == 0 and dependent_var in self.solvers:
-                        queue.append(dependent_var)
+                        # Check if this variable has a simple assignment equation
+                        has_simple_assignment = any(self._is_simple_assignment(eq) for eq in self.solvers[dependent_var])
+                        if has_simple_assignment:
+                            newly_available_simple.append(dependent_var)
+                        else:
+                            newly_available_other.append(dependent_var)
+
+                # Add simple assignments first, then others
+                for var in newly_available_simple:
+                    queue.append(var)
+                for var in newly_available_other:
+                    queue.append(var)
 
         # Filter out known variables from the result, as they don't need solving
         result = [var for var in solving_order if var not in known_vars]
 
         return result
+
+    def _is_simple_assignment(self, equation: Equation) -> bool:
+        """
+        Check if an equation is a simple assignment (var1 = var2).
+
+        Args:
+            equation: The equation to check
+
+        Returns:
+            True if the equation is a simple assignment between two variables
+        """
+        from ..algebra.nodes import VariableReference
+
+        # Check if both sides are single variable references
+        return (isinstance(equation.lhs, VariableReference) and
+                isinstance(equation.rhs, VariableReference))
 
     def detect_cycles(self) -> list[list[str]]:
         """
