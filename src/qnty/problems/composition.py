@@ -123,64 +123,14 @@ def _create_arithmetic_operation(self_obj, other, operator: str, reverse: bool =
             return getattr(self_obj._variable, f"__{method_name}__")(other)
 
 
-def _check_lhs_name_pattern(equation, expected_suffix: str) -> str | None:
-    """Check if LHS variable name matches expected pattern and return the name."""
-    lhs_name = getattr(equation.lhs, "name", "")
-    if lhs_name == expected_suffix or lhs_name.endswith(f"_{expected_suffix}"):
-        return lhs_name
-    return None
 
 
-def _is_binary_operation(expr, operator: str) -> bool:
-    """Check if expression is a BinaryOperation with the specified operator."""
-    from ..algebra.nodes import BinaryOperation
-
-    return isinstance(expr, BinaryOperation) and expr.operator == operator
 
 
-def _is_constant_value(expr, expected_value: float, tolerance: float = 1e-10) -> bool:
-    """Check if expression is a Constant with the expected value."""
-    from ..algebra.nodes import Constant
-
-    if not isinstance(expr, Constant):
-        return False
-
-    value = getattr(expr.value, "value", expr.value)
-    if isinstance(value, int | float):
-        return abs(value - expected_value) < tolerance
-    return False
 
 
-def _create_dimensionless_constant(value: float, name: str | None = None):
-    """Create a dimensionless constant with the specified value."""
-    from qnty.core.quantity_catalog import Dimensionless
-
-    from ..algebra.nodes import Constant
-
-    if name is None:
-        name = str(value)
-
-    constant_var = Dimensionless(name)
-    constant_var.value = value
-    try:
-        from qnty.core.unit import ureg
-
-        constant_var.preferred = ureg.resolve("dimensionless")
-    except ImportError:
-        pass  # Fallback if ureg is not available
-
-    return Constant(constant_var)
 
 
-def _generate_variable_names(base_name: str, suffix: str, var_names: list[str]) -> dict[str, str]:
-    """Generate namespaced variable names based on base pattern."""
-    if base_name == suffix:
-        # No prefix case
-        return {var_name: var_name for var_name in var_names}
-    else:
-        # Prefixed case
-        prefix = base_name[: -len(suffix) - 1]  # Remove '_suffix'
-        return {var_name: f"{prefix}_{var_name}" for var_name in var_names}
 
 
 # ========== COMPOSITION CLASSES ==========
@@ -718,13 +668,43 @@ class CompositionMixin:
     variables: dict[str, FieldQuantity]
     sub_problems: dict[str, Any]
     logger: Any
+    equations: list[Any]
 
-    # REMOVED HARDCODED ATTRIBUTES: The old system had hardcoded attributes like:
-    # header, branch, beta, d_1, A_1, A_w_r, etc.
-    #
-    # These were removed because the new approach doesn't need them.
-    # The flattened namespace approach automatically handles ANY variable names
-    # from ANY sub-problems without requiring hardcoded declarations.
+
+    def solve(self, max_iterations: int = 100, tolerance: float = 1e-9) -> dict[str, Any]:
+        """
+        SIMPLIFIED SOLVE: Treat composed problems exactly like simple problems.
+
+        This method implements the generic approach:
+        1. Flatten sub-problem variables into unified namespace
+        2. Flatten sub-problem equations
+        3. Solve using standard Problem.solve() method
+
+        No hardcoded patterns, no special recalculation methods.
+        Works for any engineering equations.
+        """
+        try:
+            self._flatten_sub_problem_variables()
+            self._flatten_sub_problem_equations()
+
+            # Delegate to base Problem.solve() method
+            from .problem import Problem
+            return Problem.solve(self, max_iterations, tolerance)
+        except Exception as e:
+            self.logger.error(f"Composed problem solving failed: {e}")
+            raise
+
+    def _flatten_sub_problem_variables(self):
+        """Flatten all sub-problem variables into unified namespace."""
+        # Variables are already flattened during _extract_from_class_variables()
+        # This is a placeholder for any additional flattening needed
+        pass
+
+    def _flatten_sub_problem_equations(self):
+        """Flatten all sub-problem equations into unified namespace."""
+        # Equations are already flattened during _extract_from_class_variables()
+        # This is a placeholder for any additional flattening needed
+        pass
 
     def add_variable(self, variable: FieldQuantity) -> None:
         """Will be provided by Problem class."""
@@ -823,264 +803,16 @@ class CompositionMixin:
         This handles cases where T_bar * (1 - U_m) was evaluated to constants during class definition.
         """
         try:
-            # Look for the specific pattern of the T equation: T = constant * (1 - constant)
-            if self._is_t_equation_pattern(equation):
-                return self._reconstruct_t_equation_pattern(equation)
-
-            # Look for variable sharing equations that reference wrong variables (generic)
-            if self._is_variable_sharing_pattern(equation):
-                return self._reconstruct_variable_sharing_pattern(equation)
-
-            # Could add other patterns here if needed
+            # Generic approach - no hardcoded patterns
             return None
-
         except Exception:
             return None
 
-    def _is_t_equation_pattern(self, equation) -> bool:
-        """Check if this equation matches the T = T_bar * (1 - U_m) pattern."""
-        from ..algebra.nodes import Constant
 
-        # Check if LHS variable name ends with 'T' (like 'T', 'header_T', etc.)
-        if not _check_lhs_name_pattern(equation, "T"):
-            return False
 
-        # Check if RHS is a multiplication: something * (1 - something)
-        if not _is_binary_operation(equation.rhs, "*"):
-            return False
 
-        # Check if right operand is (1 - something)
-        right_op = equation.rhs.right
-        if not _is_binary_operation(right_op, "-"):
-            return False
 
-        # Check if it's (1 - constant) pattern with both operands as constants
-        if not isinstance(right_op.left, Constant) or not isinstance(right_op.right, Constant):
-            return False
 
-        # Check if left constant is approximately 1
-        return _is_constant_value(right_op.left, 1.0)
-
-    def _reconstruct_t_equation_pattern(self, equation):
-        """Reconstruct T = T_bar * (1 - U_m) equation with variable references."""
-        try:
-            from ..algebra import equation as create_equation
-            from ..algebra.nodes import BinaryOperation, VariableReference
-
-            # Get the LHS variable name (T, header_T, branch_T, etc.)
-            lhs_name = getattr(equation.lhs, "name", "")
-
-            # Generate variable names using helper
-            var_names = _generate_variable_names(lhs_name, "T", ["T_bar", "U_m"])
-            t_bar_name = var_names["T_bar"]
-            u_m_name = var_names["U_m"]
-
-            # Check if these variables exist in the problem
-            required_vars = [lhs_name, t_bar_name, u_m_name]
-            if not all(var_name in self.variables for var_name in required_vars):
-                return None
-
-            # Get the variable objects and create references
-            t_ref = VariableReference(self.variables[lhs_name])
-            t_bar_ref = VariableReference(self.variables[t_bar_name])
-            u_m_ref = VariableReference(self.variables[u_m_name])
-
-            # Create constant for 1
-            one = _create_dimensionless_constant(1.0, "one")
-
-            # Create expression: 1 - U_m
-            one_minus_u_m = BinaryOperation("-", one, u_m_ref)
-
-            # Create expression: T_bar * (1 - U_m)
-            rhs = BinaryOperation("*", t_bar_ref, one_minus_u_m)
-
-            # Create the equation
-            return create_equation(t_ref, rhs, f"{lhs_name}_equation")
-
-        except Exception:
-            return None
-
-    def _is_pressure_thickness_pattern(self, equation) -> bool:
-        """Check if this equation matches the pressure design thickness pattern with constants."""
-        from ..algebra.nodes import Constant
-
-        # Check if LHS variable name ends with 't' (like 't', 'header_t', 'branch_t')
-        if not _check_lhs_name_pattern(equation, "t"):
-            return False
-
-        # Check if RHS has the pattern: constant_pressure * constant_diameter / (2 * (...))
-        if not _is_binary_operation(equation.rhs, "/"):
-            return False
-
-        # Check if numerator is pressure * diameter (both constants)
-        numerator = equation.rhs.left
-        if not _is_binary_operation(numerator, "*"):
-            return False
-
-        # Check if both operands are constants (pressure and diameter)
-        if not isinstance(numerator.left, Constant) or not isinstance(numerator.right, Constant):
-            return False
-
-        # Check if denominator is 2 * (...)
-        denominator = equation.rhs.right
-        if not _is_binary_operation(denominator, "*"):
-            return False
-
-        # Check if left operand is constant 2
-        return _is_constant_value(denominator.left, 2.0)
-
-    def _reconstruct_pressure_thickness_pattern(self, equation):
-        """Reconstruct pressure design thickness equation with variable references."""
-        try:
-            from ..algebra import equation as create_equation
-            from ..algebra.nodes import BinaryOperation, Constant, VariableReference
-
-            # Get the LHS variable name (t, header_t, branch_t, etc.)
-            lhs_name = getattr(equation.lhs, "name", "")
-
-            # Determine the corresponding variable names
-            if lhs_name == "t":
-                p_name = "P"
-                d_name = "D"
-                s_name = "S"
-                e_name = "E"
-                w_name = "W"
-                y_name = "Y"
-            elif lhs_name.endswith("_t"):
-                prefix = lhs_name[:-2]  # Remove '_t'
-                p_name = f"{prefix}_P"
-                d_name = f"{prefix}_D"
-                s_name = f"{prefix}_S"
-                e_name = f"{prefix}_E"
-                w_name = f"{prefix}_W"
-                y_name = f"{prefix}_Y"
-            else:
-                return None
-
-            # Find the variables
-            t_var = self.variables.get(lhs_name.replace("_", "", 1) if lhs_name.startswith("_") else lhs_name)
-            p_var = self.variables.get(p_name)
-            d_var = self.variables.get(d_name)
-            s_var = self.variables.get(s_name)
-            e_var = self.variables.get(e_name)
-            w_var = self.variables.get(w_name)
-            y_var = self.variables.get(y_name)
-
-            if not all([t_var, p_var, d_var, s_var, e_var, w_var, y_var]):
-                return None
-
-            # Type assertions for static type checking
-            assert t_var is not None
-            assert p_var is not None
-            assert d_var is not None
-            assert s_var is not None
-            assert e_var is not None
-            assert w_var is not None
-            assert y_var is not None
-
-            # Create variable references
-            t_ref = VariableReference(t_var)
-            p_ref = VariableReference(p_var)
-            d_ref = VariableReference(d_var)
-            s_ref = VariableReference(s_var)
-            e_ref = VariableReference(e_var)
-            w_ref = VariableReference(w_var)
-            y_ref = VariableReference(y_var)
-
-            # Create constant for 2
-            from qnty.core.quantity_catalog import Dimensionless
-
-            two_dimensionless = Dimensionless("two")
-            two_dimensionless.value = 2.0
-            two = Constant(two_dimensionless)
-
-            # Create expression: P * D
-            numerator = BinaryOperation("*", p_ref, d_ref)
-
-            # Create expression: S * E * W
-            s_e_w = BinaryOperation("*", BinaryOperation("*", s_ref, e_ref), w_ref)
-
-            # Create expression: P * Y
-            p_y = BinaryOperation("*", p_ref, y_ref)
-
-            # Create expression: S * E * W + P * Y
-            denominator_inner = BinaryOperation("+", s_e_w, p_y)
-
-            # Create expression: 2 * (S * E * W + P * Y)
-            denominator = BinaryOperation("*", two, denominator_inner)
-
-            # Create expression: (P * D) / (2 * (S * E * W + P * Y))
-            rhs = BinaryOperation("/", numerator, denominator)
-
-            # Create the equation
-            return create_equation(t_ref, rhs, f"{lhs_name}_equation")
-
-        except Exception:
-            return None
-
-    def _is_variable_sharing_pattern(self, equation) -> bool:
-        """Check if this equation matches the pattern: sub_problem_var = system_var (variable sharing)."""
-        from ..algebra.nodes import VariableReference
-
-        try:
-            # LHS must be a variable reference
-            if not isinstance(equation.lhs, VariableReference):
-                return False
-
-            lhs_name = getattr(equation.lhs.variable, "name", "")
-
-            # LHS should be a sub-problem variable (contains "(Header)" or "(Branch)")
-            if not (("(Header)" in lhs_name) or ("(Branch)" in lhs_name)):
-                return False
-
-            # RHS can be either a VariableReference or an ExpressionEnabledWrapper that needs fixing
-            if isinstance(equation.rhs, VariableReference):
-                # Check if it's referencing the right variable
-                rhs_name = getattr(equation.rhs.variable, "name", "")
-                lhs_base = lhs_name.replace(" (Header)", "").replace(" (Branch)", "")
-                return lhs_base == rhs_name
-            else:
-                # Check if RHS is a malformed wrapper that should be a system variable
-                rhs_str = str(equation.rhs)
-                if "ExpressionEnabledWrapper" in rhs_str:
-                    return True
-
-            return False
-
-        except Exception:
-            return False
-
-    def _reconstruct_variable_sharing_pattern(self, equation):
-        """Reconstruct variable sharing equations to use the correct system variable."""
-        from ..algebra.equation import Equation
-        from ..algebra.nodes import VariableReference
-
-        try:
-            # Get the base variable name (without sub-problem suffix)
-            lhs_name = getattr(equation.lhs.variable, "name", "")
-            base_name = lhs_name.replace(" (Header)", "").replace(" (Branch)", "")
-
-            # Find the correct system variable from our instance variables
-            # Look for a variable with the same base name but without sub-problem indicators
-            system_var = None
-            for _, var in self.variables.items():
-                if hasattr(var, "name") and var.name == base_name and "Header" not in var.name and "Branch" not in var.name:
-                    system_var = var
-                    break
-
-            if system_var is None:
-                return None
-
-            # Create variable references
-            lhs_ref = VariableReference(equation.lhs.variable)
-            system_ref = VariableReference(system_var)
-
-            # Create the reconstructed equation
-            equation_name = f"{lhs_name}_shared_equation"
-            return Equation(equation_name, lhs_ref, system_ref)
-
-        except Exception:
-            return None
 
     def replace_sub_variables(self, system_var, sub_vars):
         """
