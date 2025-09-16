@@ -52,20 +52,21 @@ def create_straight_pipe_internal():
 
 def test_simple_problem():
     problem = create_straight_pipe_internal()
-    
+
     print("\nVariables:")
     for name, var in problem.variables.items():
         print(f"  {name} (symbol: {var.symbol}): known={var.is_known}, value={var.quantity}")
-    
+
     print(f"\nEquations: {len(problem.equations)}")
     for eq in problem.equations:
         print(f"  {eq}")
-    
+
+
     try:
         problem.solve()
         print("\nSolving successful!")
         print(f"P_max: {problem.P_max}")
-        
+
         # Test the validation system
         warnings = problem.validate()
         print(f"\nValidation warnings: {len(warnings)}")

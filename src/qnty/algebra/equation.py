@@ -273,6 +273,11 @@ class Equation:
             return None
 
         other_val = analysis.other_expr.evaluate(variable_values)
+
+        # Cannot invert operations with boolean results (comparison operations)
+        if isinstance(other_val, bool):
+            return None
+
         is_left = analysis.target_side == OperandSide.LEFT
 
         return self._invert_operation(
@@ -324,6 +329,10 @@ class Equation:
             result_qty = self._solve_algebraically(target_var, variable_values)
             if result_qty is None:
                 raise NotImplementedError(f"Cannot solve for {target_var} in equation {self}. Algebraic manipulation not supported for this equation form.")
+
+        # Cannot solve equations that evaluate to boolean (comparison operations)
+        if isinstance(result_qty, bool):
+            raise TypeError(f"Cannot assign boolean result to variable '{target_var}' in equation {self}")
 
         # Get the variable object to update
         var_obj = variable_values.get(target_var)
@@ -417,6 +426,10 @@ class Equation:
             # Both lhs and rhs should be Expressions after __init__ conversion
             lhs_value = self.lhs.evaluate(variable_values)
             rhs_value = self.rhs.evaluate(variable_values)
+
+            # Cannot verify equations that evaluate to boolean (comparison operations)
+            if isinstance(lhs_value, bool) or isinstance(rhs_value, bool):
+                return False
 
             # Check dimensional compatibility using public API
             if not self._are_dimensionally_compatible(lhs_value, rhs_value):

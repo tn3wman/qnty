@@ -24,7 +24,7 @@ class Expression(ABC):
     _auto_eval_enabled = False  # Disabled by default for performance
 
     @abstractmethod
-    def evaluate(self, variable_values: dict[str, "FieldQuantity"]) -> "Quantity":
+    def evaluate(self, variable_values: dict[str, "FieldQuantity"]) -> "Quantity | bool":
         """Evaluate the expression given variable values."""
         pass
 
@@ -79,6 +79,9 @@ class Expression(ABC):
 
             # Evaluate the expression
             result = self.evaluate(variables)
+            # Skip boolean results from comparison operations
+            if isinstance(result, bool):
+                return False
             if result and hasattr(result, "value") and result.value is not None:
                 # Check dimension compatibility
                 if hasattr(quantity, "dim") and hasattr(result, "dim"):
@@ -284,14 +287,14 @@ class BinaryOperation(Expression):
         self.left = left
         self.right = right
 
-    def evaluate(self, variable_values: dict[str, "FieldQuantity"]) -> "Quantity":
+    def evaluate(self, variable_values: dict[str, "FieldQuantity"]) -> "Quantity | bool":
         """Evaluate the binary operation with caching and error handling."""
         try:
             return self._evaluate_with_caching(variable_values)
         except Exception as e:
             return self._handle_evaluation_error(e)
 
-    def _evaluate_with_caching(self, variable_values: dict[str, "FieldQuantity"]) -> "Quantity":
+    def _evaluate_with_caching(self, variable_values: dict[str, "FieldQuantity"]) -> "Quantity | bool":
         """Core evaluation logic with caching support."""
         # Check cache for constant expressions
         cached_result = self._try_get_cached_result()
@@ -304,8 +307,9 @@ class BinaryOperation(Expression):
         # Dispatch operation
         result = self._dispatch_operation(left_val, right_val)
 
-        # Cache result for constant expressions
-        self._try_cache_result(result)
+        # Cache result for constant expressions (only for Quantity results)
+        if not isinstance(result, bool):
+            self._try_cache_result(result)
 
         return result
 
@@ -375,7 +379,7 @@ class BinaryOperation(Expression):
         right_const = self.right
         return f"{id(self)}_{self.operator}_{id(left_const.value)}_{id(right_const.value)}"  # type: ignore[attr-defined]
 
-    def _dispatch_operation(self, left_val: "Quantity", right_val: "Quantity") -> "Quantity":
+    def _dispatch_operation(self, left_val: "Quantity", right_val: "Quantity") -> "Quantity | bool":
         """Dispatch to the appropriate operation handler with fast lookup."""
         # Ultra-fast path: delegate to Quantity arithmetic when both operands are concrete
         if hasattr(left_val, "value") and hasattr(right_val, "value") and left_val.value is not None and right_val.value is not None and hasattr(left_val, "dim") and hasattr(right_val, "dim"):
@@ -476,18 +480,38 @@ class BinaryOperation(Expression):
         except (ValueError, TypeError, AttributeError) as e:
             raise ValueError(f"Power operation failed: {e}") from e
 
-    def _evaluate_comparison(self, left_val: "Quantity", right_val: "Quantity") -> "Quantity":
+    def _evaluate_comparison(self, left_val: "Quantity", right_val: "Quantity") -> bool:
         """Evaluate comparison operations with optimized unit conversion."""
-        # Normalize units for comparison if needed
-        left_val, right_val = self._normalize_comparison_units(left_val, right_val)
+        # For comparisons, we should use the actual Quantity comparison operators
+        # which handle unit conversion properly
+        try:
+            if self.operator == "<":
+                result = left_val < right_val
+            elif self.operator == "<=":
+                result = left_val <= right_val
+            elif self.operator == ">":
+                result = left_val > right_val
+            elif self.operator == ">=":
+                result = left_val >= right_val
+            elif self.operator == "==":
+                result = left_val == right_val
+            elif self.operator == "!=":
+                result = left_val != right_val
+            else:
+                # Fallback to old method if operator is unknown
+                left_val, right_val = self._normalize_comparison_units(left_val, right_val)
+                left_value = left_val.value if hasattr(left_val, "value") and left_val.value is not None else 0.0
+                right_value = right_val.value if hasattr(right_val, "value") and right_val.value is not None else 0.0
+                result = self._perform_comparison(left_value, right_value)
+        except (ValueError, TypeError, AttributeError):
+            # If Quantity comparison fails, fall back to value comparison
+            left_val, right_val = self._normalize_comparison_units(left_val, right_val)
+            left_value = left_val.value if hasattr(left_val, "value") and left_val.value is not None else 0.0
+            right_value = right_val.value if hasattr(right_val, "value") and right_val.value is not None else 0.0
+            result = self._perform_comparison(left_value, right_value)
 
-        # Perform comparison using optimized dispatch
-        left_value = left_val.value if hasattr(left_val, "value") and left_val.value is not None else 0.0
-        right_value = right_val.value if hasattr(right_val, "value") and right_val.value is not None else 0.0
-        result = self._perform_comparison(left_value, right_value)
-
-        # Create dimensionless quantity for boolean result
-        return _create_dimensionless_quantity(float(result), str(result))
+        # Return boolean result directly
+        return result
 
     def _normalize_comparison_units(self, left_val: "Quantity", right_val: "Quantity") -> tuple["Quantity", "Quantity"]:
         """Normalize units for comparison operations."""
@@ -538,6 +562,9 @@ class BinaryOperation(Expression):
             # Evaluate constant expressions at compile time
             dummy_vars = {}
             result = BinaryOperation(self.operator, left_const, right_const).evaluate(dummy_vars)
+            # Don't fold comparison operations that return boolean
+            if isinstance(result, bool):
+                return BinaryOperation(self.operator, left_const, right_const)
             return Constant(result)
         except (ValueError, TypeError, ArithmeticError):
             # Return original operation if folding fails
@@ -636,12 +663,23 @@ class ConditionalExpression(Expression):
 
     def evaluate(self, variable_values: dict[str, "FieldQuantity"]) -> "Quantity":
         condition_val = self.condition.evaluate(variable_values)
-        # Consider non-zero as True
-        condition_value = condition_val.value if hasattr(condition_val, "value") and condition_val.value is not None else 0.0
-        if abs(condition_value) > CONDITION_EVALUATION_THRESHOLD:
-            return self.true_expr.evaluate(variable_values)
+        # Handle boolean results from comparison operations
+        if isinstance(condition_val, bool):
+            condition_value = 1.0 if condition_val else 0.0
         else:
-            return self.false_expr.evaluate(variable_values)
+            # Consider non-zero as True
+            condition_value = condition_val.value if hasattr(condition_val, "value") and condition_val.value is not None else 0.0
+
+        if abs(condition_value) > CONDITION_EVALUATION_THRESHOLD:
+            result = self.true_expr.evaluate(variable_values)
+        else:
+            result = self.false_expr.evaluate(variable_values)
+
+        # ConditionalExpression should always return a Quantity, not bool
+        if isinstance(result, bool):
+            # This shouldn't happen in normal usage, but handle gracefully
+            return _create_dimensionless_quantity(float(result))
+        return result
 
     def get_variables(self) -> set[str]:
         return self.condition.get_variables() | self.true_expr.get_variables() | self.false_expr.get_variables()
@@ -656,7 +694,11 @@ class ConditionalExpression(Expression):
             try:
                 dummy_vars = {}
                 condition_val = simplified_condition.evaluate(dummy_vars)
-                condition_value = condition_val.value if hasattr(condition_val, "value") and condition_val.value is not None else 0.0
+                # Handle boolean results from comparison operations
+                if isinstance(condition_val, bool):
+                    condition_value = 1.0 if condition_val else 0.0
+                else:
+                    condition_value = condition_val.value if hasattr(condition_val, "value") and condition_val.value is not None else 0.0
                 if abs(condition_value) > CONDITION_EVALUATION_THRESHOLD:
                     return simplified_true
                 else:
@@ -786,6 +828,18 @@ def wrap_operand(operand: "OperandType") -> Expression:
     # Second most common: already wrapped expressions (20-25% of calls)
     if operand_type is BinaryOperation:  # Direct type check is faster
         return operand  # type: ignore[return-value]
+
+    # Check for ExpressionEnabledWrapper from Problem class definition
+    if hasattr(operand, "_wrapped"):
+        # This is an ExpressionEnabledWrapper - get the actual variable
+        wrapped_var = getattr(operand, "_wrapped", None)
+        if wrapped_var is not None:
+            # Now wrap the actual variable
+            if hasattr(wrapped_var, "quantity") and hasattr(wrapped_var, "symbol"):
+                if hasattr(wrapped_var, "value") and getattr(wrapped_var, "value", None) is not None:
+                    return Constant(wrapped_var.quantity)  # type: ignore[arg-type]
+                else:
+                    return VariableReference(wrapped_var)  # type: ignore[arg-type]
 
     # Third most common: field quantities/variables (20-30% of calls)
     # Use getattr with hasattr-style check to reduce calls

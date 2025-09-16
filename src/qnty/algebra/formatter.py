@@ -11,7 +11,6 @@ from __future__ import annotations
 from typing import Any
 
 
-
 class ExpressionFormatter:
     """
     Handles string representation of expressions with proper precedence rules.

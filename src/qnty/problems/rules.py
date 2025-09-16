@@ -97,7 +97,7 @@ class Rules:
         # Convert result to boolean based on type
         return self._convert_result_to_bool(result)
 
-    def _convert_result_to_bool(self, result: Quantity) -> bool:
+    def _convert_result_to_bool(self, result: Quantity | bool) -> bool:
         """
         Convert an evaluation result to a boolean.
 
@@ -107,6 +107,10 @@ class Rules:
         Returns:
             Boolean interpretation of the result
         """
+        # If already boolean, return as is
+        if isinstance(result, bool):
+            return result
+
         # For qnty Quantity objects, check the value
         if isinstance(result, Quantity) and result.value is not None:
             return bool(result.value > BOOLEAN_THRESHOLD)
