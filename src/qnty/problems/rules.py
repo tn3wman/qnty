@@ -68,11 +68,7 @@ class Rules:
             result = self._evaluate_expression(self.condition, variables)
 
             if result:
-                return self._create_warning_dict(
-                    warning_type=self.warning_type,
-                    severity=self.severity,
-                    message=self.message
-                )
+                return self._create_warning_dict(warning_type=self.warning_type, severity=self.severity, message=self.message)
 
         except Exception as e:
             # If evaluation fails, return an error warning
@@ -133,13 +129,7 @@ class Rules:
         Returns:
             Warning dictionary with standard fields
         """
-        return {
-            "type": warning_type,
-            "severity": severity,
-            "message": message,
-            "check_name": self.name,
-            "condition": str(self.condition)
-        }
+        return {"type": warning_type, "severity": severity, "message": message, "check_name": self.name, "condition": str(self.condition)}
 
     def _create_error_dict(self, exception: Exception, variables: dict[str, FieldQuantity]) -> dict[str, Any]:
         """

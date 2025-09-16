@@ -1,4 +1,3 @@
-from ..utils.scope_discovery import ScopeDiscoveryService
 from .equation import Equation
 from .functions import abs_expr, cond_expr, cos, exp, ln, log10, max_expr, min_expr, sin, sqrt, tan
 from .nodes import BinaryOperation, ConditionalExpression, Constant, Expression, UnaryFunction, VariableReference, wrap_operand
@@ -106,7 +105,7 @@ def solve(quantity, expression) -> bool:
         return False
 
     # Handle numeric values
-    if isinstance(expression, (int, float)):
+    if isinstance(expression, int | float):
         if hasattr(quantity, "dim") and hasattr(quantity, "value"):
             if quantity.dim.is_dimensionless():
                 quantity.value = float(expression)
@@ -156,8 +155,6 @@ __all__ = [
     "leq",
     "lt",
     "eq",
-    # Scope discovery
-    "ScopeDiscoveryService",
     "Equation",
     "EquationSystem",
 ]

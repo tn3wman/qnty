@@ -1,7 +1,6 @@
 from typing import Any
 
-from ...algebra import Equation
-from ...algebra import ConditionalExpression, VariableReference
+from ...algebra import ConditionalExpression, Equation, VariableReference
 from ...core.quantity import FieldQuantity
 from ..order import Order
 from .base import BaseSolver, SolveResult

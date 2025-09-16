@@ -23,6 +23,7 @@ def assert_qty_close(actual_var, expected_value, expected_unit, rel_tol=1e-9):
 
     assert pytest.approx(expected_value, rel=rel_tol) == actual_value_in_expected_unit
 
+
 def assert_problem_results(problem, expected_results):
     """
     Table-driven test helper for asserting problem results.
@@ -43,6 +44,7 @@ def assert_problem_results(problem, expected_results):
     for var_name, expected_value, expected_unit, tolerance in expected_results:
         actual_var = getattr(problem, var_name)
         assert_qty_close(actual_var, expected_value, expected_unit, tolerance)
+
 
 class StraightPipeInternal(Problem):
     name = "Pressure Design of a Straight Pipe Under Internal Pressure"
@@ -72,7 +74,6 @@ class StraightPipeInternal(Problem):
     t_m_eqn = equation(t_m, t + c)
     P_max_eqn = equation(P_max, (2 * (T - c) * S * E * W) / (D - 2 * (T - c) * Y))
 
-
     # ASME B31.3 Code Compliance Checks - defined at class level like variables and equations
     thick_wall_check = add_rule(
         geq(t, D / 6),
@@ -88,8 +89,10 @@ class StraightPipeInternal(Problem):
         severity="WARNING",
     )
 
+
 def create_straight_pipe_internal():
     return StraightPipeInternal()
+
 
 class WeldedBranchConnection(Problem):
     """
@@ -141,19 +144,15 @@ class WeldedBranchConnection(Problem):
     d_2 = Length("Reinforcement Zone Radius")
     L_4 = Length("Reinforcement Zone Height")
 
-
     # # Unknown variables for required and available area
     A_1 = Area("Reinforcement Area Required")
     A_2 = Area("Reinforcement Area Run")
     A_3 = Area("Reinforcement Area Branch")
     A_4 = Area("Reinforcement Area Total")
 
-
     d_1_eqn = equation(d_1, (branch.D - 2 * (branch.T - branch.c)) / sin(beta))
     d_2_eqn = equation(d_2, max_expr(d_1, (branch.T - branch.c) + (header.T - header.c) + d_1 / 2))
     L_4_eqn = equation(L_4, min_expr(2.5 * (header.T - header.c), 2.5 * (branch.T - branch.c) + T_bar_r))
-
-
 
     # Calculations for reinforcement pad
     A_r_eqn = equation(A_r, min_expr(T_r, L_4) * (min_expr(D_r, 2 * d_2) - branch.D / sin(beta)) * min_expr(1, S_r / header.S))
@@ -163,27 +162,9 @@ class WeldedBranchConnection(Problem):
     t_c_b_eqn = equation(t_c_b, min_expr(0.7 * branch.T_bar, t_c_max))
     t_c_r_eqn = equation(t_c_r, 0.5 * T_bar_r)
 
-    A_w_b_eqn = equation(
-        A_w_b,
-        cond_expr(
-            leq(T_r, 0),
-            2 * 0.5 * max_expr((t_c_b / 0.707), z_b) ** 2,
-            cond_expr(
-                leq(T_r,L_4),
-                2 * 0.5 * max_expr((t_c_b / 0.707), z_b) ** 2,
-                0
-            )
-        )
-    )
+    A_w_b_eqn = equation(A_w_b, cond_expr(leq(T_r, 0), 2 * 0.5 * max_expr((t_c_b / 0.707), z_b) ** 2, cond_expr(leq(T_r, L_4), 2 * 0.5 * max_expr((t_c_b / 0.707), z_b) ** 2, 0)))
 
-    A_w_r_eqn = equation(
-        A_w_r,
-        cond_expr(
-            leq(D_r, 2 * d_2 - max_expr((t_c_r / 0.707), z_r)),
-            2 * 0.5 * max_expr((t_c_r / 0.707), z_r) ** 2,
-            0
-        )
-    )
+    A_w_r_eqn = equation(A_w_r, cond_expr(leq(D_r, 2 * d_2 - max_expr((t_c_r / 0.707), z_r)), 2 * 0.5 * max_expr((t_c_r / 0.707), z_r) ** 2, 0))
 
     A_w_eqn = equation(A_w, A_w_b + A_w_r)
 
@@ -193,9 +174,11 @@ class WeldedBranchConnection(Problem):
     A_3_eqn = equation(A_3, (2 * L_4 * (branch.T - branch.t - branch.c) / sin(beta)) * min_expr(1, branch.S / header.S))
     A_4_eqn = equation(A_4, A_r + A_w)
 
+
 def create_welded_branch_connection():
     """Factory function to create a BranchReinforcement engineering problem instance."""
     return WeldedBranchConnection()
+
 
 def test_branch_reinforcement_h301(capsys):
     problem = create_welded_branch_connection()
@@ -208,7 +191,7 @@ def test_branch_reinforcement_h301(capsys):
     problem.header.T_bar.set(8.18).millimeter
     problem.header.U_m.set(0.125).dimensionless
     problem.header.c.set(2.5).millimeter
-    problem.header.S.set(110000000).pascal # 110 MPa
+    problem.header.S.set(110000000).pascal  # 110 MPa
     problem.header.E.set(1).dimensionless
     problem.header.W.set(1).dimensionless
     problem.header.Y.set(0.4).dimensionless
@@ -255,7 +238,6 @@ def test_branch_reinforcement_h301(capsys):
     assert problem.is_solved
 
     assert_problem_results(problem, expected_results)
-
 
 
 def test_branch_reinforcement_h303(capsys):

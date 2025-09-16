@@ -12,9 +12,9 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import TYPE_CHECKING, Protocol, cast
 
-from ..constants import SOLVER_DEFAULT_TOLERANCE
 from ..core.quantity import FieldQuantity
 from ..utils.scope_discovery import ScopeDiscoveryService
+from ..utils.shared_utilities import SharedConstants, ValidationHelper
 from .nodes import BinaryOperation, Expression, VariableReference
 
 if TYPE_CHECKING:
@@ -28,6 +28,7 @@ _SCOPE_DISCOVERY_ENABLED = False  # Disabled by default due to high overhead
 
 class OperandSide(Enum):
     """Which side of a binary operation contains a variable."""
+
     LEFT = "left"
     RIGHT = "right"
     BOTH = "both"
@@ -37,6 +38,7 @@ class OperandSide(Enum):
 @dataclass
 class BinaryOperationAnalysis:
     """Analysis result for a binary operation."""
+
     target_side: OperandSide
     target_expr: Expression | None
     other_expr: Expression | None
@@ -44,6 +46,7 @@ class BinaryOperationAnalysis:
 
 class OperatorInverter(Protocol):
     """Protocol for operator inversion functions."""
+
     def __call__(self, result: Quantity, other: Quantity, is_left: bool) -> Quantity | None: ...
 
 
@@ -100,7 +103,7 @@ class AlgebraicInverter:
         if other_val and result_val:
             try:
                 exponent = 1.0 / other_val
-                new_value = result_val ** exponent
+                new_value = result_val**exponent
                 return self.equation._create_quantity_with_value(result, new_value, "power_result")
             except (ZeroDivisionError, ValueError):
                 pass
@@ -138,10 +141,10 @@ class Equation:
         if isinstance(value, FieldQuantity):
             return VariableReference(value)
         # Handle ConfigurableVariable from composition system
-        elif hasattr(value, '_variable') and hasattr(value, 'symbol') and not isinstance(value, Expression):
+        elif hasattr(value, "_variable") and hasattr(value, "symbol") and not isinstance(value, Expression):
             return VariableReference(value._variable)  # type: ignore[attr-defined]
         # Handle ExpressionEnabledWrapper from composition system
-        elif hasattr(value, '_wrapped') and not isinstance(value, Expression):
+        elif hasattr(value, "_wrapped") and not isinstance(value, Expression):
             return VariableReference(value._wrapped)  # type: ignore[attr-defined]
         return cast(Expression, value)
 
@@ -161,14 +164,14 @@ class Equation:
     @staticmethod
     def _get_quantity_value(quantity: Quantity) -> float | None:
         """Safely extract numeric value from a Quantity."""
-        if hasattr(quantity, "value") and quantity.value is not None:
+        if ValidationHelper.has_valid_value(quantity):
             return float(quantity.value)
         return None
 
     @staticmethod
     def _has_valid_value(quantity: Quantity) -> bool:
         """Check if a quantity has a valid numeric value."""
-        return hasattr(quantity, "value") and quantity.value is not None
+        return ValidationHelper.has_valid_value(quantity)
 
     def _create_quantity_with_value(self, template: Quantity, value: float, name: str = "result") -> Quantity | None:
         """Create a new quantity with the given value, using template for type/dimension."""
@@ -273,17 +276,9 @@ class Equation:
             return None
 
         other_val = analysis.other_expr.evaluate(variable_values)
-
-        # Cannot invert operations with boolean results (comparison operations)
-        if isinstance(other_val, bool):
-            return None
-
         is_left = analysis.target_side == OperandSide.LEFT
 
-        return self._invert_operation(
-            expr.operator, analysis.target_expr, other_val,
-            known_value, target_var, variable_values, is_left
-        )
+        return self._invert_operation(expr.operator, analysis.target_expr, other_val, known_value, target_var, variable_values, is_left)
 
     def _invert_operation(
         self, operator: str, target_expr: Expression, other_val: Quantity, result_val: Quantity, target_var: str, variable_values: dict[str, FieldQuantity], is_left: bool
@@ -330,10 +325,6 @@ class Equation:
             if result_qty is None:
                 raise NotImplementedError(f"Cannot solve for {target_var} in equation {self}. Algebraic manipulation not supported for this equation form.")
 
-        # Cannot solve equations that evaluate to boolean (comparison operations)
-        if isinstance(result_qty, bool):
-            raise TypeError(f"Cannot assign boolean result to variable '{target_var}' in equation {self}")
-
         # Get the variable object to update
         var_obj = variable_values.get(target_var)
         if var_obj is None:
@@ -375,6 +366,7 @@ class Equation:
             # Convert to SI unit to get the SI value
             try:
                 from ..core.unit import ureg
+
                 si_unit = ureg.si_unit_for(result_qty.dim)
                 if si_unit is not None:
                     si_quantity = result_qty.to(si_unit)
@@ -417,7 +409,7 @@ class Equation:
             pass  # Known status setting not supported
         return var_obj
 
-    def check_residual(self, variable_values: dict[str, FieldQuantity], tolerance: float = SOLVER_DEFAULT_TOLERANCE) -> bool:
+    def check_residual(self, variable_values: dict[str, FieldQuantity], tolerance: float = SharedConstants.SOLVER_DEFAULT_TOLERANCE) -> bool:
         """
         Check if equation is satisfied by evaluating residual (LHS - RHS).
         Returns True if |residual| < tolerance, accounting for units.
@@ -426,10 +418,6 @@ class Equation:
             # Both lhs and rhs should be Expressions after __init__ conversion
             lhs_value = self.lhs.evaluate(variable_values)
             rhs_value = self.rhs.evaluate(variable_values)
-
-            # Cannot verify equations that evaluate to boolean (comparison operations)
-            if isinstance(lhs_value, bool) or isinstance(rhs_value, bool):
-                return False
 
             # Check dimensional compatibility using public API
             if not self._are_dimensionally_compatible(lhs_value, rhs_value):
@@ -485,6 +473,7 @@ class Equation:
         # Try to get preferred unit from dimension
         if hasattr(quantity, "dim"):
             from ..core.unit import ureg
+
             return ureg.preferred_for(quantity.dim) or ureg.si_unit_for(quantity.dim)
 
         return None

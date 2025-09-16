@@ -18,22 +18,15 @@ PROBLEMS = {
         "variables": {
             "mu": (qc.ViscosityDynamic, 1000, u.poise),
             "rho": (qc.MassDensity, 0.05, u.ounce_per_milliliter),
-            "nu": (qc.ViscosityKinematic, None, None)  # Unknown
+            "nu": (qc.ViscosityKinematic, None, None),  # Unknown
         },
-        "equations": [
-            ("nu", "mu / rho")
-        ],
-        "expected": {
-            "mu": (2.09, u.pound_force_second_per_square_foot),
-            "rho": (88.4, u.pound_mass_per_cubic_foot),
-            "nu": (0.76, u.foot_squared_per_second)
-        },
+        "equations": [("nu", "mu / rho")],
+        "expected": {"mu": (2.09, u.pound_force_second_per_square_foot), "rho": (88.4, u.pound_mass_per_cubic_foot), "nu": (0.76, u.foot_squared_per_second)},
         "debug": {
             # "print_results": True,
             "assert_values": True
-        }
+        },
     },
-    
     "pipe_flow": {
         "description": "Multi-pipe flow with conservation",
         "variables": {
@@ -48,7 +41,7 @@ PROBLEMS = {
             "Q_2_5": (qc.VolumetricFlowRate, 50, u.gpm),
             "A_1": (qc.Area, None, None),
             "A_1_5": (qc.Area, None, None),
-            "A_2_5": (qc.Area, None, None)
+            "A_2_5": (qc.Area, None, None),
         },
         "equations": [
             ("A_1", "3.14 * (D_1 / 2) ** 2"),
@@ -57,7 +50,7 @@ PROBLEMS = {
             ("Q_1_5", "V_1_5 * A_1_5"),
             ("Q_1", "Q_2_5 - Q_1_5"),  # Conservation equation - tests algebraic solving
             ("V_1", "Q_1 / A_1"),
-            ("V_2_5", "Q_2_5 / A_2_5")
+            ("V_2_5", "Q_2_5 / A_2_5"),
         ],
         "expected": {
             "D_1": (1.049, u.inch),
@@ -71,33 +64,17 @@ PROBLEMS = {
             "Q_2_5": (6.68, u.cubic_feet_per_minute),
             "A_1": (0.005999, u.square_feet),
             "A_1_5": (0.01413, u.square_feet),
-            "A_2_5": (0.03323, u.square_feet)
+            "A_2_5": (0.03323, u.square_feet),
         },
-        "debug": {
-            "print_results": True,
-            "assert_values": True
-        }
+        "debug": {"print_results": True, "assert_values": True},
     },
     "problem_3": {
         "description": "Example problem 3",
-        "variables": {
-            "COP": (qc.Dimensionless, None, None),
-            "Q_heating": (qc.PowerThermalDuty, 85000, u.british_thermal_unit_per_hour),
-            "W_compressor": (qc.PowerThermalDuty, 5900, u.W)
-        },
-        "equations": [
-            ("COP", "Q_heating / W_compressor")
-        ],
-        "expected": {
-            "COP": (4.2, u.dimensionless),
-            "Q_heating": (85000, u.british_thermal_unit_per_hour),
-            "W_compressor": (5900, u.W)
-        },
-        "debug": {
-            "print_results": True,
-            "assert_values": True
-        }
-    }
+        "variables": {"COP": (qc.Dimensionless, None, None), "Q_heating": (qc.PowerThermalDuty, 85000, u.british_thermal_unit_per_hour), "W_compressor": (qc.PowerThermalDuty, 5900, u.W)},
+        "equations": [("COP", "Q_heating / W_compressor")],
+        "expected": {"COP": (4.2, u.dimensionless), "Q_heating": (85000, u.british_thermal_unit_per_hour), "W_compressor": (5900, u.W)},
+        "debug": {"print_results": True, "assert_values": True},
+    },
 }
 
 
@@ -105,28 +82,19 @@ PROBLEMS = {
 def enable_debug(problem_name, print_results=True, assert_values=True):
     """Enable debug output for a specific problem."""
     if problem_name in PROBLEMS:
-        PROBLEMS[problem_name]["debug"] = {
-            "print_results": print_results,
-            "assert_values": assert_values
-        }
+        PROBLEMS[problem_name]["debug"] = {"print_results": print_results, "assert_values": assert_values}
 
 
 def disable_debug(problem_name):
     """Disable debug output for a specific problem."""
     if problem_name in PROBLEMS:
-        PROBLEMS[problem_name]["debug"] = {
-            "print_results": False,
-            "assert_values": True
-        }
+        PROBLEMS[problem_name]["debug"] = {"print_results": False, "assert_values": True}
 
 
 def set_debug_all(print_results=True, assert_values=True):
     """Set debug settings for all problems."""
     for problem_name in PROBLEMS:
-        PROBLEMS[problem_name]["debug"] = {
-            "print_results": print_results,
-            "assert_values": assert_values
-        }
+        PROBLEMS[problem_name]["debug"] = {"print_results": print_results, "assert_values": assert_values}
 
 
 def create_variables(var_specs):
@@ -206,7 +174,7 @@ def solve_problem(problem_name, method):
     spec = PROBLEMS[problem_name]
     variables = create_variables(spec["variables"])
     equations = spec["equations"]
-    
+
     if method == "problem_class":
         return solve_with_problem_class(variables, equations)
     elif method == "equation":
@@ -262,11 +230,7 @@ def verify_results(variables, expected, debug_config, capsys, test_name):
 
 
 # Single parameterized test for all problems and methods
-@pytest.mark.parametrize("problem_name,method", [
-    (name, method)
-    for name in PROBLEMS.keys()
-    for method in ["solve_from", "equation", "problem_class"]
-])
+@pytest.mark.parametrize("problem_name,method", [(name, method) for name in PROBLEMS.keys() for method in ["solve_from", "equation", "problem_class"]])
 def test_engineering_problem(problem_name, method, capsys):
     """Test all engineering problems with all solving methods."""
     problem_spec = PROBLEMS[problem_name]

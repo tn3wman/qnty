@@ -10,7 +10,6 @@ from typing import Final, Generic, SupportsIndex, TypeVar
 
 from .dimension import Dimension
 
-
 # =======================
 # Utilities
 # =======================

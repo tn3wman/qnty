@@ -58,7 +58,6 @@ class StraightPipeInternal(Problem):
     t_m_eqn = equation(t_m, t + c)
     P_max_eqn = equation(P_max, (2 * (T - c) * S * E * W) / (D - 2 * (T - c) * Y))
 
-
     # ASME B31.3 Code Compliance Checks - defined at class level like variables and equations
     thick_wall_check = add_rule(
         geq(t, D / 6),
@@ -73,6 +72,7 @@ class StraightPipeInternal(Problem):
         warning_type="CODE_COMPLIANCE",
         severity="WARNING",
     )
+
 
 def create_straight_pipe_internal():
     return StraightPipeInternal()

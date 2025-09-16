@@ -63,8 +63,8 @@ def test_quantity_arithmetic_and_comparisons():
     assert f.dim == (dim.L / dim.L)
 
     # power
-    g = a ** 2
-    assert g.dim == (dim.L ** 2)
+    g = a**2
+    assert g.dim == (dim.L**2)
 
     # comparisons
     a2 = Q(10.0, LengthUnits)
@@ -83,7 +83,7 @@ def test_quantity_arithmetic_and_comparisons():
     assert (3 + dless).value == pytest.approx(5.0)
     assert (3 - dless).value == pytest.approx(1.0)
     assert (3 * dless).value == pytest.approx(6.0)
-    assert (3 / dless).dim == (dim.D ** -1)  # 1/dimensionless
+    assert (3 / dless).dim == (dim.D**-1)  # 1/dimensionless
 
 
 def _run_quantity_benchmark(iterations: int = 20000) -> dict:
@@ -94,9 +94,9 @@ def _run_quantity_benchmark(iterations: int = 20000) -> dict:
         q = Q(100.0, LengthUnits)
         _ = q.to_unit.millimeter
         _ = q.to("meter")
-        _ = (q * q)
-        _ = (q / q)
-        _ = (q ** 2)
+        _ = q * q
+        _ = q / q
+        _ = q**2
 
     def workload():
         res = 0
@@ -106,9 +106,9 @@ def _run_quantity_benchmark(iterations: int = 20000) -> dict:
             q_back = q_mm.to("meter")
             a = q * q_back
             b = q / q_back
-            c = q ** 2
+            c = q**2
             # comparisons
-            _cmp = (q_back == q)
+            _cmp = q_back == q
             # values are guaranteed non-None for arithmetic results; assert to aid type checkers
             assert a.value is not None and b.value is not None and c.value is not None
             res ^= hash((int(_cmp), int(a.value), int(b.value), int(c.value)))
@@ -188,9 +188,7 @@ def test_quantity_performance_regression(tmp_path: Path):
         curr_t = float(metrics["time_per_op_ns"])
         if prev_t > 0:
             ratio = curr_t / prev_t
-            assert ratio <= 2.0, (
-                f"Quantity ops slowed {ratio:.2f}x (prev {prev_t:.1f} ns/op, now {curr_t:.1f} ns/op)"
-            )
+            assert ratio <= 2.0, f"Quantity ops slowed {ratio:.2f}x (prev {prev_t:.1f} ns/op, now {curr_t:.1f} ns/op)"
 
         # Function call budget: ≤ 25% more per iteration
         prev_calls = int(last.get("quantity_calls", 0) or 0)
@@ -198,7 +196,4 @@ def test_quantity_performance_regression(tmp_path: Path):
         prev_norm = prev_calls / max(int(last.get("iterations", 1)), 1)
         curr_norm = curr_calls / max(int(metrics.get("iterations", 1)), 1)
         call_ratio = curr_norm / max(prev_norm, 1e-12)
-        assert call_ratio <= 1.25, (
-            f"Function call count increased {call_ratio:.2f}x per iteration (prev {prev_norm:.2f}, now {curr_norm:.2f})"
-        )
-
+        assert call_ratio <= 1.25, f"Function call count increased {call_ratio:.2f}x per iteration (prev {prev_norm:.2f}, now {curr_norm:.2f})"

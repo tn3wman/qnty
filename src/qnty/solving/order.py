@@ -144,8 +144,7 @@ class Order:
         from ..algebra.nodes import VariableReference
 
         # Check if both sides are single variable references
-        return (isinstance(equation.lhs, VariableReference) and
-                isinstance(equation.rhs, VariableReference))
+        return isinstance(equation.lhs, VariableReference) and isinstance(equation.rhs, VariableReference)
 
     def detect_cycles(self) -> list[list[str]]:
         """

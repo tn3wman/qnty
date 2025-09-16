@@ -87,9 +87,7 @@ class ExpressionFormatter:
             # Right side needs parentheses if:
             # 1. Its precedence is strictly lower, OR
             # 2. Same precedence AND current operator is left-associative (-, /)
-            needs_parentheses = expr_precedence < current_precedence or (
-                expr_precedence == current_precedence and operator in ExpressionFormatter.LEFT_ASSOCIATIVE_SPECIAL
-            )
+            needs_parentheses = expr_precedence < current_precedence or (expr_precedence == current_precedence and operator in ExpressionFormatter.LEFT_ASSOCIATIVE_SPECIAL)
         else:
             # Left side needs parentheses only if its precedence is strictly lower
             needs_parentheses = expr_precedence < current_precedence
