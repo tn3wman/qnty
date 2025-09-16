@@ -34,7 +34,3 @@ def get_logger(name: str = "qnty") -> logging.Logger:
     return logger
 
 
-def set_log_level(level: str):
-    """Dynamically adjust log level at runtime."""
-    logger = get_logger()
-    logger.setLevel(getattr(logging, level.upper(), logging.INFO))

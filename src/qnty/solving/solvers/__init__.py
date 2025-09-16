@@ -6,8 +6,8 @@ of engineering equations.
 """
 
 from ..manager import SolverManager
-from .base import BaseSolver, SolveError, SolveResult
+from .base import BaseSolver, SolveResult
 from .iterative import IterativeSolver
 from .simultaneous import SimultaneousEquationSolver
 
-__all__ = ["BaseSolver", "SolveResult", "SolveError", "IterativeSolver", "SimultaneousEquationSolver", "SolverManager"]
+__all__ = ["BaseSolver", "SolveResult", "IterativeSolver", "SimultaneousEquationSolver", "SolverManager"]

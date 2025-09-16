@@ -466,6 +466,29 @@ class EnergyUnits(UnitNamespace):
 
 # endregion // E
 
+
+
+
+
+# region // M
+
+# region // MASS FLOW RATE
+kilogram_per_second = attach_composed(
+    u.kg / u.second, name="kilogram_per_second", symbol="kg/s",
+    aliases=("kilogram_per_second","kilograms_per_second","kg/s",),
+)
+
+class MassFlowRateUnits(UnitNamespace):
+    __slots__ = ()
+    __preferred__ = "kilogram_per_second"
+
+    kilogram_per_second: Final[Unit] = kilogram_per_second
+
+
+
+
+
+
 # region // P
 
 # region // POWER THERMAL DUTY
@@ -490,3 +513,33 @@ class PowerThermalDutyUnits(UnitNamespace):
 # endregion // POWER THERMAL DUTY
 
 # endregion // P
+
+
+# region // S
+
+
+class SpecificVolumeUnits(UnitNamespace):
+    __slots__ = ()
+    __preferred__ = "cubic_meter_per_kilogram"
+
+    cubic_meter_per_kilogram: Final[Unit] = attach_composed(
+        u.meter**3 / u.kg, name="cubic_meter_per_kilogram", symbol="m³/kg",
+        aliases=("cubic_meter_per_kilogram","cubic_meters_per_kilogram","m3/kg",),
+    )
+
+    cubic_foot_per_pound_mass: Final[Unit] = attach_composed(
+        u.foot**3 / u.pound_mass, name="cubic_foot_per_pound_mass", symbol="ft³/lbm",
+        aliases=("cubic_foot_per_pound_mass","cubic_feet_per_pound_mass","ft3/lbm",),
+    )
+
+
+
+# endregion // S
+
+
+
+# region // V
+
+
+
+# endregion // V

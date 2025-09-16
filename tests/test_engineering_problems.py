@@ -66,14 +66,59 @@ PROBLEMS = {
             "A_1_5": (0.01413, u.square_feet),
             "A_2_5": (0.03323, u.square_feet),
         },
-        "debug": {"print_results": True, "assert_values": True},
+        "debug": {
+            # "print_results": True,
+            "assert_values": True
+        },
     },
     "problem_3": {
         "description": "Example problem 3",
-        "variables": {"COP": (qc.Dimensionless, None, None), "Q_heating": (qc.PowerThermalDuty, 85000, u.british_thermal_unit_per_hour), "W_compressor": (qc.PowerThermalDuty, 5900, u.W)},
+        "variables": {
+            "COP": (qc.Dimensionless, None, None),
+            "Q_heating": (qc.PowerThermalDuty, 85000, u.british_thermal_unit_per_hour),
+            "W_compressor": (qc.PowerThermalDuty, 5900, u.W)},
         "equations": [("COP", "Q_heating / W_compressor")],
         "expected": {"COP": (4.2, u.dimensionless), "Q_heating": (85000, u.british_thermal_unit_per_hour), "W_compressor": (5900, u.W)},
-        "debug": {"print_results": True, "assert_values": True},
+        "debug": {
+            # "print_results": True,
+            "assert_values": True
+        },
+    },
+    "problem_7": {
+        "description": "Example problem 7",
+        "variables": {
+            "R_e": (qc.Dimensionless, None, None),
+            "rho": (qc.MassDensity, None, None),
+            "v": (qc.SpecificVolume, 14, u.ft3/u.lbm),
+            "V": (qc.VelocityLinear, None, None),
+            "D": (qc.Length, 4.026, u.inch),
+            "mu": (qc.ViscosityDynamic, 8042000, u.lbm/(u.ft*u.second)),
+            "m_dot": (qc.MassFlowRate, 100, u.lbm/u.hour),
+            "Q": (qc.VolumetricFlowRate, None, None),
+            "A": (qc.Area, None, None),
+        },
+        "equations": [
+            ("R_e", "rho * V * D / mu"),
+            ("rho", "1/v"),
+            ("Q", "m_dot / rho"),
+            ("A", "3.14 * (D / 2) ** 2"),
+            ("V", "Q / A")
+        ],
+        "expected" : {
+            "R_e": (12522, u.dimensionless),
+            "rho": (0.0714, u.pound_mass_per_cubic_foot),
+            "v": (14, u.ft2/u.lbm),
+            "V": (4.4, u.feet_per_second),
+            "D": (4.026, u.inch),
+            "mu": (8042000, u.pound_mass/(u.foot* u.second)),
+            "m_dot": (100, u.lbm/u.hour),
+            "Q": (0.3888, u.ft3/u.second),
+            "A": (0.08836, u.square_feet)
+        },
+        "debug": {
+            "print_results": True,
+            "assert_values": True
+        },
     },
 }
 

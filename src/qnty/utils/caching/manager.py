@@ -85,6 +85,9 @@ class UnifiedCacheManager:
         # Weak reference caches for object-based keys
         self._dimension_signature_cache: WeakValueDictionary = WeakValueDictionary()
 
+        # External cache registry for modules that have their own caches
+        self._external_caches: dict[str, Callable[[], None]] = {}
+
         # Statistics tracking
         self._stats = {
             "unit_property": CacheStats("Unit Property"),
@@ -296,10 +299,14 @@ class UnifiedCacheManager:
             del cache_dict[key]
             self._stats[cache_name].evict()
 
+    def register_external_cache(self, name: str, clear_func: Callable[[], None]) -> None:
+        """Register external cache clearing function."""
+        self._external_caches[name] = clear_func
+
     def clear_cache(self, cache_name: str | None = None) -> None:
         """Clear specific cache or all caches."""
         if cache_name is None:
-            # Clear all caches
+            # Clear all internal caches
             self._unit_property_cache.clear()
             self._available_units_cache.clear()
             self._expression_result_cache.clear()
@@ -311,6 +318,14 @@ class UnifiedCacheManager:
             self._multiplication_cache.clear()
             self._division_cache.clear()
             self._dimension_cache.clear()
+
+            # Clear all registered external caches
+            for cache_name, clear_func in self._external_caches.items():
+                try:
+                    clear_func()
+                except Exception:
+                    # Log error but continue clearing other caches
+                    pass
         else:
             # Clear specific cache
             cache_map = {
@@ -327,6 +342,11 @@ class UnifiedCacheManager:
             }
             if cache_name in cache_map:
                 cache_map[cache_name].clear()
+            elif cache_name in self._external_caches:
+                try:
+                    self._external_caches[cache_name]()
+                except Exception:
+                    pass
 
     def get_cache_stats(self) -> dict[str, CacheStats]:
         """Get performance statistics for all caches."""

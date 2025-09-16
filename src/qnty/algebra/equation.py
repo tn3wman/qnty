@@ -164,7 +164,7 @@ class Equation:
     @staticmethod
     def _get_quantity_value(quantity: Quantity) -> float | None:
         """Safely extract numeric value from a Quantity."""
-        if ValidationHelper.has_valid_value(quantity):
+        if ValidationHelper.has_valid_value(quantity) and quantity.value is not None:
             return float(quantity.value)
         return None
 
@@ -462,21 +462,8 @@ class Equation:
 
     def _get_effective_unit(self, quantity):
         """Get the effective unit for a quantity, handling both old and new Quantity objects."""
-        # New Quantity objects have preferred attribute
-        if hasattr(quantity, "preferred") and quantity.preferred is not None:
-            return quantity.preferred
-
-        # Old Quantity objects might have unit attribute
-        if hasattr(quantity, "unit"):
-            return quantity.unit
-
-        # Try to get preferred unit from dimension
-        if hasattr(quantity, "dim"):
-            from ..core.unit import ureg
-
-            return ureg.preferred_for(quantity.dim) or ureg.si_unit_for(quantity.dim)
-
-        return None
+        from ..utils.shared_utilities import ValidationHelper
+        return ValidationHelper.get_effective_unit(quantity)
 
     def _are_dimensionally_compatible(self, lhs_value, rhs_value) -> bool:
         """Check if two quantities are dimensionally compatible."""

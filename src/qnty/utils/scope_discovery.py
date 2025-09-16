@@ -368,7 +368,6 @@ class ScopeDiscoveryService:
         cls._variable_name_cache.clear()
         cls._cache_hit_count = 0
         cls._cache_miss_count = 0
-        TypeRegistry.clear_cache()
         _logger.debug("Cleared all scope discovery caches")
 
     @classmethod
@@ -404,6 +403,20 @@ class ScopeDiscoveryService:
     def disable_debug_logging(cls) -> None:
         """Disable debug logging for scope discovery operations."""
         logging.getLogger(__name__).setLevel(logging.WARNING)
+
+
+# Register scope discovery cache with unified cache manager
+def _register_scope_cache():
+    """Register scope discovery cache clearing with the unified cache manager."""
+    try:
+        from .caching.manager import get_cache_manager
+        get_cache_manager().register_external_cache("scope_discovery", ScopeDiscoveryService.clear_cache)
+    except ImportError:
+        # Cache manager not available - proceed without registration
+        pass
+
+# Auto-register on module import
+_register_scope_cache()
 
 
 # Convenience function for backward compatibility

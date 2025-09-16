@@ -20,25 +20,6 @@ if TYPE_CHECKING:
 OperandType = Any  # Expression | FieldQuantity | Quantity | int | float
 
 
-# ========== COMMON PROTOCOLS ==========
-
-
-class VariableLike(Protocol):
-    """Protocol for objects that can act as variables."""
-
-    symbol: str | None
-    value: float | None
-
-    def get_variables(self) -> set[str]: ...
-
-
-class ExpressionLike(Protocol):
-    """Protocol for objects that can act as expressions."""
-
-    def evaluate(self, variable_values: dict[str, FieldQuantity]) -> Quantity: ...
-    def get_variables(self) -> set[str]: ...
-
-
 # ========== SHARED VALIDATION UTILITIES ==========
 
 
@@ -67,6 +48,30 @@ class ValidationHelper:
         if hasattr(obj, "symbol"):
             return getattr(obj, "symbol", None)
         return None
+
+    @staticmethod
+    def safe_get_attribute(obj, *attr_names, default=None):
+        """Safely get first available attribute from object."""
+        for attr_name in attr_names:
+            if hasattr(obj, attr_name):
+                value = getattr(obj, attr_name, None)
+                if value is not None:
+                    return value
+        return default
+
+    @staticmethod
+    def safe_get_callable(obj, attr_name, default=None):
+        """Safely get callable attribute from object."""
+        if hasattr(obj, attr_name):
+            attr_value = getattr(obj, attr_name, None)
+            if callable(attr_value):
+                return attr_value
+        return default
+
+    @staticmethod
+    def safe_get_identifier(obj) -> str | None:
+        """Get the best identifier (symbol or name) from object."""
+        return ValidationHelper.safe_get_attribute(obj, "symbol", "name")
 
     @staticmethod
     def is_simple_variable_symbol(symbol: str) -> bool:
@@ -166,88 +171,6 @@ class VariableReferenceHelper:
 
 # ========== EXPRESSION TREE UTILITIES ==========
 
-
-class ExpressionTreeHelper:
-    """Consolidates expression tree traversal and manipulation patterns."""
-
-    @staticmethod
-    def traverse_expression_tree(expr, visitor_func: Callable[[Any], Any]):
-        """Generic expression tree traversal with visitor pattern."""
-        # Visit current node
-        result = visitor_func(expr)
-        if result is not None:
-            return result
-
-        # Traverse children based on expression type
-        if hasattr(expr, "left") and hasattr(expr, "right"):
-            # Binary operation
-            left_result = ExpressionTreeHelper.traverse_expression_tree(expr.left, visitor_func)
-            if left_result is not None:
-                return left_result
-            right_result = ExpressionTreeHelper.traverse_expression_tree(expr.right, visitor_func)
-            if right_result is not None:
-                return right_result
-        elif hasattr(expr, "operand"):
-            # Unary operation
-            return ExpressionTreeHelper.traverse_expression_tree(expr.operand, visitor_func)
-        elif hasattr(expr, "condition") and hasattr(expr, "true_expr") and hasattr(expr, "false_expr"):
-            # Conditional expression
-            for child in [expr.condition, expr.true_expr, expr.false_expr]:
-                child_result = ExpressionTreeHelper.traverse_expression_tree(child, visitor_func)
-                if child_result is not None:
-                    return child_result
-
-        return None
-
-    @staticmethod
-    def collect_variables_from_expression(expr) -> set[str]:
-        """Collect all variable symbols from an expression tree."""
-        variables = set()
-
-        def collect_vars(node):
-            if VariableReferenceHelper.is_variable_reference(node):
-                symbol = ValidationHelper.safe_get_symbol(node)
-                if symbol:
-                    variables.add(symbol)
-            elif hasattr(node, "get_variables"):
-                variables.update(node.get_variables())
-            elif hasattr(node, "symbol") and node.symbol:
-                variables.add(node.symbol)
-            return None  # Continue traversal
-
-        ExpressionTreeHelper.traverse_expression_tree(expr, collect_vars)
-        return variables
-
-    @staticmethod
-    def substitute_variables_in_expression(expr, substitutions: dict[str, Any], expression_factory):
-        """Generic variable substitution in expression trees."""
-        if VariableReferenceHelper.is_variable_reference(expr):
-            symbol = ValidationHelper.safe_get_symbol(expr)
-            if symbol and symbol in substitutions:
-                # Create new variable reference with substituted variable
-                return expression_factory.create_variable_reference(substitutions[symbol])
-            return expr
-
-        elif hasattr(expr, "left") and hasattr(expr, "right") and hasattr(expr, "operator"):
-            # Binary operation
-            new_left = ExpressionTreeHelper.substitute_variables_in_expression(expr.left, substitutions, expression_factory)
-            new_right = ExpressionTreeHelper.substitute_variables_in_expression(expr.right, substitutions, expression_factory)
-            return expression_factory.create_binary_operation(expr.operator, new_left, new_right)
-
-        elif hasattr(expr, "operand") and hasattr(expr, "function_name"):
-            # Unary function
-            new_operand = ExpressionTreeHelper.substitute_variables_in_expression(expr.operand, substitutions, expression_factory)
-            return expression_factory.create_unary_function(expr.function_name, new_operand)
-
-        elif hasattr(expr, "condition") and hasattr(expr, "true_expr") and hasattr(expr, "false_expr"):
-            # Conditional expression
-            new_condition = ExpressionTreeHelper.substitute_variables_in_expression(expr.condition, substitutions, expression_factory)
-            new_true = ExpressionTreeHelper.substitute_variables_in_expression(expr.true_expr, substitutions, expression_factory)
-            new_false = ExpressionTreeHelper.substitute_variables_in_expression(expr.false_expr, substitutions, expression_factory)
-            return expression_factory.create_conditional_expression(new_condition, new_true, new_false)
-
-        else:
-            return expr
 
 
 # ========== NAMESPACE UTILITIES ==========

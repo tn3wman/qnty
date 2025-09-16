@@ -31,6 +31,28 @@ class Dimensionless:
     """Dimensionless quantity with automatic boilerplate."""
     pass
 
+
+
+# region // M
+
+
+@quantity(uc.MassDensityUnits)
+class MassDensity:
+    """Mass density quantity with automatic boilerplate."""
+    pass
+
+
+@quantity(uc.MassFlowRateUnits)
+class MassFlowRate:
+    """Mass flow rate quantity with automatic boilerplate."""
+    pass
+
+
+
+# endregion // M
+
+
+
 # region // P
 
 @quantity(uc.PowerThermalDutyUnits)
@@ -45,10 +67,16 @@ class Pressure:
 
 # endregion // P
 
-@quantity(uc.MassDensityUnits)
-class MassDensity:
-    """Mass density quantity with automatic boilerplate."""
+# region // S
+
+@quantity(uc.SpecificVolumeUnits)
+class SpecificVolume:
+    """Specific volume quantity with automatic boilerplate."""
     pass
+
+# endregion // S
+
+
 
 @quantity(uc.VelocityLinearUnits)
 class VelocityLinear:
@@ -69,4 +97,14 @@ class ViscosityDynamic:
 class ViscosityKinematic:
     """Kinematic viscosity quantity with automatic boilerplate."""
     pass
+
+
+
+# region // V
+
+
+
+
+
+# endregion // V
 

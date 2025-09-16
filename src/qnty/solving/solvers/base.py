@@ -10,10 +10,6 @@ from ...core.quantity import FieldQuantity
 from ..order import Order
 
 
-class SolveError(Exception):
-    """Exception raised when solving fails."""
-
-
 @dataclass
 class SolveResult:
     """Result of a solve operation."""
@@ -80,3 +76,78 @@ class BaseSolver(ABC):
     def _get_unknown_variables(self, variables: dict[str, FieldQuantity]) -> set[str]:
         """Get symbols of unknown variables."""
         return {s for s, v in variables.items() if not v.is_known}
+
+    def _partition_variables(self, variables: dict[str, FieldQuantity]) -> tuple[set[str], set[str]]:
+        """Partition variables into known and unknown sets efficiently."""
+        known = set()
+        unknown = set()
+        for symbol, variable in variables.items():
+            if variable.is_known:
+                known.add(symbol)
+            else:
+                unknown.add(symbol)
+        return known, unknown
+
+    def _resolve_preferred_unit(self, variable: FieldQuantity, variable_name: str | None = None):
+        """Resolve preferred unit for a variable, falling back to SI unit.
+
+        Args:
+            variable: The variable to resolve unit for
+            variable_name: Optional name for error messages (defaults to variable.name)
+
+        Returns:
+            Unit object for the variable
+
+        Raises:
+            ValueError: If no unit can be determined
+        """
+        preferred_unit = variable.preferred
+        if preferred_unit is None:
+            from ...core.unit import ureg
+            preferred_unit = ureg.si_unit_for(variable.dim)
+            if preferred_unit is None:
+                var_name = variable_name or getattr(variable, 'name', 'unknown')
+                raise ValueError(f"Cannot determine unit for variable {var_name}")
+        return preferred_unit
+
+    def _create_error_result(self, variables: dict[str, FieldQuantity], message: str, iterations: int = 0) -> SolveResult:
+        """Create a standardized error result.
+
+        Args:
+            variables: Current state of variables
+            message: Error message
+            iterations: Number of iterations completed
+
+        Returns:
+            SolveResult indicating failure
+        """
+        return SolveResult(
+            variables=variables,
+            steps=self.steps,
+            success=False,
+            message=message,
+            method=self.__class__.__name__,
+            iterations=iterations
+        )
+
+    def _extract_numerical_value(self, value: Any) -> float:
+        """Extract numerical value from various quantity types.
+
+        Args:
+            value: Value to extract from (Quantity, int, float, or object with .value)
+
+        Returns:
+            Float representation of the value
+
+        Raises:
+            ValueError: If value cannot be converted to float
+        """
+        try:
+            if hasattr(value, 'value') and value.value is not None:
+                return float(value.value)
+            elif isinstance(value, int | float):
+                return float(value)
+            else:
+                return float(value)
+        except (TypeError, ValueError) as e:
+            raise ValueError(f"Cannot extract numerical value from {type(value)}: {value}") from e

@@ -457,7 +457,7 @@ class BinaryOperation(Expression):
     def _divide(self, left_val: "Quantity", right_val: "Quantity") -> "Quantity":
         """Handle division with zero checking and optimizations."""
         # Check for division by zero first
-        if _has_valid_value(right_val):
+        if _has_valid_value(right_val) and right_val.value is not None:
             if abs(right_val.value) < SharedConstants.DIVISION_BY_ZERO_THRESHOLD:
                 raise ValueError(f"Division by zero in expression: {self}")
 
@@ -479,6 +479,10 @@ class BinaryOperation(Expression):
         try:
             # Extract numeric exponent - Quantity.__pow__ expects int
             exponent = right_val.value if _has_valid_value(right_val) else 1
+
+            # Ensure exponent is not None
+            if exponent is None:
+                exponent = 1
 
             # Convert to int if it's a whole number, otherwise raise error (for now)
             if exponent != int(exponent):
@@ -508,14 +512,14 @@ class BinaryOperation(Expression):
             else:
                 # Fallback to old method if operator is unknown
                 left_val, right_val = self._normalize_comparison_units(left_val, right_val)
-                left_value = left_val.value if _has_valid_value(left_val) else 0.0
-                right_value = right_val.value if _has_valid_value(right_val) else 0.0
+                left_value = left_val.value if _has_valid_value(left_val) and left_val.value is not None else 0.0
+                right_value = right_val.value if _has_valid_value(right_val) and right_val.value is not None else 0.0
                 result = self._perform_comparison(left_value, right_value)
         except (ValueError, TypeError, AttributeError):
             # If Quantity comparison fails, fall back to value comparison
             left_val, right_val = self._normalize_comparison_units(left_val, right_val)
-            left_value = left_val.value if _has_valid_value(left_val) else 0.0
-            right_value = right_val.value if _has_valid_value(right_val) else 0.0
+            left_value = left_val.value if _has_valid_value(left_val) and left_val.value is not None else 0.0
+            right_value = right_val.value if _has_valid_value(right_val) and right_val.value is not None else 0.0
             result = self._perform_comparison(left_value, right_value)
 
         # Create dimensionless quantity for boolean result
@@ -616,7 +620,7 @@ class UnaryFunction(Expression):
         # For now, just return the raw value since angle handling is not fully implemented
         # This maintains backward compatibility while avoiding import errors
         try:
-            if _has_valid_value(quantity):
+            if _has_valid_value(quantity) and quantity.value is not None:
                 return quantity.value
             else:
                 raise ValueError("Quantity has no numeric value")
@@ -669,7 +673,7 @@ class ConditionalExpression(Expression):
     def evaluate(self, variable_values: dict[str, "FieldQuantity"]) -> "Quantity":
         condition_val = self.condition.evaluate(variable_values)
         # Consider non-zero as True
-        condition_value = condition_val.value if _has_valid_value(condition_val) else 0.0
+        condition_value = condition_val.value if _has_valid_value(condition_val) and condition_val.value is not None else 0.0
 
         if abs(condition_value) > SharedConstants.CONDITION_EVALUATION_THRESHOLD:
             return self.true_expr.evaluate(variable_values)
@@ -689,7 +693,7 @@ class ConditionalExpression(Expression):
             try:
                 dummy_vars = {}
                 condition_val = simplified_condition.evaluate(dummy_vars)
-                condition_value = condition_val.value if _has_valid_value(condition_val) else 0.0
+                condition_value = condition_val.value if _has_valid_value(condition_val) and condition_val.value is not None else 0.0
                 if abs(condition_value) > SharedConstants.CONDITION_EVALUATION_THRESHOLD:
                     return simplified_true
                 else:
@@ -783,21 +787,8 @@ class _DimensionUtils:
     @staticmethod
     def get_effective_unit(quantity):
         """Get the effective unit for a quantity, handling both old and new Quantity objects."""
-        # New Quantity objects have preferred attribute
-        if hasattr(quantity, "preferred") and quantity.preferred is not None:
-            return quantity.preferred
-
-        # Old Quantity objects might have unit attribute
-        if hasattr(quantity, "unit"):
-            return quantity.unit
-
-        # Try to get preferred unit from dimension
-        if hasattr(quantity, "dim"):
-            from ..core.unit import ureg
-
-            return ureg.preferred_for(quantity.dim) or ureg.si_unit_for(quantity.dim)
-
-        return None
+        from ..utils.shared_utilities import ValidationHelper
+        return ValidationHelper.get_effective_unit(quantity)
 
 
 def wrap_operand(operand: "OperandType") -> Expression:
@@ -860,11 +851,12 @@ def wrap_operand(operand: "OperandType") -> Expression:
             return VariableReference(var)  # type: ignore[arg-type]
 
     # Handle DelayedExpression and DelayedFunction objects that weren't resolved
-    if hasattr(operand, "resolve") and callable(getattr(operand, "resolve", None)):
+    from ..utils.shared_utilities import ValidationHelper
+    if ValidationHelper.safe_get_callable(operand, "resolve"):
         # This is a DelayedExpression or DelayedFunction - try to resolve it with empty context
         # This is a fallback; ideally these should be resolved earlier
         try:
-            resolve_method = getattr(operand, "resolve", None)
+            resolve_method = ValidationHelper.safe_get_callable(operand, "resolve")
             if resolve_method and callable(resolve_method):
                 resolved = resolve_method({})
                 if resolved is not None and isinstance(resolved, Expression):
