@@ -2,7 +2,7 @@
 from math import acos, acosh, asin, asinh, atan, atan2, atanh, cos, cosh, exp, log, log10, sin, sinh, sqrt, tan, tanh
 from re import L
 
-from qnty.core import Acceleration, Dimensionless, Length, Q
+from qnty.core import Acceleration, Dimensionless, Length, Q, u
 from qnty.core import unit_catalog as uc
 
 
@@ -12,7 +12,7 @@ def basic_quantity_usage():
     print()
     print("Using a basic acceleration quantity")
     print("--------------------------------")
-    a_quantity = Q(25, "ft/s²")
+    a_quantity = Q(25, u.foot / u.second**2)
     print(f"a_quantity in ft/s²: {a_quantity}")
     a_quantity = a_quantity.to_unit("m/s²")
     print(f"a_quantity in m/s²: {a_quantity}")
