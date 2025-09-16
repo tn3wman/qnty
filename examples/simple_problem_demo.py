@@ -7,12 +7,12 @@ class StraightPipeInternal(Problem):
     name = "Pressure Design of a Straight Pipe Under Internal Pressure"
     description = "Calculate the minimum wall thickness of a straight pipe under internal pressure."
 
-    P = Pressure("Design Pressure").set(90).psi
+    P = Pressure("Design Pressure").set(90).pound_force_per_square_inch
     D = Length("Outside Diameter").set(0.84).inch
     T_bar = Length("Nominal Wall Thickness").set(0.147).inch
     U_m = Dimensionless("Mill Undertolerance").set(0.125).dimensionless
     c = Length("Mechanical Allowances").set(0.0).inch
-    S = Pressure("Allowable Stress").set(20000).psi
+    S = Pressure("Allowable Stress").set(20000).pound_force_per_square_inch
     E = Dimensionless("Quality Factor").set(0.8).dimensionless
     W = Dimensionless("Weld Joint Strength Reduction Factor").set(1).dimensionless
 
@@ -53,14 +53,6 @@ def create_straight_pipe_internal():
 def test_simple_problem():
     problem = create_straight_pipe_internal()
     
-    # Debug: Check equation types at class level
-    print("Class-level equations:")
-    print(f"  T_eqn type: {type(StraightPipeInternal.T_eqn)}")
-    print(f"  T_eqn value: {StraightPipeInternal.T_eqn}")
-    
-    print("✅ DelayedExpression system successfully resolving equations!")
-
-    # Debug: Print variable info
     print("\nVariables:")
     for name, var in problem.variables.items():
         print(f"  {name} (symbol: {var.symbol}): known={var.is_known}, value={var.quantity}")

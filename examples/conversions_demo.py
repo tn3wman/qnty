@@ -1,6 +1,5 @@
-from binascii import crc_hqx
-from calendar import c
-from qnty.core import Acceleration, Dimensionless, Length, Q
+
+from qnty.core import Acceleration, Q
 from qnty.core import unit_catalog as uc
 
 
