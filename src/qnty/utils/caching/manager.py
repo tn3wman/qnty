@@ -8,6 +8,7 @@ consistent cache policies, monitoring, and memory management.
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from typing import Any, TypeVar
 from weakref import WeakValueDictionary
 
@@ -320,7 +321,7 @@ class UnifiedCacheManager:
             self._dimension_cache.clear()
 
             # Clear all registered external caches
-            for cache_name, clear_func in self._external_caches.items():
+            for _cache_name, clear_func in self._external_caches.items():
                 try:
                     clear_func()
                 except Exception:
