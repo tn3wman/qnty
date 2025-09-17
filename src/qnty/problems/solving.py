@@ -17,35 +17,68 @@ from __future__ import annotations
 import ast
 import operator
 import re
-from collections.abc import Callable
 from logging import Logger
 from typing import Any
 
 from ..algebra import BinaryOperation, ConditionalExpression, Constant, Equation, UnaryFunction, VariableReference, cos, sin
 from ..algebra import equation as create_equation
 from ..core.quantity import Quantity
+from ..utils.shared_utilities import (
+    PatternMatchingHelper,
+    SafeExecutionMixin,
+)
 
 # Type aliases for better readability
 VariableDict = dict[str, Quantity]
 ReconstructionResult = Equation | None
 NamespaceMapping = dict[str, str]
 
-# Constants for pattern matching
-CONDITIONAL_PATTERNS: set[str] = {"cond("}
-FUNCTION_PATTERNS: set[str] = {"sin(", "cos(", "tan(", "log(", "exp(", "sqrt"}
-
 
 class SafeExpressionEvaluator:
     """Safe mathematical expression evaluator using AST instead of eval()."""
 
     ALLOWED_NODES = (
-        ast.Expression, ast.BinOp, ast.UnaryOp, ast.Constant,
-        ast.Name, ast.Load, ast.Store, ast.Del, ast.Add, ast.Sub, ast.Mult,
-        ast.Div, ast.Mod, ast.Pow, ast.LShift, ast.RShift, ast.BitOr, ast.BitXor,
-        ast.BitAnd, ast.FloorDiv, ast.UAdd, ast.USub, ast.Not, ast.Invert,
-        ast.Compare, ast.Eq, ast.NotEq, ast.Lt, ast.LtE, ast.Gt, ast.GtE,
-        ast.Is, ast.IsNot, ast.In, ast.NotIn, ast.BoolOp, ast.And, ast.Or,
-        ast.Call, ast.keyword, ast.Attribute
+        ast.Expression,
+        ast.BinOp,
+        ast.UnaryOp,
+        ast.Constant,
+        ast.Name,
+        ast.Load,
+        ast.Store,
+        ast.Del,
+        ast.Add,
+        ast.Sub,
+        ast.Mult,
+        ast.Div,
+        ast.Mod,
+        ast.Pow,
+        ast.LShift,
+        ast.RShift,
+        ast.BitOr,
+        ast.BitXor,
+        ast.BitAnd,
+        ast.FloorDiv,
+        ast.UAdd,
+        ast.USub,
+        ast.Not,
+        ast.Invert,
+        ast.Compare,
+        ast.Eq,
+        ast.NotEq,
+        ast.Lt,
+        ast.LtE,
+        ast.Gt,
+        ast.GtE,
+        ast.Is,
+        ast.IsNot,
+        ast.In,
+        ast.NotIn,
+        ast.BoolOp,
+        ast.And,
+        ast.Or,
+        ast.Call,
+        ast.keyword,
+        ast.Attribute,
     )
 
     OPERATORS = {
@@ -93,7 +126,7 @@ class SafeExpressionEvaluator:
     def safe_eval(self, expr_string: str) -> Any:
         """Safely evaluate a mathematical expression string."""
         try:
-            tree = ast.parse(expr_string, mode='eval')
+            tree = ast.parse(expr_string, mode="eval")
             self._validate_ast(tree)
             return self._eval_node(tree.body)
         except (SyntaxError, ValueError, TypeError) as e:
@@ -160,12 +193,11 @@ class SafeExpressionEvaluator:
             raise ValueError(f"Unsupported node type: {type(node).__name__}")
 
 
-MATH_OPERATORS: set[str] = {"(", ")", "+", "-", "*", "/"}
-EXCLUDED_FUNCTION_NAMES: set[str] = {"sin", "cos", "max", "min", "exp", "log", "sqrt", "tan"}
-
-# Compiled regex patterns for performance
-VARIABLE_PATTERN_DETAILED = re.compile(r"\b([a-zA-Z_][a-zA-Z0-9_]*)\b")
-VARIABLE_PATTERN = re.compile(r"\b[A-Za-z][A-Za-z0-9_]*\b")
+# Use shared pattern matching utilities
+MATH_OPERATORS = PatternMatchingHelper.MATH_OPERATORS
+EXCLUDED_FUNCTION_NAMES = PatternMatchingHelper.EXCLUDED_FUNCTION_NAMES
+VARIABLE_PATTERN_DETAILED = PatternMatchingHelper.VARIABLE_PATTERN_DETAILED
+VARIABLE_PATTERN = PatternMatchingHelper.VARIABLE_PATTERN
 
 # Tuple of types for isinstance() checks
 VALID_EXPRESSION_TYPES = (VariableReference, Quantity, int, float, BinaryOperation, ConditionalExpression, Constant, UnaryFunction)
@@ -174,17 +206,97 @@ VALID_EXPRESSION_TYPES = (VariableReference, Quantity, int, float, BinaryOperati
 # ========== CUSTOM EXCEPTIONS ==========
 
 
-
-
 class EquationReconstructionError(Exception):
     """Base exception for equation reconstruction errors."""
 
     pass
 
 
-
-
 # ========== SHARED UTILITIES ==========
+
+
+class DependencyAwareSolver:
+    """Solver that handles equations with dependency ordering."""
+
+    def __init__(self, variables: VariableDict):
+        """Initialize the dependency-aware solver.
+
+        Args:
+            variables: Dictionary of variables available for solving
+        """
+        self.variables = variables
+
+    def can_evaluate_expression(self, expression_str: str) -> bool:
+        """Check if an expression can be evaluated with current known variables.
+
+        Args:
+            expression_str: The expression string to check
+
+        Returns:
+            True if all variables in the expression have known values
+        """
+        try:
+            # Extract variables from the expression
+            var_names = PatternMatchingHelper.extract_variables_from_expression_string(expression_str)
+
+            # Check if all variables have known values
+            for var_name in var_names:
+                if var_name in self.variables:
+                    var = self.variables[var_name]
+                    if hasattr(var, "value") and var.value is None:
+                        return False
+                else:
+                    return False  # Variable not found
+
+            return True
+        except Exception:
+            return False
+
+    def solve_equations_with_dependencies(self, equation_specs: list[tuple[str, str]]) -> bool:
+        """Solve equations in dependency order.
+
+        Args:
+            equation_specs: List of (target_var, expression) tuples
+
+        Returns:
+            True if all equations were solved successfully
+        """
+        from qnty.algebra import solve
+
+        # Track which equations have been solved
+        remaining_equations = list(equation_specs)
+        max_iterations = len(equation_specs) * 2  # Prevent infinite loops
+        iterations = 0
+
+        while remaining_equations and iterations < max_iterations:
+            iterations += 1
+            progress_made = False
+
+            # Try to solve equations that can be evaluated now
+            for i, (target_var, expression) in enumerate(remaining_equations):
+                if self.can_evaluate_expression(expression):
+                    try:
+                        # Evaluate the expression
+                        evaluator = SafeExpressionEvaluator(self.variables)
+                        rhs = evaluator.safe_eval(expression)
+
+                        # Solve for the target variable
+                        success = solve(self.variables[target_var], rhs)
+                        if success:
+                            # Remove this equation from remaining list
+                            remaining_equations.pop(i)
+                            progress_made = True
+                            break
+
+                    except Exception:
+                        # Skip this equation for now
+                        continue
+
+            # If no progress was made, we might have unsolvable dependencies
+            if not progress_made:
+                break
+
+        return len(remaining_equations) == 0
 
 
 class ExpressionEvaluationMixin:
@@ -214,13 +326,10 @@ class ExpressionEvaluationMixin:
         Returns:
             List of variable names found in the expression
         """
-        var_matches = VARIABLE_PATTERN_DETAILED.findall(expression_str)
-        if exclude_functions:
-            return [var for var in var_matches if var not in EXCLUDED_FUNCTION_NAMES]
-        return var_matches
+        return PatternMatchingHelper.extract_variables_from_expression_string(expression_str, exclude_functions)
 
 
-class BaseExpressionHandler(ExpressionEvaluationMixin):
+class BaseExpressionHandler(ExpressionEvaluationMixin, SafeExecutionMixin):
     """Base class for expression handling components."""
 
     def __init__(self, variables: VariableDict, logger: Logger):
@@ -232,22 +341,6 @@ class BaseExpressionHandler(ExpressionEvaluationMixin):
         """
         self.variables = variables
         self.logger = logger
-
-    def safe_execute(self, operation_name: str, operation: Callable[[], Any]) -> Any | None:
-        """Safely execute an operation with standardized error handling.
-
-        Args:
-            operation_name: Name of the operation for logging
-            operation: Function to execute
-
-        Returns:
-            Operation result if successful, None if failed
-        """
-        try:
-            return operation()
-        except Exception as e:
-            self.logger.debug(f"Failed to {operation_name}: {e}")
-            return None
 
 
 # ========== EXPRESSION PARSER ==========
@@ -278,10 +371,7 @@ class ExpressionParser(BaseExpressionHandler):
         if not composite_symbol or not isinstance(composite_symbol, str):
             return None
 
-        return self.safe_execute(
-            f"parse composite expression '{composite_symbol}'",
-            lambda: self._parse_composite_expression_impl(composite_symbol)
-        )
+        return self.safe_execute(f"parse composite expression '{composite_symbol}'", lambda: self._parse_composite_expression_impl(composite_symbol))
 
     def _parse_composite_expression_impl(self, composite_symbol: str) -> Any | None:
         """Implementation of composite expression parsing."""
@@ -344,10 +434,7 @@ class ExpressionParser(BaseExpressionHandler):
         Returns:
             Built expression object if successful, None otherwise
         """
-        return self.safe_execute(
-            f"build expression from string '{expr_string}'",
-            lambda: self.create_safe_evaluator(self.variables).safe_eval(expr_string)
-        )
+        return self.safe_execute(f"build expression from string '{expr_string}'", lambda: self.create_safe_evaluator(self.variables).safe_eval(expr_string))
 
     def parse_malformed_variable_pattern(self, malformed_symbol: str) -> Any | None:
         """
@@ -560,7 +647,6 @@ class NamespaceMapper(BaseExpressionHandler):
         # Return shortest match (least nested namespace)
         return min(candidates, key=len) if candidates else None
 
-
     def clear_caches(self) -> None:
         """Clear all internal caches."""
         self._namespace_cache.clear()
@@ -743,10 +829,7 @@ class CompositeExpressionRebuilder(BaseExpressionHandler):
 
     def _safe_evaluate_pattern(self, pattern: str) -> Any | None:
         """Safely evaluate a reconstructed pattern."""
-        return self.safe_execute(
-            f"evaluate pattern '{pattern}'",
-            lambda: self.create_safe_evaluator(self.variables).safe_eval(pattern)
-        )
+        return self.safe_execute(f"evaluate pattern '{pattern}'", lambda: self.create_safe_evaluator(self.variables).safe_eval(pattern))
 
     def _attempt_fallback_reconstruction(self, equation: Equation) -> Any | None:
         """Attempt fallback reconstruction methods."""
@@ -938,7 +1021,6 @@ class EquationReconstructor:
         self.delayed_resolver = DelayedExpressionResolver(self.variables, self.logger)
         self.composite_rebuilder = CompositeExpressionRebuilder(self.variables, self.logger)
 
-
     def _reconstruct_composite_expressions(self, equation: Equation, missing_vars: list[str]) -> ReconstructionResult:
         """
         Generic reconstruction of equations with composite expressions.
@@ -1098,9 +1180,6 @@ class EquationReconstructor:
             Resolved equation if successful, None otherwise
         """
         return self.delayed_resolver.resolve_delayed_equation(equation)
-
-
-
 
     # Delegation methods for public API compatibility
     def parse_composite_expression_pattern(self, composite_symbol: str) -> Any | None:

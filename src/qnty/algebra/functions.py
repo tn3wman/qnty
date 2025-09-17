@@ -8,6 +8,7 @@ Convenience functions for creating mathematical expressions.
 from collections.abc import Callable
 
 from ..core.quantity import FieldQuantity, Quantity
+from ..utils.shared_utilities import ContextDetectionHelper
 from .nodes import BinaryOperation, ConditionalExpression, Expression, UnaryFunction, wrap_operand
 
 # Type aliases for better maintainability
@@ -15,39 +16,8 @@ ExpressionOperand = Expression | FieldQuantity | Quantity | int | float
 ConditionalOperand = Expression | BinaryOperation
 
 
-def _should_preserve_symbolic_expression() -> bool:
-    """Check if we're in a context where symbolic expressions should be preserved."""
-    import inspect
-
-    frame = inspect.currentframe()
-    try:
-        while frame:
-            code = frame.f_code
-            filename = code.co_filename
-            locals_dict = frame.f_locals
-
-            # Skip if we're in a resolve() method - we want actual expressions during resolution
-            if "resolve" in code.co_name:
-                frame = frame.f_back
-                continue
-
-            # If we find a frame in Problem-related code or class definition,
-            # don't auto-evaluate to preserve symbolic expressions
-            if (
-                "<class" in code.co_name
-                or "problem" in filename.lower()
-                or "composition" in filename.lower()
-                or "_extract" in code.co_name.lower()
-                or "WeldedBranchConnection" in str(locals_dict.get("__qualname__", ""))
-                or "Problem" in str(locals_dict.get("__qualname__", ""))
-                or any("Problem" in str(base) for base in locals_dict.get("__bases__", []))
-                or "test_composed_problem" in filename
-            ):
-                return True
-            frame = frame.f_back
-        return False
-    finally:
-        del frame
+# Use shared context detection
+_should_preserve_symbolic_expression = ContextDetectionHelper.should_preserve_symbolic_expression
 
 
 def _create_unary_function(name: str, docstring: str) -> "Callable[[ExpressionOperand], Expression | Quantity | float]":
@@ -127,21 +97,21 @@ def cond_expr(
     return ConditionalExpression(wrapped_condition, wrap_operand(true_expr), wrap_operand(false_expr))
 
 
-def min_expr(*expressions: ExpressionOperand) -> Expression:
-    """Minimum of multiple expressions."""
-    # Check if we should preserve symbolic expressions (in class definition context)
-    if _should_preserve_symbolic_expression():
-        from ..problems.composition import DelayedFunction
+def _create_expr_function(func_name: str, comparator: str):
+    """Factory function to create min/max expression functions."""
 
-        return DelayedFunction("min_expr", *expressions)
-    return _create_comparison_expr(expressions, "min")
+    def expr_func(*expressions: ExpressionOperand) -> Expression:
+        # Check if we should preserve symbolic expressions (in class definition context)
+        if _should_preserve_symbolic_expression():
+            from ..problems.composition import DelayedFunction
+
+            return DelayedFunction(func_name, *expressions)
+        return _create_comparison_expr(expressions, comparator)
+
+    expr_func.__name__ = func_name
+    expr_func.__doc__ = f"{comparator.title()} of multiple expressions."
+    return expr_func
 
 
-def max_expr(*expressions: ExpressionOperand) -> Expression:
-    """Maximum of multiple expressions."""
-    # Check if we should preserve symbolic expressions (in class definition context)
-    if _should_preserve_symbolic_expression():
-        from ..problems.composition import DelayedFunction
-
-        return DelayedFunction("max_expr", *expressions)
-    return _create_comparison_expr(expressions, "max")
+min_expr = _create_expr_function("min_expr", "min")
+max_expr = _create_expr_function("max_expr", "max")

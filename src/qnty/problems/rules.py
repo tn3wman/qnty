@@ -68,11 +68,7 @@ class Rules:
             result = self._evaluate_expression(self.condition, variables)
 
             if result:
-                return self._create_warning_dict(
-                    warning_type=self.warning_type,
-                    severity=self.severity,
-                    message=self.message
-                )
+                return self._create_warning_dict(warning_type=self.warning_type, severity=self.severity, message=self.message)
 
         except Exception as e:
             # If evaluation fails, return an error warning
@@ -97,7 +93,7 @@ class Rules:
         # Convert result to boolean based on type
         return self._convert_result_to_bool(result)
 
-    def _convert_result_to_bool(self, result: Quantity) -> bool:
+    def _convert_result_to_bool(self, result: Quantity | bool) -> bool:
         """
         Convert an evaluation result to a boolean.
 
@@ -107,6 +103,10 @@ class Rules:
         Returns:
             Boolean interpretation of the result
         """
+        # If already boolean, return as is
+        if isinstance(result, bool):
+            return result
+
         # For qnty Quantity objects, check the value
         if isinstance(result, Quantity) and result.value is not None:
             return bool(result.value > BOOLEAN_THRESHOLD)
@@ -129,13 +129,7 @@ class Rules:
         Returns:
             Warning dictionary with standard fields
         """
-        return {
-            "type": warning_type,
-            "severity": severity,
-            "message": message,
-            "check_name": self.name,
-            "condition": str(self.condition)
-        }
+        return {"type": warning_type, "severity": severity, "message": message, "check_name": self.name, "condition": str(self.condition)}
 
     def _create_error_dict(self, exception: Exception, variables: dict[str, FieldQuantity]) -> dict[str, Any]:
         """

@@ -14,6 +14,7 @@ from qnty.solving.order import Order
 
 from ...algebra import Equation
 from ...core.quantity import FieldQuantity, Quantity
+from ..utils import SolverConstants
 from .base import BaseSolver, SolveResult
 
 
@@ -42,14 +43,7 @@ class SimultaneousEquationSolver(BaseSolver):
         3×3 system: Complex engineering systems with interdependent variables
     """
 
-    # Constants for numerical stability and validation
-    MIN_SYSTEM_SIZE = 2
-    MAX_CONDITION_NUMBER = 1e12
-    DEFAULT_TOLERANCE = 1e-10
-
-    # Performance optimization constants
-    LARGE_SYSTEM_THRESHOLD = 100  # Switch to optimized algorithms for n > 100
-    SPARSE_THRESHOLD = 0.1  # Use sparse matrices if density < 10%
+    # Use consolidated constants from utils module (SolverConstants)
 
     def can_handle(self, equations: list[Equation], unknowns: set[str], dependency_graph: Order | None = None, analysis: dict[str, Any] | None = None) -> bool:
         """
@@ -74,7 +68,7 @@ class SimultaneousEquationSolver(BaseSolver):
         num_unknowns = len(unknowns)
 
         # Validate square system with minimum size
-        if system_size != num_unknowns or system_size < self.MIN_SYSTEM_SIZE:
+        if system_size != num_unknowns or system_size < SolverConstants.MIN_SYSTEM_SIZE:
             return False
 
         # Only handle systems with cycles (mutual dependencies)
@@ -84,7 +78,7 @@ class SimultaneousEquationSolver(BaseSolver):
         return bool(has_cycles)
 
     def solve(
-        self, equations: list[Equation], variables: dict[str, FieldQuantity], dependency_graph: Order | None = None, max_iterations: int = 100, tolerance: float = DEFAULT_TOLERANCE
+        self, equations: list[Equation], variables: dict[str, FieldQuantity], dependency_graph: Order | None = None, max_iterations: int = 100, tolerance: float = SolverConstants.DEFAULT_TOLERANCE
     ) -> SolveResult:
         """
         Solve the n×n simultaneous system using matrix operations.
@@ -118,7 +112,7 @@ class SimultaneousEquationSolver(BaseSolver):
         try:
             solution_vector = self._solve_matrix_system(equations, unknown_variable_names, working_variables)
             if solution_vector is None:
-                return SolveResult(variables=working_variables, steps=self.steps, success=False, message="Failed to solve matrix system", method="SimultaneousEquationSolver")
+                return self._create_error_result(working_variables, "Failed to solve matrix system")
 
             # Step 3: Update variables with solutions
             self._apply_solution_to_variables(unknown_variable_names, solution_vector, working_variables)
@@ -131,7 +125,7 @@ class SimultaneousEquationSolver(BaseSolver):
             )
 
         except Exception as general_error:
-            return SolveResult(variables=working_variables, steps=self.steps, success=False, message=f"Simultaneous solving failed: {general_error}", method="SimultaneousEquationSolver")
+            return self._create_error_result(working_variables, f"Simultaneous solving failed: {general_error}")
 
     def _validate_system(self, equations: list[Equation], variables: dict[str, FieldQuantity]) -> SolveResult:
         """
@@ -145,7 +139,7 @@ class SimultaneousEquationSolver(BaseSolver):
         num_equations = len(equations)
 
         # Validate square system with minimum size
-        if num_unknowns != num_equations or num_unknowns < self.MIN_SYSTEM_SIZE:
+        if num_unknowns != num_equations or num_unknowns < SolverConstants.MIN_SYSTEM_SIZE:
             return SolveResult(
                 variables=variables,
                 steps=self.steps,
@@ -176,7 +170,7 @@ class SimultaneousEquationSolver(BaseSolver):
 
         # Check numerical stability via condition number
         condition_number = np.linalg.cond(coefficient_matrix)
-        if condition_number > self.MAX_CONDITION_NUMBER:
+        if condition_number > SolverConstants.MAX_CONDITION_NUMBER:
             if self.logger:
                 # Use debug level for expected fallback scenarios (systems with conditionals)
                 if np.isinf(condition_number):
@@ -208,7 +202,7 @@ class SimultaneousEquationSolver(BaseSolver):
         Returns:
             Solution vector for the system Ax = b
         """
-        if system_size <= self.LARGE_SYSTEM_THRESHOLD:
+        if system_size <= SolverConstants.LARGE_SYSTEM_THRESHOLD:
             # Use standard NumPy solver for small-medium systems
             return np.linalg.solve(coefficient_matrix, constant_vector)
         else:
@@ -219,15 +213,15 @@ class SimultaneousEquationSolver(BaseSolver):
             # Check matrix density to decide between dense/sparse algorithms
             density = np.count_nonzero(coefficient_matrix) / coefficient_matrix.size
 
-            if density < self.SPARSE_THRESHOLD:
+            if density < SolverConstants.SPARSE_THRESHOLD:
                 # Use sparse matrix algorithms
                 if self.logger:
-                    self.logger.debug(f"Matrix density {density:.3f} < {self.SPARSE_THRESHOLD}, using sparse algorithms")
+                    self.logger.debug(f"Matrix density {density:.3f} < {SolverConstants.SPARSE_THRESHOLD}, using sparse algorithms")
                 return self._solve_sparse_system(coefficient_matrix, constant_vector)
             else:
                 # Use optimized dense algorithms
                 if self.logger:
-                    self.logger.debug(f"Matrix density {density:.3f} >= {self.SPARSE_THRESHOLD}, using optimized dense algorithms")
+                    self.logger.debug(f"Matrix density {density:.3f} >= {SolverConstants.SPARSE_THRESHOLD}, using optimized dense algorithms")
                 return self._solve_large_dense_system(coefficient_matrix, constant_vector)
 
     def _solve_sparse_system(self, coefficient_matrix: np.ndarray, constant_vector: np.ndarray) -> np.ndarray:
@@ -414,14 +408,8 @@ class SimultaneousEquationSolver(BaseSolver):
         original_variable = variables[variable_symbol]
         if original_variable.quantity is None:
             raise ValueError(f"Variable {variable_symbol} has no quantity")
-        result_unit = original_variable.preferred
-        if result_unit is None:
-            # Fallback to a default unit if no preferred unit
-            from ...core.unit import ureg
-
-            result_unit = ureg.si_unit_for(original_variable.dim)
-            if result_unit is None:
-                raise ValueError(f"Cannot determine unit for variable {variable_symbol}")
+        # Use consolidated utility for unit resolution
+        result_unit = self._resolve_preferred_unit(original_variable, variable_symbol)
 
         solution_quantity = Quantity.from_value(solution_value, result_unit, name="solution")
 
@@ -454,38 +442,9 @@ class SimultaneousEquationSolver(BaseSolver):
             if original_var.quantity is None:
                 raise ValueError(f"Variable {var_name} has no quantity")
 
-            # Determine preferred unit
-            preferred_unit = original_var.preferred
-            if preferred_unit is None:
-                from ...core.unit import ureg
-
-                preferred_unit = ureg.si_unit_for(original_var.dim)
-                if preferred_unit is None:
-                    raise ValueError(f"Cannot determine unit for variable {var_name}")
+            # Use consolidated utility for unit resolution
+            preferred_unit = self._resolve_preferred_unit(original_var, var_name)
 
             test_var = FieldQuantity(name=f"test_{var_name}", dim=original_var.dim, value=test_value, preferred=preferred_unit)
             test_var._symbol = var_name
             test_vars[var_name] = test_var
-
-    def _extract_numerical_value(self, value: Any) -> float:
-        """
-        Extract numerical value from various quantity types.
-
-        Args:
-            value: Value that may be a Quantity, float, int, or other numeric type
-
-        Returns:
-            Float representation of the value
-        """
-        # Check for Quantity type first (most common case)
-        if isinstance(value, Quantity) and value.value is not None:
-            return float(value.value)
-        # Handle primitive numeric types
-        elif isinstance(value, int | float):
-            return float(value)
-        # Handle objects with .value attribute as last resort
-        elif hasattr(value, "value") and value.value is not None:
-            return float(value.value)
-        else:
-            # Last resort: try direct conversion
-            return float(value)

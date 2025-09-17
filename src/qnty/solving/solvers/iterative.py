@@ -1,7 +1,6 @@
 from typing import Any
 
-from ...algebra import Equation
-from ...algebra import ConditionalExpression, VariableReference
+from ...algebra import ConditionalExpression, Equation, VariableReference
 from ...core.quantity import FieldQuantity
 from ..order import Order
 from .base import BaseSolver, SolveResult
@@ -37,7 +36,7 @@ class IterativeSolver(BaseSolver):
         self.steps = []
 
         if not dependency_graph:
-            return SolveResult(variables=variables, steps=self.steps, success=False, message="Dependency graph required for iterative solving", method="IterativeSolver")
+            return self._create_error_result(variables, "Dependency graph required for iterative solving")
 
         # Make a copy of variables to work with
         working_vars = dict(variables.items())
@@ -72,7 +71,7 @@ class IterativeSolver(BaseSolver):
             for var_symbol in solvable:
                 result = self._solve_single_variable(var_symbol, equations, working_vars, known_vars, dependency_graph, iteration, tolerance)
                 if not result:
-                    return SolveResult(variables=working_vars, steps=self.steps, success=False, message=f"Failed to solve for {var_symbol}", method="IterativeSolver", iterations=iteration + 1)
+                    return self._create_error_result(working_vars, f"Failed to solve for {var_symbol}", iteration + 1)
 
             # Check for progress
             if len(known_vars) == iteration_start:

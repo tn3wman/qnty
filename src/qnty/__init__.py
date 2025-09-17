@@ -20,5 +20,5 @@ from .algebra import (
     sqrt,
     tan,
 )
-from .problems import Problem
 from .core.quantity_catalog import *
+from .problems import Problem

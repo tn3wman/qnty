@@ -17,8 +17,10 @@ import logging
 from collections.abc import Callable
 from typing import Any, Protocol
 
-# Constants for consistent validation messaging
-MSG_VALIDATION_CHECK_FAILED = "Validation check execution failed"
+from ..utils.shared_utilities import SafeExecutionMixin, SharedConstants
+
+# Use shared constants
+MSG_VALIDATION_CHECK_FAILED = SharedConstants.MSG_VALIDATION_CHECK_FAILED
 MSG_WARNING_ATTR_UNINITIALIZED = "Problem warnings attribute is not properly initialized"
 MSG_NO_CLASS_CHECKS = "No class checks found"
 MSG_INVALID_CLASS_CHECKS = "Expected dict for _class_checks, got {type_name}"
@@ -44,7 +46,7 @@ class ProblemAttributes(Protocol):
     variables: dict[str, Any]
 
 
-class ValidationMixin:
+class ValidationMixin(SafeExecutionMixin):
     """Mixin class providing validation functionality."""
 
     # These attributes will be provided by other mixins in the final Problem class
@@ -58,25 +60,6 @@ class ValidationMixin:
         if not callable(check_function):
             raise TypeError("check_function must be callable")
         self.validation_checks.append(check_function)
-
-    def _safe_execute_with_logging(self, operation_name: str, operation: Callable[[], Any],
-                                   default_return: Any = None) -> Any:
-        """
-        Safely execute an operation with standardized error handling and logging.
-
-        Args:
-            operation_name: Description of the operation for logging
-            operation: Function to execute
-            default_return: Value to return if operation fails
-
-        Returns:
-            Operation result if successful, default_return if failed
-        """
-        try:
-            return operation()
-        except Exception as e:
-            self.logger.debug(f"{operation_name} failed: {e}")
-            return default_return
 
     def _safe_check_attribute(self, obj: Any, attr_name: str, expected_type: type | None = None, check_callable: bool = False) -> bool:
         """
@@ -120,10 +103,7 @@ class ValidationMixin:
         Returns:
             Standardized warning dictionary
         """
-        warning_dict = {
-            "type": warning_type,
-            "message": message
-        }
+        warning_dict = {"type": warning_type, "message": message}
         warning_dict.update(extra_fields)
         return warning_dict
 
@@ -131,23 +111,20 @@ class ValidationMixin:
         """Run all validation checks and return any warnings."""
         validation_warnings: list[dict[str, Any]] = []
 
-        for check in self.validation_checks:
-            if not callable(check):
-                self.logger.warning(f"Skipping non-callable validation check: {check}")
+        for validation_check in self.validation_checks:
+            if not callable(validation_check):
+                self.logger.warning(f"Skipping non-callable validation check: {validation_check}")
                 continue
 
             def execute_check() -> dict[str, Any] | None:
-                result = check(self)
+                result = validation_check(self)
                 if result is not None and isinstance(result, dict):
                     return result
                 elif result is not None:
                     self.logger.warning(MSG_NON_DICT_RESULT.format(result_type=type(result)))
                 return None
 
-            check_result = self._safe_execute_with_logging(
-                MSG_VALIDATION_CHECK_FAILED,
-                execute_check
-            )
+            check_result = self.safe_execute_with_logging(MSG_VALIDATION_CHECK_FAILED, execute_check)
 
             if check_result is not None:
                 validation_warnings.append(check_result)
@@ -156,6 +133,7 @@ class ValidationMixin:
 
     def get_warnings(self) -> list[dict[str, Any]]:
         """Get all warnings from the problem."""
+
         # Safely get existing warnings using helper method
         def get_existing_warnings() -> list[dict[str, Any]]:
             if self._safe_check_attribute(self, "warnings", list) and self.warnings:
@@ -164,18 +142,10 @@ class ValidationMixin:
                 self.logger.warning(MSG_WARNING_ATTR_UNINITIALIZED)
                 return []
 
-        warnings = self._safe_execute_with_logging(
-            "Getting existing warnings",
-            get_existing_warnings,
-            default_return=[]
-        )
+        warnings = self.safe_execute_with_logging("Getting existing warnings", get_existing_warnings, default_return=[])
 
         # Safely get validation warnings using helper method
-        validation_warnings = self._safe_execute_with_logging(
-            "Running validation checks",
-            self.validate,
-            default_return=[]
-        )
+        validation_warnings = self.safe_execute_with_logging("Running validation checks", self.validate, default_return=[])
 
         warnings.extend(validation_warnings)
         return warnings
@@ -193,11 +163,7 @@ class ValidationMixin:
                 return {}
             return class_checks
 
-        class_checks = self._safe_execute_with_logging(
-            "Getting class checks",
-            get_class_checks,
-            default_return={}
-        )
+        class_checks = self.safe_execute_with_logging("Getting class checks", get_class_checks, default_return={})
 
         if not class_checks:
             self.logger.debug(MSG_NO_CLASS_CHECKS)

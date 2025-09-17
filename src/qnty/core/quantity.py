@@ -1,6 +1,7 @@
 """
 Unified Quantity class that combines the functionality of both Quantity and FieldQuantity.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -14,6 +15,7 @@ if TYPE_CHECKING:
 
 D = TypeVar("D")
 
+
 @dataclass
 class Quantity(Generic[D]):
     """
@@ -23,6 +25,7 @@ class Quantity(Generic[D]):
 
     Supports arithmetic, unit conversions, and all FieldQuantity features.
     """
+
     name: str
     dim: Dimension
     value: float | None = None
@@ -60,11 +63,12 @@ class Quantity(Generic[D]):
                 # This handles: var = Quantity(...), var = Q(...), var = Length(...).set(...).unit
                 try:
                     import linecache
+
                     line = linecache.getline(code.co_filename, frame.f_lineno).strip()
 
                     # Match assignment patterns
                     # Pattern 1: var = expression
-                    match = re.match(r'^([a-zA-Z_][a-zA-Z0-9_]*)\s*=', line)
+                    match = re.match(r"^([a-zA-Z_][a-zA-Z0-9_]*)\s*=", line)
                     if match:
                         var_name = match.group(1)
                         # Verify this is actually our object being assigned
@@ -72,7 +76,7 @@ class Quantity(Generic[D]):
                         return var_name
 
                     # Pattern 2: self.var = expression (for class attributes)
-                    match = re.match(r'^self\.([a-zA-Z_][a-zA-Z0-9_]*)\s*=', line)
+                    match = re.match(r"^self\.([a-zA-Z_][a-zA-Z0-9_]*)\s*=", line)
                     if match:
                         return match.group(1)
 
@@ -96,11 +100,7 @@ class Quantity(Generic[D]):
     @classmethod
     def from_value(cls, value: float, unit: Unit[D], name: str = "unnamed") -> Quantity[D]:
         """Create a quantity from a value and unit (replaces Q function)."""
-        return cls(
-            name=name,
-            dim=unit.dim,
-            value=unit.si_factor * value + unit.si_offset
-        )
+        return cls(name=name, dim=unit.dim, value=unit.si_factor * value + unit.si_offset)
 
     @classmethod
     def unknown(cls, name: str, dim: Dimension, preferred: Unit[D] | None = None) -> Quantity[D]:
@@ -137,22 +137,12 @@ class Quantity(Generic[D]):
             unit = resolved
 
         # Create new instance with value set
-        new_q = Quantity(
-            name=self.name,
-            dim=self.dim,
-            value=unit.si_factor * value + unit.si_offset,
-            preferred=self.preferred or unit
-        )
+        new_q = Quantity(name=self.name, dim=self.dim, value=unit.si_factor * value + unit.si_offset, preferred=self.preferred or unit)
         return new_q  # type: ignore
 
     def prefer(self, unit: Unit[D]) -> Quantity[D]:
         """Set preferred display unit."""
-        return Quantity(
-            name=self.name,
-            dim=self.dim,
-            value=self.value,
-            preferred=unit
-        )
+        return Quantity(name=self.name, dim=self.dim, value=self.value, preferred=unit)
 
     def to(self, unit: Unit[D] | str) -> Quantity[D]:
         """Direct conversion method for maximum performance."""
@@ -213,8 +203,8 @@ class Quantity(Generic[D]):
     def __pow__(self, k: int) -> Quantity:
         if self.value is None:
             raise ValueError("Cannot perform arithmetic on unknown quantities")
-        result_value = self.value ** k
-        return Quantity(name=f"{result_value}", dim=self.dim ** k, value=result_value)
+        result_value = self.value**k
+        return Quantity(name=f"{result_value}", dim=self.dim**k, value=result_value)
 
     def __add__(self, other: Quantity | float | int) -> Quantity:
         if isinstance(other, Quantity):
@@ -286,7 +276,7 @@ class Quantity(Generic[D]):
             raise ValueError("Cannot perform arithmetic on unknown quantities")
         result_value = float(other) / self.value
         # Result dimension is 1/self.dim
-        result_dim = self.dim ** -1
+        result_dim = self.dim**-1
         return Quantity(name=f"{result_value}", dim=result_dim, value=result_value)
 
     # ---- Comparison operators ----
@@ -398,8 +388,10 @@ class Quantity(Generic[D]):
 @overload
 def Q(val: float, unit: str) -> Quantity: ...
 
+
 @overload
 def Q(val: float, unit: Unit[D]) -> Quantity[D]: ...
+
 
 if TYPE_CHECKING:
     from .unit_catalog import AccelerationUnits, DimensionlessUnits, LengthUnits
@@ -413,6 +405,7 @@ if TYPE_CHECKING:
     @overload
     def Q(val: float, unit: type[DimensionlessUnits]) -> quantity_catalog.Dimensionless: ...
 
+
 def Q(val: float, unit: Unit[D] | str | type) -> Quantity:
     """Create a quantity from value and unit string with automatic dimension detection and proper quantity type."""
     if isinstance(unit, str):
@@ -423,9 +416,10 @@ def Q(val: float, unit: Unit[D] | str | type) -> Quantity:
     elif isinstance(unit, type):
         # Check if it's a UnitNamespace class
         from .unit import UnitNamespace
+
         if issubclass(unit, UnitNamespace):
             # Get the preferred unit from the UnitNamespace class
-            preferred_name = getattr(unit, '__preferred__', None)
+            preferred_name = getattr(unit, "__preferred__", None)
             if preferred_name is None:
                 raise ValueError(f"UnitNamespace {unit.__name__} has no __preferred__ attribute")
             unit = getattr(unit, preferred_name)
@@ -455,6 +449,7 @@ def Q(val: float, unit: Unit[D] | str | type) -> Quantity:
 # ---- Setter classes ----
 class QuantitySetter(Generic[D]):
     """Fluent setter for quantities when unit not specified."""
+
     __slots__ = ("_owner", "_value", "_dim")
 
     def __init__(self, owner: Quantity[D], value: float):
@@ -493,6 +488,7 @@ class QuantitySetter(Generic[D]):
 
 class UnitApplier(Generic[D]):
     """Helper for .to_unit property."""
+
     __slots__ = ("_q", "_dim", "_unit_cache")
 
     def __init__(self, q: Quantity[D]):
@@ -556,6 +552,7 @@ class UnitApplier(Generic[D]):
 
 class UnitChanger(Generic[D]):
     """Helper for .as_unit property."""
+
     __slots__ = ("_q", "_dim")
 
     def __init__(self, q: Quantity[D]):
@@ -584,12 +581,7 @@ class UnitChanger(Generic[D]):
         # Convert this display value to SI for storage
         si_value = unit.si_factor * display_value + unit.si_offset
 
-        return Quantity(
-            name=self._q.name,
-            dim=self._dim,
-            value=si_value,
-            preferred=unit
-        )
+        return Quantity(name=self._q.name, dim=self._dim, value=si_value, preferred=unit)
 
     def __getattr__(self, name: str) -> Quantity[D]:
         unit = ureg.resolve(name, dim=self._dim)

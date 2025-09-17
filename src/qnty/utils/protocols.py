@@ -143,6 +143,22 @@ class TypeRegistry:
         return {"expression_types_registered": len(cls._expression_types), "variable_types_registered": len(cls._variable_types), "cached_types": len(cls._type_cache)}
 
 
+# Register type registry cache with unified cache manager
+def _register_type_cache():
+    """Register type registry cache clearing with the unified cache manager."""
+    try:
+        from .caching.manager import get_cache_manager
+
+        get_cache_manager().register_external_cache("type_registry", TypeRegistry.clear_cache)
+    except ImportError:
+        # Cache manager not available - proceed without registration
+        pass
+
+
+# Auto-register on module import
+_register_type_cache()
+
+
 # Convenience functions for backwards compatibility
 def register_expression_type(expression_type: type) -> None:
     """Register a type as an expression type."""

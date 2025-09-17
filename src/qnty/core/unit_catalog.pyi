@@ -3,29 +3,19 @@ from typing import Final
 from .unit import Unit, UnitNamespace
 
 class AccelerationUnits(UnitNamespace): ...
-
 class AnglePlaneUnits(UnitNamespace): ...
-
 class AreaUnits(UnitNamespace): ...
-
 class DimensionlessUnits(UnitNamespace): ...
-
 class EnergyUnits(UnitNamespace): ...
-
 class LengthUnits(UnitNamespace): ...
-
 class MassDensityUnits(UnitNamespace): ...
-
+class MassFlowRateUnits(UnitNamespace): ...
 class PowerThermalDutyUnits(UnitNamespace): ...
-
 class PressureUnits(UnitNamespace): ...
-
+class SpecificVolumeUnits(UnitNamespace): ...
 class VelocityLinearUnits(UnitNamespace): ...
-
 class ViscosityDynamicUnits(UnitNamespace): ...
-
 class ViscosityKinematicUnits(UnitNamespace): ...
-
 class VolumetricFlowRateUnits(UnitNamespace): ...
 
 class Units:
@@ -40,7 +30,9 @@ class Units:
     centi_second: Final[Unit]
     cubic_foot: Final[Unit]
     cubic_foot_per_minute: Final[Unit]
+    cubic_foot_per_pound_mass: Final[Unit]
     cubic_meter: Final[Unit]
+    cubic_meter_per_kilogram: Final[Unit]
     cubic_meter_per_second: Final[Unit]
     day: Final[Unit]
     deca_ampere: Final[Unit]
@@ -77,6 +69,7 @@ class Units:
     kilo_mole: Final[Unit]
     kilo_second: Final[Unit]
     kilogram_per_cubic_meter: Final[Unit]
+    kilogram_per_second: Final[Unit]
     liter: Final[Unit]
     meter: Final[Unit]
     meter_per_second: Final[Unit]
@@ -122,6 +115,7 @@ class Units:
     watt: Final[Unit]
     year: Final[Unit]
     Btu: Final[Unit]  # alias for british_thermal_unit
+    Btu_per_hour: Final[Unit]  # alias for british_thermal_unit_per_hour
     J: Final[Unit]  # alias for joule
     MBtu: Final[Unit]  # alias for thousand_british_thermal_unit
     MMBtu: Final[Unit]  # alias for million_british_thermal_unit
@@ -139,7 +133,9 @@ class Units:
     cs: Final[Unit]  # alias for second
     cubic_feet: Final[Unit]  # alias for cubic_foot
     cubic_feet_per_minute: Final[Unit]  # alias for cubic_foot_per_minute
+    cubic_feet_per_pound_mass: Final[Unit]  # alias for cubic_foot_per_pound_mass
     cubic_meters: Final[Unit]  # alias for cubic_meter
+    cubic_meters_per_kilogram: Final[Unit]  # alias for cubic_meter_per_kilogram
     cubic_meters_per_second: Final[Unit]  # alias for cubic_meter_per_second
     dA: Final[Unit]  # alias for ampere
     daA: Final[Unit]  # alias for ampere
@@ -181,6 +177,7 @@ class Units:
     kA: Final[Unit]  # alias for ampere
     kg: Final[Unit]  # alias for gram
     kg_per_m3: Final[Unit]  # alias for kilogram_per_cubic_meter
+    kilograms_per_second: Final[Unit]  # alias for kilogram_per_second
     km: Final[Unit]  # alias for meter
     kmol: Final[Unit]  # alias for mole
     ks: Final[Unit]  # alias for second

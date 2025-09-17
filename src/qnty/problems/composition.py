@@ -18,11 +18,17 @@ from ..algebra import BinaryOperation, ConditionalExpression, Constant, Equation
 from ..algebra.nodes import Expression, wrap_operand
 from ..core.quantity import FieldQuantity
 from ..core.quantity_catalog import Dimensionless
+from ..utils.shared_utilities import (
+    ArithmeticOperationsMixin,
+    ContextDetectionHelper,
+    SharedConstants,
+    VariableReferenceHelper,
+)
 from .rules import Rules
 
 # Constants for metaclass
-RESERVED_ATTRIBUTES: set[str] = {"name", "description"}
-PRIVATE_ATTRIBUTE_PREFIX = "_"
+RESERVED_ATTRIBUTES = SharedConstants.RESERVED_ATTRIBUTES
+PRIVATE_ATTRIBUTE_PREFIX = SharedConstants.PRIVATE_ATTRIBUTE_PREFIX
 SUB_PROBLEM_REQUIRED_ATTRIBUTES: tuple[str, ...] = ("variables", "equations")
 
 
@@ -45,20 +51,8 @@ def _extract_variables_from_obj(obj, variables_set: set[str]) -> None:
         variables_set.add(obj.symbol)
 
 
-def _get_variable_from_obj(obj):
-    """Extract the underlying variable from various wrapper types."""
-    if hasattr(obj, "_wrapped") and not isinstance(obj, Expression):
-        return obj._wrapped
-    elif isinstance(obj, ConfigurableVariable):
-        return obj._variable
-    elif hasattr(obj, "_variable") and not isinstance(obj, Expression):
-        return obj._variable
-    elif hasattr(obj, "_wrapped_var") and not isinstance(obj, Expression):
-        return obj._wrapped_var
-    elif hasattr(obj, "symbol") and hasattr(obj, "dim") and hasattr(obj, "value") and hasattr(obj, "name") and not isinstance(obj, Expression):
-        return obj
-    else:
-        return None
+# Use shared variable reference helper
+_get_variable_from_obj = VariableReferenceHelper.extract_variable_from_obj
 
 
 def _create_variable_reference_from_obj(obj, context: dict | None = None):
@@ -115,12 +109,6 @@ def _create_arithmetic_methods():
             methods[method_name] = lambda self, other, operator=op: DelayedExpression(operator, self, other)
 
     return methods
-
-
-class ArithmeticOperationsMixin:
-    """Mixin providing common arithmetic operations that create DelayedExpression objects."""
-
-    pass
 
 
 # Dynamically add arithmetic methods to avoid code duplication
@@ -263,22 +251,7 @@ class ConfigurableVariable:
 
     def _should_use_delayed_arithmetic(self) -> bool:
         """Check if we should use delayed arithmetic based on context."""
-        import inspect
-
-        frame = inspect.currentframe()
-        try:
-            while frame:
-                code = frame.f_code
-                filename = code.co_filename
-                locals_dict = frame.f_locals
-
-                # Check if we're in a class definition context
-                if "<class" in code.co_name or "problem" in filename.lower() or any("Problem" in str(base) for base in locals_dict.get("__bases__", [])) or "test_composed_problem" in filename:
-                    return True
-                frame = frame.f_back
-            return False
-        finally:
-            del frame
+        return ContextDetectionHelper.should_use_delayed_arithmetic()
 
     # Delegate arithmetic operations using a consolidated approach
     def _create_operation(self, other, operator: str, reverse: bool = False):
@@ -641,6 +614,7 @@ class CompositionMixin:
         """Clone a variable. Provided by Problem class."""
         del variable  # Mark as used
         ...
+
     def _recreate_validation_checks(self) -> None: ...
 
     def _extract_from_class_variables(self):

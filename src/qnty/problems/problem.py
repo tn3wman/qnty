@@ -18,19 +18,19 @@ from qnty.solving.solvers import SolverManager
 from qnty.utils.logging import get_logger
 
 from ..algebra import BinaryOperation, Constant, Equation, EquationSystem, VariableReference
-from ..constants import SOLVER_DEFAULT_MAX_ITERATIONS, SOLVER_DEFAULT_TOLERANCE
 from ..core.quantity import Quantity
 from ..core.unit_catalog import DimensionlessUnits
+from ..utils.shared_utilities import SharedConstants, ValidationHelper
 from .solving import EquationReconstructor
 from .validation import ValidationMixin
 
 # Constants for equation processing
-MAX_ITERATIONS_DEFAULT = SOLVER_DEFAULT_MAX_ITERATIONS
-TOLERANCE_DEFAULT = SOLVER_DEFAULT_TOLERANCE
+MAX_ITERATIONS_DEFAULT = SharedConstants.SOLVER_DEFAULT_MAX_ITERATIONS
+TOLERANCE_DEFAULT = SharedConstants.SOLVER_DEFAULT_TOLERANCE
 
 # String constants to avoid repetition
-MSG_VARIABLE_EXISTS = "Variable {symbol} already exists. Replacing."
-MSG_VARIABLE_NOT_FOUND = "Variable '{symbol}' not found in problem '{name}'"
+MSG_VARIABLE_EXISTS = SharedConstants.MSG_VARIABLE_EXISTS
+MSG_VARIABLE_NOT_FOUND = SharedConstants.MSG_VARIABLE_NOT_FOUND
 MSG_SOLVING_PROBLEM = "Solving problem: {name}"
 MSG_SOLUTION_VERIFIED = "Solution verified successfully"
 MSG_SOLUTION_FAILED = "Solution verification failed"
@@ -54,7 +54,6 @@ class SolverError(RuntimeError):
     """Raised when the solving process fails."""
 
     pass
-
 
 
 class Problem(ValidationMixin):
@@ -226,7 +225,7 @@ class Problem(ValidationMixin):
             # Track original is_known state and unit for re-solving
             self._original_variable_states[variable.symbol] = variable.is_known
             # Store the unit from original quantity to preserve unit info
-            if hasattr(variable, 'preferred') and variable.preferred is not None:
+            if hasattr(variable, "preferred") and variable.preferred is not None:
                 self._original_variable_units[variable.symbol] = variable.preferred
         # Set parent problem reference for dependency invalidation
         if hasattr(variable, "_parent_problem"):
@@ -278,9 +277,9 @@ class Problem(ValidationMixin):
 
         # Copy over the essential attributes
         cloned_var._symbol = variable.symbol  # Will be updated by namespace creation
-        if hasattr(variable, 'value') and variable.value is not None:
+        if hasattr(variable, "value") and variable.value is not None:
             cloned_var.value = variable.value
-        if hasattr(variable, 'preferred') and variable.preferred is not None:
+        if hasattr(variable, "preferred") and variable.preferred is not None:
             cloned_var.preferred = variable.preferred
 
         return cloned_var
@@ -316,7 +315,6 @@ class Problem(ValidationMixin):
         """Get symbols of all unknown variables."""
         return {symbol for symbol, var in self.variables.items() if not var.is_known}
 
-
     # Properties for compatibility
     @property
     def known_variables(self) -> dict[str, Quantity]:
@@ -345,7 +343,7 @@ class Problem(ValidationMixin):
             if symbol in self.variables:
                 # Set the quantity value and unit, then mark as known
                 self.variables[symbol].value = quantity.value
-                if hasattr(quantity, 'preferred') and quantity.preferred is not None:
+                if hasattr(quantity, "preferred") and quantity.preferred is not None:
                     self.variables[symbol].preferred = quantity.preferred
                 # Value and preferred unit are already set above, quantity is now known
             else:
@@ -388,17 +386,11 @@ class Problem(ValidationMixin):
         # For placeholder variables, use the base Quantity class directly
         # since we need to specify the dimension
         from ..core.quantity import Quantity as BaseQuantity
-        dimensionless_unit = getattr(DimensionlessUnits, 'dimensionless')  # noqa: B009
-        placeholder_var = BaseQuantity(
-            name=f"Auto-created: {symbol}",
-            dim=dimensionless_unit.dim,
-            value=None,
-            preferred=dimensionless_unit,
-            _symbol=symbol
-        )
+
+        dimensionless_unit = getattr(DimensionlessUnits, "dimensionless")  # noqa: B009
+        placeholder_var = BaseQuantity(name=f"Auto-created: {symbol}", dim=dimensionless_unit.dim, value=None, preferred=dimensionless_unit, _symbol=symbol)
         self.add_variable(placeholder_var)
         self.logger.debug(f"Auto-created placeholder variable: {symbol}")
-
 
     def _update_variables_with_solution(self, solved_variables: dict[str, Quantity]):
         """
@@ -421,19 +413,11 @@ class Problem(ValidationMixin):
                     except Exception:
                         # If conversion fails, use the solved quantity as-is
                         if solved_var.value is not None:
-                            self._update_variable_value(
-                                symbol,
-                                solved_var.value,
-                                solved_var.preferred or original_var.preferred
-                            )
+                            self._update_variable_value(symbol, solved_var.value, solved_var.preferred or original_var.preferred)
                 else:
                     # For originally known variables or if no unit conversion needed
                     if solved_var.value is not None:
-                        self._update_variable_value(
-                            symbol,
-                            solved_var.value,
-                            solved_var.preferred or original_var.preferred
-                        )
+                        self._update_variable_value(symbol, solved_var.value, solved_var.preferred or original_var.preferred)
 
     def _sync_variables_to_instance_attributes(self):
         """
@@ -516,7 +500,7 @@ class Problem(ValidationMixin):
 
     def _is_simple_variable_symbol(self, symbol: str) -> bool:
         """Check if a symbol looks like a simple variable identifier."""
-        return symbol.isidentifier() and not any(char in symbol for char in ["(", ")", "+", "-", "*", "/", " "])
+        return ValidationHelper.is_simple_variable_symbol(symbol)
 
     def _should_reanalyze_equation(self, equation: Equation) -> bool:
         """
@@ -534,7 +518,7 @@ class Problem(ValidationMixin):
             for var_symbol in equation_vars:
                 if var_symbol in self.variables:
                     var = self.variables[var_symbol]
-                    if hasattr(var, 'name') and 'Auto-created' in var.name:
+                    if hasattr(var, "name") and "Auto-created" in var.name:
                         auto_created_vars.append(var_symbol)
 
             if not auto_created_vars:
@@ -549,10 +533,8 @@ class Problem(ValidationMixin):
                         namespaced_alternatives[auto_var] = var_name
 
             # Debug logging to understand why reanalysis might not be triggering
-            if equation.name in ['A_1', 'A_2', 'A_3']:
-                self.logger.debug(f"Reanalysis check for {equation.name}: "
-                                f"vars={equation_vars}, auto={auto_created_vars}, "
-                                f"alternatives={namespaced_alternatives}")
+            if equation.name in ["A_1", "A_2", "A_3"]:
+                self.logger.debug(f"Reanalysis check for {equation.name}: vars={equation_vars}, auto={auto_created_vars}, alternatives={namespaced_alternatives}")
 
             # If we found namespaced alternatives, we should reanalyze
             return len(namespaced_alternatives) > 0
@@ -578,7 +560,7 @@ class Problem(ValidationMixin):
             for var_symbol in equation_vars:
                 if var_symbol in self.variables:
                     var = self.variables[var_symbol]
-                    if hasattr(var, 'name') and 'Auto-created' in var.name:
+                    if hasattr(var, "name") and "Auto-created" in var.name:
                         # Look for a namespaced alternative
                         best_alternative = self._find_best_namespaced_alternative(var_symbol)
                         if best_alternative:
@@ -669,8 +651,7 @@ class Problem(ValidationMixin):
             # Replace equations in-place
             for i, improved_equation in equations_to_fix:
                 self.equations[i] = improved_equation
-                self.logger.debug(f"Post-processed equation {improved_equation.name}: "
-                                f"substituted auto-created variables with namespaced ones")
+                self.logger.debug(f"Post-processed equation {improved_equation.name}: substituted auto-created variables with namespaced ones")
 
             if equations_to_fix:
                 self.logger.info(f"Post-processed {len(equations_to_fix)} equations with improved variable references")
@@ -686,7 +667,7 @@ class Problem(ValidationMixin):
         if the normal metaclass-based integration process failed.
         """
         try:
-            if not hasattr(self, 'sub_problems') or not self.sub_problems:
+            if not hasattr(self, "sub_problems") or not self.sub_problems:
                 return
 
             equations_added = 0
@@ -734,6 +715,7 @@ class Problem(ValidationMixin):
                 # Create new equation if any references were fixed
                 if fixed_lhs is not original_lhs or fixed_rhs is not original_rhs:
                     from qnty.algebra.equation import Equation
+
                     fixed_equation = Equation(equation.name, fixed_lhs, fixed_rhs)
                     self.equations[i] = fixed_equation
                     fixed_count += 1
@@ -814,7 +796,7 @@ class Problem(ValidationMixin):
             fixed_rhs = self._fix_expression_variables(equation.rhs)
 
             # Fix the LHS if it's wrapped in ExpressionEnabledWrapper
-            fixed_lhs = getattr(equation.lhs, '_wrapped', equation.lhs)
+            fixed_lhs = getattr(equation.lhs, "_wrapped", equation.lhs)
 
             # Create new equation with fixed LHS and RHS
             return Equation(equation.name, fixed_lhs, fixed_rhs)
@@ -829,7 +811,7 @@ class Problem(ValidationMixin):
         Also resolves DelayedExpression objects using the Problem's variable context.
         """
         # Handle DelayedExpression and DelayedFunction objects by resolving them
-        if hasattr(expr, 'resolve') and (hasattr(expr, 'operation') or hasattr(expr, 'func_name')):
+        if hasattr(expr, "resolve") and (hasattr(expr, "operation") or hasattr(expr, "func_name")):
             # This is a DelayedExpression or DelayedFunction - resolve it with our variables context
             # Create a context dict that unwraps ExpressionEnabledWrapper objects
             context = {}
@@ -900,17 +882,17 @@ class Problem(ValidationMixin):
 
         elif isinstance(expr, Constant):
             # Check if the constant's value is an ExpressionEnabledWrapper
-            if hasattr(expr.value, '_wrapped'):
+            if hasattr(expr.value, "_wrapped"):
                 # Replace the Constant with a VariableReference to the unwrapped variable
-                wrapped_var = getattr(expr.value, '_wrapped')  # noqa: B009
+                wrapped_var = getattr(expr.value, "_wrapped")  # noqa: B009
                 return VariableReference(wrapped_var)
             return expr
 
-        elif hasattr(expr, '_wrapped'):
+        elif hasattr(expr, "_wrapped"):
             # This is an ExpressionEnabledWrapper - unwrap it to get the actual variable
             return VariableReference(expr._wrapped)
 
-        elif hasattr(expr, '_wrapped_var'):
+        elif hasattr(expr, "_wrapped_var"):
             # This is a MainVariableWrapper - unwrap it to get the actual variable
             return VariableReference(expr._wrapped_var)
 
@@ -1004,7 +986,7 @@ class Problem(ValidationMixin):
         for equation in self.equations:
             self.dependency_graph.add_equation(equation, known_vars)
 
-    def verify_solution(self, tolerance: float = SOLVER_DEFAULT_TOLERANCE) -> bool:
+    def verify_solution(self, tolerance: float = TOLERANCE_DEFAULT) -> bool:
         """Verify that all equations are satisfied."""
         if not self.equations:
             return True
@@ -1087,8 +1069,8 @@ class Problem(ValidationMixin):
             old_var = self.variables[name]
 
             # Preserve the symbol from the old variable when updating
-            if hasattr(old_var, '_symbol') and hasattr(value, '_symbol'):
-                if old_var._symbol and old_var._symbol != '_symbol':
+            if hasattr(old_var, "_symbol") and hasattr(value, "_symbol"):
+                if old_var._symbol and old_var._symbol != "_symbol":
                     value._symbol = old_var._symbol
 
             self.variables[name] = value
@@ -1109,11 +1091,7 @@ class Problem(ValidationMixin):
             variables = object.__getattribute__(self, "variables")
             wrappers = object.__getattribute__(self, "_variable_wrappers")
 
-            if (name in variables and
-                hasattr(attr, 'set') and
-                hasattr(attr, 'value') and
-                not name.startswith('_')):  # Don't wrap internal attributes
-
+            if name in variables and hasattr(attr, "set") and hasattr(attr, "value") and not name.startswith("_"):  # Don't wrap internal attributes
                 # Check if we already have a wrapper
                 if name not in wrappers:
                     wrappers[name] = self._create_main_variable_wrapper(attr, name)
@@ -1124,8 +1102,7 @@ class Problem(ValidationMixin):
                 return wrapper
 
             # For class definition context, wrap all variables with delayed arithmetic
-            elif (hasattr(attr, 'set') and hasattr(attr, 'value') and
-                  not name.startswith('_') and self._should_use_delayed_arithmetic()):
+            elif hasattr(attr, "set") and hasattr(attr, "value") and not name.startswith("_") and self._should_use_delayed_arithmetic():
                 # Create a delayed arithmetic wrapper for class definition
                 if name not in wrappers:
                     wrappers[name] = self._create_delayed_arithmetic_wrapper(attr, name)
@@ -1146,7 +1123,7 @@ class Problem(ValidationMixin):
                 variable = variables[name]
 
                 # Check if this variable needs a wrapper for .set() support
-                if hasattr(variable, 'set') and hasattr(variable, 'value'):
+                if hasattr(variable, "set") and hasattr(variable, "value"):
                     # Check if we already have a wrapper
                     try:
                         wrappers = object.__getattribute__(self, "_variable_wrappers")
@@ -1180,7 +1157,7 @@ class Problem(ValidationMixin):
 
             def __getattr__(self, name):
                 # Handle special attributes to avoid recursion issues during copy
-                if name in ('__setstate__', '__getstate__', '__reduce__', '__reduce_ex__', '__copy__', '__deepcopy__'):
+                if name in ("__setstate__", "__getstate__", "__reduce__", "__reduce_ex__", "__copy__", "__deepcopy__"):
                     raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
 
                 # For all other attributes, delegate to the wrapped variable
@@ -1209,17 +1186,17 @@ class Problem(ValidationMixin):
 
             def get_variables(self):
                 """Get variables from the wrapped variable."""
-                if hasattr(self._wrapped_var, 'get_variables'):
+                if hasattr(self._wrapped_var, "get_variables"):
                     return self._wrapped_var.get_variables()
                 else:
                     # For regular quantities, return the variable symbol if it exists
-                    if hasattr(self._wrapped_var, 'symbol') and self._wrapped_var.symbol:
+                    if hasattr(self._wrapped_var, "symbol") and self._wrapped_var.symbol:
                         return {self._wrapped_var.symbol}
                     return set()
 
             def evaluate(self, variable_values):
                 """Delegate evaluation to the wrapped variable."""
-                if hasattr(self._wrapped_var, 'evaluate'):
+                if hasattr(self._wrapped_var, "evaluate"):
                     return self._wrapped_var.evaluate(variable_values)
                 else:
                     # For regular quantities, return the quantity itself if it has a value
@@ -1229,92 +1206,112 @@ class Problem(ValidationMixin):
             def __add__(self, other):
                 # Check if we should create symbolic expressions
                 from qnty.algebra.functions import _should_preserve_symbolic_expression
+
                 if _should_preserve_symbolic_expression():
                     from qnty.problems.composition import DelayedExpression
+
                     return DelayedExpression("+", self, other)
 
-                other_unwrapped = other._wrapped_var if hasattr(other, '_wrapped_var') else other
+                other_unwrapped = other._wrapped_var if hasattr(other, "_wrapped_var") else other
                 return self._wrapped_var.__add__(other_unwrapped)
 
             def __radd__(self, other):
                 from qnty.algebra.functions import _should_preserve_symbolic_expression
+
                 if _should_preserve_symbolic_expression():
                     from qnty.problems.composition import DelayedExpression
+
                     return DelayedExpression("+", other, self)
 
-                other_unwrapped = other._wrapped_var if hasattr(other, '_wrapped_var') else other
+                other_unwrapped = other._wrapped_var if hasattr(other, "_wrapped_var") else other
                 return self._wrapped_var.__radd__(other_unwrapped)
 
             def __sub__(self, other):
                 from qnty.algebra.functions import _should_preserve_symbolic_expression
+
                 if _should_preserve_symbolic_expression():
                     from qnty.problems.composition import DelayedExpression
+
                     return DelayedExpression("-", self, other)
 
-                other_unwrapped = other._wrapped_var if hasattr(other, '_wrapped_var') else other
+                other_unwrapped = other._wrapped_var if hasattr(other, "_wrapped_var") else other
                 return self._wrapped_var.__sub__(other_unwrapped)
 
             def __rsub__(self, other):
                 from qnty.algebra.functions import _should_preserve_symbolic_expression
+
                 if _should_preserve_symbolic_expression():
                     from qnty.problems.composition import DelayedExpression
+
                     return DelayedExpression("-", other, self)
 
-                other_unwrapped = other._wrapped_var if hasattr(other, '_wrapped_var') else other
+                other_unwrapped = other._wrapped_var if hasattr(other, "_wrapped_var") else other
                 return self._wrapped_var.__rsub__(other_unwrapped)
 
             def __mul__(self, other):
                 from qnty.algebra.functions import _should_preserve_symbolic_expression
+
                 if _should_preserve_symbolic_expression():
                     from qnty.problems.composition import DelayedExpression
+
                     return DelayedExpression("*", self, other)
 
-                other_unwrapped = other._wrapped_var if hasattr(other, '_wrapped_var') else other
+                other_unwrapped = other._wrapped_var if hasattr(other, "_wrapped_var") else other
                 return self._wrapped_var.__mul__(other_unwrapped)
 
             def __rmul__(self, other):
                 from qnty.algebra.functions import _should_preserve_symbolic_expression
+
                 if _should_preserve_symbolic_expression():
                     from qnty.problems.composition import DelayedExpression
+
                     return DelayedExpression("*", other, self)
 
-                other_unwrapped = other._wrapped_var if hasattr(other, '_wrapped_var') else other
+                other_unwrapped = other._wrapped_var if hasattr(other, "_wrapped_var") else other
                 return self._wrapped_var.__rmul__(other_unwrapped)
 
             def __truediv__(self, other):
                 from qnty.algebra.functions import _should_preserve_symbolic_expression
+
                 if _should_preserve_symbolic_expression():
                     from qnty.problems.composition import DelayedExpression
+
                     return DelayedExpression("/", self, other)
 
-                other_unwrapped = other._wrapped_var if hasattr(other, '_wrapped_var') else other
+                other_unwrapped = other._wrapped_var if hasattr(other, "_wrapped_var") else other
                 return self._wrapped_var.__truediv__(other_unwrapped)
 
             def __rtruediv__(self, other):
                 from qnty.algebra.functions import _should_preserve_symbolic_expression
+
                 if _should_preserve_symbolic_expression():
                     from qnty.problems.composition import DelayedExpression
+
                     return DelayedExpression("/", other, self)
 
-                other_unwrapped = other._wrapped_var if hasattr(other, '_wrapped_var') else other
+                other_unwrapped = other._wrapped_var if hasattr(other, "_wrapped_var") else other
                 return self._wrapped_var.__rtruediv__(other_unwrapped)
 
             def __pow__(self, other):
                 from qnty.algebra.functions import _should_preserve_symbolic_expression
+
                 if _should_preserve_symbolic_expression():
                     from qnty.problems.composition import DelayedExpression
+
                     return DelayedExpression("**", self, other)
 
-                other_unwrapped = other._wrapped_var if hasattr(other, '_wrapped_var') else other
+                other_unwrapped = other._wrapped_var if hasattr(other, "_wrapped_var") else other
                 return self._wrapped_var.__pow__(other_unwrapped)
 
             def __rpow__(self, other):
                 from qnty.algebra.functions import _should_preserve_symbolic_expression
+
                 if _should_preserve_symbolic_expression():
                     from qnty.problems.composition import DelayedExpression
+
                     return DelayedExpression("**", other, self)
 
-                other_unwrapped = other._wrapped_var if hasattr(other, '_wrapped_var') else other
+                other_unwrapped = other._wrapped_var if hasattr(other, "_wrapped_var") else other
                 return self._wrapped_var.__rpow__(other_unwrapped)
 
         class MainSetterWrapper:
@@ -1343,12 +1340,7 @@ class Problem(ValidationMixin):
                 locals_dict = frame.f_locals
 
                 # Check if we're in a class definition context
-                if (
-                    "<class" in code.co_name
-                    or "problem" in filename.lower()
-                    or any("Problem" in str(base) for base in locals_dict.get("__bases__", []))
-                    or "test_composed_problem" in filename
-                ):
+                if "<class" in code.co_name or "problem" in filename.lower() or any("Problem" in str(base) for base in locals_dict.get("__bases__", [])) or "test_composed_problem" in filename:
                     return True
                 frame = frame.f_back
             return False
