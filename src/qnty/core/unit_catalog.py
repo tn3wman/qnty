@@ -7,15 +7,16 @@ from .unit import Unit, UnitNamespace, add_unit, attach_composed, u
 if TYPE_CHECKING:
     from . import u
 
-dimensionless = add_unit(
-    dim.D,
-    symbol="",
-    si_factor=1.0,
-    aliases=(
-        "dless",
-        "scalar",
-    ),
+# dimensionless unit is now defined in unit.py to avoid circular dependencies
+
+# region // Absorbed Radiation Dose
+erg_per_gram = add_unit(
+    dim.ABSORBED_RADIATION_DOSE,
+    symbol="erg/g",
+    si_factor=0.0001,
 )
+
+# endregion // Absorbed Radiation Dose
 
 radian = add_unit(
     dim.D,
@@ -59,11 +60,6 @@ hour = add_unit(
     dim.T,
     symbol="h",
     si_factor=3600.0,
-    aliases=(
-        "hr",
-        "hrs",
-        "hours",
-    ),
 )
 
 day = add_unit(
@@ -194,7 +190,7 @@ class DimensionlessUnits(UnitNamespace):
     __slots__ = ()
     __preferred__ = ""
 
-    dimensionless: Final[Unit] = dimensionless
+    dimensionless: Final[Unit] = u.dimensionless
 
 
 ###############################################
@@ -560,10 +556,6 @@ poise = attach_composed(
     u.gram / (u.centi_meter * u.second),
     name="poise",
     symbol="P",
-    aliases=(
-        "poise",
-        "P",
-    ),
 )
 
 pound_force_second_per_square_foot = attach_composed(
@@ -716,12 +708,19 @@ Btu_per_hour = attach_composed(
     ),
 )
 
+horsepower = add_unit(
+    dim.POWER_THERMAL,
+    symbol="hp",
+    si_factor=745.69987158227,
+)
+
 
 class PowerThermalDutyUnits(UnitNamespace):
     __slots__ = ()
     __preferred__ = "watt"
 
     watt: Final[Unit] = watt
+    horsepower: Final[Unit] = horsepower
     Btu_per_hour: Final[Unit] = Btu_per_hour
 
 
