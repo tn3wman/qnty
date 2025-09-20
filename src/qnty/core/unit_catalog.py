@@ -7,7 +7,13 @@ from .unit import Unit, UnitNamespace, add_unit, attach_composed, u
 if TYPE_CHECKING:
     from . import u
 
-# dimensionless unit is now defined in unit.py to avoid circular dependencies
+# dimensionless unit
+dimensionless = add_unit(
+    dim.D,
+    symbol="",
+    si_factor=1.0,
+    aliases=("unitless",),
+)
 
 # region // Absorbed Radiation Dose
 erg_per_gram = add_unit(
@@ -190,7 +196,7 @@ class DimensionlessUnits(UnitNamespace):
     __slots__ = ()
     __preferred__ = ""
 
-    dimensionless: Final[Unit] = u.dimensionless
+    dimensionless: Final[Unit] = dimensionless
 
 
 ###############################################

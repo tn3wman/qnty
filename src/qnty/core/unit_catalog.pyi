@@ -3,19 +3,33 @@ from typing import Final
 from .unit import Unit, UnitNamespace
 
 class AccelerationUnits(UnitNamespace): ...
+
 class AnglePlaneUnits(UnitNamespace): ...
+
 class AreaUnits(UnitNamespace): ...
+
 class DimensionlessUnits(UnitNamespace): ...
+
 class EnergyUnits(UnitNamespace): ...
+
 class LengthUnits(UnitNamespace): ...
+
 class MassDensityUnits(UnitNamespace): ...
+
 class MassFlowRateUnits(UnitNamespace): ...
+
 class PowerThermalDutyUnits(UnitNamespace): ...
+
 class PressureUnits(UnitNamespace): ...
+
 class SpecificVolumeUnits(UnitNamespace): ...
+
 class VelocityLinearUnits(UnitNamespace): ...
+
 class ViscosityDynamicUnits(UnitNamespace): ...
+
 class ViscosityKinematicUnits(UnitNamespace): ...
+
 class VolumetricFlowRateUnits(UnitNamespace): ...
 
 class Units:
@@ -47,6 +61,7 @@ class Units:
     deci_second: Final[Unit]
     degree: Final[Unit]
     dimensionless: Final[Unit]
+    erg_per_gram: Final[Unit]
     feet_per_second: Final[Unit]
     foot: Final[Unit]
     foot_per_square_second: Final[Unit]
@@ -59,6 +74,7 @@ class Units:
     hecto_meter: Final[Unit]
     hecto_mole: Final[Unit]
     hecto_second: Final[Unit]
+    horsepower: Final[Unit]
     hour: Final[Unit]
     inch: Final[Unit]
     joule: Final[Unit]
@@ -120,7 +136,6 @@ class Units:
     MBtu: Final[Unit]  # alias for thousand_british_thermal_unit
     MMBtu: Final[Unit]  # alias for million_british_thermal_unit
     N: Final[Unit]  # alias for newton
-    P: Final[Unit]  # alias for poise
     Pa: Final[Unit]  # alias for pascal
     W: Final[Unit]  # alias for watt
     amp: Final[Unit]  # alias for ampere
@@ -147,7 +162,6 @@ class Units:
     deg: Final[Unit]  # alias for degree
     degrees: Final[Unit]  # alias for degree
     dg: Final[Unit]  # alias for gram
-    dless: Final[Unit]  # alias for dimensionless
     dm: Final[Unit]  # alias for meter
     dmol: Final[Unit]  # alias for mole
     ds: Final[Unit]  # alias for second
@@ -168,9 +182,6 @@ class Units:
     hg: Final[Unit]  # alias for gram
     hm: Final[Unit]  # alias for meter
     hmol: Final[Unit]  # alias for mole
-    hours: Final[Unit]  # alias for hour
-    hr: Final[Unit]  # alias for hour
-    hrs: Final[Unit]  # alias for hour
     hs: Final[Unit]  # alias for second
     inches: Final[Unit]  # alias for inch
     joules: Final[Unit]  # alias for joule
@@ -218,7 +229,6 @@ class Units:
     poundforce: Final[Unit]  # alias for pound_force
     psi: Final[Unit]  # alias for pound_force_per_square_inch
     radians: Final[Unit]  # alias for radian
-    scalar: Final[Unit]  # alias for dimensionless
     seconds: Final[Unit]  # alias for second
     slugs: Final[Unit]  # alias for slug
     square_feet: Final[Unit]  # alias for square_foot
@@ -228,6 +238,7 @@ class Units:
     ug: Final[Unit]  # alias for gram
     um: Final[Unit]  # alias for meter
     umol: Final[Unit]  # alias for mole
+    unitless: Final[Unit]  # alias for dimensionless
     us: Final[Unit]  # alias for second
     watts: Final[Unit]  # alias for watt
     years: Final[Unit]  # alias for year

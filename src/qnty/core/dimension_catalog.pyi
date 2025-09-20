@@ -114,16 +114,11 @@ class Dimensions:
     VOLUME_FRACTION: Final[Dimension]
     WAVENUMBER: Final[Dimension]
     Θ: Final[Dimension]
-    DIMENSIONLESS: Final[Dimension]  # alias for D
-    DLESS: Final[Dimension]  # alias for D
-    HEAT: Final[Dimension]  # alias for ENERGY
     PLANCK_CONSTANT: Final[Dimension]  # alias for SECOND_RADIATION_CONSTANT
     POWER_DENSITY: Final[Dimension]  # alias for POWER_PER_UNIT_VOLUME
-    SCALAR: Final[Dimension]  # alias for D
     SPECIFIC_POWER: Final[Dimension]  # alias for POWER_PER_UNIT_MASS
     ViscosityDynamic: Final[Dimension]  # alias for VISCOSITY_DYNAMIC
     ViscosityKinematic: Final[Dimension]  # alias for VISCOSITY_KINEMATIC
-    WORK: Final[Dimension]  # alias for ENERGY
     absorbed_radiation_dose: Final[Dimension]  # alias for ABSORBED_RADIATION_DOSE
     acceleration: Final[Dimension]  # alias for ACCELERATION
     activation_energy: Final[Dimension]  # alias for ACTIVATION_ENERGY
@@ -148,7 +143,6 @@ class Dimensions:
     electric_potential: Final[Dimension]  # alias for ELECTRIC_POTENTIAL
     electric_resistance: Final[Dimension]  # alias for ELECTRIC_RESISTANCE
     electric_resistivity: Final[Dimension]  # alias for ELECTRIC_RESISTIVITY
-    energy: Final[Dimension]  # alias for ENERGY
     energy_flux: Final[Dimension]  # alias for ENERGY_FLUX
     energy_per_unit_area: Final[Dimension]  # alias for ENERGY_PER_UNIT_AREA
     force: Final[Dimension]  # alias for FORCE
@@ -156,7 +150,6 @@ class Dimensions:
     force_per_unit_mass: Final[Dimension]  # alias for FORCE_PER_UNIT_MASS
     frequency_voltage_ratio: Final[Dimension]  # alias for FREQUENCY_VOLTAGE_RATIO
     fuel_consumption: Final[Dimension]  # alias for FUEL_CONSUMPTION
-    heat: Final[Dimension]  # alias for ENERGY
     heat_of_combustion: Final[Dimension]  # alias for HEAT_OF_COMBUSTION
     heat_of_fusion: Final[Dimension]  # alias for HEAT_OF_FUSION
     heat_of_vaporization: Final[Dimension]  # alias for HEAT_OF_VAPORIZATION
@@ -229,6 +222,5 @@ class Dimensions:
     volumetric_flux: Final[Dimension]  # alias for VOLUMETRIC_FLUX
     volumetric_mass_flow_rate: Final[Dimension]  # alias for VOLUMETRIC_MASS_FLOW_RATE
     wavenumber: Final[Dimension]  # alias for WAVENUMBER
-    work: Final[Dimension]  # alias for ENERGY
 
 dim: Final[Dimensions]

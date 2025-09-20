@@ -34,7 +34,7 @@ def generate_unit_stubs(
 
         # Import the unit module properly through the package
         # This will load all the catalogs and populate registries
-        from qnty.core.unit import write_units_stub, _unit_registry, _unit_aliases
+        from qnty.core.unit import _unit_aliases, _unit_registry, write_units_stub
 
         # Parse the catalog file to get UnitNamespace classes
         namespaces = set()
