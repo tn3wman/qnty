@@ -190,6 +190,9 @@ class UnitRegistry:
         if prefer:
             self._preferred[unit.dim] = unit
 
+        # Registrations can invalidate prior negative cache entries.
+        self._resolve_cache.clear()
+
         return unit
 
     def define(
