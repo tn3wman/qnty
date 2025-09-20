@@ -117,6 +117,32 @@ class Quantity(Generic[D]):
         """Compatibility property for code expecting .q"""
         return self if self.value is not None else None
 
+    def _require_value(self) -> float:
+        if self.value is None:
+            raise ValueError(f"Quantity '{self.name}' has no numeric value")
+        return float(self.value)
+
+    def _value_in_unit(self, unit: Unit[D]) -> float:
+        """Return this quantity's magnitude expressed in the provided unit."""
+        si_value = self._require_value()
+        return (si_value - unit.si_offset) / unit.si_factor
+
+    def magnitude(self, unit: Unit[D] | str | None = None) -> float:
+        """Convenience accessor that returns the value expressed in a desired unit."""
+        if unit is None:
+            target = self.preferred or ureg.preferred_for(self.dim) or ureg.si_unit_for(self.dim)
+            if target is None:
+                return self._require_value()
+            return self._value_in_unit(target)
+
+        if isinstance(unit, str):
+            resolved = ureg.resolve(unit, dim=self.dim)
+            if resolved is None:
+                raise ValueError(f"Unknown unit '{unit}'")
+            unit = resolved
+
+        return self._value_in_unit(unit)
+
     # ---- Setting values ----
     @overload
     def set(self, value: float) -> QuantitySetter[D]: ...
@@ -131,7 +157,7 @@ class Quantity(Generic[D]):
             return QuantitySetter(self, value)
 
         if isinstance(unit, str):
-            resolved = ureg.resolve(unit)
+            resolved = ureg.resolve(unit, dim=self.dim)
             if resolved is None:
                 raise ValueError(f"Unknown unit '{unit}'")
             unit = resolved
@@ -155,14 +181,14 @@ class Quantity(Generic[D]):
         if self.value is None:
             raise ValueError(f"Cannot convert unknown quantity '{self.name}' to unit")
 
-        # Fast conversion: (si_value - offset) / factor
-        converted_value = (self.value - unit.si_offset) / unit.si_factor
+        si_value = float(self.value)
 
-        # Optimized Quantity creation
+        # Optimized Quantity creation that preserves SI storage while
+        # tagging the preferred display unit for callers.
         new_q = object.__new__(Quantity)
         new_q.name = "converted"
         new_q.dim = self.dim
-        new_q.value = converted_value
+        new_q.value = si_value
         new_q.preferred = unit
         new_q._symbol = None
         return new_q
@@ -376,16 +402,10 @@ class Quantity(Generic[D]):
 
         unit = self.preferred or ureg.preferred_for(self.dim) or ureg.si_unit_for(self.dim)
         if unit is None:
-            return f"{self.value:.6g} [Dim={self.dim}]"
+            return f"{self._require_value():.6g} [Dim={self.dim}]"
 
-        # If we already have a preferred unit, the value is already in that unit
-        # (from a previous conversion), so don't convert again
-        if self.preferred is not None:
-            return f"{self.value:.6g} {unit.symbol}"
-
-        # Only convert if we're using the default unit (value is in SI)
-        converted_quantity = self.to_unit(unit)
-        return f"{converted_quantity.value:.6g} {unit.symbol}"
+        display_value = self._value_in_unit(unit)
+        return f"{display_value:.6g} {unit.symbol}"
 
     def __repr__(self) -> str:
         return self.__str__()
@@ -516,16 +536,14 @@ class UnitApplier(Generic[D]):
                 self._unit_cache[unit] = resolved
             unit = resolved
 
-        # Convert from SI to target unit: (si_value - offset) / factor
         if self._q.value is None:
             raise ValueError(f"Cannot convert unknown quantity '{self._q.name}' to unit")
-        converted_value = (self._q.value - unit.si_offset) / unit.si_factor
 
-        # Optimized Quantity creation - bypass dataclass overhead
+        # Optimized Quantity creation - bypass dataclass overhead, retaining SI storage
         new_q = object.__new__(Quantity)
         new_q.name = "converted"
         new_q.dim = self._dim
-        new_q.value = converted_value
+        new_q.value = float(self._q.value)
         new_q.preferred = unit
         new_q._symbol = None
         return new_q
@@ -544,14 +562,11 @@ class UnitApplier(Generic[D]):
         if self._q.value is None:
             raise ValueError(f"Cannot convert unknown quantity '{self._q.name}' to unit")
 
-        # Fast conversion: (si_value - offset) / factor
-        converted_value = (self._q.value - unit.si_offset) / unit.si_factor
-
         # Optimized Quantity creation
         new_q = object.__new__(Quantity)
         new_q.name = "converted"
         new_q.dim = self._dim
-        new_q.value = converted_value
+        new_q.value = float(self._q.value)
         new_q.preferred = unit
         new_q._symbol = None
         return new_q

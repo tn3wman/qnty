@@ -199,7 +199,7 @@ def test_composed_problem():
 
     p.solve()
 
-    print(p.header.P_max)
+    print(p.header.P_max.magnitude("psi"))
 
 
 
