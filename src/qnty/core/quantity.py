@@ -377,6 +377,13 @@ class Quantity(Generic[D]):
         unit = self.preferred or ureg.preferred_for(self.dim) or ureg.si_unit_for(self.dim)
         if unit is None:
             return f"{self.value:.6g} [Dim={self.dim}]"
+
+        # If we already have a preferred unit, the value is already in that unit
+        # (from a previous conversion), so don't convert again
+        if self.preferred is not None:
+            return f"{self.value:.6g} {unit.symbol}"
+
+        # Only convert if we're using the default unit (value is in SI)
         converted_quantity = self.to_unit(unit)
         return f"{converted_quantity.value:.6g} {unit.symbol}"
 
