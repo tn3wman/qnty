@@ -281,6 +281,8 @@ class Problem(ValidationMixin):
             cloned_var.value = variable.value
         if hasattr(variable, "preferred") and variable.preferred is not None:
             cloned_var.preferred = variable.preferred
+        if hasattr(variable, "_output_unit") and variable._output_unit is not None:
+            cloned_var._output_unit = variable._output_unit
 
         return cloned_var
 

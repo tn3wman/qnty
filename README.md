@@ -24,7 +24,7 @@
 - **🔗 Fluent API**: Intuitive method chaining for readable code
 - **🧮 Engineering-Focused**: Built for real-world engineering calculations
 - **🧬 Mathematical System**: Built-in equation solving and expression trees
-- **📊 Comprehensive Testing**: 187 tests with performance benchmarks
+- **📊 Comprehensive Testing**: 80+ tests with performance benchmarks and real engineering examples
 
 ## 🚀 Quick Start
 
@@ -43,55 +43,68 @@ from qnty import Length, Pressure, Area
 width = Length(3, "meter", "Width")
 height = Length(2, "meter", "Height")
 
-# Solve mathematical expressions
-area = Area("area", is_known=False)
-area.solve_from(width * height)
+# Mathematical operations preserve dimensional integrity
+area = width * height  # Automatically becomes Area quantity
 print(f"Area: {area}")  # Area: 6.0 m²
+
+# Fluent API for unit conversions
+print(f"In square feet: {area.to_unit.square_foot}")  # 64.58 ft²
 ```
 
 ### Engineering Example
 
 ```python
-from qnty import Problem, Length, Pressure
+from qnty import Problem, Length, Pressure, Dimensionless
+from qnty.algebra import equation
 
-class PipeThickness(Problem):
-    """Calculate pipe wall thickness"""
-    
-    # Known parameters
-    pressure = Pressure(150, "pound_force_per_square_inch", "Internal Pressure")
-    diameter = Length(6, "inch", "Pipe Diameter")
-    allowable_stress = Pressure(20000, "pound_force_per_square_inch", "Allowable Stress")
-    
-    # Unknown to solve for
-    thickness = Length("thickness", is_known=False)
-    
-    # Engineering equation: t = (P × D) / (2 × S)
-    equation = thickness.equals((pressure * diameter) / (2 * allowable_stress))
+class PipeDesign(Problem):
+    """ASME B31.3 Pipe Wall Thickness Calculation"""
 
-# Solve the problem
-problem = PipeThickness()
+    # Known parameters (fluent API)
+    P = Pressure("Design Pressure").set(90).pound_force_per_square_inch
+    D = Length("Outside Diameter").set(0.84).inch
+    S = Pressure("Allowable Stress").set(20000).pound_force_per_square_inch
+    E = Dimensionless("Quality Factor").set(0.8).dimensionless
+    Y = Dimensionless("Y Coefficient").set(0.4).dimensionless
+
+    # Unknowns to solve
+    t = Length("Pressure Design Thickness")
+    P_max = Pressure("Maximum Allowable Pressure")
+
+    # ASME equations
+    t_eqn = equation(t, (P * D) / (2 * (S * E + P * Y)))
+    P_max_eqn = equation(P_max, (2 * t * S * E) / (D - 2 * t * Y))
+
+# Solve and validate
+problem = PipeDesign()
 problem.solve()
-print(f"Required thickness: {problem.thickness}")
+print(f"Required thickness: {problem.t}")
+print(f"Max pressure: {problem.P_max}")
 ```
 
 ### Mathematical Operations
 
 ```python
-from qnty import Length, sqrt, Area
+from qnty import Length, Area, Force, Pressure
+from qnty.algebra import sqrt
 
-# Dimensional analysis with mathematical functions
-area = Area(25, "square_meter", "Square Area")
-side = Length("side", is_known=False)
-side.solve_from(sqrt(area))  # Returns Length, not Area!
-print(f"Side length: {side}")  # Side length: 5.0 m
+# Mathematical functions preserve dimensional correctness
+area = Area(25, "square_meter")
+side = sqrt(area)  # Returns Length, not Area!
+print(f"Side length: {side}")  # 5.0 m
+
+# Unit conversions with type safety
+force = Force(100, "newton")
+pressure_area = Area(0.01, "square_meter")
+pressure = force / pressure_area  # Automatically becomes Pressure
+print(f"Pressure: {pressure.to_unit.pound_force_per_square_inch}")  # 145.04 psi
 ```
 
-## 📚 Documentation
+## 📚 Documentation & Examples
 
-- **[📖 Tutorial](docs/TUTORIAL.md)** - Step-by-step learning guide
-- **[📋 API Reference](docs/API_REFERENCE.md)** - Complete API documentation
-- **[🏗️ Examples](examples/)** - Real-world engineering examples
-- **[📁 Full Documentation](docs/)** - Complete documentation index
+- **[🏗️ Examples](examples/)** - Real-world engineering problems including pipe design, composed problems, and conversions
+- **[🔧 Development Guide](CLAUDE.md)** - Architecture and development guidelines
+- **[📊 Performance Benchmarks](tests/test_benchmark.py)** - Comparison with Pint and other libraries
 
 ## 🚀 Performance
 
@@ -127,21 +140,24 @@ from qnty import (
 ## 🔧 Development
 
 ```bash
-# Install dependencies
-pip install -r requirements.txt
+# Install for development
+pip install -e ".[dev,benchmark]"
 
-# Run tests
+# Run all tests (80+ comprehensive tests)
 pytest
 
-# Run specific test
+# Run specific test module
 pytest tests/test_dimension.py -v
 
-# Run benchmarks
-python tests/test_benchmark.py
+# Run performance benchmarks vs Pint
+pytest tests/test_benchmark.py -v -s
 
-# Lint code
+# Code formatting and linting
 ruff check src/ tests/
 ruff format src/ tests/
+
+# Regenerate auto-generated catalog files
+python codegen/cli.py
 ```
 
 ## 📄 License
@@ -154,14 +170,18 @@ We welcome contributions! Please see [CLAUDE.md](CLAUDE.md) for development guid
 
 1. Fork the repository
 2. Create a feature branch
-3. Add tests for new functionality
+3. Add comprehensive tests for new functionality
 4. Ensure all tests pass: `pytest`
-5. Submit a pull request
+5. Verify performance benchmarks: `pytest tests/test_benchmark.py -s`
+6. Run code quality checks: `ruff check src/ tests/`
+7. Submit a pull request
+
+**Important**: Never edit `*_catalog.py` files directly - they are auto-generated. Modify generators in `codegen/` instead.
 
 ---
 
 **Ready to supercharge your engineering calculations?** 🚀
 
-- Start with the **[Tutorial](docs/TUTORIAL.md)**
-- Browse the **[API Reference](docs/API_REFERENCE.md)**
-- Try the **[Examples](examples/)**
+- Explore the **[Examples](examples/)** - Real ASME pipe design, composed problems, and more
+- Check the **[Performance Benchmarks](tests/test_benchmark.py)** - See the 18.9x speedup
+- Read the **[Development Guide](CLAUDE.md)** - Architecture and contribution guidelines
