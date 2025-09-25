@@ -217,19 +217,48 @@ class ConfigurableVariable:
     def __init__(self, symbol, name, quantity, is_known=True, proxy=None, original_symbol=None, original_variable=None):
         # Store the actual variable (we'll delegate to it)
         # Create a variable of the appropriate type based on the original
+
+        # Import here to avoid circular dependency
+        from ..core.quantity import Quantity as CoreQuantity
+
         if original_variable is not None:
-            # Preserve the original variable type
-            self._variable = type(original_variable)(name)
+            # Check if it's a Quantity (unified type)
+            if isinstance(original_variable, CoreQuantity):
+                # Check if it's a specialized quantity class (created by metaclass)
+                # or the base Quantity class
+                if hasattr(type(original_variable), "__init__") and type(original_variable).__name__ != "Quantity":
+                    # It's a specialized quantity class (Length, Pressure, etc.)
+                    # Use the specialized constructor (name, dim, value, preferred)
+                    self._variable = type(original_variable)(name=name, dim=original_variable.dim, value=original_variable.value, preferred=original_variable.preferred)
+                    # Set additional attributes manually
+                    self._variable._symbol = symbol
+                    if hasattr(original_variable, "_output_unit"):
+                        self._variable._output_unit = original_variable._output_unit
+                else:
+                    # It's the base Quantity class - use dataclass constructor
+                    self._variable = type(original_variable)(
+                        name=name,
+                        dim=original_variable.dim,
+                        value=original_variable.value,
+                        preferred=original_variable.preferred,
+                        _symbol=symbol,
+                        _output_unit=getattr(original_variable, "_output_unit", None),
+                    )
+            else:
+                # For other types (shouldn't happen with current codebase)
+                self._variable = type(original_variable)(name)
         else:
             # Fallback to Dimensionless if no original variable provided
             self._variable = Dimensionless(name)
 
-        # Set the properties using private attributes (since properties may be read-only)
-        self._variable._symbol = symbol
-        # For the unified Quantity class, we set the value and preferred unit directly
-        if quantity is not None and hasattr(quantity, "value") and hasattr(quantity, "preferred"):
-            self._variable.value = quantity.value
-            self._variable.preferred = quantity.preferred
+        # For non-Quantity types, set the symbol and other properties
+        if original_variable is not None and not isinstance(original_variable, CoreQuantity):
+            # Set the properties using private attributes (since properties may be read-only)
+            self._variable._symbol = symbol
+            # For the unified Quantity class, we set the value and preferred unit directly
+            if quantity is not None and hasattr(quantity, "value") and hasattr(quantity, "preferred"):
+                self._variable.value = quantity.value
+                self._variable.preferred = quantity.preferred
         # Note: is_known is handled via the value being None or not in the unified Quantity API
         _ = is_known  # Mark as used to avoid linting warnings
 

@@ -1,6 +1,6 @@
 # Engineering Calculation Report: Pressure Design of a Straight Pipe Under Internal Pressure
 
-**Generated:** 2025-09-25 04:28:40
+**Generated:** 2025-09-25 18:00:48
 
 **Description:** Calculate the minimum wall thickness of a straight pipe under internal pressure according to ASME B31.3.
 
@@ -32,9 +32,9 @@
 
 1. `T = T_bar * (1  - U_m)`
 2. `t = P * D / (2  * (S * E * W + P * Y))`
-3. `t_m = t + c`
+3. `d = D - 2  * T`
 4. `P_max = 2  * (T - c) * S * E * W / (D - 2  * (T - c) * Y)`
-5. `d = D - 2  * T`
+5. `t_m = t + c`
 
 ## 4. Step-by-Step Solution
 
@@ -72,21 +72,21 @@
     t = 0.0023572 in
     ```
 
-### Step 3: Solve for t_m
+### Step 3: Solve for d
 
     **Equation:**
     ```
-    t_m = t + c
+    d = D - 2  * T
     ```
 
     **Substitution:**
     ```
-    t_m = 0.0023572 in + 0 in
+    d = 0.84 in - 2  * 0.128625 in
     ```
 
     **Result:**
     ```
-    t_m = 0.0023572 in
+    d = 0.58275 in
     ```
 
 ### Step 4: Solve for P_max
@@ -106,21 +106,21 @@
     P_max = 5584.05 psi
     ```
 
-### Step 5: Solve for d
+### Step 5: Solve for t_m
 
     **Equation:**
     ```
-    d = D - 2  * T
+    t_m = t + c
     ```
 
     **Substitution:**
     ```
-    d = 0.84 in - 2  * 0.128625 in
+    t_m = 0.0023572 in + 0 in
     ```
 
     **Result:**
     ```
-    d = 0.58275 in
+    t_m = 0.0023572 in
     ```
 
 ## 5. Summary of Results

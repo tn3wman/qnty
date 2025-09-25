@@ -61,11 +61,11 @@ class StraightPipeInternal(Problem):
 
     Y = Dimensionless("Y Coefficient").set(0.4).dimensionless
 
-    T = Length("Wall Thickness")
-    d = Length("Inside Diameter")
-    t = Length("Pressure Design Thickness")
-    t_m = Length("Minimum Required Thickness")
-    P_max = Pressure("Pressure, Maximum")
+    T = Length("Wall Thickness").output_unit("inch")
+    d = Length("Inside Diameter").output_unit("inch")
+    t = Length("Pressure Design Thickness").output_unit("inch")
+    t_m = Length("Minimum Required Thickness").output_unit("inch")
+    P_max = Pressure("Pressure, Maximum").output_unit("psi")
 
     # Equations
     T_eqn = equation(T, T_bar * (1 - U_m))
