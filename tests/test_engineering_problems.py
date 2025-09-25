@@ -13,8 +13,8 @@ from qnty.problems.solving import SafeExpressionEvaluator
 
 # Problem definitions - single source of truth
 PROBLEMS = {
-    "honey_viscosity": {
-        "description": "Kinematic viscosity from dynamic viscosity and density",
+    "problem_1": {
+        "description": "Example problem 1",
         "variables": {
             "mu": (qc.ViscosityDynamic, 1000, u.poise),
             "rho": (qc.MassDensity, 0.05, u.ounce_per_milliliter),
@@ -27,8 +27,8 @@ PROBLEMS = {
             "assert_values": True
         },
     },
-    "pipe_flow": {
-        "description": "Multi-pipe flow with conservation",
+    "problem_2": {
+        "description": "Example problem 2",
         "variables": {
             "D_1": (qc.Length, 1.049, u.inch),
             "D_1_5": (qc.Length, 1.610, u.inch),
@@ -105,6 +105,31 @@ PROBLEMS = {
             "m_dot": (100, u.lbm / u.hour),
             "Q": (0.3888, u.ft3 / u.second),
             "A": (0.08836, u.square_feet),
+        },
+        "debug": {"print_results": False, "assert_values": True},
+    },
+    "problem_8": {
+        "description": "Example problem 8",
+        "variables": {
+            "Q": (qc.VolumetricFlowRate, 200, u.gpm),
+            "Head_elevation": (qc.Length, 12, u.feet),
+            "Head_friction": (qc.Length, 75, u.feet),
+            "rho": (qc.MassDensity, 8.33, u.lbm / u.gallon),
+            "g": (qc.Acceleration, 32.2, u.feet_per_second_squared),
+            "Head_total": (qc.Length, None, None),
+            "Pump_hp": (qc.PowerThermalDuty, None, None),
+        },
+        "equations": [
+            ("Head_total", "Head_elevation + Head_friction"),
+            ("Pump_hp", "rho * g * Q * Head_total"),
+        ],
+        "expected": {
+            "Q": (200, u.gpm),
+            "Head_elevation": (12, u.feet),
+            "Head_friction": (75, u.feet),
+            "rho": (8.33, u.lbm / u.gallon),
+            "g": (32.2, u.feet_per_second_squared),
+            "Pump_hp": (4.39, u.horsepower),
         },
         "debug": {"print_results": False, "assert_values": True},
     },
