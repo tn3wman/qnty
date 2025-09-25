@@ -62,9 +62,89 @@ class BaseSolver(ABC):
         """
         ...
 
-    def _log_step(self, iteration: int, variable: str, equation: str, result: str, method: str | None = None):
-        """Log a solving step."""
-        step = {"iteration": iteration, "variable": variable, "equation": equation, "result": result, "method": method or self.__class__.__name__}
+    def _log_step(
+        self, iteration: int, variable: str, equation: str, result: str, method: str | None = None, equation_obj: Equation | None = None, variables_state: dict[str, FieldQuantity] | None = None
+    ):
+        """Log a solving step with detailed information for reporting.
+
+        Args:
+            iteration: Current iteration number
+            variable: Symbol of variable being solved
+            equation: String representation of the equation
+            result: String representation of the result
+            method: Solving method used
+            equation_obj: The actual Equation object for more details
+            variables_state: Current state of all variables for substitution info
+        """
+        step = {
+            "iteration": iteration,
+            "variable": variable,
+            "equation": equation,
+            "result": result,
+            "method": method or self.__class__.__name__,
+            "target": variable,  # For compatibility with existing code
+        }
+
+        # Add additional details for reporting
+        if equation_obj:
+            step["equation_name"] = getattr(equation_obj, "name", variable)
+            step["equation_str"] = str(equation_obj)
+
+            # Try to create substituted equation with actual values
+            if variables_state:
+                try:
+                    # Create a proper substituted equation by replacing variables with their values
+                    equation_str = str(equation_obj)
+                    substituted_eq = equation_str
+
+                    # Replace each known variable with its value and unit (but NOT the target variable)
+                    equation_vars = equation_obj.get_all_variables()
+                    for var_sym in equation_vars:
+                        # Skip the target variable being solved for
+                        if var_sym == variable:
+                            continue
+
+                        if var_sym in variables_state and variables_state[var_sym].is_known:
+                            var = variables_state[var_sym]
+
+                            # Use the original value and unit (before SI conversion)
+                            if var.preferred and hasattr(var.preferred, "si_factor") and var.value is not None:
+                                # Get the value in the preferred unit
+                                original_value = var.value / var.preferred.si_factor
+                                formatted_value = f"{original_value:.6g} {var.preferred.symbol}"
+                            elif hasattr(var, "_output_unit") and var._output_unit and hasattr(var._output_unit, "si_factor") and var.value is not None:
+                                # Get the value in the output unit
+                                original_value = var.value / var._output_unit.si_factor
+                                formatted_value = f"{original_value:.6g} {var._output_unit.symbol}"
+                            else:
+                                # Fallback to SI value if no unit info available
+                                value = var.value
+                                formatted_value = f"{value:.6g}" if value is not None else "0"
+
+                            # Replace the variable symbol with the formatted value
+                            # Use word boundaries to avoid partial replacements
+                            import re
+
+                            pattern = r"\b" + re.escape(var_sym) + r"\b"
+                            substituted_eq = re.sub(pattern, formatted_value, substituted_eq)
+
+                    step["substituted"] = substituted_eq
+                except Exception:
+                    pass  # Don't fail if we can't create substitution string
+
+        # Extract numerical result and unit
+        try:
+            if " " in result:
+                parts = result.split(" ", 1)
+                step["result_value"] = parts[0]
+                step["result_unit"] = parts[1] if len(parts) > 1 else ""
+            else:
+                step["result_value"] = result
+                step["result_unit"] = ""
+        except Exception:
+            step["result_value"] = str(result)
+            step["result_unit"] = ""
+
         self.steps.append(step)
         if self.logger:
             self.logger.debug("Solved %s = %s", variable, result)

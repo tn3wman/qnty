@@ -31,6 +31,7 @@ class Quantity(Generic[D]):
     value: float | None = None
     preferred: Unit[D] | None = None
     _symbol: str | None = None
+    _output_unit: Unit[D] | None = None
 
     def __post_init__(self):
         """Auto-detect symbol from variable assignment if not set."""
@@ -170,6 +171,25 @@ class Quantity(Generic[D]):
         """Set preferred display unit."""
         return Quantity(name=self.name, dim=self.dim, value=self.value, preferred=unit)
 
+    def output_unit(self, unit: Unit[D] | str) -> Quantity[D]:
+        """Set desired output unit for display and reporting."""
+        if isinstance(unit, str):
+            resolved = ureg.resolve(unit, dim=self.dim)
+            if resolved is None:
+                raise ValueError(f"Unknown unit '{unit}'")
+            unit = resolved
+
+        # Create new instance with output unit set, preserving all other attributes
+        new_q = Quantity(
+            name=self.name,
+            dim=self.dim,
+            value=self.value,
+            preferred=self.preferred,
+            _symbol=self._symbol,
+            _output_unit=unit
+        )
+        return new_q
+
     def to(self, unit: Unit[D] | str) -> Quantity[D]:
         """Direct conversion method for maximum performance."""
         if isinstance(unit, str):
@@ -191,6 +211,7 @@ class Quantity(Generic[D]):
         new_q.value = si_value
         new_q.preferred = unit
         new_q._symbol = None
+        new_q._output_unit = self._output_unit
         return new_q
 
     @property
@@ -400,7 +421,8 @@ class Quantity(Generic[D]):
         if self.value is None:
             return f"{self.name} (unknown)" if self.name else "Unknown quantity"
 
-        unit = self.preferred or ureg.preferred_for(self.dim) or ureg.si_unit_for(self.dim)
+        # Use output unit first, then preferred, then system defaults
+        unit = self._output_unit or self.preferred or ureg.preferred_for(self.dim) or ureg.si_unit_for(self.dim)
         if unit is None:
             return f"{self._require_value():.6g} [Dim={self.dim}]"
 
