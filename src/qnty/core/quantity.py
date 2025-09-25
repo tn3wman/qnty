@@ -180,14 +180,7 @@ class Quantity(Generic[D]):
             unit = resolved
 
         # Create new instance with output unit set, preserving all other attributes
-        new_q = Quantity(
-            name=self.name,
-            dim=self.dim,
-            value=self.value,
-            preferred=self.preferred,
-            _symbol=self._symbol,
-            _output_unit=unit
-        )
+        new_q = Quantity(name=self.name, dim=self.dim, value=self.value, preferred=self.preferred, _symbol=self._symbol, _output_unit=unit)
         return new_q
 
     def to(self, unit: Unit[D] | str) -> Quantity[D]:

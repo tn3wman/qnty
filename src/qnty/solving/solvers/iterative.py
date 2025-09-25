@@ -156,15 +156,7 @@ class IterativeSolver(BaseSolver):
                 if self.logger:
                     self.logger.warning(f"Residual check failed for {var_symbol}")
 
-            self._log_step(
-                iteration + 1,
-                var_symbol,
-                str(equation),
-                str(solved_var.quantity),
-                "iterative",
-                equation_obj=equation,
-                variables_state=working_vars
-            )
+            self._log_step(iteration + 1, var_symbol, str(equation), str(solved_var.quantity), "iterative", equation_obj=equation, variables_state=working_vars)
 
             return True
 
