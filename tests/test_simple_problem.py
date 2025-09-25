@@ -146,25 +146,25 @@ def test_output_unit_preservation():
     problem = TestProblem()
 
     # Test variable with output_unit
-    T_var = problem.variables.get('T')
+    T_var = problem.variables.get("T")
     assert T_var is not None
-    assert hasattr(T_var, '_output_unit')
+    assert hasattr(T_var, "_output_unit")
     assert T_var._output_unit is not None
     assert T_var._output_unit.symbol == "in"
     assert T_var.name == "Wall Thickness"
     assert T_var._symbol == "T"
 
     # Test variable without output_unit
-    L_var = problem.variables.get('L')
+    L_var = problem.variables.get("L")
     assert L_var is not None
-    assert hasattr(L_var, '_output_unit')
+    assert hasattr(L_var, "_output_unit")
     assert L_var._output_unit is None  # Should be None for variables without output_unit
     assert L_var.name == "Length"
 
     # Test variable with both preferred and output_unit
-    P_var = problem.variables.get('P')
+    P_var = problem.variables.get("P")
     assert P_var is not None
-    assert hasattr(P_var, '_output_unit')
+    assert hasattr(P_var, "_output_unit")
     assert P_var._output_unit is not None
     assert P_var._output_unit.symbol == "Pa"
     assert P_var.preferred is not None
@@ -172,14 +172,14 @@ def test_output_unit_preservation():
     assert P_var.value is not None  # Should have a value from .set(150).psi
 
     # Test instance attributes also have correct _output_unit
-    T_instance = getattr(problem, 'T', None)
+    T_instance = getattr(problem, "T", None)
     assert T_instance is not None
-    assert hasattr(T_instance, '_output_unit')
+    assert hasattr(T_instance, "_output_unit")
     assert T_instance._output_unit is not None
     assert T_instance._output_unit.symbol == "in"
 
     # Test display behavior: output_unit takes precedence over preferred for display
-    P_instance = getattr(problem, 'P', None)
+    P_instance = getattr(problem, "P", None)
     assert P_instance is not None
     P_str = str(P_instance)
     # Should display in Pa (output_unit), not psi (preferred)

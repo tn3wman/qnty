@@ -263,7 +263,8 @@ class LatexReportGenerator(ReportGenerator):
                     latex_eq = self._to_latex_math(step.substituted_equation)
                     # Replace spaces between numbers and units with protected spaces
                     import re
-                    latex_eq = re.sub(r'([0-9\.e\-\+]+)\s+([a-zA-Z]+)', r'\1\\,\\text{\2}', latex_eq)
+
+                    latex_eq = re.sub(r"([0-9\.e\-\+]+)\s+([a-zA-Z]+)", r"\1\\,\\text{\2}", latex_eq)
                     # Add alignment marker at equals sign
                     aligned_eq = latex_eq.replace(" = ", " &= ")
                     content.append(r"\begin{aligned}")
@@ -386,7 +387,7 @@ class LatexReportGenerator(ReportGenerator):
         result = result.replace("sqrt(", r"\sqrt{")
 
         # Parse equation structure: check if it's an assignment (var = expression)
-        assignment_match = re.match(r'^([a-zA-Z][a-zA-Z0-9_]*)\s*=\s*(.+)$', result)
+        assignment_match = re.match(r"^([a-zA-Z][a-zA-Z0-9_]*)\s*=\s*(.+)$", result)
 
         if assignment_match:
             # This is an assignment equation like "P_max = ..."
@@ -452,11 +453,11 @@ class LatexReportGenerator(ReportGenerator):
         division_pos = -1
 
         for i, char in enumerate(expr):
-            if char == '(':
+            if char == "(":
                 paren_level += 1
-            elif char == ')':
+            elif char == ")":
                 paren_level -= 1
-            elif char == '/' and paren_level == 0:
+            elif char == "/" and paren_level == 0:
                 division_pos = i
                 break  # Take the first top-level division
 
@@ -465,16 +466,15 @@ class LatexReportGenerator(ReportGenerator):
 
         # Extract left and right parts
         left_part = expr[:division_pos].strip()
-        right_part = expr[division_pos + 1:].strip()
+        right_part = expr[division_pos + 1 :].strip()
 
         # Clean up parentheses if they wrap the entire expression
-        if left_part.startswith('(') and left_part.endswith(')'):
+        if left_part.startswith("(") and left_part.endswith(")"):
             left_part = left_part[1:-1].strip()
-        if right_part.startswith('(') and right_part.endswith(')'):
+        if right_part.startswith("(") and right_part.endswith(")"):
             right_part = right_part[1:-1].strip()
 
         return f"\\frac{{{left_part}}}{{{right_part}}}"
-
 
     def _format_variables_in_expression(self, expr: str) -> str:
         """Format variable names in an expression, preserving LaTeX commands."""
@@ -483,15 +483,15 @@ class LatexReportGenerator(ReportGenerator):
         def replace_variable(match):
             var_name = match.group(0)
             # Don't replace LaTeX commands
-            if any(cmd in var_name.lower() for cmd in ['frac', 'sqrt', 'cdot', 'overline']):
+            if any(cmd in var_name.lower() for cmd in ["frac", "sqrt", "cdot", "overline"]):
                 return var_name
             return self._format_latex_variable(var_name)
 
         # Pattern to match variable names, but not LaTeX commands
-        var_pattern = r'\b[a-zA-Z][a-zA-Z0-9_]*\b'
+        var_pattern = r"\b[a-zA-Z][a-zA-Z0-9_]*\b"
 
         # Split by backslash to avoid replacing LaTeX commands
-        parts = expr.split('\\')
+        parts = expr.split("\\")
 
         # Format variables in the first part (before any LaTeX commands)
         parts[0] = re.sub(var_pattern, replace_variable, parts[0])
@@ -500,28 +500,21 @@ class LatexReportGenerator(ReportGenerator):
         for i in range(1, len(parts)):
             if parts[i]:
                 # Don't replace if this part starts with a LaTeX command
-                if not any(parts[i].startswith(cmd) for cmd in ['frac{', 'sqrt{', 'cdot', 'overline{']):
+                if not any(parts[i].startswith(cmd) for cmd in ["frac{", "sqrt{", "cdot", "overline{"]):
                     # Find content after the command and format variables there
                     # This is a simplified approach - for more complex cases, we'd need a proper parser
                     parts[i] = re.sub(var_pattern, replace_variable, parts[i])
 
-        return '\\'.join(parts)
+        return "\\".join(parts)
 
     def _format_math_functions(self, expr: str) -> str:
         """Format mathematical functions for LaTeX."""
         # Handle common mathematical functions
-        functions = {
-            'sin': r'\sin',
-            'cos': r'\cos',
-            'tan': r'\tan',
-            'log': r'\log',
-            'ln': r'\ln',
-            'exp': r'\exp'
-        }
+        functions = {"sin": r"\sin", "cos": r"\cos", "tan": r"\tan", "log": r"\log", "ln": r"\ln", "exp": r"\exp"}
 
         for func, latex_func in functions.items():
             # Replace function calls like sin(x) with \sin{x}
-            expr = expr.replace(f'{func}(', f'{latex_func}{{')
+            expr = expr.replace(f"{func}(", f"{latex_func}{{")
 
         return expr
 
@@ -564,8 +557,9 @@ class PdfReportGenerator(LatexReportGenerator):
             # If no method worked, keep the LaTeX file and inform the user
             if not pdf_generated:
                 # Copy LaTeX file to output location with .tex extension
-                tex_output = output_path.with_suffix('.tex')
+                tex_output = output_path.with_suffix(".tex")
                 import shutil
+
                 shutil.copy2(tex_path, tex_output)
 
                 raise RuntimeError(
@@ -604,6 +598,7 @@ class PdfReportGenerator(LatexReportGenerator):
             if system != "windows":
                 import os
                 import stat
+
                 st = os.stat(tectonic_path)
                 os.chmod(tectonic_path, st.st_mode | stat.S_IEXEC)
 
@@ -629,11 +624,7 @@ class PdfReportGenerator(LatexReportGenerator):
         """Try to use system-installed tectonic."""
         try:
             # Check if tectonic is available in PATH
-            check_result = subprocess.run(
-                ["tectonic", "--version"],
-                capture_output=True,
-                timeout=5
-            )
+            check_result = subprocess.run(["tectonic", "--version"], capture_output=True, timeout=5)
 
             if check_result.returncode != 0:
                 return False
@@ -661,11 +652,7 @@ class PdfReportGenerator(LatexReportGenerator):
         """Try to use system-installed pdflatex."""
         try:
             # Check if pdflatex is available
-            check_result = subprocess.run(
-                ["pdflatex", "--version"],
-                capture_output=True,
-                timeout=5
-            )
+            check_result = subprocess.run(["pdflatex", "--version"], capture_output=True, timeout=5)
 
             if check_result.returncode != 0:
                 return False
@@ -673,11 +660,7 @@ class PdfReportGenerator(LatexReportGenerator):
             # Run pdflatex (need to run twice for references)
             for _ in range(2):
                 result = subprocess.run(
-                    ["pdflatex", "-interaction=nonstopmode", "-output-directory", str(tex_path.parent), str(tex_path)],
-                    capture_output=True,
-                    text=True,
-                    timeout=60,
-                    cwd=str(tex_path.parent)
+                    ["pdflatex", "-interaction=nonstopmode", "-output-directory", str(tex_path.parent), str(tex_path)], capture_output=True, text=True, timeout=60, cwd=str(tex_path.parent)
                 )
 
             # Check if PDF was generated
@@ -685,10 +668,11 @@ class PdfReportGenerator(LatexReportGenerator):
             if generated_pdf.exists():
                 # Move to final location
                 import shutil
+
                 shutil.move(str(generated_pdf), str(output_path))
 
                 # Clean up auxiliary files
-                for ext in ['.aux', '.log', '.out']:
+                for ext in [".aux", ".log", ".out"]:
                     aux_file = tex_path.with_suffix(ext)
                     if aux_file.exists():
                         aux_file.unlink()

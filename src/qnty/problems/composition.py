@@ -228,8 +228,8 @@ class ConfigurableVariable:
                 # or the base Quantity class
                 if hasattr(type(original_variable), "__init__") and type(original_variable).__name__ != "Quantity":
                     # It's a specialized quantity class (Length, Pressure, etc.)
-                    # Use the specialized constructor (name, dim, value, preferred)
-                    self._variable = type(original_variable)(name=name, dim=original_variable.dim, value=original_variable.value, preferred=original_variable.preferred)
+                    # Use the specialized constructor (name, value, preferred) - dim is set by metaclass
+                    self._variable = type(original_variable)(name=name, value=original_variable.value, preferred=original_variable.preferred)  # type: ignore[call-arg]
                     # Set additional attributes manually
                     self._variable._symbol = symbol
                     if hasattr(original_variable, "_output_unit"):
