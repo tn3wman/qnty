@@ -511,6 +511,15 @@ class QuantitySetter(Generic[D]):
 
     def __getattr__(self, name: str) -> Quantity[D]:
         """Resolve attribute name to a Unit and apply."""
+        # Guard against deepcopy and pickle operations that cause recursion
+        if name in {
+            '__setstate__', '__getstate__', '__getnewargs__', '__getnewargs_ex__',
+            '__reduce__', '__reduce_ex__', '__copy__', '__deepcopy__',
+            '__getattribute__', '__setattr__', '__delattr__',
+            '__dict__', '__weakref__', '__class__'
+        }:
+            raise AttributeError(f"{type(self).__name__} has no attribute '{name}'")
+
         unit = ureg.resolve(name, dim=self._dim)
         if unit is None:
             raise AttributeError(f"{type(self).__name__} has no attribute '{name}'")
@@ -564,6 +573,15 @@ class UnitApplier(Generic[D]):
         return new_q
 
     def __getattr__(self, name: str) -> Quantity[D]:
+        # Guard against deepcopy and pickle operations that cause recursion
+        if name in {
+            '__setstate__', '__getstate__', '__getnewargs__', '__getnewargs_ex__',
+            '__reduce__', '__reduce_ex__', '__copy__', '__deepcopy__',
+            '__getattribute__', '__setattr__', '__delattr__',
+            '__dict__', '__weakref__', '__class__'
+        }:
+            raise AttributeError(f"{type(self).__name__} has no attribute '{name}'")
+
         # Check cache first for performance
         unit = self._unit_cache.get(name)
         if unit is None:
@@ -621,6 +639,15 @@ class UnitChanger(Generic[D]):
         return Quantity(name=self._q.name, dim=self._dim, value=si_value, preferred=unit)
 
     def __getattr__(self, name: str) -> Quantity[D]:
+        # Guard against deepcopy and pickle operations that cause recursion
+        if name in {
+            '__setstate__', '__getstate__', '__getnewargs__', '__getnewargs_ex__',
+            '__reduce__', '__reduce_ex__', '__copy__', '__deepcopy__',
+            '__getattribute__', '__setattr__', '__delattr__',
+            '__dict__', '__weakref__', '__class__'
+        }:
+            raise AttributeError(f"{type(self).__name__} has no attribute '{name}'")
+
         unit = ureg.resolve(name, dim=self._dim)
         if unit is None:
             raise AttributeError(f"No unit '{name}' for dimension {self._dim}")

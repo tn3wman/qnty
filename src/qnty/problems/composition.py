@@ -158,8 +158,13 @@ class SubProblemProxy:
             SubProblemProxy._expressions_with_proxies = set()
 
     def __getattr__(self, name):
-        # Handle internal Python attributes to prevent recursion during deepcopy
-        if name.startswith("_"):
+        # Guard against deepcopy and pickle operations that cause recursion
+        if name in {
+            '__setstate__', '__getstate__', '__getnewargs__', '__getnewargs_ex__',
+            '__reduce__', '__reduce_ex__', '__copy__', '__deepcopy__',
+            '__getattribute__', '__setattr__', '__delattr__',
+            '__dict__', '__weakref__', '__class__'
+        }:
             raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
 
         if name in self._variable_cache:
@@ -206,6 +211,11 @@ class SubProblemProxy:
     def get_configurations(self):
         """Get all tracked configurations."""
         return self._variable_configurations.copy()
+
+    def __deepcopy__(self, memo):
+        # Don't allow deepcopy of SubProblemProxy - just return self
+        _ = memo  # Mark as used to avoid linting warnings
+        return self
 
 
 class ConfigurableVariable:
@@ -271,8 +281,13 @@ class ConfigurableVariable:
 
     def __getattr__(self, name):
         """Delegate all other attributes to the wrapped variable."""
-        # Add guard for deepcopy operations to prevent infinite recursion
-        if name in ('__setstate__', '__getstate__', '__getnewargs__', '__getnewargs_ex__', '__reduce__', '__reduce_ex__', '__copy__', '__deepcopy__'):
+        # Guard against deepcopy and pickle operations that cause recursion
+        if name in {
+            '__setstate__', '__getstate__', '__getnewargs__', '__getnewargs_ex__',
+            '__reduce__', '__reduce_ex__', '__copy__', '__deepcopy__',
+            '__getattribute__', '__setattr__', '__delattr__',
+            '__dict__', '__weakref__', '__class__'
+        }:
             raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
 
         # Handle special case for _arithmetic_mode since it's accessed in __mul__ etc.
@@ -280,7 +295,16 @@ class ConfigurableVariable:
             # First check if we have it directly using getattr for safety
             return getattr(self._variable, "_arithmetic_mode", "expression")
 
+        # Prevent infinite recursion by checking if _variable exists
+        if not hasattr(self, '_variable'):
+            raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
         return getattr(self._variable, name)
+
+    def __deepcopy__(self, memo):
+        # Don't allow deepcopy of ConfigurableVariable objects - just return self
+        _ = memo  # Mark as used to avoid linting warnings
+        return self
 
     def _should_use_delayed_arithmetic(self) -> bool:
         """Check if we should use delayed arithmetic based on context."""
@@ -402,6 +426,19 @@ class TrackingSetterWrapper:
         """
         Intercept property access for unit properties and track configuration after application.
         """
+        # Guard against deepcopy and pickle operations that cause recursion
+        if name in {
+            '__setstate__', '__getstate__', '__getnewargs__', '__getnewargs_ex__',
+            '__reduce__', '__reduce_ex__', '__copy__', '__deepcopy__',
+            '__getattribute__', '__setattr__', '__delattr__',
+            '__dict__', '__weakref__', '__class__'
+        }:
+            raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+        # Prevent infinite recursion by checking if _original_setter exists
+        if not hasattr(self, '_original_setter'):
+            raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
         # Get the property from the original setter
         attr = getattr(self._original_setter, name)
 
@@ -425,6 +462,11 @@ class TrackingSetterWrapper:
         if self._proxy and self._original_symbol:
             self._proxy.track_configuration(self._original_symbol, self._variable.quantity, self._variable.is_known)
         return result
+
+    def __deepcopy__(self, memo):
+        # Don't allow deepcopy of TrackingSetterWrapper - just return self
+        _ = memo  # Mark as used to avoid linting warnings
+        return self
 
 
 class DelayedVariableReference(ArithmeticOperationsMixin):
@@ -950,9 +992,17 @@ class CompositionMixin:
                 self._symbol = symbol
 
             def __getattr__(self, name):
-                # Handle special attributes to avoid recursion issues during copy
-                if name in ("__setstate__", "__getstate__", "__reduce__", "__reduce_ex__", "__copy__", "__deepcopy__"):
-                    # These are copy-related methods that might not exist - raise AttributeError
+                # Guard against deepcopy and pickle operations that cause recursion
+                if name.startswith('_') or name in {
+                    '__setstate__', '__getstate__', '__getnewargs__', '__getnewargs_ex__',
+                    '__reduce__', '__reduce_ex__', '__copy__', '__deepcopy__',
+                    '__getattribute__', '__setattr__', '__delattr__',
+                    '__dict__', '__weakref__', '__class__'
+                }:
+                    raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
+
+                # Prevent infinite recursion by checking if _wrapped_var exists
+                if not hasattr(self, '_wrapped_var'):
                     raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
 
                 # For all other attributes, delegate to the wrapped variable
@@ -960,6 +1010,11 @@ class CompositionMixin:
                     return getattr(self._wrapped_var, name)
                 except AttributeError as err:
                     raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'") from err
+
+            def __deepcopy__(self, memo):
+                # Don't allow deepcopy of NamespaceVariableWrapper - just return self
+                _ = memo  # Mark as used to avoid linting warnings
+                return self
 
             def __setattr__(self, name, value):
                 # Handle wrapper's own attributes
@@ -995,10 +1050,28 @@ class CompositionMixin:
                 self._symbol = symbol
 
             def __getattr__(self, name):
+                # Guard against deepcopy and pickle operations that cause recursion
+                if name.startswith('_') or name in {
+                    '__setstate__', '__getstate__', '__getnewargs__', '__getnewargs_ex__',
+                    '__reduce__', '__reduce_ex__', '__copy__', '__deepcopy__',
+                    '__getattribute__', '__setattr__', '__delattr__',
+                    '__dict__', '__weakref__', '__class__'
+                }:
+                    raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
+
+                # Prevent infinite recursion by checking if _setter exists
+                if not hasattr(self, '_setter'):
+                    raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
+
                 # When a unit is accessed (like .inch), get the final variable and update namespace
                 final_var = getattr(self._setter, name)
                 setattr(self._namespace, self._symbol, final_var)
                 return final_var
+
+            def __deepcopy__(self, memo):
+                # Don't allow deepcopy of NamespaceSetterWrapper - just return self
+                _ = memo  # Mark as used to avoid linting warnings
+                return self
 
         return NamespaceVariableWrapper(variable, namespace_obj, var_symbol)
 
@@ -1505,8 +1578,26 @@ class ProxiedNamespace(dict):
                 self._wrapped = wrapped_var
 
             def __getattr__(self, name):
+                # Guard against deepcopy and pickle operations that cause recursion
+                if name.startswith('_') or name in {
+                    '__setstate__', '__getstate__', '__getnewargs__', '__getnewargs_ex__',
+                    '__reduce__', '__reduce_ex__', '__copy__', '__deepcopy__',
+                    '__getattribute__', '__setattr__', '__delattr__',
+                    '__dict__', '__weakref__', '__class__'
+                }:
+                    raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+                # Prevent infinite recursion by checking if _wrapped exists
+                if not hasattr(self, '_wrapped'):
+                    raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
                 # Delegate all attribute access to the wrapped variable
                 return getattr(self._wrapped, name)
+
+            def __deepcopy__(self, memo):
+                # Don't allow deepcopy of wrapper objects - just return self
+                _ = memo  # Mark as used to avoid linting warnings
+                return self
 
             def __setattr__(self, name, value):
                 # Handle wrapper attributes normally

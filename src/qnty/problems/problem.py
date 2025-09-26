@@ -1118,6 +1118,15 @@ class Problem(ValidationMixin):
 
     def __getattr__(self, name: str) -> Any:
         """Dynamic attribute access for composed variables and other attributes."""
+        # Guard against deepcopy and pickle operations that cause recursion
+        if name in {
+            '__setstate__', '__getstate__', '__getnewargs__', '__getnewargs_ex__',
+            '__reduce__', '__reduce_ex__', '__copy__', '__deepcopy__',
+            '__getattribute__', '__setattr__', '__delattr__',
+            '__dict__', '__weakref__', '__class__'
+        }:
+            raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
+
         # Avoid recursion by checking the dict directly instead of using hasattr
         try:
             variables = object.__getattribute__(self, "variables")
@@ -1158,8 +1167,13 @@ class Problem(ValidationMixin):
                 self._name = name
 
             def __getattr__(self, name):
-                # Handle special attributes to avoid recursion issues during copy
-                if name in ("__setstate__", "__getstate__", "__reduce__", "__reduce_ex__", "__copy__", "__deepcopy__"):
+                # Guard against deepcopy and pickle operations that cause recursion
+                if name in {
+                    '__setstate__', '__getstate__', '__getnewargs__', '__getnewargs_ex__',
+                    '__reduce__', '__reduce_ex__', '__copy__', '__deepcopy__',
+                    '__getattribute__', '__setattr__', '__delattr__',
+                    '__dict__', '__weakref__', '__class__'
+                }:
                     raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
 
                 # For all other attributes, delegate to the wrapped variable
@@ -1316,6 +1330,11 @@ class Problem(ValidationMixin):
                 other_unwrapped = other._wrapped_var if hasattr(other, "_wrapped_var") else other
                 return self._wrapped_var.__rpow__(other_unwrapped)
 
+            def __deepcopy__(self, memo):
+                # Don't allow deepcopy of MainVariableWrapper - just return self
+                _ = memo  # Mark as used to avoid linting warnings
+                return self
+
         class MainSetterWrapper:
             def __init__(self, setter, problem_ref, var_name):
                 self._setter = setter
@@ -1323,10 +1342,24 @@ class Problem(ValidationMixin):
                 self._name = var_name
 
             def __getattr__(self, name):
+                # Guard against deepcopy and pickle operations that cause recursion
+                if name in {
+                    '__setstate__', '__getstate__', '__getnewargs__', '__getnewargs_ex__',
+                    '__reduce__', '__reduce_ex__', '__copy__', '__deepcopy__',
+                    '__getattribute__', '__setattr__', '__delattr__',
+                    '__dict__', '__weakref__', '__class__'
+                }:
+                    raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
+
                 # When a unit is accessed, get the final variable and update problem
                 final_var = getattr(self._setter, name)
                 setattr(self._problem, self._name, final_var)
                 return final_var
+
+            def __deepcopy__(self, memo):
+                # Don't allow deepcopy of MainSetterWrapper - just return self
+                _ = memo  # Mark as used to avoid linting warnings
+                return self
 
         return MainVariableWrapper(variable, var_name)
 
@@ -1359,8 +1392,26 @@ class Problem(ValidationMixin):
                 self._name = name
 
             def __getattr__(self, name):
+                # Guard against deepcopy and pickle operations that cause recursion
+                if name in {
+                    '__setstate__', '__getstate__', '__getnewargs__', '__getnewargs_ex__',
+                    '__reduce__', '__reduce_ex__', '__copy__', '__deepcopy__',
+                    '__getattribute__', '__setattr__', '__delattr__',
+                    '__dict__', '__weakref__', '__class__'
+                }:
+                    raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
+
+                # Prevent infinite recursion by checking if _wrapped_var exists
+                if not hasattr(self, '_wrapped_var'):
+                    raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
+
                 # Delegate all other attributes to the wrapped variable
                 return getattr(self._wrapped_var, name)
+
+            def __deepcopy__(self, memo):
+                # Don't allow deepcopy of wrapper - just return self
+                _ = memo  # Mark as used to avoid linting warnings
+                return self
 
             def __add__(self, other):
                 return DelayedExpression("+", self, other)
