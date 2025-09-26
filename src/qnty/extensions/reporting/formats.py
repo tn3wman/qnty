@@ -5,7 +5,6 @@ Format-specific report generators for Markdown, LaTeX, and PDF.
 from __future__ import annotations
 
 import subprocess
-import tempfile
 from datetime import datetime
 from pathlib import Path
 
@@ -117,12 +116,45 @@ class MarkdownReportGenerator(ReportGenerator):
         else:
             content.append("*No results to summarize*")
 
-        content.append("")
-        content.append("---")
-        content.append("*Report generated using qnty library*")
+        # Add disclaimer section
+        content.extend(self._format_disclaimer())
 
         # Write to file
         output_path.write_text("\n".join(content), encoding="utf-8")
+
+    def _format_disclaimer(self) -> list[str]:
+        """Format disclaimer section for Markdown."""
+        current_date = datetime.now().strftime("%B %d, %Y")
+
+        content = [
+            "",
+            "---",
+            "",
+            "## Disclaimer",
+            "",
+            "While every effort has been made to ensure the accuracy and reliability of the calculations provided, "
+            + "we do not guarantee that the information is complete, up-to-date, or suitable for any specific purpose. "
+            + "Users must independently verify the results and assume full responsibility for any decisions or actions "
+            + "taken based on its output. Use of this calculator is entirely at your own risk, and we expressly "
+            + "disclaim any liability for errors or omissions in the information provided.",
+            "",
+            "**Report Details:**",
+            f"- **Generated Date:** {current_date}",
+            "- **Generated Using:** Qnty Library",
+            "- **Version:** Beta (Independent verification required for production use)",
+            "",
+            "**Signatures:**",
+            "",
+            "| Role | Name | Signature | Date |",
+            "|------|------|-----------|------|",
+            "| Calculated By | _________________ | _________________ | _______ |",
+            "| Reviewed By | _________________ | _________________ | _______ |",
+            "| Approved By | _________________ | _________________ | _______ |",
+            "",
+            "*Report generated using qnty library*",
+        ]
+
+        return content
 
 
 class LatexReportGenerator(ReportGenerator):
@@ -221,7 +253,7 @@ class LatexReportGenerator(ReportGenerator):
             # Start one enumerate environment for all steps with custom label
             content.append(r"\begin{enumerate}[label=\textbf{Step \arabic*:},leftmargin=2cm]")
 
-            for i, step in enumerate(steps, 1):
+            for _i, step in enumerate(steps, 1):
                 # Format equation name properly for LaTeX
                 formatted_eq_name = step.equation_name
                 if "=" in formatted_eq_name:
@@ -312,6 +344,9 @@ class LatexReportGenerator(ReportGenerator):
             content.append(r"\end{longtable}")
         else:
             content.append(r"\textit{No results to summarize}")
+
+        # Add disclaimer section
+        content.extend(self._format_disclaimer())
 
         content.append("")
         content.append(r"\end{document}")
@@ -416,8 +451,6 @@ class LatexReportGenerator(ReportGenerator):
         - Functions: sqrt, sin, cos, etc.
         - Parentheses and complex nesting
         """
-        import re
-
         expr = expr.strip()
 
         # Handle fractions by finding division operations at the right level
@@ -518,6 +551,72 @@ class LatexReportGenerator(ReportGenerator):
 
         return expr
 
+    def _format_disclaimer(self) -> list[str]:
+        """Format disclaimer section for LaTeX/PDF with beautiful styling."""
+        current_date = datetime.now().strftime("%B %d, %Y")
+
+        content = [
+            "",
+            r"\clearpage",  # Start on a new page
+            "",
+            r"\section*{Disclaimer}",
+            r"\addcontentsline{toc}{section}{Disclaimer}",  # Add to table of contents
+            "",
+            r"\begin{center}",
+            r"\rule{\textwidth}{0.4pt}",  # Horizontal rule
+            r"\end{center}",
+            "",
+            r"\noindent\textbf{IMPORTANT NOTICE:}",
+            "",
+            r"\noindent While every effort has been made to ensure the accuracy and reliability of the "
+            + r"calculations provided, we do not guarantee that the information is complete, up-to-date, or "
+            + r"suitable for any specific purpose. Users must independently verify the results and assume full "
+            + r"responsibility for any decisions or actions taken based on its output. Use of this calculator is "
+            + r"entirely at your own risk, and we expressly disclaim any liability for errors or omissions in "
+            + r"the information provided.",
+            "",
+            r"\vspace{1em}",
+            "",
+            r"\noindent\textbf{Report Details:}",
+            r"\begin{itemize}",
+            r"\item \textbf{Generated Date:} " + current_date,
+            r"\item \textbf{Generated Using:} Qnty Library",
+            r"\item \textbf{Version:} Beta (Independent verification required for production use)",
+            r"\end{itemize}",
+            "",
+            r"\vspace{2em}",
+            "",
+            r"\noindent\textbf{Professional Review and Approval:}",
+            "",
+            r"\vspace{1em}",
+            "",
+            # Beautiful signature table with professional styling
+            r"\begin{longtable}{|p{3cm}|p{4cm}|p{4cm}|p{2.5cm}|}",
+            r"\hline",
+            r"\textbf{Role} & \textbf{Name} & \textbf{Signature} & \textbf{Date} \\",
+            r"\hline",
+            r"\hline",
+            r"Calculated By & \rule{0pt}{1.5cm} & & \\",
+            r"\hline",
+            r"Reviewed By & \rule{0pt}{1.5cm} & & \\",
+            r"\hline",
+            r"Approved By & \rule{0pt}{1.5cm} & & \\",
+            r"\hline",
+            r"\end{longtable}",
+            "",
+            r"\vspace{1em}",
+            "",
+            r"\begin{center}",
+            r"\rule{\textwidth}{0.4pt}",  # Bottom horizontal rule
+            r"\vspace{0.5em}",
+            r"\textit{Report generated using Qnty Library}",
+            r"\vspace{0.5em}",
+            r"{\footnotesize For questions or support, please refer to the Qnty documentation}",
+            r"\end{center}",
+        ]
+
+        return content
+
 
 class PdfReportGenerator(LatexReportGenerator):
     """Generate reports in PDF format using tectonic or system LaTeX."""
@@ -527,8 +626,8 @@ class PdfReportGenerator(LatexReportGenerator):
         output_path = Path(output_path)
 
         # Create a temporary LaTeX file
-        import tempfile
         import os
+        import tempfile
 
         # Create temp file and close it immediately to avoid file locking issues
         fd, temp_path = tempfile.mkstemp(suffix=".tex", text=True)
@@ -659,9 +758,7 @@ class PdfReportGenerator(LatexReportGenerator):
 
             # Run pdflatex (need to run twice for references)
             for _ in range(2):
-                result = subprocess.run(
-                    ["pdflatex", "-interaction=nonstopmode", "-output-directory", str(tex_path.parent), str(tex_path)], capture_output=True, text=True, timeout=60, cwd=str(tex_path.parent)
-                )
+                subprocess.run(["pdflatex", "-interaction=nonstopmode", "-output-directory", str(tex_path.parent), str(tex_path)], capture_output=True, text=True, timeout=60, cwd=str(tex_path.parent))
 
             # Check if PDF was generated
             generated_pdf = tex_path.with_suffix(".pdf")

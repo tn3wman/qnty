@@ -153,7 +153,6 @@ class ReportGenerator(ABC):
 
         for step_data in self.solving_history:
             # Extract information from each solving step
-            equation_name = step_data.get("equation", "Unknown")
             target_var = step_data.get("target", "Unknown")
             method = step_data.get("method", "Unknown")
 
@@ -219,3 +218,13 @@ class ReportGenerator(ABC):
                 unit_str = self._get_unit_string(var)
                 results.append({"symbol": symbol, "name": getattr(var, "name", symbol), "value": value_str, "unit": unit_str})
         return results
+
+    @abstractmethod
+    def _format_disclaimer(self) -> list[str]:
+        """
+        Format disclaimer section appropriate for the output format.
+
+        Returns:
+            List of formatted disclaimer lines
+        """
+        pass
