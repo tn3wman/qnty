@@ -271,6 +271,10 @@ class ConfigurableVariable:
 
     def __getattr__(self, name):
         """Delegate all other attributes to the wrapped variable."""
+        # Add guard for deepcopy operations to prevent infinite recursion
+        if name in ('__setstate__', '__getstate__', '__getnewargs__', '__getnewargs_ex__', '__reduce__', '__reduce_ex__', '__copy__', '__deepcopy__'):
+            raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
         # Handle special case for _arithmetic_mode since it's accessed in __mul__ etc.
         if name == "_arithmetic_mode":
             # First check if we have it directly using getattr for safety

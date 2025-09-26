@@ -54,39 +54,16 @@ $t_{m}$ & Minimum Required Thickness & in \\
 \section{Equations Used}
 
 \begin{enumerate}
-\item $\Large T = \overline{T}  \cdot  (1  - U_m)$
 \item $\Large t = \frac{P  \cdot  D}{2   \cdot  (S  \cdot  E  \cdot  W + P  \cdot  Y)}$
-\item $\Large d = D - 2   \cdot  T$
+\item $\Large T = \overline{T}  \cdot  (1  - U_m)$
 \item $\Large P_{max} = \frac{2   \cdot  (T - c)  \cdot  S  \cdot  E  \cdot  W}{D - 2   \cdot  (T - c)  \cdot  Y}$
+\item $\Large d = D - 2   \cdot  T$
 \item $\Large t_{m} = t + c$
 \end{enumerate}
 
 \section{Step-by-Step Solution}
 
 \begin{enumerate}[label=\textbf{Step \arabic*:},leftmargin=2cm]
-\item \textbf{Solve for $T$}
-
-\begin{description}[leftmargin=2cm]
-\item[\textbf{Equation:}] \mbox{}
-
-\begin{aligned}
-\Large T &= \overline{T}  \cdot  (1  - U_m)
-\end{aligned}
-
-\item[\textbf{Substitution:}] \mbox{}
-
-\begin{aligned}
-\Large T &= 0.147\,\text{in}  \cdot  (1  - 0.125 )
-\end{aligned}
-
-\item[\textbf{Result:}] \mbox{}
-
-\begin{aligned}
-\Large T &= 0.128625\,in
-\end{aligned}
-
-\end{description}
-
 \item \textbf{Solve for $t$}
 
 \begin{description}[leftmargin=2cm]
@@ -110,25 +87,25 @@ $t_{m}$ & Minimum Required Thickness & in \\
 
 \end{description}
 
-\item \textbf{Solve for $d$}
+\item \textbf{Solve for $T$}
 
 \begin{description}[leftmargin=2cm]
 \item[\textbf{Equation:}] \mbox{}
 
 \begin{aligned}
-\Large d &= D - 2   \cdot  T
+\Large T &= \overline{T}  \cdot  (1  - U_m)
 \end{aligned}
 
 \item[\textbf{Substitution:}] \mbox{}
 
 \begin{aligned}
-\Large d &= 0.84\,\text{in} - 2   \cdot  0.128625\,\text{in}
+\Large T &= 0.147\,\text{in}  \cdot  (1  - 0.125 )
 \end{aligned}
 
 \item[\textbf{Result:}] \mbox{}
 
 \begin{aligned}
-\Large d &= 0.58275\,in
+\Large T &= 0.128625\,in
 \end{aligned}
 
 \end{description}
@@ -152,6 +129,29 @@ $t_{m}$ & Minimum Required Thickness & in \\
 
 \begin{aligned}
 \Large P_{max} &= 5584.05\,psi
+\end{aligned}
+
+\end{description}
+
+\item \textbf{Solve for $d$}
+
+\begin{description}[leftmargin=2cm]
+\item[\textbf{Equation:}] \mbox{}
+
+\begin{aligned}
+\Large d &= D - 2   \cdot  T
+\end{aligned}
+
+\item[\textbf{Substitution:}] \mbox{}
+
+\begin{aligned}
+\Large d &= 0.84\,\text{in} - 2   \cdot  0.128625\,\text{in}
+\end{aligned}
+
+\item[\textbf{Result:}] \mbox{}
+
+\begin{aligned}
+\Large d &= 0.58275\,in
 \end{aligned}
 
 \end{description}
