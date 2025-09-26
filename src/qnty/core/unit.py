@@ -295,6 +295,15 @@ class UnitRegistry:
 
     # ----- Python niceties -----
     def __getattr__(self, name: str) -> Unit:
+        # Guard against deepcopy and pickle operations that cause recursion
+        if name in {
+            '__setstate__', '__getstate__', '__getnewargs__', '__getnewargs_ex__',
+            '__reduce__', '__reduce_ex__', '__copy__', '__deepcopy__',
+            '__getattribute__', '__setattr__', '__delattr__',
+            '__dict__', '__weakref__', '__class__'
+        }:
+            raise AttributeError(f"{type(self).__name__} has no attribute '{name}'")
+
         nk = _norm(name)
         u = self._attr_exposed.get(nk)
         if u is None:
