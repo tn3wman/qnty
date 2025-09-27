@@ -1,0 +1,484 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{hyperref}
+\usepackage{enumitem}
+
+\title{Engineering Calculation Report: PipeBends}
+\date{September 26, 2025}
+
+\begin{document}
+\maketitle
+
+\section{Known Variables}
+
+\begin{longtable}{llll}
+\toprule
+Symbol & Name & Value & Unit \\
+\midrule
+\endhead
+$s_{D}$ & Outside Diameter (S) & 0.84 & in \\
+$s_{E}$ & Quality Factor (S) & 0.8 &  \\
+$s_{P}$ & Design Pressure (S) & 90 & psi \\
+$s_{S}$ & Allowable Stress (S) & 20000 & psi \\
+$\overline{s_T}$ & Nominal Wall Thickness (S) & 0.147 & in \\
+$s_{U_m}$ & Mill Undertolerance (S) & 0.125 &  \\
+$s_{W}$ & Weld Joint Strength Reduction Factor (S) & 1 &  \\
+$s_{Y}$ & Y Coefficient (S) & 0.4 &  \\
+$s_{c}$ & Mechanical Allowances (S) & 0 & in \\
+$R_{1}$ & Bend Radius & 5 & in \\
+\bottomrule
+\end{longtable}
+
+\section{Unknown Variables (To Calculate)}
+
+\begin{longtable}{lll}
+\toprule
+Symbol & Name & Unit \\
+\midrule
+\endhead
+$s_{P_max}$ & Pressure, Maximum (S) & Pa \\
+$s_{T}$ & Wall Thickness (S) & m \\
+$s_{d}$ & Inside Diameter (S) & m \\
+$s_{t}$ & Pressure Design Thickness (S) & m \\
+$s_{t_m}$ & Minimum Required Thickness (S) & m \\
+$I_{e}$ & Extrados Correction Factor &  \\
+$I_{i}$ & Intrados Correction Factor &  \\
+$P_{max}$ & Maximum Allowable Pressure & Pa \\
+$P_{max_e}$ & Maximum Pressure, Outside Bend & Pa \\
+$P_{max_i}$ & Maximum Pressure, Inside Bend & Pa \\
+$t_{e}$ & Design Thickness, Outside Bend & m \\
+$t_{i}$ & Design Thickness, Inside Bend & m \\
+$t_{m_e}$ & Minimum Required Thickness, Outside Bend & m \\
+$t_{m_i}$ & Minimum Required Thickness, Inside Bend & m \\
+\bottomrule
+\end{longtable}
+
+\section{Equations Used}
+
+\begin{enumerate}
+\item $\Large s_{T} = \overline{s_T}  \cdot  (1  - s_U_m)$
+\item $\Large I_{e} = \frac{4   \cdot  R_1 / s_D + 1}{4   \cdot  R_1 / s_D + 2}$
+\item $\Large I_{i} = \frac{4   \cdot  R_1 / s_D - 1}{4   \cdot  R_1 / s_D - 2}$
+\item $\Large s_{t} = \frac{s_P  \cdot  s_D}{2   \cdot  (s_S  \cdot  s_E  \cdot  s_W + s_P  \cdot  s_Y)}$
+\item $\Large s_{P_max} = \frac{2   \cdot  (s_T - s_c)  \cdot  s_S  \cdot  s_E  \cdot  s_W}{s_D - 2   \cdot  (s_T - s_c)  \cdot  s_Y}$
+\item $\Large s_{d} = s_{D} - 2   \cdot  s_T$
+\item $\Large t_{e} = \frac{s_P  \cdot  s_D}{2   \cdot  (s_S  \cdot  s_E  \cdot  s_W / I_e + s_P  \cdot  s_Y)}$
+\item $\Large t_{i} = \frac{s_P  \cdot  s_D}{2   \cdot  (s_S  \cdot  s_E  \cdot  s_W / I_i + s_P  \cdot  s_Y)}$
+\item $\Large P_{max_i} = \frac{2   \cdot  s_E  \cdot  s_S  \cdot  s_W  \cdot  s_T}{I_i  \cdot  (s_D - 2   \cdot  s_Y  \cdot  s_T)}$
+\item $\Large P_{max_e} = \frac{2   \cdot  s_E  \cdot  s_S  \cdot  s_W  \cdot  s_T}{I_e  \cdot  (s_D - 2   \cdot  s_Y  \cdot  s_T)}$
+\item $\Large s_{t_m} = s_{t} + s_{c}$
+\item $\Large t_{m_e} = t_{e} + s_{c}$
+\item $\Large P_{max} = if(if(P_{max_i} < P_{max_e}, P_{max_i}, P_{max_e}) < s_{P_max}, if(P_{max_i} < P_{max_e}, P_{max_i}, P_{max_e}), s_{P_max})$
+\item $\Large t_{m_i} = t_{i} + s_{c}$
+\item $\Large s_{Y} = if(s_{t} < s_{D} / 6 , s_{Y}, if(s_{t} >= s_{D} / 6 , (s_{d} + 2   \cdot  s_c) / (s_D + s_d + 2   \cdot  s_c), s_Y))$
+\end{enumerate}
+
+\section{Step-by-Step Solution}
+
+\begin{enumerate}[label=\textbf{Step \arabic*:},leftmargin=2cm]
+\item \textbf{Solve for $s_{T}$}
+
+\begin{description}[leftmargin=2cm]
+\item[\textbf{Equation:}] \mbox{}
+
+\begin{aligned}
+\Large s_{T} &= \overline{s_T}  \cdot  (1  - s_U_m)
+\end{aligned}
+
+\item[\textbf{Substitution:}] \mbox{}
+
+\begin{aligned}
+\Large s_{T} &= 0.147\,\text{in}  \cdot  (1  - 0.125 )
+\end{aligned}
+
+\item[\textbf{Result:}] \mbox{}
+
+\begin{aligned}
+\Large s_{T} &= 0.00326707\,m
+\end{aligned}
+
+\end{description}
+
+\item \textbf{Solve for $I_{e}$}
+
+\begin{description}[leftmargin=2cm]
+\item[\textbf{Equation:}] \mbox{}
+
+\begin{aligned}
+\Large I_{e} &= \frac{4   \cdot  R_1 / s_D + 1}{4   \cdot  R_1 / s_D + 2}
+\end{aligned}
+
+\item[\textbf{Substitution:}] \mbox{}
+
+\begin{aligned}
+\Large I_{e} &= \frac{4   \cdot  5\,\text{in} / 0.84\,\text{in} + 1}{4   \cdot  5\,\text{in} / 0.84\,\text{in} + 2}
+\end{aligned}
+
+\item[\textbf{Result:}] \mbox{}
+
+\begin{aligned}
+\Large I_{e} &= 0.961255\,rad
+\end{aligned}
+
+\end{description}
+
+\item \textbf{Solve for $I_{i}$}
+
+\begin{description}[leftmargin=2cm]
+\item[\textbf{Equation:}] \mbox{}
+
+\begin{aligned}
+\Large I_{i} &= \frac{4   \cdot  R_1 / s_D - 1}{4   \cdot  R_1 / s_D - 2}
+\end{aligned}
+
+\item[\textbf{Substitution:}] \mbox{}
+
+\begin{aligned}
+\Large I_{i} &= \frac{4   \cdot  5\,\text{in} / 0.84\,\text{in} - 1}{4   \cdot  5\,\text{in} / 0.84\,\text{in} - 2}
+\end{aligned}
+
+\item[\textbf{Result:}] \mbox{}
+
+\begin{aligned}
+\Large I_{i} &= 1.04585\,rad
+\end{aligned}
+
+\end{description}
+
+\item \textbf{Solve for $s_{t}$}
+
+\begin{description}[leftmargin=2cm]
+\item[\textbf{Equation:}] \mbox{}
+
+\begin{aligned}
+\Large s_{t} &= \frac{s_P  \cdot  s_D}{2   \cdot  (s_S  \cdot  s_E  \cdot  s_W + s_P  \cdot  s_Y)}
+\end{aligned}
+
+\item[\textbf{Substitution:}] \mbox{}
+
+\begin{aligned}
+\Large s_{t} &= \frac{90\,\text{psi}  \cdot  0.84\,\text{in}}{2   \cdot  (20000\,\text{psi}  \cdot  0.8   \cdot  1  + 90\,\text{psi}  \cdot  0.4 )}
+\end{aligned}
+
+\item[\textbf{Result:}] \mbox{}
+
+\begin{aligned}
+\Large s_{t} &= 5.98728e-05\,m
+\end{aligned}
+
+\end{description}
+
+\item \textbf{Solve for $s_{P_max}$}
+
+\begin{description}[leftmargin=2cm]
+\item[\textbf{Equation:}] \mbox{}
+
+\begin{aligned}
+\Large s_{P_max} &= \frac{2   \cdot  (s_T - s_c)  \cdot  s_S  \cdot  s_E  \cdot  s_W}{s_D - 2   \cdot  (s_T - s_c)  \cdot  s_Y}
+\end{aligned}
+
+\item[\textbf{Substitution:}] \mbox{}
+
+\begin{aligned}
+\Large s_{P_max} &= \frac{2   \cdot  (0.00326707 - 0\,\text{in})  \cdot  20000\,\text{psi}  \cdot  0.8   \cdot  1}{0.84\,\text{in} - 2   \cdot  (0.00326707 - 0\,\text{in})  \cdot  0.4}
+\end{aligned}
+
+\item[\textbf{Result:}] \mbox{}
+
+\begin{aligned}
+\Large s_{P_max} &= 3.85006e+07\,Pa
+\end{aligned}
+
+\end{description}
+
+\item \textbf{Solve for $s_{d}$}
+
+\begin{description}[leftmargin=2cm]
+\item[\textbf{Equation:}] \mbox{}
+
+\begin{aligned}
+\Large s_{d} &= s_{D} - 2   \cdot  s_T
+\end{aligned}
+
+\item[\textbf{Substitution:}] \mbox{}
+
+\begin{aligned}
+\Large s_{d} &= 0.84\,\text{in} - 2   \cdot  0.00326707
+\end{aligned}
+
+\item[\textbf{Result:}] \mbox{}
+
+\begin{aligned}
+\Large s_{d} &= 0.0148018\,m
+\end{aligned}
+
+\end{description}
+
+\item \textbf{Solve for $t_{e}$}
+
+\begin{description}[leftmargin=2cm]
+\item[\textbf{Equation:}] \mbox{}
+
+\begin{aligned}
+\Large t_{e} &= \frac{s_P  \cdot  s_D}{2   \cdot  (s_S  \cdot  s_E  \cdot  s_W / I_e + s_P  \cdot  s_Y)}
+\end{aligned}
+
+\item[\textbf{Substitution:}] \mbox{}
+
+\begin{aligned}
+\Large t_{e} &= \frac{90\,\text{psi}  \cdot  0.84\,\text{in}}{2   \cdot  (20000\,\text{psi}  \cdot  0.8   \cdot  1  / 0.961255 + 90\,\text{psi}  \cdot  0.4 )}
+\end{aligned}
+
+\item[\textbf{Result:}] \mbox{}
+
+\begin{aligned}
+\Large t_{e} &= 5.7558e-05\,m
+\end{aligned}
+
+\end{description}
+
+\item \textbf{Solve for $t_{i}$}
+
+\begin{description}[leftmargin=2cm]
+\item[\textbf{Equation:}] \mbox{}
+
+\begin{aligned}
+\Large t_{i} &= \frac{s_P  \cdot  s_D}{2   \cdot  (s_S  \cdot  s_E  \cdot  s_W / I_i + s_P  \cdot  s_Y)}
+\end{aligned}
+
+\item[\textbf{Substitution:}] \mbox{}
+
+\begin{aligned}
+\Large t_{i} &= \frac{90\,\text{psi}  \cdot  0.84\,\text{in}}{2   \cdot  (20000\,\text{psi}  \cdot  0.8   \cdot  1  / 1.04585 + 90\,\text{psi}  \cdot  0.4 )}
+\end{aligned}
+
+\item[\textbf{Result:}] \mbox{}
+
+\begin{aligned}
+\Large t_{i} &= 6.26116e-05\,m
+\end{aligned}
+
+\end{description}
+
+\item \textbf{Solve for $P_{max_i}$}
+
+\begin{description}[leftmargin=2cm]
+\item[\textbf{Equation:}] \mbox{}
+
+\begin{aligned}
+\Large P_{max_i} &= \frac{2   \cdot  s_E  \cdot  s_S  \cdot  s_W  \cdot  s_T}{I_i  \cdot  (s_D - 2   \cdot  s_Y  \cdot  s_T)}
+\end{aligned}
+
+\item[\textbf{Substitution:}] \mbox{}
+
+\begin{aligned}
+\Large P_{max_i} &= \frac{2   \cdot  0.8   \cdot  20000\,\text{psi}  \cdot  1   \cdot  0.00326707}{1.04585  \cdot  (0.84\,\text{in} - 2   \cdot  0.4   \cdot  0.00326707)}
+\end{aligned}
+
+\item[\textbf{Result:}] \mbox{}
+
+\begin{aligned}
+\Large P_{max_i} &= 3.68127e+07\,Pa
+\end{aligned}
+
+\end{description}
+
+\item \textbf{Solve for $P_{max_e}$}
+
+\begin{description}[leftmargin=2cm]
+\item[\textbf{Equation:}] \mbox{}
+
+\begin{aligned}
+\Large P_{max_e} &= \frac{2   \cdot  s_E  \cdot  s_S  \cdot  s_W  \cdot  s_T}{I_e  \cdot  (s_D - 2   \cdot  s_Y  \cdot  s_T)}
+\end{aligned}
+
+\item[\textbf{Substitution:}] \mbox{}
+
+\begin{aligned}
+\Large P_{max_e} &= \frac{2   \cdot  0.8   \cdot  20000\,\text{psi}  \cdot  1   \cdot  0.00326707}{0.961255  \cdot  (0.84\,\text{in} - 2   \cdot  0.4   \cdot  0.00326707)}
+\end{aligned}
+
+\item[\textbf{Result:}] \mbox{}
+
+\begin{aligned}
+\Large P_{max_e} &= 4.00525e+07\,Pa
+\end{aligned}
+
+\end{description}
+
+\item \textbf{Solve for $s_{t_m}$}
+
+\begin{description}[leftmargin=2cm]
+\item[\textbf{Equation:}] \mbox{}
+
+\begin{aligned}
+\Large s_{t_m} &= s_{t} + s_{c}
+\end{aligned}
+
+\item[\textbf{Substitution:}] \mbox{}
+
+\begin{aligned}
+\Large s_{t_m} &= 5.98728e-05 + 0\,\text{in}
+\end{aligned}
+
+\item[\textbf{Result:}] \mbox{}
+
+\begin{aligned}
+\Large s_{t_m} &= 5.98728e-05\,m
+\end{aligned}
+
+\end{description}
+
+\item \textbf{Solve for $t_{m_e}$}
+
+\begin{description}[leftmargin=2cm]
+\item[\textbf{Equation:}] \mbox{}
+
+\begin{aligned}
+\Large t_{m_e} &= t_{e} + s_{c}
+\end{aligned}
+
+\item[\textbf{Substitution:}] \mbox{}
+
+\begin{aligned}
+\Large t_{m_e} &= 5.7558e-05 + 0\,\text{in}
+\end{aligned}
+
+\item[\textbf{Result:}] \mbox{}
+
+\begin{aligned}
+\Large t_{m_e} &= 5.7558e-05\,m
+\end{aligned}
+
+\end{description}
+
+\item \textbf{Solve for $P_{max}$}
+
+\begin{description}[leftmargin=2cm]
+\item[\textbf{Equation:}] \mbox{}
+
+\begin{aligned}
+\Large P_{max} &= if(if(P_{max_i} < P_{max_e}, P_{max_i}, P_{max_e}) < s_{P_max}, if(P_{max_i} < P_{max_e}, P_{max_i}, P_{max_e}), s_{P_max})
+\end{aligned}
+
+\item[\textbf{Substitution:}] \mbox{}
+
+\begin{aligned}
+\Large P_{max} &= if(if(3.68127e+07 < 4.00525e+07, 3.68127e+07, 4.00525e+07) < 3.85006e+07, if(3.68127e+07 < 4.00525e+07, 3.68127e+07, 4.00525e+07), 3.85006e+07)
+\end{aligned}
+
+\item[\textbf{Result:}] \mbox{}
+
+\begin{aligned}
+\Large P_{max} &= 3.68127e+07\,Pa
+\end{aligned}
+
+\end{description}
+
+\item \textbf{Solve for $t_{m_i}$}
+
+\begin{description}[leftmargin=2cm]
+\item[\textbf{Equation:}] \mbox{}
+
+\begin{aligned}
+\Large t_{m_i} &= t_{i} + s_{c}
+\end{aligned}
+
+\item[\textbf{Substitution:}] \mbox{}
+
+\begin{aligned}
+\Large t_{m_i} &= 6.26116e-05 + 0\,\text{in}
+\end{aligned}
+
+\item[\textbf{Result:}] \mbox{}
+
+\begin{aligned}
+\Large t_{m_i} &= 6.26116e-05\,m
+\end{aligned}
+
+\end{description}
+
+\end{enumerate}
+
+
+\section{Summary of Results}
+
+\begin{longtable}{llll}
+\toprule
+Variable & Name & Final Value & Unit \\
+\midrule
+\endhead
+$s_{P_max}$ & Pressure, Maximum (S) & 3.85006e+07 & Pa \\
+$s_{T}$ & Wall Thickness (S) & 0.00326707 & m \\
+$s_{d}$ & Inside Diameter (S) & 0.0148018 & m \\
+$s_{t}$ & Pressure Design Thickness (S) & 5.98728e-05 & m \\
+$s_{t_m}$ & Minimum Required Thickness (S) & 5.98728e-05 & m \\
+$I_{e}$ & Extrados Correction Factor & 0.961255 &  \\
+$I_{i}$ & Intrados Correction Factor & 1.04585 &  \\
+$P_{max}$ & Maximum Allowable Pressure & 3.68127e+07 & Pa \\
+$P_{max_e}$ & Maximum Pressure, Outside Bend & 4.00525e+07 & Pa \\
+$P_{max_i}$ & Maximum Pressure, Inside Bend & 3.68127e+07 & Pa \\
+$t_{e}$ & Design Thickness, Outside Bend & 5.7558e-05 & m \\
+$t_{i}$ & Design Thickness, Inside Bend & 6.26116e-05 & m \\
+$t_{m_e}$ & Minimum Required Thickness, Outside Bend & 5.7558e-05 & m \\
+$t_{m_i}$ & Minimum Required Thickness, Inside Bend & 6.26116e-05 & m \\
+\bottomrule
+\end{longtable}
+
+\clearpage
+
+\section*{Disclaimer}
+\addcontentsline{toc}{section}{Disclaimer}
+
+\begin{center}
+\rule{\textwidth}{0.4pt}
+\end{center}
+
+\noindent\textbf{IMPORTANT NOTICE:}
+
+\noindent While every effort has been made to ensure the accuracy and reliability of the calculations provided, we do not guarantee that the information is complete, up-to-date, or suitable for any specific purpose. Users must independently verify the results and assume full responsibility for any decisions or actions taken based on its output. Use of this calculator is entirely at your own risk, and we expressly disclaim any liability for errors or omissions in the information provided.
+
+\vspace{1em}
+
+\noindent\textbf{Report Details:}
+\begin{itemize}
+\item \textbf{Generated Date:} September 26, 2025
+\item \textbf{Generated Using:} Qnty Library
+\item \textbf{Version:} Beta (Independent verification required for production use)
+\end{itemize}
+
+\vspace{2em}
+
+\noindent\textbf{Professional Review and Approval:}
+
+\vspace{1em}
+
+\begin{longtable}{|p{3cm}|p{4cm}|p{4cm}|p{2.5cm}|}
+\hline
+\textbf{Role} & \textbf{Name} & \textbf{Signature} & \textbf{Date} \\
+\hline
+\hline
+Calculated By & \rule{0pt}{1.5cm} & & \\
+\hline
+Reviewed By & \rule{0pt}{1.5cm} & & \\
+\hline
+Approved By & \rule{0pt}{1.5cm} & & \\
+\hline
+\end{longtable}
+
+\vspace{1em}
+
+\begin{center}
+\rule{\textwidth}{0.4pt}
+\vspace{0.5em}
+\textit{Report generated using Qnty Library}
+\vspace{0.5em}
+{\footnotesize For questions or support, please refer to the Qnty documentation}
+\end{center}
+
+\end{document}
