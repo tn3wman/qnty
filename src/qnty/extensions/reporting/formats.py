@@ -11,12 +11,42 @@ from pathlib import Path
 from .base import ReportGenerator
 
 
+def _is_vector_equilibrium_problem(problem) -> bool:
+    """Check if problem is a VectorEquilibriumProblem."""
+    # Avoid circular import by checking class name in MRO
+    class_names = [cls.__name__ for cls in problem.__class__.__mro__]
+    return 'VectorEquilibriumProblem' in class_names
+
+
+def _generate_diagram_if_needed(problem, output_dir: Path) -> Path | None:
+    """Generate vector diagram for VectorEquilibriumProblem if applicable."""
+    if not _is_vector_equilibrium_problem(problem):
+        return None
+
+    try:
+        from .vector_diagram import create_force_diagram
+
+        # Generate diagram in same directory as report
+        # Sanitize filename - remove problematic characters
+        safe_name = problem.name.replace(' ', '_').replace(':', '').replace('/', '_').replace('\\', '_')
+        diagram_path = output_dir / f"{safe_name}_diagram.png"
+        return create_force_diagram(problem, diagram_path, show_components=False)
+    except Exception as e:
+        # Log but don't fail if diagram generation not available
+        import logging
+        logging.debug(f"Could not generate diagram: {e}")
+        return None
+
+
 class MarkdownReportGenerator(ReportGenerator):
     """Generate reports in Markdown format."""
 
     def generate(self, output_path: str | Path) -> None:
         """Generate a Markdown report."""
         output_path = Path(output_path)
+
+        # Generate vector diagram if applicable
+        diagram_path = _generate_diagram_if_needed(self.problem, output_path.parent)
 
         # Build the report content
         content = []
@@ -115,6 +145,16 @@ class MarkdownReportGenerator(ReportGenerator):
                 content.append(f"| {res['symbol']} | {res['name']} | {res['value']} | {res['unit']} |")
         else:
             content.append("*No results to summarize*")
+        content.append("")
+
+        # Include vector diagram after results if generated
+        if diagram_path and diagram_path.exists():
+            content.append("## 6. Vector Diagram")
+            content.append("")
+            content.append(f"![Vector Diagram]({diagram_path.name})")
+            content.append("")
+            content.append("*Figure: Vector diagram showing all forces and their orientations*")
+            content.append("")
 
         # Add disclaimer section
         content.extend(self._format_disclaimer())
@@ -164,6 +204,9 @@ class LatexReportGenerator(ReportGenerator):
         """Generate a LaTeX report."""
         output_path = Path(output_path)
 
+        # Generate vector diagram if applicable
+        diagram_path = _generate_diagram_if_needed(self.problem, output_path.parent)
+
         # Build the LaTeX document
         content = []
 
@@ -177,6 +220,8 @@ class LatexReportGenerator(ReportGenerator):
         content.append(r"\geometry{margin=1in}")
         content.append(r"\usepackage{hyperref}")
         content.append(r"\usepackage{enumitem}")  # For customized list environments
+        content.append(r"\usepackage{graphicx}")  # For including images
+        content.append(r"\usepackage{siunitx}")  # For decimal-aligned columns
         content.append("")
         content.append(r"\title{Engineering Calculation Report: " + self._escape_latex(self.problem.name) + "}")
         content.append(r"\date{" + datetime.now().strftime("%B %d, %Y") + "}")
@@ -196,14 +241,14 @@ class LatexReportGenerator(ReportGenerator):
         known_vars, _ = self._format_variable_table_data()
 
         if known_vars:
-            content.append(r"\begin{longtable}{llll}")
+            content.append(r"\begin{longtable}{llSl}")
             content.append(r"\toprule")
-            content.append(r"Symbol & Name & Value & Unit \\")
+            content.append(r"Symbol & Name & {Value} & Unit \\")
             content.append(r"\midrule")
             content.append(r"\endhead")
 
             for var in known_vars:
-                content.append(f"${self._format_latex_variable(var['symbol'])}$ & {self._escape_latex(var['name'])} & {self._escape_latex(var['value'])} & {self._escape_latex(var['unit'])} \\\\")
+                content.append(f"${self._format_latex_variable(var['symbol'])}$ & {self._escape_latex(var['name'])} & {var['value']} & {self._escape_latex(var['unit'])} \\\\")
 
             content.append(r"\bottomrule")
             content.append(r"\end{longtable}")
@@ -280,11 +325,10 @@ class LatexReportGenerator(ReportGenerator):
                 content.append(r"\item[\textbf{Equation:}] \mbox{}")
                 content.append("")
                 original_latex_eq = self._to_latex_math(step.equation_str)
-                # Add alignment marker at equals sign
-                aligned_eq = original_latex_eq.replace(" = ", " &= ")
-                content.append(r"\begin{aligned}")
-                content.append(r"\Large " + aligned_eq)
-                content.append(r"\end{aligned}")
+                # Use flalign* for left-aligned equations
+                content.append(r"\begin{flalign*}")
+                content.append(r"\Large " + original_latex_eq + r" &&")
+                content.append(r"\end{flalign*}")
                 content.append("")
 
                 # Show the substituted equation if different
@@ -297,22 +341,22 @@ class LatexReportGenerator(ReportGenerator):
                     import re
 
                     latex_eq = re.sub(r"([0-9\.e\-\+]+)\s+([a-zA-Z]+)", r"\1\\,\\text{\2}", latex_eq)
-                    # Add alignment marker at equals sign
-                    aligned_eq = latex_eq.replace(" = ", " &= ")
-                    content.append(r"\begin{aligned}")
-                    content.append(r"\Large " + aligned_eq)
-                    content.append(r"\end{aligned}")
+                    # Use flalign* for left-aligned equations
+                    content.append(r"\begin{flalign*}")
+                    content.append(r"\Large " + latex_eq + r" &&")
+                    content.append(r"\end{flalign*}")
                     content.append("")
 
                 # Format result as variable = value unit
                 content.append(r"\item[\textbf{Result:}] \mbox{}")
                 content.append("")
-                result_eq = self._format_latex_variable(step.equation_name) + " = " + self._escape_latex(str(step.result_value)) + r"\," + self._escape_latex(step.result_unit)
-                # Add alignment marker at equals sign
-                aligned_result = result_eq.replace(" = ", " &= ")
-                content.append(r"\begin{aligned}")
-                content.append(r"\Large " + aligned_result)
-                content.append(r"\end{aligned}")
+                # Handle degree symbol in result unit (convert to LaTeX)
+                result_unit_formatted = step.result_unit.replace("°", r"^\circ") if step.result_unit else ""
+                result_eq = self._format_latex_variable(step.equation_name) + " = " + self._escape_latex(str(step.result_value)) + r"\," + result_unit_formatted
+                # Use flalign* for left-aligned equations
+                content.append(r"\begin{flalign*}")
+                content.append(r"\Large " + result_eq + r" &&")
+                content.append(r"\end{flalign*}")
                 content.append("")
 
                 content.append(r"\end{description}")
@@ -331,19 +375,33 @@ class LatexReportGenerator(ReportGenerator):
         results = self._format_final_results()
 
         if results:
-            content.append(r"\begin{longtable}{llll}")
+            content.append(r"\begin{longtable}{llSl}")
             content.append(r"\toprule")
-            content.append(r"Variable & Name & Final Value & Unit \\")
+            content.append(r"Variable & Name & {Final Value} & Unit \\")
             content.append(r"\midrule")
             content.append(r"\endhead")
 
             for res in results:
-                content.append(f"${self._format_latex_variable(res['symbol'])}$ & {self._escape_latex(res['name'])} & {self._escape_latex(res['value'])} & {self._escape_latex(res['unit'])} \\\\")
+                content.append(f"${self._format_latex_variable(res['symbol'])}$ & {self._escape_latex(res['name'])} & {res['value']} & {self._escape_latex(res['unit'])} \\\\")
 
             content.append(r"\bottomrule")
             content.append(r"\end{longtable}")
         else:
             content.append(r"\textit{No results to summarize}")
+        content.append("")
+
+        # Include vector diagram after results if generated
+        if diagram_path and diagram_path.exists():
+            content.append(r"\section{Vector Diagram}")
+            content.append("")
+            content.append(r"\begin{center}")
+            content.append(r"\includegraphics[width=0.7\textwidth]{" + diagram_path.name + "}")
+            content.append(r"\end{center}")
+            content.append("")
+            content.append(r"\begin{center}")
+            content.append(r"\textit{Figure: Vector diagram showing all forces and their orientations}")
+            content.append(r"\end{center}")
+            content.append("")
 
         # Add disclaimer section
         content.extend(self._format_disclaimer())
@@ -421,24 +479,29 @@ class LatexReportGenerator(ReportGenerator):
         result = result.replace("==", "=")
         result = result.replace("sqrt(", r"\sqrt{")
 
-        # Parse equation structure: check if it's an assignment (var = expression)
-        assignment_match = re.match(r"^([a-zA-Z][a-zA-Z0-9_]*)\s*=\s*(.+)$", result)
+        # Parse equation structure: check if it contains an equals sign
+        if " = " in result or "=" in result:
+            # Split on equals sign to get LHS and RHS
+            parts = result.split("=", 1)
+            if len(parts) == 2:
+                lhs = parts[0].strip()
+                rhs = parts[1].strip()
 
-        if assignment_match:
-            # This is an assignment equation like "P_max = ..."
-            lhs_var = assignment_match.group(1)
-            rhs_expr = assignment_match.group(2)
+                # Check if LHS is just a simple variable
+                if re.match(r"^[a-zA-Z][a-zA-Z0-9_]*$", lhs):
+                    # Simple variable on left, format as such
+                    formatted_lhs = self._format_latex_variable(lhs)
+                else:
+                    # LHS is an expression (like "sin(alpha) / F_1")
+                    formatted_lhs = self._format_expression(lhs)
 
-            # Format the LHS variable
-            formatted_lhs = self._format_latex_variable(lhs_var)
+                # Format the RHS expression
+                formatted_rhs = self._format_expression(rhs)
 
-            # Format the RHS expression
-            formatted_rhs = self._format_expression(rhs_expr)
+                return f"{formatted_lhs} = {formatted_rhs}"
 
-            return f"{formatted_lhs} = {formatted_rhs}"
-        else:
-            # This is a pure expression, format it directly
-            return self._format_expression(result)
+        # No equals sign, this is a pure expression
+        return self._format_expression(result)
 
     def _format_expression(self, expr: str) -> str:
         r"""
@@ -453,12 +516,20 @@ class LatexReportGenerator(ReportGenerator):
         """
         expr = expr.strip()
 
+        # Replace degree symbol with LaTeX command
+        expr = expr.replace("°", r"^\circ")
+
         # Handle fractions by finding division operations at the right level
         # We need to be careful about parentheses nesting
         expr = self._convert_fractions(expr)
 
         # Replace multiplication operators
         expr = expr.replace("*", r" \cdot ")
+
+        # Format exponents: ^2 -> ^{2}, etc.
+        import re
+        expr = re.sub(r'\^(\d+)', r'^{\1}', expr)
+        expr = re.sub(r'\^([a-zA-Z_]\w*)', r'^{\1}', expr)
 
         # Format variable names
         expr = self._format_variables_in_expression(expr)
@@ -542,12 +613,17 @@ class LatexReportGenerator(ReportGenerator):
 
     def _format_math_functions(self, expr: str) -> str:
         """Format mathematical functions for LaTeX."""
+        import re
+
         # Handle common mathematical functions
-        functions = {"sin": r"\sin", "cos": r"\cos", "tan": r"\tan", "log": r"\log", "ln": r"\ln", "exp": r"\exp"}
+        functions = {"sin": "\\sin", "cos": "\\cos", "tan": "\\tan", "log": "\\log", "ln": "\\ln", "exp": "\\exp"}
 
         for func, latex_func in functions.items():
-            # Replace function calls like sin(x) with \sin{x}
-            expr = expr.replace(f"{func}(", f"{latex_func}{{")
+            # Replace function calls like sin(x) or cos(135.0°) with \sin{x} or \cos{135.0°}
+            # Use regex to properly match the function call and its argument
+            pattern = func + r'\(([^)]+)\)'
+            # Use lambda to avoid escape sequence issues in replacement string
+            expr = re.sub(pattern, lambda m: latex_func + '{' + m.group(1) + '}', expr)
 
         return expr
 
@@ -689,8 +765,13 @@ class PdfReportGenerator(LatexReportGenerator):
 
         tectonic_path = Path(__file__).parent / binary_name
 
+        # Also try without extension (for binaries downloaded without .exe)
         if not tectonic_path.exists():
-            return False
+            tectonic_path_no_ext = Path(__file__).parent / "tectonic"
+            if tectonic_path_no_ext.exists():
+                tectonic_path = tectonic_path_no_ext
+            else:
+                return False
 
         try:
             # Make sure it's executable on Unix-like systems
@@ -709,10 +790,16 @@ class PdfReportGenerator(LatexReportGenerator):
             )
 
             if result.returncode == 0:
-                # Rename the output file to the desired name
-                generated_pdf = tex_path.with_suffix(".pdf")
+                # Tectonic outputs to the directory specified by -o with the same basename as the tex file
+                # So if tex_path is /tmp/tmpXXX.tex and -o is /reports, PDF will be /reports/tmpXXX.pdf
+                temp_pdf_name = tex_path.stem + ".pdf"
+                generated_pdf = output_path.parent / temp_pdf_name
                 if generated_pdf.exists():
-                    generated_pdf.rename(output_path)
+                    if generated_pdf != output_path:
+                        # Remove existing output file if it exists (Windows requires this)
+                        if output_path.exists():
+                            output_path.unlink()
+                        generated_pdf.rename(output_path)
                     return True
         except Exception:
             pass
@@ -737,10 +824,15 @@ class PdfReportGenerator(LatexReportGenerator):
             )
 
             if result.returncode == 0:
-                # Rename the output file to the desired name
-                generated_pdf = tex_path.with_suffix(".pdf")
+                # Tectonic outputs to the directory specified by -o with the same basename as the tex file
+                temp_pdf_name = tex_path.stem + ".pdf"
+                generated_pdf = output_path.parent / temp_pdf_name
                 if generated_pdf.exists():
-                    generated_pdf.rename(output_path)
+                    if generated_pdf != output_path:
+                        # Remove existing output file if it exists (Windows requires this)
+                        if output_path.exists():
+                            output_path.unlink()
+                        generated_pdf.rename(output_path)
                     return True
         except (FileNotFoundError, subprocess.TimeoutExpired):
             pass

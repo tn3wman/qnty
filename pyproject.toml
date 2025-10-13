@@ -41,6 +41,9 @@ dev = [
 benchmark = [
     "Pint>=0.24.4",
 ]
+reporting = [
+    "matplotlib>=3.7.0",
+]
 
 [tool.poetry]
 packages = [

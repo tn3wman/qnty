@@ -31,8 +31,10 @@ Examples:
 
 from .point import Point
 from .vector import Vector
+from .force_vector import ForceVector
 
 __all__ = [
     "Point",
     "Vector",
+    "ForceVector",
 ]

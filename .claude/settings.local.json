@@ -1,5 +1,9 @@
 {
   "permissions": {
+    "allow": [
+      "Bash(python -m pytest tests/test_spatial_point.py -v)",
+      "Bash(.venv/Scripts/python.exe:*)"
+    ],
     "deny": [
       "Read(./.env)",
       "Read(./.env.*)",
@@ -11,9 +15,6 @@
       "Bash(rm -rf /*)",
       "Edit(./src/qnty/core/*.py)"
     ],
-    "defaultMode": "bypassPermissions",
-    "allow": [
-      "Bash(python -m pytest tests/test_spatial_point.py -v)"
-    ]
+    "defaultMode": "bypassPermissions"
   }
 }

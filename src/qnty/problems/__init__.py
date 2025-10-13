@@ -39,6 +39,7 @@ from .solving import (
     SafeExpressionEvaluator,
 )
 from .validation import ValidationMixin
+from .vector_equilibrium import VectorEquilibriumProblem
 
 # ========== INTEGRATED PROBLEM CLASS ==========
 
@@ -113,6 +114,7 @@ __all__ = [
     # Main classes
     "Problem",
     "EngineeringProblem",
+    "VectorEquilibriumProblem",
     # Mixins
     "ValidationMixin",
     "CompositionMixin",
