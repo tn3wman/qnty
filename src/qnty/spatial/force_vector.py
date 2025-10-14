@@ -148,6 +148,21 @@ class ForceVector:
                 self._vector = None
             return
 
+        # Case 2b: Angle known but magnitude unknown (for decomposition problems)
+        if magnitude is None and angle is not None:
+            # Convert angle to Quantity
+            if isinstance(angle, (int, float)):
+                from ..core.dimension_catalog import dim as dim_catalog
+                angle_qty = Quantity(name=f"{self.name}_angle", dim=dim_catalog.D, value=float(angle) * angle_unit.si_factor, preferred=angle_unit)
+            else:
+                angle_qty = angle
+
+            # Store angle, magnitude remains None
+            self._angle = angle_qty
+            self._magnitude = None
+            self._vector = None
+            return
+
         # Case 3: Construct from components (cartesian)
         if x is not None or y is not None:
             if unit is None:
@@ -259,19 +274,20 @@ class ForceVector:
         return cls(x=x, y=y, z=z, unit=unit, name=name, **kwargs)
 
     @classmethod
-    def unknown(cls, name: str, is_resultant: bool = False, **kwargs) -> ForceVector:
+    def unknown(cls, name: str, is_resultant: bool = False, angle: float | None = None, **kwargs) -> ForceVector:
         """
         Create an unknown ForceVector to be solved for.
 
         Args:
             name: Force name
             is_resultant: Whether this is a resultant force
+            angle: Optional known angle (in degrees). If provided, only magnitude is unknown.
             **kwargs: Additional arguments
 
         Returns:
             ForceVector instance marked as unknown
         """
-        return cls(magnitude=None, angle=None, name=name, is_known=False, is_resultant=is_resultant, **kwargs)
+        return cls(magnitude=None, angle=angle, name=name, is_known=False, is_resultant=is_resultant, **kwargs)
 
     # Properties
     @property
@@ -314,7 +330,7 @@ class ForceVector:
         if not self.is_known:
             return f"ForceVector({self.name}, unknown)"
 
-        if self._magnitude and self._angle:
+        if self._magnitude and self._angle and self._magnitude.value is not None and self._angle.value is not None:
             mag_val = self._magnitude.value / self._magnitude.preferred.si_factor if self._magnitude.preferred else self._magnitude.value
             ang_val = self._angle.value / self._angle.preferred.si_factor if self._angle.preferred else self._angle.value
             mag_unit = self._magnitude.preferred.symbol if self._magnitude.preferred else ""

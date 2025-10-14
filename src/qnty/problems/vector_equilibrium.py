@@ -13,6 +13,7 @@ from typing import Any
 import numpy as np
 
 from ..core.quantity import Quantity
+from ..solving.trig_solver import TrigSolver
 from ..spatial.force_vector import ForceVector
 from ..spatial.vector import Vector
 from .problem import Problem
@@ -58,6 +59,8 @@ class VectorEquilibriumProblem(Problem):
         self.forces: dict[str, ForceVector] = {}
         self.solution_steps: list[dict[str, Any]] = []
         self._original_variable_states: dict[str, bool] = {}  # Track which variables were originally known
+        self._original_force_states: dict[str, bool] = {}  # Track original is_known state of each force
+        self.solver = TrigSolver()  # Create trig solver instance
 
         # Extract ForceVector class attributes
         self._extract_force_vectors()
@@ -87,10 +90,19 @@ class VectorEquilibriumProblem(Problem):
                 is_resultant=force.is_resultant
             )
         else:
-            # Unknown force
+            # Unknown force - may have known angle but unknown magnitude
+            angle_value = None
+            angle_unit = None
+            if force.angle is not None and force.angle.value is not None:
+                # Convert angle from radians to degrees for unknown() classmethod
+                angle_value = force.angle.value * 180.0 / 3.14159265359
+                angle_unit = "degree"
+
             return ForceVector.unknown(
                 name=force.name,
                 is_resultant=force.is_resultant,
+                angle=angle_value,
+                angle_unit=angle_unit,
                 description=force.description
             )
 
@@ -576,15 +588,19 @@ class VectorEquilibriumProblem(Problem):
     def _solve_two_unknowns_with_resultant(
         self,
         known_forces: list[ForceVector],  # noqa: ARG002
-        unknown_forces: list[ForceVector],  # noqa: ARG002
-        resultant: ForceVector  # noqa: ARG002
+        unknown_forces: list[ForceVector],
+        resultant: ForceVector
     ) -> None:
         """
         Solve for two unknowns given a known resultant.
 
-        This is more complex and requires additional constraints.
+        This uses the TrigSolver to solve decomposition problems where the resultant
+        and component angles are known, but component magnitudes are unknown.
         """
-        raise NotImplementedError("Solving for two unknowns with known resultant not yet implemented")
+        if resultant.is_known:
+            self.solver.solve_two_unknowns_with_known_resultant(unknown_forces, resultant)
+        else:
+            raise ValueError("Cannot solve: two unknowns require a known resultant")
 
     def _solve_by_components(self, known_forces: list[ForceVector], unknown_force: ForceVector) -> None:
         """
