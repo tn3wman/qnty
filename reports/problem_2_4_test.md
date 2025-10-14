@@ -1,81 +1,49 @@
-# Engineering Calculation Report: Problem 2-2: Find Force with Known Resultant
+# Engineering Calculation Report: Problem 2-4: Find Force Components
 
-**Generated:** 2025-10-14 16:50:55
+**Generated:** 2025-10-14 16:51:50
 
 **Description:** 
-    If the resultant force is to be 500 N directed along the positive y-axis, and F_2 = 700 N at 195°, determine the magnitude and direction of F_1.
+    The vertical force F acts downward at A on the two-membered frame.
+    Determine the magnitudes of the two components of F directed along the axes of AB and AC.
+    Set F = 500 N.
     
 
 ## 1. Known Variables
 
 | Symbol | Magnitude (unit) | Angle (°) |
 |--------|------------------|-----------|
-| F_2 | 700 N | -165 |
-| F_R | 500 N | 90 |
+| F | 500 N | -90 |
 
 ## 2. Unknown Variables (To Calculate)
 
 | Symbol | Magnitude (unit) | Angle (°) |
 |--------|------------------|-----------|
-| F_1 | ? N | ? |
+| F_AB | ? N | 225 |
+| F_AC | ? N | 330 |
 
 ## 3. Equations Used
 
-1. `F_1^2 = F_R^2 + F_2^2 - 2*F_R*F_2*cos(gamma)`
-2. `sin(alpha) / F_2 = sin(gamma) / F_1`
 
 ## 4. Step-by-Step Solution
 
-### Step 1: Solve for F_1 Magnitude
-
-    **Equation:**
-    ```
-    F_1^2 = F_R^2 + F_2^2 - 2*F_R*F_2*cos(gamma)
-    ```
-
-    **Substitution:**
-    ```
-    F_1^2 = (500.00 N)^2 + (700.00 N)^2 - 2 * (500.00 N) * (700.00 N) * cos(105.0°)
-    ```
-
-    **Result:**
-    ```
-    F_1 Magnitude = 959.78 N
-    ```
-
-### Step 2: Solve for F_1 Direction
-
-    **Equation:**
-    ```
-    sin(alpha) / F_2 = sin(gamma) / F_1
-    ```
-
-    **Substitution:**
-    ```
-    sin(alpha) / 700.00 N = sin(105.0°) / 959.78 N
-    ```
-
-    **Result:**
-    ```
-    F_1 Direction = 45.21 °
-    ```
+*No detailed solution steps available*
 
 ## 5. Summary of Results
 
 | Variable | Name | Final Value | Unit |
 |----------|------|-------------|------|
-| F_1_x | F_1 X-Component | 676.148 | N |
-| F_1_y | F_1 Y-Component | 681.173 | N |
-| F_2_x | F_2 X-Component | -676.148 | N |
-| F_2_y | F_2 Y-Component | -181.173 | N |
-| F_R_mag | F_R Magnitude | 500 | N |
-| F_R_angle | F_R Direction | 1.5708 | ° |
-| F_R_x | F_R X-Component | 3.06162e-14 | N |
-| F_R_y | F_R Y-Component | 500 | N |
+| F_mag | F Magnitude | 500 | N |
+| F_angle | F Direction | -1.5708 | ° |
+| F_x | F X-Component | -9.18485e-14 | N |
+| F_y | F Y-Component | -500 | N |
+| F_AB_x | F_AB X-Component | -316.987 | N |
+| F_AB_y | F_AB Y-Component | -316.987 | N |
+| F_AC_x | F_AC X-Component | 316.987 | N |
+| F_AC_y | F_AC Y-Component | -183.013 | N |
 
 ## 6. Vector Diagram
 
-![Vector Diagram](Problem_2-2_Find_Force_with_Known_Resultant_diagram.png)
+![Vector Diagram](Problem_2-4_Find_Force_Components_diagram.png)
 
 *Figure: Vector diagram showing all forces and their orientations*
 

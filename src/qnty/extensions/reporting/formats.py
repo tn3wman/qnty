@@ -67,10 +67,17 @@ class MarkdownReportGenerator(ReportGenerator):
         known_vars, _ = self._format_variable_table_data()
 
         if known_vars:
-            content.append("| Symbol | Name | Value | Unit |")
-            content.append("|--------|------|-------|------|")
-            for var in known_vars:
-                content.append(f"| {var['symbol']} | {var['name']} | {var['value']} | {var['unit']} |")
+            # Check if this is vector equilibrium format (has 'magnitude' and 'angle' keys)
+            if known_vars and 'magnitude' in known_vars[0]:
+                content.append("| Symbol | Magnitude (unit) | Angle (°) |")
+                content.append("|--------|------------------|-----------|")
+                for var in known_vars:
+                    content.append(f"| {var['symbol']} | {var['magnitude']} {var['unit']} | {var['angle']} |")
+            else:
+                content.append("| Symbol | Name | Value | Unit |")
+                content.append("|--------|------|-------|------|")
+                for var in known_vars:
+                    content.append(f"| {var['symbol']} | {var['name']} | {var['value']} | {var['unit']} |")
         else:
             content.append("*No known variables*")
         content.append("")
@@ -81,10 +88,17 @@ class MarkdownReportGenerator(ReportGenerator):
         _, unknown_vars = self._format_variable_table_data()
 
         if unknown_vars:
-            content.append("| Symbol | Name | Unit |")
-            content.append("|--------|------|------|")
-            for var in unknown_vars:
-                content.append(f"| {var['symbol']} | {var['name']} | {var['unit']} |")
+            # Check if this is vector equilibrium format
+            if unknown_vars and 'magnitude' in unknown_vars[0]:
+                content.append("| Symbol | Magnitude (unit) | Angle (°) |")
+                content.append("|--------|------------------|-----------|")
+                for var in unknown_vars:
+                    content.append(f"| {var['symbol']} | {var['magnitude']} {var['unit']} | {var['angle']} |")
+            else:
+                content.append("| Symbol | Name | Unit |")
+                content.append("|--------|------|------|")
+                for var in unknown_vars:
+                    content.append(f"| {var['symbol']} | {var['name']} | {var['unit']} |")
         else:
             content.append("*No unknown variables*")
         content.append("")
@@ -232,7 +246,21 @@ class LatexReportGenerator(ReportGenerator):
 
         if self.problem.description:
             content.append(r"\section*{Description}")
-            content.append(self._escape_latex(self.problem.description))
+            # Split description into paragraphs and wrap properly
+            desc_paragraphs = self.problem.description.strip().split('\n\n')
+            for i, para in enumerate(desc_paragraphs):
+                # Clean up extra whitespace and newlines within paragraph
+                para = ' '.join(para.split())
+                if para:
+                    if i == 0:
+                        content.append(r"\noindent")
+                    # Format variable names in the description text
+                    para = self._format_description_variables(para)
+                    # Use a parbox or minipage to ensure proper text wrapping
+                    content.append(r"\begin{minipage}{\textwidth}")
+                    content.append(para)
+                    content.append(r"\end{minipage}")
+                    content.append(r"\par")
             content.append("")
 
         # Known variables
@@ -241,17 +269,32 @@ class LatexReportGenerator(ReportGenerator):
         known_vars, _ = self._format_variable_table_data()
 
         if known_vars:
-            content.append(r"\begin{longtable}{llSl}")
-            content.append(r"\toprule")
-            content.append(r"Symbol & Name & {Value} & Unit \\")
-            content.append(r"\midrule")
-            content.append(r"\endhead")
+            # Check if this is vector equilibrium format
+            if known_vars and 'magnitude' in known_vars[0]:
+                content.append(r"\begin{longtable}{lSS}")
+                content.append(r"\toprule")
+                content.append(r"Symbol & {Magnitude (unit)} & {Angle ($^\circ$)} \\")
+                content.append(r"\midrule")
+                content.append(r"\endhead")
 
-            for var in known_vars:
-                content.append(f"${self._format_latex_variable(var['symbol'])}$ & {self._escape_latex(var['name'])} & {var['value']} & {self._escape_latex(var['unit'])} \\\\")
+                for var in known_vars:
+                    mag_with_unit = f"{var['magnitude']}\\,\\text{{{self._escape_latex(var['unit'])}}}"
+                    content.append(f"${self._format_latex_variable(var['symbol'])}$ & {mag_with_unit} & {var['angle']} \\\\")
 
-            content.append(r"\bottomrule")
-            content.append(r"\end{longtable}")
+                content.append(r"\bottomrule")
+                content.append(r"\end{longtable}")
+            else:
+                content.append(r"\begin{longtable}{llSl}")
+                content.append(r"\toprule")
+                content.append(r"Symbol & Name & {Value} & Unit \\")
+                content.append(r"\midrule")
+                content.append(r"\endhead")
+
+                for var in known_vars:
+                    content.append(f"${self._format_latex_variable(var['symbol'])}$ & {self._escape_latex(var['name'])} & {var['value']} & {self._escape_latex(var['unit'])} \\\\")
+
+                content.append(r"\bottomrule")
+                content.append(r"\end{longtable}")
         else:
             content.append(r"\textit{No known variables}")
         content.append("")
@@ -262,17 +305,33 @@ class LatexReportGenerator(ReportGenerator):
         _, unknown_vars = self._format_variable_table_data()
 
         if unknown_vars:
-            content.append(r"\begin{longtable}{lll}")
-            content.append(r"\toprule")
-            content.append(r"Symbol & Name & Unit \\")
-            content.append(r"\midrule")
-            content.append(r"\endhead")
+            # Check if this is vector equilibrium format
+            if unknown_vars and 'magnitude' in unknown_vars[0]:
+                content.append(r"\begin{longtable}{lll}")
+                content.append(r"\toprule")
+                content.append(r"Symbol & Magnitude (unit) & Angle ($^\circ$) \\")
+                content.append(r"\midrule")
+                content.append(r"\endhead")
 
-            for var in unknown_vars:
-                content.append(f"${self._format_latex_variable(var['symbol'])}$ & {self._escape_latex(var['name'])} & {self._escape_latex(var['unit'])} \\\\")
+                for var in unknown_vars:
+                    mag_display = f"{var['magnitude']} {self._escape_latex(var['unit'])}" if var['magnitude'] != '?' else '?'
+                    angle_display = var['angle']
+                    content.append(f"${self._format_latex_variable(var['symbol'])}$ & {mag_display} & {angle_display} \\\\")
 
-            content.append(r"\bottomrule")
-            content.append(r"\end{longtable}")
+                content.append(r"\bottomrule")
+                content.append(r"\end{longtable}")
+            else:
+                content.append(r"\begin{longtable}{lll}")
+                content.append(r"\toprule")
+                content.append(r"Symbol & Name & Unit \\")
+                content.append(r"\midrule")
+                content.append(r"\endhead")
+
+                for var in unknown_vars:
+                    content.append(f"${self._format_latex_variable(var['symbol'])}$ & {self._escape_latex(var['name'])} & {self._escape_latex(var['unit'])} \\\\")
+
+                content.append(r"\bottomrule")
+                content.append(r"\end{longtable}")
         else:
             content.append(r"\textit{No unknown variables}")
         content.append("")
@@ -411,6 +470,44 @@ class LatexReportGenerator(ReportGenerator):
 
         # Write to file
         output_path.write_text("\n".join(content), encoding="utf-8")
+
+    def _format_description_variables(self, text: str) -> str:
+        """
+        Format variable names in description text using LaTeX math mode.
+
+        Converts patterns like F_1, F_2, T_bar etc. to proper LaTeX math notation.
+        Escapes other special characters that aren't part of variable names.
+        """
+        import re
+
+        # Pattern to match variable names (letter followed by optional underscore and more characters)
+        # Matches: F_1, F_2, T_bar, F_R, etc.
+        var_pattern = r'\b([A-Z][a-zA-Z]*_[a-zA-Z0-9]+)\b'
+
+        # Find all variable names and their positions
+        matches = list(re.finditer(var_pattern, text))
+
+        # Build the result by processing text segments
+        result = []
+        last_end = 0
+
+        for match in matches:
+            # Add the text before this variable (escaped)
+            before_text = text[last_end:match.start()]
+            result.append(self._escape_latex(before_text))
+
+            # Add the variable in math mode
+            var_name = match.group(1)
+            formatted_var = self._format_latex_variable(var_name)
+            result.append(f"${formatted_var}$")
+
+            last_end = match.end()
+
+        # Add any remaining text after the last match (escaped)
+        if last_end < len(text):
+            result.append(self._escape_latex(text[last_end:]))
+
+        return ''.join(result)
 
     def _escape_latex(self, text: str) -> str:
         """Escape special LaTeX characters."""

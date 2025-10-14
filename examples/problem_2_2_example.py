@@ -28,8 +28,7 @@ class Problem_2_2(VectorEquilibriumProblem):
     """
     name = "Problem 2-2: Find Force with Known Resultant"
     description = """
-    If the resultant force is to be 500 N directed along the positive y-axis,
-    and F_2 = 700 N at 195°, determine the magnitude and direction of F_1.
+    If the resultant force is to be 500 N directed along the positive y-axis, and F_2 = 700 N at 195°, determine the magnitude and direction of F_1.
     """
 
     # Unknown force to solve for (not a resultant - just a component force)

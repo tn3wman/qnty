@@ -160,6 +160,19 @@ class VectorEquilibriumProblem(Problem):
         """
         self.solution_steps = []
 
+        # Save original is_known state for each force (for report generation)
+        if not self._original_force_states:  # Only save once
+            for force_name, force in self.forces.items():
+                # Save whether the force was known
+                self._original_force_states[force_name] = force.is_known
+
+                # Also track which individual components were known before solving
+                # This handles partially known forces (e.g., known angle, unknown magnitude)
+                mag_known = force.magnitude is not None and force.magnitude.value is not None
+                angle_known = force.angle is not None and force.angle.value is not None
+                self._original_variable_states[f"{force_name}_mag_known"] = mag_known
+                self._original_variable_states[f"{force_name}_angle_known"] = angle_known
+
         # Analyze problem type
         known_forces = [f for f in self.forces.values() if f.is_known]
         unknown_forces = [f for f in self.forces.values() if not f.is_known]
