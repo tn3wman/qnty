@@ -210,12 +210,12 @@ class TrigSolver:
         # Step 1: Solve for unknown magnitude using Law of Cosines
         gamma_deg = math.degrees(gamma)
         # Use LaTeX theta command for proper rendering - use string concatenation to avoid f-string escaping issues
-        angle_diff = f"(\\theta_{resultant.name} - \\theta_{known_force.name})"
+        angle_diff = f"\\theta_{{{resultant.name}}} - \\theta_{{{known_force.name}}}"
         self.solution_steps.append({
             "target": f"{unknown_force.name} Magnitude",
             "method": "Law of Cosines",
             "equation": f"{unknown_force.name}^2 = {resultant.name}^2 + {known_force.name}^2 - 2*{resultant.name}*{known_force.name}*cos({angle_diff})",
-            "substitution": f"{unknown_force.name}^2 = ({F_R:.2f} {force_unit})^2 + ({F_known:.2f} {force_unit})^2 - 2 * ({F_R:.2f} {force_unit}) * ({F_known:.2f} {force_unit}) * cos(({gamma_deg:.1f}°))",
+            "substitution": f"{unknown_force.name}^2 = ({F_R:.2f} {force_unit})^2 + ({F_known:.2f} {force_unit})^2 - 2 * ({F_R:.2f} {force_unit}) * ({F_known:.2f} {force_unit}) * cos({gamma_deg:.1f}°)",
             "result_value": f"{F_unknown:.2f}",
             "result_unit": force_unit
         })
@@ -323,12 +323,12 @@ class TrigSolver:
         # Format substitution like reference: value and unit separated, no complex nesting
         gamma_deg = math.degrees(angle_in_triangle)
         # Use LaTeX theta command for proper rendering
-        angle_diff = f"(180° - (\\theta_{force1.name} - \\theta_{force2.name}))"
+        angle_diff = f"180° - (\\theta_{{{force2.name}}} - \\theta_{{{force1.name}}})"
         self.solution_steps.append({
             "target": f"{resultant.name} Magnitude",
             "method": "Law of Cosines",
             "equation": f"{resultant.name}^2 = {force1.name}^2 + {force2.name}^2 - 2*{force1.name}*{force2.name}*cos({angle_diff})",
-            "substitution": f"{resultant.name}^2 = ({F1:.2f} {force_unit})^2 + ({F2:.2f} {force_unit})^2 - 2 * ({F1:.2f} {force_unit}) * ({F2:.2f} {force_unit}) * cos(({gamma_deg:.1f}°))",
+            "substitution": f"{resultant.name}^2 = ({F1:.2f} {force_unit})^2 + ({F2:.2f} {force_unit})^2 - 2 * ({F1:.2f} {force_unit}) * ({F2:.2f} {force_unit}) * cos({gamma_deg:.1f}°)",
             "result_value": f"{FR:.2f}",
             "result_unit": force_unit
         })

@@ -10,7 +10,7 @@
 \usepackage{graphicx}
 \usepackage{siunitx}
 
-\title{Engineering Calculation Report: Problem 2-2: Find Force with Known Resultant}
+\title{Engineering Calculation Report: Problem 2-1: Find Resultant Force}
 \date{October 14, 2025}
 
 \begin{document}
@@ -19,7 +19,7 @@
 \section*{Description}
 \noindent
 \begin{minipage}{\textwidth}
-If the resultant force is to be 500 N directed along the positive y-axis, and $F_{2}$ = 700 N at 195°, determine the magnitude and direction of $F_{1}$.
+Test law of cosines display with force angles
 \end{minipage}
 \par
 
@@ -30,8 +30,8 @@ If the resultant force is to be 500 N directed along the positive y-axis, and $F
 Symbol & {Magnitude (unit)} & {Angle ($^\circ$)} \\
 \midrule
 \endhead
-$F_{2}$ & 700\,\text{N} & -165 \\
-$F_{R}$ & 500\,\text{N} & 90 \\
+$F1$ & 700\,\text{N} & 60 \\
+$F2$ & 450\,\text{N} & 105 \\
 \bottomrule
 \end{longtable}
 
@@ -42,62 +42,62 @@ $F_{R}$ & 500\,\text{N} & 90 \\
 Symbol & Magnitude (unit) & Angle ($^\circ$) \\
 \midrule
 \endhead
-$F_{1}$ & ? & ? \\
+$FR$ & ? & ? \\
 \bottomrule
 \end{longtable}
 
 \section{Equations Used}
 
 \begin{enumerate}
-\item $\Large F_{1}^{2} = F_{R}^{2} + F_{2}^{2} - 2 \cdot F_R \cdot F_2 \cdot \cos{\theta_{}{F_{R}} - \theta_{}{F_{2}}}$
-\item $\Large \frac{\sin{alpha}}{F_2} = \frac{\sin{gamma}}{F_1}$
+\item $\Large FR^{2} = F1^{2} + F2^{2} - 2 \cdot F1 \cdot F2 \cdot \cos{180^\circ - (\theta_{}{F2} - \theta_{}{F1}})$
+\item $\Large \frac{\sin{alpha}}{F1} = \frac{\sin{gamma}}{FR}$
 \end{enumerate}
 
 \section{Step-by-Step Solution}
 
 \begin{enumerate}[label=\textbf{Step \arabic*:},leftmargin=2cm]
-\item \textbf{Solve for $F_{1 Magnitude}$}
+\item \textbf{Solve for $FR Magnitude$}
 
 \begin{description}[leftmargin=2cm]
 \item[\textbf{Equation:}] \mbox{}
 
 \begin{flalign*}
-\Large F_{1}^{2} = F_{R}^{2} + F_{2}^{2} - 2 \cdot F_R \cdot F_2 \cdot \cos{\theta_{}{F_{R}} - \theta_{}{F_{2}}} &&
+\Large FR^{2} = F1^{2} + F2^{2} - 2 \cdot F1 \cdot F2 \cdot \cos{180^\circ - (\theta_{}{F2} - \theta_{}{F1}}) &&
 \end{flalign*}
 
 \item[\textbf{Substitution:}] \mbox{}
 
 \begin{flalign*}
-\Large F_{1}^{2} = (500.00\,\text{N})^{2} + (700.00\,\text{N})^{2} - 2  \cdot  (500.00\,\text{N})  \cdot  (700.00\,\text{N})  \cdot  \cos{105.0^\circ} &&
+\Large FR^{2} = (700.00\,\text{N})^{2} + (450.00\,\text{N})^{2} - 2  \cdot  (700.00\,\text{N})  \cdot  (450.00\,\text{N})  \cdot  \cos{135.0^\circ} &&
 \end{flalign*}
 
 \item[\textbf{Result:}] \mbox{}
 
 \begin{flalign*}
-\Large F_{1 Magnitude} = 959.78\,N &&
+\Large FR Magnitude = 1066.76\,N &&
 \end{flalign*}
 
 \end{description}
 
-\item \textbf{Solve for $F_{1 Direction}$}
+\item \textbf{Solve for $FR Direction$}
 
 \begin{description}[leftmargin=2cm]
 \item[\textbf{Equation:}] \mbox{}
 
 \begin{flalign*}
-\Large \frac{\sin{alpha}}{F_2} = \frac{\sin{gamma}}{F_1} &&
+\Large \frac{\sin{alpha}}{F1} = \frac{\sin{gamma}}{FR} &&
 \end{flalign*}
 
 \item[\textbf{Substitution:}] \mbox{}
 
 \begin{flalign*}
-\Large \frac{\sin{alpha}}{700.00\,\text{N}} = \frac{\sin{105.0^\circ}}{959.78\,\text{N}} &&
+\Large \frac{\sin{alpha}}{700.00\,\text{N}} = \frac{\sin{135.0^\circ}}{1066.76\,\text{N}} &&
 \end{flalign*}
 
 \item[\textbf{Result:}] \mbox{}
 
 \begin{flalign*}
-\Large F_{1 Direction} = 45.21\,^\circ &&
+\Large FR Direction = 77.35\,^\circ &&
 \end{flalign*}
 
 \end{description}
@@ -112,21 +112,21 @@ $F_{1}$ & ? & ? \\
 Variable & Name & {Final Value} & Unit \\
 \midrule
 \endhead
-$F_{1_x}$ & F\textbackslash{}_1 X-Component & 676.148 & N \\
-$F_{1_y}$ & F\textbackslash{}_1 Y-Component & 681.173 & N \\
-$F_{2_x}$ & F\textbackslash{}_2 X-Component & -676.148 & N \\
-$F_{2_y}$ & F\textbackslash{}_2 Y-Component & -181.173 & N \\
-$F_{R_mag}$ & F\textbackslash{}_R Magnitude & 500 & N \\
-$F_{R_angle}$ & F\textbackslash{}_R Direction & 1.5708 & ° \\
-$F_{R_x}$ & F\textbackslash{}_R X-Component & 3.06162e-14 & N \\
-$F_{R_y}$ & F\textbackslash{}_R Y-Component & 500 & N \\
+$F1_{x}$ & F1 X-Component & 350 & N \\
+$F1_{y}$ & F1 Y-Component & 606.218 & N \\
+$F2_{x}$ & F2 X-Component & -116.469 & N \\
+$F2_{y}$ & F2 Y-Component & 434.667 & N \\
+$FR_{mag}$ & FR Magnitude & 1066.76 & N \\
+$FR_{angle}$ & FR Direction & 1.35009 & ° \\
+$FR_{x}$ & FR X-Component & 233.531 & N \\
+$FR_{y}$ & FR Y-Component & 1040.88 & N \\
 \bottomrule
 \end{longtable}
 
 \section{Vector Diagram}
 
 \begin{center}
-\includegraphics[width=0.7\textwidth]{Problem_2-2_Find_Force_with_Known_Resultant_diagram.png}
+\includegraphics[width=0.7\textwidth]{Problem_2-1_Find_Resultant_Force_diagram.png}
 \end{center}
 
 \begin{center}

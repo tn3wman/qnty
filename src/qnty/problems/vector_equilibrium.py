@@ -458,10 +458,17 @@ class VectorEquilibriumProblem(Problem):
 
         # Step 1: Solve for unknown magnitude using Law of Cosines
         gamma_deg = math.degrees(gamma)
+        # Use LaTeX theta command for proper rendering with force angles
+        # Display as cos(θ_R - θ_known) or cos(θ_known - θ_R) depending on which is larger
+        if theta_R > theta_known:
+            angle_expr = f"\\theta_{{{resultant.name}}} - \\theta_{{{known_force.name}}}"
+        else:
+            angle_expr = f"\\theta_{{{known_force.name}}} - \\theta_{{{resultant.name}}}"
+
         self.solution_steps.append({
             "target": f"{unknown_force.name} Magnitude",
             "method": "Law of Cosines",
-            "equation": f"{unknown_force.name}^2 = {resultant.name}^2 + {known_force.name}^2 - 2*{resultant.name}*{known_force.name}*cos(gamma)",
+            "equation": f"{unknown_force.name}^2 = {resultant.name}^2 + {known_force.name}^2 - 2*{resultant.name}*{known_force.name}*cos({angle_expr})",
             "substitution": f"{unknown_force.name}^2 = ({F_R:.2f} {force_unit})^2 + ({F_known:.2f} {force_unit})^2 - 2 * ({F_R:.2f} {force_unit}) * ({F_known:.2f} {force_unit}) * cos({gamma_deg:.1f}°)",
             "result_value": f"{F_unknown:.2f}",
             "result_unit": force_unit
@@ -557,10 +564,17 @@ class VectorEquilibriumProblem(Problem):
         # Step 1: Solve for resultant magnitude using Law of Cosines
         # Format substitution like reference: value and unit separated, no complex nesting
         gamma_deg = math.degrees(angle_in_triangle)
+        # Use LaTeX theta command for proper rendering with force angles
+        # Display as cos(θ_F2 - θ_F1) or cos(θ_F1 - θ_F2) depending on which is larger
+        if theta2 > theta1:
+            angle_expr = f"\\theta_{{{force2.name}}} - \\theta_{{{force1.name}}}"
+        else:
+            angle_expr = f"\\theta_{{{force1.name}}} - \\theta_{{{force2.name}}}"
+
         self.solution_steps.append({
             "target": f"{resultant.name} Magnitude",
             "method": "Law of Cosines",
-            "equation": f"{resultant.name}^2 = {force1.name}^2 + {force2.name}^2 - 2*{force1.name}*{force2.name}*cos(gamma)",
+            "equation": f"{resultant.name}^2 = {force1.name}^2 + {force2.name}^2 - 2*{force1.name}*{force2.name}*cos(180° - ({angle_expr}))",
             "substitution": f"{resultant.name}^2 = ({F1:.2f} {force_unit})^2 + ({F2:.2f} {force_unit})^2 - 2 * ({F1:.2f} {force_unit}) * ({F2:.2f} {force_unit}) * cos({gamma_deg:.1f}°)",
             "result_value": f"{FR:.2f}",
             "result_unit": force_unit

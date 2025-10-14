@@ -1,6 +1,6 @@
 # Engineering Calculation Report: Problem 2-2: Find Force with Known Resultant
 
-**Generated:** 2025-10-14 16:50:55
+**Generated:** 2025-10-14 17:05:54
 
 **Description:** 
     If the resultant force is to be 500 N directed along the positive y-axis, and F_2 = 700 N at 195°, determine the magnitude and direction of F_1.
@@ -21,7 +21,7 @@
 
 ## 3. Equations Used
 
-1. `F_1^2 = F_R^2 + F_2^2 - 2*F_R*F_2*cos(gamma)`
+1. `F_1^2 = F_R^2 + F_2^2 - 2*F_R*F_2*cos(\theta_{F_R} - \theta_{F_2})`
 2. `sin(alpha) / F_2 = sin(gamma) / F_1`
 
 ## 4. Step-by-Step Solution
@@ -30,7 +30,7 @@
 
     **Equation:**
     ```
-    F_1^2 = F_R^2 + F_2^2 - 2*F_R*F_2*cos(gamma)
+    F_1^2 = F_R^2 + F_2^2 - 2*F_R*F_2*cos(\theta_{F_R} - \theta_{F_2})
     ```
 
     **Substitution:**
