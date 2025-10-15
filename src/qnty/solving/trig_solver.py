@@ -209,10 +209,13 @@ class TrigSolver:
 
         # Step 1: Solve for unknown magnitude using Law of Cosines
         gamma_deg = math.degrees(gamma)
-        # Use LaTeX theta command for proper rendering - use string concatenation to avoid f-string escaping issues
-        angle_diff = f"\\theta_{{{resultant.name}}} - \\theta_{{{known_force.name}}}"
+        # Use LaTeX theta command for proper rendering - format subscript to handle underscores properly
+        # Convert F_R to F_{R} format for theta subscript
+        resultant_subscript = resultant.name.replace('_', '_{') + '}' if '_' in resultant.name else resultant.name
+        known_subscript = known_force.name.replace('_', '_{') + '}' if '_' in known_force.name else known_force.name
+        angle_diff = f"\\theta_{{{resultant_subscript}}} - \\theta_{{{known_subscript}}}"
         self.solution_steps.append({
-            "target": f"{unknown_force.name} Magnitude",
+            "target": f"|{unknown_force.name}|",
             "method": "Law of Cosines",
             "equation": f"{unknown_force.name}^2 = {resultant.name}^2 + {known_force.name}^2 - 2*{resultant.name}*{known_force.name}*cos({angle_diff})",
             "substitution": f"{unknown_force.name}^2 = ({F_R:.2f} {force_unit})^2 + ({F_known:.2f} {force_unit})^2 - 2 * ({F_R:.2f} {force_unit}) * ({F_known:.2f} {force_unit}) * cos({gamma_deg:.1f}°)",
@@ -230,14 +233,17 @@ class TrigSolver:
 
         # Format: sin(90° + θ)/F_known = sin(γ)/F_unknown
         # This matches the textbook format from Problem 2-2
-        angle_var = f"\\theta_{unknown_force.name}"
-        theta_R_var = f"\\theta_{resultant.name}"
-        theta_known_var = f"\\theta_{known_force.name}"
+        unknown_subscript = unknown_force.name.replace('_', '_{') + '}' if '_' in unknown_force.name else unknown_force.name
+        resultant_subscript = resultant.name.replace('_', '_{') + '}' if '_' in resultant.name else resultant.name
+        known_subscript = known_force.name.replace('_', '_{') + '}' if '_' in known_force.name else known_force.name
+        angle_var = f"\\theta_{{{unknown_subscript}}}"
+        theta_R_var = f"\\theta_{{{resultant_subscript}}}"
+        theta_known_var = f"\\theta_{{{known_subscript}}}"
         angle_sum = f"({theta_R_var} + {angle_var})"
         # Use the same angle difference as in Law of Cosines for consistency
         gamma_angle = f"({theta_R_var} - {theta_known_var})"
         self.solution_steps.append({
-            "target": f"{unknown_force.name} Direction",
+            "target": f"{angle_var}",
             "method": "Law of Sines",
             "equation": f"sin({angle_sum})/{known_force.name} = sin({gamma_angle})/{unknown_force.name}",
             "substitution": f"sin(({theta_R_deg:.1f}° + {angle_var}))/{F_known:.2f} = sin(({gamma_deg:.1f}°))/{F_unknown:.2f}",
@@ -322,10 +328,12 @@ class TrigSolver:
         # Step 1: Solve for resultant magnitude using Law of Cosines
         # Format substitution like reference: value and unit separated, no complex nesting
         gamma_deg = math.degrees(angle_in_triangle)
-        # Use LaTeX theta command for proper rendering
-        angle_diff = f"180° - (\\theta_{{{force2.name}}} - \\theta_{{{force1.name}}})"
+        # Use LaTeX theta command for proper rendering - format subscript to handle underscores properly
+        force2_subscript = force2.name.replace('_', '_{') + '}' if '_' in force2.name else force2.name
+        force1_subscript = force1.name.replace('_', '_{') + '}' if '_' in force1.name else force1.name
+        angle_diff = f"180° - (\\theta_{{{force2_subscript}}} - \\theta_{{{force1_subscript}}})"
         self.solution_steps.append({
-            "target": f"{resultant.name} Magnitude",
+            "target": f"|{resultant.name}|",
             "method": "Law of Cosines",
             "equation": f"{resultant.name}^2 = {force1.name}^2 + {force2.name}^2 - 2*{force1.name}*{force2.name}*cos({angle_diff})",
             "substitution": f"{resultant.name}^2 = ({F1:.2f} {force_unit})^2 + ({F2:.2f} {force_unit})^2 - 2 * ({F1:.2f} {force_unit}) * ({F2:.2f} {force_unit}) * cos({gamma_deg:.1f}°)",
@@ -336,13 +344,14 @@ class TrigSolver:
         # Step 2: Solve for resultant direction using Law of Sines
         # Law of Sines applied to find the angle
         theta_R_deg = math.degrees(theta_R)
-        angle_var = f"\\theta_{resultant.name}"
+        resultant_subscript = resultant.name.replace('_', '_{') + '}' if '_' in resultant.name else resultant.name
+        angle_var = f"\\theta_{{{resultant_subscript}}}"
         angle_diff_sin = f"(180° - {angle_var})"
 
         # Using Law of Sines: sin(α)/a = sin(β)/b
         # This matches textbook format for engineering reports
         self.solution_steps.append({
-            "target": f"{resultant.name} Direction",
+            "target": f"{angle_var}",
             "method": "Law of Sines",
             "equation": f"sin({angle_var})/{force1.name} = sin({angle_diff_sin})/{force2.name}",
             "substitution": f"sin(({angle_var}))/{F1:.2f} = sin(({angle_diff_sin}))/{F2:.2f}",
@@ -474,7 +483,7 @@ class TrigSolver:
 
         # Step 1: Solve for Force 1 magnitude using Law of Sines
         self.solution_steps.append({
-            "target": f"{force1.name} Magnitude",
+            "target": f"|{force1.name}|",
             "method": "Law of Sines",
             "equation": f"{force1.name}/sin(\\alpha_{{opp,{force1.name}}}) = {resultant.name}/sin(\\alpha_{{opp,{resultant.name}}})",
             "substitution": f"{force1.name}/sin({angle_opposite_1_deg:.1f}°) = {F_R:.2f} {force_unit}/sin({angle_opposite_R_deg:.1f}°)",
@@ -484,7 +493,7 @@ class TrigSolver:
 
         # Step 2: Solve for Force 2 magnitude using Law of Sines
         self.solution_steps.append({
-            "target": f"{force2.name} Magnitude",
+            "target": f"|{force2.name}|",
             "method": "Law of Sines",
             "equation": f"{force2.name}/sin(\\alpha_{{opp,{force2.name}}}) = {resultant.name}/sin(\\alpha_{{opp,{resultant.name}}})",
             "substitution": f"{force2.name}/sin({angle_opposite_2_deg:.1f}°) = {F_R:.2f} {force_unit}/sin({angle_opposite_R_deg:.1f}°)",

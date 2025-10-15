@@ -27,11 +27,11 @@ If the resultant force is to be 500 N directed along the positive y-axis, and $F
 
 \begin{longtable}{lSS}
 \toprule
-Symbol & {Magnitude (unit)} & {Angle ($^\circ$)} \\
+Symbol & {Magnitude (N)} & {Angle ($^\circ$)} \\
 \midrule
 \endhead
-$F_{2}$ & 700\,\text{N} & -165 \\
-$F_{R}$ & 500\,\text{N} & 90 \\
+$F_{2}$ & 700 & -165 \\
+$F_{R}$ & 500 & 90 \\
 \bottomrule
 \end{longtable}
 
@@ -39,7 +39,7 @@ $F_{R}$ & 500\,\text{N} & 90 \\
 
 \begin{longtable}{lll}
 \toprule
-Symbol & Magnitude (unit) & Angle ($^\circ$) \\
+Symbol & Magnitude (N) & Angle ($^\circ$) \\
 \midrule
 \endhead
 $F_{1}$ & ? & ? \\
@@ -49,55 +49,55 @@ $F_{1}$ & ? & ? \\
 \section{Equations Used}
 
 \begin{enumerate}
-\item $\Large F_{1}^{2} = F_{R}^{2} + F_{2}^{2} - 2 \cdot F_R \cdot F_2 \cdot \cos{\theta_{}{F_{R}} - \theta_{}{F_{2}}}$
-\item $\Large \frac{\sin{alpha}}{F_2} = \frac{\sin{gamma}}{F_1}$
+\item $\displaystyle\Large F_{1}^{2} = F_{R}^{2} + F_{2}^{2} - 2 \cdot F_R \cdot F_2 \cdot \cos{(\theta_{F_{R}} - \theta_{F_{2}})}$
+\item $\displaystyle\Large \frac{\sin{(\theta_{F_{1}})}}{F_2} = \frac{\sin{(\theta_{F_{R}} - \theta_{F_{2}})}}{F_1}$
 \end{enumerate}
 
 \section{Step-by-Step Solution}
 
 \begin{enumerate}[label=\textbf{Step \arabic*:},leftmargin=2cm]
-\item \textbf{Solve for $F_{1 Magnitude}$}
+\item \textbf{Solve for $|F_{1}|$}
 
 \begin{description}[leftmargin=2cm]
 \item[\textbf{Equation:}] \mbox{}
 
 \begin{flalign*}
-\Large F_{1}^{2} = F_{R}^{2} + F_{2}^{2} - 2 \cdot F_R \cdot F_2 \cdot \cos{\theta_{}{F_{R}} - \theta_{}{F_{2}}} &&
+\Large F_{1}^{2} = F_{R}^{2} + F_{2}^{2} - 2 \cdot F_R \cdot F_2 \cdot \cos{(\theta_{F_{R}} - \theta_{F_{2}})} &&
 \end{flalign*}
 
 \item[\textbf{Substitution:}] \mbox{}
 
 \begin{flalign*}
-\Large F_{1}^{2} = (500.00\,\text{N})^{2} + (700.00\,\text{N})^{2} - 2  \cdot  (500.00\,\text{N})  \cdot  (700.00\,\text{N})  \cdot  \cos{105.0^\circ} &&
+\Large F_{1}^{2} = (500.00\,\mathrm{N})^{2} + (700.00\,\mathrm{N})^{2} - 2  \cdot  (500.00\,\mathrm{N})  \cdot  (700.00\,\mathrm{N})  \cdot  \cos{(105.0^\circ)} &&
 \end{flalign*}
 
 \item[\textbf{Result:}] \mbox{}
 
 \begin{flalign*}
-\Large F_{1 Magnitude} = 959.78\,N &&
+\Large |F_{1}| = 959.78\,\mathrm{N} &&
 \end{flalign*}
 
 \end{description}
 
-\item \textbf{Solve for $F_{1 Direction}$}
+\item \textbf{Solve for $\theta_{{F_{1}}}$}
 
 \begin{description}[leftmargin=2cm]
 \item[\textbf{Equation:}] \mbox{}
 
 \begin{flalign*}
-\Large \frac{\sin{alpha}}{F_2} = \frac{\sin{gamma}}{F_1} &&
+\Large \frac{\sin{(\theta_{F_{1}})}}{F_2} = \frac{\sin{(\theta_{F_{R}} - \theta_{F_{2}})}}{F_1} &&
 \end{flalign*}
 
 \item[\textbf{Substitution:}] \mbox{}
 
 \begin{flalign*}
-\Large \frac{\sin{alpha}}{700.00\,\text{N}} = \frac{\sin{105.0^\circ}}{959.78\,\text{N}} &&
+\Large \frac{\sin{(\theta_{F_{1}})}}{700.00\,\mathrm{N}} = \frac{\sin{(105.0^\circ)}}{959.78\,\mathrm{N}} &&
 \end{flalign*}
 
 \item[\textbf{Result:}] \mbox{}
 
 \begin{flalign*}
-\Large F_{1 Direction} = 45.21\,^\circ &&
+\Large \theta_{{F_{1}}} = 45.21\,\mathrm{^\circ} &&
 \end{flalign*}
 
 \end{description}
@@ -107,31 +107,16 @@ $F_{1}$ & ? & ? \\
 
 \section{Summary of Results}
 
-\begin{longtable}{llSl}
+\begin{longtable}{lSSSSS}
 \toprule
-Variable & Name & {Final Value} & Unit \\
+Symbol & {Magnitude (N)} & {Angle ($^\circ$)} & {$F_x$ (N)} & {$F_y$ (N)} \\
 \midrule
 \endhead
-$F_{1_x}$ & F\textbackslash{}_1 X-Component & 676.148 & N \\
-$F_{1_y}$ & F\textbackslash{}_1 Y-Component & 681.173 & N \\
-$F_{2_x}$ & F\textbackslash{}_2 X-Component & -676.148 & N \\
-$F_{2_y}$ & F\textbackslash{}_2 Y-Component & -181.173 & N \\
-$F_{R_mag}$ & F\textbackslash{}_R Magnitude & 500 & N \\
-$F_{R_angle}$ & F\textbackslash{}_R Direction & 1.5708 & ° \\
-$F_{R_x}$ & F\textbackslash{}_R X-Component & 3.06162e-14 & N \\
-$F_{R_y}$ & F\textbackslash{}_R Y-Component & 500 & N \\
+$F_{1}$ & 959.778 & 45.2121 & 676.148 & 681.173 \\
+$F_{2}$ & 700 & -165 & -676.148 & -181.173 \\
+$F_{R}$ & 500 & 90 & 3.06162e-14 & 500 \\
 \bottomrule
 \end{longtable}
-
-\section{Vector Diagram}
-
-\begin{center}
-\includegraphics[width=0.7\textwidth]{Problem_2-2_Find_Force_with_Known_Resultant_diagram.png}
-\end{center}
-
-\begin{center}
-\textit{Figure: Vector diagram showing all forces and their orientations}
-\end{center}
 
 
 \clearpage

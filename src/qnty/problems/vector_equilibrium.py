@@ -459,14 +459,17 @@ class VectorEquilibriumProblem(Problem):
         # Step 1: Solve for unknown magnitude using Law of Cosines
         gamma_deg = math.degrees(gamma)
         # Use LaTeX theta command for proper rendering with force angles
+        # Format subscript to handle underscores properly (e.g., F_R becomes F_{R})
+        resultant_subscript = resultant.name.replace('_', '_{') + '}' if '_' in resultant.name else resultant.name
+        known_subscript = known_force.name.replace('_', '_{') + '}' if '_' in known_force.name else known_force.name
         # Display as cos(θ_R - θ_known) or cos(θ_known - θ_R) depending on which is larger
         if theta_R > theta_known:
-            angle_expr = f"\\theta_{{{resultant.name}}} - \\theta_{{{known_force.name}}}"
+            angle_expr = f"\\theta_{{{resultant_subscript}}} - \\theta_{{{known_subscript}}}"
         else:
-            angle_expr = f"\\theta_{{{known_force.name}}} - \\theta_{{{resultant.name}}}"
+            angle_expr = f"\\theta_{{{known_subscript}}} - \\theta_{{{resultant_subscript}}}"
 
         self.solution_steps.append({
-            "target": f"{unknown_force.name} Magnitude",
+            "target": f"|{unknown_force.name}|",
             "method": "Law of Cosines",
             "equation": f"{unknown_force.name}^2 = {resultant.name}^2 + {known_force.name}^2 - 2*{resultant.name}*{known_force.name}*cos({angle_expr})",
             "substitution": f"{unknown_force.name}^2 = ({F_R:.2f} {force_unit})^2 + ({F_known:.2f} {force_unit})^2 - 2 * ({F_R:.2f} {force_unit}) * ({F_known:.2f} {force_unit}) * cos({gamma_deg:.1f}°)",
@@ -483,11 +486,21 @@ class VectorEquilibriumProblem(Problem):
         # For the textbook problem, they report θ where sin(90°+θ)/F_known = sin(gamma)/F_unknown
         theta_unknown_deg = math.degrees(theta_unknown)
 
+        # Format the angle expression using theta notation like in Law of Cosines
+        # For consistency, use theta notation for all force angles
+        unknown_subscript = unknown_force.name.replace('_', '_{') + '}' if '_' in unknown_force.name else unknown_force.name
+        unknown_angle = f"\\theta_{{{unknown_subscript}}}"  # Direction angle of unknown force
+        # gamma is the same angle as in Law of Cosines
+        if theta_R > theta_known:
+            gamma_angle = f"\\theta_{{{resultant_subscript}}} - \\theta_{{{known_subscript}}}"
+        else:
+            gamma_angle = f"\\theta_{{{known_subscript}}} - \\theta_{{{resultant_subscript}}}"
+
         self.solution_steps.append({
-            "target": f"{unknown_force.name} Direction",
+            "target": f"{unknown_angle}",
             "method": "Law of Sines",
-            "equation": f"sin(alpha) / {known_force.name} = sin(gamma) / {unknown_force.name}",
-            "substitution": f"sin(alpha) / {F_known:.2f} {force_unit} = sin({gamma_deg:.1f}°) / {F_unknown:.2f} {force_unit}",
+            "equation": f"sin({unknown_angle}) / {known_force.name} = sin({gamma_angle}) / {unknown_force.name}",
+            "substitution": f"sin({unknown_angle}) / {F_known:.2f} {force_unit} = sin({gamma_deg:.1f}°) / {F_unknown:.2f} {force_unit}",
             "result_value": f"{theta_unknown_deg:.2f}",
             "result_unit": "°"
         })
@@ -572,7 +585,7 @@ class VectorEquilibriumProblem(Problem):
             angle_expr = f"\\theta_{{{force1.name}}} - \\theta_{{{force2.name}}}"
 
         self.solution_steps.append({
-            "target": f"{resultant.name} Magnitude",
+            "target": f"|{resultant.name}|",
             "method": "Law of Cosines",
             "equation": f"{resultant.name}^2 = {force1.name}^2 + {force2.name}^2 - 2*{force1.name}*{force2.name}*cos(180° - ({angle_expr}))",
             "substitution": f"{resultant.name}^2 = ({F1:.2f} {force_unit})^2 + ({F2:.2f} {force_unit})^2 - 2 * ({F1:.2f} {force_unit}) * ({F2:.2f} {force_unit}) * cos({gamma_deg:.1f}°)",
@@ -585,8 +598,12 @@ class VectorEquilibriumProblem(Problem):
         sin_alpha = F1 * math.sin(angle_in_triangle) / FR
         alpha = math.asin(np.clip(sin_alpha, -1.0, 1.0))
 
+        # Format resultant angle using theta notation
+        resultant_subscript = resultant.name.replace('_', '_{') + '}' if '_' in resultant.name else resultant.name
+        resultant_angle = f"\\theta_{{{resultant_subscript}}}"
+
         self.solution_steps.append({
-            "target": f"{resultant.name} Direction",
+            "target": f"{resultant_angle}",
             "method": "Law of Sines",
             "equation": f"sin(alpha) / {force1.name} = sin(gamma) / {resultant.name}",
             "substitution": f"sin(alpha) / {F1:.2f} {force_unit} = sin({math.degrees(angle_in_triangle):.1f}°) / {FR:.2f} {force_unit}",

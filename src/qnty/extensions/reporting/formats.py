@@ -69,10 +69,13 @@ class MarkdownReportGenerator(ReportGenerator):
         if known_vars:
             # Check if this is vector equilibrium format (has 'magnitude' and 'angle' keys)
             if known_vars and 'magnitude' in known_vars[0]:
-                content.append("| Symbol | Magnitude (unit) | Angle (°) |")
+                # Get the unit from the first variable for the header
+                unit = known_vars[0].get('unit', 'unit')
+                content.append(f"| Symbol | Magnitude ({unit}) | Angle (°) |")
                 content.append("|--------|------------------|-----------|")
                 for var in known_vars:
-                    content.append(f"| {var['symbol']} | {var['magnitude']} {var['unit']} | {var['angle']} |")
+                    # Unit is already in the header, so just show the magnitude value
+                    content.append(f"| {var['symbol']} | {var['magnitude']} | {var['angle']} |")
             else:
                 content.append("| Symbol | Name | Value | Unit |")
                 content.append("|--------|------|-------|------|")
@@ -90,10 +93,13 @@ class MarkdownReportGenerator(ReportGenerator):
         if unknown_vars:
             # Check if this is vector equilibrium format
             if unknown_vars and 'magnitude' in unknown_vars[0]:
-                content.append("| Symbol | Magnitude (unit) | Angle (°) |")
+                # Get the unit from the first variable for the header
+                unit = unknown_vars[0].get('unit', 'unit')
+                content.append(f"| Symbol | Magnitude ({unit}) | Angle (°) |")
                 content.append("|--------|------------------|-----------|")
                 for var in unknown_vars:
-                    content.append(f"| {var['symbol']} | {var['magnitude']} {var['unit']} | {var['angle']} |")
+                    # Unit is already in the header, so just show the magnitude value
+                    content.append(f"| {var['symbol']} | {var['magnitude']} | {var['angle']} |")
             else:
                 content.append("| Symbol | Name | Unit |")
                 content.append("|--------|------|------|")
@@ -150,15 +156,19 @@ class MarkdownReportGenerator(ReportGenerator):
         # Final results summary
         content.append("## 5. Summary of Results")
         content.append("")
-        results = self._format_final_results()
 
-        if results:
-            content.append("| Variable | Name | Final Value | Unit |")
-            content.append("|----------|------|-------------|------|")
-            for res in results:
-                content.append(f"| {res['symbol']} | {res['name']} | {res['value']} | {res['unit']} |")
+        # Use special table format for vector equilibrium problems
+        if _is_vector_equilibrium_problem(self.problem):
+            content.extend(self._format_vector_results_table_md())
         else:
-            content.append("*No results to summarize*")
+            results = self._format_final_results()
+            if results:
+                content.append("| Variable | Name | Final Value | Unit |")
+                content.append("|----------|------|-------------|------|")
+                for res in results:
+                    content.append(f"| {res['symbol']} | {res['name']} | {res['value']} | {res['unit']} |")
+            else:
+                content.append("*No results to summarize*")
         content.append("")
 
         # Include vector diagram after results if generated
@@ -175,6 +185,61 @@ class MarkdownReportGenerator(ReportGenerator):
 
         # Write to file
         output_path.write_text("\n".join(content), encoding="utf-8")
+
+    def _format_vector_results_table_md(self) -> list[str]:
+        """Format results table for vector equilibrium problems with force components (Markdown)."""
+        content = []
+
+        # Get forces from the problem
+        if not hasattr(self.problem, 'forces'):
+            return ["*No results to summarize*"]
+
+        # Table header
+        content.append("| Symbol | Magnitude (N) | Angle (°) | F_x (N) | F_y (N) |")
+        content.append("|--------|---------------|-----------|---------|---------|")
+
+        # Process each force
+        for force_name, force in self.problem.forces.items():
+            symbol = force.name
+
+            # Get magnitude
+            if force.magnitude and force.magnitude.value is not None:
+                mag_value = force.magnitude.value
+                if force.magnitude.preferred:
+                    mag_value = mag_value / force.magnitude.preferred.si_factor
+                magnitude = f"{mag_value:.6g}"
+            else:
+                magnitude = "?"
+
+            # Get angle in degrees
+            if force.angle and force.angle.value is not None:
+                import math
+                angle_deg = force.angle.value * 180 / math.pi
+                angle = f"{angle_deg:.6g}"
+            else:
+                angle = "?"
+
+            # Get components
+            if force.x and force.x.value is not None:
+                x_value = force.x.value
+                if force.x.preferred:
+                    x_value = x_value / force.x.preferred.si_factor
+                fx = f"{x_value:.6g}"
+            else:
+                fx = "?"
+
+            if force.y and force.y.value is not None:
+                y_value = force.y.value
+                if force.y.preferred:
+                    y_value = y_value / force.y.preferred.si_factor
+                fy = f"{y_value:.6g}"
+            else:
+                fy = "?"
+
+            # Add row
+            content.append(f"| {symbol} | {magnitude} | {angle} | {fx} | {fy} |")
+
+        return content
 
     def _format_disclaimer(self) -> list[str]:
         """Format disclaimer section for Markdown."""
@@ -271,15 +336,17 @@ class LatexReportGenerator(ReportGenerator):
         if known_vars:
             # Check if this is vector equilibrium format
             if known_vars and 'magnitude' in known_vars[0]:
+                # Get the unit from the first variable for the header
+                unit = self._escape_latex(known_vars[0].get('unit', 'unit'))
                 content.append(r"\begin{longtable}{lSS}")
                 content.append(r"\toprule")
-                content.append(r"Symbol & {Magnitude (unit)} & {Angle ($^\circ$)} \\")
+                content.append(f"Symbol & {{Magnitude ({unit})}} & {{Angle ($^\\circ$)}} \\\\")
                 content.append(r"\midrule")
                 content.append(r"\endhead")
 
                 for var in known_vars:
-                    mag_with_unit = f"{var['magnitude']}\\,\\text{{{self._escape_latex(var['unit'])}}}"
-                    content.append(f"${self._format_latex_variable(var['symbol'])}$ & {mag_with_unit} & {var['angle']} \\\\")
+                    # Unit is already in the header, so just show the magnitude value
+                    content.append(f"${self._format_latex_variable(var['symbol'])}$ & {var['magnitude']} & {var['angle']} \\\\")
 
                 content.append(r"\bottomrule")
                 content.append(r"\end{longtable}")
@@ -307,14 +374,17 @@ class LatexReportGenerator(ReportGenerator):
         if unknown_vars:
             # Check if this is vector equilibrium format
             if unknown_vars and 'magnitude' in unknown_vars[0]:
+                # Get the unit from the first variable for the header
+                unit = self._escape_latex(unknown_vars[0].get('unit', 'unit'))
                 content.append(r"\begin{longtable}{lll}")
                 content.append(r"\toprule")
-                content.append(r"Symbol & Magnitude (unit) & Angle ($^\circ$) \\")
+                content.append(f"Symbol & Magnitude ({unit}) & Angle ($^\\circ$) \\\\")
                 content.append(r"\midrule")
                 content.append(r"\endhead")
 
                 for var in unknown_vars:
-                    mag_display = f"{var['magnitude']} {self._escape_latex(var['unit'])}" if var['magnitude'] != '?' else '?'
+                    # Unit is already in the header, so just show the magnitude value
+                    mag_display = var['magnitude']
                     angle_display = var['angle']
                     content.append(f"${self._format_latex_variable(var['symbol'])}$ & {mag_display} & {angle_display} \\\\")
 
@@ -344,7 +414,8 @@ class LatexReportGenerator(ReportGenerator):
         for eq in equations:
             # Try to convert to LaTeX math if possible
             latex_eq = self._to_latex_math(eq)
-            content.append(r"\item $" + r"\Large " + latex_eq + "$")
+            # Use displaystyle with Large for bigger equations on the same line as item numbers
+            content.append(r"\item $\displaystyle\Large " + latex_eq + "$")
         content.append(r"\end{enumerate}")
         content.append("")
 
@@ -397,9 +468,10 @@ class LatexReportGenerator(ReportGenerator):
                     # Protect spaces in values like "90 psi" by replacing them with LaTeX space commands
                     latex_eq = self._to_latex_math(step.substituted_equation)
                     # Replace spaces between numbers and units with protected spaces
+                    # Use \mathrm for units to avoid them inheriting \Large size
                     import re
 
-                    latex_eq = re.sub(r"([0-9\.e\-\+]+)\s+([a-zA-Z]+)", r"\1\\,\\text{\2}", latex_eq)
+                    latex_eq = re.sub(r"([0-9\.e\-\+]+)\s+([a-zA-Z]+)", r"\1\\,\\mathrm{\2}", latex_eq)
                     # Use flalign* for left-aligned equations
                     content.append(r"\begin{flalign*}")
                     content.append(r"\Large " + latex_eq + r" &&")
@@ -411,6 +483,9 @@ class LatexReportGenerator(ReportGenerator):
                 content.append("")
                 # Handle degree symbol in result unit (convert to LaTeX)
                 result_unit_formatted = step.result_unit.replace("°", r"^\circ") if step.result_unit else ""
+                # Wrap unit in \mathrm to avoid inheriting \Large size
+                if result_unit_formatted:
+                    result_unit_formatted = r"\mathrm{" + result_unit_formatted + "}"
                 result_eq = self._format_latex_variable(step.equation_name) + " = " + self._escape_latex(str(step.result_value)) + r"\," + result_unit_formatted
                 # Use flalign* for left-aligned equations
                 content.append(r"\begin{flalign*}")
@@ -431,22 +506,26 @@ class LatexReportGenerator(ReportGenerator):
         # Summary
         content.append(r"\section{Summary of Results}")
         content.append("")
-        results = self._format_final_results()
 
-        if results:
-            content.append(r"\begin{longtable}{llSl}")
-            content.append(r"\toprule")
-            content.append(r"Variable & Name & {Final Value} & Unit \\")
-            content.append(r"\midrule")
-            content.append(r"\endhead")
-
-            for res in results:
-                content.append(f"${self._format_latex_variable(res['symbol'])}$ & {self._escape_latex(res['name'])} & {res['value']} & {self._escape_latex(res['unit'])} \\\\")
-
-            content.append(r"\bottomrule")
-            content.append(r"\end{longtable}")
+        # Use special table format for vector equilibrium problems
+        if _is_vector_equilibrium_problem(self.problem):
+            content.extend(self._format_vector_results_table())
         else:
-            content.append(r"\textit{No results to summarize}")
+            results = self._format_final_results()
+            if results:
+                content.append(r"\begin{longtable}{llSl}")
+                content.append(r"\toprule")
+                content.append(r"Variable & Name & {Final Value} & Unit \\")
+                content.append(r"\midrule")
+                content.append(r"\endhead")
+
+                for res in results:
+                    content.append(f"${self._format_latex_variable(res['symbol'])}$ & {self._escape_latex(res['name'])} & {res['value']} & {self._escape_latex(res['unit'])} \\\\")
+
+                content.append(r"\bottomrule")
+                content.append(r"\end{longtable}")
+            else:
+                content.append(r"\textit{No results to summarize}")
         content.append("")
 
         # Include vector diagram after results if generated
@@ -541,6 +620,12 @@ class LatexReportGenerator(ReportGenerator):
         """Format a variable symbol for LaTeX with proper handling of special patterns."""
         if not isinstance(var_symbol, str):
             var_symbol = str(var_symbol)
+
+        # Handle magnitude notation like |F_1| - extract the variable inside pipes
+        if var_symbol.startswith("|") and var_symbol.endswith("|"):
+            inner_var = var_symbol[1:-1]  # Remove pipes
+            formatted_inner = self._format_latex_variable(inner_var)  # Recursively format
+            return f"|{formatted_inner}|"
 
         # Handle _bar pattern - should be overline
         if var_symbol.endswith("_bar"):
@@ -683,8 +768,8 @@ class LatexReportGenerator(ReportGenerator):
 
         def replace_variable(match):
             var_name = match.group(0)
-            # Don't replace LaTeX commands
-            if any(cmd in var_name.lower() for cmd in ["frac", "sqrt", "cdot", "overline"]):
+            # Don't replace LaTeX commands or Greek letters with subscripts
+            if any(cmd in var_name.lower() for cmd in ["frac", "sqrt", "cdot", "overline", "theta", "alpha", "beta", "gamma", "delta"]):
                 return var_name
             return self._format_latex_variable(var_name)
 
@@ -701,12 +786,76 @@ class LatexReportGenerator(ReportGenerator):
         for i in range(1, len(parts)):
             if parts[i]:
                 # Don't replace if this part starts with a LaTeX command
-                if not any(parts[i].startswith(cmd) for cmd in ["frac{", "sqrt{", "cdot", "overline{"]):
+                # theta_, alpha_, etc. are protected because the subscript content should not be reformatted
+                if not any(parts[i].startswith(cmd) for cmd in ["frac{", "sqrt{", "cdot", "overline{", "theta_", "alpha_", "beta_", "gamma_", "delta_"]):
                     # Find content after the command and format variables there
                     # This is a simplified approach - for more complex cases, we'd need a proper parser
                     parts[i] = re.sub(var_pattern, replace_variable, parts[i])
 
         return "\\".join(parts)
+
+    def _format_vector_results_table(self) -> list[str]:
+        """Format results table for vector equilibrium problems with force components."""
+        content = []
+
+        # Get forces from the problem
+        if not hasattr(self.problem, 'forces'):
+            return [r"\textit{No results to summarize}"]
+
+        # Table header
+        content.append(r"\begin{longtable}{lSSSSS}")
+        content.append(r"\toprule")
+        content.append(r"Symbol & {Magnitude (N)} & {Angle ($^\circ$)} & {$F_x$ (N)} & {$F_y$ (N)} \\")
+        content.append(r"\midrule")
+        content.append(r"\endhead")
+
+        # Process each force
+        for force_name, force in self.problem.forces.items():
+            # Get the formatted symbol
+            symbol = self._format_latex_variable(force.name)
+
+            # Get magnitude
+            if force.magnitude and force.magnitude.value is not None:
+                mag_value = force.magnitude.value
+                if force.magnitude.preferred:
+                    # Convert to preferred unit
+                    mag_value = mag_value / force.magnitude.preferred.si_factor
+                magnitude = f"{mag_value:.6g}"
+            else:
+                magnitude = "?"
+
+            # Get angle in degrees
+            if force.angle and force.angle.value is not None:
+                import math
+                angle_deg = force.angle.value * 180 / math.pi  # Convert radians to degrees
+                angle = f"{angle_deg:.6g}"
+            else:
+                angle = "?"
+
+            # Get components
+            if force.x and force.x.value is not None:
+                x_value = force.x.value
+                if force.x.preferred:
+                    x_value = x_value / force.x.preferred.si_factor
+                fx = f"{x_value:.6g}"
+            else:
+                fx = "?"
+
+            if force.y and force.y.value is not None:
+                y_value = force.y.value
+                if force.y.preferred:
+                    y_value = y_value / force.y.preferred.si_factor
+                fy = f"{y_value:.6g}"
+            else:
+                fy = "?"
+
+            # Add row
+            content.append(f"${symbol}$ & {magnitude} & {angle} & {fx} & {fy} \\\\")
+
+        content.append(r"\bottomrule")
+        content.append(r"\end{longtable}")
+
+        return content
 
     def _format_math_functions(self, expr: str) -> str:
         """Format mathematical functions for LaTeX."""
@@ -716,11 +865,12 @@ class LatexReportGenerator(ReportGenerator):
         functions = {"sin": "\\sin", "cos": "\\cos", "tan": "\\tan", "log": "\\log", "ln": "\\ln", "exp": "\\exp"}
 
         for func, latex_func in functions.items():
-            # Replace function calls like sin(x) or cos(135.0°) with \sin{x} or \cos{135.0°}
+            # Replace function calls like sin(x) or cos(135.0°) with \sin{(x)} or \cos{(135.0°)}
             # Use regex to properly match the function call and its argument
             pattern = func + r'\(([^)]+)\)'
             # Use lambda to avoid escape sequence issues in replacement string
-            expr = re.sub(pattern, lambda m: latex_func + '{' + m.group(1) + '}', expr)
+            # Wrap the argument in parentheses for proper LaTeX formatting
+            expr = re.sub(pattern, lambda m: latex_func + '{(' + m.group(1) + ')}', expr)
 
         return expr
 
