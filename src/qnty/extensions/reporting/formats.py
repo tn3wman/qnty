@@ -215,6 +215,8 @@ class MarkdownReportGenerator(ReportGenerator):
             if force.angle and force.angle.value is not None:
                 import math
                 angle_deg = force.angle.value * 180 / math.pi
+                # Normalize to 0-360 degrees (counterclockwise from positive x-axis)
+                angle_deg = angle_deg % 360
                 angle = f"{angle_deg:.6g}"
             else:
                 angle = "?"
@@ -828,6 +830,8 @@ class LatexReportGenerator(ReportGenerator):
             if force.angle and force.angle.value is not None:
                 import math
                 angle_deg = force.angle.value * 180 / math.pi  # Convert radians to degrees
+                # Normalize to 0-360 degrees (counterclockwise from positive x-axis)
+                angle_deg = angle_deg % 360
                 angle = f"{angle_deg:.6g}"
             else:
                 angle = "?"

@@ -71,6 +71,9 @@ class VectorDiagram:
         # Auto-scale parameters (computed when drawing)
         self.max_magnitude: float = 0.0
 
+        # Track angle label positions to avoid overlap
+        self.angle_label_positions: list[tuple[float, float, float, float]] = []  # (x, y, width, height)
+
     def add_vector(
         self,
         force: ForceVector,
@@ -162,6 +165,9 @@ class VectorDiagram:
             Path to saved file
         """
         output_path = Path(output_path)
+
+        # Reset angle label tracking for this diagram
+        self.angle_label_positions = []
 
         # Create figure
         fig, ax = plt.subplots(figsize=self.figsize)
@@ -288,10 +294,18 @@ class VectorDiagram:
         """
         Format vector label with LaTeX notation and magnitude.
 
-        Returns formatted string like: "$F_1$ = 450 N"
+        Returns formatted string like: "$|F_1|$ = 450 N"
         """
-        # Format the force name with LaTeX subscripts
-        latex_label = self._format_label_for_legend(label)
+        # Format the force name with LaTeX subscripts and magnitude bars
+        if '_' in label:
+            parts = label.split('_', 1)
+            if len(parts) == 2:
+                base, subscript = parts
+                latex_label = f'$|{base}_{{{subscript}}}|$'
+            else:
+                latex_label = f'$|{label}|$'
+        else:
+            latex_label = f'$|{label}|$'
 
         # Get magnitude and unit
         if force.magnitude and force.magnitude.value is not None:
@@ -302,7 +316,7 @@ class VectorDiagram:
             else:
                 unit = "N"
 
-            # Format: $F_1$ = 450 N
+            # Format: $|F_1|$ = 450 N
             return f"{latex_label} = {mag_value:.0f} {unit}"
         else:
             return latex_label
@@ -366,7 +380,7 @@ class VectorDiagram:
 
         # Show angle annotation
         if show_angle:
-            self._draw_angle_annotation(ax, angle, min(scaled_mag * 0.3, 2.0), color)
+            self._draw_angle_annotation(ax, angle, min(scaled_mag * 0.3, 2.0), color, label)
 
         # Show components if requested
         if self.show_components:
@@ -417,10 +431,99 @@ class VectorDiagram:
         )
 
         # Always show angle for resultant
-        self._draw_angle_annotation(ax, angle, min(scaled_mag * 0.25, 2.0), color)
+        self._draw_angle_annotation(ax, angle, min(scaled_mag * 0.25, 2.0), color, label)
 
-    def _draw_angle_annotation(self, ax, angle: float, radius: float, color: str) -> None:
-        """Draw angle arc and label."""
+    def _check_label_overlap(self, x: float, y: float, width: float = 1.5, height: float = 0.5) -> bool:
+        """
+        Check if a label at position (x, y) would overlap with existing labels.
+
+        Args:
+            x: X position of label center
+            y: Y position of label center
+            width: Approximate label width
+            height: Approximate label height
+
+        Returns:
+            True if overlap detected, False otherwise
+        """
+        # Check against all existing label positions
+        for ex, ey, ew, eh in self.angle_label_positions:
+            # Simple bounding box overlap check
+            if (abs(x - ex) < (width + ew) / 2 and
+                abs(y - ey) < (height + eh) / 2):
+                return True
+        return False
+
+    def _find_non_overlapping_position(
+        self,
+        angle_deg: float,
+        base_radius: float,
+        max_attempts: int = 8
+    ) -> tuple[float, float, float]:
+        """
+        Find a non-overlapping position for angle label.
+
+        Tries different strategies:
+        1. Different positions along the arc (midpoint, 1/3, 2/3, etc.)
+        2. Different radii (closer or farther from origin)
+
+        Args:
+            angle_deg: Angle in degrees
+            base_radius: Base radius to start with
+            max_attempts: Maximum position attempts
+
+        Returns:
+            Tuple of (label_x, label_y, final_radius)
+        """
+        # Define candidate positions to try
+        # Format: (arc_fraction, radius_multiplier)
+        candidates = [
+            (0.5, 1.2),   # Midpoint, normal distance (default)
+            (0.33, 1.2),  # Earlier on arc
+            (0.67, 1.2),  # Later on arc
+            (0.5, 1.6),   # Midpoint, farther out
+            (0.5, 0.9),   # Midpoint, closer in
+            (0.25, 1.4),  # Very early, bit farther
+            (0.75, 1.4),  # Very late, bit farther
+            (0.4, 1.8),   # Fallback: far out
+        ]
+
+        # Adjust for angle ranges
+        if angle_deg > 120:
+            # For large angles, prefer positions closer to the vector
+            arc_base = 0.85
+        elif angle_deg < 30:
+            # For small angles, use midpoint
+            arc_base = 0.5
+        else:
+            # Medium angles
+            arc_base = 0.5
+
+        for i, (arc_frac, radius_mult) in enumerate(candidates[:max_attempts]):
+            # Calculate position
+            if angle_deg > 120:
+                label_angle_deg = angle_deg * arc_frac
+            else:
+                label_angle_deg = angle_deg * arc_frac
+
+            label_angle_rad = math.radians(label_angle_deg)
+            test_radius = base_radius * radius_mult
+            label_x = test_radius * math.cos(label_angle_rad)
+            label_y = test_radius * math.sin(label_angle_rad)
+
+            # Check for overlap
+            if not self._check_label_overlap(label_x, label_y):
+                return label_x, label_y, test_radius
+
+        # If all positions overlap, return the farthest one as last resort
+        final_radius = base_radius * 2.0
+        label_angle_rad = math.radians(angle_deg * 0.5)
+        label_x = final_radius * math.cos(label_angle_rad)
+        label_y = final_radius * math.sin(label_angle_rad)
+        return label_x, label_y, final_radius
+
+    def _draw_angle_annotation(self, ax, angle: float, radius: float, color: str, label: str = "") -> None:
+        """Draw angle arc and label with theta notation, avoiding overlaps."""
         # Convert angle to degrees
         angle_deg = math.degrees(angle)
 
@@ -438,31 +541,39 @@ class VectorDiagram:
         )
         ax.add_patch(arc)
 
-        # Calculate label position at midpoint of arc using normalized angle
-        # IMPORTANT: Use angle_deg (normalized) not original angle for positioning
-        if angle_deg > 120:
-            # For large angles, place label closer to the vector (85% of the way)
-            label_angle_deg = angle_deg * 0.85
-        elif angle_deg < 30:
-            # For small angles, place at midpoint but farther out
-            label_angle_deg = angle_deg / 2
-            radius = radius * 1.5
+        # Find non-overlapping position for label
+        label_x, label_y, final_radius = self._find_non_overlapping_position(angle_deg, radius)
+
+        # Format angle label with theta notation if label is provided
+        if label:
+            # Format label with subscript (e.g., F_1 becomes \theta_{F_1})
+            if '_' in label:
+                parts = label.split('_', 1)
+                if len(parts) == 2:
+                    base, subscript = parts
+                    theta_label = f'$\\theta_{{{base}_{{{subscript}}}}}$ = {angle_deg:.1f}°'
+                else:
+                    theta_label = f'$\\theta_{{{label}}}$ = {angle_deg:.1f}°'
+            else:
+                theta_label = f'$\\theta_{{{label}}}$ = {angle_deg:.1f}°'
         else:
-            # For medium angles, use midpoint
-            label_angle_deg = angle_deg / 2
+            # Fallback to just the angle
+            theta_label = f"{angle_deg:.1f}°"
 
-        # Convert to radians for positioning
-        label_angle_rad = math.radians(label_angle_deg)
-        label_radius = radius * 1.2
-        label_x = label_radius * math.cos(label_angle_rad)
-        label_y = label_radius * math.sin(label_angle_rad)
+        # Estimate label size (approximate)
+        label_width = 1.5 if label else 0.8
+        label_height = 0.5
 
+        # Add label
         ax.text(
-            label_x, label_y, f"{angle_deg:.1f}°",
+            label_x, label_y, theta_label,
             fontsize=10, color=color,
             ha='center', va='center',
             bbox=dict(boxstyle='round,pad=0.2', facecolor='white', alpha=0.7)
         )
+
+        # Record this label's position to avoid future overlaps
+        self.angle_label_positions.append((label_x, label_y, label_width, label_height))
 
     def _draw_components(self, ax, x: float, y: float, color: str) -> None:
         """Draw component projections (dashed lines)."""

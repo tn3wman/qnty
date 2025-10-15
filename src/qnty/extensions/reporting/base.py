@@ -169,6 +169,8 @@ class ReportGenerator(ABC):
             # Get angle: show value only if originally known, otherwise "?"
             if angle_was_originally_known and angle_var.value is not None:
                 angle_deg = angle_var.value * 180.0 / 3.14159265359
+                # Normalize to 0-360 degrees (counterclockwise from positive x-axis)
+                angle_deg = angle_deg % 360
                 angle_str = f"{angle_deg:.6g}"
             else:
                 angle_str = "?"

@@ -119,11 +119,17 @@ class Vector(Generic[D]):
         if self._dim is None:
             raise ValueError("Cannot create Quantity from dimensionless vector components")
 
+        # Get component value and apply tolerance for near-zero values
+        # This prevents floating-point precision errors like 3.06e-14 appearing as non-zero
+        value = self._coords[index]
+        if abs(value) < 1e-10:  # Tolerance: ~10 orders of magnitude below typical engineering values
+            value = 0.0
+
         # Optimized Quantity creation - bypass dataclass overhead
         q = object.__new__(Quantity)
         q.name = name
         q.dim = self._dim
-        q.value = self._coords[index]
+        q.value = value
         q.preferred = self._unit
         q._symbol = None
         q._output_unit = None

@@ -1,6 +1,6 @@
 # Engineering Calculation Report: Problem 2-2: Find Force with Known Resultant
 
-**Generated:** 2025-10-14 19:44:48
+**Generated:** 2025-10-14 20:13:21
 
 **Description:** 
     If the resultant force is to be 500 N directed along the positive y-axis, and F_2 = 700 N at 195°, determine the magnitude and direction of F_1.
@@ -10,7 +10,7 @@
 
 | Symbol | Magnitude (N) | Angle (°) |
 |--------|------------------|-----------|
-| F_2 | 700 | -165 |
+| F_2 | 700 | 195 |
 | F_R | 500 | 90 |
 
 ## 2. Unknown Variables (To Calculate)
@@ -65,8 +65,14 @@
 | Symbol | Magnitude (N) | Angle (°) | F_x (N) | F_y (N) |
 |--------|---------------|-----------|---------|---------|
 | F_1 | 959.778 | 45.2121 | 676.148 | 681.173 |
-| F_2 | 700 | -165 | -676.148 | -181.173 |
-| F_R | 500 | 90 | 3.06162e-14 | 500 |
+| F_2 | 700 | 195 | -676.148 | -181.173 |
+| F_R | 500 | 90 | 0 | 500 |
+
+## 6. Vector Diagram
+
+![Vector Diagram](Problem_2-2_Find_Force_with_Known_Resultant_diagram.png)
+
+*Figure: Vector diagram showing all forces and their orientations*
 
 
 ---
