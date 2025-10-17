@@ -1,3 +1,4 @@
+from encodings.punycode import T
 import pytest
 from dataclasses import dataclass
 import math
@@ -5,7 +6,7 @@ import math
 from qnty import Dimensionless, Length, Pressure, Problem, Force
 from qnty.core.quantity import Quantity
 from qnty.core.dimension import Dimension
-from qnty.algebra import SelectOption, SelectVariable, equation, geq, gt, cond_expr, leq, match_expr, sqrt
+from qnty.algebra import SelectOption, SelectVariable, equation, geq, gt, cond_expr, leq, match_expr, sqrt, max_expr
 from qnty.problems.rules import add_rule
 
 
@@ -47,6 +48,8 @@ class FlangeDesign(Problem):
 
     # Step 1. Determine the design pressure and temperature of the flange joint, and the external net-section axial force, F_A , and bending moment, M_E. If the pressure is negative, the absolute value of the pressure should be used in this procedure.
     P = Pressure("Design Pressure").set(100).pound_force_per_square_inch
+    F_A = Force("External Net-Section Axial Force F_A").set(0).pound_force
+    M_E = Torque("External Net-Section Bending Moment M_E").set(0).pound_force_inch
 
     # Step 2. Determine the design bolt loads for operating condition, W_o , and the gasket seating condition, W_g , and corresponding actual bolt area, A_b , from 4.16.6.
     # Step 2.1. Determine the design pressure and temperature of the flange joint.
@@ -101,14 +104,23 @@ class FlangeDesign(Problem):
 
     # Step 5. Determine the design bolt load for the gasket seating condition.
     A_b = Length("Total cross-sectional area of all bolts")
-    n_b = Dimensionless("Number of Bolts").set(8).dimensionless
-    d_b = Length("Specified Bolt Diameter").set(0.75).inch
+    n_b = Dimensionless("Number of Bolts").set(6).dimensionless
+    d_b = Length("Specified Bolt Diameter").set(0.4041).inch
+
+    A_b_eqn = equation(A_b, n_b * pi * (d_b / 2)**2)
 
     A_m = Length("Total minimum required cross-sectional area of bolts")
+
+    A_m_eqn = equation(
+        A_m,
+        max_expr(
+            (W_o + F_A + (4*M_E) / G) / S_bo,
+            W_gs/S_bg
+        )
+    )
     S_bg = Pressure("Bolt Allowable Stress for Gasket Seating Condition")
     W_g = Force("Design Bolt Load for Gasket Seating Condition W_g")
 
-    A_b_eqn = equation(A_b, n_b * d_b)
 
     W_g_eqn = equation(
         W_g,
