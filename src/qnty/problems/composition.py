@@ -626,6 +626,18 @@ class DelayedFunction(Expression, ArithmeticOperationsMixin):
             from ..algebra.nodes import ConditionalExpression, wrap_operand
 
             return ConditionalExpression(resolved_args[0], wrap_operand(resolved_args[1]), wrap_operand(resolved_args[2]))
+        elif self.func_name == "match_expr":
+            from ..algebra.nodes import MatchExpression, wrap_operand
+
+            # First arg is the select variable, rest are option-expression pairs
+            select_var = resolved_args[0]
+            # Build cases dictionary from pairs
+            cases_dict = {}
+            for i in range(1, len(resolved_args), 2):
+                option_value = resolved_args[i]
+                expression = resolved_args[i + 1]
+                cases_dict[option_value] = wrap_operand(expression)
+            return MatchExpression(select_var, cases_dict)
         else:
             # Generic function call
             return None

@@ -160,6 +160,7 @@ FORCE_VECTOR_PROBLEMS = {
             "assert_values": True
         },
     },
+    # TODO: Create a way to define a different coordinate system
     # "problem_2_6": {
     #     "name": "Problem 2-6",
     #     "description": """
@@ -168,34 +169,77 @@ FORCE_VECTOR_PROBLEMS = {
     #     """,
     #     "forces": {
     #         "F_1": ForceVector(magnitude=4000, angle=45, unit="N", name="F_1", description="Force 1"),
-    #         "F_2": ForceVector(magnitude=6000, angle=150, unit="N", name="F_2", description="Force 2"),
+    #         "F_2": ForceVector(magnitude=6000, angle=330, unit="N", name="F_2", description="Force 2"),
     #         "F_R": ForceVector.unknown("F_R", is_resultant=True),
     #     },
     #     "expected": {
     #         "F_1": {"magnitude": 4000, "angle": 45, "unit": "N"},
-    #         "F_2": {"magnitude": 6000, "angle": 150, "unit": "N"},
+    #         "F_2": {"magnitude": 6000, "angle": 330, "unit": "N"},
     #         "F_R": {"magnitude": 8030, "angle": 43.78, "unit": "N"},  # 45° - 1.22° clockwise = 43.78°
     #     },
     #     "debug": {"print_results": True, "assert_values": False},
     # },
-    # "problem_2_9": {
-    #     "name": "Problem 2-9",
+    # "problem_2_7": {
+    #     "name": "Problem 2-7",
     #     "description": """
-    #     If the resultant force acting on the support is to be 1200 lb, directed horizontally to the right,
-    #     determine the force F in rope A and the corresponding angle theta.
+    #     Determine the magnitude of the resultant force F_R = F_1 + F_2 and its direction,
+    #     measured clockwise from the positive u axis.
     #     """,
     #     "forces": {
-    #         "F_A": ForceVector.unknown("F_A"),
-    #         "F_B": ForceVector(magnitude=900, angle=330, unit="lbf", name="F_B", description="Force B at 30° below horizontal"),
-    #         "F_R": ForceVector(magnitude=1200, angle=0, unit="lbf", name="F_R", description="Resultant Force", is_resultant=True),
+    #         "F_1": ForceVector(magnitude=4000, angle=45, unit="N", name="F_1", description="Force 1"),
+    #         "F_2": ForceVector(magnitude=6000, angle=330, unit="N", name="F_2", description="Force 2"),
+    #         "F_R": ForceVector.unknown("F_R", is_resultant=True),
     #     },
     #     "expected": {
-    #         "F_A": {"magnitude": 616, "angle": 46.9, "unit": "lbf"},
-    #         "F_B": {"magnitude": 900, "angle": 330, "unit": "lbf"},
-    #         "F_R": {"magnitude": 1200, "angle": 0, "unit": "lbf"},
+    #         "F_1": {"magnitude": 4000, "angle": 45, "unit": "N"},
+    #         "F_2": {"magnitude": 6000, "angle": 330, "unit": "N"},
+    #         "F_R": {"magnitude": 8030, "angle": 43.78, "unit": "N"},  # 45° - 1.22° clockwise = 43.78°
     #     },
     #     "debug": {"print_results": True, "assert_values": False},
     # },
+    # "problem_2_8": {
+    #     "name": "Problem 2-8",
+    #     "description": """
+    #     Determine the magnitude of the resultant force F_R = F_1 + F_2 and its direction,
+    #     measured clockwise from the positive u axis.
+    #     """,
+    #     "forces": {
+    #         "F_1": ForceVector(magnitude=4000, angle=45, unit="N", name="F_1", description="Force 1"),
+    #         "F_2": ForceVector(magnitude=6000, angle=330, unit="N", name="F_2", description="Force 2"),
+    #         "F_R": ForceVector.unknown("F_R", is_resultant=True),
+    #     },
+    #     "expected": {
+    #         "F_1": {"magnitude": 4000, "angle": 45, "unit": "N"},
+    #         "F_2": {"magnitude": 6000, "angle": 330, "unit": "N"},
+    #         "F_R": {"magnitude": 8030, "angle": 43.78, "unit": "N"},  # 45° - 1.22° clockwise = 43.78°
+    #     },
+    #     "debug": {"print_results": True, "assert_values": False},
+    # },
+    "problem_2_9": {
+        "name": "Problem 2-9",
+        "description": """
+        If the resultant force acting on the support is to be 1200 lb, directed horizontally to the right,
+        determine the force F in rope A and the corresponding angle theta.
+        """,
+        "forces": {
+            "F_A": ForceVector.unknown("F_A"),
+            "F_B": ForceVector(
+                magnitude=900, angle=330, unit="lbf",
+                name="F_B", description="Force B"),
+            "F_R": ForceVector(
+                magnitude=1200, angle=0, unit="lbf",
+                name="F_R", description="Resultant Force", is_resultant=True),
+        },
+        "expected": {
+            "F_A": {"magnitude": 615.94, "angle": 46.936, "unit": "lbf"},
+            "F_B": {"magnitude": 900, "angle": 330, "unit": "lbf"},
+            "F_R": {"magnitude": 1200, "angle": 0, "unit": "lbf"},
+        },
+        "debug": {
+            "print_results": False,
+            "assert_values": True
+        },
+    },
     # "problem_2_10": {
     #     "name": "Problem 2-10",
     #     "description": """

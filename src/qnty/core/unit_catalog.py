@@ -398,6 +398,13 @@ pound_force = add_unit(
     aliases=("poundforce", "lbf"),
 )
 
+class ForceUnits(UnitNamespace):
+    __slots__ = ()
+    __preferred__ = "newton"
+
+    newton: Final[Unit] = newton
+    pound_force: Final[Unit] = pound_force
+
 
 # =======================
 # PRESSURE

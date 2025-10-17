@@ -26,6 +26,15 @@ class Area:
 
 # endregion // A
 
+# region // F
+@quantity(uc.ForceUnits)
+class Force:
+    """Force quantity with automatic boilerplate."""
+
+    pass
+
+# endregion // F
+
 
 @quantity(uc.LengthUnits)
 class Length:

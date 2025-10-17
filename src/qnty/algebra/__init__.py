@@ -1,6 +1,7 @@
 from .equation import Equation
 from .functions import abs_expr, cond_expr, cos, exp, ln, log10, max_expr, min_expr, sin, sqrt, tan
-from .nodes import BinaryOperation, ConditionalExpression, Constant, Expression, UnaryFunction, VariableReference, wrap_operand
+from .nodes import BinaryOperation, ConditionalExpression, Constant, Expression, MatchExpression, UnaryFunction, VariableReference, wrap_operand
+from .select import SelectOption, SelectVariable
 from .system import EquationSystem
 
 
@@ -63,6 +64,59 @@ def lt(lhs, rhs) -> BinaryOperation:
 def eq(lhs, rhs) -> BinaryOperation:
     """Create an equality comparison: lhs == rhs"""
     return BinaryOperation("==", wrap_operand(lhs), wrap_operand(rhs))
+
+
+def match_expr(select_var, *cases) -> MatchExpression:
+    """
+    Create a match expression for multi-way selection based on a SelectVariable.
+
+    This provides a cleaner way to express equations that vary by category/type.
+
+    Args:
+        select_var: A SelectVariable instance
+        *cases: Pairs of (option_value, expression) for each case
+
+    Returns:
+        MatchExpression that evaluates to the appropriate expression based on select_var's value
+
+    Example:
+        @dataclass(frozen=True)
+        class GasketType(SelectOption):
+            non_self_energized: str = "non_self_energized"
+            self_energized: str = "self_energized"
+
+        gasket_type = SelectVariable("Gasket Type", GasketType, GasketType.non_self_energized)
+
+        W_o = Force("W_o")
+        W_o_eqn = equation(
+            W_o,
+            match_expr(
+                gasket_type,
+                GasketType.non_self_energized, 0.785*G**2*P + 2*b*pi*G*m*P,
+                GasketType.self_energized, 0.785*G**2*P
+            )
+        )
+    """
+    # Check if we should preserve symbolic expressions (in class definition context)
+    from ..utils.shared_utilities import ContextDetectionHelper
+
+    if ContextDetectionHelper.should_preserve_symbolic_expression():
+        from ..problems.composition import DelayedFunction
+
+        return DelayedFunction("match_expr", select_var, *cases)
+
+    # Parse cases into a dictionary
+    if len(cases) % 2 != 0:
+        raise ValueError("match_expr requires an even number of arguments after select_var (pairs of option_value, expression)")
+
+    cases_dict = {}
+    for i in range(0, len(cases), 2):
+        option_value = cases[i]
+        expression = cases[i + 1]
+        # Wrap the expression
+        cases_dict[option_value] = wrap_operand(expression)
+
+    return MatchExpression(select_var, cases_dict)
 
 
 def solve(quantity, expression) -> bool:
@@ -132,6 +186,11 @@ __all__ = [
     "BinaryOperation",
     "UnaryFunction",
     "ConditionalExpression",
+    "MatchExpression",
+    # Select/Match system
+    "SelectVariable",
+    "SelectOption",
+    "match_expr",
     # Helper functions
     "sin",
     "cos",
