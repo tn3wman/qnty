@@ -423,11 +423,6 @@ pound_force_per_square_inch = attach_composed(
     u.pound_force / (u.inch**2),
     name="pound_force_per_square_inch",
     symbol="psi",
-    aliases=(
-        "psi",
-        "lbf/in2",
-        "lbf/in²",
-    ),
 )
 
 
@@ -511,6 +506,33 @@ class MassDensityUnits(UnitNamespace):
     kilogram_per_cubic_meter: Final[Unit] = kilogram_per_cubic_meter
     pound_mass_per_cubic_foot: Final[Unit] = pound_mass_per_cubic_foot
     ounce_per_milliliter: Final[Unit] = ounce_per_milliliter
+
+
+
+# region // Second Moment of Area
+
+inch_quadrupled = attach_composed(
+    u.inch**4,
+    name="inch_quadrupled",
+    symbol="in⁴",
+)
+
+mm_quadrupled = attach_composed(
+    u.millimeter**4,
+    name="millimeter_quadrupled",
+    symbol="mm⁴",
+)
+
+class SecondMomentOfAreaUnits(UnitNamespace):
+    __slots__ = ()
+    __preferred__ = "inch_quadrupled"
+
+    inch_quadrupled: Final[Unit] = inch_quadrupled
+    millimeter_quadrupled: Final[Unit] = mm_quadrupled
+
+# endregion // Second Moment of Area
+
+
 
 
 # region // Torque

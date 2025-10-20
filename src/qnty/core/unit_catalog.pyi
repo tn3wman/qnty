@@ -24,6 +24,8 @@ class PowerThermalDutyUnits(UnitNamespace): ...
 
 class PressureUnits(UnitNamespace): ...
 
+class SecondMomentOfAreaUnits(UnitNamespace): ...
+
 class SpecificVolumeUnits(UnitNamespace): ...
 
 class TorqueUnits(UnitNamespace): ...
@@ -83,6 +85,7 @@ class Units:
     hour: Final[Unit]
     inch: Final[Unit]
     inch_pound_force: Final[Unit]
+    inch_quadrupled: Final[Unit]
     joule: Final[Unit]
     kelvin: Final[Unit]
     kiloampere: Final[Unit]
@@ -105,6 +108,7 @@ class Units:
     milliampere: Final[Unit]
     milligram: Final[Unit]
     millimeter: Final[Unit]
+    millimeter_quadrupled: Final[Unit]
     millimole: Final[Unit]
     million_british_thermal_unit: Final[Unit]
     millisecond: Final[Unit]
@@ -234,7 +238,6 @@ class Units:
     pascal_seconds: Final[Unit]  # alias for pascal_second
     pascals: Final[Unit]  # alias for pascal
     poundforce: Final[Unit]  # alias for pound_force
-    psi: Final[Unit]  # alias for pound_force_per_square_inch
     radians: Final[Unit]  # alias for radian
     seconds: Final[Unit]  # alias for second
     slugs: Final[Unit]  # alias for slug

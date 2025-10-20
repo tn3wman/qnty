@@ -91,6 +91,13 @@ class Pressure:
 
 # region // S
 
+@quantity(uc.SecondMomentOfAreaUnits)
+class SecondMomentOfArea:
+    """Second moment of area quantity with automatic boilerplate."""
+
+    pass
+
+
 
 @quantity(uc.SpecificVolumeUnits)
 class SpecificVolume:
