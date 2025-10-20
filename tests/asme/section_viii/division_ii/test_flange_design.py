@@ -1,12 +1,13 @@
-from encodings.punycode import T
-import pytest
-from dataclasses import dataclass
 import math
+from dataclasses import dataclass
+from encodings.punycode import T
 
-from qnty import Dimensionless, Length, Pressure, Problem, Force
-from qnty.core.quantity import Quantity
+import pytest
+
+from qnty import Dimensionless, Force, Length, Pressure, Problem, Torque
+from qnty.algebra import SelectOption, SelectVariable, cond_expr, equation, geq, gt, leq, match_expr, max_expr, sqrt
 from qnty.core.dimension import Dimension
-from qnty.algebra import SelectOption, SelectVariable, equation, geq, gt, cond_expr, leq, match_expr, sqrt, max_expr
+from qnty.core.quantity import Quantity
 from qnty.problems.rules import add_rule
 
 
@@ -49,7 +50,7 @@ class FlangeDesign(Problem):
     # Step 1. Determine the design pressure and temperature of the flange joint, and the external net-section axial force, F_A , and bending moment, M_E. If the pressure is negative, the absolute value of the pressure should be used in this procedure.
     P = Pressure("Design Pressure").set(100).pound_force_per_square_inch
     F_A = Force("External Net-Section Axial Force F_A").set(0).pound_force
-    M_E = Torque("External Net-Section Bending Moment M_E").set(0).pound_force_inch
+    M_E = Torque("External Net-Section Bending Moment M_E").set(0).foot_pound_force
 
     # Step 2. Determine the design bolt loads for operating condition, W_o , and the gasket seating condition, W_g , and corresponding actual bolt area, A_b , from 4.16.6.
     # Step 2.1. Determine the design pressure and temperature of the flange joint.
@@ -109,7 +110,21 @@ class FlangeDesign(Problem):
 
     A_b_eqn = equation(A_b, n_b * pi * (d_b / 2)**2)
 
+    S_bo = Pressure("Allowable stress from Annex 3-A for the bolt evaluated at the design temperature.").set(200000000).pascal
+    S_bg = Pressure("Allowable stress from Annex 3-A for the bolt evaluated at the gasket seating temperature").set(200000000).pascal
+
     A_m = Length("Total minimum required cross-sectional area of bolts")
+
+    W_gs = Force("design bolt load for the gasket seating condition")
+
+    W_gs_eqn = equation(
+        W_gs,
+        match_expr(
+            gasket_type,
+            GasketType.non_self_energized, pi*b*G*y,
+            GasketType.self_energized, 0
+        )
+    )
 
     A_m_eqn = equation(
         A_m,
@@ -129,6 +144,14 @@ class FlangeDesign(Problem):
             GasketType.non_self_energized, 0.785 * G**2 * y + 2 * b * pi * G * m * y,  # Equation 4.16.6
             GasketType.self_energized, 0.785 * G**2 * y  # Equation 4.16.7
         )
+    )
+
+    # A_b must be greater than or equal to A_m
+    bolt_area_check = add_rule(
+        geq(A_b, A_m),
+        "Bolt area A_b is less than minimum required bolt area A_m.",
+        warning_type="DESIGN_CHECK",
+        severity="ERROR",
     )
 
     # A_w_b_eqn = equation(

@@ -181,7 +181,7 @@ class TestUnitConversionsIntegrated:
     def test_point_displacement_different_units(self):
         """Test displacing point when vector has different display units."""
         p_m = Point(100.0, 200.0, 0.0, unit=u.meter)
-        v_cm = Vector(50.0, -100.0, 0.0, unit=u.centi_meter)
+        v_cm = Vector(50.0, -100.0, 0.0, unit=u.centimeter)
 
         # Displacement should work (both are lengths)
         p_new = p_m.displaced(v_cm)
@@ -206,7 +206,7 @@ class TestUnitConversionsIntegrated:
     def test_vector_operations_preserve_units(self):
         """Test that vector operations preserve internal SI consistency."""
         v1_m = Vector(1.0, 0.0, 0.0, unit=u.meter)
-        v2_cm = Vector(100.0, 0.0, 0.0, unit=u.centi_meter)  # Also 1 meter
+        v2_cm = Vector(100.0, 0.0, 0.0, unit=u.centimeter)  # Also 1 meter
 
         # Both represent the same displacement
         v_sum = v1_m + v2_cm
@@ -224,7 +224,7 @@ class TestEngineeringScenarios:
         original = Point(10.0, 5.0, 0.0, unit=u.meter)
 
         # Applied displacement (in mm, typical for structural analysis)
-        displacement = Vector(2.5, -1.8, 0.0, unit=u.milli_meter)
+        displacement = Vector(2.5, -1.8, 0.0, unit=u.millimeter)
 
         # New position
         deformed = original.displaced(displacement)

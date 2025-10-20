@@ -555,7 +555,7 @@ class TestVectorEquality:
     def test_equal_vectors_different_units(self):
         """Test that vectors with same components but different units are equal."""
         v1 = Vector(1.0, 2.0, 3.0, unit=u.meter)
-        v2 = Vector(100.0, 200.0, 300.0, unit=u.centi_meter)
+        v2 = Vector(100.0, 200.0, 300.0, unit=u.centimeter)
 
         # Should be equal because internal SI values are the same
         assert v1 == v2

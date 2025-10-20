@@ -239,7 +239,7 @@ class TestPointUnitConversions:
     def test_to_array_with_converted_unit(self):
         """Test to_array after unit conversion."""
         p_m = Point(1.0, 2.0, 3.0, unit=u.meter)
-        p_cm = p_m.to_unit(u.centi_meter)
+        p_cm = p_m.to_unit(u.centimeter)
 
         arr = p_cm.to_array()
 
@@ -262,7 +262,7 @@ class TestPointEquality:
     def test_equal_points_different_units(self):
         """Test that points with same position but different units are equal."""
         p1 = Point(1.0, 2.0, 3.0, unit=u.meter)
-        p2 = Point(100.0, 200.0, 300.0, unit=u.centi_meter)
+        p2 = Point(100.0, 200.0, 300.0, unit=u.centimeter)
 
         # Should be equal because internal SI values are the same
         assert p1 == p2

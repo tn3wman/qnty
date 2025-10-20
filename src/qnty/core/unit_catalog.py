@@ -121,7 +121,7 @@ class LengthUnits(UnitNamespace):
     __preferred__ = "meter"
 
     meter: Final[Unit] = meter
-    millimeter: Final[Unit] = u.milli_meter
+    millimeter: Final[Unit] = u.millimeter
     inch: Final[Unit] = inch
     foot: Final[Unit] = foot
 
@@ -287,7 +287,7 @@ square_meter = attach_composed(
 )
 
 square_millimeter = attach_composed(
-    u.milli_meter**2,
+    u.millimeter**2,
     name="square_millimeter",
     symbol="mm²",
     aliases=("mm2",),
@@ -328,7 +328,7 @@ cubic_meter = attach_composed(
 
 # TODO: Add option to add prefixes to composed units
 liter = attach_composed(
-    u.deci_meter**3,
+    u.decimeter**3,
     name="liter",
     symbol="L",
     aliases=(
@@ -339,7 +339,7 @@ liter = attach_composed(
 )
 
 milli_liter = attach_composed(
-    u.centi_meter**3,
+    u.centimeter**3,
     name="milli_liter",
     symbol="mL",
     aliases=("milliliters", "millilitre", "millilitres"),
@@ -513,6 +513,43 @@ class MassDensityUnits(UnitNamespace):
     ounce_per_milliliter: Final[Unit] = ounce_per_milliliter
 
 
+# region // Torque
+newton_meter = attach_composed(
+    u.newton * u.meter,
+    name="newton_meter",
+    symbol="N·m",
+    aliases=(
+        "N*m",
+    ),
+)
+
+inch_pound_force = attach_composed(
+    u.pound_force * u.inch,
+    name="inch_pound_force",
+    symbol="in·lbf",
+    aliases=(
+        "in*lbf",
+    ),
+)
+
+foot_pound_force = attach_composed(
+    u.pound_force * u.foot,
+    name="foot_pound_force",
+    symbol="ft·lbf",
+    aliases=(
+        "ft*lbf",
+    ),
+)
+
+class TorqueUnits(UnitNamespace):
+    __slots__ = ()
+    __preferred__ = "newton_meter"
+
+    newton_meter: Final[Unit] = newton_meter
+    inch_pound_force: Final[Unit] = inch_pound_force
+    foot_pound_force: Final[Unit] = foot_pound_force
+
+
 cubic_meter_per_second = attach_composed(
     u.meter**3 / u.second,
     name="cubic_meter_per_second",
@@ -566,7 +603,7 @@ pascal_second = attach_composed(
 )
 
 poise = attach_composed(
-    u.gram / (u.centi_meter * u.second),
+    u.gram / (u.centimeter * u.second),
     name="poise",
     symbol="P",
 )

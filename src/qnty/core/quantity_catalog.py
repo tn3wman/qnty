@@ -101,6 +101,18 @@ class SpecificVolume:
 
 # endregion // S
 
+# region // T
+
+@quantity(uc.TorqueUnits)
+class Torque:
+    """Torque quantity with automatic boilerplate."""
+
+    pass
+
+# endregion // T
+
+# region // V
+
 
 @quantity(uc.VelocityLinearUnits)
 class VelocityLinear:
@@ -128,9 +140,5 @@ class ViscosityKinematic:
     """Kinematic viscosity quantity with automatic boilerplate."""
 
     pass
-
-
-# region // V
-
 
 # endregion // V
