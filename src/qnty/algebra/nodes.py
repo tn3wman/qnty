@@ -407,8 +407,11 @@ class BinaryOperation(Expression):
                         # Power operation not supported on new Quantity - use fallback
                         pass
                 # For comparison operators, fall through to normal handling
-            except (ValueError, TypeError):
-                # If Quantity arithmetic fails, fall back to Expression arithmetic
+            except TypeError:
+                # Re-raise TypeError - these are dimensional mismatches and must be surfaced
+                raise
+            except ValueError:
+                # ValueError may indicate other issues, fall back to Expression arithmetic
                 pass
 
         # Normal path: check operator type with pre-compiled sets
@@ -515,8 +518,11 @@ class BinaryOperation(Expression):
                 left_value = left_val.value if _has_valid_value(left_val) and left_val.value is not None else 0.0
                 right_value = right_val.value if _has_valid_value(right_val) and right_val.value is not None else 0.0
                 result = self._perform_comparison(left_value, right_value)
-        except (ValueError, TypeError, AttributeError):
-            # If Quantity comparison fails, fall back to value comparison
+        except TypeError:
+            # Re-raise TypeError - dimensional mismatches in comparisons are critical errors
+            raise
+        except (ValueError, AttributeError):
+            # If Quantity comparison fails for other reasons, fall back to value comparison
             left_val, right_val = self._normalize_comparison_units(left_val, right_val)
             left_value = left_val.value if _has_valid_value(left_val) and left_val.value is not None else 0.0
             right_value = right_val.value if _has_valid_value(right_val) and right_val.value is not None else 0.0

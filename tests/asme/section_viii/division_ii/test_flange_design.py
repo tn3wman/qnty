@@ -1,16 +1,14 @@
 import math
 from dataclasses import dataclass
-from encodings.punycode import T
-from re import S
 
 import pytest
-from sympy import jn_zeros
 
-from qnty import Dimensionless, Force, Length, Pressure, Problem, Torque, SecondMomentOfArea
-from qnty.algebra import SelectOption, SelectVariable, cond_expr, equation, geq, gt, leq, match_expr, max_expr, sqrt, ln, log10, abs_expr
+from qnty import Area, Dimensionless, Force, Length, Pressure, Problem, SecondMomentOfArea, Torque
+from qnty.algebra import SelectOption, SelectVariable, abs_expr, cond_expr, equation, geq, gt, leq, ln, log10, match_expr, max_expr, sqrt
 from qnty.core.dimension import Dimension
 from qnty.core.quantity import Quantity
 from qnty.problems.rules import add_rule
+
 
 @dataclass(frozen=True)
 class PressureType(SelectOption):
@@ -75,11 +73,11 @@ class FlangeDesign(Problem):
         # TODO: Add temperature handling
     # Step 2.2. Select a gasket and determine the gasket factors m and y from Table 4.16.1, or other sources. The selected gasket width should comply with the guidelines detailed in Table 4.16.2.
     gasket_type = SelectVariable("Gasket Type", GasketType, GasketType.non_self_energized)
-    m = Dimensionless("Gasket Factor m").set(2.0).dimensionless
+    m = Dimensionless("Gasket Factor m").set(2).dimensionless
     y = Pressure("Gasket Factor y").set(2000).pound_force_per_square_inch
 
     # Step 2.3. Determine the width of the gasket, N, basic gasket seating width, b_0, the effective gasket seating width, b, and the location of the gasket reaction, G, based on the flange and gasket geometry, the information in Table 4.16.3 and Figure 4.16.8, and the equations shown below. Note that for lap joint flanges, G is equal to the midpoint of contact between the flange and the lap, see Figures 4.16.5 and 4.16.8.
-    N = Length("Gasket Width N").set(0.3).inch
+    N = Length("Gasket Width N").set(0.25).inch
 
     b_0 = Length("Basic Gasket Seating Width b_0")
     b_0_cond = Length("Condition for b_0").set(6).millimeter
@@ -88,7 +86,7 @@ class FlangeDesign(Problem):
     C_ul = Length("Conversion factor for length").set(1).inch
 
     G = Length("Location of Gasket Reaction G")
-    G_c = Length("Outside Diameter of Gasket Contact Area").set(3).inch
+    G_c = Length("Outside Diameter of Gasket Contact Area").set(2.875).inch
 
     b_0_eqn = equation(b_0, N / 2)
     b_eqn = equation(
@@ -121,16 +119,16 @@ class FlangeDesign(Problem):
     )
 
     # Step 2.5. Determine the design bolt load for the gasket seating condition.
-    A_b = Length("Total cross-sectional area of all bolts")
+    A_b = Area("Total cross-sectional area of all bolts")
     n_b = Dimensionless("Number of Bolts").set(6).dimensionless
     d_b = Length("Specified Bolt Diameter").set(0.4041).inch
 
     A_b_eqn = equation(A_b, n_b * pi * (d_b / 2)**2)
 
-    S_bo = Pressure("Allowable stress from Annex 3-A for the bolt evaluated at the design temperature.").set(200000000).pascal
-    S_bg = Pressure("Allowable stress from Annex 3-A for the bolt evaluated at the gasket seating temperature").set(200000000).pascal
+    S_bo = Pressure("Allowable stress from Annex 3-A for the bolt evaluated at the design temperature.").set(20000).pound_force_per_square_inch
+    S_bg = Pressure("Allowable stress from Annex 3-A for the bolt evaluated at the gasket seating temperature").set(20000).pound_force_per_square_inch
 
-    A_m = Length("Total minimum required cross-sectional area of bolts")
+    A_m = Area("Total minimum required cross-sectional area of bolts")
 
     W_gs = Force("design bolt load for the gasket seating condition")
 
@@ -167,10 +165,10 @@ class FlangeDesign(Problem):
 
     # Step 3. Determine an initial flange geometry, in addition to the information required to determine the bolt load, the following geometric parameters are required
     # (a) The flange bore, B (b) The bolt circle diameter, C (c) The outside diameter of the flange, A (d) The flange thickness, t (e) The thickness of the hub at the large end, g1 (f) The thickness of the hub at the small end, g0 (g) The hub length, h
-    B = Length("Flange Bore").set(3).inch
+    B = Length("Flange Bore").set(2.375).inch
     C = Length("Bolt Circle Diameter").set(4.5).inch
     A = Length("Outside Diameter of the Flange").set(5.5).inch
-    t = Length("Flange Thickness").set(0.5).inch
+    t = Length("Flange Thickness").set(0.75).inch
     g_1 = Length("Thickness of the Hub at the Large End").set(0).inch
     g_0 = Length("Thickness of the Hub at the Small End").set(0).inch
     h = Length("Hub Length").set(0).inch
@@ -179,6 +177,51 @@ class FlangeDesign(Problem):
     r_1 = Length("Fillet Radius at the Junction of the Hub and Flange").set(0).inch
 
     # Step 4. Determine the flange stress factors using the equations in Tables 4.16.4 and 4.16.5.
+    K = Dimensionless("ratio of the flange outside diameter to the flange inside diameter")
+    K_eq = equation(
+        K,
+        A / B
+    )
+
+    # expr_Y = (1/(K-1)) * (0.66845 + 5.71690 * ((K**2 * log10(K)) / (K**2 - 1)))
+    # expr_Y_r = alpha_r * Y
+
+    # expr_T = (K**2 * (1+8.55246*log10(K)) - 1) / ((1.04720 + 1.9448*K**2) * (K - 1))
+    # expr_T_r = (Z+0.3)/(Z-0.3) * alpha_r * T
+
+    # expr_U = (K**2 * (1 + 8.55246*log10(K)) - 1) / (1.36136 * (K**2 - 1) * (K - 1))
+    # expr_U_r = alpha_r * U
+
+    # expr_Z = (K**2 + 1) / (K**2 - 1)
+
+    # expr_L = (t*e + 1)/T + (t**3/d)
+    # expr_L_r = (t*e_r + 1)/T_r + (t**3/d_r)
+
+    # expr_e_integral = F/h_o
+    # expr_e_r_integral = F/h_or
+
+    # expr_e_loose = F_L/h_o
+    # expr_e_r_loose = F_L/h_or
+
+    # expr_e_slip = F_S/h_o
+
+    # expr_d_integral = (U * g_0**2 * h_o) / V
+    # expr_d_r_integral = (U_r * g_0**2 * h_or) / V
+
+    # expr_d_loose = (U * g_0**2 * h_o) / V_L
+    # expr_d_r_loose = (U_r * g_0**2 * h_or) / V_L
+
+    # expr_d_slip = (U * g_0**2 * h_o) / V_S
+
+    # expr_h_o = sqrt(B*g_0)
+    # expr_h_or = sqrt(A*g_0)
+
+    # expr_X_g = g_1/g_0
+    # expr_X_g2 = (g_2/g_0)
+    # # TODO: If it is an intergral flange and g_1 = g_0, X_h = 2.0 otherwise X_h = h/h_o
+    # expr_X_h = h/h_o
+    # # TODO: If it is an intergral flange and g_1 = g_0, X_h = 2.0 otherwise X_h = h/h_or
+    # expr_X_h_r = h/h_or
 
 
     # Step 5. Determine the flange forces.
@@ -250,7 +293,8 @@ class FlangeDesign(Problem):
     B_sc = Dimensionless("bolt spacing correction factor")
     B_sc_eqn = equation(
         B_sc,
-        max_expr(1, sqrt(B_s/(2*a*t))))
+        max_expr(1, sqrt(B_s/(2*a + t)))
+    )
 
     F_sr = Dimensionless("moment factor used to design split rings").set(1.0).dimensionless # 1.0 for non-split rings
 
@@ -263,11 +307,7 @@ class FlangeDesign(Problem):
         )
     )
 
-    K = Dimensionless("ratio of the flange outside diameter to the flange inside diameter")
-    K_eq = equation(
-        K,
-        A / B
-    )
+
 
     # I =  bending moment of inertia of the flange cross-section
     # I_p = polar moment of inertia of the flange cross-section
@@ -290,7 +330,7 @@ class FlangeDesign(Problem):
         A_R*t**3*((1/3) - 0.21*(t/A_R) * (1 - (1/12)*(t/A_R)**4))
     )
 
-    # TODO: Add natural logarithm function to algebra module
+    # TODO: Complete match criteria
     T_eqn = equation(
         I,
         match_expr(
@@ -321,7 +361,7 @@ class FlangeDesign(Problem):
         Y,
         (1/(K-1)) * (0.66845 + 5.71690 * ((K**2 * log10(K)) / (K**2 - 1)))
     )
-
+    # TODO: Complete match criteria
     S_Ho = Pressure("flange hub stress operating")
     S_Ro = Pressure("flange radial stress operating")
     S_To = Pressure("flange tangential stress operating")
@@ -338,7 +378,7 @@ class FlangeDesign(Problem):
         (Y*M_o) / (t**2*B)
     )
 
-
+    # TODO: Complete match criteria
     S_Hg = Pressure("flange hub stress gasket seating")
     S_Rg = Pressure("flange radial stress gasket seating")
     S_Tg = Pressure("flange tangential stress gasket seating")
@@ -357,8 +397,8 @@ class FlangeDesign(Problem):
 
     # Step 9. Check the flange stress acceptance criteria. The two criteria shown below shall be evaluated. If the stress criteria are satisfied, go to Step 10. If the stress criteria are not satisfied, re-proportion the flange dimensions and go to Step 4.
         # (a) Allowable Normal Stress - The criteria to evaluate the normal stresses for the operating and gasket seating conditions are shown in Table 4.16.9.
-    S_fo = Pressure("allowable stress from Annex 3-A for the flange evaluated at the design temperature").set(200000000).pascal
-    S_fg = Pressure("allowable stress from Annex 3-A for the flange evaluated at the gasket seating temperature").set(200000000).pascal
+    S_fo = Pressure("allowable stress from Annex 3-A for the flange evaluated at the design temperature").set(20000).pound_force_per_square_inch
+    S_fg = Pressure("allowable stress from Annex 3-A for the flange evaluated at the gasket seating temperature").set(20000).pound_force_per_square_inch
     allowable_normal_stress_check_operating = add_rule(
         leq(S_To, S_fo),
         "Flange tangential stress for operating condition exceeds allowable stress S_fo.",
@@ -399,12 +439,59 @@ def create_flange_design():
     return FlangeDesign()
 
 
-def test_simple_problem():
+def test_simple_problem(capsys):
     problem = create_flange_design()
+
+    problem.m.set(2).dimensionless
+    problem.y.set(2000).pound_force_per_square_inch
+
+    problem.C.set(4.25).inch
+
+    problem.t.set(0.75).inch
+    problem.n_b.set(4).dimensionless
+
     problem.solve()
+
+
+
+    with capsys.disabled():
+        print("\nFinal Results:")
+
+        # Bolt Loads
+        print(problem.A_m.to_unit("inch2"))
+        print(problem.A_b.to_unit("inch2"))
+
+        print(f'W_o = {problem.W_o.to_unit("lbf")}')
+        print(f'W_g = {problem.W_g.to_unit("lbf")}')
+
+        # Flange moment arms
+        print(f'h_D = {problem.h_D.to_unit("inch")}')
+        print(f'h_T = {problem.h_T.to_unit("inch")}')
+        print(f'h_G = {problem.h_G.to_unit("inch")}')
+
+        # Flange Moments
+        print(f'B_sc = {problem.B_sc}')
+        print(f'M_o = {problem.M_o.to_unit("in*lbf")}')
+        print(f'M_oe = {problem.M_oe.to_unit("in*lbf")}')
+        print(f'M_g = {problem.M_g.to_unit("in*lbf")}')
+
+        print(f'S_To = {problem.S_To.to_unit("psi")}')
+        print(f'S_Tg = {problem.S_Tg.to_unit("psi")}')
+        print(f'S_fo = {problem.S_fo.to_unit("psi")}')
+        print(f'S_fg = {problem.S_fg.to_unit("psi")}')
+
+        print(f'Y = {problem.Y}')
+
+        print(f'J_o = {problem.J_o}')
+        print(f'J_g = {problem.J_g}')
+
 
 def test_example_problem(capsys):
     problem = create_flange_design()
+
+    # Flange Type Integral type flange with hub
+    problem.flange_type.set(FlangeType.integral_welded_slip)
+
     # Flange Design
     problem.A.set(22).inch
     problem.B.set(16).inch
@@ -447,4 +534,31 @@ def test_example_problem(capsys):
         print(problem.b.to_unit("inch"))
 
         # Bolt Loads
-        print(problem.H.to_unit("lbf"))
+        print(f'H = {problem.H.to_unit("lbf")}')
+        print(f'H_G = {problem.H_G.to_unit("lbf")}') # HP in example document
+        print(f'H_D = {problem.H_D.to_unit("lbf")}')
+        print(f'H_T = {problem.H_T.to_unit("lbf")}')
+        print(f'W_o = {problem.W_o.to_unit("lbf")}') # Wm1 in example document
+        print(f'W_gs = {problem.W_gs.to_unit("lbf")}') # Wm2 in example document
+        print(f'A_m = {problem.A_m.to_unit("inch2")}')
+        print(f'A_b = {problem.A_b.to_unit("inch2")}')
+
+        # Flange Loads
+        print(f'W_g = {problem.W_g.to_unit("lbf")}') # W in example document
+        print(f'H_G = {problem.H_G.to_unit("lbf")}') # Mo in example document
+        # TODO: Maybe add individual bolt load calculation?
+
+        # Flange moment arms
+        print(f'h_D = {problem.h_D.to_unit("inch")}')
+        print(f'h_T = {problem.h_T.to_unit("inch")}')
+        print(f'h_G = {problem.h_G.to_unit("inch")}')
+
+        # Flange Moments
+        print(f'B_sc = {problem.B_sc}')
+        print(f'M_o = {problem.M_o.to_unit("in*lbf")}')
+        print(f'M_oe = {problem.M_oe.to_unit("in*lbf")}')
+        print(f'M_g = {problem.M_g.to_unit("in*lbf")}')
+
+        print(problem.H_D.to_unit("lbf") * problem.h_D.to_unit("inch") + problem.H_T.to_unit("lbf") * problem.h_T.to_unit("inch") + problem.H_G.to_unit("lbf") * problem.h_G.to_unit("inch"))
+
+        print(f'Y = {problem.Y}')

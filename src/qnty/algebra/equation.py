@@ -115,7 +115,11 @@ class AlgebraicInverter:
         if inverter:
             try:
                 return inverter(result, other, is_left)
-            except Exception:
+            except TypeError:
+                # Re-raise TypeError for dimensional mismatches - these are critical errors
+                raise
+            except (ZeroDivisionError, ValueError, AttributeError):
+                # Other errors indicate the operation cannot be inverted, return None
                 return None
         return None
 
