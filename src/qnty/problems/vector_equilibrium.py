@@ -87,15 +87,18 @@ class VectorEquilibriumProblem(Problem):
                 name=force.name,
                 description=force.description,
                 is_known=True,
-                is_resultant=force.is_resultant
+                is_resultant=force.is_resultant,
+                coordinate_system=force.coordinate_system,
+                angle_reference=force.angle_reference,
             )
         else:
             # Unknown force - may have known angle but unknown magnitude
             angle_value = None
             angle_unit = None
             if force.angle is not None and force.angle.value is not None:
-                # Convert angle from radians to degrees for unknown() classmethod
-                angle_value = force.angle.value * 180.0 / 3.14159265359
+                # Angle is stored internally as standard (CCW from +x)
+                # Convert back to the angle_reference system for cloning
+                angle_value = force.angle_reference.from_standard(force.angle.value, angle_unit="degree")
                 angle_unit = "degree"
 
             return ForceVector.unknown(
@@ -103,7 +106,9 @@ class VectorEquilibriumProblem(Problem):
                 is_resultant=force.is_resultant,
                 angle=angle_value,
                 angle_unit=angle_unit,
-                description=force.description
+                description=force.description,
+                coordinate_system=force.coordinate_system,
+                angle_reference=force.angle_reference,
             )
 
     def add_force(self, force: ForceVector, name: str | None = None) -> None:
@@ -217,13 +222,7 @@ class VectorEquilibriumProblem(Problem):
 
             if force.magnitude is not None and force.magnitude.value is not None:
                 # Add magnitude as a variable
-                mag_var = Quantity(
-                    name=f"{force.name} Magnitude",
-                    dim=dim.force,
-                    value=force.magnitude.value,
-                    preferred=force.magnitude.preferred,
-                    _symbol=f"{force_name}_mag"
-                )
+                mag_var = Quantity(name=f"{force.name} Magnitude", dim=dim.force, value=force.magnitude.value, preferred=force.magnitude.preferred, _symbol=f"{force_name}_mag")
                 self.variables[f"{force_name}_mag"] = mag_var
 
                 # Store original state for report generator
@@ -234,13 +233,7 @@ class VectorEquilibriumProblem(Problem):
 
             if force.angle is not None and force.angle.value is not None:
                 # Add angle as a variable
-                angle_var = Quantity(
-                    name=f"{force.name} Direction",
-                    dim=dim.D,
-                    value=force.angle.value,
-                    preferred=force.angle.preferred,
-                    _symbol=f"{force_name}_angle"
-                )
+                angle_var = Quantity(name=f"{force.name} Direction", dim=dim.D, value=force.angle.value, preferred=force.angle.preferred, _symbol=f"{force_name}_angle")
                 self.variables[f"{force_name}_angle"] = angle_var
 
                 # Store original state
@@ -251,23 +244,11 @@ class VectorEquilibriumProblem(Problem):
 
             # Add components if available
             if force.x is not None and force.x.value is not None:
-                x_var = Quantity(
-                    name=f"{force.name} X-Component",
-                    dim=dim.force,
-                    value=force.x.value,
-                    preferred=force.x.preferred,
-                    _symbol=f"{force_name}_x"
-                )
+                x_var = Quantity(name=f"{force.name} X-Component", dim=dim.force, value=force.x.value, preferred=force.x.preferred, _symbol=f"{force_name}_x")
                 self.variables[f"{force_name}_x"] = x_var
 
             if force.y is not None and force.y.value is not None:
-                y_var = Quantity(
-                    name=f"{force.name} Y-Component",
-                    dim=dim.force,
-                    value=force.y.value,
-                    preferred=force.y.preferred,
-                    _symbol=f"{force_name}_y"
-                )
+                y_var = Quantity(name=f"{force.name} Y-Component", dim=dim.force, value=force.y.value, preferred=force.y.preferred, _symbol=f"{force_name}_y")
                 self.variables[f"{force_name}_y"] = y_var
 
     def _populate_solving_history(self) -> None:
@@ -299,10 +280,7 @@ class VectorEquilibriumProblem(Problem):
 
         Uses vector addition (component summation).
         """
-        self.solution_steps.append({
-            "method": "Vector Addition (Component Summation)",
-            "description": "Sum all force components to find resultant"
-        })
+        self.solution_steps.append({"method": "Vector Addition (Component Summation)", "description": "Sum all force components to find resultant"})
 
         # Sum components
         sum_x = 0.0
@@ -326,6 +304,7 @@ class VectorEquilibriumProblem(Problem):
 
         # Create resultant vector
         from ..core.dimension_catalog import dim
+
         x_qty = Quantity(name="FR_x", dim=dim.force, value=sum_x, preferred=ref_unit)
         y_qty = Quantity(name="FR_y", dim=dim.force, value=sum_y, preferred=ref_unit)
         z_qty = Quantity(name="FR_z", dim=dim.force, value=sum_z, preferred=ref_unit)
@@ -351,17 +330,10 @@ class VectorEquilibriumProblem(Problem):
 
         if ref_unit is not None and resultant.magnitude is not None and resultant.angle is not None:
             mag_value = resultant.magnitude.value / ref_unit.si_factor if resultant.magnitude.value is not None else 0.0
-            ang_value = resultant.angle.value * 180/math.pi if resultant.angle.value is not None else 0.0
-            self.solution_steps.append({
-                "result": f"Resultant: {mag_value:.2f} {ref_unit.symbol} at {ang_value:.1f}°"
-            })
+            ang_value = resultant.angle.value * 180 / math.pi if resultant.angle.value is not None else 0.0
+            self.solution_steps.append({"result": f"Resultant: {mag_value:.2f} {ref_unit.symbol} at {ang_value:.1f}°"})
 
-    def _solve_single_unknown(
-        self,
-        known_forces: list[ForceVector],
-        unknown_force: ForceVector,
-        resultant_forces: list[ForceVector]
-    ) -> None:
+    def _solve_single_unknown(self, known_forces: list[ForceVector], unknown_force: ForceVector, resultant_forces: list[ForceVector]) -> None:
         """
         Solve for single unknown force given known forces.
 
@@ -401,12 +373,7 @@ class VectorEquilibriumProblem(Problem):
             # Fall back to component summation
             self._solve_by_components(known_forces, unknown_force)
 
-    def _solve_unknown_from_resultant_and_known(
-        self,
-        unknown_force: ForceVector,
-        resultant: ForceVector,
-        known_force: ForceVector
-    ) -> None:
+    def _solve_unknown_from_resultant_and_known(self, unknown_force: ForceVector, resultant: ForceVector, known_force: ForceVector) -> None:
         """
         Solve for unknown force given known resultant and one known force.
 
@@ -440,7 +407,7 @@ class VectorEquilibriumProblem(Problem):
 
         # Apply law of cosines: F_unknown² = F_R² + F_known² - 2·F_R·F_known·cos(γ)
         # This gives us the magnitude of the unknown force
-        F_unknown_squared = F_R**2 + F_known**2 - 2*F_R*F_known*math.cos(gamma)
+        F_unknown_squared = F_R**2 + F_known**2 - 2 * F_R * F_known * math.cos(gamma)
         F_unknown = math.sqrt(F_unknown_squared)
 
         # Now find the angle of the unknown force using vector addition
@@ -460,22 +427,24 @@ class VectorEquilibriumProblem(Problem):
         gamma_deg = math.degrees(gamma)
         # Use LaTeX theta command for proper rendering with force angles
         # Format subscript to handle underscores properly (e.g., F_R becomes F_{R})
-        resultant_subscript = resultant.name.replace('_', '_{') + '}' if '_' in resultant.name else resultant.name
-        known_subscript = known_force.name.replace('_', '_{') + '}' if '_' in known_force.name else known_force.name
+        resultant_subscript = resultant.name.replace("_", "_{") + "}" if "_" in resultant.name else resultant.name
+        known_subscript = known_force.name.replace("_", "_{") + "}" if "_" in known_force.name else known_force.name
         # Display as cos(θ_R - θ_known) or cos(θ_known - θ_R) depending on which is larger
         if theta_R > theta_known:
             angle_expr = f"\\theta_{{{resultant_subscript}}} - \\theta_{{{known_subscript}}}"
         else:
             angle_expr = f"\\theta_{{{known_subscript}}} - \\theta_{{{resultant_subscript}}}"
 
-        self.solution_steps.append({
-            "target": f"|{unknown_force.name}|",
-            "method": "Law of Cosines",
-            "equation": f"{unknown_force.name}^2 = {resultant.name}^2 + {known_force.name}^2 - 2*{resultant.name}*{known_force.name}*cos({angle_expr})",
-            "substitution": f"{unknown_force.name}^2 = ({F_R:.2f} {force_unit})^2 + ({F_known:.2f} {force_unit})^2 - 2 * ({F_R:.2f} {force_unit}) * ({F_known:.2f} {force_unit}) * cos({gamma_deg:.1f}°)",
-            "result_value": f"{F_unknown:.2f}",
-            "result_unit": force_unit
-        })
+        self.solution_steps.append(
+            {
+                "target": f"|{unknown_force.name}|",
+                "method": "Law of Cosines",
+                "equation": f"{unknown_force.name}^2 = {resultant.name}^2 + {known_force.name}^2 - 2*{resultant.name}*{known_force.name}*cos({angle_expr})",
+                "substitution": f"{unknown_force.name}^2 = ({F_R:.2f} {force_unit})^2 + ({F_known:.2f} {force_unit})^2 - 2 * ({F_R:.2f} {force_unit}) * ({F_known:.2f} {force_unit}) * cos({gamma_deg:.1f}°)",
+                "result_value": f"{F_unknown:.2f}",
+                "result_unit": force_unit,
+            }
+        )
 
         # Step 2: Solve for unknown direction using Law of Sines
         # sin(alpha) / F_known = sin(gamma) / F_unknown
@@ -488,7 +457,7 @@ class VectorEquilibriumProblem(Problem):
 
         # Format the angle expression using theta notation like in Law of Cosines
         # For consistency, use theta notation for all force angles
-        unknown_subscript = unknown_force.name.replace('_', '_{') + '}' if '_' in unknown_force.name else unknown_force.name
+        unknown_subscript = unknown_force.name.replace("_", "_{") + "}" if "_" in unknown_force.name else unknown_force.name
         unknown_angle = f"\\theta_{{{unknown_subscript}}}"  # Direction angle of unknown force
         # gamma is the same angle as in Law of Cosines
         if theta_R > theta_known:
@@ -496,14 +465,16 @@ class VectorEquilibriumProblem(Problem):
         else:
             gamma_angle = f"\\theta_{{{known_subscript}}} - \\theta_{{{resultant_subscript}}}"
 
-        self.solution_steps.append({
-            "target": f"{unknown_angle}",
-            "method": "Law of Sines",
-            "equation": f"sin({unknown_angle}) / {known_force.name} = sin({gamma_angle}) / {unknown_force.name}",
-            "substitution": f"sin({unknown_angle}) / {F_known:.2f} {force_unit} = sin({gamma_deg:.1f}°) / {F_unknown:.2f} {force_unit}",
-            "result_value": f"{theta_unknown_deg:.2f}",
-            "result_unit": "°"
-        })
+        self.solution_steps.append(
+            {
+                "target": f"{unknown_angle}",
+                "method": "Law of Sines",
+                "equation": f"sin({unknown_angle}) / {known_force.name} = sin({gamma_angle}) / {unknown_force.name}",
+                "substitution": f"sin({unknown_angle}) / {F_known:.2f} {force_unit} = sin({gamma_deg:.1f}°) / {F_unknown:.2f} {force_unit}",
+                "result_value": f"{theta_unknown_deg:.2f}",
+                "result_unit": "°",
+            }
+        )
 
         # Create unknown force vector
         ref_unit = resultant.magnitude.preferred
@@ -523,12 +494,7 @@ class VectorEquilibriumProblem(Problem):
         unknown_force._angle = angle_qty
         unknown_force.is_known = True
 
-    def _solve_resultant_from_two_forces(
-        self,
-        force1: ForceVector,
-        force2: ForceVector,
-        resultant: ForceVector
-    ) -> None:
+    def _solve_resultant_from_two_forces(self, force1: ForceVector, force2: ForceVector, resultant: ForceVector) -> None:
         """
         Solve for resultant of two forces using law of cosines and law of sines.
 
@@ -559,7 +525,7 @@ class VectorEquilibriumProblem(Problem):
         # Apply law of cosines: FR² = F1² + F2² - 2·F1·F2·cos(180° - γ)
         # Note: The angle in the triangle is (180° - γ) due to parallelogram law
         angle_in_triangle = math.pi - gamma
-        FR_squared = F1**2 + F2**2 - 2*F1*F2*math.cos(angle_in_triangle)
+        FR_squared = F1**2 + F2**2 - 2 * F1 * F2 * math.cos(angle_in_triangle)
         FR = math.sqrt(FR_squared)
 
         # Compute resultant using vector addition (this gives the correct angle)
@@ -584,14 +550,16 @@ class VectorEquilibriumProblem(Problem):
         else:
             angle_expr = f"\\theta_{{{force1.name}}} - \\theta_{{{force2.name}}}"
 
-        self.solution_steps.append({
-            "target": f"|{resultant.name}|",
-            "method": "Law of Cosines",
-            "equation": f"{resultant.name}^2 = {force1.name}^2 + {force2.name}^2 - 2*{force1.name}*{force2.name}*cos(180° - ({angle_expr}))",
-            "substitution": f"{resultant.name}^2 = ({F1:.2f} {force_unit})^2 + ({F2:.2f} {force_unit})^2 - 2 * ({F1:.2f} {force_unit}) * ({F2:.2f} {force_unit}) * cos({gamma_deg:.1f}°)",
-            "result_value": f"{FR:.2f}",
-            "result_unit": force_unit
-        })
+        self.solution_steps.append(
+            {
+                "target": f"|{resultant.name}|",
+                "method": "Law of Cosines",
+                "equation": f"{resultant.name}^2 = {force1.name}^2 + {force2.name}^2 - 2*{force1.name}*{force2.name}*cos(180° - ({angle_expr}))",
+                "substitution": f"{resultant.name}^2 = ({F1:.2f} {force_unit})^2 + ({F2:.2f} {force_unit})^2 - 2 * ({F1:.2f} {force_unit}) * ({F2:.2f} {force_unit}) * cos({gamma_deg:.1f}°)",
+                "result_value": f"{FR:.2f}",
+                "result_unit": force_unit,
+            }
+        )
 
         # Step 2: Solve for resultant direction using Law of Sines
         # Calculate alpha using law of sines for display purposes
@@ -599,17 +567,19 @@ class VectorEquilibriumProblem(Problem):
         alpha = math.asin(np.clip(sin_alpha, -1.0, 1.0))
 
         # Format resultant angle using theta notation
-        resultant_subscript = resultant.name.replace('_', '_{') + '}' if '_' in resultant.name else resultant.name
+        resultant_subscript = resultant.name.replace("_", "_{") + "}" if "_" in resultant.name else resultant.name
         resultant_angle = f"\\theta_{{{resultant_subscript}}}"
 
-        self.solution_steps.append({
-            "target": f"{resultant_angle}",
-            "method": "Law of Sines",
-            "equation": f"sin(alpha) / {force1.name} = sin(gamma) / {resultant.name}",
-            "substitution": f"sin(alpha) / {F1:.2f} {force_unit} = sin({math.degrees(angle_in_triangle):.1f}°) / {FR:.2f} {force_unit}",
-            "result_value": f"{math.degrees(theta_R):.2f}",
-            "result_unit": "°"
-        })
+        self.solution_steps.append(
+            {
+                "target": f"{resultant_angle}",
+                "method": "Law of Sines",
+                "equation": f"sin(alpha) / {force1.name} = sin(gamma) / {resultant.name}",
+                "substitution": f"sin(alpha) / {F1:.2f} {force_unit} = sin({math.degrees(angle_in_triangle):.1f}°) / {FR:.2f} {force_unit}",
+                "result_value": f"{math.degrees(theta_R):.2f}",
+                "result_unit": "°",
+            }
+        )
 
         # Create resultant vector using the correct angle from atan2
         ref_unit = force1.magnitude.preferred
@@ -633,7 +603,7 @@ class VectorEquilibriumProblem(Problem):
         self,
         known_forces: list[ForceVector],  # noqa: ARG002
         unknown_forces: list[ForceVector],
-        resultant: ForceVector
+        resultant: ForceVector,
     ) -> None:
         """
         Solve for two unknowns given a known resultant.
@@ -652,10 +622,7 @@ class VectorEquilibriumProblem(Problem):
 
         This assumes equilibrium: unknown force balances known forces.
         """
-        self.solution_steps.append({
-            "method": "Component Summation (Equilibrium)",
-            "description": "ΣFx = 0, ΣFy = 0"
-        })
+        self.solution_steps.append({"method": "Component Summation (Equilibrium)", "description": "ΣFx = 0, ΣFy = 0"})
 
         # Sum known force components
         sum_x = 0.0
@@ -682,10 +649,7 @@ class VectorEquilibriumProblem(Problem):
         unknown_y = -sum_y
         unknown_z = -sum_z
 
-        self.solution_steps.append({
-            "calculation": f"ΣFx = {sum_x:.2f} → Unknown Fx = {unknown_x:.2f}",
-            "calculation2": f"ΣFy = {sum_y:.2f} → Unknown Fy = {unknown_y:.2f}"
-        })
+        self.solution_steps.append({"calculation": f"ΣFx = {sum_x:.2f} → Unknown Fx = {unknown_x:.2f}", "calculation2": f"ΣFy = {sum_y:.2f} → Unknown Fy = {unknown_y:.2f}"})
 
         # Create unknown vector
         from ..core.dimension_catalog import dim
@@ -708,15 +672,7 @@ class VectorEquilibriumProblem(Problem):
         Returns:
             Dictionary with report sections
         """
-        content = {
-            "title": self.name,
-            "description": self.description,
-            "problem_type": "Vector Equilibrium (Statics)",
-            "given": [],
-            "find": [],
-            "solution_steps": self.solution_steps,
-            "results": []
-        }
+        content = {"title": self.name, "description": self.description, "problem_type": "Vector Equilibrium (Statics)", "given": [], "find": [], "solution_steps": self.solution_steps, "results": []}
 
         # List given forces
         for name, force in self.forces.items():

@@ -26,6 +26,7 @@ TEST RESULTS: 13 passing, 2 failing (solver limitations)
 import pytest
 
 from qnty.problems.vector_equilibrium import VectorEquilibriumProblem
+from qnty.spatial.coordinate_system import CoordinateSystem
 from qnty.spatial.force_vector import ForceVector
 
 # Problem definitions - single source of truth
@@ -38,11 +39,13 @@ FORCE_VECTOR_PROBLEMS = {
         """,
         "forces": {
             "F_1": ForceVector(
-                magnitude=450, angle=60, unit="N",
+                magnitude=450, unit="N",
+                angle=60, wrt="+x",
                 name="F_1", description="Force 1"
             ),
             "F_2": ForceVector(
-                magnitude=700, angle=195, unit="N",
+                magnitude=700, unit="N",
+                angle=15, wrt="-x",
                 name="F_2", description="Force 2"
             ),
             "F_R": ForceVector.unknown(
@@ -50,9 +53,18 @@ FORCE_VECTOR_PROBLEMS = {
             ),
         },
         "expected": {
-            "F_1": {"magnitude": 450, "angle": 60, "unit": "N"},
-            "F_2": {"magnitude": 700, "angle": 195, "unit": "N"},
-            "F_R": {"magnitude": 497.014, "angle": 155.2, "unit": "N"},
+            "F_1": {
+                "magnitude": 450, "unit": "N",
+                "angle": 60, "wrt": "+x"
+            },
+            "F_2": {
+                "magnitude": 700, "unit": "N",
+                "angle": 15, "wrt": "-x"
+            },
+            "F_R": {
+                "magnitude": 497.014, "unit": "N",
+                "angle": 155.192, "wrt": "+x"
+            },
         },
         "debug": {
             "print_results": False,
@@ -68,18 +80,29 @@ FORCE_VECTOR_PROBLEMS = {
         "forces": {
             "F_1": ForceVector.unknown("F_1"),
             "F_2": ForceVector(
-                magnitude=700, angle=195, unit="N",
+                magnitude=700, unit="N",
+                angle=15, wrt="-x", 
                 name="F_2", description="Force 2"
             ),
             "F_R": ForceVector(
-                magnitude=500, angle=90, unit="N",
+                magnitude=500, unit="N",
+                angle=90, wrt="+x",
                 name="F_R", description="Resultant Force",is_resultant=True
             ),
         },
         "expected": {
-            "F_1": {"magnitude": 959.778, "angle": 45.212, "unit": "N"},
-            "F_2": {"magnitude": 700, "angle": 195, "unit": "N"},
-            "F_R": {"magnitude": 500, "angle": 90, "unit": "N"},
+            "F_1": {
+                "magnitude": 959.778, "unit": "N",
+                "angle": 45.212, "wrt": "+x"
+            },
+            "F_2": {
+                "magnitude": 700, "unit": "N",
+                "angle": 15, "wrt": "-x"
+            },
+            "F_R": {
+                "magnitude": 500, "unit": "N",
+                "angle": 90, "wrt": "+x"
+            },
         },
         "debug": {
             "print_results": False,
@@ -94,21 +117,26 @@ FORCE_VECTOR_PROBLEMS = {
         """,
         "forces": {
             "F_1": ForceVector(
-                magnitude=250, angle=60, unit="lbf",
+                magnitude=250, unit="lbf",
+                angle=60, wrt="+x",
                 name="F_1", description="Force 1"
             ),
             "F_2": ForceVector(
-                magnitude=375, angle=315, unit="lbf",
+                magnitude=375, unit="lbf",
+                angle=315, wrt="+x",
                 name="F_2", description="Force 2"
             ),
             "F_R": ForceVector.unknown("F_R", is_resultant=True),
         },
         "expected": {
-            "F_1": {"magnitude": 250, "angle": 60, "unit": "lbf"},
-            "F_2": {"magnitude": 375, "angle": 315, "unit": "lbf"},
-            "F_R": {"magnitude": 393.188, "angle": 352.891, "unit": "lbf"},
+            "F_1": {"magnitude": 250, "angle": 60, "unit": "lbf", "wrt": "+x"},
+            "F_2": {"magnitude": 375, "angle": 315, "unit": "lbf", "wrt": "+x"},
+            "F_R": {"magnitude": 393.188, "angle": 352.891, "unit": "lbf", "wrt": "+x"},
         },
-        "debug": {"print_results": True, "assert_values": True},
+        "debug": {
+            "print_results": False,
+            "assert_values": True
+        },
     },
     "problem_2_4": {
         "name": "Problem 2-4",
@@ -127,9 +155,9 @@ FORCE_VECTOR_PROBLEMS = {
             ),
         },
         "expected": {
-            "F_AB": {"magnitude": 448, "angle": 225, "unit": "N"},
-            "F_AC": {"magnitude": 366, "angle": 330, "unit": "N"},
-            "F": {"magnitude": 500, "angle": 270, "unit": "N"},
+            "F_AB": {"magnitude": 448, "angle": 225, "unit": "N", "wrt": "+x"},
+            "F_AC": {"magnitude": 366, "angle": 330, "unit": "N", "wrt": "+x"},
+            "F": {"magnitude": 500, "angle": 270, "unit": "N", "wrt": "+x"},
         },
         "debug": {
             "print_results": False,
@@ -151,70 +179,93 @@ FORCE_VECTOR_PROBLEMS = {
             ),
         },
         "expected": {
-            "F_AB": {"magnitude": 314, "angle": 225, "unit": "lbf"},
-            "F_AC": {"magnitude": 256, "angle": 330, "unit": "lbf"},
-            "F": {"magnitude": 350, "angle": 270, "unit": "lbf"},
+            "F_AB": {"magnitude": 314, "angle": 225, "unit": "lbf", "wrt": "+x"},
+            "F_AC": {"magnitude": 256, "angle": 330, "unit": "lbf", "wrt": "+x"},
+            "F": {"magnitude": 350, "angle": 270, "unit": "lbf", "wrt": "+x"},
         },
         "debug": {
             "print_results": False,
             "assert_values": True
         },
     },
-    # TODO: Create a way to define a different coordinate system
-    # "problem_2_6": {
-    #     "name": "Problem 2-6",
-    #     "description": """
-    #     Determine the magnitude of the resultant force F_R = F_1 + F_2 and its direction,
-    #     measured clockwise from the positive u axis.
-    #     """,
-    #     "forces": {
-    #         "F_1": ForceVector(magnitude=4000, angle=45, unit="N", name="F_1", description="Force 1"),
-    #         "F_2": ForceVector(magnitude=6000, angle=330, unit="N", name="F_2", description="Force 2"),
-    #         "F_R": ForceVector.unknown("F_R", is_resultant=True),
-    #     },
-    #     "expected": {
-    #         "F_1": {"magnitude": 4000, "angle": 45, "unit": "N"},
-    #         "F_2": {"magnitude": 6000, "angle": 330, "unit": "N"},
-    #         "F_R": {"magnitude": 8030, "angle": 43.78, "unit": "N"},  # 45° - 1.22° clockwise = 43.78°
-    #     },
-    #     "debug": {"print_results": True, "assert_values": False},
-    # },
-    # "problem_2_7": {
-    #     "name": "Problem 2-7",
-    #     "description": """
-    #     Determine the magnitude of the resultant force F_R = F_1 + F_2 and its direction,
-    #     measured clockwise from the positive u axis.
-    #     """,
-    #     "forces": {
-    #         "F_1": ForceVector(magnitude=4000, angle=45, unit="N", name="F_1", description="Force 1"),
-    #         "F_2": ForceVector(magnitude=6000, angle=330, unit="N", name="F_2", description="Force 2"),
-    #         "F_R": ForceVector.unknown("F_R", is_resultant=True),
-    #     },
-    #     "expected": {
-    #         "F_1": {"magnitude": 4000, "angle": 45, "unit": "N"},
-    #         "F_2": {"magnitude": 6000, "angle": 330, "unit": "N"},
-    #         "F_R": {"magnitude": 8030, "angle": 43.78, "unit": "N"},  # 45° - 1.22° clockwise = 43.78°
-    #     },
-    #     "debug": {"print_results": True, "assert_values": False},
-    # },
-    # "problem_2_8": {
-    #     "name": "Problem 2-8",
-    #     "description": """
-    #     Determine the magnitude of the resultant force F_R = F_1 + F_2 and its direction,
-    #     measured clockwise from the positive u axis.
-    #     """,
-    #     "forces": {
-    #         "F_1": ForceVector(magnitude=4000, angle=45, unit="N", name="F_1", description="Force 1"),
-    #         "F_2": ForceVector(magnitude=6000, angle=330, unit="N", name="F_2", description="Force 2"),
-    #         "F_R": ForceVector.unknown("F_R", is_resultant=True),
-    #     },
-    #     "expected": {
-    #         "F_1": {"magnitude": 4000, "angle": 45, "unit": "N"},
-    #         "F_2": {"magnitude": 6000, "angle": 330, "unit": "N"},
-    #         "F_R": {"magnitude": 8030, "angle": 43.78, "unit": "N"},  # 45° - 1.22° clockwise = 43.78°
-    #     },
-    #     "debug": {"print_results": True, "assert_values": False},
-    # },
+    "problem_2_6": {
+        "name": "Problem 2-6",
+        "description": """
+        Determine the magnitude of the resultant force F_R = F_1 + F_2 and its direction,
+        measured clockwise from the positive u axis.
+        Note: u-v coordinate system with 75° between axes (u at 0°, v at 75°).
+        """,
+        "coordinate_system": CoordinateSystem.from_angle_between(
+            "u", "v", axis1_angle=0, angle_between=75
+        ),
+        "forces": {
+            "F_1": ForceVector(
+                magnitude=4000, angle=45, unit="N",
+                name="F_1", description="Force 1"
+            ),
+            "F_2": ForceVector(
+                magnitude=6000, angle=330, unit="N",
+                name="F_2", description="Force 2"
+            ),
+            "F_R": ForceVector.unknown("F_R", is_resultant=True),
+        },
+        "expected": {
+            "F_1": {"magnitude": 4000, "angle": 45, "unit": "N", "wrt": "+x"},
+            "F_2": {"magnitude": 6000, "angle": 330, "unit": "N", "wrt": "+x"},
+            "F_R": {"magnitude": 8026, "angle": 1.22, "unit": "N", "wrt": "cw:u"},
+        },
+        "debug": {
+            "print_results": False,
+            "assert_values": True
+        },
+    },
+    "problem_2_7": {
+        "name": "Problem 2-7",
+        "description": """
+        Resolve the force F_1 into components acting along the u and v axes and determine the magnitudes of the components.
+        Note: u-v coordinate system with 75° between axes (u at 0°, v at 75°).
+        """,
+        "coordinate_system": CoordinateSystem.from_angle_between(
+            "u", "v", axis1_angle=0, angle_between=75),
+        "forces": {
+            "F_1": ForceVector(
+                magnitude=4000, angle=45, unit="N",
+                name="F_1", description="Force 1 at 45°"
+            ),
+        },
+        "expected": {
+            "F_1": {"magnitude": 4000, "angle": 45, "unit": "N", "wrt": "+x"},
+            # From solution manual: F_1u = 2.07 kN, F_1v = 2.93 kN
+            "F_1_components": {"u": 2070, "v": 2930, "unit": "N"},
+        },
+        "debug": {
+            "print_results": False,
+            "assert_values": True
+        },
+    },
+    "problem_2_8": {
+        "name": "Problem 2-8",
+        "description": """
+        Resolve the force F_2 into components acting along the u and v axes and determine the magnitudes of the components.
+        Note: u-v coordinate system with 75° between axes (u at 0°, v at 75°).
+        """,
+        "coordinate_system": CoordinateSystem.from_angle_between(
+            "u", "v", axis1_angle=0, angle_between=75),
+        "forces": {
+            "F_2": ForceVector(
+                magnitude=6000, angle=330, unit="N",
+                name="F_2", description="Force 2 at 330°"
+            ),
+        },
+        "expected": {
+            "F_2": {"magnitude": 6000, "angle": 330, "unit": "N", "wrt": "+x"},
+            "F_2_components": {"u": 6000, "v": -3106, "unit": "N"},
+        },
+        "debug": {
+            "print_results": False,
+            "assert_values": True
+        },
+    },
     "problem_2_9": {
         "name": "Problem 2-9",
         "description": """
@@ -231,33 +282,53 @@ FORCE_VECTOR_PROBLEMS = {
                 name="F_R", description="Resultant Force", is_resultant=True),
         },
         "expected": {
-            "F_A": {"magnitude": 615.94, "angle": 46.936, "unit": "lbf"},
-            "F_B": {"magnitude": 900, "angle": 330, "unit": "lbf"},
-            "F_R": {"magnitude": 1200, "angle": 0, "unit": "lbf"},
+            "F_A": {"magnitude": 615.94, "angle": 46.936, "unit": "lbf", "wrt": "+x"},
+            "F_B": {"magnitude": 900, "angle": 330, "unit": "lbf", "wrt": "+x"},
+            "F_R": {"magnitude": 1200, "angle": 0, "unit": "lbf", "wrt": "+x"},
         },
         "debug": {
             "print_results": False,
             "assert_values": True
         },
     },
-    # "problem_2_10": {
-    #     "name": "Problem 2-10",
-    #     "description": """
-    #     Determine the magnitude of the resultant force and its direction,
-    #     measured counterclockwise from the positive x axis.
-    #     """,
-    #     "forces": {
-    #         "F_1": ForceVector(magnitude=800, angle=50, unit="lbf", name="F_1", description="Force 1 at 50° above horizontal"),
-    #         "F_2": ForceVector(magnitude=500, angle=145, unit="lbf", name="F_2", description="Force 2"),
-    #         "F_R": ForceVector.unknown("F_R", is_resultant=True),
-    #     },
-    #     "expected": {
-    #         "F_1": {"magnitude": 800, "angle": 50, "unit": "lbf"},
-    #         "F_2": {"magnitude": 500, "angle": 145, "unit": "lbf"},
-    #         "F_R": {"magnitude": 980, "angle": 19.4, "unit": "lbf"},
-    #     },
-    #     "debug": {"print_results": True, "assert_values": False},
-    # },
+    "problem_2_10": {
+        "name": "Problem 2-10",
+        "description": """
+        Determine the magnitude of the resultant force and its direction,
+        measured counterclockwise from the positive x axis.
+        """,
+        "forces": {
+            "F_1": ForceVector(
+                magnitude=800, unit="lbf",
+                angle=-40, wrt="+y",
+                name="F_1", description="Force 1 at 50° above horizontal"
+            ),
+            "F_2": ForceVector(
+                magnitude=500, unit="lbf",
+                angle=-35, wrt="+x",
+                name="F_2", description="Force 2"
+            ),
+            "F_R": ForceVector.unknown("F_R", is_resultant=True),
+        },
+        "expected": {
+            "F_1": {
+                "magnitude": 800, "unit": "lbf",
+                "angle": 50, "wrt": "+x"
+            },
+            "F_2": {
+                "magnitude": 500, "unit": "lbf",
+                "angle": 145, "wrt": "+x"
+            },
+            "F_R": {
+                "magnitude": 979.655, "unit": "lbf",
+                "angle": 19.440, "wrt": "+x"
+            },
+        },
+        "debug": {
+            "print_results": False,
+            "assert_values": True
+        },
+    },
     # "problem_2_11": {
     #     "name": "Problem 2-11",
     #     "description": """
@@ -454,8 +525,18 @@ def solve_force_vector_problem(problem_name):
         "description": spec["description"],
     }
 
+    # Get coordinate system if specified
+    coord_system = spec.get("coordinate_system", CoordinateSystem.standard())
+
+    # Add force vectors with coordinate system
+    forces_with_coords = {}
+    for force_name, force in spec["forces"].items():
+        # Update the force's coordinate system
+        force.coordinate_system = coord_system
+        forces_with_coords[force_name] = force
+
     # Add force vectors directly as class attributes
-    class_attrs.update(spec["forces"])
+    class_attrs.update(forces_with_coords)
 
     # Create dynamic problem class
     ProblemClass = type(f"Problem_{problem_name}", (VectorEquilibriumProblem,), class_attrs)
@@ -469,12 +550,54 @@ def solve_force_vector_problem(problem_name):
 
 def verify_force_vector_results(solution, expected, debug_config, capsys, test_name):
     """Verify force vector results match expected values and optionally print them."""
-    import math
-
     print_results = debug_config.get("print_results", False)
     assert_values = debug_config.get("assert_values", True)
 
     for force_name, expected_values in expected.items():
+        # Handle component checking (e.g., "F_1_components")
+        if force_name.endswith("_components"):
+            base_force_name = force_name.replace("_components", "")
+            if base_force_name not in solution:
+                if print_results:
+                    print(f"Warning: {base_force_name} not found in solution")
+                continue
+
+            force = solution[base_force_name]
+            comp1, comp2 = force.get_components_in_system()
+
+            if comp1 is None or comp2 is None:
+                if print_results:
+                    print(f"Warning: Could not compute components for {base_force_name}")
+                continue
+
+            # Get expected components
+            axis1_label = force.coordinate_system.axis1_label
+            axis2_label = force.coordinate_system.axis2_label
+            expected_comp1 = expected_values.get(axis1_label)
+            expected_comp2 = expected_values.get(axis2_label)
+
+            # Convert to preferred units
+            actual_comp1 = comp1.value / comp1.preferred.si_factor if comp1.preferred else comp1.value
+            actual_comp2 = comp2.value / comp2.preferred.si_factor if comp2.preferred else comp2.value
+
+            # Assert if enabled
+            if assert_values and expected_comp1 is not None and expected_comp2 is not None:
+                assert pytest.approx(expected_comp1, rel=0.01) == actual_comp1, \
+                    f"{base_force_name} {axis1_label}-component: got {actual_comp1}, expected {expected_comp1}"
+                assert pytest.approx(expected_comp2, rel=0.01) == actual_comp2, \
+                    f"{base_force_name} {axis2_label}-component: got {actual_comp2}, expected {expected_comp2}"
+
+            # Print components if enabled
+            if print_results:
+                with capsys.disabled():
+                    unit_symbol = comp1.preferred.symbol if comp1.preferred else "SI"
+                    print(f"  {base_force_name} components:")
+                    print(f"    {axis1_label}: {actual_comp1:.3f} {unit_symbol}")
+                    print(f"    {axis2_label}: {actual_comp2:.3f} {unit_symbol}")
+
+            continue
+
+        # Regular force checking
         if force_name not in solution:
             if print_results:
                 print(f"Warning: {force_name} not found in solution")
@@ -483,6 +606,7 @@ def verify_force_vector_results(solution, expected, debug_config, capsys, test_n
         force = solution[force_name]
         expected_mag = expected_values["magnitude"]
         expected_ang_deg = expected_values["angle"]
+        expected_wrt = expected_values.get("wrt", "+x")  # Default to "+x" if not specified
 
         # Convert magnitude from SI to preferred unit for comparison
         if force.magnitude.preferred:
@@ -490,19 +614,22 @@ def verify_force_vector_results(solution, expected, debug_config, capsys, test_n
         else:
             actual_mag_in_preferred = force.magnitude.value
 
-        # Convert angle from radians (SI internal) to degrees for comparison
-        actual_ang_deg = math.degrees(force.angle.value)
+        # Create the expected angle reference from wrt (with validation)
+        expected_angle_ref = ForceVector.parse_wrt(expected_wrt, force.coordinate_system)
+
+        # Convert actual angle to the expected wrt system for comparison
+        actual_ang_in_wrt = expected_angle_ref.from_standard(force.angle.value, angle_unit="degree")
 
         # Normalize angles to [0, 360) range for comparison
-        actual_ang_deg = actual_ang_deg % 360
+        actual_ang_in_wrt = actual_ang_in_wrt % 360
         expected_ang_deg_normalized = expected_ang_deg % 360
 
         # Only assert if enabled for this problem
         if assert_values:
             assert pytest.approx(expected_mag, rel=0.01) == actual_mag_in_preferred, \
                 f"{force_name} magnitude: got {actual_mag_in_preferred}, expected {expected_mag}"
-            assert pytest.approx(expected_ang_deg_normalized, rel=0.01) == actual_ang_deg, \
-                f"{force_name} angle: got {actual_ang_deg}°, expected {expected_ang_deg_normalized}°"
+            assert pytest.approx(expected_ang_deg_normalized, rel=0.01) == actual_ang_in_wrt, \
+                f"{force_name} angle (wrt {expected_wrt}): got {actual_ang_in_wrt}°, expected {expected_ang_deg_normalized}°"
 
     # Print results only if enabled for this problem
     if print_results:
@@ -510,10 +637,17 @@ def verify_force_vector_results(solution, expected, debug_config, capsys, test_n
             print(f"\n{test_name} results:")
             for force_name in sorted(solution.keys()):
                 force = solution[force_name]
-                actual_ang_deg = math.degrees(force.angle.value)
 
-                # Normalize angle to [0, 360) range for display (counterclockwise from positive x-axis)
-                actual_ang_deg = actual_ang_deg % 360
+                # Get expected wrt for this force (if specified)
+                force_expected = expected.get(force_name, {})
+                display_wrt = force_expected.get("wrt", "+x")  # Default to "+x"
+
+                # Create angle reference for display (with validation)
+                display_angle_ref = ForceVector.parse_wrt(display_wrt, force.coordinate_system)
+
+                # Convert angle to display wrt system
+                actual_ang_in_wrt = display_angle_ref.from_standard(force.angle.value, angle_unit="degree")
+                actual_ang_in_wrt = actual_ang_in_wrt % 360  # Normalize to [0, 360)
 
                 # Convert magnitude from SI to preferred unit for display
                 if force.magnitude.preferred:
@@ -523,7 +657,20 @@ def verify_force_vector_results(solution, expected, debug_config, capsys, test_n
                     mag_value_in_preferred = force.magnitude.value
                     mag_unit = "SI"
 
-                print(f"  {force_name}: magnitude={mag_value_in_preferred:.3f} {mag_unit}, angle={actual_ang_deg:.3f}°")
+                # Format wrt for display
+                wrt_display = f" wrt {display_wrt}" if display_wrt != "+x" else ""
+                print(f"  {force_name}: magnitude={mag_value_in_preferred:.3f} {mag_unit}, angle={actual_ang_in_wrt:.3f}°{wrt_display}")
+
+                # Print components if non-standard coordinate system
+                if not force.coordinate_system.is_orthogonal or force.coordinate_system.axis1_label != "x":
+                    comp1, comp2 = force.get_components_in_system()
+                    if comp1 is not None and comp2 is not None:
+                        axis1_label = force.coordinate_system.axis1_label
+                        axis2_label = force.coordinate_system.axis2_label
+                        comp1_val = comp1.value / comp1.preferred.si_factor if comp1.preferred else comp1.value
+                        comp2_val = comp2.value / comp2.preferred.si_factor if comp2.preferred else comp2.value
+                        unit_symbol = comp1.preferred.symbol if comp1.preferred else "SI"
+                        print(f"    {axis1_label}: {comp1_val:.3f} {unit_symbol}, {axis2_label}: {comp2_val:.3f} {unit_symbol}")
 
             # Show assertion status
             if not assert_values:

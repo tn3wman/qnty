@@ -20,6 +20,8 @@ from ..core.dimension import Dimension
 from ..core.quantity import Quantity
 from ..core.unit import Unit
 from .vector import Vector
+from .coordinate_system import CoordinateSystem
+from .angle_reference import AngleReference, AngleDirection
 
 if TYPE_CHECKING:
     from ..core.unit_catalog import ForceUnits, AnglePlaneUnits
@@ -49,7 +51,7 @@ class ForceVector:
         >>> FR = ForceVector(magnitude=None, angle=None, name="Resultant", is_known=False)
     """
 
-    __slots__ = ("_vector", "_magnitude", "_angle", "name", "is_known", "is_resultant", "_description")
+    __slots__ = ("_vector", "_magnitude", "_angle", "name", "is_known", "is_resultant", "_description", "coordinate_system", "angle_reference")
 
     def __init__(
         self,
@@ -65,13 +67,16 @@ class ForceVector:
         description: str = "",
         is_known: bool = True,
         is_resultant: bool = False,
+        coordinate_system: CoordinateSystem | None = None,
+        angle_reference: AngleReference | None = None,
+        wrt: str | None = None,
     ):
         """
         Create a ForceVector.
 
         Args:
             magnitude: Force magnitude (if None, will be calculated from components or marked unknown)
-            angle: Angle from positive x-axis (counterclockwise)
+            angle: Angle value in the angle_reference system (default: CCW from +x-axis)
             x: X-component of force
             y: Y-component of force
             z: Z-component of force (default 0 for 2D problems)
@@ -82,6 +87,10 @@ class ForceVector:
             description: Longer description
             is_known: Whether this force is known (False for unknowns to solve for)
             is_resultant: Whether this is a resultant force (for equilibrium problems)
+            coordinate_system: CoordinateSystem for non-standard axes (default is standard x-y)
+            angle_reference: AngleReference specifying how angle is measured (default: CCW from +x-axis)
+            wrt: Shorthand for angle reference. Examples: "+x", "-x", "+y", "-y", "u", "v", "ccw:+x", "cw:+x", "cw:u"
+                 Format: "[direction:]axis" where direction is "ccw" or "cw" (default ccw)
         """
         self.name = name or "Force"
         self.is_known = is_known
@@ -89,11 +98,24 @@ class ForceVector:
         self._description = description
         self._magnitude: Quantity | None = None
         self._angle: Quantity | None = None
+        self.coordinate_system = coordinate_system or CoordinateSystem.standard()
+
+        # Handle wrt parameter (shorthand for angle_reference)
+        if wrt is not None and angle_reference is not None:
+            raise ValueError("Cannot specify both 'wrt' and 'angle_reference'. Use one or the other.")
+
+        if wrt is not None:
+            self.angle_reference = self._parse_wrt(wrt)
+        elif angle_reference is not None:
+            self.angle_reference = angle_reference
+        else:
+            self.angle_reference = AngleReference.standard()
 
         # Resolve unit
         if isinstance(unit, str):
             from ..core.unit import ureg
             from ..core.dimension_catalog import dim
+
             resolved = ureg.resolve(unit, dim=dim.force)
             if resolved is None:
                 raise ValueError(f"Unknown force unit '{unit}'")
@@ -103,6 +125,7 @@ class ForceVector:
         if isinstance(angle_unit, str):
             from ..core.unit import ureg
             from ..core.dimension_catalog import dim
+
             resolved = ureg.resolve(angle_unit, dim=dim.D)
             if resolved is None:
                 raise ValueError(f"Unknown angle unit '{angle_unit}'")
@@ -127,17 +150,28 @@ class ForceVector:
             # Convert angle to Quantity if needed
             if isinstance(angle, (int, float)):
                 from ..core.dimension_catalog import dim
-                angle_qty = Quantity(name=f"{self.name}_angle", dim=dim.D, value=float(angle) * angle_unit.si_factor, preferred=angle_unit)
-            else:
-                angle_qty = angle
 
-            # Store magnitude and angle
+                # Convert angle from angle_reference system to standard (CCW from +x)
+                angle_in_ref_system = float(angle) * angle_unit.si_factor  # Convert to radians
+                angle_standard = self.angle_reference.to_standard(angle_in_ref_system, angle_unit="radian")
+
+                angle_qty = Quantity(name=f"{self.name}_angle", dim=dim.D, value=angle_standard, preferred=angle_unit)
+            else:
+                # Angle is already a Quantity - assume it's in the angle_reference system
+                angle_in_ref_system = angle.value
+                if angle_in_ref_system is not None:
+                    angle_standard = self.angle_reference.to_standard(angle_in_ref_system, angle_unit="radian")
+                else:
+                    angle_standard = None
+                angle_qty = Quantity(name=f"{self.name}_angle", dim=angle.dim, value=angle_standard, preferred=angle.preferred)
+
+            # Store magnitude and angle (angle is now in standard form internally)
             self._magnitude = mag_qty
             self._angle = angle_qty
 
             # Convert to vector components
             if mag_qty.value is not None and angle_qty.value is not None:
-                angle_rad = angle_qty.value  # Already in SI (radians)
+                angle_rad = angle_qty.value  # Already in SI (radians), in standard form
                 x_val = mag_qty.value * math.cos(angle_rad)
                 y_val = mag_qty.value * math.sin(angle_rad)
                 z_val = 0.0
@@ -153,11 +187,22 @@ class ForceVector:
             # Convert angle to Quantity
             if isinstance(angle, (int, float)):
                 from ..core.dimension_catalog import dim as dim_catalog
-                angle_qty = Quantity(name=f"{self.name}_angle", dim=dim_catalog.D, value=float(angle) * angle_unit.si_factor, preferred=angle_unit)
-            else:
-                angle_qty = angle
 
-            # Store angle, magnitude remains None
+                # Convert angle from angle_reference system to standard (CCW from +x)
+                angle_in_ref_system = float(angle) * angle_unit.si_factor  # Convert to radians
+                angle_standard = self.angle_reference.to_standard(angle_in_ref_system, angle_unit="radian")
+
+                angle_qty = Quantity(name=f"{self.name}_angle", dim=dim_catalog.D, value=angle_standard, preferred=angle_unit)
+            else:
+                # Angle is already a Quantity - assume it's in the angle_reference system
+                angle_in_ref_system = angle.value
+                if angle_in_ref_system is not None:
+                    angle_standard = self.angle_reference.to_standard(angle_in_ref_system, angle_unit="radian")
+                else:
+                    angle_standard = None
+                angle_qty = Quantity(name=f"{self.name}_angle", dim=angle.dim, value=angle_standard, preferred=angle.preferred)
+
+            # Store angle (now in standard form), magnitude remains None
             self._angle = angle_qty
             self._magnitude = None
             self._vector = None
@@ -190,6 +235,10 @@ class ForceVector:
 
         raise ValueError("Must provide either (magnitude, angle), (x, y, z components), or vector")
 
+    def _parse_wrt(self, wrt: str) -> AngleReference:
+        """Parse wrt using the static method with this instance's coordinate system."""
+        return ForceVector.parse_wrt(wrt, self.coordinate_system)
+
     def _to_quantity(self, value: float | Quantity | None, unit: Unit, component_name: str) -> Quantity:
         """Convert value to Quantity."""
         if isinstance(value, Quantity):
@@ -212,24 +261,14 @@ class ForceVector:
 
         from ..core.dimension_catalog import dim
         from ..core.unit import ureg
+
         degree_unit = ureg.resolve("degree", dim=dim.D)
 
-        self._angle = Quantity(
-            name=f"{self.name}_angle",
-            dim=dim.D,
-            value=angle_rad,
-            preferred=degree_unit
-        )
+        self._angle = Quantity(name=f"{self.name}_angle", dim=dim.D, value=angle_rad, preferred=degree_unit)
 
     @classmethod
     def from_magnitude_angle(
-        cls,
-        magnitude: float | Quantity,
-        angle: float | Quantity,
-        unit: Unit | str | None = None,
-        angle_unit: Unit | str = "degree",
-        name: str | None = None,
-        **kwargs
+        cls, magnitude: float | Quantity, angle: float | Quantity, unit: Unit | str | None = None, angle_unit: Unit | str = "degree", name: str | None = None, **kwargs
     ) -> ForceVector:
         """
         Create ForceVector from magnitude and angle (polar form).
@@ -248,15 +287,7 @@ class ForceVector:
         return cls(magnitude=magnitude, angle=angle, unit=unit, angle_unit=angle_unit, name=name, **kwargs)
 
     @classmethod
-    def from_components(
-        cls,
-        x: float | Quantity,
-        y: float | Quantity,
-        z: float | Quantity | None = None,
-        unit: Unit | str | None = None,
-        name: str | None = None,
-        **kwargs
-    ) -> ForceVector:
+    def from_components(cls, x: float | Quantity, y: float | Quantity, z: float | Quantity | None = None, unit: Unit | str | None = None, name: str | None = None, **kwargs) -> ForceVector:
         """
         Create ForceVector from x, y, z components (cartesian form).
 
@@ -273,8 +304,63 @@ class ForceVector:
         """
         return cls(x=x, y=y, z=z, unit=unit, name=name, **kwargs)
 
+    @staticmethod
+    def parse_wrt(wrt: str, coordinate_system: CoordinateSystem | None = None) -> AngleReference:
+        """
+        Parse a wrt string into an AngleReference, validating against coordinate system.
+
+        Args:
+            wrt: The wrt string (e.g., "+x", "cw:u", "-y")
+            coordinate_system: Optional coordinate system to validate against
+
+        Returns:
+            AngleReference instance
+
+        Raises:
+            ValueError: If wrt axis doesn't exist in coordinate system
+
+        Examples:
+            >>> ref = ForceVector.parse_wrt("+x")
+            >>> ref = ForceVector.parse_wrt("cw:u", uv_system)
+        """
+        coord_sys = coordinate_system or CoordinateSystem.standard()
+
+        # Split on colon to separate direction and axis
+        if ":" in wrt:
+            direction_str, axis = wrt.split(":", 1)
+            direction_str = direction_str.lower().strip()
+            axis = axis.strip()
+        else:
+            direction_str = "ccw"
+            axis = wrt.strip()
+
+        # Parse direction
+        if direction_str in ("ccw", "counterclockwise"):
+            direction = "counterclockwise"
+        elif direction_str in ("cw", "clockwise"):
+            direction = "clockwise"
+        else:
+            raise ValueError(f"Invalid direction '{direction_str}'. Use 'ccw', 'cw', 'counterclockwise', or 'clockwise'")
+
+        # Check if axis matches coordinate system axes
+        if axis == coord_sys.axis1_label:
+            return AngleReference.from_coordinate_system(coord_sys, axis_index=0, direction=direction)
+        elif axis == coord_sys.axis2_label:
+            return AngleReference.from_coordinate_system(coord_sys, axis_index=1, direction=direction)
+        else:
+            # Check if it's a standard axis
+            standard_axes = {"+x", "x", "+y", "y", "-x", "-y"}
+            if axis in standard_axes:
+                return AngleReference.from_axis(axis, direction=direction)
+            else:
+                # Not a standard axis and not in coordinate system
+                raise ValueError(
+                    f"Invalid wrt axis '{axis}'. Must be a standard axis (+x, -x, +y, -y) or "
+                    f"an axis from the coordinate system ({coord_sys.axis1_label}, {coord_sys.axis2_label})"
+                )
+
     @classmethod
-    def unknown(cls, name: str, is_resultant: bool = False, angle: float | None = None, **kwargs) -> ForceVector:
+    def unknown(cls, name: str, is_resultant: bool = False, angle: float | None = None, coordinate_system: CoordinateSystem | None = None, angle_reference: AngleReference | None = None, wrt: str | None = None, **kwargs) -> ForceVector:
         """
         Create an unknown ForceVector to be solved for.
 
@@ -282,12 +368,15 @@ class ForceVector:
             name: Force name
             is_resultant: Whether this is a resultant force
             angle: Optional known angle (in degrees). If provided, only magnitude is unknown.
+            coordinate_system: CoordinateSystem for non-standard axes
+            angle_reference: AngleReference specifying how angle is measured
+            wrt: Shorthand for angle reference (e.g., "+x", "cw:+y", "u")
             **kwargs: Additional arguments
 
         Returns:
             ForceVector instance marked as unknown
         """
-        return cls(magnitude=None, angle=angle, name=name, is_known=False, is_resultant=is_resultant, **kwargs)
+        return cls(magnitude=None, angle=angle, name=name, is_known=False, is_resultant=is_resultant, coordinate_system=coordinate_system, angle_reference=angle_reference, wrt=wrt, **kwargs)
 
     # Properties
     @property
@@ -297,7 +386,11 @@ class ForceVector:
 
     @property
     def angle(self) -> Quantity | None:
-        """Angle from positive x-axis (counterclockwise)."""
+        """
+        Angle in the angle_reference system.
+
+        Internally stored as standard (CCW from +x), but returned in the reference system.
+        """
         return self._angle
 
     @property
@@ -324,6 +417,37 @@ class ForceVector:
     def description(self) -> str:
         """Force description."""
         return self._description
+
+    def get_components_in_system(self) -> tuple[Quantity | None, Quantity | None]:
+        """
+        Get force components in the current coordinate system.
+
+        For standard x-y system, returns (x, y).
+        For custom systems (e.g., u-v), returns components along those axes.
+
+        Returns:
+            Tuple of (component1, component2) as Quantity objects
+        """
+        if self._vector is None:
+            return (None, None)
+
+        # Get cartesian components
+        coords = self._vector.to_array()
+        x_val = coords[0]
+        y_val = coords[1]
+
+        # Convert to coordinate system components
+        comp1, comp2 = self.coordinate_system.from_cartesian(x_val, y_val)
+
+        # Create Quantity objects
+        from ..core.dimension_catalog import dim
+
+        unit = self._vector.u.preferred if self._vector.u else None
+
+        comp1_qty = Quantity(name=f"{self.name}_{self.coordinate_system.axis1_label}", dim=dim.force, value=comp1, preferred=unit)
+        comp2_qty = Quantity(name=f"{self.name}_{self.coordinate_system.axis2_label}", dim=dim.force, value=comp2, preferred=unit)
+
+        return (comp1_qty, comp2_qty)
 
     def __str__(self) -> str:
         """String representation."""
@@ -382,6 +506,7 @@ class ForceVector:
             return False
         # Normalize angles to [0, 2π]
         import math
+
         angle1 = self._angle.value % (2 * math.pi)
         angle2 = other._angle.value % (2 * math.pi)
         angle_diff = abs(angle1 - angle2)
