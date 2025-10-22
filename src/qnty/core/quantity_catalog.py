@@ -26,6 +26,15 @@ class Area:
 
 # endregion // A
 
+# region // F
+@quantity(uc.ForceUnits)
+class Force:
+    """Force quantity with automatic boilerplate."""
+
+    pass
+
+# endregion // F
+
 
 @quantity(uc.LengthUnits)
 class Length:
@@ -82,6 +91,13 @@ class Pressure:
 
 # region // S
 
+@quantity(uc.SecondMomentOfAreaUnits)
+class SecondMomentOfArea:
+    """Second moment of area quantity with automatic boilerplate."""
+
+    pass
+
+
 
 @quantity(uc.SpecificVolumeUnits)
 class SpecificVolume:
@@ -91,6 +107,18 @@ class SpecificVolume:
 
 
 # endregion // S
+
+# region // T
+
+@quantity(uc.TorqueUnits)
+class Torque:
+    """Torque quantity with automatic boilerplate."""
+
+    pass
+
+# endregion // T
+
+# region // V
 
 
 @quantity(uc.VelocityLinearUnits)
@@ -119,9 +147,5 @@ class ViscosityKinematic:
     """Kinematic viscosity quantity with automatic boilerplate."""
 
     pass
-
-
-# region // V
-
 
 # endregion // V

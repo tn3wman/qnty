@@ -73,6 +73,11 @@ class ReportGenerator(ABC):
 
         return ""
 
+    def _is_vector_equilibrium_problem(self) -> bool:
+        """Check if problem is a VectorEquilibriumProblem."""
+        class_names = [cls.__name__ for cls in self.problem.__class__.__mro__]
+        return 'VectorEquilibriumProblem' in class_names
+
     def _format_variable_table_data(self) -> tuple[list[dict], list[dict]]:
         """
         Format known and unknown variables for table display.
@@ -80,6 +85,10 @@ class ReportGenerator(ABC):
         Returns:
             Tuple of (known_vars_data, unknown_vars_data) where each is a list of dicts
         """
+        # Use specialized formatting for vector equilibrium problems
+        if self._is_vector_equilibrium_problem():
+            return self._format_vector_equilibrium_table_data()
+
         known_data = []
         for symbol, var in self.known_variables.items():
             # Show original value in original unit, not SI-converted value
@@ -107,6 +116,80 @@ class ReportGenerator(ABC):
                 # Get expected unit for the variable type
                 unit_str = self._get_unit_string(var)
                 unknown_data.append({"symbol": symbol, "name": getattr(var, "name", symbol), "unit": unit_str})
+
+        return known_data, unknown_data
+
+    def _format_vector_equilibrium_table_data(self) -> tuple[list[dict], list[dict]]:
+        """
+        Format force vectors for VectorEquilibriumProblem in a compact table.
+
+        Groups F_1_mag and F_1_angle into a single F_1 row.
+
+        Returns:
+            Tuple of (known_forces_data, unknown_forces_data)
+        """
+        known_data = []
+        unknown_data = []
+
+        # Get forces from the problem
+        forces = getattr(self.problem, 'forces', {})
+        # Get original force states (tracked before solving)
+        original_force_states = getattr(self.problem, '_original_force_states', {})
+
+        for force_name, force_obj in forces.items():
+            # Check if this is a known force (has both magnitude and angle known)
+            mag_var = self.problem.variables.get(f"{force_name}_mag")
+            angle_var = self.problem.variables.get(f"{force_name}_angle")
+
+            if mag_var is None or angle_var is None:
+                continue
+
+            # Determine what was originally known by checking the force's original is_known state
+            force_was_originally_known = original_force_states.get(force_name, getattr(force_obj, 'is_known', True))
+
+            # Check which individual components were originally known
+            # This handles partially known forces (e.g., known angle, unknown magnitude)
+            original_var_states = getattr(self.problem, '_original_variable_states', {})
+            mag_was_originally_known = original_var_states.get(f"{force_name}_mag_known", force_was_originally_known)
+            angle_was_originally_known = original_var_states.get(f"{force_name}_angle_known", force_was_originally_known)
+
+            # Get magnitude: show value only if originally known, otherwise "?"
+            if mag_was_originally_known:
+                if hasattr(mag_var, "preferred") and mag_var.preferred:
+                    mag_value = mag_var.value / mag_var.preferred.si_factor
+                    mag_unit = mag_var.preferred.symbol
+                else:
+                    mag_value = mag_var.value
+                    mag_unit = self._get_unit_string(mag_var)
+                mag_str = f"{mag_value:.6g}"
+            else:
+                mag_str = "?"
+                mag_unit = self._get_unit_string(mag_var)
+
+            # Get angle: show value only if originally known, otherwise "?"
+            if angle_was_originally_known and angle_var.value is not None:
+                angle_deg = angle_var.value * 180.0 / 3.14159265359
+                # Normalize to 0-360 degrees (counterclockwise from positive x-axis)
+                angle_deg = angle_deg % 360
+                angle_str = f"{angle_deg:.6g}"
+            else:
+                angle_str = "?"
+
+            # Determine if this force was originally fully known
+            was_originally_known = mag_was_originally_known and angle_was_originally_known
+
+            force_data = {
+                "symbol": force_name,
+                "name": getattr(force_obj, 'name', force_name),
+                "magnitude": mag_str,
+                "angle": angle_str,
+                "unit": mag_unit
+            }
+
+            if was_originally_known:
+                known_data.append(force_data)
+            else:
+                unknown_data.append(force_data)
 
         return known_data, unknown_data
 

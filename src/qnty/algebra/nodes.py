@@ -407,8 +407,11 @@ class BinaryOperation(Expression):
                         # Power operation not supported on new Quantity - use fallback
                         pass
                 # For comparison operators, fall through to normal handling
-            except (ValueError, TypeError):
-                # If Quantity arithmetic fails, fall back to Expression arithmetic
+            except TypeError:
+                # Re-raise TypeError - these are dimensional mismatches and must be surfaced
+                raise
+            except ValueError:
+                # ValueError may indicate other issues, fall back to Expression arithmetic
                 pass
 
         # Normal path: check operator type with pre-compiled sets
@@ -515,8 +518,11 @@ class BinaryOperation(Expression):
                 left_value = left_val.value if _has_valid_value(left_val) and left_val.value is not None else 0.0
                 right_value = right_val.value if _has_valid_value(right_val) and right_val.value is not None else 0.0
                 result = self._perform_comparison(left_value, right_value)
-        except (ValueError, TypeError, AttributeError):
-            # If Quantity comparison fails, fall back to value comparison
+        except TypeError:
+            # Re-raise TypeError - dimensional mismatches in comparisons are critical errors
+            raise
+        except (ValueError, AttributeError):
+            # If Quantity comparison fails for other reasons, fall back to value comparison
             left_val, right_val = self._normalize_comparison_units(left_val, right_val)
             left_value = left_val.value if _has_valid_value(left_val) and left_val.value is not None else 0.0
             right_value = right_val.value if _has_valid_value(right_val) and right_val.value is not None else 0.0
@@ -707,6 +713,66 @@ class ConditionalExpression(Expression):
         return ExpressionFormatter.format_conditional_expression(self)  # type: ignore[arg-type]
 
 
+class MatchExpression(Expression):
+    """
+    Match expression: multi-way branch based on a select variable's value.
+
+    Similar to a switch/case statement or pattern matching:
+    match(select_var) {
+        option1 => expr1,
+        option2 => expr2,
+        ...
+    }
+    """
+
+    __slots__ = ("select_var", "cases", "_select_var_symbol")
+
+    def __init__(self, select_var, cases: dict):
+        """
+        Args:
+            select_var: SelectVariable instance to match against
+            cases: Dict mapping option values to expressions
+        """
+        self.select_var = select_var
+        self.cases = cases
+        # Cache the symbol to avoid repeated lookups
+        self._select_var_symbol = getattr(select_var, "symbol", str(select_var))
+
+    def evaluate(self, variable_values: dict[str, "FieldQuantity"]) -> "Quantity":
+        # Get the current value of the select variable
+        current_value = getattr(self.select_var, "value", None)
+        if current_value is None:
+            raise ValueError(f"SelectVariable '{self.select_var.name}' has no value selected")
+
+        # Find matching case and evaluate it
+        if current_value not in self.cases:
+            raise ValueError(f"No case for value '{current_value}' in MatchExpression. Available cases: {list(self.cases.keys())}")
+
+        matched_expr = self.cases[current_value]
+        return matched_expr.evaluate(variable_values)
+
+    def get_variables(self) -> set[str]:
+        # Collect variables from all case expressions
+        variables = set()
+        for expr in self.cases.values():
+            variables.update(expr.get_variables())
+        return variables
+
+    def simplify(self) -> Expression:
+        # Simplify all case expressions
+        simplified_cases = {key: expr.simplify() for key, expr in self.cases.items()}
+
+        # If the select variable has a known value, we can simplify to just that case
+        current_value = getattr(self.select_var, "value", None)
+        if current_value is not None and current_value in simplified_cases:
+            return simplified_cases[current_value]
+
+        return MatchExpression(self.select_var, simplified_cases)
+
+    def __str__(self) -> str:
+        return ExpressionFormatter.format_match_expression(self)  # type: ignore[arg-type]
+
+
 # Utility functions for expression creation
 
 # Cache for common types to avoid repeated type checks
@@ -882,7 +948,7 @@ def wrap_operand(operand: "OperandType") -> Expression:
 # Register expression and variable types with the TypeRegistry for optimal performance
 
 # Register expression types
-for expr_type in [Expression, BinaryOperation, VariableReference, Constant, UnaryFunction, ConditionalExpression]:
+for expr_type in [Expression, BinaryOperation, VariableReference, Constant, UnaryFunction, ConditionalExpression, MatchExpression]:
     register_expression_type(expr_type)
 
 # Register variable types - do this at module level to ensure it happens early

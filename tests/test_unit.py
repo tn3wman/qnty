@@ -83,8 +83,8 @@ def test_attach_composed_reuse_and_resolve():
 
 def test_prefix_exposure_and_preferred_units():
     # Prefixed exposure
-    assert hasattr(u, "milli_meter")
-    assert hasattr(u, "mm") or u.milli_meter.symbol == "mm"
+    assert hasattr(u, "millimeter")
+    assert hasattr(u, "mm") or u.millimeter.symbol == "mm"
     # Preferred for length should be meter
     preferred_L = ureg.preferred_for(dim.L)
     assert preferred_L is u.meter

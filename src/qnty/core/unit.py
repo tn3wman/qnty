@@ -19,7 +19,7 @@ _NORM_DELETE_MAP = str.maketrans(
         "_": None,
         "-": None,
         "^": None,
-        "·": None,
+        # NOTE: Do NOT remove '·' (middle dot) - it distinguishes N·m (newton-meter) from nm (nanometer)
     }
 )
 
@@ -350,7 +350,7 @@ def _generate_prefixed_units(base: Unit, *, expose_to_u: bool = False) -> None:
     """
     for pname, psym, pfactor in PREFIXES:
         sym = f"{psym}{base.symbol}"
-        name = f"{pname}_{base.name}"
+        name = f"{pname}{base.name}"  # Changed from f"{pname}_{base.name}" to remove underscore
 
         # Already created?
         if sym in ureg._intern_by_symbol:
@@ -360,7 +360,7 @@ def _generate_prefixed_units(base: Unit, *, expose_to_u: bool = False) -> None:
         # Include ASCII 'u' alias for micro (μ)
         if psym == "μ":
             aliases.add(f"u{base.symbol}")
-            aliases.add(f"micro_{base.name}")
+            aliases.add(f"micro{base.name}")  # Changed from f"micro_{base.name}" to remove underscore
 
         unit = Unit(name=name, symbol=sym, dim=base.dim, si_factor=base.si_factor * pfactor)
         ureg.register(unit, *aliases)

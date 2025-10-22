@@ -105,6 +105,13 @@ class ExpressionFormatter:
         return f"if({cond_expr.condition}, {cond_expr.true_expr}, {cond_expr.false_expr})"
 
     @staticmethod
+    def format_match_expression(match_expr: Any) -> str:
+        """Format match expression in match-case form."""
+        select_var_name = getattr(match_expr.select_var, "name", str(match_expr.select_var))
+        cases_str = ", ".join([f"{key}: {expr}" for key, expr in match_expr.cases.items()])
+        return f"match({select_var_name}, {{{cases_str}}})"
+
+    @staticmethod
     def format_variable_reference(var_ref: Any) -> str:
         """Format variable reference (just the name)."""
         return var_ref.name

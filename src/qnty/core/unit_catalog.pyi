@@ -3,19 +3,39 @@ from typing import Final
 from .unit import Unit, UnitNamespace
 
 class AccelerationUnits(UnitNamespace): ...
+
 class AnglePlaneUnits(UnitNamespace): ...
+
 class AreaUnits(UnitNamespace): ...
+
 class DimensionlessUnits(UnitNamespace): ...
+
 class EnergyUnits(UnitNamespace): ...
+
+class ForceUnits(UnitNamespace): ...
+
 class LengthUnits(UnitNamespace): ...
+
 class MassDensityUnits(UnitNamespace): ...
+
 class MassFlowRateUnits(UnitNamespace): ...
+
 class PowerThermalDutyUnits(UnitNamespace): ...
+
 class PressureUnits(UnitNamespace): ...
+
+class SecondMomentOfAreaUnits(UnitNamespace): ...
+
 class SpecificVolumeUnits(UnitNamespace): ...
+
+class TorqueUnits(UnitNamespace): ...
+
 class VelocityLinearUnits(UnitNamespace): ...
+
 class ViscosityDynamicUnits(UnitNamespace): ...
+
 class ViscosityKinematicUnits(UnitNamespace): ...
+
 class VolumetricFlowRateUnits(UnitNamespace): ...
 
 class Units:
@@ -23,11 +43,11 @@ class Units:
     british_thermal_unit: Final[Unit]
     british_thermal_unit_per_hour: Final[Unit]
     candela: Final[Unit]
-    centi_ampere: Final[Unit]
-    centi_gram: Final[Unit]
-    centi_meter: Final[Unit]
-    centi_mole: Final[Unit]
-    centi_second: Final[Unit]
+    centiampere: Final[Unit]
+    centigram: Final[Unit]
+    centimeter: Final[Unit]
+    centimole: Final[Unit]
+    centisecond: Final[Unit]
     cubic_foot: Final[Unit]
     cubic_foot_per_minute: Final[Unit]
     cubic_foot_per_pound_mass: Final[Unit]
@@ -35,67 +55,72 @@ class Units:
     cubic_meter_per_kilogram: Final[Unit]
     cubic_meter_per_second: Final[Unit]
     day: Final[Unit]
-    deca_ampere: Final[Unit]
-    deca_gram: Final[Unit]
-    deca_meter: Final[Unit]
-    deca_mole: Final[Unit]
-    deca_second: Final[Unit]
-    deci_ampere: Final[Unit]
-    deci_gram: Final[Unit]
-    deci_meter: Final[Unit]
-    deci_mole: Final[Unit]
-    deci_second: Final[Unit]
+    decaampere: Final[Unit]
+    decagram: Final[Unit]
+    decameter: Final[Unit]
+    decamole: Final[Unit]
+    decasecond: Final[Unit]
+    deciampere: Final[Unit]
+    decigram: Final[Unit]
+    decimeter: Final[Unit]
+    decimole: Final[Unit]
+    decisecond: Final[Unit]
     degree: Final[Unit]
     dimensionless: Final[Unit]
     erg_per_gram: Final[Unit]
     feet_per_second: Final[Unit]
     foot: Final[Unit]
     foot_per_square_second: Final[Unit]
+    foot_pound_force: Final[Unit]
     foot_squared_per_second: Final[Unit]
     gallon: Final[Unit]
     gallon_per_minute: Final[Unit]
     gram: Final[Unit]
-    hecto_ampere: Final[Unit]
-    hecto_gram: Final[Unit]
-    hecto_meter: Final[Unit]
-    hecto_mole: Final[Unit]
-    hecto_second: Final[Unit]
+    hectoampere: Final[Unit]
+    hectogram: Final[Unit]
+    hectometer: Final[Unit]
+    hectomole: Final[Unit]
+    hectosecond: Final[Unit]
     horsepower: Final[Unit]
     hour: Final[Unit]
     inch: Final[Unit]
+    inch_pound_force: Final[Unit]
+    inch_quadrupled: Final[Unit]
     joule: Final[Unit]
     kelvin: Final[Unit]
-    kilo_ampere: Final[Unit]
-    kilo_gram: Final[Unit]
-    kilo_meter: Final[Unit]
-    kilo_mole: Final[Unit]
-    kilo_second: Final[Unit]
+    kiloampere: Final[Unit]
+    kilogram: Final[Unit]
     kilogram_per_cubic_meter: Final[Unit]
     kilogram_per_second: Final[Unit]
+    kilometer: Final[Unit]
+    kilomole: Final[Unit]
+    kilosecond: Final[Unit]
     liter: Final[Unit]
     meter: Final[Unit]
     meter_per_second: Final[Unit]
     meter_per_square_second: Final[Unit]
-    micro_ampere: Final[Unit]
-    micro_gram: Final[Unit]
-    micro_meter: Final[Unit]
-    micro_mole: Final[Unit]
-    micro_second: Final[Unit]
-    milli_ampere: Final[Unit]
-    milli_gram: Final[Unit]
+    microampere: Final[Unit]
+    microgram: Final[Unit]
+    micrometer: Final[Unit]
+    micromole: Final[Unit]
+    microsecond: Final[Unit]
     milli_liter: Final[Unit]
-    milli_meter: Final[Unit]
-    milli_mole: Final[Unit]
-    milli_second: Final[Unit]
+    milliampere: Final[Unit]
+    milligram: Final[Unit]
+    millimeter: Final[Unit]
+    millimeter_quadrupled: Final[Unit]
+    millimole: Final[Unit]
     million_british_thermal_unit: Final[Unit]
+    millisecond: Final[Unit]
     minute: Final[Unit]
     mole: Final[Unit]
-    nano_ampere: Final[Unit]
-    nano_gram: Final[Unit]
-    nano_meter: Final[Unit]
-    nano_mole: Final[Unit]
-    nano_second: Final[Unit]
+    nanoampere: Final[Unit]
+    nanogram: Final[Unit]
+    nanometer: Final[Unit]
+    nanomole: Final[Unit]
+    nanosecond: Final[Unit]
     newton: Final[Unit]
+    newton_meter: Final[Unit]
     ounce: Final[Unit]
     ounce_per_milliliter: Final[Unit]
     pascal: Final[Unit]
@@ -213,7 +238,6 @@ class Units:
     pascal_seconds: Final[Unit]  # alias for pascal_second
     pascals: Final[Unit]  # alias for pascal
     poundforce: Final[Unit]  # alias for pound_force
-    psi: Final[Unit]  # alias for pound_force_per_square_inch
     radians: Final[Unit]  # alias for radian
     seconds: Final[Unit]  # alias for second
     slugs: Final[Unit]  # alias for slug

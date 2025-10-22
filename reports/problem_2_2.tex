@@ -1,0 +1,183 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{graphicx}
+\usepackage{siunitx}
+
+\title{Engineering Calculation Report: Problem 2-2: Find Force with Known Resultant}
+\date{October 14, 2025}
+
+\begin{document}
+\maketitle
+
+\section*{Description}
+\noindent
+\begin{minipage}{\textwidth}
+If the resultant force is to be 500 N directed along the positive y-axis, and $F_{2}$ = 700 N at 195°, determine the magnitude and direction of $F_{1}$.
+\end{minipage}
+\par
+
+\section{Known Variables}
+
+\begin{longtable}{lSS}
+\toprule
+Symbol & {Magnitude (N)} & {Angle ($^\circ$)} \\
+\midrule
+\endhead
+$F_{2}$ & 700 & 195 \\
+$F_{R}$ & 500 & 90 \\
+\bottomrule
+\end{longtable}
+
+\section{Unknown Variables (To Calculate)}
+
+\begin{longtable}{lll}
+\toprule
+Symbol & Magnitude (N) & Angle ($^\circ$) \\
+\midrule
+\endhead
+$F_{1}$ & ? & ? \\
+\bottomrule
+\end{longtable}
+
+\section{Equations Used}
+
+\begin{enumerate}
+\item $\displaystyle\Large F_{1}^{2} = F_{R}^{2} + F_{2}^{2} - 2 \cdot F_R \cdot F_2 \cdot \cos{(\theta_{F_{R}} - \theta_{F_{2}})}$
+\item $\displaystyle\Large \frac{\sin{(\theta_{F_{1}})}}{F_2} = \frac{\sin{(\theta_{F_{R}} - \theta_{F_{2}})}}{F_1}$
+\end{enumerate}
+
+\section{Step-by-Step Solution}
+
+\begin{enumerate}[label=\textbf{Step \arabic*:},leftmargin=2cm]
+\item \textbf{Solve for $|F_{1}|$}
+
+\begin{description}[leftmargin=2cm]
+\item[\textbf{Equation:}] \mbox{}
+
+\begin{flalign*}
+\Large F_{1}^{2} = F_{R}^{2} + F_{2}^{2} - 2 \cdot F_R \cdot F_2 \cdot \cos{(\theta_{F_{R}} - \theta_{F_{2}})} &&
+\end{flalign*}
+
+\item[\textbf{Substitution:}] \mbox{}
+
+\begin{flalign*}
+\Large F_{1}^{2} = (500.00\,\mathrm{N})^{2} + (700.00\,\mathrm{N})^{2} - 2  \cdot  (500.00\,\mathrm{N})  \cdot  (700.00\,\mathrm{N})  \cdot  \cos{(105.0^\circ)} &&
+\end{flalign*}
+
+\item[\textbf{Result:}] \mbox{}
+
+\begin{flalign*}
+\Large |F_{1}| = 959.78\,\mathrm{N} &&
+\end{flalign*}
+
+\end{description}
+
+\item \textbf{Solve for $\theta_{{F_{1}}}$}
+
+\begin{description}[leftmargin=2cm]
+\item[\textbf{Equation:}] \mbox{}
+
+\begin{flalign*}
+\Large \frac{\sin{(\theta_{F_{1}})}}{F_2} = \frac{\sin{(\theta_{F_{R}} - \theta_{F_{2}})}}{F_1} &&
+\end{flalign*}
+
+\item[\textbf{Substitution:}] \mbox{}
+
+\begin{flalign*}
+\Large \frac{\sin{(\theta_{F_{1}})}}{700.00\,\mathrm{N}} = \frac{\sin{(105.0^\circ)}}{959.78\,\mathrm{N}} &&
+\end{flalign*}
+
+\item[\textbf{Result:}] \mbox{}
+
+\begin{flalign*}
+\Large \theta_{{F_{1}}} = 45.21\,\mathrm{^\circ} &&
+\end{flalign*}
+
+\end{description}
+
+\end{enumerate}
+
+
+\section{Summary of Results}
+
+\begin{longtable}{lSSSSS}
+\toprule
+Symbol & {Magnitude (N)} & {Angle ($^\circ$)} & {$F_x$ (N)} & {$F_y$ (N)} \\
+\midrule
+\endhead
+$F_{1}$ & 959.778 & 45.2121 & 676.148 & 681.173 \\
+$F_{2}$ & 700 & 195 & -676.148 & -181.173 \\
+$F_{R}$ & 500 & 90 & 0 & 500 \\
+\bottomrule
+\end{longtable}
+
+\section{Vector Diagram}
+
+\begin{center}
+\includegraphics[width=0.7\textwidth]{Problem_2-2_Find_Force_with_Known_Resultant_diagram.png}
+\end{center}
+
+\begin{center}
+\textit{Figure: Vector diagram showing all forces and their orientations}
+\end{center}
+
+
+\clearpage
+
+\section*{Disclaimer}
+\addcontentsline{toc}{section}{Disclaimer}
+
+\begin{center}
+\rule{\textwidth}{0.4pt}
+\end{center}
+
+\noindent\textbf{IMPORTANT NOTICE:}
+
+\noindent While every effort has been made to ensure the accuracy and reliability of the calculations provided, we do not guarantee that the information is complete, up-to-date, or suitable for any specific purpose. Users must independently verify the results and assume full responsibility for any decisions or actions taken based on its output. Use of this calculator is entirely at your own risk, and we expressly disclaim any liability for errors or omissions in the information provided.
+
+\vspace{1em}
+
+\noindent\textbf{Report Details:}
+\begin{itemize}
+\item \textbf{Generated Date:} October 14, 2025
+\item \textbf{Generated Using:} Qnty Library
+\item \textbf{Version:} Beta (Independent verification required for production use)
+\end{itemize}
+
+\vspace{2em}
+
+\noindent\textbf{Professional Review and Approval:}
+
+\vspace{1em}
+
+\begin{longtable}{|p{3cm}|p{4cm}|p{4cm}|p{2.5cm}|}
+\hline
+\textbf{Role} & \textbf{Name} & \textbf{Signature} & \textbf{Date} \\
+\hline
+\hline
+Calculated By & \rule{0pt}{1.5cm} & & \\
+\hline
+Reviewed By & \rule{0pt}{1.5cm} & & \\
+\hline
+Approved By & \rule{0pt}{1.5cm} & & \\
+\hline
+\end{longtable}
+
+\vspace{1em}
+
+\begin{center}
+\rule{\textwidth}{0.4pt}
+\vspace{0.5em}
+\textit{Report generated using Qnty Library}
+\vspace{0.5em}
+{\footnotesize For questions or support, please refer to the Qnty documentation}
+\end{center}
+
+\end{document}
