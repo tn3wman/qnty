@@ -51,7 +51,7 @@ class ForceVector:
         >>> FR = ForceVector(magnitude=None, angle=None, name="Resultant", is_known=False)
     """
 
-    __slots__ = ("_vector", "_magnitude", "_angle", "name", "is_known", "is_resultant", "_description", "coordinate_system", "angle_reference")
+    __slots__ = ("_vector", "_magnitude", "_angle", "name", "is_known", "is_resultant", "_description", "coordinate_system", "angle_reference", "_relative_to_force", "_relative_angle")
 
     def __init__(
         self,
@@ -100,6 +100,10 @@ class ForceVector:
         self._angle: Quantity | None = None
         self.coordinate_system = coordinate_system or CoordinateSystem.standard()
 
+        # For relative angle constraints (e.g., "30 degrees from F_R")
+        self._relative_to_force: str | None = None
+        self._relative_angle: float | None = None  # In radians
+
         # Handle wrt parameter (shorthand for angle_reference)
         if wrt is not None and angle_reference is not None:
             raise ValueError("Cannot specify both 'wrt' and 'angle_reference'. Use one or the other.")
@@ -143,7 +147,9 @@ class ForceVector:
             if isinstance(magnitude, (int, float)):
                 if unit is None:
                     raise ValueError("unit must be specified when magnitude is a scalar")
-                mag_qty = Quantity(name=f"{self.name}_magnitude", dim=unit.dim, value=float(magnitude), preferred=unit)
+                # Use from_value to properly convert to SI units
+                mag_qty = Quantity.from_value(float(magnitude), unit, name=f"{self.name}_magnitude")
+                mag_qty.preferred = unit  # Preserve preferred unit for display
             else:
                 mag_qty = magnitude
 
@@ -153,7 +159,16 @@ class ForceVector:
 
                 # Convert angle from angle_reference system to standard (CCW from +x)
                 angle_in_ref_system = float(angle) * angle_unit.si_factor  # Convert to radians
-                angle_standard = self.angle_reference.to_standard(angle_in_ref_system, angle_unit="radian")
+
+                # If this has a relative angle constraint, don't resolve it yet
+                if self._relative_to_force is None:
+                    angle_standard = self.angle_reference.to_standard(angle_in_ref_system, angle_unit="radian")
+                else:
+                    # Store the relative offset from the angle parameter
+                    # The _relative_angle was initialized from wrt, but the actual offset is the angle parameter
+                    base_offset = self._relative_angle if self._relative_angle is not None else 0.0
+                    self._relative_angle = base_offset + angle_in_ref_system
+                    angle_standard = None  # Will be resolved later
 
                 angle_qty = Quantity(name=f"{self.name}_angle", dim=dim.D, value=angle_standard, preferred=angle_unit)
             else:
@@ -170,15 +185,21 @@ class ForceVector:
             self._angle = angle_qty
 
             # Convert to vector components
-            if mag_qty.value is not None and angle_qty.value is not None:
+            # Only if both magnitude and angle are resolved (not relative constraint)
+            if mag_qty.value is not None and angle_qty.value is not None and self._relative_to_force is None:
                 angle_rad = angle_qty.value  # Already in SI (radians), in standard form
                 x_val = mag_qty.value * math.cos(angle_rad)
                 y_val = mag_qty.value * math.sin(angle_rad)
                 z_val = 0.0
 
-                self._vector = Vector(x_val, y_val, z_val, unit=mag_qty.preferred)
+                # Create Quantities from SI values to avoid double conversion in Vector.__init__
+                from ..core.dimension_catalog import dim as dim_cat
+                x_qty = Quantity(name=f"{self.name}_x", dim=dim_cat.force, value=x_val, preferred=mag_qty.preferred)
+                y_qty = Quantity(name=f"{self.name}_y", dim=dim_cat.force, value=y_val, preferred=mag_qty.preferred)
+                z_qty = Quantity(name=f"{self.name}_z", dim=dim_cat.force, value=z_val, preferred=mag_qty.preferred)
+                self._vector = Vector.from_quantities(x_qty, y_qty, z_qty)
             else:
-                # Unknown force
+                # Unknown force or has relative angle constraint
                 self._vector = None
             return
 
@@ -205,6 +226,24 @@ class ForceVector:
             # Store angle (now in standard form), magnitude remains None
             self._angle = angle_qty
             self._magnitude = None
+            self._vector = None
+            return
+
+        # Case 2c: Magnitude known but angle unknown (for problems where direction needs to be solved)
+        if magnitude is not None and angle is None:
+            # Convert magnitude to Quantity if needed
+            if isinstance(magnitude, (int, float)):
+                if unit is None:
+                    raise ValueError("unit must be specified when magnitude is a scalar")
+                # Use from_value to properly convert to SI units
+                mag_qty = Quantity.from_value(float(magnitude), unit, name=f"{self.name}_magnitude")
+                mag_qty.preferred = unit  # Preserve preferred unit for display
+            else:
+                mag_qty = magnitude
+
+            # Store magnitude, angle remains None
+            self._magnitude = mag_qty
+            self._angle = None
             self._vector = None
             return
 
@@ -236,7 +275,47 @@ class ForceVector:
         raise ValueError("Must provide either (magnitude, angle), (x, y, z components), or vector")
 
     def _parse_wrt(self, wrt: str) -> AngleReference:
-        """Parse wrt using the static method with this instance's coordinate system."""
+        """
+        Parse wrt parameter. Can be either:
+        - Standard axis reference: "+x", "-y", "cw:+x", etc.
+        - Force reference: "+F_R", "30:F_BC", "-F_AB", etc.
+
+        For force references, stores the relative constraint and returns standard reference.
+        """
+        # Check if this is a force reference (contains uppercase letters or underscore)
+        # Standard axes are: +x, -x, +y, -y, u, v, etc. (lowercase or single char)
+        # Force names typically: F_R, F_AB, F_BC, etc. (have uppercase or underscore)
+
+        # Extract angle and reference parts
+        angle_offset = 0.0  # in degrees
+        ref_part = wrt
+
+        if ":" in wrt:
+            parts = wrt.split(":", 1)
+            # Try to parse first part as a number (angle offset)
+            try:
+                angle_offset = float(parts[0])
+                ref_part = parts[1].strip()
+            except ValueError:
+                # Not a number, might be direction like "cw:+x"
+                pass
+
+        # Check if ref_part looks like a force name (has uppercase or underscore after sign)
+        ref_without_sign = ref_part.lstrip("+-")
+        is_negative_ref = ref_part.startswith("-")
+
+        # Force names have uppercase letters or underscores
+        if any(c.isupper() or c == "_" for c in ref_without_sign):
+            # This is a force reference!
+            self._relative_to_force = ref_without_sign
+            # Apply sign to angle offset
+            if is_negative_ref:
+                angle_offset += 180.0
+            self._relative_angle = math.radians(angle_offset)
+            # Return standard reference (will be resolved later)
+            return AngleReference.standard()
+
+        # Standard axis reference - use existing logic
         return ForceVector.parse_wrt(wrt, self.coordinate_system)
 
     def _to_quantity(self, value: float | Quantity | None, unit: Unit, component_name: str) -> Quantity:
@@ -244,20 +323,37 @@ class ForceVector:
         if isinstance(value, Quantity):
             return value
         elif isinstance(value, (int, float)):
-            return Quantity(name=component_name, dim=unit.dim, value=float(value), preferred=unit)
+            # Use from_value to properly convert to SI units
+            qty = Quantity.from_value(float(value), unit, name=component_name)
+            qty.preferred = unit  # Preserve preferred unit for display
+            return qty
         else:
             return Quantity(name=component_name, dim=unit.dim, value=None, preferred=unit)
 
     def _compute_magnitude_and_angle(self) -> None:
-        """Compute magnitude and angle from vector components."""
+        """
+        Compute magnitude and angle from vector components.
+
+        If the force previously had a negative magnitude, preserve the sign by adjusting
+        the computed angle appropriately.
+        """
         if self._vector is None:
             return
 
+        # Check if we had a negative magnitude before
+        had_negative_magnitude = self._magnitude is not None and self._magnitude.value is not None and self._magnitude.value < 0
+
+        # Compute magnitude from vector (always positive from sqrt)
         self._magnitude = self._vector.magnitude
 
         # Compute angle
         coords = self._vector.to_array()
         angle_rad = math.atan2(coords[1], coords[0])
+
+        # If we had a negative magnitude, flip it back and adjust angle
+        if had_negative_magnitude and self._magnitude.value is not None:
+            # Make magnitude negative again
+            self._magnitude.value = -self._magnitude.value
 
         from ..core.dimension_catalog import dim
         from ..core.unit import ureg
@@ -343,40 +439,106 @@ class ForceVector:
             raise ValueError(f"Invalid direction '{direction_str}'. Use 'ccw', 'cw', 'counterclockwise', or 'clockwise'")
 
         # Check if axis matches coordinate system axes
-        if axis == coord_sys.axis1_label:
-            return AngleReference.from_coordinate_system(coord_sys, axis_index=0, direction=direction)
-        elif axis == coord_sys.axis2_label:
-            return AngleReference.from_coordinate_system(coord_sys, axis_index=1, direction=direction)
+        # Handle both direct match (e.g., "x") and with sign prefix (e.g., "+x", "-x")
+        axis_without_sign = axis.lstrip("+-")
+        is_negative = axis.startswith("-")
+
+        if axis == coord_sys.axis1_label or axis_without_sign == coord_sys.axis1_label:
+            if is_negative:
+                # For negative axis, add 180° to the axis angle
+                from .angle_reference import AngleReference as AR
+                axis_angle_deg = math.degrees(coord_sys.axis1_angle) + 180.0
+                return AR(axis_angle=axis_angle_deg, direction=direction, axis_label=axis, angle_unit="degree")
+            else:
+                return AngleReference.from_coordinate_system(coord_sys, axis_index=0, direction=direction)
+        elif axis == coord_sys.axis2_label or axis_without_sign == coord_sys.axis2_label:
+            if is_negative:
+                # For negative axis, add 180° to the axis angle
+                from .angle_reference import AngleReference as AR
+                axis_angle_deg = math.degrees(coord_sys.axis2_angle) + 180.0
+                return AR(axis_angle=axis_angle_deg, direction=direction, axis_label=axis, angle_unit="degree")
+            else:
+                return AngleReference.from_coordinate_system(coord_sys, axis_index=1, direction=direction)
         else:
-            # Check if it's a standard axis
+            # Check if it's a standard axis - allow these even with non-standard coordinate systems
+            # for display/comparison purposes (angles will still be in standard x-y coords)
             standard_axes = {"+x", "x", "+y", "y", "-x", "-y"}
             if axis in standard_axes:
                 return AngleReference.from_axis(axis, direction=direction)
-            else:
-                # Not a standard axis and not in coordinate system
-                raise ValueError(
-                    f"Invalid wrt axis '{axis}'. Must be a standard axis (+x, -x, +y, -y) or "
-                    f"an axis from the coordinate system ({coord_sys.axis1_label}, {coord_sys.axis2_label})"
-                )
+
+            # Not a standard axis and not in coordinate system
+            raise ValueError(
+                f"Invalid wrt axis '{axis}'. Must be a standard axis (+x, -x, +y, -y) or "
+                f"an axis from the coordinate system ({coord_sys.axis1_label}, {coord_sys.axis2_label})"
+            )
 
     @classmethod
-    def unknown(cls, name: str, is_resultant: bool = False, angle: float | None = None, coordinate_system: CoordinateSystem | None = None, angle_reference: AngleReference | None = None, wrt: str | None = None, **kwargs) -> ForceVector:
+    def unknown(cls, name: str, is_resultant: bool = False, magnitude: float | None = None, angle: float | None = None, coordinate_system: CoordinateSystem | None = None, angle_reference: AngleReference | None = None, wrt: str | None = None, **kwargs) -> ForceVector:
         """
         Create an unknown ForceVector to be solved for.
 
         Args:
             name: Force name
             is_resultant: Whether this is a resultant force
+            magnitude: Optional known magnitude. If provided, only angle is unknown.
             angle: Optional known angle (in degrees). If provided, only magnitude is unknown.
             coordinate_system: CoordinateSystem for non-standard axes
             angle_reference: AngleReference specifying how angle is measured
             wrt: Shorthand for angle reference (e.g., "+x", "cw:+y", "u")
-            **kwargs: Additional arguments
+            **kwargs: Additional arguments (e.g., unit, angle_unit)
 
         Returns:
             ForceVector instance marked as unknown
         """
-        return cls(magnitude=None, angle=angle, name=name, is_known=False, is_resultant=is_resultant, coordinate_system=coordinate_system, angle_reference=angle_reference, wrt=wrt, **kwargs)
+        return cls(magnitude=magnitude, angle=angle, name=name, is_known=False, is_resultant=is_resultant, coordinate_system=coordinate_system, angle_reference=angle_reference, wrt=wrt, **kwargs)
+
+    def resolve_relative_angle(self, forces: dict[str, "ForceVector"]) -> None:
+        """
+        Resolve relative angle constraint to absolute angle.
+
+        If this force has a relative angle constraint (e.g., "30 degrees from F_R"),
+        this method resolves it to an absolute angle once the referenced force's angle is known.
+
+        Args:
+            forces: Dictionary of force name -> ForceVector to look up referenced force
+
+        Raises:
+            ValueError: If referenced force doesn't exist or doesn't have a known angle
+        """
+        if self._relative_to_force is None:
+            return  # No relative constraint
+
+        # Look up the referenced force
+        if self._relative_to_force not in forces:
+            raise ValueError(f"Force {self.name} references unknown force '{self._relative_to_force}'")
+
+        ref_force = forces[self._relative_to_force]
+
+        # Check if referenced force has a known angle
+        if ref_force.angle is None or ref_force.angle.value is None:
+            # Can't resolve yet - referenced force doesn't have known angle
+            # Don't clear the constraint, it will be resolved during solving
+            raise ValueError(f"Force {self.name} references {self._relative_to_force}, but that force doesn't have a known angle yet")
+
+        # Calculate absolute angle: reference_angle + relative_offset
+        ref_angle_rad = ref_force.angle.value  # Already in radians
+        relative_offset = self._relative_angle if self._relative_angle is not None else 0.0
+        absolute_angle_rad = ref_angle_rad + relative_offset
+
+        # Store the resolved angle
+        from ..core.dimension_catalog import dim
+        from ..core.unit import ureg
+
+        degree_unit = ureg.resolve("degree", dim=dim.D)
+        self._angle = Quantity(name=f"{self.name}_angle", dim=dim.D, value=absolute_angle_rad, preferred=degree_unit)
+
+        # Clear the relative constraint since it's now resolved
+        self._relative_to_force = None
+        self._relative_angle = None
+
+    def has_relative_angle(self) -> bool:
+        """Check if this force has an unresolved relative angle constraint."""
+        return self._relative_to_force is not None
 
     # Properties
     @property

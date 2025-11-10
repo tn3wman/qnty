@@ -260,8 +260,11 @@ class TrigSolver:
         degree_unit = ureg.resolve("degree", dim=dim.D)
         angle_qty = Quantity(name=f"{unknown_force.name}_angle", dim=dim.D, value=theta_unknown, preferred=degree_unit)
 
-        # Use the computed components
-        unknown_vector = Vector(F_unknownx, F_unknowny, 0.0, unit=ref_unit)
+        # Use the computed components (already in SI units)
+        x_qty = Quantity(name=f"{unknown_force.name}_x", dim=dim.force, value=F_unknownx, preferred=ref_unit)
+        y_qty = Quantity(name=f"{unknown_force.name}_y", dim=dim.force, value=F_unknowny, preferred=ref_unit)
+        z_qty = Quantity(name=f"{unknown_force.name}_z", dim=dim.force, value=0.0, preferred=ref_unit)
+        unknown_vector = Vector.from_quantities(x_qty, y_qty, z_qty)
 
         # Update unknown force
         unknown_force._vector = unknown_vector
@@ -368,8 +371,11 @@ class TrigSolver:
         degree_unit = ureg.resolve("degree", dim=dim.D)
         angle_qty = Quantity(name="FR_angle", dim=dim.D, value=theta_R, preferred=degree_unit)
 
-        # Use the computed components
-        resultant_vector = Vector(FRx, FRy, 0.0, unit=ref_unit)
+        # Use the computed components (already in SI units)
+        x_qty = Quantity(name="FR_x", dim=dim.force, value=FRx, preferred=ref_unit)
+        y_qty = Quantity(name="FR_y", dim=dim.force, value=FRy, preferred=ref_unit)
+        z_qty = Quantity(name="FR_z", dim=dim.force, value=0.0, preferred=ref_unit)
+        resultant_vector = Vector.from_quantities(x_qty, y_qty, z_qty)
 
         # Update resultant force
         resultant._vector = resultant_vector
@@ -414,7 +420,10 @@ class TrigSolver:
         if force2.angle is None or force2.angle.value is None:
             raise ValueError(f"Force {force2.name} must have a known angle")
 
-        F_R = resultant.magnitude.value
+        # Use absolute value of resultant magnitude for decomposition
+        # (negative magnitude means force points opposite to specified angle)
+        # magnitude.value is now stored in SI units
+        F_R = abs(resultant.magnitude.value)  # Already in SI units
         theta_R = resultant.angle.value  # radians
         theta_1 = force1.angle.value  # radians
         theta_2 = force2.angle.value  # radians
@@ -505,12 +514,19 @@ class TrigSolver:
         ref_unit = resultant.magnitude.preferred
         from ..core.dimension_catalog import dim
 
+        # Store SI values directly (F1 and F2 are already in SI units from calculations)
+        # Quantity class handles conversion to preferred units for display
+
         # Update force 1
         mag1_qty = Quantity(name=f"{force1.name}_magnitude", dim=dim.force, value=F1, preferred=ref_unit)
         force1._magnitude = mag1_qty
         F1x = F1 * math.cos(theta_1)
         F1y = F1 * math.sin(theta_1)
-        force1._vector = Vector(F1x, F1y, 0.0, unit=ref_unit)
+        # Create vector from SI components
+        f1_x_qty = Quantity(name=f"{force1.name}_x", dim=dim.force, value=F1x, preferred=ref_unit)
+        f1_y_qty = Quantity(name=f"{force1.name}_y", dim=dim.force, value=F1y, preferred=ref_unit)
+        f1_z_qty = Quantity(name=f"{force1.name}_z", dim=dim.force, value=0.0, preferred=ref_unit)
+        force1._vector = Vector.from_quantities(f1_x_qty, f1_y_qty, f1_z_qty)
         force1.is_known = True
 
         # Update force 2
@@ -518,7 +534,11 @@ class TrigSolver:
         force2._magnitude = mag2_qty
         F2x = F2 * math.cos(theta_2)
         F2y = F2 * math.sin(theta_2)
-        force2._vector = Vector(F2x, F2y, 0.0, unit=ref_unit)
+        # Create vector from SI components
+        f2_x_qty = Quantity(name=f"{force2.name}_x", dim=dim.force, value=F2x, preferred=ref_unit)
+        f2_y_qty = Quantity(name=f"{force2.name}_y", dim=dim.force, value=F2y, preferred=ref_unit)
+        f2_z_qty = Quantity(name=f"{force2.name}_z", dim=dim.force, value=0.0, preferred=ref_unit)
+        force2._vector = Vector.from_quantities(f2_x_qty, f2_y_qty, f2_z_qty)
         force2.is_known = True
 
     def solve_by_components(self, known_forces: list[ForceVector], unknown_force: ForceVector) -> None:

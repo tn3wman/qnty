@@ -1,28 +1,3 @@
-"""
-Data-driven force vector equilibrium tests.
-Eliminates duplication by defining test cases in a table structure.
-
-USAGE:
-------
-All new problems (2-3 to 2-31) have debug output enabled and assertions disabled.
-This allows you to:
-1. Run tests and see actual vs expected results
-2. Manually verify the angles and magnitudes
-3. Update expected values as needed
-
-NOTES:
-------
-- Magnitudes are displayed in their original units (lbf, N, etc.)
-- Angles are displayed in degrees (counterclockwise from positive x-axis)
-- Negative angles are shown as-is (e.g., -90° = 270°)
-- Problems 2-12 and 2-25 require solver enhancements (2 unknowns)
-
-To enable assertions for a problem after verification:
-    FORCE_VECTOR_PROBLEMS["problem_2_X"]["debug"]["assert_values"] = True
-
-TEST RESULTS: 13 passing, 2 failing (solver limitations)
-"""
-
 import pytest
 
 from qnty.problems.vector_equilibrium import VectorEquilibriumProblem
@@ -196,23 +171,25 @@ FORCE_VECTOR_PROBLEMS = {
         Note: u-v coordinate system with 75° between axes (u at 0°, v at 75°).
         """,
         "coordinate_system": CoordinateSystem.from_angle_between(
-            "u", "v", axis1_angle=0, angle_between=75
+            "x", "y", axis1_angle=0, angle_between=75
         ),
-        "forces": {
+        "forces": lambda coord_sys: {
             "F_1": ForceVector(
-                magnitude=4000, angle=45, unit="N",
-                name="F_1", description="Force 1"
+                magnitude=4000, angle=-30, wrt="+y", unit="N",
+                name="F_1", description="Force 1",
+                coordinate_system=coord_sys
             ),
             "F_2": ForceVector(
-                magnitude=6000, angle=330, unit="N",
-                name="F_2", description="Force 2"
+                magnitude=6000, angle=-30, wrt="+x", unit="N",
+                name="F_2", description="Force 2",
+                coordinate_system=coord_sys
             ),
-            "F_R": ForceVector.unknown("F_R", is_resultant=True),
+            "F_R": ForceVector.unknown("F_R", wrt="+x", is_resultant=True, unit="N", coordinate_system=coord_sys),
         },
         "expected": {
-            "F_1": {"magnitude": 4000, "angle": 45, "unit": "N", "wrt": "+x"},
-            "F_2": {"magnitude": 6000, "angle": 330, "unit": "N", "wrt": "+x"},
-            "F_R": {"magnitude": 8026, "angle": 1.22, "unit": "N", "wrt": "cw:u"},
+            "F_1": {"magnitude": 4000, "angle": -30, "unit": "N", "wrt": "+y"},
+            "F_2": {"magnitude": 6000, "angle": -30, "unit": "N", "wrt": "+x"},
+            "F_R": {"magnitude": 8026, "angle": -1.22, "unit": "N", "wrt": "+x"},
         },
         "debug": {
             "print_results": False,
@@ -227,10 +204,11 @@ FORCE_VECTOR_PROBLEMS = {
         """,
         "coordinate_system": CoordinateSystem.from_angle_between(
             "u", "v", axis1_angle=0, angle_between=75),
-        "forces": {
+        "forces": lambda coord_sys: {
             "F_1": ForceVector(
                 magnitude=4000, angle=45, unit="N",
-                name="F_1", description="Force 1 at 45°"
+                name="F_1", description="Force 1 at 45°",
+                coordinate_system=coord_sys
             ),
         },
         "expected": {
@@ -251,10 +229,11 @@ FORCE_VECTOR_PROBLEMS = {
         """,
         "coordinate_system": CoordinateSystem.from_angle_between(
             "u", "v", axis1_angle=0, angle_between=75),
-        "forces": {
+        "forces": lambda coord_sys: {
             "F_2": ForceVector(
                 magnitude=6000, angle=330, unit="N",
-                name="F_2", description="Force 2 at 330°"
+                name="F_2", description="Force 2 at 330°",
+                coordinate_system=coord_sys
             ),
         },
         "expected": {
@@ -313,11 +292,11 @@ FORCE_VECTOR_PROBLEMS = {
         "expected": {
             "F_1": {
                 "magnitude": 800, "unit": "lbf",
-                "angle": 50, "wrt": "+x"
+                "angle": -40, "wrt": "+y"
             },
             "F_2": {
                 "magnitude": 500, "unit": "lbf",
-                "angle": 145, "wrt": "+x"
+                "angle": -35, "wrt": "+x"
             },
             "F_R": {
                 "magnitude": 979.655, "unit": "lbf",
@@ -329,44 +308,155 @@ FORCE_VECTOR_PROBLEMS = {
             "assert_values": True
         },
     },
-    # "problem_2_11": {
-    #     "name": "Problem 2-11",
-    #     "description": """
-    #     The plate is subjected to the two forces at A and B as shown. If theta = 60°,
-    #     determine the magnitude of the resultant of these two forces and its direction
-    #     measured clockwise from the horizontal.
-    #     """,
-    #     "forces": {
-    #         "F_A": ForceVector(magnitude=8000, angle=60, unit="N", name="F_A", description="Force A"),
-    #         "F_B": ForceVector(magnitude=6000, angle=160, unit="N", name="F_B", description="Force B"),
-    #         "F_R": ForceVector.unknown("F_R", is_resultant=True),
-    #     },
-    #     "expected": {
-    #         "F_A": {"magnitude": 8000, "angle": 60, "unit": "N"},
-    #         "F_B": {"magnitude": 6000, "angle": 160, "unit": "N"},
-    #         "F_R": {"magnitude": 10800, "angle": 356.84, "unit": "N"},  # 3.16° clockwise from horizontal = 356.84° CCW
-    #     },
-    #     "debug": {"print_results": True, "assert_values": False},
-    # },
-    # "problem_2_12": {
-    #     "name": "Problem 2-12",
-    #     "description": """
-    #     Determine the angle of theta for connecting member A to the plate so that the
-    #     resultant force of F_A and F_B is directed horizontally to the right. Also, what is
-    #     the magnitude of the resultant force?
-    #     """,
-    #     "forces": {
-    #         "F_A": ForceVector.unknown("F_A"),
-    #         "F_B": ForceVector(magnitude=8000, angle=160, unit="N", name="F_B", description="Force B"),
-    #         "F_R": ForceVector.unknown("F_R", is_resultant=True),
-    #     },
-    #     "expected": {
-    #         "F_A": {"magnitude": 6000, "angle": 54.9, "unit": "N"},
-    #         "F_B": {"magnitude": 8000, "angle": 160, "unit": "N"},
-    #         "F_R": {"magnitude": 10400, "angle": 0, "unit": "N"},
-    #     },
-    #     "debug": {"print_results": True, "assert_values": False},
-    # },
+    "problem_2_11": {
+        "name": "Problem 2-11",
+        "description": """
+        The plate is subjected to the two forces at A and B as shown. If theta = 60°,
+        determine the magnitude of the resultant of these two forces and its direction
+        measured clockwise from the horizontal.
+        """,
+        "forces": {
+            "F_A": ForceVector(
+                magnitude=8000, unit="N",
+                angle=-60, wrt="+y",
+                name="F_A", description="Force A"
+            ),
+            "F_B": ForceVector(
+                magnitude=6000, unit="N",
+                angle=40, wrt="-y",
+                name="F_B", description="Force B"
+            ),
+            "F_R": ForceVector.unknown("F_R", is_resultant=True),
+        },
+        "expected": {
+            "F_A": {
+                "magnitude": 8000, "unit": "N",
+                "angle": -60, "wrt": "+y"
+            },
+            "F_B": {
+                "magnitude": 6000, "unit": "N",
+                "angle": 40, "wrt": "-y"
+            },
+            "F_R": {
+                "magnitude": 10800, "unit": "N",
+                "angle": -3.16, "wrt": "+x"
+            },  # 3.16° clockwise from horizontal = 356.84° CCW
+        },
+        "debug": {
+            "print_results": False,
+            "assert_values": True
+        },
+    },
+    "problem_2_12": {
+        "name": "Problem 2-12",
+        "description": """
+        Determine the angle of theta for connecting member A to the plate so that the
+        resultant force of F_A and F_B is directed horizontally to the right. Also, what is
+        the magnitude of the resultant force?
+        """,
+        "forces": {
+            "F_A": ForceVector.unknown("F_A", magnitude=8000, wrt="+y",unit="N"),
+            "F_B": ForceVector(
+                magnitude=6000, unit="N",
+                angle=40, wrt="-y",
+                name="F_B", description="Force B"
+            ),
+            "F_R": ForceVector.unknown("F_R", angle=0, wrt="+x", unit="N", is_resultant=True),
+        },
+        "expected": {
+            "F_A": {"magnitude": 8000, "angle": -54.9, "wrt": "+y", "unit": "N"},
+            "F_B": {"magnitude": 6000, "angle": 40, "wrt": "-y", "unit": "N"},
+            "F_R": {"magnitude": 10400, "angle": 0, "unit": "N"},
+        },
+        "debug": {
+            "print_results": False,
+            "assert_values": True,
+        },
+    },
+    "problem_2_13": {
+        "name": "Problem 2-13",
+        "description": """
+        The force acting on the gear tooth is Resolve this force into two components acting along the lines aa and bb.
+        """,
+        "coordinate_system": CoordinateSystem.from_angle_between(
+            "x", "y", axis1_angle=0, angle_between=40),
+        "forces": lambda coord_sys: {
+            "F_A": ForceVector.unknown("F_A", angle=0, wrt="+x", unit="lbf", coordinate_system=coord_sys),
+            "F_B": ForceVector.unknown("F_B", angle=0, wrt="-y", unit="lbf", coordinate_system=coord_sys),
+            "F_R": ForceVector(magnitude=-20, unit="lbf", name="F_R", angle=80, wrt="+y", is_resultant=True, coordinate_system=coord_sys),
+        },
+        "expected": {
+            "F_A": {"magnitude": 30.6, "angle": 0, "wrt": "+x", "unit": "lbf"},
+            "F_B": {"magnitude": 26.9, "angle": 0, "wrt": "-y", "unit": "lbf"},
+            "F_R": {"magnitude": -20, "angle": 80, "wrt": "+y", "unit": "lbf"},
+        },
+        "debug": {
+            "print_results": True,
+            "assert_values": True,
+        },
+    },
+    "problem_2_14": {
+        "name": "Problem 2-14",
+        "description": """
+        The component of force F acting along line aa is required to be 30 lb. Determine the magnitude of F and its component along line bb.
+        """,
+        "coordinate_system": CoordinateSystem.from_angle_between(
+            "x", "y", axis1_angle=0, angle_between=40),
+        "forces": lambda coord_sys: {
+            "F_A": ForceVector(name="F_A", magnitude=30, angle=0, wrt="+x", unit="lbf", coordinate_system=coord_sys),
+            "F_B": ForceVector.unknown("F_B", angle=0, wrt="-y", unit="lbf", coordinate_system=coord_sys),
+            "F_R": ForceVector.unknown(unit="lbf", name="F_R", angle=80, wrt="+y", is_resultant=True, coordinate_system=coord_sys),
+        },
+        "expected": {
+            "F_A": {"magnitude": 30, "angle": 0, "wrt": "+x", "unit": "lbf"},
+            "F_B": {"magnitude": 26.4, "angle": 0, "wrt": "-y", "unit": "lbf"},
+            "F_R": {"magnitude": -19.6, "angle": 80, "wrt": "+y", "unit": "lbf"},
+        },
+        "debug": {
+            "print_results": True,
+            "assert_values": True,
+        },
+    },
+    "problem_2_15": {
+        "name": "Problem 2-15",
+        "description": """
+        Force F acts on the frame such that its component acting along member is 650 lb, directed from towards , and the component acting along member is 500 lb, directed from towards . Determine the magnitude of F and its direction u. Set f = 60°.
+        """,
+        "forces": {
+            "F_AB": ForceVector(name="F_AB", magnitude=650, angle=60, wrt="-x", unit="lbf"),
+            "F_BC": ForceVector(name="F_BC", magnitude=500, angle=-45, wrt="+x", unit="lbf"),
+            "F_R": ForceVector.unknown(unit="lbf", name="F_R",is_resultant=True),
+        },
+        "expected": {
+            "F_AB": {"magnitude": 650, "angle": 60, "wrt": "-x", "unit": "lbf"},
+            "F_BC": {"magnitude": 500, "angle": -45, "wrt": "+x", "unit": "lbf"},
+            "F_R": {"magnitude": 916.91, "angle": 91.8, "wrt": "-x", "unit": "lbf"},
+        },
+        "debug": {
+            "print_results": False,
+            "assert_values": True,
+        },
+    },
+    "problem_2_16": {
+        "name": "Problem 2-16",
+        "description": """
+        Force F acts on the frame such that its component acting along member AB is 650 lb, directed from B towards A. Determine the required angle and the component acting along member BC. Set and u = 30°.
+        """,
+        "forces": {
+            "F_BA": ForceVector(name="F_BA", magnitude=650, angle=-30, wrt="+F_R", unit="lbf"),
+            "F_BC": ForceVector.unknown(name="F_BC", angle=-45, wrt="+x", unit="lbf"),
+            "F_R": ForceVector(magnitude=850, wrt="-x", unit="lbf", name="F_R",is_resultant=True),
+        },
+        "expected": {
+            "F_BA": {"magnitude": 650, "angle": 33.5, "wrt": "-x", "unit": "lbf"},
+            "F_BC": {"magnitude": 433.64, "angle": -45, "wrt": "+x", "unit": "lbf"},
+            "F_R": {"magnitude": 850, "angle": 63.5, "wrt": "-x", "unit": "lbf"},
+        },
+        "debug": {
+            "print_results": False,
+            "assert_values": True,
+        },
+    },
     # "problem_2_23": {
     #     "name": "Problem 2-23",
     #     "description": """
@@ -528,15 +618,21 @@ def solve_force_vector_problem(problem_name):
     # Get coordinate system if specified
     coord_system = spec.get("coordinate_system", CoordinateSystem.standard())
 
-    # Add force vectors with coordinate system
-    forces_with_coords = {}
-    for force_name, force in spec["forces"].items():
-        # Update the force's coordinate system
-        force.coordinate_system = coord_system
-        forces_with_coords[force_name] = force
+    # Get forces - check if it's a callable (lambda) or dict
+    forces_spec = spec["forces"]
+    if callable(forces_spec):
+        # Call the lambda with the coordinate system to get the forces
+        forces_dict: dict[str, ForceVector] = forces_spec(coord_system)  # type: ignore[assignment]
+    else:
+        # Legacy: forces is a dict, update their coordinate systems
+        forces_dict: dict[str, ForceVector] = {}
+        for force_name, force in forces_spec.items():
+            # Update the force's coordinate system
+            force.coordinate_system = coord_system
+            forces_dict[force_name] = force
 
     # Add force vectors directly as class attributes
-    class_attrs.update(forces_with_coords)
+    class_attrs.update(forces_dict)
 
     # Create dynamic problem class
     ProblemClass = type(f"Problem_{problem_name}", (VectorEquilibriumProblem,), class_attrs)
