@@ -291,6 +291,26 @@ class VectorEquilibriumProblem(Problem):
 
         self.logger.info(f"Solving {self.name}: {len(known_forces)} known, {len(unknown_forces)} unknown ({total_unknowns} total unknowns)")
 
+        # Check for special case: all magnitudes known, all angles unknown (angle-between problem)
+        all_mags_known = all(
+            f.magnitude is not None and f.magnitude.value is not None
+            for f in self.forces.values()
+        )
+        all_angles_unknown = all(
+            f.angle is None or f.angle.value is None
+            for f in self.forces.values()
+        )
+
+        if all_mags_known and all_angles_unknown and len(self.forces) <= 3:
+            # This is an angle-between problem (e.g., Problem 2-23)
+            # Given: F1, F2, FR magnitudes
+            # Find: angle θ between F1 and F2
+            self._solve_angle_between_forces(list(self.forces.values()), resultant_forces)
+            self.is_solved = True
+            self._populate_variables_from_forces()
+            self._populate_solving_history()
+            return self.forces
+
         # Determine solution method
         if len(unknown_forces) == 0:
             # All forces known - compute resultant
@@ -498,6 +518,43 @@ class VectorEquilibriumProblem(Problem):
         elif len(known_forces) == 2 and unknown_force.is_resultant:
             # Two known forces, solve for resultant
             self._solve_resultant_from_two_forces(known_forces[0], known_forces[1], unknown_force)
+        elif len(known_forces) >= 3 and unknown_force.is_resultant:
+            # Multiple known forces (3+), solve for resultant using vector addition
+            # F_R = F_1 + F_2 + F_3 + ...
+            sum_x = 0.0
+            sum_y = 0.0
+            sum_z = 0.0
+            ref_unit = None
+
+            for force in known_forces:
+                if force.vector is None or force.x is None or force.y is None or force.z is None:
+                    continue
+
+                if force.x.value is not None:
+                    sum_x += force.x.value
+                if force.y.value is not None:
+                    sum_y += force.y.value
+                if force.z.value is not None:
+                    sum_z += force.z.value
+
+                if ref_unit is None and force.x.preferred is not None:
+                    ref_unit = force.x.preferred
+
+            # Create resultant vector
+            from ..core.dimension_catalog import dim
+
+            x_qty = Quantity(name=f"{unknown_force.name}_x", dim=dim.force, value=sum_x, preferred=ref_unit)
+            y_qty = Quantity(name=f"{unknown_force.name}_y", dim=dim.force, value=sum_y, preferred=ref_unit)
+            z_qty = Quantity(name=f"{unknown_force.name}_z", dim=dim.force, value=sum_z, preferred=ref_unit)
+
+            unknown_force._vector = Vector.from_quantities(x_qty, y_qty, z_qty)
+            unknown_force._compute_magnitude_and_angle()
+            unknown_force.is_known = True
+
+            self.solution_steps.append({
+                "method": "Vector Addition (Component Summation)",
+                "description": f"Computing resultant {unknown_force.name} from {len(known_forces)} known forces"
+            })
         elif len(known_forces) >= 2 and not unknown_force.is_resultant:
             # Multiple known forces and unknown resultant - find equilibrium force
             # First compute resultant of known forces
@@ -1100,8 +1157,6 @@ class VectorEquilibriumProblem(Problem):
             unknown_forces: List of unknown forces (includes the one with parametric constraint)
             resultant: The resultant force
         """
-        import math
-
         # Identify which force has the parametric constraint
         parametric_force = None
         reference_force = None
@@ -1115,8 +1170,30 @@ class VectorEquilibriumProblem(Problem):
                 reference_force = next((f for f in unknown_forces if f.name == ref_name), None)
                 if reference_force is None:
                     raise ValueError(f"Force {force.name} references {ref_name}, but that force is not in the unknown forces list")
-            elif force is not resultant and independent_force is None:
-                independent_force = force
+
+        # Find independent force (the third force that's not parametric and not reference)
+        # First try to find it in unknown_forces (excluding parametric and reference forces)
+        for force in unknown_forces:
+            if force is not parametric_force and force is not reference_force and independent_force is None:
+                # Only use if it's not the resultant (resultant will be handled separately)
+                if not force.is_resultant:
+                    independent_force = force
+                    break
+
+        # If no independent force found yet, check if resultant can serve as independent force
+        # This handles cases like problem 2-19 where the resultant is fully known
+        if independent_force is None:
+            # First check if the resultant itself can be used
+            if resultant.magnitude is not None and resultant.magnitude.value is not None and \
+               resultant.angle is not None and resultant.angle.value is not None:
+                independent_force = resultant
+            else:
+                # Fall back to checking unknown_forces list for a resultant with known properties
+                for force in unknown_forces:
+                    if force.is_resultant and force.magnitude is not None and force.magnitude.value is not None and \
+                       force.angle is not None and force.angle.value is not None:
+                        independent_force = force
+                        break
 
         if parametric_force is None:
             raise ValueError("No force with parametric angle constraint found")
@@ -1127,18 +1204,67 @@ class VectorEquilibriumProblem(Problem):
         if independent_force is None:
             raise ValueError("Independent force not found for parametric constraint")
 
-        # Validate that we have the right information
-        if parametric_force.magnitude is None or parametric_force.magnitude.value is None:
-            raise ValueError(f"{parametric_force.name} must have known magnitude for parametric solver")
-        if independent_force.angle is None or independent_force.angle.value is None:
-            raise ValueError(f"{independent_force.name} must have known angle for parametric solver")
-        if reference_force.magnitude is None or reference_force.magnitude.value is None:
-            raise ValueError(f"{reference_force.name} must have known magnitude for parametric solver")
-
         self.logger.info(f"Solving parametric constraint: {parametric_force.name} angle relative to {reference_force.name}")
 
         # Get the relative angle offset
         angle_offset = parametric_force._relative_angle if parametric_force._relative_angle is not None else 0.0
+
+        # Determine which solution pattern we have:
+        # Pattern A (decomposition): F_ref (unknown angle) = F_param (parametric) + F_indep (known angle, unknown mag)
+        #   - reference_force has known magnitude, unknown angle
+        #   - independent_force has known angle, unknown magnitude
+        #   - Example: Problem 2-16
+        #
+        # Pattern B (composition): F_indep (known) = F_ref (unknown) + F_param (parametric)
+        #   - reference_force has unknown magnitude and angle
+        #   - independent_force is fully known (resultant)
+        #   - Example: Problem 2-19
+
+        ref_mag_known = reference_force.magnitude is not None and reference_force.magnitude.value is not None
+        ref_angle_known = reference_force.angle is not None and reference_force.angle.value is not None
+        indep_mag_known = independent_force.magnitude is not None and independent_force.magnitude.value is not None
+        indep_angle_known = independent_force.angle is not None and independent_force.angle.value is not None
+
+        if ref_mag_known and not ref_angle_known and indep_angle_known:
+            # Pattern A: Decomposition (F_ref = F_param + F_indep)
+            self._solve_parametric_decomposition(
+                reference_force, parametric_force, independent_force, angle_offset, resultant
+            )
+        elif not ref_mag_known and not ref_angle_known and indep_mag_known and indep_angle_known:
+            # Pattern B: Composition (F_indep = F_ref + F_param)
+            self._solve_parametric_composition(
+                reference_force, parametric_force, independent_force, angle_offset, resultant
+            )
+        else:
+            raise ValueError(
+                f"Unsupported parametric constraint configuration: "
+                f"ref_force={reference_force.name} ref_known=(mag={ref_mag_known}, angle={ref_angle_known}), "
+                f"indep_force={independent_force.name} indep_known=(mag={indep_mag_known}, angle={indep_angle_known})"
+            )
+
+    def _solve_parametric_decomposition(
+        self,
+        reference_force: ForceVector,
+        parametric_force: ForceVector,
+        independent_force: ForceVector,
+        angle_offset: float,
+        resultant: ForceVector,  # noqa: ARG002
+    ) -> None:
+        """
+        Solve Pattern A: F_ref (unknown angle) = F_param (parametric) + F_indep (known angle, unknown mag).
+
+        Uses Law of Cosines and Law of Sines for force decomposition.
+        This is used in problems like 2-16.
+        """
+        import math
+
+        # Validate inputs
+        if reference_force.magnitude is None or reference_force.magnitude.value is None:
+            raise ValueError(f"{reference_force.name} must have known magnitude for decomposition solver")
+        if parametric_force.magnitude is None or parametric_force.magnitude.value is None:
+            raise ValueError(f"{parametric_force.name} must have known magnitude for decomposition solver")
+        if independent_force.angle is None or independent_force.angle.value is None:
+            raise ValueError(f"{independent_force.name} must have known angle for decomposition solver")
 
         # Get magnitudes and angles - all in SI units as per qnty conventions
         M_param_si = parametric_force.magnitude.value  # In SI (N)
@@ -1260,6 +1386,385 @@ class VectorEquilibriumProblem(Problem):
                 f"{independent_force.name} magnitude = {M_indep_si/ref_unit.si_factor if ref_unit else M_indep_si:.2f} {ref_unit.symbol if ref_unit else 'N'}"
             ]
         })
+
+    def _solve_parametric_composition(
+        self,
+        reference_force: ForceVector,
+        parametric_force: ForceVector,
+        independent_force: ForceVector,
+        angle_offset: float,
+        resultant: ForceVector,  # noqa: ARG002
+    ) -> None:
+        """
+        Solve Pattern B: F_indep (known) = F_ref (unknown) + F_param (parametric).
+
+        This handles cases where two forces combine to produce a known resultant,
+        and one force has a parametric angle constraint relative to the other.
+
+        Example: Problem 2-19
+        - F_R (independent, known) = F_AB (reference, unknown) + F_AC (parametric)
+        - F_AC angle = F_AB angle - 40°
+
+        Given:
+        - F_indep: magnitude R, angle θ_R (both known)
+        - F_param: magnitude M_param, angle = θ_ref + angle_offset (parametric)
+        - F_ref: magnitude M_ref, angle θ_ref (both unknown)
+
+        Equilibrium: F_ref + F_param = F_indep
+
+        In components:
+        - M_ref * cos(θ_ref) + M_param * cos(θ_ref + angle_offset) = R * cos(θ_R)
+        - M_ref * sin(θ_ref) + M_param * sin(θ_ref + angle_offset) = R * sin(θ_R)
+
+        Expanding the parametric force using angle addition formulas:
+        - M_ref * cos(θ_ref) + M_param * [cos(θ_ref)cos(angle_offset) - sin(θ_ref)sin(angle_offset)] = R * cos(θ_R)
+        - M_ref * sin(θ_ref) + M_param * [sin(θ_ref)cos(angle_offset) + cos(θ_ref)sin(angle_offset)] = R * sin(θ_R)
+
+        Rearranging:
+        - [M_ref + M_param*cos(angle_offset)] * cos(θ_ref) - M_param*sin(angle_offset) * sin(θ_ref) = R * cos(θ_R)
+        - [M_ref + M_param*cos(angle_offset)] * sin(θ_ref) + M_param*sin(angle_offset) * cos(θ_ref) = R * sin(θ_R)
+
+        Let A = M_ref + M_param*cos(angle_offset) and B = M_param*sin(angle_offset):
+        - A * cos(θ_ref) - B * sin(θ_ref) = R * cos(θ_R)
+        - A * sin(θ_ref) + B * cos(θ_ref) = R * sin(θ_R)
+
+        We can solve for A and B using the component equations, then solve for M_ref and θ_ref.
+        """
+        import math
+
+        # Validate inputs
+        if parametric_force.magnitude is None or parametric_force.magnitude.value is None:
+            raise ValueError(f"{parametric_force.name} must have known magnitude for composition solver")
+        if independent_force.magnitude is None or independent_force.magnitude.value is None:
+            raise ValueError(f"{independent_force.name} must have known magnitude for composition solver")
+        if independent_force.angle is None or independent_force.angle.value is None:
+            raise ValueError(f"{independent_force.name} must have known angle for composition solver")
+
+        # Get known values - all in SI units
+        M_param_si = parametric_force.magnitude.value
+        R_si = independent_force.magnitude.value
+        theta_R = independent_force.angle.value  # radians
+
+        # Reference unit for display
+        ref_unit = parametric_force.magnitude.preferred
+
+        # Components of independent (resultant) force
+        # In equilibrium: F_ref + F_param + F_indep = 0
+        # So: F_ref + F_param = -F_indep
+        # We need to use -F_indep as the target
+        R_x = -R_si * math.cos(theta_R)
+        R_y = -R_si * math.sin(theta_R)
+
+        # Equilibrium: F_ref + F_param = F_indep
+        # Let θ_ref be the unknown angle of reference force
+        # Then θ_param = θ_ref + angle_offset
+        #
+        # Components:
+        # M_ref * cos(θ_ref) + M_param * cos(θ_ref + angle_offset) = R_x
+        # M_ref * sin(θ_ref) + M_param * sin(θ_ref + angle_offset) = R_y
+        #
+        # Expand using angle addition:
+        # M_ref * cos(θ_ref) + M_param * [cos(θ_ref)*cos(Δ) - sin(θ_ref)*sin(Δ)] = R_x
+        # M_ref * sin(θ_ref) + M_param * [sin(θ_ref)*cos(Δ) + cos(θ_ref)*sin(Δ)] = R_y
+        #
+        # where Δ = angle_offset
+        #
+        # Rearrange:
+        # [M_ref + M_param*cos(Δ)] * cos(θ_ref) - M_param*sin(Δ) * sin(θ_ref) = R_x
+        # [M_ref + M_param*cos(Δ)] * sin(θ_ref) + M_param*sin(Δ) * cos(θ_ref) = R_y
+        #
+        # This is a system of the form:
+        # A * cos(θ_ref) - B * sin(θ_ref) = R_x
+        # A * sin(θ_ref) + B * cos(θ_ref) = R_y
+        #
+        # where A and B involve M_ref (the unknown magnitude)
+        # However, we can use a different approach.
+        #
+        # From the two equations, we can derive:
+        # Square both equations and add:
+        # [M_ref + M_param*cos(Δ)]² + [M_param*sin(Δ)]² = R_x² + R_y²
+        # M_ref² + 2*M_ref*M_param*cos(Δ) + M_param²*cos²(Δ) + M_param²*sin²(Δ) = R²
+        # M_ref² + 2*M_ref*M_param*cos(Δ) + M_param² = R²
+        #
+        # This is a quadratic in M_ref:
+        # M_ref² + 2*M_param*cos(Δ)*M_ref + (M_param² - R²) = 0
+
+        cos_delta = math.cos(angle_offset)
+
+        # Quadratic: a*M_ref² + b*M_ref + c = 0
+        a = 1.0
+        b = 2.0 * M_param_si * cos_delta
+        c = M_param_si**2 - R_si**2
+
+        discriminant = b**2 - 4*a*c
+        if discriminant < 0:
+            raise ValueError("No solution exists for composition problem (discriminant < 0)")
+
+        # Two solutions for M_ref
+        M_ref_1 = (-b + math.sqrt(discriminant)) / (2*a)
+        M_ref_2 = (-b - math.sqrt(discriminant)) / (2*a)
+
+        # Choose the solution with larger absolute value
+        # The magnitude can be negative, representing force direction
+        # We'll use the solution with larger absolute value as it's typically the physical one
+        if abs(M_ref_1) > abs(M_ref_2):
+            M_ref_si = M_ref_1
+        else:
+            M_ref_si = M_ref_2
+
+        # Track if magnitude is negative for angle adjustment
+        magnitude_is_negative = M_ref_si < 0
+
+        # Now solve for θ_ref using the component equations
+        # We have: M_ref * cos(θ_ref) + M_param * cos(θ_ref + Δ) = R_x
+        #          M_ref * sin(θ_ref) + M_param * sin(θ_ref + Δ) = R_y
+        #
+        # Rearranging:
+        # M_ref * cos(θ_ref) = R_x - M_param * cos(θ_ref + Δ)
+        # M_ref * sin(θ_ref) = R_y - M_param * sin(θ_ref + Δ)
+        #
+        # But θ_ref appears on both sides. Use a different approach:
+        # From the expanded form:
+        # [M_ref + M_param*cos(Δ)] * cos(θ_ref) - M_param*sin(Δ) * sin(θ_ref) = R_x
+        # [M_ref + M_param*cos(Δ)] * sin(θ_ref) + M_param*sin(Δ) * cos(θ_ref) = R_y
+        #
+        # Let A = M_ref + M_param*cos(Δ) and B = M_param*sin(Δ)
+        A = M_ref_si + M_param_si * cos_delta
+        B = M_param_si * math.sin(angle_offset)
+
+        # Now we have:
+        # A * cos(θ_ref) - B * sin(θ_ref) = R_x
+        # A * sin(θ_ref) + B * cos(θ_ref) = R_y
+        #
+        # This can be rewritten as:
+        # sqrt(A²+B²) * cos(θ_ref + φ) = R_x  (where φ = atan2(B, A))
+        # sqrt(A²+B²) * sin(θ_ref + φ) = R_y
+        #
+        # So: θ_ref + φ = atan2(R_y, R_x)
+        #     θ_ref = atan2(R_y, R_x) - φ = atan2(R_y, R_x) - atan2(B, A)
+        #
+        # Or more directly:
+        # From A * cos(θ_ref) - B * sin(θ_ref) = R_x
+        #      A * sin(θ_ref) + B * cos(θ_ref) = R_y
+        #
+        # Multiply first by A, second by B:
+        # A² * cos(θ_ref) - A*B * sin(θ_ref) = A*R_x
+        # A*B * sin(θ_ref) + B² * cos(θ_ref) = B*R_y
+        # Adding: (A² + B²) * cos(θ_ref) = A*R_x + B*R_y
+        #
+        # Multiply first by B, second by A:
+        # A*B * cos(θ_ref) - B² * sin(θ_ref) = B*R_x
+        # A² * sin(θ_ref) + A*B * cos(θ_ref) = A*R_y
+        # Subtracting first from second: (A² + B²) * sin(θ_ref) = A*R_y - B*R_x
+
+        cos_theta_ref = (A * R_x + B * R_y) / (A**2 + B**2)
+        sin_theta_ref = (A * R_y - B * R_x) / (A**2 + B**2)
+        theta_ref = math.atan2(sin_theta_ref, cos_theta_ref)
+
+        # If magnitude is negative, adjust angle by 180° to represent the force correctly
+        # A negative magnitude at angle θ is equivalent to positive magnitude at angle θ+180°
+        # So to keep the negative magnitude, we need to subtract 180° from the computed angle
+        if magnitude_is_negative:
+            theta_ref = theta_ref - math.pi
+
+        # Calculate parametric force angle
+        theta_param = theta_ref + angle_offset
+
+        # Update forces
+        from ..core.dimension_catalog import dim
+        from ..core.unit import ureg
+
+        degree_unit = ureg.resolve("degree", dim=dim.D)
+
+        # Update reference force
+        reference_force._magnitude = Quantity(name=f"{reference_force.name}_magnitude", dim=dim.force, value=M_ref_si, preferred=ref_unit)
+        reference_force._angle = Quantity(name=f"{reference_force.name}_angle", dim=dim.D, value=theta_ref, preferred=degree_unit)
+        ref_x = M_ref_si * math.cos(theta_ref)
+        ref_y = M_ref_si * math.sin(theta_ref)
+        ref_x_qty = Quantity(name=f"{reference_force.name}_x", dim=dim.force, value=ref_x, preferred=ref_unit)
+        ref_y_qty = Quantity(name=f"{reference_force.name}_y", dim=dim.force, value=ref_y, preferred=ref_unit)
+        ref_z_qty = Quantity(name=f"{reference_force.name}_z", dim=dim.force, value=0.0, preferred=ref_unit)
+        reference_force._vector = Vector.from_quantities(ref_x_qty, ref_y_qty, ref_z_qty)
+        reference_force.is_known = True
+
+        # Update parametric force
+        parametric_force._angle = Quantity(name=f"{parametric_force.name}_angle", dim=dim.D, value=theta_param, preferred=degree_unit)
+        param_x = M_param_si * math.cos(theta_param)
+        param_y = M_param_si * math.sin(theta_param)
+        param_x_qty = Quantity(name=f"{parametric_force.name}_x", dim=dim.force, value=param_x, preferred=ref_unit)
+        param_y_qty = Quantity(name=f"{parametric_force.name}_y", dim=dim.force, value=param_y, preferred=ref_unit)
+        param_z_qty = Quantity(name=f"{parametric_force.name}_z", dim=dim.force, value=0.0, preferred=ref_unit)
+        parametric_force._vector = Vector.from_quantities(param_x_qty, param_y_qty, param_z_qty)
+        parametric_force.is_known = True
+        parametric_force._relative_to_force = None
+        parametric_force._relative_angle = None
+
+        self.solution_steps.append({
+            "method": "Parametric Composition Solver",
+            "description": f"Solved for {reference_force.name} magnitude and angle with {parametric_force.name} at relative angle",
+            "results": [
+                f"{reference_force.name} magnitude = {M_ref_si/ref_unit.si_factor if ref_unit else M_ref_si:.2f} {ref_unit.symbol if ref_unit else 'N'}",
+                f"{reference_force.name} angle = {math.degrees(theta_ref):.2f}°",
+                f"{parametric_force.name} angle = {math.degrees(theta_param):.2f}°",
+            ]
+        })
+
+    def _solve_angle_between_forces(self, all_forces: list[ForceVector], resultant_forces: list[ForceVector]) -> None:
+        """
+        Solve for the angle between two forces given all three magnitudes.
+
+        This handles problems like 2-23 where:
+        - F₁, F₂, and F_R magnitudes are all known
+        - No angles are specified
+        - Goal: Find the angle θ between F₁ and F₂
+
+        Uses the Law of Cosines in the force triangle:
+        F_R² = F₁² + F₂² - 2·F₁·F₂·cos(180° - θ)
+
+        Since cos(180° - θ) = -cos(θ), this becomes:
+        F_R² = F₁² + F₂² + 2·F₁·F₂·cos(θ)
+
+        Solving for θ:
+        cos(θ) = (F_R² - F₁² - F₂²) / (2·F₁·F₂)
+        θ = arccos(cos(θ))
+        """
+        import math
+        import numpy as np
+
+        self.solution_steps.append({
+            "method": "Law of Cosines (Angle Between Forces)",
+            "description": "Finding angle between forces given all magnitudes"
+        })
+
+        # Identify resultant and component forces
+        if len(resultant_forces) != 1:
+            raise ValueError("Angle-between solver requires exactly one resultant force")
+
+        resultant = resultant_forces[0]
+        component_forces = [f for f in all_forces if not f.is_resultant]
+
+        if len(component_forces) != 2:
+            raise ValueError(f"Angle-between solver requires exactly two component forces, got {len(component_forces)}")
+
+        F1 = component_forces[0]
+        F2 = component_forces[1]
+
+        # Get magnitudes - all must be known
+        if F1.magnitude is None or F1.magnitude.value is None:
+            raise ValueError(f"{F1.name} magnitude must be known")
+        if F2.magnitude is None or F2.magnitude.value is None:
+            raise ValueError(f"{F2.name} magnitude must be known")
+        if resultant.magnitude is None or resultant.magnitude.value is None:
+            raise ValueError(f"{resultant.name} magnitude must be known")
+
+        M1 = F1.magnitude.value  # SI units
+        M2 = F2.magnitude.value  # SI units
+        MR = resultant.magnitude.value  # SI units
+
+        # Apply Law of Cosines to find angle between F1 and F2
+        # In the parallelogram law, the resultant forms a triangle with F1 and F2
+        # Using the triangle rule: F_R = F1 + F2
+        # The angle between F1 and F2 in the parallelogram is θ
+        # In the triangle formed by placing F2 at the tip of F1, the interior angle is (180° - θ)
+        #
+        # Law of Cosines: F_R² = F1² + F2² - 2·F1·F2·cos(180° - θ)
+        # Since cos(180° - θ) = -cos(θ):
+        # F_R² = F1² + F2² + 2·F1·F2·cos(θ)
+        #
+        # Solving for cos(θ):
+        cos_theta = (MR**2 - M1**2 - M2**2) / (2 * M1 * M2)
+
+        # Clamp to [-1, 1] to handle numerical errors
+        cos_theta = np.clip(cos_theta, -1.0, 1.0)
+
+        # Calculate angle
+        theta_rad = math.acos(cos_theta)
+        theta_deg = math.degrees(theta_rad)
+
+        # Get unit symbols
+        force_unit = F1.magnitude.preferred.symbol if F1.magnitude.preferred else "N"
+
+        # Add solution step
+        self.solution_steps.append({
+            "target": "θ (angle between forces)",
+            "method": "Law of Cosines",
+            "equation": f"{resultant.name}² = {F1.name}² + {F2.name}² - 2·{F1.name}·{F2.name}·cos(180° - θ)",
+            "substitution": f"({MR:.0f})² = ({M1:.0f})² + ({M2:.0f})² - 2·({M1:.0f})·({M2:.0f})·cos(180° - θ)",
+            "result_value": f"{theta_deg:.1f}",
+            "result_unit": "°",
+            "details": f"cos(180° - θ) = {-cos_theta:.4f}, therefore θ = {theta_deg:.1f}°"
+        })
+
+        # Now assign actual directions to the forces
+        # Convention for angle-between problems:
+        # - Place F_R (resultant) along the +x axis (most natural reference)
+        # - Determine F1 and F2 angles such that they sum to F_R with angle θ between them
+        #
+        # Using the parallelogram law and law of sines, we can find the angles
+        # that F1 and F2 make with the resultant.
+
+        # First, use law of sines to find angle α (angle between F_R and F1)
+        # In the force triangle: sin(α)/M2 = sin(180° - θ)/MR
+        # Since sin(180° - θ) = sin(θ):
+        sin_alpha = M2 * math.sin(theta_rad) / MR
+        # Clamp to handle numerical errors
+        sin_alpha = np.clip(sin_alpha, -1.0, 1.0)
+        alpha = math.asin(sin_alpha)  # Angle between F_R and F1
+
+        # The angle β (between F_R and F2) can be found from the triangle:
+        # α + β + (180° - θ) = 180°
+        # Therefore: β = θ - α
+        beta = theta_rad - alpha  # Angle between F_R and F2
+
+        # Place F_R along +x axis
+        theta_R = 0.0  # radians
+
+        # F1 is at angle α from F_R (measured CCW from +x)
+        theta1 = alpha
+
+        # F2 is at angle -β from F_R (measured CW from +x, which is negative CCW)
+        theta2 = -beta
+
+        # Calculate force components
+        F1x = M1 * math.cos(theta1)
+        F1y = M1 * math.sin(theta1)
+        F2x = M2 * math.cos(theta2)
+        F2y = M2 * math.sin(theta2)
+        FRx = F1x + F2x
+        FRy = F1y + F2y
+
+        # Create force vectors with assigned directions
+        from ..core.dimension_catalog import dim
+        from ..core.unit import ureg
+
+        degree_unit = ureg.resolve("degree", dim=dim.D)
+        ref_unit = F1.magnitude.preferred
+
+        # Update F1
+        F1._angle = Quantity(name=f"{F1.name}_angle", dim=dim.D, value=theta1, preferred=degree_unit)
+        x1_qty = Quantity(name=f"{F1.name}_x", dim=dim.force, value=F1x, preferred=ref_unit)
+        y1_qty = Quantity(name=f"{F1.name}_y", dim=dim.force, value=F1y, preferred=ref_unit)
+        z1_qty = Quantity(name=f"{F1.name}_z", dim=dim.force, value=0.0, preferred=ref_unit)
+        F1._vector = Vector.from_quantities(x1_qty, y1_qty, z1_qty)
+        F1.is_known = True
+
+        # Update F2
+        F2._angle = Quantity(name=f"{F2.name}_angle", dim=dim.D, value=theta2, preferred=degree_unit)
+        x2_qty = Quantity(name=f"{F2.name}_x", dim=dim.force, value=F2x, preferred=ref_unit)
+        y2_qty = Quantity(name=f"{F2.name}_y", dim=dim.force, value=F2y, preferred=ref_unit)
+        z2_qty = Quantity(name=f"{F2.name}_z", dim=dim.force, value=0.0, preferred=ref_unit)
+        F2._vector = Vector.from_quantities(x2_qty, y2_qty, z2_qty)
+        F2.is_known = True
+
+        # Update resultant
+        resultant._angle = Quantity(name=f"{resultant.name}_angle", dim=dim.D, value=theta_R, preferred=degree_unit)
+        xR_qty = Quantity(name=f"{resultant.name}_x", dim=dim.force, value=FRx, preferred=ref_unit)
+        yR_qty = Quantity(name=f"{resultant.name}_y", dim=dim.force, value=FRy, preferred=ref_unit)
+        zR_qty = Quantity(name=f"{resultant.name}_z", dim=dim.force, value=0.0, preferred=ref_unit)
+        resultant._vector = Vector.from_quantities(xR_qty, yR_qty, zR_qty)
+        resultant.is_known = True
+
+        self.logger.info(f"Solved angle between {F1.name} and {F2.name}: θ = {theta_deg:.1f}°")
 
     def _solve_by_components(self, known_forces: list[ForceVector], unknown_force: ForceVector) -> None:
         """

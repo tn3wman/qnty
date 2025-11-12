@@ -457,24 +457,155 @@ FORCE_VECTOR_PROBLEMS = {
             "assert_values": True,
         },
     },
-    # "problem_2_23": {
-    #     "name": "Problem 2-23",
-    #     "description": """
-    #     Two forces act on the screw eye. If F_1 = 400 N and F_2 = 600 N, determine the angle theta
-    #     (0° ≤ theta ≤ 180°) between them, so that the resultant force has a magnitude of F_R = 800 N.
-    #     """,
-    #     "forces": {
-    #         "F_1": ForceVector(magnitude=400, angle=0, unit="N", name="F_1", description="Force 1"),
-    #         "F_2": ForceVector(magnitude=600, angle=75.5, unit="N", name="F_2", description="Force 2"),
-    #         "F_R": ForceVector.unknown("F_R", is_resultant=True),
-    #     },
-    #     "expected": {
-    #         "F_1": {"magnitude": 400, "angle": 0, "unit": "N"},
-    #         "F_2": {"magnitude": 600, "angle": 75.5, "unit": "N"},
-    #         "F_R": {"magnitude": 800, "angle": 48.2, "unit": "N"},  # Estimated from geometry
-    #     },
-    #     "debug": {"print_results": True, "assert_values": False},
-    # },
+    "problem_2_17": {
+        "name": "Problem 2-17",
+        "description": """
+        Determine the magnitude and direction of the resultant of the three forces by first finding the resultant F' = F1 + F2 and then forming FR = F' + F3.
+        """,
+        "forces": {
+            "F_1": ForceVector(name="F_1", magnitude=30, angle=-36.87, wrt="-x", unit="N"),
+            "F_2": ForceVector(name="F_2", magnitude=20, angle=-20, wrt="-y", unit="N"),
+            "F_3": ForceVector(name="F_3", magnitude=50, angle=0, wrt="+x", unit="N"),
+            "F_R": ForceVector.unknown(unit="N", name="F_R",is_resultant=True),
+        },
+        "expected": {
+            "F_1": {"magnitude": 30, "angle": -36.87, "wrt": "-x", "unit": "N"},
+            "F_2": {"magnitude": 20, "angle": -20, "wrt": "-y", "unit": "N"},
+            "F_3": {"magnitude": 50, "angle": 0, "wrt": "+x", "unit": "N"},
+            "F_R": {"magnitude": 19.2, "angle": -2.37, "wrt": "+x", "unit": "N"},
+        },
+        "debug": {
+            "print_results": False,
+            "assert_values": True,
+        },
+    },
+    "problem_2_18": {
+        "name": "Problem 2-18",
+        "description": """
+        Determine the magnitude and direction of the resultant of the three forces by first finding the resultant F' = F2 + F3 and then forming FR = F' + F1.
+        """,
+        "forces": {
+            "F_1": ForceVector(name="F_1", magnitude=30, angle=-36.87, wrt="-x", unit="N"),
+            "F_2": ForceVector(name="F_2", magnitude=20, angle=-20, wrt="-y", unit="N"),
+            "F_3": ForceVector(name="F_3", magnitude=50, angle=0, wrt="+x", unit="N"),
+            "F_R": ForceVector.unknown(unit="N", name="F_R",is_resultant=True),
+        },
+        "expected": {
+            "F_1": {"magnitude": 30, "angle": -36.87, "wrt": "-x", "unit": "N"},
+            "F_2": {"magnitude": 20, "angle": -20, "wrt": "-y", "unit": "N"},
+            "F_3": {"magnitude": 50, "angle": 0, "wrt": "+x", "unit": "N"},
+            "F_R": {"magnitude": 19.2, "angle": -2.37, "wrt": "+x", "unit": "N"},
+        },
+        "debug": {
+            "print_results": False,
+            "assert_values": True,
+        },
+    },
+    "problem_2_19": {
+        "name": "Problem 2-19",
+        "description": """
+        Determine the design angle for strut AB so that the 400-lb horizontal force has a component of 500 lb directed from A towards C. What is the component of force acting along member AB? Take f = 40°.
+        """,
+        "forces": {
+            "F_AB": ForceVector.unknown(name="F_AB", wrt="+x", unit="lbf"),
+            "F_AC": ForceVector(name="F_AC", magnitude=500, angle=-40, wrt="+F_AB", unit="lbf"),
+            "F_R": ForceVector(magnitude=400, angle=0, wrt="-x",unit="lbf", name="F_R",is_resultant=True),
+        },
+        "expected": {
+            "F_AB": {"magnitude": -621.15, "angle": -53.5, "wrt": "+x", "unit": "lbf"},
+            "F_AC": {"magnitude": 500, "angle": -93.5, "wrt": "+x", "unit": "lbf"},
+            "F_R": {"magnitude": 400, "angle": 0, "wrt": "-x", "unit": "lbf"},
+        },
+        "debug": {
+            "print_results": False,
+            "assert_values": True,
+        },
+    },
+    "problem_2_20": {
+        "name": "Problem 2-20",
+        "description": """
+        Determine the design angle between struts AB and AC so that the 400-lb horizontal force has a component of 600 lb which acts up to the left, in the same direction as from B towards A. Take u = 30°.
+        """,
+        "forces": {
+            "F_AB": ForceVector(name="F_AB", magnitude=-600, angle=-30, wrt="+x", unit="lbf"),
+            "F_AC": ForceVector.unknown(name="F_AC", unit="lbf"),
+            "F_R": ForceVector(magnitude=400, angle=0, wrt="-x",unit="lbf", name="F_R",is_resultant=True),
+        },
+        "expected": {
+            "F_AB": {"magnitude": -600, "angle": -30, "wrt": "+x", "unit": "lbf"},
+            "F_AC": {"magnitude": 322.97, "angle": -38.3, "wrt": "-F_AB", "unit": "lbf"},
+            "F_R": {"magnitude": 400, "angle": 0, "wrt": "-x", "unit": "lbf"},
+        },
+        "debug": {
+            "print_results": False,
+            "assert_values": True,
+        },
+    },
+    "problem_2_21": {
+        "name": "Problem 2-21",
+        "description": """
+        Determine the magnitude and direction of the resultant force, FR measured counterclockwise from the positive x axis. Solve the problem by first finding the resultant F′ = F1 + F2 and then forming FR = F′ + F3.
+        """,
+        "forces": {
+            "F_1": ForceVector(name="F_1", magnitude=400, angle=90, wrt="+F_2", unit="N"),
+            "F_2": ForceVector(name="F_2", magnitude=200, angle=150, wrt="-y", unit="N"),
+            "F_3": ForceVector(name="F_3", magnitude=300, angle=0, wrt="-y", unit="N"),
+            "F_R": ForceVector.unknown(unit="N", name="F_R",is_resultant=True),
+        },
+        "expected": {
+            "F_1": {"magnitude": 400, "angle": 240, "wrt": "-y", "unit": "N"},
+            "F_2": {"magnitude": 200, "angle": 150, "wrt": "-y", "unit": "N"},
+            "F_3": {"magnitude": 300, "angle": 0, "wrt": "-y", "unit": "N"},
+            "F_R": {"magnitude": 257.05, "angle": 163.45, "wrt": "+x", "unit": "N"},
+        },
+        "debug": {
+            "print_results": False,
+            "assert_values": True,
+        },
+    },
+    "problem_2_22": {
+        "name": "Problem 2-22",
+        "description": """
+        Determine the magnitude and direction of the resultant force, measured counterclockwise from the positive x axis. Solve l by first finding the resultant F′ = F2 + F3 and then forming FR = F′ + F1.
+        """,
+        "forces": {
+            "F_1": ForceVector(name="F_1", magnitude=400, angle=90, wrt="+F_2", unit="N"),
+            "F_2": ForceVector(name="F_2", magnitude=200, angle=150, wrt="-y", unit="N"),
+            "F_3": ForceVector(name="F_3", magnitude=300, angle=0, wrt="-y", unit="N"),
+            "F_R": ForceVector.unknown(unit="N", name="F_R",is_resultant=True),
+        },
+        "expected": {
+            "F_1": {"magnitude": 400, "angle": 90, "wrt": "+F_2", "unit": "N"},
+            "F_2": {"magnitude": 200, "angle": 150, "wrt": "-y", "unit": "N"},
+            "F_3": {"magnitude": 300, "angle": 0, "wrt": "-y", "unit": "N"},
+            "F_R": {"magnitude": 257.05, "angle": 163.45, "wrt": "+x", "unit": "N"},
+        },
+        "debug": {
+            "print_results": False,
+            "assert_values": True,
+        },
+    },
+    "problem_2_23": {
+        "name": "Problem 2-23",
+        "description": """
+        Two forces act on the screw eye. If F_1 = 400 N and F_2 = 600 N, determine the angle theta
+        (0° ≤ theta ≤ 180°) between them, so that the resultant force has a magnitude of F_R = 800 N.
+        """,
+        "forces": {
+            "F_1": ForceVector.unknown(magnitude=400, unit="N", name="F_1", description="Force 1"),
+            "F_2": ForceVector.unknown(magnitude=600, unit="N", name="F_2", description="Force 2"),
+            "F_R": ForceVector.unknown(magnitude=800, unit="N", name="F_R", is_resultant=True),
+        },
+        "expected": {
+            "F_1": {"magnitude": 400, "angle": 75.5, "wrt": "+F_2", "unit": "N"},
+            "F_2": {"magnitude": 600, "angle": -75.5, "wrt": "+F_1", "unit": "N"},
+            "F_R": {"magnitude": 800, "angle": 0, "unit": "N"}
+        },
+        "debug": {
+            "print_results": False,
+            "assert_values": True,
+        },
+    },
     # "problem_2_25": {
     #     "name": "Problem 2-25",
     #     "description": """
@@ -711,7 +842,8 @@ def verify_force_vector_results(solution, expected, debug_config, capsys, test_n
             actual_mag_in_preferred = force.magnitude.value
 
         # Create the expected angle reference from wrt (with validation)
-        expected_angle_ref = ForceVector.parse_wrt(expected_wrt, force.coordinate_system)
+        # Pass solution dict to support force-relative references like "-F_AB"
+        expected_angle_ref = ForceVector.parse_wrt(expected_wrt, force.coordinate_system, forces=solution)
 
         # Convert actual angle to the expected wrt system for comparison
         actual_ang_in_wrt = expected_angle_ref.from_standard(force.angle.value, angle_unit="degree")
@@ -739,7 +871,8 @@ def verify_force_vector_results(solution, expected, debug_config, capsys, test_n
                 display_wrt = force_expected.get("wrt", "+x")  # Default to "+x"
 
                 # Create angle reference for display (with validation)
-                display_angle_ref = ForceVector.parse_wrt(display_wrt, force.coordinate_system)
+                # Pass solution dict to support force-relative references like "-F_AB"
+                display_angle_ref = ForceVector.parse_wrt(display_wrt, force.coordinate_system, forces=solution)
 
                 # Convert angle to display wrt system
                 actual_ang_in_wrt = display_angle_ref.from_standard(force.angle.value, angle_unit="degree")

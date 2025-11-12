@@ -401,23 +401,25 @@ class ForceVector:
         return cls(x=x, y=y, z=z, unit=unit, name=name, **kwargs)
 
     @staticmethod
-    def parse_wrt(wrt: str, coordinate_system: CoordinateSystem | None = None) -> AngleReference:
+    def parse_wrt(wrt: str, coordinate_system: CoordinateSystem | None = None, forces: dict[str, "ForceVector"] | None = None) -> AngleReference:
         """
         Parse a wrt string into an AngleReference, validating against coordinate system.
 
         Args:
-            wrt: The wrt string (e.g., "+x", "cw:u", "-y")
+            wrt: The wrt string (e.g., "+x", "cw:u", "-y", "+F_1", "-F_AB")
             coordinate_system: Optional coordinate system to validate against
+            forces: Optional dictionary of force name -> ForceVector for force-relative references
 
         Returns:
             AngleReference instance
 
         Raises:
-            ValueError: If wrt axis doesn't exist in coordinate system
+            ValueError: If wrt axis doesn't exist in coordinate system or force doesn't exist
 
         Examples:
             >>> ref = ForceVector.parse_wrt("+x")
             >>> ref = ForceVector.parse_wrt("cw:u", uv_system)
+            >>> ref = ForceVector.parse_wrt("-F_AB", forces=solution_dict)
         """
         coord_sys = coordinate_system or CoordinateSystem.standard()
 
@@ -438,11 +440,47 @@ class ForceVector:
         else:
             raise ValueError(f"Invalid direction '{direction_str}'. Use 'ccw', 'cw', 'counterclockwise', or 'clockwise'")
 
-        # Check if axis matches coordinate system axes
-        # Handle both direct match (e.g., "x") and with sign prefix (e.g., "+x", "-x")
+        # Check if axis is a force reference (starts with +/- and contains underscore, which is typical for force names)
+        # Force names typically have format like F_1, F_AB, etc.
         axis_without_sign = axis.lstrip("+-")
         is_negative = axis.startswith("-")
+        is_positive = axis.startswith("+")
 
+        # Check if this looks like a force reference (has underscore or starts with F)
+        if (is_negative or is_positive) and (axis_without_sign.startswith("F") or "_" in axis_without_sign):
+            # This is a force reference
+            if forces is None:
+                raise ValueError(f"Force reference '{wrt}' requires forces dictionary to be provided")
+
+            if axis_without_sign not in forces:
+                raise ValueError(f"Force '{axis_without_sign}' not found in forces dictionary")
+
+            ref_force = forces[axis_without_sign]
+
+            # Get the reference force's actual direction from its vector components
+            # This correctly handles negative magnitudes
+            if ref_force.vector is None or ref_force.x is None or ref_force.y is None:
+                raise ValueError(f"Force '{axis_without_sign}' does not have vector components")
+
+            # Use atan2 to get the actual direction from components
+            if ref_force.x.value is None or ref_force.y.value is None:
+                raise ValueError(f"Force '{axis_without_sign}' does not have known components")
+
+            force_angle_rad = math.atan2(ref_force.y.value, ref_force.x.value)
+            force_angle_deg = math.degrees(force_angle_rad)
+
+            # Normalize to [0, 360)
+            force_angle_deg = force_angle_deg % 360.0
+
+            # If negative reference (e.g., -F_AB), add 180° to point in opposite direction
+            if is_negative:
+                force_angle_deg = (force_angle_deg + 180.0) % 360.0
+
+            from .angle_reference import AngleReference as AR
+            return AR(axis_angle=force_angle_deg, direction=direction, axis_label=axis, angle_unit="degree")
+
+        # Check if axis matches coordinate system axes
+        # Handle both direct match (e.g., "x") and with sign prefix (e.g., "+x", "-x")
         if axis == coord_sys.axis1_label or axis_without_sign == coord_sys.axis1_label:
             if is_negative:
                 # For negative axis, add 180° to the axis angle
@@ -468,8 +506,9 @@ class ForceVector:
 
             # Not a standard axis and not in coordinate system
             raise ValueError(
-                f"Invalid wrt axis '{axis}'. Must be a standard axis (+x, -x, +y, -y) or "
-                f"an axis from the coordinate system ({coord_sys.axis1_label}, {coord_sys.axis2_label})"
+                f"Invalid wrt axis '{axis}'. Must be a standard axis (+x, -x, +y, -y), "
+                f"an axis from the coordinate system ({coord_sys.axis1_label}, {coord_sys.axis2_label}), "
+                f"or a force reference (e.g., +F_1, -F_AB)"
             )
 
     @classmethod
@@ -535,6 +574,25 @@ class ForceVector:
         # Clear the relative constraint since it's now resolved
         self._relative_to_force = None
         self._relative_angle = None
+
+        # If both magnitude and angle are now known, update is_known and create vector
+        if self._magnitude is not None and self._magnitude.value is not None and self._angle is not None and self._angle.value is not None:
+            import math
+            from .vector import Vector
+
+            # Create vector from magnitude and angle
+            mag_si = self._magnitude.value
+            angle_rad = self._angle.value
+            x_val = mag_si * math.cos(angle_rad)
+            y_val = mag_si * math.sin(angle_rad)
+            z_val = 0.0
+
+            x_qty = Quantity(name=f"{self.name}_x", dim=dim.force, value=x_val, preferred=self._magnitude.preferred)
+            y_qty = Quantity(name=f"{self.name}_y", dim=dim.force, value=y_val, preferred=self._magnitude.preferred)
+            z_qty = Quantity(name=f"{self.name}_z", dim=dim.force, value=z_val, preferred=self._magnitude.preferred)
+
+            self._vector = Vector.from_quantities(x_qty, y_qty, z_qty)
+            self.is_known = True
 
     def has_relative_angle(self) -> bool:
         """Check if this force has an unresolved relative angle constraint."""
