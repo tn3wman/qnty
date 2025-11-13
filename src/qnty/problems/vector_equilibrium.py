@@ -13,7 +13,7 @@ from typing import Any
 import numpy as np
 
 from ..core.quantity import Quantity
-from ..solving.trig_solver import TrigSolver
+from ..solving.triangle_solver import TriangleSolver
 from ..spatial.force_vector import ForceVector
 from ..spatial.vector import Vector
 from .problem import Problem
@@ -60,7 +60,7 @@ class VectorEquilibriumProblem(Problem):
         self.solution_steps: list[dict[str, Any]] = []
         self._original_variable_states: dict[str, bool] = {}  # Track which variables were originally known
         self._original_force_states: dict[str, bool] = {}  # Track original is_known state of each force
-        self.solver = TrigSolver()  # Create trig solver instance
+        self.solver = TriangleSolver()  # Create triangle solver instance
 
         # Extract ForceVector class attributes
         self._extract_force_vectors()
@@ -335,14 +335,19 @@ class VectorEquilibriumProblem(Problem):
                     # One force with known mag/unknown angle, one with known angle/unknown mag
                     self._solve_two_partially_known_equilibrium(known_forces, partially_known_forces, resultant_forces[0])
                 else:
-                    # Both have known angles but unknown magnitudes
-                    # Check if both angles are known
+                    # Both have same property known (either both angles OR both magnitudes)
                     all_angles_known = all(f.angle is not None and f.angle.value is not None for f in partially_known_forces)
+                    all_mags_known = all(f.magnitude is not None and f.magnitude.value is not None for f in partially_known_forces)
+
                     if all_angles_known:
-                        # Can solve using component equations (works whether resultant is fully known or not)
+                        # Both angles known, magnitudes unknown - use Law of Sines
                         self._solve_two_unknowns_with_resultant(known_forces, unknown_forces, resultant_forces[0])
+                    elif all_mags_known and resultant_forces[0].is_known:
+                        # Both magnitudes known, angles unknown, and resultant fully known
+                        # Can solve using component equations (2 equations, 2 unknown angles)
+                        self._solve_two_angles_with_known_magnitudes(known_forces, partially_known_forces, resultant_forces[0])
                     else:
-                        raise ValueError("Cannot solve: two unknowns require known angles or complementary partial knowledge")
+                        raise ValueError("Cannot solve: two unknowns require known angles or magnitudes with fully known resultant")
             elif resultant_forces[0].is_known:
                 # Resultant fully known - use standard solver
                 self._solve_two_unknowns_with_resultant(known_forces, unknown_forces, resultant_forces[0])
@@ -812,7 +817,7 @@ class VectorEquilibriumProblem(Problem):
         """
         Solve for two unknowns given a resultant.
 
-        This uses the TrigSolver to solve decomposition problems where the resultant
+        This uses the TriangleSolver to solve decomposition problems where the resultant
         and component angles are known, but component magnitudes are unknown.
 
         Handles two cases:
@@ -1076,6 +1081,21 @@ class VectorEquilibriumProblem(Problem):
         except np.linalg.LinAlgError:
             raise ValueError("Cannot solve: system is singular (forces may be collinear)")
 
+        # Check if forces are nearly perpendicular (potential optimization/minimization problem)
+        # When perpendicular, there are two solutions - we want the one where resultant has larger magnitude
+        angle_diff = abs(theta_res - theta_comp)
+        angle_diff_normalized = angle_diff % (2 * math.pi)
+        is_near_perpendicular = abs(angle_diff_normalized - math.pi/2) < 0.01 or abs(angle_diff_normalized - 3*math.pi/2) < 0.01
+
+        if is_near_perpendicular and abs(M_res) < abs(M_comp):
+            # We got the wrong solution - swap them
+            # The correct interpretation is that the component has the smaller magnitude
+            M_comp, M_res = M_res, M_comp
+            # If either is negative after swap, flip both signs to get the physical solution
+            if M_comp < 0 or M_res < 0:
+                M_comp = abs(M_comp)
+                M_res = abs(M_res)
+
         # Use the magnitudes as-is (can be negative, which indicates direction opposite to the specified angle)
         # Create magnitude quantities
         from ..core.dimension_catalog import dim
@@ -1142,6 +1162,229 @@ class VectorEquilibriumProblem(Problem):
             "results": [
                 f"{component_force.name} = {M_comp:.2f} {ref_unit.symbol if ref_unit else 'SI'}",
                 f"{resultant.name} = {M_res:.2f} {ref_unit.symbol if ref_unit else 'SI'}"
+            ]
+        })
+
+    def _solve_two_angles_with_known_magnitudes(
+        self,
+        known_forces: list[ForceVector],
+        partially_known_forces: list[ForceVector],
+        resultant: ForceVector,
+    ) -> None:
+        """
+        Solve for two unknown angles given known magnitudes and a fully known resultant.
+
+        Handles the case where:
+        - Two forces have known magnitudes but unknown angles
+        - Resultant is fully known (both magnitude and angle)
+        - Zero or more additional forces are fully known
+
+        Uses component-based system of nonlinear equations:
+        - ΣF_x = F_R_x: M1*cos(θ1) + M2*cos(θ2) + known_x = M_R*cos(θ_R)
+        - ΣF_y = F_R_y: M1*sin(θ1) + M2*sin(θ2) + known_y = M_R*sin(θ_R)
+
+        This is solved by converting to a system that can be solved analytically:
+        Let A = M_R*cos(θ_R) - known_x and B = M_R*sin(θ_R) - known_y
+        Then: M1*cos(θ1) + M2*cos(θ2) = A
+              M1*sin(θ1) + M2*sin(θ2) = B
+
+        We solve for θ1 and θ2 using trigonometric methods.
+        """
+        import math
+
+        # Verify exactly 2 partially known forces
+        if len(partially_known_forces) != 2:
+            raise ValueError(f"Expected exactly 2 partially known forces, got {len(partially_known_forces)}")
+
+        # Verify resultant is fully known
+        if not resultant.is_known or resultant.magnitude is None or resultant.magnitude.value is None:
+            raise ValueError("Resultant must be fully known (magnitude and angle)")
+        if resultant.angle is None or resultant.angle.value is None:
+            raise ValueError("Resultant must have a known angle")
+
+        force1, force2 = partially_known_forces
+
+        # Verify both have known magnitudes but unknown angles
+        if force1.magnitude is None or force1.magnitude.value is None:
+            raise ValueError(f"Force {force1.name} must have a known magnitude")
+        if force2.magnitude is None or force2.magnitude.value is None:
+            raise ValueError(f"Force {force2.name} must have a known magnitude")
+        if force1.angle is not None and force1.angle.value is not None:
+            raise ValueError(f"Force {force1.name} must have an unknown angle")
+        if force2.angle is not None and force2.angle.value is not None:
+            raise ValueError(f"Force {force2.name} must have an unknown angle")
+
+        # Sum all fully known forces (excluding the resultant)
+        sum_x = 0.0
+        sum_y = 0.0
+        ref_unit = None
+
+        for force in known_forces:
+            # Skip the resultant - it's what we're solving FOR, not summing
+            if force.is_resultant:
+                continue
+            if force.vector and force.x and force.y:
+                if force.x.value is not None:
+                    sum_x += force.x.value
+                if force.y.value is not None:
+                    sum_y += force.y.value
+                if ref_unit is None and force.x.preferred:
+                    ref_unit = force.x.preferred
+
+        # Get reference unit from resultant or partially known forces if not found
+        if ref_unit is None:
+            if resultant.magnitude and resultant.magnitude.preferred:
+                ref_unit = resultant.magnitude.preferred
+            elif force1.magnitude and force1.magnitude.preferred:
+                ref_unit = force1.magnitude.preferred
+            elif force2.magnitude and force2.magnitude.preferred:
+                ref_unit = force2.magnitude.preferred
+
+        # Get magnitudes and resultant components
+        M1 = force1.magnitude.value
+        M2 = force2.magnitude.value
+        M_R = resultant.magnitude.value
+        theta_R = resultant.angle.value  # radians
+
+        # Compute target components (what F1 + F2 must equal)
+        A = M_R * math.cos(theta_R) - sum_x  # Target x-component
+        B = M_R * math.sin(theta_R) - sum_y  # Target y-component
+
+        self.solution_steps.append({
+            "method": "Component Equilibrium (Nonlinear System)",
+            "description": f"Solving for {force1.name} and {force2.name} angles using equilibrium equations",
+            "equations": [
+                f"{force1.name}*cos(θ₁) + {force2.name}*cos(θ₂) = {A:.3f}",
+                f"{force1.name}*sin(θ₁) + {force2.name}*sin(θ₂) = {B:.3f}",
+            ],
+        })
+
+        # System of equations:
+        # M1*cos(θ1) + M2*cos(θ2) = A
+        # M1*sin(θ1) + M2*sin(θ2) = B
+        #
+        # Strategy: Use substitution to solve for one angle, then back-substitute
+        # From equation 1: cos(θ2) = (A - M1*cos(θ1)) / M2
+        # From equation 2: sin(θ2) = (B - M1*sin(θ1)) / M2
+        #
+        # Using cos²(θ2) + sin²(θ2) = 1:
+        # [(A - M1*cos(θ1)) / M2]² + [(B - M1*sin(θ1)) / M2]² = 1
+        #
+        # Expanding:
+        # (A - M1*cos(θ1))² + (B - M1*sin(θ1))² = M2²
+        # A² - 2A*M1*cos(θ1) + M1²*cos²(θ1) + B² - 2B*M1*sin(θ1) + M1²*sin²(θ1) = M2²
+        # A² + B² + M1²*(cos²(θ1) + sin²(θ1)) - 2M1*(A*cos(θ1) + B*sin(θ1)) = M2²
+        # A² + B² + M1² - 2M1*(A*cos(θ1) + B*sin(θ1)) = M2²
+        #
+        # Rearranging:
+        # A*cos(θ1) + B*sin(θ1) = (A² + B² + M1² - M2²) / (2*M1)
+        #
+        # This is of the form: a*cos(θ) + b*sin(θ) = c
+        # Which can be solved using: R*cos(θ - φ) = c, where R = √(a² + b²), φ = atan2(b, a)
+
+        # Compute the right-hand side
+        rhs = (A**2 + B**2 + M1**2 - M2**2) / (2 * M1)
+
+        # Solve: A*cos(θ1) + B*sin(θ1) = rhs
+        # Rewrite as: R*cos(θ1 - φ) = rhs, where R = √(A² + B²), φ = atan2(B, A)
+        R = math.sqrt(A**2 + B**2)
+
+        if abs(rhs) > R + 1e-9:  # Allow small numerical tolerance
+            raise ValueError(f"No solution exists: |{rhs:.6f}| > {R:.6f} (forces cannot form a closed triangle)")
+
+        # Clamp to valid range to handle numerical errors
+        cos_value = rhs / R
+        cos_value = max(-1.0, min(1.0, cos_value))
+
+        phi = math.atan2(B, A)
+        alpha = math.acos(cos_value)
+
+        # Two possible solutions: θ1 = φ + α or θ1 = φ - α
+        theta1_solution1 = phi + alpha
+        theta1_solution2 = phi - alpha
+
+        # For each θ1 solution, compute the corresponding θ2
+        def compute_theta2(theta1):
+            """Compute θ2 given θ1."""
+            cos_theta2 = (A - M1 * math.cos(theta1)) / M2
+            sin_theta2 = (B - M1 * math.sin(theta1)) / M2
+            return math.atan2(sin_theta2, cos_theta2)
+
+        theta2_solution1 = compute_theta2(theta1_solution1)
+        theta2_solution2 = compute_theta2(theta1_solution2)
+
+        # Choose the solution that makes physical sense
+        # Typically, we want angles in the range [0, 2π) or [-π, π)
+        # For now, use the first solution (can be refined based on problem constraints)
+        theta1 = theta1_solution1
+        theta2 = theta2_solution1
+
+        # Normalize to [0, 2π) for consistency
+        theta1 = theta1 % (2 * math.pi)
+        theta2 = theta2 % (2 * math.pi)
+
+        # Create angle quantities
+        from ..core.dimension_catalog import dim
+        from ..core.unit import ureg
+
+        degree_unit = ureg.resolve("degree", dim=dim.D)
+
+        angle1_qty = Quantity(
+            name=f"{force1.name}_angle",
+            dim=dim.D,
+            value=theta1,
+            preferred=degree_unit
+        )
+        angle2_qty = Quantity(
+            name=f"{force2.name}_angle",
+            dim=dim.D,
+            value=theta2,
+            preferred=degree_unit
+        )
+
+        # Create magnitude quantities (already known, but need as Quantity objects)
+        mag1_qty = Quantity(
+            name=f"{force1.name}_magnitude",
+            dim=dim.force,
+            value=M1,
+            preferred=ref_unit
+        )
+        mag2_qty = Quantity(
+            name=f"{force2.name}_magnitude",
+            dim=dim.force,
+            value=M2,
+            preferred=ref_unit
+        )
+
+        # Create vectors
+        f1_x = M1 * math.cos(theta1)
+        f1_y = M1 * math.sin(theta1)
+        f1_x_qty = Quantity(name=f"{force1.name}_x", dim=dim.force, value=f1_x, preferred=ref_unit)
+        f1_y_qty = Quantity(name=f"{force1.name}_y", dim=dim.force, value=f1_y, preferred=ref_unit)
+        f1_z_qty = Quantity(name=f"{force1.name}_z", dim=dim.force, value=0.0, preferred=ref_unit)
+        force1._vector = Vector.from_quantities(f1_x_qty, f1_y_qty, f1_z_qty)
+        force1._magnitude = mag1_qty
+        force1._angle = angle1_qty
+        force1.is_known = True
+
+        f2_x = M2 * math.cos(theta2)
+        f2_y = M2 * math.sin(theta2)
+        f2_x_qty = Quantity(name=f"{force2.name}_x", dim=dim.force, value=f2_x, preferred=ref_unit)
+        f2_y_qty = Quantity(name=f"{force2.name}_y", dim=dim.force, value=f2_y, preferred=ref_unit)
+        f2_z_qty = Quantity(name=f"{force2.name}_z", dim=dim.force, value=0.0, preferred=ref_unit)
+        force2._vector = Vector.from_quantities(f2_x_qty, f2_y_qty, f2_z_qty)
+        force2._magnitude = mag2_qty
+        force2._angle = angle2_qty
+        force2.is_known = True
+
+        # Add solution results
+        theta1_deg = math.degrees(theta1)
+        theta2_deg = math.degrees(theta2)
+
+        self.solution_steps.append({
+            "results": [
+                f"{force1.name} angle = {theta1_deg:.2f}°",
+                f"{force2.name} angle = {theta2_deg:.2f}°"
             ]
         })
 

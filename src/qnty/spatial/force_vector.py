@@ -211,7 +211,16 @@ class ForceVector:
 
                 # Convert angle from angle_reference system to standard (CCW from +x)
                 angle_in_ref_system = float(angle) * angle_unit.si_factor  # Convert to radians
-                angle_standard = self.angle_reference.to_standard(angle_in_ref_system, angle_unit="radian")
+
+                # If this has a relative angle constraint, don't resolve it yet
+                if self._relative_to_force is None:
+                    angle_standard = self.angle_reference.to_standard(angle_in_ref_system, angle_unit="radian")
+                else:
+                    # Store the relative offset from the angle parameter
+                    # The _relative_angle was initialized from wrt, but the actual offset is the angle parameter
+                    base_offset = self._relative_angle if self._relative_angle is not None else 0.0
+                    self._relative_angle = base_offset + angle_in_ref_system
+                    angle_standard = None  # Will be resolved later
 
                 angle_qty = Quantity(name=f"{self.name}_angle", dim=dim_catalog.D, value=angle_standard, preferred=angle_unit)
             else:

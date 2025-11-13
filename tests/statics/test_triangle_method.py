@@ -606,116 +606,210 @@ FORCE_VECTOR_PROBLEMS = {
             "assert_values": True,
         },
     },
-    # "problem_2_25": {
-    #     "name": "Problem 2-25",
-    #     "description": """
-    #     If F_1 = 30 lb and F_2 = 40 lb, determine the angles theta and phi so that the
-    #     resultant force is directed along the positive x axis and has a magnitude of F_R = 60 lb.
-    #     """,
-    #     "forces": {
-    #         "F_1": ForceVector.unknown("F_1"),
-    #         "F_2": ForceVector.unknown("F_2"),
-    #         "F_R": ForceVector(magnitude=60, angle=0, unit="lbf", name="F_R", description="Resultant Force", is_resultant=True),
-    #     },
-    #     "expected": {
-    #         "F_1": {"magnitude": 30, "angle": 36.3, "unit": "lbf"},
-    #         "F_2": {"magnitude": 40, "angle": 333.6, "unit": "lbf"},  # 360° - 26.4° = 333.6°
-    #         "F_R": {"magnitude": 60, "angle": 0, "unit": "lbf"},
-    #     },
-    #     "debug": {"print_results": True, "assert_values": False},
-    # },
-    # "problem_2_26": {
-    #     "name": "Problem 2-26",
-    #     "description": """
-    #     Determine the magnitude and direction theta of F_A so that the resultant force is
-    #     directed along the positive x axis and has a magnitude of 1250 N.
-    #     """,
-    #     "forces": {
-    #         "F_A": ForceVector.unknown("F_A"),
-    #         "F_B": ForceVector(magnitude=800, angle=330, unit="N", name="F_B", description="Force B at 30° below horizontal"),
-    #         "F_R": ForceVector(magnitude=1250, angle=0, unit="N", name="F_R", description="Resultant Force", is_resultant=True),
-    #     },
-    #     "expected": {
-    #         "F_A": {"magnitude": 686, "angle": 54.3, "unit": "N"},
-    #         "F_B": {"magnitude": 800, "angle": 330, "unit": "N"},
-    #         "F_R": {"magnitude": 1250, "angle": 0, "unit": "N"},
-    #     },
-    #     "debug": {"print_results": True, "assert_values": False},
-    # },
-    # "problem_2_27": {
-    #     "name": "Problem 2-27",
-    #     "description": """
-    #     Determine the magnitude and direction, measured counterclockwise from the positive x axis,
-    #     of the resultant force acting on the ring at O, if F_A = 750 N and theta = 45°.
-    #     """,
-    #     "forces": {
-    #         "F_A": ForceVector(magnitude=750, angle=45, unit="N", name="F_A", description="Force A at 45°"),
-    #         "F_B": ForceVector(magnitude=800, angle=330, unit="N", name="F_B", description="Force B at 30° below horizontal"),
-    #         "F_R": ForceVector.unknown("F_R", is_resultant=True),
-    #     },
-    #     "expected": {
-    #         "F_A": {"magnitude": 750, "angle": 45, "unit": "N"},
-    #         "F_B": {"magnitude": 800, "angle": 330, "unit": "N"},
-    #         "F_R": {"magnitude": 1230, "angle": 6.08, "unit": "N"},
-    #     },
-    #     "debug": {"print_results": True, "assert_values": False},
-    # },
-    # "problem_2_29": {
-    #     "name": "Problem 2-29",
-    #     "description": """
-    #     If the resultant force of the two tugboats is 3 kN, directed along the positive x axis,
-    #     determine the required magnitude of force F_B and its direction theta.
-    #     """,
-    #     "forces": {
-    #         "F_A": ForceVector(magnitude=2000, angle=30, unit="N", name="F_A", description="Force A at 30° above horizontal"),
-    #         "F_B": ForceVector.unknown("F_B"),
-    #         "F_R": ForceVector(magnitude=3000, angle=0, unit="N", name="F_R", description="Resultant Force", is_resultant=True),
-    #     },
-    #     "expected": {
-    #         "F_A": {"magnitude": 2000, "angle": 30, "unit": "N"},
-    #         "F_B": {"magnitude": 1610, "angle": 321.7, "unit": "N"},  # 360° - 38.3° = 321.7°
-    #         "F_R": {"magnitude": 3000, "angle": 0, "unit": "N"},
-    #     },
-    #     "debug": {"print_results": True, "assert_values": False},
-    # },
-    # "problem_2_30": {
-    #     "name": "Problem 2-30",
-    #     "description": """
-    #     If F_B = 3 kN and theta = 45°, determine the magnitude of the resultant force of the
-    #     two tugboats and its direction measured clockwise from the positive x axis.
-    #     """,
-    #     "forces": {
-    #         "F_A": ForceVector(magnitude=2000, angle=30, unit="N", name="F_A", description="Force A at 30° above horizontal"),
-    #         "F_B": ForceVector(magnitude=3000, angle=315, unit="N", name="F_B", description="Force B at 45° below horizontal"),
-    #         "F_R": ForceVector.unknown("F_R", is_resultant=True),
-    #     },
-    #     "expected": {
-    #         "F_A": {"magnitude": 2000, "angle": 30, "unit": "N"},
-    #         "F_B": {"magnitude": 3000, "angle": 315, "unit": "N"},
-    #         "F_R": {"magnitude": 4010, "angle": 343.8, "unit": "N"},  # 16.2° clockwise = 343.8° CCW
-    #     },
-    #     "debug": {"print_results": True, "assert_values": False},
-    # },
-    # "problem_2_31": {
-    #     "name": "Problem 2-31",
-    #     "description": """
-    #     If the resultant force of the two tugboats is required to be directed towards the positive x axis,
-    #     and F_B is to be a minimum, determine the magnitude of F_R and F_B and the angle theta.
-    #     """,
-    #     "forces": {
-    #         "F_A": ForceVector(magnitude=2000, angle=30, unit="N", name="F_A", description="Force A at 30° above horizontal"),
-    #         "F_B": ForceVector(magnitude=1000, angle=270, unit="N", name="F_B", description="Force B perpendicular to F_R (downward)"),
-    #         "F_R": ForceVector.unknown("F_R", is_resultant=True),
-    #     },
-    #     "expected": {
-    #         "F_A": {"magnitude": 2000, "angle": 30, "unit": "N"},
-    #         "F_B": {"magnitude": 1000, "angle": 270, "unit": "N"},  # 270° (perpendicular to horizontal F_R, pointing down)
-    #         "F_R": {"magnitude": 1732, "angle": 0, "unit": "N"},  # 1.732 kN (≈ 1.73 kN) horizontal
-    #     },
-    #     "debug": {"print_results": True, "assert_values": False},
-    # },
+    # TODO: Prolem 2-24 is symbolic
+    "problem_2_25": {
+        "name": "Problem 2-25",
+        "description": """
+        If F1 = 30 lb and F2 = 40 lb, determine the angles u and f so that the resultant force is directed along the positive x axis and has a magnitude of FR = 60 lb.
+        """,
+        "forces": {
+            "F_1": ForceVector.unknown(
+                magnitude=30, unit="lbf",
+                name="F_1", description="Force 1 at 50° above horizontal"
+            ),
+            "F_2": ForceVector.unknown(
+                magnitude=40, unit="lbf",
+                name="F_2", description="Force 2"
+            ),
+            "F_R": ForceVector(
+                magnitude=60, unit="lbf",
+                angle=0, wrt="+x",
+                name="F_R", is_resultant=True
+            ),
+        },
+        "expected": {
+            "F_1": {"magnitude": 30, "angle": 36.3, "wrt": "+x", "unit": "lbf"},
+            "F_2": {"magnitude": 40, "angle": -26.4, "wrt": "+x", "unit": "lbf"},
+            "F_R": {"magnitude": 60, "angle": 0, "wrt": "+x", "unit": "lbf"},
+        },
+        "debug": {
+            "print_results": False,
+            "assert_values": True,
+        },
+    },
+    "problem_2_26": {
+        "name": "Problem 2-26",
+        "description": """
+        Determine the magnitude and direction u of FA so that the resultant force is directed along the positive x axis and has a magnitude of 1250 N.
+        """,
+        "forces": {
+            "F_A": ForceVector.unknown(
+                name="F_A", description="Force A"
+            ),
+            "F_B": ForceVector(
+                magnitude=800, unit="N",
+                angle=-30, wrt="+x",
+                name="F_B", description="Force B"
+            ),
+            "F_R": ForceVector(
+                magnitude=1250, unit="N",
+                angle=0, wrt="+x",
+                name="F_R", is_resultant=True
+            ),
+        },
+        "expected": {
+            "F_A": {"magnitude": 686, "angle": -54.3, "wrt": "+y", "unit": "N"},
+            "F_B": {"magnitude": 800, "angle": -30, "wrt": "+x", "unit": "N"},
+            "F_R": {"magnitude": 1250, "angle": 0, "wrt": "+x", "unit": "N"},
+        },
+        "debug": {
+            "print_results": False,
+            "assert_values": True,
+        },
+    },
+    "problem_2_27": {
+        "name": "Problem 2-27",
+        "description": """
+        Determine the magnitude and direction, measured counterclockwise from the positive x axis, of the resultant force acting on the ring at O, if FA = 750 N and u = 45°.
+        """,
+        "forces": {
+            "F_A": ForceVector(
+                magnitude=750, unit="N",
+                angle=-45, wrt="+y",
+                name="F_A", description="Force A"
+            ),
+            "F_B": ForceVector(
+                magnitude=800, unit="N",
+                angle=-30, wrt="+x",
+                name="F_B", description="Force B"
+            ),
+            "F_R": ForceVector.unknown(
+                name="F_R", is_resultant=True
+            ),
+        },
+        "expected": {
+            "F_A": {"magnitude": 750, "angle": -45, "wrt": "+y", "unit": "N"},
+            "F_B": {"magnitude": 800, "angle": -30, "wrt": "+x", "unit": "N"},
+            "F_R": {"magnitude": 1230, "angle": 6.08, "wrt": "+x", "unit": "N"},
+        },
+        "debug": {
+            "print_results": False,
+            "assert_values": True,
+        },
+    },
+    "problem_2_28": {
+        "name": "Problem 2-28",
+        "description": """
+        Determine the magnitude of force F so that the resultant FR of the three forces is as small as possible. What is the minimum magnitude of FR?.
+        """,
+        "forces": {
+            "F_1": ForceVector(name="F_1", magnitude=8000, angle=0, wrt="-y", unit="N"),
+            "F_2": ForceVector(name="F_2", magnitude=6000, angle=0, wrt="+x", unit="N"),
+            "F_3": ForceVector.unknown(name="F_3", angle=30, wrt="-y", unit="N"),
+            "F_R": ForceVector.unknown(unit="N", angle=90, wrt="+F_3",name="F_R",is_resultant=True),
+        },
+        "expected": {
+            "F_1": {"magnitude": 8000, "angle": 0, "wrt": "-y", "unit": "N"},
+            "F_2": {"magnitude": 6000, "angle": 0, "wrt": "+x", "unit": "N"},
+            "F_3": {"magnitude": 1196, "angle": 30, "wrt": "-y", "unit": "N"},
+            "F_R": {"magnitude": 9928, "angle": 90, "wrt": "+F_3", "unit": "N"},
+        },
+        "debug": {
+            "print_results": False,
+            "assert_values": True,
+        },
+    },
+    "problem_2_29": {
+        "name": "Problem 2-29",
+        "description": """
+        If the resultant force of the two tugboats is , directed along the positive axis, determine the required magnitude of force FB and its direction u.
+        """,
+        "forces": {
+            "F_A": ForceVector(
+                magnitude=2000, unit="N",
+                angle=30, wrt="+x",
+                name="F_A", description="Force A"
+            ),
+            "F_B": ForceVector.unknown(
+                name="F_B", description="Force B"
+            ),
+            "F_R": ForceVector(
+                magnitude=3000, unit="N",
+                angle=0, wrt="+x",
+                name="F_R", is_resultant=True
+            ),
+        },
+        "expected": {
+            "F_A": {"magnitude": 2000, "angle": 30, "wrt": "+x", "unit": "N"},
+            "F_B": {"magnitude": 1615, "angle": -38.3, "wrt": "+x", "unit": "N"},
+            "F_R": {"magnitude": 3000, "angle": 0, "wrt": "+x", "unit": "N"},
+        },
+        "debug": {
+            "print_results": False,
+            "assert_values": True,
+        },
+    },
+    "problem_2_30": {
+        "name": "Problem 2-30",
+        "description": """
+        If and , determine the magnitude of the resultant force of the two tugboats and its direction measured clockwise from the positive x axis.
+        """,
+        "forces": {
+            "F_A": ForceVector(
+                magnitude=2000, unit="N",
+                angle=30, wrt="+x",
+                name="F_A", description="Force A"
+            ),
+            "F_B": ForceVector(
+                magnitude=3000, unit="N",
+                angle=-45, wrt="+x",
+                name="F_B", description="Force B"
+            ),
+            "F_R": ForceVector.unknown(
+                name="F_R", is_resultant=True
+            ),
+        },
+        "expected": {
+            "F_A": {"magnitude": 2000, "angle": 30, "wrt": "+x", "unit": "N"},
+            "F_B": {"magnitude": 3000, "angle": -45, "wrt": "+x", "unit": "N"},
+            "F_R": {"magnitude": 4013, "angle": -16.2, "wrt": "+x", "unit": "N"},
+        },
+        "debug": {
+            "print_results": False,
+            "assert_values": True,
+        },
+    },
+    "problem_2_31": {
+        "name": "Problem 2-31",
+        "description": """
+        If the resultant force of the two tugboats is required to be directed towards the positive axis, and is to be a minimum, determine the magnitude of and and the angle u.
+        """,
+        "forces": {
+            "F_A": ForceVector(
+                magnitude=2000, unit="N",
+                angle=30, wrt="+x",
+                name="F_A", description="Force A"
+            ),
+            "F_B": ForceVector.unknown(
+                angle=-90, wrt="+F_R",
+                name="F_B", description="Force B"
+            ),
+            "F_R": ForceVector.unknown(
+                angle=0, wrt="+x",
+                name="F_R", is_resultant=True
+            ),
+        },
+        "expected": {
+            "F_A": {"magnitude": 2000, "angle": 30, "wrt": "+x", "unit": "N"},
+            "F_B": {"magnitude": 1000, "angle": -90, "wrt": "+x", "unit": "N"},
+            "F_R": {"magnitude": 1730, "angle": 0, "wrt": "+x", "unit": "N"},
+        },
+        "debug": {
+            "print_results": False,
+            "assert_values": True,
+        },
+    },
 }
-
 
 # Debug control functions
 def enable_debug(problem_name, print_results=True, assert_values=True):

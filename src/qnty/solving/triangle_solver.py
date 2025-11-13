@@ -1,8 +1,15 @@
 """
-Trigonometric solver for 2D/3D vector equilibrium using parallelogram law.
+Triangle/Trigonometric solver for 2D/3D vector equilibrium using geometric methods.
+
+This solver implements the classical geometric/trigonometric approach to force
+equilibrium problems, commonly known as the "Force Triangle Method" or
+"Parallelogram Law" in engineering mechanics statics.
 
 Uses closed-form solutions (law of cosines, law of sines, Pythagorean theorem)
 for fast, exact solutions with step-by-step solution tracking.
+
+This method is preferred for problems with 2-3 forces where geometric
+relationships can be visualized as triangles or parallelograms.
 """
 
 from __future__ import annotations
@@ -17,19 +24,27 @@ from ..spatial.force_vector import ForceVector
 from ..spatial.vector import Vector
 
 
-class TrigSolver:
+class TriangleSolver:
     """
-    Solver for vector equilibrium problems using trigonometric methods.
+    Solver for vector equilibrium problems using the Force Triangle Method.
+
+    Also known as the Geometric Method or Trigonometric Method in engineering
+    mechanics statics. This solver uses force triangles/parallelograms with
+    trigonometric relationships to solve for unknown forces.
 
     Applies:
     - Law of cosines: c² = a² + b² - 2ab·cos(C)
     - Law of sines: a/sin(A) = b/sin(B) = c/sin(C)
     - Pythagorean theorem: c² = a² + b² (when angle = 90°)
+    - Parallelogram law for force composition
     - Component summation: ΣFx = 0, ΣFy = 0, ΣFz = 0
+
+    Best suited for problems with 2-3 forces where geometric visualization
+    is straightforward. For problems with many forces, use ComponentSolver instead.
     """
 
     def __init__(self):
-        """Initialize the trig solver."""
+        """Initialize the triangle solver."""
         self.solution_steps: list[dict[str, Any]] = []
 
     def solve_resultant(self, known_forces: list[ForceVector], forces_dict: dict[str, ForceVector]) -> ForceVector:
