@@ -39,6 +39,197 @@ class ComponentSolver:
         """Initialize the component solver."""
         self.solution_steps: list[dict] = []
 
+    def _resolve_force_relative_angles(self, forces_dict: dict[str, ForceVector], resolve_unknown_refs: bool = False) -> None:
+        """
+        Resolve force-relative angle references in the forces dictionary.
+
+        Some forces may have angles defined relative to other forces (e.g., F_3 at 60° from F_2).
+        This function resolves these relative constraints by computing the actual angles.
+
+        Args:
+            forces_dict: Dictionary of force_name -> ForceVector
+            resolve_unknown_refs: If True, resolve references to unknown forces (for post-solve resolution)
+        """
+        import math
+        from ..core.dimension_catalog import dim
+        from ..core.quantity import Quantity
+        from ..spatial.vector import Vector
+
+        # Identify forces with relative angle constraints
+        forces_to_resolve = []
+        for force_name, force in forces_dict.items():
+            if hasattr(force, '_relative_to_force') and force._relative_to_force is not None:
+                forces_to_resolve.append((force_name, force))
+
+        # Resolve each relative constraint
+        for force_name, force in forces_to_resolve:
+            ref_force_name = force._relative_to_force
+            if ref_force_name not in forces_dict:
+                raise ValueError(f"Force {force_name} references unknown force {ref_force_name}")
+
+            ref_force = forces_dict[ref_force_name]
+
+            # Skip resolution if the reference force is unknown (will be computed later)
+            # This handles cases where a known force references an unknown resultant
+            if not ref_force.is_known and not resolve_unknown_refs:
+                continue
+
+            # Get the reference force's angle
+            if ref_force.angle is None or ref_force.angle.value is None:
+                if not resolve_unknown_refs:
+                    continue  # Skip for now, will resolve after solving
+                raise ValueError(f"Reference force {ref_force_name} must have a known angle")
+
+            ref_angle_rad = ref_force.angle.value  # In radians, standard form (CCW from +x)
+
+            # Add the relative angle offset
+            actual_angle_rad = ref_angle_rad + force._relative_angle
+
+            # Update the force's angle
+            force._angle = Quantity(name=f"{force_name}_angle", dim=dim.D, value=actual_angle_rad, preferred=force._angle.preferred if force._angle else None)
+
+            # Recompute the vector components with the resolved angle
+            if force.magnitude and force.magnitude.value is not None:
+                mag = force.magnitude.value
+                x_val = mag * math.cos(actual_angle_rad)
+                y_val = mag * math.sin(actual_angle_rad)
+                z_val = 0.0
+
+                # Create Quantities
+                x_qty = Quantity(name=f"{force_name}_x", dim=dim.force, value=x_val, preferred=force.magnitude.preferred)
+                y_qty = Quantity(name=f"{force_name}_y", dim=dim.force, value=y_val, preferred=force.magnitude.preferred)
+                z_qty = Quantity(name=f"{force_name}_z", dim=dim.force, value=z_val, preferred=force.magnitude.preferred)
+                force._vector = Vector.from_quantities(x_qty, y_qty, z_qty)
+
+            # Clear the relative constraint since it's now resolved
+            force._relative_to_force = None
+            force._relative_angle = None
+
+    def solve(self, forces: list[ForceVector], force_unit: Optional[str] = None) -> dict[str, ForceVector]:
+        """
+        Solve a force system problem automatically detecting the problem type.
+
+        Handles three types of problems:
+        1. Normal: Given known forces, find the resultant (F_R = F_1 + F_2 + ...)
+        2. Reverse: Given known forces and known resultant, find unknown force (F_unknown = F_R - Σ known forces)
+        3. Constrained: Forces with relative angle constraints (e.g., F1 at angle θ from F_R)
+
+        Args:
+            forces: List of ForceVector objects (mix of known and unknown forces, may include resultant)
+            force_unit: Preferred unit for results (e.g., "N", "kN", "lbf")
+
+        Returns:
+            Dictionary mapping force names to solved ForceVector objects
+
+        Examples:
+            >>> # Normal problem: Find resultant
+            >>> F1 = ForceVector(magnitude=100, angle=30, unit="N", name="F1")
+            >>> F2 = ForceVector(magnitude=200, angle=120, unit="N", name="F2")
+            >>> FR = ForceVector.unknown("FR", is_resultant=True)
+            >>> result = solver.solve([F1, F2, FR])
+            >>> result["FR"]  # Computed resultant
+
+            >>> # Reverse problem: Find unknown force
+            >>> FA = ForceVector(magnitude=700, angle=-30, unit="N", name="FA")
+            >>> FB = ForceVector.unknown("FB")
+            >>> FR = ForceVector(magnitude=1500, angle=90, unit="N", name="FR", is_resultant=True)
+            >>> result = solver.solve([FA, FB, FR])
+            >>> result["FB"]  # Computed unknown force
+        """
+        # Build forces dictionary for reference resolution
+        forces_dict = {force.name: force for force in forces}
+
+        # Step 1: Resolve force-relative angle references for known forces referencing known forces
+        self._resolve_force_relative_angles(forces_dict, resolve_unknown_refs=False)
+
+        # Categorize forces
+        known_forces = []
+        unknown_forces = []
+        constrained_forces = []  # Forces with relative angle constraints to unknown forces
+        resultant = None
+
+        for force in forces:
+            if hasattr(force, 'is_resultant') and force.is_resultant:
+                resultant = force
+            elif force.is_known:
+                # Check if this force has an unresolved relative angle constraint
+                if hasattr(force, 'has_relative_angle') and force.has_relative_angle():
+                    constrained_forces.append(force)
+                else:
+                    known_forces.append(force)
+            else:
+                unknown_forces.append(force)
+
+        # Determine force unit from known forces if not specified
+        if not force_unit:
+            if known_forces and known_forces[0].magnitude and known_forces[0].magnitude.preferred:
+                force_unit = known_forces[0].magnitude.preferred.symbol
+            elif resultant and resultant.magnitude and resultant.magnitude.preferred:
+                force_unit = resultant.magnitude.preferred.symbol
+
+        # Build result dictionary
+        result = {}
+        for force in forces:
+            result[force.name] = force
+
+        # Case 1: Reverse/equilibrium problem - known resultant, solve for unknown force(s)
+        # This includes cases where FR is known and we need to find unknown forces such that:
+        # F1 + F2 + ... + F_unknown = FR
+        if resultant and resultant.is_known and len(unknown_forces) > 0:
+            for unknown_force in unknown_forces:
+                solved_force = self.solve_unknown_force(
+                    known_forces,
+                    resultant,
+                    force_unit=force_unit,
+                    unknown_force_name=unknown_force.name
+                )
+                result[unknown_force.name] = solved_force
+
+        # Case 2: Constrained equilibrium - unknown forces with known directions
+        # Example: F2 has unknown magnitude but known angle, FR has unknown magnitude but known angle
+        # We can solve for both magnitudes using equilibrium equations
+        elif resultant and not resultant.is_known and len(unknown_forces) > 0:
+            # Check if all unknowns have known angles (partially known)
+            all_have_angles = all(
+                (f.angle is not None and f.angle.value is not None) or (hasattr(f, 'is_resultant') and f.is_resultant)
+                for f in unknown_forces + [resultant]
+            )
+
+            if all_have_angles and len(unknown_forces) == 1 and resultant.angle is not None and resultant.angle.value is not None:
+                # Special case: 1 unknown force + 1 unknown resultant, both with known angles
+                # Solve using equilibrium: F1 + F2 + ... + F_unknown = F_R
+                solved_unknown, solved_resultant = self.solve_constrained_equilibrium(
+                    known_forces,
+                    unknown_forces[0],
+                    resultant,
+                    force_unit=force_unit
+                )
+                result[unknown_forces[0].name] = solved_unknown
+                result[resultant.name] = solved_resultant
+            else:
+                # Fall back to standard resultant solving
+                solved_resultant = self.solve_resultant(known_forces, force_unit=force_unit)
+                result[resultant.name] = solved_resultant
+
+        # Case 3: Normal problem - known forces, solve for unknown resultant
+        # Note: Constrained forces are temporarily excluded from known_forces
+        # They will be resolved after the resultant is computed
+        elif resultant and not resultant.is_known:
+            solved_resultant = self.solve_resultant(known_forces, force_unit=force_unit)
+            result[resultant.name] = solved_resultant
+
+        # Case 4: No resultant specified - compute it anyway
+        else:
+            solved_resultant = self.solve_resultant(known_forces, force_unit=force_unit)
+            result["F_R"] = solved_resultant
+
+        # Step 3: Post-solve resolution of force-relative angles
+        # Now that all unknowns are solved, resolve any remaining relative angle constraints
+        # This handles cases like F1 at angle θ from F_R where F_R was unknown
+        self._resolve_force_relative_angles(result, resolve_unknown_refs=True)
+
+        return result
+
     def resolve_force_components(self, force: ForceVector) -> tuple[float, float, float]:
         """
         Resolve a force into its x, y, z components in SI units.
@@ -52,8 +243,16 @@ class ComponentSolver:
         Notes:
             - If force has a vector, use those components directly
             - If force has magnitude and angle, compute components
+            - Forces with unresolved relative angle constraints cannot be resolved
             - Returns values in SI units for consistent calculations
         """
+        # Check for unresolved relative angle constraint
+        if hasattr(force, 'has_relative_angle') and force.has_relative_angle():
+            raise ValueError(
+                f"Force {force.name} has an unresolved relative angle constraint. "
+                f"Cannot compute components until the referenced force is resolved."
+            )
+
         if force.vector is not None and force.x is not None and force.y is not None:
             # Force already has components
             fx = force.x.value if force.x.value is not None else 0.0
@@ -235,24 +434,271 @@ class ComponentSolver:
         })
 
         # Create result ForceVector
+        # NOTE: magnitude and angle_rad are already in SI units (N and radians)
+        # We need to create Quantities with SI values, then set preferred units
         result_unit = ureg.resolve(force_unit if force_unit else "N", dim=dim.force)
         degree_unit = ureg.resolve("degree", dim=dim.D)
 
+        # Create Quantities in SI units
+        mag_qty = Quantity(name="F_R_magnitude", dim=dim.force, value=magnitude)
+        ang_qty = Quantity(name="F_R_angle", dim=dim.D, value=angle_rad)
+
+        # Set preferred units for display
+        mag_qty.preferred = result_unit
+        ang_qty.preferred = degree_unit
+
+        # Create ForceVector from Quantities
+        # Pass the Quantities directly (not scalar values with unit conversion)
         resultant = ForceVector(
-            magnitude=magnitude,
-            angle=angle_rad,  # Value is in radians (SI unit)
-            unit=result_unit,
-            angle_unit="radian",  # Specify that the input is in radians
+            magnitude=mag_qty,
+            angle=ang_qty,
+            unit=result_unit,  # This is for vector components
             name="F_R",
             is_resultant=True,
             is_known=True
         )
 
-        # Set preferred unit to degrees for display
-        if resultant.angle and degree_unit:
-            resultant.angle.preferred = degree_unit
-
         return resultant
+
+    def solve_constrained_equilibrium(self, known_forces: list[ForceVector],
+                                     unknown_force: ForceVector,
+                                     unknown_resultant: ForceVector,
+                                     force_unit: Optional[str] = None) -> tuple[ForceVector, ForceVector]:
+        """
+        Solve for unknown force and resultant magnitudes when both have known directions.
+
+        This handles constrained equilibrium problems where:
+        - Known forces: F1, F2, ... (fully known)
+        - Unknown force: F_unknown (magnitude unknown, angle known)
+        - Unknown resultant: F_R (magnitude unknown, angle known)
+        - Equilibrium: F1 + F2 + ... + F_unknown = F_R
+
+        Args:
+            known_forces: List of fully known ForceVector objects
+            unknown_force: ForceVector with unknown magnitude but known angle
+            unknown_resultant: Resultant ForceVector with unknown magnitude but known angle
+            force_unit: Preferred unit for results
+
+        Returns:
+            Tuple of (solved_unknown_force, solved_resultant)
+
+        Notes:
+            Uses the two equilibrium equations:
+            - ΣFx = 0: F1x + F2x + ... + F_unknown_x = FRx
+            - ΣFy = 0: F1y + F2y + ... + F_unknown_y = FRy
+
+            With F_unknown_x = |F_unknown| * cos(θ_unknown) and FRx = |FR| * cos(θ_R)
+            This gives 2 equations with 2 unknowns (|F_unknown| and |FR|)
+        """
+        from ..core.dimension_catalog import dim
+        from ..core.unit import ureg
+        import numpy as np
+
+        self.solution_steps = []
+
+        # Step 1: Get known components and angles
+        self.solution_steps.append({
+            "method": "Constrained Equilibrium Method",
+            "description": "Solving for unknown magnitudes with known directions"
+        })
+
+        # Sum known forces
+        sum_known_x, sum_known_y, _ = self.sum_components(known_forces)
+
+        # Get angles (in radians) - validate they exist
+        if unknown_force.angle is None or unknown_force.angle.value is None:
+            raise ValueError(f"Unknown force {unknown_force.name} must have a known angle for constrained equilibrium")
+        if unknown_resultant.angle is None or unknown_resultant.angle.value is None:
+            raise ValueError(f"Unknown resultant {unknown_resultant.name} must have a known angle for constrained equilibrium")
+
+        theta_unknown = unknown_force.angle.value
+        theta_R = unknown_resultant.angle.value
+
+        self.solution_steps.append({
+            "description": "Setting up equilibrium equations",
+            "equations": [
+                f"ΣFx: {sum_known_x:.3f} + |F_unknown|*cos({math.degrees(theta_unknown):.1f}°) = |FR|*cos({math.degrees(theta_R):.1f}°)",
+                f"ΣFy: {sum_known_y:.3f} + |F_unknown|*sin({math.degrees(theta_unknown):.1f}°) = |FR|*sin({math.degrees(theta_R):.1f}°)"
+            ]
+        })
+
+        # Solve system of linear equations:
+        # sum_known_x + |F_u| * cos(θ_u) = |FR| * cos(θ_R)
+        # sum_known_y + |F_u| * sin(θ_u) = |FR| * sin(θ_R)
+        #
+        # Rearrange to matrix form: A * [|F_u|, |FR|]^T = b
+        # [ cos(θ_u)  -cos(θ_R) ] [ |F_u| ]   [ -sum_known_x ]
+        # [ sin(θ_u)  -sin(θ_R) ] [ |FR|  ] = [ -sum_known_y ]
+
+        A = np.array([
+            [math.cos(theta_unknown), -math.cos(theta_R)],
+            [math.sin(theta_unknown), -math.sin(theta_R)]
+        ])
+        b = np.array([-sum_known_x, -sum_known_y])
+
+        # Solve for [|F_unknown|, |FR|]
+        try:
+            magnitudes = np.linalg.solve(A, b)
+            mag_unknown = magnitudes[0]
+            mag_R = magnitudes[1]
+        except np.linalg.LinAlgError:
+            raise ValueError(
+                "Cannot solve constrained equilibrium - system is singular. "
+                "The unknown force and resultant may be parallel."
+            )
+
+        self.solution_steps.append({
+            "description": "Solved for magnitudes",
+            "results": [
+                f"|F_unknown| = {mag_unknown:.3f} N",
+                f"|FR| = {mag_R:.3f} N"
+            ]
+        })
+
+        # Create solved forces
+        result_unit = ureg.resolve(force_unit if force_unit else "N", dim=dim.force)
+        degree_unit = ureg.resolve("degree", dim=dim.D)
+
+        # Solved unknown force
+        from ..core.quantity import Quantity
+        mag_unknown_qty = Quantity(name=f"{unknown_force.name}_magnitude", dim=dim.force, value=mag_unknown)
+        mag_unknown_qty.preferred = result_unit
+
+        ang_unknown_qty = Quantity(name=f"{unknown_force.name}_angle", dim=dim.D, value=theta_unknown)
+        ang_unknown_qty.preferred = degree_unit
+
+        solved_unknown = ForceVector(
+            magnitude=mag_unknown_qty,
+            angle=ang_unknown_qty,
+            unit=result_unit,
+            name=unknown_force.name,
+            is_known=True
+        )
+
+        # Solved resultant
+        mag_R_qty = Quantity(name=f"{unknown_resultant.name}_magnitude", dim=dim.force, value=mag_R)
+        mag_R_qty.preferred = result_unit
+
+        ang_R_qty = Quantity(name=f"{unknown_resultant.name}_angle", dim=dim.D, value=theta_R)
+        ang_R_qty.preferred = degree_unit
+
+        solved_resultant = ForceVector(
+            magnitude=mag_R_qty,
+            angle=ang_R_qty,
+            unit=result_unit,
+            name=unknown_resultant.name,
+            is_resultant=True,
+            is_known=True
+        )
+
+        return (solved_unknown, solved_resultant)
+
+    def solve_unknown_force(self, known_forces: list[ForceVector],
+                           known_resultant: ForceVector,
+                           force_unit: Optional[str] = None,
+                           unknown_force_name: str = "F_unknown") -> ForceVector:
+        """
+        Solve for an unknown force given known forces and a known resultant.
+
+        This handles reverse problems where: F_A + F_B + ... + F_unknown = F_R
+        Therefore: F_unknown = F_R - (F_A + F_B + ...)
+
+        Args:
+            known_forces: List of known ForceVector objects
+            known_resultant: Known resultant ForceVector
+            force_unit: Preferred unit for the result (e.g., "N", "kN", "lb")
+            unknown_force_name: Name for the unknown force
+
+        Returns:
+            ForceVector representing the unknown force
+
+        Notes:
+            This is used for problems like: "Determine force F_B so that the
+            resultant is directed along +y axis with magnitude 1500 N"
+        """
+        from ..core.dimension_catalog import dim
+        from ..core.unit import ureg
+
+        self.solution_steps = []
+
+        # Step 1: Get resultant components
+        self.solution_steps.append({
+            "method": "Reverse Component Method",
+            "description": "Solving for unknown force given known resultant"
+        })
+
+        R_x, R_y, R_z = self.resolve_force_components(known_resultant)
+
+        # Step 2: Sum known forces
+        sum_known_x, sum_known_y, sum_known_z = self.sum_components(known_forces)
+
+        components_breakdown = []
+        for force in known_forces:
+            fx, fy, fz = self.resolve_force_components(force)
+            components_breakdown.append(
+                f"{force.name}: Fx = {fx:.3f} N, Fy = {fy:.3f} N"
+            )
+
+        self.solution_steps.append({
+            "components": components_breakdown
+        })
+
+        self.solution_steps.append({
+            "description": "Resultant components",
+            "equations": [
+                f"F_R: Fx = {R_x:.3f} N, Fy = {R_y:.3f} N"
+            ]
+        })
+
+        # Step 3: Calculate unknown force components
+        # F_unknown = F_R - Sum(known forces)
+        unknown_x = R_x - sum_known_x
+        unknown_y = R_y - sum_known_y
+        unknown_z = R_z - sum_known_z
+
+        self.solution_steps.append({
+            "description": "Solving for unknown force components",
+            "equations": [
+                f"F_unknown_x = F_R_x - ΣF_known_x = {R_x:.3f} - {sum_known_x:.3f} = {unknown_x:.3f} N",
+                f"F_unknown_y = F_R_y - ΣF_known_y = {R_y:.3f} - {sum_known_y:.3f} = {unknown_y:.3f} N"
+            ]
+        })
+
+        # Step 4: Calculate magnitude and angle
+        magnitude = self.calculate_resultant_magnitude(unknown_x, unknown_y, unknown_z)
+        angle_rad = self.calculate_resultant_angle_2d(unknown_x, unknown_y)
+        angle_deg = math.degrees(angle_rad)
+
+        self.solution_steps.append({
+            "description": "Calculating unknown force magnitude and direction",
+            "equations": [
+                f"F_unknown = √(Fx² + Fy²) = √({unknown_x:.3f}² + {unknown_y:.3f}²) = {magnitude:.3f} N",
+                f"θ = tan⁻¹(Fy/Fx) = tan⁻¹({unknown_y:.3f}/{unknown_x:.3f}) = {angle_deg:.2f}°"
+            ]
+        })
+
+        # Create result ForceVector
+        result_unit = ureg.resolve(force_unit if force_unit else "N", dim=dim.force)
+        degree_unit = ureg.resolve("degree", dim=dim.D)
+
+        # Create Quantities in SI units
+        mag_qty = Quantity(name=f"{unknown_force_name}_magnitude", dim=dim.force, value=magnitude)
+        ang_qty = Quantity(name=f"{unknown_force_name}_angle", dim=dim.D, value=angle_rad)
+
+        # Set preferred units for display
+        mag_qty.preferred = result_unit
+        ang_qty.preferred = degree_unit
+
+        # Create ForceVector from Quantities
+        unknown_force = ForceVector(
+            magnitude=mag_qty,
+            angle=ang_qty,
+            unit=result_unit,
+            name=unknown_force_name,
+            is_known=True
+        )
+
+        return unknown_force
 
     def get_solution_steps(self) -> list[dict]:
         """Get the solution steps for report generation."""
