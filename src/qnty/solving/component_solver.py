@@ -19,11 +19,10 @@ This method is preferred over geometric/trigonometric methods when:
 """
 
 import math
-from typing import Optional
 
+from ..core.quantity import Quantity
 from ..spatial.force_vector import ForceVector
 from ..spatial.vector import Vector
-from ..core.quantity import Quantity
 
 
 class ComponentSolver:
@@ -51,14 +50,14 @@ class ComponentSolver:
             resolve_unknown_refs: If True, resolve references to unknown forces (for post-solve resolution)
         """
         import math
+
         from ..core.dimension_catalog import dim
         from ..core.quantity import Quantity
-        from ..spatial.vector import Vector
 
         # Identify forces with relative angle constraints
         forces_to_resolve = []
         for force_name, force in forces_dict.items():
-            if hasattr(force, '_relative_to_force') and force._relative_to_force is not None:
+            if hasattr(force, "_relative_to_force") and force._relative_to_force is not None:
                 forces_to_resolve.append((force_name, force))
 
         # Resolve each relative constraint
@@ -105,7 +104,7 @@ class ComponentSolver:
             force._relative_to_force = None
             force._relative_angle = None
 
-    def solve(self, forces: list[ForceVector], force_unit: Optional[str] = None) -> dict[str, ForceVector]:
+    def solve(self, forces: list[ForceVector], force_unit: str | None = None) -> dict[str, ForceVector]:
         """
         Solve a force system problem automatically detecting the problem type.
 
@@ -149,11 +148,11 @@ class ComponentSolver:
         resultant = None
 
         for force in forces:
-            if hasattr(force, 'is_resultant') and force.is_resultant:
+            if hasattr(force, "is_resultant") and force.is_resultant:
                 resultant = force
             elif force.is_known:
                 # Check if this force has an unresolved relative angle constraint
-                if hasattr(force, 'has_relative_angle') and force.has_relative_angle():
+                if hasattr(force, "has_relative_angle") and force.has_relative_angle():
                     constrained_forces.append(force)
                 else:
                     known_forces.append(force)
@@ -177,12 +176,7 @@ class ComponentSolver:
         # F1 + F2 + ... + F_unknown = FR
         if resultant and resultant.is_known and len(unknown_forces) > 0:
             for unknown_force in unknown_forces:
-                solved_force = self.solve_unknown_force(
-                    known_forces,
-                    resultant,
-                    force_unit=force_unit,
-                    unknown_force_name=unknown_force.name
-                )
+                solved_force = self.solve_unknown_force(known_forces, resultant, force_unit=force_unit, unknown_force_name=unknown_force.name)
                 result[unknown_force.name] = solved_force
 
         # Case 2: Constrained equilibrium - unknown forces with known directions
@@ -190,20 +184,12 @@ class ComponentSolver:
         # We can solve for both magnitudes using equilibrium equations
         elif resultant and not resultant.is_known and len(unknown_forces) > 0:
             # Check if all unknowns have known angles (partially known)
-            all_have_angles = all(
-                (f.angle is not None and f.angle.value is not None) or (hasattr(f, 'is_resultant') and f.is_resultant)
-                for f in unknown_forces + [resultant]
-            )
+            all_have_angles = all((f.angle is not None and f.angle.value is not None) or (hasattr(f, "is_resultant") and f.is_resultant) for f in unknown_forces + [resultant])
 
             if all_have_angles and len(unknown_forces) == 1 and resultant.angle is not None and resultant.angle.value is not None:
                 # Special case: 1 unknown force + 1 unknown resultant, both with known angles
                 # Solve using equilibrium: F1 + F2 + ... + F_unknown = F_R
-                solved_unknown, solved_resultant = self.solve_constrained_equilibrium(
-                    known_forces,
-                    unknown_forces[0],
-                    resultant,
-                    force_unit=force_unit
-                )
+                solved_unknown, solved_resultant = self.solve_constrained_equilibrium(known_forces, unknown_forces[0], resultant, force_unit=force_unit)
                 result[unknown_forces[0].name] = solved_unknown
                 result[resultant.name] = solved_resultant
             else:
@@ -247,11 +233,8 @@ class ComponentSolver:
             - Returns values in SI units for consistent calculations
         """
         # Check for unresolved relative angle constraint
-        if hasattr(force, 'has_relative_angle') and force.has_relative_angle():
-            raise ValueError(
-                f"Force {force.name} has an unresolved relative angle constraint. "
-                f"Cannot compute components until the referenced force is resolved."
-            )
+        if hasattr(force, "has_relative_angle") and force.has_relative_angle():
+            raise ValueError(f"Force {force.name} has an unresolved relative angle constraint. Cannot compute components until the referenced force is resolved.")
 
         if force.vector is not None and force.x is not None and force.y is not None:
             # Force already has components
@@ -334,8 +317,7 @@ class ComponentSolver:
         """
         return math.atan2(sum_y, sum_x)
 
-    def calculate_direction_cosines(self, sum_x: float, sum_y: float, sum_z: float,
-                                   magnitude: float) -> tuple[float, float, float]:
+    def calculate_direction_cosines(self, sum_x: float, sum_y: float, sum_z: float, magnitude: float) -> tuple[float, float, float]:
         """
         Calculate the direction cosines for 3D resultant force.
 
@@ -354,13 +336,45 @@ class ComponentSolver:
             return (0.0, 0.0, 0.0)
 
         cos_alpha = sum_x / magnitude  # Angle from +x axis
-        cos_beta = sum_y / magnitude   # Angle from +y axis
+        cos_beta = sum_y / magnitude  # Angle from +y axis
         cos_gamma = sum_z / magnitude  # Angle from +z axis
 
         return (cos_alpha, cos_beta, cos_gamma)
 
-    def solve_resultant(self, known_forces: list[ForceVector],
-                       force_unit: Optional[str] = None) -> ForceVector:
+    def calculate_direction_angles_3d(self, sum_x: float, sum_y: float, sum_z: float, magnitude: float) -> tuple[float, float, float]:
+        """
+        Calculate the coordinate direction angles for 3D resultant force.
+
+        Args:
+            sum_x, sum_y, sum_z: Component sums (SI units)
+            magnitude: Magnitude of resultant force
+
+        Returns:
+            Tuple of (alpha, beta, gamma) in radians where:
+            - alpha: angle from +x axis [0, π]
+            - beta: angle from +y axis [0, π]
+            - gamma: angle from +z axis [0, π]
+
+        Notes:
+            Angles are computed from direction cosines:
+            - cos(α) = sum_x / magnitude
+            - cos(β) = sum_y / magnitude
+            - cos(γ) = sum_z / magnitude
+        """
+        cos_alpha, cos_beta, cos_gamma = self.calculate_direction_cosines(sum_x, sum_y, sum_z, magnitude)
+
+        # Clamp to [-1, 1] to handle numerical errors
+        cos_alpha = max(-1.0, min(1.0, cos_alpha))
+        cos_beta = max(-1.0, min(1.0, cos_beta))
+        cos_gamma = max(-1.0, min(1.0, cos_gamma))
+
+        alpha = math.acos(cos_alpha)
+        beta = math.acos(cos_beta)
+        gamma = math.acos(cos_gamma)
+
+        return (alpha, beta, gamma)
+
+    def solve_resultant(self, known_forces: list[ForceVector], force_unit: str | None = None) -> ForceVector:
         """
         Calculate the resultant of known forces using component method.
 
@@ -384,10 +398,7 @@ class ComponentSolver:
         self.solution_steps = []
 
         # Step 1: Resolve each force into components
-        self.solution_steps.append({
-            "method": "Component Method (Scalar Notation)",
-            "description": "Resolving forces into x and y components"
-        })
+        self.solution_steps.append({"method": "Component Method (Scalar Notation)", "description": "Resolving forces into x and y components"})
 
         components_breakdown = []
         for force in known_forces:
@@ -399,71 +410,83 @@ class ComponentSolver:
             else:
                 angle_deg = math.degrees(math.atan2(fy, fx))
 
-            components_breakdown.append(
-                f"{force.name}: Fx = {fx:.3f} N, Fy = {fy:.3f} N"
-            )
+            components_breakdown.append(f"{force.name}: Fx = {fx:.3f} N, Fy = {fy:.3f} N")
 
-        self.solution_steps.append({
-            "components": components_breakdown
-        })
+        self.solution_steps.append({"components": components_breakdown})
 
         # Step 2: Sum components
         sum_x, sum_y, sum_z = self.sum_components(known_forces)
 
-        self.solution_steps.append({
-            "description": "Summing force components algebraically",
-            "equations": [
-                f"→+ ΣFx = {sum_x:.3f} N",
-                f"↑+ ΣFy = {sum_y:.3f} N"
-            ]
-        })
+        # Detect if this is a 3D problem (any z-component non-zero)
+        is_3d = abs(sum_z) > 1e-10
+
+        if is_3d:
+            self.solution_steps.append({"description": "Summing force components algebraically (3D)", "equations": [f"→+ ΣFx = {sum_x:.3f} N", f"↑+ ΣFy = {sum_y:.3f} N", f"↗+ ΣFz = {sum_z:.3f} N"]})
+        else:
+            self.solution_steps.append({"description": "Summing force components algebraically", "equations": [f"→+ ΣFx = {sum_x:.3f} N", f"↑+ ΣFy = {sum_y:.3f} N"]})
 
         # Step 3: Calculate resultant magnitude
         magnitude = self.calculate_resultant_magnitude(sum_x, sum_y, sum_z)
 
-        # Step 4: Calculate resultant angle
-        angle_rad = self.calculate_resultant_angle_2d(sum_x, sum_y)
-        angle_deg = math.degrees(angle_rad)
-
-        self.solution_steps.append({
-            "description": "Calculating resultant magnitude and direction",
-            "equations": [
-                f"FR = √(ΣFx² + ΣFy²) = √({sum_x:.3f}² + {sum_y:.3f}²) = {magnitude:.3f} N",
-                f"θ = tan⁻¹(ΣFy/ΣFx) = tan⁻¹({sum_y:.3f}/{sum_x:.3f}) = {angle_deg:.2f}°"
-            ]
-        })
-
-        # Create result ForceVector
-        # NOTE: magnitude and angle_rad are already in SI units (N and radians)
-        # We need to create Quantities with SI values, then set preferred units
+        # Step 4: Calculate resultant direction
         result_unit = ureg.resolve(force_unit if force_unit else "N", dim=dim.force)
         degree_unit = ureg.resolve("degree", dim=dim.D)
 
-        # Create Quantities in SI units
-        mag_qty = Quantity(name="F_R_magnitude", dim=dim.force, value=magnitude)
-        ang_qty = Quantity(name="F_R_angle", dim=dim.D, value=angle_rad)
+        if is_3d:
+            # 3D: Calculate direction angles α, β, γ
+            alpha_rad, beta_rad, gamma_rad = self.calculate_direction_angles_3d(sum_x, sum_y, sum_z, magnitude)
+            alpha_deg = math.degrees(alpha_rad)
+            beta_deg = math.degrees(beta_rad)
+            gamma_deg = math.degrees(gamma_rad)
 
-        # Set preferred units for display
-        mag_qty.preferred = result_unit
-        ang_qty.preferred = degree_unit
+            self.solution_steps.append(
+                {
+                    "description": "Calculating resultant magnitude and direction angles",
+                    "equations": [
+                        f"FR = √(ΣFx² + ΣFy² + ΣFz²) = √({sum_x:.3f}² + {sum_y:.3f}² + {sum_z:.3f}²) = {magnitude:.3f} N",
+                        f"α = cos⁻¹(ΣFx/FR) = cos⁻¹({sum_x:.3f}/{magnitude:.3f}) = {alpha_deg:.2f}°",
+                        f"β = cos⁻¹(ΣFy/FR) = cos⁻¹({sum_y:.3f}/{magnitude:.3f}) = {beta_deg:.2f}°",
+                        f"γ = cos⁻¹(ΣFz/FR) = cos⁻¹({sum_z:.3f}/{magnitude:.3f}) = {gamma_deg:.2f}°",
+                    ],
+                }
+            )
 
-        # Create ForceVector from Quantities
-        # Pass the Quantities directly (not scalar values with unit conversion)
-        resultant = ForceVector(
-            magnitude=mag_qty,
-            angle=ang_qty,
-            unit=result_unit,  # This is for vector components
-            name="F_R",
-            is_resultant=True,
-            is_known=True
-        )
+            # Create 3D ForceVector using components
+            mag_qty = Quantity(name="F_R_magnitude", dim=dim.force, value=magnitude, preferred=result_unit)
+            x_qty = Quantity(name="F_R_x", dim=dim.force, value=sum_x, preferred=result_unit)
+            y_qty = Quantity(name="F_R_y", dim=dim.force, value=sum_y, preferred=result_unit)
+            z_qty = Quantity(name="F_R_z", dim=dim.force, value=sum_z, preferred=result_unit)
+
+            resultant = ForceVector(x=x_qty, y=y_qty, z=z_qty, unit=result_unit, name="F_R", is_resultant=True, is_known=True)
+
+        else:
+            # 2D: Calculate angle θ from +x axis
+            angle_rad = self.calculate_resultant_angle_2d(sum_x, sum_y)
+            angle_deg = math.degrees(angle_rad)
+
+            self.solution_steps.append(
+                {
+                    "description": "Calculating resultant magnitude and direction",
+                    "equations": [f"FR = √(ΣFx² + ΣFy²) = √({sum_x:.3f}² + {sum_y:.3f}²) = {magnitude:.3f} N", f"θ = tan⁻¹(ΣFy/ΣFx) = tan⁻¹({sum_y:.3f}/{sum_x:.3f}) = {angle_deg:.2f}°"],
+                }
+            )
+
+            # Create Quantities in SI units
+            mag_qty = Quantity(name="F_R_magnitude", dim=dim.force, value=magnitude)
+            ang_qty = Quantity(name="F_R_angle", dim=dim.D, value=angle_rad)
+
+            # Set preferred units for display
+            mag_qty.preferred = result_unit
+            ang_qty.preferred = degree_unit
+
+            # Create 2D ForceVector from magnitude and angle
+            resultant = ForceVector(magnitude=mag_qty, angle=ang_qty, unit=result_unit, name="F_R", is_resultant=True, is_known=True)
 
         return resultant
 
-    def solve_constrained_equilibrium(self, known_forces: list[ForceVector],
-                                     unknown_force: ForceVector,
-                                     unknown_resultant: ForceVector,
-                                     force_unit: Optional[str] = None) -> tuple[ForceVector, ForceVector]:
+    def solve_constrained_equilibrium(
+        self, known_forces: list[ForceVector], unknown_force: ForceVector, unknown_resultant: ForceVector, force_unit: str | None = None
+    ) -> tuple[ForceVector, ForceVector]:
         """
         Solve for unknown force and resultant magnitudes when both have known directions.
 
@@ -490,17 +513,15 @@ class ComponentSolver:
             With F_unknown_x = |F_unknown| * cos(θ_unknown) and FRx = |FR| * cos(θ_R)
             This gives 2 equations with 2 unknowns (|F_unknown| and |FR|)
         """
+        import numpy as np
+
         from ..core.dimension_catalog import dim
         from ..core.unit import ureg
-        import numpy as np
 
         self.solution_steps = []
 
         # Step 1: Get known components and angles
-        self.solution_steps.append({
-            "method": "Constrained Equilibrium Method",
-            "description": "Solving for unknown magnitudes with known directions"
-        })
+        self.solution_steps.append({"method": "Constrained Equilibrium Method", "description": "Solving for unknown magnitudes with known directions"})
 
         # Sum known forces
         sum_known_x, sum_known_y, _ = self.sum_components(known_forces)
@@ -514,13 +535,15 @@ class ComponentSolver:
         theta_unknown = unknown_force.angle.value
         theta_R = unknown_resultant.angle.value
 
-        self.solution_steps.append({
-            "description": "Setting up equilibrium equations",
-            "equations": [
-                f"ΣFx: {sum_known_x:.3f} + |F_unknown|*cos({math.degrees(theta_unknown):.1f}°) = |FR|*cos({math.degrees(theta_R):.1f}°)",
-                f"ΣFy: {sum_known_y:.3f} + |F_unknown|*sin({math.degrees(theta_unknown):.1f}°) = |FR|*sin({math.degrees(theta_R):.1f}°)"
-            ]
-        })
+        self.solution_steps.append(
+            {
+                "description": "Setting up equilibrium equations",
+                "equations": [
+                    f"ΣFx: {sum_known_x:.3f} + |F_unknown|*cos({math.degrees(theta_unknown):.1f}°) = |FR|*cos({math.degrees(theta_R):.1f}°)",
+                    f"ΣFy: {sum_known_y:.3f} + |F_unknown|*sin({math.degrees(theta_unknown):.1f}°) = |FR|*sin({math.degrees(theta_R):.1f}°)",
+                ],
+            }
+        )
 
         # Solve system of linear equations:
         # sum_known_x + |F_u| * cos(θ_u) = |FR| * cos(θ_R)
@@ -530,10 +553,7 @@ class ComponentSolver:
         # [ cos(θ_u)  -cos(θ_R) ] [ |F_u| ]   [ -sum_known_x ]
         # [ sin(θ_u)  -sin(θ_R) ] [ |FR|  ] = [ -sum_known_y ]
 
-        A = np.array([
-            [math.cos(theta_unknown), -math.cos(theta_R)],
-            [math.sin(theta_unknown), -math.sin(theta_R)]
-        ])
+        A = np.array([[math.cos(theta_unknown), -math.cos(theta_R)], [math.sin(theta_unknown), -math.sin(theta_R)]])
         b = np.array([-sum_known_x, -sum_known_y])
 
         # Solve for [|F_unknown|, |FR|]
@@ -541,19 +561,10 @@ class ComponentSolver:
             magnitudes = np.linalg.solve(A, b)
             mag_unknown = magnitudes[0]
             mag_R = magnitudes[1]
-        except np.linalg.LinAlgError:
-            raise ValueError(
-                "Cannot solve constrained equilibrium - system is singular. "
-                "The unknown force and resultant may be parallel."
-            )
+        except np.linalg.LinAlgError as err:
+            raise ValueError("Cannot solve constrained equilibrium - system is singular. The unknown force and resultant may be parallel.") from err
 
-        self.solution_steps.append({
-            "description": "Solved for magnitudes",
-            "results": [
-                f"|F_unknown| = {mag_unknown:.3f} N",
-                f"|FR| = {mag_R:.3f} N"
-            ]
-        })
+        self.solution_steps.append({"description": "Solved for magnitudes", "results": [f"|F_unknown| = {mag_unknown:.3f} N", f"|FR| = {mag_R:.3f} N"]})
 
         # Create solved forces
         result_unit = ureg.resolve(force_unit if force_unit else "N", dim=dim.force)
@@ -561,19 +572,14 @@ class ComponentSolver:
 
         # Solved unknown force
         from ..core.quantity import Quantity
+
         mag_unknown_qty = Quantity(name=f"{unknown_force.name}_magnitude", dim=dim.force, value=mag_unknown)
         mag_unknown_qty.preferred = result_unit
 
         ang_unknown_qty = Quantity(name=f"{unknown_force.name}_angle", dim=dim.D, value=theta_unknown)
         ang_unknown_qty.preferred = degree_unit
 
-        solved_unknown = ForceVector(
-            magnitude=mag_unknown_qty,
-            angle=ang_unknown_qty,
-            unit=result_unit,
-            name=unknown_force.name,
-            is_known=True
-        )
+        solved_unknown = ForceVector(magnitude=mag_unknown_qty, angle=ang_unknown_qty, unit=result_unit, name=unknown_force.name, is_known=True)
 
         # Solved resultant
         mag_R_qty = Quantity(name=f"{unknown_resultant.name}_magnitude", dim=dim.force, value=mag_R)
@@ -582,21 +588,11 @@ class ComponentSolver:
         ang_R_qty = Quantity(name=f"{unknown_resultant.name}_angle", dim=dim.D, value=theta_R)
         ang_R_qty.preferred = degree_unit
 
-        solved_resultant = ForceVector(
-            magnitude=mag_R_qty,
-            angle=ang_R_qty,
-            unit=result_unit,
-            name=unknown_resultant.name,
-            is_resultant=True,
-            is_known=True
-        )
+        solved_resultant = ForceVector(magnitude=mag_R_qty, angle=ang_R_qty, unit=result_unit, name=unknown_resultant.name, is_resultant=True, is_known=True)
 
         return (solved_unknown, solved_resultant)
 
-    def solve_unknown_force(self, known_forces: list[ForceVector],
-                           known_resultant: ForceVector,
-                           force_unit: Optional[str] = None,
-                           unknown_force_name: str = "F_unknown") -> ForceVector:
+    def solve_unknown_force(self, known_forces: list[ForceVector], known_resultant: ForceVector, force_unit: str | None = None, unknown_force_name: str = "F_unknown") -> ForceVector:
         """
         Solve for an unknown force given known forces and a known resultant.
 
@@ -622,10 +618,7 @@ class ComponentSolver:
         self.solution_steps = []
 
         # Step 1: Get resultant components
-        self.solution_steps.append({
-            "method": "Reverse Component Method",
-            "description": "Solving for unknown force given known resultant"
-        })
+        self.solution_steps.append({"method": "Reverse Component Method", "description": "Solving for unknown force given known resultant"})
 
         R_x, R_y, R_z = self.resolve_force_components(known_resultant)
 
@@ -635,20 +628,11 @@ class ComponentSolver:
         components_breakdown = []
         for force in known_forces:
             fx, fy, fz = self.resolve_force_components(force)
-            components_breakdown.append(
-                f"{force.name}: Fx = {fx:.3f} N, Fy = {fy:.3f} N"
-            )
+            components_breakdown.append(f"{force.name}: Fx = {fx:.3f} N, Fy = {fy:.3f} N")
 
-        self.solution_steps.append({
-            "components": components_breakdown
-        })
+        self.solution_steps.append({"components": components_breakdown})
 
-        self.solution_steps.append({
-            "description": "Resultant components",
-            "equations": [
-                f"F_R: Fx = {R_x:.3f} N, Fy = {R_y:.3f} N"
-            ]
-        })
+        self.solution_steps.append({"description": "Resultant components", "equations": [f"F_R: Fx = {R_x:.3f} N, Fy = {R_y:.3f} N"]})
 
         # Step 3: Calculate unknown force components
         # F_unknown = F_R - Sum(known forces)
@@ -656,26 +640,30 @@ class ComponentSolver:
         unknown_y = R_y - sum_known_y
         unknown_z = R_z - sum_known_z
 
-        self.solution_steps.append({
-            "description": "Solving for unknown force components",
-            "equations": [
-                f"F_unknown_x = F_R_x - ΣF_known_x = {R_x:.3f} - {sum_known_x:.3f} = {unknown_x:.3f} N",
-                f"F_unknown_y = F_R_y - ΣF_known_y = {R_y:.3f} - {sum_known_y:.3f} = {unknown_y:.3f} N"
-            ]
-        })
+        self.solution_steps.append(
+            {
+                "description": "Solving for unknown force components",
+                "equations": [
+                    f"F_unknown_x = F_R_x - ΣF_known_x = {R_x:.3f} - {sum_known_x:.3f} = {unknown_x:.3f} N",
+                    f"F_unknown_y = F_R_y - ΣF_known_y = {R_y:.3f} - {sum_known_y:.3f} = {unknown_y:.3f} N",
+                ],
+            }
+        )
 
         # Step 4: Calculate magnitude and angle
         magnitude = self.calculate_resultant_magnitude(unknown_x, unknown_y, unknown_z)
         angle_rad = self.calculate_resultant_angle_2d(unknown_x, unknown_y)
         angle_deg = math.degrees(angle_rad)
 
-        self.solution_steps.append({
-            "description": "Calculating unknown force magnitude and direction",
-            "equations": [
-                f"F_unknown = √(Fx² + Fy²) = √({unknown_x:.3f}² + {unknown_y:.3f}²) = {magnitude:.3f} N",
-                f"θ = tan⁻¹(Fy/Fx) = tan⁻¹({unknown_y:.3f}/{unknown_x:.3f}) = {angle_deg:.2f}°"
-            ]
-        })
+        self.solution_steps.append(
+            {
+                "description": "Calculating unknown force magnitude and direction",
+                "equations": [
+                    f"F_unknown = √(Fx² + Fy²) = √({unknown_x:.3f}² + {unknown_y:.3f}²) = {magnitude:.3f} N",
+                    f"θ = tan⁻¹(Fy/Fx) = tan⁻¹({unknown_y:.3f}/{unknown_x:.3f}) = {angle_deg:.2f}°",
+                ],
+            }
+        )
 
         # Create result ForceVector
         result_unit = ureg.resolve(force_unit if force_unit else "N", dim=dim.force)
@@ -690,13 +678,7 @@ class ComponentSolver:
         ang_qty.preferred = degree_unit
 
         # Create ForceVector from Quantities
-        unknown_force = ForceVector(
-            magnitude=mag_qty,
-            angle=ang_qty,
-            unit=result_unit,
-            name=unknown_force_name,
-            is_known=True
-        )
+        unknown_force = ForceVector(magnitude=mag_qty, angle=ang_qty, unit=result_unit, name=unknown_force_name, is_known=True)
 
         return unknown_force
 

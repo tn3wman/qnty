@@ -14,17 +14,14 @@ from __future__ import annotations
 import math
 from typing import TYPE_CHECKING
 
-import numpy as np
-
-from ..core.dimension import Dimension
 from ..core.quantity import Quantity
 from ..core.unit import Unit
-from .vector import Vector
+from .angle_reference import AngleReference
 from .coordinate_system import CoordinateSystem
-from .angle_reference import AngleReference, AngleDirection
+from .vector import Vector
 
 if TYPE_CHECKING:
-    from ..core.unit_catalog import ForceUnits, AnglePlaneUnits
+    pass
 
 
 class ForceVector:
@@ -70,13 +67,19 @@ class ForceVector:
         coordinate_system: CoordinateSystem | None = None,
         angle_reference: AngleReference | None = None,
         wrt: str | None = None,
+        # 3D angle specifications
+        alpha: float | Quantity | None = None,  # Coordinate direction angle from +x axis
+        beta: float | Quantity | None = None,  # Coordinate direction angle from +y axis
+        gamma: float | Quantity | None = None,  # Coordinate direction angle from +z axis
+        phi: float | Quantity | None = None,  # Transverse angle (from +z axis)
+        theta: float | Quantity | None = None,  # Azimuth angle (in x-y plane from +x axis)
     ):
         """
         Create a ForceVector.
 
         Args:
             magnitude: Force magnitude (if None, will be calculated from components or marked unknown)
-            angle: Angle value in the angle_reference system (default: CCW from +x-axis)
+            angle: Angle value in the angle_reference system (default: CCW from +x-axis) - for 2D
             x: X-component of force
             y: Y-component of force
             z: Z-component of force (default 0 for 2D problems)
@@ -91,6 +94,19 @@ class ForceVector:
             angle_reference: AngleReference specifying how angle is measured (default: CCW from +x-axis)
             wrt: Shorthand for angle reference. Examples: "+x", "-x", "+y", "-y", "u", "v", "ccw:+x", "cw:+x", "cw:u"
                  Format: "[direction:]axis" where direction is "ccw" or "cw" (default ccw)
+            alpha: Coordinate direction angle from +x axis (3D) - angle between force and +x axis
+            beta: Coordinate direction angle from +y axis (3D) - angle between force and +y axis
+            gamma: Coordinate direction angle from +z axis (3D) - angle between force and +z axis
+            phi: Transverse angle (3D) - angle from +z axis down to the vector
+            theta: Azimuth angle (3D) - angle in x-y plane measured from +x axis
+
+        Notes:
+            For 3D forces, use one of these construction methods:
+            1. Components: x, y, z
+            2. Coordinate direction angles: magnitude, alpha, beta, gamma (satisfies cos²α + cos²β + cos²γ = 1)
+            3. Transverse/azimuth: magnitude, phi, theta
+
+            For 2D forces, use angle and wrt parameters.
         """
         self.name = name or "Force"
         self.is_known = is_known
@@ -117,8 +133,8 @@ class ForceVector:
 
         # Resolve unit
         if isinstance(unit, str):
-            from ..core.unit import ureg
             from ..core.dimension_catalog import dim
+            from ..core.unit import ureg
 
             resolved = ureg.resolve(unit, dim=dim.force)
             if resolved is None:
@@ -127,13 +143,132 @@ class ForceVector:
 
         # Resolve angle unit
         if isinstance(angle_unit, str):
+            from ..core.dimension_catalog import dim as dim_cat
             from ..core.unit import ureg
-            from ..core.dimension_catalog import dim
 
-            resolved = ureg.resolve(angle_unit, dim=dim.D)
+            resolved = ureg.resolve(angle_unit, dim=dim_cat.D)
             if resolved is None:
                 raise ValueError(f"Unknown angle unit '{angle_unit}'")
             angle_unit = resolved
+
+        # Case 0a: Construct from coordinate direction angles (3D)
+        if alpha is not None or beta is not None or gamma is not None:
+            if magnitude is None:
+                raise ValueError("magnitude must be specified when using coordinate direction angles")
+
+            # Convert magnitude to Quantity if needed
+            if isinstance(magnitude, int | float):
+                if unit is None:
+                    raise ValueError("unit must be specified when magnitude is a scalar")
+                from ..core.dimension_catalog import dim as dim_cat
+
+                mag_qty = Quantity.from_value(float(magnitude), unit, name=f"{self.name}_magnitude")
+                mag_qty.preferred = unit
+            else:
+                mag_qty = magnitude
+
+            # Convert angles to radians if needed
+            def to_radians(angle_val, angle_qty_name):
+                if angle_val is None:
+                    return None
+                if isinstance(angle_val, int | float):
+                    return float(angle_val) * angle_unit.si_factor
+                else:
+                    return angle_val.value
+
+            alpha_rad = to_radians(alpha, "alpha")
+            beta_rad = to_radians(beta, "beta")
+            gamma_rad = to_radians(gamma, "gamma")
+
+            # Validate: cos²α + cos²β + cos²γ = 1
+            # If one angle is missing, calculate it
+            if alpha_rad is None and beta_rad is not None and gamma_rad is not None:
+                cos_alpha = math.sqrt(1 - math.cos(beta_rad) ** 2 - math.cos(gamma_rad) ** 2)
+                alpha_rad = math.acos(cos_alpha)
+            elif beta_rad is None and alpha_rad is not None and gamma_rad is not None:
+                cos_beta = math.sqrt(1 - math.cos(alpha_rad) ** 2 - math.cos(gamma_rad) ** 2)
+                beta_rad = math.acos(cos_beta)
+            elif gamma_rad is None and alpha_rad is not None and beta_rad is not None:
+                cos_gamma = math.sqrt(1 - math.cos(alpha_rad) ** 2 - math.cos(beta_rad) ** 2)
+                gamma_rad = math.acos(cos_gamma)
+            elif alpha_rad is None or beta_rad is None or gamma_rad is None:
+                raise ValueError("Must provide at least 2 of the 3 coordinate direction angles")
+
+            # Validate the relationship
+            sum_cos_sq = math.cos(alpha_rad) ** 2 + math.cos(beta_rad) ** 2 + math.cos(gamma_rad) ** 2
+            if abs(sum_cos_sq - 1.0) > 1e-6:
+                raise ValueError(f"Direction angles must satisfy cos²α + cos²β + cos²γ = 1, got {sum_cos_sq}")
+
+            # Compute components using direction cosines
+            if mag_qty.value is None:
+                raise ValueError("Magnitude value must be known for coordinate direction angle construction")
+
+            mag_val = mag_qty.value
+            x_val = mag_val * math.cos(alpha_rad)
+            y_val = mag_val * math.cos(beta_rad)
+            z_val = mag_val * math.cos(gamma_rad)
+
+            # Create Quantities from SI values
+            from ..core.dimension_catalog import dim as dim_cat
+
+            x_qty = Quantity(name=f"{self.name}_x", dim=dim_cat.force, value=x_val, preferred=mag_qty.preferred)
+            y_qty = Quantity(name=f"{self.name}_y", dim=dim_cat.force, value=y_val, preferred=mag_qty.preferred)
+            z_qty = Quantity(name=f"{self.name}_z", dim=dim_cat.force, value=z_val, preferred=mag_qty.preferred)
+
+            self._vector = Vector.from_quantities(x_qty, y_qty, z_qty)
+            self._magnitude = mag_qty
+            self._angle = None  # Not applicable for 3D
+            return
+
+        # Case 0b: Construct from transverse and azimuth angles (3D)
+        if phi is not None and theta is not None:
+            if magnitude is None:
+                raise ValueError("magnitude must be specified when using transverse/azimuth angles")
+
+            # Convert magnitude to Quantity if needed
+            if isinstance(magnitude, int | float):
+                if unit is None:
+                    raise ValueError("unit must be specified when magnitude is a scalar")
+                from ..core.dimension_catalog import dim as dim_cat
+
+                mag_qty = Quantity.from_value(float(magnitude), unit, name=f"{self.name}_magnitude")
+                mag_qty.preferred = unit
+            else:
+                mag_qty = magnitude
+
+            # Convert angles to radians
+            def to_radians(angle_val):
+                if isinstance(angle_val, int | float):
+                    return float(angle_val) * angle_unit.si_factor
+                else:
+                    return angle_val.value
+
+            phi_rad = to_radians(phi)
+            theta_rad = to_radians(theta)
+
+            # Compute components using transverse/azimuth formulas:
+            # Ax = A sin(φ) cos(θ)
+            # Ay = A sin(φ) sin(θ)
+            # Az = A cos(φ)
+            if mag_qty.value is None:
+                raise ValueError("Magnitude value must be known for transverse/azimuth construction")
+
+            mag_val = mag_qty.value
+            x_val = mag_val * math.sin(phi_rad) * math.cos(theta_rad)
+            y_val = mag_val * math.sin(phi_rad) * math.sin(theta_rad)
+            z_val = mag_val * math.cos(phi_rad)
+
+            # Create Quantities from SI values
+            from ..core.dimension_catalog import dim as dim_cat
+
+            x_qty = Quantity(name=f"{self.name}_x", dim=dim_cat.force, value=x_val, preferred=mag_qty.preferred)
+            y_qty = Quantity(name=f"{self.name}_y", dim=dim_cat.force, value=y_val, preferred=mag_qty.preferred)
+            z_qty = Quantity(name=f"{self.name}_z", dim=dim_cat.force, value=z_val, preferred=mag_qty.preferred)
+
+            self._vector = Vector.from_quantities(x_qty, y_qty, z_qty)
+            self._magnitude = mag_qty
+            self._angle = None  # Not applicable for 3D
+            return
 
         # Case 1: Construct from existing Vector
         if vector is not None:
@@ -144,7 +279,7 @@ class ForceVector:
         # Case 2: Construct from magnitude and angle (polar)
         if magnitude is not None and angle is not None:
             # Convert magnitude to Quantity if needed
-            if isinstance(magnitude, (int, float)):
+            if isinstance(magnitude, int | float):
                 if unit is None:
                     raise ValueError("unit must be specified when magnitude is a scalar")
                 # Use from_value to properly convert to SI units
@@ -154,7 +289,7 @@ class ForceVector:
                 mag_qty = magnitude
 
             # Convert angle to Quantity if needed
-            if isinstance(angle, (int, float)):
+            if isinstance(angle, int | float):
                 from ..core.dimension_catalog import dim
 
                 # Convert angle from angle_reference system to standard (CCW from +x)
@@ -194,6 +329,7 @@ class ForceVector:
 
                 # Create Quantities from SI values to avoid double conversion in Vector.__init__
                 from ..core.dimension_catalog import dim as dim_cat
+
                 x_qty = Quantity(name=f"{self.name}_x", dim=dim_cat.force, value=x_val, preferred=mag_qty.preferred)
                 y_qty = Quantity(name=f"{self.name}_y", dim=dim_cat.force, value=y_val, preferred=mag_qty.preferred)
                 z_qty = Quantity(name=f"{self.name}_z", dim=dim_cat.force, value=z_val, preferred=mag_qty.preferred)
@@ -206,7 +342,7 @@ class ForceVector:
         # Case 2b: Angle known but magnitude unknown (for decomposition problems)
         if magnitude is None and angle is not None:
             # Convert angle to Quantity
-            if isinstance(angle, (int, float)):
+            if isinstance(angle, int | float):
                 from ..core.dimension_catalog import dim as dim_catalog
 
                 # Convert angle from angle_reference system to standard (CCW from +x)
@@ -241,7 +377,7 @@ class ForceVector:
         # Case 2c: Magnitude known but angle unknown (for problems where direction needs to be solved)
         if magnitude is not None and angle is None:
             # Convert magnitude to Quantity if needed
-            if isinstance(magnitude, (int, float)):
+            if isinstance(magnitude, int | float):
                 if unit is None:
                     raise ValueError("unit must be specified when magnitude is a scalar")
                 # Use from_value to properly convert to SI units
@@ -331,7 +467,7 @@ class ForceVector:
         """Convert value to Quantity."""
         if isinstance(value, Quantity):
             return value
-        elif isinstance(value, (int, float)):
+        elif isinstance(value, int | float):
             # Use from_value to properly convert to SI units
             qty = Quantity.from_value(float(value), unit, name=component_name)
             qty.preferred = unit  # Preserve preferred unit for display
@@ -410,7 +546,7 @@ class ForceVector:
         return cls(x=x, y=y, z=z, unit=unit, name=name, **kwargs)
 
     @staticmethod
-    def parse_wrt(wrt: str, coordinate_system: CoordinateSystem | None = None, forces: dict[str, "ForceVector"] | None = None) -> AngleReference:
+    def parse_wrt(wrt: str, coordinate_system: CoordinateSystem | None = None, forces: dict[str, ForceVector] | None = None) -> AngleReference:
         """
         Parse a wrt string into an AngleReference, validating against coordinate system.
 
@@ -486,6 +622,7 @@ class ForceVector:
                 force_angle_deg = (force_angle_deg + 180.0) % 360.0
 
             from .angle_reference import AngleReference as AR
+
             return AR(axis_angle=force_angle_deg, direction=direction, axis_label=axis, angle_unit="degree")
 
         # Check if axis matches coordinate system axes
@@ -494,6 +631,7 @@ class ForceVector:
             if is_negative:
                 # For negative axis, add 180° to the axis angle
                 from .angle_reference import AngleReference as AR
+
                 axis_angle_deg = math.degrees(coord_sys.axis1_angle) + 180.0
                 return AR(axis_angle=axis_angle_deg, direction=direction, axis_label=axis, angle_unit="degree")
             else:
@@ -502,6 +640,7 @@ class ForceVector:
             if is_negative:
                 # For negative axis, add 180° to the axis angle
                 from .angle_reference import AngleReference as AR
+
                 axis_angle_deg = math.degrees(coord_sys.axis2_angle) + 180.0
                 return AR(axis_angle=axis_angle_deg, direction=direction, axis_label=axis, angle_unit="degree")
             else:
@@ -521,7 +660,17 @@ class ForceVector:
             )
 
     @classmethod
-    def unknown(cls, name: str, is_resultant: bool = False, magnitude: float | None = None, angle: float | None = None, coordinate_system: CoordinateSystem | None = None, angle_reference: AngleReference | None = None, wrt: str | None = None, **kwargs) -> ForceVector:
+    def unknown(
+        cls,
+        name: str,
+        is_resultant: bool = False,
+        magnitude: float | None = None,
+        angle: float | None = None,
+        coordinate_system: CoordinateSystem | None = None,
+        angle_reference: AngleReference | None = None,
+        wrt: str | None = None,
+        **kwargs,
+    ) -> ForceVector:
         """
         Create an unknown ForceVector to be solved for.
 
@@ -540,7 +689,7 @@ class ForceVector:
         """
         return cls(magnitude=magnitude, angle=angle, name=name, is_known=False, is_resultant=is_resultant, coordinate_system=coordinate_system, angle_reference=angle_reference, wrt=wrt, **kwargs)
 
-    def resolve_relative_angle(self, forces: dict[str, "ForceVector"]) -> None:
+    def resolve_relative_angle(self, forces: dict[str, ForceVector]) -> None:
         """
         Resolve relative angle constraint to absolute angle.
 
@@ -587,6 +736,7 @@ class ForceVector:
         # If both magnitude and angle are now known, update is_known and create vector
         if self._magnitude is not None and self._magnitude.value is not None and self._angle is not None and self._angle.value is not None:
             import math
+
             from .vector import Vector
 
             # Create vector from magnitude and angle
@@ -646,6 +796,135 @@ class ForceVector:
     def description(self) -> str:
         """Force description."""
         return self._description
+
+    @property
+    def alpha(self) -> Quantity | None:
+        """
+        Coordinate direction angle from +x axis (3D).
+
+        Returns angle between force vector and +x axis.
+        Range: [0°, 180°]
+        """
+        if self._vector is None or self._magnitude is None:
+            return None
+
+        mag_val = self._magnitude.value
+        if mag_val is None or abs(mag_val) < 1e-10:
+            return None
+
+        x_val = self.x.value if self.x else 0.0
+        if x_val is None:
+            return None
+
+        # cos(α) = Fx / F
+        cos_alpha = x_val / mag_val
+        # Clamp to [-1, 1] to handle numerical errors
+        cos_alpha = max(-1.0, min(1.0, cos_alpha))
+        alpha_rad = math.acos(cos_alpha)
+
+        from ..core.dimension_catalog import dim as dim_cat
+        from ..core.unit import ureg
+
+        degree_unit = ureg.resolve("degree", dim=dim_cat.D)
+
+        return Quantity(name=f"{self.name}_alpha", dim=dim_cat.D, value=alpha_rad, preferred=degree_unit)
+
+    @property
+    def beta(self) -> Quantity | None:
+        """
+        Coordinate direction angle from +y axis (3D).
+
+        Returns angle between force vector and +y axis.
+        Range: [0°, 180°]
+        """
+        if self._vector is None or self._magnitude is None:
+            return None
+
+        mag_val = self._magnitude.value
+        if mag_val is None or abs(mag_val) < 1e-10:
+            return None
+
+        y_val = self.y.value if self.y else 0.0
+        if y_val is None:
+            return None
+
+        # cos(β) = Fy / F
+        cos_beta = y_val / mag_val
+        # Clamp to [-1, 1] to handle numerical errors
+        cos_beta = max(-1.0, min(1.0, cos_beta))
+        beta_rad = math.acos(cos_beta)
+
+        from ..core.dimension_catalog import dim as dim_cat
+        from ..core.unit import ureg
+
+        degree_unit = ureg.resolve("degree", dim=dim_cat.D)
+
+        return Quantity(name=f"{self.name}_beta", dim=dim_cat.D, value=beta_rad, preferred=degree_unit)
+
+    @property
+    def gamma(self) -> Quantity | None:
+        """
+        Coordinate direction angle from +z axis (3D).
+
+        Returns angle between force vector and +z axis.
+        Range: [0°, 180°]
+        """
+        if self._vector is None or self._magnitude is None:
+            return None
+
+        mag_val = self._magnitude.value
+        if mag_val is None or abs(mag_val) < 1e-10:
+            return None
+
+        z_val = self.z.value if self.z else 0.0
+        if z_val is None:
+            return None
+
+        # cos(γ) = Fz / F
+        cos_gamma = z_val / mag_val
+        # Clamp to [-1, 1] to handle numerical errors
+        cos_gamma = max(-1.0, min(1.0, cos_gamma))
+        gamma_rad = math.acos(cos_gamma)
+
+        from ..core.dimension_catalog import dim as dim_cat
+        from ..core.unit import ureg
+
+        degree_unit = ureg.resolve("degree", dim=dim_cat.D)
+
+        return Quantity(name=f"{self.name}_gamma", dim=dim_cat.D, value=gamma_rad, preferred=degree_unit)
+
+    @property
+    def direction_cosines(self) -> tuple[float, float, float] | None:
+        """
+        Direction cosines (cos(α), cos(β), cos(γ)) for 3D force.
+
+        Returns:
+            Tuple of (cos_alpha, cos_beta, cos_gamma) where:
+            - cos_alpha = Fx / F
+            - cos_beta = Fy / F
+            - cos_gamma = Fz / F
+
+        These satisfy the relation: cos²α + cos²β + cos²γ = 1
+        """
+        if self._vector is None or self._magnitude is None:
+            return None
+
+        mag_val = self._magnitude.value
+        if mag_val is None or abs(mag_val) < 1e-10:
+            return None
+
+        x_val = self.x.value if self.x else 0.0
+        y_val = self.y.value if self.y else 0.0
+        z_val = self.z.value if self.z else 0.0
+
+        if x_val is None or y_val is None or z_val is None:
+            return None
+
+        cos_alpha = x_val / mag_val
+        cos_beta = y_val / mag_val
+        cos_gamma = z_val / mag_val
+
+        return (cos_alpha, cos_beta, cos_gamma)
 
     def get_components_in_system(self) -> tuple[Quantity | None, Quantity | None]:
         """
