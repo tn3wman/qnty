@@ -1016,41 +1016,50 @@ COMPONENT_METHOD_PROBLEMS = {
             "assert_values": True
         },
     },
+    # TODO: Problem 2-57 requires derivative/minimization
+
     "problem_2_59": {
         "name": "Problem 2-59",
         "description": """
-        Determine the magnitude of the resultant force and its direction,
-        measured counterclockwise from the positive x axis.
+        If F = 5 kN and u = 30°, determine the magnitude of the resultant force and its direction, measured counterclockwise from the positive x axis.
         """,
         "forces": {
             "F_1": ForceVector(
-                magnitude=4000, unit="N",
+                magnitude=6000, unit="N",
                 angle=0, wrt="+x",
-                name="F_1", description="Force 1 along +x axis (4 kN)"
+                name="F_1", description="Force 1"
             ),
             "F_2": ForceVector(
                 magnitude=5000, unit="N",
-                angle=45, wrt="+x",
-                name="F_2", description="Force 2 at 45° from +x (5 kN)"
+                angle=-30, wrt="+y",
+                name="F_2", description="Force 2"
             ),
             "F_3": ForceVector(
-                magnitude=8000, unit="N",
+                magnitude=4000, unit="N",
                 angle=15, wrt="+y",
                 name="F_3", description="Force 3 at 15° from +y toward -x (8 kN)"
+            ),
+            "F_R": ForceVector.unknown(
+                is_resultant=True,
+                name="F_R", description="Resultant Force"
             ),
         },
         "expected": {
             "F_1": {
-                "magnitude": 4000, "unit": "N",
+                "magnitude": 6000, "unit": "N",
                 "angle": 0, "wrt": "+x"
             },
             "F_2": {
                 "magnitude": 5000, "unit": "N",
-                "angle": 45, "wrt": "+x"
+                "angle": -30, "wrt": "+y"
             },
             "F_3": {
-                "magnitude": 8000, "unit": "N",
+                "magnitude": 4000, "unit": "N",
                 "angle": 15, "wrt": "+y"
+            },
+            "F_R": {
+                "magnitude": 11080, "unit": "N",
+                "angle": 47.7, "wrt": "+x"
             },
         },
         "debug": {
@@ -1165,14 +1174,14 @@ def verify_component_results(solution, expected, debug_config, capsys, test_name
 
             # Extract values and convert from SI to preferred unit if needed
             if comp_x and force.magnitude.preferred:
-                actual_x = comp_x.value / force.magnitude.preferred.si_factor
+                actual_x = comp_x.magnitude(force.magnitude.preferred)
             elif comp_x:
                 actual_x = comp_x.value
             else:
                 actual_x = 0.0
 
             if comp_y and force.magnitude.preferred:
-                actual_y = comp_y.value / force.magnitude.preferred.si_factor
+                actual_y = comp_y.magnitude(force.magnitude.preferred)
             elif comp_y:
                 actual_y = comp_y.value
             else:
@@ -1192,7 +1201,7 @@ def verify_component_results(solution, expected, debug_config, capsys, test_name
 
             # Convert magnitude from SI to preferred unit for comparison
             if force.magnitude.preferred:
-                actual_mag_in_preferred = force.magnitude.value / force.magnitude.preferred.si_factor
+                actual_mag_in_preferred = force.magnitude.magnitude(force.magnitude.preferred)
             else:
                 actual_mag_in_preferred = force.magnitude.value
 
@@ -1254,7 +1263,7 @@ def verify_component_results(solution, expected, debug_config, capsys, test_name
 
                     # Extract values and convert from SI to preferred unit if needed
                     if comp_x and force.magnitude.preferred:
-                        actual_x = comp_x.value / force.magnitude.preferred.si_factor
+                        actual_x = comp_x.magnitude(force.magnitude.preferred)
                         comp_unit = force.magnitude.preferred.symbol
                     elif comp_x:
                         actual_x = comp_x.value
@@ -1264,7 +1273,7 @@ def verify_component_results(solution, expected, debug_config, capsys, test_name
                         comp_unit = "SI"
 
                     if comp_y and force.magnitude.preferred:
-                        actual_y = comp_y.value / force.magnitude.preferred.si_factor
+                        actual_y = comp_y.magnitude(force.magnitude.preferred)
                     elif comp_y:
                         actual_y = comp_y.value
                     else:
@@ -1288,7 +1297,7 @@ def verify_component_results(solution, expected, debug_config, capsys, test_name
 
                     # Convert magnitude from SI to preferred unit for display
                     if force.magnitude.preferred:
-                        mag_value_in_preferred = force.magnitude.value / force.magnitude.preferred.si_factor
+                        mag_value_in_preferred = force.magnitude.magnitude(force.magnitude.preferred)
                         mag_unit = force.magnitude.preferred.symbol
                     else:
                         mag_value_in_preferred = force.magnitude.value
