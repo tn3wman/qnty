@@ -8,10 +8,12 @@ These tests validate the 3D vector operations including:
 - 3D component resolution and resultant calculation
 """
 
+from encodings import unicode_escape
 import math
 
 import pytest
 
+from qnty.core import unit
 from qnty.solving.component_solver import ComponentSolver
 from qnty.spatial.force_vector import ForceVector
 
@@ -20,17 +22,14 @@ CARTESIAN_3D_PROBLEMS = {
     "problem_2_60": {
         "name": "Problem 2-60",
         "description": """
-        The force F has a magnitude of 80 lb and acts within the octant shown.
-        Determine the magnitudes of the x, y, z components of F.
-        Given: F = 80 lb, α = 60°, β = 45°
-        Find: Fx, Fy, Fz (and γ)
+        The force F has a magnitude of 80 lb and acts within the octant shown. Determine the magnitudes of the x, y, z components of F.
         """,
         "forces": {
             "F": ForceVector(
                 magnitude=80,
                 unit="lbf",
                 alpha=60,
-                beta=45,  # γ will be calculated from constraint
+                beta=45,
                 name="F",
                 description="Force F",
             ),
@@ -47,29 +46,24 @@ CARTESIAN_3D_PROBLEMS = {
                 "gamma": 60.0,  # Direction angles
             },
         },
-        "debug": {"print_results": False, "assert_values": True},
+        "debug": {
+            "print_results": False,
+            "assert_values": True
+        },
     },
     "problem_2_61": {
         "name": "Problem 2-61",
         "description": """
-        The bolt is subjected to the force F, which has components acting along the x, y, z axes as shown.
-        If the magnitude of F is 80 N, and α=60° and γ=45°, determine the magnitudes of its components.
-
-        Note: β = 120° means the y-component is negative (cos(120°) = -0.5)
-        But the textbook asks for MAGNITUDES which are always positive.
-        We construct using x,y,z components to get the right direction.
+        The bolt is subjected to the force F, which has components acting along the x, y, z axes as shown. If the magnitude of F is 80 N, and and determine the magnitudes of its components.
         """,
         "forces": {
             "F": ForceVector(
-                # Fx = 80 cos(60°) = 40
-                # Fy = 80 cos(120°) = -40  (negative!)
-                # Fz = 80 cos(45°) = 56.57
-                x=40.0,
-                y=-40.0,
-                z=56.57,
+                magnitude=80,
+                alpha=-60,
+                gamma=45,
                 unit="N",
                 name="F",
-                description="Force F on bolt",
+                description="Force F",
             ),
         },
         "expected": {
@@ -84,29 +78,59 @@ CARTESIAN_3D_PROBLEMS = {
                 "gamma": 45.0,  # Direction angles
             },
         },
-        "debug": {"print_results": False, "assert_values": True},
+        "debug": {
+            "print_results": False,
+            "assert_values": True
+        },
+    },
+    "problem_2_62": {
+        "name": "Problem 2-62",
+        "description": """
+        Determine the magnitude and coordinate direction angles of the force F acting on the support. The component of F in the x-y plane is 7 kN.
+        """,
+        "forces": {
+            "F": ForceVector(
+                magnitude=8083,  # 7 kN / sin(60°) = 8.083 kN
+                phi=60,  # Angle from +z axis (90° - 30° elevation)
+                theta=-40,  # Azimuth angle in x-y plane (negative for -y component)
+                unit="N",
+                name="F",
+                description="Force F",
+            ),
+        },
+        "expected": {
+            "F": {
+                "magnitude": 8083,
+                "unit": "N",
+                "x": 5362.4,  # F * sin(60°) * cos(-40°) = 8083 * 0.866 * 0.766 = 5361
+                "y": -4499.6,  # F * sin(60°) * sin(-40°) = 8083 * 0.866 * (-0.643) = -4502
+                "z": 4042,  # F * cos(60°) = 8083 * 0.5 = 4041.5
+                "alpha": 48.4,  # arccos(5361/8083)
+                "beta": 124,  # arccos(-4502/8083)
+                "gamma": 60.0,  # arccos(4042/8083)
+            },
+        },
+        "debug": {
+            "print_results": False,
+            "assert_values": True
+        },
     },
     "problem_2_63": {
         "name": "Problem 2-63",
         "description": """
         Determine the magnitude and coordinate direction angles of the resultant force.
-        F1 = 80 lb at angles defining components, F2 = 130 lb in -z direction
-
-        Note: F1 is given using transverse/azimuth angles: φ=30°, θ=-40° from +x in x-y plane
         """,
         "forces": {
             "F_1": ForceVector(
                 magnitude=80,
                 unit="lbf",
-                # Using phi (transverse from z) and theta (azimuth in x-y)
-                # From textbook: F1 = 80 cos(30°) cos(40°) i - 80 cos(30°) sin(40°) j + 80 sin(30°) k
-                # This means φ = 90° - 30° = 60° from +z, and θ = -40° in x-y plane (4th quadrant)
                 phi=60,
                 theta=-40,  # φ from +z axis down, θ in x-y plane (negative = clockwise from +x)
                 name="F_1",
                 description="Force F1",
             ),
-            "F_2": ForceVector(x=0, y=0, z=-130, unit="lbf", name="F_2", description="Force F2 in -z direction"),
+            "F_2": ForceVector(
+                x=0, y=0, z=-130, unit="lbf", name="F_2", description="Force F2"),
             "F_R": ForceVector.unknown(name="F_R", is_resultant=True, description="Resultant Force"),
         },
         "expected": {
@@ -133,25 +157,66 @@ CARTESIAN_3D_PROBLEMS = {
                 "gamma": 142.0,  # Direction angles
             },
         },
-        "debug": {"print_results": False, "assert_values": True},
+        "debug": {
+            "print_results": False,
+            "assert_values": True
+        },
+    },
+    "problem_2_64": {
+        "name": "Problem 2-64",
+        "description": """
+        Specify the coordinate direction angles of and and express each force as a Cartesian vector.
+        """,
+        "forces": {
+            "F_1": ForceVector(
+                magnitude=80,
+                unit="lbf",
+                phi=60,
+                theta=-40,  # φ from +z axis down, θ in x-y plane (negative = clockwise from +x)
+                name="F_1",
+                description="Force F1",
+            ),
+            "F_2": ForceVector(
+                x=0, y=0, z=-130, unit="lbf", name="F_2", description="Force F2"),
+        },
+        "expected": {
+            "F_1": {
+                "magnitude": 80,
+                "unit": "lbf",
+                "x": 53.1,
+                "y": -44.5,
+                "z": 40.0,  # From textbook solution
+                "alpha": 48.2,
+                "beta": 124.0,
+                "gamma": 60.0,  # Direction angles
+            },
+            "F_2": {
+                "magnitude": 130,
+                "unit": "lbf",
+                "x": 0,
+                "y": 0,
+                "z": -130,
+                "alpha": 90.0,
+                "beta": 90.0,
+                "gamma": 180.0,  # Direction angles
+            },
+        },
+        "debug": {
+            "print_results": True,
+            "assert_values": True
+        },
     },
     "problem_2_65": {
         "name": "Problem 2-65",
         "description": """
-        The screw eye is subjected to two forces.
-        Express each force in Cartesian vector form and then determine the resultant force.
-        Find the magnitude and coordinate direction angles of the resultant force.
-
-        F1 = 300 N, F2 = 500 N with specified direction angles
+        The screw eye is subjected to the two forces shown. Express each force in Cartesian vector form and then determine the resultant force. Find the magnitude and coordinate direction angles of the resultant force.
         """,
         "forces": {
             "F_1": ForceVector(
-                # From solution: F1 = {-106.07i + 106.07j + 259.81k} N
-                # This gives α, β, γ that produce these components
-                x=-106.07,
-                y=106.07,
-                z=259.81,
+                magnitude=300,
                 unit="N",
+                theta=135,
+                phi=30,  # Given in problem
                 name="F_1",
                 description="Force F1",
             ),
@@ -168,6 +233,8 @@ CARTESIAN_3D_PROBLEMS = {
         },
         "expected": {
             "F_1": {
+                "magnitude": 300,
+                "unit": "N",
                 "x": -106.0,
                 "y": 106.0,
                 "z": 260.0,  # Rounded
@@ -177,7 +244,7 @@ CARTESIAN_3D_PROBLEMS = {
                 "unit": "N",
                 "x": 250.0,
                 "y": 353.6,
-                "z": -250.0,  # cos(60°)=0.5, cos(45°)=0.707, cos(120°)=-0.5
+                "z": -250.0,
             },
             "F_R": {
                 "magnitude": 482,
@@ -190,26 +257,1216 @@ CARTESIAN_3D_PROBLEMS = {
                 "gamma": 88.8,  # Direction angles
             },
         },
-        "debug": {"print_results": False, "assert_values": True},
+        "debug": {
+            "print_results": False,
+            "assert_values": True
+        },
+    },
+    "problem_2_66": {
+        "name": "Problem 2-66",
+        "description": """
+        Determine the coordinate direction angles of F1.
+        """,
+        "forces": {
+            "F_1": ForceVector(
+                magnitude=300,
+                unit="N",
+                theta=135,
+                phi=30,  # Given in problem
+                name="F_1",
+                description="Force F1",
+            ),
+        },
+        "expected": {
+            "F_1": {
+                "magnitude": 300,
+                "unit": "N",
+                "x": -106.0,
+                "y": 106.0,
+                "z": 260.0,
+                "alpha": 111,
+                "beta": 69.3,
+                "gamma": 30,  # Direction angles
+            },
+        },
+        "debug": {
+            "print_results": False,
+            "assert_values": True
+        },
+    },
+    "problem_2_67": {
+        "name": "Problem 2-67",
+        "description": """
+        Determine the magnitude and coordinate direction angles of F3 so that the resultant of the three forces acts along the positive y axis and has a magnitude of 600 lb.
+        """,
+        "forces": {
+            "F_1": ForceVector(
+                magnitude=180,
+                unit="lbf",
+                angle=0,
+                wrt="-x",
+                name="F_1",
+                description="Force F1",
+            ),
+            "F_2": ForceVector(
+                magnitude=300,
+                unit="lbf",
+                theta=50,
+                phi=120,  # 120° from +z axis gives negative z component
+                name="F_2",
+                description="Force F2",
+            ),
+            "F_3": ForceVector.unknown(name="F_3", description="Force F3"),
+            "F_R": ForceVector(
+                magnitude=600,
+                unit="lbf",
+                angle=0,
+                wrt="+y",
+                name="F_R", is_resultant=True, description="Resultant Force"),
+        },
+        "expected": {
+            "F_1": {
+                "magnitude": 180,
+                "unit": "lbf",
+                "angle": 0,
+                "wrt": "-x",
+                "x": -180.0,
+                "y": 0.0,
+                "z": 0.0,
+            },
+            "F_2": {
+                "magnitude": 300,
+                "unit": "lbf",
+                "theta": 50, # from +x axis
+                "phi": 120, # from +z axis
+                "x": 167,
+                "y": 199,
+                "z": -150,
+            },
+            "F_3": {
+                "magnitude": 428, # correct value is 428
+                "unit": "lbf",
+                "alpha": 88.3,
+                "beta": 20.6,
+                "gamma": 69.5,  # Direction angles
+            },
+            "F_R": {
+                "magnitude": 600,
+                "unit": "lbf",
+                "angle": 0,
+                "wrt": "+y",
+            },
+        },
+        "debug": {
+            "print_results": False,
+            "assert_values": True
+        },
+    },
+    "problem_2_68": {
+        "name": "Problem 2-68",
+        "description": """
+        Determine the magnitude and coordinate direction angles of F3 so that the resultant of the three forces is zero.
+        """,
+        "forces": {
+            "F_1": ForceVector(
+                magnitude=180,
+                unit="lbf",
+                angle=0,
+                wrt="-x",
+                name="F_1",
+                description="Force F1",
+            ),
+            "F_2": ForceVector(
+                magnitude=300,
+                unit="lbf",
+                theta=50,
+                phi=120,  # 120° from +z axis gives negative z component
+                name="F_2",
+                description="Force F2",
+            ),
+            "F_3": ForceVector.unknown(name="F_3", description="Force F3"),
+            "F_R": ForceVector(
+                magnitude=0,
+                unit="lbf",
+                angle=0,
+                wrt="+y",
+                name="F_R", is_resultant=True, description="Resultant Force"),
+        },
+        "expected": {
+            "F_1": {
+                "magnitude": 180,
+                "unit": "lbf",
+                "angle": 0,
+                "wrt": "-x",
+                "x": -180.0,
+                "y": 0.0,
+                "z": 0.0,
+            },
+            "F_2": {
+                "magnitude": 300,
+                "unit": "lbf",
+                "theta": 50, # from +x axis
+                "phi": 120, # from +z axis
+                "x": 167,
+                "y": 199,
+                "z": -150,
+            },
+            "F_3": {
+                "magnitude": 250, # correct value is 428
+                "unit": "lbf",
+                "alpha": 87,
+                "beta": 143,
+                "gamma": 53.1,  # Direction angles
+            },
+            "F_R": {
+                "magnitude": 0,
+                "unit": "lbf",
+                "angle": 0,
+                "wrt": "+y",
+            },
+        },
+        "debug": {
+            "print_results": False,
+            "assert_values": True
+        },
+    },
+    "problem_2_69": {
+        "name": "Problem 2-69",
+        "description": """
+        Determine the magnitude and coordinate direction angles of the resultant force, and sketch this vector on the coordinate system.
+        """,
+        "forces": {
+            "F_1": ForceVector(
+                magnitude=400,
+                unit="N",
+                alpha=45,
+                beta=60,
+                gamma=120,
+                name="F_1",
+                description="Force F1",
+            ),
+            "F_2": ForceVector(
+                magnitude=125,
+                unit="N",
+                theta=-20,
+                phi=53.13,
+                name="F_2",
+                description="Force F2",
+            ),
+            "F_R": ForceVector.unknown(name="F_R", is_resultant=True, description="Resultant Force"),
+        },
+        "expected": {
+            "F_1": {
+                "magnitude": 400,
+                "unit": "N",
+                "alpha": 45,
+                "beta": 60,
+                "gamma": 120,
+            },
+            "F_2": {
+                "magnitude": 125,
+                "unit": "N",
+                "theta": -20,
+                "phi": 53.13,
+            },
+            "F_R": {
+                "magnitude": 430,
+                "unit": "N",  # Actually 481.73
+                "alpha": 28.9,
+                "beta": 67.3,
+                "gamma": 107,  # Direction angles
+            },
+        },
+        "debug": {
+            "print_results": False,
+            "assert_values": True
+        },
+    },
+    "problem_2_70": {
+        "name": "Problem 2-70",
+        "description": """
+        Determine the magnitude and coordinate direction angles of the resultant force, and sketch this vector on the coordinate system.
+        """,
+        "forces": {
+            "F_1": ForceVector(
+                magnitude=450,
+                unit="N",
+                theta=90,
+                phi=143.13,  # Given in problem
+                name="F_1",
+                description="Force F1",
+            ),
+            "F_2": ForceVector(
+                magnitude=525,
+                unit="N",
+                alpha=45,
+                beta=120,
+                gamma=60,  # Given in problem
+                name="F_2",
+                description="Force F2",
+            ),
+            "F_R": ForceVector.unknown(name="F_R", is_resultant=True, description="Resultant Force"),
+        },
+        "expected": {
+            "F_1": {
+                "magnitude": 450,
+                "unit": "N",
+                "theta": 90,
+                "phi": 143.13,
+            },
+            "F_2": {
+                "magnitude": 525,
+                "unit": "N",
+                "alpha": 45,
+                "beta": 120,
+                "gamma": 60,
+            },
+            "F_R": {
+                "magnitude": 384,
+                "unit": "N",  # Actually 481.73
+                "alpha": 14.8,
+                "beta": 88.9,
+                "gamma": 105,  # Direction angles
+            },
+        },
+        "debug": {
+            "print_results": False,
+            "assert_values": True
+        },
+    },
+    "problem_2_71": {
+        "name": "Problem 2-71",
+        "description": """
+        Specify the magnitude and coordinate direction angles a1, , of so that the resultant of the three forces acting on the bracket is Note that lies in the x–y plane.
+        """,
+        "forces": {
+            "F_1": ForceVector.unknown(
+                unit="lbf",
+                name="F_1",
+                description="Force F1",
+            ),
+            "F_2": ForceVector(
+                magnitude=200,
+                unit="lbf",
+                angle=0,
+                wrt="-y",
+                name="F_2",
+                description="Force F2",
+            ),
+            "F_3": ForceVector(
+                magnitude=400,
+                unit="lbf",
+                angle=30,
+                wrt="+y",
+                name="F_3",
+                description="Force F3",
+            ),
+            "F_R": ForceVector(
+                x=0, y=0, z=-350,
+                unit="lbf",
+                name="F_R", is_resultant=True, description="Resultant Force"
+            ),
+        },
+        "expected": {
+            "F_1": {
+                "magnitude": 429,
+                "unit": "lbf",
+                "alpha": 62.2,
+                "beta": 110,
+                "gamma": 145,  # Direction angles
+
+            },
+            "F_2": {
+                "magnitude": 200,
+                "unit": "lbf",
+                "angle": 30,
+                "wrt": "+y",
+            },
+            "F_3": {
+                "magnitude": 400,
+                "unit": "lbf",
+                "angle": 0,
+                "wrt": "-y",
+            },
+            "F_R": {
+                "magnitude": 350,
+                "unit": "lbf",  # Actually 481.73
+                "x": 0,
+                "y": 0,
+                "z": -350,
+            },
+        },
+        "debug": {
+            "print_results": False,
+            "assert_values": True
+        },
+    },
+    # "problem_2_65": {
+    #     "name": "Problem 2-65",
+    #     "description": """
+    #     The screw eye is subjected to the two forces shown. Express each force in Cartesian vector form and then determine the resultant force. Find the magnitude and coordinate direction angles of the resultant force.
+    #     """,
+    #     "forces": {
+    #         "F_1": ForceVector(
+    #             magnitude=300,
+    #             unit="N",
+    #             theta=135,
+    #             phi=30,  # Given in problem
+    #             name="F_1",
+    #             description="Force F1",
+    #         ),
+    #         "F_2": ForceVector(
+    #             magnitude=500,
+    #             unit="N",
+    #             alpha=60,
+    #             beta=45,
+    #             gamma=120,  # Given in problem
+    #             name="F_2",
+    #             description="Force F2",
+    #         ),
+    #         "F_R": ForceVector.unknown(name="F_R", is_resultant=True, description="Resultant Force"),
+    #     },
+    #     "expected": {
+    #         "F_1": {
+    #             "magnitude": 300,
+    #             "unit": "N",
+    #             "x": -106.0,
+    #             "y": 106.0,
+    #             "z": 260.0,  # Rounded
+    #         },
+    #         "F_2": {
+    #             "magnitude": 500,
+    #             "unit": "N",
+    #             "x": 250.0,
+    #             "y": 353.6,
+    #             "z": -250.0,
+    #         },
+    #         "F_R": {
+    #             "magnitude": 482,
+    #             "unit": "N",  # Actually 481.73
+    #             "x": 144.0,
+    #             "y": 460.0,
+    #             "z": 9.81,
+    #             "alpha": 72.6,
+    #             "beta": 17.4,
+    #             "gamma": 88.8,  # Direction angles
+    #         },
+    #     },
+    #     "debug": {
+    #         "print_results": False,
+    #         "assert_values": True
+    #     },
+    # },
+    # "problem_2_65": {
+    #     "name": "Problem 2-65",
+    #     "description": """
+    #     The screw eye is subjected to the two forces shown. Express each force in Cartesian vector form and then determine the resultant force. Find the magnitude and coordinate direction angles of the resultant force.
+    #     """,
+    #     "forces": {
+    #         "F_1": ForceVector(
+    #             magnitude=300,
+    #             unit="N",
+    #             theta=135,
+    #             phi=30,  # Given in problem
+    #             name="F_1",
+    #             description="Force F1",
+    #         ),
+    #         "F_2": ForceVector(
+    #             magnitude=500,
+    #             unit="N",
+    #             alpha=60,
+    #             beta=45,
+    #             gamma=120,  # Given in problem
+    #             name="F_2",
+    #             description="Force F2",
+    #         ),
+    #         "F_R": ForceVector.unknown(name="F_R", is_resultant=True, description="Resultant Force"),
+    #     },
+    #     "expected": {
+    #         "F_1": {
+    #             "magnitude": 300,
+    #             "unit": "N",
+    #             "x": -106.0,
+    #             "y": 106.0,
+    #             "z": 260.0,  # Rounded
+    #         },
+    #         "F_2": {
+    #             "magnitude": 500,
+    #             "unit": "N",
+    #             "x": 250.0,
+    #             "y": 353.6,
+    #             "z": -250.0,
+    #         },
+    #         "F_R": {
+    #             "magnitude": 482,
+    #             "unit": "N",  # Actually 481.73
+    #             "x": 144.0,
+    #             "y": 460.0,
+    #             "z": 9.81,
+    #             "alpha": 72.6,
+    #             "beta": 17.4,
+    #             "gamma": 88.8,  # Direction angles
+    #         },
+    #     },
+    #     "debug": {
+    #         "print_results": False,
+    #         "assert_values": True
+    #     },
+    # },
+    # "problem_2_65": {
+    #     "name": "Problem 2-65",
+    #     "description": """
+    #     The screw eye is subjected to the two forces shown. Express each force in Cartesian vector form and then determine the resultant force. Find the magnitude and coordinate direction angles of the resultant force.
+    #     """,
+    #     "forces": {
+    #         "F_1": ForceVector(
+    #             magnitude=300,
+    #             unit="N",
+    #             theta=135,
+    #             phi=30,  # Given in problem
+    #             name="F_1",
+    #             description="Force F1",
+    #         ),
+    #         "F_2": ForceVector(
+    #             magnitude=500,
+    #             unit="N",
+    #             alpha=60,
+    #             beta=45,
+    #             gamma=120,  # Given in problem
+    #             name="F_2",
+    #             description="Force F2",
+    #         ),
+    #         "F_R": ForceVector.unknown(name="F_R", is_resultant=True, description="Resultant Force"),
+    #     },
+    #     "expected": {
+    #         "F_1": {
+    #             "magnitude": 300,
+    #             "unit": "N",
+    #             "x": -106.0,
+    #             "y": 106.0,
+    #             "z": 260.0,  # Rounded
+    #         },
+    #         "F_2": {
+    #             "magnitude": 500,
+    #             "unit": "N",
+    #             "x": 250.0,
+    #             "y": 353.6,
+    #             "z": -250.0,
+    #         },
+    #         "F_R": {
+    #             "magnitude": 482,
+    #             "unit": "N",  # Actually 481.73
+    #             "x": 144.0,
+    #             "y": 460.0,
+    #             "z": 9.81,
+    #             "alpha": 72.6,
+    #             "beta": 17.4,
+    #             "gamma": 88.8,  # Direction angles
+    #         },
+    #     },
+    #     "debug": {
+    #         "print_results": False,
+    #         "assert_values": True
+    #     },
+    # },
+    # "problem_2_65": {
+    #     "name": "Problem 2-65",
+    #     "description": """
+    #     The screw eye is subjected to the two forces shown. Express each force in Cartesian vector form and then determine the resultant force. Find the magnitude and coordinate direction angles of the resultant force.
+    #     """,
+    #     "forces": {
+    #         "F_1": ForceVector(
+    #             magnitude=300,
+    #             unit="N",
+    #             theta=135,
+    #             phi=30,  # Given in problem
+    #             name="F_1",
+    #             description="Force F1",
+    #         ),
+    #         "F_2": ForceVector(
+    #             magnitude=500,
+    #             unit="N",
+    #             alpha=60,
+    #             beta=45,
+    #             gamma=120,  # Given in problem
+    #             name="F_2",
+    #             description="Force F2",
+    #         ),
+    #         "F_R": ForceVector.unknown(name="F_R", is_resultant=True, description="Resultant Force"),
+    #     },
+    #     "expected": {
+    #         "F_1": {
+    #             "magnitude": 300,
+    #             "unit": "N",
+    #             "x": -106.0,
+    #             "y": 106.0,
+    #             "z": 260.0,  # Rounded
+    #         },
+    #         "F_2": {
+    #             "magnitude": 500,
+    #             "unit": "N",
+    #             "x": 250.0,
+    #             "y": 353.6,
+    #             "z": -250.0,
+    #         },
+    #         "F_R": {
+    #             "magnitude": 482,
+    #             "unit": "N",  # Actually 481.73
+    #             "x": 144.0,
+    #             "y": 460.0,
+    #             "z": 9.81,
+    #             "alpha": 72.6,
+    #             "beta": 17.4,
+    #             "gamma": 88.8,  # Direction angles
+    #         },
+    #     },
+    #     "debug": {
+    #         "print_results": False,
+    #         "assert_values": True
+    #     },
+    # },
+    # "problem_2_65": {
+    #     "name": "Problem 2-65",
+    #     "description": """
+    #     The screw eye is subjected to the two forces shown. Express each force in Cartesian vector form and then determine the resultant force. Find the magnitude and coordinate direction angles of the resultant force.
+    #     """,
+    #     "forces": {
+    #         "F_1": ForceVector(
+    #             magnitude=300,
+    #             unit="N",
+    #             theta=135,
+    #             phi=30,  # Given in problem
+    #             name="F_1",
+    #             description="Force F1",
+    #         ),
+    #         "F_2": ForceVector(
+    #             magnitude=500,
+    #             unit="N",
+    #             alpha=60,
+    #             beta=45,
+    #             gamma=120,  # Given in problem
+    #             name="F_2",
+    #             description="Force F2",
+    #         ),
+    #         "F_R": ForceVector.unknown(name="F_R", is_resultant=True, description="Resultant Force"),
+    #     },
+    #     "expected": {
+    #         "F_1": {
+    #             "magnitude": 300,
+    #             "unit": "N",
+    #             "x": -106.0,
+    #             "y": 106.0,
+    #             "z": 260.0,  # Rounded
+    #         },
+    #         "F_2": {
+    #             "magnitude": 500,
+    #             "unit": "N",
+    #             "x": 250.0,
+    #             "y": 353.6,
+    #             "z": -250.0,
+    #         },
+    #         "F_R": {
+    #             "magnitude": 482,
+    #             "unit": "N",  # Actually 481.73
+    #             "x": 144.0,
+    #             "y": 460.0,
+    #             "z": 9.81,
+    #             "alpha": 72.6,
+    #             "beta": 17.4,
+    #             "gamma": 88.8,  # Direction angles
+    #         },
+    #     },
+    #     "debug": {
+    #         "print_results": False,
+    #         "assert_values": True
+    #     },
+    # },
+    # "problem_2_65": {
+    #     "name": "Problem 2-65",
+    #     "description": """
+    #     The screw eye is subjected to the two forces shown. Express each force in Cartesian vector form and then determine the resultant force. Find the magnitude and coordinate direction angles of the resultant force.
+    #     """,
+    #     "forces": {
+    #         "F_1": ForceVector(
+    #             magnitude=300,
+    #             unit="N",
+    #             theta=135,
+    #             phi=30,  # Given in problem
+    #             name="F_1",
+    #             description="Force F1",
+    #         ),
+    #         "F_2": ForceVector(
+    #             magnitude=500,
+    #             unit="N",
+    #             alpha=60,
+    #             beta=45,
+    #             gamma=120,  # Given in problem
+    #             name="F_2",
+    #             description="Force F2",
+    #         ),
+    #         "F_R": ForceVector.unknown(name="F_R", is_resultant=True, description="Resultant Force"),
+    #     },
+    #     "expected": {
+    #         "F_1": {
+    #             "magnitude": 300,
+    #             "unit": "N",
+    #             "x": -106.0,
+    #             "y": 106.0,
+    #             "z": 260.0,  # Rounded
+    #         },
+    #         "F_2": {
+    #             "magnitude": 500,
+    #             "unit": "N",
+    #             "x": 250.0,
+    #             "y": 353.6,
+    #             "z": -250.0,
+    #         },
+    #         "F_R": {
+    #             "magnitude": 482,
+    #             "unit": "N",  # Actually 481.73
+    #             "x": 144.0,
+    #             "y": 460.0,
+    #             "z": 9.81,
+    #             "alpha": 72.6,
+    #             "beta": 17.4,
+    #             "gamma": 88.8,  # Direction angles
+    #         },
+    #     },
+    #     "debug": {
+    #         "print_results": False,
+    #         "assert_values": True
+    #     },
+    # },
+    # "problem_2_65": {
+    #     "name": "Problem 2-65",
+    #     "description": """
+    #     The screw eye is subjected to the two forces shown. Express each force in Cartesian vector form and then determine the resultant force. Find the magnitude and coordinate direction angles of the resultant force.
+    #     """,
+    #     "forces": {
+    #         "F_1": ForceVector(
+    #             magnitude=300,
+    #             unit="N",
+    #             theta=135,
+    #             phi=30,  # Given in problem
+    #             name="F_1",
+    #             description="Force F1",
+    #         ),
+    #         "F_2": ForceVector(
+    #             magnitude=500,
+    #             unit="N",
+    #             alpha=60,
+    #             beta=45,
+    #             gamma=120,  # Given in problem
+    #             name="F_2",
+    #             description="Force F2",
+    #         ),
+    #         "F_R": ForceVector.unknown(name="F_R", is_resultant=True, description="Resultant Force"),
+    #     },
+    #     "expected": {
+    #         "F_1": {
+    #             "magnitude": 300,
+    #             "unit": "N",
+    #             "x": -106.0,
+    #             "y": 106.0,
+    #             "z": 260.0,  # Rounded
+    #         },
+    #         "F_2": {
+    #             "magnitude": 500,
+    #             "unit": "N",
+    #             "x": 250.0,
+    #             "y": 353.6,
+    #             "z": -250.0,
+    #         },
+    #         "F_R": {
+    #             "magnitude": 482,
+    #             "unit": "N",  # Actually 481.73
+    #             "x": 144.0,
+    #             "y": 460.0,
+    #             "z": 9.81,
+    #             "alpha": 72.6,
+    #             "beta": 17.4,
+    #             "gamma": 88.8,  # Direction angles
+    #         },
+    #     },
+    #     "debug": {
+    #         "print_results": False,
+    #         "assert_values": True
+    #     },
+    # },
+    # "problem_2_65": {
+    #     "name": "Problem 2-65",
+    #     "description": """
+    #     The screw eye is subjected to the two forces shown. Express each force in Cartesian vector form and then determine the resultant force. Find the magnitude and coordinate direction angles of the resultant force.
+    #     """,
+    #     "forces": {
+    #         "F_1": ForceVector(
+    #             magnitude=300,
+    #             unit="N",
+    #             theta=135,
+    #             phi=30,  # Given in problem
+    #             name="F_1",
+    #             description="Force F1",
+    #         ),
+    #         "F_2": ForceVector(
+    #             magnitude=500,
+    #             unit="N",
+    #             alpha=60,
+    #             beta=45,
+    #             gamma=120,  # Given in problem
+    #             name="F_2",
+    #             description="Force F2",
+    #         ),
+    #         "F_R": ForceVector.unknown(name="F_R", is_resultant=True, description="Resultant Force"),
+    #     },
+    #     "expected": {
+    #         "F_1": {
+    #             "magnitude": 300,
+    #             "unit": "N",
+    #             "x": -106.0,
+    #             "y": 106.0,
+    #             "z": 260.0,  # Rounded
+    #         },
+    #         "F_2": {
+    #             "magnitude": 500,
+    #             "unit": "N",
+    #             "x": 250.0,
+    #             "y": 353.6,
+    #             "z": -250.0,
+    #         },
+    #         "F_R": {
+    #             "magnitude": 482,
+    #             "unit": "N",  # Actually 481.73
+    #             "x": 144.0,
+    #             "y": 460.0,
+    #             "z": 9.81,
+    #             "alpha": 72.6,
+    #             "beta": 17.4,
+    #             "gamma": 88.8,  # Direction angles
+    #         },
+    #     },
+    #     "debug": {
+    #         "print_results": False,
+    #         "assert_values": True
+    #     },
+    # },
+    # "problem_2_65": {
+    #     "name": "Problem 2-65",
+    #     "description": """
+    #     The screw eye is subjected to the two forces shown. Express each force in Cartesian vector form and then determine the resultant force. Find the magnitude and coordinate direction angles of the resultant force.
+    #     """,
+    #     "forces": {
+    #         "F_1": ForceVector(
+    #             magnitude=300,
+    #             unit="N",
+    #             theta=135,
+    #             phi=30,  # Given in problem
+    #             name="F_1",
+    #             description="Force F1",
+    #         ),
+    #         "F_2": ForceVector(
+    #             magnitude=500,
+    #             unit="N",
+    #             alpha=60,
+    #             beta=45,
+    #             gamma=120,  # Given in problem
+    #             name="F_2",
+    #             description="Force F2",
+    #         ),
+    #         "F_R": ForceVector.unknown(name="F_R", is_resultant=True, description="Resultant Force"),
+    #     },
+    #     "expected": {
+    #         "F_1": {
+    #             "magnitude": 300,
+    #             "unit": "N",
+    #             "x": -106.0,
+    #             "y": 106.0,
+    #             "z": 260.0,  # Rounded
+    #         },
+    #         "F_2": {
+    #             "magnitude": 500,
+    #             "unit": "N",
+    #             "x": 250.0,
+    #             "y": 353.6,
+    #             "z": -250.0,
+    #         },
+    #         "F_R": {
+    #             "magnitude": 482,
+    #             "unit": "N",  # Actually 481.73
+    #             "x": 144.0,
+    #             "y": 460.0,
+    #             "z": 9.81,
+    #             "alpha": 72.6,
+    #             "beta": 17.4,
+    #             "gamma": 88.8,  # Direction angles
+    #         },
+    #     },
+    #     "debug": {
+    #         "print_results": False,
+    #         "assert_values": True
+    #     },
+    # },
+    # "problem_2_65": {
+    #     "name": "Problem 2-65",
+    #     "description": """
+    #     The screw eye is subjected to the two forces shown. Express each force in Cartesian vector form and then determine the resultant force. Find the magnitude and coordinate direction angles of the resultant force.
+    #     """,
+    #     "forces": {
+    #         "F_1": ForceVector(
+    #             magnitude=300,
+    #             unit="N",
+    #             theta=135,
+    #             phi=30,  # Given in problem
+    #             name="F_1",
+    #             description="Force F1",
+    #         ),
+    #         "F_2": ForceVector(
+    #             magnitude=500,
+    #             unit="N",
+    #             alpha=60,
+    #             beta=45,
+    #             gamma=120,  # Given in problem
+    #             name="F_2",
+    #             description="Force F2",
+    #         ),
+    #         "F_R": ForceVector.unknown(name="F_R", is_resultant=True, description="Resultant Force"),
+    #     },
+    #     "expected": {
+    #         "F_1": {
+    #             "magnitude": 300,
+    #             "unit": "N",
+    #             "x": -106.0,
+    #             "y": 106.0,
+    #             "z": 260.0,  # Rounded
+    #         },
+    #         "F_2": {
+    #             "magnitude": 500,
+    #             "unit": "N",
+    #             "x": 250.0,
+    #             "y": 353.6,
+    #             "z": -250.0,
+    #         },
+    #         "F_R": {
+    #             "magnitude": 482,
+    #             "unit": "N",  # Actually 481.73
+    #             "x": 144.0,
+    #             "y": 460.0,
+    #             "z": 9.81,
+    #             "alpha": 72.6,
+    #             "beta": 17.4,
+    #             "gamma": 88.8,  # Direction angles
+    #         },
+    #     },
+    #     "debug": {
+    #         "print_results": False,
+    #         "assert_values": True
+    #     },
+    # },
+    # "problem_2_65": {
+    #     "name": "Problem 2-65",
+    #     "description": """
+    #     The screw eye is subjected to the two forces shown. Express each force in Cartesian vector form and then determine the resultant force. Find the magnitude and coordinate direction angles of the resultant force.
+    #     """,
+    #     "forces": {
+    #         "F_1": ForceVector(
+    #             magnitude=300,
+    #             unit="N",
+    #             theta=135,
+    #             phi=30,  # Given in problem
+    #             name="F_1",
+    #             description="Force F1",
+    #         ),
+    #         "F_2": ForceVector(
+    #             magnitude=500,
+    #             unit="N",
+    #             alpha=60,
+    #             beta=45,
+    #             gamma=120,  # Given in problem
+    #             name="F_2",
+    #             description="Force F2",
+    #         ),
+    #         "F_R": ForceVector.unknown(name="F_R", is_resultant=True, description="Resultant Force"),
+    #     },
+    #     "expected": {
+    #         "F_1": {
+    #             "magnitude": 300,
+    #             "unit": "N",
+    #             "x": -106.0,
+    #             "y": 106.0,
+    #             "z": 260.0,  # Rounded
+    #         },
+    #         "F_2": {
+    #             "magnitude": 500,
+    #             "unit": "N",
+    #             "x": 250.0,
+    #             "y": 353.6,
+    #             "z": -250.0,
+    #         },
+    #         "F_R": {
+    #             "magnitude": 482,
+    #             "unit": "N",  # Actually 481.73
+    #             "x": 144.0,
+    #             "y": 460.0,
+    #             "z": 9.81,
+    #             "alpha": 72.6,
+    #             "beta": 17.4,
+    #             "gamma": 88.8,  # Direction angles
+    #         },
+    #     },
+    #     "debug": {
+    #         "print_results": False,
+    #         "assert_values": True
+    #     },
+    # },
+    # "problem_2_65": {
+    #     "name": "Problem 2-65",
+    #     "description": """
+    #     The screw eye is subjected to the two forces shown. Express each force in Cartesian vector form and then determine the resultant force. Find the magnitude and coordinate direction angles of the resultant force.
+    #     """,
+    #     "forces": {
+    #         "F_1": ForceVector(
+    #             magnitude=300,
+    #             unit="N",
+    #             theta=135,
+    #             phi=30,  # Given in problem
+    #             name="F_1",
+    #             description="Force F1",
+    #         ),
+    #         "F_2": ForceVector(
+    #             magnitude=500,
+    #             unit="N",
+    #             alpha=60,
+    #             beta=45,
+    #             gamma=120,  # Given in problem
+    #             name="F_2",
+    #             description="Force F2",
+    #         ),
+    #         "F_R": ForceVector.unknown(name="F_R", is_resultant=True, description="Resultant Force"),
+    #     },
+    #     "expected": {
+    #         "F_1": {
+    #             "magnitude": 300,
+    #             "unit": "N",
+    #             "x": -106.0,
+    #             "y": 106.0,
+    #             "z": 260.0,  # Rounded
+    #         },
+    #         "F_2": {
+    #             "magnitude": 500,
+    #             "unit": "N",
+    #             "x": 250.0,
+    #             "y": 353.6,
+    #             "z": -250.0,
+    #         },
+    #         "F_R": {
+    #             "magnitude": 482,
+    #             "unit": "N",  # Actually 481.73
+    #             "x": 144.0,
+    #             "y": 460.0,
+    #             "z": 9.81,
+    #             "alpha": 72.6,
+    #             "beta": 17.4,
+    #             "gamma": 88.8,  # Direction angles
+    #         },
+    #     },
+    #     "debug": {
+    #         "print_results": False,
+    #         "assert_values": True
+    #     },
+    # },
+    # "problem_2_65": {
+    #     "name": "Problem 2-65",
+    #     "description": """
+    #     The screw eye is subjected to the two forces shown. Express each force in Cartesian vector form and then determine the resultant force. Find the magnitude and coordinate direction angles of the resultant force.
+    #     """,
+    #     "forces": {
+    #         "F_1": ForceVector(
+    #             magnitude=300,
+    #             unit="N",
+    #             theta=135,
+    #             phi=30,  # Given in problem
+    #             name="F_1",
+    #             description="Force F1",
+    #         ),
+    #         "F_2": ForceVector(
+    #             magnitude=500,
+    #             unit="N",
+    #             alpha=60,
+    #             beta=45,
+    #             gamma=120,  # Given in problem
+    #             name="F_2",
+    #             description="Force F2",
+    #         ),
+    #         "F_R": ForceVector.unknown(name="F_R", is_resultant=True, description="Resultant Force"),
+    #     },
+    #     "expected": {
+    #         "F_1": {
+    #             "magnitude": 300,
+    #             "unit": "N",
+    #             "x": -106.0,
+    #             "y": 106.0,
+    #             "z": 260.0,  # Rounded
+    #         },
+    #         "F_2": {
+    #             "magnitude": 500,
+    #             "unit": "N",
+    #             "x": 250.0,
+    #             "y": 353.6,
+    #             "z": -250.0,
+    #         },
+    #         "F_R": {
+    #             "magnitude": 482,
+    #             "unit": "N",  # Actually 481.73
+    #             "x": 144.0,
+    #             "y": 460.0,
+    #             "z": 9.81,
+    #             "alpha": 72.6,
+    #             "beta": 17.4,
+    #             "gamma": 88.8,  # Direction angles
+    #         },
+    #     },
+    #     "debug": {
+    #         "print_results": False,
+    #         "assert_values": True
+    #     },
+    # },
+    # "problem_2_65": {
+    #     "name": "Problem 2-65",
+    #     "description": """
+    #     The screw eye is subjected to the two forces shown. Express each force in Cartesian vector form and then determine the resultant force. Find the magnitude and coordinate direction angles of the resultant force.
+    #     """,
+    #     "forces": {
+    #         "F_1": ForceVector(
+    #             magnitude=300,
+    #             unit="N",
+    #             theta=135,
+    #             phi=30,  # Given in problem
+    #             name="F_1",
+    #             description="Force F1",
+    #         ),
+    #         "F_2": ForceVector(
+    #             magnitude=500,
+    #             unit="N",
+    #             alpha=60,
+    #             beta=45,
+    #             gamma=120,  # Given in problem
+    #             name="F_2",
+    #             description="Force F2",
+    #         ),
+    #         "F_R": ForceVector.unknown(name="F_R", is_resultant=True, description="Resultant Force"),
+    #     },
+    #     "expected": {
+    #         "F_1": {
+    #             "magnitude": 300,
+    #             "unit": "N",
+    #             "x": -106.0,
+    #             "y": 106.0,
+    #             "z": 260.0,  # Rounded
+    #         },
+    #         "F_2": {
+    #             "magnitude": 500,
+    #             "unit": "N",
+    #             "x": 250.0,
+    #             "y": 353.6,
+    #             "z": -250.0,
+    #         },
+    #         "F_R": {
+    #             "magnitude": 482,
+    #             "unit": "N",  # Actually 481.73
+    #             "x": 144.0,
+    #             "y": 460.0,
+    #             "z": 9.81,
+    #             "alpha": 72.6,
+    #             "beta": 17.4,
+    #             "gamma": 88.8,  # Direction angles
+    #         },
+    #     },
+    #     "debug": {
+    #         "print_results": False,
+    #         "assert_values": True
+    #     },
+    # },
+    "problem_2_85": {
+        "name": "Problem 2-85",
+        "description": """
+        The screw eye is subjected to the two forces shown. Express each force in Cartesian vector form and then determine the resultant force. Find the magnitude and coordinate direction angles of the resultant force.
+        """,
+        "forces": {
+            "F_1": ForceVector(
+                magnitude=1300,
+                unit="N",
+                theta=135,
+                phi=30,  # Given in problem
+                name="F_1",
+                description="Force F1",
+            ),
+            "F_2": ForceVector(
+                magnitude=500,
+                unit="N",
+                alpha=60,
+                beta=45,
+                gamma=120,  # Given in problem
+                name="F_2",
+                description="Force F2",
+            ),
+            "F_R": ForceVector.unknown(name="F_R", is_resultant=True, description="Resultant Force"),
+        },
+        "expected": {
+            "F_1": {
+                "magnitude": 300,
+                "unit": "N",
+                "x": -106.0,
+                "y": 106.0,
+                "z": 260.0,  # Rounded
+            },
+            "F_2": {
+                "magnitude": 500,
+                "unit": "N",
+                "x": 250.0,
+                "y": 353.6,
+                "z": -250.0,
+            },
+            "F_R": {
+                "magnitude": 482,
+                "unit": "N",  # Actually 481.73
+                "x": 144.0,
+                "y": 460.0,
+                "z": 9.81,
+                "alpha": 72.6,
+                "beta": 17.4,
+                "gamma": 88.8,  # Direction angles
+            },
+        },
+        "debug": {
+            "print_results": False,
+            "assert_values": True
+        },
     },
 }
 
 
-def assert_force_magnitude(force: ForceVector, expected_mag: float, tolerance: float = 0.5):
-    """Assert force magnitude matches expected value."""
+def assert_force_magnitude(force: ForceVector, expected_mag: float, expected_unit: str, tolerance: float = 0.5):
+    """Assert force magnitude matches expected value in the expected unit."""
     assert force.magnitude is not None, f"Force {force.name} magnitude is None"
     assert force.magnitude.value is not None, f"Force {force.name} magnitude value is None"
 
-    # Convert to display unit for comparison
-    actual_mag = force.magnitude.value / force.magnitude.preferred.si_factor
+    # Validate that the force's preferred unit matches the expected unit (compare by symbol or name)
+    if force.magnitude.preferred:
+        actual_unit_symbol = force.magnitude.preferred.symbol
+        actual_unit_name = force.magnitude.preferred.name
+        # Allow matching by either symbol (e.g., "lbf") or name (e.g., "pound_force")
+        unit_matches = (actual_unit_symbol == expected_unit) or (actual_unit_name == expected_unit)
+        assert unit_matches, f"Force {force.name} unit mismatch: expected '{expected_unit}', got '{actual_unit_symbol}' (name: '{actual_unit_name}')"
 
-    assert abs(actual_mag - expected_mag) < tolerance, f"Force {force.name} magnitude: expected {expected_mag}, got {actual_mag:.3f}"
+    # Use new API: magnitude_in() handles unit conversion automatically
+    actual_mag = force.magnitude_in(force.magnitude.preferred) if force.magnitude.preferred else force.magnitude.value
+
+    assert abs(actual_mag - expected_mag) < tolerance, f"Force {force.name} magnitude: expected {expected_mag} {expected_unit}, got {actual_mag:.3f} {expected_unit}"
 
 
-def assert_force_component(component: float | None, expected: float, comp_name: str, force_name: str, tolerance: float = 0.5):
-    """Assert force component matches expected value."""
+def assert_force_component(component: float | None, expected: float, comp_name: str, force_name: str, expected_unit: str, tolerance: float = 0.5):
+    """Assert force component matches expected value in the expected unit."""
     assert component is not None, f"Force {force_name} component {comp_name} is None"
-    assert abs(component - expected) < tolerance, f"Force {force_name} {comp_name}: expected {expected}, got {component:.3f}"
+    assert abs(component - expected) < tolerance, f"Force {force_name} {comp_name}: expected {expected} {expected_unit}, got {component:.3f} {expected_unit}"
 
 
 def assert_direction_angle(angle_qty, expected_deg: float, angle_name: str, force_name: str, tolerance: float = 0.5):
@@ -241,11 +1498,11 @@ def test_cartesian_3d_problem(problem_key):
     # Create solver
     solver = ComponentSolver()
 
-    # Check if this is a resultant problem
-    has_unknown_resultant = any(f.is_resultant and not f.is_known for f in forces.values())
+    # Check if this problem requires solving (has any unknown forces)
+    has_unknowns = any(not f.is_known for f in forces.values())
 
-    if has_unknown_resultant:
-        # Solve for resultant
+    if has_unknowns:
+        # Solve for unknown forces (could be resultant or individual forces)
         result = solver.solve(list(forces.values()))
 
         if problem["debug"]["print_results"]:
@@ -264,35 +1521,38 @@ def test_cartesian_3d_problem(problem_key):
         if problem["debug"]["assert_values"]:
             for force_name, expected_values in expected.items():
                 solved_force = result[force_name]
+                expected_unit = expected_values.get("unit", "N")
 
                 if problem["debug"]["print_results"]:
                     print(f"\n--- Verification: {force_name} ---")
 
                 # Check magnitude if specified
                 if "magnitude" in expected_values:
-                    assert_force_magnitude(solved_force, expected_values["magnitude"])
+                    assert_force_magnitude(solved_force, expected_values["magnitude"], expected_unit)
                     if problem["debug"]["print_results"]:
-                        mag_val = solved_force.magnitude.value / solved_force.magnitude.preferred.si_factor
-                        print(f"  Magnitude: {mag_val:.3f} {expected_values.get('unit', 'N')} ✓")
+                        mag_val = (solved_force.magnitude_in(solved_force.magnitude.preferred)
+                                   if solved_force.magnitude and solved_force.magnitude.preferred
+                                   else solved_force.magnitude.value if solved_force.magnitude else 0.0)
+                        print(f"  Magnitude: {mag_val:.3f} {expected_unit} ✓")
 
                 # Check components if specified
                 if "x" in expected_values:
                     x_val = solved_force.x.value / solved_force.x.preferred.si_factor if solved_force.x else None
-                    assert_force_component(x_val, expected_values["x"], "x", force_name)
+                    assert_force_component(x_val, expected_values["x"], "x", force_name, expected_unit)
                     if problem["debug"]["print_results"]:
-                        print(f"  Fx: {x_val:.3f} {expected_values.get('unit', 'N')} ✓")
+                        print(f"  Fx: {x_val:.3f} {expected_unit} ✓")
 
                 if "y" in expected_values:
                     y_val = solved_force.y.value / solved_force.y.preferred.si_factor if solved_force.y else None
-                    assert_force_component(y_val, expected_values["y"], "y", force_name)
+                    assert_force_component(y_val, expected_values["y"], "y", force_name, expected_unit)
                     if problem["debug"]["print_results"]:
-                        print(f"  Fy: {y_val:.3f} {expected_values.get('unit', 'N')} ✓")
+                        print(f"  Fy: {y_val:.3f} {expected_unit} ✓")
 
                 if "z" in expected_values:
                     z_val = solved_force.z.value / solved_force.z.preferred.si_factor if solved_force.z else None
-                    assert_force_component(z_val, expected_values["z"], "z", force_name)
+                    assert_force_component(z_val, expected_values["z"], "z", force_name, expected_unit)
                     if problem["debug"]["print_results"]:
-                        print(f"  Fz: {z_val:.3f} {expected_values.get('unit', 'N')} ✓")
+                        print(f"  Fz: {z_val:.3f} {expected_unit} ✓")
 
                 # Check direction angles if specified
                 if "alpha" in expected_values:
@@ -312,31 +1572,58 @@ def test_cartesian_3d_problem(problem_key):
 
     else:
         # Just verify given forces have correct components
+        if problem["debug"]["print_results"]:
+            print("\n--- Force Properties ---")
+
         if problem["debug"]["assert_values"]:
             for force_name, force in forces.items():
                 if force_name in expected:
                     expected_values = expected[force_name]
+                    expected_unit = expected_values.get("unit", "N")
+
+                    if problem["debug"]["print_results"]:
+                        print(f"\n--- {force_name} ---")
+
+                    # Check and print magnitude
+                    if "magnitude" in expected_values:
+                        mag_val = force.magnitude_in(force.magnitude.preferred) if force.magnitude and force.magnitude.preferred else force.magnitude.value if force.magnitude else None
+                        if mag_val is not None:
+                            assert_force_magnitude(force, expected_values["magnitude"], expected_unit)
+                            if problem["debug"]["print_results"]:
+                                print(f"  Magnitude: {mag_val:.3f} {expected_unit} ✓")
 
                     if "x" in expected_values and force.x:
                         x_val = force.x.value / force.x.preferred.si_factor
-                        assert_force_component(x_val, expected_values["x"], "x", force_name)
+                        assert_force_component(x_val, expected_values["x"], "x", force_name, expected_unit)
+                        if problem["debug"]["print_results"]:
+                            print(f"  Fx: {x_val:.3f} {expected_unit} ✓")
 
                     if "y" in expected_values and force.y:
                         y_val = force.y.value / force.y.preferred.si_factor
-                        assert_force_component(y_val, expected_values["y"], "y", force_name)
+                        assert_force_component(y_val, expected_values["y"], "y", force_name, expected_unit)
+                        if problem["debug"]["print_results"]:
+                            print(f"  Fy: {y_val:.3f} {expected_unit} ✓")
 
                     if "z" in expected_values and force.z:
                         z_val = force.z.value / force.z.preferred.si_factor
-                        assert_force_component(z_val, expected_values["z"], "z", force_name)
+                        assert_force_component(z_val, expected_values["z"], "z", force_name, expected_unit)
+                        if problem["debug"]["print_results"]:
+                            print(f"  Fz: {z_val:.3f} {expected_unit} ✓")
 
                     if "alpha" in expected_values and force.alpha:
                         assert_direction_angle(force.alpha, expected_values["alpha"], "α", force_name)
+                        if problem["debug"]["print_results"]:
+                            print(f"  α: {math.degrees(force.alpha.value):.1f}° ✓")
 
                     if "beta" in expected_values and force.beta:
                         assert_direction_angle(force.beta, expected_values["beta"], "β", force_name)
+                        if problem["debug"]["print_results"]:
+                            print(f"  β: {math.degrees(force.beta.value):.1f}° ✓")
 
                     if "gamma" in expected_values and force.gamma:
                         assert_direction_angle(force.gamma, expected_values["gamma"], "γ", force_name)
+                        if problem["debug"]["print_results"]:
+                            print(f"  γ: {math.degrees(force.gamma.value):.1f}° ✓")
 
 
 if __name__ == "__main__":

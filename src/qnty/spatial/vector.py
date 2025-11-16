@@ -158,6 +158,46 @@ class Vector(Generic[D]):
         q._output_unit = None
         return q
 
+    def magnitude_in(self, unit: Unit[D] | str) -> float:
+        """
+        Get vector magnitude in specified unit.
+
+        This is a convenience method that handles unit conversion automatically,
+        similar to Quantity.magnitude(unit).
+
+        Args:
+            unit: Target unit for magnitude
+
+        Returns:
+            Magnitude value in the specified unit
+
+        Raises:
+            ValueError: If vector is dimensionless or unit is incompatible
+
+        Examples:
+            >>> from qnty.core.unit_catalog import LengthUnits
+            >>> v = Vector(1000, 0, 0, unit=LengthUnits.meter)
+            >>> v.magnitude_in("km")
+            1.0
+            >>> v.magnitude_in(LengthUnits.foot)
+            3280.84
+        """
+        if self._dim is None:
+            raise ValueError("Cannot get magnitude in unit for dimensionless vector")
+
+        # Resolve unit if string
+        if isinstance(unit, str):
+            from ..core.unit import ureg
+
+            resolved = ureg.resolve(unit, dim=self._dim)
+            if resolved is None:
+                raise ValueError(f"Unknown unit '{unit}'")
+            unit = resolved
+
+        # Use the Quantity's magnitude method
+        mag_qty = self.magnitude
+        return mag_qty.magnitude(unit)
+
     def normalized(self) -> Vector[D]:
         """
         Return unit vector in same direction.

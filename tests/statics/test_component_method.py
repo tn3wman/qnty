@@ -1199,21 +1199,12 @@ def verify_component_results(solution, expected, debug_config, capsys, test_name
             expected_ang_deg = expected_values["angle"]
             expected_wrt = expected_values.get("wrt", "+x")
 
-            # Convert magnitude from SI to preferred unit for comparison
-            if force.magnitude.preferred:
-                actual_mag_in_preferred = force.magnitude.magnitude(force.magnitude.preferred)
-            else:
-                actual_mag_in_preferred = force.magnitude.value
+            # Use new API: magnitude_in() handles unit conversion automatically
+            actual_mag_in_preferred = force.magnitude_in(force.magnitude.preferred) if force.magnitude.preferred else force.magnitude.value
 
-            # Create the expected angle reference from wrt
-            # Handle force-relative references (e.g., "+F_R") by passing forces_dict
-            if expected_wrt.startswith(("+F_", "-F_")):
-                expected_angle_ref = ForceVector.parse_wrt(expected_wrt, force.coordinate_system, forces=forces_dict)
-            else:
-                expected_angle_ref = ForceVector.parse_wrt(expected_wrt, force.coordinate_system)
-
-            # Convert actual angle to the expected wrt system for comparison
-            actual_ang_in_wrt = expected_angle_ref.from_standard(force.angle.value, angle_unit="degree")
+            # Use new API: angle_in() handles both unit conversion and reference system transformation
+            # Pass forces_dict to support force-relative references (e.g., "+F_R")
+            actual_ang_in_wrt = force.angle_in("degree", wrt=expected_wrt, forces=forces_dict)
 
             # Normalize angles to [0, 360) range for comparison
             actual_ang_in_wrt = actual_ang_in_wrt % 360
@@ -1284,20 +1275,11 @@ def verify_component_results(solution, expected, debug_config, capsys, test_name
                     # Display magnitude/angle for standard problems
                     display_wrt = force_expected.get("wrt", "+x")
 
-                    # Create angle reference for display
-                    # Handle force-relative references (e.g., "+F_R") by passing forces_dict
-                    if display_wrt.startswith(("+F_", "-F_")):
-                        display_angle_ref = ForceVector.parse_wrt(display_wrt, force.coordinate_system, forces=forces_dict)
-                    else:
-                        display_angle_ref = ForceVector.parse_wrt(display_wrt, force.coordinate_system)
+                    # Use new API for conversions (pass forces_dict for force-relative references)
+                    actual_ang_in_wrt = force.angle_in("degree", wrt=display_wrt, forces=forces_dict) % 360
 
-                    # Convert angle to display wrt system
-                    actual_ang_in_wrt = display_angle_ref.from_standard(force.angle.value, angle_unit="degree")
-                    actual_ang_in_wrt = actual_ang_in_wrt % 360
-
-                    # Convert magnitude from SI to preferred unit for display
                     if force.magnitude.preferred:
-                        mag_value_in_preferred = force.magnitude.magnitude(force.magnitude.preferred)
+                        mag_value_in_preferred = force.magnitude_in(force.magnitude.preferred)
                         mag_unit = force.magnitude.preferred.symbol
                     else:
                         mag_value_in_preferred = force.magnitude.value

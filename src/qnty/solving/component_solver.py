@@ -652,33 +652,52 @@ class ComponentSolver:
 
         # Step 4: Calculate magnitude and angle
         magnitude = self.calculate_resultant_magnitude(unknown_x, unknown_y, unknown_z)
-        angle_rad = self.calculate_resultant_angle_2d(unknown_x, unknown_y)
-        angle_deg = math.degrees(angle_rad)
 
-        self.solution_steps.append(
-            {
-                "description": "Calculating unknown force magnitude and direction",
-                "equations": [
-                    f"F_unknown = √(Fx² + Fy²) = √({unknown_x:.3f}² + {unknown_y:.3f}²) = {magnitude:.3f} N",
-                    f"θ = tan⁻¹(Fy/Fx) = tan⁻¹({unknown_y:.3f}/{unknown_x:.3f}) = {angle_deg:.2f}°",
-                ],
-            }
-        )
+        # Check if this is a 3D problem (non-zero z-component)
+        is_3d = abs(unknown_z) > 1e-6 or abs(R_z) > 1e-6 or any(abs(self.resolve_force_components(f)[2]) > 1e-6 for f in known_forces)
 
-        # Create result ForceVector
         result_unit = ureg.resolve(force_unit if force_unit else "N", dim=dim.force)
         degree_unit = ureg.resolve("degree", dim=dim.D)
 
-        # Create Quantities in SI units
-        mag_qty = Quantity(name=f"{unknown_force_name}_magnitude", dim=dim.force, value=magnitude)
-        ang_qty = Quantity(name=f"{unknown_force_name}_angle", dim=dim.D, value=angle_rad)
+        if is_3d:
+            # 3D problem - create force with x, y, z components
+            self.solution_steps.append(
+                {
+                    "description": "Calculating unknown force magnitude and direction (3D)",
+                    "equations": [
+                        f"F_unknown = √(Fx² + Fy² + Fz²) = √({unknown_x:.3f}² + {unknown_y:.3f}² + {unknown_z:.3f}²) = {magnitude:.3f} N",
+                    ],
+                }
+            )
 
-        # Set preferred units for display
-        mag_qty.preferred = result_unit
-        ang_qty.preferred = degree_unit
+            # Create component Quantities in SI units
+            x_qty = Quantity(name=f"{unknown_force_name}_x", dim=dim.force, value=unknown_x, preferred=result_unit)
+            y_qty = Quantity(name=f"{unknown_force_name}_y", dim=dim.force, value=unknown_y, preferred=result_unit)
+            z_qty = Quantity(name=f"{unknown_force_name}_z", dim=dim.force, value=unknown_z, preferred=result_unit)
 
-        # Create ForceVector from Quantities
-        unknown_force = ForceVector(magnitude=mag_qty, angle=ang_qty, unit=result_unit, name=unknown_force_name, is_known=True)
+            # Create ForceVector from components
+            unknown_force = ForceVector(x=x_qty, y=y_qty, z=z_qty, unit=result_unit, name=unknown_force_name, is_known=True)
+        else:
+            # 2D problem - create force with magnitude and angle
+            angle_rad = self.calculate_resultant_angle_2d(unknown_x, unknown_y)
+            angle_deg = math.degrees(angle_rad)
+
+            self.solution_steps.append(
+                {
+                    "description": "Calculating unknown force magnitude and direction",
+                    "equations": [
+                        f"F_unknown = √(Fx² + Fy²) = √({unknown_x:.3f}² + {unknown_y:.3f}²) = {magnitude:.3f} N",
+                        f"θ = tan⁻¹(Fy/Fx) = tan⁻¹({unknown_y:.3f}/{unknown_x:.3f}) = {angle_deg:.2f}°",
+                    ],
+                }
+            )
+
+            # Create Quantities in SI units
+            mag_qty = Quantity(name=f"{unknown_force_name}_magnitude", dim=dim.force, value=magnitude, preferred=result_unit)
+            ang_qty = Quantity(name=f"{unknown_force_name}_angle", dim=dim.D, value=angle_rad, preferred=degree_unit)
+
+            # Create ForceVector from magnitude and angle
+            unknown_force = ForceVector(magnitude=mag_qty, angle=ang_qty, unit=result_unit, name=unknown_force_name, is_known=True)
 
         return unknown_force
 

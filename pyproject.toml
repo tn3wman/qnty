@@ -80,6 +80,7 @@ python_functions = ["test_*"]
 addopts = [
     "-v",
     "--tb=short",
+    "-s",  # Don't capture output, show print statements
 ]
 
 [build-system]
