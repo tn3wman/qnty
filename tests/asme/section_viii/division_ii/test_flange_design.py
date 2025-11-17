@@ -2,9 +2,11 @@ import math
 from dataclasses import dataclass
 
 import pytest
+from sympy import to_nnf
 
+from codegen.generators import data
 from qnty import Area, Dimensionless, Force, Length, Pressure, Problem, SecondMomentOfArea, Torque
-from qnty.algebra import SelectOption, SelectVariable, abs_expr, cond_expr, equation, geq, gt, leq, ln, log10, match_expr, max_expr, sqrt
+from qnty.algebra import SelectOption, SelectVariable, abs_expr, cond_expr, eq, equation, geq, gt, leq, ln, log10, match_expr, max_expr, sqrt
 from qnty.core.dimension import Dimension
 from qnty.core.quantity import Quantity
 from qnty.problems.rules import add_rule
@@ -21,6 +23,25 @@ class GasketType(SelectOption):
     """ASME gasket types for bolt load calculations."""
     non_self_energized: str = "non_self_energized"
     self_energized: str = "self_energized"
+
+@dataclass(frozen=True)
+class FlangeOrientation(SelectOption):
+    """ASME flange orientations for bolt load calculations."""
+    standard: str = "standard"
+    reverse: str = "reverse"
+
+@dataclass(frozen=True)
+class FlangeConnection(SelectOption):
+    """ASME flange connections for bolt load calculations."""
+    integral: str = "integral"
+    loose: str = "loose"
+    welded: str = "welded"
+
+@dataclass(frozen=True)
+class FlangeHubType(SelectOption):
+    """ASME flange hub types for bolt load calculations."""
+    with_hub: str = "with_hub"
+    without_hub: str = "without_hub"
 
 @dataclass(frozen=True)
 class FlangeType(SelectOption):
@@ -169,19 +190,17 @@ class FlangeDesign(Problem):
     C = Length("Bolt Circle Diameter").set(4.5).inch
     A = Length("Outside Diameter of the Flange").set(5.5).inch
     t = Length("Flange Thickness").set(0.75).inch
-    g_1 = Length("Thickness of the Hub at the Large End").set(0).inch
     g_0 = Length("Thickness of the Hub at the Small End").set(0).inch
+    g_1 = Length("Thickness of the Hub at the Large End").set(0).inch
+    g_2 = Length("Thickness of the pipe in a welded slip-on flange, g_2 = t_n").set(0).inch
     h = Length("Hub Length").set(0).inch
 
     # TODO: radius to be at least 0.25g1 but not less than 5 mm (0.1875 in.) if hubbed flange
     r_1 = Length("Fillet Radius at the Junction of the Hub and Flange").set(0).inch
 
-    # Step 4. Determine the flange stress factors using the equations in Tables 4.16.4 and 4.16.5.
-    K = Dimensionless("ratio of the flange outside diameter to the flange inside diameter")
-    K_eq = equation(
-        K,
-        A / B
-    )
+    # region // Step 4
+    # Determine the flange stress factors using the equations in Tables 4.16.4 and 4.16.5.
+
 
     # expr_Y = (1/(K-1)) * (0.66845 + 5.71690 * ((K**2 * log10(K)) / (K**2 - 1)))
     # expr_Y_r = alpha_r * Y
@@ -224,7 +243,178 @@ class FlangeDesign(Problem):
     # expr_X_h_r = h/h_or
 
 
-    # Step 5. Determine the flange forces.
+    # Table 4.16.4 and 4.16.5 calculations
+    
+
+    # For Integral-type flange, reverse integral-type flange
+    F = Dimensionless("Flange stress factor for integral type flange")
+    F_eqn = equation(
+        F,
+        0.897697 - 0.297012*ln(X_g) + 9.5257e-3*ln(X_h) +
+        0.123586*(ln(X_g))**2 + 0.0358580*(ln(X_h))**2 - 0.194422*ln(X_g)*ln(X_h) -
+        0.0181259*(ln(X_g))**3 + 0.0129360*(ln(X_h))**3 -
+        0.0377693*(ln(X_g))*(ln(X_h))**2 + 0.0273791*(ln(X_g))**2*ln(X_h)
+    )
+
+    # For Welded slip-on flange
+
+    # Loose-type flange with a hub, reverse loose-type flange with a hub
+
+    # # Table 4.16.4 calculations
+    # # The parameters K, T, U, Y, and Z are determined using the equations for integral- and loose-type flanges
+    K = Dimensionless("ratio of the flange outside diameter to the flange inside diameter")
+    K_eq = equation(
+        K,
+        A / B
+    )
+
+    # T = Dimensionless("flange thickness factor T")
+    # T_eqn = equation(
+    #     T,
+    #     (K**2 * (1 + 8.55246*log10(K)) - 1) / ((1.04720 + 1.9448*K**2) * (K - 1))
+    # )
+
+    # U = Dimensionless("flange thickness factor U")
+    # U_eqn = equation(
+    #     U,
+    #     (K**2 * (1 + 8.55246*log10(K)) - 1) / (1.36136 * (K**2 - 1) * (K - 1))
+    # )
+
+    # Y = Dimensionless("flange stress factor Y")
+    # Y_eqn = equation(
+    #     Y,
+    #     (1/(K-1)) * (0.66845 + 5.71690 * ((K**2 * log10(K)) / (K**2 - 1)))
+    # )
+
+    # Z = Dimensionless("flange thickness factor Z")
+    # Z_eqn = equation(
+    #     Z,
+    #     (K**2 + 1) / (K**2 - 1)
+    # )
+
+
+    # # For Integral-type flange, welded slipon-type flange, and loose-type flange with a hub
+    # h_o = Length("intermediate variable h_o")
+    # h_o_eqn = equation(
+    #     h_o,
+    #     sqrt(B * g_0)
+    # )
+
+    # flange_connection = SelectVariable("Flange Connection", FlangeConnection, FlangeConnection.integral)
+    # e = Dimensionless("intermediate variable e")
+    # e_eqn = equation(
+    #     e,
+    #     match_expr(
+    #         flange_connection,
+    #         FlangeConnection.integral, F / h_o,
+    #         FlangeConnection.loose, F_L / h_o,
+    #         FlangeConnection.welded, F_S / h_o,
+    #     )
+    # )
+
+    # d = Dimensionless("intermediate variable d")
+    # d_eqn = equation(
+    #     d,
+    #     match_expr(
+    #         flange_connection,
+    #         FlangeConnection.integral, (U * g_0**2 * h_o) / V,
+    #         FlangeConnection.loose, (U * g_0**2 * h_o) / V_L,
+    #         FlangeConnection.welded, (U * g_0**2 * h_o) / V_S,
+    #     )
+    # )
+
+    # L = Dimensionless("intermediate variable L")
+    # L_eqn = equation(
+    #     L,
+    #     (t*e + 1)/T + (t**3/d)
+    # )
+
+    # X_g = Dimensionless("intermediate variable X_g")
+    # X_g_eqn = equation(
+    #     X_g,
+    #     g_1 / g_0
+    # )
+
+    # X_g2 = Dimensionless("intermediate variable X_g2")
+    # X_g2_eqn = equation(
+    #     X_g2,
+    #     g_2 / g_0
+    # )
+
+    # X_h = Dimensionless("intermediate variable X_h")
+    # X_h_eqn = equation(
+    #     X_h,
+    #     match_expr(
+    #         flange_connection,
+    #         FlangeConnection.integral, cond_expr(eq(g_1, g_0), 2.0, h / h_o),
+    #         FlangeConnection.loose, h / h_o,
+    #         FlangeConnection.welded, h / h_o,
+    #     )
+    # )
+
+    # # For Reverse integral-type flange and reverse loose-type flanges with a hub
+    # alpha_r = Dimensionless("intermediate variable alpha_r")
+    # alpha_r_eqn = equation(
+    #     alpha_r,
+    #     (1/K**2) * (1 + (0.668*(K+1)/Y))
+    # )
+
+    # T_r = Dimensionless("intermediate variable T_r")
+    # T_r_eqn = equation(
+    #     T_r,
+    #     (Z+0.3)/(Z-0.3) * alpha_r * T
+    # )
+
+    # U_r = Dimensionless("intermediate variable U_r")
+    # U_r_eqn = equation(
+    #     U_r,
+    #     alpha_r * U
+    # )
+
+    # Y_r = Dimensionless("intermediate variable Y_r")
+    # Y_r_eqn = equation(
+    #     Y_r,
+    #     alpha_r * Y
+    # )
+
+    # h_or = Length("intermediate variable h_or")
+    # h_or_eqn = equation(
+    #     h_or,
+    #     sqrt(A * g_0)
+    # )
+
+    # e_r = Dimensionless("intermediate variable e_r")
+    # e_r_eqn = equation(
+    #     e_r,
+    #     match_expr(
+    #         flange_connection,
+    #         FlangeConnection.integral, F / h_or,
+    #         FlangeConnection.loose, F_L / h_or,
+    #     )
+    # )
+
+    # d_r = Dimensionless("intermediate variable d_r")
+    # d_r_eqn = equation(
+    #     d_r,
+    #     match_expr(
+    #         flange_connection,
+    #         FlangeConnection.integral, (U_r * g_0**2 * h_or) / V,
+    #         FlangeConnection.loose, (U_r * g_0**2 * h_or) / V_L,
+    #     )
+    # )
+
+    # L_r = Dimensionless("intermediate variable L_r")
+    # L_r_eqn = equation(
+    #     L_r,
+    #     (t*e_r + 1)/T_r + (t**3/d_r)
+    # )
+
+
+
+    # endregion // Step 4
+
+    # region // Step 5
+    # Determine the flange forces.
     H_D = Force("total hydrostatic end force on the area inside of the flange")
     H = Force("total hydrostatic end force")
     H_T = Force("difference between the total hydrostatic end force and hydrostatic end force on the area inside the flange")
@@ -234,6 +424,8 @@ class FlangeDesign(Problem):
     H_eqn = equation(H, 0.785 * G**2 * P)
     H_T_eqn = equation(H_T, H - H_D)
     H_G_eqn = equation(H_G, W_o - H)
+
+    # endregion // Step 5
 
 
     # Step 6. Determine the flange moment for the operating condition using eq. (4.16.14) or eq. (4.16.15), as applicable. When specified by the user or the user's designated agent, the maximum bolt spacing (Bs ma x) and the bolt spacing correction factor (B sc) shall be applied in calculating the flange moment for internal pressure using the equations in Table 4.16.11. The flange moment Mo for the operating condition and flange moment M g for the gasket seating condition without correction for bolt spacing B s c = 1 is used for the calculation of the rigidity index in Step 10. In these equations, h D , hT , and hG are determined from Table 4.16.6. For integral and loose type flanges, the moment M oe is calculated using eq. (4.16.16) where I and Ip in this equation are determined from Table 4.16.7. For reverse type flanges, the procedure to determine M oe shall be agreed upon between the Designer and the Owner.
