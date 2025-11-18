@@ -8,7 +8,7 @@ Demonstrates different usage patterns for solving 2D statics problems:
 4. Real engineering problems from textbooks
 """
 
-from qnty.problems.vector_equilibrium import VectorEquilibriumProblem
+from qnty.problems.vector_equilibrium import ParallelogramLaw
 from qnty.spatial.force_vector import ForceVector
 from qnty.core import u
 
@@ -20,7 +20,7 @@ from qnty.core import u
 # force and its direction, measured counterclockwise from the positive x axis.
 # Given: F1 = 700 N at 60°, F2 = 450 N at 105°
 
-class Problem_2_1(VectorEquilibriumProblem):
+class Problem_2_1(ParallelogramLaw):
     """
     Textbook Problem 2-1: Find resultant of two cable forces.
 
@@ -77,7 +77,7 @@ def example_2_programmatic():
     print("=" * 80)
 
     # Create problem instance
-    problem = VectorEquilibriumProblem(
+    problem = ParallelogramLaw(
         name="Cable Forces (Programmatic)",
         description="Same problem as Example 1, but constructed programmatically"
     )
@@ -105,7 +105,7 @@ def example_2_programmatic():
 # Given: F1 has components Fx=750sin(45°), Fy=750cos(45°)
 #        F2 has components Fx=800cos(30°), Fy=-800sin(30°)
 
-class Problem_2_27(VectorEquilibriumProblem):
+class Problem_2_27(ParallelogramLaw):
     """
     Textbook Problem 2-27: Forces given as components.
 
@@ -164,7 +164,7 @@ def example_4_fluent_api():
     print("EXAMPLE 4: Fluent API with Unit References")
     print("=" * 80)
 
-    problem = VectorEquilibriumProblem("Support Cables")
+    problem = ParallelogramLaw("Support Cables")
 
     # Use unit objects from catalog
     problem.add_force(ForceVector(magnitude=1200, angle=0, unit=u.lb, name="Horizontal"))
@@ -183,7 +183,7 @@ def example_4_fluent_api():
 # EXAMPLE 5: Three Forces at Equilibrium
 # =============================================================================
 
-class ThreeForceEquilibrium(VectorEquilibriumProblem):
+class ThreeForceEquilibrium(ParallelogramLaw):
     """
     Three forces in equilibrium - find the unknown third force.
 
@@ -221,7 +221,7 @@ def example_5_equilibrium():
 # EXAMPLE 6: Real-World Engineering Problem
 # =============================================================================
 
-class SuspensionCableProblem(VectorEquilibriumProblem):
+class SuspensionCableProblem(ParallelogramLaw):
     """
     Real-world: Bridge suspension cable analysis.
 

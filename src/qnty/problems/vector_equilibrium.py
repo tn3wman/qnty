@@ -19,7 +19,7 @@ from ..spatial.vector import Vector
 from .problem import Problem
 
 
-class VectorEquilibriumProblem(Problem):
+class ParallelogramLaw(Problem):
     """
     Specialized Problem for 2D/3D vector equilibrium using algebraic methods.
 

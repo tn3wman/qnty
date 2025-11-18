@@ -7,7 +7,7 @@ with step-by-step calculations.
 """
 
 from pathlib import Path
-from qnty.problems.vector_equilibrium import VectorEquilibriumProblem
+from qnty.problems.vector_equilibrium import ParallelogramLaw
 from qnty.spatial.force_vector import ForceVector
 from qnty.extensions.reporting import generate_report
 
@@ -20,7 +20,7 @@ REPORTS_DIR.mkdir(exist_ok=True)
 # EXAMPLE 1: Simple Cable Problem with Report
 # =============================================================================
 
-class Problem1(VectorEquilibriumProblem):
+class Problem1(ParallelogramLaw):
     name = "Problem 1"
     description = """
     If $\\theta=60^{\\circ}$ and $F=450 \\mathrm{~N}$, determine the magnitude of the resultant force and its direction, measured counterclockwise from the positive $x$ axis.

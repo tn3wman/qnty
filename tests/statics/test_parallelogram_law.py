@@ -1,6 +1,6 @@
 import pytest
 
-from qnty.problems.vector_equilibrium import VectorEquilibriumProblem
+from qnty.problems.vector_equilibrium import ParallelogramLaw
 from qnty.spatial.coordinate_system import CoordinateSystem
 from qnty.spatial.force_vector import ForceVector
 
@@ -860,7 +860,7 @@ def solve_force_vector_problem(problem_name):
     class_attrs.update(forces_dict)
 
     # Create dynamic problem class
-    ProblemClass = type(f"Problem_{problem_name}", (VectorEquilibriumProblem,), class_attrs)
+    ProblemClass = type(f"Problem_{problem_name}", (ParallelogramLaw,), class_attrs)
 
     # Solve
     problem_instance = ProblemClass()

@@ -6,7 +6,7 @@ vector diagrams automatically included in PDF and Markdown outputs.
 """
 
 from pathlib import Path
-from qnty.problems.vector_equilibrium import VectorEquilibriumProblem
+from qnty.problems.vector_equilibrium import ParallelogramLaw
 from qnty.spatial.force_vector import ForceVector
 from qnty.extensions.reporting import generate_report
 
@@ -19,7 +19,7 @@ REPORTS_DIR.mkdir(exist_ok=True)
 # EXAMPLE 1: Simple Two-Force Problem
 # =============================================================================
 
-class TwoForceProblem(VectorEquilibriumProblem):
+class TwoForceProblem(ParallelogramLaw):
     """
     Find resultant of two forces.
 
@@ -65,7 +65,7 @@ def example_1_two_forces():
 # EXAMPLE 2: Three-Force Equilibrium
 # =============================================================================
 
-class ThreeForceProblem(VectorEquilibriumProblem):
+class ThreeForceProblem(ParallelogramLaw):
     """
     Three forces in equilibrium.
 
@@ -117,7 +117,7 @@ def example_2_three_forces():
 # EXAMPLE 3: Horizontal and Vertical Forces
 # =============================================================================
 
-class HorizontalVerticalProblem(VectorEquilibriumProblem):
+class HorizontalVerticalProblem(ParallelogramLaw):
     """
     Forces in cardinal directions.
 

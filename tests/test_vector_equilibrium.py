@@ -8,7 +8,7 @@ from textbook problems.
 import math
 import pytest
 
-from qnty.problems.vector_equilibrium import VectorEquilibriumProblem
+from qnty.problems.vector_equilibrium import ParallelogramLaw
 from qnty.spatial.force_vector import ForceVector
 from qnty.core import u
 
@@ -65,7 +65,7 @@ class TestVectorEquilibriumBasic:
 
     def test_problem_creation(self):
         """Test creating a problem instance."""
-        problem = VectorEquilibriumProblem("Test Problem")
+        problem = ParallelogramLaw("Test Problem")
 
         assert problem.name == "Test Problem"
         assert len(problem.forces) == 0
@@ -73,7 +73,7 @@ class TestVectorEquilibriumBasic:
 
     def test_add_force(self):
         """Test adding forces to problem."""
-        problem = VectorEquilibriumProblem("Test")
+        problem = ParallelogramLaw("Test")
 
         force1 = ForceVector(magnitude=100, angle=0, unit="N", name="F1")
         problem.add_force(force1)
@@ -84,7 +84,7 @@ class TestVectorEquilibriumBasic:
     def test_class_attribute_extraction(self):
         """Test extracting ForceVector from class attributes."""
 
-        class TestProblem(VectorEquilibriumProblem):
+        class TestProblem(ParallelogramLaw):
             F1 = ForceVector(magnitude=100, angle=0, unit="N", name="F1")
             F2 = ForceVector(magnitude=200, angle=90, unit="N", name="F2")
 
@@ -109,7 +109,7 @@ class TestTextbookProblems:
         Expected: FR = 497 N at 155°
         """
 
-        class Problem21(VectorEquilibriumProblem):
+        class Problem21(ParallelogramLaw):
             F1 = ForceVector(magnitude=700, angle=60, unit="N", name="F1")
             F2 = ForceVector(magnitude=450, angle=105, unit="N", name="F2")
             FR = ForceVector.unknown("FR", is_resultant=True)
@@ -137,7 +137,7 @@ class TestTextbookProblems:
         Expected: FR = 393 lb at 353°
         """
 
-        class Problem23(VectorEquilibriumProblem):
+        class Problem23(ParallelogramLaw):
             F1 = ForceVector(magnitude=250, angle=315, unit="lb", name="F1")
             F2 = ForceVector(magnitude=375, angle=30, unit="lb", name="F2")
             FR = ForceVector.unknown("FR", is_resultant=True)
@@ -168,7 +168,7 @@ class TestTextbookProblems:
         Expected: FR ≈ 1230 N at 6.08°
         """
 
-        class Problem227(VectorEquilibriumProblem):
+        class Problem227(ParallelogramLaw):
             F1 = ForceVector(magnitude=750, angle=45, unit="N", name="F1")
             F2 = ForceVector(magnitude=800, angle=330, unit="N", name="F2")
             FR = ForceVector.unknown("FR", is_resultant=True)
@@ -193,7 +193,7 @@ class TestEquilibriumSolving:
     def test_two_force_equilibrium(self):
         """Test finding force needed for equilibrium."""
 
-        class TwoForceEquilibrium(VectorEquilibriumProblem):
+        class TwoForceEquilibrium(ParallelogramLaw):
             F1 = ForceVector(magnitude=100, angle=0, unit="N", name="F1")
             F2 = ForceVector.unknown("F2", is_resultant=False)
 
@@ -213,7 +213,7 @@ class TestEquilibriumSolving:
     def test_three_force_equilibrium(self):
         """Test three forces in equilibrium."""
 
-        class ThreeForceEquilibrium(VectorEquilibriumProblem):
+        class ThreeForceEquilibrium(ParallelogramLaw):
             F1 = ForceVector(magnitude=500, angle=0, unit="N", name="F1")
             F2 = ForceVector(magnitude=300, angle=90, unit="N", name="F2")
             F3 = ForceVector.unknown("F3")
@@ -236,7 +236,7 @@ class TestProgrammaticConstruction:
 
     def test_add_forces_programmatically(self):
         """Test adding forces without class definition."""
-        problem = VectorEquilibriumProblem("Programmatic Test")
+        problem = ParallelogramLaw("Programmatic Test")
 
         problem.add_force(ForceVector(magnitude=100, angle=0, unit="N", name="F1"))
         problem.add_force(ForceVector(magnitude=100, angle=90, unit="N", name="F2"))
@@ -262,7 +262,7 @@ class TestReportGeneration:
     def test_generate_report_content(self):
         """Test generating report content."""
 
-        class SimpleProblem(VectorEquilibriumProblem):
+        class SimpleProblem(ParallelogramLaw):
             name = "Simple Test Problem"
             description = "Test report generation"
 

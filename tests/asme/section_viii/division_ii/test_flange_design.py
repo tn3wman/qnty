@@ -247,14 +247,14 @@ class FlangeDesign(Problem):
     
 
     # For Integral-type flange, reverse integral-type flange
-    F = Dimensionless("Flange stress factor for integral type flange")
-    F_eqn = equation(
-        F,
-        0.897697 - 0.297012*ln(X_g) + 9.5257e-3*ln(X_h) +
-        0.123586*(ln(X_g))**2 + 0.0358580*(ln(X_h))**2 - 0.194422*ln(X_g)*ln(X_h) -
-        0.0181259*(ln(X_g))**3 + 0.0129360*(ln(X_h))**3 -
-        0.0377693*(ln(X_g))*(ln(X_h))**2 + 0.0273791*(ln(X_g))**2*ln(X_h)
-    )
+    # F = Dimensionless("Flange stress factor for integral type flange")
+    # F_eqn = equation(
+    #     F,
+    #     0.897697 - 0.297012*ln(X_g) + 9.5257e-3*ln(X_h) +
+    #     0.123586*(ln(X_g))**2 + 0.0358580*(ln(X_h))**2 - 0.194422*ln(X_g)*ln(X_h) -
+    #     0.0181259*(ln(X_g))**3 + 0.0129360*(ln(X_h))**3 -
+    #     0.0377693*(ln(X_g))*(ln(X_h))**2 + 0.0273791*(ln(X_g))**2*ln(X_h)
+    # )
 
     # For Welded slip-on flange
 
