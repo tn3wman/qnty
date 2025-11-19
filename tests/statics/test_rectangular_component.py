@@ -9,7 +9,7 @@ import math
 
 import pytest
 
-from qnty.solving.component_solver import ComponentSolver
+from qnty.problems.rectangular_vector import RectangularVectorProblem
 from qnty.spatial.force_vector import ForceVector
 
 # Problem definitions - single source of truth
@@ -1103,37 +1103,47 @@ def solve_component_problem(problem_name):
     """Solve a component method problem and return the solution."""
     spec = COMPONENT_METHOD_PROBLEMS[problem_name]
 
-    # Create solver
-    solver = ComponentSolver()
+    # Create dynamic problem class with forces as class attributes
+    class_attrs = {
+        "name": spec["name"],
+        "description": spec["description"],
+    }
 
-    # Get forces dict
+    # Get forces dict and add as class attributes
     forces_dict = spec["forces"]
+    class_attrs.update(forces_dict)
 
-    # Convert forces dict to list for solver
-    forces_list = list(forces_dict.values())
+    # Create dynamic problem class
+    ProblemClass = type(f"Problem_{problem_name}", (RectangularVectorProblem,), class_attrs)
 
-    # Solve the problem (solver detects problem type automatically and handles force-relative angles)
-    solved_forces = solver.solve(forces_list)
-
-    # Update forces_dict with solved values
-    forces_dict.update(solved_forces)
+    # Solve
+    problem_instance = ProblemClass()
+    solution = problem_instance.solve()
 
     # Find resultant for return value
     resultant = None
-    for force in forces_dict.values():
+    for force in solution.values():
         if hasattr(force, 'is_resultant') and force.is_resultant:
             resultant = force
             break
 
     # Get component sums with all known forces (excluding resultant)
-    known_forces = [f for f in forces_dict.values() if f.is_known and not (hasattr(f, 'is_resultant') and f.is_resultant)]
-    sum_x, sum_y, _ = solver.sum_components(known_forces)
+    known_forces = [f for f in solution.values() if f.is_known and not (hasattr(f, 'is_resultant') and f.is_resultant)]
 
-    # Get solution steps
-    steps = solver.get_solution_steps()
+    # Calculate component sums manually
+    sum_x = 0.0
+    sum_y = 0.0
+    for force in known_forces:
+        if force.x is not None and force.x.value is not None:
+            sum_x += force.x.value
+        if force.y is not None and force.y.value is not None:
+            sum_y += force.y.value
+
+    # Get solution steps from problem instance
+    steps = problem_instance.solution_steps
 
     return {
-        "forces": forces_dict,
+        "forces": solution,
         "resultant": resultant,
         "sum_x": sum_x,
         "sum_y": sum_y,

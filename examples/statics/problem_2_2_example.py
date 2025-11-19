@@ -11,11 +11,11 @@ This demonstrates the pattern: F_1 (unknown) + F_2 (known) = F_R (known resultan
 from pathlib import Path
 
 from qnty.extensions.reporting import generate_report
-from qnty.problems.vector_equilibrium import ParallelogramLaw
+from qnty.problems.parallelogram_law import ParallelogramLawProblem
 from qnty.spatial.force_vector import ForceVector
 
 
-class Problem_2_2(ParallelogramLaw):
+class Problem_2_2(ParallelogramLawProblem):
     """
     Solve for unknown force given known resultant and known force.
 

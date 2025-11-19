@@ -13,11 +13,11 @@ Problem:
           force is F_R = 3000 N along the positive x-axis.
 """
 
-from qnty.problems.vector_equilibrium import ParallelogramLaw
+from qnty.problems.parallelogram_law import ParallelogramLawProblem
 from qnty.spatial.force_vector import ForceVector
 
 
-class TugboatProblem(ParallelogramLaw):
+class TugboatProblem(ParallelogramLawProblem):
     """
     Two tugboats pulling a barge. Given F_A and desired F_R, find F_B.
 

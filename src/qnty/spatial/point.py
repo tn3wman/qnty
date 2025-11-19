@@ -7,11 +7,11 @@ Internally stores values in SI units for consistency with qnty's architecture.
 
 from __future__ import annotations
 
-import numpy as np
-from numpy.typing import NDArray
 from typing import TYPE_CHECKING, Generic, TypeVar
 
-from ..core.dimension import Dimension
+import numpy as np
+from numpy.typing import NDArray
+
 from ..core.quantity import Quantity
 from ..core.unit import Unit
 

@@ -13,13 +13,14 @@ from typing import Any
 import numpy as np
 
 from ..core.quantity import Quantity
+from ..solving.component_solver import ComponentSolver
 from ..solving.triangle_solver import TriangleSolver
 from ..spatial.force_vector import ForceVector
 from ..spatial.vector import Vector
 from .problem import Problem
 
 
-class ParallelogramLaw(Problem):
+class ParallelogramLawProblem(Problem):
     """
     Specialized Problem for 2D/3D vector equilibrium using algebraic methods.
 

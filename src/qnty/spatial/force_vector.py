@@ -160,7 +160,6 @@ class ForceVector:
             if isinstance(magnitude, int | float):
                 if unit is None:
                     raise ValueError("unit must be specified when magnitude is a scalar")
-                from ..core.dimension_catalog import dim as dim_cat
 
                 mag_qty = Quantity.from_value(float(magnitude), unit, name=f"{self.name}_magnitude")
                 mag_qty.preferred = unit
@@ -168,7 +167,7 @@ class ForceVector:
                 mag_qty = magnitude
 
             # Convert angles to radians if needed
-            def to_radians(angle_val, angle_qty_name):
+            def to_radians_coord(angle_val, angle_qty_name):
                 if angle_val is None:
                     return None
                 if isinstance(angle_val, int | float):
@@ -176,9 +175,9 @@ class ForceVector:
                 else:
                     return angle_val.value
 
-            alpha_rad = to_radians(alpha, "alpha")
-            beta_rad = to_radians(beta, "beta")
-            gamma_rad = to_radians(gamma, "gamma")
+            alpha_rad = to_radians_coord(alpha, "alpha")
+            beta_rad = to_radians_coord(beta, "beta")
+            gamma_rad = to_radians_coord(gamma, "gamma")
 
             # Validate: cos²α + cos²β + cos²γ = 1
             # If one angle is missing, calculate it
@@ -189,7 +188,7 @@ class ForceVector:
             if alpha_rad is None and beta_rad is not None and gamma_rad is not None:
                 cos_alpha_sq = 1 - math.cos(beta_rad) ** 2 - math.cos(gamma_rad) ** 2
                 if cos_alpha_sq < 0:
-                    raise ValueError(f"Invalid angle combination: cos²α + cos²β + cos²γ > 1")
+                    raise ValueError("Invalid angle combination: cos²α + cos²β + cos²γ > 1")
                 # Determine sign from beta and gamma octant
                 # If both beta and gamma are acute (<90°), then alpha is acute (positive cos)
                 # Otherwise, check if we need obtuse alpha
@@ -199,7 +198,7 @@ class ForceVector:
             elif beta_rad is None and alpha_rad is not None and gamma_rad is not None:
                 cos_beta_sq = 1 - math.cos(alpha_rad) ** 2 - math.cos(gamma_rad) ** 2
                 if cos_beta_sq < 0:
-                    raise ValueError(f"Invalid angle combination: cos²α + cos²β + cos²γ > 1")
+                    raise ValueError("Invalid angle combination: cos²α + cos²β + cos²γ > 1")
                 # Since we don't have octant information, we need to determine the sign
                 # Check if both given angles are acute - if so, use positive sqrt (acute beta)
                 # Otherwise, use negative sqrt (obtuse beta)
@@ -220,7 +219,7 @@ class ForceVector:
             elif gamma_rad is None and alpha_rad is not None and beta_rad is not None:
                 cos_gamma_sq = 1 - math.cos(alpha_rad) ** 2 - math.cos(beta_rad) ** 2
                 if cos_gamma_sq < 0:
-                    raise ValueError(f"Invalid angle combination: cos²α + cos²β + cos²γ > 1")
+                    raise ValueError("Invalid angle combination: cos²α + cos²β + cos²γ > 1")
                 cos_gamma = math.sqrt(cos_gamma_sq)
                 # Default to acute angle
                 gamma_rad = math.acos(cos_gamma)
@@ -242,11 +241,11 @@ class ForceVector:
             z_val = mag_val * math.cos(gamma_rad)
 
             # Create Quantities from SI values
-            from ..core.dimension_catalog import dim as dim_cat
+            from ..core.dimension_catalog import dim as dim_force
 
-            x_qty = Quantity(name=f"{self.name}_x", dim=dim_cat.force, value=x_val, preferred=mag_qty.preferred)
-            y_qty = Quantity(name=f"{self.name}_y", dim=dim_cat.force, value=y_val, preferred=mag_qty.preferred)
-            z_qty = Quantity(name=f"{self.name}_z", dim=dim_cat.force, value=z_val, preferred=mag_qty.preferred)
+            x_qty = Quantity(name=f"{self.name}_x", dim=dim_force.force, value=x_val, preferred=mag_qty.preferred)
+            y_qty = Quantity(name=f"{self.name}_y", dim=dim_force.force, value=y_val, preferred=mag_qty.preferred)
+            z_qty = Quantity(name=f"{self.name}_z", dim=dim_force.force, value=z_val, preferred=mag_qty.preferred)
 
             self._vector = Vector.from_quantities(x_qty, y_qty, z_qty)
             self._magnitude = mag_qty
@@ -262,7 +261,6 @@ class ForceVector:
             if isinstance(magnitude, int | float):
                 if unit is None:
                     raise ValueError("unit must be specified when magnitude is a scalar")
-                from ..core.dimension_catalog import dim as dim_cat
 
                 mag_qty = Quantity.from_value(float(magnitude), unit, name=f"{self.name}_magnitude")
                 mag_qty.preferred = unit
@@ -285,6 +283,8 @@ class ForceVector:
             # Az = A cos(φ)
             if mag_qty.value is None:
                 raise ValueError("Magnitude value must be known for transverse/azimuth construction")
+            if phi_rad is None or theta_rad is None:
+                raise ValueError("Angles phi and theta must be known for transverse/azimuth construction")
 
             mag_val = mag_qty.value
             x_val = mag_val * math.sin(phi_rad) * math.cos(theta_rad)
@@ -292,11 +292,11 @@ class ForceVector:
             z_val = mag_val * math.cos(phi_rad)
 
             # Create Quantities from SI values
-            from ..core.dimension_catalog import dim as dim_cat
+            from ..core.dimension_catalog import dim as dim_force2
 
-            x_qty = Quantity(name=f"{self.name}_x", dim=dim_cat.force, value=x_val, preferred=mag_qty.preferred)
-            y_qty = Quantity(name=f"{self.name}_y", dim=dim_cat.force, value=y_val, preferred=mag_qty.preferred)
-            z_qty = Quantity(name=f"{self.name}_z", dim=dim_cat.force, value=z_val, preferred=mag_qty.preferred)
+            x_qty = Quantity(name=f"{self.name}_x", dim=dim_force2.force, value=x_val, preferred=mag_qty.preferred)
+            y_qty = Quantity(name=f"{self.name}_y", dim=dim_force2.force, value=y_val, preferred=mag_qty.preferred)
+            z_qty = Quantity(name=f"{self.name}_z", dim=dim_force2.force, value=z_val, preferred=mag_qty.preferred)
 
             self._vector = Vector.from_quantities(x_qty, y_qty, z_qty)
             self._magnitude = mag_qty
@@ -323,7 +323,7 @@ class ForceVector:
 
             # Convert angle to Quantity if needed
             if isinstance(angle, int | float):
-                from ..core.dimension_catalog import dim
+                from ..core.dimension_catalog import dim as dim_angle
 
                 # Convert angle from angle_reference system to standard (CCW from +x)
                 angle_in_ref_system = float(angle) * angle_unit.si_factor  # Convert to radians
@@ -338,7 +338,7 @@ class ForceVector:
                     self._relative_angle = base_offset + angle_in_ref_system
                     angle_standard = None  # Will be resolved later
 
-                angle_qty = Quantity(name=f"{self.name}_angle", dim=dim.D, value=angle_standard, preferred=angle_unit)
+                angle_qty = Quantity(name=f"{self.name}_angle", dim=dim_angle.D, value=angle_standard, preferred=angle_unit)
             else:
                 # Angle is already a Quantity - assume it's in the angle_reference system
                 angle_in_ref_system = angle.value
@@ -361,11 +361,11 @@ class ForceVector:
                 z_val = 0.0
 
                 # Create Quantities from SI values to avoid double conversion in Vector.__init__
-                from ..core.dimension_catalog import dim as dim_cat
+                from ..core.dimension_catalog import dim as dim_force3
 
-                x_qty = Quantity(name=f"{self.name}_x", dim=dim_cat.force, value=x_val, preferred=mag_qty.preferred)
-                y_qty = Quantity(name=f"{self.name}_y", dim=dim_cat.force, value=y_val, preferred=mag_qty.preferred)
-                z_qty = Quantity(name=f"{self.name}_z", dim=dim_cat.force, value=z_val, preferred=mag_qty.preferred)
+                x_qty = Quantity(name=f"{self.name}_x", dim=dim_force3.force, value=x_val, preferred=mag_qty.preferred)
+                y_qty = Quantity(name=f"{self.name}_y", dim=dim_force3.force, value=y_val, preferred=mag_qty.preferred)
+                z_qty = Quantity(name=f"{self.name}_z", dim=dim_force3.force, value=z_val, preferred=mag_qty.preferred)
                 self._vector = Vector.from_quantities(x_qty, y_qty, z_qty)
             else:
                 # Unknown force or has relative angle constraint
@@ -872,7 +872,7 @@ class ForceVector:
         # Use Quantity's built-in magnitude method
         return self._magnitude.magnitude(unit)
 
-    def angle_in(self, unit: Unit | str = "degree", wrt: str | AngleReference | None = None, forces: dict[str, "ForceVector"] | None = None) -> float:
+    def angle_in(self, unit: Unit | str = "degree", wrt: str | AngleReference | None = None, forces: dict[str, ForceVector] | None = None) -> float:
         """
         Get angle in specified unit and reference system.
 
@@ -1104,12 +1104,12 @@ class ForceVector:
         cos_alpha = max(-1.0, min(1.0, cos_alpha))
         alpha_rad = math.acos(cos_alpha)
 
-        from ..core.dimension_catalog import dim as dim_cat
+        from ..core.dimension_catalog import dim as dim_alpha
         from ..core.unit import ureg
 
-        degree_unit = ureg.resolve("degree", dim=dim_cat.D)
+        degree_unit = ureg.resolve("degree", dim=dim_alpha.D)
 
-        return Quantity(name=f"{self.name}_alpha", dim=dim_cat.D, value=alpha_rad, preferred=degree_unit)
+        return Quantity(name=f"{self.name}_alpha", dim=dim_alpha.D, value=alpha_rad, preferred=degree_unit)
 
     @property
     def beta(self) -> Quantity | None:
@@ -1136,12 +1136,12 @@ class ForceVector:
         cos_beta = max(-1.0, min(1.0, cos_beta))
         beta_rad = math.acos(cos_beta)
 
-        from ..core.dimension_catalog import dim as dim_cat
+        from ..core.dimension_catalog import dim as dim_beta
         from ..core.unit import ureg
 
-        degree_unit = ureg.resolve("degree", dim=dim_cat.D)
+        degree_unit = ureg.resolve("degree", dim=dim_beta.D)
 
-        return Quantity(name=f"{self.name}_beta", dim=dim_cat.D, value=beta_rad, preferred=degree_unit)
+        return Quantity(name=f"{self.name}_beta", dim=dim_beta.D, value=beta_rad, preferred=degree_unit)
 
     @property
     def gamma(self) -> Quantity | None:
@@ -1168,12 +1168,12 @@ class ForceVector:
         cos_gamma = max(-1.0, min(1.0, cos_gamma))
         gamma_rad = math.acos(cos_gamma)
 
-        from ..core.dimension_catalog import dim as dim_cat
+        from ..core.dimension_catalog import dim as dim_gamma
         from ..core.unit import ureg
 
-        degree_unit = ureg.resolve("degree", dim=dim_cat.D)
+        degree_unit = ureg.resolve("degree", dim=dim_gamma.D)
 
-        return Quantity(name=f"{self.name}_gamma", dim=dim_cat.D, value=gamma_rad, preferred=degree_unit)
+        return Quantity(name=f"{self.name}_gamma", dim=dim_gamma.D, value=gamma_rad, preferred=degree_unit)
 
     @property
     def direction_cosines(self) -> tuple[float, float, float] | None:

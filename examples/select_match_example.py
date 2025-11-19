@@ -7,10 +7,10 @@ to implement engineering calculations that vary based on categorical selections,
 such as gasket types in ASME BPVC Section VIII Division 2.
 """
 
-from dataclasses import dataclass
 import math
+from dataclasses import dataclass
 
-from qnty import Dimensionless, Length, Pressure, Problem, Force
+from qnty import Dimensionless, Force, Length, Pressure, Problem
 from qnty.algebra import SelectOption, SelectVariable, equation, match_expr
 
 

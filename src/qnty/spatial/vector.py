@@ -8,11 +8,11 @@ scaling, dot product, cross product, and normalization.
 
 from __future__ import annotations
 
-import numpy as np
-from numpy.typing import NDArray
 from typing import Generic, TypeVar
 
-from ..core.dimension import Dimension
+import numpy as np
+from numpy.typing import NDArray
+
 from ..core.quantity import Quantity
 from ..core.unit import Unit
 

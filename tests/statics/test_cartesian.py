@@ -12,7 +12,7 @@ import math
 
 import pytest
 
-from qnty.solving.component_solver import ComponentSolver
+from qnty.problems.cartesian_vector import CartesianVectorProblem
 from qnty.spatial.force_vector import ForceVector
 
 # Problem definitions - single source of truth
@@ -1366,31 +1366,43 @@ def assert_direction_angle(angle_qty, expected_deg: float, angle_name: str, forc
 @pytest.mark.parametrize("problem_key", list(CARTESIAN_3D_PROBLEMS.keys()))
 def test_cartesian_3d_problem(problem_key):
     """Test 3D Cartesian vector problems."""
-    problem = CARTESIAN_3D_PROBLEMS[problem_key]
+    spec = CARTESIAN_3D_PROBLEMS[problem_key]
 
-    if problem["debug"]["print_results"]:
+    if spec["debug"]["print_results"]:
         print(f"\n{'=' * 80}")
-        print(f"Testing: {problem['name']}")
+        print(f"Testing: {spec['name']}")
         print(f"{'=' * 80}")
-        print(problem["description"])
+        print(spec["description"])
 
-    # Extract forces
-    forces = problem["forces"]
-    expected = problem["expected"]
+    # Extract forces and expected values
+    forces_dict = spec["forces"]
+    expected = spec["expected"]
 
-    # Create solver
-    solver = ComponentSolver()
+    # Create dynamic problem class with forces as class attributes
+    class_attrs = {
+        "name": spec["name"],
+        "description": spec["description"],
+    }
+
+    # Add forces as class attributes
+    class_attrs.update(forces_dict)
+
+    # Create dynamic problem class
+    ProblemClass = type(f"Problem_{problem_key}", (CartesianVectorProblem,), class_attrs)
+
+    # Create problem instance
+    problem = ProblemClass()
 
     # Check if this problem requires solving (has any unknown forces)
-    has_unknowns = any(not f.is_known for f in forces.values())
+    has_unknowns = any(not f.is_known for f in forces_dict.values())
 
     if has_unknowns:
         # Solve for unknown forces (could be resultant or individual forces)
-        result = solver.solve(list(forces.values()))
+        result = problem.solve()
 
-        if problem["debug"]["print_results"]:
+        if spec["debug"]["print_results"]:
             print("\n--- Solution Steps ---")
-            for step in solver.get_solution_steps():
+            for step in problem.solution_steps:
                 if "description" in step:
                     print(f"\n{step['description']}")
                 if "equations" in step:
@@ -1401,18 +1413,18 @@ def test_cartesian_3d_problem(problem_key):
                         print(f"  {comp}")
 
         # Verify results
-        if problem["debug"]["assert_values"]:
+        if spec["debug"]["assert_values"]:
             for force_name, expected_values in expected.items():
                 solved_force = result[force_name]
                 expected_unit = expected_values.get("unit", "N")
 
-                if problem["debug"]["print_results"]:
+                if spec["debug"]["print_results"]:
                     print(f"\n--- Verification: {force_name} ---")
 
                 # Check magnitude if specified
                 if "magnitude" in expected_values:
                     assert_force_magnitude(solved_force, expected_values["magnitude"], expected_unit)
-                    if problem["debug"]["print_results"]:
+                    if spec["debug"]["print_results"]:
                         mag_val = (solved_force.magnitude_in(solved_force.magnitude.preferred)
                                    if solved_force.magnitude and solved_force.magnitude.preferred
                                    else solved_force.magnitude.value if solved_force.magnitude else 0.0)
@@ -1420,51 +1432,54 @@ def test_cartesian_3d_problem(problem_key):
 
                 # Check components if specified
                 if "x" in expected_values:
-                    x_val = solved_force.x.value / solved_force.x.preferred.si_factor if solved_force.x else None
+                    assert solved_force.x is not None and solved_force.x.value is not None and solved_force.x.preferred is not None
+                    x_val = solved_force.x.value / solved_force.x.preferred.si_factor
                     assert_force_component(x_val, expected_values["x"], "x", force_name, expected_unit)
-                    if problem["debug"]["print_results"]:
+                    if spec["debug"]["print_results"]:
                         print(f"  Fx: {x_val:.3f} {expected_unit} ✓")
 
                 if "y" in expected_values:
-                    y_val = solved_force.y.value / solved_force.y.preferred.si_factor if solved_force.y else None
+                    assert solved_force.y is not None and solved_force.y.value is not None and solved_force.y.preferred is not None
+                    y_val = solved_force.y.value / solved_force.y.preferred.si_factor
                     assert_force_component(y_val, expected_values["y"], "y", force_name, expected_unit)
-                    if problem["debug"]["print_results"]:
+                    if spec["debug"]["print_results"]:
                         print(f"  Fy: {y_val:.3f} {expected_unit} ✓")
 
                 if "z" in expected_values:
-                    z_val = solved_force.z.value / solved_force.z.preferred.si_factor if solved_force.z else None
+                    assert solved_force.z is not None and solved_force.z.value is not None and solved_force.z.preferred is not None
+                    z_val = solved_force.z.value / solved_force.z.preferred.si_factor
                     assert_force_component(z_val, expected_values["z"], "z", force_name, expected_unit)
-                    if problem["debug"]["print_results"]:
+                    if spec["debug"]["print_results"]:
                         print(f"  Fz: {z_val:.3f} {expected_unit} ✓")
 
                 # Check direction angles if specified
                 if "alpha" in expected_values:
                     assert_direction_angle(solved_force.alpha, expected_values["alpha"], "α", force_name, tolerance=1.0)
-                    if problem["debug"]["print_results"] and solved_force.alpha:
+                    if spec["debug"]["print_results"] and solved_force.alpha and solved_force.alpha.value is not None:
                         print(f"  α: {math.degrees(solved_force.alpha.value):.1f}° ✓")
 
                 if "beta" in expected_values:
                     assert_direction_angle(solved_force.beta, expected_values["beta"], "β", force_name, tolerance=1.0)
-                    if problem["debug"]["print_results"] and solved_force.beta:
+                    if spec["debug"]["print_results"] and solved_force.beta and solved_force.beta.value is not None:
                         print(f"  β: {math.degrees(solved_force.beta.value):.1f}° ✓")
 
                 if "gamma" in expected_values:
                     assert_direction_angle(solved_force.gamma, expected_values["gamma"], "γ", force_name, tolerance=1.0)
-                    if problem["debug"]["print_results"] and solved_force.gamma:
+                    if spec["debug"]["print_results"] and solved_force.gamma and solved_force.gamma.value is not None:
                         print(f"  γ: {math.degrees(solved_force.gamma.value):.1f}° ✓")
 
     else:
         # Just verify given forces have correct components
-        if problem["debug"]["print_results"]:
+        if spec["debug"]["print_results"]:
             print("\n--- Force Properties ---")
 
-        if problem["debug"]["assert_values"]:
-            for force_name, force in forces.items():
+        if spec["debug"]["assert_values"]:
+            for force_name, force in problem.forces.items():
                 if force_name in expected:
                     expected_values = expected[force_name]
                     expected_unit = expected_values.get("unit", "N")
 
-                    if problem["debug"]["print_results"]:
+                    if spec["debug"]["print_results"]:
                         print(f"\n--- {force_name} ---")
 
                     # Check and print magnitude
@@ -1472,40 +1487,43 @@ def test_cartesian_3d_problem(problem_key):
                         mag_val = force.magnitude_in(force.magnitude.preferred) if force.magnitude and force.magnitude.preferred else force.magnitude.value if force.magnitude else None
                         if mag_val is not None:
                             assert_force_magnitude(force, expected_values["magnitude"], expected_unit)
-                            if problem["debug"]["print_results"]:
+                            if spec["debug"]["print_results"]:
                                 print(f"  Magnitude: {mag_val:.3f} {expected_unit} ✓")
 
                     if "x" in expected_values and force.x:
+                        assert force.x.value is not None and force.x.preferred is not None
                         x_val = force.x.value / force.x.preferred.si_factor
                         assert_force_component(x_val, expected_values["x"], "x", force_name, expected_unit)
-                        if problem["debug"]["print_results"]:
+                        if spec["debug"]["print_results"]:
                             print(f"  Fx: {x_val:.3f} {expected_unit} ✓")
 
                     if "y" in expected_values and force.y:
+                        assert force.y.value is not None and force.y.preferred is not None
                         y_val = force.y.value / force.y.preferred.si_factor
                         assert_force_component(y_val, expected_values["y"], "y", force_name, expected_unit)
-                        if problem["debug"]["print_results"]:
+                        if spec["debug"]["print_results"]:
                             print(f"  Fy: {y_val:.3f} {expected_unit} ✓")
 
                     if "z" in expected_values and force.z:
+                        assert force.z.value is not None and force.z.preferred is not None
                         z_val = force.z.value / force.z.preferred.si_factor
                         assert_force_component(z_val, expected_values["z"], "z", force_name, expected_unit)
-                        if problem["debug"]["print_results"]:
+                        if spec["debug"]["print_results"]:
                             print(f"  Fz: {z_val:.3f} {expected_unit} ✓")
 
                     if "alpha" in expected_values and force.alpha:
                         assert_direction_angle(force.alpha, expected_values["alpha"], "α", force_name)
-                        if problem["debug"]["print_results"]:
+                        if spec["debug"]["print_results"] and force.alpha.value is not None:
                             print(f"  α: {math.degrees(force.alpha.value):.1f}° ✓")
 
                     if "beta" in expected_values and force.beta:
                         assert_direction_angle(force.beta, expected_values["beta"], "β", force_name)
-                        if problem["debug"]["print_results"]:
+                        if spec["debug"]["print_results"] and force.beta.value is not None:
                             print(f"  β: {math.degrees(force.beta.value):.1f}° ✓")
 
                     if "gamma" in expected_values and force.gamma:
                         assert_direction_angle(force.gamma, expected_values["gamma"], "γ", force_name)
-                        if problem["debug"]["print_results"]:
+                        if spec["debug"]["print_results"] and force.gamma.value is not None:
                             print(f"  γ: {math.degrees(force.gamma.value):.1f}° ✓")
 
 
