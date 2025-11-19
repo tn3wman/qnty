@@ -376,7 +376,47 @@ thickness = cond_expr(
     thick_wall,        # if pressure > threshold
     standard_wall      # else
 )
+
+# Range-based piecewise functions
+from qnty import range_expr, When
+
+# For equations that have different formulas for different value ranges
+# Example: Different stress factors based on hub parameter X_h
+V = range_expr(
+    X_h,
+    When.between(0.1, 0.5).then(v_1_expr),      # 0.1 <= X_h <= 0.5
+    When.gt(0.5).and_leq(2.0).then(v_2_expr),   # 0.5 < X_h <= 2.0
+    otherwise=default_expr
+)
+
+# Multiple ranges with readable syntax
+V_L = range_expr(
+    X_h,
+    When.between(0.1, 0.25).then(expr1),        # 0.1 <= X_h <= 0.25
+    When.gt(0.25).and_leq(0.5).then(expr2),     # 0.25 < X_h <= 0.5
+    When.gt(0.5).and_leq(1.0).then(expr3),      # 0.5 < X_h <= 1.0
+    When.gt(1.0).and_leq(2.0).then(expr4),      # 1.0 < X_h <= 2.0
+    otherwise=0
+)
+
+# One-sided conditions
+result = range_expr(
+    X,
+    When.lt(0.1).then(expr_small),              # X < 0.1
+    When.geq(0.1).and_lt(1.0).then(expr_med),   # 0.1 <= X < 1.0
+    When.geq(1.0).then(expr_large)              # X >= 1.0
+)
 ```
+
+**When helper methods:**
+
+- `When.between(lower, upper)` - Inclusive range: `lower <= x <= upper`
+- `When.gt(value)` - Greater than: `x > value`
+- `When.geq(value)` - Greater than or equal: `x >= value`
+- `When.lt(value)` - Less than: `x < value`
+- `When.leq(value)` - Less than or equal: `x <= value`
+- Chain methods: `.and_leq()`, `.and_lt()`, `.and_geq()`, `.and_gt()`
+- Complete with: `.then(expression)`
 
 ## Variable Operations
 

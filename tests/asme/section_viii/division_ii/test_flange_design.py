@@ -1,14 +1,11 @@
 import math
 from dataclasses import dataclass
 
+import numpy as np
 import pytest
-from sympy import to_nnf
 
-from codegen.generators import data
 from qnty import Area, Dimensionless, Force, Length, Pressure, Problem, SecondMomentOfArea, Torque
-from qnty.algebra import SelectOption, SelectVariable, abs_expr, cond_expr, eq, equation, geq, gt, leq, ln, log10, match_expr, max_expr, sqrt
-from qnty.core.dimension import Dimension
-from qnty.core.quantity import Quantity
+from qnty.algebra import SelectOption, SelectVariable, abs_expr, cond_expr, eq, equation, geq, leq, ln, log10, match_expr, max_expr, range_expr, sqrt, summation, When, exp
 from qnty.problems.rules import add_rule
 
 
@@ -190,10 +187,10 @@ class FlangeDesign(Problem):
     C = Length("Bolt Circle Diameter").set(4.5).inch
     A = Length("Outside Diameter of the Flange").set(5.5).inch
     t = Length("Flange Thickness").set(0.75).inch
-    g_0 = Length("Thickness of the Hub at the Small End").set(0).inch
-    g_1 = Length("Thickness of the Hub at the Large End").set(0).inch
-    g_2 = Length("Thickness of the pipe in a welded slip-on flange, g_2 = t_n").set(0).inch
-    h = Length("Hub Length").set(0).inch
+    g_0 = Length("Thickness of the Hub at the Small End").set(0.25).inch
+    g_1 = Length("Thickness of the Hub at the Large End").set(0.25).inch
+    g_2 = Length("Thickness of the pipe in a welded slip-on flange, g_2 = t_n").set(0.25).inch
+    h = Length("Hub Length").set(0.25).inch
 
     # TODO: radius to be at least 0.25g1 but not less than 5 mm (0.1875 in.) if hubbed flange
     r_1 = Length("Fillet Radius at the Junction of the Hub and Flange").set(0).inch
@@ -201,64 +198,171 @@ class FlangeDesign(Problem):
     # region // Step 4
     # Determine the flange stress factors using the equations in Tables 4.16.4 and 4.16.5.
 
+    flange_connection = SelectVariable("Flange Connection", FlangeConnection, FlangeConnection.integral)
+    flange_hub = SelectVariable("Flange Hub", FlangeHubType, FlangeHubType.without_hub)
 
-    # expr_Y = (1/(K-1)) * (0.66845 + 5.71690 * ((K**2 * log10(K)) / (K**2 - 1)))
-    # expr_Y_r = alpha_r * Y
+    X_g = Dimensionless("intermediate variable X_g")
+    X_g_eqn = equation(
+        X_g,
+        g_1 / g_0
+    )
 
-    # expr_T = (K**2 * (1+8.55246*log10(K)) - 1) / ((1.04720 + 1.9448*K**2) * (K - 1))
-    # expr_T_r = (Z+0.3)/(Z-0.3) * alpha_r * T
+    h_o = Length("intermediate variable h_o")
+    h_o_eqn = equation(
+        h_o,
+        sqrt(B * g_0)
+    )
 
-    # expr_U = (K**2 * (1 + 8.55246*log10(K)) - 1) / (1.36136 * (K**2 - 1) * (K - 1))
-    # expr_U_r = alpha_r * U
-
-    # expr_Z = (K**2 + 1) / (K**2 - 1)
-
-    # expr_L = (t*e + 1)/T + (t**3/d)
-    # expr_L_r = (t*e_r + 1)/T_r + (t**3/d_r)
-
-    # expr_e_integral = F/h_o
-    # expr_e_r_integral = F/h_or
-
-    # expr_e_loose = F_L/h_o
-    # expr_e_r_loose = F_L/h_or
-
-    # expr_e_slip = F_S/h_o
-
-    # expr_d_integral = (U * g_0**2 * h_o) / V
-    # expr_d_r_integral = (U_r * g_0**2 * h_or) / V
-
-    # expr_d_loose = (U * g_0**2 * h_o) / V_L
-    # expr_d_r_loose = (U_r * g_0**2 * h_or) / V_L
-
-    # expr_d_slip = (U * g_0**2 * h_o) / V_S
-
-    # expr_h_o = sqrt(B*g_0)
-    # expr_h_or = sqrt(A*g_0)
-
-    # expr_X_g = g_1/g_0
-    # expr_X_g2 = (g_2/g_0)
-    # # TODO: If it is an intergral flange and g_1 = g_0, X_h = 2.0 otherwise X_h = h/h_o
-    # expr_X_h = h/h_o
-    # # TODO: If it is an intergral flange and g_1 = g_0, X_h = 2.0 otherwise X_h = h/h_or
-    # expr_X_h_r = h/h_or
-
-
-    # Table 4.16.4 and 4.16.5 calculations
-    
+    X_h = Dimensionless("intermediate variable X_h")
+    X_h_eqn = equation(
+        X_h,
+        match_expr(
+            flange_connection,
+            FlangeConnection.integral, cond_expr(eq(g_1, g_0), 2.0, h / h_o),
+            FlangeConnection.loose, h / h_o,
+            FlangeConnection.welded, h / h_o,
+        )
+    )
 
     # For Integral-type flange, reverse integral-type flange
-    # F = Dimensionless("Flange stress factor for integral type flange")
-    # F_eqn = equation(
-    #     F,
-    #     0.897697 - 0.297012*ln(X_g) + 9.5257e-3*ln(X_h) +
-    #     0.123586*(ln(X_g))**2 + 0.0358580*(ln(X_h))**2 - 0.194422*ln(X_g)*ln(X_h) -
-    #     0.0181259*(ln(X_g))**3 + 0.0129360*(ln(X_h))**3 -
-    #     0.0377693*(ln(X_g))*(ln(X_h))**2 + 0.0273791*(ln(X_g))**2*ln(X_h)
-    # )
+    F = Dimensionless("Flange stress factor for integral type flange")
+    F_eqn = equation(
+        F,
+        0.897697 - 0.297012*ln(X_g) + 9.5257e-3*ln(X_h) +
+        0.123586*(ln(X_g))**2 + 0.0358580*(ln(X_h))**2 - 0.194422*ln(X_g)*ln(X_h) - 0.0181259*(ln(X_g))**3 + 0.0129360*(ln(X_h))**3 -
+        0.0377693*(ln(X_g))*(ln(X_h))**2 + 0.0273791*(ln(X_g))**2*ln(X_h)
+    )
+
+    # For 0.1 <= X_h <= 0.5
+    V = Dimensionless("intermediate variable V for integral type flange")
+
+    # For 0.1 <= X_h <= 0.5
+    v_1_expr = 0.500244 + 0.227914/X_g - 1.87071/X_h - 0.344410/X_g**2 + 2.49189*X_h**2 + 0.873446*(X_h/X_g) + 0.1899953/X_g**3 - 1.06082*X_h**3 - 1.49970*(X_h**2/X_g) - 0.719413*(X_h/X_g**2)
+
+    # For 0.5 < X_h <= 2.0
+    v_2_expr = 0.0144868 - 0.135977/X_g - 0.0461919/X_h + 0.0560718/X_g**2 + 0.0529829*X_h**2 + 0.244313/(X_g*X_h) + 0.113929/X_g**3 - 0.00928265/(X_g*X_h**2) - 0.217008*(X_g**2*X_h)
+
+    # TODO: Simplified condition, possibly need range_expr?
+    # For 0.1 <= X_h <= 0.5
+    # For 0.5 < X_h <= 2.0
+    V_eqn = equation(
+        V,
+        range_expr(
+            X_h,
+            When.between(0.1, 0.5).then(v_1_expr),
+            When.gt(0.5).and_leq(2.0).then(v_2_expr),
+        )
+    )
+
+    f = Dimensionless("Flange stress factor for loose type flange")
+    f_expr = (0.0927779 - 0.0336633*X_g + 0.964176*X_g**2 + 0.0566286*X_h + 0.347074*X_h**2 - 4.18699*X_h**3) / (1 - 5.96093e-3*X_g + 1.62904*X_h + 3.49329*X_h**2 + 1.39052*X_h**3)
+    f_eqn = equation(
+        f,
+        max_expr(
+            1,
+            f_expr
+        )
+    )
 
     # For Welded slip-on flange
+    # Define X_g2 = g_2 / g_0
+    X_g2 = Dimensionless("intermediate variable X_g2")
+    X_g2_eqn = equation(
+        X_g2,
+        g_2 / g_0
+    )
+
+    # Coefficient matrices for F_S and V_S calculations
+    # F_S = (Σ M_ij * X_g2^i * X_h^j) / (Σ N_ij * X_g2^i * X_h^j)
+    # V_S = (Σ O_ij * X_g2^i * X_h^j) / (Σ P_ij * X_g2^i * X_h^j)
+    M_mat = np.array(
+        [
+            [-0.33289917, 1.89824507, 0.51289982],
+            [5.33592441, -17.32691994, 17.31106722],
+            [4.92214647, 3.21485121, -1.76102532]
+        ]
+    )
+
+    N_mat = np.array(
+        [
+            [-0.0709392, 0.30338397, 1.74097066],
+            [0.54117473, -6.48801256, 12.82177228],
+            [10.36447138, -6.91013557, 2.9795664]
+        ]
+    )
+
+    O_mat = np.array(
+        [
+            [0.39926596, -1.09329423, 0.79382644],
+            [-0.45359452, 2.79772392, -2.02963598],
+            [0.26069646, -1.46342431, 4.17498559]
+        ]
+    )
+
+    P_mat = np.array(
+        [
+            [0.000733115, -0.016647943, 0.342479503],
+            [-0.02136683, 0.173868541, -0.199696025],
+            [0.349898055, 0.794317086, 4.88408141]
+        ]
+    )
+
+    # Calculate F_S as the ratio of two summations
+    F_S = Dimensionless("Flange stress factor for welded slip-on flange")
+
+    # F_S = (Σ M_ij * X_g2^i * X_h^j) / (Σ N_ij * X_g2^i * X_h^j) for i,j = 0,1,2
+    # Explicit variable passing to satisfy linters and make dependencies clear
+    F_S_eqn = equation(
+        F_S,
+        summation(lambda i, j, M_mat, X_g2, X_h: M_mat[i,j] * X_g2**i * X_h**j, 3, 3, M_mat=M_mat, X_g2=X_g2, X_h=X_h) /
+        summation(lambda i, j, N_mat, X_g2, X_h: N_mat[i,j] * X_g2**i * X_h**j, 3, 3, N_mat=N_mat, X_g2=X_g2, X_h=X_h)
+    )
+
+    # Calculate V_S as the ratio of two summations
+    V_S = Dimensionless("intermediate variable V_S for welded slip-on flange")
+
+    # V_S = (Σ O_ij * X_g2^i * X_h^j) / (Σ P_ij * X_g2^i * X_h^j) for i,j = 0,1,2
+    V_S_eqn = equation(
+        V_S,
+        summation(lambda i, j, O_mat, X_g2, X_h: O_mat[i,j] * X_g2**i * X_h**j, 3, 3, O_mat=O_mat, X_g2=X_g2, X_h=X_h) /
+        summation(lambda i, j, P_mat, X_g2, X_h: P_mat[i,j] * X_g2**i * X_h**j, 3, 3, P_mat=P_mat, X_g2=X_g2, X_h=X_h)
+    )
 
     # Loose-type flange with a hub, reverse loose-type flange with a hub
+
+    F_L = Dimensionless("Flange stress factor for loose type flange with a hub")
+
+    F_L_expr = (0.941074 + 0.176139*ln(X_g) - 0.188556*ln(X_h) + 0.0689847*(ln(X_g))**2 + 0.523798*(ln(X_h))**2 - 0.513894*(ln(X_g))*(ln(X_h))) / (1 + 0.379392*ln(X_g) + 0.184520*ln(X_h) - 0.00605208*(ln(X_g))**2 - 0.00358934*(ln(X_g))**2 + 0.110179*ln(X_g)*ln(X_h))
+
+    F_L_eqn = equation(
+        F_L,
+        F_L_expr
+    )
+
+    V_L = Dimensionless("intermediate variable V_L for loose type flange with a hub")
+
+    # for 0.1 <= X_h <= 0.25:
+    V_L_1_expr = 6.57683-0.115516*X_g+1.39499*sqrt(X_g)*(ln(X_g)) + 0.307340*(ln(X_g))**2 -8.30849*sqrt(X_g) + 2.62307*ln(X_g) + 0.239498*X_h*(ln(X_h)) - 2.96125*(ln(X_h)) + 7.035052e-4/X_h
+    
+    # for 0.25 < X_h <= 0.5:
+    V_L_2_expr = 1.56323 - 1.80696*(ln(X_g)) - (1.33458)/(X_h) + 0.276415*(ln(X_g))**2 + 0.417135/(X_h**2) + 1.39511*(ln(X_g))/(X_h) + 0.0137129*(ln(X_g))**3 + 0.0943597/(X_h**3) - 0.402096*(ln(X_g))/(X_h**2) - 0.101619*(ln(X_g)**2)/(X_h)
+    
+    # for 0.50 < X_h <= 1.0:
+    V_L_3_expr = -0.0213643 - 0.0763597/X_g + 0.1029900/X_h + 0.725776/(X_g**2) - 0.160603/(X_h**2) - 0.0918061/(X_g*X_h) + 0.472277/(X_g**3)+ 0.0873530/(X_h**3) + 0.527487/(X_g*X_h**2) - 0.980209/(X_g**2*X_h)
+    
+    # For 1.0 < X_h <= 2.0:
+    V_L_4_expr = 7.96687e-3 - 0.220518/X_g + 0.0602652/X_h + 0.619818/(X_g**2) - 0.223212/(X_h**2) + 0.421920/(X_g*X_h) + 0.0950195/(X_g**3) + 0.209813/(X_h**3) - 0.158821/(X_g*X_h**2) - 0.242056/(X_g**2*X_h)
+
+    V_L_eqn = equation(
+        V_L,
+        range_expr(
+            X_h,
+            When.between(0.1, 0.25).then(exp(V_L_1_expr)),
+            When.gt(0.25).and_leq(0.5).then(V_L_2_expr),
+            When.gt(0.5).and_leq(1.0).then(V_L_3_expr),
+            When.gt(1.0).and_leq(2.0).then(V_L_4_expr)
+        )
+    )
 
     # # Table 4.16.4 calculations
     # # The parameters K, T, U, Y, and Z are determined using the equations for integral- and loose-type flanges
@@ -268,146 +372,132 @@ class FlangeDesign(Problem):
         A / B
     )
 
-    # T = Dimensionless("flange thickness factor T")
-    # T_eqn = equation(
-    #     T,
-    #     (K**2 * (1 + 8.55246*log10(K)) - 1) / ((1.04720 + 1.9448*K**2) * (K - 1))
-    # )
+    T = Dimensionless("flange thickness factor T")
+    T_eqn = equation(
+        T,
+        (K**2 * (1 + 8.55246*log10(K)) - 1) / ((1.04720 + 1.9448*K**2) * (K - 1))
+    )
 
-    # U = Dimensionless("flange thickness factor U")
-    # U_eqn = equation(
-    #     U,
-    #     (K**2 * (1 + 8.55246*log10(K)) - 1) / (1.36136 * (K**2 - 1) * (K - 1))
-    # )
+    U = Dimensionless("flange thickness factor U")
+    U_eqn = equation(
+        U,
+        (K**2 * (1 + 8.55246*log10(K)) - 1) / (1.36136 * (K**2 - 1) * (K - 1))
+    )
 
-    # Y = Dimensionless("flange stress factor Y")
-    # Y_eqn = equation(
-    #     Y,
-    #     (1/(K-1)) * (0.66845 + 5.71690 * ((K**2 * log10(K)) / (K**2 - 1)))
-    # )
+    Y = Dimensionless("flange stress factor Y")
+    Y_eqn = equation(
+        Y,
+        (1/(K-1)) * (0.66845 + 5.71690 * ((K**2 * log10(K)) / (K**2 - 1)))
+    )
 
-    # Z = Dimensionless("flange thickness factor Z")
-    # Z_eqn = equation(
-    #     Z,
-    #     (K**2 + 1) / (K**2 - 1)
-    # )
+    Z = Dimensionless("flange thickness factor Z")
+    Z_eqn = equation(
+        Z,
+        (K**2 + 1) / (K**2 - 1)
+    )
 
 
     # # For Integral-type flange, welded slipon-type flange, and loose-type flange with a hub
-    # h_o = Length("intermediate variable h_o")
-    # h_o_eqn = equation(
-    #     h_o,
-    #     sqrt(B * g_0)
-    # )
+    h_o = Length("intermediate variable h_o")
+    h_o_eqn = equation(
+        h_o,
+        sqrt(B * g_0)
+    )
 
-    # flange_connection = SelectVariable("Flange Connection", FlangeConnection, FlangeConnection.integral)
-    # e = Dimensionless("intermediate variable e")
-    # e_eqn = equation(
-    #     e,
-    #     match_expr(
-    #         flange_connection,
-    #         FlangeConnection.integral, F / h_o,
-    #         FlangeConnection.loose, F_L / h_o,
-    #         FlangeConnection.welded, F_S / h_o,
-    #     )
-    # )
+    e = Dimensionless("intermediate variable e")
+    e_eqn = equation(
+        e,
+        match_expr(
+            flange_connection,
+            FlangeConnection.integral, F / h_o,
+            FlangeConnection.loose, F_L / h_o,
+            FlangeConnection.welded, F_S / h_o,
+        )
+    )
 
-    # d = Dimensionless("intermediate variable d")
-    # d_eqn = equation(
-    #     d,
-    #     match_expr(
-    #         flange_connection,
-    #         FlangeConnection.integral, (U * g_0**2 * h_o) / V,
-    #         FlangeConnection.loose, (U * g_0**2 * h_o) / V_L,
-    #         FlangeConnection.welded, (U * g_0**2 * h_o) / V_S,
-    #     )
-    # )
+    d = Dimensionless("intermediate variable d")
+    d_eqn = equation(
+        d,
+        match_expr(
+            flange_connection,
+            FlangeConnection.integral, (U * g_0**2 * h_o) / V,
+            FlangeConnection.loose, (U * g_0**2 * h_o) / V_L,
+            FlangeConnection.welded, (U * g_0**2 * h_o) / V_S,
+        )
+    )
 
-    # L = Dimensionless("intermediate variable L")
-    # L_eqn = equation(
-    #     L,
-    #     (t*e + 1)/T + (t**3/d)
-    # )
+    L = Dimensionless("intermediate variable L")
+    L_eqn = equation(
+        L,
+        (t*e + 1)/T + (t**3/d)
+    )
 
-    # X_g = Dimensionless("intermediate variable X_g")
-    # X_g_eqn = equation(
-    #     X_g,
-    #     g_1 / g_0
-    # )
 
-    # X_g2 = Dimensionless("intermediate variable X_g2")
-    # X_g2_eqn = equation(
-    #     X_g2,
-    #     g_2 / g_0
-    # )
 
-    # X_h = Dimensionless("intermediate variable X_h")
-    # X_h_eqn = equation(
-    #     X_h,
-    #     match_expr(
-    #         flange_connection,
-    #         FlangeConnection.integral, cond_expr(eq(g_1, g_0), 2.0, h / h_o),
-    #         FlangeConnection.loose, h / h_o,
-    #         FlangeConnection.welded, h / h_o,
-    #     )
-    # )
+    X_g2 = Dimensionless("intermediate variable X_g2")
+    X_g2_eqn = equation(
+        X_g2,
+        g_2 / g_0
+    )
+
+
 
     # # For Reverse integral-type flange and reverse loose-type flanges with a hub
-    # alpha_r = Dimensionless("intermediate variable alpha_r")
-    # alpha_r_eqn = equation(
-    #     alpha_r,
-    #     (1/K**2) * (1 + (0.668*(K+1)/Y))
-    # )
+    alpha_r = Dimensionless("intermediate variable alpha_r")
+    alpha_r_eqn = equation(
+        alpha_r,
+        (1/K**2) * (1 + (0.668*(K+1)/Y))
+    )
 
-    # T_r = Dimensionless("intermediate variable T_r")
-    # T_r_eqn = equation(
-    #     T_r,
-    #     (Z+0.3)/(Z-0.3) * alpha_r * T
-    # )
+    T_r = Dimensionless("intermediate variable T_r")
+    T_r_eqn = equation(
+        T_r,
+        (Z+0.3)/(Z-0.3) * alpha_r * T
+    )
 
-    # U_r = Dimensionless("intermediate variable U_r")
-    # U_r_eqn = equation(
-    #     U_r,
-    #     alpha_r * U
-    # )
+    U_r = Dimensionless("intermediate variable U_r")
+    U_r_eqn = equation(
+        U_r,
+        alpha_r * U
+    )
 
-    # Y_r = Dimensionless("intermediate variable Y_r")
-    # Y_r_eqn = equation(
-    #     Y_r,
-    #     alpha_r * Y
-    # )
+    Y_r = Dimensionless("intermediate variable Y_r")
+    Y_r_eqn = equation(
+        Y_r,
+        alpha_r * Y
+    )
 
-    # h_or = Length("intermediate variable h_or")
-    # h_or_eqn = equation(
-    #     h_or,
-    #     sqrt(A * g_0)
-    # )
+    h_or = Length("intermediate variable h_or")
+    h_or_eqn = equation(
+        h_or,
+        sqrt(A * g_0)
+    )
 
-    # e_r = Dimensionless("intermediate variable e_r")
-    # e_r_eqn = equation(
-    #     e_r,
-    #     match_expr(
-    #         flange_connection,
-    #         FlangeConnection.integral, F / h_or,
-    #         FlangeConnection.loose, F_L / h_or,
-    #     )
-    # )
+    e_r = Dimensionless("intermediate variable e_r")
+    e_r_eqn = equation(
+        e_r,
+        match_expr(
+            flange_connection,
+            FlangeConnection.integral, F / h_or,
+            FlangeConnection.loose, F_L / h_or,
+        )
+    )
 
-    # d_r = Dimensionless("intermediate variable d_r")
-    # d_r_eqn = equation(
-    #     d_r,
-    #     match_expr(
-    #         flange_connection,
-    #         FlangeConnection.integral, (U_r * g_0**2 * h_or) / V,
-    #         FlangeConnection.loose, (U_r * g_0**2 * h_or) / V_L,
-    #     )
-    # )
+    d_r = Dimensionless("intermediate variable d_r")
+    d_r_eqn = equation(
+        d_r,
+        match_expr(
+            flange_connection,
+            FlangeConnection.integral, (U_r * g_0**2 * h_or) / V,
+            FlangeConnection.loose, (U_r * g_0**2 * h_or) / V_L,
+        )
+    )
 
-    # L_r = Dimensionless("intermediate variable L_r")
-    # L_r_eqn = equation(
-    #     L_r,
-    #     (t*e_r + 1)/T_r + (t**3/d_r)
-    # )
+    L_r = Dimensionless("intermediate variable L_r")
+    L_r_eqn = equation(
+        L_r,
+        (t*e_r + 1)/T_r + (t**3/d_r)
+    )
 
 
 
@@ -508,7 +598,16 @@ class FlangeDesign(Problem):
 
     I_eqn = equation(
         I,
-        (B*t**3*ln(K)) / 24
+        match_expr(
+            flange_connection,
+            FlangeConnection.integral, (0.0874*L*g_0**2*h_o*B)/V,
+            FlangeConnection.loose, match_expr(
+                flange_hub,
+                FlangeHubType.with_hub, (0.0874*L*g_0**2*h_o*B)/V,
+                FlangeHubType.without_hub, (0.0874*L*g_0**2*h_o*B)/V
+            ),
+            FlangeConnection.welded, (0.0874*L*g_0**2*h_o*B)/V_S,
+        )
     )
 
     A_R = Length("intermediate variable unknown description")
@@ -633,6 +732,9 @@ def create_flange_design():
 
 def test_simple_problem(capsys):
     problem = create_flange_design()
+
+    problem.flange_connection.set(FlangeConnection.loose)
+    problem.flange_hub.set(FlangeHubType.without_hub)
 
     problem.m.set(2).dimensionless
     problem.y.set(2000).pound_force_per_square_inch
