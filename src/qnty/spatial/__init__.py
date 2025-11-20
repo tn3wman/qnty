@@ -29,12 +29,25 @@ Examples:
     >>> dot = v1.dot(v2)   # Dot product
 """
 
-from .point import Point
+from .point import _Point, Point
+from .point_cartesian import PointCartesian
+from .point_direction_angles import PointDirectionAngles
+from .point_direction_ratios import PointDirectionRatios
+from .point_polar import PointPolar
+from .point_spherical import PointSpherical
 from .vector import Vector
 from .force_vector import ForceVector
+from .position_vector import PositionVector
 
 __all__ = [
+    "_Point",
     "Point",
+    "PointCartesian",
+    "PointDirectionAngles",
+    "PointDirectionRatios",
+    "PointPolar",
+    "PointSpherical",
     "Vector",
     "ForceVector",
+    "PositionVector",
 ]

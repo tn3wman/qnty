@@ -21,7 +21,7 @@ from .coordinate_system import CoordinateSystem
 from .vector import Vector
 
 if TYPE_CHECKING:
-    pass
+    from .position_vector import PositionVector
 
 
 class ForceVector:
@@ -577,6 +577,89 @@ class ForceVector:
             ForceVector instance
         """
         return cls(x=x, y=y, z=z, unit=unit, name=name, **kwargs)
+
+    @classmethod
+    def from_position_vector(
+        cls,
+        pos_vector: "PositionVector",
+        magnitude: float | Quantity,
+        unit: Unit | str | None = None,
+        name: str | None = None,
+        **kwargs,
+    ) -> ForceVector:
+        """
+        Create ForceVector directed along a position vector.
+
+        This is the standard method for creating forces along lines (cables, rods, etc.):
+            F = |F| * û = |F| * (r / |r|)
+
+        Args:
+            pos_vector: PositionVector defining the direction
+            magnitude: Force magnitude
+            unit: Force unit (required if magnitude is a scalar)
+            name: Force name
+            **kwargs: Additional arguments (description, is_resultant, etc.)
+
+        Returns:
+            ForceVector instance directed along the position vector
+
+        Examples:
+            >>> from qnty.spatial import Point, PositionVector, ForceVector
+            >>> from qnty.core.unit_catalog import LengthUnits
+            >>>
+            >>> # Define points
+            >>> A = Point(0, 0, 6, unit=LengthUnits.meter)
+            >>> B = Point(2, -3, 0, unit=LengthUnits.meter)
+            >>>
+            >>> # Create position vector
+            >>> r_AB = PositionVector.from_points(A, B)
+            >>>
+            >>> # Create force along AB
+            >>> F = ForceVector.from_position_vector(r_AB, magnitude=560, unit="N", name="F_B")
+            >>> print(F.x)  # 160 N
+            >>> print(F.y)  # -240 N
+            >>> print(F.z)  # -480 N
+        """
+        from .position_vector import PositionVector
+
+        if not isinstance(pos_vector, PositionVector):
+            raise TypeError(f"Expected PositionVector, got {type(pos_vector)}")
+
+        # Get unit vector (direction cosines)
+        cos_alpha, cos_beta, cos_gamma = pos_vector.unit_vector()
+
+        # Convert magnitude to SI value
+        if isinstance(magnitude, int | float):
+            if unit is None:
+                raise ValueError("unit must be specified when magnitude is a scalar")
+
+            # Resolve unit if string
+            if isinstance(unit, str):
+                from ..core.dimension_catalog import dim
+                from ..core.unit import ureg
+
+                resolved = ureg.resolve(unit, dim=dim.force)
+                if resolved is None:
+                    raise ValueError(f"Unknown force unit '{unit}'")
+                unit = resolved
+
+            mag_si = float(magnitude) * unit.si_factor
+        else:
+            # Quantity
+            if magnitude.value is None:
+                raise ValueError("Magnitude must have a known value")
+            mag_si = magnitude.value
+            unit = magnitude.preferred
+            if unit is None:
+                raise ValueError("Magnitude Quantity must have a preferred unit")
+
+        # Compute force components: F = |F| * û
+        x_val = mag_si * cos_alpha
+        y_val = mag_si * cos_beta
+        z_val = mag_si * cos_gamma
+
+        # Create ForceVector from components (convert from SI to unit)
+        return cls(x=x_val / unit.si_factor, y=y_val / unit.si_factor, z=z_val / unit.si_factor, unit=unit, name=name, **kwargs)
 
     @staticmethod
     def parse_wrt(wrt: str, coordinate_system: CoordinateSystem | None = None, forces: dict[str, ForceVector] | None = None) -> AngleReference:

@@ -39,7 +39,7 @@ Ans:
 $F_{R}=497 \mathrm{~N}$
 $\phi=155^{\circ}$
 
-## 2-2.
+## 2-2
 
 If the magnitude of the resultant force is to be 500 N , directed along the positive $y$ axis, determine the magnitude of force $\mathbf{F}$ and its direction $\theta$.
 
@@ -76,7 +76,7 @@ $F=960 \mathrm{~N}$
 $\theta=45.2^{\circ}$
 © 2016 Pearson Education, Inc., Upper Saddle River, NJ. All rights reserved. This material is protected under all copyright laws as they currently exist. No portion of this material may be reproduced, in any form or by any means, without permission in writing from the publisher.
 
-## 2-3.
+## 2-3
 
 Determine the magnitude of the resultant force $\mathbf{F}_{R}=\mathbf{F}_{1}+\mathbf{F}_{2}$ and its direction, measured counterclockwise from the positive $x$ axis.
 
@@ -93,7 +93,7 @@ $$
 
 Ans.
 
-## Ans.
+## Ans
 
 ![](https://cdn.mathpix.com/cropped/2025_10_07_d129d6999c0a72e1e33fg-003.jpg?height=591&width=462&top_left_y=271&top_left_x=1474)
 ![](https://cdn.mathpix.com/cropped/2025_10_07_d129d6999c0a72e1e33fg-003.jpg?height=250&width=245&top_left_y=932&top_left_x=1696)
@@ -103,7 +103,7 @@ $F_{R}=393 \mathrm{lb}$
 $\phi=353^{\circ}$
 © 2016 Pearson Education, Inc., Upper Saddle River, NJ. All rights reserved. This material is protected under all copyright laws as they currently exist. No portion of this material may be reproduced, in any form or by any means, without permission in writing from the publisher.
 
-## *2-4.
+## *2-4
 
 The vertical force $\mathbf{F}$ acts downward at $A$ on the two-membered frame. Determine the magnitudes of the two components of $\mathbf{F}$ directed along the axes of $A B$ and $A C$. Set $F=500 \mathrm{~N}$.
 
@@ -282,7 +282,7 @@ Ans.
 
 © 2016 Pearson Education, Inc., Upper Saddle River, NJ. All rights reserved. This material is protected under all copyright laws as they currently exist. No portion of this material may be reproduced, in any form or by any means, without permission in writing from the publisher.
 
-## 2-10.
+## 2-10
 
 Determine the magnitude of the resultant force and its direction, measured counterclockwise from the positive $x$ axis.
 
@@ -321,7 +321,7 @@ Ans:
 $F_{R}=980 \mathrm{lb}$
 $\phi=19.4^{\circ}$
 
-## 2-11.
+## 2-11
 
 The plate is subjected to the two forces at $A$ and $B$ as shown. If $\theta=60^{\circ}$, determine the magnitude of the resultant of these two forces and its direction measured clockwise from the horizontal.
 
@@ -367,7 +367,7 @@ Ans:
 $F_{R}=10.8 \mathrm{kN}$
 $\phi=3.16^{\circ}$
 
-## *2-12.
+## *2-12
 
 Determine the angle of $\theta$ for connecting member $A$ to the plate so that the resultant force of $\mathbf{F}_{A}$ and $\mathbf{F}_{B}$ is directed horizontally to the right. Also, what is the magnitude of the resultant force?
 
@@ -428,7 +428,7 @@ $F_{a}=30.6 \mathrm{lb}$
 $F_{b}=26.9 \mathrm{lb}$
 © 2016 Pearson Education, Inc., Upper Saddle River, NJ. All rights reserved. This material is protected under all copyright laws as they currently exist. No portion of this material may be reproduced, in any form or by any means, without permission in writing from the publisher.
 
-## 2-14.
+## 2-14
 
 The component of force $\mathbf{F}$ acting along line $a a$ is required to be 30 lb . Determine the magnitude of $\mathbf{F}$ and its component along line $b b$.
 ![](https://cdn.mathpix.com/cropped/2025_10_07_d129d6999c0a72e1e33fg-014.jpg?height=381&width=397&top_left_y=265&top_left_x=1582)
@@ -452,7 +452,7 @@ $F=19.6 \mathrm{lb}$
 $F_{b}=26.4 \mathrm{lb}$
 © 2016 Pearson Education, Inc., Upper Saddle River, NJ. All rights reserved. This material is protected under all copyright laws as they currently exist. No portion of this material may be reproduced, in any form or by any means, without permission in writing from the publisher.
 
-## 2-15.
+## 2-15
 
 Force $\mathbf{F}$ acts on the frame such that its component acting along member $A B$ is 650 lb , directed from $B$ towards $A$, and the component acting along member $B C$ is 500 lb , directed from $B$ towards $C$. Determine the magnitude of $\mathbf{F}$ and its direction $\theta$. Set $\phi=60^{\circ}$.
 ![](https://cdn.mathpix.com/cropped/2025_10_07_d129d6999c0a72e1e33fg-015.jpg?height=323&width=730&top_left_y=287&top_left_x=1225)
@@ -490,7 +490,7 @@ Ans:
 $F=917 \mathrm{lb}$
 $\theta=31.8^{\circ}$
 
-## *2-16.
+## *2-16
 
 Force $\mathbf{F}$ acts on the frame such that its component acting along member $A B$ is 650 lb , directed from $B$ towards $A$. Determine the required angle $\phi\left(0^{\circ} \leq \phi \leq 45^{\circ}\right)$ and the component acting along member BC . Set $F=850 \mathrm{lb}$ and $\theta=30^{\circ}$.
 
@@ -530,7 +530,7 @@ $F_{B C}=434 \mathrm{lb}$
 $\phi=33.5^{\circ}$
 © 2016 Pearson Education, Inc., Upper Saddle River, NJ. All rights reserved. This material is protected under all copyright laws as they currently exist. No portion of this material may be reproduced, in any form or by any means, without permission in writing from the publisher.
 
-## 2-17.
+## 2-17
 
 Determine the magnitude and direction of the resultant $\mathbf{F}_{R}=\mathbf{F}_{1}+\mathbf{F}_{2}+\mathbf{F}_{3}$ of the three forces by first finding the resultant $\mathbf{F}^{\prime}=\mathbf{F}_{1}+\mathbf{F}_{2}$ and then forming $\mathbf{F}_{R}=\mathbf{F}^{\prime}+\mathbf{F}_{3}$.
 
@@ -611,7 +611,7 @@ Ans:
 $\theta=53.5^{\circ}$
 $F_{A B}=621 \mathrm{lb}$
 
-## *2-20.
+## *2-20
 
 Determine the design angle $\phi\left(0^{\circ} \leq \phi \leq 90^{\circ}\right)$ between struts $A B$ and $A C$ so that the 400-lb horizontal force has a component of 600 lb which acts up to the left, in the same direction as from $B$ towards $A$. Take $\theta=30^{\circ}$.
 
@@ -642,7 +642,7 @@ Ans.
 ![](https://cdn.mathpix.com/cropped/2025_10_07_d129d6999c0a72e1e33fg-020.jpg?height=199&width=296&top_left_y=1067&top_left_x=1477)
 (b)
 
-## 2-21.
+## 2-21
 
 Determine the magnitude and direction of the resultant force, $\mathbf{F}_{R}$ measured counterclockwise from the positive $x$ axis. Solve the problem by first finding the resultant $\mathbf{F}^{\prime}=\mathbf{F}_{1} +\mathbf{F}_{2}$ and then forming $\mathbf{F}_{R}=\mathbf{F}^{\prime}+\mathbf{F}_{3}$.
 
@@ -690,7 +690,7 @@ Ans.
 ![](https://cdn.mathpix.com/cropped/2025_10_07_d129d6999c0a72e1e33fg-021.jpg?height=389&width=399&top_left_y=1940&top_left_x=1523)
 (d)
 
-## Ans:
+## Ans
 
 $$
 \begin{aligned}
@@ -699,7 +699,7 @@ F_{R} & =257 \mathrm{~N} \\
 \end{aligned}
 $$
 
-## 2-22.
+## 2-22
 
 Determine the magnitude and direction of the resultant force, measured counterclockwise from the positive $x$ axis. Solve $l$ by first finding the resultant $\mathbf{F}^{\prime}=\mathbf{F}_{2}+\mathbf{F}_{3}$ and then forming $\mathbf{F}_{R}=\mathbf{F}^{\prime}+\mathbf{F}_{1}$.
 ![](https://cdn.mathpix.com/cropped/2025_10_07_d129d6999c0a72e1e33fg-022.jpg?height=443&width=405&top_left_y=260&top_left_x=1561)
@@ -757,7 +757,7 @@ $\phi=163^{\circ}$
 $F_{R}=257 \mathrm{~N}$
 © 2016 Pearson Education, Inc., Upper Saddle River, NJ. All rights reserved. This material is protected under all copyright laws as they currently exist. No portion of this material may be reproduced, in any form or by any means, without permission in writing from the publisher.
 
-## 2-23.
+## 2-23
 
 Two forces act on the screw eye. If $F_{1}=400 \mathrm{~N}$ and $F_{2}=600 \mathrm{~N}$, determine the angle $\theta\left(0^{\circ} \leq \theta \leq 180^{\circ}\right)$ between them, so that the resultant force has a magnitude of $F_{R}=800 \mathrm{~N}$.
 
@@ -787,7 +787,7 @@ Ans.
 Ans:
 $\theta=75.5^{\circ}$
 
-## *2-24.
+## *2-24
 
 Two forces $\mathbf{F}_{1}$ and $\mathbf{F}_{2}$ act on the screw eye. If their lines of action are at an angle $\theta$ apart and the magnitude of each force is $F_{1}=F_{2}=F$, determine the magnitude of the resultant force $\mathbf{F}_{R}$ and the angle between $\mathbf{F}_{R}$ and $\mathbf{F}_{1}$.
 
@@ -869,7 +869,7 @@ $\theta=36.3^{\circ}$
 $\phi=26.4^{\circ}$
 © 2016 Pearson Education, Inc., Upper Saddle River, NJ. All rights reserved. This material is protected under all copyright laws as they currently exist. No portion of this material may be reproduced, in any form or by any means, without permission in writing from the publisher.
 
-## 2-26.
+## 2-26
 
 Determine the magnitude and direction $\theta$ of $\mathbf{F}_{A}$ so that the resultant force is directed along the positive $x$ axis and has a magnitude of 1250 N .
 
@@ -891,7 +891,7 @@ Ans.
 Ans.
 © 2016 Pearson Education, Inc., Upper Saddle River, NJ. All rights reserved. This material is protected under all copyright laws as they currently exist. No portion of this material may be reproduced, in any form or by any means, without permission in writing from the publisher.
 
-## 2-27.
+## 2-27
 
 Determine the magnitude and direction, measured counterclockwise from the positive $x$ axis, of the resultant force acting on the ring at $O$, if $F_{A}=750 \mathrm{~N}$ and $\theta=45^{\circ}$.
 
@@ -934,7 +934,7 @@ Ans:
 $F_{R}=1.23 \mathrm{kN}$
 $\theta=6.08^{\circ}$
 
-## *2-28.
+## *2-28
 
 Determine the magnitude of force $\mathbf{F}$ so that the resultant $\mathbf{F}_{R}$ of the three forces is as small as possible. What is the minimum magnitude of $\mathbf{F}_{R}$ ?.
 ![](https://cdn.mathpix.com/cropped/2025_10_07_d129d6999c0a72e1e33fg-028.jpg?height=448&width=489&top_left_y=260&top_left_x=1479)
@@ -1012,7 +1012,7 @@ Ans:
 $F_{B}=1.61 \mathrm{kN}$
 $\theta=38.3^{\circ}$
 
-## 2-30.
+## 2-30
 
 If $F_{B}=3 \mathrm{kN}$ and $\theta=45^{\circ}$, determine the magnitude of the resultant force of the two tugboats and its direction measured clockwise from the positive $x$ axis.
 
@@ -1047,7 +1047,7 @@ Ans:
 $F_{R}=4.01 \mathrm{kN}$
 $\phi=16.2^{\circ}$
 
-## 2-31.
+## 2-31
 
 If the resultant force of the two tugboats is required to be directed towards the positive $x$ axis, and $F_{B}$ is to be a minimum, determine the magnitude of $\mathbf{F}_{R}$ and $\mathbf{F}_{B}$ and the angle $\theta$.
 
@@ -1082,7 +1082,7 @@ $\theta=90^{\circ}$
 $F_{B}=1 \mathrm{kN}$
 $F_{R}=1.73 \mathrm{kN}$
 
-## *2-32.
+## *2-32
 
 Determine the magnitude of the resultant force and its direction, measured counterclockwise from the positive $x$ axis.
 ![](https://cdn.mathpix.com/cropped/2025_10_07_d129d6999c0a72e1e33fg-032.jpg?height=400&width=443&top_left_y=254&top_left_x=1525)
@@ -1128,7 +1128,7 @@ $$
 \theta=87.0^{\circ}
 $$
 
-## 2-33.
+## 2-33
 
 Determine the magnitude of the resultant force and its direction, measured clockwise from the positive $x$ axis.
 
@@ -1198,7 +1198,7 @@ $\mathbf{F}_{1}=\{200 \mathbf{i}+346 \mathbf{j}\} \mathbf{N}$
 $\mathbf{F}_{2}=\{177 \mathbf{i}-177 \mathbf{j}\} \mathbf{N}$
 © 2016 Pearson Education, Inc., Upper Saddle River, NJ. All rights reserved. This material is protected under all copyright laws as they currently exist. No portion of this material may be reproduced, in any form or by any means, without permission in writing from the publisher.
 
-## 2-35.
+## 2-35
 
 Determine the magnitude of the resultant force and its direction measured counterclockwise from the positive $x$ axis.
 
@@ -1246,7 +1246,7 @@ Ans.
 
 ![](https://cdn.mathpix.com/cropped/2025_10_07_d129d6999c0a72e1e33fg-035.jpg?height=307&width=269&top_left_y=1046&top_left_x=1691)
 
-## Ans:
+## Ans
 
 $F_{R}=413 \mathrm{~N}$
 
@@ -1254,7 +1254,7 @@ $$
 \theta=24.2^{\circ}
 $$
 
-## *2-36.
+## *2-36
 
 Resolve each force acting on the gusset plate into its $x$ and $y$ components, and express each force as a Cartesian vector.
 
@@ -1284,7 +1284,7 @@ $\mathbf{F}_{2}=\{530 \mathbf{i}+530 \mathbf{j}\} \mathbf{N}$
 $\mathbf{F}_{3}=\{520 \mathbf{i}-390 \mathbf{j}\} \mathbf{N}$
 © 2016 Pearson Education, Inc., Upper Saddle River, NJ. All rights reserved. This material is protected under all copyright laws as they currently exist. No portion of this material may be reproduced, in any form or by any means, without permission in writing from the publisher.
 
-## 2-37.
+## 2-37
 
 Determine the magnitude of the resultant force acting on the plate and its direction, measured counterclockwise from the positive $x$ axis.
 
@@ -1325,7 +1325,7 @@ $$
 Ans.
 ![](https://cdn.mathpix.com/cropped/2025_10_07_d129d6999c0a72e1e33fg-037.jpg?height=445&width=966&top_left_y=1279&top_left_x=978)
 
-## 2-38.
+## 2-38
 
 Express each of the three forces acting on the support in Cartesian vector form and determine the magnitude of the resultant force and its direction, measured clockwise from positive $x$ axis.
 
@@ -1427,7 +1427,7 @@ Ans.
 $\theta=\tan ^{-1}\left(\frac{216.421}{11.518}\right)=87.0^{\circ}$
 Ans.
 
-## 2-41.
+## 2-41
 
 Determine the magnitude of the resultant force and its direction, measured counterclockwise from the positive $x$ axis.
 
@@ -1462,7 +1462,7 @@ Ans.
 (a)
 ![](https://cdn.mathpix.com/cropped/2025_10_07_d129d6999c0a72e1e33fg-041.jpg?height=814&width=682&top_left_y=1523&top_left_x=1135)
 
-## Ans:
+## Ans
 
 $F_{R}=12.5 \mathrm{kN}$
 
@@ -1502,7 +1502,7 @@ $\mathbf{F}_{2}=\{-312 \mathbf{i}-541 \mathbf{j}\} \mathrm{N}$
 $\mathbf{F}_{3}=\{-530 \mathbf{i}+530 \mathbf{j}\} \mathrm{N}$
 © 2016 Pearson Education, Inc., Upper Saddle River, NJ. All rights reserved. This material is protected under all copyright laws as they currently exist. No portion of this material may be reproduced, in any form or by any means, without permission in writing from the publisher.
 
-## 2-43.
+## 2-43
 
 Determine the magnitude of the resultant force and its direction measured counterclockwise from the positive $x$ axis.
 
@@ -1525,7 +1525,7 @@ Ans:
 $F_{R}=546 \mathrm{~N}$
 $\theta=253^{\circ}$
 
-## *2-44.
+## *2-44
 
 Determine the magnitude of the resultant force and its direction, measured clockwise from the positive $x$ axis.
 ![](https://cdn.mathpix.com/cropped/2025_10_07_d129d6999c0a72e1e33fg-044.jpg?height=644&width=551&top_left_y=254&top_left_x=1417)
@@ -1547,7 +1547,7 @@ $$
 F_{R}=\sqrt{\left(F_{R}\right)_{x}^{2}+\left(F_{R}\right)_{y}^{2}}=\sqrt{89^{2}+52^{2}}=103.08 \mathrm{lb}=103 \mathrm{lb}
 $$
 
-## Ans.
+## Ans
 
 And its directional angle $\theta$ measured clockwise from the positive $x$ axis is
 
@@ -1555,7 +1555,7 @@ $$
 \theta=\tan ^{-1}\left[\frac{\left(F_{R}\right)_{y}}{\left(F_{R}\right)_{x}}\right]=\tan ^{-1}\left(\frac{52}{89}\right)=30.30^{\circ}=30.3^{\circ}
 $$
 
-## Ans.
+## Ans
 
 ![](https://cdn.mathpix.com/cropped/2025_10_07_d129d6999c0a72e1e33fg-044.jpg?height=942&width=557&top_left_y=1490&top_left_x=200)
 (a)
@@ -1568,7 +1568,7 @@ $F_{R}=103 \mathrm{lb}$
 $\theta=30.3^{\circ}$
 © 2016 Pearson Education, Inc., Upper Saddle River, NJ. All rights reserved. This material is protected under all copyright laws as they currently exist. No portion of this material may be reproduced, in any form or by any means, without permission in writing from the publisher.
 
-## 2-45.
+## 2-45
 
 Determine the magnitude and direction $\theta$ of the resultant force $\mathbf{F}_{R}$. Express the result in terms of the magnitudes of the components $\mathbf{F}_{1}$ and $\mathbf{F}_{2}$ and the angle $\phi$.
 
@@ -1584,7 +1584,7 @@ $$
 F_{R}=\sqrt{F_{1}^{2}+F_{2}^{2}+2 F_{1} F_{2} \cos \phi}
 $$
 
-## Ans.
+## Ans
 
 ![](https://cdn.mathpix.com/cropped/2025_10_07_d129d6999c0a72e1e33fg-045.jpg?height=269&width=437&top_left_y=574&top_left_x=1501)
 
@@ -1609,7 +1609,7 @@ $$
 \end{aligned}
 $$
 
-## 2-46.
+## 2-46
 
 Determine the magnitude and orientation $\theta$ of $\mathbf{F}_{B}$ so that the resultant force is directed along the positive $y$ axis and has a magnitude of 1500 N .
 
@@ -1647,7 +1647,7 @@ $\theta=68.6^{\circ}$
 $F_{B}=960 \mathrm{~N}$
 © 2016 Pearson Education, Inc., Upper Saddle River, NJ. All rights reserved. This material is protected under all copyright laws as they currently exist. No portion of this material may be reproduced, in any form or by any means, without permission in writing from the publisher.
 
-## 2-47.
+## 2-47
 
 Determine the magnitude and orientation, measured counterclockwise from the positive $y$ axis, of the resultant force acting on the bracket, if $F_{B}=600 \mathrm{~N}$ and $\theta=20^{\circ}$.
 
@@ -1688,7 +1688,7 @@ Ans:
 $F_{R}=839 \mathrm{~N}$
 $\theta=14.8^{\circ}$
 
-## *2-48.
+## *2-48
 
 Three forces act on the bracket. Determine the magnitude and direction $\theta$ of $\mathbf{F}_{1}$ so that the resultant force is directed along the positive $x^{\prime}$ axis and has a magnitude of 800 N .
 
@@ -1752,7 +1752,7 @@ $\mathbf{F}_{2}=\{-125 \mathbf{i}+217 \mathbf{j}\} \mathrm{lb}$
 $\mathbf{F}_{3}=\{195 \mathbf{i}+112 \mathbf{j}\} \mathrm{lb}$
 © 2016 Pearson Education, Inc., Upper Saddle River, NJ. All rights reserved. This material is protected under all copyright laws as they currently exist. No portion of this material may be reproduced, in any form or by any means, without permission in writing from the publisher.
 
-## 2-51.
+## 2-51
 
 Determine the magnitude of the resultant force and its orientation measured counterclockwise from the positive $x$ axis.
 
@@ -1791,7 +1791,7 @@ $$
 Ans:
 $F_{R}=17.2 \mathrm{kN}, \theta=11.7^{\circ}$
 
-## *2-52.
+## *2-52
 
 Determine the $x$ and $y$ components of each force acting on the gusset plate of a bridge truss. Show that the resultant force is zero.
 ![](https://cdn.mathpix.com/cropped/2025_10_07_d129d6999c0a72e1e33fg-052.jpg?height=411&width=741&top_left_y=254&top_left_x=1230)
@@ -1844,7 +1844,7 @@ $$
 ![](https://cdn.mathpix.com/cropped/2025_10_07_d129d6999c0a72e1e33fg-052.jpg?height=559&width=787&top_left_y=1943&top_left_x=379)
 (a)
 
-## Ans:
+## Ans
 
 $$
 \begin{aligned}
@@ -1878,11 +1878,11 @@ $$
 Ans.
 ![](https://cdn.mathpix.com/cropped/2025_10_07_d129d6999c0a72e1e33fg-053.jpg?height=564&width=543&top_left_y=271&top_left_x=1395)
 
-## Ans.
+## Ans
 
 © 2016 Pearson Education, Inc., Upper Saddle River, NJ. All rights reserved. This material is protected under all copyright laws as they currently exist. No portion of this material may be reproduced, in any form or by any means, without permission in writing from the publisher.
 
-## 2-54.
+## 2-54
 
 Determine the magnitude of the resultant force and its direction measured counterclockwise from the positive $x$ axis.
 
@@ -1900,16 +1900,16 @@ $$
 
 ![](https://cdn.mathpix.com/cropped/2025_10_07_d129d6999c0a72e1e33fg-054.jpg?height=567&width=546&top_left_y=271&top_left_x=1436)
 
-## Ans.
+## Ans
 
-## Ans.
+## Ans
 
 Ans:
 $F_{R}=25.1 \mathrm{kN}$
 $\theta=185^{\circ}$
 © 2016 Pearson Education, Inc., Upper Saddle River, NJ. All rights reserved. This material is protected under all copyright laws as they currently exist. No portion of this material may be reproduced, in any form or by any means, without permission in writing from the publisher.
 
-## 2-55.
+## 2-55
 
 Determine the magnitude of force $\mathbf{F}$ so that the resultant force of the three forces is as small as possible. What is the magnitude of the resultant force?
 ![](https://cdn.mathpix.com/cropped/2025_10_07_d129d6999c0a72e1e33fg-055.jpg?height=340&width=478&top_left_y=265&top_left_x=1474)
@@ -1954,7 +1954,7 @@ $F=2.03 \mathrm{kN}$
 $F_{R}=7.87 \mathrm{kN}$
 © 2016 Pearson Education, Inc., Upper Saddle River, NJ. All rights reserved. This material is protected under all copyright laws as they currently exist. No portion of this material may be reproduced, in any form or by any means, without permission in writing from the publisher.
 
-## *2-56.
+## *2-56
 
 If the magnitude of the resultant force acting on the bracket is to be 450 N directed along the positive $u$ axis, determine the magnitude of $\mathbf{F}_{1}$ and its direction $\phi$.
 
@@ -1999,7 +1999,7 @@ Ans:
 $\phi=10.9^{\circ}$
 $F_{1}=474 \mathrm{~N}$
 
-## 2-57.
+## 2-57
 
 If the resultant force acting on the bracket is required to be a minimum, determine the magnitudes of $\mathbf{F}_{1}$ and the resultant force. Set $\phi=30^{\circ}$.
 
@@ -2085,7 +2085,7 @@ $$
 \end{aligned}
 $$
 
-## 2-58.
+## 2-58
 
 Three forces act on the bracket. Determine the magnitude and direction $\theta$ of $\mathbf{F}$ so that the resultant force is directed along the positive $x^{\prime}$ axis and has a magnitude of 8 kN .
 ![](https://cdn.mathpix.com/cropped/2025_10_07_d129d6999c0a72e1e33fg-058.jpg?height=541&width=668&top_left_y=254&top_left_x=1330)
@@ -2166,7 +2166,7 @@ $F_{R}=11.1 \mathrm{kN}$
 $\theta=47.7^{\circ}$
 © 2016 Pearson Education, Inc., Upper Saddle River, NJ. All rights reserved. This material is protected under all copyright laws as they currently exist. No portion of this material may be reproduced, in any form or by any means, without permission in writing from the publisher.
 
-## *2-60.
+## *2-60
 
 The force $\mathbf{F}$ has a magnitude of 80 lb and acts within the octant shown. Determine the magnitudes of the $x, y$, $z$ components of $\mathbf{F}$.
 
@@ -2216,7 +2216,7 @@ $F_{x}=40 \mathrm{~N}$
 $F_{y}=40 \mathrm{~N}$
 $F_{z}=56.6 \mathrm{~N}$
 
-## 2-62.
+## 2-62
 
 Determine the magnitude and coordinate direction angles of the force $\mathbf{F}$ acting on the support. The component of $\mathbf{F}$ in the $x-y$ plane is 7 kN .
 
@@ -2267,7 +2267,7 @@ $\gamma=60^{\circ}$
 $F=8.08 \mathrm{kN}$
 © 2016 Pearson Education, Inc., Upper Saddle River, NJ. All rights reserved. This material is protected under all copyright laws as they currently exist. No portion of this material may be reproduced, in any form or by any means, without permission in writing from the publisher.
 
-## 2-63.
+## 2-63
 
 Determine the magnitude and coordinate direction angles of the resultant force and sketch this vector on the coordinate system.
 
@@ -2305,7 +2305,7 @@ $\alpha=62.1^{\circ}$
 $\beta=113^{\circ}$
 $\gamma=142^{\circ}$
 
-## *2-64.
+## *2-64
 
 Specify the coordinate direction angles of $\mathbf{F}_{1}$ and $\mathbf{F}_{2}$ and express each force as a Cartesian vector.
 
@@ -2348,7 +2348,7 @@ $\alpha_{2}=90^{\circ}$
 $\beta_{2}=90^{\circ}$
 $\gamma_{2}=180^{\circ}$
 
-## 2-65.
+## 2-65
 
 The screw eye is subjected to the two forces shown. Express each force in Cartesian vector form and then determine the resultant force. Find the magnitude and coordinate direction angles of the resultant force.
 
@@ -2386,7 +2386,7 @@ Ans.
 Ans.
 Ans.
 
-## Ans:
+## Ans
 
 $\mathbf{F}_{1}=\{-106 \mathbf{i}+106 \mathbf{j}+260 \mathbf{k}\} \mathrm{N}$
 $\mathbf{F}_{2}=\{250 \mathbf{i}+354 \mathbf{j}-250 \mathbf{k}\} \mathrm{N}$
@@ -2460,7 +2460,7 @@ $\beta=20.6^{\circ}$
 $\gamma=69.5^{\circ}$
 © 2016 Pearson Education, Inc., Upper Saddle River, NJ. All rights reserved. This material is protected under all copyright laws as they currently exist. No portion of this material may be reproduced, in any form or by any means, without permission in writing from the publisher.
 
-## *2-68.
+## *2-68
 
 Determine the magnitude and coordinate direction angles of $\mathbf{F}_{3}$ so that the resultant of the three forces is zero.
 
@@ -2510,7 +2510,7 @@ Cartesian Vector Notation. For $\mathbf{F}_{1}$ and $\mathbf{F}_{2}$,
 $\mathbf{F}_{1}=400\left(\cos 45^{\circ} \mathbf{i}+\cos 60^{\circ} \mathbf{j}-\cos 60^{\circ} \mathbf{k}\right)=\{282.84 \mathbf{i}+200 \mathbf{j}-200 \mathbf{k}\} \mathrm{N}$
 $\mathbf{F}_{2}=125\left[\frac{4}{5}\left(\cos 20^{\circ}\right) \mathbf{i}-\frac{4}{5}\left(\sin 20^{\circ}\right) \mathbf{j}+\frac{3}{5} \mathbf{k}\right]=\{93.97 \mathbf{i}-34.20 \mathbf{j}+75.0 \mathbf{k}\}$
 
-## Resultant Force.
+## Resultant Force
 
 $$
 \begin{aligned}
@@ -2549,7 +2549,7 @@ $\alpha=28.9^{\circ}$
 $\beta=67.3^{\circ}$
 $\gamma=107^{\circ}$
 
-## 2-70.
+## 2-70
 
 Determine the magnitude and coordinate direction angles of the resultant force, and sketch this vector on the coordinate system.
 ![](https://cdn.mathpix.com/cropped/2025_10_07_d129d6999c0a72e1e33fg-070.jpg?height=432&width=435&top_left_y=254&top_left_x=1509)
@@ -2565,7 +2565,7 @@ $$
 \end{aligned}
 $$
 
-## Resultant Force.
+## Resultant Force
 
 $$
 \begin{aligned}
@@ -2610,7 +2610,7 @@ $$
 
 Ans.
 
-## Ans:
+## Ans
 
 $$
 \begin{aligned}
@@ -2623,7 +2623,7 @@ $$
 
 © 2016 Pearson Education, Inc., Upper Saddle River, NJ. All rights reserved. This material is protected under all copyright laws as they currently exist. No portion of this material may be reproduced, in any form or by any means, without permission in writing from the publisher.
 
-## 2-71.
+## 2-71
 
 Specify the magnitude and coordinate direction angles $\alpha_{1}$, $\beta_{1}, \gamma_{1}$ of $\mathbf{F}_{1}$ so that the resultant of the three forces acting on the bracket is $\mathbf{F}_{R}=\{-350 \mathbf{k}\} \mathrm{lb}$. Note that $\mathbf{F}_{3}$ lies in the $x-y$ plane.
 
@@ -2663,7 +2663,7 @@ $\alpha_{1}=62.2^{\circ}$
 $\beta_{1}=110^{\circ}$
 $\gamma_{1}=145^{\circ}$
 
-## *2-72.
+## *2-72
 
 Two forces $\mathbf{F}_{1}$ and $\mathbf{F}_{2}$ act on the screw eye. If the resultant force $\mathbf{F}_{R}$ has a magnitude of 150 lb and the coordinate direction angles shown, determine the magnitude of $\mathbf{F}_{2}$ and its coordinate direction angles.
 ![](https://cdn.mathpix.com/cropped/2025_10_07_d129d6999c0a72e1e33fg-072.jpg?height=377&width=541&top_left_y=260&top_left_x=1425)
@@ -2701,7 +2701,7 @@ $$
 \mathbf{F}_{1}=\{80 \mathbf{j}\} \mathrm{lb}
 $$
 
-## Resultant Force.
+## Resultant Force
 
 $$
 \begin{gathered}
@@ -2720,7 +2720,7 @@ F_{2}=\sqrt{\left(F_{2}\right)_{x}+\left(F_{2}\right)_{y}+\left(F_{2}\right)_{z}
 \end{aligned}
 $$
 
-## Ans.
+## Ans
 
 And its coordinate direction angles are
 
@@ -2734,7 +2734,7 @@ $$
 \cos \beta_{2}=\frac{\left(F_{2}\right)_{y}}{F_{2}}=\frac{16.42}{116.07} ; \quad \beta_{2}=81.87^{\circ}=81.9^{\circ}
 $$
 
-## Ans.
+## Ans
 
 $$
 \cos \gamma_{2}=\frac{\left(F_{2}\right)_{z}}{F_{2}}=\frac{87.05}{116.07} ; \quad \gamma_{2}=41.41^{\circ}=41.4^{\circ}
@@ -2742,7 +2742,7 @@ $$
 
 Ans.
 
-## Ans:
+## Ans
 
 $$
 F_{R}=116 \mathrm{lb}
@@ -2784,7 +2784,7 @@ $\mathbf{F}_{1}=\{72.0 \mathbf{i}+54.0 \mathbf{k}\} \mathrm{N}$
 $\mathbf{F}_{2}=\{53.0 \mathbf{i}+53.0 \mathbf{j}+130 \mathbf{k}\} \mathrm{N}$
 $\mathbf{F}_{3}=\{200 \mathbf{k}\}$
 
-## 2-74.
+## 2-74
 
 Determine the magnitude and coordinate direction angles of the resultant force, and sketch this vector on the coordinate system.
 
@@ -2801,7 +2801,7 @@ $$
 \end{aligned}
 $$
 
-## Resultant Force.
+## Resultant Force
 
 $$
 \begin{aligned}
@@ -2849,7 +2849,7 @@ $\alpha=72.1^{\circ}$
 $\beta=82.5^{\circ}$
 $\gamma=19.5^{\circ}$
 
-## 2-75.
+## 2-75
 
 The spur gear is subjected to the two forces caused by contact with other gears. Express each force as a Cartesian vector.
 
@@ -2863,7 +2863,7 @@ $$
 \end{aligned}
 $$
 
-## Ans.
+## Ans
 
 Ans.
 ![](https://cdn.mathpix.com/cropped/2025_10_07_d129d6999c0a72e1e33fg-075.jpg?height=538&width=581&top_left_y=268&top_left_x=1360)
@@ -2872,7 +2872,7 @@ Ans:
 $\mathbf{F}_{1}=\{14.0 \mathbf{j}-48.0 \mathbf{k}\} \mathrm{lb}$
 $\mathbf{F}_{2}=\{90 \mathbf{i}-127 \mathbf{j}+90 \mathbf{k}\} \mathrm{lb}$
 
-## *2-76.
+## *2-76
 
 The spur gear is subjected to the two forces caused by contact with other gears. Determine the resultant of the two forces and express the result as a Cartesian vector.
 
@@ -2889,16 +2889,16 @@ $$
 
 ![](https://cdn.mathpix.com/cropped/2025_10_07_d129d6999c0a72e1e33fg-076.jpg?height=529&width=573&top_left_y=271&top_left_x=1409)
 
-## Ans.
+## Ans
 
-## Ans:
+## Ans
 
 $F_{R x}=90$
 $F_{R y}=-113$
 $F_{R z}=42$
 $\mathbf{F}_{R}=\{90 \mathbf{i}-113 \mathbf{j}+42 \mathbf{k}\} \mathrm{lb}$
 
-## 2-77.
+## 2-77
 
 Determine the magnitude and coordinate direction angles of the resultant force, and sketch this vector on the coordinate system.
 
@@ -2922,7 +2922,7 @@ $$
 \end{aligned}
 $$
 
-## Resultant Force.
+## Resultant Force
 
 $$
 \begin{aligned}
@@ -2971,13 +2971,13 @@ F_{R} & =610 \mathrm{~N} \\
 \end{aligned}
 $$
 
-## 2-78.
+## 2-78
 
 The two forces $\mathbf{F}_{1}$ and $\mathbf{F}_{2}$ acting at $A$ have a resultant force of $\mathbf{F}_{R}=\{-100 \mathrm{k}\} \mathrm{lb}$. Determine the magnitude and coordinate direction angles of $\mathbf{F}_{2}$.
 
 ## SOLUTION
 
-## Cartesian Vector Notation:
+## Cartesian Vector Notation
 
 ![](https://cdn.mathpix.com/cropped/2025_10_07_d129d6999c0a72e1e33fg-078.jpg?height=576&width=551&top_left_y=265&top_left_x=1439)
 
@@ -2990,7 +2990,7 @@ $$
 \end{aligned}
 $$
 
-## Resultant Force:
+## Resultant Force
 
 $$
 \begin{gathered}
@@ -3048,7 +3048,7 @@ Determine the coordinate direction angles of the force $\mathbf{F}_{1}$ and indi
 
 ## SOLUTION
 
-## Unit Vector For Force $\mathbf{F}_{1}$ :
+## Unit Vector For Force $\mathbf{F}_{1}$
 
 $$
 \begin{aligned}
@@ -3073,13 +3073,13 @@ Ans.
 Ans.
 Ans.
 
-## *2-80.
+## *2-80
 
 The bracket is subjected to the two forces shown. Express each force in Cartesian vector form and then determine the resultant force $\mathbf{F}_{R}$. Find the magnitude and coordinate direction angles of the resultant force.
 
 ## SOLUTION
 
-## Cartesian Vector Notation:
+## Cartesian Vector Notation
 
 $$
 \begin{aligned}
@@ -3092,7 +3092,7 @@ $$
 \end{aligned}
 $$
 
-## Resultant Force:
+## Resultant Force
 
 $$
 \begin{aligned}
@@ -3148,7 +3148,7 @@ $\alpha=104^{\circ}$
 $\beta=15.1^{\circ}$
 $\gamma=83.3^{\circ}$
 
-## 2-81.
+## 2-81
 
 If the coordinate direction angles for $\mathbf{F}_{3}$ are $\alpha_{3}=120^{\circ}$, $\beta_{3}=60^{\circ}$ and $\gamma_{3}=45^{\circ}$, determine the magnitude and coordinate direction angles of the resultant force acting on the eyebolt.
 
@@ -3210,14 +3210,14 @@ Ans.
 ![](https://cdn.mathpix.com/cropped/2025_10_07_d129d6999c0a72e1e33fg-081.jpg?height=340&width=448&top_left_y=1577&top_left_x=1512)
 (c)
 
-## Ans:
+## Ans
 
 $F_{R}=1.55 \mathrm{kip}$
 $\alpha=82.4^{\circ}$
 $\beta=37.6^{\circ}$
 $\gamma=53.4^{\circ}$
 
-## 2-82.
+## 2-82
 
 If the coordinate direction angles for $\mathbf{F}_{3}$ are $\alpha_{3}=120^{\circ}$, $\beta_{3}=45^{\circ}$ and $\gamma_{3}=60^{\circ}$, determine the magnitude and coordinate direction angles of the resultant force acting on the eyebolt.
 
@@ -3244,7 +3244,7 @@ Ans.
 
 Ans.
 
-## ns.
+## ns
 
 s.
 $\mathbf{F}_{1}=700 \cos 30^{\circ}(+\mathbf{i})+700 \sin 30^{\circ}(+\mathbf{j})=\{606.22 \mathbf{i}+350 \mathbf{j}\} \mathrm{lb}$
@@ -3261,7 +3261,7 @@ $$
 
 ![](https://cdn.mathpix.com/cropped/2025_10_07_d129d6999c0a72e1e33fg-082.jpg?height=369&width=438&top_left_y=1591&top_left_x=1563)
 
-## Ans:
+## Ans
 
 $F_{R}=1.60$ kip
 $\alpha=82.6^{\circ}$
@@ -3269,7 +3269,7 @@ $\beta=29.4^{\circ}$
 $\gamma=61.7^{\circ}$
 © 2016 Pearson Education, Inc., Upper Saddle River, NJ. All rights reserved. This material is protected under all copyright laws as they currently exist. No portion of this material may be reproduced, in any form or by any means, without permission in writing from the publisher.
 
-## 2-83.
+## 2-83
 
 If the direction of the resultant force acting on the eyebolt is defined by the unit vector $\mathbf{u}_{F_{R}}=\cos 30^{\circ} \mathbf{j}+\sin 30^{\circ} \mathbf{k}$, determine the coordinate direction angles of $\mathbf{F}_{3}$ and the magnitude of $\mathbf{F}_{R}$.
 
@@ -3337,7 +3337,7 @@ $\beta_{3}=60.7^{\circ}, \gamma_{3}=64.4^{\circ}, F_{R 2}=1.41 \mathrm{kN}$
 
 Ans.
 
-## *2-84.
+## *2-84
 
 The pole is subjected to the force $\mathbf{F}$, which has components acting along the $x, y, z$ axes as shown. If the magnitude of $\mathbf{F}$ is $3 \mathrm{kN}, \beta=30^{\circ}$, and $\gamma=75^{\circ}$, determine the magnitudes of its three components.
 
@@ -3388,7 +3388,7 @@ $F=2.02 \mathrm{kN}$
 $F_{y}=0.523 \mathrm{kN}$
 © 2016 Pearson Education, Inc., Upper Saddle River, NJ. All rights reserved. This material is protected under all copyright laws as they currently exist. No portion of this material may be reproduced, in any form or by any means, without permission in writing from the publisher.
 
-## 2-86.
+## 2-86
 
 Determine the length of the connecting $\operatorname{rod} A B$ by first formulating a Cartesian position vector from $A$ to $B$ and then determining its magnitude.
 
@@ -3411,7 +3411,7 @@ $$
 \mathbf{r}_{A B}=\sqrt{129.90^{2}+375^{2}}=396.86 \mathrm{~mm}=397 \mathrm{~mm}
 $$
 
-## Ans.
+## Ans
 
 © 2016 Pearson Education, Inc., Upper Saddle River, NJ. All rights reserved. This material is protected under all copyright laws as they currently exist. No portion of this material may be reproduced, in any form or by any means, without permission in writing from the publisher.
 
@@ -3556,7 +3556,7 @@ $2 x^{2}=8^{2}-5^{2}$
 $x=y=4.42 \mathrm{~m}$
 Ans.
 
-## *2-92.
+## *2-92
 
 Express each of the forces in Cartesian vector form and determine the magnitude and coordinate direction angles of the resultant force.
 
@@ -3629,7 +3629,7 @@ Ans.
 
 Ans.
 
-## Ans:
+## Ans
 
 $\mathbf{F}_{A B}=\{97.3 \mathbf{i}-129 \mathbf{j}-191 \mathbf{k}\} \mathrm{N} \mathbf{F}_{A C}=\{221 \mathbf{i}-27.7 \mathbf{j}-332 \mathbf{k}\} \mathrm{N}$
 
@@ -3657,7 +3657,7 @@ Thus, the force vectors $\mathbf{F}_{B}$ and $\mathbf{F}_{C}$ are given by
 $\mathbf{F}_{B}=F_{B} \mathbf{u}_{B}=560\left(\frac{2}{7} \mathbf{i}-\frac{3}{7} \mathbf{j}-\frac{6}{7} \mathbf{k}\right)=\{160 \mathbf{i}-240 \mathbf{j}-480 \mathbf{k}\} \mathbf{N}$
 $\mathbf{F}_{C}=F_{C} \mathbf{u}_{C}=700\left(\frac{3}{7} \mathbf{i}+\frac{2}{7} \mathbf{j}-\frac{6}{7} \mathbf{k}\right)=\{300 \mathbf{i}+200 \mathbf{j}-600 \mathbf{k}\} \mathbf{N}$
 
-## Resultant Force:
+## Resultant Force
 
 $$
 \begin{aligned}
@@ -3705,7 +3705,7 @@ $\alpha=66.9^{\circ}$
 $\beta=92.0^{\circ}$
 $\gamma=157^{\circ}$
 
-## 2-94.
+## 2-94
 
 If $F_{B}=700 \mathrm{~N}$, and $F_{C}=560 \mathrm{~N}$, determine the magnitude and coordinate direction angles of the resultant force acting on the flag pole.
 
@@ -3725,7 +3725,7 @@ $$
 \end{aligned}
 $$
 
-## Resultant Force:
+## Resultant Force
 
 $$
 \begin{aligned}
@@ -3766,7 +3766,7 @@ $$
 
 Ans.
 
-## Ans:
+## Ans
 
 $F_{R}=1.17 \mathrm{kN}$
 $\alpha=68.0^{\circ}$
@@ -3868,7 +3868,7 @@ $\beta=90.0^{\circ}$
 $\gamma=59.0^{\circ}$
 © 2016 Pearson Education, Inc., Upper Saddle River, NJ. All rights reserved. This material is protected under all copyright laws as they currently exist. No portion of this material may be reproduced, in any form or by any means, without permission in writing from the publisher.
 
-## 2-98.
+## 2-98
 
 The force $\mathbf{F}$ has a magnitude of 80 lb and acts at the midpoint $C$ of the thin rod. Express the force as a Cartesian vector.
 
@@ -3912,7 +3912,7 @@ $$
 
 ![](https://cdn.mathpix.com/cropped/2025_10_07_d129d6999c0a72e1e33fg-099.jpg?height=703&width=559&top_left_y=265&top_left_x=1398)
 
-## Force Vector:
+## Force Vector
 
 $$
 \begin{aligned}
@@ -3926,7 +3926,7 @@ Ans.
 Ans:
 $\mathbf{F}=\{13.4 \mathbf{i}+23.2 \mathbf{j}+53.7 \mathbf{k}\} \mathrm{lb}$
 
-## *2-100.
+## *2-100
 
 Determine the magnitude and coordinate direction angles of the resultant force acting at point $A$ on the post.
 
@@ -3999,13 +3999,13 @@ $$
 
 © 2016 Pearson Education, Inc., Upper Saddle River, NJ. All rights reserved. This material is protected under all copyright laws as they currently exist. No portion of this material may be reproduced, in any form or by any means, without permission in writing from the publisher.
 
-## 2-101.
+## 2-101
 
 The two mooring cables exert forces on the stern of a ship as shown. Represent each force as a Cartesian vector and determine the magnitude and coordinate direction angles of the resultant.
 
 ## SOLUTION
 
-## Unit Vector:
+## Unit Vector
 
 ![](https://cdn.mathpix.com/cropped/2025_10_07_d129d6999c0a72e1e33fg-101.jpg?height=613&width=735&top_left_y=271&top_left_x=1203)
 $\mathbf{r}_{C A}=\{(50-0) \mathbf{i}+(10-0) \mathbf{j}+(-30-0) \mathbf{k}\} \mathrm{ft}=\{50 \mathbf{i}+10 \mathbf{j}-30 \mathbf{k}\} \mathrm{ft}$
@@ -4015,7 +4015,7 @@ $\mathbf{r}_{C B}=\{(50-0) \mathbf{i}+(50-0) \mathbf{j}+(-30-0) \mathbf{k}\} \ma
 $r_{C B}=\sqrt{50^{2}+50^{2}+(-30)^{2}}=76.81 \mathrm{ft}$
 $\mathbf{u}_{C B}=\frac{\mathbf{r}_{C A}}{r_{C A}}=\frac{50 \mathbf{i}+50 \mathbf{j}-30 \mathbf{k}}{76.81}=0.6509 \mathbf{i}+0.6509 \mathbf{j}-0.3906 \mathbf{k}$
 
-## Force Vector:
+## Force Vector
 
 $$
 \begin{aligned}
@@ -4032,7 +4032,7 @@ Ans.
 
 Ans.
 
-## Resultant Force:
+## Resultant Force
 
 $$
 \begin{aligned}
@@ -4051,7 +4051,7 @@ F_{R} & =\sqrt{266.67^{2}+131.45^{2}+(-160.00)^{2}} \\
 \end{aligned}
 $$
 
-## Ans.
+## Ans
 
 The coordinate direction angles of $\mathbf{F}_{R}$ are
 
@@ -4094,14 +4094,14 @@ $$
 ![](https://cdn.mathpix.com/cropped/2025_10_07_d129d6999c0a72e1e33fg-102.jpg?height=629&width=768&top_left_y=271&top_left_x=1214)
 Ans.
 
-## Ans.
+## Ans
 
 Ans:
 $\mathbf{F}_{1}=\{389 \mathbf{i}-64.9 \mathbf{j}+64.9 \mathbf{k}\} \mathrm{lb}$
 $\mathbf{F}_{2}=\{-584 \mathbf{i}+97.3 \mathbf{j}-97.3 \mathbf{k}\} \mathrm{lb}$
 © 2016 Pearson Education, Inc., Upper Saddle River, NJ. All rights reserved. This material is protected under all copyright laws as they currently exist. No portion of this material may be reproduced, in any form or by any means, without permission in writing from the publisher.
 
-## 2-103.
+## 2-103
 
 Determine the magnitude and coordinates on angles of the resultant force.
 
@@ -4140,7 +4140,7 @@ $\alpha=87.8^{\circ}$
 $\beta=63.7^{\circ}$
 $\gamma=154^{\circ}$
 
-## *2-104.
+## *2-104
 
 If the force in each cable tied to the bin is 70 lb , determine the magnitude and coordinate direction angles of the resultant force.
 
@@ -4170,7 +4170,7 @@ $$
 \end{aligned}
 $$
 
-## Resultant Force:
+## Resultant Force
 
 $$
 \begin{aligned}
@@ -4201,7 +4201,7 @@ $$
 
 ![](https://cdn.mathpix.com/cropped/2025_10_07_d129d6999c0a72e1e33fg-104.jpg?height=610&width=833&top_left_y=1984&top_left_x=1149)
 
-## 2-105.
+## 2-105
 
 If the resultant of the four forces is $\mathbf{F}_{R}=\{-360 \mathbf{k}\} \mathrm{lb}$, determine the tension developed in each cable. Due to symmetry, the tension in the four cables is the same.
 
@@ -4271,7 +4271,7 @@ Ans:
 $\mathbf{F}=\{466 \mathbf{i}+339 \mathbf{j}-169 \mathbf{k}\} \mathrm{N}$
 © 2016 Pearson Education, Inc., Upper Saddle River, NJ. All rights reserved. This material is protected under all copyright laws as they currently exist. No portion of this material may be reproduced, in any form or by any means, without permission in writing from the publisher.
 
-## 2-107.
+## 2-107
 
 Express force $\mathbf{F}$ in Cartesian vector form if point $B$ is located 3 m along the rod end $C$.
 
@@ -4301,7 +4301,7 @@ Ans.
 Ans:
 $\mathbf{F}=\{476 \mathbf{i}+329 \mathbf{j}-159 \mathbf{k}\} \mathrm{N}$
 
-## *2-108.
+## *2-108
 
 The chandelier is supported by three chains which are concurrent at point $O$. If the force in each chain has a magnitude of 60 lb , express each force as a Cartesian vector and determine the magnitude and coordinate direction angles of the resultant force.
 
@@ -4345,7 +4345,7 @@ $\beta=90^{\circ}$
 $\gamma=180^{\circ}$
 © 2016 Pearson Education, Inc., Upper Saddle River, NJ. All rights reserved. This material is protected under all copyright laws as they currently exist. No portion of this material may be reproduced, in any form or by any means, without permission in writing from the publisher.
 
-## 2-109.
+## 2-109
 
 The chandelier is supported by three chains which are concurrent at point $O$. If the resultant force at $O$ has a magnitude of 130 lb and is directed along the negative $z$ axis, determine the force in each chain.
 
@@ -4360,7 +4360,7 @@ $$
 \end{aligned}
 $$
 
-## Ans.
+## Ans
 
 ![](https://cdn.mathpix.com/cropped/2025_10_07_d129d6999c0a72e1e33fg-109.jpg?height=692&width=543&top_left_y=271&top_left_x=1398)
 
@@ -4390,7 +4390,7 @@ $$
 
 Ans.
 
-## Force Vector:
+## Force Vector
 
 $$
 \begin{aligned}
@@ -4429,7 +4429,7 @@ $$
 
 © 2016 Pearson Education, Inc., Upper Saddle River, NJ. All rights reserved. This material is protected under all copyright laws as they currently exist. No portion of this material may be reproduced, in any form or by any means, without permission in writing from the publisher.
 
-## 2-111.
+## 2-111
 
 The window is held open by cable $A B$. Determine the length of the cable and express the 30-N force acting at $A$ along the cable as a Cartesian vector.
 
@@ -4446,15 +4446,15 @@ $$
 
 ![](https://cdn.mathpix.com/cropped/2025_10_07_d129d6999c0a72e1e33fg-111.jpg?height=624&width=763&top_left_y=268&top_left_x=1165)
 
-## Ans.
+## Ans
 
-## Ans.
+## Ans
 
 Ans:
 $r_{A B}=592 \mathrm{~mm}$
 $\mathbf{F}=\{-13.2 \mathbf{i}-17.7 \mathbf{j}+20.3 \mathbf{k}\} \mathrm{N}$
 
-## *2-112.
+## *2-112
 
 Given the three vectors $\mathbf{A}, \mathbf{B}$, and $\mathbf{D}$, show that $\mathbf{A} \cdot(\mathbf{B}+\mathbf{D})=(\mathbf{A} \cdot \mathbf{B})+(\mathbf{A} \cdot \mathbf{D})$.
 
@@ -4482,7 +4482,7 @@ $$
 
 ![](https://cdn.mathpix.com/cropped/2025_10_07_d129d6999c0a72e1e33fg-112.jpg?height=272&width=557&top_left_y=894&top_left_x=1433)
 
-## 2-113.
+## 2-113
 
 Determine the magnitudes of the components of $F=600 \mathrm{~N}$ acting along and perpendicular to segment $D E$ of the pipe assembly.
 
@@ -4519,7 +4519,7 @@ Ans:
 $\left(F_{E D}\right)_{| |}=334 \mathrm{~N}$
 $\left(F_{E D}\right)_{\perp}=498 \mathrm{~N}$
 
-## 2-114.
+## 2-114
 
 Determine the angle $\theta$ between the two cables.
 ![](https://cdn.mathpix.com/cropped/2025_10_07_d129d6999c0a72e1e33fg-114.jpg?height=584&width=720&top_left_y=254&top_left_x=1246)
@@ -4530,7 +4530,7 @@ Unit Vectors. Here, the coordinates of points $A, B$ and $C$ are $A(2,-3,3) \mat
 $\mathbf{u}_{A B}=\frac{(0-2) \mathbf{i}+[3-(-3)] \mathbf{j}+(0-3) \mathbf{k}}{\sqrt{(0-2)^{2}+[3-(-3)]^{2}+(0-3)^{2}}}=-\frac{2}{7} \mathbf{i}+\frac{6}{7} \mathbf{j}-\frac{3}{7} \mathbf{k}$
 $\mathbf{u}_{A C}=\frac{(-2-2) \mathbf{i}+[3-(-3)] \mathbf{j}+(4-3) \mathbf{k}}{\sqrt{(-2-2)^{2}+[3-(-3)]^{2}+(4-3)^{2}}}=-\frac{4}{\sqrt{53}} \mathbf{i}+\frac{6}{\sqrt{53}} \mathbf{j}+\frac{1}{\sqrt{53}} \mathbf{k}$
 
-## The Angle $\boldsymbol{\theta}$ Between $\boldsymbol{A} \boldsymbol{B}$ and $\boldsymbol{A} \boldsymbol{C}$.
+## The Angle $\boldsymbol{\theta}$ Between $\boldsymbol{A} \boldsymbol{B}$ and $\boldsymbol{A} \boldsymbol{C}$
 
 $\mathbf{u}_{A B} \cdot \mathbf{u}_{A C}=\left(-\frac{2}{7} \mathbf{i}+\frac{6}{7} \mathbf{j}-\frac{3}{7} \mathbf{k}\right) \cdot\left(-\frac{4}{\sqrt{53}} \mathbf{i}+\frac{6}{\sqrt{53}} \mathbf{j}+\frac{1}{\sqrt{53}} \mathbf{k}\right)$
 
@@ -4549,7 +4549,7 @@ $$
 
 Ans.
 
-## 2-115.
+## 2-115
 
 Determine the magnitude of the projection of the force $\mathbf{F}_{\mathbf{1}}$ along cable $A C$.
 ![](https://cdn.mathpix.com/cropped/2025_10_07_d129d6999c0a72e1e33fg-115.jpg?height=584&width=738&top_left_y=254&top_left_x=1187)
@@ -4588,13 +4588,13 @@ Ans:
 $\left(F_{1}\right)_{A C}=56.3 \mathrm{~N}$
 © 2016 Pearson Education, Inc., Upper Saddle River, NJ. All rights reserved. This material is protected under all copyright laws as they currently exist. No portion of this material may be reproduced, in any form or by any means, without permission in writing from the publisher.
 
-## *2-116.
+## *2-116
 
 Determine the angle $\theta$ between the $y$ axis of the pole and the wire $A B$.
 
 ## SOLUTION
 
-## Position Vector:
+## Position Vector
 
 $$
 \begin{aligned}
@@ -4631,7 +4631,7 @@ $$
 Ans.
 © 2016 Pearson Education, Inc., Upper Saddle River, NJ. All rights reserved. This material is protected under all copyright laws as they currently exist. No portion of this material may be reproduced, in any form or by any means, without permission in writing from the publisher.
 
-## 2-117.
+## 2-117
 
 Determine the magnitudes of the projected components of the force $\mathbf{F}=[60 \mathbf{i}+12 \mathbf{j}-40 \mathbf{k}] \mathrm{N}$ along the cables $A B$ and $A C$.
 
@@ -4670,7 +4670,7 @@ $\left|\operatorname{Proj} F_{A B}\right|=70.5 \mathrm{~N}$
 $\mid$ Proj $F_{A C} \mid=65.1 \mathrm{~N}$
 © 2016 Pearson Education, Inc., Upper Saddle River, NJ. All rights reserved. This material is protected under all copyright laws as they currently exist. No portion of this material may be reproduced, in any form or by any means, without permission in writing from the publisher.
 
-## 2-118.
+## 2-118
 
 Determine the angle $\theta$ between cables $A B$ and $A C$.
 
@@ -4708,13 +4708,13 @@ Ans.
 
 Ans.
 
-## *2-120.
+## *2-120
 
 Two cables exert forces on the pipe. Determine the magnitude of the projected component of $\mathbf{F}_{1}$ along the line of action of $\mathbf{F}_{2}$.
 
 ## SOLUTION
 
-## Force Vector:
+## Force Vector
 
 $$
 \begin{aligned}
@@ -4731,7 +4731,7 @@ $$
 \mathbf{u}_{F_{2}}=\cos 135^{\circ} \mathbf{i}+\cos 60^{\circ} \mathbf{j}+\cos 60^{\circ} \mathbf{k}=-0.7071 \mathbf{i}+0.5 \mathbf{j}+0.5 \mathbf{k}
 $$
 
-## Projected Component of $\mathbf{F}_{1}$ Along the Line of Action of $\mathbf{F}_{2}$ :
+## Projected Component of $\mathbf{F}_{1}$ Along the Line of Action of $\mathbf{F}_{2}$
 
 $$
 \begin{aligned}
@@ -4745,19 +4745,19 @@ Negative sign indicates that the projected component of $\left(F_{1}\right)_{F_{
 
 The magnitude is $\left(F_{1}\right)_{F_{2}}=5.44 \mathrm{lb}$
 
-## Ans.
+## Ans
 
 Ans:
 The magnitude is $\left(F_{1}\right)_{F_{2}}=5.44 \mathrm{lb}$
 © 2016 Pearson Education, Inc., Upper Saddle River, NJ. All rights reserved. This material is protected under all copyright laws as they currently exist. No portion of this material may be reproduced, in any form or by any means, without permission in writing from the publisher.
 
-## 2-121.
+## 2-121
 
 Determine the angle $\theta$ between the two cables attached to the pipe.
 
 ## SOLUTION
 
-## Unit Vectors:
+## Unit Vectors
 
 $$
 \begin{aligned}
@@ -4786,7 +4786,7 @@ $$
 \theta=\cos ^{-1}\left(\mathbf{u}_{F_{1}} \cdot \mathbf{u}_{F_{2}}\right)=\cos ^{-1}(-0.1812)=100^{\circ} \quad \text { Ans. }
 $$
 
-## 2-122.
+## 2-122
 
 Determine the angle $\theta$ between the cables $A B$ and $A C$.
 
@@ -4802,7 +4802,7 @@ $$
 \end{gathered}
 $$
 
-## The Angle $\theta$ Between $\boldsymbol{A} \boldsymbol{B}$ and $\boldsymbol{A} \boldsymbol{C}$.
+## The Angle $\theta$ Between $\boldsymbol{A} \boldsymbol{B}$ and $\boldsymbol{A} \boldsymbol{C}$
 
 $$
 \begin{aligned}
@@ -4844,7 +4844,7 @@ The positive sign indicates that this component points in the same direction as 
 Ans:
 $F_{B A}=187 \mathrm{~N}$
 
-## *2-124.
+## *2-124
 
 Determine the magnitude of the projected component of the force $\mathbf{F}=\{400 \mathbf{i}-200 \mathbf{j}+500 \mathbf{k}\} \mathrm{N}$ acting along the cable $C A$.
 
@@ -4871,7 +4871,7 @@ Ans.
 The positive sign indicates that this component points in the same direction as $\mathbf{u}_{C A}$.
 © 2016 Pearson Education, Inc., Upper Saddle River, NJ. All rights reserved. This material is protected under all copyright laws as they currently exist. No portion of this material may be reproduced, in any form or by any means, without permission in writing from the publisher.
 
-## 2-125.
+## 2-125
 
 Determine the magnitude of the projection of force $F=600 \mathrm{~N}$ along the $u$ axis.
 
@@ -4925,7 +4925,7 @@ Ans:
 $F_{p}=10.5 \mathrm{lb}$
 © 2016 Pearson Education, Inc., Upper Saddle River, NJ. All rights reserved. This material is protected under all copyright laws as they currently exist. No portion of this material may be reproduced, in any form or by any means, without permission in writing from the publisher.
 
-## 2-127.
+## 2-127
 
 Determine the angle $\theta$ between pipe segments $B A$ and $B C$.
 
@@ -4946,7 +4946,7 @@ Determine the angle $\theta$ between $B A$ and $B C$.
 Unit Vectors. Here, the coordinates of points $A, B$ and $C$ are $A(0,-2,0) \mathrm{m}$, $B(0,0,0) \mathrm{m}$ and $C(3,4,-1) \mathrm{m}$ respectively. Thus, the unit vectors along $B A$ and $B C$ are
 $\mathbf{u}_{B A}=-\mathbf{j} \quad \mathbf{u}_{B E}=\frac{(3-0) \mathbf{i}+(4-0) \mathbf{j}+(-1-0) \mathbf{k}}{\sqrt{(3-0)^{2}+(4-0)^{2}+(-1-0)^{2}}}=\frac{3}{\sqrt{26}} \mathbf{i}+\frac{\mathbf{4}}{\sqrt{\mathbf{2 6}}} \mathbf{j}-\frac{1}{\sqrt{26}} \mathbf{k}$
 
-## The Angle $\boldsymbol{\theta}$ Between $\boldsymbol{B} \boldsymbol{A}$ and $\boldsymbol{B} \boldsymbol{C}$.
+## The Angle $\boldsymbol{\theta}$ Between $\boldsymbol{B} \boldsymbol{A}$ and $\boldsymbol{B} \boldsymbol{C}$
 
 $$
 \begin{aligned}
@@ -4998,7 +4998,7 @@ $$
 The negative signs indicate that this component points in the direction opposite to that of $\mathbf{u}_{B C}$.
 © 2016 Pearson Education, Inc., Upper Saddle River, NJ. All rights reserved. This material is protected under all copyright laws as they currently exist. No portion of this material may be reproduced, in any form or by any means, without permission in writing from the publisher.
 
-## 2-130.
+## 2-130
 
 Determine the angles $\theta$ and $\phi$ made between the axes $O A$ of the flag pole and $A B$ and $A C$, respectively, of each cable.
 
@@ -5028,7 +5028,7 @@ Ans:
 $\theta=74.4^{\circ}$
 $\phi=55.4^{\circ}$
 
-## 2-131.
+## 2-131
 
 Determine the magnitudes of the components of $\mathbf{F}$ acting along and perpendicular to segment $B C$ of the pipe assembly.
 
@@ -5068,7 +5068,7 @@ Ans:
 $\left(F_{B C}\right)_{\|}=28.3 \mathrm{lb}$
 $\left(F_{B C}\right)_{\perp}=68.0 \mathrm{lb}$
 
-## *2-132.
+## *2-132
 
 Determine the magnitude of the projected component of $\mathbf{F}$ along $A C$. Express this component as a Cartesian vector.
 
@@ -5137,7 +5137,7 @@ $$
 \end{aligned}
 $$
 
-## Vector Dot Product:
+## Vector Dot Product
 
 $$
 \begin{aligned}
@@ -5160,7 +5160,7 @@ Ans.
 Ans:
 $\theta=132^{\circ}$
 
-## 2-134.
+## 2-134
 
 If the force $F=100 \mathrm{~N}$ lies in the plane $D B E C$, which is parallel to the $x-z$ plane, and makes an angle of $10^{\circ}$ with the extended line $D B$ as shown, determine the angle that $\mathbf{F}$ makes with the diagonal $A B$ of the crate.
 
@@ -5183,7 +5183,7 @@ $$
 ![](https://cdn.mathpix.com/cropped/2025_10_07_d129d6999c0a72e1e33fg-134.jpg?height=242&width=275&top_left_y=872&top_left_x=1409)
 Ans.
 
-## 2-135.
+## 2-135
 
 Determine the magnitudes of the components of force $F=90 \mathrm{lb}$ acting parallel and perpendicular to diagonal $A B$ of the crate.
 
@@ -5226,7 +5226,7 @@ Ans:
 $\left[(F)_{A B}\right]_{\|}=63.2 \mathrm{lb}$
 $\left[(F)_{A B}\right]_{\perp}=64.1 \mathrm{lb}$
 
-## *2-136.
+## *2-136
 
 Determine the magnitudes of the projected components of the force $F=300 \mathrm{~N}$ acting along the $x$ and $y$ axes.
 
@@ -5262,14 +5262,14 @@ $$
 F_{x}=75 \mathrm{~N}, \quad F_{y}=260 \mathrm{~N}
 $$
 
-## Ans.
+## Ans
 
 Ans:
 $F_{x}=75 \mathrm{~N}$
 $F_{y}=260 \mathrm{~N}$
 © 2016 Pearson Education, Inc., Upper Saddle River, NJ. All rights reserved. This material is protected under all copyright laws as they currently exist. No portion of this material may be reproduced, in any form or by any means, without permission in writing from the publisher.
 
-## 2-137.
+## 2-137
 
 Determine the magnitude of the projected component of the force $F=300 \mathrm{~N}$ acting along line $O A$.
 
@@ -5343,4 +5343,3 @@ Ans.
 
 Ans:
 $\operatorname{Proj} \mathbf{F}_{A B}=\{0.229 \mathbf{i}-0.916 \mathbf{j}+1.15 \mathbf{k}\} \mathrm{lb}$
-

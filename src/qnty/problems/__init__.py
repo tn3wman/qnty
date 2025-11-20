@@ -29,6 +29,7 @@ from .composition import (
     delayed_sin,
 )
 from .parallelogram_law import ParallelogramLawProblem
+from .position_vector import PositionVectorProblem
 from .problem import EquationValidationError, SolverError, VariableNotFoundError
 from .problem import Problem as BaseProblem
 from .rectangular_vector import RectangularVectorProblem
@@ -117,6 +118,7 @@ __all__ = [
     "Problem",
     "EngineeringProblem",
     "ParallelogramLawProblem",
+    "PositionVectorProblem",
     "RectangularVectorProblem",
     "CartesianVectorProblem",
     # Mixins

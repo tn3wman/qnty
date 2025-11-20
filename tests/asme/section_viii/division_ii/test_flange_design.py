@@ -5,7 +5,7 @@ import numpy as np
 import pytest
 
 from qnty import Area, Dimensionless, Force, Length, Pressure, Problem, SecondMomentOfArea, Torque
-from qnty.algebra import SelectOption, SelectVariable, abs_expr, cond_expr, eq, equation, geq, leq, ln, log10, match_expr, max_expr, range_expr, sqrt, summation, When, exp
+from qnty.algebra import SelectOption, SelectVariable, When, abs_expr, cond_expr, eq, equation, exp, geq, leq, ln, log10, match_expr, max_expr, min_expr, range_expr, sqrt, summation
 from qnty.problems.rules import add_rule
 
 
@@ -197,7 +197,7 @@ class FlangeDesign(Problem):
 
     # region // Step 4
     # Determine the flange stress factors using the equations in Tables 4.16.4 and 4.16.5.
-
+    flange_ori = SelectVariable("Flange Orientation", FlangeOrientation, FlangeOrientation.standard)
     flange_connection = SelectVariable("Flange Connection", FlangeConnection, FlangeConnection.integral)
     flange_hub = SelectVariable("Flange Hub", FlangeHubType, FlangeHubType.without_hub)
 
@@ -517,6 +517,7 @@ class FlangeDesign(Problem):
 
     # endregion // Step 5
 
+    # region // Step 6
 
     # Step 6. Determine the flange moment for the operating condition using eq. (4.16.14) or eq. (4.16.15), as applicable. When specified by the user or the user's designated agent, the maximum bolt spacing (Bs ma x) and the bolt spacing correction factor (B sc) shall be applied in calculating the flange moment for internal pressure using the equations in Table 4.16.11. The flange moment Mo for the operating condition and flange moment M g for the gasket seating condition without correction for bolt spacing B s c = 1 is used for the calculation of the rigidity index in Step 10. In these equations, h D , hT , and hG are determined from Table 4.16.6. For integral and loose type flanges, the moment M oe is calculated using eq. (4.16.16) where I and Ip in this equation are determined from Table 4.16.7. For reverse type flanges, the procedure to determine M oe shall be agreed upon between the Designer and the Owner.
     M_o = Torque("flange design moment for the operating condition")
@@ -526,42 +527,49 @@ class FlangeDesign(Problem):
     h_T = Length("moment arm for load H_T")
     h_G = Length("moment arm for load H_G")
 
-    flange_type = SelectVariable("Flange Type", FlangeType, FlangeType.loose_type_lap_without_hub)
-
     h_D_eqn = equation(
         h_D,
         match_expr(
-            flange_type,
-            FlangeType.integral_welded_slip, (C-B-g_1) / 2,
-            FlangeType.loose_type_lap_with_hub, (C-B) / 2,
-            FlangeType.loose_type_lap_without_hub, (C-B) / 2,
-            FlangeType.reverse_integral_type, (C+g_1-2*g_0-B) / 2,
-            FlangeType.reverse_loose_type, (C-B) / 2,
+            flange_ori,
+            FlangeOrientation.standard,
+                match_expr(
+                    flange_connection,
+                    FlangeConnection.integral, (C-B-g_1) / 2,
+                    FlangeConnection.loose, (C-B) / 2,
+                    FlangeConnection.welded, (C-B-g_1) / 2,
+                ),
+            FlangeOrientation.reverse,
+                match_expr(
+                    flange_connection,
+                    FlangeConnection.integral, (C+g_1-2*g_0-B) / 2,
+                    FlangeConnection.loose, (C-B) / 2,
+                )
         )
     )
 
     h_T_eqn = equation(
         h_T,
         match_expr(
-            flange_type,
-            FlangeType.integral_welded_slip, (1/2)*((C-B)/2 + h_G),
-            FlangeType.loose_type_lap_with_hub, (C-G)/2,
-            FlangeType.loose_type_lap_without_hub, (C-G)/2,
-            FlangeType.reverse_integral_type, (1/2)*(C - (B+G)/2),
-            FlangeType.reverse_loose_type, (1/2)*(C - (B+G)/2),
+            flange_ori,
+            FlangeOrientation.standard,
+                match_expr(
+                    flange_connection,
+                    FlangeConnection.integral, (1/2)*((C-B)/2 + (C-G)/2),
+                    FlangeConnection.loose, (C-G)/2,
+                    FlangeConnection.welded, (1/2)*((C-B)/2 + (C-G)/2),
+                ),
+            FlangeOrientation.reverse,
+                match_expr(
+                    flange_connection,
+                    FlangeConnection.integral, (1/2)*(C - (B+G)/2),
+                    FlangeConnection.loose, (1/2)*(C - (B+G)/2),
+                )
         )
     )
 
     h_G_eqn = equation(
         h_G,
-        match_expr(
-            flange_type,
-            FlangeType.integral_welded_slip, (C-G)/2,
-            FlangeType.loose_type_lap_with_hub, (C-G)/2,
-            FlangeType.loose_type_lap_without_hub, (C-G)/2,
-            FlangeType.reverse_integral_type, (C-G)/2,
-            FlangeType.reverse_loose_type, (C-G)/2,
-        )
+        (C - G) / 2
     )
 
     a = Length("nominal bolt diameter").set(0.5).inch
@@ -616,24 +624,110 @@ class FlangeDesign(Problem):
         0.5*(A-B)
     )
 
-    I_p_eqn = equation(
-        I_p,
-        A_R*t**3*((1/3) - 0.21*(t/A_R) * (1 - (1/12)*(t/A_R)**4))
+    G_avg = Length("intermediate variable unknown description")
+    G_avg_eqn = equation(
+        G_avg,
+        0.5*(g_0 + g_1)
     )
 
-    # TODO: Complete match criteria
-    T_eqn = equation(
-        I,
+    h_p = Length("intermediate variable unknown description")
+    h_n = Length("intermediate variable unknown description").set(3).inch
+
+    h_p_eqn = equation(
+        h_p,
         match_expr(
-            flange_type,
-            FlangeType.loose_type_lap_without_hub, (B*t**3*ln(K))/24,
+            flange_connection,
+            FlangeConnection.integral,
+            cond_expr(
+                eq(g_1, g_0),
+                max_expr(
+                    0.35*g_0,
+                    min_expr(3*g_0, h_n, 0.78*sqrt(0.5*B*g_0))
+                ),
+                h
+            ),
+            FlangeConnection.loose, h,
+            FlangeConnection.welded, h,
         )
     )
+
+    A_A = Dimensionless("intermediate variable unknown description")
+    B_B = Dimensionless("intermediate variable unknown description")
+    C_C = Dimensionless("intermediate variable unknown description")
+    D_DG = Dimensionless("intermediate variable unknown description")
+    A_A_eqn = equation(
+        A_A,
+        cond_expr(
+            geq(t, G_avg),
+            A_R,
+            h_p + t
+        )
+    )
+
+    B_B_eqn = equation(
+        B_B,
+        cond_expr(
+            geq(t, G_avg),
+            t,
+            G_avg
+        )
+    )
+    C_C_eqn = equation(
+        C_C,
+        cond_expr(
+            geq(t, G_avg),
+            h_p,
+            A_R - G_avg
+        )
+    )
+
+    D_DG_eqn = equation(
+        D_DG,
+        cond_expr(
+            geq(t, G_avg),
+            G_avg,
+            t
+        )
+    )
+
+    K_AB = Dimensionless("intermediate variable unknown description")
+    K_CD = Dimensionless("intermediate variable unknown description")
+
+    K_AB_eqn = equation(
+        K_AB,
+        (A_A*B_B**3)*((1/3) - 0.21*(B_B/A_A)*(1 - (1/12)*(B_B/A_A)**4))
+    )
+
+    K_CD_eqn = equation(
+        K_CD,
+        (C_C*D_DG**3)*((1/3) - 0.105*(D_DG/C_C)*(1 - (1/192)*(D_DG/C_C)**4))
+    )
+
+    I_p_expr = A_R*t**3*((1/3) - 0.21*(t/A_R) * (1 - (1/12)*(t/A_R)**4))
+
+    I_p_eqn = equation(
+        I_p,
+        match_expr(
+            flange_connection,
+            FlangeConnection.integral, max_expr(K_AB + K_CD, I_p_expr),
+            FlangeConnection.loose, match_expr(
+                flange_hub,
+                FlangeHubType.with_hub, max_expr(K_AB + K_CD, I_p_expr),
+                FlangeHubType.without_hub, I_p_expr
+            ),
+            FlangeConnection.welded, max_expr(K_AB + K_CD, I_p_expr),
+        )
+    )
+
 
     M_oe_eqn = equation(
         M_oe,
         4*M_E*(I/(0.3846*I_p + I)) * (h_D/(C-2*h_D)) + F_A*h_D
     )
+
+    # endregion // Step 6
+
+    # region // Step 7
 
     # Step 7. Determine the flange moment for the gasket seating condition using eq. (4.16.17) or eq. (4.16.18), as applicable.
     M_g = Torque("flange design moment for the gasket seating condition")
@@ -646,45 +740,223 @@ class FlangeDesign(Problem):
         )
     )
 
+    # endregion // Step 7
+
+    # region // Step 8
+
     # Step 8. Determine the flange stresses for the operating and gasket seating conditions using the equations in Table 4.16.8.
-    Y = Dimensionless("flange stress factor")
-    Y_eqn = equation(
-        Y,
-        (1/(K-1)) * (0.66845 + 5.71690 * ((K**2 * log10(K)) / (K**2 - 1)))
-    )
-    # TODO: Complete match criteria
     S_Ho = Pressure("flange hub stress operating")
     S_Ro = Pressure("flange radial stress operating")
     S_To = Pressure("flange tangential stress operating")
-    S_Ho_eqn = equation(
-        S_Ho,
-        0,
-    )
-    S_Ro_eqn = equation(
-        S_Ro,
-        0,
-    )
-    S_To_eqn = equation(
-        S_To,
-        (Y*M_o) / (t**2*B)
-    )
 
-    # TODO: Complete match criteria
+    S_To1 = Pressure("flange tangential stress gasket seating")
+    S_To2 = Pressure("flange tangential stress gasket seating")
+
     S_Hg = Pressure("flange hub stress gasket seating")
     S_Rg = Pressure("flange radial stress gasket seating")
     S_Tg = Pressure("flange tangential stress gasket seating")
-    S_Hg_eqn = equation(
-        S_Hg,
-        0,
+
+    S_Tg1 = Pressure("intermediate variable S_Tg1")
+    S_Tg2 = Pressure("intermediate variable S_Tg2")
+
+    # Integral-type flange, welded slipon-type flange, or loose-type flange with a hub
+    S_Ho_1_expr = (f*M_o) / (L*g_1**2*B)
+    S_Hg_1_expr = (f*M_g) / (L*g_1**2*B)
+
+    S_Ro_1_expr = ((1.33*t*e + 1)*M_o) / (L*t**2*B)
+    S_Rg_1_expr = ((1.33*t*e + 1)*M_g) / (L*t**2*B)
+
+    S_To_1_expr = ((Y*M_o) / (t**2*B)) - Z*S_Ro
+    S_Tg_1_expr = ((Y*M_g) / (t**2*B)) - Z*S_Rg
+
+    # Loose-type flange without a hub
+    S_Ho_2_expr = 0
+    S_Hg_2_expr = 0
+
+    S_Ro_2_expr = 0
+    S_Rg_2_expr = 0
+
+    S_To_2_expr = Y*M_o / (t**2*B)
+    S_Tg_2_expr = Y*M_g / (t**2*B)
+
+    # Reverse integral-type flange or reverse loose-type flange with a hub
+    S_Ho_3_expr = (f*M_o) / (L_r*g_1**2*B)
+    S_Hg_3_expr = (f*M_g) / (L_r*g_1**2*B)
+
+    S_Ro_3_expr = ((1.33*t*e_r + 1)*M_o) / (L_r*t**2*B)
+    S_Rg_3_expr = ((1.33*t*e_r + 1)*M_g) / (L_r*t**2*B)
+
+    S_To1_3_expr = ((Y_r*M_o) / (t**2*B)) - ((Z*S_Ro*(0.67*t*e_r + 1)) / (1.33*t*e_r + 1))
+    S_To2_3_expr = (Y - ((2*K**2*(0.67*t*e_r + 1)) / ((K**2 - 1)*L_r))) * (M_o / (t**2*B))
+
+    S_Tg1_3_expr = ((Y_r*M_g) / (t**2*B)) - ((Z*S_Rg*(0.67*t*e_r + 1)) / (1.33*t*e_r + 1))
+    S_Tg2_3_expr = (Y - ((2*K**2*(0.67*t*e_r + 1)) / ((K**2 - 1)*L_r))) * (M_g / (t**2*B))
+    # Reverse loose-type flange without a hub
+    S_Ho_4_expr = 0
+    S_Hg_4_expr = 0
+
+    S_Ro_4_expr = 0
+    S_Rg_4_expr = 0
+
+    S_To_4_expr = (Y_r*M_o) / (t**2*B)
+    S_Tg_4_expr = (Y_r*M_g) / (t**2*B)
+
+    # TODO: Complete match criteria
+
+    S_Ho_eqn = equation(
+        S_Ho,
+        match_expr(
+            flange_ori,
+            FlangeOrientation.standard,
+                match_expr(
+                    flange_connection,
+                    FlangeConnection.integral, S_Ho_1_expr,
+                    FlangeConnection.loose, match_expr(
+                        flange_hub,
+                        FlangeHubType.with_hub, S_Ho_1_expr,
+                        FlangeHubType.without_hub, S_Ho_2_expr
+                    ),
+                    FlangeConnection.welded, S_Ho_1_expr,
+                ),
+            FlangeOrientation.reverse,
+                match_expr(
+                    flange_connection,
+                    FlangeConnection.integral, S_Ho_3_expr,
+                    FlangeConnection.loose, match_expr(
+                        flange_hub,
+                        FlangeHubType.with_hub, S_Ho_3_expr,
+                        FlangeHubType.without_hub, S_Ho_4_expr
+                    ),
+                )
+        )
     )
-    S_Rg_eqn = equation(
-        S_Rg,
-        0,
+
+    S_Ro_eqn = equation(
+        S_Ro,
+        match_expr(
+            flange_ori,
+            FlangeOrientation.standard,
+                match_expr(
+                    flange_connection,
+                    FlangeConnection.integral, S_Ro_1_expr,
+                    FlangeConnection.loose, match_expr(
+                        flange_hub,
+                        FlangeHubType.with_hub, S_Ro_1_expr,
+                        FlangeHubType.without_hub, S_Ro_2_expr
+                    ),
+                    FlangeConnection.welded, S_Ro_1_expr,
+                ),
+            FlangeOrientation.reverse,
+                match_expr(
+                    flange_connection,
+                    FlangeConnection.integral, S_Ro_3_expr,
+                    FlangeConnection.loose, match_expr(
+                        flange_hub,
+                        FlangeHubType.with_hub, S_Ro_3_expr,
+                        FlangeHubType.without_hub, S_Ro_4_expr
+                    ),
+                )
+        )
     )
-    S_Tg_eqn = equation(
-        S_Tg,
-        (Y*M_g) / (t**2*B)
+
+    S_To_eqn = equation(
+        S_To,
+        match_expr(
+            flange_ori,
+            FlangeOrientation.standard,
+                match_expr(
+                    flange_connection,
+                    FlangeConnection.integral, S_To_1_expr,
+                    FlangeConnection.loose, match_expr(
+                        flange_hub,
+                        FlangeHubType.with_hub, S_To_1_expr,
+                        FlangeHubType.without_hub, S_To_2_expr
+                    ),
+                    FlangeConnection.welded, S_To_1_expr,
+                ),
+            FlangeOrientation.reverse,
+                match_expr(
+                    flange_connection,
+                    FlangeConnection.integral, 0,
+                    FlangeConnection.loose, match_expr(
+                        flange_hub,
+                        FlangeHubType.with_hub, 0,
+                        FlangeHubType.without_hub, S_To_4_expr
+                    ),
+                )
+        )
     )
+
+    S_To1_eqn = equation(
+        S_To1,
+        match_expr(
+            flange_ori,
+            FlangeOrientation.reverse,
+                match_expr(
+                    flange_connection,
+                    FlangeConnection.integral, S_To1_3_expr,
+                    FlangeConnection.loose, match_expr(
+                        flange_hub,
+                        FlangeHubType.with_hub, S_To1_3_expr,
+                        FlangeHubType.without_hub, 0
+                    ),
+                )
+        )
+    )
+    S_To2_eqn = equation(
+        S_To2,
+        match_expr(
+            flange_ori,
+            FlangeOrientation.reverse,
+                match_expr(
+                    flange_connection,
+                    FlangeConnection.integral, S_To2_3_expr,
+                    FlangeConnection.loose, match_expr(
+                        flange_hub,
+                        FlangeHubType.with_hub, S_To2_3_expr,
+                        FlangeHubType.without_hub, 0
+                    ),
+                )
+        )
+    )
+
+    S_Tg1_eqn = equation(
+        S_Tg1,
+        match_expr(
+            flange_ori,
+            FlangeOrientation.reverse,
+                match_expr(
+                    flange_connection,
+                    FlangeConnection.integral, S_Tg1_3_expr,
+                    FlangeConnection.loose, match_expr(
+                        flange_hub,
+                        FlangeHubType.with_hub, S_Tg1_3_expr,
+                        FlangeHubType.without_hub, 0
+                    ),
+                )
+        )
+    )
+
+    S_Tg2_eqn = equation(
+        S_Tg2,
+        match_expr(
+            flange_ori,
+            FlangeOrientation.reverse,
+                match_expr(
+                    flange_connection,
+                    FlangeConnection.integral, S_Tg2_3_expr,
+                    FlangeConnection.loose, match_expr(
+                        flange_hub,
+                        FlangeHubType.with_hub, S_Tg2_3_expr,
+                        FlangeHubType.without_hub, 0
+                    ),
+                )
+        )
+    )
+
+    # endregion // Step 8
+
+    # region // Step 9
 
     # Step 9. Check the flange stress acceptance criteria. The two criteria shown below shall be evaluated. If the stress criteria are satisfied, go to Step 10. If the stress criteria are not satisfied, re-proportion the flange dimensions and go to Step 4.
         # (a) Allowable Normal Stress - The criteria to evaluate the normal stresses for the operating and gasket seating conditions are shown in Table 4.16.9.
