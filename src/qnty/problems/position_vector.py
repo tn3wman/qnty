@@ -59,6 +59,7 @@ class PositionVectorProblem(Problem):
         self.points: dict[str, Any] = {}  # Point objects (various frontend types)
         self.position_vectors: dict[str, PositionVector] = {}
         self.position_vector_specs: dict[str, dict] = {}  # Position vector specifications with constraints
+        self.position_vectors_with_constraints: dict[str, PositionVector] = {}  # PositionVectors with magnitude constraints
         self.vector_betweens: dict[str, VectorBetween] = {}  # VectorBetween objects
         self.forces: dict[str, ForceVector] = {}
         self.force_specs: dict[str, dict] = {}  # Force specifications (from/to/magnitude)
@@ -172,6 +173,12 @@ class PositionVectorProblem(Problem):
             # Check if it's a position vector spec (has magnitude but no force unit - just length constraint)
             elif isinstance(attr, dict) and "from" in attr and "to" in attr:
                 self.position_vector_specs[attr_name] = attr
+
+            # Check if it's a PositionVector with magnitude constraint
+            elif isinstance(attr, PositionVector):
+                if attr.constraint_magnitude is not None:
+                    self.position_vectors_with_constraints[attr_name] = attr
+                setattr(self, attr_name, attr)
 
             # Check if it's a ForceVector (e.g., resultant)
             elif isinstance(attr, ForceVector):
@@ -459,6 +466,30 @@ class PositionVectorProblem(Problem):
                 vb_name, from_point, to_point, magnitude, length_unit, vb
             )
 
+        # Process PositionVector objects with magnitude constraints
+        for pv_name, pv in self.position_vectors_with_constraints.items():
+            if not pv.has_unknowns():
+                continue
+
+            # Magnitude is already in SI units
+            magnitude_si = pv.constraint_magnitude
+            if magnitude_si is None:
+                raise ValueError(f"PositionVector '{pv_name}' has unknowns but no magnitude constraint")
+
+            from_point = pv.from_point
+            to_point = pv.to_point
+            length_unit = pv._unit
+
+            if length_unit is None:
+                raise ValueError(f"PositionVector '{pv_name}' requires a unit")
+
+            # Convert magnitude back to user units for _solve_single_constraint
+            magnitude = magnitude_si / length_unit.si_factor
+
+            self._solve_single_constraint(
+                pv_name, from_point, to_point, magnitude, length_unit, None
+            )
+
         # Then process dict-based position vector specs
         for pv_name, pv_spec in self.position_vector_specs.items():
             from_name = pv_spec["from"]
@@ -519,11 +550,91 @@ class PositionVectorProblem(Problem):
         to_coords = to_cart._coords
 
         # Determine which coordinates are unknown
-        # For now, handle the case of a single unknown coordinate
         solved_point: _Point | None = None
         unknown_point_name: str | None = None
 
-        if len(to_unknowns) == 1:
+        # Handle case where all 3 coordinates are unknown - need direction vector
+        if len(from_unknowns) == 3 or len(to_unknowns) == 3:
+            # Look for a direction vector (VectorCartesian named F or similar)
+            direction_vector = None
+            for attr_name in dir(self):
+                if attr_name.startswith('_'):
+                    continue
+                attr = getattr(self, attr_name)
+                if isinstance(attr, VectorCartesian):
+                    direction_vector = attr
+                    break
+
+            if direction_vector is None:
+                raise ValueError(f"Cannot solve for 3 unknown coordinates without a direction vector")
+
+            # Get unit vector from direction
+            dir_vec = direction_vector._vector
+            dir_coords = dir_vec._coords
+            dir_mag = math.sqrt(dir_coords[0]**2 + dir_coords[1]**2 + dir_coords[2]**2)
+            if dir_mag == 0:
+                raise ValueError("Direction vector has zero magnitude")
+
+            ux = dir_coords[0] / dir_mag
+            uy = dir_coords[1] / dir_mag
+            uz = dir_coords[2] / dir_mag
+
+            # r_AB = B - A = mag * unit_direction
+            # So A = B - mag * unit_direction
+            if len(from_unknowns) == 3:
+                # Solving for from_point (A)
+                ax = to_coords[0] - mag_si * ux
+                ay = to_coords[1] - mag_si * uy
+                az = to_coords[2] - mag_si * uz
+                solved_coords = np.array([ax, ay, az], dtype=float)
+                unknown_point = from_point
+            else:
+                # Solving for to_point (B)
+                bx = from_coords[0] + mag_si * ux
+                by = from_coords[1] + mag_si * uy
+                bz = from_coords[2] + mag_si * uz
+                solved_coords = np.array([bx, by, bz], dtype=float)
+                unknown_point = to_point
+
+            # Create solved point
+            solved_point = object.__new__(_Point)
+            solved_point._coords = solved_coords
+            solved_point._dim = dim.length
+            solved_point._unit = length_unit
+            solved_point._is_unknown = False
+            solved_point._distance = None
+
+            # Create PointCartesian wrapper
+            display_coords = solved_point.to_array()
+            solved_point_cartesian = PointCartesian(
+                x=display_coords[0],
+                y=display_coords[1],
+                z=display_coords[2],
+                unit=length_unit
+            )
+
+            # Find point name
+            for pname, p in self.points.items():
+                if p is unknown_point:
+                    unknown_point_name = pname
+                    break
+
+            if unknown_point_name:
+                self.solved_points[unknown_point_name] = solved_point
+                self.points[unknown_point_name] = solved_point_cartesian
+                setattr(self, unknown_point_name, solved_point_cartesian)
+
+            # Add solution step
+            self.solution_steps.append({
+                "target": unknown_point_name or "unknown",
+                "method": "direction_vector",
+                "description": f"Solved all coordinates using direction and |{name}| = {magnitude} {length_unit.symbol}",
+                "result_value": f"({display_coords[0]:.2f}, {display_coords[1]:.2f}, {display_coords[2]:.2f})",
+                "result_unit": length_unit.symbol,
+            })
+            return
+
+        elif len(to_unknowns) == 1:
             unknown_coord = list(to_unknowns.keys())[0]
 
             # Get known differences

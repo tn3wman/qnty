@@ -8,6 +8,7 @@ such as cables, rods, and other structural members.
 from __future__ import annotations
 
 import math
+from typing import TYPE_CHECKING, Protocol, runtime_checkable
 
 import numpy as np
 
@@ -15,6 +16,26 @@ from ..core.quantity import Quantity
 from ..core.unit import Unit
 from .point import _Point
 from .vector import _Vector
+
+@runtime_checkable
+class PointLike(Protocol):
+    """Protocol for any point-like object that can be converted to Cartesian coordinates."""
+
+    def to_cartesian(self) -> _Point: ...
+
+
+if TYPE_CHECKING:
+    from .point_cartesian import PointCartesian
+    from .point_direction_angles import PointDirectionAngles
+    from .point_direction_ratios import PointDirectionRatios
+    from .point_polar import PointPolar
+    from .point_spherical import PointSpherical
+
+    # Union type for all point types that can be used with from_points
+    AnyPoint = _Point | PointCartesian | PointPolar | PointSpherical | PointDirectionAngles | PointDirectionRatios
+else:
+    # At runtime, just use the protocol
+    AnyPoint = PointLike
 
 
 class PositionVector:
@@ -48,7 +69,7 @@ class PositionVector:
         >>> cos_alpha, cos_beta, cos_gamma = r_AB.direction_cosines
     """
 
-    __slots__ = ("_coords", "_dim", "_unit", "_name")
+    __slots__ = ("_coords", "_dim", "_unit", "_name", "_magnitude", "_from_point", "_to_point")
 
     def __init__(
         self,
@@ -92,8 +113,20 @@ class PositionVector:
             self._dim = unit.dim
             self._unit = unit
 
+        # Initialize magnitude constraint attributes
+        self._magnitude = None
+        self._from_point = None
+        self._to_point = None
+
     @classmethod
-    def from_points(cls, from_point: _Point, to_point: _Point, name: str | None = None) -> PositionVector:
+    def from_points(
+        cls,
+        from_point: AnyPoint,
+        to_point: AnyPoint,
+        name: str | None = None,
+        magnitude: float | None = None,
+        unit: Unit | str | None = None,
+    ) -> PositionVector:
         """
         Create position vector from point A to point B.
 
@@ -103,6 +136,8 @@ class PositionVector:
             from_point: Starting point A (can be _Point or any class with to_cartesian())
             to_point: Ending point B (can be _Point or any class with to_cartesian())
             name: Optional name (e.g., "r_AB")
+            magnitude: Optional magnitude constraint for solving unknown coordinates
+            unit: Unit for magnitude (required if magnitude is provided)
 
         Returns:
             Position vector pointing from A to B
@@ -114,34 +149,99 @@ class PositionVector:
             >>> A = Point(0, 0, 6, unit=LengthUnits.meter)
             >>> B = Point(2, -3, 0, unit=LengthUnits.meter)
             >>> r_AB = PositionVector.from_points(A, B, name="r_AB")
+
+            # With magnitude constraint for unknown point coordinates
+            >>> A = PointCartesian(x=..., y=..., z=..., unit="m")  # unknowns
+            >>> B = PointCartesian(x=0, y=0, z=0, unit="m")
+            >>> r_AB = PositionVector.from_points(A, B, name="r_AB", magnitude=9, unit="m")
         """
         # Convert frontend classes to _Point if needed
-        if hasattr(from_point, 'to_cartesian') and not isinstance(from_point, _Point):
-            from_point = from_point.to_cartesian()
-        if hasattr(to_point, 'to_cartesian') and not isinstance(to_point, _Point):
-            to_point = to_point.to_cartesian()
+        from_pt: _Point
+        to_pt: _Point
+        if isinstance(from_point, _Point):
+            from_pt = from_point
+        else:
+            from_pt = from_point.to_cartesian()
+        if isinstance(to_point, _Point):
+            to_pt = to_point
+        else:
+            to_pt = to_point.to_cartesian()
 
         # Check dimensions match
-        if from_point._dim != to_point._dim:
+        if from_pt._dim != to_pt._dim:
             raise ValueError(
-                f"Points must have same dimension: {from_point._dim} vs {to_point._dim}"
+                f"Points must have same dimension: {from_pt._dim} vs {to_pt._dim}"
             )
 
         # Compute displacement (to - from) using internal SI coords
-        delta = to_point._coords - from_point._coords
+        delta = to_pt._coords - from_pt._coords
 
         # Create position vector directly
         result = object.__new__(cls)
         result._coords = delta
-        result._dim = from_point._dim
-        result._unit = from_point._unit or to_point._unit
+        result._dim = from_pt._dim
+        result._unit = from_pt._unit or to_pt._unit
         result._name = name or "r"
+
+        # Store magnitude constraint and reference points
+        result._from_point = from_point
+        result._to_point = to_point
+
+        if magnitude is not None:
+            # Resolve unit if string
+            if isinstance(unit, str):
+                from ..core.dimension_catalog import dim
+                from ..core.unit import ureg
+
+                resolved = ureg.resolve(unit, dim=dim.length)
+                if resolved is None:
+                    raise ValueError(f"Unknown length unit '{unit}'")
+                unit = resolved
+
+            # Store magnitude in SI units
+            if unit is not None:
+                result._magnitude = magnitude * unit.si_factor
+            else:
+                result._magnitude = magnitude
+        else:
+            result._magnitude = None
+
         return result
 
     @property
     def name(self) -> str:
         """Position vector name."""
         return self._name
+
+    @property
+    def constraint_magnitude(self) -> float | None:
+        """Magnitude constraint in SI units, if any."""
+        return self._magnitude
+
+    @property
+    def from_point(self):
+        """Starting point reference."""
+        return self._from_point
+
+    @property
+    def to_point(self):
+        """Ending point reference."""
+        return self._to_point
+
+    def has_unknowns(self) -> bool:
+        """Check if either point has unknown coordinates."""
+        from_unknowns = getattr(self._from_point, 'unknowns', {}) if hasattr(self._from_point, 'unknowns') else {}
+        to_unknowns = getattr(self._to_point, 'unknowns', {}) if hasattr(self._to_point, 'unknowns') else {}
+        return bool(from_unknowns) or bool(to_unknowns)
+
+    @property
+    def _vector(self) -> _Vector:
+        """Get underlying _Vector for comparison."""
+        result = object.__new__(_Vector)
+        result._coords = self._coords.copy()
+        result._dim = self._dim
+        result._unit = self._unit
+        return result
 
     def to_cartesian(self) -> _Vector:
         """

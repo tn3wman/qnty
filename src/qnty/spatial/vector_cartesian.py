@@ -65,12 +65,11 @@ class VectorCartesian:
 
         # Resolve unit
         if isinstance(unit, str):
-            from ..core.dimension_catalog import dim
             from ..core.unit import ureg
 
-            resolved = ureg.resolve(unit, dim=dim.length)
+            resolved = ureg.resolve(unit)
             if resolved is None:
-                raise ValueError(f"Unknown length unit '{unit}'")
+                raise ValueError(f"Unknown unit '{unit}'")
             unit = resolved
 
         # Create internal _Vector
@@ -118,6 +117,30 @@ class VectorCartesian:
     def magnitude(self):
         """Vector magnitude."""
         return self._vector.magnitude
+
+    @property
+    def alpha(self):
+        """Coordinate direction angle from +x axis (degrees)."""
+        result = self._vector.alpha
+        if result is None:
+            raise ValueError("Cannot compute alpha for zero-magnitude vector")
+        return result
+
+    @property
+    def beta(self):
+        """Coordinate direction angle from +y axis (degrees)."""
+        result = self._vector.beta
+        if result is None:
+            raise ValueError("Cannot compute beta for zero-magnitude vector")
+        return result
+
+    @property
+    def gamma(self):
+        """Coordinate direction angle from +z axis (degrees)."""
+        result = self._vector.gamma
+        if result is None:
+            raise ValueError("Cannot compute gamma for zero-magnitude vector")
+        return result
 
     def to_unit(self, unit: Unit | str) -> VectorCartesian:
         """

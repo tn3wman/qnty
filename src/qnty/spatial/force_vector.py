@@ -579,6 +579,36 @@ class ForceVector:
         return cls(x=x, y=y, z=z, unit=unit, name=name, **kwargs)
 
     @classmethod
+    def resultant(cls, forces: list["ForceVector"], name: str | None = None) -> "ForceVector":
+        """
+        Create resultant force from a list of forces.
+
+        Args:
+            forces: List of ForceVector objects to sum
+            name: Name for the resultant force
+
+        Returns:
+            ForceVector representing the vector sum of all forces
+
+        Examples:
+            >>> F_1 = ForceVector(x=10, y=20, z=0, unit="N", name="F_1")
+            >>> F_2 = ForceVector(x=-5, y=15, z=10, unit="N", name="F_2")
+            >>> F_R = ForceVector.resultant([F_1, F_2], name="F_R")
+            >>> print(F_R.x)  # 5 N
+        """
+        if not forces:
+            raise ValueError("Cannot compute resultant of empty list")
+
+        result = forces[0]
+        for f in forces[1:]:
+            result = result + f
+
+        # Set name and mark as resultant
+        result.name = name or "F_R"
+        result.is_resultant = True
+        return result
+
+    @classmethod
     def from_position_vector(
         cls,
         pos_vector: "PositionVector",
@@ -1451,6 +1481,33 @@ class ForceVector:
         angle_tolerance_rad = math.radians(angle_abs_tol_deg)
 
         return angle_diff <= angle_tolerance_rad
+
+    def __add__(self, other: "ForceVector") -> "ForceVector":
+        """Add two force vectors."""
+        if not isinstance(other, ForceVector):
+            return NotImplemented
+
+        if self._vector is None or other._vector is None:
+            raise ValueError("Cannot add forces with unknown vectors")
+
+        # Get components in SI units
+        x_si = self._vector._coords[0] + other._vector._coords[0]
+        y_si = self._vector._coords[1] + other._vector._coords[1]
+        z_si = self._vector._coords[2] + other._vector._coords[2]
+
+        # Use the first force's unit for the result
+        unit = self._vector._unit
+        if unit:
+            si_factor = unit.si_factor
+            return ForceVector(
+                x=x_si / si_factor,
+                y=y_si / si_factor,
+                z=z_si / si_factor,
+                unit=unit,
+                name=f"{self.name}+{other.name}"
+            )
+        else:
+            return ForceVector(x=x_si, y=y_si, z=z_si, name=f"{self.name}+{other.name}")
 
     def __eq__(self, other: object) -> bool:
         """

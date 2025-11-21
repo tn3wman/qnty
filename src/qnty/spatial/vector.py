@@ -166,6 +166,72 @@ class _Vector(Generic[D]):
         q._output_unit = None
         return q
 
+    @property
+    def alpha(self) -> Quantity | None:
+        """Coordinate direction angle from +x axis."""
+        import math
+        from ..core.dimension_catalog import dim
+        from ..core.unit import ureg
+
+        mag_si = float(np.sqrt(np.sum(self._coords**2)))
+        if mag_si == 0:
+            return None
+        cos_alpha = self._coords[0] / mag_si
+        alpha_rad = math.acos(max(-1.0, min(1.0, cos_alpha)))
+        degree_unit = ureg.resolve("degree", dim=dim.D)
+        q = object.__new__(Quantity)
+        q.name = "alpha"
+        q.dim = dim.D
+        q.value = alpha_rad
+        q.preferred = degree_unit
+        q._symbol = None
+        q._output_unit = None
+        return q
+
+    @property
+    def beta(self) -> Quantity | None:
+        """Coordinate direction angle from +y axis."""
+        import math
+        from ..core.dimension_catalog import dim
+        from ..core.unit import ureg
+
+        mag_si = float(np.sqrt(np.sum(self._coords**2)))
+        if mag_si == 0:
+            return None
+        cos_beta = self._coords[1] / mag_si
+        beta_rad = math.acos(max(-1.0, min(1.0, cos_beta)))
+        degree_unit = ureg.resolve("degree", dim=dim.D)
+        q = object.__new__(Quantity)
+        q.name = "beta"
+        q.dim = dim.D
+        q.value = beta_rad
+        q.preferred = degree_unit
+        q._symbol = None
+        q._output_unit = None
+        return q
+
+    @property
+    def gamma(self) -> Quantity | None:
+        """Coordinate direction angle from +z axis."""
+        import math
+        from ..core.dimension_catalog import dim
+        from ..core.unit import ureg
+
+        mag_si = float(np.sqrt(np.sum(self._coords**2)))
+        if mag_si == 0:
+            return None
+        cos_gamma = self._coords[2] / mag_si
+        gamma_rad = math.acos(max(-1.0, min(1.0, cos_gamma)))
+        degree_unit = ureg.resolve("degree", dim=dim.D)
+        q = object.__new__(Quantity)
+        q.name = "gamma"
+        q.dim = dim.D
+        q.value = gamma_rad
+        q.preferred = degree_unit
+        q._symbol = None
+        q._output_unit = None
+        return q
+
     def magnitude_in(self, unit: Unit[D] | str) -> float:
         """
         Get vector magnitude in specified unit.
@@ -226,6 +292,31 @@ class _Vector(Generic[D]):
         result._dim = self._dim
         result._unit = self._unit
         return result
+
+    def is_close(self, other: "_Vector", rtol: float = 0.01) -> bool:
+        """
+        Check if this vector is close to another within tolerance.
+
+        Args:
+            other: Vector to compare against
+            rtol: Relative tolerance (default 1%)
+
+        Returns:
+            True if all components are within tolerance
+        """
+        if not isinstance(other, _Vector):
+            return False
+
+        # Compare in SI units
+        for i in range(3):
+            a = self._coords[i]
+            b = other._coords[i]
+            if b == 0:
+                if abs(a) > rtol:
+                    return False
+            elif abs(a - b) / abs(b) > rtol:
+                return False
+        return True
 
     def with_magnitude(self, magnitude: Quantity[D] | float) -> _Vector[D]:
         """
