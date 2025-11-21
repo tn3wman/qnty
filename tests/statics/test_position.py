@@ -197,7 +197,14 @@ POSITION_VECTOR_PROBLEMS = {
         """,
         "points": {
             "A": Point.unknown(unit="m", distance=9),  # Unknown point 9m from B
-            "B": PointCartesian(unit="m"),  # Origin
+            "B": PointCartesian(x=0, y=0, z=0, unit="m"),  # Origin
+        },
+        "position_vectors": {
+            "r_AB": {
+                "from": "A",
+                "to": "B",
+                "distance": 9,
+            },
         },
         "force_vectors": {
             "F_1": ForceVector(x=350, y=-250, z=-450, unit="N", name="F_1"),
@@ -208,6 +215,34 @@ POSITION_VECTOR_PROBLEMS = {
                 "x": -5.06,
                 "y": 3.61,
                 "z": 6.51,
+            },
+        },
+        "debug": {
+            "print_results": False,
+            "assert_values": True
+        },
+    },
+    "problem_2_90": {
+        "name": "Problem 2-90",
+        "description": """
+        The 8-m-long cable is anchored to the ground at A. If x = 4 m and y = 2 m, determine the coordinate z to the highest point of attachment along the column.
+        """,
+        "points": {
+            "A": PointCartesian(x=4, y=2, z=0, unit="m"),  # Ground anchor
+            "B": PointCartesian(x=0, y=0, z=..., unit="m"),  # Top of column, z unknown
+        },
+        "position_vectors": {
+            "r_AB": {
+                "from": "A",
+                "to": "B",
+                "magnitude": 8,  # Cable length
+                "unit": "m",
+            },
+        },
+        "expected": {
+            "B": {
+                "unit": "m",
+                "z": 6.63,
             },
         },
         "debug": {

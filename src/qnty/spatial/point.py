@@ -16,7 +16,7 @@ from ..core.quantity import Quantity
 from ..core.unit import Unit
 
 if TYPE_CHECKING:
-    from .vector import Vector
+    from .vector import _Vector
 
 D = TypeVar("D")
 
@@ -187,7 +187,7 @@ class _Point(Generic[D]):
         return q
 
     # Vector operations
-    def __sub__(self, other: _Point[D]) -> Vector[D]:
+    def __sub__(self, other: _Point[D]) -> _Vector[D]:
         """
         Compute displacement vector from other to self.
 
@@ -207,19 +207,19 @@ class _Point(Generic[D]):
             raise ValueError(f"Cannot subtract points with different dimensions: {self._dim} vs {other._dim}")
 
         # Import here to avoid circular imports
-        from .vector import Vector
+        from .vector import _Vector
 
         # Vectorized subtraction (SI values)
         delta = self._coords - other._coords
 
-        # Create Vector directly
-        result = object.__new__(Vector)
+        # Create _Vector directly
+        result = object.__new__(_Vector)
         result._coords = delta
         result._dim = self._dim
         result._unit = self._unit
         return result
 
-    def displaced(self, vector: Vector[D], times: float = 1.0) -> _Point[D]:
+    def displaced(self, vector: _Vector[D], times: float = 1.0) -> _Point[D]:
         """
         Create new point displaced by vector * times.
 
@@ -233,10 +233,10 @@ class _Point(Generic[D]):
         Raises:
             ValueError: If vector has different dimension than point
         """
-        from .vector import Vector
+        from .vector import _Vector
 
-        if not isinstance(vector, Vector):
-            raise TypeError(f"Expected Vector, got {type(vector)}")
+        if not isinstance(vector, _Vector):
+            raise TypeError(f"Expected _Vector, got {type(vector)}")
 
         if self._dim != vector._dim:
             raise ValueError(f"Cannot displace point with vector of different dimension: {self._dim} vs {vector._dim}")

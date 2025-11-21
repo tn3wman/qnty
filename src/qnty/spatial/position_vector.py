@@ -14,6 +14,7 @@ import numpy as np
 from ..core.quantity import Quantity
 from ..core.unit import Unit
 from .point import _Point
+from .vector import _Vector
 
 
 class PositionVector:
@@ -141,6 +142,19 @@ class PositionVector:
     def name(self) -> str:
         """Position vector name."""
         return self._name
+
+    def to_cartesian(self) -> _Vector:
+        """
+        Convert to Cartesian _Vector.
+
+        Returns:
+            _Vector object with x, y, z components
+        """
+        result = object.__new__(_Vector)
+        result._coords = self._coords.copy()
+        result._dim = self._dim
+        result._unit = self._unit
+        return result
 
     @property
     def x(self) -> Quantity:

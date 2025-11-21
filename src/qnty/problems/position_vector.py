@@ -14,7 +14,10 @@ from ..core.quantity import Quantity
 from ..solving.component_solver import ComponentSolver
 from ..spatial.force_vector import ForceVector
 from ..spatial.point import _Point
+from ..spatial.point_cartesian import PointCartesian
 from ..spatial.position_vector import PositionVector
+from ..spatial.vector_between import VectorBetween
+from ..spatial.vector_cartesian import VectorCartesian
 from .problem import Problem
 
 
@@ -55,6 +58,8 @@ class PositionVectorProblem(Problem):
         super().__init__(name=name, description=description)
         self.points: dict[str, Any] = {}  # Point objects (various frontend types)
         self.position_vectors: dict[str, PositionVector] = {}
+        self.position_vector_specs: dict[str, dict] = {}  # Position vector specifications with constraints
+        self.vector_betweens: dict[str, VectorBetween] = {}  # VectorBetween objects
         self.forces: dict[str, ForceVector] = {}
         self.force_specs: dict[str, dict] = {}  # Force specifications (from/to/magnitude)
         self.solution_steps: list[dict[str, Any]] = []
@@ -65,6 +70,83 @@ class PositionVectorProblem(Problem):
         # Extract class-level attributes
         self._extract_problem_elements()
 
+    def reset(self) -> None:
+        """
+        Reset the problem state so it can be re-solved with modified inputs.
+
+        Call this after changing point coordinates (lock/unlock) before re-solving.
+
+        Examples:
+            >>> prob = YourProblem()
+            >>> prob.solve()
+            >>> # Change what's known/unknown
+            >>> prob.B.set_coordinate('z', 6.0)  # Lock z
+            >>> prob.B.unlock_coordinate('y')     # Unlock y
+            >>> prob.reset()
+            >>> prob.solve()  # Re-solve for y
+        """
+        self.is_solved = False
+        self.solution_steps = []
+        self.solved_points = {}
+        self.position_vectors = {}
+        self._original_force_states = {}
+
+        # Re-extract problem elements from instance attributes (not class)
+        # This picks up modified points
+        self._re_extract_instance_elements()
+
+    def _re_extract_instance_elements(self) -> None:
+        """Re-extract elements from instance attributes after modification."""
+        # Clear existing collections but keep instance attributes
+        self.points = {}
+        self.vector_betweens = {}
+
+        # Re-populate from instance attributes (which may have been modified)
+        for attr_name in dir(self):
+            if attr_name.startswith("_"):
+                continue
+
+            attr = getattr(self, attr_name)
+
+            # Check if it's a VectorBetween object or VectorCartesian (solved result)
+            if isinstance(attr, VectorBetween):
+                self.vector_betweens[attr_name] = attr
+            elif isinstance(attr, VectorCartesian):
+                # This was a solved VectorBetween - need to recreate it
+                # Find original from class
+                class_attr = getattr(self.__class__, attr_name, None)
+                if isinstance(class_attr, VectorBetween):
+                    # Recreate VectorBetween with current instance points
+                    from_point_name = None
+                    to_point_name = None
+                    # Find point names by checking class-level VectorBetween
+                    for pname in dir(self.__class__):
+                        p = getattr(self.__class__, pname)
+                        if p is class_attr.from_point:
+                            from_point_name = pname
+                        if p is class_attr.to_point:
+                            to_point_name = pname
+
+                    if from_point_name and to_point_name:
+                        # Get current instance points
+                        from_pt = getattr(self, from_point_name)
+                        to_pt = getattr(self, to_point_name)
+                        # Create new VectorBetween with updated points
+                        new_vb = VectorBetween(
+                            from_point=from_pt,
+                            to_point=to_pt,
+                            magnitude=class_attr.constraint_magnitude,
+                            unit=class_attr.unit,
+                            name=class_attr.name
+                        )
+                        self.vector_betweens[attr_name] = new_vb
+                        setattr(self, attr_name, new_vb)
+
+            # Check if it's a point
+            elif hasattr(attr, "to_cartesian") or isinstance(attr, _Point):
+                if isinstance(attr, PointCartesian) or isinstance(attr, _Point):
+                    self.points[attr_name] = attr
+
     def _extract_problem_elements(self) -> None:
         """Extract points, force specs, and ForceVectors from class attributes."""
         for attr_name in dir(self.__class__):
@@ -73,14 +155,23 @@ class PositionVectorProblem(Problem):
 
             attr = getattr(self.__class__, attr_name)
 
+            # Check if it's a VectorBetween object (must come before point check since it has to_cartesian)
+            if isinstance(attr, VectorBetween):
+                self.vector_betweens[attr_name] = attr
+                setattr(self, attr_name, attr)
+
             # Check if it's a point (has to_cartesian method or is _Point)
-            if hasattr(attr, "to_cartesian") or isinstance(attr, _Point):
+            elif hasattr(attr, "to_cartesian") or isinstance(attr, _Point):
                 self.points[attr_name] = attr
                 setattr(self, attr_name, attr)
 
-            # Check if it's a force specification dict
-            elif isinstance(attr, dict) and "from" in attr and "to" in attr:
+            # Check if it's a force specification dict (has magnitude in force units)
+            elif isinstance(attr, dict) and "from" in attr and "to" in attr and "magnitude" in attr:
                 self.force_specs[attr_name] = attr
+
+            # Check if it's a position vector spec (has magnitude but no force unit - just length constraint)
+            elif isinstance(attr, dict) and "from" in attr and "to" in attr:
+                self.position_vector_specs[attr_name] = attr
 
             # Check if it's a ForceVector (e.g., resultant)
             elif isinstance(attr, ForceVector):
@@ -220,13 +311,16 @@ class PositionVectorProblem(Problem):
             self.forces[force_name] = F
 
     def _solve_unknown_points(self) -> None:
-        """Solve for unknown points given force vectors and distances."""
+        """Solve for unknown points given position vector magnitude constraints or force vectors."""
         from ..core.dimension_catalog import dim
         from ..core.unit import ureg
 
         import numpy as np
 
-        # Find unknown points and their corresponding known points/forces
+        # First, handle PointCartesian with ellipsis unknowns and magnitude constraints
+        self._solve_points_from_magnitude_constraints()
+
+        # Then handle legacy Point.unknown with force direction
         for point_name, point in list(self.points.items()):
             if not (hasattr(point, 'is_unknown') and point.is_unknown):
                 continue
@@ -338,6 +432,269 @@ class PositionVectorProblem(Problem):
                 "result_unit": output_unit.symbol,
             })
 
+    def _solve_points_from_magnitude_constraints(self) -> None:
+        """Solve for unknown point coordinates using position vector magnitude constraints."""
+        from ..core.dimension_catalog import dim
+        from ..core.unit import ureg
+
+        import numpy as np
+
+        # Process VectorBetween objects first
+        for vb_name, vb in self.vector_betweens.items():
+            if not vb.has_unknowns():
+                continue
+
+            magnitude = vb.constraint_magnitude
+            if magnitude is None:
+                raise ValueError(f"VectorBetween '{vb_name}' has unknowns but no magnitude constraint")
+
+            from_point = vb.from_point
+            to_point = vb.to_point
+            length_unit = vb.unit
+
+            if length_unit is None:
+                raise ValueError(f"VectorBetween '{vb_name}' requires a unit")
+
+            self._solve_single_constraint(
+                vb_name, from_point, to_point, magnitude, length_unit, vb
+            )
+
+        # Then process dict-based position vector specs
+        for pv_name, pv_spec in self.position_vector_specs.items():
+            from_name = pv_spec["from"]
+            to_name = pv_spec["to"]
+            magnitude = pv_spec.get("magnitude")
+            unit_str = pv_spec.get("unit", "m")
+
+            if magnitude is None:
+                continue
+
+            from_point = self.points.get(from_name)
+            to_point = self.points.get(to_name)
+
+            if from_point is None or to_point is None:
+                continue
+
+            # Resolve length unit
+            length_unit = ureg.resolve(unit_str, dim=dim.length)
+            if length_unit is None:
+                raise ValueError(f"Unknown length unit '{unit_str}'")
+
+            self._solve_single_constraint(
+                pv_name, from_point, to_point, magnitude, length_unit, None
+            )
+
+    def _solve_single_constraint(
+        self,
+        name: str,
+        from_point: Any,
+        to_point: Any,
+        magnitude: float,
+        length_unit: Any,
+        vector_between: VectorBetween | None,
+    ) -> None:
+        """Solve a single magnitude constraint for unknown coordinates."""
+        from ..core.dimension_catalog import dim
+
+        import numpy as np
+
+        # Check which point has unknowns
+        from_unknowns = getattr(from_point, 'unknowns', {}) if hasattr(from_point, 'unknowns') else {}
+        to_unknowns = getattr(to_point, 'unknowns', {}) if hasattr(to_point, 'unknowns') else {}
+
+        if not from_unknowns and not to_unknowns:
+            # No unknowns - just compute the vector if VectorBetween
+            if vector_between is not None:
+                vector_between._compute_vector()
+            return
+
+        # Convert magnitude to SI
+        mag_si = magnitude * length_unit.si_factor
+
+        # Get coordinates (convert to _Point if needed)
+        from_cart = from_point.to_cartesian() if hasattr(from_point, 'to_cartesian') else from_point
+        to_cart = to_point.to_cartesian() if hasattr(to_point, 'to_cartesian') else to_point
+
+        from_coords = from_cart._coords
+        to_coords = to_cart._coords
+
+        # Determine which coordinates are unknown
+        # For now, handle the case of a single unknown coordinate
+        solved_point: _Point | None = None
+        unknown_point_name: str | None = None
+
+        if len(to_unknowns) == 1:
+            unknown_coord = list(to_unknowns.keys())[0]
+
+            # Get known differences
+            if unknown_coord == "x":
+                dy = to_coords[1] - from_coords[1]
+                dz = to_coords[2] - from_coords[2]
+                dx_sq = mag_si**2 - dy**2 - dz**2
+                if dx_sq < 0:
+                    raise ValueError(f"Magnitude {magnitude} is too small for the given coordinates")
+                dx = math.sqrt(dx_sq)
+                solved_x = from_coords[0] + dx if to_coords[0] >= from_coords[0] else from_coords[0] - dx
+                solved_coords = np.array([solved_x, to_coords[1], to_coords[2]], dtype=float)
+                solved_value = solved_x / length_unit.si_factor
+
+            elif unknown_coord == "y":
+                dx = to_coords[0] - from_coords[0]
+                dz = to_coords[2] - from_coords[2]
+                dy_sq = mag_si**2 - dx**2 - dz**2
+                if dy_sq < 0:
+                    raise ValueError(f"Magnitude {magnitude} is too small for the given coordinates")
+                dy = math.sqrt(dy_sq)
+                solved_y = from_coords[1] + dy if to_coords[1] >= from_coords[1] else from_coords[1] - dy
+                solved_coords = np.array([to_coords[0], solved_y, to_coords[2]], dtype=float)
+                solved_value = solved_y / length_unit.si_factor
+
+            elif unknown_coord == "z":
+                dx = to_coords[0] - from_coords[0]
+                dy = to_coords[1] - from_coords[1]
+                dz_sq = mag_si**2 - dx**2 - dy**2
+                if dz_sq < 0:
+                    raise ValueError(f"Magnitude {magnitude} is too small for the given coordinates")
+                dz = math.sqrt(dz_sq)
+                solved_z = from_coords[2] + dz
+                solved_coords = np.array([to_coords[0], to_coords[1], solved_z], dtype=float)
+                solved_value = solved_z / length_unit.si_factor
+
+            else:
+                return
+
+            # Create solved _Point first (internal representation)
+            solved_point = object.__new__(_Point)
+            solved_point._coords = solved_coords
+            solved_point._dim = dim.length
+            solved_point._unit = length_unit
+            solved_point._is_unknown = False
+            solved_point._distance = None
+
+            # Create PointCartesian wrapper for user-friendly output
+            display_coords = solved_point.to_array()
+            solved_point_cartesian = PointCartesian(
+                x=display_coords[0],
+                y=display_coords[1],
+                z=display_coords[2],
+                unit=length_unit
+            )
+
+            # Find the point name - need to search through points dict
+            for pname, p in self.points.items():
+                if p is to_point:
+                    unknown_point_name = pname
+                    break
+
+            if unknown_point_name:
+                self.solved_points[unknown_point_name] = solved_point
+                self.points[unknown_point_name] = solved_point_cartesian
+                # Update instance attribute so prob.B returns solved PointCartesian
+                setattr(self, unknown_point_name, solved_point_cartesian)
+
+            # Add solution step
+            unit_str = length_unit.symbol if length_unit else ""
+            self.solution_steps.append({
+                "target": unknown_point_name or "unknown",
+                "method": "magnitude_constraint",
+                "description": f"Solved {unknown_coord} using |{name}| = {magnitude} {unit_str}",
+                "result_value": f"{solved_value:.2f}",
+                "result_unit": unit_str,
+            })
+
+            # Update VectorBetween's internal vector and replace with VectorCartesian
+            if vector_between is not None:
+                vector_between._compute_vector(from_cart, solved_point)
+                # Create VectorCartesian wrapper for user-friendly output
+                vec = vector_between._vector
+                if vec is not None:
+                    vec_coords = vec.to_array()
+                    solved_vector_cartesian = VectorCartesian(
+                        u=vec_coords[0],
+                        v=vec_coords[1],
+                        w=vec_coords[2],
+                        unit=length_unit
+                    )
+                    # Find the VectorBetween name and update instance attribute
+                    for vb_name_key, vb_obj in self.vector_betweens.items():
+                        if vb_obj is vector_between:
+                            setattr(self, vb_name_key, solved_vector_cartesian)
+                            break
+
+        elif len(from_unknowns) == 1:
+            unknown_coord = list(from_unknowns.keys())[0]
+
+            if unknown_coord == "z":
+                dx = to_coords[0] - from_coords[0]
+                dy = to_coords[1] - from_coords[1]
+                dz_sq = mag_si**2 - dx**2 - dy**2
+                if dz_sq < 0:
+                    raise ValueError(f"Magnitude {magnitude} is too small for the given coordinates")
+                dz = math.sqrt(dz_sq)
+                solved_z = to_coords[2] - dz
+                solved_coords = np.array([from_coords[0], from_coords[1], solved_z], dtype=float)
+                solved_value = solved_z / length_unit.si_factor
+            else:
+                return
+
+            # Create solved _Point first (internal representation)
+            solved_point = object.__new__(_Point)
+            solved_point._coords = solved_coords
+            solved_point._dim = dim.length
+            solved_point._unit = length_unit
+            solved_point._is_unknown = False
+            solved_point._distance = None
+
+            # Create PointCartesian wrapper for user-friendly output
+            display_coords = solved_point.to_array()
+            solved_point_cartesian = PointCartesian(
+                x=display_coords[0],
+                y=display_coords[1],
+                z=display_coords[2],
+                unit=length_unit
+            )
+
+            # Find the point name
+            for pname, p in self.points.items():
+                if p is from_point:
+                    unknown_point_name = pname
+                    break
+
+            if unknown_point_name:
+                self.solved_points[unknown_point_name] = solved_point
+                self.points[unknown_point_name] = solved_point_cartesian
+                # Update instance attribute so prob.A returns solved PointCartesian
+                setattr(self, unknown_point_name, solved_point_cartesian)
+
+            # Add solution step
+            unit_str = length_unit.symbol if length_unit else ""
+            self.solution_steps.append({
+                "target": unknown_point_name or "unknown",
+                "method": "magnitude_constraint",
+                "description": f"Solved {unknown_coord} using |{name}| = {magnitude} {unit_str}",
+                "result_value": f"{solved_value:.2f}",
+                "result_unit": unit_str,
+            })
+
+            # Update VectorBetween's internal vector and replace with VectorCartesian
+            if vector_between is not None:
+                vector_between._compute_vector(solved_point, to_cart)
+                # Create VectorCartesian wrapper for user-friendly output
+                vec = vector_between._vector
+                if vec is not None:
+                    vec_coords = vec.to_array()
+                    solved_vector_cartesian = VectorCartesian(
+                        u=vec_coords[0],
+                        v=vec_coords[1],
+                        w=vec_coords[2],
+                        unit=length_unit
+                    )
+                    # Find the VectorBetween name and update instance attribute
+                    for vb_name_key, vb_obj in self.vector_betweens.items():
+                        if vb_obj is vector_between:
+                            setattr(self, vb_name_key, solved_vector_cartesian)
+                            break
+
     def solve(self, max_iterations: int = 100, tolerance: float = 1e-10) -> dict[str, ForceVector]:  # type: ignore[override]
         """
         Solve the position vector problem.
@@ -353,11 +710,17 @@ class PositionVectorProblem(Problem):
 
         # Step 0: Check for unknown points to solve
         has_unknown_points = any(
-            hasattr(p, 'is_unknown') and p.is_unknown
+            (hasattr(p, 'is_unknown') and p.is_unknown) or
+            (hasattr(p, 'has_unknowns') and p.has_unknowns)
             for p in self.points.values()
         )
 
-        if has_unknown_points:
+        # Also check VectorBetween objects for unknowns
+        has_vector_unknowns = any(
+            vb.has_unknowns() for vb in self.vector_betweens.values()
+        )
+
+        if has_unknown_points or has_vector_unknowns:
             # Solve for unknown points first
             self._solve_unknown_points()
 

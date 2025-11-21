@@ -18,7 +18,7 @@ from ..core.quantity import Quantity
 from ..core.unit import Unit
 from .angle_reference import AngleReference
 from .coordinate_system import CoordinateSystem
-from .vector import Vector
+from .vector import _Vector
 
 if TYPE_CHECKING:
     from .position_vector import PositionVector
@@ -59,7 +59,7 @@ class ForceVector:
         z: float | Quantity | None = None,
         unit: Unit | str | None = None,
         angle_unit: Unit | str = "degree",
-        vector: Vector | None = None,
+        vector: _Vector | None = None,
         name: str | None = None,
         description: str = "",
         is_known: bool = True,
@@ -247,7 +247,7 @@ class ForceVector:
             y_qty = Quantity(name=f"{self.name}_y", dim=dim_force.force, value=y_val, preferred=mag_qty.preferred)
             z_qty = Quantity(name=f"{self.name}_z", dim=dim_force.force, value=z_val, preferred=mag_qty.preferred)
 
-            self._vector = Vector.from_quantities(x_qty, y_qty, z_qty)
+            self._vector = _Vector.from_quantities(x_qty, y_qty, z_qty)
             self._magnitude = mag_qty
             self._angle = None  # Not applicable for 3D
             return
@@ -298,7 +298,7 @@ class ForceVector:
             y_qty = Quantity(name=f"{self.name}_y", dim=dim_force2.force, value=y_val, preferred=mag_qty.preferred)
             z_qty = Quantity(name=f"{self.name}_z", dim=dim_force2.force, value=z_val, preferred=mag_qty.preferred)
 
-            self._vector = Vector.from_quantities(x_qty, y_qty, z_qty)
+            self._vector = _Vector.from_quantities(x_qty, y_qty, z_qty)
             self._magnitude = mag_qty
             self._angle = None  # Not applicable for 3D
             return
@@ -366,7 +366,7 @@ class ForceVector:
                 x_qty = Quantity(name=f"{self.name}_x", dim=dim_force3.force, value=x_val, preferred=mag_qty.preferred)
                 y_qty = Quantity(name=f"{self.name}_y", dim=dim_force3.force, value=y_val, preferred=mag_qty.preferred)
                 z_qty = Quantity(name=f"{self.name}_z", dim=dim_force3.force, value=z_val, preferred=mag_qty.preferred)
-                self._vector = Vector.from_quantities(x_qty, y_qty, z_qty)
+                self._vector = _Vector.from_quantities(x_qty, y_qty, z_qty)
             else:
                 # Unknown force or has relative angle constraint
                 self._vector = None
@@ -437,7 +437,7 @@ class ForceVector:
 
             # Create vector from quantities
             if x_qty.value is not None and y_qty.value is not None and z_qty.value is not None:
-                self._vector = Vector.from_quantities(x_qty, y_qty, z_qty)
+                self._vector = _Vector.from_quantities(x_qty, y_qty, z_qty)
                 self._compute_magnitude_and_angle()
             else:
                 self._vector = None
@@ -853,8 +853,6 @@ class ForceVector:
         if self._magnitude is not None and self._magnitude.value is not None and self._angle is not None and self._angle.value is not None:
             import math
 
-            from .vector import Vector
-
             # Create vector from magnitude and angle
             mag_si = self._magnitude.value
             angle_rad = self._angle.value
@@ -866,7 +864,7 @@ class ForceVector:
             y_qty = Quantity(name=f"{self.name}_y", dim=dim.force, value=y_val, preferred=self._magnitude.preferred)
             z_qty = Quantity(name=f"{self.name}_z", dim=dim.force, value=z_val, preferred=self._magnitude.preferred)
 
-            self._vector = Vector.from_quantities(x_qty, y_qty, z_qty)
+            self._vector = _Vector.from_quantities(x_qty, y_qty, z_qty)
             self.is_known = True
 
     def has_relative_angle(self) -> bool:
@@ -889,8 +887,17 @@ class ForceVector:
         return self._angle
 
     @property
-    def vector(self) -> Vector | None:
-        """Underlying Vector object."""
+    def vector(self) -> _Vector | None:
+        """Underlying _Vector object."""
+        return self._vector
+
+    def to_cartesian(self) -> _Vector | None:
+        """
+        Convert to Cartesian _Vector.
+
+        Returns:
+            _Vector object with force components, or None if unknown
+        """
         return self._vector
 
     @property

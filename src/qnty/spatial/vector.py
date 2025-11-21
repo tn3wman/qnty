@@ -19,16 +19,24 @@ from ..core.unit import Unit
 D = TypeVar("D")
 
 
-class Vector(Generic[D]):
+class _Vector(Generic[D]):
     """
-    3D vector with uniform units across all components.
+    Backend 3D vector with uniform units across all components.
 
-    Represents a direction or displacement in 3D space. All components
-    (u, v, w) share the same unit. Internally stores values in SI units.
+    This is the internal representation used by all frontend Vector classes.
+    All components (u, v, w) share the same unit for consistency
+    and performance. Internally stores values in SI units.
+
+    Users should use the frontend classes instead:
+    - VectorCartesian: Define by u, v, w components
+    - VectorPolar: Define by magnitude and angle in a plane
+    - VectorSpherical: Define by magnitude, theta, phi angles
+    - VectorDirectionAngles: Define by magnitude and direction angles
+    - VectorDirectionRatios: Define by magnitude and direction ratios
 
     Examples:
         >>> from qnty.core.unit_catalog import LengthUnits
-        >>> v1 = Vector(3.0, 4.0, 0.0, unit=LengthUnits.meter)
+        >>> v1 = _Vector(3.0, 4.0, 0.0, unit=LengthUnits.meter)
         >>> magnitude = v1.magnitude
         >>> print(magnitude)
         5 m
@@ -62,7 +70,7 @@ class Vector(Generic[D]):
             self._unit = unit  # Preferred display unit
 
     @classmethod
-    def from_quantities(cls, u: Quantity[D], v: Quantity[D], w: Quantity[D] | None = None) -> Vector[D]:
+    def from_quantities(cls, u: Quantity[D], v: Quantity[D], w: Quantity[D] | None = None) -> _Vector[D]:
         """
         Create vector from Quantity objects (must have same dimension).
 
@@ -72,7 +80,7 @@ class Vector(Generic[D]):
             w: Third component as Quantity (default: 0 in same unit as u)
 
         Returns:
-            Vector with components from the quantities
+            _Vector with components from the quantities
 
         Raises:
             ValueError: If quantities have different dimensions
@@ -198,7 +206,7 @@ class Vector(Generic[D]):
         mag_qty = self.magnitude
         return mag_qty.magnitude(unit)
 
-    def normalized(self) -> Vector[D]:
+    def normalized(self) -> _Vector[D]:
         """
         Return unit vector in same direction.
 
@@ -213,13 +221,13 @@ class Vector(Generic[D]):
             raise ValueError("Cannot normalize zero vector")
 
         # Create normalized vector
-        result = object.__new__(Vector)
+        result = object.__new__(_Vector)
         result._coords = self._coords / mag
         result._dim = self._dim
         result._unit = self._unit
         return result
 
-    def with_magnitude(self, magnitude: Quantity[D] | float) -> Vector[D]:
+    def with_magnitude(self, magnitude: Quantity[D] | float) -> _Vector[D]:
         """
         Return vector in same direction with specified magnitude.
 
@@ -248,14 +256,14 @@ class Vector(Generic[D]):
         scale = target_mag / current_mag
 
         # Create scaled vector
-        result = object.__new__(Vector)
+        result = object.__new__(_Vector)
         result._coords = self._coords * scale
         result._dim = self._dim
         result._unit = self._unit
         return result
 
     # Vector operations
-    def __add__(self, other: Vector[D]) -> Vector[D]:
+    def __add__(self, other: _Vector[D]) -> _Vector[D]:
         """
         Vector addition.
 
@@ -268,20 +276,20 @@ class Vector(Generic[D]):
         Raises:
             ValueError: If vectors have different dimensions
         """
-        if not isinstance(other, Vector):
+        if not isinstance(other, _Vector):
             return NotImplemented
 
         if self._dim != other._dim:
             raise ValueError(f"Cannot add vectors with different dimensions: {self._dim} vs {other._dim}")
 
         # Vectorized addition (SI values)
-        result = object.__new__(Vector)
+        result = object.__new__(_Vector)
         result._coords = self._coords + other._coords
         result._dim = self._dim
         result._unit = self._unit
         return result
 
-    def __sub__(self, other: Vector[D]) -> Vector[D]:
+    def __sub__(self, other: _Vector[D]) -> _Vector[D]:
         """
         Vector subtraction.
 
@@ -294,20 +302,20 @@ class Vector(Generic[D]):
         Raises:
             ValueError: If vectors have different dimensions
         """
-        if not isinstance(other, Vector):
+        if not isinstance(other, _Vector):
             return NotImplemented
 
         if self._dim != other._dim:
             raise ValueError(f"Cannot subtract vectors with different dimensions: {self._dim} vs {other._dim}")
 
         # Vectorized subtraction (SI values)
-        result = object.__new__(Vector)
+        result = object.__new__(_Vector)
         result._coords = self._coords - other._coords
         result._dim = self._dim
         result._unit = self._unit
         return result
 
-    def __mul__(self, scalar: float | int) -> Vector[D]:
+    def __mul__(self, scalar: float | int) -> _Vector[D]:
         """
         Scalar multiplication.
 
@@ -317,7 +325,7 @@ class Vector(Generic[D]):
         Returns:
             Scaled vector
         """
-        result = object.__new__(Vector)
+        result = object.__new__(_Vector)
         result._coords = self._coords * float(scalar)
         result._dim = self._dim
         result._unit = self._unit
@@ -325,7 +333,7 @@ class Vector(Generic[D]):
 
     __rmul__ = __mul__
 
-    def __truediv__(self, scalar: float | int) -> Vector[D]:
+    def __truediv__(self, scalar: float | int) -> _Vector[D]:
         """
         Scalar division.
 
@@ -341,26 +349,26 @@ class Vector(Generic[D]):
         if scalar == 0:
             raise ZeroDivisionError("Cannot divide vector by zero")
 
-        result = object.__new__(Vector)
+        result = object.__new__(_Vector)
         result._coords = self._coords / float(scalar)
         result._dim = self._dim
         result._unit = self._unit
         return result
 
-    def __neg__(self) -> Vector[D]:
+    def __neg__(self) -> _Vector[D]:
         """
         Negation (opposite direction).
 
         Returns:
             Vector pointing in opposite direction
         """
-        result = object.__new__(Vector)
+        result = object.__new__(_Vector)
         result._coords = -self._coords
         result._dim = self._dim
         result._unit = self._unit
         return result
 
-    def dot(self, other: Vector[D]) -> Quantity:
+    def dot(self, other: _Vector[D]) -> Quantity:
         """
         Dot product (scalar product).
 
@@ -373,8 +381,8 @@ class Vector(Generic[D]):
         Raises:
             ValueError: If vectors have incompatible dimensions
         """
-        if not isinstance(other, Vector):
-            raise TypeError(f"Expected Vector, got {type(other)}")
+        if not isinstance(other, _Vector):
+            raise TypeError(f"Expected _Vector, got {type(other)}")
 
         # Dot product of SI values
         dot_product = float(np.sum(self._coords * other._coords))
@@ -395,7 +403,7 @@ class Vector(Generic[D]):
         q._output_unit = None
         return q
 
-    def cross(self, other: Vector[D]) -> Vector:
+    def cross(self, other: _Vector[D]) -> _Vector:
         """
         Cross product (vector product).
 
@@ -409,8 +417,8 @@ class Vector(Generic[D]):
             The resulting vector is perpendicular to both input vectors.
             Magnitude equals area of parallelogram formed by the vectors.
         """
-        if not isinstance(other, Vector):
-            raise TypeError(f"Expected Vector, got {type(other)}")
+        if not isinstance(other, _Vector):
+            raise TypeError(f"Expected _Vector, got {type(other)}")
 
         # Cross product of SI values
         cross_coords = np.cross(self._coords, other._coords)
@@ -422,13 +430,13 @@ class Vector(Generic[D]):
             result_dim = self._dim * other._dim
 
         # Create result vector
-        result = object.__new__(Vector)
+        result = object.__new__(_Vector)
         result._coords = cross_coords
         result._dim = result_dim
         result._unit = None  # Cross product may have different units
         return result
 
-    def is_parallel_to(self, other: Vector[D], tolerance: float = 1e-10) -> bool:
+    def is_parallel_to(self, other: _Vector[D], tolerance: float = 1e-10) -> bool:
         """
         Test whether vector is parallel to another.
 
@@ -439,15 +447,15 @@ class Vector(Generic[D]):
         Returns:
             True if vectors are parallel (cross product near zero)
         """
-        if not isinstance(other, Vector):
-            raise TypeError(f"Expected Vector, got {type(other)}")
+        if not isinstance(other, _Vector):
+            raise TypeError(f"Expected _Vector, got {type(other)}")
 
         cross_coords = np.cross(self._coords, other._coords)
         cross_magnitude = np.sqrt(np.sum(cross_coords**2))
 
         return bool(cross_magnitude < tolerance)
 
-    def is_perpendicular_to(self, other: Vector[D], tolerance: float = 1e-10) -> bool:
+    def is_perpendicular_to(self, other: _Vector[D], tolerance: float = 1e-10) -> bool:
         """
         Test whether vector is perpendicular to another.
 
@@ -458,14 +466,14 @@ class Vector(Generic[D]):
         Returns:
             True if vectors are perpendicular (dot product near zero)
         """
-        if not isinstance(other, Vector):
-            raise TypeError(f"Expected Vector, got {type(other)}")
+        if not isinstance(other, _Vector):
+            raise TypeError(f"Expected _Vector, got {type(other)}")
 
         dot_product = np.sum(self._coords * other._coords)
 
         return bool(abs(dot_product) < tolerance)
 
-    def angle_to(self, other: Vector[D]) -> Quantity:
+    def angle_to(self, other: _Vector[D]) -> Quantity:
         """
         Compute angle between this vector and another.
 
@@ -478,8 +486,8 @@ class Vector(Generic[D]):
         Raises:
             ValueError: If either vector is zero
         """
-        if not isinstance(other, Vector):
-            raise TypeError(f"Expected Vector, got {type(other)}")
+        if not isinstance(other, _Vector):
+            raise TypeError(f"Expected _Vector, got {type(other)}")
 
         mag_self = np.sqrt(np.sum(self._coords**2))
         mag_other = np.sqrt(np.sum(other._coords**2))
@@ -507,7 +515,7 @@ class Vector(Generic[D]):
         q._output_unit = None
         return q
 
-    def projection_onto(self, other: Vector[D]) -> Vector[D]:
+    def projection_onto(self, other: _Vector[D]) -> _Vector[D]:
         """
         Compute projection of this vector onto another.
 
@@ -520,8 +528,8 @@ class Vector(Generic[D]):
         Raises:
             ValueError: If other vector is zero
         """
-        if not isinstance(other, Vector):
-            raise TypeError(f"Expected Vector, got {type(other)}")
+        if not isinstance(other, _Vector):
+            raise TypeError(f"Expected _Vector, got {type(other)}")
 
         mag_other_sq = np.sum(other._coords**2)
         if mag_other_sq == 0:
@@ -531,13 +539,13 @@ class Vector(Generic[D]):
         dot_product = np.sum(self._coords * other._coords)
         scale = dot_product / mag_other_sq
 
-        result = object.__new__(Vector)
+        result = object.__new__(_Vector)
         result._coords = scale * other._coords
         result._dim = self._dim
         result._unit = self._unit
         return result
 
-    def to_unit(self, unit: Unit[D] | str) -> Vector[D]:
+    def to_unit(self, unit: Unit[D] | str) -> _Vector[D]:
         """
         Convert to different display unit (SI values unchanged).
 
@@ -555,8 +563,8 @@ class Vector(Generic[D]):
                 raise ValueError(f"Unknown unit '{unit}'")
             unit = resolved
 
-        # Create new Vector with same SI values, different display unit
-        result = object.__new__(Vector)
+        # Create new _Vector with same SI values, different display unit
+        result = object.__new__(_Vector)
         result._coords = self._coords.copy()  # Copy to avoid aliasing
         result._dim = self._dim
         result._unit = unit
@@ -583,7 +591,7 @@ class Vector(Generic[D]):
         Returns:
             True if vectors are equal within tolerance
         """
-        if not isinstance(other, Vector):
+        if not isinstance(other, _Vector):
             return NotImplemented
 
         if self._dim != other._dim:
@@ -596,8 +604,12 @@ class Vector(Generic[D]):
         """String representation of the vector."""
         coords = self.to_array()
         unit_str = f" {self._unit.symbol}" if self._unit else ""
-        return f"Vector({coords[0]:.6g}, {coords[1]:.6g}, {coords[2]:.6g}{unit_str})"
+        return f"_Vector({coords[0]:.6g}, {coords[1]:.6g}, {coords[2]:.6g}{unit_str})"
 
     def __repr__(self) -> str:
         """Representation of the vector."""
         return self.__str__()
+
+
+# Backward compatibility alias - users should migrate to frontend classes
+Vector = _Vector

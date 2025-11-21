@@ -35,9 +35,15 @@ from .point_direction_angles import PointDirectionAngles
 from .point_direction_ratios import PointDirectionRatios
 from .point_polar import PointPolar
 from .point_spherical import PointSpherical
-from .vector import Vector
+from .vector import _Vector, Vector
+from .vector_cartesian import VectorCartesian
+from .vector_direction_angles import VectorDirectionAngles
+from .vector_direction_ratios import VectorDirectionRatios
+from .vector_polar import VectorPolar
+from .vector_spherical import VectorSpherical
 from .force_vector import ForceVector
 from .position_vector import PositionVector
+from .vector_between import VectorBetween
 
 __all__ = [
     "_Point",
@@ -47,7 +53,14 @@ __all__ = [
     "PointDirectionRatios",
     "PointPolar",
     "PointSpherical",
+    "_Vector",
     "Vector",
+    "VectorCartesian",
+    "VectorDirectionAngles",
+    "VectorDirectionRatios",
+    "VectorPolar",
+    "VectorSpherical",
     "ForceVector",
     "PositionVector",
+    "VectorBetween",
 ]
