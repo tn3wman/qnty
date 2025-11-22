@@ -20,7 +20,7 @@ from typing import Any
 import numpy as np
 
 from ..core.quantity import Quantity
-from ..spatial.force_vector import ForceVector
+from ..spatial import ForceVector
 from ..spatial.vector import Vector
 
 
@@ -103,7 +103,7 @@ class TriangleSolver:
             forces_dict["FR"] = resultant
         else:
             # Update existing resultant
-            resultant._vector = resultant_vector
+            resultant.copy_coords_from(resultant_vector)
             resultant._compute_magnitude_and_angle()
             resultant.is_known = True
 
@@ -158,7 +158,7 @@ class TriangleSolver:
             if resultant and resultant.vector:
                 # Unknown force is negative of resultant
                 unknown_vector = -resultant.vector
-                unknown_force._vector = unknown_vector
+                unknown_force.copy_coords_from(unknown_vector)
                 unknown_force._compute_magnitude_and_angle()
                 unknown_force.is_known = True
         else:
@@ -282,7 +282,7 @@ class TriangleSolver:
         unknown_vector = Vector.from_quantities(x_qty, y_qty, z_qty)
 
         # Update unknown force
-        unknown_force._vector = unknown_vector
+        unknown_force.copy_coords_from(unknown_vector)
         unknown_force._magnitude = mag_qty
         unknown_force._angle = angle_qty
         unknown_force.is_known = True
@@ -393,7 +393,7 @@ class TriangleSolver:
         resultant_vector = Vector.from_quantities(x_qty, y_qty, z_qty)
 
         # Update resultant force
-        resultant._vector = resultant_vector
+        resultant.copy_coords_from(resultant_vector)
         resultant._magnitude = mag_qty
         resultant._angle = angle_qty
         resultant.is_known = True
@@ -541,7 +541,7 @@ class TriangleSolver:
         f1_x_qty = Quantity(name=f"{force1.name}_x", dim=dim.force, value=F1x, preferred=ref_unit)
         f1_y_qty = Quantity(name=f"{force1.name}_y", dim=dim.force, value=F1y, preferred=ref_unit)
         f1_z_qty = Quantity(name=f"{force1.name}_z", dim=dim.force, value=0.0, preferred=ref_unit)
-        force1._vector = Vector.from_quantities(f1_x_qty, f1_y_qty, f1_z_qty)
+        force1._coords = Vector.from_quantities(f1_x_qty, f1_y_qty, f1_z_qty)._coords
         force1.is_known = True
 
         # Update force 2
@@ -553,7 +553,7 @@ class TriangleSolver:
         f2_x_qty = Quantity(name=f"{force2.name}_x", dim=dim.force, value=F2x, preferred=ref_unit)
         f2_y_qty = Quantity(name=f"{force2.name}_y", dim=dim.force, value=F2y, preferred=ref_unit)
         f2_z_qty = Quantity(name=f"{force2.name}_z", dim=dim.force, value=0.0, preferred=ref_unit)
-        force2._vector = Vector.from_quantities(f2_x_qty, f2_y_qty, f2_z_qty)
+        force2._coords = Vector.from_quantities(f2_x_qty, f2_y_qty, f2_z_qty)._coords
         force2.is_known = True
 
     def solve_by_components(self, known_forces: list[ForceVector], unknown_force: ForceVector) -> None:
@@ -611,6 +611,6 @@ class TriangleSolver:
         unknown_vector = Vector.from_quantities(x_qty, y_qty, z_qty)
 
         # Update unknown force
-        unknown_force._vector = unknown_vector
+        unknown_force.copy_coords_from(unknown_vector)
         unknown_force._compute_magnitude_and_angle()
         unknown_force.is_known = True

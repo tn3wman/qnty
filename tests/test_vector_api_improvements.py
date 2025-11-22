@@ -8,7 +8,7 @@ which now matches the Qnty design philosophy used in the core Quantity class.
 import math
 import pytest
 from qnty.spatial.vector import Vector
-from qnty.spatial.force_vector import ForceVector
+from qnty.spatial import ForceVector
 from qnty.core.unit_catalog import LengthUnits, ForceUnits
 
 

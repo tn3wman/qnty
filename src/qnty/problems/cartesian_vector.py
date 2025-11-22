@@ -12,7 +12,7 @@ from typing import Any
 
 from ..core.quantity import Quantity
 from ..solving.component_solver import ComponentSolver
-from ..spatial.force_vector import ForceVector
+from ..spatial import ForceVector
 from .problem import Problem
 
 

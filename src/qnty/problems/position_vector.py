@@ -12,12 +12,10 @@ from typing import Any
 
 from ..core.quantity import Quantity
 from ..solving.component_solver import ComponentSolver
-from ..spatial.force_vector import ForceVector
+from ..spatial import ForceVector, _Vector
 from ..spatial.point import _Point
-from ..spatial.point_cartesian import PointCartesian
-from ..spatial.position_vector import PositionVector
+from ..spatial.vectors import create_vector_cartesian, create_vector_from_points
 from ..spatial.vector_between import VectorBetween
-from ..spatial.vector_cartesian import VectorCartesian
 from .problem import Problem
 
 
@@ -57,9 +55,9 @@ class PositionVectorProblem(Problem):
         """
         super().__init__(name=name, description=description)
         self.points: dict[str, Any] = {}  # Point objects (various frontend types)
-        self.position_vectors: dict[str, PositionVector] = {}
+        self.position_vectors: dict[str, _Vector] = {}
         self.position_vector_specs: dict[str, dict] = {}  # Position vector specifications with constraints
-        self.position_vectors_with_constraints: dict[str, PositionVector] = {}  # PositionVectors with magnitude constraints
+        self.position_vectors_with_constraints: dict[str, _Vector] = {}  # Vectors with magnitude constraints
         self.vector_betweens: dict[str, VectorBetween] = {}  # VectorBetween objects
         self.forces: dict[str, ForceVector] = {}
         self.force_specs: dict[str, dict] = {}  # Force specifications (from/to/magnitude)
@@ -109,10 +107,10 @@ class PositionVectorProblem(Problem):
 
             attr = getattr(self, attr_name)
 
-            # Check if it's a VectorBetween object or VectorCartesian (solved result)
+            # Check if it's a VectorBetween object or _Vector (solved result)
             if isinstance(attr, VectorBetween):
                 self.vector_betweens[attr_name] = attr
-            elif isinstance(attr, VectorCartesian):
+            elif isinstance(attr, _Vector):
                 # This was a solved VectorBetween - need to recreate it
                 # Find original from class
                 class_attr = getattr(self.__class__, attr_name, None)
@@ -145,7 +143,7 @@ class PositionVectorProblem(Problem):
 
             # Check if it's a point
             elif hasattr(attr, "to_cartesian") or isinstance(attr, _Point):
-                if isinstance(attr, PointCartesian) or isinstance(attr, _Point):
+                if isinstance(attr, _Point):
                     self.points[attr_name] = attr
 
     def _extract_problem_elements(self) -> None:
@@ -161,6 +159,24 @@ class PositionVectorProblem(Problem):
                 self.vector_betweens[attr_name] = attr
                 setattr(self, attr_name, attr)
 
+            # Check if it's a _Vector with magnitude constraint (position vector)
+            # Must come before point check since _Vector has to_cartesian method
+            elif isinstance(attr, _Vector) and hasattr(attr, '_constraint_magnitude') and attr._constraint_magnitude is not None:
+                self.position_vectors_with_constraints[attr_name] = attr
+                setattr(self, attr_name, attr)
+
+            # Check if it's a ForceVector / plain _Vector (e.g., resultant or direction vector)
+            # Must come before point check since _Vector has to_cartesian method
+            elif isinstance(attr, _Vector):
+                # Check if it's a ForceVector that needs cloning
+                if hasattr(attr, 'is_resultant') and attr.is_resultant:
+                    force_copy = self._clone_force_vector(attr)
+                    self.forces[attr_name] = force_copy
+                    setattr(self, attr_name, force_copy)
+                else:
+                    # It's a direction vector (like F in Problem 2-89)
+                    setattr(self, attr_name, attr)
+
             # Check if it's a point (has to_cartesian method or is _Point)
             elif hasattr(attr, "to_cartesian") or isinstance(attr, _Point):
                 self.points[attr_name] = attr
@@ -173,18 +189,6 @@ class PositionVectorProblem(Problem):
             # Check if it's a position vector spec (has magnitude but no force unit - just length constraint)
             elif isinstance(attr, dict) and "from" in attr and "to" in attr:
                 self.position_vector_specs[attr_name] = attr
-
-            # Check if it's a PositionVector with magnitude constraint
-            elif isinstance(attr, PositionVector):
-                if attr.constraint_magnitude is not None:
-                    self.position_vectors_with_constraints[attr_name] = attr
-                setattr(self, attr_name, attr)
-
-            # Check if it's a ForceVector (e.g., resultant)
-            elif isinstance(attr, ForceVector):
-                force_copy = self._clone_force_vector(attr)
-                self.forces[attr_name] = force_copy
-                setattr(self, attr_name, force_copy)
 
     def _clone_force_vector(self, force: ForceVector) -> ForceVector:
         """Create a copy of a ForceVector."""
@@ -270,7 +274,7 @@ class PositionVectorProblem(Problem):
 
             # Create position vector
             pv_name = f"r_{from_name}{to_name}"
-            r = PositionVector.from_points(from_point, to_point, name=pv_name)
+            r = create_vector_from_points(from_point, to_point, name=pv_name)
             self.position_vectors[pv_name] = r
 
     def _create_forces_from_specs(self) -> None:
@@ -466,7 +470,7 @@ class PositionVectorProblem(Problem):
                 vb_name, from_point, to_point, magnitude, length_unit, vb
             )
 
-        # Process PositionVector objects with magnitude constraints
+        # Process position vectors with magnitude constraints
         for pv_name, pv in self.position_vectors_with_constraints.items():
             if not pv.has_unknowns():
                 continue
@@ -474,14 +478,15 @@ class PositionVectorProblem(Problem):
             # Magnitude is already in SI units
             magnitude_si = pv.constraint_magnitude
             if magnitude_si is None:
-                raise ValueError(f"PositionVector '{pv_name}' has unknowns but no magnitude constraint")
+                raise ValueError(f"Position vector '{pv_name}' has unknowns but no magnitude constraint. "
+                               "Cannot solve for unknown point coordinates without a magnitude constraint.")
 
             from_point = pv.from_point
             to_point = pv.to_point
             length_unit = pv._unit
 
             if length_unit is None:
-                raise ValueError(f"PositionVector '{pv_name}' requires a unit")
+                raise ValueError(f"Position vector '{pv_name}' requires a unit")
 
             # Convert magnitude back to user units for _solve_single_constraint
             magnitude = magnitude_si / length_unit.si_factor
@@ -555,22 +560,30 @@ class PositionVectorProblem(Problem):
 
         # Handle case where all 3 coordinates are unknown - need direction vector
         if len(from_unknowns) == 3 or len(to_unknowns) == 3:
-            # Look for a direction vector (VectorCartesian named F or similar)
+            # Look for a direction vector (create_vector_cartesian named F or similar)
+            # Must be a vector that is NOT the position vector being solved
             direction_vector = None
             for attr_name in dir(self):
                 if attr_name.startswith('_'):
                     continue
+                if attr_name == name:  # Skip the position vector we're solving
+                    continue
                 attr = getattr(self, attr_name)
-                if isinstance(attr, VectorCartesian):
-                    direction_vector = attr
-                    break
+                if isinstance(attr, _Vector) and not attr.has_unknowns():
+                    # Check it's not a position vector with constraint (those have _from_point)
+                    if not hasattr(attr, '_from_point') or attr._from_point is None:
+                        direction_vector = attr
+                        break
 
             if direction_vector is None:
-                raise ValueError(f"Cannot solve for 3 unknown coordinates without a direction vector")
+                raise ValueError(
+                    f"Cannot solve for 3 unknown coordinates in '{name}' without a direction vector. "
+                    f"Please provide a force or direction vector (e.g., F = create_vector_cartesian(u=..., v=..., w=..., unit='N')) "
+                    f"to define the direction from the known point to the unknown point."
+                )
 
             # Get unit vector from direction
-            dir_vec = direction_vector._vector
-            dir_coords = dir_vec._coords
+            dir_coords = direction_vector._coords
             dir_mag = math.sqrt(dir_coords[0]**2 + dir_coords[1]**2 + dir_coords[2]**2)
             if dir_mag == 0:
                 raise ValueError("Direction vector has zero magnitude")
@@ -604,15 +617,6 @@ class PositionVectorProblem(Problem):
             solved_point._is_unknown = False
             solved_point._distance = None
 
-            # Create PointCartesian wrapper
-            display_coords = solved_point.to_array()
-            solved_point_cartesian = PointCartesian(
-                x=display_coords[0],
-                y=display_coords[1],
-                z=display_coords[2],
-                unit=length_unit
-            )
-
             # Find point name
             for pname, p in self.points.items():
                 if p is unknown_point:
@@ -621,10 +625,11 @@ class PositionVectorProblem(Problem):
 
             if unknown_point_name:
                 self.solved_points[unknown_point_name] = solved_point
-                self.points[unknown_point_name] = solved_point_cartesian
-                setattr(self, unknown_point_name, solved_point_cartesian)
+                self.points[unknown_point_name] = solved_point
+                setattr(self, unknown_point_name, solved_point)
 
             # Add solution step
+            display_coords = solved_point.to_array()
             self.solution_steps.append({
                 "target": unknown_point_name or "unknown",
                 "method": "direction_vector",
@@ -682,15 +687,6 @@ class PositionVectorProblem(Problem):
             solved_point._is_unknown = False
             solved_point._distance = None
 
-            # Create PointCartesian wrapper for user-friendly output
-            display_coords = solved_point.to_array()
-            solved_point_cartesian = PointCartesian(
-                x=display_coords[0],
-                y=display_coords[1],
-                z=display_coords[2],
-                unit=length_unit
-            )
-
             # Find the point name - need to search through points dict
             for pname, p in self.points.items():
                 if p is to_point:
@@ -699,9 +695,9 @@ class PositionVectorProblem(Problem):
 
             if unknown_point_name:
                 self.solved_points[unknown_point_name] = solved_point
-                self.points[unknown_point_name] = solved_point_cartesian
-                # Update instance attribute so prob.B returns solved PointCartesian
-                setattr(self, unknown_point_name, solved_point_cartesian)
+                self.points[unknown_point_name] = solved_point
+                # Update instance attribute so prob.B returns solved _Point
+                setattr(self, unknown_point_name, solved_point)
 
             # Add solution step
             unit_str = length_unit.symbol if length_unit else ""
@@ -713,14 +709,14 @@ class PositionVectorProblem(Problem):
                 "result_unit": unit_str,
             })
 
-            # Update VectorBetween's internal vector and replace with VectorCartesian
+            # Update VectorBetween's internal vector and replace with create_vector_cartesian
             if vector_between is not None:
                 vector_between._compute_vector(from_cart, solved_point)
-                # Create VectorCartesian wrapper for user-friendly output
+                # Create create_vector_cartesian wrapper for user-friendly output
                 vec = vector_between._vector
                 if vec is not None:
                     vec_coords = vec.to_array()
-                    solved_vector_cartesian = VectorCartesian(
+                    solved_vector_cartesian = create_vector_cartesian(
                         u=vec_coords[0],
                         v=vec_coords[1],
                         w=vec_coords[2],
@@ -756,15 +752,6 @@ class PositionVectorProblem(Problem):
             solved_point._is_unknown = False
             solved_point._distance = None
 
-            # Create PointCartesian wrapper for user-friendly output
-            display_coords = solved_point.to_array()
-            solved_point_cartesian = PointCartesian(
-                x=display_coords[0],
-                y=display_coords[1],
-                z=display_coords[2],
-                unit=length_unit
-            )
-
             # Find the point name
             for pname, p in self.points.items():
                 if p is from_point:
@@ -773,9 +760,9 @@ class PositionVectorProblem(Problem):
 
             if unknown_point_name:
                 self.solved_points[unknown_point_name] = solved_point
-                self.points[unknown_point_name] = solved_point_cartesian
-                # Update instance attribute so prob.A returns solved PointCartesian
-                setattr(self, unknown_point_name, solved_point_cartesian)
+                self.points[unknown_point_name] = solved_point
+                # Update instance attribute so prob.A returns solved _Point
+                setattr(self, unknown_point_name, solved_point)
 
             # Add solution step
             unit_str = length_unit.symbol if length_unit else ""
@@ -787,14 +774,14 @@ class PositionVectorProblem(Problem):
                 "result_unit": unit_str,
             })
 
-            # Update VectorBetween's internal vector and replace with VectorCartesian
+            # Update VectorBetween's internal vector and replace with create_vector_cartesian
             if vector_between is not None:
                 vector_between._compute_vector(solved_point, to_cart)
-                # Create VectorCartesian wrapper for user-friendly output
+                # Create create_vector_cartesian wrapper for user-friendly output
                 vec = vector_between._vector
                 if vec is not None:
                     vec_coords = vec.to_array()
-                    solved_vector_cartesian = VectorCartesian(
+                    solved_vector_cartesian = create_vector_cartesian(
                         u=vec_coords[0],
                         v=vec_coords[1],
                         w=vec_coords[2],
@@ -939,7 +926,7 @@ class PositionVectorProblem(Problem):
                 )
                 self.variables[f"{force_name}_gamma"] = gamma_var
 
-    def get_position_vector(self, name: str) -> PositionVector | None:
+    def get_position_vector(self, name: str) -> _Vector | None:
         """Get a position vector by name."""
         return self.position_vectors.get(name)
 

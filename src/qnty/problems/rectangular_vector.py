@@ -12,7 +12,7 @@ from typing import Any
 
 from ..core.quantity import Quantity
 from ..solving.component_solver import ComponentSolver
-from ..spatial.force_vector import ForceVector
+from ..spatial import ForceVector
 from .problem import Problem
 
 
@@ -87,8 +87,19 @@ class RectangularVectorProblem(Problem):
 
     def _clone_force_vector(self, force: ForceVector) -> ForceVector:
         """Create a copy of a ForceVector."""
-        if force.is_known and force.vector is not None:
-            # Known force - copy with same values
+        # Check if force has unresolved relative angle
+        has_relative_angle = hasattr(force, '_relative_to_force') and force._relative_to_force is not None
+
+        # A force is fully computable only if it has both magnitude and angle with known values
+        # Otherwise the vector coords might be placeholder zeros from _init_magnitude_only
+        has_valid_vector = (force.is_known and
+                           force.vector is not None and
+                           force.magnitude is not None and force.magnitude.value is not None and
+                           force.angle is not None and force.angle.value is not None and
+                           not has_relative_angle)
+
+        if has_valid_vector:
+            # Known force with computed vector - copy with same values
             cloned = ForceVector(
                 vector=force.vector,
                 name=force.name,

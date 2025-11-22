@@ -21,7 +21,7 @@ This method is preferred over geometric/trigonometric methods when:
 import math
 
 from ..core.quantity import Quantity
-from ..spatial.force_vector import ForceVector
+from ..spatial import ForceVector
 from ..spatial.vector import Vector
 
 
@@ -98,7 +98,7 @@ class ComponentSolver:
                 x_qty = Quantity(name=f"{force_name}_x", dim=dim.force, value=x_val, preferred=force.magnitude.preferred)
                 y_qty = Quantity(name=f"{force_name}_y", dim=dim.force, value=y_val, preferred=force.magnitude.preferred)
                 z_qty = Quantity(name=f"{force_name}_z", dim=dim.force, value=z_val, preferred=force.magnitude.preferred)
-                force._vector = Vector.from_quantities(x_qty, y_qty, z_qty)
+                force._coords = Vector.from_quantities(x_qty, y_qty, z_qty)._coords
 
             # Clear the relative constraint since it's now resolved
             force._relative_to_force = None

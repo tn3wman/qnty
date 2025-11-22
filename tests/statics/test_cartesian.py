@@ -13,7 +13,7 @@ import math
 import pytest
 
 from qnty.problems.cartesian_vector import CartesianVectorProblem
-from qnty.spatial.force_vector import ForceVector
+from qnty.spatial import ForceVector
 
 # Problem definitions - single source of truth
 CARTESIAN_3D_PROBLEMS = {

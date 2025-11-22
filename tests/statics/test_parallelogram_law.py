@@ -2,7 +2,7 @@ import pytest
 
 from qnty.problems.parallelogram_law import ParallelogramLawProblem
 from qnty.spatial.coordinate_system import CoordinateSystem
-from qnty.spatial.force_vector import ForceVector
+from qnty.spatial import ForceVector
 
 # Problem definitions - single source of truth
 FORCE_VECTOR_PROBLEMS = {

@@ -10,7 +10,7 @@ import math
 import pytest
 
 from qnty.problems.rectangular_vector import RectangularVectorProblem
-from qnty.spatial.force_vector import ForceVector
+from qnty.spatial import ForceVector
 
 # Problem definitions - single source of truth
 COMPONENT_METHOD_PROBLEMS = {

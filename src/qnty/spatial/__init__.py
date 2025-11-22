@@ -30,37 +30,31 @@ Examples:
 """
 
 from .point import _Point, Point
-from .point_cartesian import PointCartesian
+from .points import create_point_cartesian, create_point_from_ratio, create_point_polar, create_point_spherical
 from .point_direction_angles import PointDirectionAngles
-from .point_direction_ratios import PointDirectionRatios
-from .point_polar import PointPolar
-from .point_spherical import PointSpherical
-from .vector import _Vector, Vector
-from .vector_cartesian import VectorCartesian
+from .vector import _Vector, Vector, ForceVector
+from .vectors import create_vector_cartesian, create_vector_from_points, create_vector_from_ratio, create_vector_polar, create_vector_spherical
 from .vector_direction_angles import VectorDirectionAngles
 from .vector_direction_ratios import VectorDirectionRatios
-from .vector_polar import VectorPolar
-from .vector_spherical import VectorSpherical
-from .force_vector import ForceVector
-from .position_vector import PositionVector
 from .vector_between import VectorBetween
 
 __all__ = [
     "_Point",
     "Point",
-    "PointCartesian",
+    "create_point_cartesian",
+    "create_point_from_ratio",
+    "create_point_polar",
+    "create_point_spherical",
     "PointDirectionAngles",
-    "PointDirectionRatios",
-    "PointPolar",
-    "PointSpherical",
     "_Vector",
     "Vector",
-    "VectorCartesian",
+    "create_vector_cartesian",
+    "create_vector_from_points",
+    "create_vector_from_ratio",
+    "create_vector_polar",
+    "create_vector_spherical",
     "VectorDirectionAngles",
     "VectorDirectionRatios",
-    "VectorPolar",
-    "VectorSpherical",
     "ForceVector",
-    "PositionVector",
     "VectorBetween",
 ]

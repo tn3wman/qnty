@@ -11,7 +11,7 @@ import pytest
 
 from qnty.core import u
 from qnty.problems.parallelogram_law import ParallelogramLawProblem
-from qnty.spatial.force_vector import ForceVector
+from qnty.spatial import ForceVector
 
 
 class TestForceVector:
