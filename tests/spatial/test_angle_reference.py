@@ -12,7 +12,7 @@ import math
 import pytest
 
 from qnty.spatial.angle_reference import AngleDirection, AngleReference
-from qnty.spatial.force_vector import ForceVector
+from qnty.spatial import ForceVector
 
 
 class TestAngleReference:

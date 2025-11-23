@@ -337,6 +337,52 @@ class Quantity(Generic[D]):
         # Use a small tolerance for floating point comparison
         return abs(self.value - other.value) < 1e-10
 
+    def is_close(self, other: Quantity, rtol: float = 1e-3, atol: float = 0.0) -> bool:
+        """
+        Check if this quantity is close to another within tolerance.
+
+        Handles unit conversion automatically - both quantities are compared
+        in SI units internally.
+
+        Args:
+            other: Quantity to compare against
+            rtol: Relative tolerance (default 0.1%)
+            atol: Absolute tolerance in SI units (default 0)
+
+        Returns:
+            True if quantities are close within tolerance
+
+        Raises:
+            TypeError: If dimensions don't match
+            ValueError: If either quantity has no value
+
+        Examples:
+            >>> from qnty.core.quantity import Q
+            >>> a = Q(1000, "mm")
+            >>> b = Q(1, "m")
+            >>> a.is_close(b)  # True - both are 1 meter
+            True
+        """
+        if not isinstance(other, Quantity):
+            raise TypeError(f"Cannot compare Quantity with {type(other)}")
+
+        if self.dim != other.dim:
+            raise TypeError(f"Cannot compare quantities with different dimensions: {self.dim} vs {other.dim}")
+
+        if self.value is None:
+            raise ValueError(f"Quantity '{self.name}' has no value")
+        if other.value is None:
+            raise ValueError(f"Quantity '{other.name}' has no value")
+
+        # Compare in SI units
+        diff = abs(self.value - other.value)
+        max_val = max(abs(self.value), abs(other.value))
+
+        if max_val == 0:
+            return diff <= atol
+
+        return diff <= atol + rtol * max_val
+
     def __ne__(self, other: object) -> bool:
         """Check inequality between quantities."""
         result = self.__eq__(other)

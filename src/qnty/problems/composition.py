@@ -638,6 +638,123 @@ class DelayedFunction(Expression, ArithmeticOperationsMixin):
                 expression = resolved_args[i + 1]
                 cases_dict[option_value] = wrap_operand(expression)
             return MatchExpression(select_var, cases_dict)
+        elif self.func_name == "sum_expr":
+            from ..algebra.nodes import BinaryOperation, wrap_operand
+
+            # Sum all arguments: sum_expr(a, b, c) -> a + b + c
+            if len(resolved_args) == 0:
+                return None
+            result = wrap_operand(resolved_args[0])
+            for arg in resolved_args[1:]:
+                result = BinaryOperation("+", result, wrap_operand(arg))
+            return result
+        elif self.func_name == "summation":
+            import itertools
+
+            from ..algebra.nodes import BinaryOperation, wrap_operand
+
+            # summation(term_generator, range_specs, kwargs)
+            # Args are: term_generator, tuple of range_specs, dict of kwargs
+            term_generator = resolved_args[0]
+            range_specs = resolved_args[1] if len(resolved_args) > 1 else ()
+            kwargs = resolved_args[2] if len(resolved_args) > 2 else {}
+
+            # Convert range_specs to actual ranges
+            ranges = []
+            for spec in range_specs:
+                if isinstance(spec, int):
+                    ranges.append(range(spec))
+                elif isinstance(spec, tuple):
+                    ranges.append(range(*spec))
+                elif isinstance(spec, range):
+                    ranges.append(spec)
+                else:
+                    raise ValueError(f"Invalid range specification: {spec}")
+
+            # Generate all terms
+            terms = []
+            for indices in itertools.product(*ranges):
+                if kwargs:
+                    # Pass both indices and captured variables
+                    term = term_generator(*indices, **kwargs)
+                else:
+                    # Just pass indices (closure-based)
+                    term = term_generator(*indices)
+                terms.append(term)
+
+            # Sum all terms
+            if len(terms) == 0:
+                return None
+            result = wrap_operand(terms[0])
+            for term in terms[1:]:
+                result = BinaryOperation("+", result, wrap_operand(term))
+            return result
+        elif self.func_name == "range_expr":
+            from ..algebra.nodes import ConditionalExpression, wrap_operand
+
+            # range_expr(variable, cases_tuple, otherwise)
+            # Args are: variable, tuple of (When, expression) tuples, otherwise value
+            variable = resolved_args[0]
+            cases = resolved_args[1] if len(resolved_args) > 1 else ()
+            otherwise = resolved_args[2] if len(resolved_args) > 2 else None
+
+            # Build conditionals from right to left
+            wrapped_var = wrap_operand(variable)
+
+            # Start with the otherwise/default case or the last case
+            if otherwise is not None:
+                result = wrap_operand(otherwise)
+            elif cases:
+                # Use the last range case as the implicit default
+                _, last_expr = cases[-1]
+                result = wrap_operand(last_expr)
+                cases = cases[:-1]
+            else:
+                return None
+
+            # Build nested conditionals from right to left
+            for condition, expression in reversed(list(cases)):
+                wrapped_expression = wrap_operand(expression)
+
+                if condition.lower is not None and condition.upper is not None:
+                    # Both bounds: create nested conditionals to implement AND logic
+                    if condition.lower_inclusive:
+                        lower_cond = wrapped_var >= wrap_operand(condition.lower)
+                    else:
+                        lower_cond = wrapped_var > wrap_operand(condition.lower)
+
+                    if condition.upper_inclusive:
+                        upper_cond = wrapped_var <= wrap_operand(condition.upper)
+                    else:
+                        upper_cond = wrapped_var < wrap_operand(condition.upper)
+
+                    # Nest the conditions
+                    from ..algebra.functions import cond_expr as create_cond_expr
+
+                    inner_cond = create_cond_expr(upper_cond, wrapped_expression, result)
+                    result = create_cond_expr(lower_cond, inner_cond, result)
+
+                elif condition.lower is not None:
+                    # Only lower bound
+                    if condition.lower_inclusive:
+                        combined_cond = wrapped_var >= wrap_operand(condition.lower)
+                    else:
+                        combined_cond = wrapped_var > wrap_operand(condition.lower)
+                    from ..algebra.functions import cond_expr as create_cond_expr
+
+                    result = create_cond_expr(combined_cond, wrapped_expression, result)
+
+                elif condition.upper is not None:
+                    # Only upper bound
+                    if condition.upper_inclusive:
+                        combined_cond = wrapped_var <= wrap_operand(condition.upper)
+                    else:
+                        combined_cond = wrapped_var < wrap_operand(condition.upper)
+                    from ..algebra.functions import cond_expr as create_cond_expr
+
+                    result = create_cond_expr(combined_cond, wrapped_expression, result)
+
+            return result
         else:
             # Generic function call
             return None
@@ -879,9 +996,11 @@ class CompositionMixin:
                 for attr_name in dir(self):
                     if not attr_name.startswith("_"):  # Skip private attributes
                         attr_value = getattr(self, attr_name, None)
+                        # Skip numpy arrays and other non-variable types
+                        if attr_value is None or type(attr_value).__module__ == "numpy":
+                            continue
                         if (
-                            attr_value
-                            and hasattr(attr_value, "name")
+                            hasattr(attr_value, "name")
                             and hasattr(attr_value, "value")  # Must be a variable
                             and attr_value.name == var.name
                         ):

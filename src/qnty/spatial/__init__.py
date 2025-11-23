@@ -29,12 +29,43 @@ Examples:
     >>> dot = v1.dot(v2)   # Dot product
 """
 
-from .point import Point
-from .vector import Vector
-from .force_vector import ForceVector
+from .point import _Point, Point
+from .points import create_point_along, create_point_cartesian, create_point_direction_angles, create_point_from_ratio, create_point_polar, create_point_spherical
+from .vector import _Vector, Vector, ForceVector
+from .vectors import _VectorWithUnknowns, create_point_at_midpoint, create_vector_along, create_vector_cartesian, create_vector_direction_angles, create_vector_from_points, create_vector_from_ratio, create_vector_in_plane, create_vector_polar, create_vector_resultant, create_vector_resultant_cartesian, create_vector_spherical, create_vector_with_magnitude
+from .vector_direction_ratios import VectorDirectionRatios
+from .vector_between import VectorBetween
+from .plane import Plane, create_plane_rotated_x, create_plane_rotated_y, create_plane_rotated_z
 
 __all__ = [
+    "_Point",
     "Point",
+    "create_point_along",
+    "create_point_at_midpoint",
+    "create_point_cartesian",
+    "create_point_direction_angles",
+    "create_point_from_ratio",
+    "create_point_polar",
+    "create_point_spherical",
+    "_Vector",
+    "_VectorWithUnknowns",
     "Vector",
+    "create_vector_along",
+    "create_vector_cartesian",
+    "create_vector_direction_angles",
+    "create_vector_from_points",
+    "create_vector_from_ratio",
+    "create_vector_in_plane",
+    "create_vector_polar",
+    "create_vector_resultant",
+    "create_vector_resultant_cartesian",
+    "create_vector_spherical",
+    "create_vector_with_magnitude",
+    "VectorDirectionRatios",
     "ForceVector",
+    "VectorBetween",
+    "Plane",
+    "create_plane_rotated_x",
+    "create_plane_rotated_y",
+    "create_plane_rotated_z",
 ]

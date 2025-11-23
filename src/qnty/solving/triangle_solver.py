@@ -1,8 +1,15 @@
 """
-Trigonometric solver for 2D/3D vector equilibrium using parallelogram law.
+Triangle/Trigonometric solver for 2D/3D vector equilibrium using geometric methods.
+
+This solver implements the classical geometric/trigonometric approach to force
+equilibrium problems, commonly known as the "Force Triangle Method" or
+"Parallelogram Law" in engineering mechanics statics.
 
 Uses closed-form solutions (law of cosines, law of sines, Pythagorean theorem)
 for fast, exact solutions with step-by-step solution tracking.
+
+This method is preferred for problems with 2-3 forces where geometric
+relationships can be visualized as triangles or parallelograms.
 """
 
 from __future__ import annotations
@@ -13,23 +20,31 @@ from typing import Any
 import numpy as np
 
 from ..core.quantity import Quantity
-from ..spatial.force_vector import ForceVector
+from ..spatial import ForceVector
 from ..spatial.vector import Vector
 
 
-class TrigSolver:
+class TriangleSolver:
     """
-    Solver for vector equilibrium problems using trigonometric methods.
+    Solver for vector equilibrium problems using the Force Triangle Method.
+
+    Also known as the Geometric Method or Trigonometric Method in engineering
+    mechanics statics. This solver uses force triangles/parallelograms with
+    trigonometric relationships to solve for unknown forces.
 
     Applies:
     - Law of cosines: c² = a² + b² - 2ab·cos(C)
     - Law of sines: a/sin(A) = b/sin(B) = c/sin(C)
     - Pythagorean theorem: c² = a² + b² (when angle = 90°)
+    - Parallelogram law for force composition
     - Component summation: ΣFx = 0, ΣFy = 0, ΣFz = 0
+
+    Best suited for problems with 2-3 forces where geometric visualization
+    is straightforward. For problems with many forces, use ComponentSolver instead.
     """
 
     def __init__(self):
-        """Initialize the trig solver."""
+        """Initialize the triangle solver."""
         self.solution_steps: list[dict[str, Any]] = []
 
     def solve_resultant(self, known_forces: list[ForceVector], forces_dict: dict[str, ForceVector]) -> ForceVector:
@@ -88,7 +103,7 @@ class TrigSolver:
             forces_dict["FR"] = resultant
         else:
             # Update existing resultant
-            resultant._vector = resultant_vector
+            resultant.copy_coords_from(resultant_vector)
             resultant._compute_magnitude_and_angle()
             resultant.is_known = True
 
@@ -143,7 +158,7 @@ class TrigSolver:
             if resultant and resultant.vector:
                 # Unknown force is negative of resultant
                 unknown_vector = -resultant.vector
-                unknown_force._vector = unknown_vector
+                unknown_force.copy_coords_from(unknown_vector)
                 unknown_force._compute_magnitude_and_angle()
                 unknown_force.is_known = True
         else:
@@ -260,11 +275,14 @@ class TrigSolver:
         degree_unit = ureg.resolve("degree", dim=dim.D)
         angle_qty = Quantity(name=f"{unknown_force.name}_angle", dim=dim.D, value=theta_unknown, preferred=degree_unit)
 
-        # Use the computed components
-        unknown_vector = Vector(F_unknownx, F_unknowny, 0.0, unit=ref_unit)
+        # Use the computed components (already in SI units)
+        x_qty = Quantity(name=f"{unknown_force.name}_x", dim=dim.force, value=F_unknownx, preferred=ref_unit)
+        y_qty = Quantity(name=f"{unknown_force.name}_y", dim=dim.force, value=F_unknowny, preferred=ref_unit)
+        z_qty = Quantity(name=f"{unknown_force.name}_z", dim=dim.force, value=0.0, preferred=ref_unit)
+        unknown_vector = Vector.from_quantities(x_qty, y_qty, z_qty)
 
         # Update unknown force
-        unknown_force._vector = unknown_vector
+        unknown_force.copy_coords_from(unknown_vector)
         unknown_force._magnitude = mag_qty
         unknown_force._angle = angle_qty
         unknown_force.is_known = True
@@ -368,11 +386,14 @@ class TrigSolver:
         degree_unit = ureg.resolve("degree", dim=dim.D)
         angle_qty = Quantity(name="FR_angle", dim=dim.D, value=theta_R, preferred=degree_unit)
 
-        # Use the computed components
-        resultant_vector = Vector(FRx, FRy, 0.0, unit=ref_unit)
+        # Use the computed components (already in SI units)
+        x_qty = Quantity(name="FR_x", dim=dim.force, value=FRx, preferred=ref_unit)
+        y_qty = Quantity(name="FR_y", dim=dim.force, value=FRy, preferred=ref_unit)
+        z_qty = Quantity(name="FR_z", dim=dim.force, value=0.0, preferred=ref_unit)
+        resultant_vector = Vector.from_quantities(x_qty, y_qty, z_qty)
 
         # Update resultant force
-        resultant._vector = resultant_vector
+        resultant.copy_coords_from(resultant_vector)
         resultant._magnitude = mag_qty
         resultant._angle = angle_qty
         resultant.is_known = True
@@ -414,7 +435,10 @@ class TrigSolver:
         if force2.angle is None or force2.angle.value is None:
             raise ValueError(f"Force {force2.name} must have a known angle")
 
-        F_R = resultant.magnitude.value
+        # Use absolute value of resultant magnitude for decomposition
+        # (negative magnitude means force points opposite to specified angle)
+        # magnitude.value is now stored in SI units
+        F_R = abs(resultant.magnitude.value)  # Already in SI units
         theta_R = resultant.angle.value  # radians
         theta_1 = force1.angle.value  # radians
         theta_2 = force2.angle.value  # radians
@@ -505,12 +529,19 @@ class TrigSolver:
         ref_unit = resultant.magnitude.preferred
         from ..core.dimension_catalog import dim
 
+        # Store SI values directly (F1 and F2 are already in SI units from calculations)
+        # Quantity class handles conversion to preferred units for display
+
         # Update force 1
         mag1_qty = Quantity(name=f"{force1.name}_magnitude", dim=dim.force, value=F1, preferred=ref_unit)
         force1._magnitude = mag1_qty
         F1x = F1 * math.cos(theta_1)
         F1y = F1 * math.sin(theta_1)
-        force1._vector = Vector(F1x, F1y, 0.0, unit=ref_unit)
+        # Create vector from SI components
+        f1_x_qty = Quantity(name=f"{force1.name}_x", dim=dim.force, value=F1x, preferred=ref_unit)
+        f1_y_qty = Quantity(name=f"{force1.name}_y", dim=dim.force, value=F1y, preferred=ref_unit)
+        f1_z_qty = Quantity(name=f"{force1.name}_z", dim=dim.force, value=0.0, preferred=ref_unit)
+        force1._coords = Vector.from_quantities(f1_x_qty, f1_y_qty, f1_z_qty)._coords
         force1.is_known = True
 
         # Update force 2
@@ -518,7 +549,11 @@ class TrigSolver:
         force2._magnitude = mag2_qty
         F2x = F2 * math.cos(theta_2)
         F2y = F2 * math.sin(theta_2)
-        force2._vector = Vector(F2x, F2y, 0.0, unit=ref_unit)
+        # Create vector from SI components
+        f2_x_qty = Quantity(name=f"{force2.name}_x", dim=dim.force, value=F2x, preferred=ref_unit)
+        f2_y_qty = Quantity(name=f"{force2.name}_y", dim=dim.force, value=F2y, preferred=ref_unit)
+        f2_z_qty = Quantity(name=f"{force2.name}_z", dim=dim.force, value=0.0, preferred=ref_unit)
+        force2._coords = Vector.from_quantities(f2_x_qty, f2_y_qty, f2_z_qty)._coords
         force2.is_known = True
 
     def solve_by_components(self, known_forces: list[ForceVector], unknown_force: ForceVector) -> None:
@@ -576,6 +611,6 @@ class TrigSolver:
         unknown_vector = Vector.from_quantities(x_qty, y_qty, z_qty)
 
         # Update unknown force
-        unknown_force._vector = unknown_vector
+        unknown_force.copy_coords_from(unknown_vector)
         unknown_force._compute_magnitude_and_angle()
         unknown_force.is_known = True

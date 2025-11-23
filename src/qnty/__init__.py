@@ -16,9 +16,13 @@ from .algebra import (
     log10,
     max_expr,
     min_expr,
+    range_expr,
     sin,
     sqrt,
+    sum_expr,
+    summation,
     tan,
+    When,
 )
 from .core.quantity_catalog import *
 from .problems import Problem

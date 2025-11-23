@@ -7,39 +7,46 @@ Internally stores values in SI units for consistency with qnty's architecture.
 
 from __future__ import annotations
 
-import numpy as np
-from numpy.typing import NDArray
 from typing import TYPE_CHECKING, Generic, TypeVar
 
-from ..core.dimension import Dimension
+import numpy as np
+from numpy.typing import NDArray
+
 from ..core.quantity import Quantity
 from ..core.unit import Unit
 
 if TYPE_CHECKING:
-    from .vector import Vector
+    from .vector import _Vector
 
 D = TypeVar("D")
 
 
-class Point(Generic[D]):
+class _Point(Generic[D]):
     """
-    3D point with uniform units across all coordinates.
+    Backend 3D point with uniform units across all coordinates.
 
+    This is the internal representation used by all frontend Point classes.
     All coordinates (x, y, z) share the same unit for consistency
     and performance. Internally stores values in SI units.
 
+    Users should use the frontend classes instead:
+    - PointCartesian: Define by x, y, z coordinates
+    - PointPolar: Define by distance and angle in a plane
+    - PointSpherical: Define by distance, theta, phi angles
+    - PointDirectionAngles: Define by distance and direction angles
+
     Examples:
         >>> from qnty.core.unit_catalog import LengthUnits
-        >>> p1 = Point(10.0, 20.0, 30.0, unit=LengthUnits.meter)
-        >>> p2 = Point(5.0, 10.0, 0.0, unit=LengthUnits.meter)
+        >>> p1 = _Point(10.0, 20.0, 30.0, unit=LengthUnits.meter)
+        >>> p2 = _Point(5.0, 10.0, 0.0, unit=LengthUnits.meter)
         >>> distance = p1.distance_to(p2)
         >>> print(distance)
         26.9258 m
     """
 
-    __slots__ = ("_coords", "_dim", "_unit")
+    __slots__ = ("_coords", "_dim", "_unit", "_is_unknown", "_distance")
 
-    def __init__(self, x: float, y: float, z: float = 0.0, unit: Unit[D] | None = None):
+    def __init__(self, x: float, y: float, z: float = 0.0, unit: Unit[D] | str | None = None):
         """
         Create a 3D point with units.
 
@@ -49,6 +56,18 @@ class Point(Generic[D]):
             z: Z coordinate value in the specified unit (default: 0.0)
             unit: Unit for all coordinates (if None, assumes SI units)
         """
+        self._is_unknown = False
+        self._distance: float | None = None
+        # Resolve unit if string
+        if isinstance(unit, str):
+            from ..core.dimension_catalog import dim
+            from ..core.unit import ureg
+
+            resolved = ureg.resolve(unit, dim=dim.length)
+            if resolved is None:
+                raise ValueError(f"Unknown length unit '{unit}'")
+            unit = resolved
+
         # Store as numpy array for vectorized operations
         if unit is None:
             # Store directly as dimensionless SI values
@@ -63,7 +82,43 @@ class Point(Generic[D]):
             self._unit = unit  # Preferred display unit
 
     @classmethod
-    def from_quantities(cls, x: Quantity[D], y: Quantity[D], z: Quantity[D] | None = None) -> Point[D]:
+    def unknown(cls, unit: Unit | str = "m", distance: float | None = None) -> _Point:
+        """
+        Create an unknown point to be solved for.
+
+        Args:
+            unit: Unit for the point coordinates (default: meters)
+            distance: Distance from a reference point (used to solve for coordinates)
+
+        Returns:
+            Unknown point with unset coordinates
+        """
+        # Resolve unit if string
+        if isinstance(unit, str):
+            from ..core.dimension_catalog import dim
+            from ..core.unit import ureg
+
+            resolved = ureg.resolve(unit, dim=dim.length)
+            if resolved is None:
+                raise ValueError(f"Unknown length unit '{unit}'")
+            unit = resolved
+
+        # Create point with NaN coordinates to indicate unknown
+        result = object.__new__(cls)
+        result._coords = np.array([np.nan, np.nan, np.nan], dtype=float)
+        result._dim = unit.dim
+        result._unit = unit
+        result._is_unknown = True
+        result._distance = distance  # Distance from reference point
+        return result
+
+    @property
+    def is_unknown(self) -> bool:
+        """Whether this point has unknown coordinates to be solved for."""
+        return self._is_unknown
+
+    @classmethod
+    def from_quantities(cls, x: Quantity[D], y: Quantity[D], z: Quantity[D] | None = None) -> _Point[D]:
         """
         Create point from Quantity objects (must have same dimension).
 
@@ -132,7 +187,7 @@ class Point(Generic[D]):
         return q
 
     # Vector operations
-    def __sub__(self, other: Point[D]) -> Vector[D]:
+    def __sub__(self, other: _Point[D]) -> _Vector[D]:
         """
         Compute displacement vector from other to self.
 
@@ -145,26 +200,26 @@ class Point(Generic[D]):
         Raises:
             ValueError: If points have different dimensions
         """
-        if not isinstance(other, Point):
+        if not isinstance(other, _Point):
             return NotImplemented
 
         if self._dim != other._dim:
             raise ValueError(f"Cannot subtract points with different dimensions: {self._dim} vs {other._dim}")
 
         # Import here to avoid circular imports
-        from .vector import Vector
+        from .vector import _Vector
 
         # Vectorized subtraction (SI values)
         delta = self._coords - other._coords
 
-        # Create Vector directly
-        result = object.__new__(Vector)
+        # Create _Vector directly
+        result = object.__new__(_Vector)
         result._coords = delta
         result._dim = self._dim
         result._unit = self._unit
         return result
 
-    def displaced(self, vector: Vector[D], times: float = 1.0) -> Point[D]:
+    def displaced(self, vector: _Vector[D], times: float = 1.0) -> _Point[D]:
         """
         Create new point displaced by vector * times.
 
@@ -178,10 +233,10 @@ class Point(Generic[D]):
         Raises:
             ValueError: If vector has different dimension than point
         """
-        from .vector import Vector
+        from .vector import _Vector
 
-        if not isinstance(vector, Vector):
-            raise TypeError(f"Expected Vector, got {type(vector)}")
+        if not isinstance(vector, _Vector):
+            raise TypeError(f"Expected _Vector, got {type(vector)}")
 
         if self._dim != vector._dim:
             raise ValueError(f"Cannot displace point with vector of different dimension: {self._dim} vs {vector._dim}")
@@ -189,14 +244,14 @@ class Point(Generic[D]):
         # Vectorized displacement (SI values)
         new_coords = self._coords + times * vector._coords
 
-        # Create new Point directly
-        result = object.__new__(Point)
+        # Create new _Point directly
+        result = object.__new__(_Point)
         result._coords = new_coords
         result._dim = self._dim
         result._unit = self._unit
         return result
 
-    def distance_to(self, other: Point[D]) -> Quantity[D]:
+    def distance_to(self, other: _Point[D]) -> Quantity[D]:
         """
         Compute Euclidean distance to another point.
 
@@ -209,8 +264,8 @@ class Point(Generic[D]):
         Raises:
             ValueError: If points have different dimensions
         """
-        if not isinstance(other, Point):
-            raise TypeError(f"Expected Point, got {type(other)}")
+        if not isinstance(other, _Point):
+            raise TypeError(f"Expected _Point, got {type(other)}")
 
         if self._dim != other._dim:
             raise ValueError(f"Cannot compute distance between points with different dimensions: {self._dim} vs {other._dim}")
@@ -229,7 +284,7 @@ class Point(Generic[D]):
         q._output_unit = None
         return q
 
-    def to_unit(self, unit: Unit[D] | str) -> Point[D]:
+    def to_unit(self, unit: Unit[D] | str) -> _Point[D]:
         """
         Convert to different display unit (SI values unchanged).
 
@@ -247,8 +302,8 @@ class Point(Generic[D]):
                 raise ValueError(f"Unknown unit '{unit}'")
             unit = resolved
 
-        # Create new Point with same SI values, different display unit
-        result = object.__new__(Point)
+        # Create new _Point with same SI values, different display unit
+        result = object.__new__(_Point)
         result._coords = self._coords.copy()  # Copy to avoid aliasing
         result._dim = self._dim
         result._unit = unit
@@ -275,7 +330,7 @@ class Point(Generic[D]):
         Returns:
             True if points are equal within tolerance
         """
-        if not isinstance(other, Point):
+        if not isinstance(other, _Point):
             return NotImplemented
 
         if self._dim != other._dim:
@@ -288,8 +343,12 @@ class Point(Generic[D]):
         """String representation of the point."""
         coords = self.to_array()
         unit_str = f" {self._unit.symbol}" if self._unit else ""
-        return f"Point({coords[0]:.6g}, {coords[1]:.6g}, {coords[2]:.6g}{unit_str})"
+        return f"_Point({coords[0]:.6g}, {coords[1]:.6g}, {coords[2]:.6g}{unit_str})"
 
     def __repr__(self) -> str:
         """Representation of the point."""
         return self.__str__()
+
+
+# Backward compatibility alias - users should migrate to frontend classes
+Point = _Point

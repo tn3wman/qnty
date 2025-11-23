@@ -10,6 +10,7 @@ This module provides a streamlined Problem system with 4 focused files instead o
 The system maintains full backward compatibility with the original Problem API.
 """
 
+from .cartesian_vector import CartesianVectorProblem
 from .composition import (
     CompositionMixin,
     ConfigurableVariable,
@@ -27,8 +28,11 @@ from .composition import (
     delayed_min_expr,
     delayed_sin,
 )
+from .parallelogram_law import ParallelogramLawProblem
+from .position_vector import PositionVectorProblem
 from .problem import EquationValidationError, SolverError, VariableNotFoundError
 from .problem import Problem as BaseProblem
+from .rectangular_vector import RectangularVectorProblem
 from .solving import (
     CompositeExpressionRebuilder,
     DelayedExpressionResolver,
@@ -39,7 +43,6 @@ from .solving import (
     SafeExpressionEvaluator,
 )
 from .validation import ValidationMixin
-from .vector_equilibrium import VectorEquilibriumProblem
 
 # ========== INTEGRATED PROBLEM CLASS ==========
 
@@ -114,7 +117,10 @@ __all__ = [
     # Main classes
     "Problem",
     "EngineeringProblem",
-    "VectorEquilibriumProblem",
+    "ParallelogramLawProblem",
+    "PositionVectorProblem",
+    "RectangularVectorProblem",
+    "CartesianVectorProblem",
     # Mixins
     "ValidationMixin",
     "CompositionMixin",

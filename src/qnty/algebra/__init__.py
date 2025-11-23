@@ -1,5 +1,5 @@
 from .equation import Equation
-from .functions import abs_expr, cond_expr, cos, exp, ln, log10, max_expr, min_expr, sin, sqrt, tan
+from .functions import abs_expr, cond_expr, cos, exp, ln, log10, max_expr, min_expr, range_expr, sin, sqrt, summation, sum_expr, tan, When
 from .nodes import BinaryOperation, ConditionalExpression, Constant, Expression, MatchExpression, UnaryFunction, VariableReference, wrap_operand
 from .select import SelectOption, SelectVariable
 from .system import EquationSystem
@@ -203,6 +203,10 @@ __all__ = [
     "cond_expr",
     "min_expr",
     "max_expr",
+    "sum_expr",
+    "summation",
+    "range_expr",
+    "When",
     # Utilities
     "wrap_operand",
     # Solving

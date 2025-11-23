@@ -17,7 +17,7 @@ import numpy as np
 from matplotlib.patches import Arc, FancyArrowPatch
 
 if TYPE_CHECKING:
-    from ...spatial.force_vector import ForceVector
+    from ...spatial import ForceVector
 
 
 class VectorDiagram:

@@ -874,6 +874,14 @@ def wrap_operand(operand: "OperandType") -> Expression:
     if operand_type in (int, float):
         return Constant(_get_dimensionless_quantity(float(operand)))  # type: ignore[arg-type]
 
+    # Handle numpy scalar types (numpy.float64, numpy.int64, etc.)
+    # Check module name to avoid importing numpy
+    if operand_type.__module__ == "numpy":
+        try:
+            return Constant(_get_dimensionless_quantity(float(operand)))  # type: ignore[arg-type]
+        except (TypeError, ValueError):
+            pass  # Fall through to other handlers
+
     # Second most common: already wrapped expressions (20-25% of calls)
     if operand_type is BinaryOperation:  # Direct type check is faster
         return operand  # type: ignore[return-value]
