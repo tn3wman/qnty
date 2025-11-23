@@ -14,7 +14,7 @@ from ..core.quantity import Quantity
 from ..solving.component_solver import ComponentSolver
 from ..spatial import ForceVector, _Vector
 from ..spatial.point import _Point
-from ..spatial.vectors import create_vector_cartesian, create_vector_from_points
+from ..spatial.vectors import _VectorWithUnknowns, create_vector_cartesian, create_vector_from_points
 from ..spatial.vector_between import VectorBetween
 from .problem import Problem
 
@@ -163,6 +163,12 @@ class PositionVectorProblem(Problem):
             # Must come before point check since _Vector has to_cartesian method
             elif isinstance(attr, _Vector) and hasattr(attr, '_constraint_magnitude') and attr._constraint_magnitude is not None:
                 self.position_vectors_with_constraints[attr_name] = attr
+                setattr(self, attr_name, attr)
+
+            # Check if it's a _VectorWithUnknowns (resultant placeholder)
+            # Must come before _Vector check
+            elif isinstance(attr, _VectorWithUnknowns):
+                # Keep the _VectorWithUnknowns as-is to preserve component_vectors
                 setattr(self, attr_name, attr)
 
             # Check if it's a ForceVector / plain _Vector (e.g., resultant or direction vector)
@@ -833,7 +839,10 @@ class PositionVectorProblem(Problem):
             for force_name, force in self.forces.items():
                 self._original_force_states[force_name] = force.is_known
 
-        # Step 3: Solve using ComponentSolver
+        # Step 3: Compute resultants from _VectorWithUnknowns
+        self._compute_vector_resultants()
+
+        # Step 4: Solve using ComponentSolver
         forces_list = list(self.forces.values())
         solved_forces = self.solver.solve(forces_list)
 
@@ -849,6 +858,130 @@ class PositionVectorProblem(Problem):
         self._populate_variables_from_forces()
 
         return self.forces
+
+    def _compute_vector_resultants(self) -> None:
+        """Compute resultant vectors from _VectorWithUnknowns placeholders."""
+        import numpy as np
+
+        for attr_name in dir(self):
+            if attr_name.startswith("_"):
+                continue
+
+            attr = getattr(self, attr_name)
+
+            # Check if it's a _VectorWithUnknowns with component vectors
+            if isinstance(attr, _VectorWithUnknowns) and attr.component_vectors:
+                # Check if this is a constraint (inverse problem)
+                if hasattr(attr, 'is_constraint') and attr.is_constraint:
+                    # Inverse problem: known resultant, solve for unknown magnitudes
+                    self._solve_inverse_resultant(attr_name, attr)
+                else:
+                    # Forward problem: sum component vectors to get resultant
+                    sum_coords = np.array([0.0, 0.0, 0.0], dtype=float)
+
+                    for vec in attr.component_vectors:
+                        sum_coords += vec._coords
+
+                    # Update the resultant vector coordinates
+                    attr._coords = sum_coords
+                    attr._unknowns = {}  # Clear unknowns
+                    attr.is_known = True
+
+                    # Recompute magnitude and angle
+                    if hasattr(attr, '_compute_magnitude_and_angle'):
+                        attr._compute_magnitude_and_angle()
+
+                    # Add solution step
+                    component_names = [getattr(v, 'name', 'Vector') for v in attr.component_vectors]
+                    self.solution_steps.append({
+                        "target": attr_name,
+                        "method": "vector_sum",
+                        "description": f"Computed {attr_name} = {' + '.join(component_names)}",
+                        "result_value": f"({sum_coords[0]:.2f}, {sum_coords[1]:.2f}, {sum_coords[2]:.2f})",
+                        "result_unit": attr._unit.symbol if attr._unit else "",
+                    })
+
+    def _solve_inverse_resultant(self, attr_name: str, constraint: _VectorWithUnknowns) -> None:
+        """
+        Solve for unknown force magnitudes given a known resultant constraint.
+
+        Sets up equilibrium equations: F_R = sum(F_i * u_i)
+        where F_i are unknown magnitudes and u_i are known unit vectors.
+
+        Uses numpy.linalg.solve for the linear system A * x = b where:
+        - A is the matrix of unit vector components (3 x n)
+        - x is the vector of unknown magnitudes (n x 1)
+        - b is the known resultant components (3 x 1)
+        """
+        import numpy as np
+
+        # Get the known resultant components (in SI)
+        resultant_coords = constraint._coords.copy()
+
+        # Collect component vectors with unknown magnitudes
+        unknown_vectors = []
+        for vec in constraint.component_vectors:
+            if isinstance(vec, _VectorWithUnknowns) and vec.direction_unit_vector is not None:
+                unknown_vectors.append(vec)
+
+        if not unknown_vectors:
+            return
+
+        n_unknowns = len(unknown_vectors)
+
+        # Build coefficient matrix A (3 x n) - each column is a unit vector
+        # Each row is a component equation (x, y, z)
+        A = np.zeros((3, n_unknowns))
+        for j, vec in enumerate(unknown_vectors):
+            for i in range(3):
+                A[i, j] = vec.direction_unit_vector[i]
+
+        # Build RHS vector b (3 x 1) - the known resultant in display units
+        si_factor = constraint._unit.si_factor if constraint._unit else 1.0
+        b = resultant_coords / si_factor  # Convert from SI to display units
+
+        # Solve the system A * magnitudes = b
+        # For 3 unknowns and 3 equations, this is a square system
+        # For overdetermined/underdetermined, use least squares
+        try:
+            if n_unknowns == 3:
+                magnitudes = np.linalg.solve(A, b)
+            else:
+                # Least squares for non-square systems
+                magnitudes, _, _, _ = np.linalg.lstsq(A, b, rcond=None)
+        except np.linalg.LinAlgError as err:
+            raise ValueError(f"Could not solve for unknown magnitudes in {attr_name}: {err}")
+
+        # Apply solutions to the vectors
+        for j, vec in enumerate(unknown_vectors):
+            mag_value = float(magnitudes[j])
+
+            # Scale unit vector by magnitude to get components (in display units)
+            new_coords = vec.direction_unit_vector * mag_value
+
+            # Convert to SI for internal storage
+            vec._coords = new_coords * si_factor
+            vec._unknowns = {}
+            vec.is_known = True
+
+            # Add solution step
+            self.solution_steps.append({
+                "target": vec.name or "Vector",
+                "method": "inverse_equilibrium",
+                "description": f"Solved {vec.name} magnitude from equilibrium",
+                "result_value": f"{mag_value:.3f}",
+                "result_unit": constraint._unit.symbol if constraint._unit else "",
+            })
+
+        # Log the constraint solution
+        component_names = [vec.name or "Vector" for vec in unknown_vectors]
+        self.solution_steps.append({
+            "target": attr_name,
+            "method": "equilibrium_constraint",
+            "description": f"Applied equilibrium constraint: {attr_name} = {' + '.join(component_names)}",
+            "result_value": f"({b[0]:.2f}, {b[1]:.2f}, {b[2]:.2f})",
+            "result_unit": constraint._unit.symbol if constraint._unit else "",
+        })
 
     def _populate_variables_from_forces(self) -> None:
         """Convert ForceVector objects to Quantity variables for report generation."""

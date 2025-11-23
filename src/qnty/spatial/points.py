@@ -8,6 +8,7 @@ with various coordinate specifications.
 from __future__ import annotations
 
 from types import EllipsisType
+from typing import Any
 
 import numpy as np
 
@@ -331,12 +332,13 @@ def create_point_from_ratio(
 
 
 def create_point_polar(
-    dist: float,
+    r: float,
     angle: float,
     plane: str = "xy",
     wrt: str = "+x",
     unit: Unit | str | None = None,
     angle_unit: str = "degree",
+    offset: float | tuple[float, float, float] = 0.0,
 ) -> _Point:
     """
     Create a point using polar coordinates in a plane.
@@ -345,12 +347,14 @@ def create_point_polar(
     coordinates within a specific plane (xy, xz, or yz).
 
     Args:
-        dist: Distance from origin
+        r: Distance from origin (or offset point if offset specified)
         angle: Angle measured from reference axis (CCW positive)
         plane: Plane containing the point ("xy", "xz", "yz")
         wrt: Reference axis for angle ("+x", "-x", "+y", "-y", "+z", "-z")
-        unit: Length unit for distance
+        unit: Length unit for distance and offset
         angle_unit: Angle unit ("degree" or "radian")
+        offset: Either a single float for the perpendicular axis (z for xy, y for xz, x for yz),
+                or a tuple (x, y, z) to offset the entire point
 
     Returns:
         _Point object with computed coordinates
@@ -362,10 +366,16 @@ def create_point_polar(
         >>> from qnty.spatial import create_point_polar
         >>>
         >>> # Point at 150mm, 30° from -x axis in xy plane
-        >>> A = create_point_polar(dist=150, angle=30, plane="xy", wrt="-x", unit="mm")
+        >>> A = create_point_polar(r=150, angle=30, plane="xy", wrt="-x", unit="mm")
         >>>
         >>> # Point at 5ft, 30° from +x axis in xy plane
-        >>> B = create_point_polar(dist=5, angle=30, plane="xy", wrt="+x", unit="ft")
+        >>> B = create_point_polar(r=5, angle=30, plane="xy", wrt="+x", unit="ft")
+        >>>
+        >>> # Point at r=5, angle=-40° in xz plane, with y=8
+        >>> C = create_point_polar(r=5, angle=-40, plane="xz", wrt="+x", unit="ft", offset=8)
+        >>>
+        >>> # Point at r=300, angle=-30° in xz plane, offset by (-300, 300, 0)
+        >>> D = create_point_polar(r=300, angle=-30, plane="xz", wrt="+z", unit="mm", offset=(-300, 300, 0))
     """
     import math
 
@@ -411,12 +421,13 @@ def create_point_polar(
         resolved_unit = unit
 
     # Compute Cartesian coordinates
-    dist_val = float(dist)
+    dist_val = float(r)
 
     # Axis angles for each plane
+    # For xz plane, right-hand rule with thumb on +y: CCW goes toward -z
     axis_angles = {
         "xy": {"+x": 0, "+y": 90, "-x": 180, "-y": 270},
-        "xz": {"+x": 0, "+z": 90, "-x": 180, "-z": 270},
+        "xz": {"+x": 0, "-z": 90, "-x": 180, "+z": 270},  # Right-hand rule around +y
         "yz": {"+y": 0, "+z": 90, "-y": 180, "-z": 270},
     }
 
@@ -427,18 +438,32 @@ def create_point_polar(
     total_angle_rad = math.radians(base_angle_deg) + angle_rad
 
     # Compute coordinates based on plane
+    # Handle offset as either float (perpendicular axis only) or tuple (x, y, z)
+    if isinstance(offset, tuple):
+        offset_x, offset_y, offset_z = offset
+    else:
+        offset_x = offset_y = offset_z = 0.0
+        # Single float goes to the perpendicular axis (z for xy, y for xz, x for yz)
+        if plane_lower == "xy":
+            offset_z = float(offset)
+        elif plane_lower == "xz":
+            offset_y = float(offset)
+        else:  # yz
+            offset_x = float(offset)
+
     if plane_lower == "xy":
-        x = dist_val * math.cos(total_angle_rad)
-        y = dist_val * math.sin(total_angle_rad)
-        z = 0.0
+        x = dist_val * math.cos(total_angle_rad) + offset_x
+        y = dist_val * math.sin(total_angle_rad) + offset_y
+        z = offset_z
     elif plane_lower == "xz":
-        x = dist_val * math.cos(total_angle_rad)
-        y = 0.0
-        z = dist_val * math.sin(total_angle_rad)
+        # Right-hand rule: thumb on +y, CCW rotation from +x goes toward -z
+        x = dist_val * math.cos(total_angle_rad) + offset_x
+        y = offset_y
+        z = -dist_val * math.sin(total_angle_rad) + offset_z
     else:  # yz
-        x = 0.0
-        y = dist_val * math.cos(total_angle_rad)
-        z = dist_val * math.sin(total_angle_rad)
+        x = offset_x
+        y = dist_val * math.cos(total_angle_rad) + offset_y
+        z = dist_val * math.sin(total_angle_rad) + offset_z
 
     return _Point(x, y, z, unit=resolved_unit)
 
@@ -547,5 +572,214 @@ def create_point_spherical(
     x = dist_val * math.sin(phi_rad) * math.cos(theta_rad)
     y = dist_val * math.sin(phi_rad) * math.sin(theta_rad)
     z = dist_val * math.cos(phi_rad)
+
+    return _Point(x, y, z, unit=resolved_unit)
+
+
+def create_point_along(
+    from_point: _Point | Any,
+    to_point: _Point | Any,
+    distance: float,
+    unit: Unit | str | None = None,
+    name: str | None = None,
+) -> _Point:
+    """
+    Create a point at a specified distance along the direction from one point to another.
+
+    This is useful when a point is defined as being a certain distance along a rod
+    or line from one end toward the other.
+
+    Args:
+        from_point: Starting point
+        to_point: Direction point (defines the direction)
+        distance: Distance from from_point toward to_point
+        unit: Length unit for distance
+        name: Optional name for the new point
+
+    Returns:
+        _Point at the specified distance along the direction
+
+    Examples:
+        >>> from qnty.spatial import create_point_cartesian, create_point_along
+        >>>
+        >>> # Point B is 3 m along rod from C toward A
+        >>> A = create_point_cartesian(x=0, y=0, z=0, unit="m")
+        >>> C = create_point_cartesian(x=-3, y=4, z=-4, unit="m")
+        >>> B = create_point_along(C, A, distance=3, unit="m", name="B")
+    """
+    import math
+
+    # Convert to _Point if needed
+    if hasattr(from_point, 'to_cartesian'):
+        from_pt = from_point.to_cartesian()
+    else:
+        from_pt = from_point
+    if hasattr(to_point, 'to_cartesian'):
+        to_pt = to_point.to_cartesian()
+    else:
+        to_pt = to_point
+
+    # Compute direction vector (in SI)
+    direction = to_pt._coords - from_pt._coords
+
+    # Calculate magnitude
+    dir_magnitude = math.sqrt(sum(c**2 for c in direction))
+
+    if dir_magnitude == 0:
+        raise ValueError("Cannot create point along zero-length direction")
+
+    # Unit vector
+    unit_vec = direction / dir_magnitude
+
+    # Resolve unit
+    resolved_unit: Unit | None = None
+    if isinstance(unit, str):
+        from ..core.dimension_catalog import dim
+        from ..core.unit import ureg
+
+        resolved = ureg.resolve(unit, dim=dim.length)
+        if resolved is None:
+            raise ValueError(f"Unknown length unit '{unit}'")
+        resolved_unit = resolved
+    elif unit is not None:
+        resolved_unit = unit
+    else:
+        # Fall back to point's unit
+        resolved_unit = from_pt._unit or to_pt._unit
+
+    # Convert distance to SI
+    if resolved_unit is not None:
+        distance_si = distance * resolved_unit.si_factor
+    else:
+        distance_si = distance
+
+    # Compute new point coordinates
+    new_coords = from_pt._coords + unit_vec * distance_si
+
+    # Create point
+    result = object.__new__(_Point)
+    result._coords = new_coords
+    result._dim = from_pt._dim
+    result._unit = resolved_unit
+
+    # Note: name parameter available for future use with named points
+    _ = name
+
+    return result
+
+
+def create_point_direction_angles(
+    dist: float,
+    alpha: float | None = None,
+    beta: float | None = None,
+    gamma: float | None = None,
+    unit: Unit | str | None = None,
+    angle_unit: str = "degree",
+    name: str | None = None,
+) -> _Point:
+    """
+    Create a point using distance and coordinate direction angles.
+
+    This factory function provides a convenient way to define points using:
+    - dist: Distance from origin
+    - alpha: Angle from +x axis
+    - beta: Angle from +y axis
+    - gamma: Angle from +z axis
+
+    The coordinates are: x = dist * cos(alpha), y = dist * cos(beta), z = dist * cos(gamma)
+
+    Note: The angles must satisfy: cos²α + cos²β + cos²γ = 1
+    At least 2 of the 3 angles must be provided. The third will be calculated.
+
+    Args:
+        dist: Distance from origin
+        alpha: Angle from +x axis (optional if other two provided)
+        beta: Angle from +y axis (optional if other two provided)
+        gamma: Angle from +z axis (optional if other two provided)
+        unit: Length unit for distance
+        angle_unit: Angle unit ("degree" or "radian")
+        name: Optional point name
+
+    Returns:
+        _Point object with computed coordinates
+
+    Raises:
+        ValueError: If angles don't satisfy the constraint or fewer than 2 provided
+
+    Examples:
+        >>> from qnty.spatial import create_point_direction_angles
+        >>>
+        >>> # Point at 10m with direction angles
+        >>> A = create_point_direction_angles(dist=10, alpha=60, beta=45, gamma=120, unit="m")
+        >>>
+        >>> # Point with two angles (third calculated)
+        >>> B = create_point_direction_angles(dist=10, alpha=60, beta=45, unit="m")
+    """
+    import math
+
+    dist_val = float(dist)
+
+    # Convert angles to radians
+    def to_radians(angle_val):
+        if angle_val is None:
+            return None
+        if angle_unit.lower() in ("degree", "degrees", "deg"):
+            return math.radians(float(angle_val))
+        elif angle_unit.lower() in ("radian", "radians", "rad"):
+            return float(angle_val)
+        else:
+            raise ValueError(f"Invalid angle_unit '{angle_unit}'. Use 'degree' or 'radian'")
+
+    alpha_rad = to_radians(alpha)
+    beta_rad = to_radians(beta)
+    gamma_rad = to_radians(gamma)
+
+    # Calculate missing angle from constraint cos²α + cos²β + cos²γ = 1
+    if alpha_rad is None and beta_rad is not None and gamma_rad is not None:
+        cos_alpha_sq = 1 - math.cos(beta_rad) ** 2 - math.cos(gamma_rad) ** 2
+        if cos_alpha_sq < 0:
+            raise ValueError("Invalid angle combination: cos²α + cos²β + cos²γ > 1")
+        cos_alpha = math.sqrt(cos_alpha_sq)
+        alpha_rad = math.acos(cos_alpha)
+    elif beta_rad is None and alpha_rad is not None and gamma_rad is not None:
+        cos_beta_sq = 1 - math.cos(alpha_rad) ** 2 - math.cos(gamma_rad) ** 2
+        if cos_beta_sq < 0:
+            raise ValueError("Invalid angle combination: cos²α + cos²β + cos²γ > 1")
+        cos_beta = math.sqrt(cos_beta_sq)
+        beta_rad = math.acos(cos_beta)
+    elif gamma_rad is None and alpha_rad is not None and beta_rad is not None:
+        cos_gamma_sq = 1 - math.cos(alpha_rad) ** 2 - math.cos(beta_rad) ** 2
+        if cos_gamma_sq < 0:
+            raise ValueError("Invalid angle combination: cos²α + cos²β + cos²γ > 1")
+        cos_gamma = math.sqrt(cos_gamma_sq)
+        gamma_rad = math.acos(cos_gamma)
+    elif alpha_rad is None or beta_rad is None or gamma_rad is None:
+        raise ValueError("Must provide at least 2 of the 3 coordinate direction angles")
+
+    # Validate the constraint
+    sum_cos_sq = math.cos(alpha_rad) ** 2 + math.cos(beta_rad) ** 2 + math.cos(gamma_rad) ** 2
+    if abs(sum_cos_sq - 1.0) > 1e-6:
+        raise ValueError(f"Direction angles must satisfy cos²α + cos²β + cos²γ = 1, got {sum_cos_sq}")
+
+    # Resolve unit
+    resolved_unit: Unit | None = None
+    if isinstance(unit, str):
+        from ..core.dimension_catalog import dim
+        from ..core.unit import ureg
+
+        resolved = ureg.resolve(unit, dim=dim.length)
+        if resolved is None:
+            raise ValueError(f"Unknown length unit '{unit}'")
+        resolved_unit = resolved
+    else:
+        resolved_unit = unit
+
+    # Compute Cartesian coordinates
+    x = dist_val * math.cos(alpha_rad)
+    y = dist_val * math.cos(beta_rad)
+    z = dist_val * math.cos(gamma_rad)
+
+    # Note: name parameter available for future use
+    _ = name
 
     return _Point(x, y, z, unit=resolved_unit)

@@ -829,6 +829,174 @@ class _Vector(Generic[D]):
         self._init_result_slots(result)
         return result
 
+    def unit_vector(self) -> NDArray[np.float64]:
+        """
+        Return the unit vector (versor) as a numpy array.
+
+        Returns:
+            Numpy array [u, v, w] with magnitude 1 (dimensionless)
+
+        Raises:
+            ValueError: If vector is zero (cannot compute unit vector)
+
+        Examples:
+            >>> from qnty.spatial import create_vector_cartesian
+            >>> v = create_vector_cartesian(u=3, v=4, w=0, unit="m")
+            >>> u = v.unit_vector()  # [0.6, 0.8, 0.0]
+        """
+        mag = np.sqrt(np.sum(self._coords**2))
+        if mag == 0:
+            raise ValueError("Cannot compute unit vector for zero vector")
+        return self._coords / mag
+
+    def dot(self, other: "_Vector | NDArray[np.float64] | tuple[float, float, float]") -> "Quantity":
+        """
+        Compute dot product with another vector.
+
+        Returns the scalar dot product as a Quantity. If the other argument is a
+        unit vector (numpy array or tuple), the result has the same dimension as self.
+
+        Args:
+            other: Another vector or unit vector (numpy array or tuple)
+
+        Returns:
+            Dot product as Quantity
+
+        Examples:
+            >>> from qnty.spatial import create_vector_cartesian
+            >>> F = create_vector_cartesian(u=3, v=4, w=0, unit="N")
+            >>> r = create_vector_cartesian(u=1, v=0, w=0, unit="m")
+            >>> # Dot product with unit vector
+            >>> F_parallel = F.dot(r.unit_vector())  # 3.0 N
+            >>> # Dot product with vector (gives N·m)
+            >>> work = F.dot(r)  # 3.0 N·m
+        """
+        from ..core.quantity import Quantity
+
+        if isinstance(other, (np.ndarray, tuple)):
+            # Dot with unit vector (dimensionless array or tuple)
+            other_arr = np.array(other) if isinstance(other, tuple) else other
+            dot_product = float(np.dot(self._coords, other_arr))
+
+            # Return as Quantity with same dimension as self
+            q = object.__new__(Quantity)
+            q.name = "dot_product"
+            q.dim = self._dim
+            q.value = dot_product
+            q.preferred = self._unit
+            q._symbol = None
+            q._output_unit = None
+            return q
+        elif isinstance(other, _Vector):
+            # Dot with another vector
+            dot_product = float(np.dot(self._coords, other._coords))
+
+            # Result dimension is product of vector dimensions
+            if self._dim is None or other._dim is None:
+                result_dim = None
+            else:
+                result_dim = self._dim * other._dim
+
+            q = object.__new__(Quantity)
+            q.name = "dot_product"
+            q.dim = result_dim
+            q.value = dot_product
+            q.preferred = None
+            q._symbol = None
+            q._output_unit = None
+            return q
+        else:
+            raise TypeError(f"Cannot compute dot product with {type(other)}")
+
+    def cross(self, other: "_Vector | NDArray[np.float64] | tuple[float, float, float]") -> "_Vector":
+        """
+        Compute cross product with another vector.
+
+        Returns a new vector perpendicular to both input vectors.
+        The magnitude of the cross product equals |A||B|sin(θ).
+
+        Args:
+            other: Another vector or unit vector (numpy array or tuple)
+
+        Returns:
+            New _Vector representing the cross product
+
+        Examples:
+            >>> from qnty.spatial import create_vector_cartesian
+            >>> F = create_vector_cartesian(u=3, v=4, w=0, unit="N")
+            >>> r = create_vector_cartesian(u=1, v=0, w=0, unit="m")
+            >>> # Cross product with unit vector
+            >>> F_perp = F.cross(r.unit_vector())
+            >>> # Magnitude gives perpendicular component
+            >>> F_perp_mag = F_perp.magnitude
+        """
+        if isinstance(other, (np.ndarray, tuple)):
+            # Cross with unit vector (dimensionless array or tuple)
+            other_arr = np.array(other) if isinstance(other, tuple) else other
+            result = np.cross(self._coords, other_arr)
+            return _Vector(result[0], result[1], result[2], unit=self._unit)
+        elif isinstance(other, _Vector):
+            # Cross with another vector
+            result = np.cross(self._coords, other._coords)
+            # Note: resulting unit would be product of units, but for simplicity
+            # we return with self's unit (caller should handle unit multiplication)
+            return _Vector(result[0], result[1], result[2], unit=self._unit)
+        else:
+            raise TypeError(f"Cannot compute cross product with {type(other)}")
+
+    def angle_between(self, other: "_Vector") -> "Quantity":
+        """
+        Compute the angle between this vector and another vector.
+
+        Uses the dot product formula: cos(θ) = (A · B) / (|A| |B|)
+
+        Args:
+            other: Another vector
+
+        Returns:
+            Angle as Quantity in degrees
+
+        Examples:
+            >>> from qnty.spatial import create_vector_cartesian
+            >>> r_AB = create_vector_cartesian(u=-2, v=6, w=-3, unit="m")
+            >>> r_AC = create_vector_cartesian(u=-4, v=6, w=1, unit="m")
+            >>> theta = r_AB.angle_between(r_AC)  # 36.4 deg
+        """
+        from ..core.quantity import Quantity
+        from ..core.unit import ureg
+
+        if not isinstance(other, _Vector):
+            raise TypeError(f"Expected _Vector, got {type(other)}")
+
+        # Get magnitudes
+        mag_self = np.sqrt(np.sum(self._coords**2))
+        mag_other = np.sqrt(np.sum(other._coords**2))
+
+        if mag_self == 0 or mag_other == 0:
+            raise ValueError("Cannot compute angle with zero-length vector")
+
+        # Compute dot product and cos(theta)
+        dot_product = float(np.dot(self._coords, other._coords))
+        cos_theta = dot_product / (mag_self * mag_other)
+
+        # Clamp to [-1, 1] to handle floating point errors
+        cos_theta = max(-1.0, min(1.0, cos_theta))
+
+        # Compute angle in degrees
+        angle_rad = np.arccos(cos_theta)
+        angle_deg = np.degrees(angle_rad)
+
+        # Return as Quantity with degree unit
+        deg_unit = ureg.resolve("deg")
+        q = object.__new__(Quantity)
+        q.name = "angle"
+        q.dim = deg_unit.dim if deg_unit else None
+        q.value = float(angle_deg) * (deg_unit.si_factor if deg_unit else 1.0)
+        q.preferred = deg_unit
+        q._symbol = None
+        q._output_unit = None
+        return q
+
     def is_close(
         self,
         other: "_Vector",
@@ -1132,19 +1300,35 @@ class _Vector(Generic[D]):
         self._init_result_slots(result)
         return result
 
-    def dot(self, other: _Vector[D]) -> Quantity:
+    def dot(self, other: "_Vector[D] | NDArray | tuple") -> "Quantity":
         """
         Dot product (scalar product).
 
         Args:
-            other: Vector to compute dot product with
+            other: Vector, numpy array, or tuple to compute dot product with
 
         Returns:
-            Dot product as Quantity (dimension is self.dim * other.dim)
+            Dot product as Quantity (dimension is self.dim * other.dim for vectors,
+            or self.dim for unit vectors since unit vectors are dimensionless)
 
         Raises:
             ValueError: If vectors have incompatible dimensions
         """
+        # Handle numpy array or tuple (unit vector)
+        if isinstance(other, (np.ndarray, tuple)):
+            other_arr = np.array(other) if isinstance(other, tuple) else other
+            dot_product = float(np.dot(self._coords, other_arr))
+
+            # Return as Quantity with same dimension as self (unit vector is dimensionless)
+            q = object.__new__(Quantity)
+            q.name = "dot_product"
+            q.dim = self._dim
+            q.value = dot_product
+            q.preferred = self._unit
+            q._symbol = None
+            q._output_unit = None
+            return q
+
         if not isinstance(other, _Vector):
             raise TypeError(f"Expected _Vector, got {type(other)}")
 
@@ -1167,20 +1351,33 @@ class _Vector(Generic[D]):
         q._output_unit = None
         return q
 
-    def cross(self, other: _Vector[D]) -> _Vector:
+    def cross(self, other: "_Vector[D] | NDArray[np.float64] | tuple[float, float, float]") -> _Vector:
         """
         Cross product (vector product).
 
         Args:
-            other: Vector to compute cross product with
+            other: Vector to compute cross product with, or unit vector (array/tuple)
 
         Returns:
-            Cross product vector (dimension is self.dim * other.dim)
+            Cross product vector (dimension is self.dim * other.dim for vectors,
+            or same dimension as self for unit vectors)
 
         Note:
             The resulting vector is perpendicular to both input vectors.
             Magnitude equals area of parallelogram formed by the vectors.
         """
+        # Handle tuple/array (unit vector)
+        if isinstance(other, (np.ndarray, tuple)):
+            other_arr = np.array(other) if isinstance(other, tuple) else other
+            cross_coords = np.cross(self._coords, other_arr)
+            # Create result with same dimension as self (cross with dimensionless)
+            result = object.__new__(_Vector)
+            result._coords = cross_coords
+            result._dim = self._dim
+            result._unit = self._unit
+            self._init_result_slots(result)
+            return result
+
         if not isinstance(other, _Vector):
             raise TypeError(f"Expected _Vector, got {type(other)}")
 
