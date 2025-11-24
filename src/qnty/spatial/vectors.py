@@ -282,11 +282,12 @@ def create_vector_from_ratio(
 
 def create_vector_polar(
     magnitude: float,
+    unit: Unit | str,
     angle: float,
-    plane: str = "xy",
-    wrt: str = "+x",
-    unit: Unit | str | None = None,
     angle_unit: str = "degree",
+    
+    wrt: str = "+x",
+    plane: str = "xy",
     name: str | None = None,
 ) -> _Vector:
     """
@@ -297,11 +298,11 @@ def create_vector_polar(
 
     Args:
         magnitude: Vector magnitude
-        angle: Angle measured from reference axis (CCW positive)
-        plane: Plane containing the vector ("xy", "xz", "yz")
-        wrt: Reference axis for angle ("+x", "-x", "+y", "-y", "+z", "-z")
         unit: Unit for magnitude
+        angle: Angle measured from reference axis (CCW positive)
         angle_unit: Angle unit ("degree" or "radian")
+        wrt: Reference axis for angle ("+x", "-x", "+y", "-y", "+z", "-z")
+        plane: Plane containing the vector ("xy", "xz", "yz")
         name: Optional vector name
 
     Returns:
@@ -398,7 +399,11 @@ def create_vector_polar(
         v = mag_val * math.cos(total_angle_rad)
         w = mag_val * math.sin(total_angle_rad)
 
-    return _Vector(u, v, w, unit=resolved_unit, name=name)
+    vec = _Vector(u, v, w, unit=resolved_unit, name=name)
+    # Store original angle and reference for reporting
+    vec._original_angle = float(angle)
+    vec._original_wrt = wrt
+    return vec
 
 
 def create_vector_spherical(

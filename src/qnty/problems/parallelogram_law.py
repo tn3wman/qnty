@@ -16,7 +16,8 @@ from ..core.quantity import Quantity
 from ..solving.component_solver import ComponentSolver
 from ..solving.triangle_solver import TriangleSolver
 from ..spatial import ForceVector
-from ..spatial.vector import Vector
+from ..spatial.vector import Vector, _Vector
+from ..spatial.vectors import _VectorWithUnknowns
 from .problem import Problem
 
 
@@ -66,18 +67,314 @@ class ParallelogramLawProblem(Problem):
         # Extract ForceVector class attributes
         self._extract_force_vectors()
 
+        # Compute any vector resultants from _VectorWithUnknowns
+        self._compute_vector_resultants()
+
     def _extract_force_vectors(self) -> None:
-        """Extract ForceVector objects defined at class level."""
+        """Extract ForceVector and _Vector objects defined at class level."""
+        # First pass: clone all plain _Vectors so we have fresh copies
+        vector_clones: dict[int, _Vector] = {}  # Map from id(original) to clone
+
         for attr_name in dir(self.__class__):
             if attr_name.startswith("_"):
                 continue
 
             attr = getattr(self.__class__, attr_name)
-            if isinstance(attr, ForceVector):
+            # First pass: only handle plain _Vector from create_vector_polar (not ForceVector or _VectorWithUnknowns)
+            # Check for exact type to avoid catching ForceVector subclass
+            if type(attr).__name__ == "_Vector":
+                # Clone plain _Vector, using attr_name as default name
+                clone = self._clone_vector(attr, default_name=attr_name)
+                vector_clones[id(attr)] = clone
+                setattr(self, attr_name, clone)
+
+        # Second pass: handle _VectorWithUnknowns and ForceVectors not already cloned
+        for attr_name in dir(self.__class__):
+            if attr_name.startswith("_"):
+                continue
+
+            attr = getattr(self.__class__, attr_name)
+
+            # Skip if already cloned in first pass
+            if id(attr) in vector_clones:
+                continue
+
+            # Check _VectorWithUnknowns FIRST since it's also a ForceVector and _Vector
+            if isinstance(attr, _VectorWithUnknowns):
+                # Clone the _VectorWithUnknowns and update component_vectors to use cloned vectors
+                clone = self._clone_vector_with_unknowns(attr, vector_clones)
+                setattr(self, attr_name, clone)
+            elif isinstance(attr, ForceVector):
                 # Clone to avoid sharing between instances
                 force_copy = self._clone_force_vector(attr)
                 self.forces[attr_name] = force_copy
                 setattr(self, attr_name, force_copy)
+
+    def _clone_vector(self, vec: _Vector, default_name: str = "") -> _Vector:
+        """Create a copy of a _Vector."""
+        clone = object.__new__(_Vector)
+        clone._coords = vec._coords.copy()
+        clone._dim = vec._dim
+        clone._unit = vec._unit
+        # Use original name if it exists and is meaningful, otherwise use default_name
+        original_name = getattr(vec, 'name', "")
+        # Replace generic names like "Vector" or empty with the attribute name
+        clone.name = original_name if (original_name and original_name != "Vector") else default_name
+        clone._description = getattr(vec, '_description', "")
+        clone.is_known = getattr(vec, 'is_known', True)
+        clone.is_resultant = getattr(vec, 'is_resultant', False)
+        clone.coordinate_system = getattr(vec, 'coordinate_system', None)
+        clone.angle_reference = getattr(vec, 'angle_reference', None)
+
+        # Copy magnitude and angle if present
+        if hasattr(vec, '_magnitude'):
+            clone._magnitude = vec._magnitude
+        if hasattr(vec, '_angle'):
+            clone._angle = vec._angle
+
+        # Copy original angle and wrt for reporting
+        if hasattr(vec, '_original_angle'):
+            clone._original_angle = vec._original_angle
+        if hasattr(vec, '_original_wrt'):
+            clone._original_wrt = vec._original_wrt
+
+        return clone
+
+    def _clone_vector_with_unknowns(self, vec: _VectorWithUnknowns, vector_clones: dict[int, _Vector]) -> _VectorWithUnknowns:
+        """Create a copy of a _VectorWithUnknowns with updated component_vectors."""
+        clone = object.__new__(_VectorWithUnknowns)
+        clone._coords = vec._coords.copy()
+        clone._dim = vec._dim
+        clone._unit = vec._unit
+        clone.name = getattr(vec, 'name', "")
+        clone._description = getattr(vec, '_description', "")
+        clone.is_known = getattr(vec, 'is_known', False)
+        clone.is_resultant = getattr(vec, 'is_resultant', True)
+        clone.coordinate_system = getattr(vec, 'coordinate_system', None)
+        clone.angle_reference = getattr(vec, 'angle_reference', None)
+        clone._unknowns = vec._unknowns.copy() if hasattr(vec, '_unknowns') else {}
+
+        # Update component_vectors to use cloned vectors
+        if hasattr(vec, '_component_vectors') and vec._component_vectors:
+            clone._component_vectors = [
+                vector_clones.get(id(cv), cv) for cv in vec._component_vectors
+            ]
+        else:
+            clone._component_vectors = []
+
+        # Copy other attributes
+        if hasattr(vec, '_direction_unit_vector'):
+            clone._direction_unit_vector = vec._direction_unit_vector
+        if hasattr(vec, '_is_constraint'):
+            clone._is_constraint = vec._is_constraint
+        if hasattr(vec, '_magnitude'):
+            clone._magnitude = vec._magnitude
+        if hasattr(vec, '_angle'):
+            clone._angle = vec._angle
+
+        return clone
+
+    def _compute_vector_resultants(self) -> None:
+        """Compute resultant vectors from _VectorWithUnknowns placeholders."""
+        from ..core.dimension_catalog import dim
+
+        has_vector_resultants = False
+
+        for attr_name in dir(self):
+            if attr_name.startswith("_"):
+                continue
+
+            attr = getattr(self, attr_name)
+
+            # Check if it's a _VectorWithUnknowns with component vectors
+            if isinstance(attr, _VectorWithUnknowns) and attr.component_vectors:
+                has_vector_resultants = True
+
+                # First, add known vectors as variables
+                for vec in attr.component_vectors:
+                    vec_name = getattr(vec, 'name', None)
+                    if vec_name and vec._unit:
+                        # Add magnitude
+                        mag = vec.magnitude
+                        if mag:
+                            mag_var = Quantity(
+                                name=f"{vec_name} Magnitude",
+                                dim=mag.dim,
+                                value=mag.value,
+                                preferred=mag.preferred,
+                                _symbol=f"|{vec_name}|",
+                            )
+                            self.variables[f"{vec_name}_mag"] = mag_var
+                            self._original_variable_states[f"{vec_name}_mag"] = True
+
+                        # Add angle if present
+                        if hasattr(vec, '_angle') and vec._angle and vec._angle.value is not None:
+                            angle_var = Quantity(
+                                name=f"{vec_name} Angle",
+                                dim=dim.D,
+                                value=vec._angle.value,
+                                preferred=vec._angle.preferred,
+                                _symbol=f"θ_{vec_name}",
+                            )
+                            self.variables[f"{vec_name}_angle"] = angle_var
+                            self._original_variable_states[f"{vec_name}_angle"] = True
+
+                # Forward problem: sum component vectors to get resultant
+                sum_coords = np.array([0.0, 0.0, 0.0], dtype=float)
+
+                for vec in attr.component_vectors:
+                    sum_coords += vec._coords
+
+                # Update the resultant vector coordinates
+                attr._coords = sum_coords
+                attr._unknowns = {}  # Clear unknowns
+                attr.is_known = True
+
+                # Recompute magnitude and angle
+                if hasattr(attr, '_compute_magnitude_and_angle'):
+                    attr._compute_magnitude_and_angle()
+
+                # Compute magnitude and angle for reporting
+                mag_si = float(np.sqrt(np.sum(sum_coords**2)))
+                angle_rad = float(np.arctan2(sum_coords[1], sum_coords[0]))
+                if angle_rad < 0:
+                    angle_rad += 2 * np.pi
+
+                # Store as _magnitude and _angle for consistency
+                from ..core.unit import ureg
+                degree_unit = ureg.resolve("degree", dim=dim.D)
+
+                attr._magnitude = Quantity(
+                    name=f"{attr_name}_magnitude",
+                    dim=attr._dim,
+                    value=mag_si,
+                    preferred=attr._unit,
+                )
+                attr._angle = Quantity(
+                    name=f"{attr_name}_angle",
+                    dim=dim.D,
+                    value=angle_rad,
+                    preferred=degree_unit,
+                )
+
+                # Add resultant as unknown variable (solved)
+                mag_var = Quantity(
+                    name=f"{attr_name} Magnitude",
+                    dim=attr._dim,
+                    value=mag_si,
+                    preferred=attr._unit,
+                    _symbol=f"|{attr_name}|",
+                )
+                self.variables[f"{attr_name}_mag"] = mag_var
+                self._original_variable_states[f"{attr_name}_mag"] = False  # Was unknown
+
+                angle_var = Quantity(
+                    name=f"{attr_name} Angle",
+                    dim=dim.D,
+                    value=angle_rad,
+                    preferred=degree_unit,
+                    _symbol=f"θ_{attr_name}",
+                )
+                self.variables[f"{attr_name}_angle"] = angle_var
+                self._original_variable_states[f"{attr_name}_angle"] = False  # Was unknown
+
+                # Add solution steps in format expected by _populate_solving_history
+                component_names = [getattr(v, 'name', 'Vector') for v in attr.component_vectors]
+                unit_symbol = attr._unit.symbol if attr._unit else ""
+                mag_display = mag_si / attr._unit.si_factor if attr._unit else mag_si
+                angle_deg = np.degrees(angle_rad)
+
+                if attr._unit:
+                    display_sum = sum_coords / attr._unit.si_factor
+                else:
+                    display_sum = sum_coords
+
+                # Step 1: Resolve each force into components
+                for vec in attr.component_vectors:
+                    vec_name = getattr(vec, 'name', 'Vector')
+                    coords = vec._coords
+                    if attr._unit:
+                        display_coords = coords / attr._unit.si_factor
+                    else:
+                        display_coords = coords
+
+                    # Get magnitude and angle for this vector
+                    vec_mag = np.sqrt(np.sum(coords**2))
+                    vec_angle = np.arctan2(coords[1], coords[0])
+                    if vec_angle < 0:
+                        vec_angle += 2 * np.pi
+                    vec_mag_display = vec_mag / attr._unit.si_factor if attr._unit else vec_mag
+                    vec_angle_deg = np.degrees(vec_angle)
+
+                    self.solution_steps.append({
+                        "target": f"{vec_name}_x",
+                        "method": "component_resolution",
+                        "description": f"Resolve {vec_name} into x and y components",
+                        "equation": f"{vec_name}_x = |{vec_name}| cos(θ)",
+                        "substitution": f"{vec_name}_x = {vec_mag_display:.3f} cos({vec_angle_deg:.1f}°)",
+                        "result_value": f"{display_coords[0]:.3f}",
+                        "result_unit": unit_symbol,
+                    })
+                    self.solution_steps.append({
+                        "target": f"{vec_name}_y",
+                        "method": "component_resolution",
+                        "description": f"Resolve {vec_name} into x and y components",
+                        "equation": f"{vec_name}_y = |{vec_name}| sin(θ)",
+                        "substitution": f"{vec_name}_y = {vec_mag_display:.3f} sin({vec_angle_deg:.1f}°)",
+                        "result_value": f"{display_coords[1]:.3f}",
+                        "result_unit": unit_symbol,
+                    })
+
+                # Step 2: Sum x-components
+                x_terms = " + ".join([f"({(v._coords[0]/attr._unit.si_factor if attr._unit else v._coords[0]):.3f})" for v in attr.component_vectors])
+                self.solution_steps.append({
+                    "target": f"{attr_name}_x",
+                    "method": "component_sum",
+                    "description": "Sum x-components",
+                    "equation": f"Σ{attr_name}_x = {' + '.join([f'{n}_x' for n in component_names])}",
+                    "substitution": f"Σ{attr_name}_x = {x_terms}",
+                    "result_value": f"{display_sum[0]:.3f}",
+                    "result_unit": unit_symbol,
+                })
+
+                # Step 3: Sum y-components
+                y_terms = " + ".join([f"({(v._coords[1]/attr._unit.si_factor if attr._unit else v._coords[1]):.3f})" for v in attr.component_vectors])
+                self.solution_steps.append({
+                    "target": f"{attr_name}_y",
+                    "method": "component_sum",
+                    "description": "Sum y-components",
+                    "equation": f"Σ{attr_name}_y = {' + '.join([f'{n}_y' for n in component_names])}",
+                    "substitution": f"Σ{attr_name}_y = {y_terms}",
+                    "result_value": f"{display_sum[1]:.3f}",
+                    "result_unit": unit_symbol,
+                })
+
+                # Step 4: Calculate magnitude
+                self.solution_steps.append({
+                    "target": f"|{attr_name}|",
+                    "method": "pythagorean",
+                    "description": "Calculate resultant magnitude using Pythagorean theorem",
+                    "equation": f"|{attr_name}| = √(({attr_name}_x)² + ({attr_name}_y)²)",
+                    "substitution": f"|{attr_name}| = √(({display_sum[0]:.3f})² + ({display_sum[1]:.3f})²)",
+                    "result_value": f"{mag_display:.3f}",
+                    "result_unit": unit_symbol,
+                })
+
+                # Step 5: Calculate angle
+                self.solution_steps.append({
+                    "target": f"θ_{attr_name}",
+                    "method": "inverse_trig",
+                    "description": "Calculate resultant direction using inverse tangent",
+                    "equation": f"θ = tan⁻¹({attr_name}_y / {attr_name}_x)",
+                    "substitution": f"θ = tan⁻¹({display_sum[1]:.3f} / {display_sum[0]:.3f})",
+                    "result_value": f"{angle_deg:.3f}",
+                    "result_unit": "°",
+                })
+
+        # Mark as solved if we computed any resultants
+        if has_vector_resultants:
+            self.is_solved = True
+            self._populate_solving_history()
 
     def _clone_force_vector(self, force: ForceVector) -> ForceVector:
         """Create a copy of a ForceVector."""

@@ -1,22 +1,5 @@
-I would like to implement some sort of "select" variable and "match" equation functionality to qnty. I added a very crude idea to handle this, but am open to more professional implementations. For the 'select' options I would like some sort of validation or control over the options that are frozen like a dataclass (I need a way to get all the options as a list for future UI implementation). Here is my crude implementation but I am guessing there needs to be some boolean indicator and more professional way to do this kind of like select boxes you see on a ui but I don't know how to implement it behind the scenes in a way that is consistent with the rest of the qnty codebase:
+# Prompt File: prompt.txt
 
-from dataclasses import dataclass
-from qnty.algebra import MatchVariable, equation, match
-
-@dataclass
-class Options:
-    non_self_energized_gaskets = "non_self_energized_gaskets"
-    self_energized_gaskets = "self_energized_gaskets"
-
-energized_gaskets = MatchVariable("energized_gaskets")
-
-W_o_eqn = equation(
-    W_o
-    match(
-        energized_gaskets, 25,
-        non_energized_gaskets, 15,
-    )
-
-I am trying to implement this in a way that is consistent with the rest of the qnty codebase and algebra system. Any suggestions on how to improve this implementation or make it more professional would be greatly appreciated. I am trying to implement it here: C:\Projects\qnty\tests\asme\section_viii\division_ii\test_flange_design.py and here is a image of the part of the problem I am stuck on.lhs=
-
-C:\Projects\qnty\Screenshot 2025-10-17 133930.png
+Symbol | X (unit) | Y (unit) | Magnitude (unit) | Angle (unit) | Reference
+F_1 | | | 450 | 60 | +x
+F_2 | | | 700 | 15 | -x
