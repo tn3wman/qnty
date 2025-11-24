@@ -2,7 +2,7 @@ import pytest
 
 from qnty.problems.parallelogram_law import ParallelogramLawProblem
 from qnty.spatial.coordinate_system import CoordinateSystem
-from qnty.spatial import ForceVector
+from qnty.spatial import _Vector
 
 # Problem definitions - single source of truth
 FORCE_VECTOR_PROBLEMS = {
@@ -13,17 +13,17 @@ FORCE_VECTOR_PROBLEMS = {
         and its direction, measured counterclockwise from the positive x axis.
         """,
         "forces": {
-            "F_1": ForceVector(
+            "F_1": _Vector(
                 magnitude=450, unit="N",
                 angle=60, wrt="+x",
                 name="F_1", description="Force 1"
             ),
-            "F_2": ForceVector(
+            "F_2": _Vector(
                 magnitude=700, unit="N",
                 angle=15, wrt="-x",
                 name="F_2", description="Force 2"
             ),
-            "F_R": ForceVector.unknown(
+            "F_R": _Vector.unknown(
                 "F_R", is_resultant=True
             ),
         },
@@ -53,13 +53,13 @@ FORCE_VECTOR_PROBLEMS = {
         determine the magnitude of force F and its direction theta.
         """,
         "forces": {
-            "F_1": ForceVector.unknown("F_1"),
-            "F_2": ForceVector(
+            "F_1": _Vector.unknown("F_1"),
+            "F_2": _Vector(
                 magnitude=700, unit="N",
                 angle=15, wrt="-x", 
                 name="F_2", description="Force 2"
             ),
-            "F_R": ForceVector(
+            "F_R": _Vector(
                 magnitude=500, unit="N",
                 angle=90, wrt="+x",
                 name="F_R", description="Resultant Force",is_resultant=True
@@ -91,17 +91,17 @@ FORCE_VECTOR_PROBLEMS = {
         measured counterclockwise from the positive x axis.
         """,
         "forces": {
-            "F_1": ForceVector(
+            "F_1": _Vector(
                 magnitude=250, unit="lbf",
                 angle=60, wrt="+x",
                 name="F_1", description="Force 1"
             ),
-            "F_2": ForceVector(
+            "F_2": _Vector(
                 magnitude=375, unit="lbf",
                 angle=315, wrt="+x",
                 name="F_2", description="Force 2"
             ),
-            "F_R": ForceVector.unknown("F_R", is_resultant=True),
+            "F_R": _Vector.unknown("F_R", is_resultant=True),
         },
         "expected": {
             "F_1": {"magnitude": 250, "angle": 60, "unit": "lbf", "wrt": "+x"},
@@ -121,9 +121,9 @@ FORCE_VECTOR_PROBLEMS = {
         Set F = 500 N.
         """,
         "forces": {
-            "F_AB": ForceVector.unknown("F_AB", angle=225, unit="N"),  # Known angle, unknown magnitude
-            "F_AC": ForceVector.unknown("F_AC", angle=330, unit="N"),  # Known angle, unknown magnitude
-            "F": ForceVector(
+            "F_AB": _Vector.unknown("F_AB", angle=225, unit="N"),  # Known angle, unknown magnitude
+            "F_AC": _Vector.unknown("F_AC", angle=330, unit="N"),  # Known angle, unknown magnitude
+            "F": _Vector(
                 magnitude=500, angle=270, unit="N",
                 name="F", description="Resultant (vertical downward)",
                 is_resultant=True
@@ -145,9 +145,9 @@ FORCE_VECTOR_PROBLEMS = {
         Solve Prob. 2-4 with F = 350 lb.
         """,
         "forces": {
-            "F_AB": ForceVector.unknown("F_AB", angle=225, unit="lbf"),  # Known angle, unknown magnitude
-            "F_AC": ForceVector.unknown("F_AC", angle=330, unit="lbf"),  # Known angle, unknown magnitude
-            "F": ForceVector(
+            "F_AB": _Vector.unknown("F_AB", angle=225, unit="lbf"),  # Known angle, unknown magnitude
+            "F_AC": _Vector.unknown("F_AC", angle=330, unit="lbf"),  # Known angle, unknown magnitude
+            "F": _Vector(
                 magnitude=350, angle=270, unit="lbf",
                 name="F", description="Resultant (vertical downward)",
                 is_resultant=True
@@ -174,17 +174,17 @@ FORCE_VECTOR_PROBLEMS = {
             "x", "y", axis1_angle=0, angle_between=75
         ),
         "forces": lambda coord_sys: {
-            "F_1": ForceVector(
+            "F_1": _Vector(
                 magnitude=4000, angle=-30, wrt="+y", unit="N",
                 name="F_1", description="Force 1",
                 coordinate_system=coord_sys
             ),
-            "F_2": ForceVector(
+            "F_2": _Vector(
                 magnitude=6000, angle=-30, wrt="+x", unit="N",
                 name="F_2", description="Force 2",
                 coordinate_system=coord_sys
             ),
-            "F_R": ForceVector.unknown("F_R", wrt="+x", is_resultant=True, unit="N", coordinate_system=coord_sys),
+            "F_R": _Vector.unknown("F_R", wrt="+x", is_resultant=True, unit="N", coordinate_system=coord_sys),
         },
         "expected": {
             "F_1": {"magnitude": 4000, "angle": -30, "unit": "N", "wrt": "+y"},
@@ -205,7 +205,7 @@ FORCE_VECTOR_PROBLEMS = {
         "coordinate_system": CoordinateSystem.from_angle_between(
             "u", "v", axis1_angle=0, angle_between=75),
         "forces": lambda coord_sys: {
-            "F_1": ForceVector(
+            "F_1": _Vector(
                 magnitude=4000, angle=45, unit="N",
                 name="F_1", description="Force 1 at 45°",
                 coordinate_system=coord_sys
@@ -230,7 +230,7 @@ FORCE_VECTOR_PROBLEMS = {
         "coordinate_system": CoordinateSystem.from_angle_between(
             "u", "v", axis1_angle=0, angle_between=75),
         "forces": lambda coord_sys: {
-            "F_2": ForceVector(
+            "F_2": _Vector(
                 magnitude=6000, angle=330, unit="N",
                 name="F_2", description="Force 2 at 330°",
                 coordinate_system=coord_sys
@@ -252,11 +252,11 @@ FORCE_VECTOR_PROBLEMS = {
         determine the force F in rope A and the corresponding angle theta.
         """,
         "forces": {
-            "F_A": ForceVector.unknown("F_A"),
-            "F_B": ForceVector(
+            "F_A": _Vector.unknown("F_A"),
+            "F_B": _Vector(
                 magnitude=900, angle=330, unit="lbf",
                 name="F_B", description="Force B"),
-            "F_R": ForceVector(
+            "F_R": _Vector(
                 magnitude=1200, angle=0, unit="lbf",
                 name="F_R", description="Resultant Force", is_resultant=True),
         },
@@ -277,17 +277,17 @@ FORCE_VECTOR_PROBLEMS = {
         measured counterclockwise from the positive x axis.
         """,
         "forces": {
-            "F_1": ForceVector(
+            "F_1": _Vector(
                 magnitude=800, unit="lbf",
                 angle=-40, wrt="+y",
                 name="F_1", description="Force 1 at 50° above horizontal"
             ),
-            "F_2": ForceVector(
+            "F_2": _Vector(
                 magnitude=500, unit="lbf",
                 angle=-35, wrt="+x",
                 name="F_2", description="Force 2"
             ),
-            "F_R": ForceVector.unknown("F_R", is_resultant=True),
+            "F_R": _Vector.unknown("F_R", is_resultant=True),
         },
         "expected": {
             "F_1": {
@@ -316,17 +316,17 @@ FORCE_VECTOR_PROBLEMS = {
         measured clockwise from the horizontal.
         """,
         "forces": {
-            "F_A": ForceVector(
+            "F_A": _Vector(
                 magnitude=8000, unit="N",
                 angle=-60, wrt="+y",
                 name="F_A", description="Force A"
             ),
-            "F_B": ForceVector(
+            "F_B": _Vector(
                 magnitude=6000, unit="N",
                 angle=40, wrt="-y",
                 name="F_B", description="Force B"
             ),
-            "F_R": ForceVector.unknown("F_R", is_resultant=True),
+            "F_R": _Vector.unknown("F_R", is_resultant=True),
         },
         "expected": {
             "F_A": {
@@ -355,13 +355,13 @@ FORCE_VECTOR_PROBLEMS = {
         the magnitude of the resultant force?
         """,
         "forces": {
-            "F_A": ForceVector.unknown("F_A", magnitude=8000, wrt="+y",unit="N"),
-            "F_B": ForceVector(
+            "F_A": _Vector.unknown("F_A", magnitude=8000, wrt="+y",unit="N"),
+            "F_B": _Vector(
                 magnitude=6000, unit="N",
                 angle=40, wrt="-y",
                 name="F_B", description="Force B"
             ),
-            "F_R": ForceVector.unknown("F_R", angle=0, wrt="+x", unit="N", is_resultant=True),
+            "F_R": _Vector.unknown("F_R", angle=0, wrt="+x", unit="N", is_resultant=True),
         },
         "expected": {
             "F_A": {"magnitude": 8000, "angle": -54.9, "wrt": "+y", "unit": "N"},
@@ -381,9 +381,9 @@ FORCE_VECTOR_PROBLEMS = {
         "coordinate_system": CoordinateSystem.from_angle_between(
             "x", "y", axis1_angle=0, angle_between=40),
         "forces": lambda coord_sys: {
-            "F_A": ForceVector.unknown("F_A", angle=0, wrt="+x", unit="lbf", coordinate_system=coord_sys),
-            "F_B": ForceVector.unknown("F_B", angle=0, wrt="-y", unit="lbf", coordinate_system=coord_sys),
-            "F_R": ForceVector(magnitude=-20, unit="lbf", name="F_R", angle=80, wrt="+y", is_resultant=True, coordinate_system=coord_sys),
+            "F_A": _Vector.unknown("F_A", angle=0, wrt="+x", unit="lbf", coordinate_system=coord_sys),
+            "F_B": _Vector.unknown("F_B", angle=0, wrt="-y", unit="lbf", coordinate_system=coord_sys),
+            "F_R": _Vector(magnitude=-20, unit="lbf", name="F_R", angle=80, wrt="+y", is_resultant=True, coordinate_system=coord_sys),
         },
         "expected": {
             "F_A": {"magnitude": 30.6, "angle": 0, "wrt": "+x", "unit": "lbf"},
@@ -403,9 +403,9 @@ FORCE_VECTOR_PROBLEMS = {
         "coordinate_system": CoordinateSystem.from_angle_between(
             "x", "y", axis1_angle=0, angle_between=40),
         "forces": lambda coord_sys: {
-            "F_A": ForceVector(name="F_A", magnitude=30, angle=0, wrt="+x", unit="lbf", coordinate_system=coord_sys),
-            "F_B": ForceVector.unknown("F_B", angle=0, wrt="-y", unit="lbf", coordinate_system=coord_sys),
-            "F_R": ForceVector.unknown(unit="lbf", name="F_R", angle=80, wrt="+y", is_resultant=True, coordinate_system=coord_sys),
+            "F_A": _Vector(name="F_A", magnitude=30, angle=0, wrt="+x", unit="lbf", coordinate_system=coord_sys),
+            "F_B": _Vector.unknown("F_B", angle=0, wrt="-y", unit="lbf", coordinate_system=coord_sys),
+            "F_R": _Vector.unknown(unit="lbf", name="F_R", angle=80, wrt="+y", is_resultant=True, coordinate_system=coord_sys),
         },
         "expected": {
             "F_A": {"magnitude": 30, "angle": 0, "wrt": "+x", "unit": "lbf"},
@@ -423,9 +423,9 @@ FORCE_VECTOR_PROBLEMS = {
         Force F acts on the frame such that its component acting along member is 650 lb, directed from towards , and the component acting along member is 500 lb, directed from towards . Determine the magnitude of F and its direction u. Set f = 60°.
         """,
         "forces": {
-            "F_AB": ForceVector(name="F_AB", magnitude=650, angle=60, wrt="-x", unit="lbf"),
-            "F_BC": ForceVector(name="F_BC", magnitude=500, angle=-45, wrt="+x", unit="lbf"),
-            "F_R": ForceVector.unknown(unit="lbf", name="F_R",is_resultant=True),
+            "F_AB": _Vector(name="F_AB", magnitude=650, angle=60, wrt="-x", unit="lbf"),
+            "F_BC": _Vector(name="F_BC", magnitude=500, angle=-45, wrt="+x", unit="lbf"),
+            "F_R": _Vector.unknown(unit="lbf", name="F_R",is_resultant=True),
         },
         "expected": {
             "F_AB": {"magnitude": 650, "angle": 60, "wrt": "-x", "unit": "lbf"},
@@ -443,9 +443,9 @@ FORCE_VECTOR_PROBLEMS = {
         Force F acts on the frame such that its component acting along member AB is 650 lb, directed from B towards A. Determine the required angle and the component acting along member BC. Set and u = 30°.
         """,
         "forces": {
-            "F_BA": ForceVector(name="F_BA", magnitude=650, angle=-30, wrt="+F_R", unit="lbf"),
-            "F_BC": ForceVector.unknown(name="F_BC", angle=-45, wrt="+x", unit="lbf"),
-            "F_R": ForceVector(magnitude=850, wrt="-x", unit="lbf", name="F_R",is_resultant=True),
+            "F_BA": _Vector(name="F_BA", magnitude=650, angle=-30, wrt="+F_R", unit="lbf"),
+            "F_BC": _Vector.unknown(name="F_BC", angle=-45, wrt="+x", unit="lbf"),
+            "F_R": _Vector(magnitude=850, wrt="-x", unit="lbf", name="F_R",is_resultant=True),
         },
         "expected": {
             "F_BA": {"magnitude": 650, "angle": 33.5, "wrt": "-x", "unit": "lbf"},
@@ -463,10 +463,10 @@ FORCE_VECTOR_PROBLEMS = {
         Determine the magnitude and direction of the resultant of the three forces by first finding the resultant F' = F1 + F2 and then forming FR = F' + F3.
         """,
         "forces": {
-            "F_1": ForceVector(name="F_1", magnitude=30, angle=-36.87, wrt="-x", unit="N"),
-            "F_2": ForceVector(name="F_2", magnitude=20, angle=-20, wrt="-y", unit="N"),
-            "F_3": ForceVector(name="F_3", magnitude=50, angle=0, wrt="+x", unit="N"),
-            "F_R": ForceVector.unknown(unit="N", name="F_R",is_resultant=True),
+            "F_1": _Vector(name="F_1", magnitude=30, angle=-36.87, wrt="-x", unit="N"),
+            "F_2": _Vector(name="F_2", magnitude=20, angle=-20, wrt="-y", unit="N"),
+            "F_3": _Vector(name="F_3", magnitude=50, angle=0, wrt="+x", unit="N"),
+            "F_R": _Vector.unknown(unit="N", name="F_R",is_resultant=True),
         },
         "expected": {
             "F_1": {"magnitude": 30, "angle": -36.87, "wrt": "-x", "unit": "N"},
@@ -485,10 +485,10 @@ FORCE_VECTOR_PROBLEMS = {
         Determine the magnitude and direction of the resultant of the three forces by first finding the resultant F' = F2 + F3 and then forming FR = F' + F1.
         """,
         "forces": {
-            "F_1": ForceVector(name="F_1", magnitude=30, angle=-36.87, wrt="-x", unit="N"),
-            "F_2": ForceVector(name="F_2", magnitude=20, angle=-20, wrt="-y", unit="N"),
-            "F_3": ForceVector(name="F_3", magnitude=50, angle=0, wrt="+x", unit="N"),
-            "F_R": ForceVector.unknown(unit="N", name="F_R",is_resultant=True),
+            "F_1": _Vector(name="F_1", magnitude=30, angle=-36.87, wrt="-x", unit="N"),
+            "F_2": _Vector(name="F_2", magnitude=20, angle=-20, wrt="-y", unit="N"),
+            "F_3": _Vector(name="F_3", magnitude=50, angle=0, wrt="+x", unit="N"),
+            "F_R": _Vector.unknown(unit="N", name="F_R",is_resultant=True),
         },
         "expected": {
             "F_1": {"magnitude": 30, "angle": -36.87, "wrt": "-x", "unit": "N"},
@@ -507,9 +507,9 @@ FORCE_VECTOR_PROBLEMS = {
         Determine the design angle for strut AB so that the 400-lb horizontal force has a component of 500 lb directed from A towards C. What is the component of force acting along member AB? Take f = 40°.
         """,
         "forces": {
-            "F_AB": ForceVector.unknown(name="F_AB", wrt="+x", unit="lbf"),
-            "F_AC": ForceVector(name="F_AC", magnitude=500, angle=-40, wrt="+F_AB", unit="lbf"),
-            "F_R": ForceVector(magnitude=400, angle=0, wrt="-x",unit="lbf", name="F_R",is_resultant=True),
+            "F_AB": _Vector.unknown(name="F_AB", wrt="+x", unit="lbf"),
+            "F_AC": _Vector(name="F_AC", magnitude=500, angle=-40, wrt="+F_AB", unit="lbf"),
+            "F_R": _Vector(magnitude=400, angle=0, wrt="-x",unit="lbf", name="F_R",is_resultant=True),
         },
         "expected": {
             "F_AB": {"magnitude": -621.15, "angle": -53.5, "wrt": "+x", "unit": "lbf"},
@@ -527,9 +527,9 @@ FORCE_VECTOR_PROBLEMS = {
         Determine the design angle between struts AB and AC so that the 400-lb horizontal force has a component of 600 lb which acts up to the left, in the same direction as from B towards A. Take u = 30°.
         """,
         "forces": {
-            "F_AB": ForceVector(name="F_AB", magnitude=-600, angle=-30, wrt="+x", unit="lbf"),
-            "F_AC": ForceVector.unknown(name="F_AC", unit="lbf"),
-            "F_R": ForceVector(magnitude=400, angle=0, wrt="-x",unit="lbf", name="F_R",is_resultant=True),
+            "F_AB": _Vector(name="F_AB", magnitude=-600, angle=-30, wrt="+x", unit="lbf"),
+            "F_AC": _Vector.unknown(name="F_AC", unit="lbf"),
+            "F_R": _Vector(magnitude=400, angle=0, wrt="-x",unit="lbf", name="F_R",is_resultant=True),
         },
         "expected": {
             "F_AB": {"magnitude": -600, "angle": -30, "wrt": "+x", "unit": "lbf"},
@@ -547,10 +547,10 @@ FORCE_VECTOR_PROBLEMS = {
         Determine the magnitude and direction of the resultant force, FR measured counterclockwise from the positive x axis. Solve the problem by first finding the resultant F′ = F1 + F2 and then forming FR = F′ + F3.
         """,
         "forces": {
-            "F_1": ForceVector(name="F_1", magnitude=400, angle=90, wrt="+F_2", unit="N"),
-            "F_2": ForceVector(name="F_2", magnitude=200, angle=150, wrt="-y", unit="N"),
-            "F_3": ForceVector(name="F_3", magnitude=300, angle=0, wrt="-y", unit="N"),
-            "F_R": ForceVector.unknown(unit="N", name="F_R",is_resultant=True),
+            "F_1": _Vector(name="F_1", magnitude=400, angle=90, wrt="+F_2", unit="N"),
+            "F_2": _Vector(name="F_2", magnitude=200, angle=150, wrt="-y", unit="N"),
+            "F_3": _Vector(name="F_3", magnitude=300, angle=0, wrt="-y", unit="N"),
+            "F_R": _Vector.unknown(unit="N", name="F_R",is_resultant=True),
         },
         "expected": {
             "F_1": {"magnitude": 400, "angle": 240, "wrt": "-y", "unit": "N"},
@@ -569,10 +569,10 @@ FORCE_VECTOR_PROBLEMS = {
         Determine the magnitude and direction of the resultant force, measured counterclockwise from the positive x axis. Solve l by first finding the resultant F′ = F2 + F3 and then forming FR = F′ + F1.
         """,
         "forces": {
-            "F_1": ForceVector(name="F_1", magnitude=400, angle=90, wrt="+F_2", unit="N"),
-            "F_2": ForceVector(name="F_2", magnitude=200, angle=150, wrt="-y", unit="N"),
-            "F_3": ForceVector(name="F_3", magnitude=300, angle=0, wrt="-y", unit="N"),
-            "F_R": ForceVector.unknown(unit="N", name="F_R",is_resultant=True),
+            "F_1": _Vector(name="F_1", magnitude=400, angle=90, wrt="+F_2", unit="N"),
+            "F_2": _Vector(name="F_2", magnitude=200, angle=150, wrt="-y", unit="N"),
+            "F_3": _Vector(name="F_3", magnitude=300, angle=0, wrt="-y", unit="N"),
+            "F_R": _Vector.unknown(unit="N", name="F_R",is_resultant=True),
         },
         "expected": {
             "F_1": {"magnitude": 400, "angle": 90, "wrt": "+F_2", "unit": "N"},
@@ -592,9 +592,9 @@ FORCE_VECTOR_PROBLEMS = {
         (0° ≤ theta ≤ 180°) between them, so that the resultant force has a magnitude of F_R = 800 N.
         """,
         "forces": {
-            "F_1": ForceVector.unknown(magnitude=400, unit="N", name="F_1", description="Force 1"),
-            "F_2": ForceVector.unknown(magnitude=600, unit="N", name="F_2", description="Force 2"),
-            "F_R": ForceVector.unknown(magnitude=800, unit="N", name="F_R", is_resultant=True),
+            "F_1": _Vector.unknown(magnitude=400, unit="N", name="F_1", description="Force 1"),
+            "F_2": _Vector.unknown(magnitude=600, unit="N", name="F_2", description="Force 2"),
+            "F_R": _Vector.unknown(magnitude=800, unit="N", name="F_R", is_resultant=True),
         },
         "expected": {
             "F_1": {"magnitude": 400, "angle": 75.5, "wrt": "+F_2", "unit": "N"},
@@ -613,15 +613,15 @@ FORCE_VECTOR_PROBLEMS = {
         If F1 = 30 lb and F2 = 40 lb, determine the angles u and f so that the resultant force is directed along the positive x axis and has a magnitude of FR = 60 lb.
         """,
         "forces": {
-            "F_1": ForceVector.unknown(
+            "F_1": _Vector.unknown(
                 magnitude=30, unit="lbf",
                 name="F_1", description="Force 1 at 50° above horizontal"
             ),
-            "F_2": ForceVector.unknown(
+            "F_2": _Vector.unknown(
                 magnitude=40, unit="lbf",
                 name="F_2", description="Force 2"
             ),
-            "F_R": ForceVector(
+            "F_R": _Vector(
                 magnitude=60, unit="lbf",
                 angle=0, wrt="+x",
                 name="F_R", is_resultant=True
@@ -643,15 +643,15 @@ FORCE_VECTOR_PROBLEMS = {
         Determine the magnitude and direction u of FA so that the resultant force is directed along the positive x axis and has a magnitude of 1250 N.
         """,
         "forces": {
-            "F_A": ForceVector.unknown(
+            "F_A": _Vector.unknown(
                 name="F_A", description="Force A"
             ),
-            "F_B": ForceVector(
+            "F_B": _Vector(
                 magnitude=800, unit="N",
                 angle=-30, wrt="+x",
                 name="F_B", description="Force B"
             ),
-            "F_R": ForceVector(
+            "F_R": _Vector(
                 magnitude=1250, unit="N",
                 angle=0, wrt="+x",
                 name="F_R", is_resultant=True
@@ -673,17 +673,17 @@ FORCE_VECTOR_PROBLEMS = {
         Determine the magnitude and direction, measured counterclockwise from the positive x axis, of the resultant force acting on the ring at O, if FA = 750 N and u = 45°.
         """,
         "forces": {
-            "F_A": ForceVector(
+            "F_A": _Vector(
                 magnitude=750, unit="N",
                 angle=-45, wrt="+y",
                 name="F_A", description="Force A"
             ),
-            "F_B": ForceVector(
+            "F_B": _Vector(
                 magnitude=800, unit="N",
                 angle=-30, wrt="+x",
                 name="F_B", description="Force B"
             ),
-            "F_R": ForceVector.unknown(
+            "F_R": _Vector.unknown(
                 name="F_R", is_resultant=True
             ),
         },
@@ -703,10 +703,10 @@ FORCE_VECTOR_PROBLEMS = {
         Determine the magnitude of force F so that the resultant FR of the three forces is as small as possible. What is the minimum magnitude of FR?.
         """,
         "forces": {
-            "F_1": ForceVector(name="F_1", magnitude=8000, angle=0, wrt="-y", unit="N"),
-            "F_2": ForceVector(name="F_2", magnitude=6000, angle=0, wrt="+x", unit="N"),
-            "F_3": ForceVector.unknown(name="F_3", angle=30, wrt="-y", unit="N"),
-            "F_R": ForceVector.unknown(unit="N", angle=90, wrt="+F_3",name="F_R",is_resultant=True),
+            "F_1": _Vector(name="F_1", magnitude=8000, angle=0, wrt="-y", unit="N"),
+            "F_2": _Vector(name="F_2", magnitude=6000, angle=0, wrt="+x", unit="N"),
+            "F_3": _Vector.unknown(name="F_3", angle=30, wrt="-y", unit="N"),
+            "F_R": _Vector.unknown(unit="N", angle=90, wrt="+F_3",name="F_R",is_resultant=True),
         },
         "expected": {
             "F_1": {"magnitude": 8000, "angle": 0, "wrt": "-y", "unit": "N"},
@@ -725,15 +725,15 @@ FORCE_VECTOR_PROBLEMS = {
         If the resultant force of the two tugboats is , directed along the positive axis, determine the required magnitude of force FB and its direction u.
         """,
         "forces": {
-            "F_A": ForceVector(
+            "F_A": _Vector(
                 magnitude=2000, unit="N",
                 angle=30, wrt="+x",
                 name="F_A", description="Force A"
             ),
-            "F_B": ForceVector.unknown(
+            "F_B": _Vector.unknown(
                 name="F_B", description="Force B"
             ),
-            "F_R": ForceVector(
+            "F_R": _Vector(
                 magnitude=3000, unit="N",
                 angle=0, wrt="+x",
                 name="F_R", is_resultant=True
@@ -755,17 +755,17 @@ FORCE_VECTOR_PROBLEMS = {
         If and , determine the magnitude of the resultant force of the two tugboats and its direction measured clockwise from the positive x axis.
         """,
         "forces": {
-            "F_A": ForceVector(
+            "F_A": _Vector(
                 magnitude=2000, unit="N",
                 angle=30, wrt="+x",
                 name="F_A", description="Force A"
             ),
-            "F_B": ForceVector(
+            "F_B": _Vector(
                 magnitude=3000, unit="N",
                 angle=-45, wrt="+x",
                 name="F_B", description="Force B"
             ),
-            "F_R": ForceVector.unknown(
+            "F_R": _Vector.unknown(
                 name="F_R", is_resultant=True
             ),
         },
@@ -785,16 +785,16 @@ FORCE_VECTOR_PROBLEMS = {
         If the resultant force of the two tugboats is required to be directed towards the positive axis, and is to be a minimum, determine the magnitude of and and the angle u.
         """,
         "forces": {
-            "F_A": ForceVector(
+            "F_A": _Vector(
                 magnitude=2000, unit="N",
                 angle=30, wrt="+x",
                 name="F_A", description="Force A"
             ),
-            "F_B": ForceVector.unknown(
+            "F_B": _Vector.unknown(
                 angle=-90, wrt="+F_R",
                 name="F_B", description="Force B"
             ),
-            "F_R": ForceVector.unknown(
+            "F_R": _Vector.unknown(
                 angle=0, wrt="+x",
                 name="F_R", is_resultant=True
             ),
@@ -847,10 +847,10 @@ def solve_force_vector_problem(problem_name):
     forces_spec = spec["forces"]
     if callable(forces_spec):
         # Call the lambda with the coordinate system to get the forces
-        forces_dict: dict[str, ForceVector] = forces_spec(coord_system)  # type: ignore[assignment]
+        forces_dict: dict[str, _Vector] = forces_spec(coord_system)  # type: ignore[assignment]
     else:
         # Legacy: forces is a dict, update their coordinate systems
-        forces_dict: dict[str, ForceVector] = {}
+        forces_dict: dict[str, _Vector] = {}
         for force_name, force in forces_spec.items():
             # Update the force's coordinate system
             force.coordinate_system = coord_system

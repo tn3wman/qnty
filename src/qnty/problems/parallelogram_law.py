@@ -13,10 +13,8 @@ from typing import Any
 import numpy as np
 
 from ..core.quantity import Quantity
-from ..solving.component_solver import ComponentSolver
 from ..solving.triangle_solver import TriangleSolver
-from ..spatial import ForceVector
-from ..spatial.vector import Vector, _Vector
+from ..spatial.vector import _Vector
 from ..spatial.vectors import _VectorWithUnknowns
 from .problem import Problem
 
@@ -34,18 +32,18 @@ class ParallelogramLawProblem(Problem):
     Examples:
         >>> # Define problem with class inheritance
         >>> class CableProblem(VectorEquilibriumProblem):
-        ...     F1 = ForceVector(magnitude=700, angle=60, unit="N")
-        ...     F2 = ForceVector(magnitude=450, angle=105, unit="N")
-        ...     FR = ForceVector.unknown("FR", is_resultant=True)
+        ...     F1 = create_vector_polar(magnitude=700, angle=60, unit="N")
+        ...     F2 = create_vector_polar(magnitude=450, angle=105, unit="N")
+        ...     FR = create_vector_resultant(F1, F2, name="FR")
         ...
         >>> problem = CableProblem()
         >>> solution = problem.solve()
 
         >>> # Or programmatically
         >>> problem = VectorEquilibriumProblem("Cable Forces")
-        >>> problem.add_force(ForceVector(magnitude=700, angle=60, unit="N", name="F1"))
-        >>> problem.add_force(ForceVector(magnitude=450, angle=105, unit="N", name="F2"))
-        >>> problem.add_force(ForceVector.unknown("FR", is_resultant=True))
+        >>> problem.add_force(create_vector_polar(magnitude=700, angle=60, unit="N", name="F1"))
+        >>> problem.add_force(create_vector_polar(magnitude=450, angle=105, unit="N", name="F2"))
+        >>> problem.add_force(create_vector_resultant("F1", "F2", name="FR"))
         >>> solution = problem.solve()
     """
 
@@ -58,7 +56,7 @@ class ParallelogramLawProblem(Problem):
             description: Problem description
         """
         super().__init__(name=name, description=description)
-        self.forces: dict[str, ForceVector] = {}
+        self.forces: dict[str, _Vector] = {}
         self.solution_steps: list[dict[str, Any]] = []
         self._original_variable_states: dict[str, bool] = {}  # Track which variables were originally known
         self._original_force_states: dict[str, bool] = {}  # Track original is_known state of each force
@@ -104,7 +102,7 @@ class ParallelogramLawProblem(Problem):
                 # Clone the _VectorWithUnknowns and update component_vectors to use cloned vectors
                 clone = self._clone_vector_with_unknowns(attr, vector_clones)
                 setattr(self, attr_name, clone)
-            elif isinstance(attr, ForceVector):
+            elif isinstance(attr, _Vector):
                 # Clone to avoid sharing between instances
                 force_copy = self._clone_force_vector(attr)
                 self.forces[attr_name] = force_copy
@@ -376,7 +374,7 @@ class ParallelogramLawProblem(Problem):
             self.is_solved = True
             self._populate_solving_history()
 
-    def _clone_force_vector(self, force: ForceVector) -> ForceVector:
+    def _clone_force_vector(self, force: _Vector) -> _Vector:
         """Create a copy of a ForceVector."""
         # Check if force has unresolved relative angle
         has_relative_angle = hasattr(force, '_relative_to_force') and force._relative_to_force is not None
@@ -391,7 +389,7 @@ class ParallelogramLawProblem(Problem):
 
         if has_valid_vector:
             # Known force with computed vector - copy with same values
-            cloned = ForceVector(
+            cloned = _Vector(
                 vector=force.vector,
                 name=force.name,
                 description=force.description,
@@ -424,7 +422,7 @@ class ParallelogramLawProblem(Problem):
 
             # Create cloned force with Quantity objects to avoid double conversion
             # Use the main constructor which accepts Quantity objects
-            cloned = ForceVector(
+            cloned = _Vector(
                 name=force.name,
                 magnitude=force.magnitude,  # Pass Quantity object directly
                 angle=angle_value if angle_value is not None else None,  # This is a float in degrees
@@ -444,7 +442,7 @@ class ParallelogramLawProblem(Problem):
 
             return cloned
 
-    def add_force(self, force: ForceVector, name: str | None = None) -> None:
+    def add_force(self, force: _Vector, name: str | None = None) -> None:
         """
         Add a force to the problem.
 
@@ -539,7 +537,7 @@ class ParallelogramLawProblem(Problem):
         # If we get here, we exceeded max iterations
         raise ValueError("Exceeded maximum iterations while resolving relative angle constraints")
 
-    def solve(self, max_iterations: int = 100, tolerance: float = 1e-10) -> dict[str, ForceVector]:  # type: ignore[override]
+    def solve(self, max_iterations: int = 100, tolerance: float = 1e-10) -> dict[str, _Vector]:  # type: ignore[override]
         """
         Solve the vector equilibrium problem algebraically.
 
@@ -763,7 +761,7 @@ class ParallelogramLawProblem(Problem):
             }
             self.solving_history.append(history_entry)
 
-    def _solve_resultant(self, known_forces: list[ForceVector]) -> None:
+    def _solve_resultant(self, known_forces: list[_Vector]) -> None:
         """
         Compute resultant of known forces.
 
@@ -798,7 +796,7 @@ class ParallelogramLawProblem(Problem):
         y_qty = Quantity(name="FR_y", dim=dim.force, value=sum_y, preferred=ref_unit)
         z_qty = Quantity(name="FR_z", dim=dim.force, value=sum_z, preferred=ref_unit)
 
-        resultant_vector = Vector.from_quantities(x_qty, y_qty, z_qty)
+        resultant_vector = _Vector.from_quantities(x_qty, y_qty, z_qty)
 
         # Find or create resultant force
         resultant = None
@@ -808,7 +806,7 @@ class ParallelogramLawProblem(Problem):
                 break
 
         if resultant is None:
-            resultant = ForceVector(vector=resultant_vector, name="FR", is_resultant=True)
+            resultant = _Vector(vector=resultant_vector, name="FR", is_resultant=True)
             self.forces["FR"] = resultant
             setattr(self, "FR", resultant)
         else:
@@ -822,7 +820,7 @@ class ParallelogramLawProblem(Problem):
             ang_value = resultant.angle.value * 180 / math.pi if resultant.angle.value is not None else 0.0
             self.solution_steps.append({"result": f"Resultant: {mag_value:.2f} {ref_unit.symbol} at {ang_value:.1f}°"})
 
-    def _solve_single_unknown(self, known_forces: list[ForceVector], unknown_force: ForceVector, resultant_forces: list[ForceVector]) -> None:
+    def _solve_single_unknown(self, known_forces: list[_Vector], unknown_force: _Vector, resultant_forces: list[_Vector]) -> None:
         """
         Solve for single unknown force given known forces.
 
@@ -875,7 +873,7 @@ class ParallelogramLawProblem(Problem):
             y_qty = Quantity(name=f"{unknown_force.name}_y", dim=dim.force, value=sum_y, preferred=ref_unit)
             z_qty = Quantity(name=f"{unknown_force.name}_z", dim=dim.force, value=sum_z, preferred=ref_unit)
 
-            unknown_force._coords = Vector.from_quantities(x_qty, y_qty, z_qty)._coords
+            unknown_force._coords = _Vector.from_quantities(x_qty, y_qty, z_qty)._coords
             unknown_force._compute_magnitude_and_angle()
             unknown_force.is_known = True
 
@@ -899,7 +897,7 @@ class ParallelogramLawProblem(Problem):
             # Fall back to component summation
             self._solve_by_components(known_forces, unknown_force)
 
-    def _solve_unknown_from_resultant_and_known(self, unknown_force: ForceVector, resultant: ForceVector, known_force: ForceVector) -> None:
+    def _solve_unknown_from_resultant_and_known(self, unknown_force: _Vector, resultant: _Vector, known_force: _Vector) -> None:
         """
         Solve for unknown force given known resultant and one known force.
 
@@ -1015,7 +1013,7 @@ class ParallelogramLawProblem(Problem):
         x_qty = Quantity(name=f"{unknown_force.name}_x", dim=dim.force, value=F_unknownx, preferred=ref_unit)
         y_qty = Quantity(name=f"{unknown_force.name}_y", dim=dim.force, value=F_unknowny, preferred=ref_unit)
         z_qty = Quantity(name=f"{unknown_force.name}_z", dim=dim.force, value=0.0, preferred=ref_unit)
-        unknown_vector = Vector.from_quantities(x_qty, y_qty, z_qty)
+        unknown_vector = _Vector.from_quantities(x_qty, y_qty, z_qty)
 
         # Update unknown force
         unknown_force.copy_coords_from(unknown_vector)
@@ -1023,7 +1021,7 @@ class ParallelogramLawProblem(Problem):
         unknown_force._angle = angle_qty
         unknown_force.is_known = True
 
-    def _solve_resultant_from_two_forces(self, force1: ForceVector, force2: ForceVector, resultant: ForceVector) -> None:
+    def _solve_resultant_from_two_forces(self, force1: _Vector, force2: _Vector, resultant: _Vector) -> None:
         """
         Solve for resultant of two forces using law of cosines and law of sines.
 
@@ -1123,7 +1121,7 @@ class ParallelogramLawProblem(Problem):
         x_qty = Quantity(name="FR_x", dim=dim.force, value=FRx, preferred=ref_unit)
         y_qty = Quantity(name="FR_y", dim=dim.force, value=FRy, preferred=ref_unit)
         z_qty = Quantity(name="FR_z", dim=dim.force, value=0.0, preferred=ref_unit)
-        resultant_vector = Vector.from_quantities(x_qty, y_qty, z_qty)
+        resultant_vector = _Vector.from_quantities(x_qty, y_qty, z_qty)
 
         # Update resultant force
         resultant.copy_coords_from(resultant_vector)
@@ -1133,9 +1131,9 @@ class ParallelogramLawProblem(Problem):
 
     def _solve_two_unknowns_with_resultant(
         self,
-        known_forces: list[ForceVector],
-        unknown_forces: list[ForceVector],
-        resultant: ForceVector,
+        known_forces: list[_Vector],
+        unknown_forces: list[_Vector],
+        resultant: _Vector,
     ) -> None:
         """
         Solve for two unknowns given a resultant.
@@ -1165,9 +1163,9 @@ class ParallelogramLawProblem(Problem):
 
     def _solve_two_partially_known_equilibrium(
         self,
-        known_forces: list[ForceVector],
-        partially_known_forces: list[ForceVector],
-        resultant: ForceVector,  # noqa: ARG002
+        known_forces: list[_Vector],
+        partially_known_forces: list[_Vector],
+        resultant: _Vector,  # noqa: ARG002
     ) -> None:
         """
         Solve for two partially known forces using equilibrium equations.
@@ -1297,7 +1295,7 @@ class ParallelogramLawProblem(Problem):
         x_qty = Quantity(name=f"{force_with_known_mag.name}_x", dim=dim.force, value=x_val, preferred=pref_unit)
         y_qty = Quantity(name=f"{force_with_known_mag.name}_y", dim=dim.force, value=y_val, preferred=pref_unit)
         z_qty = Quantity(name=f"{force_with_known_mag.name}_z", dim=dim.force, value=z_val, preferred=pref_unit)
-        force_with_known_mag._coords = Vector.from_quantities(x_qty, y_qty, z_qty)._coords
+        force_with_known_mag._coords = _Vector.from_quantities(x_qty, y_qty, z_qty)._coords
         force_with_known_mag.is_known = True
 
         # Update force with known angle (set magnitude)
@@ -1317,14 +1315,14 @@ class ParallelogramLawProblem(Problem):
         x_qty_r = Quantity(name=f"{force_with_known_angle.name}_x", dim=dim.force, value=x_val_r, preferred=pref_unit)
         y_qty_r = Quantity(name=f"{force_with_known_angle.name}_y", dim=dim.force, value=y_val_r, preferred=pref_unit)
         z_qty_r = Quantity(name=f"{force_with_known_angle.name}_z", dim=dim.force, value=z_val_r, preferred=pref_unit)
-        force_with_known_angle._coords = Vector.from_quantities(x_qty_r, y_qty_r, z_qty_r)._coords
+        force_with_known_angle._coords = _Vector.from_quantities(x_qty_r, y_qty_r, z_qty_r)._coords
         force_with_known_angle.is_known = True
 
     def _solve_two_magnitudes_with_known_angles(
         self,
-        known_forces: list[ForceVector],
-        unknown_forces: list[ForceVector],
-        resultant: ForceVector,
+        known_forces: list[_Vector],
+        unknown_forces: list[_Vector],
+        resultant: _Vector,
     ) -> None:
         """
         Solve for two unknown magnitudes given known angles.
@@ -1459,7 +1457,7 @@ class ParallelogramLawProblem(Problem):
         comp_x_qty = Quantity(name=f"{component_force.name}_x", dim=dim.force, value=comp_x, preferred=ref_unit)
         comp_y_qty = Quantity(name=f"{component_force.name}_y", dim=dim.force, value=comp_y, preferred=ref_unit)
         comp_z_qty = Quantity(name=f"{component_force.name}_z", dim=dim.force, value=0.0, preferred=ref_unit)
-        component_force._coords = Vector.from_quantities(comp_x_qty, comp_y_qty, comp_z_qty)._coords
+        component_force._coords = _Vector.from_quantities(comp_x_qty, comp_y_qty, comp_z_qty)._coords
         component_force._magnitude = mag_comp_qty
         component_force._angle = angle_comp_qty
         component_force.is_known = True
@@ -1469,7 +1467,7 @@ class ParallelogramLawProblem(Problem):
         res_x_qty = Quantity(name=f"{resultant.name}_x", dim=dim.force, value=res_x, preferred=ref_unit)
         res_y_qty = Quantity(name=f"{resultant.name}_y", dim=dim.force, value=res_y, preferred=ref_unit)
         res_z_qty = Quantity(name=f"{resultant.name}_z", dim=dim.force, value=0.0, preferred=ref_unit)
-        resultant._coords = Vector.from_quantities(res_x_qty, res_y_qty, res_z_qty)._coords
+        resultant._coords = _Vector.from_quantities(res_x_qty, res_y_qty, res_z_qty)._coords
         resultant._magnitude = mag_res_qty
         resultant._angle = angle_res_qty
         resultant.is_known = True
@@ -1490,9 +1488,9 @@ class ParallelogramLawProblem(Problem):
 
     def _solve_two_angles_with_known_magnitudes(
         self,
-        known_forces: list[ForceVector],
-        partially_known_forces: list[ForceVector],
-        resultant: ForceVector,
+        known_forces: list[_Vector],
+        partially_known_forces: list[_Vector],
+        resultant: _Vector,
     ) -> None:
         """
         Solve for two unknown angles given known magnitudes and a fully known resultant.
@@ -1685,7 +1683,7 @@ class ParallelogramLawProblem(Problem):
         f1_x_qty = Quantity(name=f"{force1.name}_x", dim=dim.force, value=f1_x, preferred=ref_unit)
         f1_y_qty = Quantity(name=f"{force1.name}_y", dim=dim.force, value=f1_y, preferred=ref_unit)
         f1_z_qty = Quantity(name=f"{force1.name}_z", dim=dim.force, value=0.0, preferred=ref_unit)
-        force1._coords = Vector.from_quantities(f1_x_qty, f1_y_qty, f1_z_qty)._coords
+        force1._coords = _Vector.from_quantities(f1_x_qty, f1_y_qty, f1_z_qty)._coords
         force1._magnitude = mag1_qty
         force1._angle = angle1_qty
         force1.is_known = True
@@ -1695,7 +1693,7 @@ class ParallelogramLawProblem(Problem):
         f2_x_qty = Quantity(name=f"{force2.name}_x", dim=dim.force, value=f2_x, preferred=ref_unit)
         f2_y_qty = Quantity(name=f"{force2.name}_y", dim=dim.force, value=f2_y, preferred=ref_unit)
         f2_z_qty = Quantity(name=f"{force2.name}_z", dim=dim.force, value=0.0, preferred=ref_unit)
-        force2._coords = Vector.from_quantities(f2_x_qty, f2_y_qty, f2_z_qty)._coords
+        force2._coords = _Vector.from_quantities(f2_x_qty, f2_y_qty, f2_z_qty)._coords
         force2._magnitude = mag2_qty
         force2._angle = angle2_qty
         force2.is_known = True
@@ -1711,7 +1709,7 @@ class ParallelogramLawProblem(Problem):
             ]
         })
 
-    def _solve_with_parametric_angle_constraint(self, known_forces: list[ForceVector], unknown_forces: list[ForceVector], resultant: ForceVector) -> None:
+    def _solve_with_parametric_angle_constraint(self, known_forces: list[_Vector], unknown_forces: list[_Vector], resultant: _Vector) -> None:
         """
         Solve equilibrium when one force has a relative angle constraint to another unknown force.
 
@@ -1810,11 +1808,11 @@ class ParallelogramLawProblem(Problem):
 
     def _solve_parametric_decomposition(
         self,
-        reference_force: ForceVector,
-        parametric_force: ForceVector,
-        independent_force: ForceVector,
+        reference_force: _Vector,
+        parametric_force: _Vector,
+        independent_force: _Vector,
         angle_offset: float,
-        resultant: ForceVector,  # noqa: ARG002
+        resultant: _Vector,  # noqa: ARG002
     ) -> None:
         """
         Solve Pattern A: F_ref (unknown angle) = F_param (parametric) + F_indep (known angle, unknown mag).
@@ -1914,7 +1912,7 @@ class ParallelogramLawProblem(Problem):
         ref_x_qty = Quantity(name=f"{reference_force.name}_x", dim=dim.force, value=ref_x, preferred=ref_unit)
         ref_y_qty = Quantity(name=f"{reference_force.name}_y", dim=dim.force, value=ref_y, preferred=ref_unit)
         ref_z_qty = Quantity(name=f"{reference_force.name}_z", dim=dim.force, value=0.0, preferred=ref_unit)
-        reference_force._coords = Vector.from_quantities(ref_x_qty, ref_y_qty, ref_z_qty)._coords
+        reference_force._coords = _Vector.from_quantities(ref_x_qty, ref_y_qty, ref_z_qty)._coords
         reference_force.is_known = True
 
         # Update parametric force
@@ -1927,7 +1925,7 @@ class ParallelogramLawProblem(Problem):
         param_x_qty = Quantity(name=f"{parametric_force.name}_x", dim=dim.force, value=param_x, preferred=ref_unit)
         param_y_qty = Quantity(name=f"{parametric_force.name}_y", dim=dim.force, value=param_y, preferred=ref_unit)
         param_z_qty = Quantity(name=f"{parametric_force.name}_z", dim=dim.force, value=0.0, preferred=ref_unit)
-        parametric_force._coords = Vector.from_quantities(param_x_qty, param_y_qty, param_z_qty)._coords
+        parametric_force._coords = _Vector.from_quantities(param_x_qty, param_y_qty, param_z_qty)._coords
         parametric_force.is_known = True
         parametric_force._relative_to_force = None
         parametric_force._relative_angle = None
@@ -1940,7 +1938,7 @@ class ParallelogramLawProblem(Problem):
         indep_x_qty = Quantity(name=f"{independent_force.name}_x", dim=dim.force, value=indep_x, preferred=ref_unit)
         indep_y_qty = Quantity(name=f"{independent_force.name}_y", dim=dim.force, value=indep_y, preferred=ref_unit)
         indep_z_qty = Quantity(name=f"{independent_force.name}_z", dim=dim.force, value=0.0, preferred=ref_unit)
-        independent_force._coords = Vector.from_quantities(indep_x_qty, indep_y_qty, indep_z_qty)._coords
+        independent_force._coords = _Vector.from_quantities(indep_x_qty, indep_y_qty, indep_z_qty)._coords
         independent_force.is_known = True
 
         self.solution_steps.append({
@@ -1955,11 +1953,11 @@ class ParallelogramLawProblem(Problem):
 
     def _solve_parametric_composition(
         self,
-        reference_force: ForceVector,
-        parametric_force: ForceVector,
-        independent_force: ForceVector,
+        reference_force: _Vector,
+        parametric_force: _Vector,
+        independent_force: _Vector,
         angle_offset: float,
-        resultant: ForceVector,  # noqa: ARG002
+        resultant: _Vector,  # noqa: ARG002
     ) -> None:
         """
         Solve Pattern B: F_indep (known) = F_ref (unknown) + F_param (parametric).
@@ -2150,7 +2148,7 @@ class ParallelogramLawProblem(Problem):
         ref_x_qty = Quantity(name=f"{reference_force.name}_x", dim=dim.force, value=ref_x, preferred=ref_unit)
         ref_y_qty = Quantity(name=f"{reference_force.name}_y", dim=dim.force, value=ref_y, preferred=ref_unit)
         ref_z_qty = Quantity(name=f"{reference_force.name}_z", dim=dim.force, value=0.0, preferred=ref_unit)
-        reference_force._coords = Vector.from_quantities(ref_x_qty, ref_y_qty, ref_z_qty)._coords
+        reference_force._coords = _Vector.from_quantities(ref_x_qty, ref_y_qty, ref_z_qty)._coords
         reference_force.is_known = True
 
         # Update parametric force
@@ -2160,7 +2158,7 @@ class ParallelogramLawProblem(Problem):
         param_x_qty = Quantity(name=f"{parametric_force.name}_x", dim=dim.force, value=param_x, preferred=ref_unit)
         param_y_qty = Quantity(name=f"{parametric_force.name}_y", dim=dim.force, value=param_y, preferred=ref_unit)
         param_z_qty = Quantity(name=f"{parametric_force.name}_z", dim=dim.force, value=0.0, preferred=ref_unit)
-        parametric_force._coords = Vector.from_quantities(param_x_qty, param_y_qty, param_z_qty)._coords
+        parametric_force._coords = _Vector.from_quantities(param_x_qty, param_y_qty, param_z_qty)._coords
         parametric_force.is_known = True
         parametric_force._relative_to_force = None
         parametric_force._relative_angle = None
@@ -2175,7 +2173,7 @@ class ParallelogramLawProblem(Problem):
             ]
         })
 
-    def _solve_angle_between_forces(self, all_forces: list[ForceVector], resultant_forces: list[ForceVector]) -> None:
+    def _solve_angle_between_forces(self, all_forces: list[_Vector], resultant_forces: list[_Vector]) -> None:
         """
         Solve for the angle between two forces given all three magnitudes.
 
@@ -2311,7 +2309,7 @@ class ParallelogramLawProblem(Problem):
         x1_qty = Quantity(name=f"{F1.name}_x", dim=dim.force, value=F1x, preferred=ref_unit)
         y1_qty = Quantity(name=f"{F1.name}_y", dim=dim.force, value=F1y, preferred=ref_unit)
         z1_qty = Quantity(name=f"{F1.name}_z", dim=dim.force, value=0.0, preferred=ref_unit)
-        F1._coords = Vector.from_quantities(x1_qty, y1_qty, z1_qty)._coords
+        F1._coords = _Vector.from_quantities(x1_qty, y1_qty, z1_qty)._coords
         F1.is_known = True
 
         # Update F2
@@ -2319,7 +2317,7 @@ class ParallelogramLawProblem(Problem):
         x2_qty = Quantity(name=f"{F2.name}_x", dim=dim.force, value=F2x, preferred=ref_unit)
         y2_qty = Quantity(name=f"{F2.name}_y", dim=dim.force, value=F2y, preferred=ref_unit)
         z2_qty = Quantity(name=f"{F2.name}_z", dim=dim.force, value=0.0, preferred=ref_unit)
-        F2._coords = Vector.from_quantities(x2_qty, y2_qty, z2_qty)._coords
+        F2._coords = _Vector.from_quantities(x2_qty, y2_qty, z2_qty)._coords
         F2.is_known = True
 
         # Update resultant
@@ -2327,12 +2325,12 @@ class ParallelogramLawProblem(Problem):
         xR_qty = Quantity(name=f"{resultant.name}_x", dim=dim.force, value=FRx, preferred=ref_unit)
         yR_qty = Quantity(name=f"{resultant.name}_y", dim=dim.force, value=FRy, preferred=ref_unit)
         zR_qty = Quantity(name=f"{resultant.name}_z", dim=dim.force, value=0.0, preferred=ref_unit)
-        resultant._coords = Vector.from_quantities(xR_qty, yR_qty, zR_qty)._coords
+        resultant._coords = _Vector.from_quantities(xR_qty, yR_qty, zR_qty)._coords
         resultant.is_known = True
 
         self.logger.info(f"Solved angle between {F1.name} and {F2.name}: θ = {theta_deg:.1f}°")
 
-    def _solve_by_components(self, known_forces: list[ForceVector], unknown_force: ForceVector) -> None:
+    def _solve_by_components(self, known_forces: list[_Vector], unknown_force: _Vector) -> None:
         """
         Solve using component summation (ΣFx = 0, ΣFy = 0).
 
@@ -2374,7 +2372,7 @@ class ParallelogramLawProblem(Problem):
         y_qty = Quantity(name=f"{unknown_force.name}_y", dim=dim.force, value=unknown_y, preferred=ref_unit)
         z_qty = Quantity(name=f"{unknown_force.name}_z", dim=dim.force, value=unknown_z, preferred=ref_unit)
 
-        unknown_vector = Vector.from_quantities(x_qty, y_qty, z_qty)
+        unknown_vector = _Vector.from_quantities(x_qty, y_qty, z_qty)
 
         # Update unknown force
         unknown_force.copy_coords_from(unknown_vector)

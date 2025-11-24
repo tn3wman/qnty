@@ -2027,5 +2027,5 @@ class _Vector(Generic[D]):
 
 
 # Backward compatibility aliases
-Vector = _Vector
-ForceVector = _Vector
+_Vector = _Vector
+_Vector = _Vector

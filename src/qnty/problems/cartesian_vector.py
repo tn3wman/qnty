@@ -12,7 +12,7 @@ from typing import Any
 
 from ..core.quantity import Quantity
 from ..solving.component_solver import ComponentSolver
-from ..spatial import ForceVector
+from ..spatial import _Vector
 from .problem import Problem
 
 
@@ -63,7 +63,7 @@ class CartesianVectorProblem(Problem):
             description: Problem description
         """
         super().__init__(name=name, description=description)
-        self.forces: dict[str, ForceVector] = {}
+        self.forces: dict[str, _Vector] = {}
         self.solution_steps: list[dict[str, Any]] = []
         self._original_variable_states: dict[str, bool] = {}  # Track which variables were originally known
         self._original_force_states: dict[str, bool] = {}  # Track original is_known state of each force
@@ -79,17 +79,17 @@ class CartesianVectorProblem(Problem):
                 continue
 
             attr = getattr(self.__class__, attr_name)
-            if isinstance(attr, ForceVector):
+            if isinstance(attr, _Vector):
                 # Clone to avoid sharing between instances
                 force_copy = self._clone_force_vector(attr)
                 self.forces[attr_name] = force_copy
                 setattr(self, attr_name, force_copy)
 
-    def _clone_force_vector(self, force: ForceVector) -> ForceVector:
+    def _clone_force_vector(self, force: _Vector) -> _Vector:
         """Create a copy of a ForceVector."""
         if force.is_known and force.vector is not None:
             # Known force - copy with same values
-            cloned = ForceVector(
+            cloned = _Vector(
                 vector=force.vector,
                 name=force.name,
                 description=force.description,
@@ -121,7 +121,7 @@ class CartesianVectorProblem(Problem):
 
             # Create cloned force with Quantity objects to avoid double conversion
             # Use the main constructor which accepts Quantity objects
-            cloned = ForceVector(
+            cloned = _Vector(
                 name=force.name,
                 magnitude=force.magnitude,  # Pass Quantity object directly
                 angle=angle_value if angle_value is not None else None,  # This is a float in degrees
@@ -141,7 +141,7 @@ class CartesianVectorProblem(Problem):
 
             return cloned
 
-    def add_force(self, force: ForceVector, name: str | None = None) -> None:
+    def add_force(self, force: _Vector, name: str | None = None) -> None:
         """
         Add a force to the problem.
 
@@ -179,7 +179,7 @@ class CartesianVectorProblem(Problem):
                 unknown_vars[var_name] = var
         return unknown_vars
 
-    def solve(self, max_iterations: int = 100, tolerance: float = 1e-10) -> dict[str, ForceVector]:  # type: ignore[override]
+    def solve(self, max_iterations: int = 100, tolerance: float = 1e-10) -> dict[str, _Vector]:  # type: ignore[override]
         """
         Solve the vector equilibrium problem using the 3D Cartesian vector method.
 

@@ -12,7 +12,7 @@ from typing import Any
 
 from ..core.quantity import Quantity
 from ..solving.component_solver import ComponentSolver
-from ..spatial import ForceVector, _Vector
+from ..spatial import _Vector, _Vector
 from ..spatial.point import _Point
 from ..spatial.vectors import _VectorWithUnknowns, create_vector_cartesian, create_vector_from_points
 from ..spatial.vector_between import VectorBetween
@@ -59,7 +59,7 @@ class PositionVectorProblem(Problem):
         self.position_vector_specs: dict[str, dict] = {}  # Position vector specifications with constraints
         self.position_vectors_with_constraints: dict[str, _Vector] = {}  # Vectors with magnitude constraints
         self.vector_betweens: dict[str, VectorBetween] = {}  # VectorBetween objects
-        self.forces: dict[str, ForceVector] = {}
+        self.forces: dict[str, _Vector] = {}
         self.force_specs: dict[str, dict] = {}  # Force specifications (from/to/magnitude)
         self.solution_steps: list[dict[str, Any]] = []
         self._original_force_states: dict[str, bool] = {}
@@ -196,10 +196,10 @@ class PositionVectorProblem(Problem):
             elif isinstance(attr, dict) and "from" in attr and "to" in attr:
                 self.position_vector_specs[attr_name] = attr
 
-    def _clone_force_vector(self, force: ForceVector) -> ForceVector:
+    def _clone_force_vector(self, force: _Vector) -> _Vector:
         """Create a copy of a ForceVector."""
         if force.is_known and force.vector is not None:
-            cloned = ForceVector(
+            cloned = _Vector(
                 vector=force.vector,
                 name=force.name,
                 description=force.description,
@@ -211,7 +211,7 @@ class PositionVectorProblem(Problem):
             return cloned
         else:
             # Unknown force
-            cloned = ForceVector(
+            cloned = _Vector(
                 name=force.name,
                 magnitude=force.magnitude,
                 unit=force.magnitude.preferred if force.magnitude else None,
@@ -255,7 +255,7 @@ class PositionVectorProblem(Problem):
 
     def add_resultant(self, name: str = "F_R", unit: str | None = None) -> None:
         """Add an unknown resultant force."""
-        resultant = ForceVector.unknown(name=name, unit=unit, is_resultant=True)
+        resultant = _Vector.unknown(name=name, unit=unit, is_resultant=True)
         self.forces[name] = resultant
 
     def _create_position_vectors(self) -> None:
@@ -317,7 +317,7 @@ class PositionVectorProblem(Problem):
             z_qty = Quantity(name=f"{force_name}_z", dim=dim.force, value=fz, preferred=force_unit)
 
             # Create ForceVector from components
-            F = ForceVector(
+            F = _Vector(
                 x=x_qty,
                 y=y_qty,
                 z=z_qty,
@@ -799,7 +799,7 @@ class PositionVectorProblem(Problem):
                             setattr(self, vb_name_key, solved_vector_cartesian)
                             break
 
-    def solve(self, max_iterations: int = 100, tolerance: float = 1e-10) -> dict[str, ForceVector]:  # type: ignore[override]
+    def solve(self, max_iterations: int = 100, tolerance: float = 1e-10) -> dict[str, _Vector]:  # type: ignore[override]
         """
         Solve the position vector problem.
 
@@ -1063,7 +1063,7 @@ class PositionVectorProblem(Problem):
         """Get a position vector by name."""
         return self.position_vectors.get(name)
 
-    def get_force(self, name: str) -> ForceVector | None:
+    def get_force(self, name: str) -> _Vector | None:
         """Get a force by name."""
         return self.forces.get(name)
 

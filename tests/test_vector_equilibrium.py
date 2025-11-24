@@ -11,7 +11,7 @@ import pytest
 
 from qnty.core import u
 from qnty.problems.parallelogram_law import ParallelogramLawProblem
-from qnty.spatial import ForceVector
+from qnty.spatial import _Vector
 
 
 class TestForceVector:
@@ -19,7 +19,7 @@ class TestForceVector:
 
     def test_from_magnitude_angle(self):
         """Test creating force from magnitude and angle."""
-        force = ForceVector(magnitude=500, angle=30, unit="N", name="F1")
+        force = _Vector(magnitude=500, angle=30, unit="N", name="F1")
 
         assert force.is_known
         assert force.magnitude is not None
@@ -30,7 +30,7 @@ class TestForceVector:
 
     def test_from_components(self):
         """Test creating force from x,y components."""
-        force = ForceVector.from_components(x=300, y=400, unit="N", name="F2")
+        force = _Vector.from_components(x=300, y=400, unit="N", name="F2")
 
         assert force.is_known
         # Magnitude should be sqrt(300^2 + 400^2) = 500
@@ -44,7 +44,7 @@ class TestForceVector:
 
     def test_unknown_force(self):
         """Test creating unknown force."""
-        force = ForceVector.unknown("F_unknown")
+        force = _Vector.unknown("F_unknown")
 
         assert not force.is_known
         assert force.magnitude is None
@@ -52,7 +52,7 @@ class TestForceVector:
 
     def test_force_components(self):
         """Test accessing force components."""
-        force = ForceVector(magnitude=100, angle=45, unit="N")
+        force = _Vector(magnitude=100, angle=45, unit="N")
 
         # At 45°, x and y should be equal: 100/sqrt(2) ≈ 70.71
         assert force.x is not None
@@ -76,7 +76,7 @@ class TestVectorEquilibriumBasic:
         """Test adding forces to problem."""
         problem = ParallelogramLawProblem("Test")
 
-        force1 = ForceVector(magnitude=100, angle=0, unit="N", name="F1")
+        force1 = _Vector(magnitude=100, angle=0, unit="N", name="F1")
         problem.add_force(force1)
 
         assert len(problem.forces) == 1
@@ -86,8 +86,8 @@ class TestVectorEquilibriumBasic:
         """Test extracting ForceVector from class attributes."""
 
         class TestProblem(ParallelogramLawProblem):
-            F1 = ForceVector(magnitude=100, angle=0, unit="N", name="F1")
-            F2 = ForceVector(magnitude=200, angle=90, unit="N", name="F2")
+            F1 = _Vector(magnitude=100, angle=0, unit="N", name="F1")
+            F2 = _Vector(magnitude=200, angle=90, unit="N", name="F2")
 
         problem = TestProblem()
 
@@ -111,9 +111,9 @@ class TestTextbookProblems:
         """
 
         class Problem21(ParallelogramLawProblem):
-            F1 = ForceVector(magnitude=700, angle=60, unit="N", name="F1")
-            F2 = ForceVector(magnitude=450, angle=105, unit="N", name="F2")
-            FR = ForceVector.unknown("FR", is_resultant=True)
+            F1 = _Vector(magnitude=700, angle=60, unit="N", name="F1")
+            F2 = _Vector(magnitude=450, angle=105, unit="N", name="F2")
+            FR = _Vector.unknown("FR", is_resultant=True)
 
         problem = Problem21()
         solution = problem.solve()
@@ -139,9 +139,9 @@ class TestTextbookProblems:
         """
 
         class Problem23(ParallelogramLawProblem):
-            F1 = ForceVector(magnitude=250, angle=315, unit="lb", name="F1")
-            F2 = ForceVector(magnitude=375, angle=30, unit="lb", name="F2")
-            FR = ForceVector.unknown("FR", is_resultant=True)
+            F1 = _Vector(magnitude=250, angle=315, unit="lb", name="F1")
+            F2 = _Vector(magnitude=375, angle=30, unit="lb", name="F2")
+            FR = _Vector.unknown("FR", is_resultant=True)
 
         problem = Problem23()
         solution = problem.solve()
@@ -170,9 +170,9 @@ class TestTextbookProblems:
         """
 
         class Problem227(ParallelogramLawProblem):
-            F1 = ForceVector(magnitude=750, angle=45, unit="N", name="F1")
-            F2 = ForceVector(magnitude=800, angle=330, unit="N", name="F2")
-            FR = ForceVector.unknown("FR", is_resultant=True)
+            F1 = _Vector(magnitude=750, angle=45, unit="N", name="F1")
+            F2 = _Vector(magnitude=800, angle=330, unit="N", name="F2")
+            FR = _Vector.unknown("FR", is_resultant=True)
 
         problem = Problem227()
         solution = problem.solve()
@@ -195,8 +195,8 @@ class TestEquilibriumSolving:
         """Test finding force needed for equilibrium."""
 
         class TwoForceEquilibrium(ParallelogramLawProblem):
-            F1 = ForceVector(magnitude=100, angle=0, unit="N", name="F1")
-            F2 = ForceVector.unknown("F2", is_resultant=False)
+            F1 = _Vector(magnitude=100, angle=0, unit="N", name="F1")
+            F2 = _Vector.unknown("F2", is_resultant=False)
 
         problem = TwoForceEquilibrium()
         solution = problem.solve()
@@ -215,9 +215,9 @@ class TestEquilibriumSolving:
         """Test three forces in equilibrium."""
 
         class ThreeForceEquilibrium(ParallelogramLawProblem):
-            F1 = ForceVector(magnitude=500, angle=0, unit="N", name="F1")
-            F2 = ForceVector(magnitude=300, angle=90, unit="N", name="F2")
-            F3 = ForceVector.unknown("F3")
+            F1 = _Vector(magnitude=500, angle=0, unit="N", name="F1")
+            F2 = _Vector(magnitude=300, angle=90, unit="N", name="F2")
+            F3 = _Vector.unknown("F3")
 
         problem = ThreeForceEquilibrium()
         solution = problem.solve()
@@ -239,9 +239,9 @@ class TestProgrammaticConstruction:
         """Test adding forces without class definition."""
         problem = ParallelogramLawProblem("Programmatic Test")
 
-        problem.add_force(ForceVector(magnitude=100, angle=0, unit="N", name="F1"))
-        problem.add_force(ForceVector(magnitude=100, angle=90, unit="N", name="F2"))
-        problem.add_force(ForceVector.unknown("FR", is_resultant=True))
+        problem.add_force(_Vector(magnitude=100, angle=0, unit="N", name="F1"))
+        problem.add_force(_Vector(magnitude=100, angle=90, unit="N", name="F2"))
+        problem.add_force(_Vector.unknown("FR", is_resultant=True))
 
         solution = problem.solve()
 
@@ -267,9 +267,9 @@ class TestReportGeneration:
             name = "Simple Test Problem"
             description = "Test report generation"
 
-            F1 = ForceVector(magnitude=100, angle=0, unit="N", name="F1")
-            F2 = ForceVector(magnitude=100, angle=90, unit="N", name="F2")
-            FR = ForceVector.unknown("FR", is_resultant=True)
+            F1 = _Vector(magnitude=100, angle=0, unit="N", name="F1")
+            F2 = _Vector(magnitude=100, angle=90, unit="N", name="F2")
+            FR = _Vector.unknown("FR", is_resultant=True)
 
         problem = SimpleProblem()
         problem.solve()

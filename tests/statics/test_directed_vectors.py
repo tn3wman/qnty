@@ -17,7 +17,7 @@ import pytest
 from qnty.core.quantity import Q
 from qnty.problems.position_vector import PositionVectorProblem
 from qnty.spatial import (
-    ForceVector,
+    _Vector,
     _Point,
     _Vector,
     create_point_cartesian,
@@ -149,7 +149,7 @@ class Chapter2Problem87(PositionVectorProblem):
 
     # Computed values
     r_AB = create_vector_from_points(A, B, name="r_AB")
-    F = ForceVector.from_position_vector(r_AB, magnitude=135, unit="lbf", name="F")
+    F = _Vector.from_position_vector(r_AB, magnitude=135, unit="lbf", name="F")
 
     # Expected values
     class expected:
@@ -181,14 +181,14 @@ class Chapter2Problem88(PositionVectorProblem):
     r_AB = create_vector_from_points(A, B, name="r_AB")
 
     # Force magnitudes
-    F_1 = ForceVector.from_position_vector(
+    F_1 = _Vector.from_position_vector(
         r_AC, magnitude=80, unit="lbf", name="F_1"
     )
-    F_2 = ForceVector.from_position_vector(
+    F_2 = _Vector.from_position_vector(
         r_AB, magnitude=50, unit="lbf", name="F_2"
     )
 
-    F_R = ForceVector.resultant([F_1, F_2], name="F_R")
+    F_R = _Vector.resultant([F_1, F_2], name="F_R")
 
     # Expected values
     class expected:

@@ -14,7 +14,7 @@ import math
 import pytest
 
 from qnty.core import Q, u
-from qnty.spatial import Point, Vector
+from qnty.spatial import Point, _Vector
 
 
 class TestPointVectorIntegration:
@@ -27,7 +27,7 @@ class TestPointVectorIntegration:
 
         v = p1 - p2
 
-        assert isinstance(v, Vector)
+        assert isinstance(v, _Vector)
         assert v.u.magnitude() == 5.0
         assert v.v.magnitude() == 5.0
         assert v.w.magnitude() == 5.0
@@ -35,7 +35,7 @@ class TestPointVectorIntegration:
     def test_point_displacement_and_back(self):
         """Test displacing a point and returning to origin."""
         p1 = Point(10.0, 20.0, 30.0, unit=u.meter)
-        v = Vector(5.0, -10.0, 15.0, unit=u.meter)
+        v = _Vector(5.0, -10.0, 15.0, unit=u.meter)
 
         # Displace forward
         p2 = p1.displaced(v)
@@ -116,7 +116,7 @@ class TestGeometricScenarios:
     def test_perpendicular_projection(self):
         """Test projecting a point onto a line."""
         # Line along x-axis through origin
-        line_direction = Vector(1.0, 0.0, 0.0, unit=u.meter)
+        line_direction = _Vector(1.0, 0.0, 0.0, unit=u.meter)
 
         # Point off the line
         p = Point(5.0, 3.0, 0.0, unit=u.meter)
@@ -155,12 +155,12 @@ class TestGeometricScenarios:
     def test_vector_decomposition(self):
         """Test decomposing a vector into orthogonal components."""
         # Basis vectors
-        e_x = Vector(1.0, 0.0, 0.0, unit=u.meter)
-        e_y = Vector(0.0, 1.0, 0.0, unit=u.meter)
-        e_z = Vector(0.0, 0.0, 1.0, unit=u.meter)
+        e_x = _Vector(1.0, 0.0, 0.0, unit=u.meter)
+        e_y = _Vector(0.0, 1.0, 0.0, unit=u.meter)
+        e_z = _Vector(0.0, 0.0, 1.0, unit=u.meter)
 
         # General vector
-        v = Vector(3.0, 4.0, 5.0, unit=u.meter)
+        v = _Vector(3.0, 4.0, 5.0, unit=u.meter)
 
         # Project onto each axis
         proj_x = v.projection_onto(e_x)
@@ -181,7 +181,7 @@ class TestUnitConversionsIntegrated:
     def test_point_displacement_different_units(self):
         """Test displacing point when vector has different display units."""
         p_m = Point(100.0, 200.0, 0.0, unit=u.meter)
-        v_cm = Vector(50.0, -100.0, 0.0, unit=u.centimeter)
+        v_cm = _Vector(50.0, -100.0, 0.0, unit=u.centimeter)
 
         # Displacement should work (both are lengths)
         p_new = p_m.displaced(v_cm)
@@ -205,8 +205,8 @@ class TestUnitConversionsIntegrated:
 
     def test_vector_operations_preserve_units(self):
         """Test that vector operations preserve internal SI consistency."""
-        v1_m = Vector(1.0, 0.0, 0.0, unit=u.meter)
-        v2_cm = Vector(100.0, 0.0, 0.0, unit=u.centimeter)  # Also 1 meter
+        v1_m = _Vector(1.0, 0.0, 0.0, unit=u.meter)
+        v2_cm = _Vector(100.0, 0.0, 0.0, unit=u.centimeter)  # Also 1 meter
 
         # Both represent the same displacement
         v_sum = v1_m + v2_cm
@@ -224,7 +224,7 @@ class TestEngineeringScenarios:
         original = Point(10.0, 5.0, 0.0, unit=u.meter)
 
         # Applied displacement (in mm, typical for structural analysis)
-        displacement = Vector(2.5, -1.8, 0.0, unit=u.millimeter)
+        displacement = _Vector(2.5, -1.8, 0.0, unit=u.millimeter)
 
         # New position
         deformed = original.displaced(displacement)
@@ -239,9 +239,9 @@ class TestEngineeringScenarios:
         station_a = Point(1000.0, 2000.0, 100.0, unit=u.meter)
 
         # Traverse legs
-        leg1 = Vector(50.0, 30.0, 0.0, unit=u.meter)
-        leg2 = Vector(40.0, -20.0, 0.0, unit=u.meter)
-        leg3 = Vector(-30.0, 25.0, 0.0, unit=u.meter)
+        leg1 = _Vector(50.0, 30.0, 0.0, unit=u.meter)
+        leg2 = _Vector(40.0, -20.0, 0.0, unit=u.meter)
+        leg3 = _Vector(-30.0, 25.0, 0.0, unit=u.meter)
 
         # Compute positions
         station_b = station_a.displaced(leg1)
@@ -266,9 +266,9 @@ class TestEngineeringScenarios:
         start = Point(0.0, 0.0, 0.5, unit=u.meter)
 
         # Move sequence
-        move1 = Vector(0.2, 0.0, 0.0, unit=u.meter)  # Forward
-        move2 = Vector(0.0, 0.15, 0.0, unit=u.meter)  # Right
-        move3 = Vector(0.0, 0.0, -0.1, unit=u.meter)  # Down
+        move1 = _Vector(0.2, 0.0, 0.0, unit=u.meter)  # Forward
+        move2 = _Vector(0.0, 0.15, 0.0, unit=u.meter)  # Right
+        move3 = _Vector(0.0, 0.0, -0.1, unit=u.meter)  # Down
 
         # Execute path
         pos1 = start.displaced(move1)
@@ -292,7 +292,7 @@ class TestEngineeringScenarios:
         tower_base = Point(0.0, 0.0, 0.0, unit=u.meter)
 
         # Antenna height
-        antenna_height = Vector(0.0, 0.0, 50.0, unit=u.meter)
+        antenna_height = _Vector(0.0, 0.0, 50.0, unit=u.meter)
 
         # Antenna position
         antenna = tower_base.displaced(antenna_height)
@@ -366,7 +366,7 @@ class TestNumericalStability:
     def test_very_small_displacements(self):
         """Test numerical stability with very small displacements."""
         p = Point(1000.0, 2000.0, 3000.0, unit=u.meter)
-        v = Vector(1e-10, 1e-10, 1e-10, unit=u.meter)
+        v = _Vector(1e-10, 1e-10, 1e-10, unit=u.meter)
 
         p_new = p.displaced(v)
 
@@ -391,8 +391,8 @@ class TestNumericalStability:
 
     def test_nearly_parallel_vectors(self):
         """Test detection of nearly parallel vectors."""
-        v1 = Vector(1.0, 0.0, 0.0, unit=u.meter)
-        v2 = Vector(1.0, 1e-12, 0.0, unit=u.meter)
+        v1 = _Vector(1.0, 0.0, 0.0, unit=u.meter)
+        v2 = _Vector(1.0, 1e-12, 0.0, unit=u.meter)
 
         # Should be detected as parallel with default tolerance
         assert v1.is_parallel_to(v2)
