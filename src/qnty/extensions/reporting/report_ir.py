@@ -1008,14 +1008,17 @@ class ReportBuilder:
 
             mag_unit = mag_var.preferred.symbol if hasattr(mag_var, 'preferred') and mag_var.preferred else ""
 
-            # Get angle in degrees - try original angle first, then angle_var, then compute from coordinates
+            # Get angle in degrees - only show value if angle was originally known
             angle_str = ""
             vec_obj = getattr(self.problem, vec_name, None)
 
+            # If angle was not originally known, show "?" regardless of computed value
+            if not angle_was_known:
+                angle_str = "?"
             # First try to use original angle from create_vector_polar
-            if vec_obj is not None and hasattr(vec_obj, '_original_angle') and vec_obj._original_angle is not None:
+            elif vec_obj is not None and hasattr(vec_obj, '_original_angle') and vec_obj._original_angle is not None:
                 angle_str = f"{vec_obj._original_angle:.6g}"
-            elif angle_var is not None and angle_was_known and angle_var.value is not None:
+            elif angle_var is not None and angle_var.value is not None:
                 import math
                 angle_deg = angle_var.value * 180.0 / math.pi
                 angle_deg = angle_deg % 360

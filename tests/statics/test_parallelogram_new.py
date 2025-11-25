@@ -83,7 +83,25 @@ class Chapter2Problem1(ParallelogramLawProblem):
         )
 
     class report:
-        pass
+        """Expected content for report generation tests."""
+
+        class unknown_variables:
+            """Expected unknown variables table data.
+
+            Each entry represents a row in the unknown variables table with:
+            - symbol: Variable name/symbol
+            - magnitude: Expected magnitude value (or "?" if unknown before solve)
+            - angle: Expected angle value in degrees (or "?" if unknown before solve)
+            - unit: Expected unit symbol
+            - reference: Angle reference (e.g., "+x", "-x")
+            """
+            F_R = {
+                "symbol": "F_R",
+                "magnitude": "?",
+                "angle": "?",
+                "unit": "N",
+                "reference": "+x",
+            }
 
 class Chapter2Problem1Mixed(ParallelogramLawProblem):
     name = "Problem 2-1 (Mixed Units)"
@@ -161,3 +179,75 @@ def test_problems(problem_class):
             # Compare using is_close method
             assert actual_vec.is_close(exp_val, rtol=rtol), \
                 f"{attr_name}: expected {exp_val}, got {actual}"
+
+
+# =============================================================================
+# Report generation tests
+# =============================================================================
+
+# List of problem classes that have report expectations defined
+REPORT_TEST_CLASSES = [
+    Chapter2Problem1,
+]
+
+
+@pytest.mark.parametrize("problem_class", REPORT_TEST_CLASSES, ids=lambda c: c.name)
+def test_report_unknown_variables_table(problem_class):
+    """Test that the unknown variables table in reports matches expected data.
+
+    This test verifies that the ReportBuilder generates the correct unknown
+    variables table data before solving. The same data is used for both
+    LaTeX and Markdown output, ensuring consistency.
+    """
+    from qnty.extensions.reporting.report_ir import ReportBuilder
+
+    # Instantiate problem (this triggers vector extraction but not solving)
+    problem = problem_class()
+
+    # Get the report expectations
+    report_expectations = getattr(problem_class, 'report', None)
+    if report_expectations is None:
+        pytest.skip("No report expectations defined")
+
+    unknown_vars_expected = getattr(report_expectations, 'unknown_variables', None)
+    if unknown_vars_expected is None:
+        pytest.skip("No unknown_variables expectations defined")
+
+    # Build the report IR to get the unknown variables table data
+    # Note: We need to provide minimal data since problem isn't solved yet
+    builder = ReportBuilder(
+        problem=problem,
+        known_variables={},  # Will be populated from problem.variables
+        equations=[],
+        solving_history=[],
+        diagram_path=None
+    )
+
+    # Get the unknown variable data directly
+    unknown_data = builder._get_unknown_variable_data()
+
+    # Convert to dict keyed by symbol for easier comparison
+    actual_by_symbol = {row['symbol']: row for row in unknown_data}
+
+    # Compare each expected unknown variable
+    for attr_name in dir(unknown_vars_expected):
+        if attr_name.startswith('_'):
+            continue
+
+        expected_row = getattr(unknown_vars_expected, attr_name)
+        if not isinstance(expected_row, dict):
+            continue
+
+        symbol = expected_row['symbol']
+        assert symbol in actual_by_symbol, \
+            f"Expected unknown variable '{symbol}' not found in report. " \
+            f"Found: {list(actual_by_symbol.keys())}"
+
+        actual_row = actual_by_symbol[symbol]
+
+        # Compare each field
+        for field in ['symbol', 'magnitude', 'angle', 'unit', 'reference']:
+            if field in expected_row:
+                assert actual_row.get(field) == expected_row[field], \
+                    f"Unknown variable '{symbol}' field '{field}': " \
+                    f"expected '{expected_row[field]}', got '{actual_row.get(field)}'"
