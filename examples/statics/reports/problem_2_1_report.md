@@ -1,11 +1,6 @@
-# Engineering Calculation Report: Problem 2-1
+# Engineering Calculation Report: DynamicProblem
 
-**Generated:** 2025-11-24 07:46:59
-
-**Description:** 
-            Determine the magnitude of the resultant force and its direction,
-            measured counterclockwise from the positive x axis.
-            
+**Generated:** 2025-11-26 16:41:29
 
 ## 1. Known Variables
 
@@ -14,109 +9,32 @@
 | F_1 | 225 | 389.711 | 450 | 60 | +x |
 | F_2 | -676.148 | -181.173 | 700 | 15 | -x |
 
-## 2. Unknown Variables (To Calculate)
+## 2. Unknown Variables
 
 | Symbol | X (N) | Y (N) | Magnitude (N) | Angle (deg) | Reference |
 | :--- | ---: | ---: | ---: | ---: | :--- |
-| F_R | -451.148 | 208.538 | ? | 155.192 | +x |
+| F_R | ? | ? | ? | ? | +x |
 
 ## 3. Equations Used
 
-1. F_1_x = |F_1| cos(θ)
+1. F_R² = F_1² + F_2² + 2·F_1·F_2·cos(θ)
 
-2. F_1_y = |F_1| sin(θ)
+2. sin(φ)/F_2 = sin(θ)/F_R
 
-3. F_2_x = |F_2| cos(θ)
-
-4. F_2_y = |F_2| sin(θ)
-
-5. ΣF_R_x = F_1_x + F_2_x
-
-6. ΣF_R_y = F_1_y + F_2_y
-
-7. |F_R| = √((F_R_x)² + (F_R_y)²)
-
-8. θ = tan⁻¹(F_R_y / F_R_x)
+3. θ_F_R = θ_F_1 + φ
 
 ## 4. Step-by-Step Solution
 
-### Step 1: Solve for F_1_x
+### Step 1: Solve for |F_R|
 
     **Equation:**
     ```
-    F_1_x = |F_1| cos(θ)
+    F_R² = F_1² + F_2² + 2·F_1·F_2·cos(θ)
     ```
 
-    **Result:**
+    **Substitution:**
     ```
-    F_1_x = 225.000 N
-    ```
-
-### Step 2: Solve for F_1_y
-
-    **Equation:**
-    ```
-    F_1_y = |F_1| sin(θ)
-    ```
-
-    **Result:**
-    ```
-    F_1_y = 389.711 N
-    ```
-
-### Step 3: Solve for F_2_x
-
-    **Equation:**
-    ```
-    F_2_x = |F_2| cos(θ)
-    ```
-
-    **Result:**
-    ```
-    F_2_x = -676.148 N
-    ```
-
-### Step 4: Solve for F_2_y
-
-    **Equation:**
-    ```
-    F_2_y = |F_2| sin(θ)
-    ```
-
-    **Result:**
-    ```
-    F_2_y = -181.173 N
-    ```
-
-### Step 5: Solve for ΣF_R_x
-
-    **Equation:**
-    ```
-    ΣF_R_x = F_1_x + F_2_x
-    ```
-
-    **Result:**
-    ```
-    ΣF_R_x = -451.148 N
-    ```
-
-### Step 6: Solve for ΣF_R_y
-
-    **Equation:**
-    ```
-    ΣF_R_y = F_1_y + F_2_y
-    ```
-
-    **Result:**
-    ```
-    ΣF_R_y = 208.538 N
-    ```
-
-### Step 7: Solve for |F_R|
-
-    **Equation:**
-    ```
-    |F_R| = √((F_R_x)² + (F_R_y)²)
+    F_R² = (450.000)² + (700.000)² + 2(450.000)(700.000)cos(45.0°)
     ```
 
     **Result:**
@@ -124,16 +42,38 @@
     |F_R| = 497.014 N
     ```
 
-### Step 8: Solve for θ
+### Step 2: Solve for φ
 
     **Equation:**
     ```
-    θ = tan⁻¹(F_R_y / F_R_x)
+    sin(φ)/F_2 = sin(θ)/F_R
+    ```
+
+    **Substitution:**
+    ```
+    sin(φ)/700.000 = sin(45.0°)/497.014
     ```
 
     **Result:**
     ```
-    θ = 155.192 °
+    φ = 95.192 °
+    ```
+
+### Step 3: Solve for θ_F_R
+
+    **Equation:**
+    ```
+    θ_F_R = θ_F_1 + φ
+    ```
+
+    **Substitution:**
+    ```
+    θ_F_R = 60.0° + (95.192°)
+    ```
+
+    **Result:**
+    ```
+    θ_F_R = 155.192 °
     ```
 
 ## 5. Summary of Results
@@ -149,7 +89,7 @@
 While every effort has been made to ensure the accuracy and reliability of the calculations provided, we do not guarantee that the information is complete, up-to-date, or suitable for any specific purpose. Users must independently verify the results and assume full responsibility for any decisions or actions taken based on its output. Use of this calculator is entirely at your own risk, and we expressly disclaim any liability for errors or omissions in the information provided.
 
 **Report Details:**
-- **Generated Date:** November 24, 2025
+- **Generated Date:** November 26, 2025
 - **Generated Using:** Qnty Library
 - **Version:** Beta (Independent verification required for production use)
 

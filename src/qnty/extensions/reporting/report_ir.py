@@ -322,33 +322,86 @@ class LaTeXRenderer(ReportRenderer):
         """Render a section to LaTeX."""
         lines = []
 
+        # Strip leading number pattern (e.g., "1. " or "2. ") from title
+        # since LaTeX \section commands handle numbering automatically
+        import re
+        title = re.sub(r'^\d+\.\s*', '', section.title)
+
         # Section header
         if section.level == 1:
-            lines.append(r"\section{" + self._escape_latex(section.title) + "}")
+            lines.append(r"\section{" + self._escape_latex(title) + "}")
         elif section.level == 2:
-            lines.append(r"\subsection{" + self._escape_latex(section.title) + "}")
+            lines.append(r"\subsection{" + self._escape_latex(title) + "}")
         else:
-            lines.append(r"\subsubsection{" + self._escape_latex(section.title) + "}")
+            lines.append(r"\subsubsection{" + self._escape_latex(title) + "}")
         lines.append("")
 
-        # Content
-        for item in section.content:
+        # Content - collect numbered equations to render in enumerate environment
+        import re
+        numbered_equations = []
+        i = 0
+        while i < len(section.content):
+            item = section.content[i]
             if isinstance(item, str):
-                lines.append(self._escape_latex(item))
-                lines.append("")
+                # Check if this looks like a numbered equation (e.g., "1. F_R² = ...")
+                eq_match = re.match(r'^(\d+)\.\s*(.+)$', item)
+                if eq_match and '=' in item:
+                    # Collect consecutive numbered equations
+                    numbered_equations.append(eq_match.group(2))
+                    i += 1
+                    continue
+                else:
+                    # Flush any collected numbered equations first
+                    if numbered_equations:
+                        lines.extend(self._render_numbered_equations(numbered_equations))
+                        numbered_equations = []
+                    lines.append(self._escape_latex(item))
+                    lines.append("")
             elif isinstance(item, Table):
+                # Flush any collected numbered equations first
+                if numbered_equations:
+                    lines.extend(self._render_numbered_equations(numbered_equations))
+                    numbered_equations = []
                 lines.extend(self._render_table(item))
             elif isinstance(item, Equation):
+                # Flush any collected numbered equations first
+                if numbered_equations:
+                    lines.extend(self._render_numbered_equations(numbered_equations))
+                    numbered_equations = []
                 latex_eq = self._to_latex_math(item.text) if not item.is_latex else item.text
                 lines.append(r"\begin{enumerate}")
                 lines.append(r"\item $\displaystyle\Large " + latex_eq + "$")
                 lines.append(r"\end{enumerate}")
                 lines.append("")
             elif isinstance(item, SolutionStep):
+                # Flush any collected numbered equations first
+                if numbered_equations:
+                    lines.extend(self._render_numbered_equations(numbered_equations))
+                    numbered_equations = []
                 lines.extend(self._render_solution_step(item))
             elif isinstance(item, Section):
+                # Flush any collected numbered equations first
+                if numbered_equations:
+                    lines.extend(self._render_numbered_equations(numbered_equations))
+                    numbered_equations = []
                 lines.extend(self._render_section(item))
+            i += 1
 
+        # Flush any remaining numbered equations
+        if numbered_equations:
+            lines.extend(self._render_numbered_equations(numbered_equations))
+
+        return lines
+
+    def _render_numbered_equations(self, equations: list[str]) -> list[str]:
+        """Render a list of equations as a properly indented enumerate list."""
+        lines = []
+        lines.append(r"\begin{enumerate}")
+        for eq_text in equations:
+            latex_eq = self._to_latex_math(eq_text)
+            lines.append(r"\item $\displaystyle " + latex_eq + "$")
+        lines.append(r"\end{enumerate}")
+        lines.append("")
         return lines
 
     def _render_table(self, table: Table) -> list[str]:
@@ -500,11 +553,27 @@ class LaTeXRenderer(ReportRenderer):
         if not name:
             return ""
 
+        # Handle magnitude notation |F_R|
+        if name.startswith("|") and name.endswith("|"):
+            inner = name[1:-1]
+            return r"\left|" + self._format_latex_variable(inner) + r"\right|"
+
+        # Handle Greek letters
+        greek_map = {"θ": r"\theta", "φ": r"\varphi", "α": r"\alpha", "β": r"\beta", "γ": r"\gamma"}
+        for greek, latex in greek_map.items():
+            if name.startswith(greek):
+                name = latex + name[1:]
+                break
+
         # Handle subscripts
         if "_" in name:
             parts = name.split("_", 1)
             base = parts[0]
             subscript = parts[1] if len(parts) > 1 else ""
+
+            # Recursively format the subscript in case it has nested underscores
+            if "_" in subscript:
+                subscript = self._format_latex_variable(subscript).replace("_", r"\_")
 
             # Multi-character subscripts need braces
             if len(subscript) > 1:
@@ -519,22 +588,52 @@ class LaTeXRenderer(ReportRenderer):
         if not text:
             return ""
 
+        import re
+
         result = text
 
+        # Handle Greek letters first (before subscript processing)
+        greek_map = {"θ": r"\theta", "φ": r"\varphi", "α": r"\alpha", "β": r"\beta", "γ": r"\gamma"}
+        for greek, latex in greek_map.items():
+            result = result.replace(greek, latex)
+
+        # Handle nested subscripts like F_R or θ_F_R
+        # First pass: handle simple subscripts (letter_something)
+        # Use a function to handle the replacement properly
+        def subscript_replacer(match):
+            base = match.group(1)
+            subscript = match.group(2)
+            # Check if subscript itself has an underscore (nested case)
+            if '_' in subscript:
+                # For nested like F_R in θ_F_R, make it a single subscript block
+                subscript = subscript.replace('_', r'\_')
+            return f"{base}_{{{subscript}}}"
+
+        # Match: word character or backslash+word (for \theta etc) followed by _something
+        result = re.sub(r'(\\?[A-Za-z]+)_([A-Za-z0-9_]+)', subscript_replacer, result)
+
+        # Handle magnitude notation |...|
+        result = re.sub(r'\|([^|]+)\|', r'\\left|\1\\right|', result)
+
+        # Replace superscript ² with ^2
+        result = result.replace("²", "^2")
+
         # Replace common operators
+        result = result.replace("·", r" \cdot ")
         result = result.replace("*", r" \cdot ")
-        result = result.replace("sqrt(", r"\sqrt{")
-        result = result.replace("sin(", r"\sin(")
-        result = result.replace("cos(", r"\cos(")
-        result = result.replace("tan(", r"\tan(")
         result = result.replace("**", "^")
 
-        # Handle variable names with subscripts
-        import re
-        result = re.sub(r'([A-Za-z]+)_(\w+)', r'\1_{\2}', result)
+        # Replace trig functions (need to handle already-converted \theta etc)
+        result = re.sub(r'(?<!\\)sin\(', r'\\sin(', result)
+        result = re.sub(r'(?<!\\)cos\(', r'\\cos(', result)
+        result = re.sub(r'(?<!\\)tan\(', r'\\tan(', result)
 
-        # Close sqrt braces
-        result = result.replace(r"\sqrt{", r"\sqrt{").replace(")", "}")
+        # Handle sqrt - need to track parentheses
+        sqrt_pattern = r'sqrt\(([^)]+)\)'
+        result = re.sub(sqrt_pattern, r'\\sqrt{\1}', result)
+
+        # Handle degree symbol
+        result = result.replace("°", r"^{\circ}")
 
         return result
 
@@ -589,7 +688,7 @@ class ReportBuilder:
 
     def _add_unknown_variables_section(self, report: ReportIR) -> None:
         """Add the unknown variables section."""
-        section = report.add_section("2. Unknown Variables (To Calculate)")
+        section = report.add_section("2. Unknown Variables")
         table = self._build_unknown_variables_table()
         if table:
             section.content.append(table)
@@ -923,22 +1022,22 @@ class ReportBuilder:
             else:
                 angle_str = "?"
 
-            # Get X and Y components using proper qnty unit handling
-            x_str = ""
-            y_str = ""
+            # Get X and Y components - only for originally known forces
+            x_str = "?"
+            y_str = "?"
             was_originally_known = mag_was_originally_known and angle_was_originally_known
 
-            if hasattr(force_obj, 'u') and hasattr(force_obj, 'v') and force_obj._coords is not None:
-                if was_originally_known or (mag_var.value is not None and angle_var.value is not None):
-                    try:
-                        u_qty = force_obj.u
-                        v_qty = force_obj.v
-                        if u_qty is not None and u_qty.value is not None:
-                            x_str = f"{u_qty.magnitude():.6g}"
-                        if v_qty is not None and v_qty.value is not None:
-                            y_str = f"{v_qty.magnitude():.6g}"
-                    except (ValueError, AttributeError):
-                        pass
+            # Only populate X and Y for forces that were originally known
+            if was_originally_known and hasattr(force_obj, 'u') and hasattr(force_obj, 'v') and force_obj._coords is not None:
+                try:
+                    u_qty = force_obj.u
+                    v_qty = force_obj.v
+                    if u_qty is not None and u_qty.value is not None:
+                        x_str = f"{u_qty.magnitude():.6g}"
+                    if v_qty is not None and v_qty.value is not None:
+                        y_str = f"{v_qty.magnitude():.6g}"
+                except (ValueError, AttributeError):
+                    pass
 
             # Get angle reference
             reference_str = ""
@@ -1051,24 +1150,22 @@ class ReportBuilder:
             else:
                 angle_str = "?"
 
-            # Get X and Y components
-            x_str = ""
-            y_str = ""
+            # Get X and Y components - only for originally known vectors
+            x_str = "?"
+            y_str = "?"
             was_originally_known = mag_was_known and angle_was_known
 
-            # Try to get vector object to extract components (vec_obj already retrieved above)
-            if vec_obj is not None and hasattr(vec_obj, 'u') and hasattr(vec_obj, 'v'):
-                angle_has_value = (angle_var is not None and angle_var.value is not None) or (hasattr(vec_obj, '_angle') and vec_obj._angle is not None)
-                if was_originally_known or (mag_var.value is not None and angle_has_value):
-                    try:
-                        u_qty = vec_obj.u
-                        v_qty = vec_obj.v
-                        if u_qty is not None and u_qty.value is not None:
-                            x_str = f"{u_qty.magnitude():.6g}"
-                        if v_qty is not None and v_qty.value is not None:
-                            y_str = f"{v_qty.magnitude():.6g}"
-                    except (ValueError, AttributeError):
-                        pass
+            # Only populate X and Y for vectors that were originally known
+            if was_originally_known and vec_obj is not None and hasattr(vec_obj, 'u') and hasattr(vec_obj, 'v'):
+                try:
+                    u_qty = vec_obj.u
+                    v_qty = vec_obj.v
+                    if u_qty is not None and u_qty.value is not None:
+                        x_str = f"{u_qty.magnitude():.6g}"
+                    if v_qty is not None and v_qty.value is not None:
+                        y_str = f"{v_qty.magnitude():.6g}"
+                except (ValueError, AttributeError):
+                    pass
 
             # Get angle reference - prefer original wrt from create_vector_polar
             reference_str = ""

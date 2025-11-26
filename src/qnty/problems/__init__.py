@@ -10,6 +10,9 @@ This module provides a streamlined Problem system with 4 focused files instead o
 The system maintains full backward compatibility with the original Problem API.
 """
 
+# Unified API modules (recommended for new code)
+from . import statics
+
 from .cartesian_vector import CartesianVectorProblem
 from .composition import (
     CompositionMixin,
@@ -114,6 +117,8 @@ EngineeringProblem = Problem
 
 # Export all relevant classes and exceptions for compatibility
 __all__ = [
+    # Unified API modules (recommended)
+    "statics",
     # Main classes
     "Problem",
     "EngineeringProblem",

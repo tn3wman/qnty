@@ -276,103 +276,245 @@ class ParallelogramLawProblem(Problem):
                 self.variables[f"{attr_name}_angle"] = angle_var
                 self._original_variable_states[f"{attr_name}_angle"] = False  # Was unknown
 
-                # Add solution steps in format expected by _populate_solving_history
-                component_names = [getattr(v, 'name', 'Vector') for v in attr.component_vectors]
-                unit_symbol = attr._unit.symbol if attr._unit else ""
-                mag_display = mag_si / attr._unit.si_factor if attr._unit else mag_si
-                angle_deg = np.degrees(angle_rad)
-
-                if attr._unit:
-                    display_sum = sum_coords / attr._unit.si_factor
+                # Add solution steps using the triangle/parallelogram law method
+                # Use TriangleSolver for 2-force problems (parallelogram law)
+                if len(attr.component_vectors) == 2:
+                    # Use triangle method with Law of Cosines and Law of Sines
+                    self._add_triangle_method_steps(
+                        attr.component_vectors[0],
+                        attr.component_vectors[1],
+                        attr,
+                        attr_name,
+                        mag_si,
+                        angle_rad,
+                    )
                 else:
-                    display_sum = sum_coords
-
-                # Step 1: Resolve each force into components
-                for vec in attr.component_vectors:
-                    vec_name = getattr(vec, 'name', 'Vector')
-                    coords = vec._coords
-                    if attr._unit:
-                        display_coords = coords / attr._unit.si_factor
-                    else:
-                        display_coords = coords
-
-                    # Get magnitude and angle for this vector
-                    vec_mag = np.sqrt(np.sum(coords**2))
-                    vec_angle = np.arctan2(coords[1], coords[0])
-                    if vec_angle < 0:
-                        vec_angle += 2 * np.pi
-                    vec_mag_display = vec_mag / attr._unit.si_factor if attr._unit else vec_mag
-                    vec_angle_deg = np.degrees(vec_angle)
-
-                    self.solution_steps.append({
-                        "target": f"{vec_name}_x",
-                        "method": "component_resolution",
-                        "description": f"Resolve {vec_name} into x and y components",
-                        "equation": f"{vec_name}_x = |{vec_name}| cos(θ)",
-                        "substitution": f"{vec_name}_x = {vec_mag_display:.3f} cos({vec_angle_deg:.1f}°)",
-                        "result_value": f"{display_coords[0]:.3f}",
-                        "result_unit": unit_symbol,
-                    })
-                    self.solution_steps.append({
-                        "target": f"{vec_name}_y",
-                        "method": "component_resolution",
-                        "description": f"Resolve {vec_name} into x and y components",
-                        "equation": f"{vec_name}_y = |{vec_name}| sin(θ)",
-                        "substitution": f"{vec_name}_y = {vec_mag_display:.3f} sin({vec_angle_deg:.1f}°)",
-                        "result_value": f"{display_coords[1]:.3f}",
-                        "result_unit": unit_symbol,
-                    })
-
-                # Step 2: Sum x-components
-                x_terms = " + ".join([f"({(v._coords[0]/attr._unit.si_factor if attr._unit else v._coords[0]):.3f})" for v in attr.component_vectors])
-                self.solution_steps.append({
-                    "target": f"{attr_name}_x",
-                    "method": "component_sum",
-                    "description": "Sum x-components",
-                    "equation": f"Σ{attr_name}_x = {' + '.join([f'{n}_x' for n in component_names])}",
-                    "substitution": f"Σ{attr_name}_x = {x_terms}",
-                    "result_value": f"{display_sum[0]:.3f}",
-                    "result_unit": unit_symbol,
-                })
-
-                # Step 3: Sum y-components
-                y_terms = " + ".join([f"({(v._coords[1]/attr._unit.si_factor if attr._unit else v._coords[1]):.3f})" for v in attr.component_vectors])
-                self.solution_steps.append({
-                    "target": f"{attr_name}_y",
-                    "method": "component_sum",
-                    "description": "Sum y-components",
-                    "equation": f"Σ{attr_name}_y = {' + '.join([f'{n}_y' for n in component_names])}",
-                    "substitution": f"Σ{attr_name}_y = {y_terms}",
-                    "result_value": f"{display_sum[1]:.3f}",
-                    "result_unit": unit_symbol,
-                })
-
-                # Step 4: Calculate magnitude
-                self.solution_steps.append({
-                    "target": f"|{attr_name}|",
-                    "method": "pythagorean",
-                    "description": "Calculate resultant magnitude using Pythagorean theorem",
-                    "equation": f"|{attr_name}| = √(({attr_name}_x)² + ({attr_name}_y)²)",
-                    "substitution": f"|{attr_name}| = √(({display_sum[0]:.3f})² + ({display_sum[1]:.3f})²)",
-                    "result_value": f"{mag_display:.3f}",
-                    "result_unit": unit_symbol,
-                })
-
-                # Step 5: Calculate angle
-                self.solution_steps.append({
-                    "target": f"θ_{attr_name}",
-                    "method": "inverse_trig",
-                    "description": "Calculate resultant direction using inverse tangent",
-                    "equation": f"θ = tan⁻¹({attr_name}_y / {attr_name}_x)",
-                    "substitution": f"θ = tan⁻¹({display_sum[1]:.3f} / {display_sum[0]:.3f})",
-                    "result_value": f"{angle_deg:.3f}",
-                    "result_unit": "°",
-                })
+                    # Fall back to component method for 3+ forces
+                    self._add_component_method_steps(
+                        attr.component_vectors,
+                        attr,
+                        attr_name,
+                        sum_coords,
+                        mag_si,
+                        angle_rad,
+                    )
 
         # Mark as solved if we computed any resultants
         if has_vector_resultants:
             self.is_solved = True
             self._populate_solving_history()
+
+    def _add_triangle_method_steps(
+        self,
+        force1: _Vector,
+        force2: _Vector,
+        resultant: _VectorWithUnknowns,
+        resultant_name: str,
+        mag_si: float,
+        angle_rad: float,
+    ) -> None:
+        """
+        Add solution steps using the parallelogram law (Law of Cosines and Law of Sines).
+
+        This is the preferred method for 2-force resultant problems as it matches
+        the classical engineering statics approach.
+
+        Args:
+            force1: First component vector
+            force2: Second component vector
+            resultant: The resultant vector
+            resultant_name: Name of the resultant (e.g., "F_R")
+            mag_si: Resultant magnitude in SI units
+            angle_rad: Resultant angle in radians
+        """
+        # Get force magnitudes and angles
+        F1 = np.sqrt(np.sum(force1._coords**2))
+        F2 = np.sqrt(np.sum(force2._coords**2))
+        theta1 = np.arctan2(force1._coords[1], force1._coords[0])
+        theta2 = np.arctan2(force2._coords[1], force2._coords[0])
+
+        # Get unit info
+        unit = resultant._unit
+        unit_symbol = unit.symbol if unit else "N"
+        si_factor = unit.si_factor if unit else 1.0
+
+        # Display values in user's units
+        F1_display = F1 / si_factor
+        F2_display = F2 / si_factor
+        FR_display = mag_si / si_factor
+
+        # Get force names
+        f1_name = getattr(force1, 'name', 'F_1')
+        f2_name = getattr(force2, 'name', 'F_2')
+
+        # Compute angle between forces (for the parallelogram)
+        gamma = abs(theta2 - theta1)
+        if gamma > math.pi:
+            gamma = 2 * math.pi - gamma
+
+        # The angle in the triangle is (180° - gamma) due to parallelogram law
+        angle_in_triangle = math.pi - gamma
+        angle_in_triangle_deg = np.degrees(angle_in_triangle)
+
+        # Step 1: Law of Cosines for magnitude
+        # F_R² = F_1² + F_2² + 2·F_1·F_2·cos(θ)
+        # where θ is the angle between the two force vectors
+        self.solution_steps.append({
+            "target": f"|{resultant_name}|",
+            "method": "Law of Cosines",
+            "description": "Calculate resultant magnitude using Law of Cosines",
+            "equation": f"{resultant_name}² = {f1_name}² + {f2_name}² + 2·{f1_name}·{f2_name}·cos(θ)",
+            "substitution": f"{resultant_name}² = ({F1_display:.3f})² + ({F2_display:.3f})² + 2({F1_display:.3f})({F2_display:.3f})cos({angle_in_triangle_deg:.1f}°)",
+            "result_value": f"{FR_display:.3f}",
+            "result_unit": unit_symbol,
+        })
+
+        # Step 2: Law of Sines for angle
+        # sin(φ)/F_2 = sin(θ)/F_R
+        # where φ is the angle from F_1 to F_R
+        angle_deg = np.degrees(angle_rad)
+        theta1_deg = np.degrees(theta1)
+
+        # Calculate the angle φ from F_1 to F_R using Law of Sines
+        # This gives us the angle adjustment needed
+        if mag_si > 1e-10:
+            # Determine sign: if resultant angle is less than F_1 angle, phi is negative
+            phi_deg = angle_deg - theta1_deg
+        else:
+            phi_deg = 0.0
+
+        self.solution_steps.append({
+            "target": "φ",
+            "method": "Law of Sines",
+            "description": "Calculate angle φ (from F_1 to F_R) using Law of Sines",
+            "equation": f"sin(φ)/{f2_name} = sin(θ)/{resultant_name}",
+            "substitution": f"sin(φ)/{F2_display:.3f} = sin({angle_in_triangle_deg:.1f}°)/{FR_display:.3f}",
+            "result_value": f"{phi_deg:.3f}",
+            "result_unit": "°",
+        })
+
+        # Step 3: Calculate final angle relative to +x axis
+        self.solution_steps.append({
+            "target": f"θ_{resultant_name}",
+            "method": "Angle Addition",
+            "description": f"Calculate {resultant_name} direction relative to +x axis",
+            "equation": f"θ_{resultant_name} = θ_{f1_name} + φ",
+            "substitution": f"θ_{resultant_name} = {theta1_deg:.1f}° + ({phi_deg:.3f}°)",
+            "result_value": f"{angle_deg:.3f}",
+            "result_unit": "°",
+        })
+
+    def _add_component_method_steps(
+        self,
+        component_vectors: list[_Vector],
+        resultant: _VectorWithUnknowns,
+        resultant_name: str,
+        sum_coords: np.ndarray,
+        mag_si: float,
+        angle_rad: float,
+    ) -> None:
+        """
+        Add solution steps using the component method (for 3+ forces).
+
+        This breaks each force into x and y components, sums them,
+        then uses Pythagorean theorem for magnitude and arctan for angle.
+
+        Args:
+            component_vectors: List of component vectors
+            resultant: The resultant vector
+            resultant_name: Name of the resultant
+            sum_coords: Sum of all component coordinates
+            mag_si: Resultant magnitude in SI units
+            angle_rad: Resultant angle in radians
+        """
+        unit = resultant._unit
+        unit_symbol = unit.symbol if unit else ""
+        si_factor = unit.si_factor if unit else 1.0
+
+        mag_display = mag_si / si_factor
+        angle_deg = np.degrees(angle_rad)
+        display_sum = sum_coords / si_factor if unit else sum_coords
+
+        component_names = [getattr(v, 'name', 'Vector') for v in component_vectors]
+
+        # Step 1: Resolve each force into components
+        for vec in component_vectors:
+            vec_name = getattr(vec, 'name', 'Vector')
+            coords = vec._coords
+            display_coords = coords / si_factor if unit else coords
+
+            # Get magnitude and angle for this vector
+            vec_mag = np.sqrt(np.sum(coords**2))
+            vec_angle = np.arctan2(coords[1], coords[0])
+            if vec_angle < 0:
+                vec_angle += 2 * np.pi
+            vec_mag_display = vec_mag / si_factor if unit else vec_mag
+            vec_angle_deg = np.degrees(vec_angle)
+
+            self.solution_steps.append({
+                "target": f"{vec_name}_x",
+                "method": "component_resolution",
+                "description": f"Resolve {vec_name} into x and y components",
+                "equation": f"{vec_name}_x = |{vec_name}| cos(θ)",
+                "substitution": f"{vec_name}_x = {vec_mag_display:.3f} cos({vec_angle_deg:.1f}°)",
+                "result_value": f"{display_coords[0]:.3f}",
+                "result_unit": unit_symbol,
+            })
+            self.solution_steps.append({
+                "target": f"{vec_name}_y",
+                "method": "component_resolution",
+                "description": f"Resolve {vec_name} into x and y components",
+                "equation": f"{vec_name}_y = |{vec_name}| sin(θ)",
+                "substitution": f"{vec_name}_y = {vec_mag_display:.3f} sin({vec_angle_deg:.1f}°)",
+                "result_value": f"{display_coords[1]:.3f}",
+                "result_unit": unit_symbol,
+            })
+
+        # Step 2: Sum x-components
+        x_terms = " + ".join([f"({(v._coords[0]/si_factor):.3f})" for v in component_vectors])
+        self.solution_steps.append({
+            "target": f"{resultant_name}_x",
+            "method": "component_sum",
+            "description": "Sum x-components",
+            "equation": f"Σ{resultant_name}_x = {' + '.join([f'{n}_x' for n in component_names])}",
+            "substitution": f"Σ{resultant_name}_x = {x_terms}",
+            "result_value": f"{display_sum[0]:.3f}",
+            "result_unit": unit_symbol,
+        })
+
+        # Step 3: Sum y-components
+        y_terms = " + ".join([f"({(v._coords[1]/si_factor):.3f})" for v in component_vectors])
+        self.solution_steps.append({
+            "target": f"{resultant_name}_y",
+            "method": "component_sum",
+            "description": "Sum y-components",
+            "equation": f"Σ{resultant_name}_y = {' + '.join([f'{n}_y' for n in component_names])}",
+            "substitution": f"Σ{resultant_name}_y = {y_terms}",
+            "result_value": f"{display_sum[1]:.3f}",
+            "result_unit": unit_symbol,
+        })
+
+        # Step 4: Calculate magnitude
+        self.solution_steps.append({
+            "target": f"|{resultant_name}|",
+            "method": "pythagorean",
+            "description": "Calculate resultant magnitude using Pythagorean theorem",
+            "equation": f"|{resultant_name}| = √(({resultant_name}_x)² + ({resultant_name}_y)²)",
+            "substitution": f"|{resultant_name}| = √(({display_sum[0]:.3f})² + ({display_sum[1]:.3f})²)",
+            "result_value": f"{mag_display:.3f}",
+            "result_unit": unit_symbol,
+        })
+
+        # Step 5: Calculate angle
+        self.solution_steps.append({
+            "target": f"θ_{resultant_name}",
+            "method": "inverse_trig",
+            "description": "Calculate resultant direction using inverse tangent",
+            "equation": f"θ = tan⁻¹({resultant_name}_y / {resultant_name}_x)",
+            "substitution": f"θ = tan⁻¹({display_sum[1]:.3f} / {display_sum[0]:.3f})",
+            "result_value": f"{angle_deg:.3f}",
+            "result_unit": "°",
+        })
 
     def _clone_force_vector(self, force: _Vector) -> _Vector:
         """Create a copy of a ForceVector."""
@@ -747,14 +889,14 @@ class ParallelogramLawProblem(Problem):
         self.solving_history = []
 
         for i, step in enumerate(self.solution_steps):
-            # Our new format already has the correct fields
+            # Map to the format expected by report_ir._extract_solution_steps
             history_entry = {
                 "step": i + 1,
-                "target": step.get("target", "Unknown"),
+                "target_variable": step.get("target", "Unknown"),
                 "method": step.get("method", "algebraic"),
                 "description": step.get("description", ""),
                 "equation_str": step.get("equation", ""),
-                "substituted": step.get("substitution", ""),
+                "substituted_equation": step.get("substitution", ""),
                 "result_value": step.get("result_value", ""),
                 "result_unit": step.get("result_unit", ""),
                 "details": step.get("description", ""),
