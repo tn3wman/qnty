@@ -17,7 +17,7 @@ import numpy as np
 import pytest
 
 from qnty.core import Q, u
-from qnty.spatial import Vector
+from qnty.spatial import _Vector
 
 
 class TestVectorCreation:
@@ -25,7 +25,7 @@ class TestVectorCreation:
 
     def test_create_vector_with_unit(self):
         """Test creating a vector with explicit unit."""
-        v = Vector(1.0, 2.0, 3.0, unit=u.meter)
+        v = _Vector(1.0, 2.0, 3.0, unit=u.meter)
 
         assert v is not None
         # Verify internal SI storage
@@ -35,7 +35,7 @@ class TestVectorCreation:
 
     def test_create_vector_2d_default_w(self):
         """Test creating a 2D vector (w defaults to 0)."""
-        v = Vector(1.0, 2.0, unit=u.meter)
+        v = _Vector(1.0, 2.0, unit=u.meter)
 
         assert v._coords[2] == 0.0
 
@@ -45,7 +45,7 @@ class TestVectorCreation:
         v_comp = Q(2.0, u.meter)
         w_comp = Q(3.0, u.meter)
 
-        vec = Vector.from_quantities(u_comp, v_comp, w_comp)
+        vec = _Vector.from_quantities(u_comp, v_comp, w_comp)
 
         assert vec.u == u_comp
         assert vec.v == v_comp
@@ -56,7 +56,7 @@ class TestVectorCreation:
         u_comp = Q(1.0, u.meter)
         v_comp = Q(2.0, u.meter)
 
-        vec = Vector.from_quantities(u_comp, v_comp)
+        vec = _Vector.from_quantities(u_comp, v_comp)
 
         assert vec.u == u_comp
         assert vec.v == v_comp
@@ -68,7 +68,7 @@ class TestVectorCreation:
         v_comp = Q(2.0, u.newton)  # Wrong dimension!
 
         with pytest.raises(ValueError, match="same dimension"):
-            Vector.from_quantities(u_comp, v_comp)
+            _Vector.from_quantities(u_comp, v_comp)
 
 
 class TestVectorComponentAccess:
@@ -76,7 +76,7 @@ class TestVectorComponentAccess:
 
     def test_access_u_component(self):
         """Test accessing u component as Quantity."""
-        v = Vector(1.0, 2.0, 3.0, unit=u.meter)
+        v = _Vector(1.0, 2.0, 3.0, unit=u.meter)
         u_comp = v.u
 
         assert u_comp.magnitude() == 1.0
@@ -84,7 +84,7 @@ class TestVectorComponentAccess:
 
     def test_access_v_component(self):
         """Test accessing v component as Quantity."""
-        v = Vector(1.0, 2.0, 3.0, unit=u.meter)
+        v = _Vector(1.0, 2.0, 3.0, unit=u.meter)
         v_comp = v.v
 
         assert v_comp.magnitude() == 2.0
@@ -92,7 +92,7 @@ class TestVectorComponentAccess:
 
     def test_access_w_component(self):
         """Test accessing w component as Quantity."""
-        v = Vector(1.0, 2.0, 3.0, unit=u.meter)
+        v = _Vector(1.0, 2.0, 3.0, unit=u.meter)
         w = v.w
 
         assert w.magnitude() == 3.0
@@ -104,7 +104,7 @@ class TestVectorMagnitude:
 
     def test_magnitude_2d_vector(self):
         """Test magnitude of 2D vector."""
-        v = Vector(3.0, 4.0, 0.0, unit=u.meter)
+        v = _Vector(3.0, 4.0, 0.0, unit=u.meter)
         mag = v.magnitude
 
         # 3-4-5 triangle
@@ -112,7 +112,7 @@ class TestVectorMagnitude:
 
     def test_magnitude_3d_vector(self):
         """Test magnitude of 3D vector."""
-        v = Vector(1.0, 2.0, 2.0, unit=u.meter)
+        v = _Vector(1.0, 2.0, 2.0, unit=u.meter)
         mag = v.magnitude
 
         # sqrt(1² + 2² + 2²) = sqrt(9) = 3
@@ -121,14 +121,14 @@ class TestVectorMagnitude:
 
     def test_magnitude_unit_vector(self):
         """Test magnitude of unit vector."""
-        v = Vector(1.0, 0.0, 0.0, unit=u.meter)
+        v = _Vector(1.0, 0.0, 0.0, unit=u.meter)
         mag = v.magnitude
 
         assert abs(mag.magnitude() - 1.0) < 1e-10
 
     def test_magnitude_zero_vector(self):
         """Test magnitude of zero vector."""
-        v = Vector(0.0, 0.0, 0.0, unit=u.meter)
+        v = _Vector(0.0, 0.0, 0.0, unit=u.meter)
         mag = v.magnitude
 
         assert abs(mag.magnitude()) < 1e-10
@@ -139,7 +139,7 @@ class TestVectorNormalization:
 
     def test_normalize_vector(self):
         """Test normalizing a vector."""
-        v = Vector(3.0, 4.0, 0.0, unit=u.meter)
+        v = _Vector(3.0, 4.0, 0.0, unit=u.meter)
         v_norm = v.normalized()
 
         # Magnitude should be 1
@@ -151,7 +151,7 @@ class TestVectorNormalization:
 
     def test_normalize_3d_vector(self):
         """Test normalizing a 3D vector."""
-        v = Vector(1.0, 2.0, 2.0, unit=u.meter)
+        v = _Vector(1.0, 2.0, 2.0, unit=u.meter)
         v_norm = v.normalized()
 
         # Magnitude should be 1
@@ -159,14 +159,14 @@ class TestVectorNormalization:
 
     def test_normalize_zero_vector_raises(self):
         """Test that normalizing zero vector raises error."""
-        v = Vector(0.0, 0.0, 0.0, unit=u.meter)
+        v = _Vector(0.0, 0.0, 0.0, unit=u.meter)
 
         with pytest.raises(ValueError, match="Cannot normalize zero vector"):
             _ = v.normalized()
 
     def test_normalize_already_normalized(self):
         """Test normalizing an already normalized vector."""
-        v = Vector(1.0, 0.0, 0.0, unit=u.meter)
+        v = _Vector(1.0, 0.0, 0.0, unit=u.meter)
         v_norm = v.normalized()
 
         # Should be essentially the same
@@ -179,7 +179,7 @@ class TestVectorWithMagnitude:
 
     def test_with_magnitude_quantity(self):
         """Test setting vector magnitude using Quantity."""
-        v = Vector(3.0, 4.0, 0.0, unit=u.meter)  # mag = 5
+        v = _Vector(3.0, 4.0, 0.0, unit=u.meter)  # mag = 5
         new_mag = Q(10.0, u.meter)
 
         v_scaled = v.with_magnitude(new_mag)
@@ -193,7 +193,7 @@ class TestVectorWithMagnitude:
 
     def test_with_magnitude_float(self):
         """Test setting vector magnitude using float (SI units)."""
-        v = Vector(1.0, 0.0, 0.0, unit=u.meter)
+        v = _Vector(1.0, 0.0, 0.0, unit=u.meter)
 
         v_scaled = v.with_magnitude(5.0)
 
@@ -202,7 +202,7 @@ class TestVectorWithMagnitude:
 
     def test_with_magnitude_zero_vector_raises(self):
         """Test that setting magnitude of zero vector raises error."""
-        v = Vector(0.0, 0.0, 0.0, unit=u.meter)
+        v = _Vector(0.0, 0.0, 0.0, unit=u.meter)
 
         with pytest.raises(ValueError, match="Cannot scale zero vector"):
             _ = v.with_magnitude(5.0)
@@ -213,8 +213,8 @@ class TestVectorArithmetic:
 
     def test_vector_addition(self):
         """Test adding two vectors."""
-        v1 = Vector(1.0, 2.0, 3.0, unit=u.meter)
-        v2 = Vector(4.0, 5.0, 6.0, unit=u.meter)
+        v1 = _Vector(1.0, 2.0, 3.0, unit=u.meter)
+        v2 = _Vector(4.0, 5.0, 6.0, unit=u.meter)
 
         v3 = v1 + v2
 
@@ -224,8 +224,8 @@ class TestVectorArithmetic:
 
     def test_vector_subtraction(self):
         """Test subtracting two vectors."""
-        v1 = Vector(5.0, 7.0, 9.0, unit=u.meter)
-        v2 = Vector(1.0, 2.0, 3.0, unit=u.meter)
+        v1 = _Vector(5.0, 7.0, 9.0, unit=u.meter)
+        v2 = _Vector(1.0, 2.0, 3.0, unit=u.meter)
 
         v3 = v1 - v2
 
@@ -235,15 +235,15 @@ class TestVectorArithmetic:
 
     def test_vector_addition_different_dimensions_raises(self):
         """Test that adding vectors with different dimensions raises error."""
-        v1 = Vector(1.0, 2.0, 3.0, unit=u.meter)
-        v2 = Vector(4.0, 5.0, 6.0, unit=u.newton)
+        v1 = _Vector(1.0, 2.0, 3.0, unit=u.meter)
+        v2 = _Vector(4.0, 5.0, 6.0, unit=u.newton)
 
         with pytest.raises(ValueError, match="different dimensions"):
             _ = v1 + v2
 
     def test_scalar_multiplication(self):
         """Test multiplying vector by scalar."""
-        v = Vector(1.0, 2.0, 3.0, unit=u.meter)
+        v = _Vector(1.0, 2.0, 3.0, unit=u.meter)
 
         v_scaled = v * 2.0
 
@@ -253,7 +253,7 @@ class TestVectorArithmetic:
 
     def test_scalar_multiplication_reverse(self):
         """Test multiplying scalar by vector (reverse order)."""
-        v = Vector(1.0, 2.0, 3.0, unit=u.meter)
+        v = _Vector(1.0, 2.0, 3.0, unit=u.meter)
 
         v_scaled = 3.0 * v
 
@@ -263,7 +263,7 @@ class TestVectorArithmetic:
 
     def test_scalar_division(self):
         """Test dividing vector by scalar."""
-        v = Vector(10.0, 20.0, 30.0, unit=u.meter)
+        v = _Vector(10.0, 20.0, 30.0, unit=u.meter)
 
         v_scaled = v / 10.0
 
@@ -273,14 +273,14 @@ class TestVectorArithmetic:
 
     def test_scalar_division_by_zero_raises(self):
         """Test that dividing by zero raises error."""
-        v = Vector(1.0, 2.0, 3.0, unit=u.meter)
+        v = _Vector(1.0, 2.0, 3.0, unit=u.meter)
 
         with pytest.raises(ZeroDivisionError):
             _ = v / 0.0
 
     def test_vector_negation(self):
         """Test negating a vector."""
-        v = Vector(1.0, 2.0, 3.0, unit=u.meter)
+        v = _Vector(1.0, 2.0, 3.0, unit=u.meter)
 
         v_neg = -v
 
@@ -294,8 +294,8 @@ class TestVectorDotProduct:
 
     def test_dot_product_perpendicular_vectors(self):
         """Test dot product of perpendicular vectors is zero."""
-        v1 = Vector(1.0, 0.0, 0.0, unit=u.meter)
-        v2 = Vector(0.0, 1.0, 0.0, unit=u.meter)
+        v1 = _Vector(1.0, 0.0, 0.0, unit=u.meter)
+        v2 = _Vector(0.0, 1.0, 0.0, unit=u.meter)
 
         dot = v1.dot(v2)
 
@@ -303,8 +303,8 @@ class TestVectorDotProduct:
 
     def test_dot_product_parallel_vectors(self):
         """Test dot product of parallel vectors."""
-        v1 = Vector(2.0, 0.0, 0.0, unit=u.meter)
-        v2 = Vector(3.0, 0.0, 0.0, unit=u.meter)
+        v1 = _Vector(2.0, 0.0, 0.0, unit=u.meter)
+        v2 = _Vector(3.0, 0.0, 0.0, unit=u.meter)
 
         dot = v1.dot(v2)
 
@@ -313,8 +313,8 @@ class TestVectorDotProduct:
 
     def test_dot_product_general_vectors(self):
         """Test dot product of general vectors."""
-        v1 = Vector(1.0, 2.0, 3.0, unit=u.meter)
-        v2 = Vector(4.0, 5.0, 6.0, unit=u.meter)
+        v1 = _Vector(1.0, 2.0, 3.0, unit=u.meter)
+        v2 = _Vector(4.0, 5.0, 6.0, unit=u.meter)
 
         dot = v1.dot(v2)
 
@@ -328,8 +328,8 @@ class TestVectorCrossProduct:
 
     def test_cross_product_orthogonal_unit_vectors(self):
         """Test cross product of orthogonal unit vectors."""
-        v1 = Vector(1.0, 0.0, 0.0, unit=u.meter)
-        v2 = Vector(0.0, 1.0, 0.0, unit=u.meter)
+        v1 = _Vector(1.0, 0.0, 0.0, unit=u.meter)
+        v2 = _Vector(0.0, 1.0, 0.0, unit=u.meter)
 
         v3 = v1.cross(v2)
 
@@ -340,8 +340,8 @@ class TestVectorCrossProduct:
 
     def test_cross_product_reverse_order(self):
         """Test that cross product is anti-commutative."""
-        v1 = Vector(1.0, 0.0, 0.0, unit=u.meter)
-        v2 = Vector(0.0, 1.0, 0.0, unit=u.meter)
+        v1 = _Vector(1.0, 0.0, 0.0, unit=u.meter)
+        v2 = _Vector(0.0, 1.0, 0.0, unit=u.meter)
 
         v3 = v2.cross(v1)
 
@@ -352,8 +352,8 @@ class TestVectorCrossProduct:
 
     def test_cross_product_parallel_vectors_is_zero(self):
         """Test cross product of parallel vectors is zero."""
-        v1 = Vector(2.0, 0.0, 0.0, unit=u.meter)
-        v2 = Vector(4.0, 0.0, 0.0, unit=u.meter)
+        v1 = _Vector(2.0, 0.0, 0.0, unit=u.meter)
+        v2 = _Vector(4.0, 0.0, 0.0, unit=u.meter)
 
         v3 = v1.cross(v2)
 
@@ -364,8 +364,8 @@ class TestVectorCrossProduct:
 
     def test_cross_product_general_vectors(self):
         """Test cross product of general vectors."""
-        v1 = Vector(1.0, 2.0, 3.0, unit=u.meter)
-        v2 = Vector(4.0, 5.0, 6.0, unit=u.meter)
+        v1 = _Vector(1.0, 2.0, 3.0, unit=u.meter)
+        v2 = _Vector(4.0, 5.0, 6.0, unit=u.meter)
 
         v3 = v1.cross(v2)
 
@@ -380,36 +380,36 @@ class TestVectorGeometricTests:
 
     def test_is_parallel_to_same_direction(self):
         """Test parallel test for vectors in same direction."""
-        v1 = Vector(1.0, 2.0, 3.0, unit=u.meter)
-        v2 = Vector(2.0, 4.0, 6.0, unit=u.meter)
+        v1 = _Vector(1.0, 2.0, 3.0, unit=u.meter)
+        v2 = _Vector(2.0, 4.0, 6.0, unit=u.meter)
 
         assert v1.is_parallel_to(v2)
 
     def test_is_parallel_to_opposite_direction(self):
         """Test parallel test for vectors in opposite directions."""
-        v1 = Vector(1.0, 2.0, 3.0, unit=u.meter)
-        v2 = Vector(-1.0, -2.0, -3.0, unit=u.meter)
+        v1 = _Vector(1.0, 2.0, 3.0, unit=u.meter)
+        v2 = _Vector(-1.0, -2.0, -3.0, unit=u.meter)
 
         assert v1.is_parallel_to(v2)
 
     def test_is_not_parallel(self):
         """Test parallel test for non-parallel vectors."""
-        v1 = Vector(1.0, 0.0, 0.0, unit=u.meter)
-        v2 = Vector(0.0, 1.0, 0.0, unit=u.meter)
+        v1 = _Vector(1.0, 0.0, 0.0, unit=u.meter)
+        v2 = _Vector(0.0, 1.0, 0.0, unit=u.meter)
 
         assert not v1.is_parallel_to(v2)
 
     def test_is_perpendicular_to(self):
         """Test perpendicular test for orthogonal vectors."""
-        v1 = Vector(1.0, 0.0, 0.0, unit=u.meter)
-        v2 = Vector(0.0, 1.0, 0.0, unit=u.meter)
+        v1 = _Vector(1.0, 0.0, 0.0, unit=u.meter)
+        v2 = _Vector(0.0, 1.0, 0.0, unit=u.meter)
 
         assert v1.is_perpendicular_to(v2)
 
     def test_is_not_perpendicular(self):
         """Test perpendicular test for non-orthogonal vectors."""
-        v1 = Vector(1.0, 0.0, 0.0, unit=u.meter)
-        v2 = Vector(1.0, 1.0, 0.0, unit=u.meter)
+        v1 = _Vector(1.0, 0.0, 0.0, unit=u.meter)
+        v2 = _Vector(1.0, 1.0, 0.0, unit=u.meter)
 
         assert not v1.is_perpendicular_to(v2)
 
@@ -419,8 +419,8 @@ class TestVectorAngle:
 
     def test_angle_between_perpendicular_vectors(self):
         """Test angle between perpendicular vectors is 90 degrees."""
-        v1 = Vector(1.0, 0.0, 0.0, unit=u.meter)
-        v2 = Vector(0.0, 1.0, 0.0, unit=u.meter)
+        v1 = _Vector(1.0, 0.0, 0.0, unit=u.meter)
+        v2 = _Vector(0.0, 1.0, 0.0, unit=u.meter)
 
         angle = v1.angle_to(v2)
 
@@ -430,8 +430,8 @@ class TestVectorAngle:
 
     def test_angle_between_parallel_vectors(self):
         """Test angle between parallel vectors is 0."""
-        v1 = Vector(1.0, 0.0, 0.0, unit=u.meter)
-        v2 = Vector(2.0, 0.0, 0.0, unit=u.meter)
+        v1 = _Vector(1.0, 0.0, 0.0, unit=u.meter)
+        v2 = _Vector(2.0, 0.0, 0.0, unit=u.meter)
 
         angle = v1.angle_to(v2)
 
@@ -439,8 +439,8 @@ class TestVectorAngle:
 
     def test_angle_between_opposite_vectors(self):
         """Test angle between opposite vectors is 180 degrees."""
-        v1 = Vector(1.0, 0.0, 0.0, unit=u.meter)
-        v2 = Vector(-1.0, 0.0, 0.0, unit=u.meter)
+        v1 = _Vector(1.0, 0.0, 0.0, unit=u.meter)
+        v2 = _Vector(-1.0, 0.0, 0.0, unit=u.meter)
 
         angle = v1.angle_to(v2)
 
@@ -450,8 +450,8 @@ class TestVectorAngle:
 
     def test_angle_45_degrees(self):
         """Test angle calculation for 45 degree angle."""
-        v1 = Vector(1.0, 0.0, 0.0, unit=u.meter)
-        v2 = Vector(1.0, 1.0, 0.0, unit=u.meter)
+        v1 = _Vector(1.0, 0.0, 0.0, unit=u.meter)
+        v2 = _Vector(1.0, 1.0, 0.0, unit=u.meter)
 
         angle = v1.angle_to(v2)
 
@@ -461,8 +461,8 @@ class TestVectorAngle:
 
     def test_angle_with_zero_vector_raises(self):
         """Test that angle with zero vector raises error."""
-        v1 = Vector(1.0, 0.0, 0.0, unit=u.meter)
-        v2 = Vector(0.0, 0.0, 0.0, unit=u.meter)
+        v1 = _Vector(1.0, 0.0, 0.0, unit=u.meter)
+        v2 = _Vector(0.0, 0.0, 0.0, unit=u.meter)
 
         with pytest.raises(ValueError, match="zero vector"):
             _ = v1.angle_to(v2)
@@ -473,8 +473,8 @@ class TestVectorProjection:
 
     def test_projection_onto_parallel_vector(self):
         """Test projection onto parallel vector gives the original vector."""
-        v1 = Vector(3.0, 0.0, 0.0, unit=u.meter)
-        v2 = Vector(1.0, 0.0, 0.0, unit=u.meter)
+        v1 = _Vector(3.0, 0.0, 0.0, unit=u.meter)
+        v2 = _Vector(1.0, 0.0, 0.0, unit=u.meter)
 
         proj = v1.projection_onto(v2)
 
@@ -485,8 +485,8 @@ class TestVectorProjection:
 
     def test_projection_onto_perpendicular_vector(self):
         """Test projection onto perpendicular vector gives zero vector."""
-        v1 = Vector(1.0, 0.0, 0.0, unit=u.meter)
-        v2 = Vector(0.0, 1.0, 0.0, unit=u.meter)
+        v1 = _Vector(1.0, 0.0, 0.0, unit=u.meter)
+        v2 = _Vector(0.0, 1.0, 0.0, unit=u.meter)
 
         proj = v1.projection_onto(v2)
 
@@ -497,8 +497,8 @@ class TestVectorProjection:
 
     def test_projection_general_case(self):
         """Test projection in general case."""
-        v1 = Vector(3.0, 4.0, 0.0, unit=u.meter)
-        v2 = Vector(1.0, 0.0, 0.0, unit=u.meter)
+        v1 = _Vector(3.0, 4.0, 0.0, unit=u.meter)
+        v2 = _Vector(1.0, 0.0, 0.0, unit=u.meter)
 
         proj = v1.projection_onto(v2)
 
@@ -508,8 +508,8 @@ class TestVectorProjection:
 
     def test_projection_onto_zero_vector_raises(self):
         """Test that projection onto zero vector raises error."""
-        v1 = Vector(1.0, 2.0, 3.0, unit=u.meter)
-        v2 = Vector(0.0, 0.0, 0.0, unit=u.meter)
+        v1 = _Vector(1.0, 2.0, 3.0, unit=u.meter)
+        v2 = _Vector(0.0, 0.0, 0.0, unit=u.meter)
 
         with pytest.raises(ValueError, match="Cannot project onto zero vector"):
             _ = v1.projection_onto(v2)
@@ -520,7 +520,7 @@ class TestVectorUnitConversions:
 
     def test_convert_vector_to_different_unit(self):
         """Test converting vector to different display unit."""
-        v_m = Vector(10.0, 20.0, 30.0, unit=u.meter)
+        v_m = _Vector(10.0, 20.0, 30.0, unit=u.meter)
         v_ft = v_m.to_unit(u.foot)
 
         # 1 meter = 3.28084 feet
@@ -534,7 +534,7 @@ class TestVectorUnitConversions:
 
     def test_to_array_returns_display_values(self):
         """Test that to_array returns values in display unit."""
-        v = Vector(1.0, 2.0, 3.0, unit=u.meter)
+        v = _Vector(1.0, 2.0, 3.0, unit=u.meter)
         arr = v.to_array()
 
         assert arr[0] == 1.0
@@ -547,23 +547,23 @@ class TestVectorEquality:
 
     def test_equal_vectors(self):
         """Test that identical vectors are equal."""
-        v1 = Vector(1.0, 2.0, 3.0, unit=u.meter)
-        v2 = Vector(1.0, 2.0, 3.0, unit=u.meter)
+        v1 = _Vector(1.0, 2.0, 3.0, unit=u.meter)
+        v2 = _Vector(1.0, 2.0, 3.0, unit=u.meter)
 
         assert v1 == v2
 
     def test_equal_vectors_different_units(self):
         """Test that vectors with same components but different units are equal."""
-        v1 = Vector(1.0, 2.0, 3.0, unit=u.meter)
-        v2 = Vector(100.0, 200.0, 300.0, unit=u.centimeter)
+        v1 = _Vector(1.0, 2.0, 3.0, unit=u.meter)
+        v2 = _Vector(100.0, 200.0, 300.0, unit=u.centimeter)
 
         # Should be equal because internal SI values are the same
         assert v1 == v2
 
     def test_unequal_vectors(self):
         """Test that different vectors are not equal."""
-        v1 = Vector(1.0, 2.0, 3.0, unit=u.meter)
-        v2 = Vector(1.1, 2.0, 3.0, unit=u.meter)
+        v1 = _Vector(1.0, 2.0, 3.0, unit=u.meter)
+        v2 = _Vector(1.1, 2.0, 3.0, unit=u.meter)
 
         assert v1 != v2
 
@@ -573,13 +573,13 @@ class TestVectorEdgeCases:
 
     def test_zero_vector(self):
         """Test creating zero vector."""
-        v = Vector(0.0, 0.0, 0.0, unit=u.meter)
+        v = _Vector(0.0, 0.0, 0.0, unit=u.meter)
 
         assert abs(v.magnitude.magnitude()) < 1e-10
 
     def test_negative_components(self):
         """Test vector with negative components."""
-        v = Vector(-1.0, -2.0, -3.0, unit=u.meter)
+        v = _Vector(-1.0, -2.0, -3.0, unit=u.meter)
 
         assert v.u.magnitude() == -1.0
         assert v.v.magnitude() == -2.0
@@ -588,13 +588,13 @@ class TestVectorEdgeCases:
     def test_very_large_components(self):
         """Test vector with very large components."""
         large_val = 1e10
-        v = Vector(large_val, large_val, large_val, unit=u.meter)
+        v = _Vector(large_val, large_val, large_val, unit=u.meter)
 
         assert v.u.magnitude() == large_val
 
     def test_very_small_components(self):
         """Test vector with very small components."""
         small_val = 1e-10
-        v = Vector(small_val, small_val, small_val, unit=u.meter)
+        v = _Vector(small_val, small_val, small_val, unit=u.meter)
 
         assert abs(v.u.magnitude() - small_val) < 1e-20

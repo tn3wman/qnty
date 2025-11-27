@@ -17,7 +17,7 @@ import numpy as np
 from matplotlib.patches import Arc, FancyArrowPatch
 
 if TYPE_CHECKING:
-    from ...spatial import ForceVector
+    from ...spatial import _Vector
 
 
 class VectorDiagram:
@@ -73,7 +73,7 @@ class VectorDiagram:
 
     def add_vector(
         self,
-        force: ForceVector,
+        force: _Vector,
         color: str = 'blue',
         label: str | None = None,
         show_angle: bool = True,
@@ -111,7 +111,7 @@ class VectorDiagram:
 
     def add_resultant(
         self,
-        force: ForceVector,
+        force: _Vector,
         color: str = 'green',
         label: str | None = None,
         linewidth: float = 3.0
@@ -286,7 +286,7 @@ class VectorDiagram:
                 return f'${base}_{{{subscript}}}$'
         return label
 
-    def _format_vector_label(self, force: ForceVector, label: str) -> str:
+    def _format_vector_label(self, force: _Vector, label: str) -> str:
         """
         Format vector label with LaTeX notation and magnitude.
 

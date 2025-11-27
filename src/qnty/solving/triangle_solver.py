@@ -20,8 +20,8 @@ from typing import Any
 import numpy as np
 
 from ..core.quantity import Quantity
-from ..spatial import ForceVector
-from ..spatial.vector import Vector
+from ..spatial import _Vector
+from ..spatial.vector import _Vector
 
 
 class TriangleSolver:
@@ -47,7 +47,7 @@ class TriangleSolver:
         """Initialize the triangle solver."""
         self.solution_steps: list[dict[str, Any]] = []
 
-    def solve_resultant(self, known_forces: list[ForceVector], forces_dict: dict[str, ForceVector]) -> ForceVector:
+    def solve_resultant(self, known_forces: list[_Vector], forces_dict: dict[str, _Vector]) -> _Vector:
         """
         Compute resultant of known forces using vector addition (component summation).
 
@@ -89,7 +89,7 @@ class TriangleSolver:
         y_qty = Quantity(name="FR_y", dim=dim.force, value=sum_y, preferred=ref_unit)
         z_qty = Quantity(name="FR_z", dim=dim.force, value=sum_z, preferred=ref_unit)
 
-        resultant_vector = Vector.from_quantities(x_qty, y_qty, z_qty)
+        resultant_vector = _Vector.from_quantities(x_qty, y_qty, z_qty)
 
         # Find or create resultant force
         resultant = None
@@ -99,7 +99,7 @@ class TriangleSolver:
                 break
 
         if resultant is None:
-            resultant = ForceVector(vector=resultant_vector, name="FR", is_resultant=True)
+            resultant = _Vector(vector=resultant_vector, name="FR", is_resultant=True)
             forces_dict["FR"] = resultant
         else:
             # Update existing resultant
@@ -118,10 +118,10 @@ class TriangleSolver:
 
     def solve_single_unknown(
         self,
-        known_forces: list[ForceVector],
-        unknown_force: ForceVector,
-        resultant_forces: list[ForceVector],
-        forces_dict: dict[str, ForceVector]
+        known_forces: list[_Vector],
+        unknown_force: _Vector,
+        resultant_forces: list[_Vector],
+        forces_dict: dict[str, _Vector]
     ) -> None:
         """
         Solve for single unknown force given known forces.
@@ -167,9 +167,9 @@ class TriangleSolver:
 
     def solve_unknown_from_resultant_and_known(
         self,
-        unknown_force: ForceVector,
-        resultant: ForceVector,
-        known_force: ForceVector
+        unknown_force: _Vector,
+        resultant: _Vector,
+        known_force: _Vector
     ) -> None:
         """
         Solve for unknown force given known resultant and one known force.
@@ -279,7 +279,7 @@ class TriangleSolver:
         x_qty = Quantity(name=f"{unknown_force.name}_x", dim=dim.force, value=F_unknownx, preferred=ref_unit)
         y_qty = Quantity(name=f"{unknown_force.name}_y", dim=dim.force, value=F_unknowny, preferred=ref_unit)
         z_qty = Quantity(name=f"{unknown_force.name}_z", dim=dim.force, value=0.0, preferred=ref_unit)
-        unknown_vector = Vector.from_quantities(x_qty, y_qty, z_qty)
+        unknown_vector = _Vector.from_quantities(x_qty, y_qty, z_qty)
 
         # Update unknown force
         unknown_force.copy_coords_from(unknown_vector)
@@ -289,9 +289,9 @@ class TriangleSolver:
 
     def solve_resultant_from_two_forces(
         self,
-        force1: ForceVector,
-        force2: ForceVector,
-        resultant: ForceVector
+        force1: _Vector,
+        force2: _Vector,
+        resultant: _Vector
     ) -> None:
         """
         Solve for resultant of two forces using law of cosines and law of sines.
@@ -390,7 +390,7 @@ class TriangleSolver:
         x_qty = Quantity(name="FR_x", dim=dim.force, value=FRx, preferred=ref_unit)
         y_qty = Quantity(name="FR_y", dim=dim.force, value=FRy, preferred=ref_unit)
         z_qty = Quantity(name="FR_z", dim=dim.force, value=0.0, preferred=ref_unit)
-        resultant_vector = Vector.from_quantities(x_qty, y_qty, z_qty)
+        resultant_vector = _Vector.from_quantities(x_qty, y_qty, z_qty)
 
         # Update resultant force
         resultant.copy_coords_from(resultant_vector)
@@ -400,8 +400,8 @@ class TriangleSolver:
 
     def solve_two_unknowns_with_known_resultant(
         self,
-        unknown_forces: list[ForceVector],
-        resultant: ForceVector
+        unknown_forces: list[_Vector],
+        resultant: _Vector
     ) -> None:
         """
         Solve for two unknown force magnitudes given known resultant and known angles.
@@ -541,7 +541,7 @@ class TriangleSolver:
         f1_x_qty = Quantity(name=f"{force1.name}_x", dim=dim.force, value=F1x, preferred=ref_unit)
         f1_y_qty = Quantity(name=f"{force1.name}_y", dim=dim.force, value=F1y, preferred=ref_unit)
         f1_z_qty = Quantity(name=f"{force1.name}_z", dim=dim.force, value=0.0, preferred=ref_unit)
-        force1._coords = Vector.from_quantities(f1_x_qty, f1_y_qty, f1_z_qty)._coords
+        force1._coords = _Vector.from_quantities(f1_x_qty, f1_y_qty, f1_z_qty)._coords
         force1.is_known = True
 
         # Update force 2
@@ -553,10 +553,10 @@ class TriangleSolver:
         f2_x_qty = Quantity(name=f"{force2.name}_x", dim=dim.force, value=F2x, preferred=ref_unit)
         f2_y_qty = Quantity(name=f"{force2.name}_y", dim=dim.force, value=F2y, preferred=ref_unit)
         f2_z_qty = Quantity(name=f"{force2.name}_z", dim=dim.force, value=0.0, preferred=ref_unit)
-        force2._coords = Vector.from_quantities(f2_x_qty, f2_y_qty, f2_z_qty)._coords
+        force2._coords = _Vector.from_quantities(f2_x_qty, f2_y_qty, f2_z_qty)._coords
         force2.is_known = True
 
-    def solve_by_components(self, known_forces: list[ForceVector], unknown_force: ForceVector) -> None:
+    def solve_by_components(self, known_forces: list[_Vector], unknown_force: _Vector) -> None:
         """
         Solve using component summation (ΣFx = 0, ΣFy = 0).
 
@@ -608,7 +608,7 @@ class TriangleSolver:
         y_qty = Quantity(name=f"{unknown_force.name}_y", dim=dim.force, value=unknown_y, preferred=ref_unit)
         z_qty = Quantity(name=f"{unknown_force.name}_z", dim=dim.force, value=unknown_z, preferred=ref_unit)
 
-        unknown_vector = Vector.from_quantities(x_qty, y_qty, z_qty)
+        unknown_vector = _Vector.from_quantities(x_qty, y_qty, z_qty)
 
         # Update unknown force
         unknown_force.copy_coords_from(unknown_vector)

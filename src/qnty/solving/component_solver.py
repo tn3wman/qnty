@@ -21,8 +21,8 @@ This method is preferred over geometric/trigonometric methods when:
 import math
 
 from ..core.quantity import Quantity
-from ..spatial import ForceVector
-from ..spatial.vector import Vector
+from ..spatial import _Vector
+from ..spatial.vector import _Vector
 
 
 class ComponentSolver:
@@ -38,7 +38,7 @@ class ComponentSolver:
         """Initialize the component solver."""
         self.solution_steps: list[dict] = []
 
-    def _resolve_force_relative_angles(self, forces_dict: dict[str, ForceVector], resolve_unknown_refs: bool = False) -> None:
+    def _resolve_force_relative_angles(self, forces_dict: dict[str, _Vector], resolve_unknown_refs: bool = False) -> None:
         """
         Resolve force-relative angle references in the forces dictionary.
 
@@ -98,13 +98,13 @@ class ComponentSolver:
                 x_qty = Quantity(name=f"{force_name}_x", dim=dim.force, value=x_val, preferred=force.magnitude.preferred)
                 y_qty = Quantity(name=f"{force_name}_y", dim=dim.force, value=y_val, preferred=force.magnitude.preferred)
                 z_qty = Quantity(name=f"{force_name}_z", dim=dim.force, value=z_val, preferred=force.magnitude.preferred)
-                force._coords = Vector.from_quantities(x_qty, y_qty, z_qty)._coords
+                force._coords = _Vector.from_quantities(x_qty, y_qty, z_qty)._coords
 
             # Clear the relative constraint since it's now resolved
             force._relative_to_force = None
             force._relative_angle = None
 
-    def solve(self, forces: list[ForceVector], force_unit: str | None = None) -> dict[str, ForceVector]:
+    def solve(self, forces: list[_Vector], force_unit: str | None = None) -> dict[str, _Vector]:
         """
         Solve a force system problem automatically detecting the problem type.
 
@@ -216,7 +216,7 @@ class ComponentSolver:
 
         return result
 
-    def resolve_force_components(self, force: ForceVector) -> tuple[float, float, float]:
+    def resolve_force_components(self, force: _Vector) -> tuple[float, float, float]:
         """
         Resolve a force into its x, y, z components in SI units.
 
@@ -261,7 +261,7 @@ class ComponentSolver:
         else:
             raise ValueError(f"Force {force.name} must have either vector components or magnitude+angle")
 
-    def sum_components(self, forces: list[ForceVector]) -> tuple[float, float, float]:
+    def sum_components(self, forces: list[_Vector]) -> tuple[float, float, float]:
         """
         Sum the x, y, z components of all forces.
 
@@ -374,7 +374,7 @@ class ComponentSolver:
 
         return (alpha, beta, gamma)
 
-    def solve_resultant(self, known_forces: list[ForceVector], force_unit: str | None = None) -> ForceVector:
+    def solve_resultant(self, known_forces: list[_Vector], force_unit: str | None = None) -> _Vector:
         """
         Calculate the resultant of known forces using component method.
 
@@ -457,7 +457,7 @@ class ComponentSolver:
             y_qty = Quantity(name="F_R_y", dim=dim.force, value=sum_y, preferred=result_unit)
             z_qty = Quantity(name="F_R_z", dim=dim.force, value=sum_z, preferred=result_unit)
 
-            resultant = ForceVector(x=x_qty, y=y_qty, z=z_qty, unit=result_unit, name="F_R", is_resultant=True, is_known=True)
+            resultant = _Vector(x=x_qty, y=y_qty, z=z_qty, unit=result_unit, name="F_R", is_resultant=True, is_known=True)
 
         else:
             # 2D: Calculate angle θ from +x axis
@@ -480,13 +480,13 @@ class ComponentSolver:
             ang_qty.preferred = degree_unit
 
             # Create 2D ForceVector from magnitude and angle
-            resultant = ForceVector(magnitude=mag_qty, angle=ang_qty, unit=result_unit, name="F_R", is_resultant=True, is_known=True)
+            resultant = _Vector(magnitude=mag_qty, angle=ang_qty, unit=result_unit, name="F_R", is_resultant=True, is_known=True)
 
         return resultant
 
     def solve_constrained_equilibrium(
-        self, known_forces: list[ForceVector], unknown_force: ForceVector, unknown_resultant: ForceVector, force_unit: str | None = None
-    ) -> tuple[ForceVector, ForceVector]:
+        self, known_forces: list[_Vector], unknown_force: _Vector, unknown_resultant: _Vector, force_unit: str | None = None
+    ) -> tuple[_Vector, _Vector]:
         """
         Solve for unknown force and resultant magnitudes when both have known directions.
 
@@ -579,7 +579,7 @@ class ComponentSolver:
         ang_unknown_qty = Quantity(name=f"{unknown_force.name}_angle", dim=dim.D, value=theta_unknown)
         ang_unknown_qty.preferred = degree_unit
 
-        solved_unknown = ForceVector(magnitude=mag_unknown_qty, angle=ang_unknown_qty, unit=result_unit, name=unknown_force.name, is_known=True)
+        solved_unknown = _Vector(magnitude=mag_unknown_qty, angle=ang_unknown_qty, unit=result_unit, name=unknown_force.name, is_known=True)
 
         # Solved resultant
         mag_R_qty = Quantity(name=f"{unknown_resultant.name}_magnitude", dim=dim.force, value=mag_R)
@@ -588,11 +588,11 @@ class ComponentSolver:
         ang_R_qty = Quantity(name=f"{unknown_resultant.name}_angle", dim=dim.D, value=theta_R)
         ang_R_qty.preferred = degree_unit
 
-        solved_resultant = ForceVector(magnitude=mag_R_qty, angle=ang_R_qty, unit=result_unit, name=unknown_resultant.name, is_resultant=True, is_known=True)
+        solved_resultant = _Vector(magnitude=mag_R_qty, angle=ang_R_qty, unit=result_unit, name=unknown_resultant.name, is_resultant=True, is_known=True)
 
         return (solved_unknown, solved_resultant)
 
-    def solve_unknown_force(self, known_forces: list[ForceVector], known_resultant: ForceVector, force_unit: str | None = None, unknown_force_name: str = "F_unknown") -> ForceVector:
+    def solve_unknown_force(self, known_forces: list[_Vector], known_resultant: _Vector, force_unit: str | None = None, unknown_force_name: str = "F_unknown") -> _Vector:
         """
         Solve for an unknown force given known forces and a known resultant.
 
@@ -676,7 +676,7 @@ class ComponentSolver:
             z_qty = Quantity(name=f"{unknown_force_name}_z", dim=dim.force, value=unknown_z, preferred=result_unit)
 
             # Create ForceVector from components
-            unknown_force = ForceVector(x=x_qty, y=y_qty, z=z_qty, unit=result_unit, name=unknown_force_name, is_known=True)
+            unknown_force = _Vector(x=x_qty, y=y_qty, z=z_qty, unit=result_unit, name=unknown_force_name, is_known=True)
         else:
             # 2D problem - create force with magnitude and angle
             angle_rad = self.calculate_resultant_angle_2d(unknown_x, unknown_y)
@@ -697,7 +697,7 @@ class ComponentSolver:
             ang_qty = Quantity(name=f"{unknown_force_name}_angle", dim=dim.D, value=angle_rad, preferred=degree_unit)
 
             # Create ForceVector from magnitude and angle
-            unknown_force = ForceVector(magnitude=mag_qty, angle=ang_qty, unit=result_unit, name=unknown_force_name, is_known=True)
+            unknown_force = _Vector(magnitude=mag_qty, angle=ang_qty, unit=result_unit, name=unknown_force_name, is_known=True)
 
         return unknown_force
 

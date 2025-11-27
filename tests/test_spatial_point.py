@@ -14,7 +14,7 @@ import math
 import pytest
 
 from qnty.core import Q, u
-from qnty.spatial import Point, Vector
+from qnty.spatial import Point, _Vector
 
 
 class TestPointCreation:
@@ -128,7 +128,7 @@ class TestPointOperations:
 
         v = p1 - p2
 
-        assert isinstance(v, Vector)
+        assert isinstance(v, _Vector)
         assert v.u.magnitude() == 5.0  # 10 - 5
         assert v.v.magnitude() == 10.0  # 20 - 10
         assert v.w.magnitude() == 15.0  # 30 - 15
@@ -173,7 +173,7 @@ class TestPointOperations:
     def test_displaced_point(self):
         """Test displacing a point by a vector."""
         p = Point(10.0, 20.0, 30.0, unit=u.meter)
-        v = Vector(5.0, -10.0, 15.0, unit=u.meter)
+        v = _Vector(5.0, -10.0, 15.0, unit=u.meter)
 
         p_new = p.displaced(v)
 
@@ -184,7 +184,7 @@ class TestPointOperations:
     def test_displaced_point_with_scaling(self):
         """Test displacing a point by a scaled vector."""
         p = Point(10.0, 20.0, 30.0, unit=u.meter)
-        v = Vector(1.0, 0.0, 0.0, unit=u.meter)
+        v = _Vector(1.0, 0.0, 0.0, unit=u.meter)
 
         p_new = p.displaced(v, times=5.0)
 
@@ -195,7 +195,7 @@ class TestPointOperations:
     def test_displaced_different_dimensions_raises(self):
         """Test that displacing with vector of different dimension raises error."""
         p = Point(10.0, 20.0, 30.0, unit=u.meter)
-        v = Vector(5.0, 10.0, 15.0, unit=u.newton)
+        v = _Vector(5.0, 10.0, 15.0, unit=u.newton)
 
         with pytest.raises(ValueError, match="different dimension"):
             _ = p.displaced(v)
@@ -334,7 +334,7 @@ class TestPointEdgeCases:
     def test_displacement_by_zero_vector(self):
         """Test displacing point by zero vector."""
         p = Point(10.0, 20.0, 30.0, unit=u.meter)
-        v = Vector(0.0, 0.0, 0.0, unit=u.meter)
+        v = _Vector(0.0, 0.0, 0.0, unit=u.meter)
 
         p_new = p.displaced(v)
 

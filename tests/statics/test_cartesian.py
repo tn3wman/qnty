@@ -13,7 +13,7 @@ import math
 import pytest
 
 from qnty.problems.cartesian_vector import CartesianVectorProblem
-from qnty.spatial import ForceVector
+from qnty.spatial import _Vector
 
 # Problem definitions - single source of truth
 CARTESIAN_3D_PROBLEMS = {
@@ -23,7 +23,7 @@ CARTESIAN_3D_PROBLEMS = {
         The force F has a magnitude of 80 lb and acts within the octant shown. Determine the magnitudes of the x, y, z components of F.
         """,
         "forces": {
-            "F": ForceVector(
+            "F": _Vector(
                 magnitude=80,
                 unit="lbf",
                 alpha=60,
@@ -55,7 +55,7 @@ CARTESIAN_3D_PROBLEMS = {
         The bolt is subjected to the force F, which has components acting along the x, y, z axes as shown. If the magnitude of F is 80 N, and and determine the magnitudes of its components.
         """,
         "forces": {
-            "F": ForceVector(
+            "F": _Vector(
                 magnitude=80,
                 alpha=-60,
                 gamma=45,
@@ -87,7 +87,7 @@ CARTESIAN_3D_PROBLEMS = {
         Determine the magnitude and coordinate direction angles of the force F acting on the support. The component of F in the x-y plane is 7 kN.
         """,
         "forces": {
-            "F": ForceVector(
+            "F": _Vector(
                 magnitude=8083,  # 7 kN / sin(60°) = 8.083 kN
                 phi=60,  # Angle from +z axis (90° - 30° elevation)
                 theta=-40,  # Azimuth angle in x-y plane (negative for -y component)
@@ -119,7 +119,7 @@ CARTESIAN_3D_PROBLEMS = {
         Determine the magnitude and coordinate direction angles of the resultant force.
         """,
         "forces": {
-            "F_1": ForceVector(
+            "F_1": _Vector(
                 magnitude=80,
                 unit="lbf",
                 phi=60,
@@ -127,9 +127,9 @@ CARTESIAN_3D_PROBLEMS = {
                 name="F_1",
                 description="Force F1",
             ),
-            "F_2": ForceVector(
+            "F_2": _Vector(
                 x=0, y=0, z=-130, unit="lbf", name="F_2", description="Force F2"),
-            "F_R": ForceVector.unknown(name="F_R", is_resultant=True, description="Resultant Force"),
+            "F_R": _Vector.unknown(name="F_R", is_resultant=True, description="Resultant Force"),
         },
         "expected": {
             "F_1": {
@@ -166,7 +166,7 @@ CARTESIAN_3D_PROBLEMS = {
         Specify the coordinate direction angles of and and express each force as a Cartesian vector.
         """,
         "forces": {
-            "F_1": ForceVector(
+            "F_1": _Vector(
                 magnitude=80,
                 unit="lbf",
                 phi=60,
@@ -174,7 +174,7 @@ CARTESIAN_3D_PROBLEMS = {
                 name="F_1",
                 description="Force F1",
             ),
-            "F_2": ForceVector(
+            "F_2": _Vector(
                 x=0, y=0, z=-130, unit="lbf", name="F_2", description="Force F2"),
         },
         "expected": {
@@ -210,7 +210,7 @@ CARTESIAN_3D_PROBLEMS = {
         The screw eye is subjected to the two forces shown. Express each force in Cartesian vector form and then determine the resultant force. Find the magnitude and coordinate direction angles of the resultant force.
         """,
         "forces": {
-            "F_1": ForceVector(
+            "F_1": _Vector(
                 magnitude=300,
                 unit="N",
                 theta=135,
@@ -218,7 +218,7 @@ CARTESIAN_3D_PROBLEMS = {
                 name="F_1",
                 description="Force F1",
             ),
-            "F_2": ForceVector(
+            "F_2": _Vector(
                 magnitude=500,
                 unit="N",
                 alpha=60,
@@ -227,7 +227,7 @@ CARTESIAN_3D_PROBLEMS = {
                 name="F_2",
                 description="Force F2",
             ),
-            "F_R": ForceVector.unknown(name="F_R", is_resultant=True, description="Resultant Force"),
+            "F_R": _Vector.unknown(name="F_R", is_resultant=True, description="Resultant Force"),
         },
         "expected": {
             "F_1": {
@@ -266,7 +266,7 @@ CARTESIAN_3D_PROBLEMS = {
         Determine the coordinate direction angles of F1.
         """,
         "forces": {
-            "F_1": ForceVector(
+            "F_1": _Vector(
                 magnitude=300,
                 unit="N",
                 theta=135,
@@ -298,7 +298,7 @@ CARTESIAN_3D_PROBLEMS = {
         Determine the magnitude and coordinate direction angles of F3 so that the resultant of the three forces acts along the positive y axis and has a magnitude of 600 lb.
         """,
         "forces": {
-            "F_1": ForceVector(
+            "F_1": _Vector(
                 magnitude=180,
                 unit="lbf",
                 angle=0,
@@ -306,7 +306,7 @@ CARTESIAN_3D_PROBLEMS = {
                 name="F_1",
                 description="Force F1",
             ),
-            "F_2": ForceVector(
+            "F_2": _Vector(
                 magnitude=300,
                 unit="lbf",
                 theta=50,
@@ -314,8 +314,8 @@ CARTESIAN_3D_PROBLEMS = {
                 name="F_2",
                 description="Force F2",
             ),
-            "F_3": ForceVector.unknown(name="F_3", description="Force F3"),
-            "F_R": ForceVector(
+            "F_3": _Vector.unknown(name="F_3", description="Force F3"),
+            "F_R": _Vector(
                 magnitude=600,
                 unit="lbf",
                 angle=0,
@@ -366,7 +366,7 @@ CARTESIAN_3D_PROBLEMS = {
         Determine the magnitude and coordinate direction angles of F3 so that the resultant of the three forces is zero.
         """,
         "forces": {
-            "F_1": ForceVector(
+            "F_1": _Vector(
                 magnitude=180,
                 unit="lbf",
                 angle=0,
@@ -374,7 +374,7 @@ CARTESIAN_3D_PROBLEMS = {
                 name="F_1",
                 description="Force F1",
             ),
-            "F_2": ForceVector(
+            "F_2": _Vector(
                 magnitude=300,
                 unit="lbf",
                 theta=50,
@@ -382,8 +382,8 @@ CARTESIAN_3D_PROBLEMS = {
                 name="F_2",
                 description="Force F2",
             ),
-            "F_3": ForceVector.unknown(name="F_3", description="Force F3"),
-            "F_R": ForceVector(
+            "F_3": _Vector.unknown(name="F_3", description="Force F3"),
+            "F_R": _Vector(
                 magnitude=0,
                 unit="lbf",
                 angle=0,
@@ -434,7 +434,7 @@ CARTESIAN_3D_PROBLEMS = {
         Determine the magnitude and coordinate direction angles of the resultant force, and sketch this vector on the coordinate system.
         """,
         "forces": {
-            "F_1": ForceVector(
+            "F_1": _Vector(
                 magnitude=400,
                 unit="N",
                 alpha=45,
@@ -443,7 +443,7 @@ CARTESIAN_3D_PROBLEMS = {
                 name="F_1",
                 description="Force F1",
             ),
-            "F_2": ForceVector(
+            "F_2": _Vector(
                 magnitude=125,
                 unit="N",
                 theta=-20,
@@ -451,7 +451,7 @@ CARTESIAN_3D_PROBLEMS = {
                 name="F_2",
                 description="Force F2",
             ),
-            "F_R": ForceVector.unknown(name="F_R", is_resultant=True, description="Resultant Force"),
+            "F_R": _Vector.unknown(name="F_R", is_resultant=True, description="Resultant Force"),
         },
         "expected": {
             "F_1": {
@@ -486,7 +486,7 @@ CARTESIAN_3D_PROBLEMS = {
         Determine the magnitude and coordinate direction angles of the resultant force, and sketch this vector on the coordinate system.
         """,
         "forces": {
-            "F_1": ForceVector(
+            "F_1": _Vector(
                 magnitude=450,
                 unit="N",
                 theta=90,
@@ -494,7 +494,7 @@ CARTESIAN_3D_PROBLEMS = {
                 name="F_1",
                 description="Force F1",
             ),
-            "F_2": ForceVector(
+            "F_2": _Vector(
                 magnitude=525,
                 unit="N",
                 alpha=45,
@@ -503,7 +503,7 @@ CARTESIAN_3D_PROBLEMS = {
                 name="F_2",
                 description="Force F2",
             ),
-            "F_R": ForceVector.unknown(name="F_R", is_resultant=True, description="Resultant Force"),
+            "F_R": _Vector.unknown(name="F_R", is_resultant=True, description="Resultant Force"),
         },
         "expected": {
             "F_1": {
@@ -538,12 +538,12 @@ CARTESIAN_3D_PROBLEMS = {
         Specify the magnitude and coordinate direction angles a1, , of so that the resultant of the three forces acting on the bracket is Note that lies in the x–y plane.
         """,
         "forces": {
-            "F_1": ForceVector.unknown(
+            "F_1": _Vector.unknown(
                 unit="lbf",
                 name="F_1",
                 description="Force F1",
             ),
-            "F_2": ForceVector(
+            "F_2": _Vector(
                 magnitude=200,
                 unit="lbf",
                 angle=0,
@@ -551,7 +551,7 @@ CARTESIAN_3D_PROBLEMS = {
                 name="F_2",
                 description="Force F2",
             ),
-            "F_3": ForceVector(
+            "F_3": _Vector(
                 magnitude=400,
                 unit="lbf",
                 angle=30,
@@ -559,7 +559,7 @@ CARTESIAN_3D_PROBLEMS = {
                 name="F_3",
                 description="Force F3",
             ),
-            "F_R": ForceVector(
+            "F_R": _Vector(
                 x=0, y=0, z=-350,
                 unit="lbf",
                 name="F_R", is_resultant=True, description="Resultant Force"
@@ -605,7 +605,7 @@ CARTESIAN_3D_PROBLEMS = {
         Two forces F1 and F2 act on the screw eye. If the resultant force FR has a magnitude of 150 lb and the coordinate direction angles shown, determine the magnitude of F2 and its coordinate direction angles.
         """,
         "forces": {
-            "F_1": ForceVector(
+            "F_1": _Vector(
                 magnitude=80,
                 unit="lbf",
                 angle=0,
@@ -613,12 +613,12 @@ CARTESIAN_3D_PROBLEMS = {
                 name="F_1",
                 description="Force F1",
             ),
-            "F_2": ForceVector.unknown(
+            "F_2": _Vector.unknown(
                 unit="lbf",
                 name="F_2",
                 description="Force F2",
             ),
-            "F_R": ForceVector(
+            "F_R": _Vector(
                 magnitude=150,
                 alpha=120,
                 beta=50,
@@ -659,7 +659,7 @@ CARTESIAN_3D_PROBLEMS = {
         Express each force in Cartesian vector form.
         """,
         "forces": {
-            "F_1": ForceVector(
+            "F_1": _Vector(
                 magnitude=90,
                 unit="N",
                 theta=0,
@@ -667,7 +667,7 @@ CARTESIAN_3D_PROBLEMS = {
                 name="F_1",
                 description="Force F1",
             ),
-            "F_2": ForceVector(
+            "F_2": _Vector(
                 magnitude=150,
                 unit="N",
                 theta=45,
@@ -675,7 +675,7 @@ CARTESIAN_3D_PROBLEMS = {
                 name="F_2",
                 description="Force F2",
             ),
-            "F_3": ForceVector(
+            "F_3": _Vector(
                 magnitude=200,
                 unit="N",
                 theta=0,
@@ -718,7 +718,7 @@ CARTESIAN_3D_PROBLEMS = {
         Determine the magnitude and coordinate direction angles of the resultant force, and sketch this vector on the coordinate system.
         """,
         "forces": {
-            "F_1": ForceVector(
+            "F_1": _Vector(
                 magnitude=90,
                 unit="N",
                 theta=0,
@@ -726,7 +726,7 @@ CARTESIAN_3D_PROBLEMS = {
                 name="F_1",
                 description="Force F1",
             ),
-            "F_2": ForceVector(
+            "F_2": _Vector(
                 magnitude=150,
                 unit="N",
                 theta=45,
@@ -734,7 +734,7 @@ CARTESIAN_3D_PROBLEMS = {
                 name="F_2",
                 description="Force F2",
             ),
-            "F_3": ForceVector(
+            "F_3": _Vector(
                 magnitude=200,
                 unit="N",
                 theta=0,
@@ -742,7 +742,7 @@ CARTESIAN_3D_PROBLEMS = {
                 name="F_3",
                 description="Force F3",
             ),
-            "F_R": ForceVector.unknown(name="F_R", is_resultant=True, description="Resultant Force"),
+            "F_R": _Vector.unknown(name="F_R", is_resultant=True, description="Resultant Force"),
         },
         "expected": {
             "F_1": {
@@ -785,7 +785,7 @@ CARTESIAN_3D_PROBLEMS = {
         The spur gear is subjected to the two forces caused by contact with other gears. Express each force as a Cartesian vector.
         """,
         "forces": {
-            "F_1": ForceVector(
+            "F_1": _Vector(
                 magnitude=50,
                 unit="lbf",
                 theta=90,
@@ -793,7 +793,7 @@ CARTESIAN_3D_PROBLEMS = {
                 name="F_1",
                 description="Force F1",
             ),
-            "F_2": ForceVector(
+            "F_2": _Vector(
                 magnitude=180,
                 unit="lbf",
                 alpha=60,
@@ -830,7 +830,7 @@ CARTESIAN_3D_PROBLEMS = {
         The spur gear is subjected to the two forces caused by contact with other gears. Express each force as a Cartesian vector.
         """,
         "forces": {
-            "F_1": ForceVector(
+            "F_1": _Vector(
                 magnitude=50,
                 unit="lbf",
                 theta=90,
@@ -838,7 +838,7 @@ CARTESIAN_3D_PROBLEMS = {
                 name="F_1",
                 description="Force F1",
             ),
-            "F_2": ForceVector(
+            "F_2": _Vector(
                 magnitude=180,
                 unit="lbf",
                 alpha=60,
@@ -847,7 +847,7 @@ CARTESIAN_3D_PROBLEMS = {
                 name="F_2",
                 description="Force F2",
             ),
-            "F_R": ForceVector.unknown(name="F_R", is_resultant=True, description="Resultant Force"),
+            "F_R": _Vector.unknown(name="F_R", is_resultant=True, description="Resultant Force"),
         },
         "expected": {
             "F_1": {
@@ -882,7 +882,7 @@ CARTESIAN_3D_PROBLEMS = {
         Determine the magnitude and coordinate direction angles of the resultant force, and sketch this vector on the coordinate system.
         """,
         "forces": {
-            "F_1": ForceVector(
+            "F_1": _Vector(
                 magnitude=400,
                 unit="N",
                 theta=-20,
@@ -890,7 +890,7 @@ CARTESIAN_3D_PROBLEMS = {
                 name="F_1",
                 description="Force F1",
             ),
-            "F_2": ForceVector(
+            "F_2": _Vector(
                 magnitude=500,
                 unit="N",
                 alpha=60,
@@ -899,7 +899,7 @@ CARTESIAN_3D_PROBLEMS = {
                 name="F_2",
                 description="Force F2",
             ),
-            "F_R": ForceVector.unknown(name="F_R", is_resultant=True, description="Resultant Force"),
+            "F_R": _Vector.unknown(name="F_R", is_resultant=True, description="Resultant Force"),
         },
         "expected": {
             "F_1": {
@@ -934,7 +934,7 @@ CARTESIAN_3D_PROBLEMS = {
         The two forces F1 and F2 acting at A have a resultant force of FR = 5 - 100k6 lb. Determine the magnitude and coordinate direction angles of F2.
         """,
         "forces": {
-            "F_1": ForceVector(
+            "F_1": _Vector(
                 magnitude=60,
                 unit="lbf",
                 theta=150,
@@ -942,12 +942,12 @@ CARTESIAN_3D_PROBLEMS = {
                 name="F_1",
                 description="Force F1",
             ),
-            "F_2": ForceVector.unknown(
+            "F_2": _Vector.unknown(
                 unit="lbf",
                 name="F_2",
                 description="Force F2",
             ),
-            "F_R": ForceVector(
+            "F_R": _Vector(
                 unit="lbf",
                 x=0,
                 y=0,
@@ -987,7 +987,7 @@ CARTESIAN_3D_PROBLEMS = {
         Determine the coordinate direction angles of the force F1 and indicate them on the figure.
         """,
         "forces": {
-            "F_1": ForceVector(
+            "F_1": _Vector(
                 magnitude=60,
                 unit="lbf",
                 theta=150,
@@ -1016,7 +1016,7 @@ CARTESIAN_3D_PROBLEMS = {
         The bracket is subjected to the two forces shown. Express each force in Cartesian vector form and then determine the resultant force Find the magnitude and coordinate direction angles of the resultant force.
         """,
         "forces": {
-            "F_1": ForceVector(
+            "F_1": _Vector(
                 magnitude=250,
                 unit="N",
                 theta=65,
@@ -1024,7 +1024,7 @@ CARTESIAN_3D_PROBLEMS = {
                 name="F_1",
                 description="Force F1",
             ),
-            "F_2": ForceVector(
+            "F_2": _Vector(
                 magnitude=400,
                 unit="N",
                 alpha=120,
@@ -1033,7 +1033,7 @@ CARTESIAN_3D_PROBLEMS = {
                 name="F_2",
                 description="Force F2",
             ),
-            "F_R": ForceVector.unknown(name="F_R", is_resultant=True, description="Resultant Force"),
+            "F_R": _Vector.unknown(name="F_R", is_resultant=True, description="Resultant Force"),
         },
         "expected": {
             "F_1": {
@@ -1072,7 +1072,7 @@ CARTESIAN_3D_PROBLEMS = {
         If the coordinate direction angles for are , and , determine the magnitude and coordinate direction angles of the resultant force acting on the eyebolt.  b3 = 60°
         """,
         "forces": {
-            "F_1": ForceVector(
+            "F_1": _Vector(
                 magnitude=700,
                 unit="lbf",
                 theta=30,
@@ -1080,7 +1080,7 @@ CARTESIAN_3D_PROBLEMS = {
                 name="F_1",
                 description="Force F1",
             ),
-            "F_2": ForceVector(
+            "F_2": _Vector(
                 magnitude=600,
                 unit="lbf",
                 theta=90,
@@ -1088,7 +1088,7 @@ CARTESIAN_3D_PROBLEMS = {
                 name="F_2",
                 description="Force F2",
             ),
-            "F_3": ForceVector(
+            "F_3": _Vector(
                 magnitude=800,
                 unit="lbf",
                 alpha=120,
@@ -1097,7 +1097,7 @@ CARTESIAN_3D_PROBLEMS = {
                 name="F_3",
                 description="Force F3",
             ),
-            "F_R": ForceVector.unknown(name="F_R", is_resultant=True, description="Resultant Force"),
+            "F_R": _Vector.unknown(name="F_R", is_resultant=True, description="Resultant Force"),
         },
         "expected": {
             "F_1": {
@@ -1138,7 +1138,7 @@ CARTESIAN_3D_PROBLEMS = {
         If the coordinate direction angles for are , and , determine the magnitude and coordinate direction angles of the resultant force acting on the eyebolt.  b3 = 45°
         """,
         "forces": {
-            "F_1": ForceVector(
+            "F_1": _Vector(
                 magnitude=700,
                 unit="lbf",
                 theta=30,
@@ -1146,7 +1146,7 @@ CARTESIAN_3D_PROBLEMS = {
                 name="F_1",
                 description="Force F1",
             ),
-            "F_2": ForceVector(
+            "F_2": _Vector(
                 magnitude=600,
                 unit="lbf",
                 theta=90,
@@ -1154,7 +1154,7 @@ CARTESIAN_3D_PROBLEMS = {
                 name="F_2",
                 description="Force F2",
             ),
-            "F_3": ForceVector(
+            "F_3": _Vector(
                 magnitude=800,
                 unit="lbf",
                 alpha=120,
@@ -1163,7 +1163,7 @@ CARTESIAN_3D_PROBLEMS = {
                 name="F_3",
                 description="Force F3",
             ),
-            "F_R": ForceVector.unknown(name="F_R", is_resultant=True, description="Resultant Force"),
+            "F_R": _Vector.unknown(name="F_R", is_resultant=True, description="Resultant Force"),
         },
         "expected": {
             "F_1": {
@@ -1271,7 +1271,7 @@ CARTESIAN_3D_PROBLEMS = {
         The pole is subjected to the force F, which has components acting along the x, y, z axes as shown. If the magnitude of F is 3 kN, , and , determine the magnitudes of its three components.
         """,
         "forces": {
-            "F_1": ForceVector(
+            "F_1": _Vector(
                 magnitude=3000,
                 unit="N",
                 beta=30,
@@ -1327,7 +1327,7 @@ CARTESIAN_3D_PROBLEMS = {
 }
 
 
-def assert_force_magnitude(force: ForceVector, expected_mag: float, expected_unit: str, tolerance: float = 0.5):
+def assert_force_magnitude(force: _Vector, expected_mag: float, expected_unit: str, tolerance: float = 0.5):
     """Assert force magnitude matches expected value in the expected unit."""
     assert force.magnitude is not None, f"Force {force.name} magnitude is None"
     assert force.magnitude.value is not None, f"Force {force.name} magnitude value is None"

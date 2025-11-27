@@ -26,3 +26,6 @@ from .algebra import (
 )
 from .core.quantity_catalog import *
 from .problems import Problem
+
+# Integration module for frontend frameworks (Reflex, FastAPI, etc.)
+from . import integration

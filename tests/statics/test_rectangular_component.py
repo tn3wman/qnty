@@ -10,7 +10,7 @@ import math
 import pytest
 
 from qnty.problems.rectangular_vector import RectangularVectorProblem
-from qnty.spatial import ForceVector
+from qnty.spatial import _Vector
 
 # Problem definitions - single source of truth
 COMPONENT_METHOD_PROBLEMS = {
@@ -21,17 +21,17 @@ COMPONENT_METHOD_PROBLEMS = {
         measured counterclockwise from the positive x axis.
         """,
         "forces": {
-            "F_1": ForceVector(
+            "F_1": _Vector(
                 magnitude=200, unit="N",
                 angle=-45, wrt="+y",
                 name="F_1", description="Force 1 at 45° from +x"
             ),
-            "F_2": ForceVector(
+            "F_2": _Vector(
                 magnitude=-150, unit="N",
                 angle=-30, wrt="+x",
                 name="F_2", description="Force 2 at 30° from -x"
             ),
-            "F_R": ForceVector.unknown(
+            "F_R": _Vector.unknown(
                 name="F_R", is_resultant=True, description="Resultant Force"
             )
         },
@@ -60,17 +60,17 @@ COMPONENT_METHOD_PROBLEMS = {
         Determine the magnitude of the resultant force and its direction, measured clockwise from the positive x axis.
         """,
         "forces": {
-            "F_1": ForceVector(
+            "F_1": _Vector(
                 magnitude=400, unit="N",
                 angle=30, wrt="+x",
                 name="F_1", description="Force 1"
             ),
-            "F_2": ForceVector(
+            "F_2": _Vector(
                 magnitude=800, unit="N",
                 angle=45, wrt="-y",
                 name="F_2", description="Force 2"
             ),
-            "F_R": ForceVector.unknown(
+            "F_R": _Vector.unknown(
                 name="F_R", is_resultant=True, description="Resultant Force"
             )
         },
@@ -99,12 +99,12 @@ COMPONENT_METHOD_PROBLEMS = {
         Resolve F1 and F2 into their x and y components.
         """,
         "forces": {
-            "F_1": ForceVector(
+            "F_1": _Vector(
                 magnitude=400, unit="N",
                 angle=-30, wrt="+y",
                 name="F_1", description="Force 1"
             ),
-            "F_2": ForceVector(
+            "F_2": _Vector(
                 magnitude=250, unit="N",
                 angle=-45, wrt="+x",
                 name="F_2", description="Force 2"
@@ -129,17 +129,17 @@ COMPONENT_METHOD_PROBLEMS = {
         Determine the magnitude of the resultant force and its direction measured counterclockwise from the positive x axis.
         """,
         "forces": {
-            "F_1": ForceVector(
+            "F_1": _Vector(
                 magnitude=400, unit="N",
                 angle=-30, wrt="+y",
                 name="F_1", description="Force 1"
             ),
-            "F_2": ForceVector(
+            "F_2": _Vector(
                 magnitude=250, unit="N",
                 angle=-45, wrt="+x",
                 name="F_2", description="Force 2"
             ),
-            "F_R": ForceVector.unknown(
+            "F_R": _Vector.unknown(
                 name="F_R", is_resultant=True, description="Resultant Force"
             )
         },
@@ -166,17 +166,17 @@ COMPONENT_METHOD_PROBLEMS = {
         Resolve each force acting on the gusset plate into its and y components, and express each force as a Cartesian vector.
         """,
         "forces": {
-            "F_1": ForceVector(
+            "F_1": _Vector(
                 magnitude=900, unit="N",
                 angle=0, wrt="+x",
                 name="F_1", description="Force 1"
             ),
-            "F_2": ForceVector(
+            "F_2": _Vector(
                 magnitude=750, unit="N",
                 angle=45, wrt="+x",
                 name="F_2", description="Force 2"
             ),
-            "F_3": ForceVector(
+            "F_3": _Vector(
                 magnitude=-650, unit="N",
                 angle=-36.87, wrt="-x",
                 name="F_3", description="Force 3"
@@ -204,22 +204,22 @@ COMPONENT_METHOD_PROBLEMS = {
         Determine the magnitude of the resultant force acting on the plate and its direction, measured counterclockwise from the positive x axis.
         """,
         "forces": {
-            "F_1": ForceVector(
+            "F_1": _Vector(
                 magnitude=900, unit="N",
                 angle=0, wrt="+x",
                 name="F_1", description="Force 1"
             ),
-            "F_2": ForceVector(
+            "F_2": _Vector(
                 magnitude=750, unit="N",
                 angle=45, wrt="+x",
                 name="F_2", description="Force 2"
             ),
-            "F_3": ForceVector(
+            "F_3": _Vector(
                 magnitude=-650, unit="N",
                 angle=-36.87, wrt="-x",
                 name="F_3", description="Force 3"
             ),
-            "F_R": ForceVector.unknown(
+            "F_R": _Vector.unknown(
                 name="F_R", is_resultant=True, description="Resultant Force"
             )
         },
@@ -249,22 +249,22 @@ COMPONENT_METHOD_PROBLEMS = {
         Express each of the three forces acting on the support in Cartesian vector form and determine the magnitude of the resultant force and its direction, measured clockwise from positive x axis.
         """,
         "forces": {
-            "F_1": ForceVector(
+            "F_1": _Vector(
                 magnitude=50, unit="N",
                 angle=53.15, wrt="+x",
                 name="F_1", description="Force 1"
             ),
-            "F_2": ForceVector(
+            "F_2": _Vector(
                 magnitude=80, unit="N",
                 angle=-15, wrt="-y",
                 name="F_2", description="Force 2"
             ),
-            "F_3": ForceVector(
+            "F_3": _Vector(
                 magnitude=30, unit="N",
                 angle=0, wrt="+x",
                 name="F_3", description="Force 3"
             ),
-            "F_R": ForceVector.unknown(
+            "F_R": _Vector.unknown(
                 name="F_R", is_resultant=True, description="Resultant Force"
             )
         },
@@ -294,12 +294,12 @@ COMPONENT_METHOD_PROBLEMS = {
         Determine the x and y components of F1 and F2.
         """,
         "forces": {
-            "F_1": ForceVector(
+            "F_1": _Vector(
                 magnitude=200, unit="N",
                 angle=-45, wrt="+y",
                 name="F_1", description="Force 1"
             ),
-            "F_2": ForceVector(
+            "F_2": _Vector(
                 magnitude=-150, unit="N",
                 angle=-30, wrt="+x",
                 name="F_2", description="Force 2"
@@ -324,17 +324,17 @@ COMPONENT_METHOD_PROBLEMS = {
         Determine the magnitude of the resultant force and its direction, measured counterclockwise from the positive x axis.
         """,
         "forces": {
-            "F_1": ForceVector(
+            "F_1": _Vector(
                 magnitude=200, unit="N",
                 angle=-45, wrt="+y",
                 name="F_1", description="Force 1"
             ),
-            "F_2": ForceVector(
+            "F_2": _Vector(
                 magnitude=-150, unit="N",
                 angle=-30, wrt="+x",
                 name="F_2", description="Force 2"
             ),
-            "F_R": ForceVector.unknown(
+            "F_R": _Vector.unknown(
                 name="F_R", is_resultant=True, description="Resultant Force"
             )
         },
@@ -362,22 +362,22 @@ COMPONENT_METHOD_PROBLEMS = {
         measured counterclockwise from the positive x axis.
         """,
         "forces": {
-            "F_1": ForceVector(
+            "F_1": _Vector(
                 magnitude=4000, unit="N",
                 angle=0, wrt="+x",
                 name="F_1", description="Force 1"
             ),
-            "F_2": ForceVector(
+            "F_2": _Vector(
                 magnitude=5000, unit="N",
                 angle=45, wrt="+x",
                 name="F_2", description="Force 2"
             ),
-            "F_3": ForceVector(
+            "F_3": _Vector(
                 magnitude=8000, unit="N",
                 angle=60, wrt="+F_2",
                 name="F_3", description="Force 3"
             ),
-            "F_R": ForceVector.unknown(
+            "F_R": _Vector.unknown(
                 name="F_R", is_resultant=True, description="Resultant Force"
             )
         },
@@ -410,17 +410,17 @@ COMPONENT_METHOD_PROBLEMS = {
         Express F1, F2, and F3 as Cartesian vectors.
         """,
         "forces": {
-            "F_1": ForceVector(
+            "F_1": _Vector(
                 magnitude=850, unit="N",
                 angle=53.13, wrt="-y",
                 name="F_1", description="Force 1"
             ),
-            "F_2": ForceVector(
+            "F_2": _Vector(
                 magnitude=625, unit="N",
                 angle=-30, wrt="-y",
                 name="F_2", description="Force 2"
             ),
-            "F_3": ForceVector(
+            "F_3": _Vector(
                 magnitude=750, unit="N",
                 angle=45, wrt="+y",
                 name="F_3", description="Force 3"
@@ -448,22 +448,22 @@ COMPONENT_METHOD_PROBLEMS = {
         Determine the magnitude of the resultant force and its direction measured counterclockwise from the positive x axis.
         """,
         "forces": {
-            "F_1": ForceVector(
+            "F_1": _Vector(
                 magnitude=850, unit="N",
                 angle=53.13, wrt="-y",
                 name="F_1", description="Force 1"
             ),
-            "F_2": ForceVector(
+            "F_2": _Vector(
                 magnitude=625, unit="N",
                 angle=-30, wrt="-y",
                 name="F_2", description="Force 2"
             ),
-            "F_3": ForceVector(
+            "F_3": _Vector(
                 magnitude=750, unit="N",
                 angle=45, wrt="+y",
                 name="F_3", description="Force 3"
             ),
-            "F_R": ForceVector.unknown(
+            "F_R": _Vector.unknown(
                 name="F_R", is_resultant=True, description="Resultant Force"
             )
         },
@@ -493,22 +493,22 @@ COMPONENT_METHOD_PROBLEMS = {
         Determine the magnitude of the resultant force and its direction measured counterclockwise from the positive x axis.
         """,
         "forces": {
-            "F_1": ForceVector(
+            "F_1": _Vector(
                 magnitude=40, unit="lbf",
                 angle=53.13, wrt="+x",
                 name="F_1", description="Force 1"
             ),
-            "F_2": ForceVector(
+            "F_2": _Vector(
                 magnitude=91, unit="lbf",
                 angle=-67.4, wrt="+x",
                 name="F_2", description="Force 2"
             ),
-            "F_3": ForceVector(
+            "F_3": _Vector(
                 magnitude=30, unit="lbf",
                 angle=0, wrt="+x",
                 name="F_3", description="Force 3"
             ),
-            "F_R": ForceVector.unknown(
+            "F_R": _Vector.unknown(
                 name="F_R", is_resultant=True, description="Resultant Force"
             )
         },
@@ -542,15 +542,15 @@ COMPONENT_METHOD_PROBLEMS = {
         Determine the magnitude of the resultant force and its direction measured counterclockwise from the positive x axis.
         """,
         "forces": {
-            "F_A": ForceVector(
+            "F_A": _Vector(
                 magnitude=700, unit="N",
                 angle=-30, wrt="+y",
                 name="F_A", description="Force A"
             ),
-            "F_B": ForceVector.unknown(
+            "F_B": _Vector.unknown(
                 name="F_B", description="Force B"
             ),
-            "F_R": ForceVector(
+            "F_R": _Vector(
                 magnitude=1500, unit="N",
                 angle=0, wrt="+y", is_resultant=True,
                 name="F_R", description="Resultant Force"
@@ -581,17 +581,17 @@ COMPONENT_METHOD_PROBLEMS = {
         Determine the magnitude and orientation, measured counterclockwise from the positive y axis, of the resultant force acting on the bracket, if FB = 600 N and u = 20°.
         """,
         "forces": {
-            "F_A": ForceVector(
+            "F_A": _Vector(
                 magnitude=700, unit="N",
                 angle=-30, wrt="+y",
                 name="F_A", description="Force A"
             ),
-            "F_B": ForceVector(
+            "F_B": _Vector(
                 magnitude=600, unit="N",
                 angle=-20, wrt="-x",
                 name="F_B", description="Force B"
             ),
-            "F_R": ForceVector.unknown(
+            "F_R": _Vector.unknown(
                 is_resultant=True,
                 name="F_R", description="Resultant Force"
             ),
@@ -621,20 +621,20 @@ COMPONENT_METHOD_PROBLEMS = {
         Three forces act on the bracket. Determine the magnitude and direction of so that the resultant force is directed along the positive axis and has a magnitude of 800 N.
         """,
         "forces": {
-            "F_1": ForceVector.unknown(
+            "F_1": _Vector.unknown(
                 name="F_1", description="Force 1"
             ),
-            "F_2": ForceVector(
+            "F_2": _Vector(
                 magnitude=200, unit="N",
                 angle=0, wrt="+y",
                 name="F_2", description="Force 2"
             ),
-            "F_3": ForceVector(
+            "F_3": _Vector(
                 magnitude=180, unit="N",
                 angle=-22.6, wrt="-x",
                 name="F_3", description="Force 3"
             ),
-            "F_R": ForceVector(
+            "F_R": _Vector(
                 magnitude=800, unit="N",
                 angle=-60, wrt="+y",
                 is_resultant=True,
@@ -670,22 +670,22 @@ COMPONENT_METHOD_PROBLEMS = {
         If and determine the magnitude and direction, measured counterclockwise from the positive x¿ axis, of the resultant force acting on the bracket.
         """,
         "forces": {
-            "F_1": ForceVector(
+            "F_1": _Vector(
                 magnitude=300, unit="N",
                 angle=-70, wrt="+y",
                 name="F_1", description="Force 1"
             ),
-            "F_2": ForceVector(
+            "F_2": _Vector(
                 magnitude=200, unit="N",
                 angle=0, wrt="+y",
                 name="F_2", description="Force 2"
             ),
-            "F_3": ForceVector(
+            "F_3": _Vector(
                 magnitude=180, unit="N",
                 angle=-22.6, wrt="-x",
                 name="F_3", description="Force 3"
             ),
-            "F_R": ForceVector.unknown(
+            "F_R": _Vector.unknown(
                 is_resultant=True,
                 name="F_R", description="Resultant Force"
             ),
@@ -719,17 +719,17 @@ COMPONENT_METHOD_PROBLEMS = {
         Express F1, F2, and F3 as Cartesian vectors.
         """,
         "forces": {
-            "F_1": ForceVector(
+            "F_1": _Vector(
                 magnitude=15000, unit="N",
                 angle=-40, wrt="+y",
                 name="F_1", description="Force 1"
             ),
-            "F_2": ForceVector(
+            "F_2": _Vector(
                 magnitude=26000, unit="N",
                 angle=-22.6, wrt="-x",
                 name="F_2", description="Force 2"
             ),
-            "F_3": ForceVector(
+            "F_3": _Vector(
                 magnitude=36000, unit="N",
                 angle=-30, wrt="+x",
                 name="F_3", description="Force 3"
@@ -757,22 +757,22 @@ COMPONENT_METHOD_PROBLEMS = {
         Determine the magnitude of the resultant force and its orientation measured counterclockwise from the positive x axis.
         """,
         "forces": {
-            "F_1": ForceVector(
+            "F_1": _Vector(
                 magnitude=15000, unit="N",
                 angle=-40, wrt="+y",
                 name="F_1", description="Force 1"
             ),
-            "F_2": ForceVector(
+            "F_2": _Vector(
                 magnitude=26000, unit="N",
                 angle=-22.6, wrt="-x",
                 name="F_2", description="Force 2"
             ),
-            "F_3": ForceVector(
+            "F_3": _Vector(
                 magnitude=36000, unit="N",
                 angle=-30, wrt="+x",
                 name="F_3", description="Force 3"
             ),
-            "F_R": ForceVector.unknown(
+            "F_R": _Vector.unknown(
                 is_resultant=True,
                 name="F_R", description="Resultant Force"
             ),
@@ -803,27 +803,27 @@ COMPONENT_METHOD_PROBLEMS = {
         Determine the x and y components of each force acting on the gusset plate of a bridge truss. Show that the resultant force is zero.
         """,
         "forces": {
-            "F_1": ForceVector(
+            "F_1": _Vector(
                 magnitude=-8000, unit="N",
                 angle=53.13, wrt="+y",
                 name="F_1", description="Force 1"
             ),
-            "F_2": ForceVector(
+            "F_2": _Vector(
                 magnitude=6000, unit="N",
                 angle=53.13, wrt="+x",
                 name="F_2", description="Force 2"
             ),
-            "F_3": ForceVector(
+            "F_3": _Vector(
                 magnitude=4000, unit="N",
                 angle=0, wrt="-x",
                 name="F_3", description="Force 3"
             ),
-            "F_4": ForceVector(
+            "F_4": _Vector(
                 magnitude=6000, unit="N",
                 angle=0, wrt="-x",
                 name="F_4", description="Force 4"
             ),
-            "F_R": ForceVector.unknown(
+            "F_R": _Vector.unknown(
                 is_resultant=True,
                 name="F_R", description="Resultant Force"
             ),
@@ -856,12 +856,12 @@ COMPONENT_METHOD_PROBLEMS = {
         Express and F2 as Cartesian vectors.
         """,
         "forces": {
-            "F_1": ForceVector(
+            "F_1": _Vector(
                 magnitude=30000, unit="N",
                 angle=-30, wrt="-y",
                 name="F_1", description="Force 1"
             ),
-            "F_2": ForceVector(
+            "F_2": _Vector(
                 magnitude=26000, unit="N",
                 angle=-67.4, wrt="-x",
                 name="F_2", description="Force 2"
@@ -886,17 +886,17 @@ COMPONENT_METHOD_PROBLEMS = {
         Determine the magnitude of the resultant force and its direction measured counterclockwise from the positive x axis.
         """,
         "forces": {
-            "F_1": ForceVector(
+            "F_1": _Vector(
                 magnitude=30000, unit="N",
                 angle=-30, wrt="-y",
                 name="F_1", description="Force 1"
             ),
-            "F_2": ForceVector(
+            "F_2": _Vector(
                 magnitude=26000, unit="N",
                 angle=-67.4, wrt="-x",
                 name="F_2", description="Force 2"
             ),
-            "F_R": ForceVector.unknown(
+            "F_R": _Vector.unknown(
                 is_resultant=True,
                 name="F_R", description="Resultant Force"
             ),
@@ -924,21 +924,21 @@ COMPONENT_METHOD_PROBLEMS = {
         Determine the magnitude of force so that the resultant force of the three forces is as small as possible. What is the magnitude of the resultant force?
         """,
         "forces": {
-            "F_1": ForceVector(
+            "F_1": _Vector(
                 magnitude=8000, unit="N",
                 angle=0, wrt="+x",
                 name="F_1", description="Force 1"
             ),
-            "F_2": ForceVector.unknown(
+            "F_2": _Vector.unknown(
                 angle=45, wrt="-x",
                 name="F_2", description="Force 2"
             ),
-            "F_3": ForceVector(
+            "F_3": _Vector(
                 magnitude=14000, unit="N",
                 angle=-30, wrt="-x",
                 name="F_3", description="Force 3"
             ),
-            "F_R": ForceVector.unknown(
+            "F_R": _Vector.unknown(
                 angle=135, wrt="+x",
                 is_resultant=True,
                 name="F_R", description="Resultant Force"
@@ -973,20 +973,20 @@ COMPONENT_METHOD_PROBLEMS = {
         If the magnitude of the resultant force acting on the bracket is to be 450 N directed along the positive u axis, determine the magnitude of F1 and its direction f.
         """,
         "forces": {
-            "F_1": ForceVector.unknown(
+            "F_1": _Vector.unknown(
                 name="F_1", description="Force 1"
             ),
-            "F_2": ForceVector(
+            "F_2": _Vector(
                 magnitude=200, unit="N",
                 angle=0, wrt="+x",
                 name="F_2", description="Force 2"
             ),
-            "F_3": ForceVector(
+            "F_3": _Vector(
                 magnitude=260, unit="N",
                 angle=22.6, wrt="-y",
                 name="F_3", description="Force 3"
             ),
-            "F_R": ForceVector(
+            "F_R": _Vector(
                 magnitude=450, unit="N",
                 angle=30, wrt="+x",
                 is_resultant=True,
@@ -1024,22 +1024,22 @@ COMPONENT_METHOD_PROBLEMS = {
         If F = 5 kN and u = 30°, determine the magnitude of the resultant force and its direction, measured counterclockwise from the positive x axis.
         """,
         "forces": {
-            "F_1": ForceVector(
+            "F_1": _Vector(
                 magnitude=6000, unit="N",
                 angle=0, wrt="+x",
                 name="F_1", description="Force 1"
             ),
-            "F_2": ForceVector(
+            "F_2": _Vector(
                 magnitude=5000, unit="N",
                 angle=-30, wrt="+y",
                 name="F_2", description="Force 2"
             ),
-            "F_3": ForceVector(
+            "F_3": _Vector(
                 magnitude=4000, unit="N",
                 angle=15, wrt="+y",
                 name="F_3", description="Force 3 at 15° from +y toward -x (8 kN)"
             ),
-            "F_R": ForceVector.unknown(
+            "F_R": _Vector.unknown(
                 is_resultant=True,
                 name="F_R", description="Resultant Force"
             ),

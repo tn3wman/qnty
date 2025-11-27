@@ -13,10 +13,9 @@ from typing import Any
 import numpy as np
 
 from ..core.quantity import Quantity
-from ..solving.component_solver import ComponentSolver
 from ..solving.triangle_solver import TriangleSolver
-from ..spatial import ForceVector
-from ..spatial.vector import Vector
+from ..spatial.vector import _Vector
+from ..spatial.vectors import _VectorWithUnknowns
 from .problem import Problem
 
 
@@ -33,18 +32,18 @@ class ParallelogramLawProblem(Problem):
     Examples:
         >>> # Define problem with class inheritance
         >>> class CableProblem(VectorEquilibriumProblem):
-        ...     F1 = ForceVector(magnitude=700, angle=60, unit="N")
-        ...     F2 = ForceVector(magnitude=450, angle=105, unit="N")
-        ...     FR = ForceVector.unknown("FR", is_resultant=True)
+        ...     F1 = create_vector_polar(magnitude=700, angle=60, unit="N")
+        ...     F2 = create_vector_polar(magnitude=450, angle=105, unit="N")
+        ...     FR = create_vector_resultant(F1, F2, name="FR")
         ...
         >>> problem = CableProblem()
         >>> solution = problem.solve()
 
         >>> # Or programmatically
         >>> problem = VectorEquilibriumProblem("Cable Forces")
-        >>> problem.add_force(ForceVector(magnitude=700, angle=60, unit="N", name="F1"))
-        >>> problem.add_force(ForceVector(magnitude=450, angle=105, unit="N", name="F2"))
-        >>> problem.add_force(ForceVector.unknown("FR", is_resultant=True))
+        >>> problem.add_force(create_vector_polar(magnitude=700, angle=60, unit="N", name="F1"))
+        >>> problem.add_force(create_vector_polar(magnitude=450, angle=105, unit="N", name="F2"))
+        >>> problem.add_force(create_vector_resultant("F1", "F2", name="FR"))
         >>> solution = problem.solve()
     """
 
@@ -57,7 +56,7 @@ class ParallelogramLawProblem(Problem):
             description: Problem description
         """
         super().__init__(name=name, description=description)
-        self.forces: dict[str, ForceVector] = {}
+        self.forces: dict[str, _Vector] = {}
         self.solution_steps: list[dict[str, Any]] = []
         self._original_variable_states: dict[str, bool] = {}  # Track which variables were originally known
         self._original_force_states: dict[str, bool] = {}  # Track original is_known state of each force
@@ -66,20 +65,493 @@ class ParallelogramLawProblem(Problem):
         # Extract ForceVector class attributes
         self._extract_force_vectors()
 
+        # Compute any vector resultants from _VectorWithUnknowns
+        self._compute_vector_resultants()
+
     def _extract_force_vectors(self) -> None:
-        """Extract ForceVector objects defined at class level."""
+        """Extract ForceVector and _Vector objects defined at class level."""
+        # First pass: clone all plain _Vectors so we have fresh copies
+        vector_clones: dict[int, _Vector] = {}  # Map from id(original) to clone
+
         for attr_name in dir(self.__class__):
             if attr_name.startswith("_"):
                 continue
 
             attr = getattr(self.__class__, attr_name)
-            if isinstance(attr, ForceVector):
+            # First pass: only handle plain _Vector from create_vector_polar (not ForceVector or _VectorWithUnknowns)
+            # Check for exact type to avoid catching ForceVector subclass
+            if type(attr).__name__ == "_Vector":
+                # Clone plain _Vector, using attr_name as default name
+                clone = self._clone_vector(attr, default_name=attr_name)
+                vector_clones[id(attr)] = clone
+                setattr(self, attr_name, clone)
+
+        # Second pass: handle _VectorWithUnknowns and ForceVectors not already cloned
+        for attr_name in dir(self.__class__):
+            if attr_name.startswith("_"):
+                continue
+
+            attr = getattr(self.__class__, attr_name)
+
+            # Skip if already cloned in first pass
+            if id(attr) in vector_clones:
+                continue
+
+            # Check _VectorWithUnknowns FIRST since it's also a ForceVector and _Vector
+            if isinstance(attr, _VectorWithUnknowns):
+                # Clone the _VectorWithUnknowns and update component_vectors to use cloned vectors
+                clone = self._clone_vector_with_unknowns(attr, vector_clones)
+                setattr(self, attr_name, clone)
+            elif isinstance(attr, _Vector):
                 # Clone to avoid sharing between instances
                 force_copy = self._clone_force_vector(attr)
                 self.forces[attr_name] = force_copy
                 setattr(self, attr_name, force_copy)
 
-    def _clone_force_vector(self, force: ForceVector) -> ForceVector:
+    def _clone_vector(self, vec: _Vector, default_name: str = "") -> _Vector:
+        """Create a copy of a _Vector."""
+        clone = object.__new__(_Vector)
+        clone._coords = vec._coords.copy()
+        clone._dim = vec._dim
+        clone._unit = vec._unit
+        # Use original name if it exists and is meaningful, otherwise use default_name
+        original_name = getattr(vec, 'name', "")
+        # Replace generic names like "Vector" or empty with the attribute name
+        clone.name = original_name if (original_name and original_name != "Vector") else default_name
+        clone._description = getattr(vec, '_description', "")
+        clone.is_known = getattr(vec, 'is_known', True)
+        clone.is_resultant = getattr(vec, 'is_resultant', False)
+        clone.coordinate_system = getattr(vec, 'coordinate_system', None)
+        clone.angle_reference = getattr(vec, 'angle_reference', None)
+
+        # Copy magnitude and angle if present
+        if hasattr(vec, '_magnitude'):
+            clone._magnitude = vec._magnitude
+        if hasattr(vec, '_angle'):
+            clone._angle = vec._angle
+
+        # Copy original angle and wrt for reporting
+        if hasattr(vec, '_original_angle'):
+            clone._original_angle = vec._original_angle
+        if hasattr(vec, '_original_wrt'):
+            clone._original_wrt = vec._original_wrt
+
+        return clone
+
+    def _clone_vector_with_unknowns(self, vec: _VectorWithUnknowns, vector_clones: dict[int, _Vector]) -> _VectorWithUnknowns:
+        """Create a copy of a _VectorWithUnknowns with updated component_vectors."""
+        clone = object.__new__(_VectorWithUnknowns)
+        clone._coords = vec._coords.copy()
+        clone._dim = vec._dim
+        clone._unit = vec._unit
+        clone.name = getattr(vec, 'name', "")
+        clone._description = getattr(vec, '_description', "")
+        clone.is_known = getattr(vec, 'is_known', False)
+        clone.is_resultant = getattr(vec, 'is_resultant', True)
+        clone.coordinate_system = getattr(vec, 'coordinate_system', None)
+        clone.angle_reference = getattr(vec, 'angle_reference', None)
+        clone._unknowns = vec._unknowns.copy() if hasattr(vec, '_unknowns') else {}
+
+        # Update component_vectors to use cloned vectors
+        if hasattr(vec, '_component_vectors') and vec._component_vectors:
+            clone._component_vectors = [
+                vector_clones.get(id(cv), cv) for cv in vec._component_vectors
+            ]
+        else:
+            clone._component_vectors = []
+
+        # Copy other attributes
+        if hasattr(vec, '_direction_unit_vector'):
+            clone._direction_unit_vector = vec._direction_unit_vector
+        if hasattr(vec, '_is_constraint'):
+            clone._is_constraint = vec._is_constraint
+        if hasattr(vec, '_magnitude'):
+            clone._magnitude = vec._magnitude
+        if hasattr(vec, '_angle'):
+            clone._angle = vec._angle
+
+        return clone
+
+    def _compute_vector_resultants(self) -> None:
+        """Compute resultant vectors from _VectorWithUnknowns placeholders."""
+        from ..core.dimension_catalog import dim
+
+        has_vector_resultants = False
+
+        for attr_name in dir(self):
+            if attr_name.startswith("_"):
+                continue
+
+            attr = getattr(self, attr_name)
+
+            # Check if it's a _VectorWithUnknowns with component vectors
+            if isinstance(attr, _VectorWithUnknowns) and attr.component_vectors:
+                has_vector_resultants = True
+
+                # First, add known vectors as variables
+                for vec in attr.component_vectors:
+                    vec_name = getattr(vec, 'name', None)
+                    if vec_name and vec._unit:
+                        # Add magnitude
+                        mag = vec.magnitude
+                        if mag:
+                            mag_var = Quantity(
+                                name=f"{vec_name} Magnitude",
+                                dim=mag.dim,
+                                value=mag.value,
+                                preferred=mag.preferred,
+                                _symbol=f"|{vec_name}|",
+                            )
+                            self.variables[f"{vec_name}_mag"] = mag_var
+                            self._original_variable_states[f"{vec_name}_mag"] = True
+
+                        # Add angle if present
+                        if hasattr(vec, '_angle') and vec._angle and vec._angle.value is not None:
+                            angle_var = Quantity(
+                                name=f"{vec_name} Angle",
+                                dim=dim.D,
+                                value=vec._angle.value,
+                                preferred=vec._angle.preferred,
+                                _symbol=f"θ_{vec_name}",
+                            )
+                            self.variables[f"{vec_name}_angle"] = angle_var
+                            self._original_variable_states[f"{vec_name}_angle"] = True
+
+                # Forward problem: sum component vectors to get resultant
+                sum_coords = np.array([0.0, 0.0, 0.0], dtype=float)
+
+                for vec in attr.component_vectors:
+                    sum_coords += vec._coords
+
+                # Update the resultant vector coordinates
+                attr._coords = sum_coords
+                attr._unknowns = {}  # Clear unknowns
+                attr.is_known = True
+
+                # Recompute magnitude and angle
+                if hasattr(attr, '_compute_magnitude_and_angle'):
+                    attr._compute_magnitude_and_angle()
+
+                # Compute magnitude and angle for reporting
+                mag_si = float(np.sqrt(np.sum(sum_coords**2)))
+                angle_rad = float(np.arctan2(sum_coords[1], sum_coords[0]))
+                if angle_rad < 0:
+                    angle_rad += 2 * np.pi
+
+                # Store as _magnitude and _angle for consistency
+                from ..core.unit import ureg
+                degree_unit = ureg.resolve("degree", dim=dim.D)
+
+                attr._magnitude = Quantity(
+                    name=f"{attr_name}_magnitude",
+                    dim=attr._dim,
+                    value=mag_si,
+                    preferred=attr._unit,
+                )
+                attr._angle = Quantity(
+                    name=f"{attr_name}_angle",
+                    dim=dim.D,
+                    value=angle_rad,
+                    preferred=degree_unit,
+                )
+
+                # Add resultant as unknown variable (solved)
+                mag_var = Quantity(
+                    name=f"{attr_name} Magnitude",
+                    dim=attr._dim,
+                    value=mag_si,
+                    preferred=attr._unit,
+                    _symbol=f"|{attr_name}|",
+                )
+                self.variables[f"{attr_name}_mag"] = mag_var
+                self._original_variable_states[f"{attr_name}_mag"] = False  # Was unknown
+
+                angle_var = Quantity(
+                    name=f"{attr_name} Angle",
+                    dim=dim.D,
+                    value=angle_rad,
+                    preferred=degree_unit,
+                    _symbol=f"θ_{attr_name}",
+                )
+                self.variables[f"{attr_name}_angle"] = angle_var
+                self._original_variable_states[f"{attr_name}_angle"] = False  # Was unknown
+
+                # Add solution steps using the triangle/parallelogram law method
+                # Use TriangleSolver for 2-force problems (parallelogram law)
+                if len(attr.component_vectors) == 2:
+                    # Use triangle method with Law of Cosines and Law of Sines
+                    self._add_triangle_method_steps(
+                        attr.component_vectors[0],
+                        attr.component_vectors[1],
+                        attr,
+                        attr_name,
+                        mag_si,
+                        angle_rad,
+                    )
+                else:
+                    # Fall back to component method for 3+ forces
+                    self._add_component_method_steps(
+                        attr.component_vectors,
+                        attr,
+                        attr_name,
+                        sum_coords,
+                        mag_si,
+                        angle_rad,
+                    )
+
+        # Mark as solved if we computed any resultants
+        if has_vector_resultants:
+            self.is_solved = True
+            self._populate_solving_history()
+
+    def _add_triangle_method_steps(
+        self,
+        force1: _Vector,
+        force2: _Vector,
+        resultant: _VectorWithUnknowns,
+        resultant_name: str,
+        mag_si: float,
+        angle_rad: float,
+    ) -> None:
+        """
+        Add solution steps using the parallelogram law (Law of Cosines and Law of Sines).
+
+        This is the preferred method for 2-force resultant problems as it matches
+        the classical engineering statics approach.
+
+        Args:
+            force1: First component vector
+            force2: Second component vector
+            resultant: The resultant vector
+            resultant_name: Name of the resultant (e.g., "F_R")
+            mag_si: Resultant magnitude in SI units
+            angle_rad: Resultant angle in radians
+        """
+        # Get force magnitudes and angles
+        F1 = np.sqrt(np.sum(force1._coords**2))
+        F2 = np.sqrt(np.sum(force2._coords**2))
+        theta1 = np.arctan2(force1._coords[1], force1._coords[0])
+        theta2 = np.arctan2(force2._coords[1], force2._coords[0])
+
+        # Get unit info
+        unit = resultant._unit
+        unit_symbol = unit.symbol if unit else "N"
+        si_factor = unit.si_factor if unit else 1.0
+
+        # Display values in user's units
+        F1_display = F1 / si_factor
+        F2_display = F2 / si_factor
+        FR_display = mag_si / si_factor
+
+        # Get force names
+        f1_name = getattr(force1, 'name', 'F_1')
+        f2_name = getattr(force2, 'name', 'F_2')
+
+        # Compute angle between forces (for the parallelogram)
+        gamma = abs(theta2 - theta1)
+        if gamma > math.pi:
+            gamma = 2 * math.pi - gamma
+
+        # The angle in the triangle is (180° - gamma) due to parallelogram law
+        angle_in_triangle = math.pi - gamma
+        angle_in_triangle_deg = np.degrees(angle_in_triangle)
+
+        # Get original angles from vector objects if available (for cleaner display)
+        # The _original_angle attribute stores the angle as given by the user
+        theta1_display = getattr(force1, '_original_angle', None)
+        theta2_display = getattr(force2, '_original_angle', None)
+
+        # Fall back to computed angles if original not available
+        if theta1_display is None:
+            theta1_display = np.degrees(theta1)
+        if theta2_display is None:
+            theta2_display = np.degrees(theta2)
+
+        # Step 1: Calculate the angle between the two force vectors
+        # This is needed before we can apply the Law of Cosines
+        # Use simple format: just show the calculation with aligned equals
+        # Show it as the simpler |θ_1 - θ_2| = angle
+        self.solution_steps.append({
+            "target": f"∠({f1_name},{f2_name})",
+            "method": "Angle Difference",
+            "description": f"Calculate the angle between {f1_name} and {f2_name}",
+            "equation": None,  # No separate equation - just show the calculation
+            "substitution": f"∠({f1_name},{f2_name}) = |θ_{f1_name} - θ_{f2_name}|\n= |{theta1_display:.0f}° - {theta2_display:.0f}°|\n= {angle_in_triangle_deg:.0f}°",
+            "result_value": None,  # Result is included in the substitution
+            "result_unit": "",
+        })
+
+        # Step 2: Law of Cosines for magnitude
+        # |F_R|² = |F_1|² + |F_2|² + 2·|F_1|·|F_2|·cos(∠(F_1,F_2))
+        # where ∠(F_1,F_2) is the angle between the two force vectors
+        # Format similar to Step 1: show calculation with sqrt applied directly
+        self.solution_steps.append({
+            "target": f"|{resultant_name}| using Eq 1",
+            "method": "Law of Cosines",
+            "description": "Calculate resultant magnitude using Law of Cosines",
+            "equation": None,  # Don't show equation inline in step
+            "equation_for_list": f"|{resultant_name}|² = |{f1_name}|² + |{f2_name}|² + 2·|{f1_name}|·|{f2_name}|·cos(∠({f1_name},{f2_name}))",  # For "Equations Used" section
+            "substitution": f"|{resultant_name}| = sqrt(({F1_display:.1f})² + ({F2_display:.1f})² + 2({F1_display:.1f})({F2_display:.1f})cos({angle_in_triangle_deg:.0f}°))\n= {FR_display:.1f} {unit_symbol}",
+            "result_value": None,  # Result is included in substitution
+            "result_unit": "",
+        })
+
+        # Step 3: Law of Sines for angle
+        # sin(∠(F_1,F_R))/|F_2| = sin(∠(F_1,F_2))/|F_R|
+        # where ∠(F_1,F_R) is the angle from F_1 to F_R
+        angle_deg = np.degrees(angle_rad)
+        theta1_deg = np.degrees(theta1)
+
+        # Calculate the angle ∠(F_1,F_R) using Law of Sines
+        # This gives us the angle adjustment needed
+        if mag_si > 1e-10:
+            # Determine sign: if resultant angle is less than F_1 angle, phi is negative
+            phi_deg = angle_deg - theta1_deg
+        else:
+            phi_deg = 0.0
+
+        self.solution_steps.append({
+            "target": f"∠({f1_name},{resultant_name}) using Eq 2",
+            "method": "Law of Sines",
+            "description": f"Calculate angle from {f1_name} to {resultant_name} using Law of Sines",
+            "equation": None,  # Don't show equation inline - reference "Eq 2" in title
+            "equation_for_list": f"sin(∠({f1_name},{resultant_name}))/|{f2_name}| = sin(∠({f1_name},{f2_name}))/|{resultant_name}|",  # For "Equations Used" section
+            "substitution": f"∠({f1_name},{resultant_name}) = sin⁻¹({F2_display:.1f}·sin({angle_in_triangle_deg:.0f}°)/{FR_display:.1f})\n= {phi_deg:.1f}°",
+            "result_value": None,  # Result is included in substitution
+            "result_unit": "",
+        })
+
+        # Step 4: Calculate final angle relative to reference axis
+        # No equation_for_list - this is a simple addition, not a named equation
+        # Get reference axis label from resultant's angle_reference
+        ref_label = "+x"  # Default
+        if hasattr(resultant, 'angle_reference') and resultant.angle_reference is not None:
+            if hasattr(resultant.angle_reference, 'axis_label'):
+                ref_label = resultant.angle_reference.axis_label
+
+        self.solution_steps.append({
+            "target": f"θ_{resultant_name} with respect to {ref_label}",
+            "method": "Angle Addition",
+            "description": f"Calculate {resultant_name} direction relative to {ref_label} axis",
+            "equation": None,  # Don't show in "Equations Used" section
+            "substitution": f"θ_{resultant_name} = θ_{f1_name} + ∠({f1_name},{resultant_name})\n= {theta1_deg:.1f}° + {phi_deg:.1f}°\n= {angle_deg:.1f}°",
+            "result_value": None,  # Result included in substitution
+            "result_unit": "",
+        })
+
+    def _add_component_method_steps(
+        self,
+        component_vectors: list[_Vector],
+        resultant: _VectorWithUnknowns,
+        resultant_name: str,
+        sum_coords: np.ndarray,
+        mag_si: float,
+        angle_rad: float,
+    ) -> None:
+        """
+        Add solution steps using the component method (for 3+ forces).
+
+        This breaks each force into x and y components, sums them,
+        then uses Pythagorean theorem for magnitude and arctan for angle.
+
+        Args:
+            component_vectors: List of component vectors
+            resultant: The resultant vector
+            resultant_name: Name of the resultant
+            sum_coords: Sum of all component coordinates
+            mag_si: Resultant magnitude in SI units
+            angle_rad: Resultant angle in radians
+        """
+        unit = resultant._unit
+        unit_symbol = unit.symbol if unit else ""
+        si_factor = unit.si_factor if unit else 1.0
+
+        mag_display = mag_si / si_factor
+        angle_deg = np.degrees(angle_rad)
+        display_sum = sum_coords / si_factor if unit else sum_coords
+
+        component_names = [getattr(v, 'name', 'Vector') for v in component_vectors]
+
+        # Step 1: Resolve each force into components
+        for vec in component_vectors:
+            vec_name = getattr(vec, 'name', 'Vector')
+            coords = vec._coords
+            display_coords = coords / si_factor if unit else coords
+
+            # Get magnitude and angle for this vector
+            vec_mag = np.sqrt(np.sum(coords**2))
+            vec_angle = np.arctan2(coords[1], coords[0])
+            if vec_angle < 0:
+                vec_angle += 2 * np.pi
+            vec_mag_display = vec_mag / si_factor if unit else vec_mag
+            vec_angle_deg = np.degrees(vec_angle)
+
+            self.solution_steps.append({
+                "target": f"{vec_name}_x",
+                "method": "component_resolution",
+                "description": f"Resolve {vec_name} into x and y components",
+                "equation": f"{vec_name}_x = |{vec_name}| cos(θ)",
+                "substitution": f"{vec_name}_x = {vec_mag_display:.3f} cos({vec_angle_deg:.1f}°)",
+                "result_value": f"{display_coords[0]:.3f}",
+                "result_unit": unit_symbol,
+            })
+            self.solution_steps.append({
+                "target": f"{vec_name}_y",
+                "method": "component_resolution",
+                "description": f"Resolve {vec_name} into x and y components",
+                "equation": f"{vec_name}_y = |{vec_name}| sin(θ)",
+                "substitution": f"{vec_name}_y = {vec_mag_display:.3f} sin({vec_angle_deg:.1f}°)",
+                "result_value": f"{display_coords[1]:.3f}",
+                "result_unit": unit_symbol,
+            })
+
+        # Step 2: Sum x-components
+        x_terms = " + ".join([f"({(v._coords[0]/si_factor):.3f})" for v in component_vectors])
+        self.solution_steps.append({
+            "target": f"{resultant_name}_x",
+            "method": "component_sum",
+            "description": "Sum x-components",
+            "equation": f"Σ{resultant_name}_x = {' + '.join([f'{n}_x' for n in component_names])}",
+            "substitution": f"Σ{resultant_name}_x = {x_terms}",
+            "result_value": f"{display_sum[0]:.3f}",
+            "result_unit": unit_symbol,
+        })
+
+        # Step 3: Sum y-components
+        y_terms = " + ".join([f"({(v._coords[1]/si_factor):.3f})" for v in component_vectors])
+        self.solution_steps.append({
+            "target": f"{resultant_name}_y",
+            "method": "component_sum",
+            "description": "Sum y-components",
+            "equation": f"Σ{resultant_name}_y = {' + '.join([f'{n}_y' for n in component_names])}",
+            "substitution": f"Σ{resultant_name}_y = {y_terms}",
+            "result_value": f"{display_sum[1]:.3f}",
+            "result_unit": unit_symbol,
+        })
+
+        # Step 4: Calculate magnitude
+        self.solution_steps.append({
+            "target": f"|{resultant_name}|",
+            "method": "pythagorean",
+            "description": "Calculate resultant magnitude using Pythagorean theorem",
+            "equation": f"|{resultant_name}| = √(({resultant_name}_x)² + ({resultant_name}_y)²)",
+            "substitution": f"|{resultant_name}| = √(({display_sum[0]:.3f})² + ({display_sum[1]:.3f})²)",
+            "result_value": f"{mag_display:.3f}",
+            "result_unit": unit_symbol,
+        })
+
+        # Step 5: Calculate angle
+        self.solution_steps.append({
+            "target": f"θ_{resultant_name}",
+            "method": "inverse_trig",
+            "description": "Calculate resultant direction using inverse tangent",
+            "equation": f"θ = tan⁻¹({resultant_name}_y / {resultant_name}_x)",
+            "substitution": f"θ = tan⁻¹({display_sum[1]:.3f} / {display_sum[0]:.3f})",
+            "result_value": f"{angle_deg:.3f}",
+            "result_unit": "°",
+        })
+
+    def _clone_force_vector(self, force: _Vector) -> _Vector:
         """Create a copy of a ForceVector."""
         # Check if force has unresolved relative angle
         has_relative_angle = hasattr(force, '_relative_to_force') and force._relative_to_force is not None
@@ -94,7 +566,7 @@ class ParallelogramLawProblem(Problem):
 
         if has_valid_vector:
             # Known force with computed vector - copy with same values
-            cloned = ForceVector(
+            cloned = _Vector(
                 vector=force.vector,
                 name=force.name,
                 description=force.description,
@@ -127,7 +599,7 @@ class ParallelogramLawProblem(Problem):
 
             # Create cloned force with Quantity objects to avoid double conversion
             # Use the main constructor which accepts Quantity objects
-            cloned = ForceVector(
+            cloned = _Vector(
                 name=force.name,
                 magnitude=force.magnitude,  # Pass Quantity object directly
                 angle=angle_value if angle_value is not None else None,  # This is a float in degrees
@@ -147,7 +619,7 @@ class ParallelogramLawProblem(Problem):
 
             return cloned
 
-    def add_force(self, force: ForceVector, name: str | None = None) -> None:
+    def add_force(self, force: _Vector, name: str | None = None) -> None:
         """
         Add a force to the problem.
 
@@ -242,7 +714,7 @@ class ParallelogramLawProblem(Problem):
         # If we get here, we exceeded max iterations
         raise ValueError("Exceeded maximum iterations while resolving relative angle constraints")
 
-    def solve(self, max_iterations: int = 100, tolerance: float = 1e-10) -> dict[str, ForceVector]:  # type: ignore[override]
+    def solve(self, max_iterations: int = 100, tolerance: float = 1e-10) -> dict[str, _Vector]:  # type: ignore[override]
         """
         Solve the vector equilibrium problem algebraically.
 
@@ -452,21 +924,26 @@ class ParallelogramLawProblem(Problem):
         self.solving_history = []
 
         for i, step in enumerate(self.solution_steps):
-            # Our new format already has the correct fields
+            # Map to the format expected by report_ir._extract_solution_steps
+            # equation_str: used for "Equations Used" section (use equation_for_list if equation is None)
+            # equation_inline: used for step rendering (only if equation should be shown in step)
+            equation_for_list = step.get("equation") or step.get("equation_for_list", "")
+            equation_inline = step.get("equation", "")  # Only show in step if explicitly set
             history_entry = {
                 "step": i + 1,
-                "target": step.get("target", "Unknown"),
+                "target_variable": step.get("target", "Unknown"),
                 "method": step.get("method", "algebraic"),
                 "description": step.get("description", ""),
-                "equation_str": step.get("equation", ""),
-                "substituted": step.get("substitution", ""),
+                "equation_str": equation_for_list,  # For "Equations Used" section
+                "equation_inline": equation_inline,  # For step rendering
+                "substituted_equation": step.get("substitution", ""),
                 "result_value": step.get("result_value", ""),
                 "result_unit": step.get("result_unit", ""),
                 "details": step.get("description", ""),
             }
             self.solving_history.append(history_entry)
 
-    def _solve_resultant(self, known_forces: list[ForceVector]) -> None:
+    def _solve_resultant(self, known_forces: list[_Vector]) -> None:
         """
         Compute resultant of known forces.
 
@@ -501,7 +978,7 @@ class ParallelogramLawProblem(Problem):
         y_qty = Quantity(name="FR_y", dim=dim.force, value=sum_y, preferred=ref_unit)
         z_qty = Quantity(name="FR_z", dim=dim.force, value=sum_z, preferred=ref_unit)
 
-        resultant_vector = Vector.from_quantities(x_qty, y_qty, z_qty)
+        resultant_vector = _Vector.from_quantities(x_qty, y_qty, z_qty)
 
         # Find or create resultant force
         resultant = None
@@ -511,7 +988,7 @@ class ParallelogramLawProblem(Problem):
                 break
 
         if resultant is None:
-            resultant = ForceVector(vector=resultant_vector, name="FR", is_resultant=True)
+            resultant = _Vector(vector=resultant_vector, name="FR", is_resultant=True)
             self.forces["FR"] = resultant
             setattr(self, "FR", resultant)
         else:
@@ -525,7 +1002,7 @@ class ParallelogramLawProblem(Problem):
             ang_value = resultant.angle.value * 180 / math.pi if resultant.angle.value is not None else 0.0
             self.solution_steps.append({"result": f"Resultant: {mag_value:.2f} {ref_unit.symbol} at {ang_value:.1f}°"})
 
-    def _solve_single_unknown(self, known_forces: list[ForceVector], unknown_force: ForceVector, resultant_forces: list[ForceVector]) -> None:
+    def _solve_single_unknown(self, known_forces: list[_Vector], unknown_force: _Vector, resultant_forces: list[_Vector]) -> None:
         """
         Solve for single unknown force given known forces.
 
@@ -578,7 +1055,7 @@ class ParallelogramLawProblem(Problem):
             y_qty = Quantity(name=f"{unknown_force.name}_y", dim=dim.force, value=sum_y, preferred=ref_unit)
             z_qty = Quantity(name=f"{unknown_force.name}_z", dim=dim.force, value=sum_z, preferred=ref_unit)
 
-            unknown_force._coords = Vector.from_quantities(x_qty, y_qty, z_qty)._coords
+            unknown_force._coords = _Vector.from_quantities(x_qty, y_qty, z_qty)._coords
             unknown_force._compute_magnitude_and_angle()
             unknown_force.is_known = True
 
@@ -602,7 +1079,7 @@ class ParallelogramLawProblem(Problem):
             # Fall back to component summation
             self._solve_by_components(known_forces, unknown_force)
 
-    def _solve_unknown_from_resultant_and_known(self, unknown_force: ForceVector, resultant: ForceVector, known_force: ForceVector) -> None:
+    def _solve_unknown_from_resultant_and_known(self, unknown_force: _Vector, resultant: _Vector, known_force: _Vector) -> None:
         """
         Solve for unknown force given known resultant and one known force.
 
@@ -718,7 +1195,7 @@ class ParallelogramLawProblem(Problem):
         x_qty = Quantity(name=f"{unknown_force.name}_x", dim=dim.force, value=F_unknownx, preferred=ref_unit)
         y_qty = Quantity(name=f"{unknown_force.name}_y", dim=dim.force, value=F_unknowny, preferred=ref_unit)
         z_qty = Quantity(name=f"{unknown_force.name}_z", dim=dim.force, value=0.0, preferred=ref_unit)
-        unknown_vector = Vector.from_quantities(x_qty, y_qty, z_qty)
+        unknown_vector = _Vector.from_quantities(x_qty, y_qty, z_qty)
 
         # Update unknown force
         unknown_force.copy_coords_from(unknown_vector)
@@ -726,7 +1203,7 @@ class ParallelogramLawProblem(Problem):
         unknown_force._angle = angle_qty
         unknown_force.is_known = True
 
-    def _solve_resultant_from_two_forces(self, force1: ForceVector, force2: ForceVector, resultant: ForceVector) -> None:
+    def _solve_resultant_from_two_forces(self, force1: _Vector, force2: _Vector, resultant: _Vector) -> None:
         """
         Solve for resultant of two forces using law of cosines and law of sines.
 
@@ -826,7 +1303,7 @@ class ParallelogramLawProblem(Problem):
         x_qty = Quantity(name="FR_x", dim=dim.force, value=FRx, preferred=ref_unit)
         y_qty = Quantity(name="FR_y", dim=dim.force, value=FRy, preferred=ref_unit)
         z_qty = Quantity(name="FR_z", dim=dim.force, value=0.0, preferred=ref_unit)
-        resultant_vector = Vector.from_quantities(x_qty, y_qty, z_qty)
+        resultant_vector = _Vector.from_quantities(x_qty, y_qty, z_qty)
 
         # Update resultant force
         resultant.copy_coords_from(resultant_vector)
@@ -836,9 +1313,9 @@ class ParallelogramLawProblem(Problem):
 
     def _solve_two_unknowns_with_resultant(
         self,
-        known_forces: list[ForceVector],
-        unknown_forces: list[ForceVector],
-        resultant: ForceVector,
+        known_forces: list[_Vector],
+        unknown_forces: list[_Vector],
+        resultant: _Vector,
     ) -> None:
         """
         Solve for two unknowns given a resultant.
@@ -868,9 +1345,9 @@ class ParallelogramLawProblem(Problem):
 
     def _solve_two_partially_known_equilibrium(
         self,
-        known_forces: list[ForceVector],
-        partially_known_forces: list[ForceVector],
-        resultant: ForceVector,  # noqa: ARG002
+        known_forces: list[_Vector],
+        partially_known_forces: list[_Vector],
+        resultant: _Vector,  # noqa: ARG002
     ) -> None:
         """
         Solve for two partially known forces using equilibrium equations.
@@ -1000,7 +1477,7 @@ class ParallelogramLawProblem(Problem):
         x_qty = Quantity(name=f"{force_with_known_mag.name}_x", dim=dim.force, value=x_val, preferred=pref_unit)
         y_qty = Quantity(name=f"{force_with_known_mag.name}_y", dim=dim.force, value=y_val, preferred=pref_unit)
         z_qty = Quantity(name=f"{force_with_known_mag.name}_z", dim=dim.force, value=z_val, preferred=pref_unit)
-        force_with_known_mag._coords = Vector.from_quantities(x_qty, y_qty, z_qty)._coords
+        force_with_known_mag._coords = _Vector.from_quantities(x_qty, y_qty, z_qty)._coords
         force_with_known_mag.is_known = True
 
         # Update force with known angle (set magnitude)
@@ -1020,14 +1497,14 @@ class ParallelogramLawProblem(Problem):
         x_qty_r = Quantity(name=f"{force_with_known_angle.name}_x", dim=dim.force, value=x_val_r, preferred=pref_unit)
         y_qty_r = Quantity(name=f"{force_with_known_angle.name}_y", dim=dim.force, value=y_val_r, preferred=pref_unit)
         z_qty_r = Quantity(name=f"{force_with_known_angle.name}_z", dim=dim.force, value=z_val_r, preferred=pref_unit)
-        force_with_known_angle._coords = Vector.from_quantities(x_qty_r, y_qty_r, z_qty_r)._coords
+        force_with_known_angle._coords = _Vector.from_quantities(x_qty_r, y_qty_r, z_qty_r)._coords
         force_with_known_angle.is_known = True
 
     def _solve_two_magnitudes_with_known_angles(
         self,
-        known_forces: list[ForceVector],
-        unknown_forces: list[ForceVector],
-        resultant: ForceVector,
+        known_forces: list[_Vector],
+        unknown_forces: list[_Vector],
+        resultant: _Vector,
     ) -> None:
         """
         Solve for two unknown magnitudes given known angles.
@@ -1162,7 +1639,7 @@ class ParallelogramLawProblem(Problem):
         comp_x_qty = Quantity(name=f"{component_force.name}_x", dim=dim.force, value=comp_x, preferred=ref_unit)
         comp_y_qty = Quantity(name=f"{component_force.name}_y", dim=dim.force, value=comp_y, preferred=ref_unit)
         comp_z_qty = Quantity(name=f"{component_force.name}_z", dim=dim.force, value=0.0, preferred=ref_unit)
-        component_force._coords = Vector.from_quantities(comp_x_qty, comp_y_qty, comp_z_qty)._coords
+        component_force._coords = _Vector.from_quantities(comp_x_qty, comp_y_qty, comp_z_qty)._coords
         component_force._magnitude = mag_comp_qty
         component_force._angle = angle_comp_qty
         component_force.is_known = True
@@ -1172,7 +1649,7 @@ class ParallelogramLawProblem(Problem):
         res_x_qty = Quantity(name=f"{resultant.name}_x", dim=dim.force, value=res_x, preferred=ref_unit)
         res_y_qty = Quantity(name=f"{resultant.name}_y", dim=dim.force, value=res_y, preferred=ref_unit)
         res_z_qty = Quantity(name=f"{resultant.name}_z", dim=dim.force, value=0.0, preferred=ref_unit)
-        resultant._coords = Vector.from_quantities(res_x_qty, res_y_qty, res_z_qty)._coords
+        resultant._coords = _Vector.from_quantities(res_x_qty, res_y_qty, res_z_qty)._coords
         resultant._magnitude = mag_res_qty
         resultant._angle = angle_res_qty
         resultant.is_known = True
@@ -1193,9 +1670,9 @@ class ParallelogramLawProblem(Problem):
 
     def _solve_two_angles_with_known_magnitudes(
         self,
-        known_forces: list[ForceVector],
-        partially_known_forces: list[ForceVector],
-        resultant: ForceVector,
+        known_forces: list[_Vector],
+        partially_known_forces: list[_Vector],
+        resultant: _Vector,
     ) -> None:
         """
         Solve for two unknown angles given known magnitudes and a fully known resultant.
@@ -1388,7 +1865,7 @@ class ParallelogramLawProblem(Problem):
         f1_x_qty = Quantity(name=f"{force1.name}_x", dim=dim.force, value=f1_x, preferred=ref_unit)
         f1_y_qty = Quantity(name=f"{force1.name}_y", dim=dim.force, value=f1_y, preferred=ref_unit)
         f1_z_qty = Quantity(name=f"{force1.name}_z", dim=dim.force, value=0.0, preferred=ref_unit)
-        force1._coords = Vector.from_quantities(f1_x_qty, f1_y_qty, f1_z_qty)._coords
+        force1._coords = _Vector.from_quantities(f1_x_qty, f1_y_qty, f1_z_qty)._coords
         force1._magnitude = mag1_qty
         force1._angle = angle1_qty
         force1.is_known = True
@@ -1398,7 +1875,7 @@ class ParallelogramLawProblem(Problem):
         f2_x_qty = Quantity(name=f"{force2.name}_x", dim=dim.force, value=f2_x, preferred=ref_unit)
         f2_y_qty = Quantity(name=f"{force2.name}_y", dim=dim.force, value=f2_y, preferred=ref_unit)
         f2_z_qty = Quantity(name=f"{force2.name}_z", dim=dim.force, value=0.0, preferred=ref_unit)
-        force2._coords = Vector.from_quantities(f2_x_qty, f2_y_qty, f2_z_qty)._coords
+        force2._coords = _Vector.from_quantities(f2_x_qty, f2_y_qty, f2_z_qty)._coords
         force2._magnitude = mag2_qty
         force2._angle = angle2_qty
         force2.is_known = True
@@ -1414,7 +1891,7 @@ class ParallelogramLawProblem(Problem):
             ]
         })
 
-    def _solve_with_parametric_angle_constraint(self, known_forces: list[ForceVector], unknown_forces: list[ForceVector], resultant: ForceVector) -> None:
+    def _solve_with_parametric_angle_constraint(self, known_forces: list[_Vector], unknown_forces: list[_Vector], resultant: _Vector) -> None:
         """
         Solve equilibrium when one force has a relative angle constraint to another unknown force.
 
@@ -1513,11 +1990,11 @@ class ParallelogramLawProblem(Problem):
 
     def _solve_parametric_decomposition(
         self,
-        reference_force: ForceVector,
-        parametric_force: ForceVector,
-        independent_force: ForceVector,
+        reference_force: _Vector,
+        parametric_force: _Vector,
+        independent_force: _Vector,
         angle_offset: float,
-        resultant: ForceVector,  # noqa: ARG002
+        resultant: _Vector,  # noqa: ARG002
     ) -> None:
         """
         Solve Pattern A: F_ref (unknown angle) = F_param (parametric) + F_indep (known angle, unknown mag).
@@ -1617,7 +2094,7 @@ class ParallelogramLawProblem(Problem):
         ref_x_qty = Quantity(name=f"{reference_force.name}_x", dim=dim.force, value=ref_x, preferred=ref_unit)
         ref_y_qty = Quantity(name=f"{reference_force.name}_y", dim=dim.force, value=ref_y, preferred=ref_unit)
         ref_z_qty = Quantity(name=f"{reference_force.name}_z", dim=dim.force, value=0.0, preferred=ref_unit)
-        reference_force._coords = Vector.from_quantities(ref_x_qty, ref_y_qty, ref_z_qty)._coords
+        reference_force._coords = _Vector.from_quantities(ref_x_qty, ref_y_qty, ref_z_qty)._coords
         reference_force.is_known = True
 
         # Update parametric force
@@ -1630,7 +2107,7 @@ class ParallelogramLawProblem(Problem):
         param_x_qty = Quantity(name=f"{parametric_force.name}_x", dim=dim.force, value=param_x, preferred=ref_unit)
         param_y_qty = Quantity(name=f"{parametric_force.name}_y", dim=dim.force, value=param_y, preferred=ref_unit)
         param_z_qty = Quantity(name=f"{parametric_force.name}_z", dim=dim.force, value=0.0, preferred=ref_unit)
-        parametric_force._coords = Vector.from_quantities(param_x_qty, param_y_qty, param_z_qty)._coords
+        parametric_force._coords = _Vector.from_quantities(param_x_qty, param_y_qty, param_z_qty)._coords
         parametric_force.is_known = True
         parametric_force._relative_to_force = None
         parametric_force._relative_angle = None
@@ -1643,7 +2120,7 @@ class ParallelogramLawProblem(Problem):
         indep_x_qty = Quantity(name=f"{independent_force.name}_x", dim=dim.force, value=indep_x, preferred=ref_unit)
         indep_y_qty = Quantity(name=f"{independent_force.name}_y", dim=dim.force, value=indep_y, preferred=ref_unit)
         indep_z_qty = Quantity(name=f"{independent_force.name}_z", dim=dim.force, value=0.0, preferred=ref_unit)
-        independent_force._coords = Vector.from_quantities(indep_x_qty, indep_y_qty, indep_z_qty)._coords
+        independent_force._coords = _Vector.from_quantities(indep_x_qty, indep_y_qty, indep_z_qty)._coords
         independent_force.is_known = True
 
         self.solution_steps.append({
@@ -1658,11 +2135,11 @@ class ParallelogramLawProblem(Problem):
 
     def _solve_parametric_composition(
         self,
-        reference_force: ForceVector,
-        parametric_force: ForceVector,
-        independent_force: ForceVector,
+        reference_force: _Vector,
+        parametric_force: _Vector,
+        independent_force: _Vector,
         angle_offset: float,
-        resultant: ForceVector,  # noqa: ARG002
+        resultant: _Vector,  # noqa: ARG002
     ) -> None:
         """
         Solve Pattern B: F_indep (known) = F_ref (unknown) + F_param (parametric).
@@ -1853,7 +2330,7 @@ class ParallelogramLawProblem(Problem):
         ref_x_qty = Quantity(name=f"{reference_force.name}_x", dim=dim.force, value=ref_x, preferred=ref_unit)
         ref_y_qty = Quantity(name=f"{reference_force.name}_y", dim=dim.force, value=ref_y, preferred=ref_unit)
         ref_z_qty = Quantity(name=f"{reference_force.name}_z", dim=dim.force, value=0.0, preferred=ref_unit)
-        reference_force._coords = Vector.from_quantities(ref_x_qty, ref_y_qty, ref_z_qty)._coords
+        reference_force._coords = _Vector.from_quantities(ref_x_qty, ref_y_qty, ref_z_qty)._coords
         reference_force.is_known = True
 
         # Update parametric force
@@ -1863,7 +2340,7 @@ class ParallelogramLawProblem(Problem):
         param_x_qty = Quantity(name=f"{parametric_force.name}_x", dim=dim.force, value=param_x, preferred=ref_unit)
         param_y_qty = Quantity(name=f"{parametric_force.name}_y", dim=dim.force, value=param_y, preferred=ref_unit)
         param_z_qty = Quantity(name=f"{parametric_force.name}_z", dim=dim.force, value=0.0, preferred=ref_unit)
-        parametric_force._coords = Vector.from_quantities(param_x_qty, param_y_qty, param_z_qty)._coords
+        parametric_force._coords = _Vector.from_quantities(param_x_qty, param_y_qty, param_z_qty)._coords
         parametric_force.is_known = True
         parametric_force._relative_to_force = None
         parametric_force._relative_angle = None
@@ -1878,7 +2355,7 @@ class ParallelogramLawProblem(Problem):
             ]
         })
 
-    def _solve_angle_between_forces(self, all_forces: list[ForceVector], resultant_forces: list[ForceVector]) -> None:
+    def _solve_angle_between_forces(self, all_forces: list[_Vector], resultant_forces: list[_Vector]) -> None:
         """
         Solve for the angle between two forces given all three magnitudes.
 
@@ -2014,7 +2491,7 @@ class ParallelogramLawProblem(Problem):
         x1_qty = Quantity(name=f"{F1.name}_x", dim=dim.force, value=F1x, preferred=ref_unit)
         y1_qty = Quantity(name=f"{F1.name}_y", dim=dim.force, value=F1y, preferred=ref_unit)
         z1_qty = Quantity(name=f"{F1.name}_z", dim=dim.force, value=0.0, preferred=ref_unit)
-        F1._coords = Vector.from_quantities(x1_qty, y1_qty, z1_qty)._coords
+        F1._coords = _Vector.from_quantities(x1_qty, y1_qty, z1_qty)._coords
         F1.is_known = True
 
         # Update F2
@@ -2022,7 +2499,7 @@ class ParallelogramLawProblem(Problem):
         x2_qty = Quantity(name=f"{F2.name}_x", dim=dim.force, value=F2x, preferred=ref_unit)
         y2_qty = Quantity(name=f"{F2.name}_y", dim=dim.force, value=F2y, preferred=ref_unit)
         z2_qty = Quantity(name=f"{F2.name}_z", dim=dim.force, value=0.0, preferred=ref_unit)
-        F2._coords = Vector.from_quantities(x2_qty, y2_qty, z2_qty)._coords
+        F2._coords = _Vector.from_quantities(x2_qty, y2_qty, z2_qty)._coords
         F2.is_known = True
 
         # Update resultant
@@ -2030,12 +2507,12 @@ class ParallelogramLawProblem(Problem):
         xR_qty = Quantity(name=f"{resultant.name}_x", dim=dim.force, value=FRx, preferred=ref_unit)
         yR_qty = Quantity(name=f"{resultant.name}_y", dim=dim.force, value=FRy, preferred=ref_unit)
         zR_qty = Quantity(name=f"{resultant.name}_z", dim=dim.force, value=0.0, preferred=ref_unit)
-        resultant._coords = Vector.from_quantities(xR_qty, yR_qty, zR_qty)._coords
+        resultant._coords = _Vector.from_quantities(xR_qty, yR_qty, zR_qty)._coords
         resultant.is_known = True
 
         self.logger.info(f"Solved angle between {F1.name} and {F2.name}: θ = {theta_deg:.1f}°")
 
-    def _solve_by_components(self, known_forces: list[ForceVector], unknown_force: ForceVector) -> None:
+    def _solve_by_components(self, known_forces: list[_Vector], unknown_force: _Vector) -> None:
         """
         Solve using component summation (ΣFx = 0, ΣFy = 0).
 
@@ -2077,7 +2554,7 @@ class ParallelogramLawProblem(Problem):
         y_qty = Quantity(name=f"{unknown_force.name}_y", dim=dim.force, value=unknown_y, preferred=ref_unit)
         z_qty = Quantity(name=f"{unknown_force.name}_z", dim=dim.force, value=unknown_z, preferred=ref_unit)
 
-        unknown_vector = Vector.from_quantities(x_qty, y_qty, z_qty)
+        unknown_vector = _Vector.from_quantities(x_qty, y_qty, z_qty)
 
         # Update unknown force
         unknown_force.copy_coords_from(unknown_vector)

@@ -178,12 +178,41 @@ class ReportGenerator(ABC):
             # Determine if this force was originally fully known
             was_originally_known = mag_was_originally_known and angle_was_originally_known
 
+            # Get X and Y components using Quantity's magnitude() method for proper unit handling
+            x_str = ""
+            y_str = ""
+            if hasattr(force_obj, 'u') and hasattr(force_obj, 'v') and force_obj._coords is not None:
+                # Only show if we have actual values (not computed from unknowns)
+                if was_originally_known or (mag_var.value is not None and angle_var.value is not None):
+                    try:
+                        u_qty = force_obj.u  # Returns Quantity with proper unit
+                        v_qty = force_obj.v
+                        if u_qty is not None and u_qty.value is not None:
+                            # Use Quantity.magnitude() for proper unit conversion
+                            x_val = u_qty.magnitude()  # Returns value in preferred/SI unit
+                            x_str = f"{x_val:.6g}"
+                        if v_qty is not None and v_qty.value is not None:
+                            y_val = v_qty.magnitude()
+                            y_str = f"{y_val:.6g}"
+                    except (ValueError, AttributeError):
+                        pass
+
+            # Get angle reference (e.g., "+x", "-x", "+y", "-y")
+            reference_str = ""
+            if hasattr(force_obj, 'angle_reference') and force_obj.angle_reference is not None:
+                ref = force_obj.angle_reference
+                if hasattr(ref, 'axis_label'):
+                    reference_str = ref.axis_label
+
             force_data = {
                 "symbol": force_name,
                 "name": getattr(force_obj, 'name', force_name),
                 "magnitude": mag_str,
                 "angle": angle_str,
-                "unit": mag_unit
+                "unit": mag_unit,
+                "x": x_str,
+                "y": y_str,
+                "reference": reference_str
             }
 
             if was_originally_known:

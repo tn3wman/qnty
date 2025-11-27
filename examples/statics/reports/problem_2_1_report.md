@@ -1,0 +1,90 @@
+# Engineering Calculation Report: DynamicProblem
+
+**Generated:** 2025-11-26 19:06:14
+
+## 1. Known Variables
+
+| Vector | Fₓ (N) | Fᵧ (N) | |F| (N) | θ (deg) | Reference |
+| :--- | ---: | ---: | ---: | ---: | :--- |
+| $\vec{F_1}$ | 225.0 | 389.7 | 450.0 | 60.0 | +x |
+| $\vec{F_2}$ | -676.1 | -181.2 | 700.0 | 15.0 | -x |
+
+## 2. Unknown Variables
+
+| Vector | Fₓ (N) | Fᵧ (N) | |F| (N) | θ (deg) | Reference |
+| :--- | ---: | ---: | ---: | ---: | :--- |
+| $\vec{F_R}$ | ? | ? | ? | ? | +x |
+
+## 3. Equations Used
+
+1. $|\vec{F_R}|^2 = |\vec{F_1}|^2 + |\vec{F_2}|^2 + 2 \cdot |\vec{F_1}| \cdot |\vec{F_2}| \cdot \cos(\angle(\vec{F_1}, \vec{F_2}))$
+
+2. $\frac{\sin(\angle(\vec{F_1}, \vec{F_R}))}{|\vec{F_2}|} = \frac{\sin(\angle(\vec{F_1}, \vec{F_2}))}{|\vec{F_R}|}$
+
+## 4. Step-by-Step Solution
+
+**Step 1: Solve for $\angle(\vec{F_1}, \vec{F_2})$**
+
+$$
+\begin{aligned}
+\angle(\vec{F_1}, \vec{F_2}) &= |\theta_{F_1} - \theta_{F_2}| \\
+&= |60^{\circ} - 15^{\circ}| \\
+&= 45^{\circ} \\
+\end{aligned}
+$$
+
+**Step 2: Solve for $|\vec{F_R}|$ using Eq 1**
+
+$$
+\begin{aligned}
+|\vec{F_R}| &= \sqrt{(450.0)^2 + (700.0)^2 + 2(450.0)(700.0)\cos(45^{\circ})} \\
+&= 497.0 N \\
+\end{aligned}
+$$
+
+**Step 3: Solve for $\angle(\vec{F_1}, \vec{F_R})$ using Eq 2**
+
+$$
+\begin{aligned}
+\angle(\vec{F_1}, \vec{F_R}) &= \sin^{-1}(700.0 \cdot \frac{\sin(45^{\circ})}{497.0}) \\
+&= 95.2^{\circ} \\
+\end{aligned}
+$$
+
+**Step 4: Solve for $\theta_{F_{R}}$ with respect to +x**
+
+$$
+\begin{aligned}
+\theta_{F_R} &= \theta_{F_1} + \angle(\vec{F_1}, \vec{F_R}) \\
+&= 60.0^{\circ} + 95.2^{\circ} \\
+&= 155.2^{\circ} \\
+\end{aligned}
+$$
+
+## 5. Summary of Results
+
+| Vector | Fₓ (N) | Fᵧ (N) | |F| (N) | θ (deg) | Reference |
+| :--- | ---: | ---: | ---: | ---: | :--- |
+| $\vec{F_R}$ | -451.1 | 208.5 | 497.0 | 155.2 | +x |
+
+
+---
+
+## Disclaimer
+
+While every effort has been made to ensure the accuracy and reliability of the calculations provided, we do not guarantee that the information is complete, up-to-date, or suitable for any specific purpose. Users must independently verify the results and assume full responsibility for any decisions or actions taken based on its output. Use of this calculator is entirely at your own risk, and we expressly disclaim any liability for errors or omissions in the information provided.
+
+**Report Details:**
+- **Generated Date:** November 26, 2025
+- **Generated Using:** Qnty Library
+- **Version:** Beta (Independent verification required for production use)
+
+**Signatures:**
+
+| Role | Name | Signature | Date |
+|------|------|-----------|------|
+| Calculated By | _________________ | _________________ | _______ |
+| Reviewed By | _________________ | _________________ | _______ |
+| Approved By | _________________ | _________________ | _______ |
+
+*Report generated using qnty library*

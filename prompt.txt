@@ -1,22 +1,326 @@
-I would like to implement some sort of "select" variable and "match" equation functionality to qnty. I added a very crude idea to handle this, but am open to more professional implementations. For the 'select' options I would like some sort of validation or control over the options that are frozen like a dataclass (I need a way to get all the options as a list for future UI implementation). Here is my crude implementation but I am guessing there needs to be some boolean indicator and more professional way to do this kind of like select boxes you see on a ui but I don't know how to implement it behind the scenes in a way that is consistent with the rest of the qnty codebase:
+# Prompt File: prompt.txt
 
-from dataclasses import dataclass
-from qnty.algebra import MatchVariable, equation, match
+I am having a really hard time integrating Qnty with a frontend framework like Reflex. Previously you created an example at C:\Projects\qnty\examples\statics\parallelogram_law_example.py that runs ok here here, but when I install Qnty in my Reflex development environment and try to run the same code I get many errors related to unknown vectors. I am wondering if refactorint Qnty to be both a code based engineering problem solver and a sort of API is feasable. Reflex tends to work very well with state variables that are dataclasses. If Qnty could be refactored to use dataclasses for its core objects (Vectors, Points, Forces, etc) and then these objects could be passed to a problem/solver engine that would do the calculations and return results in the same dataclass format, I feel it would be much easier to integrate the two. Please use web search and context7 to understand the best path forward.
+
+I am imagining some sort of workflow in the backend of a Reflex parallelogram problem like this:.
+
+
+Analysis Summary
+The Core Problem
+Your current Qnty architecture uses:
+__slots__ for memory efficiency in _Vector and _Point classes
+NumPy arrays for coordinate storage (self._coords = np.array([x, y, z]))
+Singleton references to Dimension and Unit objects from catalogs
+Complex factory methods with multiple construction paths (29 parameters in _Vector.__init__)
+Metaclass magic in Quantity (already a @dataclass but with object.__new__() bypass)
+Reflex requires:
+JSON-serializable state variables (primitives, lists, dicts, or dataclasses)
+Standard Python dataclasses (they're removing rx.Base in favor of stdlib dataclasses)
+Custom @rx.serializer decorators for complex types
+Why It Doesn't Work Now
+When Reflex tries to serialize your _Vector objects in state:
+NumPy arrays aren't JSON-serializable by default
+Dimension and Unit singleton references can't be serialized/deserialized correctly
+The __slots__ pattern prevents default pickling
+Complex object graphs with recursive references fail serialization
+Recommended Architecture: Data Transfer Objects (DTOs)
+The cleanest solution is a DTO layer that separates concerns:
+┌─────────────────────────────────────────────────────────────────────┐
+│                          REFLEX FRONTEND                            │
+│  ┌─────────────────────────────────────────────────────────────┐   │
+│  │  rx.State                                                    │   │
+│  │    vectors: list[VectorDTO]    # JSON-serializable DTOs     │   │
+│  │    points: list[PointDTO]                                   │   │
+│  │    result: SolutionDTO | None                               │   │
+│  └─────────────────────────────────────────────────────────────┘   │
+└──────────────────────────────┬──────────────────────────────────────┘
+                               │
+                        DTO ←→ Domain
+                               │
+┌──────────────────────────────▼──────────────────────────────────────┐
+│                          QNTY BACKEND                               │
+│  ┌─────────────────────────────────────────────────────────────┐   │
+│  │  _Vector, _Point, Quantity (unchanged high-performance)     │   │
+│  │  ParallelogramLawProblem, TriangleSolver (unchanged)       │   │
+│  └─────────────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────────────┘
+Proposed DTOs
+# src/qnty/integration/dto.py
+from dataclasses import dataclass, field
+from typing import Literal
 
 @dataclass
-class Options:
-    non_self_energized_gaskets = "non_self_energized_gaskets"
-    self_energized_gaskets = "self_energized_gaskets"
+class PointDTO:
+    """JSON-serializable Point data."""
+    x: float
+    y: float
+    z: float = 0.0
+    unit: str = "m"
+    name: str | None = None
 
-energized_gaskets = MatchVariable("energized_gaskets")
+@dataclass  
+class VectorDTO:
+    """JSON-serializable Vector data."""
+    # Cartesian representation (always populated)
+    u: float
+    v: float  
+    w: float = 0.0
+    unit: str = "N"
+    name: str | None = None
+    
+    # Optional polar representation (for input convenience)
+    magnitude: float | None = None
+    angle: float | None = None
+    angle_unit: str = "degree"
+    angle_wrt: str = "+x"
+    plane: str = "xy"
+    
+    # Flags
+    is_known: bool = True
+    is_resultant: bool = False
 
-W_o_eqn = equation(
-    W_o
-    match(
-        energized_gaskets, 25,
-        non_energized_gaskets, 15,
+@dataclass
+class ProblemInputDTO:
+    """Input data for a problem."""
+    problem_type: str  # "parallelogram_law", "equilibrium", etc.
+    vectors: list[VectorDTO] = field(default_factory=list)
+    points: list[PointDTO] = field(default_factory=list)
+    output_unit: str = "N"
+    output_angle_unit: str = "degree"
+
+@dataclass
+class SolutionDTO:
+    """Solution results."""
+    success: bool
+    vectors: dict[str, VectorDTO] = field(default_factory=dict)  # name -> solved vector
+    error: str | None = None
+    steps: list[str] = field(default_factory=list)  # Solution steps for display
+Conversion Functions
+# src/qnty/integration/converters.py
+from ..spatial.vector import _Vector
+from ..spatial.vectors import create_vector_polar, create_vector_cartesian
+from .dto import VectorDTO, PointDTO
+
+def vector_to_dto(vec: _Vector, output_unit: str = "N") -> VectorDTO:
+    """Convert internal _Vector to JSON-serializable DTO."""
+    coords = vec.to_array()  # Get in display unit
+    
+    # Convert to output unit
+    if vec._unit:
+        factor = vec._unit.si_factor
+        from ..core.unit import ureg
+        target = ureg.resolve(output_unit)
+        if target:
+            coords = [c * factor / target.si_factor for c in coords]
+    
+    return VectorDTO(
+        u=coords[0],
+        v=coords[1],
+        w=coords[2],
+        unit=output_unit,
+        name=vec.name,
+        magnitude=vec.magnitude_in(output_unit) if hasattr(vec, 'magnitude_in') else None,
+        angle=vec.angle_in("degree", wrt="+x") if hasattr(vec, 'angle_in') else None,
+        is_known=vec.is_known,
+        is_resultant=getattr(vec, 'is_resultant', False),
     )
 
-I am trying to implement this in a way that is consistent with the rest of the qnty codebase and algebra system. Any suggestions on how to improve this implementation or make it more professional would be greatly appreciated. I am trying to implement it here: C:\Projects\qnty\tests\asme\section_viii\division_ii\test_flange_design.py and here is a image of the part of the problem I am stuck on.lhs=
+def dto_to_vector(dto: VectorDTO) -> _Vector:
+    """Convert DTO to internal _Vector for computation."""
+    if dto.magnitude is not None and dto.angle is not None:
+        # Create from polar
+        return create_vector_polar(
+            magnitude=dto.magnitude,
+            unit=dto.unit,
+            angle=dto.angle,
+            angle_unit=dto.angle_unit,
+            wrt=dto.angle_wrt,
+            plane=dto.plane,
+            name=dto.name,
+        )
+    else:
+        # Create from Cartesian
+        return create_vector_cartesian(
+            u=dto.u, v=dto.v, w=dto.w,
+            unit=dto.unit,
+            name=dto.name,
+        )
+Problem Solver Service
+# src/qnty/integration/solver_service.py
+from .dto import ProblemInputDTO, SolutionDTO, VectorDTO
+from .converters import dto_to_vector, vector_to_dto
+from ..problems.parallelogram_law import ParallelogramLawProblem
+from ..spatial.vectors import create_vector_resultant
 
-C:\Projects\qnty\Screenshot 2025-10-17 133930.png
+def solve_problem(input_dto: ProblemInputDTO) -> SolutionDTO:
+    """
+    Solve a problem from DTO input and return DTO output.
+    
+    This is the main API entry point for Reflex integration.
+    """
+    try:
+        if input_dto.problem_type == "parallelogram_law":
+            return _solve_parallelogram_law(input_dto)
+        else:
+            return SolutionDTO(success=False, error=f"Unknown problem type: {input_dto.problem_type}")
+    except Exception as e:
+        return SolutionDTO(success=False, error=str(e))
+
+def _solve_parallelogram_law(input_dto: ProblemInputDTO) -> SolutionDTO:
+    """Solve parallelogram law problem."""
+    # Convert DTOs to internal vectors
+    vectors = [dto_to_vector(v) for v in input_dto.vectors]
+    
+    # Create dynamic problem class
+    class DynamicProblem(ParallelogramLawProblem):
+        pass
+    
+    # Add vectors as class attributes
+    for i, vec in enumerate(vectors):
+        name = vec.name or f"F_{i+1}"
+        setattr(DynamicProblem, name, vec)
+    
+    # Add resultant
+    setattr(DynamicProblem, "F_R", create_vector_resultant(*vectors, name="F_R"))
+    
+    # Solve
+    problem = DynamicProblem()
+    
+    # Convert results to DTOs
+    result_vectors = {}
+    for name in ["F_R"] + [v.name for v in vectors if v.name]:
+        if hasattr(problem, name):
+            vec = getattr(problem, name)
+            result_vectors[name] = vector_to_dto(vec, input_dto.output_unit)
+    
+    return SolutionDTO(
+        success=True,
+        vectors=result_vectors,
+        steps=getattr(problem, 'solution_steps', []),
+    )
+Reflex Integration Example
+# reflex_app/state.py
+import reflex as rx
+from dataclasses import dataclass, field
+from qnty.integration import ProblemInputDTO, VectorDTO, SolutionDTO, solve_problem
+
+class ProblemState(rx.State):
+    # Input vectors (JSON-serializable dataclasses)
+    vectors: list[VectorDTO] = []
+    
+    # Results
+    result: SolutionDTO | None = None
+    
+    # UI state
+    output_unit: str = "N"
+    output_angle_unit: str = "degree"
+    
+    def add_vector_polar(self, magnitude: float, angle: float, unit: str, name: str):
+        """Add a vector using polar coordinates."""
+        self.vectors.append(VectorDTO(
+            u=0, v=0, w=0,  # Will be computed
+            magnitude=magnitude,
+            angle=angle,
+            unit=unit,
+            name=name,
+        ))
+    
+    def solve(self):
+        """Solve the current problem."""
+        input_dto = ProblemInputDTO(
+            problem_type="parallelogram_law",
+            vectors=self.vectors,
+            output_unit=self.output_unit,
+            output_angle_unit=self.output_angle_unit,
+        )
+        self.result = solve_problem(input_dto)
+    
+    def clear(self):
+        """Clear all vectors and results."""
+        self.vectors = []
+        self.result = None
+Implementation Plan
+Phase 1: Create DTO Module
+Create src/qnty/integration/init.py
+Create src/qnty/integration/dto.py with dataclass definitions
+Create src/qnty/integration/converters.py for DTO ↔ domain conversion
+Phase 2: Create Solver Service
+Create src/qnty/integration/solver_service.py
+Implement solve_problem() dispatcher
+Implement problem-specific solvers (parallelogram law first)
+Phase 3: Optional Reflex Serializers
+Create src/qnty/integration/reflex_serializers.py
+Add @rx.serializer decorators for direct DTO serialization (optional, for convenience)
+Phase 4: Example and Documentation
+Update examples/statics/parallelogram_law_example.py to use DTOs
+Create example Reflex app showing integration
+Key Benefits of This Approach
+Aspect	Benefit
+No Breaking Changes	Existing Qnty code unchanged; DTOs are additive
+Clean Separation	Domain logic stays in Qnty core; serialization isolated in integration layer
+Performance Preserved	High-performance __slots__ and NumPy internals unchanged
+Reflex Compatible	Standard dataclasses work with Reflex's move away from rx.Base
+Testable	DTO layer can be unit-tested independently
+Extensible	Easy to add new problem types or frontends
+Alternative: Custom @rx.serializer (Simpler but Less Clean)
+If you want a quicker solution without restructuring, you can register custom serializers:
+import reflex as rx
+from qnty.spatial.vector import _Vector
+
+@rx.serializer
+def serialize_vector(vec: _Vector) -> dict:
+    """Serialize _Vector to JSON-compatible dict."""
+    coords = vec.to_array()
+    return {
+        "u": float(coords[0]),
+        "v": float(coords[1]),
+        "w": float(coords[2]),
+        "unit": vec._unit.symbol if vec._unit else None,
+        "name": vec.name,
+        "is_known": vec.is_known,
+    }
+However, this approach:
+Doesn't handle deserialization (one-way only)
+Requires Reflex as a dependency of Qnty
+Couples the library to a specific frontend framework
+Recommendation
+I recommend the DTO approach for these reasons:
+Reflex is moving to standard dataclasses - The Reflex v0.8.0 blog post confirms they're deprecating rx.Base and using stdlib dataclasses
+Clean API boundary - Your core library stays framework-agnostic
+Better testability - You can test the solver service without a Reflex app
+Future-proof - Works with any frontend (FastAPI, Flask, CLI, etc.)
+Would you like me to proceed with implementing this DTO-based integration layer? Sources:
+Reflex v0.8.0 Release Blog
+Reflex Custom Vars Documentation
+Reflex GitHub Releases
+numpydantic Serialization
+Python Dataclass vs Pydantic Article
+
+
+import reflex as rx
+from qnty import parallelogram_law_problem
+
+# The problem would have very good documentation about what objects exist, what objects are required, etc.
+problem = parallelogram_law_problem
+
+class AppState(rx.State):
+    vectors: list[problem.type.Vector] = []
+    resultant: problem.type.Vector | None = None
+    result: problem.type.Solution | None = None
+
+    def add_vector(self, magnitude: float, angle: float, unit: str):
+        self.vectors.append(problem.Vector(
+            u=0, v=0,
+            magnitude=magnitude,
+            angle=angle,
+            unit=unit,
+            name=f"F_{len(self.vectors)+1}",
+        ))
+    
+    def solve(self):
+        input = problem.input(
+            problem_type="parallelogram_law",
+            vectors=self.vectors,
+            output_unit="N",
+        )
+        self.result = problem.solve(input_dto)

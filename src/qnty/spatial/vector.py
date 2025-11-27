@@ -66,7 +66,9 @@ class _Vector(Generic[D]):
         "_magnitude", "_angle", "name", "is_known", "is_resultant", "_description",
         "coordinate_system", "angle_reference", "_relative_to_force", "_relative_angle",
         # PositionVector attributes
-        "_from_point", "_to_point", "_constraint_magnitude"
+        "_from_point", "_to_point", "_constraint_magnitude",
+        # Original polar coordinates for reporting
+        "_original_angle", "_original_wrt"
     )
 
     def __init__(
@@ -2025,5 +2027,5 @@ class _Vector(Generic[D]):
 
 
 # Backward compatibility aliases
-Vector = _Vector
-ForceVector = _Vector
+_Vector = _Vector
+_Vector = _Vector
