@@ -83,6 +83,57 @@ class Chapter2Problem1:
                 "x": "?", "y": "?", "magnitude": "?", "angle": "?", "reference": "+x",
             }
 
+        class equations:
+            """Expected equations used in the solution.
+
+            These are exact equation strings from the solver.
+            """
+            # Law of cosines (no spaces around comma in angle notation)
+            eq_1 = "|F_R|² = |F_1|² + |F_2|² + 2·|F_1|·|F_2|·cos(∠(F_1,F_2))"
+            # Law of sines
+            eq_2 = "sin(∠(F_1,F_R))/|F_2| = sin(∠(F_1,F_2))/|F_R|"
+            count = 2
+
+        class steps:
+            """Expected solution steps.
+
+            The substituted_equation contains the full calculation with result.
+            Values are extracted from the last line of substituted_equation.
+            """
+            # Step 1: Solve for angle between F_1 and F_2
+            step_1 = {
+                "target": "∠(F_1,F_2)",  # No spaces around comma
+                "final_line": "= 45°",   # Last line of substituted equation
+            }
+            # Step 2: Solve for |F_R| using law of cosines
+            step_2 = {
+                "target": "|F_R| using Eq 1",
+                "final_line": "= 497.0 N",
+            }
+            # Step 3: Solve for angle between F_1 and F_R using law of sines
+            step_3 = {
+                "target": "∠(F_1,F_R) using Eq 2",
+                "final_line": "= 95.2°",
+            }
+            # Step 4: Solve for θ_F_R with respect to +x
+            step_4 = {
+                "target": "θ_F_R with respect to +x",
+                "final_line": "= 155.2°",
+            }
+            count = 4
+
+        class results:
+            """Expected final results in the Summary of Results table."""
+            F_R = {
+                "symbol": "F_R",
+                "unit": "N",
+                "x": -451.1,
+                "y": 208.5,
+                "magnitude": 497.0,
+                "angle": 155.2,
+                "reference": "+x",
+            }
+
 
 # =============================================================================
 # List of all problem classes for parameterized testing
@@ -318,4 +369,224 @@ def test_report_unknown_variables(problem_class):
             assert actual.get("reference") == expected["reference"], (
                 f"Unknown variable '{expected['symbol']}' reference mismatch: "
                 f"expected '{expected['reference']}', got '{actual.get('reference')}'"
+            )
+
+
+@pytest.mark.parametrize("problem_class", PROBLEM_CLASSES, ids=lambda c: c.name)
+def test_report_equations(problem_class):
+    """Test that report equations match expected equations."""
+    if not hasattr(problem_class, 'report') or not hasattr(problem_class.report, 'equations'):
+        pytest.skip("Problem class does not define report.equations")
+
+    from qnty.extensions.reporting.report_ir import ReportBuilder
+
+    # Use solve_class to properly solve and get the Result object
+    result = pl.solve_class(problem_class, output_unit="N")
+    assert result.success, f"Solve failed: {result.error}"
+
+    # Get the problem from the result (it has solving_history populated)
+    problem = result._problem
+    assert problem is not None, "Result._problem should be populated"
+
+    # Build report IR and get equations
+    builder = ReportBuilder(
+        problem=problem,
+        known_variables=problem.get_known_variables(),
+        equations=problem.equations,
+        solving_history=getattr(problem, "solving_history", []),
+        diagram_path=None
+    )
+    equation_list = builder._format_equation_list()
+
+    # Check equation count
+    expected_equations = problem_class.report.equations
+    expected_count = getattr(expected_equations, 'count', 0)
+    assert len(equation_list) == expected_count, (
+        f"Expected {expected_count} equations, got {len(equation_list)}"
+    )
+
+    # Verify each expected equation matches exactly (in order)
+    # eq_1 should match equation_list[0], eq_2 should match equation_list[1], etc.
+    for i in range(1, expected_count + 1):
+        attr_name = f'eq_{i}'
+        expected_eq = getattr(expected_equations, attr_name, None)
+        if expected_eq is None:
+            continue
+
+        actual_eq = equation_list[i - 1]
+        assert actual_eq == expected_eq, (
+            f"Equation {i} mismatch:\n"
+            f"  Expected: {expected_eq!r}\n"
+            f"  Actual:   {actual_eq!r}"
+        )
+
+
+@pytest.mark.parametrize("problem_class", PROBLEM_CLASSES, ids=lambda c: c.name)
+def test_report_steps(problem_class):
+    """Test that solution steps match expected step data."""
+    if not hasattr(problem_class, 'report') or not hasattr(problem_class.report, 'steps'):
+        pytest.skip("Problem class does not define report.steps")
+
+    from qnty.extensions.reporting.report_ir import ReportBuilder
+
+    # Use solve_class to properly solve and get the Result object
+    result = pl.solve_class(problem_class, output_unit="N")
+    assert result.success, f"Solve failed: {result.error}"
+
+    # Get the problem from the result (it has solving_history populated)
+    problem = result._problem
+    assert problem is not None, "Result._problem should be populated"
+
+    # Build report IR and get solution steps
+    builder = ReportBuilder(
+        problem=problem,
+        known_variables=problem.get_known_variables(),
+        equations=problem.equations,
+        solving_history=getattr(problem, "solving_history", []),
+        diagram_path=None
+    )
+    steps = builder._extract_solution_steps()
+
+    # Check step count
+    expected_steps = problem_class.report.steps
+    expected_count = getattr(expected_steps, 'count', 0)
+    assert len(steps) == expected_count, (
+        f"Expected {expected_count} steps, got {len(steps)}"
+    )
+
+    # Check each step
+    for i in range(1, expected_count + 1):
+        expected_step = getattr(expected_steps, f'step_{i}', None)
+        if expected_step is None:
+            continue
+
+        actual_step = steps[i - 1]  # Convert to 0-based index
+
+        # Check target (equation_name) matches exactly
+        if "target" in expected_step:
+            assert actual_step.equation_name == expected_step["target"], (
+                f"Step {i} target mismatch:\n"
+                f"  Expected: {expected_step['target']!r}\n"
+                f"  Actual:   {actual_step.equation_name!r}"
+            )
+
+        # Check that the final line of substituted_equation contains expected result
+        if "final_line" in expected_step and actual_step.substituted_equation:
+            # Get the last line of the substituted equation
+            lines = actual_step.substituted_equation.strip().split('\n')
+            actual_final_line = lines[-1].strip() if lines else ""
+            expected_final = expected_step["final_line"]
+
+            assert actual_final_line == expected_final, (
+                f"Step {i} final result mismatch:\n"
+                f"  Expected: {expected_final!r}\n"
+                f"  Actual:   {actual_final_line!r}\n"
+                f"  Full substituted: {actual_step.substituted_equation!r}"
+            )
+
+
+@pytest.mark.parametrize("problem_class", PROBLEM_CLASSES, ids=lambda c: c.name)
+def test_report_results(problem_class):
+    """Test that Summary of Results table matches expected values."""
+    if not hasattr(problem_class, 'report') or not hasattr(problem_class.report, 'results'):
+        pytest.skip("Problem class does not define report.results")
+
+    from qnty.extensions.reporting.report_ir import ReportBuilder
+
+    # Use solve_class to properly solve and get the Result object
+    result = pl.solve_class(problem_class, output_unit="N")
+    assert result.success, f"Solve failed: {result.error}"
+
+    # Get the problem from the result (it has solving_history populated)
+    problem = result._problem
+    assert problem is not None, "Result._problem should be populated"
+
+    # Build report IR and get results table
+    builder = ReportBuilder(
+        problem=problem,
+        known_variables=problem.get_known_variables(),
+        equations=problem.equations,
+        solving_history=getattr(problem, "solving_history", []),
+        diagram_path=None
+    )
+    results_table = builder._build_vector_results_table()
+
+    assert results_table is not None, "Results table should not be None for vector problems"
+
+    # Check each expected result
+    expected_results = problem_class.report.results
+    for attr_name in dir(expected_results):
+        if attr_name.startswith('_'):
+            continue
+        expected = getattr(expected_results, attr_name)
+        if not isinstance(expected, dict):
+            continue
+
+        # Find the row matching the expected symbol
+        found_row = None
+        for row in results_table.rows:
+            if row.cells[0] == expected["symbol"]:
+                found_row = row
+                break
+
+        assert found_row is not None, (
+            f"Result '{expected['symbol']}' not found in results table"
+        )
+
+        # The results table has columns: Vector, Fₓ, Fᵧ, |F|, θ, Reference
+        # Cells order: [symbol, fx, fy, magnitude, angle, reference]
+
+        # Check X component (index 1)
+        if "x" in expected:
+            try:
+                actual_x = float(found_row.cells[1])
+                expected_x = float(expected["x"])
+                assert abs(actual_x - expected_x) < 1.0, (
+                    f"Result '{expected['symbol']}' X component mismatch: "
+                    f"expected {expected_x}, got {actual_x}"
+                )
+            except ValueError:
+                pass  # Non-numeric value
+
+        # Check Y component (index 2)
+        if "y" in expected:
+            try:
+                actual_y = float(found_row.cells[2])
+                expected_y = float(expected["y"])
+                assert abs(actual_y - expected_y) < 1.0, (
+                    f"Result '{expected['symbol']}' Y component mismatch: "
+                    f"expected {expected_y}, got {actual_y}"
+                )
+            except ValueError:
+                pass
+
+        # Check magnitude (index 3)
+        if "magnitude" in expected:
+            try:
+                actual_mag = float(found_row.cells[3])
+                expected_mag = float(expected["magnitude"])
+                assert abs(actual_mag - expected_mag) < 1.0, (
+                    f"Result '{expected['symbol']}' magnitude mismatch: "
+                    f"expected {expected_mag}, got {actual_mag}"
+                )
+            except ValueError:
+                pass
+
+        # Check angle (index 4)
+        if "angle" in expected:
+            try:
+                actual_angle = float(found_row.cells[4])
+                expected_angle = float(expected["angle"])
+                assert abs(actual_angle - expected_angle) < 1.0, (
+                    f"Result '{expected['symbol']}' angle mismatch: "
+                    f"expected {expected_angle}, got {actual_angle}"
+                )
+            except ValueError:
+                pass
+
+        # Check reference (index 5)
+        if "reference" in expected:
+            assert found_row.cells[5] == expected["reference"], (
+                f"Result '{expected['symbol']}' reference mismatch: "
+                f"expected '{expected['reference']}', got '{found_row.cells[5]}'"
             )

@@ -96,65 +96,88 @@ class ReportRenderer:
 
 
 class MarkdownRenderer(ReportRenderer):
-    """Render ReportIR to Markdown format."""
+    """Render ReportIR to Markdown format.
 
-    # Unicode subscript mapping
-    SUBSCRIPT_MAP = {
-        '0': '₀', '1': '₁', '2': '₂', '3': '₃', '4': '₄',
-        '5': '₅', '6': '₆', '7': '₇', '8': '₈', '9': '₉',
-        'a': 'ₐ', 'e': 'ₑ', 'h': 'ₕ', 'i': 'ᵢ', 'j': 'ⱼ',
-        'k': 'ₖ', 'l': 'ₗ', 'm': 'ₘ', 'n': 'ₙ', 'o': 'ₒ',
-        'p': 'ₚ', 'r': 'ᵣ', 's': 'ₛ', 't': 'ₜ', 'u': 'ᵤ',
-        'v': 'ᵥ', 'x': 'ₓ',
-        # Common uppercase letters used in physics/engineering
-        'R': 'ᵣ',  # Use lowercase subscript for R
-    }
+    Uses LaTeX math notation ($...$) which is supported by most Markdown renderers
+    including GitHub, Jupyter, VS Code, and MathJax-enabled viewers.
 
-    def _to_unicode_subscript(self, text: str) -> str:
-        """Convert underscore subscript notation to Unicode subscripts.
+    LaTeX is the single source of truth for math formatting - this class
+    delegates to LaTeXRenderer for all math conversion, then expands custom
+    macros (\\magn{}, \\vv{}) to standard LaTeX for Markdown compatibility.
+    """
 
-        Examples:
-            F_1 -> F₁
-            F_R -> Fᵣ
-            θ_F_1 -> θ_F₁
-            θ_F_R -> θ_Fᵣ
+    def __init__(self):
+        # Create a LaTeXRenderer instance to reuse its math conversion methods
+        self._latex = LaTeXRenderer()
+
+    def _expand_custom_macros(self, latex: str) -> str:
+        r"""Expand custom LaTeX macros to standard LaTeX for Markdown compatibility.
+
+        Markdown renderers (GitHub, MathJax, KaTeX) don't support custom macros
+        defined in LaTeX preambles, so we need to expand:
+        - \magn{...} → |...| (magnitude notation)
+        - \vv{...} → \vec{...} (vector notation)
         """
-        import re
+        result = latex
 
-        def replace_single_subscript(match):
-            base = match.group(1)
-            subscript = match.group(2)
-
-            # Try to convert all characters in subscript to Unicode
-            result = []
-            can_convert = True
-            for char in subscript:
-                if char in self.SUBSCRIPT_MAP:
-                    result.append(self.SUBSCRIPT_MAP[char])
+        # Expand \vv{...} to \vec{...}
+        # Need to handle nested braces properly
+        def expand_vv(text):
+            """Expand \vv{...} to \vec{...}, handling nested braces."""
+            output = []
+            i = 0
+            while i < len(text):
+                if text[i:i+4] == r'\vv{':
+                    # Find matching closing brace
+                    start = i + 4
+                    depth = 1
+                    j = start
+                    while j < len(text) and depth > 0:
+                        if text[j] == '{':
+                            depth += 1
+                        elif text[j] == '}':
+                            depth -= 1
+                        j += 1
+                    inner = text[start:j-1]
+                    # Recursively expand any nested \vv
+                    inner = expand_vv(inner)
+                    output.append(r'\vec{' + inner + '}')
+                    i = j
                 else:
-                    # Character doesn't have Unicode subscript
-                    can_convert = False
-                    break
+                    output.append(text[i])
+                    i += 1
+            return ''.join(output)
 
-            if can_convert and result:
-                return base + ''.join(result)
-            else:
-                # Keep original notation
-                return match.group(0)
+        result = expand_vv(result)
 
-        result = text
+        # Expand \magn{...} to |...|
+        def expand_magn(text):
+            r"""Expand \magn{...} to |...|, handling nested braces."""
+            output = []
+            i = 0
+            while i < len(text):
+                if text[i:i+6] == r'\magn{':
+                    # Find matching closing brace
+                    start = i + 6
+                    depth = 1
+                    j = start
+                    while j < len(text) and depth > 0:
+                        if text[j] == '{':
+                            depth += 1
+                        elif text[j] == '}':
+                            depth -= 1
+                        j += 1
+                    inner = text[start:j-1]
+                    # Recursively expand any nested \magn
+                    inner = expand_magn(inner)
+                    output.append('|' + inner + '|')
+                    i = j
+                else:
+                    output.append(text[i])
+                    i += 1
+            return ''.join(output)
 
-        # Process nested subscripts from right to left
-        # First handle patterns like _F_1 -> _F₁ (inner subscript first)
-        # Then handle θ_F₁ -> θ_F₁ (already converted) or θ_F -> θ_F (can't convert F)
-
-        # Keep applying the pattern until no more changes
-        prev_result = None
-        while prev_result != result:
-            prev_result = result
-            # Match: base character(s) followed by _subscript
-            # The subscript can be letters or numbers
-            result = re.sub(r'([A-Za-zθφαβγ₀₁₂₃₄₅₆₇₈₉ₐₑₕᵢⱼₖₗₘₙₒₚᵣₛₜᵤᵥₓ]+)_([A-Za-z0-9]+)(?![_A-Za-z0-9])', replace_single_subscript, result)
+        result = expand_magn(result)
 
         return result
 
@@ -203,13 +226,14 @@ class MarkdownRenderer(ReportRenderer):
         # Content
         for item in section.content:
             if isinstance(item, str):
-                # Apply Unicode subscript conversion to equation strings
-                lines.append(self._to_unicode_subscript(item))
+                # Numbered equations - wrap in LaTeX math
+                lines.append(self._to_latex_inline(item))
                 lines.append("")
             elif isinstance(item, Table):
                 lines.extend(self._render_table(item))
             elif isinstance(item, Equation):
-                lines.append(f"`{self._to_unicode_subscript(item.text)}`")
+                latex = self._expand_custom_macros(self._latex._to_latex_math(item.text))
+                lines.append(f"${latex}$")
                 lines.append("")
             elif isinstance(item, SolutionStep):
                 lines.extend(self._render_solution_step(item))
@@ -245,11 +269,11 @@ class MarkdownRenderer(ReportRenderer):
         # Data rows
         for row in table.rows:
             if not row.is_header:
-                # Convert subscripts in the first column (symbol/vector names)
+                # Convert first column (vector name) to LaTeX
                 converted_cells = []
                 for i, cell in enumerate(row.cells):
                     if i == 0:  # First column is typically symbol/vector name
-                        converted_cells.append(self._to_unicode_subscript(cell))
+                        converted_cells.append(self._format_vector_symbol(cell))
                     else:
                         converted_cells.append(cell)
                 row_text = "| " + " | ".join(converted_cells) + " |"
@@ -258,21 +282,33 @@ class MarkdownRenderer(ReportRenderer):
         lines.append("")
         return lines
 
+    def _format_vector_symbol(self, symbol: str) -> str:
+        """Format a vector symbol for Markdown using LaTeX."""
+        # Convert F_1, F_R etc to LaTeX vector notation
+        import re
+        if re.match(r'^[A-Z]_', symbol):
+            # It's a vector like F_1 or F_R
+            # Format as scalar first, then wrap in \vec{} for Markdown
+            # (We use \vec{} directly for Markdown instead of the \vv{} macro)
+            latex = self._latex._format_latex_variable(symbol, as_vector=False)
+            return f"$\\vec{{{latex}}}$"
+        return symbol
+
     def _render_solution_step(self, step: SolutionStep) -> list[str]:
         """Render a solution step to Markdown."""
         lines = []
 
-        # Convert title subscripts to Unicode
-        title = self._to_unicode_subscript(step.title)
-        lines.append(f"### Step {step.step_number}: Solve for {title}")
+        # Format title using LaTeX and expand custom macros
+        title_latex = self._expand_custom_macros(self._latex._format_step_title(step.title))
+        lines.append(f"**Step {step.step_number}: Solve for {title_latex}**")
         lines.append("")
 
         # Equation (only if provided)
         if step.equation:
-            lines.append("    **Equation:**")
-            lines.append("    ```")
-            lines.append(f"    {self._to_unicode_subscript(step.equation)}")
-            lines.append("    ```")
+            lines.append("**Equation:**")
+            lines.append("")
+            eq_latex = self._expand_custom_macros(self._latex._to_latex_math(step.equation))
+            lines.append(f"$${eq_latex}$$")
             lines.append("")
 
         # Substitution/Calculation
@@ -281,29 +317,53 @@ class MarkdownRenderer(ReportRenderer):
             if "\n" in step.substituted:
                 # Only show label if there was also an equation
                 if step.equation:
-                    lines.append("    **Substitution:**")
-                lines.append("    ```")
+                    lines.append("**Substitution:**")
+                    lines.append("")
+                # Use aligned LaTeX environment for multi-line
+                lines.append("$$")
+                lines.append(r"\begin{aligned}")
                 for sub_line in step.substituted.split("\n"):
-                    lines.append(f"    {self._to_unicode_subscript(sub_line.strip())}")
-                lines.append("    ```")
+                    latex_line = self._expand_custom_macros(self._latex._to_latex_math(sub_line.strip()))
+                    if "=" in latex_line:
+                        latex_line = latex_line.replace("=", "&=", 1)
+                    lines.append(latex_line + r" \\")
+                lines.append(r"\end{aligned}")
+                lines.append("$$")
                 lines.append("")
             elif step.substituted != step.equation:
-                lines.append("    **Substitution:**")
-                lines.append("    ```")
-                lines.append(f"    {self._to_unicode_subscript(step.substituted)}")
-                lines.append("    ```")
+                lines.append("**Substitution:**")
+                lines.append("")
+                sub_latex = self._expand_custom_macros(self._latex._to_latex_math(step.substituted))
+                lines.append(f"$${sub_latex}$$")
                 lines.append("")
 
         # Result (only if provided and not None)
         if step.result_value and step.result_value != "None":
-            lines.append("    **Result:**")
-            lines.append("    ```")
-            result_var = self._to_unicode_subscript(step.result_var)
-            lines.append(f"    {result_var} = {step.result_value} {step.result_unit}")
-            lines.append("    ```")
+            lines.append("**Result:**")
+            lines.append("")
+            result_var_latex = self._expand_custom_macros(self._latex._to_latex_math(step.result_var))
+            result_latex = f"{result_var_latex} = {step.result_value}"
+            if step.result_unit:
+                result_latex += r" \text{ " + step.result_unit + "}"
+            lines.append(f"$${result_latex}$$")
             lines.append("")
 
         return lines
+
+    def _to_latex_inline(self, text: str) -> str:
+        """Convert text with math to inline LaTeX format for Markdown.
+
+        For numbered equations like "1. |F_R|² = ...", wraps the equation in $...$
+        """
+        import re
+        # Check for numbered equation pattern
+        match = re.match(r'^(\d+\.\s*)(.+)$', text)
+        if match:
+            number = match.group(1)
+            equation = match.group(2)
+            latex = self._expand_custom_macros(self._latex._to_latex_math(equation))
+            return f"{number}${latex}$"
+        return text
 
     def _render_disclaimer(self, generated_date: datetime) -> list[str]:
         """Render the disclaimer section."""

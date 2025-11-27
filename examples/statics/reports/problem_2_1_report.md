@@ -1,63 +1,71 @@
 # Engineering Calculation Report: DynamicProblem
 
-**Generated:** 2025-11-26 18:57:42
+**Generated:** 2025-11-26 19:06:14
 
 ## 1. Known Variables
 
 | Vector | Fₓ (N) | Fᵧ (N) | |F| (N) | θ (deg) | Reference |
 | :--- | ---: | ---: | ---: | ---: | :--- |
-| F₁ | 225.0 | 389.7 | 450.0 | 60.0 | +x |
-| F₂ | -676.1 | -181.2 | 700.0 | 15.0 | -x |
+| $\vec{F_1}$ | 225.0 | 389.7 | 450.0 | 60.0 | +x |
+| $\vec{F_2}$ | -676.1 | -181.2 | 700.0 | 15.0 | -x |
 
 ## 2. Unknown Variables
 
 | Vector | Fₓ (N) | Fᵧ (N) | |F| (N) | θ (deg) | Reference |
 | :--- | ---: | ---: | ---: | ---: | :--- |
-| Fᵣ | ? | ? | ? | ? | +x |
+| $\vec{F_R}$ | ? | ? | ? | ? | +x |
 
 ## 3. Equations Used
 
-1. |Fᵣ|² = |F₁|² + |F₂|² + 2·|F₁|·|F₂|·cos(∠(F₁,F₂))
+1. $|\vec{F_R}|^2 = |\vec{F_1}|^2 + |\vec{F_2}|^2 + 2 \cdot |\vec{F_1}| \cdot |\vec{F_2}| \cdot \cos(\angle(\vec{F_1}, \vec{F_2}))$
 
-2. sin(∠(F₁,Fᵣ))/|F₂| = sin(∠(F₁,F₂))/|Fᵣ|
+2. $\frac{\sin(\angle(\vec{F_1}, \vec{F_R}))}{|\vec{F_2}|} = \frac{\sin(\angle(\vec{F_1}, \vec{F_2}))}{|\vec{F_R}|}$
 
 ## 4. Step-by-Step Solution
 
-### Step 1: Solve for ∠(F₁,F₂)
+**Step 1: Solve for $\angle(\vec{F_1}, \vec{F_2})$**
 
-    ```
-    ∠(F₁,F₂) = |θ_F₁ - θ_F₂|
-    = |60° - 15°|
-    = 45°
-    ```
+$$
+\begin{aligned}
+\angle(\vec{F_1}, \vec{F_2}) &= |\theta_{F_1} - \theta_{F_2}| \\
+&= |60^{\circ} - 15^{\circ}| \\
+&= 45^{\circ} \\
+\end{aligned}
+$$
 
-### Step 2: Solve for |Fᵣ| using Eq 1
+**Step 2: Solve for $|\vec{F_R}|$ using Eq 1**
 
-    ```
-    |Fᵣ| = sqrt((450.0)² + (700.0)² + 2(450.0)(700.0)cos(45°))
-    = 497.0 N
-    ```
+$$
+\begin{aligned}
+|\vec{F_R}| &= \sqrt{(450.0)^2 + (700.0)^2 + 2(450.0)(700.0)\cos(45^{\circ})} \\
+&= 497.0 N \\
+\end{aligned}
+$$
 
-### Step 3: Solve for ∠(F₁,Fᵣ) using Eq 2
+**Step 3: Solve for $\angle(\vec{F_1}, \vec{F_R})$ using Eq 2**
 
-    ```
-    ∠(F₁,Fᵣ) = sin⁻¹(700.0·sin(45°)/497.0)
-    = 95.2°
-    ```
+$$
+\begin{aligned}
+\angle(\vec{F_1}, \vec{F_R}) &= \sin^{-1}(700.0 \cdot \frac{\sin(45^{\circ})}{497.0}) \\
+&= 95.2^{\circ} \\
+\end{aligned}
+$$
 
-### Step 4: Solve for θ_Fᵣ with respect to +x
+**Step 4: Solve for $\theta_{F_{R}}$ with respect to +x**
 
-    ```
-    θ_Fᵣ = θ_F₁ + ∠(F₁,Fᵣ)
-    = 60.0° + 95.2°
-    = 155.2°
-    ```
+$$
+\begin{aligned}
+\theta_{F_R} &= \theta_{F_1} + \angle(\vec{F_1}, \vec{F_R}) \\
+&= 60.0^{\circ} + 95.2^{\circ} \\
+&= 155.2^{\circ} \\
+\end{aligned}
+$$
 
 ## 5. Summary of Results
 
 | Vector | Fₓ (N) | Fᵧ (N) | |F| (N) | θ (deg) | Reference |
 | :--- | ---: | ---: | ---: | ---: | :--- |
-| Fᵣ | -451.1 | 208.5 | 497.0 | 155.2 | +x |
+| $\vec{F_R}$ | -451.1 | 208.5 | 497.0 | 155.2 | +x |
 
 
 ---
