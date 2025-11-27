@@ -136,11 +136,114 @@ class Chapter2Problem1:
 
 
 # =============================================================================
+# Intentionally WRONG problem class to verify tests detect failures
+# =============================================================================
+
+
+class Chapter2Problem1_WRONG:
+    """Copy of Problem 2-1 with INTENTIONALLY WRONG expected values.
+
+    This class is used to verify that the tests actually detect incorrect values.
+    Each section has deliberately wrong data that should cause the corresponding
+    test to fail.
+    """
+    name = "Problem 2-1 WRONG (expect failures)"
+
+    # Input vectors - same as correct problem
+    F_1 = pl.create_vector_polar(magnitude=450, unit="N", angle=60, wrt="+x")
+    F_2 = pl.create_vector_polar(magnitude=700, unit="N", angle=15, wrt="-x")
+    F_R = pl.create_vector_resultant(F_1, F_2)
+
+    # WRONG expected values
+    class expected:
+        F_1 = pl.create_vector_polar(magnitude=450, unit="N", angle=60, wrt="+x")
+        F_2 = pl.create_vector_polar(magnitude=700, unit="N", angle=15, wrt="-x")
+        # WRONG: magnitude should be 497.014, angle should be 155.192
+        F_R = pl.create_vector_polar(magnitude=999.0, unit="N", angle=45.0, wrt="+x")
+
+    class report:
+        """WRONG expected content for report generation tests."""
+
+        class known_variables:
+            """WRONG known variables - wrong component values."""
+            F_1 = {
+                "symbol": "F_1", "unit": "N",
+                # WRONG: x should be 225.0, y should be 389.7
+                "x": 999.0, "y": 999.0, "mag": 450, "angle": 60, "wrt": "+x"
+            }
+            F_2 = {
+                "symbol": "F_2", "unit": "N",
+                "x": -676.1, "y": -181.2, "mag": 700, "angle": 15, "wrt": "-x"
+            }
+
+        class unknown_variables:
+            """WRONG unknown variables - wrong reference."""
+            F_R = {
+                "symbol": "F_R", "unit": "N",
+                "x": "?", "y": "?", "magnitude": "?", "angle": "?",
+                # WRONG: reference should be "+x"
+                "reference": "-y",
+            }
+
+        class equations:
+            """WRONG equations - wrong equation strings."""
+            # WRONG: should be "|F_R|² = |F_1|² + |F_2|² + 2·|F_1|·|F_2|·cos(∠(F_1,F_2))"
+            eq_1 = "WRONG EQUATION ONE"
+            # WRONG: should be "sin(∠(F_1,F_R))/|F_2| = sin(∠(F_1,F_2))/|F_R|"
+            eq_2 = "WRONG EQUATION TWO"
+            count = 2
+
+        class steps:
+            """WRONG steps - wrong targets and final lines."""
+            step_1 = {
+                # WRONG: target should be "∠(F_1,F_2)"
+                "target": "WRONG TARGET",
+                # WRONG: final_line should be "= 45°"
+                "final_line": "= 999°",
+            }
+            step_2 = {
+                "target": "|F_R| using Eq 1",
+                # WRONG: final_line should be "= 497.0 N"
+                "final_line": "= 999.0 N",
+            }
+            step_3 = {
+                "target": "∠(F_1,F_R) using Eq 2",
+                "final_line": "= 95.2°",
+            }
+            step_4 = {
+                "target": "θ_F_R with respect to +x",
+                "final_line": "= 155.2°",
+            }
+            count = 4
+
+        class results:
+            """WRONG results - wrong values."""
+            F_R = {
+                "symbol": "F_R",
+                "unit": "N",
+                # WRONG: x should be -451.1
+                "x": 999.0,
+                # WRONG: y should be 208.5
+                "y": 999.0,
+                # WRONG: magnitude should be 497.0
+                "magnitude": 999.0,
+                # WRONG: angle should be 155.2
+                "angle": 999.0,
+                "reference": "+x",
+            }
+
+
+# =============================================================================
 # List of all problem classes for parameterized testing
 # =============================================================================
 
 PROBLEM_CLASSES = [
     Chapter2Problem1,
+]
+
+# Problem classes that are EXPECTED TO FAIL (for test validation)
+PROBLEM_CLASSES_EXPECT_FAIL = [
+    Chapter2Problem1_WRONG,
 ]
 
 
@@ -590,3 +693,243 @@ def test_report_results(problem_class):
                 f"Result '{expected['symbol']}' reference mismatch: "
                 f"expected '{expected['reference']}', got '{found_row.cells[5]}'"
             )
+
+
+# =============================================================================
+# Tests that are EXPECTED TO FAIL (to verify test correctness)
+# These use the WRONG problem class with intentionally incorrect expected values
+# =============================================================================
+
+
+@pytest.mark.parametrize("problem_class", PROBLEM_CLASSES_EXPECT_FAIL, ids=lambda c: c.name)
+@pytest.mark.xfail(reason="Intentionally wrong expected values to verify tests detect failures", strict=True)
+def test_problem_EXPECT_FAIL(problem_class):
+    """Test that WRONG expected vectors are detected as failures."""
+    rtol = 0.01
+    result = pl.solve_class(problem_class, output_unit="N")
+    assert result.success, f"Solve failed: {result.error}"
+
+    expected = problem_class.expected
+    for attr_name in dir(expected):
+        if attr_name.startswith('_'):
+            continue
+        expected_vec = getattr(expected, attr_name)
+        if not isinstance(expected_vec, _Vector):
+            continue
+        actual_vec = result.vectors.get(attr_name)
+        assert actual_vec is not None
+        assert_vectors_close(actual_vec, expected_vec, rtol=rtol, name=attr_name)
+
+
+@pytest.mark.parametrize("problem_class", PROBLEM_CLASSES_EXPECT_FAIL, ids=lambda c: c.name)
+@pytest.mark.xfail(reason="Intentionally wrong known_variables to verify tests detect failures", strict=True)
+def test_report_known_variables_EXPECT_FAIL(problem_class):
+    """Test that WRONG known variables are detected as failures."""
+    from qnty.extensions.reporting.report_ir import ReportBuilder
+    from qnty.problems.parallelogram_law import ParallelogramLawProblem
+
+    class DynamicProblem(ParallelogramLawProblem):
+        name = getattr(problem_class, 'name', 'Test Problem')
+
+    for attr_name in dir(problem_class):
+        if attr_name.startswith('_'):
+            continue
+        attr = getattr(problem_class, attr_name)
+        if isinstance(attr, _Vector):
+            setattr(DynamicProblem, attr_name, attr)
+
+    problem = DynamicProblem()
+    problem.is_solved = True
+
+    builder = ReportBuilder(
+        problem=problem,
+        known_variables=problem.get_known_variables(),
+        equations=problem.equations,
+        solving_history=getattr(problem, "solving_history", []),
+        diagram_path=None
+    )
+    known_data = builder._get_known_variable_data()
+
+    expected_known = problem_class.report.known_variables
+    for attr_name in dir(expected_known):
+        if attr_name.startswith('_'):
+            continue
+        expected = getattr(expected_known, attr_name)
+        if not isinstance(expected, dict):
+            continue
+
+        actual = _find_report_variable(known_data, expected["symbol"])
+        assert actual is not None
+
+        if "x" in expected:
+            actual_x = float(actual.get("x", 0))
+            expected_x = float(expected["x"])
+            assert abs(actual_x - expected_x) < 1.0
+
+
+@pytest.mark.parametrize("problem_class", PROBLEM_CLASSES_EXPECT_FAIL, ids=lambda c: c.name)
+@pytest.mark.xfail(reason="Intentionally wrong unknown_variables to verify tests detect failures", strict=True)
+def test_report_unknown_variables_EXPECT_FAIL(problem_class):
+    """Test that WRONG unknown variables are detected as failures."""
+    from qnty.extensions.reporting.report_ir import ReportBuilder
+    from qnty.problems.parallelogram_law import ParallelogramLawProblem
+
+    class DynamicProblem(ParallelogramLawProblem):
+        name = getattr(problem_class, 'name', 'Test Problem')
+
+    for attr_name in dir(problem_class):
+        if attr_name.startswith('_'):
+            continue
+        attr = getattr(problem_class, attr_name)
+        if isinstance(attr, _Vector):
+            setattr(DynamicProblem, attr_name, attr)
+
+    problem = DynamicProblem()
+    problem.is_solved = True
+
+    builder = ReportBuilder(
+        problem=problem,
+        known_variables=problem.get_known_variables(),
+        equations=problem.equations,
+        solving_history=getattr(problem, "solving_history", []),
+        diagram_path=None
+    )
+    unknown_data = builder._get_unknown_variable_data()
+
+    expected_unknown = problem_class.report.unknown_variables
+    for attr_name in dir(expected_unknown):
+        if attr_name.startswith('_'):
+            continue
+        expected = getattr(expected_unknown, attr_name)
+        if not isinstance(expected, dict):
+            continue
+
+        actual = _find_report_variable(unknown_data, expected["symbol"])
+        assert actual is not None
+
+        if "reference" in expected:
+            assert actual.get("reference") == expected["reference"]
+
+
+@pytest.mark.parametrize("problem_class", PROBLEM_CLASSES_EXPECT_FAIL, ids=lambda c: c.name)
+@pytest.mark.xfail(reason="Intentionally wrong equations to verify tests detect failures", strict=True)
+def test_report_equations_EXPECT_FAIL(problem_class):
+    """Test that WRONG equations are detected as failures."""
+    from qnty.extensions.reporting.report_ir import ReportBuilder
+
+    result = pl.solve_class(problem_class, output_unit="N")
+    assert result.success
+
+    problem = result._problem
+    assert problem is not None
+
+    builder = ReportBuilder(
+        problem=problem,
+        known_variables=problem.get_known_variables(),
+        equations=problem.equations,
+        solving_history=getattr(problem, "solving_history", []),
+        diagram_path=None
+    )
+    equation_list = builder._format_equation_list()
+
+    expected_equations = problem_class.report.equations
+    expected_count = getattr(expected_equations, 'count', 0)
+    assert len(equation_list) == expected_count
+
+    for i in range(1, expected_count + 1):
+        attr_name = f'eq_{i}'
+        expected_eq = getattr(expected_equations, attr_name, None)
+        if expected_eq is None:
+            continue
+        actual_eq = equation_list[i - 1]
+        assert actual_eq == expected_eq
+
+
+@pytest.mark.parametrize("problem_class", PROBLEM_CLASSES_EXPECT_FAIL, ids=lambda c: c.name)
+@pytest.mark.xfail(reason="Intentionally wrong steps to verify tests detect failures", strict=True)
+def test_report_steps_EXPECT_FAIL(problem_class):
+    """Test that WRONG steps are detected as failures."""
+    from qnty.extensions.reporting.report_ir import ReportBuilder
+
+    result = pl.solve_class(problem_class, output_unit="N")
+    assert result.success
+
+    problem = result._problem
+    assert problem is not None
+
+    builder = ReportBuilder(
+        problem=problem,
+        known_variables=problem.get_known_variables(),
+        equations=problem.equations,
+        solving_history=getattr(problem, "solving_history", []),
+        diagram_path=None
+    )
+    steps = builder._extract_solution_steps()
+
+    expected_steps = problem_class.report.steps
+    expected_count = getattr(expected_steps, 'count', 0)
+    assert len(steps) == expected_count
+
+    for i in range(1, expected_count + 1):
+        expected_step = getattr(expected_steps, f'step_{i}', None)
+        if expected_step is None:
+            continue
+
+        actual_step = steps[i - 1]
+
+        if "target" in expected_step:
+            assert actual_step.equation_name == expected_step["target"]
+
+        if "final_line" in expected_step and actual_step.substituted_equation:
+            lines = actual_step.substituted_equation.strip().split('\n')
+            actual_final_line = lines[-1].strip() if lines else ""
+            assert actual_final_line == expected_step["final_line"]
+
+
+@pytest.mark.parametrize("problem_class", PROBLEM_CLASSES_EXPECT_FAIL, ids=lambda c: c.name)
+@pytest.mark.xfail(reason="Intentionally wrong results to verify tests detect failures", strict=True)
+def test_report_results_EXPECT_FAIL(problem_class):
+    """Test that WRONG results are detected as failures."""
+    from qnty.extensions.reporting.report_ir import ReportBuilder
+
+    result = pl.solve_class(problem_class, output_unit="N")
+    assert result.success
+
+    problem = result._problem
+    assert problem is not None
+
+    builder = ReportBuilder(
+        problem=problem,
+        known_variables=problem.get_known_variables(),
+        equations=problem.equations,
+        solving_history=getattr(problem, "solving_history", []),
+        diagram_path=None
+    )
+    results_table = builder._build_vector_results_table()
+    assert results_table is not None
+
+    expected_results = problem_class.report.results
+    for attr_name in dir(expected_results):
+        if attr_name.startswith('_'):
+            continue
+        expected = getattr(expected_results, attr_name)
+        if not isinstance(expected, dict):
+            continue
+
+        found_row = None
+        for row in results_table.rows:
+            if row.cells[0] == expected["symbol"]:
+                found_row = row
+                break
+
+        assert found_row is not None
+
+        if "x" in expected:
+            actual_x = float(found_row.cells[1])
+            expected_x = float(expected["x"])
+            assert abs(actual_x - expected_x) < 1.0
+
+        if "magnitude" in expected:
+            actual_mag = float(found_row.cells[3])
+            expected_mag = float(expected["magnitude"])
+            assert abs(actual_mag - expected_mag) < 1.0
