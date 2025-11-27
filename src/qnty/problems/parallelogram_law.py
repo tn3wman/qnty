@@ -356,26 +356,53 @@ class ParallelogramLawProblem(Problem):
         angle_in_triangle = math.pi - gamma
         angle_in_triangle_deg = np.degrees(angle_in_triangle)
 
-        # Step 1: Law of Cosines for magnitude
-        # F_R² = F_1² + F_2² + 2·F_1·F_2·cos(θ)
-        # where θ is the angle between the two force vectors
+        # Get original angles from vector objects if available (for cleaner display)
+        # The _original_angle attribute stores the angle as given by the user
+        theta1_display = getattr(force1, '_original_angle', None)
+        theta2_display = getattr(force2, '_original_angle', None)
+
+        # Fall back to computed angles if original not available
+        if theta1_display is None:
+            theta1_display = np.degrees(theta1)
+        if theta2_display is None:
+            theta2_display = np.degrees(theta2)
+
+        # Step 1: Calculate the angle between the two force vectors
+        # This is needed before we can apply the Law of Cosines
+        # Use simple format: just show the calculation with aligned equals
+        # Show it as the simpler |θ_1 - θ_2| = angle
         self.solution_steps.append({
-            "target": f"|{resultant_name}|",
-            "method": "Law of Cosines",
-            "description": "Calculate resultant magnitude using Law of Cosines",
-            "equation": f"{resultant_name}² = {f1_name}² + {f2_name}² + 2·{f1_name}·{f2_name}·cos(θ)",
-            "substitution": f"{resultant_name}² = ({F1_display:.3f})² + ({F2_display:.3f})² + 2({F1_display:.3f})({F2_display:.3f})cos({angle_in_triangle_deg:.1f}°)",
-            "result_value": f"{FR_display:.3f}",
-            "result_unit": unit_symbol,
+            "target": f"∠({f1_name},{f2_name})",
+            "method": "Angle Difference",
+            "description": f"Calculate the angle between {f1_name} and {f2_name}",
+            "equation": None,  # No separate equation - just show the calculation
+            "substitution": f"∠({f1_name},{f2_name}) = |θ_{f1_name} - θ_{f2_name}|\n= |{theta1_display:.0f}° - {theta2_display:.0f}°|\n= {angle_in_triangle_deg:.0f}°",
+            "result_value": None,  # Result is included in the substitution
+            "result_unit": "",
         })
 
-        # Step 2: Law of Sines for angle
-        # sin(φ)/F_2 = sin(θ)/F_R
-        # where φ is the angle from F_1 to F_R
+        # Step 2: Law of Cosines for magnitude
+        # |F_R|² = |F_1|² + |F_2|² + 2·|F_1|·|F_2|·cos(∠(F_1,F_2))
+        # where ∠(F_1,F_2) is the angle between the two force vectors
+        # Format similar to Step 1: show calculation with sqrt applied directly
+        self.solution_steps.append({
+            "target": f"|{resultant_name}| using Eq 1",
+            "method": "Law of Cosines",
+            "description": "Calculate resultant magnitude using Law of Cosines",
+            "equation": None,  # Don't show equation inline in step
+            "equation_for_list": f"|{resultant_name}|² = |{f1_name}|² + |{f2_name}|² + 2·|{f1_name}|·|{f2_name}|·cos(∠({f1_name},{f2_name}))",  # For "Equations Used" section
+            "substitution": f"|{resultant_name}| = sqrt(({F1_display:.1f})² + ({F2_display:.1f})² + 2({F1_display:.1f})({F2_display:.1f})cos({angle_in_triangle_deg:.0f}°))\n= {FR_display:.1f} {unit_symbol}",
+            "result_value": None,  # Result is included in substitution
+            "result_unit": "",
+        })
+
+        # Step 3: Law of Sines for angle
+        # sin(∠(F_1,F_R))/|F_2| = sin(∠(F_1,F_2))/|F_R|
+        # where ∠(F_1,F_R) is the angle from F_1 to F_R
         angle_deg = np.degrees(angle_rad)
         theta1_deg = np.degrees(theta1)
 
-        # Calculate the angle φ from F_1 to F_R using Law of Sines
+        # Calculate the angle ∠(F_1,F_R) using Law of Sines
         # This gives us the angle adjustment needed
         if mag_si > 1e-10:
             # Determine sign: if resultant angle is less than F_1 angle, phi is negative
@@ -384,24 +411,32 @@ class ParallelogramLawProblem(Problem):
             phi_deg = 0.0
 
         self.solution_steps.append({
-            "target": "φ",
+            "target": f"∠({f1_name},{resultant_name}) using Eq 2",
             "method": "Law of Sines",
-            "description": "Calculate angle φ (from F_1 to F_R) using Law of Sines",
-            "equation": f"sin(φ)/{f2_name} = sin(θ)/{resultant_name}",
-            "substitution": f"sin(φ)/{F2_display:.3f} = sin({angle_in_triangle_deg:.1f}°)/{FR_display:.3f}",
-            "result_value": f"{phi_deg:.3f}",
-            "result_unit": "°",
+            "description": f"Calculate angle from {f1_name} to {resultant_name} using Law of Sines",
+            "equation": None,  # Don't show equation inline - reference "Eq 2" in title
+            "equation_for_list": f"sin(∠({f1_name},{resultant_name}))/|{f2_name}| = sin(∠({f1_name},{f2_name}))/|{resultant_name}|",  # For "Equations Used" section
+            "substitution": f"∠({f1_name},{resultant_name}) = sin⁻¹({F2_display:.1f}·sin({angle_in_triangle_deg:.0f}°)/{FR_display:.1f})\n= {phi_deg:.1f}°",
+            "result_value": None,  # Result is included in substitution
+            "result_unit": "",
         })
 
-        # Step 3: Calculate final angle relative to +x axis
+        # Step 4: Calculate final angle relative to reference axis
+        # No equation_for_list - this is a simple addition, not a named equation
+        # Get reference axis label from resultant's angle_reference
+        ref_label = "+x"  # Default
+        if hasattr(resultant, 'angle_reference') and resultant.angle_reference is not None:
+            if hasattr(resultant.angle_reference, 'axis_label'):
+                ref_label = resultant.angle_reference.axis_label
+
         self.solution_steps.append({
-            "target": f"θ_{resultant_name}",
+            "target": f"θ_{resultant_name} with respect to {ref_label}",
             "method": "Angle Addition",
-            "description": f"Calculate {resultant_name} direction relative to +x axis",
-            "equation": f"θ_{resultant_name} = θ_{f1_name} + φ",
-            "substitution": f"θ_{resultant_name} = {theta1_deg:.1f}° + ({phi_deg:.3f}°)",
-            "result_value": f"{angle_deg:.3f}",
-            "result_unit": "°",
+            "description": f"Calculate {resultant_name} direction relative to {ref_label} axis",
+            "equation": None,  # Don't show in "Equations Used" section
+            "substitution": f"θ_{resultant_name} = θ_{f1_name} + ∠({f1_name},{resultant_name})\n= {theta1_deg:.1f}° + {phi_deg:.1f}°\n= {angle_deg:.1f}°",
+            "result_value": None,  # Result included in substitution
+            "result_unit": "",
         })
 
     def _add_component_method_steps(
@@ -890,12 +925,17 @@ class ParallelogramLawProblem(Problem):
 
         for i, step in enumerate(self.solution_steps):
             # Map to the format expected by report_ir._extract_solution_steps
+            # equation_str: used for "Equations Used" section (use equation_for_list if equation is None)
+            # equation_inline: used for step rendering (only if equation should be shown in step)
+            equation_for_list = step.get("equation") or step.get("equation_for_list", "")
+            equation_inline = step.get("equation", "")  # Only show in step if explicitly set
             history_entry = {
                 "step": i + 1,
                 "target_variable": step.get("target", "Unknown"),
                 "method": step.get("method", "algebraic"),
                 "description": step.get("description", ""),
-                "equation_str": step.get("equation", ""),
+                "equation_str": equation_for_list,  # For "Equations Used" section
+                "equation_inline": equation_inline,  # For step rendering
                 "substituted_equation": step.get("substitution", ""),
                 "result_value": step.get("result_value", ""),
                 "result_unit": step.get("result_unit", ""),

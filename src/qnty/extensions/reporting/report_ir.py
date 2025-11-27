@@ -11,6 +11,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
+from typing import Any
 
 
 class TableAlignment(Enum):
@@ -67,7 +68,7 @@ class Section:
     """A section of the report."""
     title: str
     level: int = 1  # 1 = top level, 2 = subsection, etc.
-    content: list[str | Table | Equation | SolutionStep | "Section"] = field(default_factory=list)
+    content: list[str | Table | Equation | SolutionStep | Section] = field(default_factory=list)
 
 
 @dataclass
@@ -96,6 +97,66 @@ class ReportRenderer:
 
 class MarkdownRenderer(ReportRenderer):
     """Render ReportIR to Markdown format."""
+
+    # Unicode subscript mapping
+    SUBSCRIPT_MAP = {
+        '0': '₀', '1': '₁', '2': '₂', '3': '₃', '4': '₄',
+        '5': '₅', '6': '₆', '7': '₇', '8': '₈', '9': '₉',
+        'a': 'ₐ', 'e': 'ₑ', 'h': 'ₕ', 'i': 'ᵢ', 'j': 'ⱼ',
+        'k': 'ₖ', 'l': 'ₗ', 'm': 'ₘ', 'n': 'ₙ', 'o': 'ₒ',
+        'p': 'ₚ', 'r': 'ᵣ', 's': 'ₛ', 't': 'ₜ', 'u': 'ᵤ',
+        'v': 'ᵥ', 'x': 'ₓ',
+        # Common uppercase letters used in physics/engineering
+        'R': 'ᵣ',  # Use lowercase subscript for R
+    }
+
+    def _to_unicode_subscript(self, text: str) -> str:
+        """Convert underscore subscript notation to Unicode subscripts.
+
+        Examples:
+            F_1 -> F₁
+            F_R -> Fᵣ
+            θ_F_1 -> θ_F₁
+            θ_F_R -> θ_Fᵣ
+        """
+        import re
+
+        def replace_single_subscript(match):
+            base = match.group(1)
+            subscript = match.group(2)
+
+            # Try to convert all characters in subscript to Unicode
+            result = []
+            can_convert = True
+            for char in subscript:
+                if char in self.SUBSCRIPT_MAP:
+                    result.append(self.SUBSCRIPT_MAP[char])
+                else:
+                    # Character doesn't have Unicode subscript
+                    can_convert = False
+                    break
+
+            if can_convert and result:
+                return base + ''.join(result)
+            else:
+                # Keep original notation
+                return match.group(0)
+
+        result = text
+
+        # Process nested subscripts from right to left
+        # First handle patterns like _F_1 -> _F₁ (inner subscript first)
+        # Then handle θ_F₁ -> θ_F₁ (already converted) or θ_F -> θ_F (can't convert F)
+
+        # Keep applying the pattern until no more changes
+        prev_result = None
+        while prev_result != result:
+            prev_result = result
+            # Match: base character(s) followed by _subscript
+            # The subscript can be letters or numbers
+            result = re.sub(r'([A-Za-zθφαβγ₀₁₂₃₄₅₆₇₈₉ₐₑₕᵢⱼₖₗₘₙₒₚᵣₛₜᵤᵥₓ]+)_([A-Za-z0-9]+)(?![_A-Za-z0-9])', replace_single_subscript, result)
+
+        return result
 
     def render(self, report: ReportIR, output_path: Path) -> None:
         """Render the report to Markdown."""
@@ -142,12 +203,13 @@ class MarkdownRenderer(ReportRenderer):
         # Content
         for item in section.content:
             if isinstance(item, str):
-                lines.append(item)
+                # Apply Unicode subscript conversion to equation strings
+                lines.append(self._to_unicode_subscript(item))
                 lines.append("")
             elif isinstance(item, Table):
                 lines.extend(self._render_table(item))
             elif isinstance(item, Equation):
-                lines.append(f"`{item.text}`")
+                lines.append(f"`{self._to_unicode_subscript(item.text)}`")
                 lines.append("")
             elif isinstance(item, SolutionStep):
                 lines.extend(self._render_solution_step(item))
@@ -183,7 +245,14 @@ class MarkdownRenderer(ReportRenderer):
         # Data rows
         for row in table.rows:
             if not row.is_header:
-                row_text = "| " + " | ".join(row.cells) + " |"
+                # Convert subscripts in the first column (symbol/vector names)
+                converted_cells = []
+                for i, cell in enumerate(row.cells):
+                    if i == 0:  # First column is typically symbol/vector name
+                        converted_cells.append(self._to_unicode_subscript(cell))
+                    else:
+                        converted_cells.append(cell)
+                row_text = "| " + " | ".join(converted_cells) + " |"
                 lines.append(row_text)
 
         lines.append("")
@@ -193,30 +262,46 @@ class MarkdownRenderer(ReportRenderer):
         """Render a solution step to Markdown."""
         lines = []
 
-        lines.append(f"### Step {step.step_number}: Solve for {step.title}")
+        # Convert title subscripts to Unicode
+        title = self._to_unicode_subscript(step.title)
+        lines.append(f"### Step {step.step_number}: Solve for {title}")
         lines.append("")
 
-        # Equation
-        lines.append("    **Equation:**")
-        lines.append("    ```")
-        lines.append(f"    {step.equation}")
-        lines.append("    ```")
-        lines.append("")
-
-        # Substitution
-        if step.substituted and step.substituted != step.equation:
-            lines.append("    **Substitution:**")
+        # Equation (only if provided)
+        if step.equation:
+            lines.append("    **Equation:**")
             lines.append("    ```")
-            lines.append(f"    {step.substituted}")
+            lines.append(f"    {self._to_unicode_subscript(step.equation)}")
             lines.append("    ```")
             lines.append("")
 
-        # Result
-        lines.append("    **Result:**")
-        lines.append("    ```")
-        lines.append(f"    {step.result_var} = {step.result_value} {step.result_unit}")
-        lines.append("    ```")
-        lines.append("")
+        # Substitution/Calculation
+        if step.substituted:
+            # Check if this is a multi-line calculation
+            if "\n" in step.substituted:
+                # Only show label if there was also an equation
+                if step.equation:
+                    lines.append("    **Substitution:**")
+                lines.append("    ```")
+                for sub_line in step.substituted.split("\n"):
+                    lines.append(f"    {self._to_unicode_subscript(sub_line.strip())}")
+                lines.append("    ```")
+                lines.append("")
+            elif step.substituted != step.equation:
+                lines.append("    **Substitution:**")
+                lines.append("    ```")
+                lines.append(f"    {self._to_unicode_subscript(step.substituted)}")
+                lines.append("    ```")
+                lines.append("")
+
+        # Result (only if provided and not None)
+        if step.result_value and step.result_value != "None":
+            lines.append("    **Result:**")
+            lines.append("    ```")
+            result_var = self._to_unicode_subscript(step.result_var)
+            lines.append(f"    {result_var} = {step.result_value} {step.result_unit}")
+            lines.append("    ```")
+            lines.append("")
 
         return lines
 
@@ -312,6 +397,13 @@ class LaTeXRenderer(ReportRenderer):
             r"\usepackage{enumitem}",
             r"\usepackage{graphicx}",
             r"\usepackage{siunitx}",
+            r"\usepackage{accents}",  # For vector notation
+            r"\usepackage{changepage}",  # For adjustwidth environment
+            "",
+            r"% Vector notation: \vv{F} produces F with arrow over it",
+            r"\newcommand{\vv}[1]{\vec{#1}}",
+            r"% Magnitude notation: \magn{F} produces |F| with fixed-height bars",
+            r"\newcommand{\magn}[1]{|#1|}",
             "",
             r"\title{Engineering Calculation Report: " + self._escape_latex(report.title) + "}",
             r"\date{" + report.generated_date.strftime("%B %d, %Y") + "}",
@@ -429,11 +521,12 @@ class LaTeXRenderer(ReportRenderer):
         # Header row
         header_cells = []
         for col in table.columns:
+            header = self._format_table_header(col.header)
             if col.alignment == TableAlignment.DECIMAL:
                 # Wrap in braces for siunitx S columns
-                header_cells.append("{" + self._escape_latex(col.header) + "}")
+                header_cells.append("{" + header + "}")
             else:
-                header_cells.append(self._escape_latex(col.header))
+                header_cells.append(header)
         lines.append(" & ".join(header_cells) + r" \\")
         lines.append(r"\midrule")
         lines.append(r"\endhead")
@@ -461,33 +554,164 @@ class LaTeXRenderer(ReportRenderer):
         """Render a solution step to LaTeX."""
         lines = []
 
-        lines.append(r"\subsection*{Step " + str(step.step_number) + ": Solve for " + self._escape_latex(step.title) + "}")
+        # Format the step title as math (handles Greek letters, subscripts, magnitude bars)
+        title_latex = self._format_step_title(step.title)
+        # Indent step under the section using a small left margin
+        lines.append(r"\vspace{0.2em}")
+        lines.append(r"\noindent\hspace{1em}\textbf{Step " + str(step.step_number) + ": Solve for " + title_latex + "}")
+        lines.append(r"\vspace{0.1em}")
         lines.append("")
 
-        # Equation
-        lines.append(r"\textbf{Equation:}")
-        lines.append(r"\begin{equation*}")
-        lines.append(self._to_latex_math(step.equation))
-        lines.append(r"\end{equation*}")
+        # Wrap step content in adjustwidth for indentation
+        lines.append(r"\begin{adjustwidth}{2em}{}")
 
-        # Substitution
-        if step.substituted and step.substituted != step.equation:
-            lines.append(r"\textbf{Substitution:}")
+        # Equation (only if provided)
+        if step.equation:
+            lines.append(r"\textbf{Equation:}")
             lines.append(r"\begin{equation*}")
-            lines.append(self._to_latex_math(step.substituted))
+            lines.append(self._to_latex_math(step.equation))
             lines.append(r"\end{equation*}")
 
-        # Result
-        lines.append(r"\textbf{Result:}")
-        lines.append(r"\begin{equation*}")
-        result_latex = self._format_latex_variable(step.result_var) + " = " + step.result_value
-        if step.result_unit:
-            result_latex += r" \text{ " + self._escape_latex(step.result_unit) + "}"
-        lines.append(result_latex)
-        lines.append(r"\end{equation*}")
+        # Substitution/Calculation
+        if step.substituted:
+            # Check if this is a multi-line calculation with aligned equals signs
+            if "\n" in step.substituted:
+                # Only show label if there was also an equation
+                if step.equation:
+                    lines.append(r"\textbf{Substitution:}")
+                # Use flalign* for left-aligned multi-line equations with indentation
+                # The && at the end pushes the equation to the left
+                # Add negative space to reduce flalign's default spacing
+                lines.append(r"\vspace{-0.8em}")
+                lines.append(r"\begin{flalign*}")
+                sub_lines = step.substituted.split("\n")
+                for i, sub_line in enumerate(sub_lines):
+                    latex_line = self._to_latex_math(sub_line.strip())
+                    # Add alignment on equals sign and left-align with quad indent
+                    if "=" in latex_line:
+                        # \quad for indentation, &= for alignment, && to push left
+                        latex_line = r"\quad " + latex_line.replace("=", "&=", 1) + " &&"
+                    else:
+                        # Lines without = just get indented
+                        latex_line = r"\quad & " + latex_line + " &&"
+                    # Add line continuation except for last line
+                    if i < len(sub_lines) - 1:
+                        latex_line += r" \\"
+                    lines.append(latex_line)
+                lines.append(r"\end{flalign*}")
+                lines.append(r"\vspace{-0.8em}")
+            elif step.substituted != step.equation:
+                lines.append(r"\textbf{Substitution:}")
+                lines.append(r"\begin{equation*}")
+                lines.append(self._to_latex_math(step.substituted))
+                lines.append(r"\end{equation*}")
+
+        # Result (only if provided and not None)
+        if step.result_value and step.result_value != "None":
+            lines.append(r"\textbf{Result:}")
+            lines.append(r"\begin{equation*}")
+            # Use _to_latex_math for result_var to handle angle notation ∠(F_1,F_2)
+            result_var_latex = self._to_latex_math(step.result_var)
+            result_latex = result_var_latex + " = " + step.result_value
+            if step.result_unit:
+                result_latex += r" \text{ " + self._escape_latex(step.result_unit) + "}"
+            lines.append(result_latex)
+            lines.append(r"\end{equation*}")
+
+        lines.append(r"\end{adjustwidth}")
         lines.append("")
 
         return lines
+
+    def _format_step_title(self, title: str) -> str:
+        """Format a step title for LaTeX, handling math symbols properly.
+
+        Converts variable names like |F_R|, φ, θ_F_R to proper LaTeX math mode.
+        """
+        if not title:
+            return ""
+
+        import re
+
+        # Check for angle notation ∠(F_1,F_2) possibly followed by additional text
+        angle_match = re.match(r'∠\(([^,]+),\s*([^)]+)\)(.*)', title)
+        if angle_match:
+            v1 = angle_match.group(1)
+            v2 = angle_match.group(2)
+            suffix = angle_match.group(3).strip()
+            v1_formatted = self._format_latex_variable(v1, as_vector=True)
+            v2_formatted = self._format_latex_variable(v2, as_vector=True)
+            result = r"$\angle(" + v1_formatted + ", " + v2_formatted + r")$"
+            if suffix:
+                # Add the suffix as regular text (e.g., "using Eq 2")
+                result += " " + self._escape_latex(suffix)
+            return result
+
+        # Check for magnitude notation |...| possibly followed by additional text
+        magnitude_match = re.match(r'\|([^|]+)\|(.*)', title)
+        if magnitude_match:
+            inner = magnitude_match.group(1)
+            suffix = magnitude_match.group(2).strip()
+            result = r"$\magn{\vv{" + self._format_latex_variable(inner, as_vector=False) + r"}}$"
+            if suffix:
+                # Add the suffix as regular text (e.g., "using Eq 1")
+                result += " " + self._escape_latex(suffix)
+            return result
+
+        # Check for Greek letters
+        greek_map = {"θ": r"\theta", "φ": r"\varphi", "α": r"\alpha", "β": r"\beta", "γ": r"\gamma"}
+        for greek, latex in greek_map.items():
+            if title.startswith(greek):
+                # Handle subscripted Greek like θ_F_R possibly followed by text like "with respect to +x"
+                if "_" in title:
+                    rest = title[1:]  # Remove Greek letter, get _F_R with respect to +x
+                    # Find where the subscript ends (at first space or end)
+                    space_idx = rest.find(" ")
+                    if space_idx != -1:
+                        subscript_part = rest[:space_idx]  # _F_R
+                        suffix = rest[space_idx:].strip()  # with respect to +x
+                        subscript_latex = self._format_subscript_content(subscript_part)
+                        return r"$" + latex + subscript_latex + r"$ " + self._escape_latex(suffix)
+                    else:
+                        subscript_latex = self._format_subscript_content(rest)
+                        return r"$" + latex + subscript_latex + r"$"
+                return r"$" + latex + r"$"
+
+        # Check for force variables like F_R (show as magnitude in solve context)
+        if title.startswith(("F_", "V_", "A_", "R_", "P_")):
+            return r"$" + self._format_latex_variable(title, as_vector=False) + r"$"
+
+        # Check for any variable with subscripts (e.g., x_1, y_max)
+        if "_" in title:
+            return r"$" + self._format_latex_variable(title, as_vector=False) + r"$"
+
+        # Default: escape as text
+        return self._escape_latex(title)
+
+    def _format_subscript_content(self, text: str) -> str:
+        """Format subscript content like _F_R for LaTeX.
+
+        Input: _F_R (with leading underscore)
+        Output: _{F_R} (proper LaTeX subscript with nested content)
+
+        For angle subscripts like θ_{F_R}, the subscript F_R should render
+        as a proper subscript showing F with R as a sub-subscript.
+        """
+        if not text.startswith("_"):
+            return text
+
+        subscript = text[1:]  # Remove leading underscore, get "F_R"
+
+        # Handle nested subscripts like F_R
+        # We want θ_{F_R} to display the subscript as "F_R" (F with subscript R)
+        if "_" in subscript:
+            parts = subscript.split("_", 1)
+            base = parts[0]
+            sub = parts[1]
+            # Create nested subscript: F_{R}
+            return "_{" + base + "_{" + sub + "}}"
+
+        return "_{" + subscript + "}"
 
     def _render_disclaimer(self, generated_date: datetime) -> list[str]:
         """Render the disclaimer section."""
@@ -548,15 +772,98 @@ class LaTeXRenderer(ReportRenderer):
             result = result.replace(old, new)
         return result
 
-    def _format_latex_variable(self, name: str) -> str:
-        """Format a variable name for LaTeX math mode."""
+    def _format_table_header(self, header: str) -> str:
+        """Format a table header with proper LaTeX notation for vectors and magnitudes.
+
+        Handles special notation like:
+        - |F| → $|\\vec{F}|$
+        - Fₓ → $F_x$
+        - Fᵧ → $F_y$
+        - θ → $\\theta$
+        """
+        if not header:
+            return ""
+
+        import re
+
+        # Check for magnitude notation like "|F| (N)"
+        magnitude_match = re.match(r'\|([A-Za-z]+)\|\s*\(([^)]+)\)', header)
+        if magnitude_match:
+            var = magnitude_match.group(1)
+            unit = magnitude_match.group(2)
+            return r"$\magn{\vv{" + var + r"}}$ (" + self._escape_latex(unit) + ")"
+
+        # Check for subscript notation like "Fₓ (N)" or "Fᵧ (N)"
+        subscript_map = {"ₓ": "x", "ᵧ": "y", "₁": "1", "₂": "2", "₃": "3"}
+        for unicode_sub, ascii_sub in subscript_map.items():
+            if unicode_sub in header:
+                # Parse pattern like "Fₓ (unit)"
+                sub_match = re.match(r'([A-Za-z]+)' + unicode_sub + r'\s*\(([^)]+)\)', header)
+                if sub_match:
+                    base = sub_match.group(1)
+                    unit = sub_match.group(2)
+                    return r"$" + base + "_{" + ascii_sub + r"}$ (" + self._escape_latex(unit) + ")"
+
+        # Check for Greek letters like "θ (deg)"
+        greek_map = {"θ": r"\theta", "φ": r"\varphi", "α": r"\alpha", "β": r"\beta", "γ": r"\gamma"}
+        for greek, latex in greek_map.items():
+            if header.startswith(greek):
+                # Parse pattern like "θ (deg)"
+                greek_match = re.match(greek + r'\s*\(([^)]+)\)', header)
+                if greek_match:
+                    unit = greek_match.group(1)
+                    return r"$" + latex + r"$ (" + self._escape_latex(unit) + ")"
+                # Just the Greek letter
+                return r"$" + latex + r"$" + self._escape_latex(header[1:])
+
+        # Default: escape as regular text
+        return self._escape_latex(header)
+
+    def _is_vector_symbol(self, name: str) -> bool:
+        """Check if a variable name represents a vector quantity.
+
+        Vector symbols typically start with F (force), v (velocity), a (acceleration),
+        r (position), etc. and have subscripts like F_1, F_R, v_A.
+        Angles (θ, φ) and their subscripted forms are NOT vectors.
+        """
+        if not name:
+            return False
+
+        # Strip magnitude bars if present
+        if name.startswith("|") and name.endswith("|"):
+            name = name[1:-1]
+
+        # Angles are not vectors
+        if name.startswith(("θ", "φ", "α", "β", "γ", r"\theta", r"\varphi", r"\alpha", r"\beta", r"\gamma")):
+            return False
+
+        # Common vector variable patterns (force, velocity, acceleration, position, etc.)
+        # Check base letter before any subscript
+        base = name.split("_")[0] if "_" in name else name
+        vector_bases = {"F", "v", "a", "r", "p", "V", "A", "R", "P"}  # Common vector symbols
+
+        return base in vector_bases
+
+    def _format_latex_variable(self, name: str, as_vector: bool | None = None) -> str:
+        """Format a variable name for LaTeX math mode.
+
+        Args:
+            name: The variable name to format
+            as_vector: If True, format as vector with arrow. If False, format as scalar.
+                      If None, auto-detect based on the variable name.
+        """
         if not name:
             return ""
 
-        # Handle magnitude notation |F_R|
+        # Handle magnitude notation |F_R| - magnitude is a scalar, but we show the vector inside
         if name.startswith("|") and name.endswith("|"):
             inner = name[1:-1]
-            return r"\left|" + self._format_latex_variable(inner) + r"\right|"
+            # Format inner as vector (with arrow) inside magnitude bars
+            inner_formatted = self._format_latex_variable(inner, as_vector=True)
+            return r"\magn{" + inner_formatted + "}"
+
+        # Determine if this should be formatted as a vector
+        is_vector = as_vector if as_vector is not None else self._is_vector_symbol(name)
 
         # Handle Greek letters
         greek_map = {"θ": r"\theta", "φ": r"\varphi", "α": r"\alpha", "β": r"\beta", "γ": r"\gamma"}
@@ -573,18 +880,37 @@ class LaTeXRenderer(ReportRenderer):
 
             # Recursively format the subscript in case it has nested underscores
             if "_" in subscript:
-                subscript = self._format_latex_variable(subscript).replace("_", r"\_")
+                subscript = self._format_latex_variable(subscript, as_vector=False).replace("_", r"\_")
 
             # Multi-character subscripts need braces
             if len(subscript) > 1:
-                return f"{base}_{{{subscript}}}"
+                formatted = f"{base}_{{{subscript}}}"
             else:
-                return f"{base}_{subscript}"
+                formatted = f"{base}_{subscript}"
 
+            # Add vector arrow if this is a vector
+            if is_vector:
+                return r"\vv{" + formatted + "}"
+            return formatted
+
+        # No subscript - simple variable
+        if is_vector:
+            return r"\vv{" + name + "}"
         return name
 
     def _to_latex_math(self, text: str) -> str:
-        """Convert equation text to LaTeX math notation."""
+        """Convert equation text to LaTeX math notation.
+
+        In equations, force variables (F_1, F_2, F_R) typically represent magnitudes
+        (scalar values) when they appear:
+        - Squared (F²)
+        - In arithmetic operations (+, -, *, /)
+        - With trig functions
+
+        Vector notation (with arrows) is used in tables to identify the vector,
+        but equations typically work with magnitudes. We use |F| notation
+        to explicitly show magnitude when clarity is needed.
+        """
         if not text:
             return ""
 
@@ -597,23 +923,59 @@ class LaTeXRenderer(ReportRenderer):
         for greek, latex in greek_map.items():
             result = result.replace(greek, latex)
 
+        # Handle angle symbol ∠ for "angle between vectors" notation
+        # Also add vector arrows to the vectors inside the angle notation
+        def angle_replacer(match):
+            v1 = match.group(1)
+            v2 = match.group(2)
+            # Format each vector with subscript and arrow
+            v1_formatted = self._format_latex_variable(v1, as_vector=True)
+            v2_formatted = self._format_latex_variable(v2, as_vector=True)
+            return r"\angle(" + v1_formatted + ", " + v2_formatted + ")"
+
+        result = re.sub(r'∠\(([^,]+),\s*([^)]+)\)', angle_replacer, result)
+
+        # Handle explicit magnitude notation |...| BEFORE variable processing
+        # This captures magnitude expressions and formats them properly
+        def magnitude_replacer(match):
+            inner = match.group(1)
+            # Check if inner is a vector-like variable
+            inner_base = inner.split("_")[0] if "_" in inner else inner
+            inner_base = inner_base.lstrip("\\")  # Remove backslash for checking
+            vector_bases = {"F", "v", "a", "r", "p", "V", "A", "R", "P"}
+            if inner_base in vector_bases:
+                # Format inner with vector arrow inside magnitude bars
+                return r"\magn{\vv{" + inner + "}}"
+            return r"\magn{" + inner + "}"
+
+        result = re.sub(r'\|([^|]+)\|', magnitude_replacer, result)
+
         # Handle nested subscripts like F_R or θ_F_R
-        # First pass: handle simple subscripts (letter_something)
-        # Use a function to handle the replacement properly
+        # In equation context, F_R represents the magnitude (scalar), not the vector
+        # Only explicit |F_R| or table contexts should show vector arrows
         def subscript_replacer(match):
             base = match.group(1)
             subscript = match.group(2)
-            # Check if subscript itself has an underscore (nested case)
+
+            # Check if subscript itself has an underscore (nested case like F_1 in θ_F_1)
+            # We want θ_{F_1} to render as theta with "F₁" as subscript
             if '_' in subscript:
-                # For nested like F_R in θ_F_R, make it a single subscript block
-                subscript = subscript.replace('_', r'\_')
-            return f"{base}_{{{subscript}}}"
+                # For nested subscripts: F_1 -> F_1 (keep underscore, LaTeX handles it)
+                # The outer braces group it as a single subscript unit
+                # Inner underscores create sub-subscripts in LaTeX
+                pass  # Keep subscript as-is, braces will handle grouping
+
+            # Multi-character subscripts need braces
+            if len(subscript) > 1:
+                formatted = f"{base}_{{{subscript}}}"
+            else:
+                formatted = f"{base}_{subscript}"
+
+            return formatted
 
         # Match: word character or backslash+word (for \theta etc) followed by _something
-        result = re.sub(r'(\\?[A-Za-z]+)_([A-Za-z0-9_]+)', subscript_replacer, result)
-
-        # Handle magnitude notation |...|
-        result = re.sub(r'\|([^|]+)\|', r'\\left|\1\\right|', result)
+        # But NOT if already inside a \vv{} or \magn{} command
+        result = re.sub(r'(?<!\\vv\{)(?<!\\magn\{)(\\?[A-Za-z]+)_([A-Za-z0-9_]+)', subscript_replacer, result)
 
         # Replace superscript ² with ^2
         result = result.replace("²", "^2")
@@ -624,13 +986,170 @@ class LaTeXRenderer(ReportRenderer):
         result = result.replace("**", "^")
 
         # Replace trig functions (need to handle already-converted \theta etc)
+        # Handle inverse trig functions first (sin⁻¹, cos⁻¹, tan⁻¹)
+        result = result.replace('sin⁻¹(', r'\sin^{-1}(')
+        result = result.replace('cos⁻¹(', r'\cos^{-1}(')
+        result = result.replace('tan⁻¹(', r'\tan^{-1}(')
+        # Then regular trig functions
         result = re.sub(r'(?<!\\)sin\(', r'\\sin(', result)
         result = re.sub(r'(?<!\\)cos\(', r'\\cos(', result)
         result = re.sub(r'(?<!\\)tan\(', r'\\tan(', result)
 
-        # Handle sqrt - need to track parentheses
-        sqrt_pattern = r'sqrt\(([^)]+)\)'
-        result = re.sub(sqrt_pattern, r'\\sqrt{\1}', result)
+        # Handle sqrt - need to track balanced parentheses
+        def replace_sqrt(text):
+            """Replace sqrt(...) with \\sqrt{...}, handling nested parentheses."""
+            output = []
+            i = 0
+            while i < len(text):
+                if text[i:i+5] == 'sqrt(':
+                    # Find the matching closing parenthesis
+                    start = i + 5
+                    depth = 1
+                    j = start
+                    while j < len(text) and depth > 0:
+                        if text[j] == '(':
+                            depth += 1
+                        elif text[j] == ')':
+                            depth -= 1
+                        j += 1
+                    # j now points to one past the closing paren
+                    inner = text[start:j-1]
+                    output.append(r'\sqrt{' + inner + '}')
+                    i = j
+                else:
+                    output.append(text[i])
+                    i += 1
+            return ''.join(output)
+
+        result = replace_sqrt(result)
+
+        # Handle fractions (a/b -> \frac{a}{b})
+        # Need to identify the numerator and denominator properly
+        def find_balanced_braces(text, start):
+            """Find the end of balanced braces starting at start (which should be '{')."""
+            if start >= len(text) or text[start] != '{':
+                return start
+            depth = 1
+            i = start + 1
+            while i < len(text) and depth > 0:
+                if text[i] == '{':
+                    depth += 1
+                elif text[i] == '}':
+                    depth -= 1
+                i += 1
+            return i
+
+        def replace_fractions(text):
+            """Replace a/b patterns with \\frac{a}{b}."""
+            output = []
+            i = 0
+            while i < len(text):
+                if text[i] == '/':
+                    # Find the numerator (go backwards)
+                    # Could be: sin(...), |...|, \magn{...}, a single term, or parenthesized expression
+                    num_end = i
+                    num_start = i - 1
+
+                    if num_start >= 0:
+                        # Check for closing paren/bracket
+                        if text[num_start] == ')':
+                            # Find matching open paren
+                            depth = 1
+                            num_start -= 1
+                            while num_start >= 0 and depth > 0:
+                                if text[num_start] == ')':
+                                    depth += 1
+                                elif text[num_start] == '(':
+                                    depth -= 1
+                                num_start -= 1
+                            num_start += 1
+                            # Check if preceded by function name like \sin
+                            while num_start > 0 and (text[num_start-1].isalpha() or text[num_start-1] == '\\'):
+                                num_start -= 1
+                        elif text[num_start] == '|':
+                            # Find matching open |
+                            num_start -= 1
+                            while num_start >= 0 and text[num_start] != '|':
+                                num_start -= 1
+                        elif text[num_start] == '}':
+                            # Find matching open { and include preceding command
+                            depth = 1
+                            num_start -= 1
+                            while num_start >= 0 and depth > 0:
+                                if text[num_start] == '}':
+                                    depth += 1
+                                elif text[num_start] == '{':
+                                    depth -= 1
+                                num_start -= 1
+                            num_start += 1
+                            # Include preceding command like \magn
+                            while num_start > 0 and (text[num_start-1].isalpha() or text[num_start-1] == '\\'):
+                                num_start -= 1
+                        else:
+                            # Single term - go back to start of term
+                            while num_start > 0 and (text[num_start-1].isalnum() or text[num_start-1] in '_\\{}^'):
+                                num_start -= 1
+
+                    # Find the denominator (go forwards)
+                    den_start = i + 1
+                    den_end = den_start
+
+                    if den_end < len(text):
+                        if text[den_start] == '|':
+                            # Find matching close |
+                            den_end += 1
+                            while den_end < len(text) and text[den_end] != '|':
+                                den_end += 1
+                            den_end += 1  # Include the closing |
+                        elif text[den_start] == '(':
+                            # Find matching close paren
+                            depth = 1
+                            den_end += 1
+                            while den_end < len(text) and depth > 0:
+                                if text[den_end] == '(':
+                                    depth += 1
+                                elif text[den_end] == ')':
+                                    depth -= 1
+                                den_end += 1
+                        elif text[den_start] == '\\':
+                            # LaTeX command like \sin(...) or \magn{...}
+                            den_end += 1
+                            while den_end < len(text) and text[den_end].isalpha():
+                                den_end += 1
+                            # Check for {...} argument
+                            if den_end < len(text) and text[den_end] == '{':
+                                den_end = find_balanced_braces(text, den_end)
+                            # Check for (...) argument
+                            elif den_end < len(text) and text[den_end] == '(':
+                                depth = 1
+                                den_end += 1
+                                while den_end < len(text) and depth > 0:
+                                    if text[den_end] == '(':
+                                        depth += 1
+                                    elif text[den_end] == ')':
+                                        depth -= 1
+                                    den_end += 1
+                        else:
+                            # Single term (include decimal point for numbers like 700.000)
+                            while den_end < len(text) and (text[den_end].isalnum() or text[den_end] in '_\\{}^.'):
+                                den_end += 1
+
+                    numerator = text[num_start:num_end]
+                    denominator = text[den_start:den_end]
+
+                    # Remove what we've already added that's part of numerator
+                    output_str = ''.join(output)
+                    if output_str.endswith(numerator):
+                        output = list(output_str[:-len(numerator)])
+
+                    output.append(r'\frac{' + numerator + '}{' + denominator + '}')
+                    i = den_end
+                else:
+                    output.append(text[i])
+                    i += 1
+            return ''.join(output)
+
+        result = replace_fractions(result)
 
         # Handle degree symbol
         result = result.replace("°", r"^{\circ}")
@@ -709,12 +1228,17 @@ class ReportBuilder:
 
         if steps:
             for i, step_data in enumerate(steps, 1):
+                # Strip "using Eq N" suffix from result_var (keep it only in title)
+                result_var = step_data.equation_name
+                if " using Eq " in result_var:
+                    result_var = result_var.split(" using Eq ")[0]
+
                 step = SolutionStep(
                     step_number=i,
                     title=step_data.equation_name,
                     equation=step_data.equation_str,
                     substituted=step_data.substituted_equation,
-                    result_var=step_data.equation_name,
+                    result_var=result_var,
                     result_value=step_data.result_value,
                     result_unit=step_data.result_unit
                 )
@@ -774,15 +1298,20 @@ class ReportBuilder:
             return self._build_standard_unknown_table(unknown_data)
 
     def _build_force_table(self, data: list[dict]) -> Table:
-        """Build a table for force vectors with X, Y, Magnitude, Angle, Reference columns."""
+        """Build a table for force vectors with X, Y, Magnitude, Angle, Reference columns.
+
+        Uses proper vector notation:
+        - Symbol column shows vector with arrow (e.g., F̄₁)
+        - Magnitude column header indicates |F̄| notation
+        """
         unit = data[0].get('unit', 'unit') if data else 'unit'
 
         columns = [
-            TableColumn("Symbol", TableAlignment.LEFT),
-            TableColumn(f"X ({unit})", TableAlignment.DECIMAL),
-            TableColumn(f"Y ({unit})", TableAlignment.DECIMAL),
-            TableColumn(f"Magnitude ({unit})", TableAlignment.DECIMAL),
-            TableColumn("Angle (deg)", TableAlignment.DECIMAL),
+            TableColumn("Vector", TableAlignment.LEFT),
+            TableColumn(f"Fₓ ({unit})", TableAlignment.DECIMAL),
+            TableColumn(f"Fᵧ ({unit})", TableAlignment.DECIMAL),
+            TableColumn(f"|F| ({unit})", TableAlignment.DECIMAL),
+            TableColumn("θ (deg)", TableAlignment.DECIMAL),
             TableColumn("Reference", TableAlignment.LEFT),
         ]
 
@@ -838,49 +1367,116 @@ class ReportBuilder:
         return Table(columns=columns, rows=rows)
 
     def _build_vector_results_table(self) -> Table | None:
-        """Build results table for vector equilibrium problems."""
-        if not hasattr(self.problem, 'forces'):
+        """Build results table for vector equilibrium problems.
+
+        Shows only the solved unknowns (resultants) with their computed values.
+        Uses proper vector notation:
+        - Vector column shows vector with arrow
+        - Magnitude column uses |F| notation
+        """
+        import math
+
+        # Collect all vectors - check both forces dict and direct attributes
+        all_vectors: dict[str, Any] = {}
+
+        # Check forces dict
+        if hasattr(self.problem, 'forces') and self.problem.forces:
+            all_vectors.update(self.problem.forces)
+
+        # Also check for vectors as direct attributes (for DynamicProblem cases)
+        # Look for common resultant names
+        for attr_name in ['F_R', 'FR', 'resultant', 'R']:
+            if hasattr(self.problem, attr_name):
+                vec = getattr(self.problem, attr_name)
+                if vec is not None and hasattr(vec, '_coords'):
+                    all_vectors[attr_name] = vec
+
+        if not all_vectors:
             return None
 
+        # Determine unit from any force that has one
+        unit = "N"
+        for force in all_vectors.values():
+            if hasattr(force, 'magnitude') and force.magnitude and hasattr(force.magnitude, '_unit') and force.magnitude._unit:
+                unit = force.magnitude._unit.symbol
+                break
+            elif hasattr(force, '_unit') and force._unit:
+                unit = force._unit.symbol
+                break
+
         columns = [
-            TableColumn("Symbol", TableAlignment.LEFT),
-            TableColumn("Magnitude (N)", TableAlignment.DECIMAL),
-            TableColumn("Angle (deg)", TableAlignment.DECIMAL),
-            TableColumn("F_x (N)", TableAlignment.DECIMAL),
-            TableColumn("F_y (N)", TableAlignment.DECIMAL),
+            TableColumn("Vector", TableAlignment.LEFT),
+            TableColumn(f"Fₓ ({unit})", TableAlignment.DECIMAL),
+            TableColumn(f"Fᵧ ({unit})", TableAlignment.DECIMAL),
+            TableColumn(f"|F| ({unit})", TableAlignment.DECIMAL),
+            TableColumn("θ (deg)", TableAlignment.DECIMAL),
+            TableColumn("Reference", TableAlignment.LEFT),
         ]
 
         rows = []
-        for _force_name, force in self.problem.forces.items():
-            symbol = force.name
 
-            # Get magnitude using proper qnty unit handling
-            if force.magnitude and force.magnitude.value is not None:
-                magnitude = f"{force.magnitude.magnitude():.6g}"
-            else:
-                magnitude = "?"
+        for force_name, force in all_vectors.items():
+            # Only show resultants in the results table
+            is_resultant = getattr(force, 'is_resultant', False)
+            if not is_resultant:
+                continue
+
+            symbol = getattr(force, 'name', force_name)
+
+            # Get unit's SI factor for display conversion
+            si_factor = 1.0
+            if hasattr(force, '_unit') and force._unit:
+                si_factor = force._unit.si_factor
+
+            # Get magnitude - try multiple access patterns
+            magnitude = "?"
+            if hasattr(force, 'magnitude') and force.magnitude and force.magnitude.value is not None:
+                magnitude = f"{force.magnitude.magnitude():.1f}"
+            elif hasattr(force, '_coords'):
+                # Calculate magnitude from coordinates
+                import numpy as np
+                mag_si = np.linalg.norm(force._coords)
+                magnitude = f"{mag_si / si_factor:.1f}"
 
             # Get angle in degrees
-            if force.angle and force.angle.value is not None:
-                import math
+            angle = "?"
+            if hasattr(force, 'angle') and force.angle and force.angle.value is not None:
                 angle_deg = force.angle.value * 180 / math.pi
                 angle_deg = angle_deg % 360
-                angle = f"{angle_deg:.6g}"
-            else:
-                angle = "?"
+                angle = f"{angle_deg:.1f}"
+            elif hasattr(force, '_coords') and len(force._coords) >= 2:
+                # Calculate angle from coordinates
+                import numpy as np
+                angle_rad = np.arctan2(force._coords[1], force._coords[0])
+                angle_deg = angle_rad * 180 / math.pi
+                if angle_deg < 0:
+                    angle_deg += 360
+                angle = f"{angle_deg:.1f}"
 
-            # Get components using proper qnty unit handling
+            # Get x-component
+            fx = "?"
             if hasattr(force, 'u') and force.u and force.u.value is not None:
-                fx = f"{force.u.magnitude():.6g}"
-            else:
-                fx = "?"
+                fx = f"{force.u.magnitude():.1f}"
+            elif hasattr(force, '_coords') and len(force._coords) >= 1:
+                fx = f"{force._coords[0] / si_factor:.1f}"
 
+            # Get y-component
+            fy = "?"
             if hasattr(force, 'v') and force.v and force.v.value is not None:
-                fy = f"{force.v.magnitude():.6g}"
-            else:
-                fy = "?"
+                fy = f"{force.v.magnitude():.1f}"
+            elif hasattr(force, '_coords') and len(force._coords) >= 2:
+                fy = f"{force._coords[1] / si_factor:.1f}"
 
-            rows.append(TableRow([symbol, magnitude, angle, fx, fy]))
+            # Get reference axis
+            ref = "+x"
+            if hasattr(force, 'angle_reference') and force.angle_reference:
+                if hasattr(force.angle_reference, 'axis_label'):
+                    ref = force.angle_reference.axis_label
+
+            rows.append(TableRow([symbol, fx, fy, magnitude, angle, ref]))
+
+        if not rows:
+            return None
 
         return Table(columns=columns, rows=rows)
 
@@ -924,11 +1520,11 @@ class ReportBuilder:
             if hasattr(var, 'magnitude') and callable(var.magnitude):
                 try:
                     value = var.magnitude()
-                    value_str = f"{value:.6g}"
+                    value_str = f"{value:.1f}"
                 except (ValueError, AttributeError):
-                    value_str = f"{var.value:.6g}" if var.value is not None else "N/A"
+                    value_str = f"{var.value:.1f}" if var.value is not None else "N/A"
             else:
-                value_str = f"{var.value:.6g}" if var.value is not None else "N/A"
+                value_str = f"{var.value:.1f}" if var.value is not None else "N/A"
 
             # Get unit string
             if hasattr(var, 'preferred') and var.preferred:
@@ -1003,7 +1599,7 @@ class ReportBuilder:
                 if hasattr(mag_var, 'magnitude') and callable(mag_var.magnitude):
                     try:
                         mag_value = mag_var.magnitude()
-                        mag_str = f"{mag_value:.6g}"
+                        mag_str = f"{mag_value:.1f}"
                     except (ValueError, AttributeError):
                         mag_str = "?"
                 else:
@@ -1018,7 +1614,7 @@ class ReportBuilder:
                 import math
                 angle_deg = angle_var.value * 180.0 / math.pi
                 angle_deg = angle_deg % 360
-                angle_str = f"{angle_deg:.6g}"
+                angle_str = f"{angle_deg:.1f}"
             else:
                 angle_str = "?"
 
@@ -1033,9 +1629,9 @@ class ReportBuilder:
                     u_qty = force_obj.u
                     v_qty = force_obj.v
                     if u_qty is not None and u_qty.value is not None:
-                        x_str = f"{u_qty.magnitude():.6g}"
+                        x_str = f"{u_qty.magnitude():.1f}"
                     if v_qty is not None and v_qty.value is not None:
-                        y_str = f"{v_qty.magnitude():.6g}"
+                        y_str = f"{v_qty.magnitude():.1f}"
                 except (ValueError, AttributeError):
                     pass
 
@@ -1097,7 +1693,7 @@ class ReportBuilder:
                 if hasattr(mag_var, 'magnitude') and callable(mag_var.magnitude):
                     try:
                         mag_value = mag_var.magnitude()
-                        mag_str = f"{mag_value:.6g}"
+                        mag_str = f"{mag_value:.1f}"
                     except (ValueError, AttributeError):
                         mag_str = "?"
                 else:
@@ -1116,12 +1712,12 @@ class ReportBuilder:
                 angle_str = "?"
             # First try to use original angle from create_vector_polar
             elif vec_obj is not None and hasattr(vec_obj, '_original_angle') and vec_obj._original_angle is not None:
-                angle_str = f"{vec_obj._original_angle:.6g}"
+                angle_str = f"{vec_obj._original_angle:.1f}"
             elif angle_var is not None and angle_var.value is not None:
                 import math
                 angle_deg = angle_var.value * 180.0 / math.pi
                 angle_deg = angle_deg % 360
-                angle_str = f"{angle_deg:.6g}"
+                angle_str = f"{angle_deg:.1f}"
             elif vec_obj is not None and hasattr(vec_obj, '_angle') and vec_obj._angle is not None:
                 # Get angle from vector object directly
                 import math
@@ -1132,7 +1728,7 @@ class ReportBuilder:
                 if angle_val is not None:
                     angle_deg = float(angle_val) * 180.0 / math.pi
                     angle_deg = angle_deg % 360
-                    angle_str = f"{angle_deg:.6g}"
+                    angle_str = f"{angle_deg:.1f}"
                 else:
                     angle_str = "?"
             elif vec_obj is not None and hasattr(vec_obj, '_coords') and vec_obj._coords is not None:
@@ -1144,7 +1740,7 @@ class ReportBuilder:
                     angle_deg = math.degrees(angle_rad)
                     if angle_deg < 0:
                         angle_deg += 360
-                    angle_str = f"{angle_deg:.6g}"
+                    angle_str = f"{angle_deg:.1f}"
                 else:
                     angle_str = "?"
             else:
@@ -1161,9 +1757,9 @@ class ReportBuilder:
                     u_qty = vec_obj.u
                     v_qty = vec_obj.v
                     if u_qty is not None and u_qty.value is not None:
-                        x_str = f"{u_qty.magnitude():.6g}"
+                        x_str = f"{u_qty.magnitude():.1f}"
                     if v_qty is not None and v_qty.value is not None:
-                        y_str = f"{v_qty.magnitude():.6g}"
+                        y_str = f"{v_qty.magnitude():.1f}"
                 except (ValueError, AttributeError):
                     pass
 
@@ -1243,9 +1839,13 @@ class ReportBuilder:
             result_value = step_data.get("result_value", "")
             result_unit = step_data.get("result_unit", "")
 
+            # Use equation_inline for step rendering (may be empty even if equation_str exists)
+            # This allows equations to appear in "Equations Used" but not inline in the step
+            equation_inline = step_data.get("equation_inline", equation_str)
+
             steps.append(StepData(
                 equation_name=target,
-                equation_str=equation_str,
+                equation_str=equation_inline,  # Use inline version for step rendering
                 substituted_equation=step_data.get("substituted_equation"),
                 result_value=str(result_value),
                 result_unit=str(result_unit)
@@ -1263,11 +1863,11 @@ class ReportBuilder:
                 if hasattr(var, 'magnitude') and callable(var.magnitude):
                     try:
                         value = var.magnitude()
-                        value_str = f"{value:.6g}"
+                        value_str = f"{value:.1f}"
                     except (ValueError, AttributeError):
-                        value_str = f"{var.value:.6g}"
+                        value_str = f"{var.value:.1f}"
                 else:
-                    value_str = f"{var.value:.6g}"
+                    value_str = f"{var.value:.1f}"
 
                 # Get unit string
                 if hasattr(var, 'preferred') and var.preferred:
