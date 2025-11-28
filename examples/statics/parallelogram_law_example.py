@@ -87,7 +87,7 @@ class ProblemState:
         )
 
         # Solve using the unified API
-        self._result = parallelogram_law.solve(F_1, F_2)
+        self._result = parallelogram_law.solve(F_1, F_2, name="Problem 2-1")
 
         # Extract results in user's preferred units
         self._update_results()

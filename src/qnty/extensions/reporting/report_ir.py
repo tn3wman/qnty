@@ -243,14 +243,84 @@ class MarkdownRenderer(ReportRenderer):
         return lines
 
     def _render_table(self, table: Table) -> list[str]:
-        """Render a table to Markdown."""
+        """Render a table to Markdown.
+
+        Uses standard markdown tables with LaTeX math notation for headers.
+        Headers with special characters (|, subscripts, Greek letters) are
+        converted to proper LaTeX format for consistent rendering.
+        """
         if not table.columns:
             return ["*No data*", ""]
 
         lines = []
 
+        # Format headers for markdown - convert special notation to LaTeX
+        formatted_headers = []
+        for col in table.columns:
+            formatted_headers.append(self._format_table_header_md(col.header))
+
+        # Always use markdown table - LaTeX rendering in markdown tables
+        # is widely supported (GitHub, VS Code, Jupyter, etc.)
+        lines.extend(self._render_markdown_table(table, formatted_headers))
+
+        lines.append("")
+        return lines
+
+    def _format_table_header_md(self, header: str) -> str:
+        r"""Format a table header for Markdown with proper LaTeX notation.
+
+        Converts:
+        - |F| (N) → $|\vec{F}|$ (N)
+        - Fₓ (N) → $F_x$ (N)
+        - Fᵧ (N) → $F_y$ (N)
+        - θ (deg) → $\theta$ (deg)
+        """
+        import re
+
+        if not header:
+            return ""
+
+        result = header
+
+        # Handle magnitude notation |F| (unit)
+        magnitude_match = re.match(r'\|([A-Za-z]+)\|\s*\(([^)]+)\)', header)
+        if magnitude_match:
+            var = magnitude_match.group(1)
+            unit = magnitude_match.group(2)
+            return f"$\\|\\vec{{{var}}}\\|$ ({unit})"
+
+        # Handle subscript notation Fₓ (unit), Fᵧ (unit)
+        subscript_map = {"ₓ": "x", "ᵧ": "y", "₁": "1", "₂": "2", "₃": "3"}
+        for unicode_sub, ascii_sub in subscript_map.items():
+            if unicode_sub in result:
+                sub_match = re.match(r'([A-Za-z]+)' + unicode_sub + r'\s*\(([^)]+)\)', result)
+                if sub_match:
+                    base = sub_match.group(1)
+                    unit = sub_match.group(2)
+                    return f"${base}_{ascii_sub}$ ({unit})"
+
+        # Handle Greek letters θ (deg)
+        greek_map = {"θ": r"\theta", "φ": r"\varphi", "α": r"\alpha", "β": r"\beta", "γ": r"\gamma"}
+        for greek, latex in greek_map.items():
+            if result.startswith(greek):
+                greek_match = re.match(greek + r'\s*\(([^)]+)\)', result)
+                if greek_match:
+                    unit = greek_match.group(1)
+                    return f"${latex}$ ({unit})"
+                return f"${latex}${result[1:]}"
+
+        return result
+
+    def _render_markdown_table(self, table: Table, formatted_headers: list[str]) -> list[str]:
+        """Render a standard markdown table, centered to match PDF output."""
+        lines = []
+
+        # Wrap table in centered div for consistency with PDF layout
+        lines.append('<div align="center">')
+        lines.append("")
+
         # Header row
-        header = "| " + " | ".join(col.header for col in table.columns) + " |"
+        header = "| " + " | ".join(formatted_headers) + " |"
         lines.append(header)
 
         # Separator row
@@ -269,7 +339,6 @@ class MarkdownRenderer(ReportRenderer):
         # Data rows
         for row in table.rows:
             if not row.is_header:
-                # Convert first column (vector name) to LaTeX
                 converted_cells = []
                 for i, cell in enumerate(row.cells):
                     if i == 0:  # First column is typically symbol/vector name
@@ -280,6 +349,8 @@ class MarkdownRenderer(ReportRenderer):
                 lines.append(row_text)
 
         lines.append("")
+        lines.append("</div>")
+
         return lines
 
     def _format_vector_symbol(self, symbol: str) -> str:
@@ -295,7 +366,13 @@ class MarkdownRenderer(ReportRenderer):
         return symbol
 
     def _render_solution_step(self, step: SolutionStep) -> list[str]:
-        """Render a solution step to Markdown."""
+        """Render a solution step to Markdown.
+
+        Uses the 'aligned' environment for multi-line equations with equal sign
+        alignment. Note: KaTeX doesn't support flalign* for left-alignment of the
+        block, so the block will be centered (standard for display math) but
+        equations within are aligned at the = sign.
+        """
         lines = []
 
         # Format title using LaTeX and expand custom macros
@@ -303,23 +380,11 @@ class MarkdownRenderer(ReportRenderer):
         lines.append(f"**Step {step.step_number}: Solve for {title_latex}**")
         lines.append("")
 
-        # Equation (only if provided)
-        if step.equation:
-            lines.append("**Equation:**")
-            lines.append("")
-            eq_latex = self._expand_custom_macros(self._latex._to_latex_math(step.equation))
-            lines.append(f"$${eq_latex}$$")
-            lines.append("")
-
-        # Substitution/Calculation
+        # Substitution/Calculation - this is the main content for solution steps
         if step.substituted:
             # Check if this is a multi-line calculation
             if "\n" in step.substituted:
-                # Only show label if there was also an equation
-                if step.equation:
-                    lines.append("**Substitution:**")
-                    lines.append("")
-                # Use aligned LaTeX environment for multi-line
+                # Use aligned environment for equal sign alignment
                 lines.append("$$")
                 lines.append(r"\begin{aligned}")
                 for sub_line in step.substituted.split("\n"):
@@ -331,22 +396,9 @@ class MarkdownRenderer(ReportRenderer):
                 lines.append("$$")
                 lines.append("")
             elif step.substituted != step.equation:
-                lines.append("**Substitution:**")
-                lines.append("")
                 sub_latex = self._expand_custom_macros(self._latex._to_latex_math(step.substituted))
                 lines.append(f"$${sub_latex}$$")
                 lines.append("")
-
-        # Result (only if provided and not None)
-        if step.result_value and step.result_value != "None":
-            lines.append("**Result:**")
-            lines.append("")
-            result_var_latex = self._expand_custom_macros(self._latex._to_latex_math(step.result_var))
-            result_latex = f"{result_var_latex} = {step.result_value}"
-            if step.result_unit:
-                result_latex += r" \text{ " + step.result_unit + "}"
-            lines.append(f"$${result_latex}$$")
-            lines.append("")
 
         return lines
 
@@ -1429,39 +1481,37 @@ class ReportBuilder:
     def _build_vector_results_table(self) -> Table | None:
         """Build results table for vector equilibrium problems.
 
-        Shows only the solved unknowns (resultants) with their computed values.
+        Shows solved unknowns - vectors that were originally unknown but now have
+        computed values. This includes:
+        - For forward problems: the resultant (F_R)
+        - For inverse problems: the unknown component force (e.g., F_1)
+
         Uses proper vector notation:
         - Vector column shows vector with arrow
         - Magnitude column uses |F| notation
         """
         import math
 
-        # Collect all vectors - check both forces dict and direct attributes
-        all_vectors: dict[str, Any] = {}
+        # Get original variable states to determine what was originally unknown
+        original_var_states = getattr(self.problem, '_original_variable_states', {})
 
-        # Check forces dict
-        if hasattr(self.problem, 'forces') and self.problem.forces:
-            all_vectors.update(self.problem.forces)
+        # Find all vector-related variables by looking for *_mag and *_angle pairs
+        vector_names = set()
+        for var_name in self.problem.variables:
+            if var_name.endswith('_mag'):
+                vector_names.add(var_name[:-4])  # Remove '_mag' suffix
+            elif var_name.endswith('_angle'):
+                vector_names.add(var_name[:-6])  # Remove '_angle' suffix
 
-        # Also check for vectors as direct attributes (for DynamicProblem cases)
-        # Look for common resultant names
-        for attr_name in ['F_R', 'FR', 'resultant', 'R']:
-            if hasattr(self.problem, attr_name):
-                vec = getattr(self.problem, attr_name)
-                if vec is not None and hasattr(vec, '_coords'):
-                    all_vectors[attr_name] = vec
-
-        if not all_vectors:
+        if not vector_names:
             return None
 
-        # Determine unit from any force that has one
+        # Determine unit from any vector's magnitude variable
         unit = "N"
-        for force in all_vectors.values():
-            if hasattr(force, 'magnitude') and force.magnitude and hasattr(force.magnitude, '_unit') and force.magnitude._unit:
-                unit = force.magnitude._unit.symbol
-                break
-            elif hasattr(force, '_unit') and force._unit:
-                unit = force._unit.symbol
+        for vec_name in vector_names:
+            mag_var = self.problem.variables.get(f"{vec_name}_mag")
+            if mag_var and hasattr(mag_var, 'preferred') and mag_var.preferred:
+                unit = mag_var.preferred.symbol
                 break
 
         columns = [
@@ -1475,65 +1525,80 @@ class ReportBuilder:
 
         rows = []
 
-        for force_name, force in all_vectors.items():
-            # Only show resultants in the results table
-            is_resultant = getattr(force, 'is_resultant', False)
-            if not is_resultant:
+        for vec_name in sorted(vector_names):
+            mag_var = self.problem.variables.get(f"{vec_name}_mag")
+            angle_var = self.problem.variables.get(f"{vec_name}_angle")
+
+            if mag_var is None:
                 continue
 
-            symbol = getattr(force, 'name', force_name)
+            # Determine if this vector was originally unknown
+            mag_was_known = original_var_states.get(f"{vec_name}_mag", True)
+            angle_was_known = original_var_states.get(f"{vec_name}_angle", True) if angle_var else True
+            was_originally_unknown = not (mag_was_known and angle_was_known)
+
+            # Only show vectors that were originally unknown (solved unknowns)
+            if not was_originally_unknown:
+                continue
+
+            # Get vector object for additional data
+            vec_obj = getattr(self.problem, vec_name, None)
 
             # Get unit's SI factor for display conversion
             si_factor = 1.0
-            if hasattr(force, '_unit') and force._unit:
-                si_factor = force._unit.si_factor
+            if vec_obj and hasattr(vec_obj, '_unit') and vec_obj._unit:
+                si_factor = vec_obj._unit.si_factor
 
-            # Get magnitude - try multiple access patterns
+            # Get magnitude
             magnitude = "?"
-            if hasattr(force, 'magnitude') and force.magnitude and force.magnitude.value is not None:
-                magnitude = f"{force.magnitude.magnitude():.1f}"
-            elif hasattr(force, '_coords'):
-                # Calculate magnitude from coordinates
-                import numpy as np
-                mag_si = np.linalg.norm(force._coords)
-                magnitude = f"{mag_si / si_factor:.1f}"
+            if mag_var.value is not None:
+                if hasattr(mag_var, 'magnitude') and callable(mag_var.magnitude):
+                    try:
+                        magnitude = f"{mag_var.magnitude():.1f}"
+                    except (ValueError, AttributeError):
+                        magnitude = f"{mag_var.value:.1f}"
+                else:
+                    magnitude = f"{mag_var.value:.1f}"
 
             # Get angle in degrees
             angle = "?"
-            if hasattr(force, 'angle') and force.angle and force.angle.value is not None:
-                angle_deg = force.angle.value * 180 / math.pi
+            if angle_var is not None and angle_var.value is not None:
+                angle_deg = angle_var.value * 180 / math.pi
                 angle_deg = angle_deg % 360
                 angle = f"{angle_deg:.1f}"
-            elif hasattr(force, '_coords') and len(force._coords) >= 2:
+            elif vec_obj is not None and hasattr(vec_obj, '_coords') and vec_obj._coords is not None:
                 # Calculate angle from coordinates
-                import numpy as np
-                angle_rad = np.arctan2(force._coords[1], force._coords[0])
-                angle_deg = angle_rad * 180 / math.pi
-                if angle_deg < 0:
-                    angle_deg += 360
-                angle = f"{angle_deg:.1f}"
+                coords = vec_obj._coords
+                if len(coords) >= 2:
+                    angle_rad = math.atan2(coords[1], coords[0])
+                    angle_deg = angle_rad * 180 / math.pi
+                    if angle_deg < 0:
+                        angle_deg += 360
+                    angle = f"{angle_deg:.1f}"
 
             # Get x-component
             fx = "?"
-            if hasattr(force, 'u') and force.u and force.u.value is not None:
-                fx = f"{force.u.magnitude():.1f}"
-            elif hasattr(force, '_coords') and len(force._coords) >= 1:
-                fx = f"{force._coords[0] / si_factor:.1f}"
+            if vec_obj is not None and hasattr(vec_obj, 'u') and vec_obj.u and vec_obj.u.value is not None:
+                fx = f"{vec_obj.u.magnitude():.1f}"
+            elif vec_obj is not None and hasattr(vec_obj, '_coords') and vec_obj._coords is not None and len(vec_obj._coords) >= 1:
+                fx = f"{vec_obj._coords[0] / si_factor:.1f}"
 
             # Get y-component
             fy = "?"
-            if hasattr(force, 'v') and force.v and force.v.value is not None:
-                fy = f"{force.v.magnitude():.1f}"
-            elif hasattr(force, '_coords') and len(force._coords) >= 2:
-                fy = f"{force._coords[1] / si_factor:.1f}"
+            if vec_obj is not None and hasattr(vec_obj, 'v') and vec_obj.v and vec_obj.v.value is not None:
+                fy = f"{vec_obj.v.magnitude():.1f}"
+            elif vec_obj is not None and hasattr(vec_obj, '_coords') and vec_obj._coords is not None and len(vec_obj._coords) >= 2:
+                fy = f"{vec_obj._coords[1] / si_factor:.1f}"
 
             # Get reference axis
             ref = "+x"
-            if hasattr(force, 'angle_reference') and force.angle_reference:
-                if hasattr(force.angle_reference, 'axis_label'):
-                    ref = force.angle_reference.axis_label
+            if vec_obj is not None and hasattr(vec_obj, '_original_wrt') and vec_obj._original_wrt:
+                ref = vec_obj._original_wrt
+            elif vec_obj is not None and hasattr(vec_obj, 'angle_reference') and vec_obj.angle_reference:
+                if hasattr(vec_obj.angle_reference, 'axis_label'):
+                    ref = vec_obj.angle_reference.axis_label
 
-            rows.append(TableRow([symbol, fx, fy, magnitude, angle, ref]))
+            rows.append(TableRow([vec_name, fx, fy, magnitude, angle, ref]))
 
         if not rows:
             return None

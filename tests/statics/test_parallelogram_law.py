@@ -15,6 +15,9 @@ import pytest
 from qnty.problems.statics import parallelogram_law as pl
 from qnty.spatial.vector import _Vector
 
+# Import problem fixtures
+from tests.statics._problem_fixtures import PARALLELOGRAM_LAW_PROBLEMS, PROBLEMS_EXPECT_FAIL
+
 # =============================================================================
 # Helper functions for assertions
 # =============================================================================
@@ -44,207 +47,12 @@ def assert_vectors_close(actual: _Vector, expected: _Vector, rtol: float = 0.01,
 
 
 # =============================================================================
-# Problem class definitions using Unified API
+# Problem class lists for parameterized testing
 # =============================================================================
 
+PROBLEM_CLASSES = PARALLELOGRAM_LAW_PROBLEMS
 
-class Chapter2Problem1:
-    name = "Problem 2-1"
-
-    # Input vectors using unified API
-    F_1 = pl.create_vector_polar(magnitude=450, unit="N", angle=60, wrt="+x")
-    F_2 = pl.create_vector_polar(magnitude=700, unit="N", angle=15, wrt="-x")
-    F_R = pl.create_vector_resultant(F_1, F_2)
-
-    # Expected values (from textbook)
-    class expected:
-        F_1 = pl.create_vector_polar(magnitude=450, unit="N", angle=60, wrt="+x")
-        F_2 = pl.create_vector_polar(magnitude=700, unit="N", angle=15, wrt="-x")
-        F_R = pl.create_vector_polar(magnitude=497.014, unit="N", angle=155.192, wrt="+x")
-
-    class report:
-        """Expected content for report generation tests."""
-
-        class known_variables:
-            """Expected known variables table data."""
-            F_1 = {
-                "symbol": "F_1", "unit": "N",
-                "x": 225.0, "y": 389.7, "mag": 450, "angle": 60, "wrt": "+x"
-            }
-            F_2 = {
-                "symbol": "F_2", "unit": "N",
-                "x": -676.1, "y": -181.2, "mag": 700, "angle": 15, "wrt": "-x"
-            }
-
-        class unknown_variables:
-            """Expected unknown variables table data."""
-            F_R = {
-                "symbol": "F_R", "unit": "N",
-                "x": "?", "y": "?", "magnitude": "?", "angle": "?", "reference": "+x",
-            }
-
-        class equations:
-            """Expected equations used in the solution.
-
-            These are exact equation strings from the solver.
-            """
-            # Law of cosines (no spaces around comma in angle notation)
-            eq_1 = "|F_R|² = |F_1|² + |F_2|² + 2·|F_1|·|F_2|·cos(∠(F_1,F_2))"
-            # Law of sines
-            eq_2 = "sin(∠(F_1,F_R))/|F_2| = sin(∠(F_1,F_2))/|F_R|"
-            count = 2
-
-        class steps:
-            """Expected solution steps.
-
-            The substituted_equation contains the full calculation with result.
-            Values are extracted from the last line of substituted_equation.
-            """
-            # Step 1: Solve for angle between F_1 and F_2
-            step_1 = {
-                "target": "∠(F_1,F_2)",  # No spaces around comma
-                "final_line": "= 45°",   # Last line of substituted equation
-            }
-            # Step 2: Solve for |F_R| using law of cosines
-            step_2 = {
-                "target": "|F_R| using Eq 1",
-                "final_line": "= 497.0 N",
-            }
-            # Step 3: Solve for angle between F_1 and F_R using law of sines
-            step_3 = {
-                "target": "∠(F_1,F_R) using Eq 2",
-                "final_line": "= 95.2°",
-            }
-            # Step 4: Solve for θ_F_R with respect to +x
-            step_4 = {
-                "target": "θ_F_R with respect to +x",
-                "final_line": "= 155.2°",
-            }
-            count = 4
-
-        class results:
-            """Expected final results in the Summary of Results table."""
-            F_R = {
-                "symbol": "F_R",
-                "unit": "N",
-                "x": -451.1,
-                "y": 208.5,
-                "magnitude": 497.0,
-                "angle": 155.2,
-                "reference": "+x",
-            }
-
-
-# =============================================================================
-# Intentionally WRONG problem class to verify tests detect failures
-# =============================================================================
-
-
-class Chapter2Problem1_WRONG:
-    """Copy of Problem 2-1 with INTENTIONALLY WRONG expected values.
-
-    This class is used to verify that the tests actually detect incorrect values.
-    Each section has deliberately wrong data that should cause the corresponding
-    test to fail.
-    """
-    name = "Problem 2-1 WRONG (expect failures)"
-
-    # Input vectors - same as correct problem
-    F_1 = pl.create_vector_polar(magnitude=450, unit="N", angle=60, wrt="+x")
-    F_2 = pl.create_vector_polar(magnitude=700, unit="N", angle=15, wrt="-x")
-    F_R = pl.create_vector_resultant(F_1, F_2)
-
-    # WRONG expected values
-    class expected:
-        F_1 = pl.create_vector_polar(magnitude=450, unit="N", angle=60, wrt="+x")
-        F_2 = pl.create_vector_polar(magnitude=700, unit="N", angle=15, wrt="-x")
-        # WRONG: magnitude should be 497.014, angle should be 155.192
-        F_R = pl.create_vector_polar(magnitude=999.0, unit="N", angle=45.0, wrt="+x")
-
-    class report:
-        """WRONG expected content for report generation tests."""
-
-        class known_variables:
-            """WRONG known variables - wrong component values."""
-            F_1 = {
-                "symbol": "F_1", "unit": "N",
-                # WRONG: x should be 225.0, y should be 389.7
-                "x": 999.0, "y": 999.0, "mag": 450, "angle": 60, "wrt": "+x"
-            }
-            F_2 = {
-                "symbol": "F_2", "unit": "N",
-                "x": -676.1, "y": -181.2, "mag": 700, "angle": 15, "wrt": "-x"
-            }
-
-        class unknown_variables:
-            """WRONG unknown variables - wrong reference."""
-            F_R = {
-                "symbol": "F_R", "unit": "N",
-                "x": "?", "y": "?", "magnitude": "?", "angle": "?",
-                # WRONG: reference should be "+x"
-                "reference": "-y",
-            }
-
-        class equations:
-            """WRONG equations - wrong equation strings."""
-            # WRONG: should be "|F_R|² = |F_1|² + |F_2|² + 2·|F_1|·|F_2|·cos(∠(F_1,F_2))"
-            eq_1 = "WRONG EQUATION ONE"
-            # WRONG: should be "sin(∠(F_1,F_R))/|F_2| = sin(∠(F_1,F_2))/|F_R|"
-            eq_2 = "WRONG EQUATION TWO"
-            count = 2
-
-        class steps:
-            """WRONG steps - wrong targets and final lines."""
-            step_1 = {
-                # WRONG: target should be "∠(F_1,F_2)"
-                "target": "WRONG TARGET",
-                # WRONG: final_line should be "= 45°"
-                "final_line": "= 999°",
-            }
-            step_2 = {
-                "target": "|F_R| using Eq 1",
-                # WRONG: final_line should be "= 497.0 N"
-                "final_line": "= 999.0 N",
-            }
-            step_3 = {
-                "target": "∠(F_1,F_R) using Eq 2",
-                "final_line": "= 95.2°",
-            }
-            step_4 = {
-                "target": "θ_F_R with respect to +x",
-                "final_line": "= 155.2°",
-            }
-            count = 4
-
-        class results:
-            """WRONG results - wrong values."""
-            F_R = {
-                "symbol": "F_R",
-                "unit": "N",
-                # WRONG: x should be -451.1
-                "x": 999.0,
-                # WRONG: y should be 208.5
-                "y": 999.0,
-                # WRONG: magnitude should be 497.0
-                "magnitude": 999.0,
-                # WRONG: angle should be 155.2
-                "angle": 999.0,
-                "reference": "+x",
-            }
-
-
-# =============================================================================
-# List of all problem classes for parameterized testing
-# =============================================================================
-
-PROBLEM_CLASSES = [
-    Chapter2Problem1,
-]
-
-# Problem classes that are EXPECTED TO FAIL (for test validation)
-PROBLEM_CLASSES_EXPECT_FAIL = [
-    Chapter2Problem1_WRONG,
-]
+PROBLEM_CLASSES_EXPECT_FAIL = PROBLEMS_EXPECT_FAIL
 
 
 # =============================================================================

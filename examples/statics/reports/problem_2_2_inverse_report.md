@@ -1,6 +1,6 @@
-# Engineering Calculation Report: Problem 2-1
+# Engineering Calculation Report: Problem 2-2
 
-**Generated:** 2025-11-28 13:28:48
+**Generated:** 2025-11-28 13:26:37
 
 ## 1. Known Variables
 
@@ -8,8 +8,8 @@
 
 | Vector | $F_x$ (N) | $F_y$ (N) | $\|\vec{F}\|$ (N) | $\theta$ (deg) | Reference |
 | :--- | ---: | ---: | ---: | ---: | :--- |
-| $\vec{F_1}$ | 225.0 | 389.7 | 450.0 | 60.0 | +x |
 | $\vec{F_2}$ | -676.1 | -181.2 | 700.0 | 15.0 | -x |
+| $\vec{F_R}$ | 0.0 | 500.0 | 500.0 | 0.0 | +y |
 
 </div>
 
@@ -19,53 +19,53 @@
 
 | Vector | $F_x$ (N) | $F_y$ (N) | $\|\vec{F}\|$ (N) | $\theta$ (deg) | Reference |
 | :--- | ---: | ---: | ---: | ---: | :--- |
-| $\vec{F_R}$ | ? | ? | ? | ? | +x |
+| $\vec{F_1}$ | ? | ? | ? | ? | +x |
 
 </div>
 
 ## 3. Equations Used
 
-1. $|\vec{F_R}|^2 = |\vec{F_1}|^2 + |\vec{F_2}|^2 + 2 \cdot |\vec{F_1}| \cdot |\vec{F_2}| \cdot \cos(\angle(\vec{F_1}, \vec{F_2}))$
+1. $|\vec{F_1}|^2 = |\vec{F_2}|^2 + |\vec{F_R}|^2 - 2 \cdot |\vec{F_2}| \cdot |\vec{F_R}| \cdot \cos(\angle(\vec{F_2}, \vec{F_R}))$
 
-2. $\frac{\sin(\angle(\vec{F_1}, \vec{F_R}))}{|\vec{F_2}|} = \frac{\sin(\angle(\vec{F_1}, \vec{F_2}))}{|\vec{F_R}|}$
+2. $\frac{\sin(\angle(\vec{F_R}, \vec{F_1}))}{|\vec{F_2}|} = \frac{\sin(\angle(\vec{F_2}, \vec{F_R}))}{|\vec{F_1}|}$
 
 ## 4. Step-by-Step Solution
 
-**Step 1: Solve for $\angle(\vec{F_1}, \vec{F_2})$**
+**Step 1: Solve for $\angle(\vec{F_2}, \vec{F_R})$**
 
 $$
 \begin{aligned}
-\angle(\vec{F_1}, \vec{F_2}) &= |\angle(\vec{x}, \vec{F_1}) - \angle(\vec{-x}, \vec{F_2})| \\
-&= |60^{\circ} - 15^{\circ}| \\
-&= 45^{\circ} \\
+\angle(\vec{F_2}, \vec{F_R}) &= |\angle(\vec{-x}, \vec{F_2}) + \angle(\vec{x}, \vec{F_R})| \\
+&= |15^{\circ} + 90^{\circ}| \\
+&= 105^{\circ} \\
 \end{aligned}
 $$
 
-**Step 2: Solve for $|\vec{F_R}|$ using Eq 1**
+**Step 2: Solve for $|\vec{F_1}|$ using Eq 1**
 
 $$
 \begin{aligned}
-|\vec{F_R}| &= \sqrt{(450.0)^2 + (700.0)^2 + 2(450.0)(700.0)\cos(45^{\circ})} \\
-&= 497.0 N \\
+|\vec{F_1}| &= \sqrt{(700)^2 + (500)^2 - 2(700)(500)\cos(105^{\circ})} \\
+&= 959.8 N \\
 \end{aligned}
 $$
 
-**Step 3: Solve for $\angle(\vec{F_1}, \vec{F_R})$ using Eq 2**
+**Step 3: Solve for $\angle(\vec{F_R}, \vec{F_1})$ using Eq 2**
 
 $$
 \begin{aligned}
-\angle(\vec{F_1}, \vec{F_R}) &= \sin^{-1}(700.0 \cdot \frac{\sin(45^{\circ})}{497.0}) \\
-&= 95.2^{\circ} \\
+\angle(\vec{F_R}, \vec{F_1}) &= \sin^{-1}(700.0 \cdot \frac{\sin(105^{\circ})}{959.8}) \\
+&= 44.8^{\circ} \\
 \end{aligned}
 $$
 
-**Step 4: Solve for $\angle(\vec{x}, \vec{F_R})$ with respect to +x**
+**Step 4: Solve for $\angle(\vec{x}, \vec{F_1})$ with respect to +x**
 
 $$
 \begin{aligned}
-\angle(\vec{x}, \vec{F_R}) &= \angle(\vec{x}, \vec{F_1}) + \angle(\vec{F_1}, \vec{F_R}) \\
-&= 60.0^{\circ} + 95.2^{\circ} \\
-&= 155.2^{\circ} \\
+\angle(\vec{x}, \vec{F_1}) &= \angle(\vec{x}, \vec{F_R}) - \angle(\vec{F_R}, \vec{F_1}) \\
+&= 90.0^{\circ} - 44.8^{\circ} \\
+&= 45.2^{\circ} \\
 \end{aligned}
 $$
 
@@ -75,7 +75,7 @@ $$
 
 | Vector | $F_x$ (N) | $F_y$ (N) | $\|\vec{F}\|$ (N) | $\theta$ (deg) | Reference |
 | :--- | ---: | ---: | ---: | ---: | :--- |
-| $\vec{F_R}$ | -451.1 | 208.5 | 497.0 | 155.2 | +x |
+| $\vec{F_R}$ | 0.0 | 500.0 | 500.0 | 90.0 | +x |
 
 </div>
 

@@ -86,7 +86,8 @@ class ParallelogramLawProblem(Problem):
                 vector_clones[id(attr)] = clone
                 setattr(self, attr_name, clone)
 
-        # Second pass: handle _VectorWithUnknowns and ForceVectors not already cloned
+        # Second pass: clone _VectorWithUnknowns that are NOT resultants (component vectors with unknowns)
+        # These need to be cloned before the resultants so the resultant can reference them
         for attr_name in dir(self.__class__):
             if attr_name.startswith("_"):
                 continue
@@ -97,10 +98,27 @@ class ParallelogramLawProblem(Problem):
             if id(attr) in vector_clones:
                 continue
 
-            # Check _VectorWithUnknowns FIRST since it's also a ForceVector and _Vector
-            if isinstance(attr, _VectorWithUnknowns):
-                # Clone the _VectorWithUnknowns and update component_vectors to use cloned vectors
-                clone = self._clone_vector_with_unknowns(attr, vector_clones)
+            # Clone _VectorWithUnknowns that are NOT resultants first
+            if isinstance(attr, _VectorWithUnknowns) and not getattr(attr, 'is_resultant', False):
+                clone = self._clone_vector_with_unknowns(attr, vector_clones, default_name=attr_name)
+                vector_clones[id(attr)] = clone
+                setattr(self, attr_name, clone)
+
+        # Third pass: clone _VectorWithUnknowns that ARE resultants (they reference the component vectors)
+        for attr_name in dir(self.__class__):
+            if attr_name.startswith("_"):
+                continue
+
+            attr = getattr(self.__class__, attr_name)
+
+            # Skip if already cloned
+            if id(attr) in vector_clones:
+                continue
+
+            # Clone _VectorWithUnknowns resultants
+            if isinstance(attr, _VectorWithUnknowns) and getattr(attr, 'is_resultant', False):
+                clone = self._clone_vector_with_unknowns(attr, vector_clones, default_name=attr_name)
+                vector_clones[id(attr)] = clone
                 setattr(self, attr_name, clone)
             elif isinstance(attr, _Vector):
                 # Clone to avoid sharing between instances
@@ -138,13 +156,15 @@ class ParallelogramLawProblem(Problem):
 
         return clone
 
-    def _clone_vector_with_unknowns(self, vec: _VectorWithUnknowns, vector_clones: dict[int, _Vector]) -> _VectorWithUnknowns:
+    def _clone_vector_with_unknowns(self, vec: _VectorWithUnknowns, vector_clones: dict[int, _Vector], default_name: str = "") -> _VectorWithUnknowns:
         """Create a copy of a _VectorWithUnknowns with updated component_vectors."""
         clone = object.__new__(_VectorWithUnknowns)
         clone._coords = vec._coords.copy()
         clone._dim = vec._dim
         clone._unit = vec._unit
-        clone.name = getattr(vec, 'name', "")
+        # Use original name if it exists and is meaningful, otherwise use default_name
+        original_name = getattr(vec, 'name', "")
+        clone.name = original_name if (original_name and original_name != "Vector") else default_name
         clone._description = getattr(vec, '_description', "")
         clone.is_known = getattr(vec, 'is_known', False)
         clone.is_resultant = getattr(vec, 'is_resultant', True)
@@ -170,6 +190,12 @@ class ParallelogramLawProblem(Problem):
         if hasattr(vec, '_angle'):
             clone._angle = vec._angle
 
+        # Copy original angle and wrt for reporting
+        if hasattr(vec, '_original_angle'):
+            clone._original_angle = vec._original_angle
+        if hasattr(vec, '_original_wrt'):
+            clone._original_wrt = vec._original_wrt
+
         return clone
 
     def _compute_vector_resultants(self) -> None:
@@ -187,6 +213,15 @@ class ParallelogramLawProblem(Problem):
             # Check if it's a _VectorWithUnknowns with component vectors
             if isinstance(attr, _VectorWithUnknowns) and attr.component_vectors:
                 has_vector_resultants = True
+
+                # Check if this is a constraint (inverse) problem
+                # Constraint: resultant is known, some component vectors are unknown
+                is_constraint = getattr(attr, '_is_constraint', False)
+
+                if is_constraint:
+                    # Inverse problem: solve for unknown component vectors given known resultant
+                    self._solve_inverse_resultant(attr, attr_name)
+                    continue
 
                 # First, add known vectors as variables
                 for vec in attr.component_vectors:
@@ -304,6 +339,366 @@ class ParallelogramLawProblem(Problem):
             self.is_solved = True
             self._populate_solving_history()
 
+    def _solve_inverse_resultant(self, resultant: _VectorWithUnknowns, resultant_name: str) -> None:
+        """
+        Solve for unknown component vectors given a known resultant constraint.
+
+        This is the inverse of the forward problem: instead of summing known vectors
+        to get the resultant, we have a known resultant and need to find the unknown
+        component vector(s).
+
+        For the 2-vector case with one unknown (magnitude and angle), we use:
+        - Law of Cosines to find the unknown magnitude
+        - Law of Sines to find the unknown angle
+
+        Args:
+            resultant: The _VectorWithUnknowns with known resultant values
+            resultant_name: Name of the resultant (e.g., "F_R")
+        """
+        from ..core.dimension_catalog import dim
+        from ..core.unit import ureg
+
+        component_vectors = resultant.component_vectors
+
+        # Identify known and unknown component vectors
+        known_vectors: list[_Vector] = []
+        unknown_vectors: list[_VectorWithUnknowns] = []
+
+        for vec in component_vectors:
+            if isinstance(vec, _VectorWithUnknowns) and vec.has_unknowns:
+                unknown_vectors.append(vec)
+            else:
+                known_vectors.append(vec)
+
+        # Get the known resultant values (already set in the resultant object's _coords)
+        FR_coords = resultant._coords
+        FR_mag = float(np.sqrt(np.sum(FR_coords**2)))
+        FR_angle = float(np.arctan2(FR_coords[1], FR_coords[0]))
+
+        # Get unit info
+        unit = resultant._unit
+        si_factor = unit.si_factor if unit else 1.0
+
+        # For now, handle the case: 1 known vector + 1 unknown vector = known resultant
+        # This is Problem 2-2: F_1 (unknown) + F_2 (known) = F_R (known)
+        if len(known_vectors) == 1 and len(unknown_vectors) == 1:
+            known_vec = known_vectors[0]
+            unknown_vec = unknown_vectors[0]
+
+            # Known vector properties
+            F_known_coords = known_vec._coords
+            F_known_mag = float(np.sqrt(np.sum(F_known_coords**2)))
+            F_known_angle = float(np.arctan2(F_known_coords[1], F_known_coords[0]))
+
+            # Direct vector subtraction: F_unknown = F_R - F_known
+            # Since F_R = F_unknown + F_known
+            F_unknown_coords = FR_coords - F_known_coords
+            F_unknown_mag = float(np.sqrt(np.sum(F_unknown_coords**2)))
+            F_unknown_angle = float(np.arctan2(F_unknown_coords[1], F_unknown_coords[0]))
+
+            # Normalize angle to [0, 2π)
+            while F_unknown_angle < 0:
+                F_unknown_angle += 2 * math.pi
+            while F_unknown_angle >= 2 * math.pi:
+                F_unknown_angle -= 2 * math.pi
+
+            # Calculate gamma (angle between F_known and F_R) for solution steps
+            gamma = abs(FR_angle - F_known_angle)
+            if gamma > math.pi:
+                gamma = 2 * math.pi - gamma
+
+            # Calculate alpha (angle between F_R and F_unknown) for solution steps
+            alpha = abs(FR_angle - F_unknown_angle)
+            if alpha > math.pi:
+                alpha = 2 * math.pi - alpha
+
+            # Update the unknown vector's coordinates (use directly computed values)
+            unknown_vec._coords = F_unknown_coords.copy()
+            unknown_vec._unknowns = {}  # Clear unknowns
+            unknown_vec.is_known = True
+
+            # Store magnitude and angle
+            degree_unit = ureg.resolve("degree", dim=dim.D)
+
+            unknown_vec._magnitude = Quantity(
+                name=f"{unknown_vec.name}_magnitude",
+                dim=resultant._dim,
+                value=F_unknown_mag,
+                preferred=unit,
+            )
+            unknown_vec._angle = Quantity(
+                name=f"{unknown_vec.name}_angle",
+                dim=dim.D,
+                value=F_unknown_angle,
+                preferred=degree_unit,
+            )
+
+            # Also store _original_angle and _original_wrt for reporting
+            unknown_vec._original_angle = math.degrees(F_unknown_angle)
+            unknown_vec._original_wrt = "+x"
+
+            # Add variables for the solved unknown
+            vec_name = unknown_vec.name or "F_unknown"
+            mag_var = Quantity(
+                name=f"{vec_name} Magnitude",
+                dim=resultant._dim,
+                value=F_unknown_mag,
+                preferred=unit,
+                _symbol=f"|{vec_name}|",
+            )
+            self.variables[f"{vec_name}_mag"] = mag_var
+            self._original_variable_states[f"{vec_name}_mag"] = False  # Was unknown
+
+            angle_var = Quantity(
+                name=f"{vec_name} Angle",
+                dim=dim.D,
+                value=F_unknown_angle,
+                preferred=degree_unit,
+                _symbol=f"θ_{vec_name}",
+            )
+            self.variables[f"{vec_name}_angle"] = angle_var
+            self._original_variable_states[f"{vec_name}_angle"] = False  # Was unknown
+
+            # Add variables for the known vector
+            known_name = known_vec.name or "F_known"
+            known_mag_var = Quantity(
+                name=f"{known_name} Magnitude",
+                dim=resultant._dim,
+                value=F_known_mag,
+                preferred=unit,
+                _symbol=f"|{known_name}|",
+            )
+            self.variables[f"{known_name}_mag"] = known_mag_var
+            self._original_variable_states[f"{known_name}_mag"] = True  # Was known
+
+            # Add variables for the resultant (known constraint)
+            res_mag_var = Quantity(
+                name=f"{resultant_name} Magnitude",
+                dim=resultant._dim,
+                value=FR_mag,
+                preferred=unit,
+                _symbol=f"|{resultant_name}|",
+            )
+            self.variables[f"{resultant_name}_mag"] = res_mag_var
+            self._original_variable_states[f"{resultant_name}_mag"] = True  # Known constraint
+
+            res_angle_var = Quantity(
+                name=f"{resultant_name} Angle",
+                dim=dim.D,
+                value=FR_angle,
+                preferred=degree_unit,
+                _symbol=f"θ_{resultant_name}",
+            )
+            self.variables[f"{resultant_name}_angle"] = res_angle_var
+            self._original_variable_states[f"{resultant_name}_angle"] = True  # Known constraint
+
+            # Store magnitude and angle on resultant for reporting
+            resultant._magnitude = Quantity(
+                name=f"{resultant_name}_magnitude",
+                dim=resultant._dim,
+                value=FR_mag,
+                preferred=unit,
+            )
+            resultant._angle = Quantity(
+                name=f"{resultant_name}_angle",
+                dim=dim.D,
+                value=FR_angle,
+                preferred=degree_unit,
+            )
+
+            # Add solution steps
+            self._add_inverse_triangle_method_steps(
+                known_vec,
+                unknown_vec,
+                resultant,
+                resultant_name,
+                F_unknown_mag,
+                F_unknown_angle,
+                F_known_angle,
+                FR_angle,
+                gamma,
+                alpha,
+            )
+
+        else:
+            # More complex cases - not yet implemented
+            raise NotImplementedError(
+                f"Inverse resultant solve not implemented for {len(known_vectors)} known + "
+                f"{len(unknown_vectors)} unknown vectors"
+            )
+
+    def _add_inverse_triangle_method_steps(
+        self,
+        known_vec: _Vector,
+        unknown_vec: _VectorWithUnknowns,
+        resultant: _VectorWithUnknowns,
+        resultant_name: str,
+        F_unknown_mag: float,
+        F_unknown_angle: float,
+        F_known_angle: float,
+        FR_angle: float,
+        gamma: float,
+        alpha: float,
+    ) -> None:
+        """
+        Add solution steps for inverse parallelogram law problem.
+
+        Args:
+            known_vec: The known component vector
+            unknown_vec: The solved unknown vector
+            resultant: The known resultant constraint
+            resultant_name: Name of the resultant
+            F_unknown_mag: Solved magnitude of unknown vector (SI units)
+            F_unknown_angle: Solved angle of unknown vector (radians from +x)
+            F_known_angle: Angle of known vector (radians from +x)
+            FR_angle: Angle of resultant (radians from +x)
+            gamma: Angle between known vector and resultant (radians)
+            alpha: Angle from Law of Sines (radians)
+        """
+        # Get display values
+        unit = resultant._unit
+        unit_symbol = unit.symbol if unit else "N"
+        si_factor = unit.si_factor if unit else 1.0
+
+        known_name = known_vec.name or "F_known"
+        unknown_name = unknown_vec.name or "F_unknown"
+
+        F_known_mag = float(np.sqrt(np.sum(known_vec._coords**2)))
+        FR_mag = float(np.sqrt(np.sum(resultant._coords**2)))
+
+        F_known_display = F_known_mag / si_factor
+        FR_display = FR_mag / si_factor
+        F_unknown_display = F_unknown_mag / si_factor
+
+        gamma_deg = math.degrees(gamma)
+        alpha_deg = math.degrees(alpha)
+        F_unknown_angle_deg = math.degrees(F_unknown_angle)
+
+        # Triangle interior angle (supplement of gamma for the parallelogram law)
+        triangle_angle = 180 - gamma_deg
+
+        # Step 1: Calculate angle between known vector and resultant
+        # Use original angles if available for clearer presentation
+        known_original_angle = getattr(known_vec, '_original_angle', None)
+        known_original_wrt = getattr(known_vec, '_original_wrt', '+x')
+        resultant_original_angle = getattr(resultant, '_original_angle', None)
+        resultant_original_wrt = getattr(resultant, '_original_wrt', '+x')
+
+        # Format reference axis as vector notation (e.g., "+x" -> "x", "-x" -> "-x")
+        def format_axis_ref(wrt: str) -> str:
+            """Format axis reference for angle notation."""
+            if wrt.startswith('+'):
+                return wrt[1:]  # "+x" -> "x"
+            return wrt  # "-x" stays "-x"
+
+        known_axis = format_axis_ref(known_original_wrt)
+        resultant_axis = format_axis_ref(resultant_original_wrt)
+
+        # Build a user-friendly substitution showing how angles combine
+        if known_original_angle is not None and resultant_original_angle is not None:
+            # Determine how to present the angle calculation based on reference axes
+            # Convert angles to absolute from +x for cleaner display
+            known_wrt = known_original_wrt or '+x'
+            resultant_wrt = resultant_original_wrt or '+x'
+
+            # For display purposes, compute what angles to show
+            # The key insight: we want to show angles that add/subtract to gamma_deg
+            # When vectors have different reference axes, we convert to a common reference (+x)
+            if known_wrt == '-x' and resultant_wrt == '+y':
+                # Special case: F_2 from -x, F_R from +y
+                # Convert F_R's angle to be measured from +x: if F_R is 0° from +y, it's 90° from +x
+                display_known = known_original_angle
+                display_resultant = 90 + resultant_original_angle  # Convert +y reference to +x reference
+                substitution = (
+                    f"∠({known_name},{resultant_name}) = |∠({known_axis},{known_name}) + ∠(x,{resultant_name})|\n"
+                    f"= |{display_known:.0f}° + {display_resultant:.0f}°|\n"
+                    f"= {gamma_deg:.0f}°"
+                )
+            elif known_wrt == '-x' and resultant_wrt == '+x':
+                # Vectors on opposite sides - angles add
+                substitution = (
+                    f"∠({known_name},{resultant_name}) = |∠({known_axis},{known_name}) + ∠({resultant_axis},{resultant_name})|\n"
+                    f"= |{known_original_angle:.0f}° + {resultant_original_angle:.0f}°|\n"
+                    f"= {gamma_deg:.0f}°"
+                )
+            elif known_wrt == '+x' and resultant_wrt == '-x':
+                # Vectors on opposite sides - angles add
+                substitution = (
+                    f"∠({known_name},{resultant_name}) = |∠({known_axis},{known_name}) + ∠({resultant_axis},{resultant_name})|\n"
+                    f"= |{known_original_angle:.0f}° + {resultant_original_angle:.0f}°|\n"
+                    f"= {gamma_deg:.0f}°"
+                )
+            else:
+                # Same side or other cases - show difference
+                substitution = (
+                    f"∠({known_name},{resultant_name}) = |∠({known_axis},{known_name}) - ∠({resultant_axis},{resultant_name})|\n"
+                    f"= |{known_original_angle:.0f}° - {resultant_original_angle:.0f}°|\n"
+                    f"= {gamma_deg:.0f}°"
+                )
+        else:
+            # Fall back to computed Cartesian angles
+            F_known_angle_deg = math.degrees(F_known_angle)
+            FR_angle_deg = math.degrees(FR_angle)
+            substitution = (
+                f"∠({known_name},{resultant_name}) = |∠(x,{known_name}) - ∠(x,{resultant_name})|\n"
+                f"= |{F_known_angle_deg:.0f}° - {FR_angle_deg:.0f}°|\n"
+                f"= {gamma_deg:.0f}°"
+            )
+
+        self.solution_steps.append({
+            "target": f"∠({known_name},{resultant_name})",
+            "method": "Angle Calculation",
+            "description": f"Calculate the angle between {known_name} and {resultant_name}",
+            "equation": None,
+            "substitution": substitution,
+        })
+
+        # Step 2: Apply Law of Cosines to find unknown magnitude
+        # Use equation_for_list to add to "Equations Used" section but not inline
+        self.solution_steps.append({
+            "target": f"|{unknown_name}| using Eq 1",
+            "method": "Law of Cosines",
+            "description": f"Calculate {unknown_name} magnitude using Law of Cosines",
+            "equation": None,  # Don't show inline
+            "equation_for_list": f"|{unknown_name}|² = |{known_name}|² + |{resultant_name}|² - 2·|{known_name}|·|{resultant_name}|·cos(∠({known_name},{resultant_name}))",
+            "substitution": (
+                f"|{unknown_name}| = sqrt(({F_known_display:.0f})² + ({FR_display:.0f})² - "
+                f"2({F_known_display:.0f})({FR_display:.0f})cos({gamma_deg:.0f}°))\n"
+                f"= {F_unknown_display:.1f} {unit_symbol}"
+            ),
+        })
+
+        # Step 3: Apply Law of Sines to find angle
+        # Use equation_for_list to add to "Equations Used" section but not inline
+        # Format similar to forward problem: show sin⁻¹(...) = result
+        self.solution_steps.append({
+            "target": f"∠({resultant_name},{unknown_name}) using Eq 2",
+            "method": "Law of Sines",
+            "description": f"Calculate angle from {resultant_name} to {unknown_name} using Law of Sines",
+            "equation": None,  # Don't show inline
+            "equation_for_list": f"sin(∠({resultant_name},{unknown_name}))/|{known_name}| = sin(∠({known_name},{resultant_name}))/|{unknown_name}|",
+            "substitution": (
+                f"∠({resultant_name},{unknown_name}) = sin⁻¹({F_known_display:.1f}·sin({gamma_deg:.0f}°)/{F_unknown_display:.1f})\n"
+                f"= {alpha_deg:.1f}°"
+            ),
+        })
+
+        # Step 4: Calculate absolute angle of unknown vector
+        # Show the full calculation similar to forward problem
+        # Use angle notation with reference to +x axis
+        FR_angle_for_display = 90 + resultant_original_angle if resultant_original_angle is not None else math.degrees(FR_angle)
+        self.solution_steps.append({
+            "target": f"∠(x,{unknown_name}) with respect to +x",
+            "method": "Angle Addition",
+            "description": f"Calculate {unknown_name} direction relative to +x axis",
+            "equation": None,
+            "substitution": (
+                f"∠(x,{unknown_name}) = ∠(x,{resultant_name}) - ∠({resultant_name},{unknown_name})\n"
+                f"= {FR_angle_for_display:.1f}° - {alpha_deg:.1f}°\n"
+                f"= {F_unknown_angle_deg:.1f}°"
+            ),
+        })
+
     def _add_triangle_method_steps(
         self,
         force1: _Vector,
@@ -356,10 +751,13 @@ class ParallelogramLawProblem(Problem):
         angle_in_triangle = math.pi - gamma
         angle_in_triangle_deg = np.degrees(angle_in_triangle)
 
-        # Get original angles from vector objects if available (for cleaner display)
+        # Get original angles and reference axes from vector objects if available
         # The _original_angle attribute stores the angle as given by the user
+        # The _original_wrt attribute stores the reference axis (e.g., "+x", "-x")
         theta1_display = getattr(force1, '_original_angle', None)
         theta2_display = getattr(force2, '_original_angle', None)
+        wrt1 = getattr(force1, '_original_wrt', '+x')
+        wrt2 = getattr(force2, '_original_wrt', '+x')
 
         # Fall back to computed angles if original not available
         if theta1_display is None:
@@ -367,16 +765,25 @@ class ParallelogramLawProblem(Problem):
         if theta2_display is None:
             theta2_display = np.degrees(theta2)
 
+        # Format reference axis as vector notation (e.g., "+x" -> "x", "-x" -> "-x")
+        def format_axis_ref(wrt: str) -> str:
+            """Format axis reference for angle notation."""
+            if wrt.startswith('+'):
+                return wrt[1:]  # "+x" -> "x"
+            return wrt  # "-x" stays "-x"
+
+        axis1 = format_axis_ref(wrt1)
+        axis2 = format_axis_ref(wrt2)
+
         # Step 1: Calculate the angle between the two force vectors
         # This is needed before we can apply the Law of Cosines
-        # Use simple format: just show the calculation with aligned equals
-        # Show it as the simpler |θ_1 - θ_2| = angle
+        # Use angle notation with reference axis: ∠(x, F_1) instead of θ_{F_1}
         self.solution_steps.append({
             "target": f"∠({f1_name},{f2_name})",
             "method": "Angle Difference",
             "description": f"Calculate the angle between {f1_name} and {f2_name}",
             "equation": None,  # No separate equation - just show the calculation
-            "substitution": f"∠({f1_name},{f2_name}) = |θ_{f1_name} - θ_{f2_name}|\n= |{theta1_display:.0f}° - {theta2_display:.0f}°|\n= {angle_in_triangle_deg:.0f}°",
+            "substitution": f"∠({f1_name},{f2_name}) = |∠({axis1},{f1_name}) - ∠({axis2},{f2_name})|\n= |{theta1_display:.0f}° - {theta2_display:.0f}°|\n= {angle_in_triangle_deg:.0f}°",
             "result_value": None,  # Result is included in the substitution
             "result_unit": "",
         })
@@ -429,12 +836,15 @@ class ParallelogramLawProblem(Problem):
             if hasattr(resultant.angle_reference, 'axis_label'):
                 ref_label = resultant.angle_reference.axis_label
 
+        # Use angle notation with reference axis
+        ref_axis = ref_label[1] if ref_label.startswith('+') else ref_label  # "+x" -> "x"
+
         self.solution_steps.append({
-            "target": f"θ_{resultant_name} with respect to {ref_label}",
+            "target": f"∠({ref_axis},{resultant_name}) with respect to {ref_label}",
             "method": "Angle Addition",
             "description": f"Calculate {resultant_name} direction relative to {ref_label} axis",
             "equation": None,  # Don't show in "Equations Used" section
-            "substitution": f"θ_{resultant_name} = θ_{f1_name} + ∠({f1_name},{resultant_name})\n= {theta1_deg:.1f}° + {phi_deg:.1f}°\n= {angle_deg:.1f}°",
+            "substitution": f"∠({ref_axis},{resultant_name}) = ∠({axis1},{f1_name}) + ∠({f1_name},{resultant_name})\n= {theta1_deg:.1f}° + {phi_deg:.1f}°\n= {angle_deg:.1f}°",
             "result_value": None,  # Result included in substitution
             "result_unit": "",
         })

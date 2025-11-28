@@ -28,7 +28,7 @@ class _VectorWithUnknowns(_Vector):
     Also stores component vectors for resultant computation.
     """
 
-    __slots__ = ("_unknowns", "_component_vectors", "_direction_unit_vector", "_is_constraint", "_alpha_rad", "_beta_rad", "_gamma_rad")
+    __slots__ = ("_unknowns", "_component_vectors", "_direction_unit_vector", "_is_constraint", "_alpha_rad", "_beta_rad", "_gamma_rad", "_original_plane", "_angle_unit", "_polar_magnitude", "_polar_angle_rad")
 
     def __init__(
         self,
@@ -281,15 +281,14 @@ def create_vector_from_ratio(
 
 
 def create_vector_polar(
-    magnitude: float,
+    magnitude: "float | EllipsisType",
     unit: Unit | str,
-    angle: float,
+    angle: "float | EllipsisType",
     angle_unit: str = "degree",
-    
     wrt: str = "+x",
     plane: str = "xy",
     name: str | None = None,
-) -> _Vector:
+) -> "_Vector | _VectorWithUnknowns":
     """
     Create a vector using polar coordinates in a plane.
 
@@ -297,16 +296,17 @@ def create_vector_polar(
     coordinates within a specific plane (xy, xz, or yz).
 
     Args:
-        magnitude: Vector magnitude
+        magnitude: Vector magnitude, or ... for unknown
         unit: Unit for magnitude
-        angle: Angle measured from reference axis (CCW positive)
+        angle: Angle measured from reference axis (CCW positive), or ... for unknown
         angle_unit: Angle unit ("degree" or "radian")
         wrt: Reference axis for angle ("+x", "-x", "+y", "-y", "+z", "-z")
         plane: Plane containing the vector ("xy", "xz", "yz")
         name: Optional vector name
 
     Returns:
-        _Vector object with computed components
+        _Vector object with computed components, or _VectorWithUnknowns if magnitude
+        or angle is unknown (ellipsis)
 
     Raises:
         ValueError: If plane or wrt is invalid
@@ -319,8 +319,16 @@ def create_vector_polar(
         >>>
         >>> # Vector at 100N, 45° from +y axis in xy plane
         >>> v2 = create_vector_polar(magnitude=100, angle=45, plane="xy", wrt="+y", unit="N")
+        >>>
+        >>> # Unknown vector (for solving)
+        >>> v3 = create_vector_polar(magnitude=..., angle=..., unit="N", name="F_1")
     """
     import math
+
+    # Check for unknown values (ellipsis)
+    has_unknown_magnitude = magnitude is ...
+    has_unknown_angle = angle is ...
+    has_unknowns = has_unknown_magnitude or has_unknown_angle
 
     # Validate plane
     valid_planes = {"xy", "xz", "yz"}
@@ -342,14 +350,6 @@ def create_vector_polar(
             f"Valid axes for {plane} plane: {[f'+{c}' for c in plane] + [f'-{c}' for c in plane]}"
         )
 
-    # Convert angle to radians
-    if angle_unit.lower() in ("degree", "degrees", "deg"):
-        angle_rad = math.radians(float(angle))
-    elif angle_unit.lower() in ("radian", "radians", "rad"):
-        angle_rad = float(angle)
-    else:
-        raise ValueError(f"Invalid angle_unit '{angle_unit}'. Use 'degree' or 'radian'")
-
     # Resolve unit
     resolved_unit: Unit | None = None
     if isinstance(unit, str):
@@ -362,8 +362,60 @@ def create_vector_polar(
     else:
         resolved_unit = unit
 
+    # Handle unknown values - return _VectorWithUnknowns
+    if has_unknowns:
+        unknowns: dict[str, str] = {}
+        if has_unknown_magnitude:
+            unknowns["magnitude"] = "magnitude"
+        if has_unknown_angle:
+            unknowns["angle"] = "angle"
+
+        result = _VectorWithUnknowns(
+            u=0.0,
+            v=0.0,
+            w=0.0,
+            unit=resolved_unit,
+            unknowns=unknowns,
+            name=name,
+        )
+        result.is_known = False
+
+        # Store known values for partial solving (use polar-specific attributes)
+        if not has_unknown_magnitude:
+            result._polar_magnitude = float(magnitude)  # type: ignore[arg-type]
+        else:
+            result._polar_magnitude = None
+        if not has_unknown_angle:
+            # Convert and store angle
+            if angle_unit.lower() in ("degree", "degrees", "deg"):
+                result._polar_angle_rad = math.radians(float(angle))  # type: ignore[arg-type]
+            else:
+                result._polar_angle_rad = float(angle)  # type: ignore[arg-type]
+        else:
+            result._polar_angle_rad = None
+
+        # Store wrt and plane for later computation
+        result._original_wrt = wrt
+        result._original_plane = plane
+        result._angle_unit = angle_unit
+
+        return result
+
+    # Both magnitude and angle are known - compute Cartesian components
+    # At this point we know neither is ellipsis, so cast to float
+    angle_value = float(angle)  # type: ignore[arg-type]
+    magnitude_value = float(magnitude)  # type: ignore[arg-type]
+
+    # Convert angle to radians
+    if angle_unit.lower() in ("degree", "degrees", "deg"):
+        angle_rad = math.radians(angle_value)
+    elif angle_unit.lower() in ("radian", "radians", "rad"):
+        angle_rad = angle_value
+    else:
+        raise ValueError(f"Invalid angle_unit '{angle_unit}'. Use 'degree' or 'radian'")
+
     # Compute Cartesian components
-    mag_val = float(magnitude)
+    mag_val = magnitude_value
 
     # Axis angles for each plane (following right-hand rule)
     # xy plane: thumb +z, fingers curl +x → +y (CCW from above)
@@ -401,7 +453,7 @@ def create_vector_polar(
 
     vec = _Vector(u, v, w, unit=resolved_unit, name=name)
     # Store original angle and reference for reporting
-    vec._original_angle = float(angle)
+    vec._original_angle = angle_value
     vec._original_wrt = wrt
     return vec
 
@@ -989,6 +1041,126 @@ def create_vector_resultant_cartesian(
     result.is_resultant = True
     result.is_known = True  # The resultant itself is known
     result._is_constraint = True  # Mark this as a constraint for inverse solving
+
+    return result
+
+
+def create_vector_resultant_polar(
+    *vectors: _Vector,
+    magnitude: float,
+    angle: float,
+    unit: Unit | str | None = None,
+    angle_unit: str = "degree",
+    wrt: str = "+x",
+    name: str = "F_R",
+) -> _VectorWithUnknowns:
+    """
+    Create a known resultant constraint using polar coordinates for inverse solving.
+
+    This function defines a known resultant vector (magnitude, angle) that equals the sum
+    of component vectors with unknown magnitudes. The solver will use this
+    constraint to solve for the unknown magnitudes.
+
+    This is the polar equivalent of create_vector_resultant_cartesian:
+    - create_vector_resultant: unknown resultant = sum of known vectors
+    - create_vector_resultant_cartesian: known resultant (u, v, w) = sum of unknown vectors
+    - create_vector_resultant_polar: known resultant (magnitude, angle) = sum of unknown vectors
+
+    Args:
+        *vectors: Component vectors with unknown magnitudes (from create_vector_along with ...)
+        magnitude: Magnitude of the known resultant
+        angle: Angle of the known resultant (measured CCW from reference axis)
+        unit: Unit for the resultant magnitude
+        angle_unit: Angle unit ("degree" or "radian")
+        wrt: Reference axis for angle measurement ("+x", "-x", "+y", "-y")
+        name: Name for the resultant (default "F_R")
+
+    Returns:
+        _VectorWithUnknowns with known values and component vectors stored for constraint solving
+
+    Examples:
+        >>> from qnty.spatial import create_point_cartesian, create_vector_from_points
+        >>> from qnty.spatial import create_vector_along, create_vector_resultant_polar
+        >>>
+        >>> # Define points and position vectors
+        >>> O = create_point_cartesian(x=0, y=0, z=0, unit="ft")
+        >>> A = create_point_cartesian(x=3, y=4, z=0, unit="ft")
+        >>> r_OA = create_vector_from_points(O, A)
+        >>>
+        >>> # Create force with unknown magnitude
+        >>> F_A = create_vector_along(r_OA, magnitude=..., unit="lbf", name="F_A")
+        >>>
+        >>> # Define known resultant as constraint using polar form
+        >>> F_R = create_vector_resultant_polar(
+        ...     F_A, F_B,
+        ...     magnitude=500, angle=45,
+        ...     unit="lbf",
+        ...     name="F_R"
+        ... )
+    """
+    import math
+
+    # Convert angle to radians
+    if angle_unit.lower() in ("degree", "degrees", "deg"):
+        angle_rad = math.radians(float(angle))
+    elif angle_unit.lower() in ("radian", "radians", "rad"):
+        angle_rad = float(angle)
+    else:
+        raise ValueError(f"Invalid angle_unit '{angle_unit}'. Use 'degree' or 'radian'")
+
+    # Handle wrt (reference axis) - convert to standard angle from +x
+    wrt_lower = wrt.lower()
+    axis_angles = {
+        "+x": 0,
+        "+y": 90,
+        "-x": 180,
+        "-y": 270,
+    }
+    if wrt_lower not in axis_angles:
+        raise ValueError(f"Invalid wrt axis '{wrt}'. Must be one of: {set(axis_angles.keys())}")
+
+    base_angle_rad = math.radians(axis_angles[wrt_lower])
+    total_angle_rad = base_angle_rad + angle_rad
+
+    # Compute Cartesian components from polar
+    mag_val = float(magnitude)
+    u = mag_val * math.cos(total_angle_rad)
+    v = mag_val * math.sin(total_angle_rad)
+    w = 0.0
+
+    # Resolve unit if string
+    resolved_unit = None
+    if isinstance(unit, str):
+        from ..core.unit import ureg
+
+        resolved = ureg.resolve(unit)
+        if resolved is None:
+            raise ValueError(f"Unknown unit '{unit}'")
+        resolved_unit = resolved
+    elif unit is not None:
+        resolved_unit = unit
+    elif vectors:
+        # Get unit from first vector
+        resolved_unit = vectors[0]._unit
+
+    # Create with the known resultant values (no unknowns in the resultant itself)
+    # But store the component vectors for the solver to set up equilibrium equations
+    result = _VectorWithUnknowns(
+        u=u,
+        v=v,
+        w=w,
+        unit=resolved_unit,
+        unknowns={},  # Resultant values are known
+        component_vectors=list(vectors),
+        name=name,
+    )
+    result.is_resultant = True
+    result.is_known = True  # The resultant itself is known
+    result._is_constraint = True  # Mark this as a constraint for inverse solving
+
+    # Store original angle and reference for reporting
+    result._original_angle = float(angle)
+    result._original_wrt = wrt
 
     return result
 

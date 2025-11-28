@@ -67,6 +67,7 @@ from ...spatial.vectors import (
     create_vector_cartesian,
     create_vector_polar,
     create_vector_resultant,
+    create_vector_resultant_polar,
 )
 
 if TYPE_CHECKING:
@@ -489,20 +490,20 @@ Solution = ResultDTO  # Alias for consistency
 #     return PointDTO(x=x, y=y, z=z, unit=unit, name=name)
 
 
-def resultant(*vectors: _Vector, name: str = "F_R") -> _Vector:
-    """
-    Create a resultant vector (sum of input vectors).
+# def resultant(*vectors: _Vector, name: str = "F_R") -> _Vector:
+#     """
+#     Create a resultant vector (sum of input vectors).
 
-    The resultant will be computed when solve() is called.
+#     The resultant will be computed when solve() is called.
 
-    Args:
-        vectors: Input vectors to sum
-        name: Name for the resultant vector
+#     Args:
+#         vectors: Input vectors to sum
+#         name: Name for the resultant vector
 
-    Returns:
-        _Vector placeholder for the resultant
-    """
-    return create_vector_resultant(*vectors, name=name)
+#     Returns:
+#         _Vector placeholder for the resultant
+#     """
+#     return create_vector_resultant(*vectors, name=name)
 
 
 def solve_class(
@@ -537,8 +538,11 @@ def solve_class(
     try:
         # Create a dynamic problem class that inherits from ParallelogramLawProblem
         # and copies all vector attributes from the input class
+        # Use the problem class name as default, but allow override via 'name' attribute
+        problem_name = getattr(problem_class, 'name', problem_class.__name__)
+
         class DynamicProblem(ParallelogramLawProblem):
-            pass
+            name = problem_name
 
         # Copy all _Vector attributes from problem_class to DynamicProblem
         for attr_name in dir(problem_class):
@@ -592,6 +596,7 @@ def solve(
     *vectors: _Vector,
     output_unit: str = "N",
     output_angle_unit: str = "degree",
+    name: str | None = None,
 ) -> Result:
     """
     Solve the parallelogram law problem.
@@ -602,6 +607,7 @@ def solve(
         *vectors: Vectors to add (can include a resultant placeholder)
         output_unit: Unit for output values
         output_angle_unit: Unit for angles ("degree" or "radian")
+        name: Optional name for the problem (used in report title)
 
     Returns:
         Result object with:
@@ -640,9 +646,11 @@ def solve(
         if not input_vectors:
             return Result(success=False, error="No input vectors provided")
 
-        # Create dynamic problem class
+        # Create dynamic problem class with optional name
+        problem_name = name or "Parallelogram Law Problem"
+
         class DynamicProblem(ParallelogramLawProblem):
-            pass
+            name = problem_name
 
         # Add vectors as class attributes
         for vec in input_vectors:
