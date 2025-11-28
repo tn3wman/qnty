@@ -9,14 +9,56 @@ Each problem class defines:
 - Vector definitions using the unified parallelogram_law API
 - expected: Expected solution values (from textbook/oracle)
 - report: Expected content for report generation tests (optional)
+- generate_debug_reports: If True, generates MD/PDF reports for this problem
 """
+
+from pathlib import Path
 
 from qnty.problems.statics import parallelogram_law as pl
 
-# =============================================================================
-# Problem 2-1: Forward Problem (Find Resultant)
-# =============================================================================
+# Output directory for debug reports
+DEBUG_REPORT_DIR = Path(__file__).parent / "report_debug"
 
+
+def generate_debug_reports_for_problem(problem_class) -> None:
+    """Generate debug reports (MD and PDF) for a single problem class.
+
+    Only generates if the problem has generate_debug_reports = True.
+
+    Args:
+        problem_class: A problem fixture class with name, vectors, etc.
+    """
+    if not getattr(problem_class, 'generate_debug_reports', False):
+        return
+
+    # Create output directory if needed
+    DEBUG_REPORT_DIR.mkdir(parents=True, exist_ok=True)
+
+    # Generate a safe filename from problem name
+    safe_name = problem_class.name.lower().replace(" ", "_").replace("-", "_")
+    safe_name = "".join(c for c in safe_name if c.isalnum() or c == "_")
+
+    # Solve the problem
+    result = pl.solve_class(problem_class, output_unit="N")
+
+    if not result.success:
+        print(f"WARNING: {problem_class.name} failed to solve: {result.error}")
+        return
+
+    # Generate markdown report
+    md_path = DEBUG_REPORT_DIR / f"{safe_name}.md"
+    result.generate_report(md_path, format="markdown")
+    print(f"Generated: {md_path}")
+
+    # Generate PDF report
+    pdf_path = DEBUG_REPORT_DIR / f"{safe_name}.pdf"
+    try:
+        result.generate_report(pdf_path, format="pdf")
+        print(f"Generated: {pdf_path}")
+    except Exception as e:
+        print(f"WARNING: PDF generation failed for {problem_class.name}: {e}")
+
+# region // Parallelogram Law Problems
 
 class Chapter2Problem1:
     name = "Problem 2-1"
@@ -163,6 +205,169 @@ class Chapter2Problem2:
                 "reference": "+x",
             }
 
+# There are 139 problems in Chapter 2
+# TODO: Fix report generation
+class Chapter2Problem3:
+    name = "Problem 2-3"
+    generate_debug_reports = True  # Set to True to generate MD/PDF for debugging
+
+    F_1 = pl.create_vector_polar(magnitude=250, unit="N", angle=-30, wrt="+y")
+    F_2 = pl.create_vector_polar(magnitude=375, unit="N", angle=-45, wrt="+x")
+    F_R = pl.create_vector_resultant(F_1, F_2)
+
+    class expected:
+        F_1 = pl.create_vector_polar(magnitude=250, unit="N", angle=-30, wrt="+y")
+        F_2 = pl.create_vector_polar(magnitude=375, unit="N", angle=-45, wrt="+x")
+        F_R = pl.create_vector_polar(magnitude=393.2, unit="N", angle=352.9, wrt="+x")
+
+class Chapter2Problem4:
+    pass
+
+class Chapter2Problem5:
+    pass
+
+class Chapter2Problem6:
+    pass
+
+class Chapter2Problem7:
+    pass
+
+class Chapter2Problem8:
+    pass
+
+class Chapter2Problem9:
+    pass
+
+class Chapter2Problem10:
+    pass
+
+class Chapter2Problem11:
+    pass
+
+class Chapter2Problem12:
+    pass
+
+class Chapter2Problem13:
+    pass
+
+class Chapter2Problem14:
+    pass
+
+class Chapter2Problem15:
+    pass
+
+class Chapter2Problem16:
+    pass
+
+class Chapter2Problem17:
+    pass
+
+class Chapter2Problem18:
+    pass
+
+class Chapter2Problem19:
+    pass
+
+class Chapter2Problem20:
+    pass
+
+class Chapter2Problem21:
+    pass
+
+class Chapter2Problem22:
+    pass
+
+class Chapter2Problem23:
+    pass
+
+class Chapter2Problem24:
+    pass
+
+class Chapter2Problem25:
+    pass
+
+class Chapter2Problem26:
+    pass
+
+class Chapter2Problem27:
+    pass
+
+class Chapter2Problem28:
+    pass
+
+class Chapter2Problem29:
+    pass
+
+class Chapter2Problem30:
+    pass
+
+class Chapter2Problem31:
+    pass
+
+class Chapter2Problem32:
+    pass
+
+class Chapter2Problem33:
+    pass
+
+class Chapter2Problem34:
+    pass
+
+class Chapter2Problem35:
+    pass
+
+class Chapter2Problem36:
+    pass
+
+class Chapter2Problem37:
+    pass
+
+class Chapter2Problem38:
+    pass
+
+class Chapter2Problem39:
+    pass
+
+class Chapter2Problem40:
+    pass
+
+class Chapter2Problem41:
+    pass
+
+class Chapter2Problem42:
+    pass
+
+class Chapter2Problem43:
+    pass
+
+class Chapter2Problem44:
+    pass
+
+class Chapter2Problem45:
+    pass
+
+class Chapter2Problem46:
+    pass
+
+class Chapter2Problem47:
+    pass
+
+class Chapter2Problem48:
+    pass
+
+class Chapter2Problem49:
+    pass
+
+class Chapter2Problem50:
+    pass
+
+
+
+
+
+
+
+
 
 # =============================================================================
 # Problem 2-1 Mixed Units (Variant)
@@ -291,7 +496,32 @@ class Chapter2Problem1_WRONG:
 PARALLELOGRAM_LAW_PROBLEMS = [
     Chapter2Problem1,
     Chapter2Problem1MixedUnits,
-    Chapter2Problem2
+    Chapter2Problem2,
+    Chapter2Problem3,
 ]
 
 PROBLEMS_EXPECT_FAIL = [Chapter2Problem1_WRONG]
+
+# All problem classes (for debug report generation)
+ALL_PROBLEM_CLASSES = [
+    Chapter2Problem1,
+    Chapter2Problem1MixedUnits,
+    Chapter2Problem2,
+    Chapter2Problem3,
+]
+
+
+def generate_all_debug_reports() -> None:
+    """Generate debug reports for all problems that have generate_debug_reports = True."""
+    for problem_class in ALL_PROBLEM_CLASSES:
+        generate_debug_reports_for_problem(problem_class)
+
+
+# =============================================================================
+# Run as script to generate debug reports
+# =============================================================================
+
+if __name__ == "__main__":
+    print(f"Generating debug reports to: {DEBUG_REPORT_DIR}")
+    generate_all_debug_reports()
+    print("Done!")
