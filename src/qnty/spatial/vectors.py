@@ -138,6 +138,90 @@ class _VectorWithUnknowns(_Vector):
         name_str = f"'{self.name}' " if self.name else ""
         return f"_Vector({name_str}{u_str}, {v_str}, {w_str}{unit_str})"
 
+    def clone(self, name: str | None = None, vector_clones: dict[int, _Vector] | None = None) -> "_VectorWithUnknowns":
+        """
+        Create a deep copy of this _VectorWithUnknowns.
+
+        This method creates an independent copy with all attributes preserved,
+        including unknowns and component vectors. Component vectors are updated
+        to reference cloned versions if provided in vector_clones.
+
+        Args:
+            name: Optional new name for the cloned vector. If not provided,
+                  uses the original vector's name.
+            vector_clones: Optional dictionary mapping original vector ids to
+                          their clones. Used to update component_vectors references.
+
+        Returns:
+            A new _VectorWithUnknowns instance with copied attributes.
+        """
+        result = object.__new__(_VectorWithUnknowns)
+
+        # Copy base _Vector attributes
+        result._coords = self._coords.copy()
+        result._dim = self._dim
+        result._unit = self._unit
+
+        # Use provided name or original name
+        original_name = getattr(self, 'name', "")
+        result.name = name if name is not None else (original_name if original_name and original_name != "Vector" else "")
+
+        result._description = getattr(self, '_description', "")
+        result.is_known = getattr(self, 'is_known', False)
+        result.is_resultant = getattr(self, 'is_resultant', True)
+        result.coordinate_system = getattr(self, 'coordinate_system', None)
+        result.angle_reference = getattr(self, 'angle_reference', None)
+
+        # Copy magnitude and angle
+        result._magnitude = self._magnitude if hasattr(self, '_magnitude') else None
+        result._angle = self._angle if hasattr(self, '_angle') else None
+
+        # Copy relative angle info
+        result._relative_to_force = getattr(self, '_relative_to_force', None)
+        result._relative_angle = getattr(self, '_relative_angle', None)
+
+        # Copy original angle and wrt for reporting
+        if hasattr(self, '_original_angle'):
+            result._original_angle = self._original_angle
+        if hasattr(self, '_original_wrt'):
+            result._original_wrt = self._original_wrt
+
+        # Copy _VectorWithUnknowns-specific attributes
+        result._unknowns = self._unknowns.copy() if hasattr(self, '_unknowns') else {}
+
+        # Update component_vectors to use cloned vectors if provided
+        if hasattr(self, '_component_vectors') and self._component_vectors:
+            if vector_clones:
+                result._component_vectors = [
+                    vector_clones.get(id(cv), cv) for cv in self._component_vectors
+                ]
+            else:
+                result._component_vectors = list(self._component_vectors)
+        else:
+            result._component_vectors = []
+
+        # Copy additional attributes
+        result._direction_unit_vector = getattr(self, '_direction_unit_vector', None)
+        result._is_constraint = getattr(self, '_is_constraint', False)
+
+        # Copy direction angle attributes if present
+        if hasattr(self, '_alpha_rad'):
+            result._alpha_rad = self._alpha_rad
+        if hasattr(self, '_beta_rad'):
+            result._beta_rad = self._beta_rad
+        if hasattr(self, '_gamma_rad'):
+            result._gamma_rad = self._gamma_rad
+        if hasattr(self, '_original_plane'):
+            result._original_plane = self._original_plane
+        if hasattr(self, '_angle_unit'):
+            result._angle_unit = self._angle_unit
+        if hasattr(self, '_polar_magnitude'):
+            result._polar_magnitude = self._polar_magnitude
+        if hasattr(self, '_polar_angle_rad'):
+            result._polar_angle_rad = self._polar_angle_rad
+
+        return result
+
 
 def create_vector_cartesian(
     u: float = 0.0,

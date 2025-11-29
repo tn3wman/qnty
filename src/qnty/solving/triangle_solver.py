@@ -17,11 +17,9 @@ from __future__ import annotations
 import math
 from typing import Any
 
-import numpy as np
-
 from ..core.quantity import Quantity
-from ..spatial import _Vector
 from ..spatial.vector import _Vector
+from ..utils.geometry import normalize_angle_positive
 
 
 class TriangleSolver:
@@ -93,7 +91,7 @@ class TriangleSolver:
 
         # Find or create resultant force
         resultant = None
-        for force_name, force in forces_dict.items():
+        for _force_name, force in forces_dict.items():
             if force.is_resultant:
                 resultant = force
                 break
@@ -454,17 +452,10 @@ class TriangleSolver:
         # We always compute angles in the CCW direction to maintain consistency with the
         # standard convention that angles are measured counterclockwise from positive x-axis.
 
-        # Normalize all angles to [0, 2π)
-        def normalize_angle(angle):
-            while angle < 0:
-                angle += 2 * math.pi
-            while angle >= 2 * math.pi:
-                angle -= 2 * math.pi
-            return angle
-
-        theta_R = normalize_angle(theta_R)
-        theta_1 = normalize_angle(theta_1)
-        theta_2 = normalize_angle(theta_2)
+        # Normalize all angles to [0, 2π) using shared utility
+        theta_R = normalize_angle_positive(theta_R)
+        theta_1 = normalize_angle_positive(theta_1)
+        theta_2 = normalize_angle_positive(theta_2)
 
         # Angle opposite to resultant (angle from force1 to force2, measured CCW)
         angle_opposite_R = theta_2 - theta_1

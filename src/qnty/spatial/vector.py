@@ -1997,6 +1997,66 @@ class _Vector(Generic[D]):
         result._constraint_magnitude = None
         return result
 
+    def clone(self, name: str | None = None) -> "_Vector":
+        """
+        Create a deep copy of this vector.
+
+        This method creates an independent copy of the vector with all
+        attributes preserved. Useful when you need to modify a vector
+        without affecting the original.
+
+        Args:
+            name: Optional new name for the cloned vector. If not provided,
+                  uses the original vector's name.
+
+        Returns:
+            A new _Vector instance with copied attributes.
+
+        Examples:
+            >>> v = _Vector(magnitude=100, angle=45, unit="N", name="F1")
+            >>> v_copy = v.clone()
+            >>> v_copy.name
+            'F1'
+            >>> v_copy = v.clone(name="F1_copy")
+            >>> v_copy.name
+            'F1_copy'
+        """
+        result = object.__new__(_Vector)
+        result._coords = self._coords.copy()
+        result._dim = self._dim
+        result._unit = self._unit
+
+        # Use provided name or original name (not default "Vector")
+        original_name = getattr(self, 'name', "")
+        result.name = name if name is not None else (original_name if original_name and original_name != "Vector" else "")
+
+        result._description = getattr(self, '_description', "")
+        result.is_known = getattr(self, 'is_known', True)
+        result.is_resultant = getattr(self, 'is_resultant', False)
+        result.coordinate_system = getattr(self, 'coordinate_system', None)
+        result.angle_reference = getattr(self, 'angle_reference', None)
+
+        # Copy magnitude and angle
+        result._magnitude = self._magnitude
+        result._angle = self._angle
+
+        # Copy relative angle info
+        result._relative_to_force = getattr(self, '_relative_to_force', None)
+        result._relative_angle = getattr(self, '_relative_angle', None)
+
+        # Copy original angle and wrt for reporting
+        if hasattr(self, '_original_angle'):
+            result._original_angle = self._original_angle
+        if hasattr(self, '_original_wrt'):
+            result._original_wrt = self._original_wrt
+
+        # Copy position vector attributes
+        result._from_point = getattr(self, '_from_point', None)
+        result._to_point = getattr(self, '_to_point', None)
+        result._constraint_magnitude = getattr(self, '_constraint_magnitude', None)
+
+        return result
+
     def __add__(self, other: "_Vector[D]") -> "_Vector[D]":
         """Vector addition."""
         if not isinstance(other, _Vector):
