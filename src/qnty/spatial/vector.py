@@ -303,20 +303,7 @@ class _Vector(Generic[D]):
         result._coords = np.array([u.value, v.value, w.value], dtype=float)
         result._dim = u.dim
         result._unit = u.preferred or v.preferred or w.preferred
-        # Initialize other slots
-        result._magnitude = None
-        result._angle = None
-        result.name = "Vector"
-        result.is_known = True
-        result.is_resultant = False
-        result._description = ""
-        result.coordinate_system = None
-        result.angle_reference = None
-        result._relative_to_force = None
-        result._relative_angle = None
-        result._from_point = None
-        result._to_point = None
-        result._constraint_magnitude = None
+        cls._init_result_slots(result)
         return result
 
     # Helper methods for different construction modes
@@ -604,33 +591,35 @@ class _Vector(Generic[D]):
             self._dim = unit.dim
             self._unit = unit
 
-    def _compute_magnitude_and_angle(self):
-        """Compute magnitude and angle from vector components."""
+    def _compute_magnitude_and_angle(self) -> None:
+        """
+        Compute magnitude and angle from vector components.
+
+        If the force previously had a negative magnitude, preserve the sign by adjusting
+        the computed angle appropriately.
+        """
         from ..core.dimension_catalog import dim
         from ..core.unit import ureg
 
+        if self._coords is None:
+            return
+
+        # Check if we had a negative magnitude before
+        had_negative_magnitude = self._magnitude is not None and self._magnitude.value is not None and self._magnitude.value < 0
+
+        # Compute magnitude from vector (always positive from sqrt)
         mag_si = float(np.sqrt(np.sum(self._coords**2)))
+        self._magnitude = self._create_quantity(f"{self.name}_magnitude", self._dim, mag_si, self._unit)
 
-        mag_qty = object.__new__(Quantity)
-        mag_qty.name = f"{self.name}_magnitude"
-        mag_qty.dim = self._dim
-        mag_qty.value = mag_si
-        mag_qty.preferred = self._unit
-        mag_qty._symbol = None
-        mag_qty._output_unit = None
-        self._magnitude = mag_qty
-
+        # Compute angle
         angle_rad = math.atan2(self._coords[1], self._coords[0])
-        degree_unit = ureg.resolve("degree", dim=dim.D)
 
-        angle_qty = object.__new__(Quantity)
-        angle_qty.name = f"{self.name}_angle"
-        angle_qty.dim = dim.D
-        angle_qty.value = angle_rad
-        angle_qty.preferred = degree_unit
-        angle_qty._symbol = None
-        angle_qty._output_unit = None
-        self._angle = angle_qty
+        # If we had a negative magnitude, flip it back
+        if had_negative_magnitude and self._magnitude is not None and self._magnitude.value is not None:
+            self._magnitude.value = -self._magnitude.value
+
+        degree_unit = ureg.resolve("degree", dim=dim.D)
+        self._angle = self._create_quantity(f"{self.name}_angle", dim.D, angle_rad, degree_unit)
 
     # Properties for component access
     @property
@@ -648,6 +637,18 @@ class _Vector(Generic[D]):
         """Third component as Quantity."""
         return self._make_quantity(2, "w")
 
+    @staticmethod
+    def _create_quantity(name: str, dim, value: float, preferred=None) -> Quantity:
+        """Create Quantity bypassing dataclass overhead."""
+        q = object.__new__(Quantity)
+        q.name = name
+        q.dim = dim
+        q.value = value
+        q.preferred = preferred
+        q._symbol = None
+        q._output_unit = None
+        return q
+
     def _make_quantity(self, index: int, name: str) -> Quantity[D]:
         """Create Quantity from component index."""
         if self._dim is None:
@@ -659,15 +660,7 @@ class _Vector(Generic[D]):
         if abs(value) < 1e-10:  # Tolerance: ~10 orders of magnitude below typical engineering values
             value = 0.0
 
-        # Optimized Quantity creation - bypass dataclass overhead
-        q = object.__new__(Quantity)
-        q.name = name
-        q.dim = self._dim
-        q.value = value
-        q.preferred = self._unit
-        q._symbol = None
-        q._output_unit = None
-        return q
+        return self._create_quantity(name, self._dim, value, self._unit)
 
     @property
     def magnitude(self) -> Quantity[D] | None:
@@ -689,87 +682,40 @@ class _Vector(Generic[D]):
             raise ValueError("Cannot compute magnitude of dimensionless vector")
 
         mag_si = float(np.sqrt(np.sum(self._coords**2)))
-
-        # Return as Quantity
-        q = object.__new__(Quantity)
-        q.name = "magnitude"
-        q.dim = self._dim
-        q.value = mag_si
-        q.preferred = self._unit
-        q._symbol = None
-        q._output_unit = None
-        return q
+        return self._create_quantity("magnitude", self._dim, mag_si, self._unit)
 
     @property
     def angle(self) -> Quantity | None:
         """Angle in the angle_reference system (for 2D polar vectors)."""
         return self._angle if hasattr(self, '_angle') else None
 
-    @property
-    def alpha(self) -> Quantity | None:
-        """Coordinate direction angle from +x axis."""
-        import math
+    def _direction_angle(self, component_index: int, name: str) -> Quantity | None:
+        """Compute coordinate direction angle for a given axis."""
         from ..core.dimension_catalog import dim
         from ..core.unit import ureg
 
         mag_si = float(np.sqrt(np.sum(self._coords**2)))
         if mag_si == 0:
             return None
-        cos_alpha = self._coords[0] / mag_si
-        alpha_rad = math.acos(max(-1.0, min(1.0, cos_alpha)))
+        cos_angle = self._coords[component_index] / mag_si
+        angle_rad = math.acos(max(-1.0, min(1.0, cos_angle)))
         degree_unit = ureg.resolve("degree", dim=dim.D)
-        q = object.__new__(Quantity)
-        q.name = "alpha"
-        q.dim = dim.D
-        q.value = alpha_rad
-        q.preferred = degree_unit
-        q._symbol = None
-        q._output_unit = None
-        return q
+        return self._create_quantity(name, dim.D, angle_rad, degree_unit)
+
+    @property
+    def alpha(self) -> Quantity | None:
+        """Coordinate direction angle from +x axis."""
+        return self._direction_angle(0, "alpha")
 
     @property
     def beta(self) -> Quantity | None:
         """Coordinate direction angle from +y axis."""
-        import math
-        from ..core.dimension_catalog import dim
-        from ..core.unit import ureg
-
-        mag_si = float(np.sqrt(np.sum(self._coords**2)))
-        if mag_si == 0:
-            return None
-        cos_beta = self._coords[1] / mag_si
-        beta_rad = math.acos(max(-1.0, min(1.0, cos_beta)))
-        degree_unit = ureg.resolve("degree", dim=dim.D)
-        q = object.__new__(Quantity)
-        q.name = "beta"
-        q.dim = dim.D
-        q.value = beta_rad
-        q.preferred = degree_unit
-        q._symbol = None
-        q._output_unit = None
-        return q
+        return self._direction_angle(1, "beta")
 
     @property
     def gamma(self) -> Quantity | None:
         """Coordinate direction angle from +z axis."""
-        import math
-        from ..core.dimension_catalog import dim
-        from ..core.unit import ureg
-
-        mag_si = float(np.sqrt(np.sum(self._coords**2)))
-        if mag_si == 0:
-            return None
-        cos_gamma = self._coords[2] / mag_si
-        gamma_rad = math.acos(max(-1.0, min(1.0, cos_gamma)))
-        degree_unit = ureg.resolve("degree", dim=dim.D)
-        q = object.__new__(Quantity)
-        q.name = "gamma"
-        q.dim = dim.D
-        q.value = gamma_rad
-        q.preferred = degree_unit
-        q._symbol = None
-        q._output_unit = None
-        return q
+        return self._direction_angle(2, "gamma")
 
     def magnitude_in(self, unit: Unit[D] | str) -> float:
         """
@@ -795,20 +741,27 @@ class _Vector(Generic[D]):
             >>> v.magnitude_in(LengthUnits.foot)
             3280.84
         """
-        if self._dim is None:
+        # Determine dimension from vector or stored magnitude
+        vector_dim = self._dim
+        if vector_dim is None and hasattr(self, '_magnitude') and self._magnitude is not None:
+            vector_dim = self._magnitude.dim
+
+        if vector_dim is None:
             raise ValueError("Cannot get magnitude in unit for dimensionless vector")
 
         # Resolve unit if string
         if isinstance(unit, str):
             from ..core.unit import ureg
 
-            resolved = ureg.resolve(unit, dim=self._dim)
+            resolved = ureg.resolve(unit, dim=vector_dim)
             if resolved is None:
                 raise ValueError(f"Unknown unit '{unit}'")
             unit = resolved
 
         # Use the Quantity's magnitude method
         mag_qty = self.magnitude
+        if mag_qty is None:
+            raise ValueError("Cannot get magnitude of unknown vector")
         return mag_qty.magnitude(unit)
 
     def normalized(self) -> _Vector[D]:
@@ -875,40 +828,17 @@ class _Vector(Generic[D]):
             >>> # Dot product with vector (gives N·m)
             >>> work = F.dot(r)  # 3.0 N·m
         """
-        from ..core.quantity import Quantity
-
         if isinstance(other, (np.ndarray, tuple)):
             # Dot with unit vector (dimensionless array or tuple)
             other_arr = np.array(other) if isinstance(other, tuple) else other
             dot_product = float(np.dot(self._coords, other_arr))
-
-            # Return as Quantity with same dimension as self
-            q = object.__new__(Quantity)
-            q.name = "dot_product"
-            q.dim = self._dim
-            q.value = dot_product
-            q.preferred = self._unit
-            q._symbol = None
-            q._output_unit = None
-            return q
+            return self._create_quantity("dot_product", self._dim, dot_product, self._unit)
         elif isinstance(other, _Vector):
             # Dot with another vector
             dot_product = float(np.dot(self._coords, other._coords))
-
             # Result dimension is product of vector dimensions
-            if self._dim is None or other._dim is None:
-                result_dim = None
-            else:
-                result_dim = self._dim * other._dim
-
-            q = object.__new__(Quantity)
-            q.name = "dot_product"
-            q.dim = result_dim
-            q.value = dot_product
-            q.preferred = None
-            q._symbol = None
-            q._output_unit = None
-            return q
+            result_dim = self._dim * other._dim if self._dim is not None and other._dim is not None else None
+            return self._create_quantity("dot_product", result_dim, dot_product, None)
         else:
             raise TypeError(f"Cannot compute dot product with {type(other)}")
 
@@ -937,14 +867,25 @@ class _Vector(Generic[D]):
         if isinstance(other, (np.ndarray, tuple)):
             # Cross with unit vector (dimensionless array or tuple)
             other_arr = np.array(other) if isinstance(other, tuple) else other
-            result = np.cross(self._coords, other_arr)
-            return _Vector(result[0], result[1], result[2], unit=self._unit)
+            cross_coords = np.cross(self._coords, other_arr)
+            # Create result with same dimension as self (cross with dimensionless)
+            result = object.__new__(_Vector)
+            result._coords = cross_coords
+            result._dim = self._dim
+            result._unit = self._unit
+            self._init_result_slots(result)
+            return result
         elif isinstance(other, _Vector):
             # Cross with another vector
-            result = np.cross(self._coords, other._coords)
-            # Note: resulting unit would be product of units, but for simplicity
-            # we return with self's unit (caller should handle unit multiplication)
-            return _Vector(result[0], result[1], result[2], unit=self._unit)
+            cross_coords = np.cross(self._coords, other._coords)
+            # Result dimension is product of vector dimensions
+            result_dim = self._dim * other._dim if self._dim is not None and other._dim is not None else None
+            result = object.__new__(_Vector)
+            result._coords = cross_coords
+            result._dim = result_dim
+            result._unit = None  # Cross product may have different units
+            self._init_result_slots(result)
+            return result
         else:
             raise TypeError(f"Cannot compute cross product with {type(other)}")
 
@@ -966,7 +907,7 @@ class _Vector(Generic[D]):
             >>> r_AC = create_vector_cartesian(u=-4, v=6, w=1, unit="m")
             >>> theta = r_AB.angle_between(r_AC)  # 36.4 deg
         """
-        from ..core.quantity import Quantity
+        from ..core.dimension_catalog import dim
         from ..core.unit import ureg
 
         if not isinstance(other, _Vector):
@@ -986,20 +927,12 @@ class _Vector(Generic[D]):
         # Clamp to [-1, 1] to handle floating point errors
         cos_theta = max(-1.0, min(1.0, cos_theta))
 
-        # Compute angle in degrees
-        angle_rad = np.arccos(cos_theta)
-        angle_deg = np.degrees(angle_rad)
+        # Compute angle in radians (SI)
+        angle_rad = float(np.arccos(cos_theta))
 
         # Return as Quantity with degree unit
-        deg_unit = ureg.resolve("deg")
-        q = object.__new__(Quantity)
-        q.name = "angle"
-        q.dim = deg_unit.dim if deg_unit else None
-        q.value = float(angle_deg) * (deg_unit.si_factor if deg_unit else 1.0)
-        q.preferred = deg_unit
-        q._symbol = None
-        q._output_unit = None
-        return q
+        deg_unit = ureg.resolve("deg", dim=dim.D)
+        return self._create_quantity("angle", dim.D, angle_rad, deg_unit)
 
     def is_close(
         self,
@@ -1136,7 +1069,8 @@ class _Vector(Generic[D]):
         self._init_result_slots(result)
         return result
 
-    def _init_result_slots(self, result: "_Vector") -> None:
+    @staticmethod
+    def _init_result_slots(result: "_Vector") -> None:
         """Initialize all slots for a newly created result vector."""
         result._magnitude = None
         result._angle = None
@@ -1157,38 +1091,6 @@ class _Vector(Generic[D]):
         self._coords = other._coords.copy()
         self._dim = other._dim
         self._unit = other._unit
-
-    def _compute_magnitude_and_angle(self) -> None:
-        """
-        Compute magnitude and angle from vector components.
-
-        If the force previously had a negative magnitude, preserve the sign by adjusting
-        the computed angle appropriately.
-        """
-        import math
-        from ..core.dimension_catalog import dim
-        from ..core.unit import ureg
-
-        if self._coords is None:
-            return
-
-        # Check if we had a negative magnitude before
-        had_negative_magnitude = self._magnitude is not None and self._magnitude.value is not None and self._magnitude.value < 0
-
-        # Compute magnitude from vector (always positive from sqrt)
-        mag_si = float(np.sqrt(np.sum(self._coords**2)))
-        self._magnitude = Quantity(name=f"{self.name}_magnitude", dim=self._dim, value=mag_si, preferred=self._unit)
-
-        # Compute angle
-        angle_rad = math.atan2(self._coords[1], self._coords[0])
-
-        # If we had a negative magnitude, flip it back and adjust angle
-        if had_negative_magnitude and self._magnitude.value is not None:
-            # Make magnitude negative again
-            self._magnitude.value = -self._magnitude.value
-
-        degree_unit = ureg.resolve("degree", dim=dim.D)
-        self._angle = Quantity(name=f"{self.name}_angle", dim=dim.D, value=angle_rad, preferred=degree_unit)
 
     def get_components_in_system(self) -> tuple["Quantity | None", "Quantity | None"]:
         """
@@ -1304,104 +1206,6 @@ class _Vector(Generic[D]):
         self._init_result_slots(result)
         return result
 
-    def dot(self, other: "_Vector[D] | NDArray | tuple") -> "Quantity":
-        """
-        Dot product (scalar product).
-
-        Args:
-            other: Vector, numpy array, or tuple to compute dot product with
-
-        Returns:
-            Dot product as Quantity (dimension is self.dim * other.dim for vectors,
-            or self.dim for unit vectors since unit vectors are dimensionless)
-
-        Raises:
-            ValueError: If vectors have incompatible dimensions
-        """
-        # Handle numpy array or tuple (unit vector)
-        if isinstance(other, (np.ndarray, tuple)):
-            other_arr = np.array(other) if isinstance(other, tuple) else other
-            dot_product = float(np.dot(self._coords, other_arr))
-
-            # Return as Quantity with same dimension as self (unit vector is dimensionless)
-            q = object.__new__(Quantity)
-            q.name = "dot_product"
-            q.dim = self._dim
-            q.value = dot_product
-            q.preferred = self._unit
-            q._symbol = None
-            q._output_unit = None
-            return q
-
-        if not isinstance(other, _Vector):
-            raise TypeError(f"Expected _Vector, got {type(other)}")
-
-        # Dot product of SI values
-        dot_product = float(np.sum(self._coords * other._coords))
-
-        # Result dimension is product of vector dimensions
-        if self._dim is None or other._dim is None:
-            result_dim = None
-        else:
-            result_dim = self._dim * other._dim
-
-        # Return as Quantity
-        q = object.__new__(Quantity)
-        q.name = "dot_product"
-        q.dim = result_dim
-        q.value = dot_product
-        q.preferred = None  # No obvious preferred unit for product
-        q._symbol = None
-        q._output_unit = None
-        return q
-
-    def cross(self, other: "_Vector[D] | NDArray[np.float64] | tuple[float, float, float]") -> _Vector:
-        """
-        Cross product (vector product).
-
-        Args:
-            other: Vector to compute cross product with, or unit vector (array/tuple)
-
-        Returns:
-            Cross product vector (dimension is self.dim * other.dim for vectors,
-            or same dimension as self for unit vectors)
-
-        Note:
-            The resulting vector is perpendicular to both input vectors.
-            Magnitude equals area of parallelogram formed by the vectors.
-        """
-        # Handle tuple/array (unit vector)
-        if isinstance(other, (np.ndarray, tuple)):
-            other_arr = np.array(other) if isinstance(other, tuple) else other
-            cross_coords = np.cross(self._coords, other_arr)
-            # Create result with same dimension as self (cross with dimensionless)
-            result = object.__new__(_Vector)
-            result._coords = cross_coords
-            result._dim = self._dim
-            result._unit = self._unit
-            self._init_result_slots(result)
-            return result
-
-        if not isinstance(other, _Vector):
-            raise TypeError(f"Expected _Vector, got {type(other)}")
-
-        # Cross product of SI values
-        cross_coords = np.cross(self._coords, other._coords)
-
-        # Result dimension is product of vector dimensions
-        if self._dim is None or other._dim is None:
-            result_dim = None
-        else:
-            result_dim = self._dim * other._dim
-
-        # Create result vector
-        result = object.__new__(_Vector)
-        result._coords = cross_coords
-        result._dim = result_dim
-        result._unit = None  # Cross product may have different units
-        self._init_result_slots(result)
-        return result
-
     def is_parallel_to(self, other: _Vector[D], tolerance: float = 1e-10) -> bool:
         """
         Test whether vector is parallel to another.
@@ -1466,20 +1270,11 @@ class _Vector(Generic[D]):
 
         # Clamp to [-1, 1] to handle numerical errors
         cos_angle = np.clip(cos_angle, -1.0, 1.0)
-
         angle_rad = float(np.arccos(cos_angle))
 
         # Return as dimensionless Quantity
         from ..core.dimension_catalog import dim
-
-        q = object.__new__(Quantity)
-        q.name = "angle"
-        q.dim = dim.angle_plane  # Angle dimension (dimensionless but special)
-        q.value = angle_rad
-        q.preferred = None
-        q._symbol = None
-        q._output_unit = None
-        return q
+        return self._create_quantity("angle", dim.angle_plane, angle_rad, None)
 
     def projection_onto(self, other: _Vector[D]) -> _Vector[D]:
         """
@@ -1548,25 +1343,6 @@ class _Vector(Generic[D]):
         if self._unit is None:
             return self._coords.copy()
         return (self._coords - self._unit.si_offset) / self._unit.si_factor
-
-    def __eq__(self, other: object) -> bool:
-        """
-        Check equality between vectors (same components and dimension).
-
-        Args:
-            other: Vector to compare with
-
-        Returns:
-            True if vectors are equal within tolerance
-        """
-        if not isinstance(other, _Vector):
-            return NotImplemented
-
-        if self._dim != other._dim:
-            return False
-
-        # Use small tolerance for floating point comparison
-        return bool(np.allclose(self._coords, other._coords, rtol=1e-10, atol=1e-10))
 
     def __str__(self) -> str:
         """String representation of the vector."""
@@ -1790,54 +1566,15 @@ class _Vector(Generic[D]):
             float(self._coords[2] / mag),
         )
 
-    def unit_vector(self) -> tuple[float, float, float]:
-        """Get unit vector (direction cosines)."""
-        result = self.direction_cosines
-        if result is None:
-            raise ValueError("Cannot compute unit vector of zero vector")
-        return result
-
     def to_cartesian(self) -> "_Vector":
         """Convert to Cartesian _Vector."""
         result = object.__new__(_Vector)
         result._coords = self._coords.copy()
         result._dim = self._dim
         result._unit = self._unit
-        result._magnitude = None
-        result._angle = None
+        self._init_result_slots(result)
         result.name = self.name if hasattr(self, 'name') else "Vector"
-        result.is_known = True
-        result.is_resultant = False
-        result._description = ""
-        result.coordinate_system = None
-        result.angle_reference = None
-        result._relative_to_force = None
-        result._relative_angle = None
-        result._from_point = None
-        result._to_point = None
-        result._constraint_magnitude = None
         return result
-
-    # Convenience methods
-    def magnitude_in(self, unit: Unit[D] | str) -> float:
-        """Get magnitude in specified unit."""
-        # Determine dimension from vector or stored magnitude
-        vector_dim = self._dim
-        if vector_dim is None and hasattr(self, '_magnitude') and self._magnitude is not None:
-            vector_dim = self._magnitude.dim
-
-        if vector_dim is None:
-            raise ValueError("Cannot get magnitude of dimensionless vector")
-
-        if isinstance(unit, str):
-            from ..core.unit import ureg
-            resolved = ureg.resolve(unit, dim=vector_dim)
-            if resolved is None:
-                raise ValueError(f"Unknown unit '{unit}'")
-            unit = resolved
-
-        mag_qty = self.magnitude
-        return mag_qty.magnitude(unit)
 
     def angle_in(self, unit: Unit | str = "degree", wrt: str | None = None, forces: dict[str, "_Vector"] | None = None) -> float:
         """Get angle in specified unit and reference system."""
@@ -2071,23 +1808,8 @@ class _Vector(Generic[D]):
         result._coords = self._coords + other._coords
         result._dim = self._dim
         result._unit = self._unit
-        # Initialize other slots
-        result._magnitude = None
-        result._angle = None
-        result.name = f"{self.name}+{other.name}"
-        result.is_known = True
-        result.is_resultant = False
-        result._description = ""
-        result.coordinate_system = None
-        result.angle_reference = None
-        result._relative_to_force = None
-        result._relative_angle = None
-        result._from_point = None
-        result._to_point = None
-        result._constraint_magnitude = None
+        self._init_result_slots(result)
+        self_name = getattr(self, 'name', "Vector")
+        other_name = getattr(other, 'name', "Vector")
+        result.name = f"{self_name}+{other_name}"
         return result
-
-
-# Backward compatibility aliases
-_Vector = _Vector
-_Vector = _Vector
