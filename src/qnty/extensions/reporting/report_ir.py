@@ -11,7 +11,6 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
-from typing import Any
 
 
 class TableAlignment(Enum):
@@ -289,8 +288,8 @@ class MarkdownRenderer(ReportRenderer):
             unit = magnitude_match.group(2)
             return f"$\\|\\vec{{{var}}}\\|$ ({unit})"
 
-        # Handle subscript notation Fₓ (unit), Fᵧ (unit)
-        subscript_map = {"ₓ": "x", "ᵧ": "y", "₁": "1", "₂": "2", "₃": "3"}
+        # Handle subscript notation Fₓ (unit), Fᵧ (unit), Fᵤ (unit), Fᵥ (unit)
+        subscript_map = {"ₓ": "x", "ᵧ": "y", "ᵤ": "u", "ᵥ": "v", "ₙ": "n", "ₜ": "t", "₁": "1", "₂": "2", "₃": "3"}
         for unicode_sub, ascii_sub in subscript_map.items():
             if unicode_sub in result:
                 sub_match = re.match(r'([A-Za-z]+)' + unicode_sub + r'\s*\(([^)]+)\)', result)
@@ -905,8 +904,8 @@ class LaTeXRenderer(ReportRenderer):
             unit = magnitude_match.group(2)
             return r"$\magn{\vv{" + var + r"}}$ (" + self._escape_latex(unit) + ")"
 
-        # Check for subscript notation like "Fₓ (N)" or "Fᵧ (N)"
-        subscript_map = {"ₓ": "x", "ᵧ": "y", "₁": "1", "₂": "2", "₃": "3"}
+        # Check for subscript notation like "Fₓ (N)", "Fᵧ (N)", "Fᵤ (N)", "Fᵥ (N)"
+        subscript_map = {"ₓ": "x", "ᵧ": "y", "ᵤ": "u", "ᵥ": "v", "ₙ": "n", "ₜ": "t", "₁": "1", "₂": "2", "₃": "3"}
         for unicode_sub, ascii_sub in subscript_map.items():
             if unicode_sub in header:
                 # Parse pattern like "Fₓ (unit)"
@@ -1455,19 +1454,96 @@ class ReportBuilder:
         else:
             return self._build_standard_unknown_table(unknown_data)
 
+    def _get_axis_labels(self) -> tuple[str, str]:
+        """Get the axis labels for table headers.
+
+        Returns (axis1_label, axis2_label) based on the coordinate system.
+        Defaults to ('x', 'y') for standard Cartesian coordinates.
+        """
+        coord_sys = getattr(self.problem, 'coordinate_system', None)
+        if coord_sys is not None:
+            axis1 = getattr(coord_sys, 'axis1_label', 'x')
+            axis2 = getattr(coord_sys, 'axis2_label', 'y')
+            return (axis1, axis2)
+        return ('x', 'y')
+
+    def _get_components_in_coordinate_system(self, vec_obj, si_factor: float = 1.0) -> tuple[str, str]:
+        """Get vector components in the problem's coordinate system.
+
+        For non-orthogonal coordinate systems (like u-v with 75° between axes),
+        this converts the Cartesian x-y components to the custom coordinate system.
+
+        Args:
+            vec_obj: The vector object with _coords or u/v attributes
+            si_factor: SI conversion factor for the unit
+
+        Returns:
+            Tuple of (component1_str, component2_str) formatted as strings with 1 decimal place.
+            Returns ("?", "?") if components cannot be determined.
+        """
+        if vec_obj is None:
+            return ("?", "?")
+
+        # Get Cartesian x-y coordinates
+        x_val = None
+        y_val = None
+
+        if hasattr(vec_obj, '_coords') and vec_obj._coords is not None and len(vec_obj._coords) >= 2:
+            x_val = vec_obj._coords[0]
+            y_val = vec_obj._coords[1]
+        elif hasattr(vec_obj, 'u') and vec_obj.u and vec_obj.u.value is not None:
+            # vec_obj.u and vec_obj.v store Cartesian x and y (confusingly named)
+            x_val = vec_obj.u.value
+            if hasattr(vec_obj, 'v') and vec_obj.v and vec_obj.v.value is not None:
+                y_val = vec_obj.v.value
+
+        if x_val is None or y_val is None:
+            return ("?", "?")
+
+        # Check if we have a non-orthogonal coordinate system
+        coord_sys = getattr(self.problem, 'coordinate_system', None)
+        if coord_sys is not None and not coord_sys.is_orthogonal:
+            # Convert Cartesian x-y to the custom coordinate system
+            comp1, comp2 = coord_sys.from_cartesian(x_val, y_val)
+            # Avoid -0.0 display by using abs() for very small values
+            comp1_display = comp1 / si_factor
+            comp2_display = comp2 / si_factor
+            if abs(comp1_display) < 0.05:
+                comp1_display = abs(comp1_display)
+            if abs(comp2_display) < 0.05:
+                comp2_display = abs(comp2_display)
+            return (f"{comp1_display:.1f}", f"{comp2_display:.1f}")
+        else:
+            # Standard orthogonal system - just use x and y directly
+            # Avoid -0.0 display by using abs() for very small values
+            x_display = x_val / si_factor
+            y_display = y_val / si_factor
+            if abs(x_display) < 0.05:
+                x_display = abs(x_display)
+            if abs(y_display) < 0.05:
+                y_display = abs(y_display)
+            return (f"{x_display:.1f}", f"{y_display:.1f}")
+
     def _build_force_table(self, data: list[dict]) -> Table:
-        """Build a table for force vectors with X, Y, Magnitude, Angle, Reference columns.
+        """Build a table for force vectors with component, Magnitude, Angle, Reference columns.
 
         Uses proper vector notation:
         - Symbol column shows vector with arrow (e.g., F̄₁)
         - Magnitude column header indicates |F̄| notation
+        - Component headers use the coordinate system axes (e.g., Fᵤ, Fᵥ for u-v system)
         """
         unit = data[0].get('unit', 'unit') if data else 'unit'
+        axis1, axis2 = self._get_axis_labels()
+
+        # Build subscript characters for axis labels
+        subscript_map = {'x': 'ₓ', 'y': 'ᵧ', 'u': 'ᵤ', 'v': 'ᵥ', 'n': 'ₙ', 't': 'ₜ'}
+        sub1 = subscript_map.get(axis1.lower(), f'_{axis1}')
+        sub2 = subscript_map.get(axis2.lower(), f'_{axis2}')
 
         columns = [
             TableColumn("Vector", TableAlignment.LEFT),
-            TableColumn(f"Fₓ ({unit})", TableAlignment.DECIMAL),
-            TableColumn(f"Fᵧ ({unit})", TableAlignment.DECIMAL),
+            TableColumn(f"F{sub1} ({unit})", TableAlignment.DECIMAL),
+            TableColumn(f"F{sub2} ({unit})", TableAlignment.DECIMAL),
             TableColumn(f"|F| ({unit})", TableAlignment.DECIMAL),
             TableColumn("θ (deg)", TableAlignment.DECIMAL),
             TableColumn("Reference", TableAlignment.LEFT),
@@ -1560,10 +1636,18 @@ class ReportBuilder:
                 unit = mag_var.preferred.symbol
                 break
 
+        # Get axis labels from coordinate system
+        axis1, axis2 = self._get_axis_labels()
+
+        # Build subscript characters for axis labels
+        subscript_map = {'x': 'ₓ', 'y': 'ᵧ', 'u': 'ᵤ', 'v': 'ᵥ', 'n': 'ₙ', 't': 'ₜ'}
+        sub1 = subscript_map.get(axis1.lower(), f'_{axis1}')
+        sub2 = subscript_map.get(axis2.lower(), f'_{axis2}')
+
         columns = [
             TableColumn("Vector", TableAlignment.LEFT),
-            TableColumn(f"Fₓ ({unit})", TableAlignment.DECIMAL),
-            TableColumn(f"Fᵧ ({unit})", TableAlignment.DECIMAL),
+            TableColumn(f"F{sub1} ({unit})", TableAlignment.DECIMAL),
+            TableColumn(f"F{sub2} ({unit})", TableAlignment.DECIMAL),
             TableColumn(f"|F| ({unit})", TableAlignment.DECIMAL),
             TableColumn("θ (deg)", TableAlignment.DECIMAL),
             TableColumn("Reference", TableAlignment.LEFT),
@@ -1644,19 +1728,8 @@ class ReportBuilder:
                     angle_deg = self._convert_angle_for_display(angle_deg, vec_obj)
                     angle = f"{angle_deg:.1f}"
 
-            # Get x-component
-            fx = "?"
-            if vec_obj is not None and hasattr(vec_obj, 'u') and vec_obj.u and vec_obj.u.value is not None:
-                fx = f"{vec_obj.u.magnitude():.1f}"
-            elif vec_obj is not None and hasattr(vec_obj, '_coords') and vec_obj._coords is not None and len(vec_obj._coords) >= 1:
-                fx = f"{vec_obj._coords[0] / si_factor:.1f}"
-
-            # Get y-component
-            fy = "?"
-            if vec_obj is not None and hasattr(vec_obj, 'v') and vec_obj.v and vec_obj.v.value is not None:
-                fy = f"{vec_obj.v.magnitude():.1f}"
-            elif vec_obj is not None and hasattr(vec_obj, '_coords') and vec_obj._coords is not None and len(vec_obj._coords) >= 2:
-                fy = f"{vec_obj._coords[1] / si_factor:.1f}"
+            # Get components in the coordinate system (handles non-orthogonal systems)
+            fx, fy = self._get_components_in_coordinate_system(vec_obj, si_factor)
 
             rows.append(TableRow([vec_name, fx, fy, magnitude, angle, ref]))
 
@@ -1803,22 +1876,18 @@ class ReportBuilder:
             else:
                 angle_str = "?"
 
-            # Get X and Y components - only for originally known forces
+            # Get components in the coordinate system - only for originally known forces
             x_str = "?"
             y_str = "?"
             was_originally_known = mag_was_originally_known and angle_was_originally_known
 
-            # Only populate X and Y for forces that were originally known
-            if was_originally_known and hasattr(force_obj, 'u') and hasattr(force_obj, 'v') and force_obj._coords is not None:
-                try:
-                    u_qty = force_obj.u
-                    v_qty = force_obj.v
-                    if u_qty is not None and u_qty.value is not None:
-                        x_str = f"{u_qty.magnitude():.1f}"
-                    if v_qty is not None and v_qty.value is not None:
-                        y_str = f"{v_qty.magnitude():.1f}"
-                except (ValueError, AttributeError):
-                    pass
+            # Only populate components for forces that were originally known
+            if was_originally_known:
+                # Get SI factor for unit conversion
+                si_factor = 1.0
+                if hasattr(force_obj, '_unit') and force_obj._unit:
+                    si_factor = force_obj._unit.si_factor
+                x_str, y_str = self._get_components_in_coordinate_system(force_obj, si_factor)
 
             # Get angle reference
             reference_str = ""
@@ -1945,22 +2014,18 @@ class ReportBuilder:
             else:
                 angle_str = "?"
 
-            # Get X and Y components - only for originally known vectors
+            # Get components in the coordinate system - only for originally known vectors
             x_str = "?"
             y_str = "?"
             was_originally_known = mag_was_known and angle_was_known
 
-            # Only populate X and Y for vectors that were originally known
-            if was_originally_known and vec_obj is not None and hasattr(vec_obj, 'u') and hasattr(vec_obj, 'v'):
-                try:
-                    u_qty = vec_obj.u
-                    v_qty = vec_obj.v
-                    if u_qty is not None and u_qty.value is not None:
-                        x_str = f"{u_qty.magnitude():.1f}"
-                    if v_qty is not None and v_qty.value is not None:
-                        y_str = f"{v_qty.magnitude():.1f}"
-                except (ValueError, AttributeError):
-                    pass
+            # Only populate components for vectors that were originally known
+            if was_originally_known and vec_obj is not None:
+                # Get SI factor for unit conversion
+                si_factor = 1.0
+                if hasattr(vec_obj, '_unit') and vec_obj._unit:
+                    si_factor = vec_obj._unit.si_factor
+                x_str, y_str = self._get_components_in_coordinate_system(vec_obj, si_factor)
 
             # Get angle reference - prefer original wrt from create_vector_polar
             # Use problem's coordinate system default if no reference is found

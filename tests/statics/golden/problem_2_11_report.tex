@@ -17,7 +17,7 @@
 % Magnitude notation: \magn{F} produces |F| with fixed-height bars
 \newcommand{\magn}[1]{|#1|}
 
-\title{Engineering Calculation Report: Problem 2-6}
+\title{Engineering Calculation Report: Problem 2-11}
 \date{{{GENERATED_DATE}}}
 
 \begin{document}
@@ -27,11 +27,11 @@
 
 \begin{longtable}{lSSSSl}
 \toprule
-Vector & {$F_{u}$ (N)} & {$F_{v}$ (N)} & {$\magn{\vv{F}}$ (N)} & {$\theta$ (deg)} & Reference \\
+Vector & {$F_{x}$ (N)} & {$F_{y}$ (N)} & {$\magn{\vv{F}}$ (N)} & {$\theta$ (deg)} & Reference \\
 \midrule
 \endhead
-$\vv{F_1}$ & 2070.6 & 2928.2 & 4000.0 & -30.0 & +v \\
-$\vv{F_2}$ & 6000.0 & -3105.8 & 6000.0 & -30.0 & +u \\
+$\vv{F_A}$ & 6928.2 & 4000.0 & 8000.0 & -60.0 & +y \\
+$\vv{F_B}$ & 3856.7 & -4596.3 & 6000.0 & 40.0 & -y \\
 \bottomrule
 \end{longtable}
 
@@ -39,32 +39,32 @@ $\vv{F_2}$ & 6000.0 & -3105.8 & 6000.0 & -30.0 & +u \\
 
 \begin{longtable}{lSSSSl}
 \toprule
-Vector & {$F_{u}$ (N)} & {$F_{v}$ (N)} & {$\magn{\vv{F}}$ (N)} & {$\theta$ (deg)} & Reference \\
+Vector & {$F_{x}$ (N)} & {$F_{y}$ (N)} & {$\magn{\vv{F}}$ (N)} & {$\theta$ (deg)} & Reference \\
 \midrule
 \endhead
-$\vv{F_R}$ & ? & ? & ? & ? & +u \\
+$\vv{F_R}$ & ? & ? & ? & ? & +x \\
 \bottomrule
 \end{longtable}
 
 \section{Equations Used}
 
 \begin{enumerate}
-\item $\displaystyle \magn{\vv{F_R}}^2 = \magn{\vv{F_1}}^2 + \magn{\vv{F_2}}^2 + 2 \cdot \magn{\vv{F_1}} \cdot \magn{\vv{F_2}} \cdot \cos(\angle(\vv{F_1}, \vv{F_2}))$
-\item $\displaystyle \frac{\sin(\angle(\vv{F_2}, \vv{F_R}))}{\magn{\vv{F_1}}} = \frac{\sin(\angle(\vv{F_1}, \vv{F_2}))}{\magn{\vv{F_R}}}$
+\item $\displaystyle \magn{\vv{F_R}}^2 = \magn{\vv{F_A}}^2 + \magn{\vv{F_B}}^2 + 2 \cdot \magn{\vv{F_A}} \cdot \magn{\vv{F_B}} \cdot \cos(\angle(\vv{F_A}, \vv{F_B}))$
+\item $\displaystyle \frac{\sin(\angle(\vv{F_B}, \vv{F_R}))}{\magn{\vv{F_A}}} = \frac{\sin(\angle(\vv{F_A}, \vv{F_B}))}{\magn{\vv{F_R}}}$
 \end{enumerate}
 
 \section{Step-by-Step Solution}
 
 \vspace{0.2em}
-\noindent\hspace{1em}\textbf{Step 1: Solve for $\angle(\vv{F_1}, \vv{F_2})$}
+\noindent\hspace{1em}\textbf{Step 1: Solve for $\angle(\vv{F_A}, \vv{F_B})$}
 \vspace{0.1em}
 
 \begin{adjustwidth}{2em}{}
 \vspace{-0.8em}
 \begin{flalign*}
-\quad \angle(\vv{F_1}, \vv{F_2}) &= 180^{\circ} - \angle(\vv{v}, \vv{u}) && \\
-\quad &= 180^{\circ} - 75^{\circ} && \\
-\quad &= 105^{\circ} &&
+\quad \angle(\vv{F_A}, \vv{F_B}) &= \magn{\angle(\vv{y}, \vv{F_A}) - \angle(\vv{-y}, \vv{F_B})} && \\
+\quad &= \magn{-60^{\circ} - 40^{\circ}} && \\
+\quad &= 100^{\circ} &&
 \end{flalign*}
 \vspace{-0.8em}
 \end{adjustwidth}
@@ -76,21 +76,21 @@ $\vv{F_R}$ & ? & ? & ? & ? & +u \\
 \begin{adjustwidth}{2em}{}
 \vspace{-0.8em}
 \begin{flalign*}
-\quad \magn{\vv{F_R}} &= \sqrt{(4000.0)^2 + (6000.0)^2 + 2(4000.0)(6000.0)\cos(105^{\circ})} && \\
-\quad &= 8026.4\ \text{N} &&
+\quad \magn{\vv{F_R}} &= \sqrt{(8000.0)^2 + (6000.0)^2 + 2(8000.0)(6000.0)\cos(100^{\circ})} && \\
+\quad &= 10801.4\ \text{N} &&
 \end{flalign*}
 \vspace{-0.8em}
 \end{adjustwidth}
 
 \vspace{0.2em}
-\noindent\hspace{1em}\textbf{Step 3: Solve for $\angle(\vv{F_2}, \vv{F_R})$ using Eq 2}
+\noindent\hspace{1em}\textbf{Step 3: Solve for $\angle(\vv{F_B}, \vv{F_R})$ using Eq 2}
 \vspace{0.1em}
 
 \begin{adjustwidth}{2em}{}
 \vspace{-0.8em}
 \begin{flalign*}
-\quad \angle(\vv{F_2}, \vv{F_R}) &= \sin^{-1}(4000.0 \cdot \frac{\sin(105^{\circ})}{8026.4}) && \\
-\quad &= 28.8^{\circ} &&
+\quad \angle(\vv{F_B}, \vv{F_R}) &= \sin^{-1}(8000.0 \cdot \frac{\sin(100^{\circ})}{10801.4}) && \\
+\quad &= 46.8^{\circ} &&
 \end{flalign*}
 \vspace{-0.8em}
 \end{adjustwidth}
@@ -102,9 +102,9 @@ $\vv{F_R}$ & ? & ? & ? & ? & +u \\
 \begin{adjustwidth}{2em}{}
 \vspace{-0.8em}
 \begin{flalign*}
-\quad \angle(\vv{x}, \vv{F_R}) &= \angle(\vv{u}, \vv{F_2}) + \angle(\vv{F_2}, \vv{F_R}) && \\
-\quad &= -30.0^{\circ} + 28.8^{\circ} && \\
-\quad &= -1.2^{\circ} &&
+\quad \angle(\vv{x}, \vv{F_R}) &= \angle(\vv{x}, \vv{-y}) + \angle(\vv{-y}, \vv{F_B}) + \angle(\vv{F_B}, \vv{F_R}) && \\
+\quad &= -90.0^{\circ} + 40.0^{\circ} + 46.8^{\circ} && \\
+\quad &= -3.2^{\circ} &&
 \end{flalign*}
 \vspace{-0.8em}
 \end{adjustwidth}
@@ -113,10 +113,10 @@ $\vv{F_R}$ & ? & ? & ? & ? & +u \\
 
 \begin{longtable}{lSSSSl}
 \toprule
-Vector & {$F_{u}$ (N)} & {$F_{v}$ (N)} & {$\magn{\vv{F}}$ (N)} & {$\theta$ (deg)} & Reference \\
+Vector & {$F_{x}$ (N)} & {$F_{y}$ (N)} & {$\magn{\vv{F}}$ (N)} & {$\theta$ (deg)} & Reference \\
 \midrule
 \endhead
-$\vv{F_R}$ & 8070.6 & -177.6 & 8026.4 & -1.2 & +u \\
+$\vv{F_R}$ & 10784.9 & -596.3 & 10801.4 & -3.2 & +x \\
 \bottomrule
 \end{longtable}
 

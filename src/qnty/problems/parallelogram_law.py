@@ -18,7 +18,7 @@ from ..solving.triangle_solver import TriangleSolver
 from ..spatial.vector import _Vector
 from ..spatial.vector_helpers import vector_helper as _helper
 from ..spatial.vectors import _VectorWithUnknowns
-from ..utils.geometry import format_axis_ref, interior_angle, normalize_angle_positive, compute_angle_between_display
+from ..utils.geometry import compute_angle_between_display, format_axis_ref, interior_angle, normalize_angle_positive
 from .problem import Problem
 
 # =============================================================================
@@ -466,6 +466,20 @@ class ParallelogramLawProblem(Problem):
             else:
                 known_vectors.append(vec)
 
+        # Check if resultant itself has unknown magnitude (but known direction)
+        resultant_has_unknown_magnitude = "magnitude" in resultant.unknowns
+
+        if resultant_has_unknown_magnitude:
+            # Special case: resultant direction is known but magnitude is unknown
+            # Get direction from the unit vector stored in coords (we set mag=1 during creation)
+            FR_angle = getattr(resultant, '_polar_angle_rad', None)
+            if FR_angle is None:
+                # Compute from coords (they are unit direction)
+                FR_angle = math.atan2(resultant._coords[1], resultant._coords[0])
+            unit = resultant._unit
+            self._solve_with_unknown_resultant_magnitude(known_vectors, unknown_vectors, resultant, resultant_name, FR_angle, unit)
+            return
+
         FR_coords = resultant._coords
         FR_mag, FR_angle = _magnitude_and_angle_from_coords(FR_coords)
 
@@ -670,6 +684,202 @@ class ParallelogramLawProblem(Problem):
             theta1_input_deg, theta2_input_deg
         )
 
+    def _solve_with_unknown_resultant_magnitude(
+        self,
+        known_vectors: list[_Vector],
+        unknown_vectors: list[_VectorWithUnknowns],
+        resultant: _VectorWithUnknowns,
+        resultant_name: str,
+        FR_angle: float,
+        unit,
+    ) -> None:
+        """
+        Solve when resultant direction is known but magnitude is unknown.
+
+        This handles the case where:
+        - F_R direction is known (e.g., along +x axis)
+        - F_R magnitude is unknown
+        - One component vector has known magnitude but unknown angle
+        - Other component vector(s) are fully known
+
+        The constraint is: F_A + F_B = F_R where F_R is along a known direction.
+
+        For Problem 2-12:
+        - F_A: 8000 N, unknown angle (wrt +y)
+        - F_B: 6000 N at 40° (wrt -y) - fully known
+        - F_R: along +x axis (unknown magnitude)
+
+        We use the constraint that F_R_y = 0 (no y-component) to solve for F_A's angle,
+        then compute F_R_x from the x-components.
+        """
+        if len(known_vectors) != 1 or len(unknown_vectors) != 1:
+            raise NotImplementedError(
+                f"Unknown resultant magnitude solve requires exactly 1 known + 1 unknown vector, "
+                f"got {len(known_vectors)} known + {len(unknown_vectors)} unknown"
+            )
+
+        known_vec = known_vectors[0]
+        unknown_vec = unknown_vectors[0]
+
+        # Check that unknown vector has known magnitude but unknown angle
+        if "angle" not in unknown_vec.unknowns:
+            raise NotImplementedError(
+                "Unknown resultant magnitude solve requires the unknown vector to have unknown angle"
+            )
+        unknown_magnitude = getattr(unknown_vec, '_polar_magnitude', None)
+        if unknown_magnitude is None:
+            raise NotImplementedError(
+                "Unknown resultant magnitude solve requires the unknown vector to have known magnitude"
+            )
+
+        # Get known vector components
+        F_known_coords = known_vec._coords
+        F_known_mag, F_known_angle = _magnitude_and_angle_from_coords(F_known_coords)
+
+        # Get unknown vector's known magnitude
+        F_unknown_mag = unknown_magnitude
+
+        # Get wrt reference for unknown vector to compute base angle
+        wrt = getattr(unknown_vec, '_original_wrt', '+x')
+        standard_axis_angles = {"+x": 0, "+y": 90, "-x": 180, "-y": 270}
+
+        coord_sys = getattr(self, 'coordinate_system', None)
+        wrt_lower = wrt.lower()
+
+        if wrt_lower in standard_axis_angles:
+            base_angle_rad = math.radians(standard_axis_angles[wrt_lower])
+        elif coord_sys is not None:
+            wrt_stripped = wrt.lstrip('+-')
+            is_negative = wrt.startswith('-')
+            if wrt_stripped == coord_sys.axis1_label:
+                base_angle_rad = coord_sys.axis1_angle
+            elif wrt_stripped == coord_sys.axis2_label:
+                base_angle_rad = coord_sys.axis2_angle
+            else:
+                raise ValueError(f"Unknown axis '{wrt}'")
+            if is_negative:
+                base_angle_rad += math.pi
+        else:
+            raise ValueError(f"Unknown axis '{wrt}' and no coordinate system defined")
+
+        # The constraint is that F_R is along the direction FR_angle.
+        # F_R = F_unknown + F_known
+        # For F_R to be along FR_angle, the perpendicular component must be zero.
+        #
+        # If FR_angle = 0 (along +x), then F_R_y = 0.
+        # F_unknown_y + F_known_y = 0
+        # |F_unknown| * sin(base + theta) + F_known_y = 0
+        # sin(base + theta) = -F_known_y / |F_unknown|
+        #
+        # General case: project onto perpendicular direction
+        FR_perp_angle = FR_angle + math.pi / 2  # perpendicular to resultant direction
+
+        # Perpendicular component of known vector
+        F_known_perp = F_known_coords[0] * math.sin(FR_perp_angle) - F_known_coords[1] * math.cos(FR_perp_angle)
+        # Actually let's use the simpler approach: dot product with perpendicular unit vector
+        perp_x = -math.sin(FR_angle)
+        perp_y = math.cos(FR_angle)
+        F_known_perp = F_known_coords[0] * perp_x + F_known_coords[1] * perp_y
+
+        # For unknown vector:
+        # F_unknown_perp = |F_unknown| * (cos(base + theta) * perp_x + sin(base + theta) * perp_y)
+        # = |F_unknown| * sin(base + theta - FR_angle)  (using angle subtraction)
+        # Actually, let's just expand:
+        # cos(base + theta) * perp_x + sin(base + theta) * perp_y
+        # = cos(base + theta) * (-sin(FR_angle)) + sin(base + theta) * cos(FR_angle)
+        # = sin(base + theta - FR_angle)
+
+        # Constraint: F_unknown_perp + F_known_perp = 0
+        # |F_unknown| * sin(base + theta - FR_angle) = -F_known_perp
+        # sin(base + theta - FR_angle) = -F_known_perp / |F_unknown|
+
+        sin_value = -F_known_perp / F_unknown_mag
+
+        # Clamp to valid range for asin (handle numerical precision)
+        if sin_value > 1.0:
+            sin_value = 1.0
+        elif sin_value < -1.0:
+            sin_value = -1.0
+
+        # Solve for (base + theta - FR_angle)
+        angle_offset = math.asin(sin_value)
+
+        # There are two solutions: angle_offset and (pi - angle_offset)
+        # We need to pick the one that makes sense for the problem geometry
+        # For now, try both and pick the one that gives positive resultant magnitude
+
+        solutions = []
+        for offset in [angle_offset, math.pi - angle_offset]:
+            # theta = offset + FR_angle - base
+            theta = offset + FR_angle - base_angle_rad
+
+            # Compute unknown vector components
+            total_angle = base_angle_rad + theta
+            F_unknown_x = F_unknown_mag * math.cos(total_angle)
+            F_unknown_y = F_unknown_mag * math.sin(total_angle)
+
+            # Compute resultant components
+            FR_x = F_unknown_x + F_known_coords[0]
+            FR_y = F_unknown_y + F_known_coords[1]
+
+            # Resultant magnitude (should be along FR_angle direction)
+            FR_computed_mag = FR_x * math.cos(FR_angle) + FR_y * math.sin(FR_angle)
+
+            # Check if the solution is valid (resultant should be in the expected direction)
+            if FR_computed_mag > 0:
+                solutions.append((theta, total_angle, FR_computed_mag, F_unknown_x, F_unknown_y))
+
+        if not solutions:
+            raise ValueError("No valid solution found for unknown resultant magnitude problem")
+
+        # Pick the solution (prefer positive angle if multiple valid solutions)
+        solution = solutions[0]
+        if len(solutions) > 1:
+            # Pick solution with theta closest to 0 or smallest absolute value
+            solution = min(solutions, key=lambda s: abs(s[0]))
+
+        theta, total_angle, FR_mag, F_unknown_x, F_unknown_y = solution
+
+        # Update unknown vector
+        unknown_vec._coords = np.array([F_unknown_x, F_unknown_y, 0.0])
+        unknown_vec._unknowns = {}
+        unknown_vec.is_known = True
+        unknown_vec._magnitude = _helper.create_force_quantity(f"{unknown_vec.name}_magnitude", F_unknown_mag, unit)
+        unknown_vec._angle = _helper.create_angle_quantity(f"{unknown_vec.name}_angle", total_angle)
+        unknown_vec._original_angle = math.degrees(theta)  # Store the angle relative to wrt
+
+        # Update resultant
+        FR_x = F_unknown_x + F_known_coords[0]
+        FR_y = F_unknown_y + F_known_coords[1]
+        resultant._coords = np.array([FR_x, FR_y, 0.0])
+        resultant._unknowns = {}
+        resultant.is_known = True
+        resultant._magnitude = _helper.create_force_quantity(f"{resultant_name}_magnitude", FR_mag, unit)
+        resultant._angle = _helper.create_angle_quantity(f"{resultant_name}_angle", FR_angle)
+
+        # Add variables
+        vec_name = unknown_vec.name or "F_unknown"
+        known_name = known_vec.name or "F_known"
+
+        # For unknown_vec: magnitude was known, angle was unknown (solved)
+        self._add_force_variables(vec_name, F_unknown_mag, total_angle, resultant._dim, unit, is_known=False)
+        # Override: magnitude was actually known at input time
+        self._original_variable_states[f"{vec_name}_mag"] = True
+
+        # Known vector: both magnitude and angle are known
+        self._add_force_variables(known_name, F_known_mag, F_known_angle, resultant._dim, unit, is_known=True)
+
+        # Resultant: angle was known, magnitude was unknown (solved)
+        self._add_force_variables(resultant_name, FR_mag, FR_angle, resultant._dim, unit, is_known=False)
+        # Override: angle was actually known at input time
+        self._original_variable_states[f"{resultant_name}_angle"] = True
+
+        # Add solution steps for this solving approach
+        self._add_unknown_resultant_magnitude_steps(
+            known_vec, unknown_vec, resultant, resultant_name,
+            F_unknown_mag, theta, base_angle_rad, FR_mag, FR_angle, unit
+        )
+
     def _add_law_of_sines_solution_steps(
         self,
         vec1: _VectorWithUnknowns,
@@ -721,10 +931,31 @@ class ParallelogramLawProblem(Problem):
             resultant_input_deg = math.degrees(resultant._angle.value) if resultant._angle and resultant._angle.value else 0
 
         # Get standard angles from +x
-        axis_angles = {"+x": 0, "+y": 90, "-x": 180, "-y": 270}
-        base1 = axis_angles.get(wrt1.lower(), 0)
-        base2 = axis_angles.get(wrt2.lower(), 0)
-        base_r = axis_angles.get(resultant_wrt.lower(), 0)
+        # Use coordinate system axis angles for custom axes (u, v, etc.)
+        coord_sys = getattr(self, 'coordinate_system', None)
+        axis_angles = {"+x": 0, "+y": 90, "-x": 180, "-y": 270, "x": 0, "y": 90}
+
+        def get_axis_base_angle(wrt: str) -> float:
+            """Get the base angle for a reference axis, using coordinate system if available."""
+            wrt_lower = wrt.lower()
+            # Check standard axes first
+            if wrt_lower in axis_angles:
+                return axis_angles[wrt_lower]
+            # For custom axes, use coordinate system
+            if coord_sys is not None:
+                wrt_stripped = wrt_lower.lstrip('+-')
+                is_negative = wrt_lower.startswith('-')
+                if wrt_stripped == coord_sys.axis1_label.lower():
+                    base = math.degrees(coord_sys.axis1_angle)
+                    return (base + 180) % 360 if is_negative else base
+                elif wrt_stripped == coord_sys.axis2_label.lower():
+                    base = math.degrees(coord_sys.axis2_angle)
+                    return (base + 180) % 360 if is_negative else base
+            return 0  # Default fallback
+
+        base1 = get_axis_base_angle(wrt1)
+        base2 = get_axis_base_angle(wrt2)
+        base_r = get_axis_base_angle(resultant_wrt)
 
         theta1_std_deg = (base1 + theta1_input_deg) % 360
         theta2_std_deg = (base2 + theta2_input_deg) % 360
@@ -737,14 +968,16 @@ class ParallelogramLawProblem(Problem):
             theta1_input_deg, resultant_input_deg,
             wrt1, resultant_wrt,
             vec1_latex, resultant_latex,
-            beta_deg
+            beta_deg,
+            coordinate_system=coord_sys
         )
         angle_vec2_FR_display = compute_angle_between_display(
             theta2_std_deg, resultant_std_deg,
             theta2_input_deg, resultant_input_deg,
             wrt2, resultant_wrt,
             vec2_latex, resultant_latex,
-            alpha_deg
+            alpha_deg,
+            coordinate_system=coord_sys
         )
 
         # Build the consolidated Step 1 substitution
@@ -783,6 +1016,164 @@ class ParallelogramLawProblem(Problem):
                 description=f"Solve for |{vec2_name}| using Equation 2",
                 equation_for_list=f"|{vec2_latex}|/sin(∠({vec1_latex},{resultant_latex})) = |{resultant_latex}|/sin(∠({vec1_latex},{vec2_latex}))",
                 substitution=f"|{vec2_latex}| = {FR_display:.0f} · sin({beta_deg:.0f}°)/sin({gamma_deg:.0f}°)\n= {M2_display:.0f}\\ \\text{{{unit_symbol}}}",
+            )
+        )
+
+    def _add_unknown_resultant_magnitude_steps(
+        self,
+        known_vec: _Vector,
+        unknown_vec: _VectorWithUnknowns,
+        resultant: _VectorWithUnknowns,  # noqa: ARG002
+        resultant_name: str,
+        F_unknown_mag: float,
+        theta: float,
+        base_angle_rad: float,  # noqa: ARG002
+        FR_mag: float,
+        FR_angle: float,  # noqa: ARG002
+        unit,
+    ) -> None:
+        """Add solution steps for unknown resultant magnitude problem.
+
+        This problem type has:
+        - One fully known vector (F_B)
+        - One vector with known magnitude but unknown angle (F_A)
+        - Resultant with known direction but unknown magnitude (F_R)
+
+        Following textbook Problem 2-12 solution:
+        1. Law of Sines to find θ: sin(90° - θ)/|F_B| = sin(50°)/|F_A|
+        2. Calculate interior angle φ = 180° - (90° - θ) - 50°
+        3. Law of Cosines for F_R: F_R = sqrt(F_A² + F_B² - 2·F_A·F_B·cos(φ))
+        """
+        unit_symbol, si_factor = _get_unit_info(unit)
+        if not unit_symbol:
+            unit_symbol = "N"
+
+        # Get vector names
+        known_name = known_vec.name or "F_B"
+        unknown_name = unknown_vec.name or "F_A"
+        unknown_wrt = getattr(unknown_vec, '_original_wrt', '+x')
+
+        # Get angle info
+        known_mag, _ = _magnitude_and_angle_from_coords(known_vec._coords)
+        known_original_angle = getattr(known_vec, '_original_angle', 0)
+        known_wrt = getattr(known_vec, '_original_wrt', '+x')
+
+        # Convert values for display
+        F_unknown_display = _to_display_value(F_unknown_mag, si_factor)
+        FR_display = _to_display_value(FR_mag, si_factor)
+        F_known_display = _to_display_value(known_mag, si_factor)
+
+        # Compute the angles for the force triangle
+        theta_deg = math.degrees(theta)  # Angle of F_A from its wrt reference
+        base_angle_deg = math.degrees(base_angle_rad)
+
+        # The angle at vertex opposite to F_R in the force triangle
+        # For Problem 2-12: F_B is at 40° from -y, which means 50° from +x
+        # F_A is at θ from +y (90° - θ from +x)
+        # The angle between F_A direction and horizontal (+x) is (90° - θ)
+
+        # Known vector angle from +x (standard angle)
+        known_std_angle_deg = math.degrees(math.atan2(known_vec._coords[1], known_vec._coords[0]))
+        if known_std_angle_deg < 0:
+            known_std_angle_deg += 360
+
+        # The interior angle at the vertex where F_A and F_B meet
+        # This is the supplement of the angle between F_A and F_B directions
+        # For F_R along +x, the angle from F_B to +x is (90° - known_original_angle) if known_wrt is -y
+        if known_wrt == "-y":
+            angle_FB_to_horizontal = 90 - known_original_angle  # 90° - 40° = 50° for Problem 2-12
+        elif known_wrt == "+y":
+            angle_FB_to_horizontal = 90 + known_original_angle
+        elif known_wrt == "+x":
+            angle_FB_to_horizontal = known_original_angle
+        elif known_wrt == "-x":
+            angle_FB_to_horizontal = 180 - known_original_angle
+        else:
+            angle_FB_to_horizontal = known_original_angle
+
+        # The angle ∠(F_R, F_A) in the force triangle - this is (90° - θ) for Problem 2-12
+        # because F_R is along +x and F_A is at angle θ from +y
+        angle_FR_FA = 90 - abs(theta_deg)  # This is the angle at the F_R vertex of the triangle
+
+        # The angle ∠(F_B, F_R) - angle from F_B to the horizontal (F_R direction)
+        # For Problem 2-12: F_B is at 40° from -y, which means 50° from +x
+        angle_FB_FR = angle_FB_to_horizontal
+
+        # Step 1: Calculate ∠(F_B, F_R) - the angle between F_B and the resultant direction
+        # For F_B at 40° from -y and F_R along +x:
+        # ∠(-y, +x) = 90° in standard coordinates
+        # ∠(F_B, F_R) = ∠(-y, +x) - ∠(-y, F_B) = 90° - 40° = 50°
+        self._add_solution_step(
+            SolutionStep(
+                target=f"∠({known_name},{resultant_name})",
+                method="Angle Calculation",
+                description=f"Calculate the angle between {known_name} and {resultant_name}",
+                substitution=(
+                    f"∠({known_name},{resultant_name}) = ∠({known_wrt},x) - ∠({known_wrt},{known_name})\n"
+                    f"= 90° - {known_original_angle:.0f}°\n"
+                    f"= {angle_FB_FR:.0f}°"
+                ),
+            )
+        )
+
+        # Step 2: Law of Sines to find ∠(F_R, F_A) and thus θ
+        # sin(∠(F_R,F_A))/|F_B| = sin(∠(F_B,F_R))/|F_A|
+        self._add_solution_step(
+            SolutionStep(
+                target=f"∠({resultant_name},{unknown_name}) using Eq 1",
+                method="Law of Sines",
+                description=f"Use Law of Sines to find ∠({resultant_name},{unknown_name})",
+                equation_for_list=f"sin(∠({resultant_name},{unknown_name}))/|{known_name}| = sin(∠({known_name},{resultant_name}))/|{unknown_name}|",
+                substitution=(
+                    f"∠({resultant_name},{unknown_name}) = sin⁻¹({F_known_display:.0f} · sin({angle_FB_FR:.0f}°)/{F_unknown_display:.0f})\n"
+                    f"= {angle_FR_FA:.1f}°"
+                ),
+            )
+        )
+
+        # Step 3: Calculate θ (the angle of F_A from its reference axis)
+        self._add_solution_step(
+            SolutionStep(
+                target=f"∠({unknown_wrt},{unknown_name})",
+                method="Angle Calculation",
+                description=f"Calculate θ from ∠({resultant_name},{unknown_name})",
+                substitution=(
+                    f"θ = 90° - ∠({resultant_name},{unknown_name})\n"
+                    f"= 90° - {angle_FR_FA:.1f}°\n"
+                    f"= {abs(theta_deg):.1f}°"
+                ),
+            )
+        )
+
+        # Step 4: Calculate interior angle ∠(F_A, F_B)
+        # φ = 180° - ∠(F_R,F_A) - ∠(F_B,F_R)
+        phi_deg = 180 - angle_FR_FA - angle_FB_FR
+        self._add_solution_step(
+            SolutionStep(
+                target=f"∠({unknown_name},{known_name})",
+                method="Triangle Geometry",
+                description="Calculate the interior angle of the force triangle",
+                substitution=(
+                    f"∠({unknown_name},{known_name}) = 180° - ∠({resultant_name},{unknown_name}) - ∠({known_name},{resultant_name})\n"
+                    f"= 180° - {angle_FR_FA:.1f}° - {angle_FB_FR:.0f}°\n"
+                    f"= {phi_deg:.1f}°"
+                ),
+            )
+        )
+
+        # Step 5: Law of Cosines for F_R
+        # F_R = sqrt(F_A² + F_B² - 2·F_A·F_B·cos(φ))
+        self._add_solution_step(
+            SolutionStep(
+                target=f"|{resultant_name}| using Eq 2",
+                method="Law of Cosines",
+                description=f"Calculate |{resultant_name}| using Law of Cosines",
+                equation_for_list=f"|{resultant_name}|² = |{unknown_name}|² + |{known_name}|² - 2·|{unknown_name}|·|{known_name}|·cos(∠({unknown_name},{known_name}))",
+                substitution=(
+                    f"|{resultant_name}| = sqrt(({F_unknown_display:.0f})² + ({F_known_display:.0f})² - "
+                    f"2({F_unknown_display:.0f})({F_known_display:.0f})cos({phi_deg:.1f}°))\n"
+                    f"= {FR_display:.1f}\\ \\text{{{unit_symbol}}}"
+                ),
             )
         )
 
@@ -869,7 +1260,7 @@ class ParallelogramLawProblem(Problem):
                 substitution=(
                     f"|{unknown_name}| = sqrt(({F_known_display:.0f})² + ({FR_display:.0f})² - "
                     f"2({F_known_display:.0f})({FR_display:.0f})cos({gamma_deg:.0f}°))\n"
-                    f"= {F_unknown_display:.1f} {unit_symbol}"
+                    f"= {F_unknown_display:.1f}\\ \\text{{{unit_symbol}}}"
                 ),
             )
         )
@@ -884,13 +1275,54 @@ class ParallelogramLawProblem(Problem):
             )
         )
 
-        FR_angle_for_display = 90 + resultant_original_angle if resultant_original_angle is not None else math.degrees(FR_angle)
+        # Step 4: Final angle calculation - be smart about how we show this
+        # Case 1: If resultant is along an axis (angle ≈ 0°), simplify the display
+        # Case 2: Otherwise show the full calculation
+        FR_angle_deg = math.degrees(FR_angle)
+
+        # Determine the proper angle of resultant wrt its reference axis
+        if resultant_original_wrt == "+x":
+            FR_angle_from_ref = resultant_original_angle if resultant_original_angle is not None else FR_angle_deg
+        elif resultant_original_wrt == "+y":
+            FR_angle_from_ref = 90 + (resultant_original_angle if resultant_original_angle is not None else FR_angle_deg - 90)
+        elif resultant_original_wrt == "-x":
+            FR_angle_from_ref = 180 + (resultant_original_angle if resultant_original_angle is not None else FR_angle_deg - 180)
+        elif resultant_original_wrt == "-y":
+            FR_angle_from_ref = 270 + (resultant_original_angle if resultant_original_angle is not None else FR_angle_deg - 270)
+        else:
+            FR_angle_from_ref = FR_angle_deg
+
+        # Check if resultant is along the +x axis (angle from +x ≈ 0°)
+        # This is only true if:
+        # 1. The reference is +x and the angle from +x is ≈ 0, OR
+        # 2. The reference is -x and the angle from -x is ≈ 0 (i.e., along -x, but we focus on +x), OR
+        # 3. The standard angle from +x is ≈ 0
+        resultant_along_x_axis = (
+            (resultant_original_wrt == "+x" and abs(resultant_original_angle or 0) < 0.5) or
+            abs(FR_angle_deg) < 0.5 or abs(FR_angle_deg - 360) < 0.5
+        )
+
+        if resultant_along_x_axis:
+            # Resultant is along the +x axis - simplify the display
+            # ∠(x, F_A) = ∠(F_R, F_A) since F_R is along +x
+            substitution = (
+                f"∠(x,{unknown_name}) = ∠({resultant_name},{unknown_name})  \\text{{(since }} {resultant_name} \\text{{ is along +x)}}\n"
+                f"= {alpha_deg:.1f}°"
+            )
+        else:
+            # General case: show the angle addition
+            substitution = (
+                f"∠(x,{unknown_name}) = ∠(x,{resultant_name}) - ∠({resultant_name},{unknown_name})\n"
+                f"= {FR_angle_from_ref:.1f}° - {alpha_deg:.1f}°\n"
+                f"= {F_unknown_angle_deg:.1f}°"
+            )
+
         self._add_solution_step(
             SolutionStep(
                 target=f"∠(x,{unknown_name}) with respect to +x",
                 method="Angle Addition",
                 description=f"Calculate {unknown_name} direction relative to +x axis",
-                substitution=(f"∠(x,{unknown_name}) = ∠(x,{resultant_name}) - ∠({resultant_name},{unknown_name})\n= {FR_angle_for_display:.1f}° - {alpha_deg:.1f}°\n= {F_unknown_angle_deg:.1f}°"),
+                substitution=substitution,
             )
         )
 
@@ -1042,6 +1474,7 @@ class ParallelogramLawProblem(Problem):
                 law_of_sines_name = f1_name
                 phi_deg = interior_B if angle_f2_to_fr >= 0 else -interior_B
                 theta_ref_deg = theta2_std
+                theta_ref_display = theta2_display  # Use original angle for display
                 axis_for_step4 = axis2
                 force_for_step4 = f2_name
             else:
@@ -1050,6 +1483,7 @@ class ParallelogramLawProblem(Problem):
                 law_of_sines_name = f2_name
                 phi_deg = interior_angle_deg if angle_f1_to_fr >= 0 else -interior_angle_deg
                 theta_ref_deg = theta1_std
+                theta_ref_display = theta1_display  # Use original angle for display
                 axis_for_step4 = axis1
                 force_for_step4 = f1_name
         else:
@@ -1058,6 +1492,7 @@ class ParallelogramLawProblem(Problem):
             law_of_sines_force = F2_display
             law_of_sines_name = f2_name
             theta_ref_deg = np.degrees(theta1)
+            theta_ref_display = theta1_display  # Use original angle for display
             axis_for_step4 = axis1
             force_for_step4 = f1_name
             use_f1_approach = False
@@ -1114,12 +1549,34 @@ class ParallelogramLawProblem(Problem):
                     f"= {display_angle:.1f}°"
                 )
         else:
+            # Calculate intermediate sum using standard angles for correctness check
             intermediate_sum = theta_ref_deg + phi_deg
-            if abs(intermediate_sum - final_angle) > 0.1 and abs(intermediate_sum + 360 - final_angle) > 0.1 and abs(intermediate_sum - 360 - final_angle) > 0.1:
-                substitution = f"∠({ref_axis},{resultant_name}) = ∠({axis_for_step4},{force_for_step4}) + ∠({force_for_step4},{resultant_name})\n= {theta_ref_deg:.1f}° + {phi_deg:.1f}°\n= {intermediate_sum:.1f}°\n= {display_angle:.1f}°"
+            # But display using original problem-defined angle
+            display_intermediate_sum = theta_ref_display + phi_deg
+
+            # Check if the force's reference axis is different from the output reference axis
+            # In that case, we need to include the angle from +x to the force's reference axis
+            axis_for_step4_normalized = axis_for_step4.lower().replace(" ", "")
+            needs_axis_offset = axis_for_step4_normalized not in ("x", "+x")
+
+            if needs_axis_offset:
+                # Calculate angle from +x to the force's reference axis
+                axis_angles_from_x = {"+x": 0, "x": 0, "+y": 90, "y": 90, "-x": 180, "-y": -90}
+                # Handle with or without + prefix
+                axis_key = axis_for_step4_normalized if axis_for_step4_normalized.startswith("-") else f"+{axis_for_step4_normalized}" if not axis_for_step4_normalized.startswith("+") else axis_for_step4_normalized
+                axis_offset = axis_angles_from_x.get(axis_key, 0)
+
+                # Show expanded formula: ∠(x, F_R) = ∠(x, -y) + ∠(-y, F_B) + ∠(F_B, F_R)
+                substitution = (
+                    f"∠({ref_axis},{resultant_name}) = ∠({ref_axis},{axis_for_step4}) + ∠({axis_for_step4},{force_for_step4}) + ∠({force_for_step4},{resultant_name})\n"
+                    f"= {axis_offset:.1f}° + {theta_ref_display:.1f}° + {phi_deg:.1f}°\n"
+                    f"= {display_angle:.1f}°"
+                )
+            elif abs(intermediate_sum - final_angle) > 0.1 and abs(intermediate_sum + 360 - final_angle) > 0.1 and abs(intermediate_sum - 360 - final_angle) > 0.1:
+                substitution = f"∠({ref_axis},{resultant_name}) = ∠({axis_for_step4},{force_for_step4}) + ∠({force_for_step4},{resultant_name})\n= {theta_ref_display:.1f}° + {phi_deg:.1f}°\n= {display_intermediate_sum:.1f}°\n= {display_angle:.1f}°"
             else:
                 substitution = (
-                    f"∠({ref_axis},{resultant_name}) = ∠({axis_for_step4},{force_for_step4}) + ∠({force_for_step4},{resultant_name})\n= {theta_ref_deg:.1f}° + {phi_deg:.1f}°\n= {display_angle:.1f}°"
+                    f"∠({ref_axis},{resultant_name}) = ∠({axis_for_step4},{force_for_step4}) + ∠({force_for_step4},{resultant_name})\n= {theta_ref_display:.1f}° + {phi_deg:.1f}°\n= {display_angle:.1f}°"
                 )
 
         self._add_solution_step(

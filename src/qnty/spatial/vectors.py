@@ -1164,7 +1164,7 @@ def create_vector_resultant_cartesian(
 
 def create_vector_resultant_polar(
     *vectors: _Vector,
-    magnitude: float,
+    magnitude: "float | EllipsisType",
     angle: float,
     unit: Unit | str | None = None,
     angle_unit: str = "degree",
@@ -1172,21 +1172,21 @@ def create_vector_resultant_polar(
     name: str = "F_R",
 ) -> _VectorWithUnknowns:
     """
-    Create a known resultant constraint using polar coordinates for inverse solving.
+    Create a resultant constraint using polar coordinates for inverse solving.
 
-    This function defines a known resultant vector (magnitude, angle) that equals the sum
-    of component vectors with unknown magnitudes. The solver will use this
-    constraint to solve for the unknown magnitudes.
+    This function defines a resultant vector that equals the sum of component vectors.
+    The magnitude can be known (float) or unknown (...). The angle specifies the
+    direction of the resultant.
 
     This is the polar equivalent of create_vector_resultant_cartesian:
     - create_vector_resultant: unknown resultant = sum of known vectors
     - create_vector_resultant_cartesian: known resultant (u, v, w) = sum of unknown vectors
-    - create_vector_resultant_polar: known resultant (magnitude, angle) = sum of unknown vectors
+    - create_vector_resultant_polar: resultant (magnitude, angle) = sum of unknown vectors
 
     Args:
-        *vectors: Component vectors with unknown magnitudes (from create_vector_along with ...)
-        magnitude: Magnitude of the known resultant
-        angle: Angle of the known resultant (measured CCW from reference axis)
+        *vectors: Component vectors (may have unknown magnitudes or angles)
+        magnitude: Magnitude of the resultant, or ... for unknown
+        angle: Angle of the resultant (measured CCW from reference axis)
         unit: Unit for the resultant magnitude
         angle_unit: Angle unit ("degree" or "radian")
         wrt: Reference axis for angle measurement ("+x", "-x", "+y", "-y", or custom like "+u", "+v")
@@ -1250,7 +1250,15 @@ def create_vector_resultant_polar(
         # Get unit from first vector
         resolved_unit = vectors[0]._unit
 
-    mag_val = float(magnitude)
+    # Check for unknown magnitude
+    has_unknown_magnitude = magnitude is ...
+
+    if has_unknown_magnitude:
+        # Unknown magnitude with known direction
+        # We can compute the unit direction vector from the angle
+        mag_val = 1.0  # Use unit magnitude for direction computation
+    else:
+        mag_val = float(magnitude)
 
     # Check if this is a standard axis or a custom axis
     if wrt_lower in standard_axis_angles:
@@ -1258,7 +1266,7 @@ def create_vector_resultant_polar(
         base_angle_rad = math.radians(standard_axis_angles[wrt_lower])
         total_angle_rad = base_angle_rad + angle_rad
 
-        # Compute Cartesian components from polar
+        # Compute Cartesian components from polar (unit direction if unknown magnitude)
         u = mag_val * math.cos(total_angle_rad)
         v = mag_val * math.sin(total_angle_rad)
         w = 0.0
@@ -1269,29 +1277,42 @@ def create_vector_resultant_polar(
         v = 0.0
         w = 0.0
 
-    # Create with the known resultant values (no unknowns in the resultant itself)
-    # But store the component vectors for the solver to set up equilibrium equations
+    # Determine unknowns dict based on what's unknown
+    if has_unknown_magnitude:
+        unknowns = {"magnitude": "magnitude"}
+    else:
+        unknowns = {}
+
+    # Create with the resultant values
+    # If magnitude is unknown, components are direction only (unit vector scaled)
     result = _VectorWithUnknowns(
         u=u,
         v=v,
         w=w,
         unit=resolved_unit,
-        unknowns={},  # Resultant values are known
+        unknowns=unknowns,
         component_vectors=list(vectors),
         name=name,
     )
     result.is_resultant = True
-    result.is_known = True  # The resultant itself is known
+    result.is_known = not has_unknown_magnitude  # Only known if magnitude is known
     result._is_constraint = True  # Mark this as a constraint for inverse solving
 
     # Store original angle and reference for reporting
     result._original_angle = float(angle)
     result._original_wrt = wrt
 
+    # Store polar-specific attributes for solving
+    if has_unknown_magnitude:
+        result._polar_magnitude = None
+    else:
+        result._polar_magnitude = mag_val
+    result._polar_angle_rad = angle_rad
+
     # For custom axes, mark as needing coordinate system resolution
     if wrt_lower not in standard_axis_angles:
         result._needs_coordinate_system = True
-        result._deferred_magnitude = mag_val
+        result._deferred_magnitude = mag_val if not has_unknown_magnitude else None
         result._deferred_angle_rad = angle_rad
 
     return result

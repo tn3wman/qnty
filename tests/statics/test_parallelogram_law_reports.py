@@ -29,6 +29,12 @@ from tests.statics._problem_fixtures import (
     Chapter2Problem4,
     Chapter2Problem5,
     Chapter2Problem6,
+    Chapter2Problem7,
+    Chapter2Problem8,
+    Chapter2Problem9,
+    Chapter2Problem10,
+    Chapter2Problem11,
+    Chapter2Problem12,
 )
 
 # =============================================================================
@@ -45,6 +51,12 @@ PROBLEMS_WITH_GOLDEN_FILES = [
     Chapter2Problem4,
     Chapter2Problem5,
     Chapter2Problem6,
+    Chapter2Problem7,
+    Chapter2Problem8,
+    Chapter2Problem9,
+    Chapter2Problem10,
+    Chapter2Problem11,
+    Chapter2Problem12,
 ]
 
 
@@ -111,7 +123,7 @@ def assert_reports_match(actual: str, expected: str, format_name: str = "report"
         expected_lines = expected_normalized.splitlines()
 
         first_diff_line = None
-        for i, (a, e) in enumerate(zip(actual_lines, expected_lines)):
+        for i, (a, e) in enumerate(zip(actual_lines, expected_lines, strict=False)):
             if a != e:
                 first_diff_line = i + 1
                 break

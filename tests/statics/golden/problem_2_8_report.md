@@ -1,4 +1,4 @@
-# Engineering Calculation Report: Problem 2-6
+# Engineering Calculation Report: Problem 2-8
 
 **Generated:** {{GENERATED_DATETIME}}
 
@@ -8,7 +8,6 @@
 
 | Vector | $F_u$ (N) | $F_v$ (N) | $\|\vec{F}\|$ (N) | $\theta$ (deg) | Reference |
 | :--- | ---: | ---: | ---: | ---: | :--- |
-| $\vec{F_1}$ | 2070.6 | 2928.2 | 4000.0 | -30.0 | +v |
 | $\vec{F_2}$ | 6000.0 | -3105.8 | 6000.0 | -30.0 | +u |
 
 </div>
@@ -19,53 +18,49 @@
 
 | Vector | $F_u$ (N) | $F_v$ (N) | $\|\vec{F}\|$ (N) | $\theta$ (deg) | Reference |
 | :--- | ---: | ---: | ---: | ---: | :--- |
-| $\vec{F_R}$ | ? | ? | ? | ? | +u |
+| $\vec{F_{2u}}$ | ? | ? | ? | 0.0 | +u |
+| $\vec{F_{2v}}$ | ? | ? | ? | 0.0 | +v |
 
 </div>
 
 ## 3. Equations Used
 
-1. $|\vec{F_R}|^2 = |\vec{F_1}|^2 + |\vec{F_2}|^2 + 2 \cdot |\vec{F_1}| \cdot |\vec{F_2}| \cdot \cos(\angle(\vec{F_1}, \vec{F_2}))$
+1. $\frac{|\vec{F_{2u}}|}{\sin(\angle(\vec{F_{{2v}}}, \vec{F_{{2}}}))} = \frac{|\vec{F_{2}}|}{\sin(\angle(\vec{F_{{2u}}}, \vec{F_{{2v}}}))}$
 
-2. $\frac{\sin(\angle(\vec{F_2}, \vec{F_R}))}{|\vec{F_1}|} = \frac{\sin(\angle(\vec{F_1}, \vec{F_2}))}{|\vec{F_R}|}$
+2. $\frac{|\vec{F_{2v}}|}{\sin(\angle(\vec{F_{{2u}}}, \vec{F_{{2}}}))} = \frac{|\vec{F_{2}}|}{\sin(\angle(\vec{F_{{2u}}}, \vec{F_{{2v}}}))}$
 
 ## 4. Step-by-Step Solution
 
-**Step 1: Solve for $\angle(\vec{F_1}, \vec{F_2})$**
+**Step 1: Solve for triangle angles**
 
 $$
 \begin{aligned}
-\angle(\vec{F_1}, \vec{F_2}) &= 180^{\circ} - \angle(\vec{v}, \vec{u}) \\
-&= 180^{\circ} - 75^{\circ} \\
+\angle(\vec{F_{{2u}}}, \vec{F_{{2}}}) &= |\angle(\vec{u}, \vec{F_{{2u}}}) - \angle(\vec{u}, \vec{F_{{2}}})| \\
+&= |0^{\circ} - -30^{\circ}| \\
+&= 30^{\circ} \\
+\angle(\vec{F_{{2v}}}, \vec{F_{{2}}}) &= \angle(\vec{v}, \vec{u}) - |\angle(\vec{u}, \vec{F_{{2}}})| \\
+&= 75^{\circ} - 30^{\circ} \\
+&= 45^{\circ} \\
+\angle(\vec{F_{{2u}}}, \vec{F_{{2v}}}) &= 180^{\circ} - 30^{\circ} - 45^{\circ} \\
 &= 105^{\circ} \\
 \end{aligned}
 $$
 
-**Step 2: Solve for $|\vec{F_R}|$ using Eq 1**
+**Step 2: Solve for $|\vec{F_{{2u}}}|$ using Eq 1**
 
 $$
 \begin{aligned}
-|\vec{F_R}| &= \sqrt{(4000.0)^2 + (6000.0)^2 + 2(4000.0)(6000.0)\cos(105^{\circ})} \\
-&= 8026.4\ \text{N} \\
+|\vec{F_{2u}}| &= 6000  \cdot  \frac{\sin(45^{\circ})}{\sin(105^{\circ})} \\
+&= 6000\ \text{N} \\
 \end{aligned}
 $$
 
-**Step 3: Solve for $\angle(\vec{F_2}, \vec{F_R})$ using Eq 2**
+**Step 3: Solve for $|\vec{F_{{2v}}}|$ using Eq 2**
 
 $$
 \begin{aligned}
-\angle(\vec{F_2}, \vec{F_R}) &= \sin^{-1}(4000.0 \cdot \frac{\sin(105^{\circ})}{8026.4}) \\
-&= 28.8^{\circ} \\
-\end{aligned}
-$$
-
-**Step 4: Solve for $\angle(\vec{x}, \vec{F_R})$ with respect to +x**
-
-$$
-\begin{aligned}
-\angle(\vec{x}, \vec{F_R}) &= \angle(\vec{u}, \vec{F_2}) + \angle(\vec{F_2}, \vec{F_R}) \\
-&= -30.0^{\circ} + 28.8^{\circ} \\
-&= -1.2^{\circ} \\
+|\vec{F_{2v}}| &= 6000  \cdot  \frac{\sin(30^{\circ})}{\sin(105^{\circ})} \\
+&= 3106\ \text{N} \\
 \end{aligned}
 $$
 
@@ -75,7 +70,8 @@ $$
 
 | Vector | $F_u$ (N) | $F_v$ (N) | $\|\vec{F}\|$ (N) | $\theta$ (deg) | Reference |
 | :--- | ---: | ---: | ---: | ---: | :--- |
-| $\vec{F_R}$ | 8070.6 | -177.6 | 8026.4 | -1.2 | +u |
+| $\vec{F_{2u}}$ | 6000.0 | 0.0 | 6000.0 | 0.0 | +u |
+| $\vec{F_{2v}}$ | 0.0 | -3105.8 | 3105.8 | 0.0 | +v |
 
 </div>
 

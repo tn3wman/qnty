@@ -1,15 +1,15 @@
-# Engineering Calculation Report: Problem 2-6
+# Engineering Calculation Report: Problem 2-10
 
-**Generated:** {{GENERATED_DATETIME}}
+**Generated:** 2025-11-29 15:48:03
 
 ## 1. Known Variables
 
 <div align="center">
 
-| Vector | $F_u$ (N) | $F_v$ (N) | $\|\vec{F}\|$ (N) | $\theta$ (deg) | Reference |
+| Vector | $F_x$ (lbf) | $F_y$ (lbf) | $\|\vec{F}\|$ (lbf) | $\theta$ (deg) | Reference |
 | :--- | ---: | ---: | ---: | ---: | :--- |
-| $\vec{F_1}$ | 2070.6 | 2928.2 | 4000.0 | -30.0 | +v |
-| $\vec{F_2}$ | 6000.0 | -3105.8 | 6000.0 | -30.0 | +u |
+| $\vec{F_1}$ | 514.2 | 612.8 | 800.0 | -40.0 | +y |
+| $\vec{F_2}$ | 409.6 | -286.8 | 500.0 | -35.0 | +x |
 
 </div>
 
@@ -17,9 +17,9 @@
 
 <div align="center">
 
-| Vector | $F_u$ (N) | $F_v$ (N) | $\|\vec{F}\|$ (N) | $\theta$ (deg) | Reference |
+| Vector | $F_x$ (lbf) | $F_y$ (lbf) | $\|\vec{F}\|$ (lbf) | $\theta$ (deg) | Reference |
 | :--- | ---: | ---: | ---: | ---: | :--- |
-| $\vec{F_R}$ | ? | ? | ? | ? | +u |
+| $\vec{F_R}$ | ? | ? | ? | ? | +x |
 
 </div>
 
@@ -35,9 +35,11 @@
 
 $$
 \begin{aligned}
-\angle(\vec{F_1}, \vec{F_2}) &= 180^{\circ} - \angle(\vec{v}, \vec{u}) \\
-&= 180^{\circ} - 75^{\circ} \\
-&= 105^{\circ} \\
+\angle(\vec{F_1}, \vec{F_2}) &= |\angle(\vec{y}, \vec{F_1})| + \angle(\vec{-y}, \vec{F_2}) \\
+&= 40^{\circ} + (90^{\circ} - |\angle(\vec{x}, \vec{F_2})|) \\
+&= 40^{\circ} + (90^{\circ} - 35^{\circ}) \\
+&= 40^{\circ} + 55^{\circ} \\
+&= 95^{\circ} \\
 \end{aligned}
 $$
 
@@ -45,8 +47,8 @@ $$
 
 $$
 \begin{aligned}
-|\vec{F_R}| &= \sqrt{(4000.0)^2 + (6000.0)^2 + 2(4000.0)(6000.0)\cos(105^{\circ})} \\
-&= 8026.4\ \text{N} \\
+|\vec{F_R}| &= \sqrt{(800.0)^2 + (500.0)^2 + 2(800.0)(500.0)\cos(95^{\circ})} \\
+&= 979.7\ \text{lbf} \\
 \end{aligned}
 $$
 
@@ -54,8 +56,8 @@ $$
 
 $$
 \begin{aligned}
-\angle(\vec{F_2}, \vec{F_R}) &= \sin^{-1}(4000.0 \cdot \frac{\sin(105^{\circ})}{8026.4}) \\
-&= 28.8^{\circ} \\
+\angle(\vec{F_2}, \vec{F_R}) &= \sin^{-1}(800.0 \cdot \frac{\sin(95^{\circ})}{979.7}) \\
+&= 54.4^{\circ} \\
 \end{aligned}
 $$
 
@@ -63,9 +65,9 @@ $$
 
 $$
 \begin{aligned}
-\angle(\vec{x}, \vec{F_R}) &= \angle(\vec{u}, \vec{F_2}) + \angle(\vec{F_2}, \vec{F_R}) \\
-&= -30.0^{\circ} + 28.8^{\circ} \\
-&= -1.2^{\circ} \\
+\angle(\vec{x}, \vec{F_R}) &= \angle(\vec{x}, \vec{F_2}) + \angle(\vec{F_2}, \vec{F_R}) \\
+&= -35.0^{\circ} + 54.4^{\circ} \\
+&= 19.4^{\circ} \\
 \end{aligned}
 $$
 
@@ -73,9 +75,9 @@ $$
 
 <div align="center">
 
-| Vector | $F_u$ (N) | $F_v$ (N) | $\|\vec{F}\|$ (N) | $\theta$ (deg) | Reference |
+| Vector | $F_x$ (lbf) | $F_y$ (lbf) | $\|\vec{F}\|$ (lbf) | $\theta$ (deg) | Reference |
 | :--- | ---: | ---: | ---: | ---: | :--- |
-| $\vec{F_R}$ | 8070.6 | -177.6 | 8026.4 | -1.2 | +u |
+| $\vec{F_R}$ | 923.8 | 326.0 | 979.7 | 19.4 | +x |
 
 </div>
 
@@ -87,7 +89,7 @@ $$
 While every effort has been made to ensure the accuracy and reliability of the calculations provided, we do not guarantee that the information is complete, up-to-date, or suitable for any specific purpose. Users must independently verify the results and assume full responsibility for any decisions or actions taken based on its output. Use of this calculator is entirely at your own risk, and we expressly disclaim any liability for errors or omissions in the information provided.
 
 **Report Details:**
-- **Generated Date:** {{GENERATED_DATE}}
+- **Generated Date:** November 29, 2025
 - **Generated Using:** Qnty Library
 - **Version:** Beta (Independent verification required for production use)
 

@@ -181,7 +181,7 @@ class Chapter2Problem2:
             }
             step_2 = {
                 "target": "|F_1| using Eq 1",
-                "final_line": "= 959.8 N",
+                "final_line": "= 959.8\\ \\text{N}",
             }
             step_3 = {
                 "target": "∠(F_R,F_1) using Eq 2",
@@ -367,7 +367,6 @@ class Chapter2Problem6:
 
 class Chapter2Problem7:
     name = "Problem 2-7"
-    generate_debug_reports = True
     coordinate_system = pl.create_coord_angle_between(
         "u", "v", angle_between=75
     )
@@ -385,7 +384,6 @@ class Chapter2Problem7:
 
 class Chapter2Problem8:
     name = "Problem 2-8"
-    generate_debug_reports = True
     coordinate_system = pl.create_coord_angle_between(
         "u", "v", angle_between=75
     )
@@ -402,28 +400,22 @@ class Chapter2Problem8:
         F_2 = pl.create_vector_polar(magnitude=6000, unit="N", angle=-30, wrt="+u")
 
 class Chapter2Problem9:
-    """
-    If the resultant force acting on the support is to be 1200 lb, directed horizontally to the right,
-    determine the force F in rope A and the corresponding angle theta.
-    """
     name = "Problem 2-9"
-
     F_A = pl.create_vector_polar(magnitude=..., unit="lbf", angle=..., wrt="+x")
-    F_B = pl.create_vector_polar(magnitude=900, unit="lbf", angle=330, wrt="+x")
-    F_R = pl.create_vector_resultant_polar(F_A, F_B, magnitude=1200, unit="lbf", angle=0, wrt="+x")
+    F_B = pl.create_vector_polar(magnitude=900, unit="lbf", angle=60, wrt="-y")
+    F_R = pl.create_vector_resultant_polar(
+        F_A, F_B,
+        magnitude=1200, unit="lbf", angle=0, wrt="+x"
+    )
 
     class expected:
         F_A = pl.create_vector_polar(magnitude=615.94, unit="lbf", angle=46.936, wrt="+x")
-        F_B = pl.create_vector_polar(magnitude=900, unit="lbf", angle=330, wrt="+x")
+        F_B = pl.create_vector_polar(magnitude=900, unit="lbf", angle=60, wrt="-y")
         F_R = pl.create_vector_polar(magnitude=1200, unit="lbf", angle=0, wrt="+x")
 
 class Chapter2Problem10:
-    """
-    Determine the magnitude of the resultant force and its direction,
-    measured counterclockwise from the positive x axis.
-    """
     name = "Problem 2-10"
-
+    generate_debug_reports = False
     F_1 = pl.create_vector_polar(magnitude=800, unit="lbf", angle=-40, wrt="+y")
     F_2 = pl.create_vector_polar(magnitude=500, unit="lbf", angle=-35, wrt="+x")
     F_R = pl.create_vector_resultant(F_1, F_2)
@@ -434,16 +426,11 @@ class Chapter2Problem10:
         F_R = pl.create_vector_polar(magnitude=979.655, unit="lbf", angle=19.440, wrt="+x")
 
 class Chapter2Problem11:
-    """
-    The plate is subjected to the two forces at A and B as shown. If theta = 60°,
-    determine the magnitude of the resultant of these two forces and its direction
-    measured clockwise from the horizontal.
-    """
     name = "Problem 2-11"
-
+    generate_debug_reports = False
     F_A = pl.create_vector_polar(magnitude=8000, unit="N", angle=-60, wrt="+y")
     F_B = pl.create_vector_polar(magnitude=6000, unit="N", angle=40, wrt="-y")
-    F_R = pl.create_vector_resultant(F_A, F_B)
+    F_R = pl.create_vector_resultant(F_A, F_B, angle_dir="cw")
 
     class expected:
         F_A = pl.create_vector_polar(magnitude=8000, unit="N", angle=-60, wrt="+y")
@@ -451,25 +438,19 @@ class Chapter2Problem11:
         F_R = pl.create_vector_polar(magnitude=10800, unit="N", angle=-3.16, wrt="+x")
 
 class Chapter2Problem12:
-    """
-    Determine the angle of theta for connecting member A to the plate so that the
-    resultant force of F_A and F_B is directed horizontally to the right. Also, what is
-    the magnitude of the resultant force?
+    name = "Problem 2-12"
+    generate_debug_reports = False
+    F_A = pl.create_vector_polar(magnitude=8000, unit="N", angle=..., wrt="+y")
+    F_B = pl.create_vector_polar(magnitude=6000, unit="N", angle=40, wrt="-y")
+    F_R = pl.create_vector_resultant_polar(
+        F_A, F_B,
+        magnitude=..., unit="N", angle=0, wrt="+x"
+    )
 
-    NOTE: This problem has a resultant with unknown magnitude but known angle (0° wrt +x).
-    The current API may need extension to support this case. Skipped for now.
-    """
-    pass
-
-    # TODO: Implement when API supports unknown magnitude with known angle for resultant
-    # F_A = pl.create_vector_polar(magnitude=8000, unit="N", angle=..., wrt="+y")
-    # F_B = pl.create_vector_polar(magnitude=6000, unit="N", angle=40, wrt="-y")
-    # F_R = pl.create_vector_resultant_polar(F_A, F_B, magnitude=..., unit="N", angle=0, wrt="+x")
-    #
-    # class expected:
-    #     F_A = pl.create_vector_polar(magnitude=8000, unit="N", angle=-54.9, wrt="+y")
-    #     F_B = pl.create_vector_polar(magnitude=6000, unit="N", angle=40, wrt="-y")
-    #     F_R = pl.create_vector_polar(magnitude=10400, unit="N", angle=0, wrt="+x")
+    class expected:
+        F_A = pl.create_vector_polar(magnitude=8000, unit="N", angle=-54.9, wrt="+y")
+        F_B = pl.create_vector_polar(magnitude=6000, unit="N", angle=40, wrt="-y")
+        F_R = pl.create_vector_polar(magnitude=10400, unit="N", angle=0, wrt="+x")
 
 class Chapter2Problem13:
     """
@@ -874,11 +855,10 @@ PARALLELOGRAM_LAW_PROBLEMS = [
     Chapter2Problem6,
     Chapter2Problem7,
     Chapter2Problem8,
-
     Chapter2Problem9,
     Chapter2Problem10,
     Chapter2Problem11,
-    # Problem 12: Unknown resultant magnitude with known angle - not yet supported
+    Chapter2Problem12,
     # Problems 13-14: Non-orthogonal coordinate systems (40° between axes) - not yet supported
     Chapter2Problem15,
     # Problem 16: Force-relative reference (wrt="+F_R") - not yet supported
@@ -911,10 +891,10 @@ ALL_PROBLEM_CLASSES = [
     Chapter2Problem6,
     Chapter2Problem7,
     Chapter2Problem8,
-
     Chapter2Problem9,
     Chapter2Problem10,
     Chapter2Problem11,
+    Chapter2Problem12,
     Chapter2Problem15,
     Chapter2Problem17,
     Chapter2Problem18,

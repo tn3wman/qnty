@@ -285,9 +285,8 @@ def compute_angle_between_display(
             f"= {result_deg:.0f}°"
         )
 
-    # Case 2: Custom coordinate system - show using standard angles from +x
-    # The result_deg is the interior angle of the force triangle, which is 180° - gamma
-    # where gamma is the angle between the vectors
+    # Case 2: Custom coordinate system - show using axis relationships
+    # Use the coordinate system's axis angles to provide meaningful geometric explanations
     if is_custom_coord_sys:
         import math
         axis1_label = format_axis_ref(wrt1)
@@ -297,12 +296,64 @@ def compute_angle_between_display(
         raw_diff = abs(theta1_std_deg - theta2_std_deg)
         gamma = raw_diff if raw_diff <= 180 else 360 - raw_diff
 
-        # If we have coordinate system info, check for special case where both vectors
-        # have the same angle relative to their respective axes
+        # Get coordinate system info for smart display
         if coordinate_system is not None and hasattr(coordinate_system, 'axis1_angle') and hasattr(coordinate_system, 'axis2_angle'):
             axis_angle_deg = abs(math.degrees(coordinate_system.axis2_angle - coordinate_system.axis1_angle))
 
-            # Special case: both input angles are equal, so angle between vectors = angle between axes
+            # Determine which axis each vector references
+            wrt1_stripped = wrt1.lower().lstrip('+-')
+            wrt2_stripped = wrt2.lower().lstrip('+-')
+
+            # Get absolute values of input angles for cleaner display
+            abs_theta1 = abs(theta1_input_deg)
+            abs_theta2 = abs(theta2_input_deg)
+
+            # Case 2a: One vector is along its axis (angle=0), other has an offset from a different axis
+            # This is the common decomposition case like F_2u along +u and F_2 at -30° from +u
+            if abs(theta1_input_deg) < 0.5 and wrt1_stripped != wrt2_stripped:
+                # vec1 is along its axis, vec2 has an offset from a different axis
+                # The angle is: |angle_between_axes - vec2_offset| or |angle_between_axes + vec2_offset|
+                if abs(axis_angle_deg - abs_theta2 - result_deg) < 0.5:
+                    return (
+                        f"∠({vec1_name},{vec2_name}) = ∠({axis1_label},{axis2_label}) - |∠({axis2_label},{vec2_name})|\n"
+                        f"= {axis_angle_deg:.0f}° - {abs_theta2:.0f}°\n"
+                        f"= {result_deg:.0f}°"
+                    )
+                elif abs(axis_angle_deg + abs_theta2 - result_deg) < 0.5:
+                    return (
+                        f"∠({vec1_name},{vec2_name}) = ∠({axis1_label},{axis2_label}) + |∠({axis2_label},{vec2_name})|\n"
+                        f"= {axis_angle_deg:.0f}° + {abs_theta2:.0f}°\n"
+                        f"= {result_deg:.0f}°"
+                    )
+                elif abs(abs_theta2 - axis_angle_deg - result_deg) < 0.5:
+                    return (
+                        f"∠({vec1_name},{vec2_name}) = |∠({axis2_label},{vec2_name})| - ∠({axis1_label},{axis2_label})\n"
+                        f"= {abs_theta2:.0f}° - {axis_angle_deg:.0f}°\n"
+                        f"= {result_deg:.0f}°"
+                    )
+
+            elif abs(theta2_input_deg) < 0.5 and wrt1_stripped != wrt2_stripped:
+                # vec2 is along its axis, vec1 has an offset from a different axis
+                if abs(axis_angle_deg - abs_theta1 - result_deg) < 0.5:
+                    return (
+                        f"∠({vec1_name},{vec2_name}) = ∠({axis1_label},{axis2_label}) - |∠({axis1_label},{vec1_name})|\n"
+                        f"= {axis_angle_deg:.0f}° - {abs_theta1:.0f}°\n"
+                        f"= {result_deg:.0f}°"
+                    )
+                elif abs(axis_angle_deg + abs_theta1 - result_deg) < 0.5:
+                    return (
+                        f"∠({vec1_name},{vec2_name}) = ∠({axis1_label},{axis2_label}) + |∠({axis1_label},{vec1_name})|\n"
+                        f"= {axis_angle_deg:.0f}° + {abs_theta1:.0f}°\n"
+                        f"= {result_deg:.0f}°"
+                    )
+                elif abs(abs_theta1 - axis_angle_deg - result_deg) < 0.5:
+                    return (
+                        f"∠({vec1_name},{vec2_name}) = |∠({axis1_label},{vec1_name})| - ∠({axis1_label},{axis2_label})\n"
+                        f"= {abs_theta1:.0f}° - {axis_angle_deg:.0f}°\n"
+                        f"= {result_deg:.0f}°"
+                    )
+
+            # Case 2b: Both vectors have the same angle relative to their respective axes
             # Show directly as 180° - axis_angle to get the interior angle
             if abs(theta1_input_deg - theta2_input_deg) < 0.5 and abs(axis_angle_deg - gamma) < 0.5:
                 return (
@@ -311,12 +362,28 @@ def compute_angle_between_display(
                     f"= {result_deg:.0f}°"
                 )
 
-        # General case: show using standard angles from +x
-        return (
-            f"∠({vec1_name},{vec2_name}) = 180° - |{theta1_std_deg:.0f}° - ({theta2_std_deg:.0f}°)|\n"
-            f"= 180° - {gamma:.0f}°\n"
-            f"= {result_deg:.0f}°"
-        )
+            # Case 2c: Same axis - simple difference
+            if wrt1_stripped == wrt2_stripped:
+                return (
+                    f"∠({vec1_name},{vec2_name}) = |∠({axis1_label},{vec1_name}) - ∠({axis1_label},{vec2_name})|\n"
+                    f"= |{theta1_input_deg:.0f}° - {theta2_input_deg:.0f}°|\n"
+                    f"= {result_deg:.0f}°"
+                )
+
+        # Fallback: show using angle between vectors in the triangle
+        # For force triangles, the interior angle is 180° - gamma only when dealing with parallelogram law
+        # For decomposition triangles, the interior angle may be gamma directly
+        if abs(gamma - result_deg) < 0.5:
+            return (
+                f"∠({vec1_name},{vec2_name}) = |{theta1_std_deg:.0f}° - {theta2_std_deg:.0f}°|\n"
+                f"= {result_deg:.0f}°"
+            )
+        else:
+            return (
+                f"∠({vec1_name},{vec2_name}) = 180° - |{theta1_std_deg:.0f}° - {theta2_std_deg:.0f}°|\n"
+                f"= 180° - {gamma:.0f}°\n"
+                f"= {result_deg:.0f}°"
+            )
 
     # Case 3: Both vectors reference standard axes - need to find the relationship
     axis1_type, _ = get_axis_info(wrt1)
@@ -334,17 +401,7 @@ def compute_angle_between_display(
         )
 
     # Axes are orthogonal (one is x-type, one is y-type)
-    # Determine the geometric relationship between the angles
-
-    # Get the axis angles in standard form
-    axis_angles = {"+x": 0, "+y": 90, "-x": 180, "-y": 270}
-    axis1_std = axis_angles.get(wrt1.lower(), 0)
-    axis2_std = axis_angles.get(wrt2.lower(), 0)
-
-    # Calculate the angle between the two reference axes
-    axis_diff = abs(axis2_std - axis1_std)
-    if axis_diff > 180:
-        axis_diff = 360 - axis_diff
+    # Use geometric reasoning based on tip-to-tail vector placement
 
     # Determine how to express the calculation most naturally
     # Use absolute values of input angles for clarity
@@ -377,7 +434,7 @@ def compute_angle_between_display(
                 f"= {result_deg:.0f}°"
             )
 
-    # Check if 90 - angle relationship applies
+    # Check if 90 - angle relationship applies (single angle case)
     if abs(90 - abs_theta1 - result_deg) < 0.5:
         return (
             f"∠({vec1_name},{vec2_name}) = 90° - |∠({axis1_label},{vec1_name})|\n"
@@ -392,8 +449,121 @@ def compute_angle_between_display(
             f"= {result_deg:.0f}°"
         )
 
-    # Fallback: show using standard angles from +x
-    return (
-        f"∠({vec1_name},{vec2_name}) = |{theta1_std_deg:.0f}° - {theta2_std_deg:.0f}°|\n"
-        f"= {result_deg:.0f}°"
-    )
+    # Case 3a: Use opposite axis relationship for cleaner geometric explanation
+    # When vectors are on opposite sides relative to their reference axes,
+    # express using the complementary angle from the opposite axis
+    # Example: F_1 at -40° from +y and F_2 at -35° from +x
+    #   → F_2 is at 90° - 35° = 55° from -y
+    #   → ∠(F_1, F_2) = |∠(y, F_1)| + ∠(-y, F_2) = 40° + 55° = 95°
+
+    # Determine opposite axis labels
+    opposite_axis = {"+x": "-x", "-x": "+x", "+y": "-y", "-y": "+y"}
+    opp_axis1 = opposite_axis.get(wrt1.lower(), wrt1)
+    opp_axis2 = opposite_axis.get(wrt2.lower(), wrt2)
+    opp_axis1_label = format_axis_ref(opp_axis1)
+    opp_axis2_label = format_axis_ref(opp_axis2)
+
+    # Calculate angles from opposite axes
+    # If vec is at θ from +x, it's at (90° - θ) from +y or -y depending on direction
+    # More generally: angle from opposite axis = 90° - |original angle|
+    opp_theta1 = 90 - abs_theta1  # angle from opposite axis type
+    opp_theta2 = 90 - abs_theta2
+
+    # Check if using opposite axis for vec2 gives a clean formula
+    # ∠(axis1, vec1) + ∠(opp_axis1, vec2) = result
+    if abs(abs_theta1 + opp_theta2 - result_deg) < 0.5:
+        return (
+            f"∠({vec1_name},{vec2_name}) = |∠({axis1_label},{vec1_name})| + ∠({opp_axis1_label},{vec2_name})\n"
+            f"= {abs_theta1:.0f}° + (90° - |∠({axis2_label},{vec2_name})|)\n"
+            f"= {abs_theta1:.0f}° + (90° - {abs_theta2:.0f}°)\n"
+            f"= {abs_theta1:.0f}° + {opp_theta2:.0f}°\n"
+            f"= {result_deg:.0f}°"
+        )
+
+    # Check if using opposite axis for vec1 gives a clean formula
+    if abs(opp_theta1 + abs_theta2 - result_deg) < 0.5:
+        return (
+            f"∠({vec1_name},{vec2_name}) = ∠({opp_axis2_label},{vec1_name}) + |∠({axis2_label},{vec2_name})|\n"
+            f"= (90° - |∠({axis1_label},{vec1_name})|) + {abs_theta2:.0f}°\n"
+            f"= (90° - {abs_theta1:.0f}°) + {abs_theta2:.0f}°\n"
+            f"= {opp_theta1:.0f}° + {abs_theta2:.0f}°\n"
+            f"= {result_deg:.0f}°"
+        )
+
+    # Check if using opposite axes for both gives a clean formula
+    if abs(opp_theta1 + opp_theta2 - result_deg) < 0.5:
+        return (
+            f"∠({vec1_name},{vec2_name}) = ∠({opp_axis2_label},{vec1_name}) + ∠({opp_axis1_label},{vec2_name})\n"
+            f"= (90° - {abs_theta1:.0f}°) + (90° - {abs_theta2:.0f}°)\n"
+            f"= {opp_theta1:.0f}° + {opp_theta2:.0f}°\n"
+            f"= {result_deg:.0f}°"
+        )
+
+    # Check subtraction with opposite axis
+    if abs(abs(abs_theta1 - opp_theta2) - result_deg) < 0.5:
+        if abs_theta1 >= opp_theta2:
+            return (
+                f"∠({vec1_name},{vec2_name}) = |∠({axis1_label},{vec1_name})| - ∠({opp_axis1_label},{vec2_name})\n"
+                f"= {abs_theta1:.0f}° - (90° - {abs_theta2:.0f}°)\n"
+                f"= {abs_theta1:.0f}° - {opp_theta2:.0f}°\n"
+                f"= {result_deg:.0f}°"
+            )
+        else:
+            return (
+                f"∠({vec1_name},{vec2_name}) = ∠({opp_axis1_label},{vec2_name}) - |∠({axis1_label},{vec1_name})|\n"
+                f"= (90° - {abs_theta2:.0f}°) - {abs_theta1:.0f}°\n"
+                f"= {opp_theta2:.0f}° - {abs_theta1:.0f}°\n"
+                f"= {result_deg:.0f}°"
+            )
+
+    if abs(abs(opp_theta1 - abs_theta2) - result_deg) < 0.5:
+        if opp_theta1 >= abs_theta2:
+            return (
+                f"∠({vec1_name},{vec2_name}) = ∠({opp_axis2_label},{vec1_name}) - |∠({axis2_label},{vec2_name})|\n"
+                f"= (90° - {abs_theta1:.0f}°) - {abs_theta2:.0f}°\n"
+                f"= {opp_theta1:.0f}° - {abs_theta2:.0f}°\n"
+                f"= {result_deg:.0f}°"
+            )
+        else:
+            return (
+                f"∠({vec1_name},{vec2_name}) = |∠({axis2_label},{vec2_name})| - ∠({opp_axis2_label},{vec1_name})\n"
+                f"= {abs_theta2:.0f}° - (90° - {abs_theta1:.0f}°)\n"
+                f"= {abs_theta2:.0f}° - {opp_theta1:.0f}°\n"
+                f"= {result_deg:.0f}°"
+            )
+
+    # Fallback: show using standard angles from +x with proper interior angle calculation
+    # First compute the interior angle (minimum angle between the two directions)
+    raw_diff = abs(theta1_std_deg - theta2_std_deg)
+    interior_deg = raw_diff if raw_diff <= 180 else 360 - raw_diff
+
+    # Check if result matches the interior angle
+    if abs(interior_deg - result_deg) < 0.5:
+        # Result is the interior angle - show the calculation
+        if raw_diff <= 180:
+            return (
+                f"∠({vec1_name},{vec2_name}) = |{theta1_std_deg:.0f}° - {theta2_std_deg:.0f}°|\n"
+                f"= {interior_deg:.0f}°"
+            )
+        else:
+            return (
+                f"∠({vec1_name},{vec2_name}) = 360° - |{theta1_std_deg:.0f}° - {theta2_std_deg:.0f}°|\n"
+                f"= 360° - {raw_diff:.0f}°\n"
+                f"= {interior_deg:.0f}°"
+            )
+    else:
+        # Result is the supplementary angle (used in parallelogram law)
+        # Show the calculation through the interior angle
+        if raw_diff <= 180:
+            return (
+                f"∠({vec1_name},{vec2_name}) = 180° - |{theta1_std_deg:.0f}° - {theta2_std_deg:.0f}°|\n"
+                f"= 180° - {interior_deg:.0f}°\n"
+                f"= {result_deg:.0f}°"
+            )
+        else:
+            return (
+                f"∠({vec1_name},{vec2_name}) = 180° - (360° - |{theta1_std_deg:.0f}° - {theta2_std_deg:.0f}°|)\n"
+                f"= 180° - (360° - {raw_diff:.0f}°)\n"
+                f"= 180° - {interior_deg:.0f}°\n"
+                f"= {result_deg:.0f}°"
+            )

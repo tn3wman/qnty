@@ -17,7 +17,7 @@
 % Magnitude notation: \magn{F} produces |F| with fixed-height bars
 \newcommand{\magn}[1]{|#1|}
 
-\title{Engineering Calculation Report: Problem 2-6}
+\title{Engineering Calculation Report: Problem 2-10}
 \date{{{GENERATED_DATE}}}
 
 \begin{document}
@@ -27,11 +27,11 @@
 
 \begin{longtable}{lSSSSl}
 \toprule
-Vector & {$F_{u}$ (N)} & {$F_{v}$ (N)} & {$\magn{\vv{F}}$ (N)} & {$\theta$ (deg)} & Reference \\
+Vector & {$F_{x}$ (lbf)} & {$F_{y}$ (lbf)} & {$\magn{\vv{F}}$ (lbf)} & {$\theta$ (deg)} & Reference \\
 \midrule
 \endhead
-$\vv{F_1}$ & 2070.6 & 2928.2 & 4000.0 & -30.0 & +v \\
-$\vv{F_2}$ & 6000.0 & -3105.8 & 6000.0 & -30.0 & +u \\
+$\vv{F_1}$ & 514.2 & 612.8 & 800.0 & -40.0 & +y \\
+$\vv{F_2}$ & 409.6 & -286.8 & 500.0 & -35.0 & +x \\
 \bottomrule
 \end{longtable}
 
@@ -39,10 +39,10 @@ $\vv{F_2}$ & 6000.0 & -3105.8 & 6000.0 & -30.0 & +u \\
 
 \begin{longtable}{lSSSSl}
 \toprule
-Vector & {$F_{u}$ (N)} & {$F_{v}$ (N)} & {$\magn{\vv{F}}$ (N)} & {$\theta$ (deg)} & Reference \\
+Vector & {$F_{x}$ (lbf)} & {$F_{y}$ (lbf)} & {$\magn{\vv{F}}$ (lbf)} & {$\theta$ (deg)} & Reference \\
 \midrule
 \endhead
-$\vv{F_R}$ & ? & ? & ? & ? & +u \\
+$\vv{F_R}$ & ? & ? & ? & ? & +x \\
 \bottomrule
 \end{longtable}
 
@@ -62,9 +62,11 @@ $\vv{F_R}$ & ? & ? & ? & ? & +u \\
 \begin{adjustwidth}{2em}{}
 \vspace{-0.8em}
 \begin{flalign*}
-\quad \angle(\vv{F_1}, \vv{F_2}) &= 180^{\circ} - \angle(\vv{v}, \vv{u}) && \\
-\quad &= 180^{\circ} - 75^{\circ} && \\
-\quad &= 105^{\circ} &&
+\quad \angle(\vv{F_1}, \vv{F_2}) &= \magn{\angle(\vv{y}, \vv{F_1})} + \angle(\vv{-y}, \vv{F_2}) && \\
+\quad &= 40^{\circ} + (90^{\circ} - \magn{\angle(\vv{x}, \vv{F_2})}) && \\
+\quad &= 40^{\circ} + (90^{\circ} - 35^{\circ}) && \\
+\quad &= 40^{\circ} + 55^{\circ} && \\
+\quad &= 95^{\circ} &&
 \end{flalign*}
 \vspace{-0.8em}
 \end{adjustwidth}
@@ -76,8 +78,8 @@ $\vv{F_R}$ & ? & ? & ? & ? & +u \\
 \begin{adjustwidth}{2em}{}
 \vspace{-0.8em}
 \begin{flalign*}
-\quad \magn{\vv{F_R}} &= \sqrt{(4000.0)^2 + (6000.0)^2 + 2(4000.0)(6000.0)\cos(105^{\circ})} && \\
-\quad &= 8026.4\ \text{N} &&
+\quad \magn{\vv{F_R}} &= \sqrt{(800.0)^2 + (500.0)^2 + 2(800.0)(500.0)\cos(95^{\circ})} && \\
+\quad &= 979.7\ \text{lbf} &&
 \end{flalign*}
 \vspace{-0.8em}
 \end{adjustwidth}
@@ -89,8 +91,8 @@ $\vv{F_R}$ & ? & ? & ? & ? & +u \\
 \begin{adjustwidth}{2em}{}
 \vspace{-0.8em}
 \begin{flalign*}
-\quad \angle(\vv{F_2}, \vv{F_R}) &= \sin^{-1}(4000.0 \cdot \frac{\sin(105^{\circ})}{8026.4}) && \\
-\quad &= 28.8^{\circ} &&
+\quad \angle(\vv{F_2}, \vv{F_R}) &= \sin^{-1}(800.0 \cdot \frac{\sin(95^{\circ})}{979.7}) && \\
+\quad &= 54.4^{\circ} &&
 \end{flalign*}
 \vspace{-0.8em}
 \end{adjustwidth}
@@ -102,9 +104,9 @@ $\vv{F_R}$ & ? & ? & ? & ? & +u \\
 \begin{adjustwidth}{2em}{}
 \vspace{-0.8em}
 \begin{flalign*}
-\quad \angle(\vv{x}, \vv{F_R}) &= \angle(\vv{u}, \vv{F_2}) + \angle(\vv{F_2}, \vv{F_R}) && \\
-\quad &= -30.0^{\circ} + 28.8^{\circ} && \\
-\quad &= -1.2^{\circ} &&
+\quad \angle(\vv{x}, \vv{F_R}) &= \angle(\vv{x}, \vv{F_2}) + \angle(\vv{F_2}, \vv{F_R}) && \\
+\quad &= -35.0^{\circ} + 54.4^{\circ} && \\
+\quad &= 19.4^{\circ} &&
 \end{flalign*}
 \vspace{-0.8em}
 \end{adjustwidth}
@@ -113,10 +115,10 @@ $\vv{F_R}$ & ? & ? & ? & ? & +u \\
 
 \begin{longtable}{lSSSSl}
 \toprule
-Vector & {$F_{u}$ (N)} & {$F_{v}$ (N)} & {$\magn{\vv{F}}$ (N)} & {$\theta$ (deg)} & Reference \\
+Vector & {$F_{x}$ (lbf)} & {$F_{y}$ (lbf)} & {$\magn{\vv{F}}$ (lbf)} & {$\theta$ (deg)} & Reference \\
 \midrule
 \endhead
-$\vv{F_R}$ & 8070.6 & -177.6 & 8026.4 & -1.2 & +u \\
+$\vv{F_R}$ & 923.8 & 326.0 & 979.7 & 19.4 & +x \\
 \bottomrule
 \end{longtable}
 
