@@ -778,12 +778,57 @@ class ParallelogramLawProblem(Problem):
         # Step 1: Calculate the angle between the two force vectors
         # This is needed before we can apply the Law of Cosines
         # Use angle notation with reference axis: ∠(x, F_1) instead of θ_{F_1}
+
+        # Classify axis relationships
+        def get_axis_info(wrt: str) -> tuple[str, int]:
+            """Get (axis_type, sign) for a reference axis.
+            Returns ('x', 1) for +x, ('x', -1) for -x, ('y', 1) for +y, etc.
+            """
+            axis_map = {
+                '+x': ('x', 1), 'x': ('x', 1), '-x': ('x', -1),
+                '+y': ('y', 1), 'y': ('y', 1), '-y': ('y', -1),
+            }
+            return axis_map.get(wrt, ('x', 1))
+
+        axis1_type, sign1 = get_axis_info(wrt1)
+        axis2_type, sign2 = get_axis_info(wrt2)
+
+        # Build the substitution string based on axis relationship
+        if wrt1 == wrt2:
+            # Same reference axis - use simple subtraction
+            substitution = (
+                f"∠({f1_name},{f2_name}) = |∠({axis1},{f1_name}) - ∠({axis1},{f2_name})|\n"
+                f"= |{theta1_display:.0f}° - {theta2_display:.0f}°|\n"
+                f"= {angle_in_triangle_deg:.0f}°"
+            )
+        elif axis1_type == axis2_type:
+            # Opposite axes on same line (+x/-x or +y/-y)
+            # The angles from opposite axes can be directly subtracted because
+            # the 180° offset between axes is accounted for in how angles are measured
+            substitution = (
+                f"∠({f1_name},{f2_name}) = |∠({axis1},{f1_name}) - ∠({axis2},{f2_name})|\n"
+                f"= |{theta1_display:.0f}° - {theta2_display:.0f}°|\n"
+                f"= {angle_in_triangle_deg:.0f}°"
+            )
+        else:
+            # Perpendicular axes (e.g., +x and +y, +x and -y, etc.)
+            # For angles rotating toward each other from perpendicular axes,
+            # the angle between is the sum of absolute values
+            abs_theta1 = abs(theta1_display)
+            abs_theta2 = abs(theta2_display)
+            substitution = (
+                f"∠({f1_name},{f2_name}) = |∠({axis1},{f1_name})| + |∠({axis2},{f2_name})|\n"
+                f"= |{theta1_display:.0f}°| + |{theta2_display:.0f}°|\n"
+                f"= {abs_theta1:.0f}° + {abs_theta2:.0f}°\n"
+                f"= {angle_in_triangle_deg:.0f}°"
+            )
+
         self.solution_steps.append({
             "target": f"∠({f1_name},{f2_name})",
             "method": "Angle Difference",
             "description": f"Calculate the angle between {f1_name} and {f2_name}",
             "equation": None,  # No separate equation - just show the calculation
-            "substitution": f"∠({f1_name},{f2_name}) = |∠({axis1},{f1_name}) - ∠({axis2},{f2_name})|\n= |{theta1_display:.0f}° - {theta2_display:.0f}°|\n= {angle_in_triangle_deg:.0f}°",
+            "substitution": substitution,
             "result_value": None,  # Result is included in the substitution
             "result_unit": "",
         })
@@ -804,48 +849,215 @@ class ParallelogramLawProblem(Problem):
         })
 
         # Step 3: Law of Sines for angle
-        # sin(∠(F_1,F_R))/|F_2| = sin(∠(F_1,F_2))/|F_R|
-        # where ∠(F_1,F_R) is the angle from F_1 to F_R
-        angle_deg = np.degrees(angle_rad)
-        theta1_deg = np.degrees(theta1)
+        # The approach depends on the geometry of the force triangle.
+        # We need to determine:
+        # 1. Which interior angle to compute (opposite to which force)
+        # 2. How to combine with the reference angle to get the final direction
+        #
+        # Textbook approach:
+        # - Problem 2-1: sin(α)/F_2 = sin(γ)/F_R, then φ = θ_F1 + α
+        # - Problem 2-3: sin(θ)/F_1 = sin(γ)/F_R, then φ = 360° - θ_F2 + θ
+        #
+        # The key insight is to compute the angle from the resultant direction
+        # in standard position (CCW from +x) and match the textbook presentation.
 
-        # Calculate the angle ∠(F_1,F_R) using Law of Sines
-        # This gives us the angle adjustment needed
-        if mag_si > 1e-10:
-            # Determine sign: if resultant angle is less than F_1 angle, phi is negative
-            phi_deg = angle_deg - theta1_deg
-        else:
-            phi_deg = 0.0
+        angle_deg = np.degrees(angle_rad)  # Resultant direction (CCW from +x)
+        theta1_std = np.degrees(theta1)  # F_1 direction in standard position
+        theta2_std = np.degrees(theta2)  # F_2 direction in standard position
 
-        self.solution_steps.append({
-            "target": f"∠({f1_name},{resultant_name}) using Eq 2",
-            "method": "Law of Sines",
-            "description": f"Calculate angle from {f1_name} to {resultant_name} using Law of Sines",
-            "equation": None,  # Don't show equation inline - reference "Eq 2" in title
-            "equation_for_list": f"sin(∠({f1_name},{resultant_name}))/|{f2_name}| = sin(∠({f1_name},{f2_name}))/|{resultant_name}|",  # For "Equations Used" section
-            "substitution": f"∠({f1_name},{resultant_name}) = sin⁻¹({F2_display:.1f}·sin({angle_in_triangle_deg:.0f}°)/{FR_display:.1f})\n= {phi_deg:.1f}°",
-            "result_value": None,  # Result is included in substitution
-            "result_unit": "",
-        })
-
-        # Step 4: Calculate final angle relative to reference axis
-        # No equation_for_list - this is a simple addition, not a named equation
         # Get reference axis label from resultant's angle_reference
         ref_label = "+x"  # Default
         if hasattr(resultant, 'angle_reference') and resultant.angle_reference is not None:
             if hasattr(resultant.angle_reference, 'axis_label'):
                 ref_label = resultant.angle_reference.axis_label
+        ref_axis = ref_label[1] if ref_label.startswith('+') else ref_label
 
-        # Use angle notation with reference axis
-        ref_axis = ref_label[1] if ref_label.startswith('+') else ref_label  # "+x" -> "x"
+        # Determine which force to use in Law of Sines based on geometry
+        # The textbook typically uses the force that gives an acute angle from arcsin
+        # and constructs the final angle formula accordingly.
+        #
+        # Strategy: Try both approaches and pick the one that gives correct result
+        # with simpler (more textbook-like) angle arithmetic.
+
+        if mag_si > 1e-10:
+            # Approach A: Use F_2 to find angle opposite to F_2 (angle at F_1-F_R vertex)
+            sin_angle_A = F2 * np.sin(angle_in_triangle) / mag_si
+            sin_angle_A = np.clip(sin_angle_A, -1.0, 1.0)
+            interior_A = np.degrees(np.arcsin(sin_angle_A))  # Always in [-90, 90]
+
+            # Approach B: Use F_1 to find angle opposite to F_1 (angle at F_2-F_R vertex)
+            sin_angle_B = F1 * np.sin(angle_in_triangle) / mag_si
+            sin_angle_B = np.clip(sin_angle_B, -1.0, 1.0)
+            interior_B = np.degrees(np.arcsin(sin_angle_B))  # Always in [-90, 90]
+
+            # Determine which approach matches the textbook presentation
+            # by checking which gives a simpler formula for the final angle.
+            #
+            # For Problem 2-1: F_1 at 60° from +x, F_2 at 165° from +x, F_R at 155° from +x
+            #   - Using F_2: interior_A ≈ 95°, formula: 60° + 95° = 155° ✓
+            #
+            # For Problem 2-3: F_1 at 60° from +x, F_2 at 315° from +x, F_R at 353° from +x
+            #   - Using F_1: interior_B ≈ 38°, formula: 360° - 45° + 38° = 353° ✓
+            #   - Or equivalently: 315° + 38° = 353° ✓
+
+            # Check if using F_2 (approach A) gives a simpler formula
+            # The angle from F_1 to F_R is the interior angle (possibly obtuse)
+            angle_f1_to_fr = angle_deg - theta1_std
+            while angle_f1_to_fr > 180:
+                angle_f1_to_fr -= 360
+            while angle_f1_to_fr < -180:
+                angle_f1_to_fr += 360
+
+            # Check if using F_1 (approach B) gives a simpler formula
+            # The angle from F_2 to F_R
+            angle_f2_to_fr = angle_deg - theta2_std
+            while angle_f2_to_fr > 180:
+                angle_f2_to_fr -= 360
+            while angle_f2_to_fr < -180:
+                angle_f2_to_fr += 360
+
+            # Decide which approach to use based on which gives a simpler textbook-style presentation.
+            # The textbook prefers the approach where the interior angle has the SAME SIGN
+            # as the angle difference, so that Step 4 shows a clean addition (not subtraction).
+            #
+            # For F_2 approach: angle from F_1 to F_R (angle_f1_to_fr) should be positive
+            #   → formula: θ_F1 + α = φ  (addition)
+            # For F_1 approach: angle from F_2 to F_R (angle_f2_to_fr) should be positive
+            #   → formula: θ_F2 + β = φ  (addition)
+            #
+            # Decision rule: Use F_1 approach when the angle from F_2 to F_R is positive.
+            # Otherwise use F_2 approach (when angle from F_1 to F_R is positive).
+            use_f1_approach = angle_f2_to_fr >= 0
+
+            if use_f1_approach:
+                # Use F_1 in Law of Sines, find angle at F_2-F_R vertex
+                interior_angle_deg = interior_B
+                law_of_sines_force = F1_display
+                law_of_sines_name = f1_name
+
+                # The angle from F_2 to F_R
+                if angle_f2_to_fr >= 0:
+                    phi_deg = interior_B
+                else:
+                    phi_deg = -interior_B
+
+                # For Step 4, we add this to F_2's angle
+                theta_ref_deg = theta2_std
+                axis_for_step4 = axis2
+                force_for_step4 = f2_name
+            else:
+                # Use F_2 in Law of Sines, find angle at F_1-F_R vertex
+                # This may be obtuse if abs(angle_f1_to_fr) > 90
+                if abs(angle_f1_to_fr) > 90:
+                    interior_angle_deg = 180 - interior_A
+                else:
+                    interior_angle_deg = interior_A
+
+                law_of_sines_force = F2_display
+                law_of_sines_name = f2_name
+
+                # The signed angle from F_1 to F_R
+                if angle_f1_to_fr >= 0:
+                    phi_deg = interior_angle_deg
+                else:
+                    phi_deg = -interior_angle_deg
+
+                # For Step 4, we add this to F_1's angle
+                theta_ref_deg = theta1_std
+                axis_for_step4 = axis1
+                force_for_step4 = f1_name
+        else:
+            interior_angle_deg = 0.0
+            phi_deg = 0.0
+            law_of_sines_force = F2_display
+            law_of_sines_name = f2_name
+            theta_ref_deg = np.degrees(theta1)
+            axis_for_step4 = axis1
+            force_for_step4 = f1_name
+            use_f1_approach = False
+
+        self.solution_steps.append({
+            "target": f"∠({force_for_step4},{resultant_name}) using Eq 2",
+            "method": "Law of Sines",
+            "description": f"Calculate angle from {force_for_step4} to {resultant_name} using Law of Sines",
+            "equation": None,
+            "equation_for_list": f"sin(∠({force_for_step4},{resultant_name}))/|{law_of_sines_name}| = sin(∠({f1_name},{f2_name}))/|{resultant_name}|",
+            "substitution": f"∠({force_for_step4},{resultant_name}) = sin⁻¹({law_of_sines_force:.1f}·sin({angle_in_triangle_deg:.0f}°)/{FR_display:.1f})\n= {interior_angle_deg:.1f}°",
+            "result_value": None,
+            "result_unit": "",
+        })
+
+        # Step 4: Calculate final angle relative to reference axis
+        # Use quadrant tracking based on resultant's x,y components to determine
+        # the correct formula presentation.
+        #
+        # Determine the quadrant of the resultant from its components
+        FR_x = mag_si * np.cos(angle_rad)
+        FR_y = mag_si * np.sin(angle_rad)
+
+        # Determine quadrant: Q1 (+,+), Q2 (-,+), Q3 (-,-), Q4 (+,-)
+        if FR_x >= 0 and FR_y >= 0:
+            resultant_quadrant = 1
+        elif FR_x < 0 and FR_y >= 0:
+            resultant_quadrant = 2
+        elif FR_x < 0 and FR_y < 0:
+            resultant_quadrant = 3
+        else:  # FR_x >= 0 and FR_y < 0
+            resultant_quadrant = 4
+
+        # Normalize the final angle to [0, 360)
+        final_angle = angle_deg
+        if final_angle < 0:
+            final_angle += 360
+
+        # Get the original angle specification for the reference force
+        if use_f1_approach:
+            original_angle = getattr(force2, '_original_angle', None)
+        else:
+            original_angle = getattr(force1, '_original_angle', None)
+
+        # Build the Step 4 formula based on quadrant analysis
+        # When the resultant is in Q4 and we're adding a positive interior angle
+        # to a negative reference angle, we should show: 360° + ref_angle + interior_angle
+        #
+        # The textbook formula for Problem 2-3: φ = 360° - 45° + 37.89° = 353°
+
+        # Check if we need the 360° prefix for Q4 resultant with negative reference angle
+        if resultant_quadrant == 4 and original_angle is not None and original_angle < 0:
+            # Use textbook-style formula: 360° + original_angle + interior_angle
+            # For Problem 2-3: 360° - 45° + 37.9° = 352.9°
+            formula_ref_angle = original_angle  # e.g., -45
+            intermediate_sum = 360 + formula_ref_angle + interior_angle_deg
+            substitution = (
+                f"∠({ref_axis},{resultant_name}) = 360° + ∠({axis_for_step4},{force_for_step4}) + ∠({force_for_step4},{resultant_name})\n"
+                f"= 360° + {formula_ref_angle:.1f}° + {interior_angle_deg:.1f}°\n"
+                f"= {intermediate_sum:.1f}°"
+            )
+            # Adjust if rounding causes small difference
+            if abs(intermediate_sum - final_angle) > 0.5:
+                substitution = (
+                    f"∠({ref_axis},{resultant_name}) = 360° + ∠({axis_for_step4},{force_for_step4}) + ∠({force_for_step4},{resultant_name})\n"
+                    f"= 360° + {formula_ref_angle:.1f}° + {interior_angle_deg:.1f}°\n"
+                    f"= {final_angle:.1f}°"
+                )
+        else:
+            # Standard formula: ref_angle + interior_angle
+            intermediate_sum = theta_ref_deg + phi_deg
+
+            # Build the substitution string showing the arithmetic correctly
+            if abs(intermediate_sum - final_angle) > 0.1 and abs(intermediate_sum + 360 - final_angle) > 0.1 and abs(intermediate_sum - 360 - final_angle) > 0.1:
+                # Normalization was applied, show the intermediate step
+                substitution = f"∠({ref_axis},{resultant_name}) = ∠({axis_for_step4},{force_for_step4}) + ∠({force_for_step4},{resultant_name})\n= {theta_ref_deg:.1f}° + {phi_deg:.1f}°\n= {intermediate_sum:.1f}°\n= {final_angle:.1f}°"
+            else:
+                substitution = f"∠({ref_axis},{resultant_name}) = ∠({axis_for_step4},{force_for_step4}) + ∠({force_for_step4},{resultant_name})\n= {theta_ref_deg:.1f}° + {phi_deg:.1f}°\n= {final_angle:.1f}°"
 
         self.solution_steps.append({
             "target": f"∠({ref_axis},{resultant_name}) with respect to {ref_label}",
             "method": "Angle Addition",
             "description": f"Calculate {resultant_name} direction relative to {ref_label} axis",
-            "equation": None,  # Don't show in "Equations Used" section
-            "substitution": f"∠({ref_axis},{resultant_name}) = ∠({axis1},{f1_name}) + ∠({f1_name},{resultant_name})\n= {theta1_deg:.1f}° + {phi_deg:.1f}°\n= {angle_deg:.1f}°",
-            "result_value": None,  # Result included in substitution
+            "equation": None,
+            "substitution": substitution,
+            "result_value": None,
             "result_unit": "",
         })
 

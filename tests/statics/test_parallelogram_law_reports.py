@@ -24,8 +24,8 @@ from qnty.problems.statics import parallelogram_law as pl
 # Import shared problem fixtures
 from tests.statics._problem_fixtures import (
     Chapter2Problem1,
-    Chapter2Problem1MixedUnits,
     Chapter2Problem2,
+    Chapter2Problem3,
 )
 
 # =============================================================================
@@ -34,15 +34,25 @@ from tests.statics._problem_fixtures import (
 
 GOLDEN_DIR = Path(__file__).parent / "golden"
 
-# Map problem classes to their golden file base names
-PROBLEM_GOLDEN_FILES = {
-    Chapter2Problem1: "problem_2_1_report",
-    Chapter2Problem1MixedUnits: "problem_2_1_mixed_units_report",
-    Chapter2Problem2: "problem_2_2_report",
-}
-
 # Problems that have golden files for snapshot testing
-PROBLEMS_WITH_GOLDEN_FILES = [Chapter2Problem1, Chapter2Problem2]
+PROBLEMS_WITH_GOLDEN_FILES = [
+    Chapter2Problem1,
+    Chapter2Problem2,
+    Chapter2Problem3,
+]
+
+
+def get_golden_base(problem_class) -> str:
+    """
+    Derive golden file base name from problem class name.
+
+    Examples:
+        "Problem 2-1" -> "problem_2_1_report"
+        "Problem 2-3" -> "problem_2_3_report"
+    """
+    # e.g., "Problem 2-1" -> "problem_2_1_report"
+    name = problem_class.name.lower().replace(" ", "_").replace("-", "_")
+    return f"{name}_report"
 
 
 def normalize_report(content: str) -> str:
@@ -143,7 +153,7 @@ class TestParallelogramLawReports:
     @pytest.fixture
     def golden_base(self, problem_class):
         """Get the golden file base name for this problem."""
-        return PROBLEM_GOLDEN_FILES[problem_class]
+        return get_golden_base(problem_class)
 
     def test_solve_succeeds(self, solved_result):
         """Verify the problem solves successfully."""
@@ -206,7 +216,7 @@ def regenerate_golden_files():
     you've verified the new output is correct.
     """
     for problem_class in PROBLEMS_WITH_GOLDEN_FILES:
-        golden_base = PROBLEM_GOLDEN_FILES[problem_class]
+        golden_base = get_golden_base(problem_class)
         result = pl.solve_class(problem_class, output_unit="N")
 
         # Generate markdown
