@@ -133,7 +133,7 @@ The `Problem` class automatically:
 
 - **~4,800 lines of tests** across 19 test modules
 - Table-driven tests using `pytest.mark.parametrize` for comprehensive coverage
-- Hard-coded oracle values (never computed expectations) to prevent circular validation
+- **Hard-coded oracle values** (never computed expectations) to prevent circular validation - see `tests/CLAUDE.md` for detailed testing rules
 - Performance tracking in `tests/test_benchmark.py` comparing against Pint
 - Real engineering problems in:
   - `tests/test_engineering_problems.py` - General engineering

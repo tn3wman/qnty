@@ -1,6 +1,6 @@
-# Engineering Calculation Report: Problem 2-3
+# Engineering Calculation Report: Problem 2-6
 
-**Generated:** 2025-11-28 20:16:43
+**Generated:** {{GENERATED_DATETIME}}
 
 ## 1. Known Variables
 
@@ -8,8 +8,8 @@
 
 | Vector | $F_x$ (N) | $F_y$ (N) | $\|\vec{F}\|$ (N) | $\theta$ (deg) | Reference |
 | :--- | ---: | ---: | ---: | ---: | :--- |
-| $\vec{F_1}$ | 125.0 | 216.5 | 250.0 | -30.0 | +y |
-| $\vec{F_2}$ | 265.2 | -265.2 | 375.0 | -45.0 | +x |
+| $\vec{F_1}$ | 2828.4 | 2828.4 | 4000.0 | -30.0 | +v |
+| $\vec{F_2}$ | 5196.2 | -3000.0 | 6000.0 | -30.0 | +u |
 
 </div>
 
@@ -19,7 +19,7 @@
 
 | Vector | $F_x$ (N) | $F_y$ (N) | $\|\vec{F}\|$ (N) | $\theta$ (deg) | Reference |
 | :--- | ---: | ---: | ---: | ---: | :--- |
-| $\vec{F_R}$ | ? | ? | ? | ? | +x |
+| $\vec{F_R}$ | ? | ? | ? | ? | +u |
 
 </div>
 
@@ -35,10 +35,9 @@
 
 $$
 \begin{aligned}
-\angle(\vec{F_1}, \vec{F_2}) &= |\angle(\vec{y}, \vec{F_1})| + |\angle(\vec{x}, \vec{F_2})| \\
-&= |-30^{\circ}| + |-45^{\circ}| \\
-&= 30^{\circ} + 45^{\circ} \\
-&= 75^{\circ} \\
+\angle(\vec{F_1}, \vec{F_2}) &= 180^{\circ} - \angle(\vec{v}, \vec{u}) \\
+&= 180^{\circ} - 75^{\circ} \\
+&= 105^{\circ} \\
 \end{aligned}
 $$
 
@@ -46,8 +45,8 @@ $$
 
 $$
 \begin{aligned}
-|\vec{F_R}| &= \sqrt{(250.0)^2 + (375.0)^2 + 2(250.0)(375.0)\cos(75^{\circ})} \\
-&= 393.2 N \\
+|\vec{F_R}| &= \sqrt{(4000.0)^2 + (6000.0)^2 + 2(4000.0)(6000.0)\cos(105^{\circ})} \\
+&= 8026.4\ \text{N} \\
 \end{aligned}
 $$
 
@@ -55,8 +54,8 @@ $$
 
 $$
 \begin{aligned}
-\angle(\vec{F_2}, \vec{F_R}) &= \sin^{-1}(250.0 \cdot \frac{\sin(75^{\circ})}{393.2}) \\
-&= 37.9^{\circ} \\
+\angle(\vec{F_2}, \vec{F_R}) &= \sin^{-1}(4000.0 \cdot \frac{\sin(105^{\circ})}{8026.4}) \\
+&= 28.8^{\circ} \\
 \end{aligned}
 $$
 
@@ -64,9 +63,9 @@ $$
 
 $$
 \begin{aligned}
-\angle(\vec{x}, \vec{F_R}) &= 360^{\circ} + \angle(\vec{x}, \vec{F_2}) + \angle(\vec{F_2}, \vec{F_R}) \\
-&= 360^{\circ} + -45.0^{\circ} + 37.9^{\circ} \\
-&= 352.9^{\circ} \\
+\angle(\vec{x}, \vec{F_R}) &= \angle(\vec{u}, \vec{F_2}) + \angle(\vec{F_2}, \vec{F_R}) \\
+&= -30.0^{\circ} + 28.8^{\circ} \\
+&= -1.2^{\circ} \\
 \end{aligned}
 $$
 
@@ -76,7 +75,7 @@ $$
 
 | Vector | $F_x$ (N) | $F_y$ (N) | $\|\vec{F}\|$ (N) | $\theta$ (deg) | Reference |
 | :--- | ---: | ---: | ---: | ---: | :--- |
-| $\vec{F_R}$ | 390.2 | -48.7 | 393.2 | 352.9 | +x |
+| $\vec{F_R}$ | 8024.6 | -171.6 | 8026.4 | -1.2 | +u |
 
 </div>
 
@@ -88,7 +87,7 @@ $$
 While every effort has been made to ensure the accuracy and reliability of the calculations provided, we do not guarantee that the information is complete, up-to-date, or suitable for any specific purpose. Users must independently verify the results and assume full responsibility for any decisions or actions taken based on its output. Use of this calculator is entirely at your own risk, and we expressly disclaim any liability for errors or omissions in the information provided.
 
 **Report Details:**
-- **Generated Date:** November 28, 2025
+- **Generated Date:** {{GENERATED_DATE}}
 - **Generated Using:** Qnty Library
 - **Version:** Beta (Independent verification required for production use)
 

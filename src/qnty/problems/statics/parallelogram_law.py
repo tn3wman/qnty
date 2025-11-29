@@ -62,6 +62,7 @@ from ...integration.dto import (
     SolutionStepDTO,
     VectorDTO,
 )
+from ...spatial.coordinate_system import CoordinateSystem
 from ...spatial.vector import _Vector
 from ...spatial.vectors import (
     create_vector_cartesian,
@@ -72,6 +73,43 @@ from ...spatial.vectors import (
 
 if TYPE_CHECKING:
     from ...core.quantity import Quantity
+
+
+# =============================================================================
+# Coordinate System Factory Functions
+# =============================================================================
+
+
+def create_coord_angle_between(
+    axis1_label: str,
+    axis2_label: str,
+    angle_between: float,
+    axis1_angle: float = 0,
+) -> CoordinateSystem:
+    """
+    Create a non-orthogonal coordinate system by specifying the angle between axes.
+
+    This is a convenience wrapper for CoordinateSystem.from_angle_between().
+
+    Args:
+        axis1_label: Label for the first axis (e.g., "u")
+        axis2_label: Label for the second axis (e.g., "v")
+        angle_between: Angle between the two axes in degrees
+        axis1_angle: Angle of axis1 from +x in degrees (default: 0)
+
+    Returns:
+        CoordinateSystem with the specified axes
+
+    Examples:
+        >>> # Create u-v system with 75° between axes
+        >>> uv = create_coord_angle_between("u", "v", angle_between=75)
+        >>> # u is at 0° (aligned with +x), v is at 75°
+    """
+    return CoordinateSystem.from_angle_between(
+        axis1_label, axis2_label,
+        axis1_angle=axis1_angle,
+        angle_between=angle_between
+    )
 
 
 # =============================================================================
@@ -506,6 +544,114 @@ Solution = ResultDTO  # Alias for consistency
 #     return create_vector_resultant(*vectors, name=name)
 
 
+def _apply_coordinate_system(vec: _Vector, coord_sys: CoordinateSystem) -> _Vector:
+    """
+    Apply a coordinate system to a vector with deferred coordinate resolution.
+
+    When a vector is created with a custom axis reference (like wrt="+v"), the
+    Cartesian components cannot be computed until the coordinate system is known.
+    This function computes the actual components using the coordinate system.
+
+    Args:
+        vec: Vector with _needs_coordinate_system=True
+        coord_sys: The coordinate system to apply
+
+    Returns:
+        New vector with computed Cartesian components
+    """
+    import math
+
+    from ...spatial.vectors import _VectorWithUnknowns
+
+    if not getattr(vec, '_needs_coordinate_system', False):
+        return vec
+
+    # Get the deferred values
+    magnitude = getattr(vec, '_deferred_magnitude', None)
+    angle_rad = getattr(vec, '_deferred_angle_rad', None)
+    wrt = getattr(vec, '_original_wrt', '+x')
+
+    if magnitude is None or angle_rad is None:
+        return vec
+
+    # Parse the wrt to get the base axis angle
+    wrt_stripped = wrt.lstrip('+-')
+    is_negative = wrt.startswith('-')
+
+    # Find the axis angle from the coordinate system
+    # Only the axes defined in the coordinate system are valid
+    valid_axes = {coord_sys.axis1_label, coord_sys.axis2_label}
+    if wrt_stripped not in valid_axes:
+        raise ValueError(
+            f"Invalid wrt axis '{wrt}' for coordinate system with axes "
+            f"'{coord_sys.axis1_label}' and '{coord_sys.axis2_label}'. "
+            f"Valid options: {[f'+{a}' for a in valid_axes] + [f'-{a}' for a in valid_axes]}"
+        )
+
+    if wrt_stripped == coord_sys.axis1_label:
+        base_angle_rad = coord_sys.axis1_angle
+        if is_negative:
+            base_angle_rad += math.pi
+    else:  # wrt_stripped == coord_sys.axis2_label
+        base_angle_rad = coord_sys.axis2_angle
+        if is_negative:
+            base_angle_rad += math.pi
+
+    # Compute the total angle (base + input angle)
+    total_angle_rad = base_angle_rad + angle_rad
+
+    # Compute Cartesian components
+    u = magnitude * math.cos(total_angle_rad)
+    v = magnitude * math.sin(total_angle_rad)
+    w = 0.0
+
+    # Check if the input vector is a _VectorWithUnknowns (has component vectors, constraints, etc.)
+    if isinstance(vec, _VectorWithUnknowns):
+        # Create a _VectorWithUnknowns to preserve all the special attributes
+        new_vec = _VectorWithUnknowns(
+            u=u, v=v, w=w,
+            unit=vec._unit,
+            unknowns=vec._unknowns.copy(),
+            component_vectors=vec._component_vectors,  # Preserve component vectors (will be updated later)
+            name=vec.name,
+        )
+        new_vec.is_known = vec.is_known
+        new_vec.is_resultant = vec.is_resultant
+        new_vec._is_constraint = vec._is_constraint
+        new_vec.angle_dir = getattr(vec, 'angle_dir', None)
+        # Clear the deferred flag since we've resolved it
+        new_vec._needs_coordinate_system = False
+    else:
+        # Create new vector with computed components
+        new_vec = _Vector(
+            u=u, v=v, w=w,
+            unit=vec._unit,
+            name=vec.name,
+            is_known=vec.is_known,
+            is_resultant=vec.is_resultant,
+            coordinate_system=coord_sys,
+        )
+
+    # Preserve original angle info for reporting
+    new_vec._original_angle = math.degrees(angle_rad)
+    new_vec._original_wrt = wrt
+
+    # Compute and store magnitude and angle
+    new_vec._magnitude = vec._magnitude
+    if new_vec._magnitude is None and vec._unit is not None:
+        from ...core.quantity import Quantity
+        new_vec._magnitude = Quantity.from_value(magnitude, vec._unit, name=f"{vec.name}_magnitude")
+        new_vec._magnitude.preferred = vec._unit
+
+    # Store the standard angle (from +x)
+    from ...core.quantity import Quantity
+    from ...core.unit_catalog import degree, radian
+    new_vec._angle = Quantity.from_value(total_angle_rad, radian, name=f"{vec.name}_angle")
+    new_vec._angle.preferred = degree
+
+    return new_vec
+
+
 def solve_class(
     problem_class: type,
     output_unit: str = "N",
@@ -541,18 +687,67 @@ def solve_class(
         # Use the problem class name as default, but allow override via 'name' attribute
         problem_name = getattr(problem_class, 'name', problem_class.__name__)
 
+        # Get coordinate system from problem class (if defined)
+        problem_coord_sys = getattr(problem_class, 'coordinate_system', None)
+
         class DynamicProblem(ParallelogramLawProblem):
             name = problem_name
+            # Store coordinate system as class attribute so it's available during solve()
+            coordinate_system = problem_coord_sys
 
         # Copy all _Vector attributes from problem_class to DynamicProblem
+        # Apply coordinate system to vectors that need it
+        # Build a mapping from old vectors to new (resolved) vectors
+        vector_map: dict[int, _Vector] = {}  # Maps id(old_vec) -> new_vec
+
         for attr_name in dir(problem_class):
             if attr_name.startswith('_'):
                 continue
             attr = getattr(problem_class, attr_name)
             if isinstance(attr, _Vector):
+                old_id = id(attr)
+                # Check if this vector needs coordinate system resolution
+                if getattr(attr, '_needs_coordinate_system', False) and problem_coord_sys is not None:
+                    attr = _apply_coordinate_system(attr, problem_coord_sys)
+                elif problem_coord_sys is not None:
+                    # Validate that vectors with standard axes don't use x/y when a custom coordinate system is defined
+                    original_wrt = getattr(attr, '_original_wrt', None)
+                    if original_wrt is not None:
+                        wrt_stripped = original_wrt.lstrip('+-').lower()
+                        valid_axes = {problem_coord_sys.axis1_label.lower(), problem_coord_sys.axis2_label.lower()}
+                        if wrt_stripped not in valid_axes:
+                            raise ValueError(
+                                f"Vector '{attr.name or attr_name}' uses wrt='{original_wrt}' but problem defines "
+                                f"coordinate system with axes '{problem_coord_sys.axis1_label}' and '{problem_coord_sys.axis2_label}'. "
+                                f"Use wrt='+{problem_coord_sys.axis1_label}' or wrt='+{problem_coord_sys.axis2_label}' instead."
+                            )
+                vector_map[old_id] = attr
                 setattr(DynamicProblem, attr_name, attr)
 
-        # Instantiate and solve
+        # Update component_vectors references in resultant vectors
+        for attr_name in dir(problem_class):
+            if attr_name.startswith('_'):
+                continue
+            attr = getattr(DynamicProblem, attr_name, None)
+            original_attr = getattr(problem_class, attr_name, None)
+            if attr is not None and hasattr(attr, '_component_vectors') and attr._component_vectors:
+                # Clone the vector if it's the same object as the original to avoid mutation
+                # This can happen when vectors don't need coordinate system resolution
+                if attr is original_attr:
+                    attr = attr.clone()
+                    setattr(DynamicProblem, attr_name, attr)
+                    vector_map[id(original_attr)] = attr
+                # Replace component_vectors with resolved versions
+                new_components = []
+                for cv in attr._component_vectors:
+                    cv_id = id(cv)
+                    if cv_id in vector_map:
+                        new_components.append(vector_map[cv_id])
+                    else:
+                        new_components.append(cv)
+                attr._component_vectors = new_components
+
+        # Instantiate and solve (coordinate_system is already set as class attribute)
         problem = DynamicProblem()
 
         # Extract results using attribute names from problem_class

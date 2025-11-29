@@ -68,7 +68,9 @@ class _Vector(Generic[D]):
         # PositionVector attributes
         "_from_point", "_to_point", "_constraint_magnitude",
         # Original polar coordinates for reporting
-        "_original_angle", "_original_wrt"
+        "_original_angle", "_original_wrt",
+        # Deferred coordinate system attributes (for custom axes like +u, +v)
+        "_deferred_magnitude", "_deferred_angle_rad", "_needs_coordinate_system"
     )
 
     def __init__(

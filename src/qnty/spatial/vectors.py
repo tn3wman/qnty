@@ -28,7 +28,10 @@ class _VectorWithUnknowns(_Vector):
     Also stores component vectors for resultant computation.
     """
 
-    __slots__ = ("_unknowns", "_component_vectors", "_direction_unit_vector", "_is_constraint", "_alpha_rad", "_beta_rad", "_gamma_rad", "_original_plane", "_angle_unit", "_polar_magnitude", "_polar_angle_rad")
+    __slots__ = ("_unknowns", "_component_vectors", "_direction_unit_vector", "_is_constraint", "_alpha_rad", "_beta_rad", "_gamma_rad", "_original_plane", "_angle_unit", "_polar_magnitude", "_polar_angle_rad", "angle_dir")
+
+    # Type annotation for angle_dir slot
+    angle_dir: str | None
 
     def __init__(
         self,
@@ -45,6 +48,7 @@ class _VectorWithUnknowns(_Vector):
         self._component_vectors = component_vectors or []
         self._direction_unit_vector = None
         self._is_constraint = False
+        self.angle_dir = None  # Angle direction convention for display
         # Mark as unknown if there are any unknowns
         if unknowns:
             self.is_known = False
@@ -219,6 +223,9 @@ class _VectorWithUnknowns(_Vector):
             result._polar_magnitude = self._polar_magnitude
         if hasattr(self, '_polar_angle_rad'):
             result._polar_angle_rad = self._polar_angle_rad
+
+        # Copy angle direction convention
+        result.angle_dir = getattr(self, 'angle_dir', None)
 
         return result
 
@@ -420,19 +427,25 @@ def create_vector_polar(
     if plane_lower not in valid_planes:
         raise ValueError(f"Invalid plane '{plane}'. Must be one of: {valid_planes}")
 
-    # Validate wrt axis
-    valid_axes = {"+x", "-x", "+y", "-y", "+z", "-z"}
-    wrt_lower = wrt.lower()
-    if wrt_lower not in valid_axes:
-        raise ValueError(f"Invalid wrt axis '{wrt}'. Must be one of: {valid_axes}")
+    # Validate wrt axis - allow standard axes or custom axis names (e.g., +u, +v for non-orthogonal systems)
+    # Custom axis names are validated later when coordinate system is applied
+    standard_axes = {"+x", "-x", "+y", "-y", "+z", "-z"}
+    wrt_stripped = wrt.lstrip("+-").lower()
+    wrt_has_sign = wrt.startswith("+") or wrt.startswith("-")
 
-    # Validate wrt axis is in the specified plane
-    axis_char = wrt_lower[1]  # 'x', 'y', or 'z'
-    if axis_char not in plane_lower:
-        raise ValueError(
-            f"Reference axis '{wrt}' must be in plane '{plane}'. "
-            f"Valid axes for {plane} plane: {[f'+{c}' for c in plane] + [f'-{c}' for c in plane]}"
-        )
+    # Check if this is a standard axis
+    is_standard_axis = wrt.lower() in standard_axes
+
+    # For standard axes, validate they're in the specified plane
+    if is_standard_axis:
+        axis_char = wrt.lower()[1]  # 'x', 'y', or 'z'
+        if axis_char not in plane_lower:
+            raise ValueError(
+                f"Reference axis '{wrt}' must be in plane '{plane}'. "
+                f"Valid axes for {plane} plane: {[f'+{c}' for c in plane] + [f'-{c}' for c in plane]}"
+            )
+    # For custom axes (like +u, +v), we defer validation to solve time
+    # when the coordinate system is known
 
     # Resolve unit
     resolved_unit: Unit | None = None
@@ -512,7 +525,21 @@ def create_vector_polar(
     }
 
     # Get the base angle for the reference axis
-    base_angle_deg = axis_angles[plane_lower][wrt_lower]
+    wrt_lower = wrt.lower()
+    if wrt_lower in axis_angles.get(plane_lower, {}):
+        base_angle_deg = axis_angles[plane_lower][wrt_lower]
+    else:
+        # Custom axis (like +u, +v) - defer angle computation
+        # Store the wrt for later resolution when coordinate system is applied
+        # For now, we can't compute Cartesian components without the coordinate system
+        # Create the vector but mark it for deferred computation
+        vec = _Vector(0.0, 0.0, 0.0, unit=resolved_unit, name=name)
+        vec._original_angle = angle_value
+        vec._original_wrt = wrt
+        vec._deferred_magnitude = magnitude_value
+        vec._deferred_angle_rad = angle_rad
+        vec._needs_coordinate_system = True
+        return vec
 
     # Total angle in the plane
     # For xz plane, negate angle to follow right-hand rule (thumb +y, -x → +z)
@@ -983,6 +1010,7 @@ def create_vector_resultant(
     *vectors: _Vector,
     name: str = "F_R",
     unit: Unit | str | None = None,
+    angle_dir: str | None = None,
 ) -> _VectorWithUnknowns:
     """
     Create a resultant vector placeholder from component vectors.
@@ -995,6 +1023,10 @@ def create_vector_resultant(
         *vectors: Variable number of vectors to sum
         name: Name for the resultant vector (default "F_R")
         unit: Preferred unit for the result
+        angle_dir: Angle direction convention for the result:
+            - "ccw" (default): 0 to 360, counterclockwise from reference
+            - "cw": Negative for clockwise angles (e.g., 358.8° -> -1.2°)
+            - "signed": -180 to 180 range
 
     Returns:
         _VectorWithUnknowns with all components unknown and component vectors stored
@@ -1042,6 +1074,7 @@ def create_vector_resultant(
         name=name,
     )
     result.is_resultant = True
+    result.angle_dir = angle_dir  # Store angle direction convention for display
 
     return result
 
@@ -1156,7 +1189,7 @@ def create_vector_resultant_polar(
         angle: Angle of the known resultant (measured CCW from reference axis)
         unit: Unit for the resultant magnitude
         angle_unit: Angle unit ("degree" or "radian")
-        wrt: Reference axis for angle measurement ("+x", "-x", "+y", "-y")
+        wrt: Reference axis for angle measurement ("+x", "-x", "+y", "-y", or custom like "+u", "+v")
         name: Name for the resultant (default "F_R")
 
     Returns:
@@ -1193,24 +1226,14 @@ def create_vector_resultant_polar(
         raise ValueError(f"Invalid angle_unit '{angle_unit}'. Use 'degree' or 'radian'")
 
     # Handle wrt (reference axis) - convert to standard angle from +x
+    # Support both standard axes (+x, +y, -x, -y) and custom axes (+u, +v, etc.)
     wrt_lower = wrt.lower()
-    axis_angles = {
+    standard_axis_angles = {
         "+x": 0,
         "+y": 90,
         "-x": 180,
         "-y": 270,
     }
-    if wrt_lower not in axis_angles:
-        raise ValueError(f"Invalid wrt axis '{wrt}'. Must be one of: {set(axis_angles.keys())}")
-
-    base_angle_rad = math.radians(axis_angles[wrt_lower])
-    total_angle_rad = base_angle_rad + angle_rad
-
-    # Compute Cartesian components from polar
-    mag_val = float(magnitude)
-    u = mag_val * math.cos(total_angle_rad)
-    v = mag_val * math.sin(total_angle_rad)
-    w = 0.0
 
     # Resolve unit if string
     resolved_unit = None
@@ -1226,6 +1249,25 @@ def create_vector_resultant_polar(
     elif vectors:
         # Get unit from first vector
         resolved_unit = vectors[0]._unit
+
+    mag_val = float(magnitude)
+
+    # Check if this is a standard axis or a custom axis
+    if wrt_lower in standard_axis_angles:
+        # Standard axis - compute Cartesian components immediately
+        base_angle_rad = math.radians(standard_axis_angles[wrt_lower])
+        total_angle_rad = base_angle_rad + angle_rad
+
+        # Compute Cartesian components from polar
+        u = mag_val * math.cos(total_angle_rad)
+        v = mag_val * math.sin(total_angle_rad)
+        w = 0.0
+    else:
+        # Custom axis (like +u, +v) - defer Cartesian computation until coordinate system is applied
+        # Set placeholder components that will be resolved later
+        u = 0.0
+        v = 0.0
+        w = 0.0
 
     # Create with the known resultant values (no unknowns in the resultant itself)
     # But store the component vectors for the solver to set up equilibrium equations
@@ -1245,6 +1287,12 @@ def create_vector_resultant_polar(
     # Store original angle and reference for reporting
     result._original_angle = float(angle)
     result._original_wrt = wrt
+
+    # For custom axes, mark as needing coordinate system resolution
+    if wrt_lower not in standard_axis_angles:
+        result._needs_coordinate_system = True
+        result._deferred_magnitude = mag_val
+        result._deferred_angle_rad = angle_rad
 
     return result
 

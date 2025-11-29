@@ -1290,6 +1290,52 @@ class ReportBuilder:
         self.solving_history = solving_history
         self.diagram_path = diagram_path
 
+    def _get_default_reference_axis(self) -> str:
+        """Get the default reference axis for unknown vectors.
+
+        If the problem has a custom coordinate system, use its primary axis.
+        Otherwise default to '+x'.
+        """
+        coord_sys = getattr(self.problem, 'coordinate_system', None)
+        if coord_sys is not None and hasattr(coord_sys, 'axis1_label'):
+            return f"+{coord_sys.axis1_label}"
+        return "+x"
+
+    def _convert_angle_for_display(self, angle_deg: float, vec_obj: object | None = None) -> float:
+        """Convert angle based on the vector's angle_dir setting.
+
+        Args:
+            angle_deg: Angle in degrees (standard CCW convention, 0-360)
+            vec_obj: Vector object that may have angle_dir attribute
+
+        Returns:
+            Converted angle based on angle_dir:
+            - "ccw" (default): 0 to 360, counterclockwise from reference
+            - "cw": Negative for clockwise angles (e.g., 358.8° -> -1.2°)
+            - "signed": -180 to 180 range
+        """
+        # Get angle_dir from vector first, then fall back to problem
+        angle_dir = None
+        if vec_obj is not None:
+            angle_dir = getattr(vec_obj, 'angle_dir', None)
+        if angle_dir is None:
+            angle_dir = getattr(self.problem, 'angle_dir', None)
+
+        if angle_dir == "cw":
+            # Convert to clockwise: if angle > 180, show as negative
+            # e.g., 358.8° CCW = -1.2° (which is 1.2° CW)
+            if angle_deg > 180:
+                return angle_deg - 360
+            return angle_deg
+        elif angle_dir == "signed":
+            # Convert to signed range: -180 to 180
+            if angle_deg > 180:
+                return angle_deg - 360
+            return angle_deg
+        else:
+            # Default: CCW, 0-360
+            return angle_deg
+
     def build(self) -> ReportIR:
         """Build the complete report intermediate representation."""
         report = ReportIR(
@@ -1560,11 +1606,31 @@ class ReportBuilder:
                 else:
                     magnitude = f"{mag_var.value:.1f}"
 
+            # Get reference axis - use problem's coordinate system if available
+            # Note: Don't fall back to angle_reference if problem has a coordinate system,
+            # as angle_reference defaults to +x which may not match the coordinate system
+            ref = self._get_default_reference_axis()
+            if vec_obj is not None and hasattr(vec_obj, '_original_wrt') and vec_obj._original_wrt:
+                ref = vec_obj._original_wrt
+            elif getattr(self.problem, 'coordinate_system', None) is None:
+                # Only use angle_reference fallback if no custom coordinate system
+                if vec_obj is not None and hasattr(vec_obj, 'angle_reference') and vec_obj.angle_reference:
+                    if hasattr(vec_obj.angle_reference, 'axis_label'):
+                        ref = vec_obj.angle_reference.axis_label
+
             # Get angle in degrees
             angle = "?"
-            if angle_var is not None and angle_var.value is not None:
+
+            # First check if there's an original input angle we should preserve
+            # (for vectors defined with known angles, like in inverse problems)
+            if vec_obj is not None and hasattr(vec_obj, '_polar_angle_rad') and vec_obj._polar_angle_rad is not None:
+                # Use the original input angle (preserves the sign convention from problem definition)
+                angle = f"{math.degrees(vec_obj._polar_angle_rad):.1f}"
+            elif angle_var is not None and angle_var.value is not None:
                 angle_deg = angle_var.value * 180 / math.pi
                 angle_deg = angle_deg % 360
+                # Apply angle_dir conversion for solved unknowns
+                angle_deg = self._convert_angle_for_display(angle_deg, vec_obj)
                 angle = f"{angle_deg:.1f}"
             elif vec_obj is not None and hasattr(vec_obj, '_coords') and vec_obj._coords is not None:
                 # Calculate angle from coordinates
@@ -1574,6 +1640,8 @@ class ReportBuilder:
                     angle_deg = angle_rad * 180 / math.pi
                     if angle_deg < 0:
                         angle_deg += 360
+                    # Apply angle_dir conversion for solved unknowns
+                    angle_deg = self._convert_angle_for_display(angle_deg, vec_obj)
                     angle = f"{angle_deg:.1f}"
 
             # Get x-component
@@ -1589,14 +1657,6 @@ class ReportBuilder:
                 fy = f"{vec_obj.v.magnitude():.1f}"
             elif vec_obj is not None and hasattr(vec_obj, '_coords') and vec_obj._coords is not None and len(vec_obj._coords) >= 2:
                 fy = f"{vec_obj._coords[1] / si_factor:.1f}"
-
-            # Get reference axis
-            ref = "+x"
-            if vec_obj is not None and hasattr(vec_obj, '_original_wrt') and vec_obj._original_wrt:
-                ref = vec_obj._original_wrt
-            elif vec_obj is not None and hasattr(vec_obj, 'angle_reference') and vec_obj.angle_reference:
-                if hasattr(vec_obj.angle_reference, 'axis_label'):
-                    ref = vec_obj.angle_reference.axis_label
 
             rows.append(TableRow([vec_name, fx, fy, magnitude, angle, ref]))
 
@@ -1809,9 +1869,17 @@ class ReportBuilder:
             if mag_var is None:
                 continue
 
+            # Get the vector object for checking polar angle info
+            vec_obj = getattr(self.problem, vec_name, None)
+
             # Determine original known state
             mag_was_known = original_var_states.get(f"{vec_name}_mag", True)
+            # Check if angle was originally known either from _original_variable_states
+            # or from having _polar_angle_rad set (for vectors with unknown magnitude but known angle)
             angle_was_known = original_var_states.get(f"{vec_name}_angle", True) if angle_var else True
+            # Also check for _polar_angle_rad which indicates angle was specified at creation time
+            if vec_obj is not None and hasattr(vec_obj, '_polar_angle_rad') and vec_obj._polar_angle_rad is not None:
+                angle_was_known = True
 
             # Get magnitude using proper qnty unit handling
             if mag_was_known and mag_var.value is not None:
@@ -1830,14 +1898,20 @@ class ReportBuilder:
 
             # Get angle in degrees - only show value if angle was originally known
             angle_str = ""
-            vec_obj = getattr(self.problem, vec_name, None)
 
             # If angle was not originally known, show "?" regardless of computed value
             if not angle_was_known:
                 angle_str = "?"
-            # First try to use original angle from create_vector_polar
+            # First try to use original angle from create_vector_polar (for fully known vectors)
             elif vec_obj is not None and hasattr(vec_obj, '_original_angle') and vec_obj._original_angle is not None:
                 angle_str = f"{vec_obj._original_angle:.1f}"
+            # Check for _polar_angle_rad (for vectors with unknown magnitude but known angle)
+            elif vec_obj is not None and hasattr(vec_obj, '_polar_angle_rad') and vec_obj._polar_angle_rad is not None:
+                import math
+                # _polar_angle_rad stores the input angle in radians (before wrt conversion)
+                # For display, we want to show the original input angle
+                angle_deg = math.degrees(vec_obj._polar_angle_rad)
+                angle_str = f"{angle_deg:.1f}"
             elif angle_var is not None and angle_var.value is not None:
                 import math
                 angle_deg = angle_var.value * 180.0 / math.pi
@@ -1889,13 +1963,18 @@ class ReportBuilder:
                     pass
 
             # Get angle reference - prefer original wrt from create_vector_polar
-            reference_str = ""
+            # Use problem's coordinate system default if no reference is found
+            # Note: Don't fall back to angle_reference if problem has a coordinate system,
+            # as angle_reference defaults to +x which may not match the coordinate system
+            reference_str = self._get_default_reference_axis()
             if vec_obj is not None and hasattr(vec_obj, '_original_wrt') and vec_obj._original_wrt is not None:
                 reference_str = vec_obj._original_wrt
-            elif vec_obj is not None and hasattr(vec_obj, 'angle_reference') and vec_obj.angle_reference is not None:
-                ref = vec_obj.angle_reference
-                if hasattr(ref, 'axis_label'):
-                    reference_str = ref.axis_label
+            elif getattr(self.problem, 'coordinate_system', None) is None:
+                # Only use angle_reference fallback if no custom coordinate system
+                if vec_obj is not None and hasattr(vec_obj, 'angle_reference') and vec_obj.angle_reference is not None:
+                    ref = vec_obj.angle_reference
+                    if hasattr(ref, 'axis_label'):
+                        reference_str = ref.axis_label
 
             vector_data = {
                 "symbol": vec_name,

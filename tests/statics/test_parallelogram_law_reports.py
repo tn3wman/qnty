@@ -26,6 +26,9 @@ from tests.statics._problem_fixtures import (
     Chapter2Problem1,
     Chapter2Problem2,
     Chapter2Problem3,
+    Chapter2Problem4,
+    Chapter2Problem5,
+    Chapter2Problem6,
 )
 
 # =============================================================================
@@ -39,6 +42,9 @@ PROBLEMS_WITH_GOLDEN_FILES = [
     Chapter2Problem1,
     Chapter2Problem2,
     Chapter2Problem3,
+    Chapter2Problem4,
+    Chapter2Problem5,
+    Chapter2Problem6,
 ]
 
 
@@ -205,6 +211,17 @@ class TestParallelogramLawReports:
 # =============================================================================
 
 
+def _get_problem_unit(problem_class) -> str:
+    """Get the output unit for a problem class from its vector definitions."""
+    # Check F_R first, then F_AB, then default to N
+    for attr in ["F_R", "F_AB", "F_AC"]:
+        if hasattr(problem_class, attr):
+            vec = getattr(problem_class, attr)
+            if hasattr(vec, "_unit") and vec._unit:
+                return vec._unit.symbol
+    return "N"
+
+
 def regenerate_golden_files():
     """
     Utility function to regenerate golden files for all problems.
@@ -217,7 +234,8 @@ def regenerate_golden_files():
     """
     for problem_class in PROBLEMS_WITH_GOLDEN_FILES:
         golden_base = get_golden_base(problem_class)
-        result = pl.solve_class(problem_class, output_unit="N")
+        output_unit = _get_problem_unit(problem_class)
+        result = pl.solve_class(problem_class, output_unit=output_unit)
 
         # Generate markdown
         md_path = GOLDEN_DIR / f"{golden_base}.md"

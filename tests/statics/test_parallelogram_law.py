@@ -63,12 +63,17 @@ PROBLEM_CLASSES_EXPECT_FAIL = PROBLEMS_EXPECT_FAIL
 @pytest.mark.parametrize("problem_class", PROBLEM_CLASSES, ids=lambda c: c.name)
 def test_problem(problem_class):
     """Test parallelogram law problem by comparing all expected vectors."""
+    from qnty.problems.statics.parallelogram_law import _apply_coordinate_system
+
     rtol = 0.01
 
     # Solve using the class - preserves attribute names
     result = pl.solve_class(problem_class, output_unit="N")
 
     assert result.success, f"Solve failed: {result.error}"
+
+    # Get coordinate system from problem class (if any)
+    coord_sys = getattr(problem_class, 'coordinate_system', None)
 
     # Compare each expected vector with actual result
     expected = problem_class.expected
@@ -79,6 +84,10 @@ def test_problem(problem_class):
         expected_vec = getattr(expected, attr_name)
         if not isinstance(expected_vec, _Vector):
             continue
+
+        # Apply coordinate system to expected vectors if needed
+        if coord_sys is not None and getattr(expected_vec, '_needs_coordinate_system', False):
+            expected_vec = _apply_coordinate_system(expected_vec, coord_sys)
 
         # Get actual vector from result
         actual_vec = result.vectors.get(attr_name)

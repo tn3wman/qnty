@@ -1,4 +1,4 @@
-# Engineering Calculation Report: Problem 2-3
+# Engineering Calculation Report: Problem 2-4
 
 **Generated:** {{GENERATED_DATETIME}}
 
@@ -8,8 +8,7 @@
 
 | Vector | $F_x$ (N) | $F_y$ (N) | $\|\vec{F}\|$ (N) | $\theta$ (deg) | Reference |
 | :--- | ---: | ---: | ---: | ---: | :--- |
-| $\vec{F_1}$ | 125.0 | 216.5 | 250.0 | -30.0 | +y |
-| $\vec{F_2}$ | 265.2 | -265.2 | 375.0 | -45.0 | +x |
+| $\vec{F_R}$ | 0.0 | -500.0 | 500.0 | 0.0 | -y |
 
 </div>
 
@@ -19,54 +18,49 @@
 
 | Vector | $F_x$ (N) | $F_y$ (N) | $\|\vec{F}\|$ (N) | $\theta$ (deg) | Reference |
 | :--- | ---: | ---: | ---: | ---: | :--- |
-| $\vec{F_R}$ | ? | ? | ? | ? | +x |
+| $\vec{F_{AB}}$ | ? | ? | ? | -45.0 | -y |
+| $\vec{F_{AC}}$ | ? | ? | ? | -30.0 | +x |
 
 </div>
 
 ## 3. Equations Used
 
-1. $|\vec{F_R}|^2 = |\vec{F_1}|^2 + |\vec{F_2}|^2 + 2 \cdot |\vec{F_1}| \cdot |\vec{F_2}| \cdot \cos(\angle(\vec{F_1}, \vec{F_2}))$
+1. $\frac{|\vec{F_{AB}}|}{\sin(\angle(\vec{F_{{AC}}}, \vec{F_{{R}}}))} = \frac{|\vec{F_{R}}|}{\sin(\angle(\vec{F_{{AB}}}, \vec{F_{{AC}}}))}$
 
-2. $\frac{\sin(\angle(\vec{F_2}, \vec{F_R}))}{|\vec{F_1}|} = \frac{\sin(\angle(\vec{F_1}, \vec{F_2}))}{|\vec{F_R}|}$
+2. $\frac{|\vec{F_{AC}}|}{\sin(\angle(\vec{F_{{AB}}}, \vec{F_{{R}}}))} = \frac{|\vec{F_{R}}|}{\sin(\angle(\vec{F_{{AB}}}, \vec{F_{{AC}}}))}$
 
 ## 4. Step-by-Step Solution
 
-**Step 1: Solve for $\angle(\vec{F_1}, \vec{F_2})$**
+**Step 1: Solve for triangle angles**
 
 $$
 \begin{aligned}
-\angle(\vec{F_1}, \vec{F_2}) &= |\angle(\vec{y}, \vec{F_1})| + |\angle(\vec{x}, \vec{F_2})| \\
-&= |-30^{\circ}| + |-45^{\circ}| \\
-&= 30^{\circ} + 45^{\circ} \\
+\angle(\vec{F_{{AB}}}, \vec{F_{{R}}}) &= |\angle(\vec{-y}, \vec{F_{{AB}}}) - \angle(\vec{-y}, \vec{F_{{R}}})| \\
+&= |-45^{\circ} - 0^{\circ}| \\
+&= 45^{\circ} \\
+\angle(\vec{F_{{AC}}}, \vec{F_{{R}}}) &= 90^{\circ} - |\angle(\vec{x}, \vec{F_{{AC}}})| \\
+&= 90^{\circ} - |-30^{\circ}| \\
+&= 60^{\circ} \\
+\angle(\vec{F_{{AB}}}, \vec{F_{{AC}}}) &= 180^{\circ} - 45^{\circ} - 60^{\circ} \\
 &= 75^{\circ} \\
 \end{aligned}
 $$
 
-**Step 2: Solve for $|\vec{F_R}|$ using Eq 1**
+**Step 2: Solve for $|\vec{F_{{AB}}}|$ using Eq 1**
 
 $$
 \begin{aligned}
-|\vec{F_R}| &= \sqrt{(250.0)^2 + (375.0)^2 + 2(250.0)(375.0)\cos(75^{\circ})} \\
-&= 393.2\ \text{N} \\
+|\vec{F_{AB}}| &= 500  \cdot  \frac{\sin(60^{\circ})}{\sin(75^{\circ})} \\
+&= 448\ \text{N} \\
 \end{aligned}
 $$
 
-**Step 3: Solve for $\angle(\vec{F_2}, \vec{F_R})$ using Eq 2**
+**Step 3: Solve for $|\vec{F_{{AC}}}|$ using Eq 2**
 
 $$
 \begin{aligned}
-\angle(\vec{F_2}, \vec{F_R}) &= \sin^{-1}(250.0 \cdot \frac{\sin(75^{\circ})}{393.2}) \\
-&= 37.9^{\circ} \\
-\end{aligned}
-$$
-
-**Step 4: Solve for $\angle(\vec{x}, \vec{F_R})$ with respect to +x**
-
-$$
-\begin{aligned}
-\angle(\vec{x}, \vec{F_R}) &= 360^{\circ} + \angle(\vec{x}, \vec{F_2}) + \angle(\vec{F_2}, \vec{F_R}) \\
-&= 360^{\circ} + -45.0^{\circ} + 37.9^{\circ} \\
-&= 352.9^{\circ} \\
+|\vec{F_{AC}}| &= 500  \cdot  \frac{\sin(45^{\circ})}{\sin(75^{\circ})} \\
+&= 366\ \text{N} \\
 \end{aligned}
 $$
 
@@ -76,7 +70,8 @@ $$
 
 | Vector | $F_x$ (N) | $F_y$ (N) | $\|\vec{F}\|$ (N) | $\theta$ (deg) | Reference |
 | :--- | ---: | ---: | ---: | ---: | :--- |
-| $\vec{F_R}$ | 390.2 | -48.7 | 393.2 | 352.9 | +x |
+| $\vec{F_{AB}}$ | -317.0 | -317.0 | 448.3 | -45.0 | -y |
+| $\vec{F_{AC}}$ | 317.0 | -183.0 | 366.0 | -30.0 | +x |
 
 </div>
 

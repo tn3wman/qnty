@@ -17,7 +17,7 @@
 % Magnitude notation: \magn{F} produces |F| with fixed-height bars
 \newcommand{\magn}[1]{|#1|}
 
-\title{Engineering Calculation Report: Problem 2-1}
+\title{Engineering Calculation Report: Problem 2-5}
 \date{{{GENERATED_DATE}}}
 
 \begin{document}
@@ -27,11 +27,10 @@
 
 \begin{longtable}{lSSSSl}
 \toprule
-Vector & {$F_{x}$ (N)} & {$F_{y}$ (N)} & {$\magn{\vv{F}}$ (N)} & {$\theta$ (deg)} & Reference \\
+Vector & {$F_{x}$ (lbf)} & {$F_{y}$ (lbf)} & {$\magn{\vv{F}}$ (lbf)} & {$\theta$ (deg)} & Reference \\
 \midrule
 \endhead
-$\vv{F_1}$ & 225.0 & 389.7 & 450.0 & 60.0 & +x \\
-$\vv{F_2}$ & -676.1 & -181.2 & 700.0 & 15.0 & -x \\
+$\vv{F_R}$ & 0.0 & -350.0 & 350.0 & 270.0 & +x \\
 \bottomrule
 \end{longtable}
 
@@ -39,72 +38,64 @@ $\vv{F_2}$ & -676.1 & -181.2 & 700.0 & 15.0 & -x \\
 
 \begin{longtable}{lSSSSl}
 \toprule
-Vector & {$F_{x}$ (N)} & {$F_{y}$ (N)} & {$\magn{\vv{F}}$ (N)} & {$\theta$ (deg)} & Reference \\
+Vector & {$F_{x}$ (lbf)} & {$F_{y}$ (lbf)} & {$\magn{\vv{F}}$ (lbf)} & {$\theta$ (deg)} & Reference \\
 \midrule
 \endhead
-$\vv{F_R}$ & ? & ? & ? & ? & +x \\
+$\vv{F_{AB}}$ & ? & ? & ? & 225.0 & +x \\
+$\vv{F_{AC}}$ & ? & ? & ? & 330.0 & +x \\
 \bottomrule
 \end{longtable}
 
 \section{Equations Used}
 
 \begin{enumerate}
-\item $\displaystyle \magn{\vv{F_R}}^2 = \magn{\vv{F_1}}^2 + \magn{\vv{F_2}}^2 + 2 \cdot \magn{\vv{F_1}} \cdot \magn{\vv{F_2}} \cdot \cos(\angle(\vv{F_1}, \vv{F_2}))$
-\item $\displaystyle \frac{\sin(\angle(\vv{F_1}, \vv{F_R}))}{\magn{\vv{F_2}}} = \frac{\sin(\angle(\vv{F_1}, \vv{F_2}))}{\magn{\vv{F_R}}}$
+\item $\displaystyle \frac{\magn{\vv{F_{AB}}}}{\sin(\angle(\vv{F_{{AC}}}, \vv{F_{{R}}}))} = \frac{\magn{\vv{F_{R}}}}{\sin(\angle(\vv{F_{{AB}}}, \vv{F_{{AC}}}))}$
+\item $\displaystyle \frac{\magn{\vv{F_{AC}}}}{\sin(\angle(\vv{F_{{AB}}}, \vv{F_{{R}}}))} = \frac{\magn{\vv{F_{R}}}}{\sin(\angle(\vv{F_{{AB}}}, \vv{F_{{AC}}}))}$
 \end{enumerate}
 
 \section{Step-by-Step Solution}
 
 \vspace{0.2em}
-\noindent\hspace{1em}\textbf{Step 1: Solve for $\angle(\vv{F_1}, \vv{F_2})$}
+\noindent\hspace{1em}\textbf{Step 1: Solve for triangle angles}
 \vspace{0.1em}
 
 \begin{adjustwidth}{2em}{}
 \vspace{-0.8em}
 \begin{flalign*}
-\quad \angle(\vv{F_1}, \vv{F_2}) &= \magn{\angle(\vv{x}, \vv{F_1}) - \angle(\vv{-x}, \vv{F_2})} && \\
-\quad &= \magn{60^{\circ} - 15^{\circ}} && \\
-\quad &= 45^{\circ} &&
+\quad \angle(\vv{F_{{AB}}}, \vv{F_{{R}}}) &= \magn{\angle(\vv{x}, \vv{F_{{AB}}}) - \angle(\vv{x}, \vv{F_{{R}}})} && \\
+\quad &= \magn{225^{\circ} - 270^{\circ}} && \\
+\quad &= 45^{\circ} && \\
+\quad \angle(\vv{F_{{AC}}}, \vv{F_{{R}}}) &= \magn{\angle(\vv{x}, \vv{F_{{AC}}}) - \angle(\vv{x}, \vv{F_{{R}}})} && \\
+\quad &= \magn{330^{\circ} - 270^{\circ}} && \\
+\quad &= 60^{\circ} && \\
+\quad \angle(\vv{F_{{AB}}}, \vv{F_{{AC}}}) &= 180^{\circ} - 45^{\circ} - 60^{\circ} && \\
+\quad &= 75^{\circ} &&
 \end{flalign*}
 \vspace{-0.8em}
 \end{adjustwidth}
 
 \vspace{0.2em}
-\noindent\hspace{1em}\textbf{Step 2: Solve for $\magn{\vv{F_R}}$ using Eq 1}
+\noindent\hspace{1em}\textbf{Step 2: Solve for $\magn{\vv{F_{{AB}}}}$ using Eq 1}
 \vspace{0.1em}
 
 \begin{adjustwidth}{2em}{}
 \vspace{-0.8em}
 \begin{flalign*}
-\quad \magn{\vv{F_R}} &= \sqrt{(450.0)^2 + (700.0)^2 + 2(450.0)(700.0)\cos(45^{\circ})} && \\
-\quad &= 497.0\ \text{N} &&
+\quad \magn{\vv{F_{AB}}} &= 350  \cdot  \frac{\sin(60^{\circ})}{\sin(75^{\circ})} && \\
+\quad &= 314\ \text{lbf} &&
 \end{flalign*}
 \vspace{-0.8em}
 \end{adjustwidth}
 
 \vspace{0.2em}
-\noindent\hspace{1em}\textbf{Step 3: Solve for $\angle(\vv{F_1}, \vv{F_R})$ using Eq 2}
+\noindent\hspace{1em}\textbf{Step 3: Solve for $\magn{\vv{F_{{AC}}}}$ using Eq 2}
 \vspace{0.1em}
 
 \begin{adjustwidth}{2em}{}
 \vspace{-0.8em}
 \begin{flalign*}
-\quad \angle(\vv{F_1}, \vv{F_R}) &= \sin^{-1}(700.0 \cdot \frac{\sin(45^{\circ})}{497.0}) && \\
-\quad &= 95.2^{\circ} &&
-\end{flalign*}
-\vspace{-0.8em}
-\end{adjustwidth}
-
-\vspace{0.2em}
-\noindent\hspace{1em}\textbf{Step 4: Solve for $\angle(\vv{x}, \vv{F_R})$ with respect to +x}
-\vspace{0.1em}
-
-\begin{adjustwidth}{2em}{}
-\vspace{-0.8em}
-\begin{flalign*}
-\quad \angle(\vv{x}, \vv{F_R}) &= \angle(\vv{x}, \vv{F_1}) + \angle(\vv{F_1}, \vv{F_R}) && \\
-\quad &= 60.0^{\circ} + 95.2^{\circ} && \\
-\quad &= 155.2^{\circ} &&
+\quad \magn{\vv{F_{AC}}} &= 350  \cdot  \frac{\sin(45^{\circ})}{\sin(75^{\circ})} && \\
+\quad &= 256\ \text{lbf} &&
 \end{flalign*}
 \vspace{-0.8em}
 \end{adjustwidth}
@@ -113,10 +104,11 @@ $\vv{F_R}$ & ? & ? & ? & ? & +x \\
 
 \begin{longtable}{lSSSSl}
 \toprule
-Vector & {$F_{x}$ (N)} & {$F_{y}$ (N)} & {$\magn{\vv{F}}$ (N)} & {$\theta$ (deg)} & Reference \\
+Vector & {$F_{x}$ (lbf)} & {$F_{y}$ (lbf)} & {$\magn{\vv{F}}$ (lbf)} & {$\theta$ (deg)} & Reference \\
 \midrule
 \endhead
-$\vv{F_R}$ & -451.1 & 208.5 & 497.0 & 155.2 & +x \\
+$\vv{F_{AB}}$ & -221.9 & -221.9 & 313.8 & 225.0 & +x \\
+$\vv{F_{AC}}$ & 221.9 & -128.1 & 256.2 & 330.0 & +x \\
 \bottomrule
 \end{longtable}
 
