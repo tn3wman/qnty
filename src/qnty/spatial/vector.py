@@ -1376,20 +1376,6 @@ class _Vector(Generic[D]):
 
     # ForceVector factory methods and properties
     @classmethod
-    def from_magnitude_angle(
-        cls, magnitude: float | Quantity, angle: float | Quantity, unit: Unit | str | None = None,
-        angle_unit: Unit | str = "degree", name: str | None = None, **kwargs
-    ) -> "_Vector":
-        """Create vector from magnitude and angle (polar form)."""
-        return cls(magnitude=magnitude, angle=angle, unit=unit, angle_unit=angle_unit, name=name, **kwargs)
-
-    @classmethod
-    def from_components(cls, x: float | Quantity, y: float | Quantity, z: float | Quantity | None = None,
-                       unit: Unit | str | None = None, name: str | None = None, **kwargs) -> "_Vector":
-        """Create vector from x, y, z components (cartesian form)."""
-        return cls(x=x, y=y, z=z, unit=unit, name=name, **kwargs)
-
-    @classmethod
     def resultant(cls, vectors: list["_Vector"], name: str | None = None) -> "_Vector":
         """Create resultant from a list of vectors."""
         if not vectors:
@@ -1554,18 +1540,6 @@ class _Vector(Generic[D]):
         to_unknowns = getattr(self._to_point, 'unknowns', {}) if hasattr(self, '_to_point') and self._to_point else {}
         return bool(from_unknowns) or bool(to_unknowns)
 
-    @property
-    def direction_cosines(self) -> tuple[float, float, float] | None:
-        """Direction cosines (cos α, cos β, cos γ)."""
-        mag = np.sqrt(np.sum(self._coords**2))
-        if mag == 0:
-            return None
-        return (
-            float(self._coords[0] / mag),
-            float(self._coords[1] / mag),
-            float(self._coords[2] / mag),
-        )
-
     def to_cartesian(self) -> "_Vector":
         """Convert to Cartesian _Vector."""
         result = object.__new__(_Vector)
@@ -1621,7 +1595,7 @@ class _Vector(Generic[D]):
         ref_vec = vectors[self._relative_to_force]
 
         if not hasattr(ref_vec, '_angle') or ref_vec._angle is None or ref_vec._angle.value is None:
-            raise ValueError(f"Referenced vector doesn't have known angle")
+            raise ValueError("Referenced vector doesn't have known angle")
 
         ref_angle_rad = ref_vec._angle.value
         relative_offset = self._relative_angle if self._relative_angle else 0.0
@@ -1646,95 +1620,6 @@ class _Vector(Generic[D]):
     def has_relative_angle(self) -> bool:
         """Check if vector has unresolved relative angle constraint."""
         return hasattr(self, '_relative_to_force') and self._relative_to_force is not None
-
-    def with_magnitude_unit(self, unit: Unit | str) -> "_Vector":
-        """Return a new vector with magnitude displayed in a different unit."""
-        if self._magnitude is None:
-            raise ValueError(f"Vector {self.name} has no magnitude")
-
-        if isinstance(unit, str):
-            from ..core.unit import ureg
-            resolved = ureg.resolve(unit, dim=self._dim)
-            if resolved is None:
-                raise ValueError(f"Unknown unit '{unit}'")
-            unit = resolved
-
-        result = object.__new__(_Vector)
-        result._coords = self._coords.copy()
-        result._dim = self._dim
-        result._unit = self._unit
-        result._magnitude = self._magnitude.to_unit(unit) if self._magnitude else None
-        result._angle = self._angle
-        result.name = self.name
-        result.is_known = self.is_known
-        result.is_resultant = self.is_resultant
-        result._description = self._description
-        result.coordinate_system = self.coordinate_system
-        result.angle_reference = self.angle_reference
-        result._relative_to_force = self._relative_to_force
-        result._relative_angle = self._relative_angle
-        result._from_point = None
-        result._to_point = None
-        result._constraint_magnitude = None
-        return result
-
-    def with_angle_unit(self, unit: Unit | str) -> "_Vector":
-        """Return a new vector with angle displayed in a different unit."""
-        if self._angle is None:
-            raise ValueError(f"Vector {self.name} has no angle")
-
-        if isinstance(unit, str):
-            from ..core.dimension_catalog import dim
-            from ..core.unit import ureg
-            resolved = ureg.resolve(unit, dim=dim.D)
-            if resolved is None:
-                raise ValueError(f"Unknown angle unit '{unit}'")
-            unit = resolved
-
-        result = object.__new__(_Vector)
-        result._coords = self._coords.copy()
-        result._dim = self._dim
-        result._unit = self._unit
-        result._magnitude = self._magnitude
-        result._angle = self._angle.to_unit(unit) if self._angle else None
-        result.name = self.name
-        result.is_known = self.is_known
-        result.is_resultant = self.is_resultant
-        result._description = self._description
-        result.coordinate_system = self.coordinate_system
-        result.angle_reference = self.angle_reference
-        result._relative_to_force = self._relative_to_force
-        result._relative_angle = self._relative_angle
-        result._from_point = None
-        result._to_point = None
-        result._constraint_magnitude = None
-        return result
-
-    def with_angle_reference(self, wrt: str | "AngleReference") -> "_Vector":
-        """Return a new vector with a different angle reference system."""
-        if isinstance(wrt, str):
-            new_angle_ref = _Vector.parse_wrt_static(wrt, self.coordinate_system)
-        else:
-            new_angle_ref = wrt
-
-        result = object.__new__(_Vector)
-        result._coords = self._coords.copy()
-        result._dim = self._dim
-        result._unit = self._unit
-        result._magnitude = self._magnitude
-        result._angle = self._angle
-        result.name = self.name
-        result.is_known = self.is_known
-        result.is_resultant = self.is_resultant
-        result._description = self._description
-        result.coordinate_system = self.coordinate_system
-        result.angle_reference = new_angle_ref
-        result._relative_to_force = self._relative_to_force
-        result._relative_angle = self._relative_angle
-        result._from_point = None
-        result._to_point = None
-        result._constraint_magnitude = None
-        return result
 
     def clone(self, name: str | None = None) -> "_Vector":
         """
