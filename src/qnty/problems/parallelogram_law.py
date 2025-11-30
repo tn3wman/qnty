@@ -721,10 +721,21 @@ class ParallelogramLawProblem(Problem):
         known_vec = known_vectors[0]
         unknown_vec = unknown_vectors[0]
 
-        # Check that unknown vector has known magnitude but unknown angle
-        if "angle" not in unknown_vec.unknowns:
+        # Check what's unknown about the unknown vector
+        has_unknown_angle = "angle" in unknown_vec.unknowns
+        has_unknown_magnitude = "magnitude" in unknown_vec.unknowns
+
+        # Case 1: Unknown vector has known magnitude, unknown angle (Problem 2-12)
+        # Case 2: Unknown vector has unknown magnitude, known angle (Problem 2-14)
+        if has_unknown_magnitude and not has_unknown_angle:
+            # Case 2: Known angle, unknown magnitude - use Law of Sines
+            self._solve_unknown_resultant_with_known_angles(known_vec, unknown_vec, resultant, resultant_name, FR_angle, unit)
+            return
+
+        # Case 1: Unknown angle, known magnitude
+        if not has_unknown_angle:
             raise NotImplementedError(
-                "Unknown resultant magnitude solve requires the unknown vector to have unknown angle"
+                "Unknown resultant magnitude solve requires the unknown vector to have unknown angle or unknown magnitude"
             )
         unknown_magnitude = getattr(unknown_vec, '_polar_magnitude', None)
         if unknown_magnitude is None:
@@ -879,6 +890,296 @@ class ParallelogramLawProblem(Problem):
             known_vec, unknown_vec, resultant, resultant_name,
             F_unknown_mag, theta, base_angle_rad, FR_mag, FR_angle, unit
         )
+
+    def _solve_unknown_resultant_with_known_angles(
+        self,
+        known_vec: _Vector,
+        unknown_vec: _VectorWithUnknowns,
+        resultant: _VectorWithUnknowns,
+        resultant_name: str,
+        FR_angle: float,
+        unit,
+    ) -> None:
+        """
+        Solve for unknown vector magnitude and resultant magnitude when all angles are known.
+
+        This handles the case where:
+        - One component vector is fully known (magnitude and angle)
+        - One component vector has known angle but unknown magnitude
+        - Resultant has known angle but unknown magnitude
+
+        Uses the Law of Sines in the force triangle:
+            |F_known| / sin(angle opposite F_known) = |F_unknown| / sin(angle opposite F_unknown)
+                                                    = |F_R| / sin(angle opposite F_R)
+
+        For Problem 2-14:
+        - F_a: 30 lbf at 0° from +a (known)
+        - F_b: unknown magnitude at 0° from -b
+        - F: unknown magnitude at 80° from -b
+        """
+        # Get known vector properties
+        F_known_coords = known_vec._coords
+        F_known_mag, F_known_angle = _magnitude_and_angle_from_coords(F_known_coords)
+
+        # Get unknown vector's known angle (standard angle from input)
+        unknown_angle = unknown_vec._polar_angle_rad
+        if unknown_angle is None:
+            raise ValueError("Unknown vector must have a known angle")
+
+        # Convert unknown angle to standard if needed (using wrt reference)
+        unknown_wrt = getattr(unknown_vec, '_original_wrt', '+x')
+        unknown_standard_angle = self._get_standard_angle(unknown_angle, unknown_wrt)
+
+        # Convert resultant's angle to standard form (FR_angle is the input angle)
+        resultant_wrt = getattr(resultant, '_original_wrt', '+x')
+        FR_standard_angle = self._get_standard_angle(FR_angle, resultant_wrt)
+
+        # Calculate the interior angles of the force triangle
+        # The force triangle has vertices at:
+        # - Origin (where F_known and F_R start)
+        # - Tip of F_known (where F_unknown starts in head-to-tail)
+        # - Tip of F_R (end point)
+        #
+        # Using the Law of Sines:
+        # |F_known| / sin(angle_opposite_known) = |F_unknown| / sin(angle_opposite_unknown)
+        #                                        = |F_R| / sin(angle_opposite_resultant)
+
+        # angle_opposite_unknown = interior angle between F_known and F_R (at origin)
+        angle_opposite_unknown = interior_angle(F_known_angle, FR_standard_angle)
+
+        # angle_opposite_resultant = interior angle between -F_known and F_unknown (at tip of F_known)
+        # In head-to-tail, at tip of F_known, we have -F_known meeting F_unknown
+        angle_opposite_resultant = interior_angle(F_known_angle + math.pi, unknown_standard_angle)
+
+        # angle_opposite_known = 180 - other two (triangle sum property)
+        angle_opposite_known = math.pi - angle_opposite_unknown - angle_opposite_resultant
+
+        # Apply Law of Sines
+        # |F_known| / sin(angle_opposite_known) = |F_unknown| / sin(angle_opposite_unknown)
+        #                                        = |F_R| / sin(angle_opposite_resultant)
+        sin_opposite_known = math.sin(angle_opposite_known)
+        sin_opposite_unknown = math.sin(angle_opposite_unknown)
+        sin_opposite_resultant = math.sin(angle_opposite_resultant)
+
+        if abs(sin_opposite_known) < 1e-10:
+            raise ValueError("Cannot solve: angle opposite to known vector is zero")
+
+        ratio = F_known_mag / sin_opposite_known
+        F_unknown_mag = ratio * sin_opposite_unknown
+        FR_mag = ratio * sin_opposite_resultant
+
+        # Handle negative magnitudes (can happen if angles are obtuse)
+        F_unknown_mag = abs(F_unknown_mag)
+        FR_mag = abs(FR_mag)
+
+        # Compute unknown vector coordinates
+        F_unknown_x = F_unknown_mag * math.cos(unknown_standard_angle)
+        F_unknown_y = F_unknown_mag * math.sin(unknown_standard_angle)
+
+        # Update unknown vector
+        unknown_vec._coords = np.array([F_unknown_x, F_unknown_y, 0.0])
+        unknown_vec._unknowns = {}
+        unknown_vec.is_known = True
+        unknown_vec._magnitude = _helper.create_force_quantity(f"{unknown_vec.name}_magnitude", F_unknown_mag, unit)
+        unknown_vec._angle = _helper.create_angle_quantity(f"{unknown_vec.name}_angle", unknown_standard_angle)
+
+        # Update resultant
+        FR_x = FR_mag * math.cos(FR_standard_angle)
+        FR_y = FR_mag * math.sin(FR_standard_angle)
+        resultant._coords = np.array([FR_x, FR_y, 0.0])
+        resultant._unknowns = {}
+        resultant.is_known = True
+        resultant._magnitude = _helper.create_force_quantity(f"{resultant_name}_magnitude", FR_mag, unit)
+        resultant._angle = _helper.create_angle_quantity(f"{resultant_name}_angle", FR_standard_angle)
+
+        # Add variables
+        vec_name = unknown_vec.name or "F_unknown"
+        known_name = known_vec.name or "F_known"
+
+        # For unknown_vec: magnitude was unknown, angle was known
+        self._add_force_variables(vec_name, F_unknown_mag, unknown_standard_angle, resultant._dim, unit, is_known=False)
+        # Override: angle was actually known at input time
+        self._original_variable_states[f"{vec_name}_angle"] = True
+
+        # Known vector: both magnitude and angle are known
+        self._add_force_variables(known_name, F_known_mag, F_known_angle, resultant._dim, unit, is_known=True)
+
+        # Resultant: both magnitude and angle were unknown (but angle was constrained)
+        self._add_force_variables(resultant_name, FR_mag, FR_standard_angle, resultant._dim, unit, is_known=False)
+        # Override: angle was actually known at input time
+        self._original_variable_states[f"{resultant_name}_angle"] = True
+
+        # Get input angles for display
+        unknown_input_deg = math.degrees(unknown_angle)
+        resultant_input_deg = math.degrees(getattr(resultant, '_polar_angle_rad', FR_angle))
+
+        # Add solution steps using the Law of Sines approach
+        self._add_known_angles_unknown_magnitudes_steps(
+            known_vec, unknown_vec, resultant, resultant_name,
+            F_known_mag, F_unknown_mag, FR_mag,
+            angle_opposite_known, angle_opposite_unknown, angle_opposite_resultant,
+            unknown_input_deg, resultant_input_deg,
+            unit
+        )
+
+    def _get_standard_angle(self, input_angle_rad: float, wrt: str) -> float:
+        """Convert an input angle (relative to wrt axis) to standard angle (from +x CCW)."""
+        standard_axis_angles = {"+x": 0, "+y": math.pi/2, "-x": math.pi, "-y": 3*math.pi/2}
+        wrt_lower = wrt.lower()
+
+        if wrt_lower in standard_axis_angles:
+            base_angle = standard_axis_angles[wrt_lower]
+        else:
+            coord_sys = getattr(self, 'coordinate_system', None)
+            if coord_sys is not None:
+                wrt_stripped = wrt.lstrip('+-')
+                is_negative = wrt.startswith('-')
+                if wrt_stripped == coord_sys.axis1_label:
+                    base_angle = coord_sys.axis1_angle
+                elif wrt_stripped == coord_sys.axis2_label:
+                    base_angle = coord_sys.axis2_angle
+                else:
+                    raise ValueError(f"Unknown axis '{wrt}'")
+                if is_negative:
+                    base_angle += math.pi
+            else:
+                raise ValueError(f"Unknown axis '{wrt}' and no coordinate system defined")
+
+        return normalize_angle_positive(base_angle + input_angle_rad)
+
+    def _add_known_angles_unknown_magnitudes_steps(
+        self,
+        known_vec: _Vector,
+        unknown_vec: _VectorWithUnknowns,
+        resultant: _VectorWithUnknowns,
+        resultant_name: str,
+        F_known_mag: float,
+        F_unknown_mag: float,
+        FR_mag: float,
+        angle_opposite_known: float,
+        angle_opposite_unknown: float,
+        angle_opposite_resultant: float,
+        unknown_input_deg: float,
+        resultant_input_deg: float,
+        unit,
+    ) -> None:
+        """Add solution steps for known angles, unknown magnitudes case (Law of Sines)."""
+        unit_symbol, si_factor = _get_unit_info(unit)
+        if not unit_symbol:
+            unit_symbol = "N"
+
+        known_name = known_vec.name or "F_known"
+        unknown_name = unknown_vec.name or "F_unknown"
+
+        F_known_display = _to_display_value(F_known_mag, si_factor)
+        F_unknown_display = _to_display_value(F_unknown_mag, si_factor)
+        FR_display = _to_display_value(FR_mag, si_factor)
+
+        # Get angle display info
+        known_wrt = getattr(known_vec, '_original_wrt', '+x')
+        unknown_wrt = getattr(unknown_vec, '_original_wrt', '+x')
+        resultant_wrt = getattr(resultant, '_original_wrt', '+x')
+
+        coord_sys = getattr(self, 'coordinate_system', None)
+
+        # Step 1: Compute triangle angles
+        from qnty.utils.geometry import compute_angle_between_display
+
+        # Get the input angles in degrees for display
+        known_input_deg = math.degrees(getattr(known_vec, '_polar_angle_rad', 0.0))
+        if known_input_deg == 0 and hasattr(known_vec, '_original_angle'):
+            known_input_deg = known_vec._original_angle
+
+        # Angle between unknown and resultant (opposite to known vector)
+        alpha_deg = math.degrees(angle_opposite_known)
+        # Angle between known and resultant (opposite to unknown vector)
+        beta_deg = math.degrees(angle_opposite_unknown)
+        # Angle between known and unknown (opposite to resultant)
+        gamma_deg = math.degrees(angle_opposite_resultant)
+
+        # Get standard angles for display function
+        known_std = _magnitude_and_angle_from_coords(known_vec._coords)[1]
+        unknown_std = self._get_standard_angle(
+            getattr(unknown_vec, '_polar_angle_rad', 0.0),
+            unknown_wrt
+        )
+        resultant_std = getattr(resultant, '_polar_angle_rad', 0.0)
+        if resultant_wrt:
+            resultant_std = self._get_standard_angle(resultant_std, resultant_wrt)
+
+        # Build angle computation displays
+        angle_displays = []
+
+        # Angle between unknown and resultant (opposite to known vector)
+        display_ur = compute_angle_between_display(
+            theta1_std_deg=math.degrees(unknown_std),
+            theta2_std_deg=math.degrees(resultant_std),
+            theta1_input_deg=unknown_input_deg,
+            theta2_input_deg=resultant_input_deg,
+            wrt1=unknown_wrt,
+            wrt2=resultant_wrt,
+            vec1_name=unknown_name,
+            vec2_name=resultant_name,
+            result_deg=alpha_deg,
+            coordinate_system=coord_sys
+        )
+        angle_displays.append(display_ur)
+
+        # Angle between known and resultant (opposite to unknown vector)
+        display_kr = compute_angle_between_display(
+            theta1_std_deg=math.degrees(known_std),
+            theta2_std_deg=math.degrees(resultant_std),
+            theta1_input_deg=known_input_deg,
+            theta2_input_deg=resultant_input_deg,
+            wrt1=known_wrt,
+            wrt2=resultant_wrt,
+            vec1_name=known_name,
+            vec2_name=resultant_name,
+            result_deg=beta_deg,
+            coordinate_system=coord_sys
+        )
+        angle_displays.append(display_kr)
+
+        # Third angle from triangle sum
+        angle_displays.append(
+            f"∠({known_name},{unknown_name}) = 180° - {alpha_deg:.0f}° - {beta_deg:.0f}°\n"
+            f"= {gamma_deg:.0f}°"
+        )
+
+        step1_content = "\n".join(angle_displays)
+
+        self.solving_history.append({
+            "target_variable": "triangle angles",
+            "equation_str": "",  # No equation for angle computation step
+            "equation_inline": "",
+            "substituted_equation": step1_content,
+        })
+
+        # Step 2: Solve for unknown magnitude using Law of Sines
+        step2_sub = (
+            f"|{unknown_name}| = {F_known_display:.0f} · sin({beta_deg:.0f}°)/sin({alpha_deg:.0f}°)\n"
+            f"= {F_unknown_display:.0f}\\ \\text{{{unit_symbol}}}"
+        )
+
+        self.solving_history.append({
+            "target_variable": f"|{unknown_name}| using Eq 1",
+            "equation_str": f"|{unknown_name}|/sin(∠({known_name},{resultant_name})) = |{known_name}|/sin(∠({unknown_name},{resultant_name}))",
+            "equation_inline": "",
+            "substituted_equation": step2_sub,
+        })
+
+        # Step 3: Solve for resultant magnitude using Law of Sines
+        step3_sub = (
+            f"|{resultant_name}| = {F_known_display:.0f} · sin({gamma_deg:.0f}°)/sin({alpha_deg:.0f}°)\n"
+            f"= {FR_display:.0f}\\ \\text{{{unit_symbol}}}"
+        )
+
+        self.solving_history.append({
+            "target_variable": f"|{resultant_name}| using Eq 2",
+            "equation_str": f"|{resultant_name}|/sin(∠({known_name},{unknown_name})) = |{known_name}|/sin(∠({unknown_name},{resultant_name}))",
+            "equation_inline": "",
+            "substituted_equation": step3_sub,
+        })
 
     def _add_law_of_sines_solution_steps(
         self,
@@ -2203,8 +2504,14 @@ class ParallelogramLawProblem(Problem):
                 self.variables[f"{force_name}_y"] = y_var
 
     def _populate_solving_history(self) -> None:
-        """Convert solution_steps to solving_history format for report generation."""
-        self.solving_history = []
+        """Convert solution_steps to solving_history format for report generation.
+
+        Note: If solving_history already has entries (e.g., from direct appends during
+        solving), they are preserved and new entries from solution_steps are appended.
+        """
+        # Initialize solving_history if it doesn't exist, but preserve existing entries
+        if not hasattr(self, 'solving_history'):
+            self.solving_history = []
 
         for i, step in enumerate(self.solution_steps):
             equation_for_list = step.get("equation") or step.get("equation_for_list", "")

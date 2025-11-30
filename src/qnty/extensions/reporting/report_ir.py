@@ -288,8 +288,9 @@ class MarkdownRenderer(ReportRenderer):
             unit = magnitude_match.group(2)
             return f"$\\|\\vec{{{var}}}\\|$ ({unit})"
 
-        # Handle subscript notation Fₓ (unit), Fᵧ (unit), Fᵤ (unit), Fᵥ (unit)
-        subscript_map = {"ₓ": "x", "ᵧ": "y", "ᵤ": "u", "ᵥ": "v", "ₙ": "n", "ₜ": "t", "₁": "1", "₂": "2", "₃": "3"}
+        # Handle subscript notation Fₓ (unit), Fᵧ (unit), Fᵤ (unit), Fᵥ (unit), Fₐ (unit), Fᵦ (unit)
+        subscript_map = {"ₓ": "x", "ᵧ": "y", "ᵤ": "u", "ᵥ": "v", "ₙ": "n", "ₜ": "t", "₁": "1", "₂": "2", "₃": "3",
+                         "ₐ": "a", "ᵦ": "b"}  # Added a and b for custom coordinate systems
         for unicode_sub, ascii_sub in subscript_map.items():
             if unicode_sub in result:
                 sub_match = re.match(r'([A-Za-z]+)' + unicode_sub + r'\s*\(([^)]+)\)', result)
@@ -904,8 +905,9 @@ class LaTeXRenderer(ReportRenderer):
             unit = magnitude_match.group(2)
             return r"$\magn{\vv{" + var + r"}}$ (" + self._escape_latex(unit) + ")"
 
-        # Check for subscript notation like "Fₓ (N)", "Fᵧ (N)", "Fᵤ (N)", "Fᵥ (N)"
-        subscript_map = {"ₓ": "x", "ᵧ": "y", "ᵤ": "u", "ᵥ": "v", "ₙ": "n", "ₜ": "t", "₁": "1", "₂": "2", "₃": "3"}
+        # Check for subscript notation like "Fₓ (N)", "Fᵧ (N)", "Fᵤ (N)", "Fᵥ (N)", "Fₐ (N)", "Fᵦ (N)"
+        subscript_map = {"ₓ": "x", "ᵧ": "y", "ᵤ": "u", "ᵥ": "v", "ₙ": "n", "ₜ": "t", "₁": "1", "₂": "2", "₃": "3",
+                         "ₐ": "a", "ᵦ": "b"}  # Added a and b for custom coordinate systems
         for unicode_sub, ascii_sub in subscript_map.items():
             if unicode_sub in header:
                 # Parse pattern like "Fₓ (unit)"
@@ -1536,7 +1538,10 @@ class ReportBuilder:
         axis1, axis2 = self._get_axis_labels()
 
         # Build subscript characters for axis labels
-        subscript_map = {'x': 'ₓ', 'y': 'ᵧ', 'u': 'ᵤ', 'v': 'ᵥ', 'n': 'ₙ', 't': 'ₜ'}
+        # Use Unicode subscripts where available, otherwise use underscore notation
+        # which will be converted to LaTeX by _format_table_header_md
+        subscript_map = {'x': 'ₓ', 'y': 'ᵧ', 'u': 'ᵤ', 'v': 'ᵥ', 'n': 'ₙ', 't': 'ₜ',
+                         'a': 'ₐ', 'b': 'ᵦ'}  # Added a and b for custom coordinate systems
         sub1 = subscript_map.get(axis1.lower(), f'_{axis1}')
         sub2 = subscript_map.get(axis2.lower(), f'_{axis2}')
 
@@ -1640,7 +1645,9 @@ class ReportBuilder:
         axis1, axis2 = self._get_axis_labels()
 
         # Build subscript characters for axis labels
-        subscript_map = {'x': 'ₓ', 'y': 'ᵧ', 'u': 'ᵤ', 'v': 'ᵥ', 'n': 'ₙ', 't': 'ₜ'}
+        # Use Unicode subscripts where available, otherwise use underscore notation
+        subscript_map = {'x': 'ₓ', 'y': 'ᵧ', 'u': 'ᵤ', 'v': 'ᵥ', 'n': 'ₙ', 't': 'ₜ',
+                         'a': 'ₐ', 'b': 'ᵦ'}  # Added a and b for custom coordinate systems
         sub1 = subscript_map.get(axis1.lower(), f'_{axis1}')
         sub2 = subscript_map.get(axis2.lower(), f'_{axis2}')
 

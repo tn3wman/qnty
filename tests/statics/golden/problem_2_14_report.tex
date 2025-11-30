@@ -1,0 +1,142 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{graphicx}
+\usepackage{siunitx}
+\usepackage{accents}
+\usepackage{changepage}
+
+% Vector notation: \vv{F} produces F with arrow over it
+\newcommand{\vv}[1]{\vec{#1}}
+% Magnitude notation: \magn{F} produces |F| with fixed-height bars
+\newcommand{\magn}[1]{|#1|}
+
+\title{Engineering Calculation Report: Problem 2-14}
+\date{{{GENERATED_DATE}}}
+
+\begin{document}
+\maketitle
+
+\section{Known Variables}
+
+\begin{longtable}{lSSSSl}
+\toprule
+Vector & {$F_{a}$ (lbf)} & {$F_{b}$ (lbf)} & {$\magn{\vv{F}}$ (lbf)} & {$\theta$ (deg)} & Reference \\
+\midrule
+\endhead
+$\vv{F_a}$ & 30.0 & 0.0 & 30.0 & 0.0 & +a \\
+\bottomrule
+\end{longtable}
+
+\section{Unknown Variables}
+
+\begin{longtable}{lSSSSl}
+\toprule
+Vector & {$F_{a}$ (lbf)} & {$F_{b}$ (lbf)} & {$\magn{\vv{F}}$ (lbf)} & {$\theta$ (deg)} & Reference \\
+\midrule
+\endhead
+$\vv{F}$ & ? & ? & ? & 80.0 & -b \\
+$\vv{F_b}$ & ? & ? & ? & 0.0 & -b \\
+\bottomrule
+\end{longtable}
+
+\section{Equations Used}
+
+\begin{enumerate}
+\item $\displaystyle \frac{\magn{\vv{F_b}}}{\sin(\angle(\vv{F_a}, \vv{F}))} = \frac{\magn{\vv{F_a}}}{\sin(\angle(\vv{F_b}, \vv{F}))}$
+\item $\displaystyle \frac{\magn{\vv{F}}}{\sin(\angle(\vv{F_a}, \vv{F_b}))} = \frac{\magn{\vv{F_a}}}{\sin(\angle(\vv{F_b}, \vv{F}))}$
+\end{enumerate}
+
+\section{Step-by-Step Solution}
+
+\vspace{0.2em}
+\noindent\hspace{1em}\textbf{Step 1: Solve for triangle angles}
+\vspace{0.1em}
+
+\begin{adjustwidth}{2em}{}
+\vspace{-0.8em}
+\begin{flalign*}
+\quad \angle(\vv{F_b}, \vv{F}) &= \magn{\angle(\vv{-b}, \vv{F_b}) - \angle(\vv{-b}, \vv{F})} && \\
+\quad &= \magn{0^{\circ} - 80^{\circ}} && \\
+\quad &= 80^{\circ} && \\
+\quad \angle(\vv{F_a}, \vv{F}) &= \angle(\vv{a}, \vv{-b}) - \magn{\angle(\vv{-b}, \vv{F})} && \\
+\quad &= 140^{\circ} - 80^{\circ} && \\
+\quad &= 60^{\circ} && \\
+\quad \angle(\vv{F_a}, \vv{F_b}) &= 180^{\circ} - 80^{\circ} - 60^{\circ} && \\
+\quad &= 40^{\circ} &&
+\end{flalign*}
+\vspace{-0.8em}
+\end{adjustwidth}
+
+\vspace{0.2em}
+\noindent\hspace{1em}\textbf{Step 2: Solve for $\magn{\vv{F_b}}$ using Eq 1}
+\vspace{0.1em}
+
+\begin{adjustwidth}{2em}{}
+\vspace{-0.8em}
+\begin{flalign*}
+\quad \magn{\vv{F_b}} &= 30  \cdot  \frac{\sin(60^{\circ})}{\sin(80^{\circ})} && \\
+\quad &= 26\ \text{lbf} &&
+\end{flalign*}
+\vspace{-0.8em}
+\end{adjustwidth}
+
+\vspace{0.2em}
+\noindent\hspace{1em}\textbf{Step 3: Solve for $\magn{\vv{F}}$ using Eq 2}
+\vspace{0.1em}
+
+\begin{adjustwidth}{2em}{}
+\vspace{-0.8em}
+\begin{flalign*}
+\quad \magn{\vv{F}} &= 30  \cdot  \frac{\sin(40^{\circ})}{\sin(80^{\circ})} && \\
+\quad &= 20\ \text{lbf} &&
+\end{flalign*}
+\vspace{-0.8em}
+\end{adjustwidth}
+
+\section{Summary of Results}
+
+\begin{longtable}{lSSSSl}
+\toprule
+Vector & {$F_{a}$ (lbf)} & {$F_{b}$ (lbf)} & {$\magn{\vv{F}}$ (lbf)} & {$\theta$ (deg)} & Reference \\
+\midrule
+\endhead
+$\vv{F}$ & 30.0 & -26.4 & 19.6 & 80.0 & -b \\
+$\vv{F_b}$ & 0.0 & -26.4 & 26.4 & 0.0 & -b \\
+\bottomrule
+\end{longtable}
+
+\section*{Disclaimer}
+\small
+While every effort has been made to ensure the accuracy and reliability of the calculations provided, we do not guarantee that the information is complete, up-to-date, or suitable for any specific purpose. Users must independently verify the results and assume full responsibility for any decisions or actions taken based on its output. Use of this calculator is entirely at your own risk, and we expressly disclaim any liability for errors or omissions in the information provided.
+
+\vspace{1em}
+\noindent\textbf{Report Details:}
+\begin{itemize}[nosep]
+\item \textbf{Generated Date:} {{GENERATED_DATE}}
+\item \textbf{Generated Using:} Qnty Library
+\item \textbf{Version:} Beta (Independent verification required for production use)
+\end{itemize}
+
+\vspace{1em}
+\noindent\textbf{Signatures:}
+\begin{longtable}{llll}
+\toprule
+Role & Name & Signature & Date \\
+\midrule
+Calculated By & \rule{3cm}{0.4pt} & \rule{3cm}{0.4pt} & \rule{2cm}{0.4pt} \\
+Reviewed By & \rule{3cm}{0.4pt} & \rule{3cm}{0.4pt} & \rule{2cm}{0.4pt} \\
+Approved By & \rule{3cm}{0.4pt} & \rule{3cm}{0.4pt} & \rule{2cm}{0.4pt} \\
+\bottomrule
+\end{longtable}
+
+\begin{center}
+\textit{Report generated using qnty library}
+\end{center}
+\end{document}

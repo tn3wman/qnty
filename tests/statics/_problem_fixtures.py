@@ -453,14 +453,40 @@ class Chapter2Problem12:
         F_R = pl.create_vector_polar(magnitude=10400, unit="N", angle=0, wrt="+x")
 
 class Chapter2Problem13:
-    """
-    NOTE: Problems 13-14 use non-orthogonal coordinate systems (40° between axes).
-    These require CoordinateSystem support which is not yet migrated.
-    """
-    pass
+    name = "Problem 2-13"
+    generate_debug_reports = False
+    coordinate_system = pl.create_coord_angle_between(
+        "a", "b", angle_between=40
+    )
+    F_a = pl.create_vector_polar(magnitude=..., unit="lbf", angle=0, wrt="+a")
+    F_b = pl.create_vector_polar(magnitude=..., unit="lbf", angle=0, wrt="-b")
+    F = pl.create_vector_resultant_polar(
+        F_a, F_b,
+        magnitude=20, unit="lbf", angle=80, wrt="-b"
+    )
+
+    class expected:
+        F_a = pl.create_vector_polar(magnitude=30.6, unit="lbf", angle=0, wrt="+a")
+        F_b = pl.create_vector_polar(magnitude=26.9, unit="lbf", angle=0, wrt="-b")
+        F = pl.create_vector_polar(magnitude=20, unit="lbf", angle=80, wrt="-b")
 
 class Chapter2Problem14:
-    pass
+    name = "Problem 2-14"
+    generate_debug_reports = True
+    coordinate_system = pl.create_coord_angle_between(
+        "a", "b", angle_between=40
+    )
+    F_a = pl.create_vector_polar(magnitude=30, unit="lbf", angle=0, wrt="+a")
+    F_b = pl.create_vector_polar(magnitude=..., unit="lbf", angle=0, wrt="-b")
+    F = pl.create_vector_resultant_polar(
+        F_a, F_b,
+        magnitude=..., unit="lbf", angle=80, wrt="-b"
+    )
+
+    class expected:
+        F_a = pl.create_vector_polar(magnitude=30, unit="lbf", angle=0, wrt="+a")
+        F_b = pl.create_vector_polar(magnitude=26.4, unit="lbf", angle=0, wrt="-b")
+        F = pl.create_vector_polar(magnitude=19.6, unit="lbf", angle=80, wrt="-b")
 
 class Chapter2Problem15:
     """
@@ -859,8 +885,8 @@ PARALLELOGRAM_LAW_PROBLEMS = [
     Chapter2Problem10,
     Chapter2Problem11,
     Chapter2Problem12,
-    # Problems 13-14: Non-orthogonal coordinate systems (40° between axes) - not yet supported
-    Chapter2Problem15,
+    Chapter2Problem13,
+    Chapter2Problem14,
     # Problem 16: Force-relative reference (wrt="+F_R") - not yet supported
     Chapter2Problem17,
     Chapter2Problem18,
@@ -895,6 +921,8 @@ ALL_PROBLEM_CLASSES = [
     Chapter2Problem10,
     Chapter2Problem11,
     Chapter2Problem12,
+    Chapter2Problem13,
+    Chapter2Problem14,
     Chapter2Problem15,
     Chapter2Problem17,
     Chapter2Problem18,
@@ -903,6 +931,23 @@ ALL_PROBLEM_CLASSES = [
     Chapter2Problem27,
     Chapter2Problem29,
     Chapter2Problem30,
+]
+
+PROBLEMS_WITH_GOLDEN_FILES = [
+    Chapter2Problem1,
+    Chapter2Problem2,
+    Chapter2Problem3,
+    Chapter2Problem4,
+    Chapter2Problem5,
+    Chapter2Problem6,
+    Chapter2Problem7,
+    Chapter2Problem8,
+    Chapter2Problem9,
+    Chapter2Problem10,
+    Chapter2Problem11,
+    Chapter2Problem12,
+    Chapter2Problem13,
+    Chapter2Problem14,
 ]
 
 

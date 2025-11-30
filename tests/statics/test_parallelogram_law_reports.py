@@ -22,43 +22,13 @@ import pytest
 from qnty.problems.statics import parallelogram_law as pl
 
 # Import shared problem fixtures
-from tests.statics._problem_fixtures import (
-    Chapter2Problem1,
-    Chapter2Problem2,
-    Chapter2Problem3,
-    Chapter2Problem4,
-    Chapter2Problem5,
-    Chapter2Problem6,
-    Chapter2Problem7,
-    Chapter2Problem8,
-    Chapter2Problem9,
-    Chapter2Problem10,
-    Chapter2Problem11,
-    Chapter2Problem12,
-)
+from tests.statics._problem_fixtures import PROBLEMS_WITH_GOLDEN_FILES
 
 # =============================================================================
 # Test fixtures and utilities
 # =============================================================================
 
 GOLDEN_DIR = Path(__file__).parent / "golden"
-
-# Problems that have golden files for snapshot testing
-PROBLEMS_WITH_GOLDEN_FILES = [
-    Chapter2Problem1,
-    Chapter2Problem2,
-    Chapter2Problem3,
-    Chapter2Problem4,
-    Chapter2Problem5,
-    Chapter2Problem6,
-    Chapter2Problem7,
-    Chapter2Problem8,
-    Chapter2Problem9,
-    Chapter2Problem10,
-    Chapter2Problem11,
-    Chapter2Problem12,
-]
-
 
 def get_golden_base(problem_class) -> str:
     """
