@@ -17,7 +17,7 @@
 % Magnitude notation: \magn{F} produces |F| with fixed-height bars
 \newcommand{\magn}[1]{|#1|}
 
-\title{Engineering Calculation Report: Problem 2-13}
+\title{Engineering Calculation Report: Problem 2-16}
 \date{{{GENERATED_DATE}}}
 
 \begin{document}
@@ -27,10 +27,10 @@
 
 \begin{longtable}{lSSSSl}
 \toprule
-Vector & {$F_{a}$ (lbf)} & {$F_{b}$ (lbf)} & {$\magn{\vv{F}}$ (lbf)} & {$\theta$ (deg)} & Reference \\
+Vector & {$F_{x}$ (lbf)} & {$F_{y}$ (lbf)} & {$\magn{\vv{F}}$ (lbf)} & {$\theta$ (deg)} & Reference \\
 \midrule
 \endhead
-$\vv{F}$ & 30.6 & -26.9 & 20.0 & 80.0 & -b \\
+$\vv{F_R}$ & -378.7 & -761.0 & 850.0 & 30.0 & $\vv{F_{BA}}$ \\
 \bottomrule
 \end{longtable}
 
@@ -38,64 +38,72 @@ $\vv{F}$ & 30.6 & -26.9 & 20.0 & 80.0 & -b \\
 
 \begin{longtable}{lSSSSl}
 \toprule
-Vector & {$F_{a}$ (lbf)} & {$F_{b}$ (lbf)} & {$\magn{\vv{F}}$ (lbf)} & {$\theta$ (deg)} & Reference \\
+Vector & {$F_{x}$ (lbf)} & {$F_{y}$ (lbf)} & {$\magn{\vv{F}}$ (lbf)} & {$\theta$ (deg)} & Reference \\
 \midrule
 \endhead
-$\vv{F_a}$ & ? & ? & ? & 0.0 & +a \\
-$\vv{F_b}$ & ? & ? & ? & 0.0 & -b \\
+$\vv{F_{BA}}$ & ? & ? & 650.0 & ? & -x \\
+$\vv{F_{BC}}$ & ? & ? & ? & -45.0 & +x \\
 \bottomrule
 \end{longtable}
 
 \section{Equations Used}
 
 \begin{enumerate}
-\item $\displaystyle \frac{\magn{\vv{F_{a}}}}{\sin(\angle(\vv{F_{b}}, \vv{F}))} = \frac{\magn{\vv{F}}}{\sin(\angle(\vv{F_{a}}, \vv{F_{b}}))}$
-\item $\displaystyle \frac{\magn{\vv{F_{b}}}}{\sin(\angle(\vv{F_{a}}, \vv{F}))} = \frac{\magn{\vv{F}}}{\sin(\angle(\vv{F_{a}}, \vv{F_{b}}))}$
+\item $\displaystyle \magn{\vv{F_{BC}}}^2 = \magn{\vv{F_{R}}}^2 + \magn{\vv{F_{BA}}}^2 - 2 \cdot \magn{\vv{F_{R}}} \cdot \magn{\vv{F_{BA}}} \cdot \cos(\angle(\vv{F_{BA}}, \vv{F_{R}}))$
+\item $\displaystyle \frac{\sin(\angle(\vv{F_{BA}}, \vv{F_{BC}}))}{\magn{\vv{F_{R}}}} = \frac{\sin(\angle(\vv{F_{BA}}, \vv{F_{R}}))}{\magn{\vv{F_{BC}}}}$
 \end{enumerate}
 
 \section{Step-by-Step Solution}
 
 \vspace{0.2em}
-\noindent\hspace{1em}\textbf{Step 1: Solve for triangle angles}
+\noindent\hspace{1em}\textbf{Step 1: Solve for $\angle(\vv{F_{BA}}, \vv{F_{R}})$}
 \vspace{0.1em}
 
 \begin{adjustwidth}{2em}{}
 \vspace{-0.8em}
 \begin{flalign*}
-\quad \angle(\vv{F_{a}}, \vv{F}) &= \angle(\vv{a}, \vv{-b}) - \magn{\angle(\vv{-b}, \vv{F})} && \\
-\quad &= 140^{\circ} - 80^{\circ} && \\
-\quad &= 60^{\circ} && \\
-\quad \angle(\vv{F_{b}}, \vv{F}) &= \magn{\angle(\vv{-b}, \vv{F_{b}}) - \angle(\vv{-b}, \vv{F})} && \\
-\quad &= \magn{0^{\circ} - 80^{\circ}} && \\
-\quad &= 80^{\circ} && \\
-\quad \angle(\vv{F_{a}}, \vv{F_{b}}) &= 180^{\circ} - 60^{\circ} - 80^{\circ} && \\
-\quad &= 40^{\circ} &&
+\quad \angle(\vv{F_{BA}}, \vv{F_{R}}) &= 30^{\circ} (given) && \\
+\quad &= 30^{\circ} &&
 \end{flalign*}
 \vspace{-0.8em}
 \end{adjustwidth}
 
 \vspace{0.2em}
-\noindent\hspace{1em}\textbf{Step 2: Solve for $\magn{\vv{F_{a}}}$ using Eq 1}
+\noindent\hspace{1em}\textbf{Step 2: Solve for $\magn{\vv{F_{BC}}}$ using Eq 1}
 \vspace{0.1em}
 
 \begin{adjustwidth}{2em}{}
 \vspace{-0.8em}
 \begin{flalign*}
-\quad \magn{\vv{F_{a}}} &= 20  \cdot  \frac{\sin(80^{\circ})}{\sin(40^{\circ})} && \\
-\quad &= 31\ \text{lbf} &&
+\quad \magn{\vv{F_{BC}}} &= \sqrt{850^2 + 650^2 - 2 \cdot 850 \cdot 650 \cdot \cos(30^{\circ})} && \\
+\quad &= 434\ \text{lbf} &&
 \end{flalign*}
 \vspace{-0.8em}
 \end{adjustwidth}
 
 \vspace{0.2em}
-\noindent\hspace{1em}\textbf{Step 3: Solve for $\magn{\vv{F_{b}}}$ using Eq 2}
+\noindent\hspace{1em}\textbf{Step 3: Solve for $\angle(\vv{F_{BA}}, \vv{F_{BC}})$ using Eq 2}
 \vspace{0.1em}
 
 \begin{adjustwidth}{2em}{}
 \vspace{-0.8em}
 \begin{flalign*}
-\quad \magn{\vv{F_{b}}} &= 20  \cdot  \frac{\sin(60^{\circ})}{\sin(40^{\circ})} && \\
-\quad &= 27\ \text{lbf} &&
+\quad \angle(\vv{F_{BA}}, \vv{F_{BC}}) &= \sin^{-1}(850 \cdot \frac{\sin(30^{\circ})}{434}) && \\
+\quad &= 78.5^{\circ} &&
+\end{flalign*}
+\vspace{-0.8em}
+\end{adjustwidth}
+
+\vspace{0.2em}
+\noindent\hspace{1em}\textbf{Step 4: Solve for $\angle(\vv{-x}, \vv{F_{BA}})$}
+\vspace{0.1em}
+
+\begin{adjustwidth}{2em}{}
+\vspace{-0.8em}
+\begin{flalign*}
+\quad \angle(\vv{-x}, \vv{F_{BA}}) &= \angle(\vv{F_{BA}}, \vv{F_{BC}}) - \magn{\angle(\vv{+x}, \vv{F_{BC}})} && \\
+\quad &= 78.5^{\circ} - 45^{\circ} && \\
+\quad &= 33.5^{\circ} &&
 \end{flalign*}
 \vspace{-0.8em}
 \end{adjustwidth}
@@ -104,11 +112,11 @@ $\vv{F_b}$ & ? & ? & ? & 0.0 & -b \\
 
 \begin{longtable}{lSSSSl}
 \toprule
-Vector & {$F_{a}$ (lbf)} & {$F_{b}$ (lbf)} & {$\magn{\vv{F}}$ (lbf)} & {$\theta$ (deg)} & Reference \\
+Vector & {$F_{x}$ (lbf)} & {$F_{y}$ (lbf)} & {$\magn{\vv{F}}$ (lbf)} & {$\theta$ (deg)} & Reference \\
 \midrule
 \endhead
-$\vv{F_a}$ & 30.6 & 0.0 & 30.6 & 0.0 & +a \\
-$\vv{F_b}$ & 0.0 & -26.9 & 26.9 & 0.0 & -b \\
+$\vv{F_{BA}}$ & -541.7 & -359.2 & 650.0 & 33.5 & -x \\
+$\vv{F_{BC}}$ & 306.6 & -306.6 & 433.6 & -45.0 & +x \\
 \bottomrule
 \end{longtable}
 

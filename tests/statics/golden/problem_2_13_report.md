@@ -25,9 +25,9 @@
 
 ## 3. Equations Used
 
-1. $\frac{|\vec{F_{a}}|}{\sin(\angle(\vec{F_{{b}}}, \vec{F}))} = \frac{|\vec{F}|}{\sin(\angle(\vec{F_{{a}}}, \vec{F_{{b}}}))}$
+1. $\frac{|\vec{F_{a}}|}{\sin(\angle(\vec{F_{b}}, \vec{F}))} = \frac{|\vec{F}|}{\sin(\angle(\vec{F_{a}}, \vec{F_{b}}))}$
 
-2. $\frac{|\vec{F_{b}}|}{\sin(\angle(\vec{F_{{a}}}, \vec{F}))} = \frac{|\vec{F}|}{\sin(\angle(\vec{F_{{a}}}, \vec{F_{{b}}}))}$
+2. $\frac{|\vec{F_{b}}|}{\sin(\angle(\vec{F_{a}}, \vec{F}))} = \frac{|\vec{F}|}{\sin(\angle(\vec{F_{a}}, \vec{F_{b}}))}$
 
 ## 4. Step-by-Step Solution
 
@@ -35,18 +35,18 @@
 
 $$
 \begin{aligned}
-\angle(\vec{F_{{a}}}, \vec{F}) &= \angle(\vec{a}, \vec{-b}) - |\angle(\vec{-b}, \vec{F})| \\
+\angle(\vec{F_{a}}, \vec{F}) &= \angle(\vec{a}, \vec{-b}) - |\angle(\vec{-b}, \vec{F})| \\
 &= 140^{\circ} - 80^{\circ} \\
 &= 60^{\circ} \\
-\angle(\vec{F_{{b}}}, \vec{F}) &= |\angle(\vec{-b}, \vec{F_{{b}}}) - \angle(\vec{-b}, \vec{F})| \\
+\angle(\vec{F_{b}}, \vec{F}) &= |\angle(\vec{-b}, \vec{F_{b}}) - \angle(\vec{-b}, \vec{F})| \\
 &= |0^{\circ} - 80^{\circ}| \\
 &= 80^{\circ} \\
-\angle(\vec{F_{{a}}}, \vec{F_{{b}}}) &= 180^{\circ} - 60^{\circ} - 80^{\circ} \\
+\angle(\vec{F_{a}}, \vec{F_{b}}) &= 180^{\circ} - 60^{\circ} - 80^{\circ} \\
 &= 40^{\circ} \\
 \end{aligned}
 $$
 
-**Step 2: Solve for $|\vec{F_{{a}}}|$ using Eq 1**
+**Step 2: Solve for $|\vec{F_{a}}|$ using Eq 1**
 
 $$
 \begin{aligned}
@@ -55,7 +55,7 @@ $$
 \end{aligned}
 $$
 
-**Step 3: Solve for $|\vec{F_{{b}}}|$ using Eq 2**
+**Step 3: Solve for $|\vec{F_{b}}|$ using Eq 2**
 
 $$
 \begin{aligned}

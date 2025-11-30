@@ -1,6 +1,6 @@
-# Engineering Calculation Report: Problem 2-5
+# Engineering Calculation Report: Problem 2-15
 
-**Generated:** {{GENERATED_DATETIME}}
+**Generated:** 2025-11-30 07:02:32
 
 ## 1. Known Variables
 
@@ -8,7 +8,8 @@
 
 | Vector | $F_x$ (lbf) | $F_y$ (lbf) | $\|\vec{F}\|$ (lbf) | $\theta$ (deg) | Reference |
 | :--- | ---: | ---: | ---: | ---: | :--- |
-| $\vec{F_R}$ | 0.0 | -350.0 | 350.0 | 270.0 | +x |
+| $\vec{F_{BA}}$ | -325.0 | -562.9 | 650.0 | 60.0 | -x |
+| $\vec{F_{BC}}$ | 353.6 | -353.6 | 500.0 | -45.0 | +x |
 
 </div>
 
@@ -18,49 +19,53 @@
 
 | Vector | $F_x$ (lbf) | $F_y$ (lbf) | $\|\vec{F}\|$ (lbf) | $\theta$ (deg) | Reference |
 | :--- | ---: | ---: | ---: | ---: | :--- |
-| $\vec{F_{AB}}$ | ? | ? | ? | 225.0 | +x |
-| $\vec{F_{AC}}$ | ? | ? | ? | 330.0 | +x |
+| $\vec{F_R}$ | ? | ? | ? | ? | +x |
 
 </div>
 
 ## 3. Equations Used
 
-1. $\frac{|\vec{F_{AB}}|}{\sin(\angle(\vec{F_{AC}}, \vec{F_{R}}))} = \frac{|\vec{F_{R}}|}{\sin(\angle(\vec{F_{AB}}, \vec{F_{AC}}))}$
+1. $|\vec{F_R}|^2 = |\vec{F_{BA}}|^2 + |\vec{F_{BC}}|^2 + 2 \cdot |\vec{F_{BA}}| \cdot |\vec{F_{BC}}| \cdot \cos(\angle(\vec{F_{BA}}, \vec{F_{BC}}))$
 
-2. $\frac{|\vec{F_{AC}}|}{\sin(\angle(\vec{F_{AB}}, \vec{F_{R}}))} = \frac{|\vec{F_{R}}|}{\sin(\angle(\vec{F_{AB}}, \vec{F_{AC}}))}$
+2. $\frac{\sin(\angle(\vec{F_{BA}}, \vec{F_R}))}{|\vec{F_{BC}}|} = \frac{\sin(\angle(\vec{F_{BA}}, \vec{F_{BC}}))}{|\vec{F_R}|}$
 
 ## 4. Step-by-Step Solution
 
-**Step 1: Solve for triangle angles**
+**Step 1: Solve for $\angle(\vec{F_{BA}}, \vec{F_{BC}})$**
 
 $$
 \begin{aligned}
-\angle(\vec{F_{AB}}, \vec{F_{R}}) &= |\angle(\vec{x}, \vec{F_{AB}}) - \angle(\vec{x}, \vec{F_{R}})| \\
-&= |225^{\circ} - 270^{\circ}| \\
-&= 45^{\circ} \\
-\angle(\vec{F_{AC}}, \vec{F_{R}}) &= |\angle(\vec{x}, \vec{F_{AC}}) - \angle(\vec{x}, \vec{F_{R}})| \\
-&= |330^{\circ} - 270^{\circ}| \\
-&= 60^{\circ} \\
-\angle(\vec{F_{AB}}, \vec{F_{AC}}) &= 180^{\circ} - 45^{\circ} - 60^{\circ} \\
-&= 75^{\circ} \\
+\angle(\vec{F_{BA}}, \vec{F_{BC}}) &= |\angle(\vec{-x}, \vec{F_{BA}}) - \angle(\vec{x}, \vec{F_{BC}})| \\
+&= |60^{\circ} - -45^{\circ}| \\
+&= 105^{\circ} \\
 \end{aligned}
 $$
 
-**Step 2: Solve for $|\vec{F_{AB}}|$ using Eq 1**
+**Step 2: Solve for $|\vec{F_R}|$ using Eq 1**
 
 $$
 \begin{aligned}
-|\vec{F_{AB}}| &= 350  \cdot  \frac{\sin(60^{\circ})}{\sin(75^{\circ})} \\
-&= 314\ \text{lbf} \\
+|\vec{F_R}| &= \sqrt{(650.0)^2 + (500.0)^2 + 2(650.0)(500.0)\cos(105^{\circ})} \\
+&= 916.9\ \text{lbf} \\
 \end{aligned}
 $$
 
-**Step 3: Solve for $|\vec{F_{AC}}|$ using Eq 2**
+**Step 3: Solve for $\angle(\vec{F_{BA}}, \vec{F_R})$ using Eq 2**
 
 $$
 \begin{aligned}
-|\vec{F_{AC}}| &= 350  \cdot  \frac{\sin(45^{\circ})}{\sin(75^{\circ})} \\
-&= 256\ \text{lbf} \\
+\angle(\vec{F_{BA}}, \vec{F_R}) &= \sin^{-1}(500.0 \cdot \frac{\sin(105^{\circ})}{916.9}) \\
+&= 31.8^{\circ} \\
+\end{aligned}
+$$
+
+**Step 4: Solve for $\angle(\vec{x}, \vec{F_R})$ with respect to +x**
+
+$$
+\begin{aligned}
+\angle(\vec{x}, \vec{F_R}) &= \angle(\vec{x}, \vec{-x}) + \angle(\vec{-x}, \vec{F_{BA}}) + \angle(\vec{F_{BA}}, \vec{F_R}) \\
+&= 180.0^{\circ} + 60.0^{\circ} + 31.8^{\circ} \\
+&= 271.8^{\circ} \\
 \end{aligned}
 $$
 
@@ -70,8 +75,7 @@ $$
 
 | Vector | $F_x$ (lbf) | $F_y$ (lbf) | $\|\vec{F}\|$ (lbf) | $\theta$ (deg) | Reference |
 | :--- | ---: | ---: | ---: | ---: | :--- |
-| $\vec{F_{AB}}$ | -221.9 | -221.9 | 313.8 | 225.0 | +x |
-| $\vec{F_{AC}}$ | 221.9 | -128.1 | 256.2 | 330.0 | +x |
+| $\vec{F_R}$ | 28.6 | -916.5 | 916.9 | 271.8 | +x |
 
 </div>
 
@@ -83,7 +87,7 @@ $$
 While every effort has been made to ensure the accuracy and reliability of the calculations provided, we do not guarantee that the information is complete, up-to-date, or suitable for any specific purpose. Users must independently verify the results and assume full responsibility for any decisions or actions taken based on its output. Use of this calculator is entirely at your own risk, and we expressly disclaim any liability for errors or omissions in the information provided.
 
 **Report Details:**
-- **Generated Date:** {{GENERATED_DATE}}
+- **Generated Date:** November 30, 2025
 - **Generated Using:** Qnty Library
 - **Version:** Beta (Independent verification required for production use)
 

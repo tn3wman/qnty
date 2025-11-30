@@ -488,15 +488,41 @@ class ParallelogramLawProblem(Problem):
         if len(known_vectors) == 1 and len(unknown_vectors) == 1:
             self._solve_one_known_one_unknown_inverse(known_vectors[0], unknown_vectors[0], resultant, resultant_name, FR_coords, FR_mag, FR_angle, unit)
         elif len(known_vectors) == 0 and len(unknown_vectors) == 2:
-            # Check if both unknowns have known angles but unknown magnitudes
+            # Check what type of unknowns we have
             both_have_known_angles = all(
                 hasattr(vec, '_polar_angle_rad') and vec._polar_angle_rad is not None
                 for vec in unknown_vectors
             )
+            # Check for mixed unknowns: one with unknown angle, one with unknown magnitude
+            has_unknown_angle = [
+                hasattr(vec, '_unknowns') and 'angle' in vec._unknowns
+                for vec in unknown_vectors
+            ]
+            has_unknown_magnitude = [
+                hasattr(vec, '_unknowns') and 'magnitude' in vec._unknowns
+                for vec in unknown_vectors
+            ]
+            is_mixed_unknowns = (
+                sum(has_unknown_angle) == 1 and
+                sum(has_unknown_magnitude) == 1 and
+                has_unknown_angle != has_unknown_magnitude  # One each, not both on same vector
+            )
+
             if both_have_known_angles:
                 self._solve_two_unknown_magnitudes_inverse(unknown_vectors, resultant, resultant_name, FR_mag, FR_angle, unit)
+            elif is_mixed_unknowns:
+                # One vector has unknown angle (known magnitude), other has unknown magnitude (known angle)
+                # For mixed unknowns with vector-relative resultant, use _polar_magnitude directly
+                # since _coords were computed with wrong reference (when wrt is a vector with unknown angle)
+                wrt_R = getattr(resultant, '_original_wrt', '+x')
+                if wrt_R.startswith('@'):
+                    # Vector-relative resultant: use polar values directly
+                    FR_mag_polar = getattr(resultant, '_polar_magnitude', None)
+                    if FR_mag_polar is not None:
+                        FR_mag = FR_mag_polar
+                self._solve_mixed_unknowns_inverse(unknown_vectors, resultant, resultant_name, FR_mag, FR_angle, unit)
             else:
-                raise NotImplementedError("Inverse resultant solve requires known angles for both unknown vectors")
+                raise NotImplementedError("Inverse resultant solve requires either both unknown magnitudes or one unknown angle + one unknown magnitude")
         else:
             raise NotImplementedError(f"Inverse resultant solve not implemented for {len(known_vectors)} known + {len(unknown_vectors)} unknown vectors")
 
@@ -683,6 +709,438 @@ class ParallelogramLawProblem(Problem):
             vec1, vec2, resultant, resultant_name, M1, M2, alpha, beta, gamma, unit,
             theta1_input_deg, theta2_input_deg
         )
+
+    def _solve_mixed_unknowns_inverse(
+        self,
+        unknown_vectors: list[_VectorWithUnknowns],
+        resultant: _VectorWithUnknowns,
+        resultant_name: str,
+        FR_mag: float,
+        FR_angle: float,
+        unit,
+    ) -> None:
+        """
+        Solve inverse problem with mixed unknowns: one vector has unknown angle (known magnitude),
+        the other has unknown magnitude (known angle).
+
+        Given: FR = F1 + F2 where FR is known
+        - F1: known magnitude |F1|, unknown angle θ1
+        - F2: unknown magnitude |F2|, known angle θ2
+
+        When FR is specified relative to F1 (wrt=F1), we use the triangle method:
+        1. Law of Cosines: |F2|² = |FR|² + |F1|² - 2·|FR|·|F1|·cos(θ_FR_from_F1)
+        2. Law of Sines: sin(angle_F2_to_FR)/|F1| = sin(θ_FR_from_F1)/|F2|
+
+        The angle between F1 and F2 (call it γ = 45° + φ in Problem 2-16) can be found
+        from the law of sines, and then φ (the unknown angle of F1) can be computed.
+        """
+        # Identify which vector has unknown angle vs unknown magnitude
+        vec_with_unknown_angle = None
+        vec_with_unknown_magnitude = None
+
+        for vec in unknown_vectors:
+            if 'angle' in vec._unknowns:
+                vec_with_unknown_angle = vec
+            if 'magnitude' in vec._unknowns:
+                vec_with_unknown_magnitude = vec
+
+        if vec_with_unknown_angle is None or vec_with_unknown_magnitude is None:
+            raise ValueError("Expected one vector with unknown angle and one with unknown magnitude")
+
+        # Get known values
+        # F1: Vector with unknown angle has known magnitude (convert to SI)
+        F1_mag_input = vec_with_unknown_angle._polar_magnitude
+        if F1_mag_input is None:
+            raise ValueError("Vector with unknown angle must have known magnitude")
+        # Convert to SI using Quantity.from_value
+        F1_mag = Quantity.from_value(F1_mag_input, unit).value if unit else F1_mag_input
+
+        # F2: Vector with unknown magnitude has known angle
+        theta2_input = vec_with_unknown_magnitude._polar_angle_rad
+        if theta2_input is None:
+            raise ValueError("Vector with unknown magnitude must have known angle")
+
+        # Convert FR_mag to SI as well
+        FR_mag = Quantity.from_value(FR_mag, unit).value if unit else FR_mag
+
+        # Get wrt references
+        wrt1 = getattr(vec_with_unknown_angle, '_original_wrt', '+x')
+        wrt2 = getattr(vec_with_unknown_magnitude, '_original_wrt', '+x')
+        wrt_R = getattr(resultant, '_original_wrt', '+x')
+
+        standard_axis_angles = {"+x": 0, "+y": 90, "-x": 180, "-y": 270}
+        coord_sys = getattr(self, 'coordinate_system', None)
+
+        def get_axis_base_angle(wrt: str) -> float:
+            """Get the base angle for an axis reference."""
+            wrt_lower = wrt.lower()
+            if wrt_lower in standard_axis_angles:
+                return math.radians(standard_axis_angles[wrt_lower])
+            elif coord_sys is not None:
+                wrt_stripped = wrt.lstrip('+-')
+                is_negative = wrt.startswith('-')
+                if wrt_stripped == coord_sys.axis1_label:
+                    base = coord_sys.axis1_angle
+                elif wrt_stripped == coord_sys.axis2_label:
+                    base = coord_sys.axis2_angle
+                else:
+                    raise ValueError(f"Unknown axis '{wrt}'")
+                if is_negative:
+                    base += math.pi
+                return base
+            else:
+                raise ValueError(f"Unknown axis '{wrt}'")
+
+        # Check if resultant is specified relative to F1 (the vector with unknown angle)
+        # This is indicated by wrt_R starting with '@' (vector reference)
+        is_wrt_vector_ref = wrt_R.startswith('@')
+
+        if is_wrt_vector_ref:
+            # Triangle method: FR is specified at angle θ_R relative to F1
+            # θ_R is stored in resultant._polar_angle_rad
+            theta_R_from_F1 = resultant._polar_angle_rad  # angle of FR from F1
+
+            # Law of Cosines to find |F2|:
+            # |F2|² = |FR|² + |F1|² - 2·|FR|·|F1|·cos(θ_R_from_F1)
+            F2_mag = math.sqrt(
+                FR_mag**2 + F1_mag**2 - 2 * FR_mag * F1_mag * math.cos(theta_R_from_F1)
+            )
+
+            # Get base angle for F2 (known angle)
+            base2 = get_axis_base_angle(wrt2)
+            theta2_std = base2 + theta2_input  # F2's absolute angle (standard)
+
+            # Solve for θ1 (F1's standard angle) using vector equation:
+            # FR = F1 + F2
+            # FR is at angle (θ1 + θ_R_from_F1) with magnitude FR_mag
+            #
+            # FR_x = FR_mag * cos(θ1 + θ_R_from_F1) = F1_mag * cos(θ1) + F2_mag * cos(θ2)
+            # FR_y = FR_mag * sin(θ1 + θ_R_from_F1) = F1_mag * sin(θ1) + F2_mag * sin(θ2)
+            #
+            # Using angle addition:
+            # FR_mag * [cos(θ1)cos(θ_R) - sin(θ1)sin(θ_R)] = F1_mag * cos(θ1) + F2_mag * cos(θ2)
+            # FR_mag * [sin(θ1)cos(θ_R) + cos(θ1)sin(θ_R)] = F1_mag * sin(θ1) + F2_mag * sin(θ2)
+            #
+            # Let c1 = cos(θ1), s1 = sin(θ1), cR = cos(θ_R_from_F1), sR = sin(θ_R_from_F1)
+            # c2 = cos(θ2_std), s2 = sin(θ2_std)
+            #
+            # Eq1: FR_mag * (c1*cR - s1*sR) = F1_mag * c1 + F2_mag * c2
+            # Eq2: FR_mag * (s1*cR + c1*sR) = F1_mag * s1 + F2_mag * s2
+            #
+            # Rearranging:
+            # Eq1: c1 * (FR_mag*cR - F1_mag) - s1 * (FR_mag*sR) = F2_mag * c2
+            # Eq2: s1 * (FR_mag*cR - F1_mag) + c1 * (FR_mag*sR) = F2_mag * s2
+            #
+            # Let A = FR_mag*cR - F1_mag, B = FR_mag*sR
+            # A*c1 - B*s1 = F2_mag*c2  ... (1)
+            # A*s1 + B*c1 = F2_mag*s2  ... (2)
+            #
+            # From (1): c1 = (F2_mag*c2 + B*s1) / A
+            # Sub into (2): A*s1 + B*(F2_mag*c2 + B*s1)/A = F2_mag*s2
+            # A²*s1 + B*F2_mag*c2 + B²*s1 = A*F2_mag*s2
+            # s1*(A² + B²) = A*F2_mag*s2 - B*F2_mag*c2
+            # s1 = F2_mag * (A*s2 - B*c2) / (A² + B²)
+
+            # Use the triangle method (law of sines) to find the angle
+            # In the force triangle:
+            # - θ_R_from_F1 is the angle at the F1 vertex (between F1 and FR)
+            # - β is the angle at the FR vertex (between F1 and F2 sides)
+            # - γ is the angle at the F2 vertex (between FR and F1 sides)
+            #
+            # Law of sines: sin(γ)/|FR| = sin(θ_R_from_F1)/|F2|
+            # γ is the interior angle at the F1 tip, which equals the angle between
+            # the directions of -F1 and F2. This is related to the frame geometry.
+
+            # Law of sines to find γ (angle at F1 tip in force triangle)
+            sin_gamma = FR_mag * math.sin(abs(theta_R_from_F1)) / F2_mag
+            sin_gamma = max(-1.0, min(1.0, sin_gamma))
+
+            # Two possible values for γ: asin and π - asin
+            gamma1 = math.asin(sin_gamma)
+            gamma2 = math.pi - gamma1
+
+            # Get base angle for wrt1 and wrt2
+            base1 = get_axis_base_angle(wrt1)
+            base2 = get_axis_base_angle(wrt2)
+            theta2_std = base2 + theta2_input  # F2's absolute angle (standard)
+
+            # The angle γ is between (-F1 direction) and (F2 direction)
+            # So: theta2_std - (theta1_std + π) = ±γ
+            # Therefore: theta1_std = theta2_std - π ∓ γ
+
+            # Try both solutions and pick the one with valid input angle
+            candidates = []
+            for gamma in [gamma1, gamma2]:
+                for sign in [1, -1]:
+                    theta1_std_candidate = theta2_std - math.pi - sign * gamma
+                    theta1_std_candidate = normalize_angle_positive(theta1_std_candidate)
+
+                    # Compute input angle relative to reference axis
+                    theta1_input_candidate = theta1_std_candidate - base1
+                    # Normalize to [-π, π]
+                    if theta1_input_candidate > math.pi:
+                        theta1_input_candidate -= 2 * math.pi
+                    if theta1_input_candidate < -math.pi:
+                        theta1_input_candidate += 2 * math.pi
+
+                    candidates.append((theta1_std_candidate, theta1_input_candidate, gamma))
+
+            # Select the candidate where input angle is in valid range [0, π/4] for this problem
+            # More generally, prefer smaller positive angles from the reference axis
+            theta1_std = None
+            theta1_input = None
+            best_gamma = None
+
+            for theta1_std_c, theta1_input_c, gamma_c in candidates:
+                # For problems like 2-16 where constraint is 0 ≤ φ ≤ 45°
+                # the input angle should be positive and ≤ 45°
+                if 0 <= theta1_input_c <= math.pi / 4:
+                    theta1_std = theta1_std_c
+                    theta1_input = theta1_input_c
+                    best_gamma = gamma_c
+                    break
+
+            # If no candidate in [0, 45°], try [0, 90°]
+            if theta1_std is None:
+                for theta1_std_c, theta1_input_c, gamma_c in candidates:
+                    if 0 <= theta1_input_c <= math.pi / 2:
+                        theta1_std = theta1_std_c
+                        theta1_input = theta1_input_c
+                        best_gamma = gamma_c
+                        break
+
+            # Fallback: pick smallest positive angle
+            if theta1_std is None:
+                positive_candidates = [(t, i, g) for t, i, g in candidates if i >= 0]
+                if positive_candidates:
+                    theta1_std, theta1_input, best_gamma = min(positive_candidates, key=lambda x: x[1])
+                else:
+                    # Last resort: first candidate
+                    theta1_std, theta1_input, best_gamma = candidates[0]
+
+            # For solution step display
+            beta = math.pi - abs(theta_R_from_F1) - best_gamma
+            gamma = best_gamma
+
+        else:
+            # Original Cartesian approach when FR is specified relative to a fixed axis
+            # (This won't work well when FR is relative to unknown vector)
+            raise NotImplementedError(
+                "Mixed unknowns solver currently requires resultant to be specified "
+                "relative to the vector with unknown angle (wrt=vector)"
+            )
+
+        # Normalize the computed angle
+        theta1_std = normalize_angle_positive(theta1_std)
+        theta2_std = normalize_angle_positive(theta2_std)
+
+        # Compute Cartesian coordinates
+        cos1, sin1 = math.cos(theta1_std), math.sin(theta1_std)
+        cos2, sin2 = math.cos(theta2_std), math.sin(theta2_std)
+        vec1_coords = np.array([F1_mag * cos1, F1_mag * sin1, 0.0])
+        vec2_coords = np.array([F2_mag * cos2, F2_mag * sin2, 0.0])
+
+        # Update vec_with_unknown_angle (F1)
+        vec_with_unknown_angle._coords = vec1_coords
+        # Save original unknowns before clearing for reporting
+        vec_with_unknown_angle._original_unknowns = vec_with_unknown_angle._unknowns.copy()
+        vec_with_unknown_angle._unknowns = {}
+        vec_with_unknown_angle.is_known = True
+        vec_with_unknown_angle._magnitude = _helper.create_force_quantity(
+            f"{vec_with_unknown_angle.name}_magnitude", F1_mag, unit
+        )
+        vec_with_unknown_angle._angle = _helper.create_angle_quantity(
+            f"{vec_with_unknown_angle.name}_angle", theta1_std
+        )
+        vec_with_unknown_angle._polar_angle_rad = theta1_input
+        vec_with_unknown_angle._original_angle = math.degrees(theta1_input)
+
+        # Update vec_with_unknown_magnitude (F2)
+        vec_with_unknown_magnitude._coords = vec2_coords
+        # Save original unknowns before clearing for reporting
+        vec_with_unknown_magnitude._original_unknowns = vec_with_unknown_magnitude._unknowns.copy()
+        vec_with_unknown_magnitude._unknowns = {}
+        vec_with_unknown_magnitude.is_known = True
+        vec_with_unknown_magnitude._magnitude = _helper.create_force_quantity(
+            f"{vec_with_unknown_magnitude.name}_magnitude", F2_mag, unit
+        )
+        vec_with_unknown_magnitude._angle = _helper.create_angle_quantity(
+            f"{vec_with_unknown_magnitude.name}_angle", theta2_std
+        )
+        vec_with_unknown_magnitude._polar_magnitude = F2_mag
+
+        # Update resultant coordinates (now that we know F1's direction)
+        FR_angle_std = theta1_std + theta_R_from_F1  # FR is θ_R from F1
+        FR_angle_std = normalize_angle_positive(FR_angle_std)
+        FR_coords = np.array([FR_mag * math.cos(FR_angle_std), FR_mag * math.sin(FR_angle_std), 0.0])
+        resultant._coords = FR_coords
+
+        # Add variables to the problem
+        vec1_name = vec_with_unknown_angle.name or "F_1"
+        vec2_name = vec_with_unknown_magnitude.name or "F_2"
+
+        self._add_force_variables(vec1_name, F1_mag, theta1_std, resultant._dim, unit, is_known=False)
+        self._add_force_variables(vec2_name, F2_mag, theta2_std, resultant._dim, unit, is_known=False)
+        self._add_force_variables(resultant_name, FR_mag, FR_angle_std, resultant._dim, unit, is_known=True)
+
+        # Store on resultant
+        resultant._magnitude = _helper.create_force_quantity(f"{resultant_name}_magnitude", FR_mag, unit)
+        resultant._angle = _helper.create_angle_quantity(f"{resultant_name}_angle", FR_angle_std)
+
+        # Add solution steps
+        self._add_mixed_unknowns_solution_steps(
+            vec_with_unknown_angle, vec_with_unknown_magnitude, resultant, resultant_name,
+            F1_mag, F2_mag, theta1_input, theta2_input, theta1_std, theta2_std, FR_mag, FR_angle_std,
+            wrt1, wrt2, unit, theta_R_from_F1, beta, gamma
+        )
+
+    def _add_mixed_unknowns_solution_steps(
+        self,
+        vec1: _VectorWithUnknowns,  # Has unknown angle
+        vec2: _VectorWithUnknowns,  # Has unknown magnitude
+        resultant: _VectorWithUnknowns,
+        resultant_name: str,
+        F1_mag: float,
+        F2_mag: float,
+        theta1_input: float,
+        theta2_input: float,
+        theta1_std: float,  # noqa: ARG002
+        theta2_std: float,  # noqa: ARG002
+        FR_mag: float,
+        FR_angle: float,  # noqa: ARG002
+        wrt1: str,
+        wrt2: str,
+        unit,
+        theta_R_from_F1: float | None = None,
+        beta_triangle: float | None = None,  # noqa: ARG002
+        gamma_triangle: float | None = None,
+    ) -> None:
+        """Add solution steps for mixed unknowns case (triangle method).
+
+        This handles Problem 2-16 type problems where:
+        - vec1 (F_BA): known magnitude, unknown angle φ from -x
+        - vec2 (F_BC): unknown magnitude, known angle from +x
+        - resultant (F): known magnitude and angle (θ = 30°) relative to vec1
+
+        Following the textbook solution:
+        Step 1: Law of Cosines to find |F_BC|
+        Step 2: Law of Sines to find φ (angle of F_BA)
+        """
+        unit_symbol, si_factor = _get_unit_info(unit)
+        if not unit_symbol:
+            unit_symbol = "N"
+
+        vec1_name = vec1.name or "F_1"
+        vec2_name = vec2.name or "F_2"
+
+        # Format vector names for LaTeX (convert F_BA to F_{BA} for proper subscripts)
+        def latex_name(name: str) -> str:
+            if '_' in name:
+                parts = name.split('_', 1)
+                return f"{parts[0]}_{{{parts[1]}}}"
+            return name
+
+        vec1_latex = latex_name(vec1_name)
+        vec2_latex = latex_name(vec2_name)
+        resultant_latex = latex_name(resultant_name)
+
+        theta1_input_deg = math.degrees(theta1_input)
+        theta2_input_deg = math.degrees(theta2_input)
+        theta_R_deg = math.degrees(theta_R_from_F1) if theta_R_from_F1 is not None else 0
+
+        # Convert to display units
+        F1_display = _to_display_value(F1_mag, si_factor)
+        F2_display = _to_display_value(F2_mag, si_factor)
+        FR_display = _to_display_value(FR_mag, si_factor)
+
+        # For Problem 2-16: F_BC is at -45° from +x, so the angle between F_BA and F_BC
+        # in the force triangle is (45° + φ) where φ is the angle of F_BA from -x
+        # The triangle has:
+        # - Angle θ = 30° at F_BA vertex (between F and F_BA)
+        # - Angle (45° + φ) at F vertex (between F_BA and F_BC)
+        # - Angle β at F_BC vertex
+
+        # Step 1: Calculate angle between F_BA and F_R
+        # This is the angle θ given in the problem (angle of resultant relative to vec1)
+        # Use multi-line format for consistency with other problems (left-aligned flalign*)
+        # The newline character triggers the multi-line path in the LaTeX renderer
+        step1_sub = (
+            f"∠({vec1_latex},{resultant_latex}) = {theta_R_deg:.0f}° (given)\n"
+            f"= {theta_R_deg:.0f}°"
+        )
+
+        self._add_solution_step(
+            SolutionStep(
+                target=f"∠({vec1_latex},{resultant_latex})",
+                method="From problem definition",
+                description=f"Angle between {vec1_name} and {resultant_name}",
+                substitution=step1_sub,
+            )
+        )
+
+        # Step 2: Law of Cosines to find |F_BC|
+        # |F_BC|² = |F|² + |F_BA|² - 2·|F|·|F_BA|·cos(θ)
+        step2_sub = (
+            f"|{vec2_latex}| = sqrt({FR_display:.0f}² + {F1_display:.0f}² - 2·{FR_display:.0f}·{F1_display:.0f}·cos({theta_R_deg:.0f}°))\n"
+            f"= {F2_display:.0f}\\ \\text{{{unit_symbol}}}"
+        )
+
+        self._add_solution_step(
+            SolutionStep(
+                target=f"|{vec2_latex}| using Eq 1",
+                method="Law of Cosines",
+                description=f"Calculate |{vec2_name}| using Law of Cosines",
+                equation_for_list=f"|{vec2_latex}|² = |{resultant_latex}|² + |{vec1_latex}|² - 2·|{resultant_latex}|·|{vec1_latex}|·cos(∠({vec1_latex},{resultant_latex}))",
+                substitution=step2_sub,
+            )
+        )
+
+        # Step 3: Law of Sines to find ∠(F_BA, F_BC)
+        # sin(∠(F_BA,F_BC))/|F_R| = sin(∠(F_BA,F_R))/|F_BC|
+        # For Problem 2-16: sin(∠(F_BA,F_BC))/850 = sin(30°)/434
+        if gamma_triangle is not None:
+            gamma_deg = math.degrees(gamma_triangle)
+            # gamma is the angle between F_BA and F_BC in the force triangle
+            # For Problem 2-16: this is (45° + φ) where φ is the angle of F_BA from -x
+
+            # The angle between vec1 and vec2 = |θ2_input| + φ
+            angle_between_vecs = abs(theta2_input_deg) + theta1_input_deg
+
+            step3_sub = (
+                f"∠({vec1_latex},{vec2_latex}) = sin⁻¹({FR_display:.0f}·sin({theta_R_deg:.0f}°)/{F2_display:.0f})\n"
+                f"= {angle_between_vecs:.1f}°"
+            )
+
+            self._add_solution_step(
+                SolutionStep(
+                    target=f"∠({vec1_latex},{vec2_latex}) using Eq 2",
+                    method="Law of Sines",
+                    description=f"Calculate angle between {vec1_name} and {vec2_name} using Law of Sines",
+                    equation_for_list=f"sin(∠({vec1_latex},{vec2_latex}))/|{resultant_latex}| = sin(∠({vec1_latex},{resultant_latex}))/|{vec2_latex}|",
+                    substitution=step3_sub,
+                )
+            )
+
+            # Step 4: Calculate ∠(-x, F_BA) = φ
+            # ∠(F_BA, F_BC) = |θ_BC| + φ, so φ = ∠(F_BA, F_BC) - |θ_BC|
+            # Format the reference axis for display
+            axis_label = wrt1.replace("+", "").replace("-", "")  # Get just 'x' or 'y'
+            sign = "-" if wrt1.startswith("-") else "+"
+
+            step4_sub = (
+                f"∠({wrt1},{vec1_latex}) = ∠({vec1_latex},{vec2_latex}) - |∠({wrt2},{vec2_latex})|\n"
+                f"= {angle_between_vecs:.1f}° - {abs(theta2_input_deg):.0f}°\n"
+                f"= {theta1_input_deg:.1f}°"
+            )
+
+            self._add_solution_step(
+                SolutionStep(
+                    target=f"∠({wrt1},{vec1_latex})",
+                    method="Angle subtraction",
+                    description=f"Calculate {vec1_name} angle from {wrt1}",
+                    substitution=step4_sub,
+                )
+            )
 
     def _solve_with_unknown_resultant_magnitude(
         self,

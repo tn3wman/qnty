@@ -25,9 +25,9 @@
 
 ## 3. Equations Used
 
-1. $\frac{|\vec{F_{AB}}|}{\sin(\angle(\vec{F_{{AC}}}, \vec{F_{{R}}}))} = \frac{|\vec{F_{R}}|}{\sin(\angle(\vec{F_{{AB}}}, \vec{F_{{AC}}}))}$
+1. $\frac{|\vec{F_{AB}}|}{\sin(\angle(\vec{F_{AC}}, \vec{F_{R}}))} = \frac{|\vec{F_{R}}|}{\sin(\angle(\vec{F_{AB}}, \vec{F_{AC}}))}$
 
-2. $\frac{|\vec{F_{AC}}|}{\sin(\angle(\vec{F_{{AB}}}, \vec{F_{{R}}}))} = \frac{|\vec{F_{R}}|}{\sin(\angle(\vec{F_{{AB}}}, \vec{F_{{AC}}}))}$
+2. $\frac{|\vec{F_{AC}}|}{\sin(\angle(\vec{F_{AB}}, \vec{F_{R}}))} = \frac{|\vec{F_{R}}|}{\sin(\angle(\vec{F_{AB}}, \vec{F_{AC}}))}$
 
 ## 4. Step-by-Step Solution
 
@@ -35,18 +35,18 @@
 
 $$
 \begin{aligned}
-\angle(\vec{F_{{AB}}}, \vec{F_{{R}}}) &= |\angle(\vec{-y}, \vec{F_{{AB}}}) - \angle(\vec{-y}, \vec{F_{{R}}})| \\
+\angle(\vec{F_{AB}}, \vec{F_{R}}) &= |\angle(\vec{-y}, \vec{F_{AB}}) - \angle(\vec{-y}, \vec{F_{R}})| \\
 &= |-45^{\circ} - 0^{\circ}| \\
 &= 45^{\circ} \\
-\angle(\vec{F_{{AC}}}, \vec{F_{{R}}}) &= 90^{\circ} - |\angle(\vec{x}, \vec{F_{{AC}}})| \\
+\angle(\vec{F_{AC}}, \vec{F_{R}}) &= 90^{\circ} - |\angle(\vec{x}, \vec{F_{AC}})| \\
 &= 90^{\circ} - |-30^{\circ}| \\
 &= 60^{\circ} \\
-\angle(\vec{F_{{AB}}}, \vec{F_{{AC}}}) &= 180^{\circ} - 45^{\circ} - 60^{\circ} \\
+\angle(\vec{F_{AB}}, \vec{F_{AC}}) &= 180^{\circ} - 45^{\circ} - 60^{\circ} \\
 &= 75^{\circ} \\
 \end{aligned}
 $$
 
-**Step 2: Solve for $|\vec{F_{{AB}}}|$ using Eq 1**
+**Step 2: Solve for $|\vec{F_{AB}}|$ using Eq 1**
 
 $$
 \begin{aligned}
@@ -55,7 +55,7 @@ $$
 \end{aligned}
 $$
 
-**Step 3: Solve for $|\vec{F_{{AC}}}|$ using Eq 2**
+**Step 3: Solve for $|\vec{F_{AC}}|$ using Eq 2**
 
 $$
 \begin{aligned}

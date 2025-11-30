@@ -619,6 +619,11 @@ def _apply_coordinate_system(vec: _Vector, coord_sys: CoordinateSystem) -> _Vect
         new_vec.is_resultant = vec.is_resultant
         new_vec._is_constraint = vec._is_constraint
         new_vec.angle_dir = getattr(vec, 'angle_dir', None)
+        # Preserve polar specification for reporting
+        if hasattr(vec, '_polar_magnitude'):
+            new_vec._polar_magnitude = vec._polar_magnitude
+        if hasattr(vec, '_polar_angle_rad'):
+            new_vec._polar_angle_rad = vec._polar_angle_rad
         # Clear the deferred flag since we've resolved it
         new_vec._needs_coordinate_system = False
     else:
@@ -706,6 +711,10 @@ def solve_class(
             attr = getattr(problem_class, attr_name)
             if isinstance(attr, _Vector):
                 old_id = id(attr)
+                # Set the vector's name from the attribute name if not already set
+                # (default name is "Vector" which should be overwritten)
+                if attr.name is None or attr.name == "Vector":
+                    attr.name = attr_name
                 # Check if this vector needs coordinate system resolution
                 if getattr(attr, '_needs_coordinate_system', False) and problem_coord_sys is not None:
                     attr = _apply_coordinate_system(attr, problem_coord_sys)
@@ -746,6 +755,20 @@ def solve_class(
                     else:
                         new_components.append(cv)
                 attr._component_vectors = new_components
+
+                # Update _original_wrt if it references a vector (starts with @)
+                # Now that component vectors have names, we can use those names
+                original_wrt = getattr(attr, '_original_wrt', None)
+                if original_wrt and original_wrt.startswith('@'):
+                    # Find the referenced vector from component_vectors and use its name
+                    wrt_vec_ref = getattr(attr, '_wrt_vector_ref', None)
+                    if wrt_vec_ref is not None:
+                        # Find the resolved version of this vector in vector_map
+                        resolved_ref = vector_map.get(id(wrt_vec_ref), wrt_vec_ref)
+                        if resolved_ref.name and resolved_ref.name != "Vector":
+                            attr._original_wrt = f"@{resolved_ref.name}"
+                            # Update the reference to point to the resolved vector
+                            attr._wrt_vector_ref = resolved_ref
 
         # Instantiate and solve (coordinate_system is already set as class attribute)
         problem = DynamicProblem()

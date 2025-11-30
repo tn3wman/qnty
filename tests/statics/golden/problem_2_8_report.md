@@ -25,9 +25,9 @@
 
 ## 3. Equations Used
 
-1. $\frac{|\vec{F_{2u}}|}{\sin(\angle(\vec{F_{{2v}}}, \vec{F_{{2}}}))} = \frac{|\vec{F_{2}}|}{\sin(\angle(\vec{F_{{2u}}}, \vec{F_{{2v}}}))}$
+1. $\frac{|\vec{F_{2u}}|}{\sin(\angle(\vec{F_{2v}}, \vec{F_{2}}))} = \frac{|\vec{F_{2}}|}{\sin(\angle(\vec{F_{2u}}, \vec{F_{2v}}))}$
 
-2. $\frac{|\vec{F_{2v}}|}{\sin(\angle(\vec{F_{{2u}}}, \vec{F_{{2}}}))} = \frac{|\vec{F_{2}}|}{\sin(\angle(\vec{F_{{2u}}}, \vec{F_{{2v}}}))}$
+2. $\frac{|\vec{F_{2v}}|}{\sin(\angle(\vec{F_{2u}}, \vec{F_{2}}))} = \frac{|\vec{F_{2}}|}{\sin(\angle(\vec{F_{2u}}, \vec{F_{2v}}))}$
 
 ## 4. Step-by-Step Solution
 
@@ -35,18 +35,18 @@
 
 $$
 \begin{aligned}
-\angle(\vec{F_{{2u}}}, \vec{F_{{2}}}) &= |\angle(\vec{u}, \vec{F_{{2u}}}) - \angle(\vec{u}, \vec{F_{{2}}})| \\
+\angle(\vec{F_{2u}}, \vec{F_{2}}) &= |\angle(\vec{u}, \vec{F_{2u}}) - \angle(\vec{u}, \vec{F_{2}})| \\
 &= |0^{\circ} - -30^{\circ}| \\
 &= 30^{\circ} \\
-\angle(\vec{F_{{2v}}}, \vec{F_{{2}}}) &= \angle(\vec{v}, \vec{u}) - |\angle(\vec{u}, \vec{F_{{2}}})| \\
+\angle(\vec{F_{2v}}, \vec{F_{2}}) &= \angle(\vec{v}, \vec{u}) - |\angle(\vec{u}, \vec{F_{2}})| \\
 &= 75^{\circ} - 30^{\circ} \\
 &= 45^{\circ} \\
-\angle(\vec{F_{{2u}}}, \vec{F_{{2v}}}) &= 180^{\circ} - 30^{\circ} - 45^{\circ} \\
+\angle(\vec{F_{2u}}, \vec{F_{2v}}) &= 180^{\circ} - 30^{\circ} - 45^{\circ} \\
 &= 105^{\circ} \\
 \end{aligned}
 $$
 
-**Step 2: Solve for $|\vec{F_{{2u}}}|$ using Eq 1**
+**Step 2: Solve for $|\vec{F_{2u}}|$ using Eq 1**
 
 $$
 \begin{aligned}
@@ -55,7 +55,7 @@ $$
 \end{aligned}
 $$
 
-**Step 3: Solve for $|\vec{F_{{2v}}}|$ using Eq 2**
+**Step 3: Solve for $|\vec{F_{2v}}|$ using Eq 2**
 
 $$
 \begin{aligned}

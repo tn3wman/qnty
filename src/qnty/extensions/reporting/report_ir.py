@@ -652,6 +652,11 @@ class LaTeXRenderer(ReportRenderer):
                     if i == 0 and cell and not cell.startswith("$"):
                         # Format as math variable
                         cells.append("$" + self._format_latex_variable(cell) + "$")
+                    elif cell and cell.startswith("$"):
+                        # Cell already contains LaTeX - convert to proper LaTeX format
+                        # $\vec{F_{BA}}$ -> $\vv{F_{BA}}$
+                        latex_cell = cell.replace(r"\vec{", r"\vv{")
+                        cells.append(latex_cell)
                     else:
                         cells.append(self._escape_latex(cell))
                 lines.append(" & ".join(cells) + r" \\")
@@ -774,9 +779,9 @@ class LaTeXRenderer(ReportRenderer):
         greek_map = {"θ": r"\theta", "φ": r"\varphi", "α": r"\alpha", "β": r"\beta", "γ": r"\gamma"}
         for greek, latex in greek_map.items():
             if title.startswith(greek):
+                rest = title[1:]  # Everything after the Greek letter
                 # Handle subscripted Greek like θ_F_R possibly followed by text like "with respect to +x"
-                if "_" in title:
-                    rest = title[1:]  # Remove Greek letter, get _F_R with respect to +x
+                if rest.startswith("_"):
                     # Find where the subscript ends (at first space or end)
                     space_idx = rest.find(" ")
                     if space_idx != -1:
@@ -787,6 +792,9 @@ class LaTeXRenderer(ReportRenderer):
                     else:
                         subscript_latex = self._format_subscript_content(rest)
                         return r"$" + latex + subscript_latex + r"$"
+                elif rest.strip():
+                    # Plain Greek letter followed by text (e.g., "φ using Eq 2")
+                    return r"$" + latex + r"$ " + self._escape_latex(rest.strip())
                 return r"$" + latex + r"$"
 
         # Check for force variables like F_R (show as magnitude in solve context)
@@ -995,8 +1003,9 @@ class LaTeXRenderer(ReportRenderer):
             if "_" in subscript:
                 subscript = self._format_latex_variable(subscript, as_vector=False).replace("_", r"\_")
 
-            # Multi-character subscripts need braces
-            if len(subscript) > 1:
+            # Multi-character subscripts need braces (unless already braced)
+            already_braced = subscript.startswith("{") and subscript.endswith("}")
+            if len(subscript) > 1 and not already_braced:
                 formatted = f"{base}_{{{subscript}}}"
             else:
                 formatted = f"{base}_{subscript}"
@@ -1058,7 +1067,9 @@ class LaTeXRenderer(ReportRenderer):
             vector_bases = {"F", "v", "a", "r", "p", "V", "A", "R", "P"}
             if inner_base in vector_bases:
                 # Format inner with vector arrow inside magnitude bars
-                return r"\magn{\vv{" + inner + "}}"
+                # Use _format_latex_variable to properly format subscripts like F_BA -> F_{BA}
+                inner_formatted = self._format_latex_variable(inner, as_vector=False)
+                return r"\magn{\vv{" + inner_formatted + "}}"
             return r"\magn{" + inner + "}"
 
         result = re.sub(r'\|([^|]+)\|', magnitude_replacer, result)
@@ -1703,6 +1714,15 @@ class ReportBuilder:
             ref = self._get_default_reference_axis()
             if vec_obj is not None and hasattr(vec_obj, '_original_wrt') and vec_obj._original_wrt:
                 ref = vec_obj._original_wrt
+                # Handle vector-relative references like "@F_BA" -> LaTeX formatted vector
+                if ref.startswith('@'):
+                    vec_name_ref = ref[1:]  # Remove the @ prefix
+                    # Format as LaTeX vector: F_BA -> $\vec{F_{BA}}$
+                    if '_' in vec_name_ref:
+                        parts = vec_name_ref.split('_', 1)
+                        ref = f"$\\vec{{{parts[0]}_{{{parts[1]}}}}}$"
+                    else:
+                        ref = f"$\\vec{{{vec_name_ref}}}$"
             elif getattr(self.problem, 'coordinate_system', None) is None:
                 # Only use angle_reference fallback if no custom coordinate system
                 if vec_obj is not None and hasattr(vec_obj, 'angle_reference') and vec_obj.angle_reference:
@@ -1948,14 +1968,46 @@ class ReportBuilder:
             # Get the vector object for checking polar angle info
             vec_obj = getattr(self.problem, vec_name, None)
 
-            # Determine original known state
-            mag_was_known = original_var_states.get(f"{vec_name}_mag", True)
-            # Check if angle was originally known either from _original_variable_states
-            # or from having _polar_angle_rad set (for vectors with unknown magnitude but known angle)
-            angle_was_known = original_var_states.get(f"{vec_name}_angle", True) if angle_var else True
-            # Also check for _polar_angle_rad which indicates angle was specified at creation time
-            if vec_obj is not None and hasattr(vec_obj, '_polar_angle_rad') and vec_obj._polar_angle_rad is not None:
-                angle_was_known = True
+            # Determine original known state from multiple sources:
+            # 1. _original_unknowns dict (saved before solving for mixed unknowns)
+            # 2. _original_variable_states on the problem (for regular problems)
+            # 3. Fall back to assuming known if no info available
+            original_unknowns = getattr(vec_obj, '_original_unknowns', None) if vec_obj else None
+            current_unknowns = getattr(vec_obj, '_unknowns', {}) if vec_obj else {}
+
+            # Use _original_unknowns if available (most reliable for mixed unknown problems)
+            if original_unknowns is not None:
+                # For mixed unknowns, check for specific 'magnitude' or 'angle' keys
+                mag_was_known = 'magnitude' not in original_unknowns
+                angle_was_known = 'angle' not in original_unknowns
+            elif current_unknowns:
+                # Check current unknowns (for unsolved vectors or coordinate-based unknowns)
+                # Coordinate-based unknowns ('u', 'v', 'w') indicate full unknown
+                if any(k in current_unknowns for k in ('u', 'v', 'w')):
+                    mag_was_known = False
+                    angle_was_known = False
+                else:
+                    mag_was_known = 'magnitude' not in current_unknowns
+                    angle_was_known = 'angle' not in current_unknowns
+            elif vec_obj is not None:
+                # After solving, determine original known state from vector creation
+                # _VectorWithUnknowns has _polar_magnitude in __slots__, regular _Vector does not
+                # Check if it's a _VectorWithUnknowns (has _polar_magnitude slot)
+                has_polar_slots = '_polar_magnitude' in type(vec_obj).__slots__ if hasattr(type(vec_obj), '__slots__') else False
+                if has_polar_slots:
+                    # It's a _VectorWithUnknowns - check _polar_* attributes for original known state
+                    polar_mag = getattr(vec_obj, '_polar_magnitude', None)
+                    polar_angle = getattr(vec_obj, '_polar_angle_rad', None)
+                    mag_was_known = polar_mag is not None
+                    angle_was_known = polar_angle is not None
+                else:
+                    # Regular _Vector was created with both magnitude and angle known
+                    mag_was_known = True
+                    angle_was_known = True
+            else:
+                # Fall back to _original_variable_states
+                mag_was_known = original_var_states.get(f"{vec_name}_mag", True)
+                angle_was_known = original_var_states.get(f"{vec_name}_angle", True)
 
             # Get magnitude using proper qnty unit handling
             if mag_was_known and mag_var.value is not None:
@@ -2041,6 +2093,15 @@ class ReportBuilder:
             reference_str = self._get_default_reference_axis()
             if vec_obj is not None and hasattr(vec_obj, '_original_wrt') and vec_obj._original_wrt is not None:
                 reference_str = vec_obj._original_wrt
+                # Handle vector-relative references like "@F_BA" -> LaTeX formatted vector
+                if reference_str.startswith('@'):
+                    vec_name_ref = reference_str[1:]  # Remove the @ prefix
+                    # Format as LaTeX vector: F_BA -> $\vec{F_{BA}}$
+                    if '_' in vec_name_ref:
+                        parts = vec_name_ref.split('_', 1)
+                        reference_str = f"$\\vec{{{parts[0]}_{{{parts[1]}}}}}$"
+                    else:
+                        reference_str = f"$\\vec{{{vec_name_ref}}}$"
             elif getattr(self.problem, 'coordinate_system', None) is None:
                 # Only use angle_reference fallback if no custom coordinate system
                 if vec_obj is not None and hasattr(vec_obj, 'angle_reference') and vec_obj.angle_reference is not None:

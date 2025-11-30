@@ -1,4 +1,4 @@
-# Engineering Calculation Report: Problem 2-5
+# Engineering Calculation Report: Problem 2-16
 
 **Generated:** {{GENERATED_DATETIME}}
 
@@ -8,7 +8,7 @@
 
 | Vector | $F_x$ (lbf) | $F_y$ (lbf) | $\|\vec{F}\|$ (lbf) | $\theta$ (deg) | Reference |
 | :--- | ---: | ---: | ---: | ---: | :--- |
-| $\vec{F_R}$ | 0.0 | -350.0 | 350.0 | 270.0 | +x |
+| $\vec{F_R}$ | -378.7 | -761.0 | 850.0 | 30.0 | $\vec{F_{BA}}$ |
 
 </div>
 
@@ -18,49 +18,53 @@
 
 | Vector | $F_x$ (lbf) | $F_y$ (lbf) | $\|\vec{F}\|$ (lbf) | $\theta$ (deg) | Reference |
 | :--- | ---: | ---: | ---: | ---: | :--- |
-| $\vec{F_{AB}}$ | ? | ? | ? | 225.0 | +x |
-| $\vec{F_{AC}}$ | ? | ? | ? | 330.0 | +x |
+| $\vec{F_{BA}}$ | ? | ? | 650.0 | ? | -x |
+| $\vec{F_{BC}}$ | ? | ? | ? | -45.0 | +x |
 
 </div>
 
 ## 3. Equations Used
 
-1. $\frac{|\vec{F_{AB}}|}{\sin(\angle(\vec{F_{AC}}, \vec{F_{R}}))} = \frac{|\vec{F_{R}}|}{\sin(\angle(\vec{F_{AB}}, \vec{F_{AC}}))}$
+1. $|\vec{F_{BC}}|^2 = |\vec{F_{R}}|^2 + |\vec{F_{BA}}|^2 - 2 \cdot |\vec{F_{R}}| \cdot |\vec{F_{BA}}| \cdot \cos(\angle(\vec{F_{BA}}, \vec{F_{R}}))$
 
-2. $\frac{|\vec{F_{AC}}|}{\sin(\angle(\vec{F_{AB}}, \vec{F_{R}}))} = \frac{|\vec{F_{R}}|}{\sin(\angle(\vec{F_{AB}}, \vec{F_{AC}}))}$
+2. $\frac{\sin(\angle(\vec{F_{BA}}, \vec{F_{BC}}))}{|\vec{F_{R}}|} = \frac{\sin(\angle(\vec{F_{BA}}, \vec{F_{R}}))}{|\vec{F_{BC}}|}$
 
 ## 4. Step-by-Step Solution
 
-**Step 1: Solve for triangle angles**
+**Step 1: Solve for $\angle(\vec{F_{BA}}, \vec{F_{R}})$**
 
 $$
 \begin{aligned}
-\angle(\vec{F_{AB}}, \vec{F_{R}}) &= |\angle(\vec{x}, \vec{F_{AB}}) - \angle(\vec{x}, \vec{F_{R}})| \\
-&= |225^{\circ} - 270^{\circ}| \\
-&= 45^{\circ} \\
-\angle(\vec{F_{AC}}, \vec{F_{R}}) &= |\angle(\vec{x}, \vec{F_{AC}}) - \angle(\vec{x}, \vec{F_{R}})| \\
-&= |330^{\circ} - 270^{\circ}| \\
-&= 60^{\circ} \\
-\angle(\vec{F_{AB}}, \vec{F_{AC}}) &= 180^{\circ} - 45^{\circ} - 60^{\circ} \\
-&= 75^{\circ} \\
+\angle(\vec{F_{BA}}, \vec{F_{R}}) &= 30^{\circ} (given) \\
+&= 30^{\circ} \\
 \end{aligned}
 $$
 
-**Step 2: Solve for $|\vec{F_{AB}}|$ using Eq 1**
+**Step 2: Solve for $|\vec{F_{BC}}|$ using Eq 1**
 
 $$
 \begin{aligned}
-|\vec{F_{AB}}| &= 350  \cdot  \frac{\sin(60^{\circ})}{\sin(75^{\circ})} \\
-&= 314\ \text{lbf} \\
+|\vec{F_{BC}}| &= \sqrt{850^2 + 650^2 - 2 \cdot 850 \cdot 650 \cdot \cos(30^{\circ})} \\
+&= 434\ \text{lbf} \\
 \end{aligned}
 $$
 
-**Step 3: Solve for $|\vec{F_{AC}}|$ using Eq 2**
+**Step 3: Solve for $\angle(\vec{F_{BA}}, \vec{F_{BC}})$ using Eq 2**
 
 $$
 \begin{aligned}
-|\vec{F_{AC}}| &= 350  \cdot  \frac{\sin(45^{\circ})}{\sin(75^{\circ})} \\
-&= 256\ \text{lbf} \\
+\angle(\vec{F_{BA}}, \vec{F_{BC}}) &= \sin^{-1}(850 \cdot \frac{\sin(30^{\circ})}{434}) \\
+&= 78.5^{\circ} \\
+\end{aligned}
+$$
+
+**Step 4: Solve for $\angle(\vec{-x}, \vec{F_{BA}})$**
+
+$$
+\begin{aligned}
+\angle(\vec{-x}, \vec{F_{BA}}) &= \angle(\vec{F_{BA}}, \vec{F_{BC}}) - |\angle(\vec{+x}, \vec{F_{BC}})| \\
+&= 78.5^{\circ} - 45^{\circ} \\
+&= 33.5^{\circ} \\
 \end{aligned}
 $$
 
@@ -70,8 +74,8 @@ $$
 
 | Vector | $F_x$ (lbf) | $F_y$ (lbf) | $\|\vec{F}\|$ (lbf) | $\theta$ (deg) | Reference |
 | :--- | ---: | ---: | ---: | ---: | :--- |
-| $\vec{F_{AB}}$ | -221.9 | -221.9 | 313.8 | 225.0 | +x |
-| $\vec{F_{AC}}$ | 221.9 | -128.1 | 256.2 | 330.0 | +x |
+| $\vec{F_{BA}}$ | -541.7 | -359.2 | 650.0 | 33.5 | -x |
+| $\vec{F_{BC}}$ | 306.6 | -306.6 | 433.6 | -45.0 | +x |
 
 </div>
 

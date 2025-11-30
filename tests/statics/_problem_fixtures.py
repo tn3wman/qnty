@@ -12,6 +12,7 @@ Each problem class defines:
 - generate_debug_reports: If True, generates MD/PDF reports for this problem
 """
 
+from operator import ge
 from pathlib import Path
 
 from qnty.problems.statics import parallelogram_law as pl
@@ -275,6 +276,7 @@ class Chapter2Problem3:
 
 class Chapter2Problem4:
     name = "Problem 2-4"
+    generate_debug_reports = True
     F_AB = pl.create_vector_polar(magnitude=..., unit="N", angle=-45, wrt="-y")
     F_AC = pl.create_vector_polar(magnitude=..., unit="N", angle=-30, wrt="+x")
     F_R = pl.create_vector_resultant_polar(
@@ -339,6 +341,7 @@ class Chapter2Problem4:
 
 class Chapter2Problem5:
     name = "Problem 2-5"
+    generate_debug_reports = True
     F_AB = pl.create_vector_polar(magnitude=..., unit="lbf", angle=225, wrt="+x")
     F_AC = pl.create_vector_polar(magnitude=..., unit="lbf", angle=330, wrt="+x")
     F_R = pl.create_vector_resultant_polar(
@@ -472,7 +475,7 @@ class Chapter2Problem13:
 
 class Chapter2Problem14:
     name = "Problem 2-14"
-    generate_debug_reports = True
+    generate_debug_reports = False
     coordinate_system = pl.create_coord_angle_between(
         "a", "b", angle_between=40
     )
@@ -489,27 +492,31 @@ class Chapter2Problem14:
         F = pl.create_vector_polar(magnitude=19.6, unit="lbf", angle=80, wrt="-b")
 
 class Chapter2Problem15:
-    """
-    Force F acts on the frame such that its component acting along member is 650 lb,
-    directed from towards, and the component acting along member is 500 lb, directed
-    from towards. Determine the magnitude of F and its direction u. Set f = 60°.
-    """
     name = "Problem 2-15"
-
-    F_AB = pl.create_vector_polar(magnitude=650, unit="lbf", angle=60, wrt="-x")
+    generate_debug_reports = False
+    F_BA = pl.create_vector_polar(magnitude=650, unit="lbf", angle=60, wrt="-x")
     F_BC = pl.create_vector_polar(magnitude=500, unit="lbf", angle=-45, wrt="+x")
-    F_R = pl.create_vector_resultant(F_AB, F_BC)
+    F_R = pl.create_vector_resultant(F_BA, F_BC)
 
     class expected:
-        F_AB = pl.create_vector_polar(magnitude=650, unit="lbf", angle=60, wrt="-x")
+        F_BA = pl.create_vector_polar(magnitude=650, unit="lbf", angle=60, wrt="-x")
         F_BC = pl.create_vector_polar(magnitude=500, unit="lbf", angle=-45, wrt="+x")
-        F_R = pl.create_vector_polar(magnitude=916.91, unit="lbf", angle=91.8, wrt="-x")
+        F_R = pl.create_vector_polar(magnitude=916.91, unit="lbf", angle=31.8, wrt=F_BA)
 
 class Chapter2Problem16:
-    """
-    NOTE: Uses force-relative reference (wrt="+F_R"). Skipped for now.
-    """
-    pass
+    name = "Problem 2-16"
+    generate_debug_reports = True
+    F_BA = pl.create_vector_polar(magnitude=650, unit="lbf", angle=..., wrt="-x")
+    F_BC = pl.create_vector_polar(magnitude=..., unit="lbf", angle=-45, wrt="+x")
+    F_R = pl.create_vector_resultant_polar(
+        F_BA, F_BC,
+        magnitude=850, unit="lbf", angle=30, wrt=F_BA
+    )
+
+    class expected:
+        F_BA = pl.create_vector_polar(magnitude=650, unit="lbf", angle=33.5, wrt="-x")
+        F_BC = pl.create_vector_polar(magnitude=434, unit="lbf", angle=-45, wrt="+x")
+        F_R = pl.create_vector_polar(magnitude=850, unit="lbf", angle=30, wrt=F_BA)
 
 class Chapter2Problem17:
     """
@@ -887,7 +894,8 @@ PARALLELOGRAM_LAW_PROBLEMS = [
     Chapter2Problem12,
     Chapter2Problem13,
     Chapter2Problem14,
-    # Problem 16: Force-relative reference (wrt="+F_R") - not yet supported
+    Chapter2Problem15,
+    Chapter2Problem16,
     Chapter2Problem17,
     Chapter2Problem18,
     # Problems 19-22: Force-relative references - not yet supported
@@ -924,6 +932,7 @@ ALL_PROBLEM_CLASSES = [
     Chapter2Problem13,
     Chapter2Problem14,
     Chapter2Problem15,
+    Chapter2Problem16,
     Chapter2Problem17,
     Chapter2Problem18,
     # Chapter2Problem25,
@@ -948,6 +957,8 @@ PROBLEMS_WITH_GOLDEN_FILES = [
     Chapter2Problem12,
     Chapter2Problem13,
     Chapter2Problem14,
+    Chapter2Problem15,
+    Chapter2Problem16,
 ]
 
 

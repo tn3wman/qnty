@@ -28,7 +28,7 @@ class _VectorWithUnknowns(_Vector):
     Also stores component vectors for resultant computation.
     """
 
-    __slots__ = ("_unknowns", "_component_vectors", "_direction_unit_vector", "_is_constraint", "_alpha_rad", "_beta_rad", "_gamma_rad", "_original_plane", "_angle_unit", "_polar_magnitude", "_polar_angle_rad", "angle_dir")
+    __slots__ = ("_unknowns", "_original_unknowns", "_component_vectors", "_direction_unit_vector", "_is_constraint", "_alpha_rad", "_beta_rad", "_gamma_rad", "_original_plane", "_angle_unit", "_polar_magnitude", "_polar_angle_rad", "angle_dir", "_wrt_vector_angle_rad", "_wrt_vector_ref")
 
     # Type annotation for angle_dir slot
     angle_dir: str | None
@@ -224,6 +224,12 @@ class _VectorWithUnknowns(_Vector):
         if hasattr(self, '_polar_angle_rad'):
             result._polar_angle_rad = self._polar_angle_rad
 
+        # Copy wrt vector reference for angle reference reporting
+        if hasattr(self, '_wrt_vector_angle_rad'):
+            result._wrt_vector_angle_rad = self._wrt_vector_angle_rad
+        if hasattr(self, '_wrt_vector_ref'):
+            result._wrt_vector_ref = self._wrt_vector_ref
+
         # Copy angle direction convention
         result.angle_dir = getattr(self, 'angle_dir', None)
 
@@ -376,7 +382,7 @@ def create_vector_polar(
     unit: Unit | str,
     angle: "float | EllipsisType",
     angle_unit: str = "degree",
-    wrt: str = "+x",
+    wrt: "str | _Vector" = "+x",
     plane: str = "xy",
     name: str | None = None,
 ) -> "_Vector | _VectorWithUnknowns":
@@ -391,7 +397,8 @@ def create_vector_polar(
         unit: Unit for magnitude
         angle: Angle measured from reference axis (CCW positive), or ... for unknown
         angle_unit: Angle unit ("degree" or "radian")
-        wrt: Reference axis for angle ("+x", "-x", "+y", "-y", "+z", "-z")
+        wrt: Reference axis for angle - can be a string like "+x", "-x", "+y", "-y", "+z", "-z"
+             or a _Vector object to measure the angle relative to that vector's direction
         plane: Plane containing the vector ("xy", "xz", "yz")
         name: Optional vector name
 
@@ -427,25 +434,44 @@ def create_vector_polar(
     if plane_lower not in valid_planes:
         raise ValueError(f"Invalid plane '{plane}'. Must be one of: {valid_planes}")
 
-    # Validate wrt axis - allow standard axes or custom axis names (e.g., +u, +v for non-orthogonal systems)
-    # Custom axis names are validated later when coordinate system is applied
-    standard_axes = {"+x", "-x", "+y", "-y", "+z", "-z"}
-    wrt_stripped = wrt.lstrip("+-").lower()
-    wrt_has_sign = wrt.startswith("+") or wrt.startswith("-")
+    # Handle wrt as either a string axis or a reference vector
+    wrt_is_vector = isinstance(wrt, _Vector)
+    wrt_vector_angle_rad: float | None = None
 
-    # Check if this is a standard axis
-    is_standard_axis = wrt.lower() in standard_axes
+    if wrt_is_vector:
+        # wrt is a _Vector - compute the reference angle from the vector's direction
+        # Get the angle of the reference vector in the specified plane using raw coordinates
+        ref_vec = wrt
+        # Access internal _coords array to avoid Quantity conversion issues
+        coords = ref_vec._coords  # type: ignore[union-attr]
+        if plane_lower == "xy":
+            wrt_vector_angle_rad = math.atan2(coords[1], coords[0])  # v, u
+        elif plane_lower == "xz":
+            wrt_vector_angle_rad = math.atan2(coords[2], coords[0])  # w, u
+        else:  # yz
+            wrt_vector_angle_rad = math.atan2(coords[2], coords[1])  # w, v
+        # Store string representation for later use
+        wrt_str = f"@{ref_vec.name}" if ref_vec.name else "@vector"
+    else:
+        # wrt is a string axis
+        wrt_str = wrt
+        # Validate wrt axis - allow standard axes or custom axis names (e.g., +u, +v for non-orthogonal systems)
+        # Custom axis names are validated later when coordinate system is applied
+        standard_axes = {"+x", "-x", "+y", "-y", "+z", "-z"}
 
-    # For standard axes, validate they're in the specified plane
-    if is_standard_axis:
-        axis_char = wrt.lower()[1]  # 'x', 'y', or 'z'
-        if axis_char not in plane_lower:
-            raise ValueError(
-                f"Reference axis '{wrt}' must be in plane '{plane}'. "
-                f"Valid axes for {plane} plane: {[f'+{c}' for c in plane] + [f'-{c}' for c in plane]}"
-            )
-    # For custom axes (like +u, +v), we defer validation to solve time
-    # when the coordinate system is known
+        # Check if this is a standard axis
+        is_standard_axis = wrt_str.lower() in standard_axes
+
+        # For standard axes, validate they're in the specified plane
+        if is_standard_axis:
+            axis_char = wrt_str.lower()[1]  # 'x', 'y', or 'z'
+            if axis_char not in plane_lower:
+                raise ValueError(
+                    f"Reference axis '{wrt_str}' must be in plane '{plane}'. "
+                    f"Valid axes for {plane} plane: {[f'+{c}' for c in plane] + [f'-{c}' for c in plane]}"
+                )
+        # For custom axes (like +u, +v), we defer validation to solve time
+        # when the coordinate system is known
 
     # Resolve unit
     resolved_unit: Unit | None = None
@@ -492,9 +518,12 @@ def create_vector_polar(
             result._polar_angle_rad = None
 
         # Store wrt and plane for later computation
-        result._original_wrt = wrt
+        result._original_wrt = wrt_str
         result._original_plane = plane
         result._angle_unit = angle_unit
+        # Store the pre-computed base angle if wrt was a vector
+        if wrt_is_vector:
+            result._wrt_vector_angle_rad = wrt_vector_angle_rad
 
         return result
 
@@ -525,28 +554,34 @@ def create_vector_polar(
     }
 
     # Get the base angle for the reference axis
-    wrt_lower = wrt.lower()
-    if wrt_lower in axis_angles.get(plane_lower, {}):
-        base_angle_deg = axis_angles[plane_lower][wrt_lower]
+    base_angle_rad: float
+    if wrt_is_vector:
+        # When wrt is a vector, use the vector's angle as the base
+        assert wrt_vector_angle_rad is not None  # Set above when wrt_is_vector is True
+        base_angle_rad = wrt_vector_angle_rad
     else:
-        # Custom axis (like +u, +v) - defer angle computation
-        # Store the wrt for later resolution when coordinate system is applied
-        # For now, we can't compute Cartesian components without the coordinate system
-        # Create the vector but mark it for deferred computation
-        vec = _Vector(0.0, 0.0, 0.0, unit=resolved_unit, name=name)
-        vec._original_angle = angle_value
-        vec._original_wrt = wrt
-        vec._deferred_magnitude = magnitude_value
-        vec._deferred_angle_rad = angle_rad
-        vec._needs_coordinate_system = True
-        return vec
+        wrt_lower = wrt_str.lower()
+        if wrt_lower in axis_angles.get(plane_lower, {}):
+            base_angle_rad = math.radians(axis_angles[plane_lower][wrt_lower])
+        else:
+            # Custom axis (like +u, +v) - defer angle computation
+            # Store the wrt for later resolution when coordinate system is applied
+            # For now, we can't compute Cartesian components without the coordinate system
+            # Create the vector but mark it for deferred computation
+            vec = _Vector(0.0, 0.0, 0.0, unit=resolved_unit, name=name)
+            vec._original_angle = angle_value
+            vec._original_wrt = wrt_str
+            vec._deferred_magnitude = magnitude_value
+            vec._deferred_angle_rad = angle_rad
+            vec._needs_coordinate_system = True
+            return vec
 
     # Total angle in the plane
     # For xz plane, negate angle to follow right-hand rule (thumb +y, -x → +z)
     if plane_lower == "xz":
-        total_angle_rad = math.radians(base_angle_deg) - angle_rad
+        total_angle_rad = base_angle_rad - angle_rad
     else:
-        total_angle_rad = math.radians(base_angle_deg) + angle_rad
+        total_angle_rad = base_angle_rad + angle_rad
 
     # Compute components based on plane
     if plane_lower == "xy":
@@ -565,7 +600,7 @@ def create_vector_polar(
     vec = _Vector(u, v, w, unit=resolved_unit, name=name)
     # Store original angle and reference for reporting
     vec._original_angle = angle_value
-    vec._original_wrt = wrt
+    vec._original_wrt = wrt_str
     return vec
 
 
@@ -1168,7 +1203,7 @@ def create_vector_resultant_polar(
     angle: float,
     unit: Unit | str | None = None,
     angle_unit: str = "degree",
-    wrt: str = "+x",
+    wrt: "str | _Vector" = "+x",
     name: str = "F_R",
 ) -> _VectorWithUnknowns:
     """
@@ -1189,7 +1224,9 @@ def create_vector_resultant_polar(
         angle: Angle of the resultant (measured CCW from reference axis)
         unit: Unit for the resultant magnitude
         angle_unit: Angle unit ("degree" or "radian")
-        wrt: Reference axis for angle measurement ("+x", "-x", "+y", "-y", or custom like "+u", "+v")
+        wrt: Reference axis for angle measurement - can be a string like "+x", "-x", "+y", "-y",
+             custom axes like "+u", "+v", or a _Vector object to measure the angle relative
+             to that vector's direction
         name: Name for the resultant (default "F_R")
 
     Returns:
@@ -1225,15 +1262,27 @@ def create_vector_resultant_polar(
     else:
         raise ValueError(f"Invalid angle_unit '{angle_unit}'. Use 'degree' or 'radian'")
 
-    # Handle wrt (reference axis) - convert to standard angle from +x
-    # Support both standard axes (+x, +y, -x, -y) and custom axes (+u, +v, etc.)
-    wrt_lower = wrt.lower()
+    # Handle wrt as either a string axis or a reference vector
+    wrt_is_vector = isinstance(wrt, _Vector)
+    wrt_vector_angle_rad: float | None = None
+
     standard_axis_angles = {
         "+x": 0,
         "+y": 90,
         "-x": 180,
         "-y": 270,
     }
+
+    if wrt_is_vector:
+        # wrt is a _Vector - compute the reference angle from the vector's direction
+        ref_vec = wrt
+        coords = ref_vec._coords  # type: ignore[union-attr]
+        wrt_vector_angle_rad = math.atan2(coords[1], coords[0])  # v, u in xy plane
+        wrt_str = f"@{ref_vec.name}" if ref_vec.name else "@vector"
+        wrt_lower = None  # Not a string axis
+    else:
+        wrt_str = wrt
+        wrt_lower = wrt.lower()
 
     # Resolve unit if string
     resolved_unit = None
@@ -1260,8 +1309,18 @@ def create_vector_resultant_polar(
     else:
         mag_val = float(magnitude)
 
-    # Check if this is a standard axis or a custom axis
-    if wrt_lower in standard_axis_angles:
+    # Check if this is a vector reference, standard axis, or custom axis
+    if wrt_is_vector:
+        # Vector reference - compute Cartesian components using vector's direction as base
+        assert wrt_vector_angle_rad is not None
+        base_angle_rad = wrt_vector_angle_rad
+        total_angle_rad = base_angle_rad + angle_rad
+
+        # Compute Cartesian components from polar (unit direction if unknown magnitude)
+        u = mag_val * math.cos(total_angle_rad)
+        v = mag_val * math.sin(total_angle_rad)
+        w = 0.0
+    elif wrt_lower in standard_axis_angles:
         # Standard axis - compute Cartesian components immediately
         base_angle_rad = math.radians(standard_axis_angles[wrt_lower])
         total_angle_rad = base_angle_rad + angle_rad
@@ -1300,7 +1359,7 @@ def create_vector_resultant_polar(
 
     # Store original angle and reference for reporting
     result._original_angle = float(angle)
-    result._original_wrt = wrt
+    result._original_wrt = wrt_str
 
     # Store polar-specific attributes for solving
     if has_unknown_magnitude:
@@ -1309,8 +1368,13 @@ def create_vector_resultant_polar(
         result._polar_magnitude = mag_val
     result._polar_angle_rad = angle_rad
 
-    # For custom axes, mark as needing coordinate system resolution
-    if wrt_lower not in standard_axis_angles:
+    # Store vector reference if wrt was a vector
+    if wrt_is_vector:
+        result._wrt_vector_angle_rad = wrt_vector_angle_rad
+        result._wrt_vector_ref = wrt  # Store the actual vector reference for later name lookup
+
+    # For custom axes (not vector reference and not standard), mark as needing coordinate system resolution
+    if not wrt_is_vector and wrt_lower not in standard_axis_angles:
         result._needs_coordinate_system = True
         result._deferred_magnitude = mag_val if not has_unknown_magnitude else None
         result._deferred_angle_rad = angle_rad
