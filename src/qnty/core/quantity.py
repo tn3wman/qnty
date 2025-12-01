@@ -406,6 +406,8 @@ class Quantity(Generic[D]):
             return NotImplemented
 
         self._check_comparison_compatibility(other)
+        # After compatibility check, both values are guaranteed to be non-None
+        assert self.value is not None and other.value is not None
         return self.value < other.value
 
     def __le__(self, other: Quantity) -> bool:
@@ -414,6 +416,8 @@ class Quantity(Generic[D]):
             return NotImplemented
 
         self._check_comparison_compatibility(other)
+        # After compatibility check, both values are guaranteed to be non-None
+        assert self.value is not None and other.value is not None
         return self.value <= other.value
 
     def __gt__(self, other: Quantity) -> bool:
@@ -422,6 +426,8 @@ class Quantity(Generic[D]):
             return NotImplemented
 
         self._check_comparison_compatibility(other)
+        # After compatibility check, both values are guaranteed to be non-None
+        assert self.value is not None and other.value is not None
         return self.value > other.value
 
     def __ge__(self, other: Quantity) -> bool:
@@ -430,6 +436,8 @@ class Quantity(Generic[D]):
             return NotImplemented
 
         self._check_comparison_compatibility(other)
+        # After compatibility check, both values are guaranteed to be non-None
+        assert self.value is not None and other.value is not None
         return self.value >= other.value
 
     def __float__(self) -> float:

@@ -1781,7 +1781,9 @@ class ReportBuilder:
             # Get unit string
             unit_str = get_preferred_unit_symbol(var)
 
-            known_data.append({"symbol": symbol, "name": getattr(var, "name", symbol), "value": value_str, "unit": unit_str})
+            from ...utils.shared_utilities import build_variable_dict
+
+            known_data.append(build_variable_dict(symbol, var, value_str, unit_str))
 
         return known_data
 
@@ -2110,6 +2112,8 @@ class ReportBuilder:
                 # Get unit string
                 unit_str = get_preferred_unit_symbol(var)
 
-                results.append({"symbol": symbol, "name": getattr(var, "name", symbol), "value": value_str, "unit": unit_str})
+                from ...utils.shared_utilities import build_variable_dict
+
+                results.append(build_variable_dict(symbol, var, value_str, unit_str))
 
         return results

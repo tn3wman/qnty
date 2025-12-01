@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from .equation import Equation
 from .functions import abs_expr, cond_expr, cos, exp, ln, log10, max_expr, min_expr, range_expr, sin, sqrt, summation, sum_expr, tan, When
 from .nodes import BinaryOperation, ConditionalExpression, Constant, Expression, MatchExpression, UnaryFunction, VariableReference, wrap_operand
@@ -66,7 +68,7 @@ def eq(lhs, rhs) -> BinaryOperation:
     return BinaryOperation("==", wrap_operand(lhs), wrap_operand(rhs))
 
 
-def match_expr(select_var, *cases) -> MatchExpression:
+def match_expr(select_var, *cases) -> MatchExpression | "DelayedFunction":  # type: ignore[name-defined]
     """
     Create a match expression for multi-way selection based on a SelectVariable.
 

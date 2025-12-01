@@ -116,7 +116,9 @@ class ReportGenerator(ABC):
                 value_str = f"{var.value:.6g}" if var.value is not None else "N/A"
                 unit_str = self._get_unit_string(var)
 
-            known_data.append({"symbol": symbol, "name": getattr(var, "name", symbol), "value": value_str, "unit": unit_str})
+            from ...utils.shared_utilities import build_variable_dict
+
+            known_data.append(build_variable_dict(symbol, var, value_str, unit_str))
 
         unknown_data = []
         # List unknown variables WITHOUT their calculated values (those go in the results section)
@@ -296,7 +298,9 @@ class ReportGenerator(ABC):
                 else:
                     value_str = "Unknown"
                 unit_str = self._get_unit_string(var)
-                results.append({"symbol": symbol, "name": getattr(var, "name", symbol), "value": value_str, "unit": unit_str})
+                from ...utils.shared_utilities import build_variable_dict
+
+                results.append(build_variable_dict(symbol, var, value_str, unit_str))
         return results
 
     @abstractmethod

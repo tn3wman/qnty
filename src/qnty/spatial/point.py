@@ -59,12 +59,12 @@ class _Point(Generic[D]):
         """
         self._is_unknown = False
         self._distance: float | None = None
-        # Resolve unit if string
-        unit = resolve_length_unit_from_string(unit) if unit is not None else None
+        # Resolve unit if string - after this, resolved_unit is Unit | None
+        resolved_unit: Unit | None = resolve_length_unit_from_string(unit) if unit is not None else None
 
         # Store as numpy array for vectorized operations
         from .vector_helpers import init_coords_from_unit
-        self._coords, self._dim, self._unit = init_coords_from_unit(x, y, z, unit)
+        self._coords, self._dim, self._unit = init_coords_from_unit(x, y, z, resolved_unit)
 
     @classmethod
     def unknown(cls, unit: Unit | str = "m", distance: float | None = None) -> _Point:
@@ -78,14 +78,14 @@ class _Point(Generic[D]):
         Returns:
             Unknown point with unset coordinates
         """
-        # Resolve unit if string
-        unit = resolve_length_unit_from_string(unit)
+        # Resolve unit if string - after this, resolved_unit is Unit
+        resolved_unit: Unit = resolve_length_unit_from_string(unit)
 
         # Create point with NaN coordinates to indicate unknown
         result = object.__new__(cls)
         result._coords = np.array([np.nan, np.nan, np.nan], dtype=float)
-        result._dim = unit.dim
-        result._unit = unit
+        result._dim = resolved_unit.dim
+        result._unit = resolved_unit
         result._is_unknown = True
         result._distance = distance  # Distance from reference point
         return result
@@ -255,7 +255,7 @@ class _Point(Generic[D]):
         # Return as Quantity
         q = object.__new__(Quantity)
         q.name = "distance"
-        q.dim = self._dim
+        q.dim = self._dim  # type: ignore[assignment]  # _dim is set in __init__
         q.value = distance_si
         q.preferred = self._unit
         q._symbol = None

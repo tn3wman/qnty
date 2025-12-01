@@ -18,7 +18,7 @@ from numpy.typing import NDArray
 
 from ..core.quantity import Quantity
 from ..core.unit import Unit
-from ..utils.shared_utilities import compute_dimension_product, create_magnitude_quantity, resolve_angle_unit_from_string, resolve_unit_from_string
+from ..utils.shared_utilities import compute_dimension_product, create_magnitude_quantity, resolve_angle_unit_from_string, resolve_unit_from_string, resolve_vector_name
 
 if TYPE_CHECKING:
     from .angle_reference import AngleReference
@@ -166,8 +166,8 @@ class _Vector(Generic[D]):
                 # Convert angle to radians and store as relative angle
                 if isinstance(angle, int | float):
                     # Resolve angle unit for conversion
-                    angle_unit = resolve_angle_unit_from_string(angle_unit)
-                    self._relative_angle = float(angle) * angle_unit.si_factor
+                    resolved_au: Unit = resolve_angle_unit_from_string(angle_unit)
+                    self._relative_angle = float(angle) * resolved_au.si_factor
                 else:
                     # Angle is a Quantity
                     self._relative_angle = angle.value if angle.value is not None else 0.0
@@ -179,11 +179,11 @@ class _Vector(Generic[D]):
             from .angle_reference import AngleReference
             self.angle_reference = AngleReference.standard()
 
-        # Resolve unit if string
-        unit = resolve_unit_from_string(unit) if unit is not None else None
+        # Resolve unit if string - after this, unit is Unit | None
+        resolved_unit: Unit | None = resolve_unit_from_string(unit) if unit is not None else None
 
-        # Resolve angle unit
-        angle_unit = resolve_angle_unit_from_string(angle_unit)
+        # Resolve angle unit - after this, angle_unit is Unit
+        resolved_angle_unit: Unit = resolve_angle_unit_from_string(angle_unit)
 
         # Determine construction mode
         # Mode 0: From existing vector
@@ -197,52 +197,52 @@ class _Vector(Generic[D]):
         # Mode 1: Basic u, v, w construction
         if u is not None and v is not None:
             from .vector_helpers import init_coords_from_unit
-            self._coords, self._dim, self._unit = init_coords_from_unit(u, v, w, unit)
+            self._coords, self._dim, self._unit = init_coords_from_unit(u, v, w, resolved_unit)
             return
 
         # Mode 2: Coordinate direction angles (3D)
         if alpha is not None or beta is not None or gamma is not None:
-            self._init_from_direction_angles(magnitude, alpha, beta, gamma, unit, angle_unit)
+            self._init_from_direction_angles(magnitude, alpha, beta, gamma, resolved_unit, resolved_angle_unit)
             return
 
         # Mode 3: Transverse/azimuth angles (3D)
         if phi is not None and theta is not None:
-            self._init_from_transverse_azimuth(magnitude, phi, theta, unit, angle_unit)
+            self._init_from_transverse_azimuth(magnitude, phi, theta, resolved_unit, resolved_angle_unit)
             return
 
         # Mode 4: Magnitude and angle (polar, 2D)
         if magnitude is not None and angle is not None:
-            self._init_from_polar(magnitude, angle, unit, angle_unit)
+            self._init_from_polar(magnitude, angle, resolved_unit, resolved_angle_unit)
             return
 
         # Mode 4b: Angle known but magnitude unknown
         if magnitude is None and angle is not None:
-            self._init_angle_only(angle, unit, angle_unit)
+            self._init_angle_only(angle, resolved_unit, resolved_angle_unit)
             return
 
         # Mode 4c: Magnitude known but angle unknown
         if magnitude is not None and angle is None:
-            self._init_magnitude_only(magnitude, unit)
+            self._init_magnitude_only(magnitude, resolved_unit)
             return
 
         # Mode 5: Cartesian components (x, y, z)
         if x is not None or y is not None:
-            self._init_from_cartesian(x, y, z, unit)
+            self._init_from_cartesian(x, y, z, resolved_unit)
             return
 
         # Mode 6: Unknown vector
         if not is_known:
             self._coords = np.array([0.0, 0.0, 0.0], dtype=float)
-            self._dim = unit.dim if unit else None
-            self._unit = unit
+            self._dim = resolved_unit.dim if resolved_unit else None
+            self._unit = resolved_unit
             self._magnitude = None
             self._angle = None
             return
 
         # Default: zero vector
         self._coords = np.array([0.0, 0.0, 0.0], dtype=float)
-        self._dim = unit.dim if unit else None
-        self._unit = unit
+        self._dim = resolved_unit.dim if resolved_unit else None
+        self._unit = resolved_unit
 
     @classmethod
     def from_quantities(cls, u: Quantity[D], v: Quantity[D], w: Quantity[D] | None = None) -> _Vector[D]:
@@ -402,13 +402,15 @@ class _Vector(Generic[D]):
         gamma_rad = to_radians(gamma)
 
         # Calculate missing angle
+        from ..utils.shared_utilities import compute_missing_direction_cosine_squared
+
         if alpha_rad is None and beta_rad is not None and gamma_rad is not None:
-            cos_alpha_sq = 1 - math.cos(beta_rad)**2 - math.cos(gamma_rad)**2
+            cos_alpha_sq = compute_missing_direction_cosine_squared(math.cos(beta_rad), math.cos(gamma_rad))
             if cos_alpha_sq < 0:
                 raise ValueError("Invalid angle combination")
             alpha_rad = math.acos(math.sqrt(cos_alpha_sq))
         elif beta_rad is None and alpha_rad is not None and gamma_rad is not None:
-            cos_beta_sq = 1 - math.cos(alpha_rad)**2 - math.cos(gamma_rad)**2
+            cos_beta_sq = compute_missing_direction_cosine_squared(math.cos(alpha_rad), math.cos(gamma_rad))
             if cos_beta_sq < 0:
                 raise ValueError("Invalid angle combination")
             cos_beta = math.sqrt(cos_beta_sq)
@@ -416,7 +418,7 @@ class _Vector(Generic[D]):
                 cos_beta = -cos_beta
             beta_rad = math.acos(cos_beta)
         elif gamma_rad is None and alpha_rad is not None and beta_rad is not None:
-            cos_gamma_sq = 1 - math.cos(alpha_rad)**2 - math.cos(beta_rad)**2
+            cos_gamma_sq = compute_missing_direction_cosine_squared(math.cos(alpha_rad), math.cos(beta_rad))
             if cos_gamma_sq < 0:
                 raise ValueError("Invalid angle combination")
             gamma_rad = math.acos(math.sqrt(cos_gamma_sq))
@@ -1371,24 +1373,27 @@ class _Vector(Generic[D]):
         cos_gamma = pos_vector._coords[2] / mag
 
         # Convert magnitude to SI
+        resolved_unit: Unit
         if isinstance(magnitude, int | float):
             if unit is None:
                 raise ValueError("unit must be specified")
-            unit = resolve_unit_from_string(unit)
-            mag_si = float(magnitude) * unit.si_factor
+            resolved_unit = resolve_unit_from_string(unit)
+            mag_si = float(magnitude) * resolved_unit.si_factor
         else:
             if magnitude.value is None:
                 raise ValueError("Magnitude must have a known value")
             mag_si = magnitude.value
-            unit = magnitude.preferred
+            if magnitude.preferred is None:
+                raise ValueError("Magnitude must have a preferred unit")
+            resolved_unit = magnitude.preferred
 
         # Compute components
         x_val = mag_si * cos_alpha
         y_val = mag_si * cos_beta
         z_val = mag_si * cos_gamma
 
-        return cls(x=x_val / unit.si_factor, y=y_val / unit.si_factor, z=z_val / unit.si_factor,
-                  unit=unit, name=name, **kwargs)
+        return cls(x=x_val / resolved_unit.si_factor, y=y_val / resolved_unit.si_factor, z=z_val / resolved_unit.si_factor,
+                  unit=resolved_unit, name=name, **kwargs)
 
     @classmethod
     def from_points(cls, from_point: "PointLike | _Point", to_point: "PointLike | _Point",
@@ -1406,8 +1411,9 @@ class _Vector(Generic[D]):
         else:
             to_pt = to_point.to_cartesian()
 
-        if from_pt._dim != to_pt._dim:
-            raise ValueError(f"Points must have same dimension: {from_pt._dim} vs {to_pt._dim}")
+        from ..utils.shared_utilities import validate_points_same_dimension
+
+        validate_points_same_dimension(from_pt, to_pt)
 
         delta = to_pt._coords - from_pt._coords
 
@@ -1446,21 +1452,27 @@ class _Vector(Generic[D]):
     @property
     def x(self) -> Quantity | None:
         """X-component."""
-        if not hasattr(self, '_coords') or self._coords is None or self._dim is None:
+        from ..utils.shared_utilities import has_valid_coords
+
+        if not has_valid_coords(self):
             return None
         return self._make_quantity(0, "x")
 
     @property
     def y(self) -> Quantity | None:
         """Y-component."""
-        if not hasattr(self, '_coords') or self._coords is None or self._dim is None:
+        from ..utils.shared_utilities import has_valid_coords
+
+        if not has_valid_coords(self):
             return None
         return self._make_quantity(1, "y")
 
     @property
     def z(self) -> Quantity | None:
         """Z-component."""
-        if not hasattr(self, '_coords') or self._coords is None or self._dim is None:
+        from ..utils.shared_utilities import has_valid_coords
+
+        if not has_valid_coords(self):
             return None
         return self._make_quantity(2, "z")
 
@@ -1489,6 +1501,7 @@ class _Vector(Generic[D]):
         """Ending point reference."""
         return self._to_point if hasattr(self, '_to_point') else None
 
+    @property
     def has_unknowns(self) -> bool:
         """Check if either point has unknown coordinates."""
         from_unknowns = getattr(self._from_point, 'unknowns', {}) if hasattr(self, '_from_point') and self._from_point else {}
@@ -1607,7 +1620,7 @@ class _Vector(Generic[D]):
 
         # Use provided name or original name (not default "Vector")
         original_name = getattr(self, 'name', "")
-        result.name = name if name is not None else (original_name if original_name and original_name != "Vector" else "")
+        result.name = resolve_vector_name(name, original_name)
 
         result._description = getattr(self, '_description', "")
         result.is_known = getattr(self, 'is_known', True)

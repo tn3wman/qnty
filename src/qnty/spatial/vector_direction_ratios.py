@@ -7,8 +7,6 @@ direction ratios (a, b, c) which are proportional to the components.
 
 from __future__ import annotations
 
-import math
-
 from ..core.unit import Unit
 from ..utils.shared_utilities import resolve_length_unit_from_string
 from .vector import _Vector
@@ -72,12 +70,14 @@ class VectorDirectionRatios:
         """
         self._name = name
         self._magnitude = float(magnitude)
+        from ..utils.shared_utilities import compute_3d_magnitude
+
         self._a = float(a)
         self._b = float(b)
         self._c = float(c)
 
         # Calculate magnitude of direction vector
-        dir_magnitude = math.sqrt(a**2 + b**2 + c**2)
+        dir_magnitude = compute_3d_magnitude(a, b, c)
         if dir_magnitude == 0:
             raise ValueError("Direction ratios cannot all be zero")
 
@@ -135,7 +135,9 @@ class VectorDirectionRatios:
     @property
     def direction_cosines(self) -> tuple[float, float, float]:
         """Direction cosines (cos α, cos β, cos γ)."""
-        dir_magnitude = math.sqrt(self._a**2 + self._b**2 + self._c**2)
+        from ..utils.shared_utilities import compute_3d_magnitude
+
+        dir_magnitude = compute_3d_magnitude(self._a, self._b, self._c)
         return (
             self._a / dir_magnitude,
             self._b / dir_magnitude,

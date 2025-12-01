@@ -84,11 +84,13 @@ class VectorBetween:
         fp = from_point if from_point is not None else self._from_point
         tp = to_point if to_point is not None else self._to_point
 
-        # Convert to _Point if needed
-        if hasattr(fp, 'to_cartesian'):
-            fp = fp.to_cartesian()
-        if hasattr(tp, 'to_cartesian'):
-            tp = tp.to_cartesian()
+        # Convert to _Point if needed (some point types like spherical have to_cartesian)
+        to_cartesian_fn = getattr(fp, "to_cartesian", None)
+        if to_cartesian_fn:
+            fp = to_cartesian_fn()
+        to_cartesian_fn = getattr(tp, "to_cartesian", None)
+        if to_cartesian_fn:
+            tp = to_cartesian_fn()
 
         # Compute displacement
         from_coords = fp._coords

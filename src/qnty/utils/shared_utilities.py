@@ -1430,16 +1430,9 @@ def resolve_unit_from_string_or_fallback(
         >>> resolved = resolve_unit_from_string_or_fallback("N", vectors)
         >>> resolved = resolve_unit_from_string_or_fallback(None, vectors)  # Uses v1._unit
     """
-    from ..core.unit import ureg
-
     if isinstance(unit, str):
-        if dim is not None:
-            resolved = ureg.resolve(unit, dim=dim)
-        else:
-            resolved = ureg.resolve(unit)
-        if resolved is None:
-            raise ValueError(f"Unknown unit '{unit}'")
-        return resolved
+        # Delegate to resolve_unit_from_string for actual resolution
+        return resolve_unit_from_string(unit, dim=dim)
     elif unit is not None:
         return unit
     elif fallback_sources:
@@ -2339,3 +2332,157 @@ def compute_third_direction_angle(
         raise ValueError(error_msg)
     cos_val = sign * math.sqrt(cos_sq)
     return math.acos(cos_val)
+
+
+# ========== POINT DIMENSION VALIDATION UTILITIES ==========
+
+
+def validate_points_same_dimension(point1: Any, point2: Any, context: str = "Points") -> None:
+    """
+    Validate that two points have the same dimension.
+
+    This consolidates the repeated pattern:
+        if from_pt._dim != to_pt._dim:
+            raise ValueError(f"Points must have same dimension: {from_pt._dim} vs {to_pt._dim}")
+
+    Args:
+        point1: First point with _dim attribute
+        point2: Second point with _dim attribute
+        context: Context string for error message (default: "Points")
+
+    Raises:
+        ValueError: If points have different dimensions
+    """
+    if point1._dim != point2._dim:
+        raise ValueError(f"{context} must have same dimension: {point1._dim} vs {point2._dim}")
+
+
+# ========== COORDS VALIDITY CHECK UTILITIES ==========
+
+
+def has_valid_coords(obj: Any) -> bool:
+    """
+    Check if an object has valid coordinate data.
+
+    This consolidates the repeated pattern:
+        if not hasattr(self, '_coords') or self._coords is None or self._dim is None:
+            return None
+
+    Args:
+        obj: Object to check for _coords and _dim attributes
+
+    Returns:
+        True if object has valid _coords and _dim, False otherwise
+    """
+    return hasattr(obj, "_coords") and obj._coords is not None and obj._dim is not None
+
+
+# ========== 3D MAGNITUDE CALCULATION UTILITIES ==========
+
+
+def compute_3d_magnitude(x: float, y: float, z: float) -> float:
+    """
+    Compute the magnitude of a 3D vector.
+
+    This consolidates the repeated pattern:
+        magnitude = math.sqrt(x**2 + y**2 + z**2)
+
+    Args:
+        x: X component
+        y: Y component
+        z: Z component
+
+    Returns:
+        Magnitude (Euclidean norm) of the vector
+    """
+    import math
+
+    return math.sqrt(x**2 + y**2 + z**2)
+
+
+# ========== FORCE QUANTITY CREATION UTILITIES ==========
+
+
+def create_force_component_quantity(
+    force_name: str,
+    component: str,
+    dim: Any,
+    value: float,
+    preferred_unit: Any,
+) -> Any:
+    """
+    Create a Quantity for a force component (x, y, z, or magnitude).
+
+    This consolidates the repeated pattern in triangle_solver.py:
+        x_qty = Quantity(name=f"{force.name}_x", dim=dim.force, value=F_x, preferred=ref_unit)
+
+    Args:
+        force_name: Name of the force (e.g., "F_1")
+        component: Component name ("x", "y", "z", "magnitude", or "angle")
+        dim: Dimension for the quantity (e.g., dim.force or dim.D)
+        value: Numerical value
+        preferred_unit: Preferred unit for display
+
+    Returns:
+        Quantity object for the force component
+    """
+    from ..core.quantity import Quantity
+
+    return Quantity(name=f"{force_name}_{component}", dim=dim, value=value, preferred=preferred_unit)
+
+
+# ========== WRAPPED VARIABLE CHECK UTILITIES ==========
+
+
+def raise_if_missing_wrapped_var(obj: Any, attr_name: str) -> None:
+    """
+    Raise AttributeError if object doesn't have _wrapped_var attribute.
+
+    This consolidates the repeated pattern:
+        if not hasattr(self, '_wrapped_var'):
+            raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
+
+    Args:
+        obj: Object to check
+        attr_name: Attribute name to include in error message
+
+    Raises:
+        AttributeError: If object doesn't have _wrapped_var attribute
+    """
+    if not hasattr(obj, "_wrapped_var"):
+        raise AttributeError(f"'{type(obj).__name__}' object has no attribute '{attr_name}'")
+
+
+# ========== VECTOR NAME UTILITIES ==========
+
+
+def resolve_vector_name(explicit_name: str | None, original_name: str, default_name: str = "Vector") -> str:
+    """
+    Resolve the name to use for a vector, handling explicit names and defaults.
+
+    This consolidates the repeated pattern:
+        name if name is not None else (original_name if original_name and original_name != "Vector" else "")
+
+    Args:
+        explicit_name: Explicitly provided name (takes priority if not None)
+        original_name: Original name from source object
+        default_name: Default name to exclude (default: "Vector")
+
+    Returns:
+        Resolved name string
+
+    Examples:
+        >>> resolve_vector_name("F1_copy", "F1")
+        'F1_copy'
+        >>> resolve_vector_name(None, "F1")
+        'F1'
+        >>> resolve_vector_name(None, "Vector")
+        ''
+        >>> resolve_vector_name(None, "")
+        ''
+    """
+    if explicit_name is not None:
+        return explicit_name
+    if original_name and original_name != default_name:
+        return original_name
+    return ""

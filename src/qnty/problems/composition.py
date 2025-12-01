@@ -27,6 +27,7 @@ from ..utils.shared_utilities import (
     delegate_getattr,
     is_private_or_excluded_dunder,
     raise_if_excluded_dunder,
+    raise_if_missing_wrapped_var,
 )
 from .rules import Rules
 
@@ -681,7 +682,9 @@ class DelayedFunction(Expression, ArithmeticOperationsMixin):
             # Build nested conditionals from right to left
             from ..algebra.functions import cond_expr as create_cond_expr
 
-            for condition, expression in reversed(list(cases)):
+            # Explicitly type cases to help type checker with sliced tuple
+            remaining_cases: tuple = cases  # type: ignore[assignment]
+            for condition, expression in reversed(list(remaining_cases)):
                 wrapped_expression = wrap_operand(expression)
 
                 if condition.lower is not None and condition.upper is not None:
@@ -1091,8 +1094,7 @@ class CompositionMixin:
                     raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
 
                 # Prevent infinite recursion by checking if _wrapped_var exists
-                if not hasattr(self, "_wrapped_var"):
-                    raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
+                raise_if_missing_wrapped_var(self, name)
 
                 # For all other attributes, delegate to the wrapped variable
                 return delegate_getattr(self._wrapped_var, name, self)

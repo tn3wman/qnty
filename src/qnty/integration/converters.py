@@ -240,8 +240,9 @@ def quantity_to_dto(qty: "Quantity", output_unit: str | None = None) -> Quantity
     else:
         value = qty.value if qty.value is not None else 0.0
 
-    # Get dimension name
-    dim_name = qty.dim.name if qty.dim else None
+    # Get dimension name (Dimension objects don't have name attribute)
+    # The name is only stored in the registry, so we pass None
+    dim_name = None
 
     return QuantityDTO(
         value=value,

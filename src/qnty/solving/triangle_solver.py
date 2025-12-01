@@ -278,7 +278,7 @@ class TriangleSolver:
 
         # Find or create resultant force
         resultant = None
-        for _force_name, force in forces_dict.items():
+        for force in forces_dict.values():
             if force.is_resultant:
                 resultant = force
                 break
@@ -358,6 +358,12 @@ class TriangleSolver:
         validate_force_magnitude_and_angle(resultant, "Resultant")
         validate_force_magnitude_and_angle(known_force, "Force")
 
+        # After validation, we know these are not None
+        assert resultant.magnitude is not None and resultant.magnitude.value is not None
+        assert resultant.angle is not None and resultant.angle.value is not None
+        assert known_force.magnitude is not None and known_force.magnitude.value is not None
+        assert known_force.angle is not None and known_force.angle.value is not None
+
         F_R = resultant.magnitude.value
         F_known = known_force.magnitude.value
         theta_R = resultant.angle.value  # radians
@@ -429,15 +435,16 @@ class TriangleSolver:
         ref_unit = resultant.magnitude.preferred
         from ..core.dimension_catalog import dim
         from ..core.unit import ureg
+        from ..utils.shared_utilities import create_force_component_quantity
 
-        mag_qty = Quantity(name=f"{unknown_force.name}_magnitude", dim=dim.force, value=F_unknown, preferred=ref_unit)
+        mag_qty = create_force_component_quantity(unknown_force.name, "magnitude", dim.force, F_unknown, ref_unit)
         degree_unit = ureg.resolve("degree", dim=dim.D)
-        angle_qty = Quantity(name=f"{unknown_force.name}_angle", dim=dim.D, value=theta_unknown, preferred=degree_unit)
+        angle_qty = create_force_component_quantity(unknown_force.name, "angle", dim.D, theta_unknown, degree_unit)
 
         # Use the computed components (already in SI units)
-        x_qty = Quantity(name=f"{unknown_force.name}_x", dim=dim.force, value=F_unknownx, preferred=ref_unit)
-        y_qty = Quantity(name=f"{unknown_force.name}_y", dim=dim.force, value=F_unknowny, preferred=ref_unit)
-        z_qty = Quantity(name=f"{unknown_force.name}_z", dim=dim.force, value=0.0, preferred=ref_unit)
+        x_qty = create_force_component_quantity(unknown_force.name, "x", dim.force, F_unknownx, ref_unit)
+        y_qty = create_force_component_quantity(unknown_force.name, "y", dim.force, F_unknowny, ref_unit)
+        z_qty = create_force_component_quantity(unknown_force.name, "z", dim.force, 0.0, ref_unit)
         unknown_vector = _Vector.from_quantities(x_qty, y_qty, z_qty)
 
         # Update unknown force
@@ -460,6 +467,12 @@ class TriangleSolver:
         # Validate magnitudes and angles
         validate_force_magnitude_and_angle(force1, "Force")
         validate_force_magnitude_and_angle(force2, "Force")
+
+        # After validation, we know these are not None
+        assert force1.magnitude is not None and force1.magnitude.value is not None
+        assert force1.angle is not None and force1.angle.value is not None
+        assert force2.magnitude is not None and force2.magnitude.value is not None
+        assert force2.angle is not None and force2.angle.value is not None
 
         F1 = force1.magnitude.value
         F2 = force2.magnitude.value
@@ -566,6 +579,12 @@ class TriangleSolver:
         validate_force_angle(force1, "Force")
         validate_force_angle(force2, "Force")
 
+        # After validation, we know these are not None
+        assert resultant.magnitude is not None and resultant.magnitude.value is not None
+        assert resultant.angle is not None and resultant.angle.value is not None
+        assert force1.angle is not None and force1.angle.value is not None
+        assert force2.angle is not None and force2.angle.value is not None
+
         # Use absolute value of resultant magnitude for decomposition
         # (negative magnitude means force points opposite to specified angle)
         # magnitude.value is now stored in SI units
@@ -638,31 +657,32 @@ class TriangleSolver:
         # Create force vectors with computed magnitudes
         ref_unit = resultant.magnitude.preferred
         from ..core.dimension_catalog import dim
+        from ..utils.shared_utilities import create_force_component_quantity
 
         # Store SI values directly (F1 and F2 are already in SI units from calculations)
         # Quantity class handles conversion to preferred units for display
 
         # Update force 1
-        mag1_qty = Quantity(name=f"{force1.name}_magnitude", dim=dim.force, value=F1, preferred=ref_unit)
+        mag1_qty = create_force_component_quantity(force1.name, "magnitude", dim.force, F1, ref_unit)
         force1._magnitude = mag1_qty
         F1x = F1 * math.cos(theta_1)
         F1y = F1 * math.sin(theta_1)
         # Create vector from SI components
-        f1_x_qty = Quantity(name=f"{force1.name}_x", dim=dim.force, value=F1x, preferred=ref_unit)
-        f1_y_qty = Quantity(name=f"{force1.name}_y", dim=dim.force, value=F1y, preferred=ref_unit)
-        f1_z_qty = Quantity(name=f"{force1.name}_z", dim=dim.force, value=0.0, preferred=ref_unit)
+        f1_x_qty = create_force_component_quantity(force1.name, "x", dim.force, F1x, ref_unit)
+        f1_y_qty = create_force_component_quantity(force1.name, "y", dim.force, F1y, ref_unit)
+        f1_z_qty = create_force_component_quantity(force1.name, "z", dim.force, 0.0, ref_unit)
         force1._coords = _Vector.from_quantities(f1_x_qty, f1_y_qty, f1_z_qty)._coords
         force1.is_known = True
 
         # Update force 2
-        mag2_qty = Quantity(name=f"{force2.name}_magnitude", dim=dim.force, value=F2, preferred=ref_unit)
+        mag2_qty = create_force_component_quantity(force2.name, "magnitude", dim.force, F2, ref_unit)
         force2._magnitude = mag2_qty
         F2x = F2 * math.cos(theta_2)
         F2y = F2 * math.sin(theta_2)
         # Create vector from SI components
-        f2_x_qty = Quantity(name=f"{force2.name}_x", dim=dim.force, value=F2x, preferred=ref_unit)
-        f2_y_qty = Quantity(name=f"{force2.name}_y", dim=dim.force, value=F2y, preferred=ref_unit)
-        f2_z_qty = Quantity(name=f"{force2.name}_z", dim=dim.force, value=0.0, preferred=ref_unit)
+        f2_x_qty = create_force_component_quantity(force2.name, "x", dim.force, F2x, ref_unit)
+        f2_y_qty = create_force_component_quantity(force2.name, "y", dim.force, F2y, ref_unit)
+        f2_z_qty = create_force_component_quantity(force2.name, "z", dim.force, 0.0, ref_unit)
         force2._coords = _Vector.from_quantities(f2_x_qty, f2_y_qty, f2_z_qty)._coords
         force2.is_known = True
 
@@ -690,10 +710,11 @@ class TriangleSolver:
 
         # Create unknown vector
         from ..core.dimension_catalog import dim
+        from ..utils.shared_utilities import create_force_component_quantity
 
-        x_qty = Quantity(name=f"{unknown_force.name}_x", dim=dim.force, value=unknown_x, preferred=ref_unit)
-        y_qty = Quantity(name=f"{unknown_force.name}_y", dim=dim.force, value=unknown_y, preferred=ref_unit)
-        z_qty = Quantity(name=f"{unknown_force.name}_z", dim=dim.force, value=unknown_z, preferred=ref_unit)
+        x_qty = create_force_component_quantity(unknown_force.name, "x", dim.force, unknown_x, ref_unit)
+        y_qty = create_force_component_quantity(unknown_force.name, "y", dim.force, unknown_y, ref_unit)
+        z_qty = create_force_component_quantity(unknown_force.name, "z", dim.force, unknown_z, ref_unit)
 
         unknown_vector = _Vector.from_quantities(x_qty, y_qty, z_qty)
 

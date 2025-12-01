@@ -20,7 +20,7 @@ from ..utils.shared_utilities import create_angle_arc, draw_styled_text
 if TYPE_CHECKING:
     from typing import Protocol
 
-    from ...spatial import _Vector
+    from ..spatial import _Vector
 
     class VectorDiagramProtocol(Protocol):
         """Protocol for VectorDiagram classes."""

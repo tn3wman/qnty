@@ -237,7 +237,8 @@ def init_coords_from_unit(
         x: X/U coordinate value in the specified unit
         y: Y/V coordinate value in the specified unit
         z: Z/W coordinate value in the specified unit
-        unit: Unit for all coordinates (if None, assumes SI units)
+        unit: Unit for all coordinates (if None, assumes SI units).
+              Must be a Unit object, not a string - resolve strings before calling.
 
     Returns:
         Tuple of (coords_array, dimension, unit) where:

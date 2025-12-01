@@ -299,6 +299,8 @@ class PositionVectorProblem(Problem):
 
             # Resolve force unit
             force_unit = ureg.resolve(unit_str, dim=dim.force)
+            if force_unit is None:
+                raise ValueError(f"Unknown force unit: {unit_str}")
 
             # Compute force components: F = |F| * u_hat
             # Components are in SI units internally
@@ -472,7 +474,7 @@ class PositionVectorProblem(Problem):
 
         # Process position vectors with magnitude constraints
         for pv_name, pv in self.position_vectors_with_constraints.items():
-            if not pv.has_unknowns():
+            if not pv.has_unknowns:
                 continue
 
             # Magnitude is already in SI units
@@ -648,7 +650,7 @@ class PositionVectorProblem(Problem):
                 if attr_name == name:  # Skip the position vector we're solving
                     continue
                 attr = getattr(self, attr_name)
-                if isinstance(attr, _Vector) and not attr.has_unknowns():
+                if isinstance(attr, _Vector) and not attr.has_unknowns:
                     # Check it's not a position vector with constraint (those have _from_point)
                     if not hasattr(attr, '_from_point') or attr._from_point is None:
                         direction_vector = attr

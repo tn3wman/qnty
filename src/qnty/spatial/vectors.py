@@ -13,7 +13,15 @@ from typing import TYPE_CHECKING, Any
 import numpy as np
 
 from ..core.unit import Unit
-from ..utils.shared_utilities import compute_third_direction_angle, convert_angle_to_radians, convert_phi_to_standard, convert_to_si, resolve_unit_from_string, resolve_unit_from_string_or_fallback
+from ..utils.shared_utilities import (
+    compute_third_direction_angle,
+    convert_angle_to_radians,
+    convert_phi_to_standard,
+    convert_to_si,
+    resolve_unit_from_string,
+    resolve_unit_from_string_or_fallback,
+    resolve_vector_name,
+)
 from .vector import _Vector
 from .vector_helpers import validate_direction_cosines
 
@@ -183,7 +191,7 @@ class _VectorWithUnknowns(_Vector):
 
         # Use provided name or original name
         original_name = getattr(self, "name", "")
-        result.name = name if name is not None else (original_name if original_name and original_name != "Vector" else "")
+        result.name = resolve_vector_name(name, original_name)
 
         result._description = getattr(self, "_description", "")
         result.is_known = getattr(self, "is_known", False)
@@ -348,8 +356,6 @@ def create_vector_from_ratio(
         ...     magnitude=26, u=3, v=4, w=12, unit="m"
         ... )
     """
-    import math
-
     # Validate ratios aren't all zero
     if u == 0 and v == 0 and w == 0:
         raise ValueError("Direction ratios cannot all be zero")
@@ -358,11 +364,13 @@ def create_vector_from_ratio(
     resolved_unit = resolve_unit_from_string(unit) if unit is not None else None
 
     # Compute vector components
+    from ..utils.shared_utilities import compute_3d_magnitude
+
     ru, rv, rw = float(u), float(v), float(w)
     mag_val = float(magnitude)
 
     # Compute the magnitude of the ratio vector
-    ratio_magnitude = math.sqrt(ru**2 + rv**2 + rw**2)
+    ratio_magnitude = compute_3d_magnitude(ru, rv, rw)
 
     # Scale factor to get unit direction, then multiply by magnitude
     scale = mag_val / ratio_magnitude
@@ -721,8 +729,9 @@ def create_vector_from_points(
     else:
         to_pt = to_point.to_cartesian()
 
-    if from_pt._dim != to_pt._dim:
-        raise ValueError(f"Points must have same dimension: {from_pt._dim} vs {to_pt._dim}")
+    from ..utils.shared_utilities import validate_points_same_dimension
+
+    validate_points_same_dimension(from_pt, to_pt)
 
     delta = to_pt._coords - from_pt._coords
 
@@ -734,14 +743,14 @@ def create_vector_from_points(
     result.is_known = True
     result.is_resultant = False
     result._description = ""
-    result.coordinate_system = None
-    result.angle_reference = None
+    result.coordinate_system = None  # type: ignore[assignment]
+    result.angle_reference = None  # type: ignore[assignment]
     result._magnitude = None
     result._angle = None
     result._relative_to_force = None
     result._relative_angle = None
-    result._from_point = from_point
-    result._to_point = to_point
+    result._from_point = from_point  # type: ignore[assignment]
+    result._to_point = to_point  # type: ignore[assignment]
 
     return result
 
@@ -791,8 +800,9 @@ def create_vector_with_magnitude(
     else:
         to_pt = to_point.to_cartesian()
 
-    if from_pt._dim != to_pt._dim:
-        raise ValueError(f"Points must have same dimension: {from_pt._dim} vs {to_pt._dim}")
+    from ..utils.shared_utilities import validate_points_same_dimension
+
+    validate_points_same_dimension(from_pt, to_pt)
 
     delta = to_pt._coords - from_pt._coords
 
@@ -804,14 +814,14 @@ def create_vector_with_magnitude(
     result.is_known = True
     result.is_resultant = False
     result._description = ""
-    result.coordinate_system = None
-    result.angle_reference = None
+    result.coordinate_system = None  # type: ignore[assignment]
+    result.angle_reference = None  # type: ignore[assignment]
     result._magnitude = None
     result._angle = None
     result._relative_to_force = None
     result._relative_angle = None
-    result._from_point = from_point
-    result._to_point = to_point
+    result._from_point = from_point  # type: ignore[assignment]
+    result._to_point = to_point  # type: ignore[assignment]
 
     # Store magnitude constraint
     if isinstance(unit, str):
@@ -820,11 +830,11 @@ def create_vector_with_magnitude(
         resolved = ureg.resolve(unit)
         if resolved is None:
             raise ValueError(f"Unknown unit '{unit}'")
-        result._constraint_magnitude = magnitude * resolved.si_factor
+        result._constraint_magnitude = magnitude * resolved.si_factor  # type: ignore[assignment]
     elif unit is not None:
-        result._constraint_magnitude = magnitude * unit.si_factor
+        result._constraint_magnitude = magnitude * unit.si_factor  # type: ignore[assignment]
     else:
-        result._constraint_magnitude = magnitude
+        result._constraint_magnitude = magnitude  # type: ignore[assignment]
 
     return result
 

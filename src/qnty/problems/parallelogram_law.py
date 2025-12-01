@@ -734,7 +734,10 @@ class ParallelogramLawProblem(Problem):
             raise ValueError("Vector with unknown magnitude must have known angle")
 
         # Convert FR_mag to SI as well
-        FR_mag = Quantity.from_value(FR_mag, unit).value if unit else FR_mag
+        if unit:
+            FR_mag_qty = Quantity.from_value(FR_mag, unit)
+            if FR_mag_qty.value is not None:
+                FR_mag = FR_mag_qty.value
 
         # Get wrt references
         wrt1 = getattr(vec_with_unknown_angle, "_original_wrt", "+x")
@@ -876,6 +879,9 @@ class ParallelogramLawProblem(Problem):
             # Original Cartesian approach when FR is specified relative to a fixed axis
             # (This won't work well when FR is relative to unknown vector)
             raise NotImplementedError("Mixed unknowns solver currently requires resultant to be specified relative to the vector with unknown angle (wrt=vector)")
+
+        # Verify theta1_input was computed (should always be set if we reached this point)
+        assert theta1_input is not None, "theta1_input should have been set in the if/else block above"
 
         # Normalize the computed angle
         theta1_std = normalize_angle_positive(theta1_std)

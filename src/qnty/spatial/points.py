@@ -106,13 +106,13 @@ class _PointWithUnknowns(_Point):
         Returns:
             New _PointWithUnknowns with coordinates in target unit
         """
-        unit = resolve_unit_from_string(unit, dim=self._dim)
+        resolved_unit: Unit = resolve_unit_from_string(unit, dim=self._dim)
 
         # Get coordinates in new unit
         coords = self.to_array()
 
         # Create new point with converted values
-        result = _PointWithUnknowns(x=coords[0], y=coords[1], z=coords[2], unit=unit, unknowns=self._unknowns.copy(), name=self._name)
+        result = _PointWithUnknowns(x=coords[0], y=coords[1], z=coords[2], unit=resolved_unit, unknowns=self._unknowns.copy(), name=self._name)
         return result
 
     def __str__(self) -> str:
@@ -165,8 +165,8 @@ def create_point_cartesian(
         >>> # Point with unknown z coordinate
         >>> C = create_point_cartesian(x=4, y=2, z=..., unit="m")
     """
-    # Resolve unit if string
-    unit = resolve_length_unit_from_string(unit) if unit is not None else None
+    # Resolve unit if string - after this, resolved_unit is Unit | None
+    resolved_unit: Unit | None = resolve_length_unit_from_string(unit) if unit is not None else None
 
     # Track unknowns
     unknowns: dict[str, str] = {}
@@ -193,10 +193,10 @@ def create_point_cartesian(
 
     # If there are unknowns, return _PointWithUnknowns
     if unknowns:
-        return _PointWithUnknowns(x_val, y_val, z_val, unit=unit, unknowns=unknowns, name=name)
+        return _PointWithUnknowns(x_val, y_val, z_val, unit=resolved_unit, unknowns=unknowns, name=name)
 
     # Otherwise return simple _Point
-    return _Point(x_val, y_val, z_val, unit=unit)
+    return _Point(x_val, y_val, z_val, unit=resolved_unit)
 
 
 def create_point_from_ratio(
@@ -252,8 +252,6 @@ def create_point_from_ratio(
         ... )
         >>> # Coordinates: (5, 0, 12) m
     """
-    import math
-
     # Validate ratio_component
     valid_components = {"hyp", "x", "y", "z"}
     ratio_component_lower = ratio_component.lower()
@@ -274,11 +272,13 @@ def create_point_from_ratio(
         resolved_unit = unit
 
     # Compute Cartesian coordinates
+    from ..utils.shared_utilities import compute_3d_magnitude
+
     rx, ry, rz = float(x), float(y), float(z)
     dist_val = float(dist)
 
     # Compute the magnitude of the ratio vector
-    ratio_magnitude = math.sqrt(rx**2 + ry**2 + rz**2)
+    ratio_magnitude = compute_3d_magnitude(rx, ry, rz)
 
     # Determine the scale factor based on which component dist corresponds to
     if ratio_component_lower == "hyp":
@@ -549,15 +549,11 @@ def create_point_along(
     """
     import math
 
-    # Convert to _Point if needed
-    if hasattr(from_point, "to_cartesian"):
-        from_pt = from_point.to_cartesian()
-    else:
-        from_pt = from_point
-    if hasattr(to_point, "to_cartesian"):
-        to_pt = to_point.to_cartesian()
-    else:
-        to_pt = to_point
+    # Convert to _Point if needed (some point types like spherical have to_cartesian)
+    to_cartesian_fn = getattr(from_point, "to_cartesian", None)
+    from_pt = to_cartesian_fn() if to_cartesian_fn else from_point
+    to_cartesian_fn = getattr(to_point, "to_cartesian", None)
+    to_pt = to_cartesian_fn() if to_cartesian_fn else to_point
 
     # Compute direction vector (in SI)
     direction = to_pt._coords - from_pt._coords

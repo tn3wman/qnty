@@ -1,66 +1,11 @@
 Analyzing 80 Python files...
 2 repetitions of complexity 29
 
-Line 1396 - src/qnty/utils/shared_utilities.py:
-if x_0 is not None:
-    x_1 = x_2.resolve(x_3, dim=x_0)
-else:
-    x_1 = x_2.resolve(x_3)
-
-Line 1436 - src/qnty/utils/shared_utilities.py:
-if x_0 is not None:
-    x_1 = x_2.resolve(x_3, dim=x_0)
-else:
-    x_1 = x_2.resolve(x_3)
-
-======================================================================
-
-2 repetitions of complexity 29
-
-Line 81 - src/qnty/extensions/reporting/formats.py:
-x_0 = x_0(problem=x_1.problem, known_variables=x_1.known_variables, equations=x_1.equations, solving_history=x_1.solving_history, diagram_path=x_2)
-
-Line 106 - src/qnty/extensions/reporting/formats.py:
-x_0 = x_0(problem=x_1.problem, known_variables=x_1.known_variables, equations=x_1.equations, solving_history=x_1.solving_history, diagram_path=x_2)
-
-======================================================================
-
-2 repetitions of complexity 29
-
-Line 633 - src/qnty/solving/triangle_solver.py:
+Line 634 - src/qnty/solving/triangle_solver.py:
 x_0.solution_steps.append(x_1(x_2.name, x_3.name, x_4, x_5, x_6, x_7, x_8))
 
-Line 636 - src/qnty/solving/triangle_solver.py:
+Line 637 - src/qnty/solving/triangle_solver.py:
 x_0.solution_steps.append(x_1(x_2.name, x_3.name, x_4, x_5, x_6, x_7, x_8))
-
-======================================================================
-
-3 repetitions of complexity 28
-
-Line 724 - src/qnty/spatial/vectors.py:
-if x_0._dim != x_1._dim:
-    raise ValueError(f'Points must have same dimension: {x_0._dim} vs {x_1._dim}')
-
-Line 794 - src/qnty/spatial/vectors.py:
-if x_0._dim != x_1._dim:
-    raise ValueError(f'Points must have same dimension: {x_0._dim} vs {x_1._dim}')
-
-Line 1409 - src/qnty/spatial/vector.py:
-if x_0._dim != x_1._dim:
-    raise ValueError(f'Points must have same dimension: {x_0._dim} vs {x_1._dim}')
-
-======================================================================
-
-3 repetitions of complexity 28
-
-Line 406 - src/qnty/spatial/vector.py:
-x_0 = 1 - x_0.cos(x_1) ** 2 - x_0.cos(x_2) ** 2
-
-Line 411 - src/qnty/spatial/vector.py:
-x_0 = 1 - x_0.cos(x_1) ** 2 - x_0.cos(x_2) ** 2
-
-Line 419 - src/qnty/spatial/vector.py:
-x_0 = 1 - x_0.cos(x_1) ** 2 - x_0.cos(x_2) ** 2
 
 ======================================================================
 
@@ -82,42 +27,11 @@ else:
 
 2 repetitions of complexity 28
 
-Line 1355 - src/qnty/problems/problem.py:
-if not hasattr(x_0, '_wrapped_var'):
-    raise AttributeError(f"'{type(x_0).__name__}' object has no attribute '{x_1}'")
-
-Line 1094 - src/qnty/problems/composition.py:
-if not hasattr(x_0, '_wrapped_var'):
-    raise AttributeError(f"'{type(x_0).__name__}' object has no attribute '{x_1}'")
-
-======================================================================
-
-2 repetitions of complexity 28
-
-Line 633 - src/qnty/solving/triangle_solver.py:
+Line 634 - src/qnty/solving/triangle_solver.py:
 x_0.solution_steps.append(x_1(x_2.name, x_3.name, x_4, x_5, x_6, x_7, x_8))
 
-Line 636 - src/qnty/solving/triangle_solver.py:
+Line 637 - src/qnty/solving/triangle_solver.py:
 x_0.solution_steps.append(x_1(x_2.name, x_3.name, x_4, x_5, x_6, x_7, x_8))
-
-======================================================================
-
-5 repetitions of complexity 27
-
-Line 319 - src/qnty/integration/solver_service.py:
-x_0 = x_1.sqrt(x_2 ** 2 + x_3 ** 2 + x_4 ** 2)
-
-Line 403 - src/qnty/problems/position_vector.py:
-x_0 = x_1.sqrt(x_2 ** 2 + x_3 ** 2 + x_4 ** 2)
-
-Line 365 - src/qnty/spatial/vectors.py:
-x_0 = x_1.sqrt(x_2 ** 2 + x_3 ** 2 + x_4 ** 2)
-
-Line 281 - src/qnty/spatial/points.py:
-x_0 = x_1.sqrt(x_2 ** 2 + x_3 ** 2 + x_4 ** 2)
-
-Line 80 - src/qnty/spatial/vector_direction_ratios.py:
-x_0 = x_1.sqrt(x_2 ** 2 + x_3 ** 2 + x_4 ** 2)
 
 ======================================================================
 
@@ -146,7 +60,7 @@ if x_0 in x_1.WRAPPER_EXCLUDED_DUNDERS:
 Line 279 - src/qnty/spatial/vector.py:
 x_0._coords = x_1.array([x_2.value, x_3.value, x_4.value], dtype=float)
 
-Line 551 - src/qnty/spatial/vector.py:
+Line 553 - src/qnty/spatial/vector.py:
 x_0._coords = x_1.array([x_2.value, x_3.value, x_4.value], dtype=float)
 
 Line 130 - src/qnty/spatial/point.py:
@@ -154,29 +68,23 @@ x_0._coords = x_1.array([x_2.value, x_3.value, x_4.value], dtype=float)
 
 ======================================================================
 
-3 repetitions of complexity 27
+2 repetitions of complexity 27
 
-Line 1449 - src/qnty/spatial/vector.py:
-if not hasattr(x_0, '_coords') or x_0._coords is None or x_0._dim is None:
-    return None
+Line 70 - src/qnty/core/dimension_catalog.py:
+x_0 *x_1 **2* x_2** (-2) * x_3 ** (-2)
 
-Line 1456 - src/qnty/spatial/vector.py:
-if not hasattr(x_0, '_coords') or x_0._coords is None or x_0._dim is None:
-    return None
-
-Line 1463 - src/qnty/spatial/vector.py:
-if not hasattr(x_0, '_coords') or x_0._coords is None or x_0._dim is None:
-    return None
+Line 169 - src/qnty/core/dimension_catalog.py:
+x_0 *x_1 **2* x_2** (-2) * x_3 ** (-2)
 
 ======================================================================
 
 2 repetitions of complexity 27
 
-Line 70 - src/qnty/core/dimension_catalog.py:
-x_0 * x_1 ** 2 * x_2 ** (-2) * x_3 ** (-2)
+Line 319 - src/qnty/integration/solver_service.py:
+x_0 = x_1.sqrt(x_2 __2 + x_3__ 2 + x_4 ** 2)
 
-Line 169 - src/qnty/core/dimension_catalog.py:
-x_0 * x_1 ** 2 * x_2 ** (-2) * x_3 ** (-2)
+Line 403 - src/qnty/problems/position_vector.py:
+x_0 = x_1.sqrt(x_2 __2 + x_3__ 2 + x_4 ** 2)
 
 ======================================================================
 
@@ -192,10 +100,10 @@ equation_for_list=f'sin(∠({x_0},{x_1}))/|{x_2}| = sin(∠({x_2},{x_0}))/|{x_1}
 
 2 repetitions of complexity 27
 
-Line 483 - src/qnty/spatial/vector.py:
+Line 485 - src/qnty/spatial/vector.py:
 x_0 = x_1(name=f'{x_2.name}_angle', dim=x_3.dim, value=x_4, preferred=x_3.preferred)
 
-Line 514 - src/qnty/spatial/vector.py:
+Line 516 - src/qnty/spatial/vector.py:
 x_0 = x_1(name=f'{x_2.name}_angle', dim=x_3.dim, value=x_4, preferred=x_3.preferred)
 
 ======================================================================
@@ -232,26 +140,6 @@ cls, local_vars: dict, global_vars: dict, remaining_vars: set[str], discovered: 
 
 2 repetitions of complexity 26
 
-Line 81 - src/qnty/extensions/reporting/formats.py:
-x_0(problem=x_1.problem, known_variables=x_1.known_variables, equations=x_1.equations, solving_history=x_1.solving_history, diagram_path=x_2)
-
-Line 106 - src/qnty/extensions/reporting/formats.py:
-x_0(problem=x_1.problem, known_variables=x_1.known_variables, equations=x_1.equations, solving_history=x_1.solving_history, diagram_path=x_2)
-
-======================================================================
-
-2 repetitions of complexity 26
-
-Line 186 - src/qnty/spatial/vectors.py:
-x_0.name = x_1 if x_1 is not None else x_2 if x_2 and x_2 != 'Vector' else ''
-
-Line 1610 - src/qnty/spatial/vector.py:
-x_0.name = x_1 if x_1 is not None else x_2 if x_2 and x_2 != 'Vector' else ''
-
-======================================================================
-
-2 repetitions of complexity 26
-
 Line 361 - src/qnty/spatial/vectors.py:
 x_0, x_1, x_2 = (float(x_3), float(x_4), float(x_5))
 
@@ -267,93 +155,6 @@ x_0._coords, x_0._dim, x_0._unit = x_1(x_2, x_3, x_4, x_5)
 
 Line 67 - src/qnty/spatial/point.py:
 x_0._coords, x_0._dim, x_0._unit = x_1(x_2, x_3, x_4, x_5)
-
-======================================================================
-
-4 repetitions of complexity 25
-
-Line 1784 - src/qnty/extensions/reporting/report_ir.py:
-x_0.append({'symbol': x_1, 'name': getattr(x_2, 'name', x_1), 'value': x_3, 'unit': x_4})
-
-Line 2113 - src/qnty/extensions/reporting/report_ir.py:
-x_0.append({'symbol': x_1, 'name': getattr(x_2, 'name', x_1), 'value': x_3, 'unit': x_4})
-
-Line 119 - src/qnty/extensions/reporting/base.py:
-x_0.append({'symbol': x_1, 'name': getattr(x_2, 'name', x_1), 'value': x_3, 'unit': x_4})
-
-Line 299 - src/qnty/extensions/reporting/base.py:
-x_0.append({'symbol': x_1, 'name': getattr(x_2, 'name', x_1), 'value': x_3, 'unit': x_4})
-
-======================================================================
-
-4 repetitions of complexity 25
-
-Line 438 - src/qnty/solving/triangle_solver.py:
-x_0 = x_1(name=f'{x_2.name}_x', dim=x_3.force, value=x_4, preferred=x_5)
-
-Line 651 - src/qnty/solving/triangle_solver.py:
-x_0 = x_1(name=f'{x_2.name}_x', dim=x_3.force, value=x_4, preferred=x_5)
-
-Line 663 - src/qnty/solving/triangle_solver.py:
-x_0 = x_1(name=f'{x_2.name}_x', dim=x_3.force, value=x_4, preferred=x_5)
-
-Line 694 - src/qnty/solving/triangle_solver.py:
-x_0 = x_1(name=f'{x_2.name}_x', dim=x_3.force, value=x_4, preferred=x_5)
-
-======================================================================
-
-4 repetitions of complexity 25
-
-Line 439 - src/qnty/solving/triangle_solver.py:
-x_0 = x_1(name=f'{x_2.name}_y', dim=x_3.force, value=x_4, preferred=x_5)
-
-Line 652 - src/qnty/solving/triangle_solver.py:
-x_0 = x_1(name=f'{x_2.name}_y', dim=x_3.force, value=x_4, preferred=x_5)
-
-Line 664 - src/qnty/solving/triangle_solver.py:
-x_0 = x_1(name=f'{x_2.name}_y', dim=x_3.force, value=x_4, preferred=x_5)
-
-Line 695 - src/qnty/solving/triangle_solver.py:
-x_0 = x_1(name=f'{x_2.name}_y', dim=x_3.force, value=x_4, preferred=x_5)
-
-======================================================================
-
-3 repetitions of complexity 25
-
-Line 433 - src/qnty/solving/triangle_solver.py:
-x_0 = x_1(name=f'{x_2.name}_magnitude', dim=x_3.force, value=x_4, preferred=x_5)
-
-Line 646 - src/qnty/solving/triangle_solver.py:
-x_0 = x_1(name=f'{x_2.name}_magnitude', dim=x_3.force, value=x_4, preferred=x_5)
-
-Line 658 - src/qnty/solving/triangle_solver.py:
-x_0 = x_1(name=f'{x_2.name}_magnitude', dim=x_3.force, value=x_4, preferred=x_5)
-
-======================================================================
-
-3 repetitions of complexity 25
-
-Line 435 - src/qnty/solving/triangle_solver.py:
-x_0 = x_1(name=f'{x_2.name}_angle', dim=x_3.D, value=x_4, preferred=x_5)
-
-Line 476 - src/qnty/spatial/vector.py:
-x_0 = x_1(name=f'{x_2.name}_angle', dim=x_3.D, value=x_4, preferred=x_5)
-
-Line 507 - src/qnty/spatial/vector.py:
-x_0 = x_1(name=f'{x_2.name}_angle', dim=x_3.D, value=x_4, preferred=x_5)
-
-======================================================================
-
-3 repetitions of complexity 25
-
-Line 406 - src/qnty/spatial/vector.py:
-1 - x_0.cos(x_1) ** 2 - x_0.cos(x_2) ** 2
-
-Line 411 - src/qnty/spatial/vector.py:
-1 - x_0.cos(x_1) ** 2 - x_0.cos(x_2) ** 2
-
-Line 419 - src/qnty/spatial/vector.py:
-1 - x_0.cos(x_1) ** 2 - x_0.cos(x_2) ** 2
 
 ======================================================================
 
@@ -401,7 +202,7 @@ x_0 = x_1.array([x_2[0], x_2[1], x_3], dtype=float)
 
 2 repetitions of complexity 25
 
-Line 1090 - src/qnty/problems/composition.py:
+Line 1091 - src/qnty/problems/composition.py:
 if x_0(x_1):
     raise AttributeError(f"'{type(x_2).__name__}' object has no attribute '{x_1}'")
 
@@ -433,12 +234,22 @@ x_0 = any((x_1._is_simple_assignment(x_2) for x_2 in x_1.solvers[x_3]))
 
 2 repetitions of complexity 25
 
-Line 413 - src/qnty/solving/component_solver.py:
+Line 415 - src/qnty/solving/component_solver.py:
 x_0.append(f'{x_1.name}: Fx = {x_2:.3f} N, Fy = {x_3:.3f} N')
 
-Line 620 - src/qnty/solving/component_solver.py:
+Line 622 - src/qnty/solving/component_solver.py:
 x_0.append(f'{x_1.name}: Fx = {x_2:.3f} N, Fy = {x_3:.3f} N')
 
 ======================================================================
 
-Found 36 repeated patterns
+2 repetitions of complexity 25
+
+Line 478 - src/qnty/spatial/vector.py:
+x_0 = x_1(name=f'{x_2.name}_angle', dim=x_3.D, value=x_4, preferred=x_5)
+
+Line 509 - src/qnty/spatial/vector.py:
+x_0 = x_1(name=f'{x_2.name}_angle', dim=x_3.D, value=x_4, preferred=x_5)
+
+======================================================================
+
+Found 23 repeated patterns

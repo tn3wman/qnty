@@ -622,9 +622,13 @@ def _apply_coordinate_system(vec: _Vector, coord_sys: CoordinateSystem) -> _Vect
 
     # Store the standard angle (from +x)
     from ...core.quantity import Quantity
-    from ...core.unit_catalog import degree, radian
-    new_vec._angle = Quantity.from_value(total_angle_rad, radian, name=f"{vec.name}_angle")
-    new_vec._angle.preferred = degree
+    from ...core.unit import ureg
+    radian_unit = ureg.resolve("radian")
+    degree_unit = ureg.resolve("degree")
+    if radian_unit:
+        new_vec._angle = Quantity.from_value(total_angle_rad, radian_unit, name=f"{vec.name}_angle")
+        if degree_unit:
+            new_vec._angle.preferred = degree_unit
 
     return new_vec
 
@@ -737,7 +741,7 @@ def solve_class(
                     if wrt_vec_ref is not None:
                         # Find the resolved version of this vector in vector_map
                         resolved_ref = vector_map.get(id(wrt_vec_ref), wrt_vec_ref)
-                        if resolved_ref.name and resolved_ref.name != "Vector":
+                        if resolved_ref is not None and resolved_ref.name and resolved_ref.name != "Vector":
                             attr._original_wrt = f"@{resolved_ref.name}"
                             # Update the reference to point to the resolved vector
                             attr._wrt_vector_ref = resolved_ref

@@ -12,7 +12,6 @@ Each problem class defines:
 - generate_debug_reports: If True, generates MD/PDF reports for this problem
 """
 
-from operator import ge
 from pathlib import Path
 
 from qnty.problems.statics import parallelogram_law as pl

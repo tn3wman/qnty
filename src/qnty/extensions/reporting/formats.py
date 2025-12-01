@@ -65,23 +65,45 @@ def _handle_generated_pdf_output(tex_path: Path, output_path: Path) -> bool:
     return False
 
 
+def _build_report_ir(generator: ReportGenerator, diagram_path: Path | None):
+    """
+    Build the report intermediate representation (IR) from a generator.
+
+    This consolidates the repeated ReportBuilder instantiation pattern.
+
+    Args:
+        generator: ReportGenerator instance with problem, known_variables, equations, solving_history
+        diagram_path: Optional path to the generated diagram
+
+    Returns:
+        Built report IR
+    """
+    from .report_ir import ReportBuilder
+
+    builder = ReportBuilder(
+        problem=generator.problem,
+        known_variables=generator.known_variables,
+        equations=generator.equations,
+        solving_history=generator.solving_history,
+        diagram_path=diagram_path,
+    )
+    return builder.build()
+
+
 class MarkdownReportGenerator(ReportGenerator):
     """Generate reports in Markdown format using the unified IR system."""
 
     def generate(self, output_path: str | Path) -> None:
         """Generate a Markdown report."""
-        from .report_ir import MarkdownRenderer, ReportBuilder
+        from .report_ir import MarkdownRenderer
 
         output_path = Path(output_path)
 
         # Generate vector diagram if applicable
         diagram_path = _generate_diagram_if_needed(self.problem, output_path.parent)
 
-        # Build the report IR
-        builder = ReportBuilder(problem=self.problem, known_variables=self.known_variables, equations=self.equations, solving_history=self.solving_history, diagram_path=diagram_path)
-        report_ir = builder.build()
-
-        # Render to Markdown
+        # Build the report IR and render
+        report_ir = _build_report_ir(self, diagram_path)
         renderer = MarkdownRenderer()
         renderer.render(report_ir, output_path)
 
@@ -95,18 +117,15 @@ class LatexReportGenerator(ReportGenerator):
 
     def generate(self, output_path: str | Path) -> None:
         """Generate a LaTeX report."""
-        from .report_ir import LaTeXRenderer, ReportBuilder
+        from .report_ir import LaTeXRenderer
 
         output_path = Path(output_path)
 
         # Generate vector diagram if applicable
         diagram_path = _generate_diagram_if_needed(self.problem, output_path.parent)
 
-        # Build the report IR
-        builder = ReportBuilder(problem=self.problem, known_variables=self.known_variables, equations=self.equations, solving_history=self.solving_history, diagram_path=diagram_path)
-        report_ir = builder.build()
-
-        # Render to LaTeX
+        # Build the report IR and render
+        report_ir = _build_report_ir(self, diagram_path)
         renderer = LaTeXRenderer()
         renderer.render(report_ir, output_path)
 

@@ -21,7 +21,7 @@ from qnty.utils.logging import get_logger
 from ..algebra import BinaryOperation, Constant, Equation, EquationSystem, VariableReference
 from ..core.quantity import Quantity
 from ..core.unit_catalog import DimensionlessUnits
-from ..utils.shared_utilities import ContextDetectionHelper, SharedConstants, ValidationHelper, delegate_getattr, raise_if_excluded_dunder, reconstruct_unary_expression
+from ..utils.shared_utilities import ContextDetectionHelper, SharedConstants, ValidationHelper, delegate_getattr, raise_if_excluded_dunder, raise_if_missing_wrapped_var, reconstruct_unary_expression
 from .solving import EquationReconstructor
 from .validation import ValidationMixin
 
@@ -1352,8 +1352,7 @@ class Problem(ValidationMixin):
                 raise_if_excluded_dunder(name, self)
 
                 # Prevent infinite recursion by checking if _wrapped_var exists
-                if not hasattr(self, "_wrapped_var"):
-                    raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
+                raise_if_missing_wrapped_var(self, name)
 
                 # Delegate all other attributes to the wrapped variable
                 return getattr(self._wrapped_var, name)

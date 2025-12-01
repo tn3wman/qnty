@@ -312,7 +312,11 @@ class When:
 
         Returns:
             BinaryOperation representing the lower bound check
+
+        Note:
+            Caller must ensure self.lower is not None before calling.
         """
+        assert self.lower is not None, "Lower bound must be set to build lower condition"
         if self.lower_inclusive:
             return wrapped_var >= wrap_operand(self.lower)
         else:
@@ -326,7 +330,11 @@ class When:
 
         Returns:
             BinaryOperation representing the upper bound check
+
+        Note:
+            Caller must ensure self.upper is not None before calling.
         """
+        assert self.upper is not None, "Upper bound must be set to build upper condition"
         if self.upper_inclusive:
             return wrapped_var <= wrap_operand(self.upper)
         else:

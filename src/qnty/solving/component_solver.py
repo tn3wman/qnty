@@ -301,7 +301,9 @@ class ComponentSolver:
         Returns:
             Magnitude of resultant force: FR = √(ΣFx² + ΣFy² + ΣFz²)
         """
-        return math.sqrt(sum_x**2 + sum_y**2 + sum_z**2)
+        from ..utils.shared_utilities import compute_3d_magnitude
+
+        return compute_3d_magnitude(sum_x, sum_y, sum_z)
 
     def calculate_resultant_angle_2d(self, sum_x: float, sum_y: float) -> float:
         """
