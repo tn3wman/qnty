@@ -12,12 +12,11 @@ from datetime import datetime
 from enum import Enum
 from pathlib import Path
 
-from ...utils.shared_utilities import build_force_data_dict
+from ...utils.shared_utilities import SharedConstants, build_force_data_dict, get_angle_reference_label, get_preferred_unit_symbol
 from ...utils.shared_utilities import build_variable_table_rows as _build_variable_table_rows
 from ...utils.shared_utilities import convert_angle_to_direction as _convert_angle_to_direction
 from ...utils.shared_utilities import escape_latex as _escape_latex_util
 from ...utils.shared_utilities import extract_magnitude_string as _extract_magnitude_string
-from ...utils.shared_utilities import get_angle_reference_label
 from ...utils.shared_utilities import scan_backwards_for_latex_command as _scan_backwards_for_latex_command
 
 
@@ -361,8 +360,7 @@ class MarkdownRenderer(ReportRenderer):
             return f"$\\|\\vec{{{var}}}\\|$ ({unit})"
 
         # Handle subscript notation Fₓ (unit), Fᵧ (unit), Fᵤ (unit), Fᵥ (unit), Fₐ (unit), Fᵦ (unit)
-        subscript_map = {"ₓ": "x", "ᵧ": "y", "ᵤ": "u", "ᵥ": "v", "ₙ": "n", "ₜ": "t", "₁": "1", "₂": "2", "₃": "3", "ₐ": "a", "ᵦ": "b"}  # Added a and b for custom coordinate systems
-        for unicode_sub, ascii_sub in subscript_map.items():
+        for unicode_sub, ascii_sub in SharedConstants.SUBSCRIPT_MAP.items():
             if unicode_sub in result:
                 sub_match = re.match(r"([A-Za-z]+)" + unicode_sub + r"\s*\(([^)]+)\)", result)
                 if sub_match:
@@ -972,8 +970,7 @@ class LaTeXRenderer(ReportRenderer):
             return r"$\magn{\vv{" + var + r"}}$ (" + self._escape_latex(unit) + ")"
 
         # Check for subscript notation like "Fₓ (N)", "Fᵧ (N)", "Fᵤ (N)", "Fᵥ (N)", "Fₐ (N)", "Fᵦ (N)"
-        subscript_map = {"ₓ": "x", "ᵧ": "y", "ᵤ": "u", "ᵥ": "v", "ₙ": "n", "ₜ": "t", "₁": "1", "₂": "2", "₃": "3", "ₐ": "a", "ᵦ": "b"}  # Added a and b for custom coordinate systems
-        for unicode_sub, ascii_sub in subscript_map.items():
+        for unicode_sub, ascii_sub in SharedConstants.SUBSCRIPT_MAP.items():
             if unicode_sub in header:
                 # Parse pattern like "Fₓ (unit)"
                 sub_match = re.match(r"([A-Za-z]+)" + unicode_sub + r"\s*\(([^)]+)\)", header)
@@ -1782,10 +1779,7 @@ class ReportBuilder:
                 value_str = f"{var.value:.1f}" if var.value is not None else "N/A"
 
             # Get unit string
-            if hasattr(var, "preferred") and var.preferred:
-                unit_str = var.preferred.symbol
-            else:
-                unit_str = ""
+            unit_str = get_preferred_unit_symbol(var)
 
             known_data.append({"symbol": symbol, "name": getattr(var, "name", symbol), "value": value_str, "unit": unit_str})
 
@@ -1802,10 +1796,7 @@ class ReportBuilder:
         for symbol, var in self.problem.variables.items():
             if symbol not in self.known_variables:
                 # Get unit string
-                if hasattr(var, "preferred") and var.preferred:
-                    unit_str = var.preferred.symbol
-                else:
-                    unit_str = ""
+                unit_str = get_preferred_unit_symbol(var)
 
                 unknown_data.append({"symbol": symbol, "name": getattr(var, "name", symbol), "unit": unit_str})
 
@@ -2117,10 +2108,7 @@ class ReportBuilder:
                     value_str = f"{var.value:.1f}"
 
                 # Get unit string
-                if hasattr(var, "preferred") and var.preferred:
-                    unit_str = var.preferred.symbol
-                else:
-                    unit_str = ""
+                unit_str = get_preferred_unit_symbol(var)
 
                 results.append({"symbol": symbol, "name": getattr(var, "name", symbol), "value": value_str, "unit": unit_str})
 

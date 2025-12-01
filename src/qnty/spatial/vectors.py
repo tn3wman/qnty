@@ -13,7 +13,7 @@ from typing import TYPE_CHECKING, Any
 import numpy as np
 
 from ..core.unit import Unit
-from ..utils.shared_utilities import convert_angle_to_radians, convert_phi_to_standard, convert_to_si, resolve_unit_from_string, resolve_unit_from_string_or_fallback
+from ..utils.shared_utilities import compute_third_direction_angle, convert_angle_to_radians, convert_phi_to_standard, convert_to_si, resolve_unit_from_string, resolve_unit_from_string_or_fallback
 from .vector import _Vector
 from .vector_helpers import validate_direction_cosines
 
@@ -1505,25 +1505,14 @@ def create_vector_direction_angles(
     sign_alpha = signs[0] if signs else 1
     sign_beta = signs[1] if signs else 1
     sign_gamma = signs[2] if signs else 1
+    error_msg = "Invalid angle combination: cos²α + cos²β + cos²γ > 1"
 
     if alpha_rad is None and beta_rad is not None and gamma_rad is not None:
-        cos_alpha_sq = 1 - math.cos(beta_rad) ** 2 - math.cos(gamma_rad) ** 2
-        if cos_alpha_sq < 0:
-            raise ValueError("Invalid angle combination: cos²α + cos²β + cos²γ > 1")
-        cos_alpha = sign_alpha * math.sqrt(cos_alpha_sq)
-        alpha_rad = math.acos(cos_alpha)
+        alpha_rad = compute_third_direction_angle(beta_rad, gamma_rad, sign=sign_alpha, error_msg=error_msg)
     elif beta_rad is None and alpha_rad is not None and gamma_rad is not None:
-        cos_beta_sq = 1 - math.cos(alpha_rad) ** 2 - math.cos(gamma_rad) ** 2
-        if cos_beta_sq < 0:
-            raise ValueError("Invalid angle combination: cos²α + cos²β + cos²γ > 1")
-        cos_beta = sign_beta * math.sqrt(cos_beta_sq)
-        beta_rad = math.acos(cos_beta)
+        beta_rad = compute_third_direction_angle(alpha_rad, gamma_rad, sign=sign_beta, error_msg=error_msg)
     elif gamma_rad is None and alpha_rad is not None and beta_rad is not None:
-        cos_gamma_sq = 1 - math.cos(alpha_rad) ** 2 - math.cos(beta_rad) ** 2
-        if cos_gamma_sq < 0:
-            raise ValueError("Invalid angle combination: cos²α + cos²β + cos²γ > 1")
-        cos_gamma = sign_gamma * math.sqrt(cos_gamma_sq)
-        gamma_rad = math.acos(cos_gamma)
+        gamma_rad = compute_third_direction_angle(alpha_rad, beta_rad, sign=sign_gamma, error_msg=error_msg)
     elif alpha_rad is None or beta_rad is None or gamma_rad is None:
         raise ValueError("Must provide at least 2 of the 3 coordinate direction angles")
 

@@ -71,7 +71,7 @@ from ...spatial.vectors import (
     create_vector_resultant,
     create_vector_resultant_polar,
 )
-from ...utils.shared_utilities import format_exception_with_traceback
+from ...utils.shared_utilities import convert_angle_with_unit, format_exception_with_traceback
 
 if TYPE_CHECKING:
     from ...core.quantity import Quantity
@@ -370,18 +370,13 @@ def _vector_to_dto(
     angle: float | None = None
     if abs(u_output) > 1e-12 or abs(v_output) > 1e-12:
         angle_rad = math.atan2(v_output, u_output)
-        if output_angle_unit.lower() in ("degree", "degrees", "deg"):
-            angle = math.degrees(angle_rad)
-        else:
-            angle = angle_rad
+        angle = convert_angle_with_unit(angle_rad, output_angle_unit)
 
     # Get original angle info if available
     original_angle = getattr(vec, "_original_angle", None)
     if original_angle is not None and hasattr(original_angle, "value"):
         angle = original_angle.value
-        if output_angle_unit.lower() in ("degree", "degrees", "deg"):
-            # Convert from radians if stored in radians
-            pass  # Assume already in degrees for now
+        # Note: Original angle is assumed to already be in degrees
 
     original_wrt = getattr(vec, "_original_wrt", "+x")
 

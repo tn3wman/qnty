@@ -13,7 +13,7 @@ from __future__ import annotations
 import math
 from typing import TYPE_CHECKING
 
-from ..utils.shared_utilities import convert_coords_to_unit
+from ..utils.shared_utilities import convert_angle_with_unit, convert_coords_to_unit
 from .dto import PointDTO, QuantityDTO, VectorDTO
 
 if TYPE_CHECKING:
@@ -68,10 +68,7 @@ def vector_to_dto(
     angle: float | None = None
     if abs(coords_output[0]) > 1e-12 or abs(coords_output[1]) > 1e-12:
         angle_rad = math.atan2(coords_output[1], coords_output[0])
-        if output_angle_unit.lower() in ("degree", "degrees", "deg"):
-            angle = math.degrees(angle_rad)
-        else:
-            angle = angle_rad
+        angle = convert_angle_with_unit(angle_rad, output_angle_unit)
 
     # Get original angle info if available (for reporting)
     original_angle = getattr(vec, "_original_angle", None)

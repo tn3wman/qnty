@@ -19,6 +19,71 @@ if TYPE_CHECKING:
 OperandType = Any  # Expression | FieldQuantity | Quantity | int | float
 
 
+# ========== INTROSPECTION UTILITIES ==========
+
+
+def caller_var_name(fn: str, frame_depth: int = 2, unicode: bool = False) -> str:
+    """
+    Inspect the caller's line to infer a variable name when `name` is omitted.
+
+    This consolidates the repeated pattern in unit.py and dimension.py for
+    detecting the LHS variable name from source code like:
+        my_unit = add_unit(...)
+
+    Args:
+        fn: Function name to match in the source line
+        frame_depth: Number of stack frames to go back (default: 2)
+        unicode: If True, use Unicode-aware pattern matching for non-ASCII
+                identifiers (e.g., Greek letters like Θ)
+
+    Returns:
+        The variable name on the left-hand side of the assignment
+
+    Raises:
+        RuntimeError: If call stack cannot be accessed or variable name
+                     cannot be detected
+
+    Examples:
+        >>> # In calling code:
+        >>> my_var = add_unit(...)  # fn="add_unit"
+        >>> # caller_var_name("add_unit") returns "my_var"
+    """
+    import inspect
+
+    frame = inspect.currentframe()
+    if frame is None:
+        raise RuntimeError("Could not access call stack for variable name detection")
+
+    # Navigate up the call stack
+    current = frame
+    for _ in range(frame_depth):
+        if current.f_back is None:
+            raise RuntimeError("Could not access call stack for variable name detection")
+        current = current.f_back
+
+    frame_info = inspect.getframeinfo(current)
+    if frame_info.code_context is None or not frame_info.code_context:
+        raise RuntimeError("Could not get source code context for variable name detection")
+
+    line = frame_info.code_context[0]
+
+    # Choose pattern based on Unicode support
+    if unicode:
+        # Support Unicode identifiers (like Θ, α, β) in addition to ASCII
+        pattern = rf"\s*([\w_][\w\d_]*)\s*=\s*{fn}\b"
+        flags = re.UNICODE
+    else:
+        # ASCII-only identifiers
+        pattern = rf"\s*([A-Za-z_][A-Za-z0-9_]*)\s*=\s*{fn}\b"
+        flags = 0
+
+    m = re.match(pattern, line, flags)
+    if not m:
+        raise RuntimeError("Could not auto-detect variable name")
+
+    return m.group(1)
+
+
 # ========== SHARED VALIDATION UTILITIES ==========
 
 
@@ -477,6 +542,25 @@ class SharedConstants:
             "__class__",
         }
     )
+
+    # Unicode subscript to ASCII mapping for LaTeX rendering
+    # Used in report_ir.py for formatting subscripted variable names
+    SUBSCRIPT_MAP: dict[str, str] = {
+        "ₓ": "x",
+        "ᵧ": "y",
+        "ᵤ": "u",
+        "ᵥ": "v",
+        "ₙ": "n",
+        "ₜ": "t",
+        "₁": "1",
+        "₂": "2",
+        "₃": "3",
+        "ₐ": "a",
+        "ᵦ": "b",
+    }
+
+    # Angle unit string patterns for degree/radian detection
+    DEGREE_UNIT_PATTERNS = ("degree", "degrees", "deg")
 
 
 def is_private_or_excluded_dunder(name: str) -> bool:
@@ -2007,3 +2091,251 @@ def format_exception_with_traceback(exc: Exception) -> str:
     import traceback
 
     return f"{type(exc).__name__}: {exc}\n{traceback.format_exc()}"
+
+
+# ========== COORDINATE FORMATTING UTILITIES ==========
+
+
+def format_3d_coords(coords: tuple[float, float, float] | list[float] | Any, precision: int = 2) -> str:
+    """
+    Format 3D coordinates as a string with consistent precision.
+
+    This consolidates the repeated pattern:
+        f"({coords[0]:.2f}, {coords[1]:.2f}, {coords[2]:.2f})"
+
+    Args:
+        coords: Sequence of 3 coordinate values (x, y, z)
+        precision: Number of decimal places (default: 2)
+
+    Returns:
+        Formatted string like "(1.23, 4.56, 7.89)"
+
+    Examples:
+        >>> format_3d_coords([1.234, 5.678, 9.012])
+        '(1.23, 5.68, 9.01)'
+        >>> format_3d_coords((1.0, 2.0, 3.0), precision=1)
+        '(1.0, 2.0, 3.0)'
+    """
+    fmt = f"{{:.{precision}f}}"
+    return f"({fmt.format(coords[0])}, {fmt.format(coords[1])}, {fmt.format(coords[2])})"
+
+
+def is_degree_unit(unit_str: str) -> bool:
+    """
+    Check if a unit string represents degrees (vs radians).
+
+    This consolidates the repeated pattern:
+        if x_0.lower() in ('degree', 'degrees', 'deg'):
+
+    Args:
+        unit_str: Unit string to check
+
+    Returns:
+        True if the unit string represents degrees
+
+    Examples:
+        >>> is_degree_unit("degree")
+        True
+        >>> is_degree_unit("rad")
+        False
+    """
+    return unit_str.lower() in SharedConstants.DEGREE_UNIT_PATTERNS
+
+
+def convert_angle_with_unit(angle_rad: float, output_unit: str) -> float:
+    """
+    Convert angle from radians to output unit (degrees or radians).
+
+    This consolidates the repeated pattern:
+        if x_0.lower() in ('degree', 'degrees', 'deg'):
+            x_1 = math.degrees(x_3)
+        else:
+            x_1 = x_3
+
+    Args:
+        angle_rad: Angle in radians
+        output_unit: Output unit string ("degree", "degrees", "deg", or "rad")
+
+    Returns:
+        Angle in the requested unit
+
+    Examples:
+        >>> import math
+        >>> convert_angle_with_unit(math.pi / 2, "degrees")
+        90.0
+        >>> convert_angle_with_unit(math.pi / 2, "rad")
+        1.5707963267948966
+    """
+    import math
+
+    if is_degree_unit(output_unit):
+        return math.degrees(angle_rad)
+    return angle_rad
+
+
+def get_preferred_unit_symbol(obj: Any) -> str:
+    """
+    Get the preferred unit symbol from an object, with fallback to empty string.
+
+    This consolidates the repeated pattern:
+        if hasattr(x_0, 'preferred') and x_0.preferred:
+            x_1 = x_0.preferred.symbol
+        else:
+            x_1 = ''
+
+    Args:
+        obj: Object that may have a 'preferred' attribute with a 'symbol' attribute
+
+    Returns:
+        The preferred unit symbol, or empty string if not available
+
+    Examples:
+        >>> class MockObj:
+        ...     class preferred:
+        ...         symbol = "N"
+        >>> get_preferred_unit_symbol(MockObj())
+        'N'
+        >>> get_preferred_unit_symbol(object())
+        ''
+    """
+    if hasattr(obj, "preferred") and obj.preferred:
+        return obj.preferred.symbol
+    return ""
+
+
+def build_variable_dict(symbol: str, var: Any, value: str, unit_symbol: str) -> dict[str, Any]:
+    """
+    Build a variable dictionary for report generation.
+
+    This consolidates the repeated pattern:
+        x_0.append({'symbol': x_1, 'name': getattr(x_2, 'name', x_1), 'value': x_3, 'unit': x_4})
+
+    Args:
+        symbol: Variable symbol/identifier
+        var: Variable object (may have 'name' attribute)
+        value: Formatted value string
+        unit_symbol: Unit symbol string
+
+    Returns:
+        Dictionary with 'symbol', 'name', 'value', and 'unit' keys
+    """
+    return {
+        "symbol": symbol,
+        "name": getattr(var, "name", symbol),
+        "value": value,
+        "unit": unit_symbol,
+    }
+
+
+# ========== TEXT STYLING UTILITIES ==========
+
+
+# Default bbox style for diagram labels
+DEFAULT_LABEL_BBOX: dict[str, Any] = {
+    "boxstyle": "round,pad=0.2",
+    "facecolor": "white",
+    "alpha": 0.7,
+}
+
+
+def draw_styled_text(
+    ax: Any,
+    x: float,
+    y: float,
+    text: str,
+    color: str,
+    fontsize: int = 10,
+    ha: str = "center",
+    va: str = "center",
+    bbox: dict[str, Any] | None = None,
+) -> None:
+    """
+    Draw styled text on a matplotlib axes with consistent formatting.
+
+    This consolidates the repeated pattern:
+        ax.text(x, y, text, fontsize=10, color=color, ha='center', va='center',
+                bbox={'boxstyle': 'round,pad=0.2', 'facecolor': 'white', 'alpha': 0.7})
+
+    Args:
+        ax: Matplotlib Axes object
+        x: X coordinate
+        y: Y coordinate
+        text: Text to display
+        color: Text color
+        fontsize: Font size (default: 10)
+        ha: Horizontal alignment (default: "center")
+        va: Vertical alignment (default: "center")
+        bbox: Bounding box style dict (default: DEFAULT_LABEL_BBOX)
+
+    Examples:
+        >>> draw_styled_text(ax, 1.0, 2.0, "F = 100 N", "blue")
+    """
+    if bbox is None:
+        bbox = DEFAULT_LABEL_BBOX
+    ax.text(x, y, text, fontsize=fontsize, color=color, ha=ha, va=va, bbox=bbox)
+
+
+# ========== DIRECTION COSINE UTILITIES ==========
+
+
+def compute_missing_direction_cosine_squared(
+    known_cos1: float,
+    known_cos2: float,
+) -> float:
+    """
+    Compute the squared cosine of the third direction angle from two known direction cosines.
+
+    Uses the identity: cos²α + cos²β + cos²γ = 1
+
+    This consolidates the repeated pattern:
+        cos_sq = 1 - math.cos(angle1)**2 - math.cos(angle2)**2
+
+    Args:
+        known_cos1: Cosine of first known angle
+        known_cos2: Cosine of second known angle
+
+    Returns:
+        Squared cosine of the missing angle (may be negative if invalid)
+
+    Raises:
+        ValueError: If the result is negative (invalid angle combination)
+
+    Examples:
+        >>> import math
+        >>> # For orthogonal unit vectors (90°, 90°, 0°)
+        >>> compute_missing_direction_cosine_squared(0.0, 0.0)
+        1.0
+    """
+    return 1 - known_cos1**2 - known_cos2**2
+
+
+def compute_third_direction_angle(
+    angle1_rad: float,
+    angle2_rad: float,
+    sign: int = 1,
+    error_msg: str = "Invalid angle combination: cos²α + cos²β + cos²γ > 1",
+) -> float:
+    """
+    Compute the third direction angle from two known direction angles.
+
+    Uses the identity: cos²α + cos²β + cos²γ = 1
+
+    Args:
+        angle1_rad: First known angle in radians
+        angle2_rad: Second known angle in radians
+        sign: Sign for the cosine of the result (+1 or -1)
+        error_msg: Error message if angles are invalid
+
+    Returns:
+        Third direction angle in radians
+
+    Raises:
+        ValueError: If the angle combination is invalid
+    """
+    import math
+
+    cos_sq = compute_missing_direction_cosine_squared(math.cos(angle1_rad), math.cos(angle2_rad))
+    if cos_sq < 0:
+        raise ValueError(error_msg)
+    cos_val = sign * math.sqrt(cos_sq)
+    return math.acos(cos_val)

@@ -13,7 +13,7 @@ from typing import Any
 
 from matplotlib.patches import Arc
 
-from ...utils.shared_utilities import create_angle_arc
+from ...utils.shared_utilities import create_angle_arc, draw_styled_text
 from ..diagram_utils import (
     VectorDiagramBase,
     format_vector_label,
@@ -166,7 +166,7 @@ class VectorDiagram(VectorDiagramBase):
         label_height = 0.5
 
         # Add label
-        ax.text(label_x, label_y, theta_label, fontsize=10, color=color, ha="center", va="center", bbox={"boxstyle": "round,pad=0.2", "facecolor": "white", "alpha": 0.7})
+        draw_styled_text(ax, label_x, label_y, theta_label, color)
 
         # Record this label's position to avoid future overlaps
         self.angle_label_positions.append((label_x, label_y, label_width, label_height))

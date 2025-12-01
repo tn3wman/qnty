@@ -2,12 +2,12 @@
 from __future__ import annotations
 
 import functools
-import inspect
-import re
 from collections.abc import Iterable
 from dataclasses import dataclass
 from types import MappingProxyType
 from typing import Final, Protocol
+
+from ..utils.shared_utilities import caller_var_name
 
 # =======================
 # Configuration
@@ -387,20 +387,13 @@ _dim_aliases: dict[str, str] = {}  # alias -> canonical name
 
 
 def _caller_var_name(fn: str) -> str:
-    """Best-effort LHS variable name from the calling source line."""
-    frame = inspect.currentframe()
-    if frame is None or frame.f_back is None or frame.f_back.f_back is None:
-        raise RuntimeError("Could not access call stack for variable name detection")
-    frame = frame.f_back.f_back
-    frame_info = inspect.getframeinfo(frame)
-    if frame_info.code_context is None or not frame_info.code_context:
-        raise RuntimeError("Could not get source code context for variable name detection")
-    line = frame_info.code_context[0]
-    # Support Unicode identifiers (like Θ) in addition to ASCII
-    m = re.match(rf"\s*([\w_][\w\d_]*)\s*=\s*{fn}\b", line, re.UNICODE)
-    if not m:
-        raise RuntimeError("Could not auto-detect variable name for registration")
-    return m.group(1)
+    """
+    Best-effort LHS variable name from the calling source line.
+
+    Supports Unicode identifiers (like Θ) for dimension variable names.
+    Delegates to shared utility function.
+    """
+    return caller_var_name(fn, frame_depth=3, unicode=True)
 
 
 def _register_dimension_aliases(d: Dimension, name: str, aliases: Iterable[str]) -> None:

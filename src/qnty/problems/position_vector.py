@@ -19,7 +19,7 @@ from ..spatial import _Vector
 from ..spatial.point import _Point
 from ..spatial.vector_between import VectorBetween
 from ..spatial.vectors import _VectorWithUnknowns, create_vector_cartesian, create_vector_from_points
-from ..utils.shared_utilities import add_force_components_xyz, add_force_magnitude_to_variables, clone_vector_as_known
+from ..utils.shared_utilities import add_force_components_xyz, add_force_magnitude_to_variables, clone_vector_as_known, format_3d_coords
 from .problem import Problem
 
 
@@ -440,7 +440,7 @@ class PositionVectorProblem(Problem):
                 "target": point_name,
                 "method": "position_vector",
                 "description": f"Solved for {point_name} using force {force_name} and distance {distance} {output_unit.symbol}",
-                "result_value": f"({coords[0]:.2f}, {coords[1]:.2f}, {coords[2]:.2f})",
+                "result_value": format_3d_coords(coords),
                 "result_unit": output_unit.symbol,
             })
 
@@ -698,7 +698,7 @@ class PositionVectorProblem(Problem):
                 "target": unknown_point_name or "unknown",
                 "method": "direction_vector",
                 "description": f"Solved all coordinates using direction and |{name}| = {magnitude} {length_unit.symbol}",
-                "result_value": f"({display_coords[0]:.2f}, {display_coords[1]:.2f}, {display_coords[2]:.2f})",
+                "result_value": format_3d_coords(display_coords),
                 "result_unit": length_unit.symbol,
             })
             return
@@ -873,7 +873,7 @@ class PositionVectorProblem(Problem):
                         "target": attr_name,
                         "method": "vector_sum",
                         "description": f"Computed {attr_name} = {' + '.join(component_names)}",
-                        "result_value": f"({sum_coords[0]:.2f}, {sum_coords[1]:.2f}, {sum_coords[2]:.2f})",
+                        "result_value": format_3d_coords(sum_coords),
                         "result_unit": attr._unit.symbol if attr._unit else "",
                     })
 
@@ -955,7 +955,7 @@ class PositionVectorProblem(Problem):
             "target": attr_name,
             "method": "equilibrium_constraint",
             "description": f"Applied equilibrium constraint: {attr_name} = {' + '.join(component_names)}",
-            "result_value": f"({b[0]:.2f}, {b[1]:.2f}, {b[2]:.2f})",
+            "result_value": format_3d_coords(b),
             "result_unit": constraint._unit.symbol if constraint._unit else "",
         })
 

@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.patches import Arc, FancyArrowPatch
 
-from ..utils.shared_utilities import create_angle_arc
+from ..utils.shared_utilities import create_angle_arc, draw_styled_text
 
 if TYPE_CHECKING:
     from typing import Protocol
@@ -713,7 +713,7 @@ class VectorDiagramBase:
         else:
             label_text = f"{angle_deg:.1f}°"
 
-        ax.text(label_x, label_y, label_text, fontsize=10, color=color, ha="center", va="center", bbox={"boxstyle": "round,pad=0.2", "facecolor": "white", "alpha": 0.7})
+        draw_styled_text(ax, label_x, label_y, label_text, color)
 
     def _draw_components(self, ax, x: float, y: float, color: str) -> None:
         """Draw component projections (dashed lines)."""

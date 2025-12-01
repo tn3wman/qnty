@@ -11,6 +11,8 @@ from __future__ import annotations
 import math
 from typing import TYPE_CHECKING
 
+from ..utils.shared_utilities import compute_third_direction_angle
+
 if TYPE_CHECKING:
     import numpy as np
     from numpy.typing import NDArray
@@ -173,24 +175,13 @@ def compute_missing_direction_angle(
     Raises:
         ValueError: If angles don't satisfy the constraint or fewer than 2 provided
     """
+    error_msg = "Invalid angle combination: cos²α + cos²β + cos²γ > 1"
     if alpha_rad is None and beta_rad is not None and gamma_rad is not None:
-        cos_alpha_sq = 1 - math.cos(beta_rad) ** 2 - math.cos(gamma_rad) ** 2
-        if cos_alpha_sq < 0:
-            raise ValueError("Invalid angle combination: cos²α + cos²β + cos²γ > 1")
-        cos_alpha = math.sqrt(cos_alpha_sq)
-        alpha_rad = math.acos(cos_alpha)
+        alpha_rad = compute_third_direction_angle(beta_rad, gamma_rad, error_msg=error_msg)
     elif beta_rad is None and alpha_rad is not None and gamma_rad is not None:
-        cos_beta_sq = 1 - math.cos(alpha_rad) ** 2 - math.cos(gamma_rad) ** 2
-        if cos_beta_sq < 0:
-            raise ValueError("Invalid angle combination: cos²α + cos²β + cos²γ > 1")
-        cos_beta = math.sqrt(cos_beta_sq)
-        beta_rad = math.acos(cos_beta)
+        beta_rad = compute_third_direction_angle(alpha_rad, gamma_rad, error_msg=error_msg)
     elif gamma_rad is None and alpha_rad is not None and beta_rad is not None:
-        cos_gamma_sq = 1 - math.cos(alpha_rad) ** 2 - math.cos(beta_rad) ** 2
-        if cos_gamma_sq < 0:
-            raise ValueError("Invalid angle combination: cos²α + cos²β + cos²γ > 1")
-        cos_gamma = math.sqrt(cos_gamma_sq)
-        gamma_rad = math.acos(cos_gamma)
+        gamma_rad = compute_third_direction_angle(alpha_rad, beta_rad, error_msg=error_msg)
     elif alpha_rad is None or beta_rad is None or gamma_rad is None:
         raise ValueError("Must provide at least 2 of the 3 coordinate direction angles")
 
