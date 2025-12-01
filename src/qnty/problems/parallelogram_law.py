@@ -447,7 +447,11 @@ class ParallelogramLawProblem(Problem):
         self._add_force_variables(resultant_name, mag_si, angle_rad, resultant._dim, resultant._unit, is_known=False)
 
         # Add solution steps
-        if len(resultant.component_vectors) == 2:
+        num_forces = len(resultant.component_vectors)
+        if num_forces == 1:
+            # Single force: resultant equals the force, no steps needed
+            pass
+        elif num_forces == 2:
             self._add_triangle_method_steps(
                 resultant.component_vectors[0],
                 resultant.component_vectors[1],
@@ -457,13 +461,11 @@ class ParallelogramLawProblem(Problem):
                 angle_rad,
             )
         else:
-            self._add_component_method_steps(
+            # For 3+ forces, use iterative parallelogram law (like textbook solution)
+            self._add_iterative_parallelogram_steps(
                 resultant.component_vectors,
                 resultant,
                 resultant_name,
-                sum_coords,
-                mag_si,
-                angle_rad,
             )
 
     def _solve_inverse_resultant(self, resultant: _VectorWithUnknowns, resultant_name: str) -> None:
@@ -2019,8 +2021,12 @@ class ParallelogramLawProblem(Problem):
             FR_angle_deg = math.degrees(FR_angle)
             return _format_angle_difference_display(known_name, resultant_name, "x", "x", F_known_angle_deg, FR_angle_deg, gamma_deg, operator="-", use_absolute=True)
 
-    def _add_triangle_method_steps(self, force1: _Vector, force2: _Vector, resultant: _VectorWithUnknowns, resultant_name: str, mag_si: float, angle_rad: float) -> None:
-        """Add solution steps using the parallelogram law (Law of Cosines and Law of Sines)."""
+    def _add_triangle_method_steps(self, force1: _Vector, force2: _Vector, resultant: _VectorWithUnknowns, resultant_name: str, mag_si: float, angle_rad: float, eq_num_offset: int = 0) -> None:
+        """Add solution steps using the parallelogram law (Law of Cosines and Law of Sines).
+
+        Args:
+            eq_num_offset: Offset for equation numbers (e.g., 2 means use Eq 3 and Eq 4 instead of Eq 1 and Eq 2)
+        """
         F1, theta1 = _magnitude_and_angle_from_coords(force1._coords)
         F2, theta2 = _magnitude_and_angle_from_coords(force2._coords)
 
@@ -2066,9 +2072,10 @@ class ParallelogramLawProblem(Problem):
         )
 
         # Step 2: Law of Cosines for magnitude
+        eq1_num = 1 + eq_num_offset
         self._add_solution_step(
             SolutionStep(
-                target=f"|{resultant_name}| using Eq 1",
+                target=f"|{resultant_name}| using Eq {eq1_num}",
                 method="Law of Cosines",
                 description="Calculate resultant magnitude using Law of Cosines",
                 equation_for_list=f"|{resultant_name}|² = |{f1_name}|² + |{f2_name}|² + 2·|{f1_name}|·|{f2_name}|·cos(∠({f1_name},{f2_name}))",
@@ -2140,9 +2147,10 @@ class ParallelogramLawProblem(Problem):
             force_for_step4 = f1_name
             use_f1_approach = False
 
+        eq2_num = 2 + eq_num_offset
         self._add_solution_step(
             SolutionStep(
-                target=f"∠({force_for_step4},{resultant_name}) using Eq 2",
+                target=f"∠({force_for_step4},{resultant_name}) using Eq {eq2_num}",
                 method="Law of Sines",
                 description=f"Calculate angle from {force_for_step4} to {resultant_name} using Law of Sines",
                 equation_for_list=f"sin(∠({force_for_step4},{resultant_name}))/|{law_of_sines_name}| = sin(∠({f1_name},{f2_name}))/|{resultant_name}|",
@@ -2223,12 +2231,23 @@ class ParallelogramLawProblem(Problem):
                 )
             else:
                 # Build base formula for angle addition
-                base_formula = f"∠({ref_axis},{resultant_name}) = ∠({axis_for_step4},{force_for_step4}) + ∠({force_for_step4},{resultant_name})\n= {theta_ref_display:.1f}° + {phi_deg:.1f}°"
-                # Show intermediate step if sum differs significantly from final angle
-                needs_intermediate = abs(intermediate_sum - final_angle) > 0.1 and abs(intermediate_sum + 360 - final_angle) > 0.1 and abs(intermediate_sum - 360 - final_angle) > 0.1
-                if needs_intermediate:
+                arithmetic_sum = theta_ref_display + phi_deg
+                # Show intermediate step if:
+                # 1. The arithmetic sum differs from final angle (normalization happened), OR
+                # 2. The display angle differs from the arithmetic sum (angle_dir conversion)
+                needs_intermediate_for_normalization = abs(intermediate_sum - final_angle) > 0.1 and abs(intermediate_sum + 360 - final_angle) > 0.1 and abs(intermediate_sum - 360 - final_angle) > 0.1
+                needs_intermediate_for_display = abs(arithmetic_sum - display_angle) > 0.5
+
+                if needs_intermediate_for_display and arithmetic_sum > 180:
+                    # When sum > 180° and we need a negative result, show the subtraction form
+                    # θ_FR = ∠(x, F') + ∠(F', F_R) - 360° = 181.5° + 176.2° - 360° = -2.4°
+                    base_formula = f"∠({ref_axis},{resultant_name}) = ∠({axis_for_step4},{force_for_step4}) + ∠({force_for_step4},{resultant_name}) - 360°\n= {theta_ref_display:.1f}° + {phi_deg:.1f}° - 360°"
+                    substitution = f"{base_formula}\n= {display_angle:.1f}°"
+                elif needs_intermediate_for_normalization:
+                    base_formula = f"∠({ref_axis},{resultant_name}) = ∠({axis_for_step4},{force_for_step4}) + ∠({force_for_step4},{resultant_name})\n= {theta_ref_display:.1f}° + {phi_deg:.1f}°"
                     substitution = f"{base_formula}\n= {display_intermediate_sum:.1f}°\n= {display_angle:.1f}°"
                 else:
+                    base_formula = f"∠({ref_axis},{resultant_name}) = ∠({axis_for_step4},{force_for_step4}) + ∠({force_for_step4},{resultant_name})\n= {theta_ref_display:.1f}° + {phi_deg:.1f}°"
                     substitution = f"{base_formula}\n= {display_angle:.1f}°"
 
         self._add_solution_step(
@@ -2240,8 +2259,90 @@ class ParallelogramLawProblem(Problem):
             )
         )
 
+    def _add_iterative_parallelogram_steps(self, component_vectors: list[_Vector], resultant: _VectorWithUnknowns, resultant_name: str) -> None:
+        """
+        Add solution steps using iterative parallelogram law for 3+ forces.
+
+        Following textbook approach: F' = F_1 + F_2, then F_R = F' + F_3, etc.
+        Each step uses Law of Cosines and Law of Sines with proper solution steps.
+        """
+        if len(component_vectors) < 3:
+            raise ValueError("Iterative parallelogram method requires at least 3 forces")
+
+        unit_symbol, si_factor = _get_unit_info(resultant._unit)
+        if not unit_symbol:
+            unit_symbol = "N"
+
+        # Start with first two forces
+        force1 = component_vectors[0]
+        force2 = component_vectors[1]
+
+        # Compute intermediate resultant F' = F_1 + F_2
+        intermediate_coords = force1._coords + force2._coords
+        intermediate_mag = float(np.sqrt(np.sum(intermediate_coords**2)))
+        intermediate_angle = float(np.arctan2(intermediate_coords[1], intermediate_coords[0]))
+        if intermediate_angle < 0:
+            intermediate_angle += 2 * np.pi
+
+        # Create a temporary vector for the intermediate result (for step generation)
+        intermediate = _Vector(
+            name="F'",
+            magnitude=intermediate_mag,
+            angle=np.degrees(intermediate_angle),
+            unit=resultant._unit,
+            angle_unit="degree",
+            is_known=True,
+        )
+        intermediate._coords = intermediate_coords
+        intermediate._original_wrt = "+x"
+        intermediate._original_angle = np.degrees(intermediate_angle)
+
+        # Add triangle method steps for F' = F_1 + F_2 (uses Eq 1, Eq 2)
+        self._add_triangle_method_steps(force1, force2, intermediate, "F'", intermediate_mag, intermediate_angle, eq_num_offset=0)
+
+        # Chain additional forces: F'' = F' + F_3, F''' = F'' + F_4, etc.
+        current_intermediate = intermediate
+        remaining_forces = component_vectors[2:]
+
+        for i, force in enumerate(remaining_forces):
+            is_last_force = (i == len(remaining_forces) - 1)
+            # Each iteration uses 2 more equations (offset increases by 2)
+            eq_offset = (i + 1) * 2  # i=0 -> offset=2 (Eq 3, Eq 4), i=1 -> offset=4 (Eq 5, Eq 6), etc.
+
+            # Compute the new intermediate (or final resultant)
+            new_coords = current_intermediate._coords + force._coords
+            new_mag = float(np.sqrt(np.sum(new_coords**2)))
+            new_angle = float(np.arctan2(new_coords[1], new_coords[0]))
+            if new_angle < 0:
+                new_angle += 2 * np.pi
+
+            if is_last_force:
+                # Final step: F_R = F'' + F_n
+                # Use the actual resultant name
+                self._add_triangle_method_steps(current_intermediate, force, resultant, resultant_name, new_mag, new_angle, eq_num_offset=eq_offset)
+            else:
+                # Create next intermediate with proper prime notation
+                prime_count = i + 2  # F'' for second intermediate, F''' for third, etc.
+                prime_str = "'" * prime_count
+                next_name = f"F{prime_str}"
+
+                next_intermediate = _Vector(
+                    name=next_name,
+                    magnitude=new_mag,
+                    angle=np.degrees(new_angle),
+                    unit=resultant._unit,
+                    angle_unit="degree",
+                    is_known=True,
+                )
+                next_intermediate._coords = new_coords
+                next_intermediate._original_wrt = "+x"
+                next_intermediate._original_angle = np.degrees(new_angle)
+
+                self._add_triangle_method_steps(current_intermediate, force, next_intermediate, next_name, new_mag, new_angle, eq_num_offset=eq_offset)
+                current_intermediate = next_intermediate
+
     def _add_component_method_steps(self, component_vectors: list[_Vector], resultant: _VectorWithUnknowns, resultant_name: str, sum_coords: np.ndarray, mag_si: float, angle_rad: float) -> None:
-        """Add solution steps using the component method (for 3+ forces)."""
+        """Add solution steps using the component method (for 3+ forces). DEPRECATED - use iterative parallelogram."""
         unit_symbol, si_factor = _get_unit_info(resultant._unit)
 
         mag_display = _to_display_value(mag_si, si_factor)
@@ -2472,9 +2573,100 @@ class ParallelogramLawProblem(Problem):
 
     def _solve_resultant(self, known_forces: list[_Vector]) -> None:
         """Compute resultant of known forces."""
+        # Find the resultant force in the problem
+        resultant = None
+        for force in self.forces.values():
+            if force.is_resultant:
+                resultant = force
+                break
+
+        # For 3+ forces, use iterative parallelogram law
+        if len(known_forces) >= 3 and resultant is not None:
+            self._solve_resultant_iterative_parallelogram(known_forces, resultant)
+            return
+
+        # For 2 forces, use the standard triangle solver
         self.solver.solve_resultant(known_forces, self.forces)
         self.solution_steps.extend(self.solver.solution_steps)
         self.solver.solution_steps = []
+
+    def _solve_resultant_iterative_parallelogram(self, known_forces: list[_Vector], resultant: _Vector) -> None:
+        """
+        Solve for resultant of 3+ forces using iterative parallelogram law.
+
+        This matches textbook approach: F' = F_1 + F_2, then F_R = F' + F_3, etc.
+        Each step uses Law of Cosines and Law of Sines with proper solution steps.
+
+        Args:
+            known_forces: List of 3 or more known forces to sum
+            resultant: The resultant force to solve for
+        """
+        if len(known_forces) < 3:
+            raise ValueError("Iterative parallelogram law requires at least 3 forces")
+
+        from ..core.dimension_catalog import dim
+        from ..core.unit import ureg
+
+        # Get reference unit from first force
+        ref_unit = known_forces[0].magnitude.preferred if known_forces[0].magnitude else None
+
+        # Start with first two forces
+        intermediate = _Vector(
+            name="F'",
+            magnitude=0.0,
+            angle=0.0,
+            unit=ref_unit,
+            angle_unit="degree",
+            is_known=False,
+            is_resultant=True,
+        )
+
+        # Solve F' = F_1 + F_2
+        self.solver.solve_resultant_from_two_forces(known_forces[0], known_forces[1], intermediate)
+        self.solution_steps.extend(self.solver.solution_steps)
+        self.solver.solution_steps = []
+
+        # Store intermediate name for reporting
+        intermediate._original_wrt = "+x"
+        if intermediate._angle and intermediate._angle.value is not None:
+            intermediate._original_angle = math.degrees(intermediate._angle.value)
+
+        # Chain additional forces: F'' = F' + F_3, F''' = F'' + F_4, etc.
+        # For 3 forces: F' = F_1 + F_2 (done above), then F_R = F' + F_3
+        # For 4 forces: F' = F_1 + F_2, F'' = F' + F_3, then F_R = F'' + F_4
+        current_intermediate = intermediate
+        remaining_forces = known_forces[2:]
+
+        for i, force in enumerate(remaining_forces):
+            is_last_force = (i == len(remaining_forces) - 1)
+
+            if is_last_force:
+                # Final step: solve for actual resultant
+                self.solver.solve_resultant_from_two_forces(current_intermediate, force, resultant)
+                self.solution_steps.extend(self.solver.solution_steps)
+                self.solver.solution_steps = []
+            else:
+                # Create next intermediate with proper prime notation
+                prime_count = i + 2  # F'' for second intermediate, F''' for third, etc.
+                prime_str = "'" * prime_count
+                next_intermediate = _Vector(
+                    name=f"F{prime_str}",
+                    magnitude=0.0,
+                    angle=0.0,
+                    unit=ref_unit,
+                    angle_unit="degree",
+                    is_known=False,
+                    is_resultant=True,
+                )
+                self.solver.solve_resultant_from_two_forces(current_intermediate, force, next_intermediate)
+                self.solution_steps.extend(self.solver.solution_steps)
+                self.solver.solution_steps = []
+
+                next_intermediate._original_wrt = "+x"
+                if next_intermediate._angle and next_intermediate._angle.value is not None:
+                    next_intermediate._original_angle = math.degrees(next_intermediate._angle.value)
+
+                current_intermediate = next_intermediate
 
     def _solve_single_unknown(self, known_forces: list[_Vector], unknown_force: _Vector, resultant_forces: list[_Vector]) -> None:
         """Solve for single unknown force."""
@@ -2495,14 +2687,8 @@ class ParallelogramLawProblem(Problem):
             return
 
         if len(known_forces) >= 3 and unknown_force.is_resultant:
-            # Sum all known forces for resultant
-            sum_x, sum_y, sum_z, ref_unit = _sum_force_components(known_forces)
-
-            _helper.update_force_coords(unknown_force, sum_x, sum_y, sum_z, ref_unit)
-            unknown_force._compute_magnitude_and_angle()
-            unknown_force.is_known = True
-
-            self.solution_steps.append({"method": "Vector Addition (Component Summation)", "description": f"Computing resultant {unknown_force.name} from {len(known_forces)} known forces"})
+            # Use iterative parallelogram law: F' = F_1 + F_2, then F_R = F' + F_3, etc.
+            self._solve_resultant_iterative_parallelogram(known_forces, unknown_force)
             return
 
         # Fallback to component method

@@ -11,9 +11,11 @@ The golden files use placeholders for dynamic content:
 
 These placeholders are substituted during comparison to allow for
 time-independent testing.
+
+To regenerate golden files when report generation changes intentionally:
+    python tests/statics/_problem_fixtures.py --regenerate-golden
 """
 
-import re
 import tempfile
 from pathlib import Path
 
@@ -21,56 +23,17 @@ import pytest
 
 from qnty.problems.statics import parallelogram_law as pl
 
-# Import shared problem fixtures
-from tests.statics._problem_fixtures import PROBLEMS_WITH_GOLDEN_FILES
+# Import shared problem fixtures and utilities
+from tests.statics._problem_fixtures import (
+    GOLDEN_DIR,
+    PROBLEMS_WITH_GOLDEN_FILES,
+    get_golden_base,
+    normalize_report,
+)
 
 # =============================================================================
 # Test fixtures and utilities
 # =============================================================================
-
-GOLDEN_DIR = Path(__file__).parent / "golden"
-
-def get_golden_base(problem_class) -> str:
-    """
-    Derive golden file base name from problem class name.
-
-    Examples:
-        "Problem 2-1" -> "problem_2_1_report"
-        "Problem 2-3" -> "problem_2_3_report"
-    """
-    # e.g., "Problem 2-1" -> "problem_2_1_report"
-    name = problem_class.name.lower().replace(" ", "_").replace("-", "_")
-    return f"{name}_report"
-
-
-def normalize_report(content: str) -> str:
-    """
-    Normalize a report by replacing dynamic content with placeholders.
-
-    This allows comparison between generated reports (with actual dates)
-    and golden files (with placeholders).
-
-    Args:
-        content: Raw report content
-
-    Returns:
-        Normalized content with dates replaced by placeholders
-    """
-    # Replace datetime format: "2025-11-28 10:32:10"
-    content = re.sub(
-        r"\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}",
-        "{{GENERATED_DATETIME}}",
-        content
-    )
-
-    # Replace date format: "November 28, 2025"
-    content = re.sub(
-        r"(January|February|March|April|May|June|July|August|September|October|November|December) \d{1,2}, \d{4}",
-        "{{GENERATED_DATE}}",
-        content
-    )
-
-    return content
 
 
 def assert_reports_match(actual: str, expected: str, format_name: str = "report") -> None:
@@ -188,64 +151,3 @@ class TestParallelogramLawReports:
         assert_reports_match(actual, expected, "LaTeX report")
 
 
-# =============================================================================
-# Utility for regenerating golden files
-# =============================================================================
-
-
-def _get_problem_unit(problem_class) -> str:
-    """Get the output unit for a problem class from its vector definitions."""
-    # Check F_R first, then F_AB, then default to N
-    for attr in ["F_R", "F_AB", "F_AC"]:
-        if hasattr(problem_class, attr):
-            vec = getattr(problem_class, attr)
-            if hasattr(vec, "_unit") and vec._unit:
-                return vec._unit.symbol
-    return "N"
-
-
-def regenerate_golden_files():
-    """
-    Utility function to regenerate golden files for all problems.
-
-    Run this when report generation changes intentionally:
-        python tests/report_generation/statics/test_parallelogram_law_reports.py --regenerate
-
-    WARNING: This will overwrite the golden files. Only run this when
-    you've verified the new output is correct.
-    """
-    for problem_class in PROBLEMS_WITH_GOLDEN_FILES:
-        golden_base = get_golden_base(problem_class)
-        output_unit = _get_problem_unit(problem_class)
-        result = pl.solve_class(problem_class, output_unit=output_unit)
-
-        # Generate markdown
-        md_path = GOLDEN_DIR / f"{golden_base}.md"
-        result.generate_report(md_path, format="markdown")
-
-        # Normalize the file (replace dates with placeholders)
-        content = md_path.read_text(encoding="utf-8")
-        content = normalize_report(content)
-        md_path.write_text(content, encoding="utf-8")
-        print(f"Regenerated: {md_path}")
-
-        # Generate LaTeX
-        tex_path = GOLDEN_DIR / f"{golden_base}.tex"
-        result.generate_report(tex_path, format="latex")
-
-        # Normalize the file
-        content = tex_path.read_text(encoding="utf-8")
-        content = normalize_report(content)
-        tex_path.write_text(content, encoding="utf-8")
-        print(f"Regenerated: {tex_path}")
-
-
-if __name__ == "__main__":
-    # Allow running as script to regenerate golden files
-    import sys
-
-    if len(sys.argv) > 1 and sys.argv[1] == "--regenerate":
-        regenerate_golden_files()
-    else:
-        print("Usage: python test_parallelogram_law_reports.py --regenerate")
-        print("       pytest test_parallelogram_law_reports.py")

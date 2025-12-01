@@ -12,12 +12,18 @@ Each problem class defines:
 - generate_debug_reports: If True, generates MD/PDF reports for this problem
 """
 
+import re
 from pathlib import Path
+
+from numpy import angle
 
 from qnty.problems.statics import parallelogram_law as pl
 
 # Output directory for debug reports
 DEBUG_REPORT_DIR = Path(__file__).parent / "report_debug"
+
+# Output directory for golden files (used by snapshot tests)
+GOLDEN_DIR = Path(__file__).parent / "golden"
 
 
 def generate_debug_reports_for_problem(problem_class) -> None:
@@ -523,7 +529,7 @@ class Chapter2Problem17:
     F_1 = pl.create_vector_polar(magnitude=30, unit="N", angle=-36.87, wrt="-x")
     F_2 = pl.create_vector_polar(magnitude=20, unit="N", angle=-20, wrt="-y")
     F_3 = pl.create_vector_polar(magnitude=50, unit="N", angle=0, wrt="+x")
-    F_R = pl.create_vector_resultant(F_1, F_2, F_3)
+    F_R = pl.create_vector_resultant(F_1, F_2, F_3, angle_dir="cw")
 
     class expected:
         F_1 = pl.create_vector_polar(magnitude=30, unit="N", angle=-36.87, wrt="-x")
@@ -954,6 +960,7 @@ PROBLEMS_WITH_GOLDEN_FILES = [
     Chapter2Problem14,
     Chapter2Problem15,
     Chapter2Problem16,
+    Chapter2Problem17,
 ]
 
 
@@ -964,10 +971,152 @@ def generate_all_debug_reports() -> None:
 
 
 # =============================================================================
-# Run as script to generate debug reports
+# Golden file utilities (for snapshot tests)
+# =============================================================================
+
+
+def get_golden_base(problem_class) -> str:
+    """
+    Derive golden file base name from problem class name.
+
+    Examples:
+        "Problem 2-1" -> "problem_2_1_report"
+        "Problem 2-3" -> "problem_2_3_report"
+    """
+    name = problem_class.name.lower().replace(" ", "_").replace("-", "_")
+    return f"{name}_report"
+
+
+def normalize_report(content: str) -> str:
+    """
+    Normalize a report by replacing dynamic content with placeholders.
+
+    This allows comparison between generated reports (with actual dates)
+    and golden files (with placeholders).
+
+    Args:
+        content: Raw report content
+
+    Returns:
+        Normalized content with dates replaced by placeholders
+    """
+    # Replace datetime format: "2025-11-28 10:32:10"
+    content = re.sub(
+        r"\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}",
+        "{{GENERATED_DATETIME}}",
+        content
+    )
+
+    # Replace date format: "November 28, 2025"
+    content = re.sub(
+        r"(January|February|March|April|May|June|July|August|September|October|November|December) \d{1,2}, \d{4}",
+        "{{GENERATED_DATE}}",
+        content
+    )
+
+    return content
+
+
+def _get_problem_unit(problem_class) -> str:
+    """Get the output unit for a problem class from its vector definitions."""
+    # Check F_R first, then F_AB, then default to N
+    for attr in ["F_R", "F_AB", "F_AC"]:
+        if hasattr(problem_class, attr):
+            vec = getattr(problem_class, attr)
+            if hasattr(vec, "_unit") and vec._unit:
+                return vec._unit.symbol
+    return "N"
+
+
+def regenerate_golden_files() -> None:
+    """
+    Regenerate golden files for all problems in PROBLEMS_WITH_GOLDEN_FILES.
+
+    Run this when report generation changes intentionally:
+        python tests/statics/_problem_fixtures.py --regenerate-golden
+
+    WARNING: This will overwrite the golden files. Only run this when
+    you've verified the new output is correct.
+    """
+    GOLDEN_DIR.mkdir(parents=True, exist_ok=True)
+
+    for problem_class in PROBLEMS_WITH_GOLDEN_FILES:
+        golden_base = get_golden_base(problem_class)
+        output_unit = _get_problem_unit(problem_class)
+        result = pl.solve_class(problem_class, output_unit=output_unit)
+
+        if not result.success:
+            print(f"WARNING: {problem_class.name} failed to solve: {result.error}")
+            continue
+
+        # Generate markdown
+        md_path = GOLDEN_DIR / f"{golden_base}.md"
+        result.generate_report(md_path, format="markdown")
+
+        # Normalize the file (replace dates with placeholders)
+        content = md_path.read_text(encoding="utf-8")
+        content = normalize_report(content)
+        md_path.write_text(content, encoding="utf-8")
+        print(f"Regenerated: {md_path}")
+
+        # Generate LaTeX
+        tex_path = GOLDEN_DIR / f"{golden_base}.tex"
+        result.generate_report(tex_path, format="latex")
+
+        # Normalize the file
+        content = tex_path.read_text(encoding="utf-8")
+        content = normalize_report(content)
+        tex_path.write_text(content, encoding="utf-8")
+        print(f"Regenerated: {tex_path}")
+
+
+# =============================================================================
+# Run as script to generate reports
 # =============================================================================
 
 if __name__ == "__main__":
-    print(f"Generating debug reports to: {DEBUG_REPORT_DIR}")
-    generate_all_debug_reports()
-    print("Done!")
+    import sys
+
+    def show_menu():
+        """Show interactive menu and get user choice."""
+        print("\n" + "=" * 50)
+        print("Problem Fixtures - Report Generation")
+        print("=" * 50)
+        print("\nOptions:")
+        print("  1. Regenerate golden files (for snapshot tests)")
+        print("  2. Generate debug reports (MD/PDF)")
+        print("  3. Exit")
+        print("")
+        return input("Enter choice (1-3): ").strip()
+
+    # Check for command-line arguments first
+    if len(sys.argv) > 1:
+        if sys.argv[1] == "--regenerate-golden":
+            print(f"Regenerating golden files to: {GOLDEN_DIR}")
+            regenerate_golden_files()
+            print("Done!")
+        elif sys.argv[1] == "--debug":
+            print(f"Generating debug reports to: {DEBUG_REPORT_DIR}")
+            generate_all_debug_reports()
+            print("Done!")
+        else:
+            print("Usage:")
+            print("  python _problem_fixtures.py --regenerate-golden  # Regenerate golden files")
+            print("  python _problem_fixtures.py --debug              # Generate debug reports")
+            print("  python _problem_fixtures.py                      # Interactive menu")
+    else:
+        # Interactive mode
+        choice = show_menu()
+
+        if choice == "1":
+            print(f"\nRegenerating golden files to: {GOLDEN_DIR}")
+            regenerate_golden_files()
+            print("\nDone!")
+        elif choice == "2":
+            print(f"\nGenerating debug reports to: {DEBUG_REPORT_DIR}")
+            generate_all_debug_reports()
+            print("\nDone!")
+        elif choice == "3":
+            print("Exiting.")
+        else:
+            print(f"Invalid choice: {choice}")

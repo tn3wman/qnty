@@ -26,6 +26,33 @@ DEFAULT_FORCE_UNIT_SYMBOL = "N"
 DEFAULT_ANGLE_UNIT = "degree"
 
 
+def _get_opposite_axis(axis: str) -> str:
+    """
+    Get the opposite axis label for a given axis.
+
+    Args:
+        axis: Axis label like "+x", "-x", "+y", "-y"
+
+    Returns:
+        The opposite axis label (e.g., "+x" -> "-x", "-y" -> "+y")
+    """
+    axis_lower = axis.lower()
+    if axis_lower == "+x":
+        return "-x"
+    elif axis_lower == "-x":
+        return "+x"
+    elif axis_lower == "+y":
+        return "-y"
+    elif axis_lower == "-y":
+        return "+y"
+    # For custom axes, just flip the sign
+    if axis.startswith("+"):
+        return "-" + axis[1:]
+    elif axis.startswith("-"):
+        return "+" + axis[1:]
+    return axis  # fallback
+
+
 # =============================================================================
 # Angle Display String Helpers
 # =============================================================================
@@ -395,8 +422,44 @@ def compute_angle_between_display(
 
     # Case 1: Both vectors use the same reference axis
     if wrt1 == wrt2:
-        # Simple difference of angles from the same reference
         axis_label = format_axis_ref(wrt1)
+
+        # Check if simple difference matches result (within tolerance)
+        simple_diff = abs(theta1_input_deg - theta2_input_deg)
+
+        if abs(simple_diff - result_deg) < 0.5:
+            # Simple difference works
+            return _format_angle_difference_display(
+                vec1_name, vec2_name, axis_label, axis_label,
+                theta1_input_deg, theta2_input_deg, result_deg,
+                operator="-", use_absolute=True
+            )
+
+        # For angles > 180° apart, need to show the reflex angle calculation
+        # The interior angle is 360° - |diff| or use the opposite axis
+        if simple_diff > 180:
+            # One vector is past 180° from reference - show via opposite axis
+            # E.g., F' at 181° from +x is 1° from -x (181° - 180° = 1°)
+            if theta1_std_deg > 180:
+                # vec1 is in 3rd or 4th quadrant
+                opposite_axis = _get_opposite_axis(wrt1)
+                angle_from_opposite = theta1_std_deg - 180
+                return (
+                    f"∠({vec1_name},{vec2_name}) = |∠({opposite_axis},{vec1_name})|\n"
+                    f"= |{theta1_std_deg:.0f}° - 180°|\n"
+                    f"= {result_deg:.0f}°"
+                )
+            else:
+                # vec2 is in 3rd or 4th quadrant
+                opposite_axis = _get_opposite_axis(wrt2)
+                angle_from_opposite = theta2_std_deg - 180
+                return (
+                    f"∠({vec1_name},{vec2_name}) = |∠({opposite_axis},{vec2_name})|\n"
+                    f"= |{theta2_std_deg:.0f}° - 180°|\n"
+                    f"= {result_deg:.0f}°"
+                )
+
+        # Fallback to standard display
         return _format_angle_difference_display(
             vec1_name, vec2_name, axis_label, axis_label,
             theta1_input_deg, theta2_input_deg, result_deg,
