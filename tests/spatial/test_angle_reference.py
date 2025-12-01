@@ -11,8 +11,8 @@ import math
 
 import pytest
 
-from qnty.spatial.angle_reference import AngleDirection, AngleReference
 from qnty.spatial import _Vector
+from qnty.spatial.angle_reference import AngleDirection, AngleReference
 
 
 class TestAngleReference:
@@ -159,10 +159,16 @@ class TestForceVectorWithAngleReference:
         assert force.angle_reference == AngleReference.standard()
 
         # Components should be correct
-        assert force.x is not None
-        assert force.y is not None
-        assert math.isclose(force.x.value, 100 * math.cos(math.radians(30)), rel_tol=1e-6)
-        assert math.isclose(force.y.value, 100 * math.sin(math.radians(30)), rel_tol=1e-6)
+        x_component = force.x
+        y_component = force.y
+        assert x_component is not None
+        assert y_component is not None
+        x_val = x_component.value
+        y_val = y_component.value
+        assert x_val is not None
+        assert y_val is not None
+        assert math.isclose(x_val, 100 * math.cos(math.radians(30)), rel_tol=1e-6)
+        assert math.isclose(y_val, 100 * math.sin(math.radians(30)), rel_tol=1e-6)
 
     def test_force_with_cw_from_x_reference(self):
         """Test force with clockwise from +x reference."""
@@ -171,10 +177,16 @@ class TestForceVectorWithAngleReference:
         force = _Vector(magnitude=100, angle=30, unit="N", name="F", angle_reference=ref)
 
         # Components should be at 330° standard
-        assert force.x is not None
-        assert force.y is not None
-        assert math.isclose(force.x.value, 100 * math.cos(math.radians(330)), rel_tol=1e-6)
-        assert math.isclose(force.y.value, 100 * math.sin(math.radians(330)), rel_tol=1e-6)
+        x_component = force.x
+        y_component = force.y
+        assert x_component is not None
+        assert y_component is not None
+        x_val = x_component.value
+        y_val = y_component.value
+        assert x_val is not None
+        assert y_val is not None
+        assert math.isclose(x_val, 100 * math.cos(math.radians(330)), rel_tol=1e-6)
+        assert math.isclose(y_val, 100 * math.sin(math.radians(330)), rel_tol=1e-6)
 
     def test_force_with_ccw_from_y_reference(self):
         """Test force with CCW from +y reference."""
@@ -183,10 +195,16 @@ class TestForceVectorWithAngleReference:
         force = _Vector(magnitude=100, angle=45, unit="N", name="F", angle_reference=ref)
 
         # Components should be at 135° standard
-        assert force.x is not None
-        assert force.y is not None
-        assert math.isclose(force.x.value, 100 * math.cos(math.radians(135)), rel_tol=1e-6)
-        assert math.isclose(force.y.value, 100 * math.sin(math.radians(135)), rel_tol=1e-6)
+        x_component = force.x
+        y_component = force.y
+        assert x_component is not None
+        assert y_component is not None
+        x_val = x_component.value
+        y_val = y_component.value
+        assert x_val is not None
+        assert y_val is not None
+        assert math.isclose(x_val, 100 * math.cos(math.radians(135)), rel_tol=1e-6)
+        assert math.isclose(y_val, 100 * math.sin(math.radians(135)), rel_tol=1e-6)
 
     def test_force_with_cw_from_y_reference(self):
         """Test force with CW from +y reference."""
@@ -195,10 +213,16 @@ class TestForceVectorWithAngleReference:
         force = _Vector(magnitude=100, angle=45, unit="N", name="F", angle_reference=ref)
 
         # Components should be at 45° standard
-        assert force.x is not None
-        assert force.y is not None
-        assert math.isclose(force.x.value, 100 * math.cos(math.radians(45)), rel_tol=1e-6)
-        assert math.isclose(force.y.value, 100 * math.sin(math.radians(45)), rel_tol=1e-6)
+        x_component = force.x
+        y_component = force.y
+        assert x_component is not None
+        assert y_component is not None
+        x_val = x_component.value
+        y_val = y_component.value
+        assert x_val is not None
+        assert y_val is not None
+        assert math.isclose(x_val, 100 * math.cos(math.radians(45)), rel_tol=1e-6)
+        assert math.isclose(y_val, 100 * math.sin(math.radians(45)), rel_tol=1e-6)
 
     def test_problem_2_6_angle_reference(self):
         """
@@ -215,8 +239,11 @@ class TestForceVectorWithAngleReference:
         force_result = _Vector(magnitude=8026, angle=1.22, unit="N", name="F_R", angle_reference=ref_cw_from_u)
 
         # Check internal angle (should be 358.78° in standard form)
-        assert force_result._angle is not None
-        standard_angle_deg = math.degrees(force_result._angle.value)
+        internal_angle = force_result._angle
+        assert internal_angle is not None
+        angle_val = internal_angle.value
+        assert angle_val is not None
+        standard_angle_deg = math.degrees(angle_val)
         assert math.isclose(standard_angle_deg, 358.78, abs_tol=0.1)
 
     def test_unknown_force_with_angle_reference(self):
@@ -225,9 +252,12 @@ class TestForceVectorWithAngleReference:
         force = _Vector.unknown("F", angle=30, angle_unit="degree", angle_reference=ref)
 
         assert not force.is_known
-        assert force.angle is not None
+        force_angle = force.angle
+        assert force_angle is not None
+        angle_value = force_angle.value
+        assert angle_value is not None
         # Angle should be stored as 330° (standard form)
-        assert math.isclose(math.degrees(force.angle.value), 330, abs_tol=1e-6)
+        assert math.isclose(math.degrees(angle_value), 330, abs_tol=1e-6)
 
     def test_angle_reference_preservation_in_unknown(self):
         """Test that angle_reference is preserved when creating unknown force."""
@@ -252,25 +282,41 @@ class TestForceVectorWrtParameter:
         F2 = _Vector(magnitude=100, angle=30, unit="N", wrt="cw:+x")
         assert F2.angle_reference.direction == AngleDirection.CLOCKWISE
         # 30° CW from +x = 330° CCW from +x
-        assert math.isclose(math.degrees(F2._angle.value), 330, abs_tol=1e-6)
+        internal_angle = F2._angle
+        assert internal_angle is not None
+        angle_val = internal_angle.value
+        assert angle_val is not None
+        assert math.isclose(math.degrees(angle_val), 330, abs_tol=1e-6)
 
     def test_wrt_y_axis(self):
         """Test wrt='+y' (CCW from +y)."""
         F3 = _Vector(magnitude=100, angle=45, unit="N", wrt="+y")
         # 45° CCW from +y = 135° CCW from +x
-        assert math.isclose(math.degrees(F3._angle.value), 135, abs_tol=1e-6)
+        internal_angle = F3._angle
+        assert internal_angle is not None
+        angle_val = internal_angle.value
+        assert angle_val is not None
+        assert math.isclose(math.degrees(angle_val), 135, abs_tol=1e-6)
 
     def test_wrt_cw_from_y(self):
         """Test wrt='cw:+y' (CW from +y)."""
         F4 = _Vector(magnitude=100, angle=45, unit="N", wrt="cw:+y")
         # 45° CW from +y = 45° CCW from +x
-        assert math.isclose(math.degrees(F4._angle.value), 45, abs_tol=1e-6)
+        internal_angle = F4._angle
+        assert internal_angle is not None
+        angle_val = internal_angle.value
+        assert angle_val is not None
+        assert math.isclose(math.degrees(angle_val), 45, abs_tol=1e-6)
 
     def test_wrt_negative_x(self):
         """Test wrt='-x' (CCW from -x)."""
         F5 = _Vector(magnitude=100, angle=30, unit="N", wrt="-x")
         # 30° CCW from -x (180°) = 210° CCW from +x
-        assert math.isclose(math.degrees(F5._angle.value), 210, abs_tol=1e-6)
+        internal_angle = F5._angle
+        assert internal_angle is not None
+        angle_val = internal_angle.value
+        assert angle_val is not None
+        assert math.isclose(math.degrees(angle_val), 210, abs_tol=1e-6)
 
     def test_wrt_with_coordinate_system_axis(self):
         """Test wrt with custom coordinate system axes."""
@@ -282,7 +328,11 @@ class TestForceVectorWrtParameter:
         # Use wrt='u' to reference the u-axis
         F6 = _Vector(magnitude=100, angle=30, unit="N", wrt="u", coordinate_system=uv_system)
         # Since u is at 0°, 30° from u = 30° from +x
-        assert math.isclose(math.degrees(F6._angle.value), 30, abs_tol=1e-6)
+        internal_angle = F6._angle
+        assert internal_angle is not None
+        angle_val = internal_angle.value
+        assert angle_val is not None
+        assert math.isclose(math.degrees(angle_val), 30, abs_tol=1e-6)
 
     def test_wrt_cw_from_custom_axis(self):
         """Test wrt='cw:v' with custom coordinate system."""
@@ -294,14 +344,22 @@ class TestForceVectorWrtParameter:
         # Use wrt='cw:v' to reference v-axis clockwise
         F7 = _Vector(magnitude=100, angle=30, unit="N", wrt="cw:v", coordinate_system=uv_system)
         # 30° CW from v (75°) = 75° - 30° = 45° CCW from +x
-        assert math.isclose(math.degrees(F7._angle.value), 45, abs_tol=1e-6)
+        internal_angle = F7._angle
+        assert internal_angle is not None
+        angle_val = internal_angle.value
+        assert angle_val is not None
+        assert math.isclose(math.degrees(angle_val), 45, abs_tol=1e-6)
 
     def test_wrt_unknown_force(self):
         """Test wrt parameter with unknown force."""
         F8 = _Vector.unknown("F", angle=30, wrt="cw:+x")
         assert not F8.is_known
         # 30° CW from +x = 330° CCW from +x
-        assert math.isclose(math.degrees(F8._angle.value), 330, abs_tol=1e-6)
+        internal_angle = F8._angle
+        assert internal_angle is not None
+        angle_val = internal_angle.value
+        assert angle_val is not None
+        assert math.isclose(math.degrees(angle_val), 330, abs_tol=1e-6)
 
     def test_wrt_and_angle_reference_conflict(self):
         """Test that specifying both wrt and angle_reference raises error."""

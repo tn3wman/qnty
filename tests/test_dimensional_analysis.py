@@ -10,8 +10,9 @@ This test suite ensures that:
 
 import pytest
 
-from qnty import Area, Dimensionless, Force, Length, Pressure, Problem, Torque
+from qnty import Area, Dimensionless, Force, Length, Pressure, Problem
 from qnty.algebra import equation
+from qnty.core import dim
 
 
 class TestDirectArithmetic:
@@ -71,44 +72,30 @@ class TestExpressionSystem:
 
     def test_expression_add_incompatible_raises_error(self):
         """Expression addition with incompatible dimensions should raise error."""
-        length = Length("length_var")
-        area = Area("area_var")
+        length = Length("length_var").set(5, "meter")
+        area = Area("area_var").set(10, "meter2")
 
-        length.set(5, "meter")
-        area.set(10, "meter2")
-
-        # Create expression: length + area
-        expr = length + area
-
+        # Dimension mismatch should raise immediately when adding quantities with values
         with pytest.raises(TypeError, match="Dimension mismatch"):
-            result = expr.evaluate({"length_var": length, "area_var": area})
+            _ = length + area
 
     def test_expression_subtract_incompatible_raises_error(self):
         """Expression subtraction with incompatible dimensions should raise error."""
-        force = Force("force_var")
-        pressure = Pressure("pressure_var")
+        force = Force("force_var").set(100, "newton")
+        pressure = Pressure("pressure_var").set(50, "pascal")
 
-        force.set(100, "newton")
-        pressure.set(50, "pascal")
-
-        # Create expression: force - pressure
-        expr = force - pressure
-
+        # Dimension mismatch should raise immediately when subtracting quantities with values
         with pytest.raises(TypeError, match="Dimension mismatch"):
-            result = expr.evaluate({"force_var": force, "pressure_var": pressure})
+            _ = force - pressure
 
     def test_expression_compatible_operations_succeed(self):
         """Expression operations with compatible dimensions should succeed."""
-        l1 = Length("l1")
-        l2 = Length("l2")
+        l1 = Length("l1").set(5, "meter")
+        l2 = Length("l2").set(3, "meter")
 
-        l1.set(5, "meter")
-        l2.set(3, "meter")
+        # Adding quantities with same dimensions should succeed
+        result = l1 + l2
 
-        # Create expression: l1 + l2
-        expr = l1 + l2
-
-        result = expr.evaluate({"l1": l1, "l2": l2})
         assert result.value is not None
         assert abs(result.value - 8.0) < 1e-10
 
@@ -129,7 +116,7 @@ class TestProblemSolving:
 
             # Intentionally create dimensional inconsistency
             force_var = Force("Force Variable").set(100).newton
-            area_var = Area("Area Variable", is_known=False)
+            area_var = Area("Area Variable")  # Unknown (no value set)
 
             # This equation is dimensionally inconsistent:
             # area_var = force_var (Force ≠ Area)
@@ -158,7 +145,7 @@ class TestProblemSolving:
             S_bo = Pressure("Allowable Stress").set(200e6).pascal
 
             # A_m should be Area (Force / Pressure = Area)
-            A_m = Area("Required Area", is_known=False)
+            A_m = Area("Required Area")  # Unknown (no value set)
 
             # Correct equation: A_m = (W_o + F_A) / S_bo
             area_equation = equation(A_m, (W_o + F_A) / S_bo)
@@ -170,9 +157,7 @@ class TestProblemSolving:
         assert problem.A_m.value is not None
 
         # Verify the dimension is actually Area
-        from qnty.core.dimension_catalog import Area as AreaDim
-
-        assert problem.A_m.dim == AreaDim
+        assert problem.A_m.dim == dim.AREA
 
     def test_problem_catches_error_when_length_assigned_to_area(self):
         """
@@ -189,7 +174,7 @@ class TestProblemSolving:
             stress = Pressure("Stress").set(200e6).pascal
 
             # Intentionally define wrong: should be Area but we'll try to assign wrong dimension
-            wrong_area = Length("Wrong Area", is_known=False)  # Should be Area!
+            wrong_area = Length("Wrong Area")  # Should be Area!
 
             # This equation tries to assign an Area result to a Length variable
             # force / stress = Area, but wrong_area is Length
@@ -211,7 +196,7 @@ class TestProblemSolving:
             force = Force("Force").set(100).newton
 
             # torque_wrong is defined as Force but equation gives Torque
-            torque_wrong = Force("Wrong Torque", is_known=False)
+            torque_wrong = Force("Wrong Torque")  # Unknown (no value set)
 
             # length * force = Torque, not Force
             wrong_eqn = equation(torque_wrong, length * force)
@@ -231,41 +216,40 @@ class TestDimensionalConsistency:
         l2 = Length("l2").set(3, "meter")
         area = Area("area").set(10, "meter2")
 
-        # (l1 + l2) is Length, adding Area should fail
-        expr = (l1 + l2) + area
-
+        # (l1 + l2) is Length, adding Area should fail immediately
         with pytest.raises(TypeError, match="Dimension mismatch"):
-            result = expr.evaluate({"l1": l1, "l2": l2, "area": area})
+            _ = (l1 + l2) + area
 
     def test_division_by_same_dimension_creates_dimensionless(self):
         """Dividing same dimensions should create dimensionless quantity."""
-        l1 = Length(10, "meter")
-        l2 = Length(2, "meter")
+        l1 = Length("l1").set(10, "meter")
+        l2 = Length("l2").set(2, "meter")
 
         result = l1 / l2
 
         # Should be dimensionless
         assert result.dim.is_dimensionless()
         # Value should be 10/2 = 5.0
-        assert abs(result.value - 5.0) < 1e-10
+        result_val = result.value
+        assert result_val is not None
+        assert abs(result_val - 5.0) < 1e-10
 
     def test_power_maintains_dimensional_consistency(self):
         """Power operations should properly scale dimensions."""
-        length = Length(3, "meter")
+        length = Length("length").set(3, "meter")
 
         # length^2 should give Area
         squared = length**2
 
-        from qnty.core.dimension_catalog import Area as AreaDim
-
-        assert squared.dim == AreaDim
+        assert squared.dim == dim.AREA
         # 3^2 = 9
-        assert abs(squared.value - 9.0) < 1e-10
+        squared_val = squared.value
+        assert squared_val is not None
+        assert abs(squared_val - 9.0) < 1e-10
 
     def test_dimensionless_operations_with_dimensional_quantities(self):
         """Test that dimensionless numbers only add/subtract to dimensionless quantities."""
-        length = Length(5, "meter")
-        dimensionless = Dimensionless(2, "dimensionless")
+        length = Length("length").set(5, "meter")
 
         # Adding dimensionless number (not quantity) to dimensional should fail
         with pytest.raises(TypeError, match="Cannot add dimensionless number"):
@@ -273,7 +257,9 @@ class TestDimensionalConsistency:
 
         # But multiplying should work (scaling)
         result = length * 2.0
-        assert abs(result.value - 10.0) < 1e-10
+        result_val = result.value
+        assert result_val is not None
+        assert abs(result_val - 10.0) < 1e-10
 
 
 class TestEdgeCases:
