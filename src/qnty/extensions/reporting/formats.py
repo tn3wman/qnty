@@ -7,15 +7,15 @@ from __future__ import annotations
 import subprocess
 from pathlib import Path
 
-from .base import ReportGenerator
 from ...utils.shared_utilities import escape_latex
+from .base import ReportGenerator
 
 
 def _is_vector_equilibrium_problem(problem) -> bool:
     """Check if problem is a VectorEquilibriumProblem."""
     # Avoid circular import by checking class name in MRO
     class_names = [cls.__name__ for cls in problem.__class__.__mro__]
-    return 'VectorEquilibriumProblem' in class_names
+    return "VectorEquilibriumProblem" in class_names
 
 
 def _generate_diagram_if_needed(problem, output_dir: Path) -> Path | None:
@@ -28,14 +28,41 @@ def _generate_diagram_if_needed(problem, output_dir: Path) -> Path | None:
 
         # Generate diagram in same directory as report
         # Sanitize filename - remove problematic characters
-        safe_name = problem.name.replace(' ', '_').replace(':', '').replace('/', '_').replace('\\', '_')
+        safe_name = problem.name.replace(" ", "_").replace(":", "").replace("/", "_").replace("\\", "_")
         diagram_path = output_dir / f"{safe_name}_diagram.png"
         return create_force_diagram(problem, diagram_path, show_components=False)
     except Exception as e:
         # Log but don't fail if diagram generation not available
         import logging
+
         logging.debug(f"Could not generate diagram: {e}")
         return None
+
+
+def _handle_generated_pdf_output(tex_path: Path, output_path: Path) -> bool:
+    """
+    Handle moving the generated PDF to the desired output location.
+
+    Tectonic and similar tools output PDFs with the same basename as the input .tex file.
+    This function handles renaming/moving the generated PDF to the desired output path.
+
+    Args:
+        tex_path: Path to the input .tex file (used to determine generated PDF name)
+        output_path: Desired final output path for the PDF
+
+    Returns:
+        True if the PDF was found and successfully moved/renamed, False otherwise
+    """
+    temp_pdf_name = tex_path.stem + ".pdf"
+    generated_pdf = output_path.parent / temp_pdf_name
+    if generated_pdf.exists():
+        if generated_pdf != output_path:
+            # Remove existing output file if it exists (Windows requires this)
+            if output_path.exists():
+                output_path.unlink()
+            generated_pdf.rename(output_path)
+        return True
+    return False
 
 
 class MarkdownReportGenerator(ReportGenerator):
@@ -51,13 +78,7 @@ class MarkdownReportGenerator(ReportGenerator):
         diagram_path = _generate_diagram_if_needed(self.problem, output_path.parent)
 
         # Build the report IR
-        builder = ReportBuilder(
-            problem=self.problem,
-            known_variables=self.known_variables,
-            equations=self.equations,
-            solving_history=self.solving_history,
-            diagram_path=diagram_path
-        )
+        builder = ReportBuilder(problem=self.problem, known_variables=self.known_variables, equations=self.equations, solving_history=self.solving_history, diagram_path=diagram_path)
         report_ir = builder.build()
 
         # Render to Markdown
@@ -82,13 +103,7 @@ class LatexReportGenerator(ReportGenerator):
         diagram_path = _generate_diagram_if_needed(self.problem, output_path.parent)
 
         # Build the report IR
-        builder = ReportBuilder(
-            problem=self.problem,
-            known_variables=self.known_variables,
-            equations=self.equations,
-            solving_history=self.solving_history,
-            diagram_path=diagram_path
-        )
+        builder = ReportBuilder(problem=self.problem, known_variables=self.known_variables, equations=self.equations, solving_history=self.solving_history, diagram_path=diagram_path)
         report_ir = builder.build()
 
         # Render to LaTeX
@@ -202,14 +217,7 @@ class PdfReportGenerator(LatexReportGenerator):
             if result.returncode == 0:
                 # Tectonic outputs to the directory specified by -o with the same basename as the tex file
                 # So if tex_path is /tmp/tmpXXX.tex and -o is /reports, PDF will be /reports/tmpXXX.pdf
-                temp_pdf_name = tex_path.stem + ".pdf"
-                generated_pdf = output_path.parent / temp_pdf_name
-                if generated_pdf.exists():
-                    if generated_pdf != output_path:
-                        # Remove existing output file if it exists (Windows requires this)
-                        if output_path.exists():
-                            output_path.unlink()
-                        generated_pdf.rename(output_path)
+                if _handle_generated_pdf_output(tex_path, output_path):
                     return True
         except Exception:
             pass
@@ -234,14 +242,7 @@ class PdfReportGenerator(LatexReportGenerator):
 
             if result.returncode == 0:
                 # Tectonic outputs to the directory specified by -o with the same basename as the tex file
-                temp_pdf_name = tex_path.stem + ".pdf"
-                generated_pdf = output_path.parent / temp_pdf_name
-                if generated_pdf.exists():
-                    if generated_pdf != output_path:
-                        # Remove existing output file if it exists (Windows requires this)
-                        if output_path.exists():
-                            output_path.unlink()
-                        generated_pdf.rename(output_path)
+                if _handle_generated_pdf_output(tex_path, output_path):
                     return True
         except (FileNotFoundError, subprocess.TimeoutExpired):
             pass

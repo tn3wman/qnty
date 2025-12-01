@@ -18,6 +18,7 @@ from numpy.typing import NDArray
 
 from ..core.quantity import Quantity
 from ..core.unit import Unit
+from ..utils.shared_utilities import create_magnitude_quantity
 
 if TYPE_CHECKING:
     from .angle_reference import AngleReference
@@ -441,13 +442,7 @@ class _Vector(Generic[D]):
         if magnitude is None:
             raise ValueError("magnitude must be specified")
 
-        if isinstance(magnitude, int | float):
-            if unit is None:
-                raise ValueError("unit must be specified")
-            mag_qty = Quantity.from_value(float(magnitude), unit, name=f"{self.name}_magnitude")
-            mag_qty.preferred = unit
-        else:
-            mag_qty = magnitude
+        mag_qty = create_magnitude_quantity(magnitude, unit, self.name)
 
         def to_radians(angle_val):
             if isinstance(angle_val, int | float):
@@ -472,13 +467,7 @@ class _Vector(Generic[D]):
 
     def _init_from_polar(self, magnitude, angle, unit, angle_unit):
         """Initialize from magnitude and angle (2D polar)."""
-        if isinstance(magnitude, int | float):
-            if unit is None:
-                raise ValueError("unit must be specified")
-            mag_qty = Quantity.from_value(float(magnitude), unit, name=f"{self.name}_magnitude")
-            mag_qty.preferred = unit
-        else:
-            mag_qty = magnitude
+        mag_qty = create_magnitude_quantity(magnitude, unit, self.name)
 
         if isinstance(angle, int | float):
             from ..core.dimension_catalog import dim
@@ -542,13 +531,7 @@ class _Vector(Generic[D]):
 
     def _init_magnitude_only(self, magnitude, unit):
         """Initialize with known magnitude but unknown angle."""
-        if isinstance(magnitude, int | float):
-            if unit is None:
-                raise ValueError("unit must be specified")
-            mag_qty = Quantity.from_value(float(magnitude), unit, name=f"{self.name}_magnitude")
-            mag_qty.preferred = unit
-        else:
-            mag_qty = magnitude
+        mag_qty = create_magnitude_quantity(magnitude, unit, self.name)
 
         self._magnitude = mag_qty
         self._angle = None

@@ -13,7 +13,7 @@ from typing import TYPE_CHECKING, Any
 import numpy as np
 
 from ..core.unit import Unit
-from ..utils.shared_utilities import convert_angle_to_radians
+from ..utils.shared_utilities import convert_angle_to_radians, resolve_unit_from_string_or_fallback
 from .vector import _Vector
 
 if TYPE_CHECKING:
@@ -29,7 +29,23 @@ class _VectorWithUnknowns(_Vector):
     Also stores component vectors for resultant computation.
     """
 
-    __slots__ = ("_unknowns", "_original_unknowns", "_component_vectors", "_direction_unit_vector", "_is_constraint", "_alpha_rad", "_beta_rad", "_gamma_rad", "_original_plane", "_angle_unit", "_polar_magnitude", "_polar_angle_rad", "angle_dir", "_wrt_vector_angle_rad", "_wrt_vector_ref")
+    __slots__ = (
+        "_unknowns",
+        "_original_unknowns",
+        "_component_vectors",
+        "_direction_unit_vector",
+        "_is_constraint",
+        "_alpha_rad",
+        "_beta_rad",
+        "_gamma_rad",
+        "_original_plane",
+        "_angle_unit",
+        "_polar_magnitude",
+        "_polar_angle_rad",
+        "angle_dir",
+        "_wrt_vector_angle_rad",
+        "_wrt_vector_ref",
+    )
 
     # Type annotation for angle_dir slot
     angle_dir: str | None
@@ -92,7 +108,7 @@ class _VectorWithUnknowns(_Vector):
             comp: Component name ('u', 'v', or 'w')
             value: Value in current unit
         """
-        if comp not in ('u', 'v', 'w'):
+        if comp not in ("u", "v", "w"):
             raise ValueError(f"Invalid component '{comp}', must be 'u', 'v', or 'w'")
 
         # Remove from unknowns if present
@@ -100,7 +116,7 @@ class _VectorWithUnknowns(_Vector):
             del self._unknowns[comp]
 
         # Update internal coordinates
-        idx = {'u': 0, 'v': 1, 'w': 2}[comp]
+        idx = {"u": 0, "v": 1, "w": 2}[comp]
 
         # Convert value to SI
         if self._unit is not None:
@@ -119,14 +135,14 @@ class _VectorWithUnknowns(_Vector):
         Args:
             comp: Component name ('u', 'v', or 'w')
         """
-        if comp not in ('u', 'v', 'w'):
+        if comp not in ("u", "v", "w"):
             raise ValueError(f"Invalid component '{comp}', must be 'u', 'v', or 'w'")
 
         # Add to unknowns
         self._unknowns[comp] = comp
 
         # Set component to 0 (placeholder)
-        idx = {'u': 0, 'v': 1, 'w': 2}[comp]
+        idx = {"u": 0, "v": 1, "w": 2}[comp]
         self._coords[idx] = 0.0
         self.is_known = False
 
@@ -143,7 +159,7 @@ class _VectorWithUnknowns(_Vector):
         name_str = f"'{self.name}' " if self.name else ""
         return f"_Vector({name_str}{u_str}, {v_str}, {w_str}{unit_str})"
 
-    def clone(self, name: str | None = None, vector_clones: dict[int, _Vector] | None = None) -> "_VectorWithUnknowns":
+    def clone(self, name: str | None = None, vector_clones: dict[int, _Vector] | None = None) -> _VectorWithUnknowns:
         """
         Create a deep copy of this _VectorWithUnknowns.
 
@@ -168,71 +184,69 @@ class _VectorWithUnknowns(_Vector):
         result._unit = self._unit
 
         # Use provided name or original name
-        original_name = getattr(self, 'name', "")
+        original_name = getattr(self, "name", "")
         result.name = name if name is not None else (original_name if original_name and original_name != "Vector" else "")
 
-        result._description = getattr(self, '_description', "")
-        result.is_known = getattr(self, 'is_known', False)
-        result.is_resultant = getattr(self, 'is_resultant', True)
-        result.coordinate_system = getattr(self, 'coordinate_system', None)
-        result.angle_reference = getattr(self, 'angle_reference', None)
+        result._description = getattr(self, "_description", "")
+        result.is_known = getattr(self, "is_known", False)
+        result.is_resultant = getattr(self, "is_resultant", True)
+        result.coordinate_system = getattr(self, "coordinate_system", None)
+        result.angle_reference = getattr(self, "angle_reference", None)
 
         # Copy magnitude and angle
-        result._magnitude = self._magnitude if hasattr(self, '_magnitude') else None
-        result._angle = self._angle if hasattr(self, '_angle') else None
+        result._magnitude = self._magnitude if hasattr(self, "_magnitude") else None
+        result._angle = self._angle if hasattr(self, "_angle") else None
 
         # Copy relative angle info
-        result._relative_to_force = getattr(self, '_relative_to_force', None)
-        result._relative_angle = getattr(self, '_relative_angle', None)
+        result._relative_to_force = getattr(self, "_relative_to_force", None)
+        result._relative_angle = getattr(self, "_relative_angle", None)
 
         # Copy original angle and wrt for reporting
-        if hasattr(self, '_original_angle'):
+        if hasattr(self, "_original_angle"):
             result._original_angle = self._original_angle
-        if hasattr(self, '_original_wrt'):
+        if hasattr(self, "_original_wrt"):
             result._original_wrt = self._original_wrt
 
         # Copy _VectorWithUnknowns-specific attributes
-        result._unknowns = self._unknowns.copy() if hasattr(self, '_unknowns') else {}
+        result._unknowns = self._unknowns.copy() if hasattr(self, "_unknowns") else {}
 
         # Update component_vectors to use cloned vectors if provided
-        if hasattr(self, '_component_vectors') and self._component_vectors:
+        if hasattr(self, "_component_vectors") and self._component_vectors:
             if vector_clones:
-                result._component_vectors = [
-                    vector_clones.get(id(cv), cv) for cv in self._component_vectors
-                ]
+                result._component_vectors = [vector_clones.get(id(cv), cv) for cv in self._component_vectors]
             else:
                 result._component_vectors = list(self._component_vectors)
         else:
             result._component_vectors = []
 
         # Copy additional attributes
-        result._direction_unit_vector = getattr(self, '_direction_unit_vector', None)
-        result._is_constraint = getattr(self, '_is_constraint', False)
+        result._direction_unit_vector = getattr(self, "_direction_unit_vector", None)
+        result._is_constraint = getattr(self, "_is_constraint", False)
 
         # Copy direction angle attributes if present
-        if hasattr(self, '_alpha_rad'):
+        if hasattr(self, "_alpha_rad"):
             result._alpha_rad = self._alpha_rad
-        if hasattr(self, '_beta_rad'):
+        if hasattr(self, "_beta_rad"):
             result._beta_rad = self._beta_rad
-        if hasattr(self, '_gamma_rad'):
+        if hasattr(self, "_gamma_rad"):
             result._gamma_rad = self._gamma_rad
-        if hasattr(self, '_original_plane'):
+        if hasattr(self, "_original_plane"):
             result._original_plane = self._original_plane
-        if hasattr(self, '_angle_unit'):
+        if hasattr(self, "_angle_unit"):
             result._angle_unit = self._angle_unit
-        if hasattr(self, '_polar_magnitude'):
+        if hasattr(self, "_polar_magnitude"):
             result._polar_magnitude = self._polar_magnitude
-        if hasattr(self, '_polar_angle_rad'):
+        if hasattr(self, "_polar_angle_rad"):
             result._polar_angle_rad = self._polar_angle_rad
 
         # Copy wrt vector reference for angle reference reporting
-        if hasattr(self, '_wrt_vector_angle_rad'):
+        if hasattr(self, "_wrt_vector_angle_rad"):
             result._wrt_vector_angle_rad = self._wrt_vector_angle_rad
-        if hasattr(self, '_wrt_vector_ref'):
+        if hasattr(self, "_wrt_vector_ref"):
             result._wrt_vector_ref = self._wrt_vector_ref
 
         # Copy angle direction convention
-        result.angle_dir = getattr(self, 'angle_dir', None)
+        result.angle_dir = getattr(self, "angle_dir", None)
 
         return result
 
@@ -242,7 +256,7 @@ def create_vector_cartesian(
     v: float = 0.0,
     w: float = 0.0,
     unit: Unit | str | None = None,
-    from_point: "Any | None" = None,
+    from_point: Any | None = None,
     name: str | None = None,
 ) -> _Vector:
     """
@@ -379,14 +393,14 @@ def create_vector_from_ratio(
 
 
 def create_vector_polar(
-    magnitude: "float | EllipsisType",
+    magnitude: float | EllipsisType,
     unit: Unit | str,
-    angle: "float | EllipsisType",
+    angle: float | EllipsisType,
     angle_unit: str = "degree",
-    wrt: "str | _Vector" = "+x",
+    wrt: str | _Vector = "+x",
     plane: str = "xy",
     name: str | None = None,
-) -> "_Vector | _VectorWithUnknowns":
+) -> _Vector | _VectorWithUnknowns:
     """
     Create a vector using polar coordinates in a plane.
 
@@ -467,10 +481,7 @@ def create_vector_polar(
         if is_standard_axis:
             axis_char = wrt_str.lower()[1]  # 'x', 'y', or 'z'
             if axis_char not in plane_lower:
-                raise ValueError(
-                    f"Reference axis '{wrt_str}' must be in plane '{plane}'. "
-                    f"Valid axes for {plane} plane: {[f'+{c}' for c in plane] + [f'-{c}' for c in plane]}"
-                )
+                raise ValueError(f"Reference axis '{wrt_str}' must be in plane '{plane}'. Valid axes for {plane} plane: {[f'+{c}' for c in plane] + [f'-{c}' for c in plane]}")
         # For custom axes (like +u, +v), we defer validation to solve time
         # when the coordinate system is known
 
@@ -709,8 +720,8 @@ def create_vector_spherical(
 
 
 def create_vector_from_points(
-    from_point: "_Point",
-    to_point: "_Point",
+    from_point: _Point,
+    to_point: _Point,
     name: str | None = None,
 ) -> _Vector:
     """
@@ -776,8 +787,8 @@ def create_vector_from_points(
 
 
 def create_vector_with_magnitude(
-    from_point: "_Point",
-    to_point: "_Point",
+    from_point: _Point,
+    to_point: _Point,
     magnitude: float,
     unit: Unit | str | None = None,
     name: str | None = None,
@@ -845,6 +856,7 @@ def create_vector_with_magnitude(
     # Store magnitude constraint
     if isinstance(unit, str):
         from ..core.unit import ureg
+
         resolved = ureg.resolve(unit)
         if resolved is None:
             raise ValueError(f"Unknown unit '{unit}'")
@@ -859,7 +871,7 @@ def create_vector_with_magnitude(
 
 def create_vector_along(
     vector: _Vector,
-    magnitude: "float | EllipsisType | Any",
+    magnitude: float | EllipsisType | Any,
     unit: Unit | str | None = None,
     name: str | None = None,
 ) -> _Vector | _VectorWithUnknowns:
@@ -913,6 +925,7 @@ def create_vector_along(
         qty_unit = magnitude.preferred
         if qty_unit is None:
             from ..core.unit import ureg
+
             qty_unit = ureg.preferred_for(magnitude.dim) or ureg.si_unit_for(magnitude.dim)
         # Get the value in that unit
         mag_value = magnitude.magnitude(qty_unit)
@@ -983,10 +996,10 @@ def create_vector_along(
 
 
 def create_point_at_midpoint(
-    from_point: "Any",
-    to_point: "Any",
+    from_point: Any,
+    to_point: Any,
     name: str | None = None,
-) -> "_Point":
+) -> _Point:
     """
     Create a point at the midpoint between two points.
 
@@ -1009,11 +1022,11 @@ def create_point_at_midpoint(
     from .point import _Point
 
     # Convert to _Point if needed
-    if hasattr(from_point, 'to_cartesian'):
+    if hasattr(from_point, "to_cartesian"):
         from_pt = from_point.to_cartesian()
     else:
         from_pt = from_point
-    if hasattr(to_point, 'to_cartesian'):
+    if hasattr(to_point, "to_cartesian"):
         to_pt = to_point.to_cartesian()
     else:
         to_pt = to_point
@@ -1075,20 +1088,8 @@ def create_vector_resultant(
         ...     F_2 = ForceVector(magnitude=150, angle=120, unit="N", name="F_2")
         ...     F_R = create_vector_resultant(F_1, F_2, name="F_R")
     """
-    # Resolve unit if string
-    resolved_unit = None
-    if isinstance(unit, str):
-        from ..core.unit import ureg
-
-        resolved = ureg.resolve(unit)
-        if resolved is None:
-            raise ValueError(f"Unknown unit '{unit}'")
-        resolved_unit = resolved
-    elif unit is not None:
-        resolved_unit = unit
-    elif vectors:
-        # Get unit from first vector
-        resolved_unit = vectors[0]._unit
+    # Resolve unit using helper
+    resolved_unit = resolve_unit_from_string_or_fallback(unit, list(vectors) if vectors else None)
 
     # All components are unknown - they will be computed from component vectors
     unknowns = {"u": "u", "v": "v", "w": "w"}
@@ -1159,20 +1160,8 @@ def create_vector_resultant_cartesian(
         ...     name="F_R"
         ... )
     """
-    # Resolve unit if string
-    resolved_unit = None
-    if isinstance(unit, str):
-        from ..core.unit import ureg
-
-        resolved = ureg.resolve(unit)
-        if resolved is None:
-            raise ValueError(f"Unknown unit '{unit}'")
-        resolved_unit = resolved
-    elif unit is not None:
-        resolved_unit = unit
-    elif vectors:
-        # Get unit from first vector
-        resolved_unit = vectors[0]._unit
+    # Resolve unit using helper
+    resolved_unit = resolve_unit_from_string_or_fallback(unit, list(vectors) if vectors else None)
 
     # Create with the known resultant values (no unknowns in the resultant itself)
     # But store the component vectors for the solver to set up equilibrium equations
@@ -1194,11 +1183,11 @@ def create_vector_resultant_cartesian(
 
 def create_vector_resultant_polar(
     *vectors: _Vector,
-    magnitude: "float | EllipsisType",
+    magnitude: float | EllipsisType,
     angle: float,
     unit: Unit | str | None = None,
     angle_unit: str = "degree",
-    wrt: "str | _Vector" = "+x",
+    wrt: str | _Vector = "+x",
     name: str = "F_R",
 ) -> _VectorWithUnknowns:
     """
@@ -1250,12 +1239,7 @@ def create_vector_resultant_polar(
     import math
 
     # Convert angle to radians
-    if angle_unit.lower() in ("degree", "degrees", "deg"):
-        angle_rad = math.radians(float(angle))
-    elif angle_unit.lower() in ("radian", "radians", "rad"):
-        angle_rad = float(angle)
-    else:
-        raise ValueError(f"Invalid angle_unit '{angle_unit}'. Use 'degree' or 'radian'")
+    angle_rad = convert_angle_to_radians(angle, angle_unit)
 
     # Handle wrt as either a string axis or a reference vector
     wrt_is_vector = isinstance(wrt, _Vector)
@@ -1279,20 +1263,8 @@ def create_vector_resultant_polar(
         wrt_str = wrt
         wrt_lower = wrt.lower()
 
-    # Resolve unit if string
-    resolved_unit = None
-    if isinstance(unit, str):
-        from ..core.unit import ureg
-
-        resolved = ureg.resolve(unit)
-        if resolved is None:
-            raise ValueError(f"Unknown unit '{unit}'")
-        resolved_unit = resolved
-    elif unit is not None:
-        resolved_unit = unit
-    elif vectors:
-        # Get unit from first vector
-        resolved_unit = vectors[0]._unit
+    # Resolve unit using helper
+    resolved_unit = resolve_unit_from_string_or_fallback(unit, list(vectors) if vectors else None)
 
     # Check for unknown magnitude
     has_unknown_magnitude = magnitude is ...
@@ -1378,7 +1350,7 @@ def create_vector_resultant_polar(
 
 
 def create_vector_in_plane(
-    plane: "Any",
+    plane: Any,
     magnitude: float,
     angle: float,
     from_axis: str = "+y",
@@ -1420,12 +1392,7 @@ def create_vector_in_plane(
     import math
 
     # Convert angle to radians
-    if angle_unit.lower() in ("degree", "degrees", "deg"):
-        angle_rad = math.radians(float(angle))
-    elif angle_unit.lower() in ("radian", "radians", "rad"):
-        angle_rad = float(angle)
-    else:
-        raise ValueError(f"Invalid angle_unit '{angle_unit}'. Use 'degree' or 'radian'")
+    angle_rad = convert_angle_to_radians(angle, angle_unit)
 
     # Get axis vectors
     axis_vectors = {
@@ -1478,6 +1445,7 @@ def create_vector_in_plane(
     resolved_unit = None
     if isinstance(unit, str):
         from ..core.unit import ureg
+
         resolved = ureg.resolve(unit)
         if resolved is None:
             raise ValueError(f"Unknown unit '{unit}'")

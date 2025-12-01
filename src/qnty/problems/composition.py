@@ -160,10 +160,20 @@ class SubProblemProxy:
     def __getattr__(self, name):
         # Guard against deepcopy and pickle operations that cause recursion
         if name in {
-            '__setstate__', '__getstate__', '__getnewargs__', '__getnewargs_ex__',
-            '__reduce__', '__reduce_ex__', '__copy__', '__deepcopy__',
-            '__getattribute__', '__setattr__', '__delattr__',
-            '__dict__', '__weakref__', '__class__'
+            "__setstate__",
+            "__getstate__",
+            "__getnewargs__",
+            "__getnewargs_ex__",
+            "__reduce__",
+            "__reduce_ex__",
+            "__copy__",
+            "__deepcopy__",
+            "__getattribute__",
+            "__setattr__",
+            "__delattr__",
+            "__dict__",
+            "__weakref__",
+            "__class__",
         }:
             raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
 
@@ -283,10 +293,20 @@ class ConfigurableVariable:
         """Delegate all other attributes to the wrapped variable."""
         # Guard against deepcopy and pickle operations that cause recursion
         if name in {
-            '__setstate__', '__getstate__', '__getnewargs__', '__getnewargs_ex__',
-            '__reduce__', '__reduce_ex__', '__copy__', '__deepcopy__',
-            '__getattribute__', '__setattr__', '__delattr__',
-            '__dict__', '__weakref__', '__class__'
+            "__setstate__",
+            "__getstate__",
+            "__getnewargs__",
+            "__getnewargs_ex__",
+            "__reduce__",
+            "__reduce_ex__",
+            "__copy__",
+            "__deepcopy__",
+            "__getattribute__",
+            "__setattr__",
+            "__delattr__",
+            "__dict__",
+            "__weakref__",
+            "__class__",
         }:
             raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
 
@@ -296,7 +316,7 @@ class ConfigurableVariable:
             return getattr(self._variable, "_arithmetic_mode", "expression")
 
         # Prevent infinite recursion by checking if _variable exists
-        if not hasattr(self, '_variable'):
+        if not hasattr(self, "_variable"):
             raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
 
         return getattr(self._variable, name)
@@ -428,15 +448,25 @@ class TrackingSetterWrapper:
         """
         # Guard against deepcopy and pickle operations that cause recursion
         if name in {
-            '__setstate__', '__getstate__', '__getnewargs__', '__getnewargs_ex__',
-            '__reduce__', '__reduce_ex__', '__copy__', '__deepcopy__',
-            '__getattribute__', '__setattr__', '__delattr__',
-            '__dict__', '__weakref__', '__class__'
+            "__setstate__",
+            "__getstate__",
+            "__getnewargs__",
+            "__getnewargs_ex__",
+            "__reduce__",
+            "__reduce_ex__",
+            "__copy__",
+            "__deepcopy__",
+            "__getattribute__",
+            "__setattr__",
+            "__delattr__",
+            "__dict__",
+            "__weakref__",
+            "__class__",
         }:
             raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
 
         # Prevent infinite recursion by checking if _original_setter exists
-        if not hasattr(self, '_original_setter'):
+        if not hasattr(self, "_original_setter"):
             raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
 
         # Get the property from the original setter
@@ -918,6 +948,24 @@ class CompositionMixin:
             # This ensures pressure values are established before dependent equations
             self.equations.insert(0, equation)
 
+    def _find_canonical_variable(self, var) -> tuple[bool, Any]:
+        """
+        Find a canonical variable in self.variables that matches the given variable by name.
+
+        Args:
+            var: Variable to find a canonical match for
+
+        Returns:
+            Tuple of (found, canonical_var) where found is True if a match was found
+            and canonical_var is the matching variable (or None if not found)
+        """
+        if not hasattr(var, "name"):
+            return False, None
+        for canonical_var in self.variables.values():
+            if hasattr(canonical_var, "name") and var.name == canonical_var.name and id(var) != id(canonical_var):
+                return True, canonical_var
+        return False, None
+
     def _fix_equation_variable_references(self, equation):
         """Fix variable references in equations to use canonical variables from self.variables."""
         from ..algebra.equation import Equation
@@ -930,21 +978,17 @@ class CompositionMixin:
 
             # Fix LHS if it's a variable reference
             if isinstance(equation.lhs, VariableReference):
-                lhs_var = equation.lhs.variable
-                for canonical_var in self.variables.values():
-                    if hasattr(lhs_var, "name") and hasattr(canonical_var, "name") and lhs_var.name == canonical_var.name and id(lhs_var) != id(canonical_var):
-                        new_lhs = VariableReference(canonical_var)
-                        changed = True
-                        break
+                found, canonical_var = self._find_canonical_variable(equation.lhs.variable)
+                if found:
+                    new_lhs = VariableReference(canonical_var)
+                    changed = True
 
             # Fix RHS if it's a variable reference
             if isinstance(equation.rhs, VariableReference):
-                rhs_var = equation.rhs.variable
-                for canonical_var in self.variables.values():
-                    if hasattr(rhs_var, "name") and hasattr(canonical_var, "name") and rhs_var.name == canonical_var.name and id(rhs_var) != id(canonical_var):
-                        new_rhs = VariableReference(canonical_var)
-                        changed = True
-                        break
+                found, canonical_var = self._find_canonical_variable(equation.rhs.variable)
+                if found:
+                    new_rhs = VariableReference(canonical_var)
+                    changed = True
 
             # Return new equation if any references were fixed
             if changed:
@@ -1116,16 +1160,26 @@ class CompositionMixin:
 
             def __getattr__(self, name):
                 # Guard against deepcopy and pickle operations that cause recursion
-                if name.startswith('_') or name in {
-                    '__setstate__', '__getstate__', '__getnewargs__', '__getnewargs_ex__',
-                    '__reduce__', '__reduce_ex__', '__copy__', '__deepcopy__',
-                    '__getattribute__', '__setattr__', '__delattr__',
-                    '__dict__', '__weakref__', '__class__'
+                if name.startswith("_") or name in {
+                    "__setstate__",
+                    "__getstate__",
+                    "__getnewargs__",
+                    "__getnewargs_ex__",
+                    "__reduce__",
+                    "__reduce_ex__",
+                    "__copy__",
+                    "__deepcopy__",
+                    "__getattribute__",
+                    "__setattr__",
+                    "__delattr__",
+                    "__dict__",
+                    "__weakref__",
+                    "__class__",
                 }:
                     raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
 
                 # Prevent infinite recursion by checking if _wrapped_var exists
-                if not hasattr(self, '_wrapped_var'):
+                if not hasattr(self, "_wrapped_var"):
                     raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
 
                 # For all other attributes, delegate to the wrapped variable
@@ -1174,16 +1228,26 @@ class CompositionMixin:
 
             def __getattr__(self, name):
                 # Guard against deepcopy and pickle operations that cause recursion
-                if name.startswith('_') or name in {
-                    '__setstate__', '__getstate__', '__getnewargs__', '__getnewargs_ex__',
-                    '__reduce__', '__reduce_ex__', '__copy__', '__deepcopy__',
-                    '__getattribute__', '__setattr__', '__delattr__',
-                    '__dict__', '__weakref__', '__class__'
+                if name.startswith("_") or name in {
+                    "__setstate__",
+                    "__getstate__",
+                    "__getnewargs__",
+                    "__getnewargs_ex__",
+                    "__reduce__",
+                    "__reduce_ex__",
+                    "__copy__",
+                    "__deepcopy__",
+                    "__getattribute__",
+                    "__setattr__",
+                    "__delattr__",
+                    "__dict__",
+                    "__weakref__",
+                    "__class__",
                 }:
                     raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
 
                 # Prevent infinite recursion by checking if _setter exists
-                if not hasattr(self, '_setter'):
+                if not hasattr(self, "_setter"):
                     raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
 
                 # When a unit is accessed (like .inch), get the final variable and update namespace
@@ -1702,16 +1766,26 @@ class ProxiedNamespace(dict):
 
             def __getattr__(self, name):
                 # Guard against deepcopy and pickle operations that cause recursion
-                if name.startswith('_') or name in {
-                    '__setstate__', '__getstate__', '__getnewargs__', '__getnewargs_ex__',
-                    '__reduce__', '__reduce_ex__', '__copy__', '__deepcopy__',
-                    '__getattribute__', '__setattr__', '__delattr__',
-                    '__dict__', '__weakref__', '__class__'
+                if name.startswith("_") or name in {
+                    "__setstate__",
+                    "__getstate__",
+                    "__getnewargs__",
+                    "__getnewargs_ex__",
+                    "__reduce__",
+                    "__reduce_ex__",
+                    "__copy__",
+                    "__deepcopy__",
+                    "__getattribute__",
+                    "__setattr__",
+                    "__delattr__",
+                    "__dict__",
+                    "__weakref__",
+                    "__class__",
                 }:
                     raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
 
                 # Prevent infinite recursion by checking if _wrapped exists
-                if not hasattr(self, '_wrapped'):
+                if not hasattr(self, "_wrapped"):
                     raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
 
                 # Delegate all attribute access to the wrapped variable

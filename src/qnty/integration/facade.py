@@ -148,82 +148,9 @@ class parallelogram_law:
     default_output_unit: str = "N"
     default_angle_unit: str = "degree"
 
-    @staticmethod
-    def create_vector(
-        *,
-        u: float = 0.0,
-        v: float = 0.0,
-        w: float = 0.0,
-        magnitude: float | None = None,
-        angle: float | None = None,
-        angle_unit: str = "degree",
-        angle_wrt: str = "+x",
-        plane: str = "xy",
-        unit: str = "N",
-        name: str | None = None,
-        is_known: bool = True,
-        is_resultant: bool = False,
-    ) -> VectorDTO:
-        """
-        Create a vector for this problem.
-
-        Can be created using either:
-        - Cartesian components (u, v, w)
-        - Polar coordinates (magnitude, angle)
-
-        Args:
-            u: X-component (Cartesian)
-            v: Y-component (Cartesian)
-            w: Z-component (Cartesian, default 0)
-            magnitude: Vector magnitude (polar)
-            angle: Angle from reference axis (polar)
-            angle_unit: "degree" or "radian"
-            angle_wrt: Reference axis ("+x", "-x", "+y", "-y")
-            plane: Plane for 2D vectors ("xy", "xz", "yz")
-            unit: Force/length unit
-            name: Vector name/label
-
-        Returns:
-            VectorDTO ready for use in solve()
-        """
-        return VectorDTO(
-            u=u,
-            v=v,
-            w=w,
-            unit=unit,
-            name=name,
-            magnitude=magnitude,
-            angle=angle,
-            angle_unit=angle_unit,
-            angle_wrt=angle_wrt,
-            plane=plane,
-            is_known=is_known,
-            is_resultant=is_resultant,
-        )
-
-    @staticmethod
-    def create_point(
-        *,
-        x: float,
-        y: float,
-        z: float = 0.0,
-        unit: str = "m",
-        name: str | None = None,
-    ) -> PointDTO:
-        """
-        Create a point for this problem.
-
-        Args:
-            x: X-coordinate
-            y: Y-coordinate
-            z: Z-coordinate (default 0)
-            unit: Length unit
-            name: Point name/label
-
-        Returns:
-            PointDTO ready for use in solve()
-        """
-        return PointDTO(x=x, y=y, z=z, unit=unit, name=name)
+    # Use shared factory functions
+    create_vector = staticmethod(_create_vector_dto)
+    create_point = staticmethod(_create_point_dto)
 
     @staticmethod
     def create_input(

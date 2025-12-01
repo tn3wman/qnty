@@ -10,6 +10,7 @@ from __future__ import annotations
 import math
 
 from ..core.unit import Unit
+from ..utils.shared_utilities import convert_angle_to_radians_optional, resolve_length_unit_from_string
 from .vector import _Vector
 from .vector_helpers import compute_missing_direction_angle
 
@@ -77,20 +78,10 @@ class VectorDirectionAngles:
         self._name = name
         self._magnitude = float(magnitude)
 
-        # Convert angles to radians
-        def to_radians(angle_val):
-            if angle_val is None:
-                return None
-            if angle_unit.lower() in ("degree", "degrees", "deg"):
-                return math.radians(float(angle_val))
-            elif angle_unit.lower() in ("radian", "radians", "rad"):
-                return float(angle_val)
-            else:
-                raise ValueError(f"Invalid angle_unit '{angle_unit}'. Use 'degree' or 'radian'")
-
-        alpha_rad = to_radians(alpha)
-        beta_rad = to_radians(beta)
-        gamma_rad = to_radians(gamma)
+        # Convert angles to radians using shared utility
+        alpha_rad = convert_angle_to_radians_optional(alpha, angle_unit)
+        beta_rad = convert_angle_to_radians_optional(beta, angle_unit)
+        gamma_rad = convert_angle_to_radians_optional(gamma, angle_unit)
 
         # Calculate missing angle from constraint cos²α + cos²β + cos²γ = 1
         alpha_rad, beta_rad, gamma_rad = compute_missing_direction_angle(alpha_rad, beta_rad, gamma_rad)
@@ -105,16 +96,7 @@ class VectorDirectionAngles:
         self._gamma_rad = gamma_rad
 
         # Resolve unit
-        if isinstance(unit, str):
-            from ..core.dimension_catalog import dim
-            from ..core.unit import ureg
-
-            resolved = ureg.resolve(unit, dim=dim.length)
-            if resolved is None:
-                raise ValueError(f"Unknown length unit '{unit}'")
-            self._unit = resolved
-        else:
-            self._unit = unit
+        self._unit = resolve_length_unit_from_string(unit)
 
         # Compute Cartesian components using direction cosines
         u = self._magnitude * math.cos(self._alpha_rad)

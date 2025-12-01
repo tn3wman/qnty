@@ -12,6 +12,7 @@ import math
 import numpy as np
 
 from ..core.unit import Unit
+from ..utils.shared_utilities import convert_angle_to_radians
 
 
 class Plane:
@@ -165,12 +166,7 @@ def create_plane_rotated_x(
         >>> p2 = create_plane_rotated_x(angle=90)
     """
     # Convert angle to radians
-    if angle_unit.lower() in ("degree", "degrees", "deg"):
-        angle_rad = math.radians(float(angle))
-    elif angle_unit.lower() in ("radian", "radians", "rad"):
-        angle_rad = float(angle)
-    else:
-        raise ValueError(f"Invalid angle_unit '{angle_unit}'. Use 'degree' or 'radian'")
+    angle_rad = convert_angle_to_radians(angle, angle_unit)
 
     # Rotation around x-axis
     # Starting normal: [0, 0, 1] (z-axis)
@@ -220,12 +216,7 @@ def create_plane_rotated_y(
         >>> p2 = create_plane_rotated_y(angle=-30, start_plane="zy")
     """
     # Convert angle to radians
-    if angle_unit.lower() in ("degree", "degrees", "deg"):
-        angle_rad = math.radians(float(angle))
-    elif angle_unit.lower() in ("radian", "radians", "rad"):
-        angle_rad = float(angle)
-    else:
-        raise ValueError(f"Invalid angle_unit '{angle_unit}'. Use 'degree' or 'radian'")
+    angle_rad = convert_angle_to_radians(angle, angle_unit)
 
     # Rotation around y-axis
     if start_plane.lower() == "xy":
@@ -282,12 +273,7 @@ def create_plane_rotated_z(
         >>> p2 = create_plane_rotated_z(angle=90)
     """
     # Convert angle to radians
-    if angle_unit.lower() in ("degree", "degrees", "deg"):
-        angle_rad = math.radians(float(angle))
-    elif angle_unit.lower() in ("radian", "radians", "rad"):
-        angle_rad = float(angle)
-    else:
-        raise ValueError(f"Invalid angle_unit '{angle_unit}'. Use 'degree' or 'radian'")
+    angle_rad = convert_angle_to_radians(angle, angle_unit)
 
     # Rotation around z-axis
     # Starting normal: [0, 1, 0] (y-axis)

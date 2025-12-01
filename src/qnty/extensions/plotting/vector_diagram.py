@@ -12,7 +12,9 @@ from pathlib import Path
 
 from ..diagram_utils import (
     VectorDiagramBase,
-    populate_force_diagram,
+)
+from ..diagram_utils import (
+    create_force_diagram as _create_force_diagram_impl,
 )
 
 
@@ -39,16 +41,11 @@ class VectorDiagram(VectorDiagramBase):
         >>> diagram.add_resultant(FR, color='green', label='FR')
         >>> diagram.save("diagram.png")
     """
+
     pass
 
 
-def create_force_diagram(
-    problem,
-    output_path: str | Path,
-    title: str | None = None,
-    show_components: bool = False,
-    **kwargs
-) -> Path:
+def create_force_diagram(problem, output_path: str | Path, title: str | None = None, show_components: bool = False, **kwargs) -> Path:
     """
     Create vector diagram from a VectorEquilibriumProblem.
 
@@ -67,7 +64,4 @@ def create_force_diagram(
         >>> problem.solve()
         >>> create_force_diagram(problem, "diagram.png")
     """
-    title = title or problem.name
-    diagram = VectorDiagram(title=title, show_components=show_components, **kwargs)
-    populate_force_diagram(diagram, problem)
-    return diagram.save(output_path)
+    return _create_force_diagram_impl(problem, output_path, VectorDiagram, title, show_components, **kwargs)

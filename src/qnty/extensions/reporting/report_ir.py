@@ -15,8 +15,33 @@ from pathlib import Path
 from ...utils.shared_utilities import escape_latex as _escape_latex_util
 
 
+def _format_vector_ref_as_latex(ref: str) -> str:
+    """
+    Format a vector reference string (like "@F_BA") as LaTeX.
+
+    Converts vector-relative references from the internal "@name" format
+    to proper LaTeX vector notation: $\\vec{F_{BA}}$.
+
+    Args:
+        ref: Reference string, possibly starting with '@' for vector references
+
+    Returns:
+        LaTeX-formatted string, or original string if not a vector reference
+    """
+    if not ref.startswith("@"):
+        return ref
+    vec_name_ref = ref[1:]  # Remove the @ prefix
+    # Format as LaTeX vector: F_BA -> $\vec{F_{BA}}$
+    if "_" in vec_name_ref:
+        parts = vec_name_ref.split("_", 1)
+        return f"$\\vec{{{parts[0]}_{{{parts[1]}}}}}$"
+    else:
+        return f"$\\vec{{{vec_name_ref}}}$"
+
+
 class TableAlignment(Enum):
     """Column alignment for tables."""
+
     LEFT = "left"
     CENTER = "center"
     RIGHT = "right"
@@ -26,6 +51,7 @@ class TableAlignment(Enum):
 @dataclass
 class TableColumn:
     """Definition of a table column."""
+
     header: str
     alignment: TableAlignment = TableAlignment.LEFT
 
@@ -33,6 +59,7 @@ class TableColumn:
 @dataclass
 class TableRow:
     """A row of table data."""
+
     cells: list[str]
     is_header: bool = False
 
@@ -40,6 +67,7 @@ class TableRow:
 @dataclass
 class Table:
     """A table in the report."""
+
     columns: list[TableColumn]
     rows: list[TableRow]
     caption: str | None = None
@@ -48,6 +76,7 @@ class Table:
 @dataclass
 class Equation:
     """An equation to display."""
+
     text: str
     is_latex: bool = False  # If True, text is already in LaTeX format
 
@@ -55,6 +84,7 @@ class Equation:
 @dataclass
 class SolutionStep:
     """A step in the solution process."""
+
     step_number: int
     title: str
     equation: str
@@ -67,6 +97,7 @@ class SolutionStep:
 @dataclass
 class Section:
     """A section of the report."""
+
     title: str
     level: int = 1  # 1 = top level, 2 = subsection, etc.
     content: list[str | Table | Equation | SolutionStep | Section] = field(default_factory=list)
@@ -75,6 +106,7 @@ class Section:
 @dataclass
 class ReportIR:
     """Intermediate Representation of a complete report."""
+
     title: str
     generated_date: datetime
     description: str | None = None
@@ -128,26 +160,26 @@ class MarkdownRenderer(ReportRenderer):
             output = []
             i = 0
             while i < len(text):
-                if text[i:i+4] == r'\vv{':
+                if text[i : i + 4] == r"\vv{":
                     # Find matching closing brace
                     start = i + 4
                     depth = 1
                     j = start
                     while j < len(text) and depth > 0:
-                        if text[j] == '{':
+                        if text[j] == "{":
                             depth += 1
-                        elif text[j] == '}':
+                        elif text[j] == "}":
                             depth -= 1
                         j += 1
-                    inner = text[start:j-1]
+                    inner = text[start : j - 1]
                     # Recursively expand any nested \vv
                     inner = expand_vv(inner)
-                    output.append(r'\vec{' + inner + '}')
+                    output.append(r"\vec{" + inner + "}")
                     i = j
                 else:
                     output.append(text[i])
                     i += 1
-            return ''.join(output)
+            return "".join(output)
 
         result = expand_vv(result)
 
@@ -157,26 +189,26 @@ class MarkdownRenderer(ReportRenderer):
             output = []
             i = 0
             while i < len(text):
-                if text[i:i+6] == r'\magn{':
+                if text[i : i + 6] == r"\magn{":
                     # Find matching closing brace
                     start = i + 6
                     depth = 1
                     j = start
                     while j < len(text) and depth > 0:
-                        if text[j] == '{':
+                        if text[j] == "{":
                             depth += 1
-                        elif text[j] == '}':
+                        elif text[j] == "}":
                             depth -= 1
                         j += 1
-                    inner = text[start:j-1]
+                    inner = text[start : j - 1]
                     # Recursively expand any nested \magn
                     inner = expand_magn(inner)
-                    output.append('|' + inner + '|')
+                    output.append("|" + inner + "|")
                     i = j
                 else:
                     output.append(text[i])
                     i += 1
-            return ''.join(output)
+            return "".join(output)
 
         result = expand_magn(result)
 
@@ -284,18 +316,17 @@ class MarkdownRenderer(ReportRenderer):
         result = header
 
         # Handle magnitude notation |F| (unit)
-        magnitude_match = re.match(r'\|([A-Za-z]+)\|\s*\(([^)]+)\)', header)
+        magnitude_match = re.match(r"\|([A-Za-z]+)\|\s*\(([^)]+)\)", header)
         if magnitude_match:
             var = magnitude_match.group(1)
             unit = magnitude_match.group(2)
             return f"$\\|\\vec{{{var}}}\\|$ ({unit})"
 
         # Handle subscript notation Fₓ (unit), Fᵧ (unit), Fᵤ (unit), Fᵥ (unit), Fₐ (unit), Fᵦ (unit)
-        subscript_map = {"ₓ": "x", "ᵧ": "y", "ᵤ": "u", "ᵥ": "v", "ₙ": "n", "ₜ": "t", "₁": "1", "₂": "2", "₃": "3",
-                         "ₐ": "a", "ᵦ": "b"}  # Added a and b for custom coordinate systems
+        subscript_map = {"ₓ": "x", "ᵧ": "y", "ᵤ": "u", "ᵥ": "v", "ₙ": "n", "ₜ": "t", "₁": "1", "₂": "2", "₃": "3", "ₐ": "a", "ᵦ": "b"}  # Added a and b for custom coordinate systems
         for unicode_sub, ascii_sub in subscript_map.items():
             if unicode_sub in result:
-                sub_match = re.match(r'([A-Za-z]+)' + unicode_sub + r'\s*\(([^)]+)\)', result)
+                sub_match = re.match(r"([A-Za-z]+)" + unicode_sub + r"\s*\(([^)]+)\)", result)
                 if sub_match:
                     base = sub_match.group(1)
                     unit = sub_match.group(2)
@@ -305,7 +336,7 @@ class MarkdownRenderer(ReportRenderer):
         greek_map = {"θ": r"\theta", "φ": r"\varphi", "α": r"\alpha", "β": r"\beta", "γ": r"\gamma"}
         for greek, latex in greek_map.items():
             if result.startswith(greek):
-                greek_match = re.match(greek + r'\s*\(([^)]+)\)', result)
+                greek_match = re.match(greek + r"\s*\(([^)]+)\)", result)
                 if greek_match:
                     unit = greek_match.group(1)
                     return f"${latex}$ ({unit})"
@@ -359,7 +390,8 @@ class MarkdownRenderer(ReportRenderer):
         """Format a vector symbol for Markdown using LaTeX."""
         # Convert F_1, F_R etc to LaTeX vector notation
         import re
-        if re.match(r'^[A-Z]_', symbol):
+
+        if re.match(r"^[A-Z]_", symbol):
             # It's a vector like F_1 or F_R
             # Format as scalar first, then wrap in \vec{} for Markdown
             # (We use \vec{} directly for Markdown instead of the \vv{} macro)
@@ -410,8 +442,9 @@ class MarkdownRenderer(ReportRenderer):
         For numbered equations like "1. |F_R|² = ...", wraps the equation in $...$
         """
         import re
+
         # Check for numbered equation pattern
-        match = re.match(r'^(\d+\.\s*)(.+)$', text)
+        match = re.match(r"^(\d+\.\s*)(.+)$", text)
         if match:
             number = match.group(1)
             equation = match.group(2)
@@ -531,7 +564,8 @@ class LaTeXRenderer(ReportRenderer):
         # Strip leading number pattern (e.g., "1. " or "2. ") from title
         # since LaTeX \section commands handle numbering automatically
         import re
-        title = re.sub(r'^\d+\.\s*', '', section.title)
+
+        title = re.sub(r"^\d+\.\s*", "", section.title)
 
         # Section header
         if section.level == 1:
@@ -544,14 +578,15 @@ class LaTeXRenderer(ReportRenderer):
 
         # Content - collect numbered equations to render in enumerate environment
         import re
+
         numbered_equations = []
         i = 0
         while i < len(section.content):
             item = section.content[i]
             if isinstance(item, str):
                 # Check if this looks like a numbered equation (e.g., "1. F_R² = ...")
-                eq_match = re.match(r'^(\d+)\.\s*(.+)$', item)
-                if eq_match and '=' in item:
+                eq_match = re.match(r"^(\d+)\.\s*(.+)$", item)
+                if eq_match and "=" in item:
                     # Collect consecutive numbered equations
                     numbered_equations.append(eq_match.group(2))
                     i += 1
@@ -753,7 +788,7 @@ class LaTeXRenderer(ReportRenderer):
         import re
 
         # Check for angle notation ∠(F_1,F_2) possibly followed by additional text
-        angle_match = re.match(r'∠\(([^,]+),\s*([^)]+)\)(.*)', title)
+        angle_match = re.match(r"∠\(([^,]+),\s*([^)]+)\)(.*)", title)
         if angle_match:
             v1 = angle_match.group(1)
             v2 = angle_match.group(2)
@@ -767,7 +802,7 @@ class LaTeXRenderer(ReportRenderer):
             return result
 
         # Check for magnitude notation |...| possibly followed by additional text
-        magnitude_match = re.match(r'\|([^|]+)\|(.*)', title)
+        magnitude_match = re.match(r"\|([^|]+)\|(.*)", title)
         if magnitude_match:
             inner = magnitude_match.group(1)
             suffix = magnitude_match.group(2).strip()
@@ -892,19 +927,18 @@ class LaTeXRenderer(ReportRenderer):
         import re
 
         # Check for magnitude notation like "|F| (N)"
-        magnitude_match = re.match(r'\|([A-Za-z]+)\|\s*\(([^)]+)\)', header)
+        magnitude_match = re.match(r"\|([A-Za-z]+)\|\s*\(([^)]+)\)", header)
         if magnitude_match:
             var = magnitude_match.group(1)
             unit = magnitude_match.group(2)
             return r"$\magn{\vv{" + var + r"}}$ (" + self._escape_latex(unit) + ")"
 
         # Check for subscript notation like "Fₓ (N)", "Fᵧ (N)", "Fᵤ (N)", "Fᵥ (N)", "Fₐ (N)", "Fᵦ (N)"
-        subscript_map = {"ₓ": "x", "ᵧ": "y", "ᵤ": "u", "ᵥ": "v", "ₙ": "n", "ₜ": "t", "₁": "1", "₂": "2", "₃": "3",
-                         "ₐ": "a", "ᵦ": "b"}  # Added a and b for custom coordinate systems
+        subscript_map = {"ₓ": "x", "ᵧ": "y", "ᵤ": "u", "ᵥ": "v", "ₙ": "n", "ₜ": "t", "₁": "1", "₂": "2", "₃": "3", "ₐ": "a", "ᵦ": "b"}  # Added a and b for custom coordinate systems
         for unicode_sub, ascii_sub in subscript_map.items():
             if unicode_sub in header:
                 # Parse pattern like "Fₓ (unit)"
-                sub_match = re.match(r'([A-Za-z]+)' + unicode_sub + r'\s*\(([^)]+)\)', header)
+                sub_match = re.match(r"([A-Za-z]+)" + unicode_sub + r"\s*\(([^)]+)\)", header)
                 if sub_match:
                     base = sub_match.group(1)
                     unit = sub_match.group(2)
@@ -915,7 +949,7 @@ class LaTeXRenderer(ReportRenderer):
         for greek, latex in greek_map.items():
             if header.startswith(greek):
                 # Parse pattern like "θ (deg)"
-                greek_match = re.match(greek + r'\s*\(([^)]+)\)', header)
+                greek_match = re.match(greek + r"\s*\(([^)]+)\)", header)
                 if greek_match:
                     unit = greek_match.group(1)
                     return r"$" + latex + r"$ (" + self._escape_latex(unit) + ")"
@@ -1040,7 +1074,7 @@ class LaTeXRenderer(ReportRenderer):
             v2_formatted = self._format_latex_variable(v2, as_vector=True)
             return r"\angle(" + v1_formatted + ", " + v2_formatted + ")"
 
-        result = re.sub(r'∠\(([^,]+),\s*([^)]+)\)', angle_replacer, result)
+        result = re.sub(r"∠\(([^,]+),\s*([^)]+)\)", angle_replacer, result)
 
         # Handle explicit magnitude notation |...| BEFORE variable processing
         # This captures magnitude expressions and formats them properly
@@ -1057,7 +1091,7 @@ class LaTeXRenderer(ReportRenderer):
                 return r"\magn{\vv{" + inner_formatted + "}}"
             return r"\magn{" + inner + "}"
 
-        result = re.sub(r'\|([^|]+)\|', magnitude_replacer, result)
+        result = re.sub(r"\|([^|]+)\|", magnitude_replacer, result)
 
         # Handle nested subscripts like F_R or θ_F_R
         # In equation context, F_R represents the magnitude (scalar), not the vector
@@ -1068,7 +1102,7 @@ class LaTeXRenderer(ReportRenderer):
 
             # Check if subscript itself has an underscore (nested case like F_1 in θ_F_1)
             # We want θ_{F_1} to render as theta with "F₁" as subscript
-            if '_' in subscript:
+            if "_" in subscript:
                 # For nested subscripts: F_1 -> F_1 (keep underscore, LaTeX handles it)
                 # The outer braces group it as a single subscript unit
                 # Inner underscores create sub-subscripts in LaTeX
@@ -1084,7 +1118,7 @@ class LaTeXRenderer(ReportRenderer):
 
         # Match: word character or backslash+word (for \theta etc) followed by _something
         # But NOT if already inside a \vv{} or \magn{} command
-        result = re.sub(r'(?<!\\vv\{)(?<!\\magn\{)(\\?[A-Za-z]+)_([A-Za-z0-9_]+)', subscript_replacer, result)
+        result = re.sub(r"(?<!\\vv\{)(?<!\\magn\{)(\\?[A-Za-z]+)_([A-Za-z0-9_]+)", subscript_replacer, result)
 
         # Replace superscript ² with ^2
         result = result.replace("²", "^2")
@@ -1096,13 +1130,13 @@ class LaTeXRenderer(ReportRenderer):
 
         # Replace trig functions (need to handle already-converted \theta etc)
         # Handle inverse trig functions first (sin⁻¹, cos⁻¹, tan⁻¹)
-        result = result.replace('sin⁻¹(', r'\sin^{-1}(')
-        result = result.replace('cos⁻¹(', r'\cos^{-1}(')
-        result = result.replace('tan⁻¹(', r'\tan^{-1}(')
+        result = result.replace("sin⁻¹(", r"\sin^{-1}(")
+        result = result.replace("cos⁻¹(", r"\cos^{-1}(")
+        result = result.replace("tan⁻¹(", r"\tan^{-1}(")
         # Then regular trig functions
-        result = re.sub(r'(?<!\\)sin\(', r'\\sin(', result)
-        result = re.sub(r'(?<!\\)cos\(', r'\\cos(', result)
-        result = re.sub(r'(?<!\\)tan\(', r'\\tan(', result)
+        result = re.sub(r"(?<!\\)sin\(", r"\\sin(", result)
+        result = re.sub(r"(?<!\\)cos\(", r"\\cos(", result)
+        result = re.sub(r"(?<!\\)tan\(", r"\\tan(", result)
 
         # Handle sqrt - need to track balanced parentheses
         def replace_sqrt(text):
@@ -1110,25 +1144,25 @@ class LaTeXRenderer(ReportRenderer):
             output = []
             i = 0
             while i < len(text):
-                if text[i:i+5] == 'sqrt(':
+                if text[i : i + 5] == "sqrt(":
                     # Find the matching closing parenthesis
                     start = i + 5
                     depth = 1
                     j = start
                     while j < len(text) and depth > 0:
-                        if text[j] == '(':
+                        if text[j] == "(":
                             depth += 1
-                        elif text[j] == ')':
+                        elif text[j] == ")":
                             depth -= 1
                         j += 1
                     # j now points to one past the closing paren
-                    inner = text[start:j-1]
-                    output.append(r'\sqrt{' + inner + '}')
+                    inner = text[start : j - 1]
+                    output.append(r"\sqrt{" + inner + "}")
                     i = j
                 else:
                     output.append(text[i])
                     i += 1
-            return ''.join(output)
+            return "".join(output)
 
         result = replace_sqrt(result)
 
@@ -1136,14 +1170,14 @@ class LaTeXRenderer(ReportRenderer):
         # Need to identify the numerator and denominator properly
         def find_balanced_braces(text, start):
             """Find the end of balanced braces starting at start (which should be '{')."""
-            if start >= len(text) or text[start] != '{':
+            if start >= len(text) or text[start] != "{":
                 return start
             depth = 1
             i = start + 1
             while i < len(text) and depth > 0:
-                if text[i] == '{':
+                if text[i] == "{":
                     depth += 1
-                elif text[i] == '}':
+                elif text[i] == "}":
                     depth -= 1
                 i += 1
             return i
@@ -1153,7 +1187,7 @@ class LaTeXRenderer(ReportRenderer):
             output = []
             i = 0
             while i < len(text):
-                if text[i] == '/':
+                if text[i] == "/":
                     # Find the numerator (go backwards)
                     # Could be: sin(...), |...|, \magn{...}, a single term, or parenthesized expression
                     num_end = i
@@ -1161,42 +1195,42 @@ class LaTeXRenderer(ReportRenderer):
 
                     if num_start >= 0:
                         # Check for closing paren/bracket
-                        if text[num_start] == ')':
+                        if text[num_start] == ")":
                             # Find matching open paren
                             depth = 1
                             num_start -= 1
                             while num_start >= 0 and depth > 0:
-                                if text[num_start] == ')':
+                                if text[num_start] == ")":
                                     depth += 1
-                                elif text[num_start] == '(':
+                                elif text[num_start] == "(":
                                     depth -= 1
                                 num_start -= 1
                             num_start += 1
                             # Check if preceded by function name like \sin
-                            while num_start > 0 and (text[num_start-1].isalpha() or text[num_start-1] == '\\'):
+                            while num_start > 0 and (text[num_start - 1].isalpha() or text[num_start - 1] == "\\"):
                                 num_start -= 1
-                        elif text[num_start] == '|':
+                        elif text[num_start] == "|":
                             # Find matching open |
                             num_start -= 1
-                            while num_start >= 0 and text[num_start] != '|':
+                            while num_start >= 0 and text[num_start] != "|":
                                 num_start -= 1
-                        elif text[num_start] == '}':
+                        elif text[num_start] == "}":
                             # Find matching open { and include preceding command
                             depth = 1
                             num_start -= 1
                             while num_start >= 0 and depth > 0:
-                                if text[num_start] == '}':
+                                if text[num_start] == "}":
                                     depth += 1
-                                elif text[num_start] == '{':
+                                elif text[num_start] == "{":
                                     depth -= 1
                                 num_start -= 1
                             num_start += 1
                             # Include preceding command like \magn
-                            while num_start > 0 and (text[num_start-1].isalpha() or text[num_start-1] == '\\'):
+                            while num_start > 0 and (text[num_start - 1].isalpha() or text[num_start - 1] == "\\"):
                                 num_start -= 1
                         else:
                             # Single term - go back to start of term
-                            while num_start > 0 and (text[num_start-1].isalnum() or text[num_start-1] in '_\\{}^'):
+                            while num_start > 0 and (text[num_start - 1].isalnum() or text[num_start - 1] in "_\\{}^"):
                                 num_start -= 1
 
                     # Find the denominator (go forwards)
@@ -1204,59 +1238,59 @@ class LaTeXRenderer(ReportRenderer):
                     den_end = den_start
 
                     if den_end < len(text):
-                        if text[den_start] == '|':
+                        if text[den_start] == "|":
                             # Find matching close |
                             den_end += 1
-                            while den_end < len(text) and text[den_end] != '|':
+                            while den_end < len(text) and text[den_end] != "|":
                                 den_end += 1
                             den_end += 1  # Include the closing |
-                        elif text[den_start] == '(':
+                        elif text[den_start] == "(":
                             # Find matching close paren
                             depth = 1
                             den_end += 1
                             while den_end < len(text) and depth > 0:
-                                if text[den_end] == '(':
+                                if text[den_end] == "(":
                                     depth += 1
-                                elif text[den_end] == ')':
+                                elif text[den_end] == ")":
                                     depth -= 1
                                 den_end += 1
-                        elif text[den_start] == '\\':
+                        elif text[den_start] == "\\":
                             # LaTeX command like \sin(...) or \magn{...}
                             den_end += 1
                             while den_end < len(text) and text[den_end].isalpha():
                                 den_end += 1
                             # Check for {...} argument
-                            if den_end < len(text) and text[den_end] == '{':
+                            if den_end < len(text) and text[den_end] == "{":
                                 den_end = find_balanced_braces(text, den_end)
                             # Check for (...) argument
-                            elif den_end < len(text) and text[den_end] == '(':
+                            elif den_end < len(text) and text[den_end] == "(":
                                 depth = 1
                                 den_end += 1
                                 while den_end < len(text) and depth > 0:
-                                    if text[den_end] == '(':
+                                    if text[den_end] == "(":
                                         depth += 1
-                                    elif text[den_end] == ')':
+                                    elif text[den_end] == ")":
                                         depth -= 1
                                     den_end += 1
                         else:
                             # Single term (include decimal point for numbers like 700.000)
-                            while den_end < len(text) and (text[den_end].isalnum() or text[den_end] in '_\\{}^.'):
+                            while den_end < len(text) and (text[den_end].isalnum() or text[den_end] in "_\\{}^."):
                                 den_end += 1
 
                     numerator = text[num_start:num_end]
                     denominator = text[den_start:den_end]
 
                     # Remove what we've already added that's part of numerator
-                    output_str = ''.join(output)
+                    output_str = "".join(output)
                     if output_str.endswith(numerator):
-                        output = list(output_str[:-len(numerator)])
+                        output = list(output_str[: -len(numerator)])
 
-                    output.append(r'\frac{' + numerator + '}{' + denominator + '}')
+                    output.append(r"\frac{" + numerator + "}{" + denominator + "}")
                     i = den_end
                 else:
                     output.append(text[i])
                     i += 1
-            return ''.join(output)
+            return "".join(output)
 
         result = replace_fractions(result)
 
@@ -1273,14 +1307,7 @@ class ReportBuilder:
     Both Markdown and LaTeX renderers use the IR produced by this builder.
     """
 
-    def __init__(
-        self,
-        problem,
-        known_variables: dict,
-        equations: list,
-        solving_history: list,
-        diagram_path: Path | None = None
-    ):
+    def __init__(self, problem, known_variables: dict, equations: list, solving_history: list, diagram_path: Path | None = None):
         self.problem = problem
         self.known_variables = known_variables
         self.equations = equations
@@ -1293,8 +1320,8 @@ class ReportBuilder:
         If the problem has a custom coordinate system, use its primary axis.
         Otherwise default to '+x'.
         """
-        coord_sys = getattr(self.problem, 'coordinate_system', None)
-        if coord_sys is not None and hasattr(coord_sys, 'axis1_label'):
+        coord_sys = getattr(self.problem, "coordinate_system", None)
+        if coord_sys is not None and hasattr(coord_sys, "axis1_label"):
             return f"+{coord_sys.axis1_label}"
         return "+x"
 
@@ -1314,9 +1341,9 @@ class ReportBuilder:
         # Get angle_dir from vector first, then fall back to problem
         angle_dir = None
         if vec_obj is not None:
-            angle_dir = getattr(vec_obj, 'angle_dir', None)
+            angle_dir = getattr(vec_obj, "angle_dir", None)
         if angle_dir is None:
-            angle_dir = getattr(self.problem, 'angle_dir', None)
+            angle_dir = getattr(self.problem, "angle_dir", None)
 
         if angle_dir == "cw":
             # Convert to clockwise: if angle > 180, show as negative
@@ -1335,12 +1362,7 @@ class ReportBuilder:
 
     def build(self) -> ReportIR:
         """Build the complete report intermediate representation."""
-        report = ReportIR(
-            title=self.problem.name,
-            generated_date=datetime.now(),
-            description=getattr(self.problem, 'description', None),
-            diagram_path=self.diagram_path
-        )
+        report = ReportIR(title=self.problem.name, generated_date=datetime.now(), description=getattr(self.problem, "description", None), diagram_path=self.diagram_path)
 
         # Add sections
         self._add_known_variables_section(report)
@@ -1395,7 +1417,7 @@ class ReportBuilder:
                     substituted=step_data.substituted_equation,
                     result_var=result_var,
                     result_value=step_data.result_value,
-                    result_unit=step_data.result_unit
+                    result_unit=step_data.result_unit,
                 )
                 section.content.append(step)
         else:
@@ -1421,12 +1443,12 @@ class ReportBuilder:
         Detection is based on presence of 'forces' attribute with force vectors.
         """
         # Check for forces attribute (used by ParallelogramLawProblem and VectorEquilibriumProblem)
-        if hasattr(self.problem, 'forces') and self.problem.forces:
+        if hasattr(self.problem, "forces") and self.problem.forces:
             return True
 
         # Also check class hierarchy as fallback
         class_names = [cls.__name__ for cls in self.problem.__class__.__mro__]
-        return 'VectorEquilibriumProblem' in class_names or 'ParallelogramLawProblem' in class_names
+        return "VectorEquilibriumProblem" in class_names or "ParallelogramLawProblem" in class_names
 
     def _build_known_variables_table(self) -> Table | None:
         """Build the known variables table."""
@@ -1435,7 +1457,7 @@ class ReportBuilder:
             return None
 
         # Check if this is vector equilibrium format
-        if known_data and 'magnitude' in known_data[0]:
+        if known_data and "magnitude" in known_data[0]:
             return self._build_force_table(known_data)
         else:
             return self._build_standard_known_table(known_data)
@@ -1447,7 +1469,7 @@ class ReportBuilder:
             return None
 
         # Check if this is vector equilibrium format
-        if unknown_data and 'magnitude' in unknown_data[0]:
+        if unknown_data and "magnitude" in unknown_data[0]:
             return self._build_force_table(unknown_data)
         else:
             return self._build_standard_unknown_table(unknown_data)
@@ -1458,12 +1480,12 @@ class ReportBuilder:
         Returns (axis1_label, axis2_label) based on the coordinate system.
         Defaults to ('x', 'y') for standard Cartesian coordinates.
         """
-        coord_sys = getattr(self.problem, 'coordinate_system', None)
+        coord_sys = getattr(self.problem, "coordinate_system", None)
         if coord_sys is not None:
-            axis1 = getattr(coord_sys, 'axis1_label', 'x')
-            axis2 = getattr(coord_sys, 'axis2_label', 'y')
+            axis1 = getattr(coord_sys, "axis1_label", "x")
+            axis2 = getattr(coord_sys, "axis2_label", "y")
             return (axis1, axis2)
-        return ('x', 'y')
+        return ("x", "y")
 
     def _get_components_in_coordinate_system(self, vec_obj, si_factor: float = 1.0) -> tuple[str, str]:
         """Get vector components in the problem's coordinate system.
@@ -1486,20 +1508,20 @@ class ReportBuilder:
         x_val = None
         y_val = None
 
-        if hasattr(vec_obj, '_coords') and vec_obj._coords is not None and len(vec_obj._coords) >= 2:
+        if hasattr(vec_obj, "_coords") and vec_obj._coords is not None and len(vec_obj._coords) >= 2:
             x_val = vec_obj._coords[0]
             y_val = vec_obj._coords[1]
-        elif hasattr(vec_obj, 'u') and vec_obj.u and vec_obj.u.value is not None:
+        elif hasattr(vec_obj, "u") and vec_obj.u and vec_obj.u.value is not None:
             # vec_obj.u and vec_obj.v store Cartesian x and y (confusingly named)
             x_val = vec_obj.u.value
-            if hasattr(vec_obj, 'v') and vec_obj.v and vec_obj.v.value is not None:
+            if hasattr(vec_obj, "v") and vec_obj.v and vec_obj.v.value is not None:
                 y_val = vec_obj.v.value
 
         if x_val is None or y_val is None:
             return ("?", "?")
 
         # Check if we have a non-orthogonal coordinate system
-        coord_sys = getattr(self.problem, 'coordinate_system', None)
+        coord_sys = getattr(self.problem, "coordinate_system", None)
         if coord_sys is not None and not coord_sys.is_orthogonal:
             # Convert Cartesian x-y to the custom coordinate system
             comp1, comp2 = coord_sys.from_cartesian(x_val, y_val)
@@ -1523,10 +1545,7 @@ class ReportBuilder:
             return (f"{x_display:.1f}", f"{y_display:.1f}")
 
     # Subscript map for axis labels - use Unicode subscripts where available
-    _AXIS_SUBSCRIPT_MAP = {
-        'x': 'ₓ', 'y': 'ᵧ', 'u': 'ᵤ', 'v': 'ᵥ', 'n': 'ₙ', 't': 'ₜ',
-        'a': 'ₐ', 'b': 'ᵦ'
-    }
+    _AXIS_SUBSCRIPT_MAP = {"x": "ₓ", "y": "ᵧ", "u": "ᵤ", "v": "ᵥ", "n": "ₙ", "t": "ₜ", "a": "ₐ", "b": "ᵦ"}
 
     def _build_force_table_columns(self, unit: str) -> list[TableColumn]:
         """Build standard columns for force vector tables.
@@ -1538,8 +1557,8 @@ class ReportBuilder:
             List of TableColumn objects for force vector tables
         """
         axis1, axis2 = self._get_axis_labels()
-        sub1 = self._AXIS_SUBSCRIPT_MAP.get(axis1.lower(), f'_{axis1}')
-        sub2 = self._AXIS_SUBSCRIPT_MAP.get(axis2.lower(), f'_{axis2}')
+        sub1 = self._AXIS_SUBSCRIPT_MAP.get(axis1.lower(), f"_{axis1}")
+        sub2 = self._AXIS_SUBSCRIPT_MAP.get(axis2.lower(), f"_{axis2}")
 
         return [
             TableColumn("Vector", TableAlignment.LEFT),
@@ -1558,19 +1577,23 @@ class ReportBuilder:
         - Magnitude column header indicates |F̄| notation
         - Component headers use the coordinate system axes (e.g., Fᵤ, Fᵥ for u-v system)
         """
-        unit = data[0].get('unit', 'unit') if data else 'unit'
+        unit = data[0].get("unit", "unit") if data else "unit"
         columns = self._build_force_table_columns(unit)
 
         rows = []
         for var in data:
-            rows.append(TableRow([
-                var['symbol'],
-                var.get('x', ''),
-                var.get('y', ''),
-                var['magnitude'],
-                var['angle'],
-                var.get('reference', ''),
-            ]))
+            rows.append(
+                TableRow(
+                    [
+                        var["symbol"],
+                        var.get("x", ""),
+                        var.get("y", ""),
+                        var["magnitude"],
+                        var["angle"],
+                        var.get("reference", ""),
+                    ]
+                )
+            )
 
         return Table(columns=columns, rows=rows)
 
@@ -1585,12 +1608,16 @@ class ReportBuilder:
 
         rows = []
         for var in data:
-            rows.append(TableRow([
-                var['symbol'],
-                var['name'],
-                var['value'],
-                var['unit'],
-            ]))
+            rows.append(
+                TableRow(
+                    [
+                        var["symbol"],
+                        var["name"],
+                        var["value"],
+                        var["unit"],
+                    ]
+                )
+            )
 
         return Table(columns=columns, rows=rows)
 
@@ -1604,11 +1631,15 @@ class ReportBuilder:
 
         rows = []
         for var in data:
-            rows.append(TableRow([
-                var['symbol'],
-                var['name'],
-                var['unit'],
-            ]))
+            rows.append(
+                TableRow(
+                    [
+                        var["symbol"],
+                        var["name"],
+                        var["unit"],
+                    ]
+                )
+            )
 
         return Table(columns=columns, rows=rows)
 
@@ -1627,14 +1658,14 @@ class ReportBuilder:
         import math
 
         # Get original variable states to determine what was originally unknown
-        original_var_states = getattr(self.problem, '_original_variable_states', {})
+        original_var_states = getattr(self.problem, "_original_variable_states", {})
 
         # Find all vector-related variables by looking for *_mag and *_angle pairs
         vector_names = set()
         for var_name in self.problem.variables:
-            if var_name.endswith('_mag'):
+            if var_name.endswith("_mag"):
                 vector_names.add(var_name[:-4])  # Remove '_mag' suffix
-            elif var_name.endswith('_angle'):
+            elif var_name.endswith("_angle"):
                 vector_names.add(var_name[:-6])  # Remove '_angle' suffix
 
         if not vector_names:
@@ -1644,7 +1675,7 @@ class ReportBuilder:
         unit = "N"
         for vec_name in vector_names:
             mag_var = self.problem.variables.get(f"{vec_name}_mag")
-            if mag_var and hasattr(mag_var, 'preferred') and mag_var.preferred:
+            if mag_var and hasattr(mag_var, "preferred") and mag_var.preferred:
                 unit = mag_var.preferred.symbol
                 break
 
@@ -1673,13 +1704,13 @@ class ReportBuilder:
 
             # Get unit's SI factor for display conversion
             si_factor = 1.0
-            if vec_obj and hasattr(vec_obj, '_unit') and vec_obj._unit:
+            if vec_obj and hasattr(vec_obj, "_unit") and vec_obj._unit:
                 si_factor = vec_obj._unit.si_factor
 
             # Get magnitude
             magnitude = "?"
             if mag_var.value is not None:
-                if hasattr(mag_var, 'magnitude') and callable(mag_var.magnitude):
+                if hasattr(mag_var, "magnitude") and callable(mag_var.magnitude):
                     try:
                         magnitude = f"{mag_var.magnitude():.1f}"
                     except (ValueError, AttributeError):
@@ -1691,21 +1722,12 @@ class ReportBuilder:
             # Note: Don't fall back to angle_reference if problem has a coordinate system,
             # as angle_reference defaults to +x which may not match the coordinate system
             ref = self._get_default_reference_axis()
-            if vec_obj is not None and hasattr(vec_obj, '_original_wrt') and vec_obj._original_wrt:
-                ref = vec_obj._original_wrt
-                # Handle vector-relative references like "@F_BA" -> LaTeX formatted vector
-                if ref.startswith('@'):
-                    vec_name_ref = ref[1:]  # Remove the @ prefix
-                    # Format as LaTeX vector: F_BA -> $\vec{F_{BA}}$
-                    if '_' in vec_name_ref:
-                        parts = vec_name_ref.split('_', 1)
-                        ref = f"$\\vec{{{parts[0]}_{{{parts[1]}}}}}$"
-                    else:
-                        ref = f"$\\vec{{{vec_name_ref}}}$"
-            elif getattr(self.problem, 'coordinate_system', None) is None:
+            if vec_obj is not None and hasattr(vec_obj, "_original_wrt") and vec_obj._original_wrt:
+                ref = _format_vector_ref_as_latex(vec_obj._original_wrt)
+            elif getattr(self.problem, "coordinate_system", None) is None:
                 # Only use angle_reference fallback if no custom coordinate system
-                if vec_obj is not None and hasattr(vec_obj, 'angle_reference') and vec_obj.angle_reference:
-                    if hasattr(vec_obj.angle_reference, 'axis_label'):
+                if vec_obj is not None and hasattr(vec_obj, "angle_reference") and vec_obj.angle_reference:
+                    if hasattr(vec_obj.angle_reference, "axis_label"):
                         ref = vec_obj.angle_reference.axis_label
 
             # Get angle in degrees
@@ -1713,7 +1735,7 @@ class ReportBuilder:
 
             # First check if there's an original input angle we should preserve
             # (for vectors defined with known angles, like in inverse problems)
-            if vec_obj is not None and hasattr(vec_obj, '_polar_angle_rad') and vec_obj._polar_angle_rad is not None:
+            if vec_obj is not None and hasattr(vec_obj, "_polar_angle_rad") and vec_obj._polar_angle_rad is not None:
                 # Use the original input angle (preserves the sign convention from problem definition)
                 angle = f"{math.degrees(vec_obj._polar_angle_rad):.1f}"
             elif angle_var is not None and angle_var.value is not None:
@@ -1722,7 +1744,7 @@ class ReportBuilder:
                 # Apply angle_dir conversion for solved unknowns
                 angle_deg = self._convert_angle_for_display(angle_deg, vec_obj)
                 angle = f"{angle_deg:.1f}"
-            elif vec_obj is not None and hasattr(vec_obj, '_coords') and vec_obj._coords is not None:
+            elif vec_obj is not None and hasattr(vec_obj, "_coords") and vec_obj._coords is not None:
                 # Calculate angle from coordinates
                 coords = vec_obj._coords
                 if len(coords) >= 2:
@@ -1759,12 +1781,16 @@ class ReportBuilder:
 
         rows = []
         for res in results:
-            rows.append(TableRow([
-                res['symbol'],
-                res['name'],
-                res['value'],
-                res['unit'],
-            ]))
+            rows.append(
+                TableRow(
+                    [
+                        res["symbol"],
+                        res["name"],
+                        res["value"],
+                        res["unit"],
+                    ]
+                )
+            )
 
         return Table(columns=columns, rows=rows)
 
@@ -1781,7 +1807,7 @@ class ReportBuilder:
         known_data = []
         for symbol, var in self.known_variables.items():
             # Use Quantity.magnitude() for proper unit conversion
-            if hasattr(var, 'magnitude') and callable(var.magnitude):
+            if hasattr(var, "magnitude") and callable(var.magnitude):
                 try:
                     value = var.magnitude()
                     value_str = f"{value:.1f}"
@@ -1791,17 +1817,12 @@ class ReportBuilder:
                 value_str = f"{var.value:.1f}" if var.value is not None else "N/A"
 
             # Get unit string
-            if hasattr(var, 'preferred') and var.preferred:
+            if hasattr(var, "preferred") and var.preferred:
                 unit_str = var.preferred.symbol
             else:
                 unit_str = ""
 
-            known_data.append({
-                "symbol": symbol,
-                "name": getattr(var, "name", symbol),
-                "value": value_str,
-                "unit": unit_str
-            })
+            known_data.append({"symbol": symbol, "name": getattr(var, "name", symbol), "value": value_str, "unit": unit_str})
 
         return known_data
 
@@ -1816,16 +1837,12 @@ class ReportBuilder:
         for symbol, var in self.problem.variables.items():
             if symbol not in self.known_variables:
                 # Get unit string
-                if hasattr(var, 'preferred') and var.preferred:
+                if hasattr(var, "preferred") and var.preferred:
                     unit_str = var.preferred.symbol
                 else:
                     unit_str = ""
 
-                unknown_data.append({
-                    "symbol": symbol,
-                    "name": getattr(var, "name", symbol),
-                    "unit": unit_str
-                })
+                unknown_data.append({"symbol": symbol, "name": getattr(var, "name", symbol), "unit": unit_str})
 
         return unknown_data
 
@@ -1837,13 +1854,12 @@ class ReportBuilder:
         known_data = []
         unknown_data = []
 
-        forces = getattr(self.problem, 'forces', {})
-        original_force_states = getattr(self.problem, '_original_force_states', {})
+        forces = getattr(self.problem, "forces", {})
+        original_force_states = getattr(self.problem, "_original_force_states", {})
 
         # If forces dict is empty, look for _Vector attributes on the problem
         if not forces:
             return self._get_vector_variable_data()
-
 
         for force_name, force_obj in forces.items():
             mag_var = self.problem.variables.get(f"{force_name}_mag")
@@ -1853,14 +1869,14 @@ class ReportBuilder:
                 continue
 
             # Determine original known state
-            force_was_originally_known = original_force_states.get(force_name, getattr(force_obj, 'is_known', True))
-            original_var_states = getattr(self.problem, '_original_variable_states', {})
+            force_was_originally_known = original_force_states.get(force_name, getattr(force_obj, "is_known", True))
+            original_var_states = getattr(self.problem, "_original_variable_states", {})
             mag_was_originally_known = original_var_states.get(f"{force_name}_mag_known", force_was_originally_known)
             angle_was_originally_known = original_var_states.get(f"{force_name}_angle_known", force_was_originally_known)
 
             # Get magnitude using proper qnty unit handling
             if mag_was_originally_known:
-                if hasattr(mag_var, 'magnitude') and callable(mag_var.magnitude):
+                if hasattr(mag_var, "magnitude") and callable(mag_var.magnitude):
                     try:
                         mag_value = mag_var.magnitude()
                         mag_str = f"{mag_value:.1f}"
@@ -1868,14 +1884,15 @@ class ReportBuilder:
                         mag_str = "?"
                 else:
                     mag_str = "?"
-                mag_unit = mag_var.preferred.symbol if hasattr(mag_var, 'preferred') and mag_var.preferred else ""
+                mag_unit = mag_var.preferred.symbol if hasattr(mag_var, "preferred") and mag_var.preferred else ""
             else:
                 mag_str = "?"
-                mag_unit = mag_var.preferred.symbol if hasattr(mag_var, 'preferred') and mag_var.preferred else ""
+                mag_unit = mag_var.preferred.symbol if hasattr(mag_var, "preferred") and mag_var.preferred else ""
 
             # Get angle
             if angle_was_originally_known and angle_var.value is not None:
                 import math
+
                 angle_deg = angle_var.value * 180.0 / math.pi
                 angle_deg = angle_deg % 360
                 angle_str = f"{angle_deg:.1f}"
@@ -1891,26 +1908,26 @@ class ReportBuilder:
             if was_originally_known:
                 # Get SI factor for unit conversion
                 si_factor = 1.0
-                if hasattr(force_obj, '_unit') and force_obj._unit:
+                if hasattr(force_obj, "_unit") and force_obj._unit:
                     si_factor = force_obj._unit.si_factor
                 x_str, y_str = self._get_components_in_coordinate_system(force_obj, si_factor)
 
             # Get angle reference
             reference_str = ""
-            if hasattr(force_obj, 'angle_reference') and force_obj.angle_reference is not None:
+            if hasattr(force_obj, "angle_reference") and force_obj.angle_reference is not None:
                 ref = force_obj.angle_reference
-                if hasattr(ref, 'axis_label'):
+                if hasattr(ref, "axis_label"):
                     reference_str = ref.axis_label
 
             force_data = {
                 "symbol": force_name,
-                "name": getattr(force_obj, 'name', force_name),
+                "name": getattr(force_obj, "name", force_name),
                 "magnitude": mag_str,
                 "angle": angle_str,
                 "unit": mag_unit,
                 "x": x_str,
                 "y": y_str,
-                "reference": reference_str
+                "reference": reference_str,
             }
 
             if was_originally_known:
@@ -1927,14 +1944,14 @@ class ReportBuilder:
         """
         known_data = []
         unknown_data = []
-        original_var_states = getattr(self.problem, '_original_variable_states', {})
+        original_var_states = getattr(self.problem, "_original_variable_states", {})
 
         # Find all vector-related variables by looking for *_mag and *_angle pairs
         vector_names = set()
         for var_name in self.problem.variables:
-            if var_name.endswith('_mag'):
+            if var_name.endswith("_mag"):
                 vector_names.add(var_name[:-4])  # Remove '_mag' suffix
-            elif var_name.endswith('_angle'):
+            elif var_name.endswith("_angle"):
                 vector_names.add(var_name[:-6])  # Remove '_angle' suffix
 
         for vec_name in sorted(vector_names):
@@ -1951,32 +1968,32 @@ class ReportBuilder:
             # 1. _original_unknowns dict (saved before solving for mixed unknowns)
             # 2. _original_variable_states on the problem (for regular problems)
             # 3. Fall back to assuming known if no info available
-            original_unknowns = getattr(vec_obj, '_original_unknowns', None) if vec_obj else None
-            current_unknowns = getattr(vec_obj, '_unknowns', {}) if vec_obj else {}
+            original_unknowns = getattr(vec_obj, "_original_unknowns", None) if vec_obj else None
+            current_unknowns = getattr(vec_obj, "_unknowns", {}) if vec_obj else {}
 
             # Use _original_unknowns if available (most reliable for mixed unknown problems)
             if original_unknowns is not None:
                 # For mixed unknowns, check for specific 'magnitude' or 'angle' keys
-                mag_was_known = 'magnitude' not in original_unknowns
-                angle_was_known = 'angle' not in original_unknowns
+                mag_was_known = "magnitude" not in original_unknowns
+                angle_was_known = "angle" not in original_unknowns
             elif current_unknowns:
                 # Check current unknowns (for unsolved vectors or coordinate-based unknowns)
                 # Coordinate-based unknowns ('u', 'v', 'w') indicate full unknown
-                if any(k in current_unknowns for k in ('u', 'v', 'w')):
+                if any(k in current_unknowns for k in ("u", "v", "w")):
                     mag_was_known = False
                     angle_was_known = False
                 else:
-                    mag_was_known = 'magnitude' not in current_unknowns
-                    angle_was_known = 'angle' not in current_unknowns
+                    mag_was_known = "magnitude" not in current_unknowns
+                    angle_was_known = "angle" not in current_unknowns
             elif vec_obj is not None:
                 # After solving, determine original known state from vector creation
                 # _VectorWithUnknowns has _polar_magnitude in __slots__, regular _Vector does not
                 # Check if it's a _VectorWithUnknowns (has _polar_magnitude slot)
-                has_polar_slots = '_polar_magnitude' in type(vec_obj).__slots__ if hasattr(type(vec_obj), '__slots__') else False
+                has_polar_slots = "_polar_magnitude" in type(vec_obj).__slots__ if hasattr(type(vec_obj), "__slots__") else False
                 if has_polar_slots:
                     # It's a _VectorWithUnknowns - check _polar_* attributes for original known state
-                    polar_mag = getattr(vec_obj, '_polar_magnitude', None)
-                    polar_angle = getattr(vec_obj, '_polar_angle_rad', None)
+                    polar_mag = getattr(vec_obj, "_polar_magnitude", None)
+                    polar_angle = getattr(vec_obj, "_polar_angle_rad", None)
                     mag_was_known = polar_mag is not None
                     angle_was_known = polar_angle is not None
                 else:
@@ -1990,7 +2007,7 @@ class ReportBuilder:
 
             # Get magnitude using proper qnty unit handling
             if mag_was_known and mag_var.value is not None:
-                if hasattr(mag_var, 'magnitude') and callable(mag_var.magnitude):
+                if hasattr(mag_var, "magnitude") and callable(mag_var.magnitude):
                     try:
                         mag_value = mag_var.magnitude()
                         mag_str = f"{mag_value:.1f}"
@@ -2001,7 +2018,7 @@ class ReportBuilder:
             else:
                 mag_str = "?"
 
-            mag_unit = mag_var.preferred.symbol if hasattr(mag_var, 'preferred') and mag_var.preferred else ""
+            mag_unit = mag_var.preferred.symbol if hasattr(mag_var, "preferred") and mag_var.preferred else ""
 
             # Get angle in degrees - only show value if angle was originally known
             angle_str = ""
@@ -2010,26 +2027,29 @@ class ReportBuilder:
             if not angle_was_known:
                 angle_str = "?"
             # First try to use original angle from create_vector_polar (for fully known vectors)
-            elif vec_obj is not None and hasattr(vec_obj, '_original_angle') and vec_obj._original_angle is not None:
+            elif vec_obj is not None and hasattr(vec_obj, "_original_angle") and vec_obj._original_angle is not None:
                 angle_str = f"{vec_obj._original_angle:.1f}"
             # Check for _polar_angle_rad (for vectors with unknown magnitude but known angle)
-            elif vec_obj is not None and hasattr(vec_obj, '_polar_angle_rad') and vec_obj._polar_angle_rad is not None:
+            elif vec_obj is not None and hasattr(vec_obj, "_polar_angle_rad") and vec_obj._polar_angle_rad is not None:
                 import math
+
                 # _polar_angle_rad stores the input angle in radians (before wrt conversion)
                 # For display, we want to show the original input angle
                 angle_deg = math.degrees(vec_obj._polar_angle_rad)
                 angle_str = f"{angle_deg:.1f}"
             elif angle_var is not None and angle_var.value is not None:
                 import math
+
                 angle_deg = angle_var.value * 180.0 / math.pi
                 angle_deg = angle_deg % 360
                 angle_str = f"{angle_deg:.1f}"
-            elif vec_obj is not None and hasattr(vec_obj, '_angle') and vec_obj._angle is not None:
+            elif vec_obj is not None and hasattr(vec_obj, "_angle") and vec_obj._angle is not None:
                 # Get angle from vector object directly
                 import math
+
                 angle_val = vec_obj._angle
                 # Handle if _angle is a Quantity
-                if hasattr(angle_val, 'value'):
+                if hasattr(angle_val, "value"):
                     angle_val = angle_val.value
                 if angle_val is not None:
                     angle_deg = float(angle_val) * 180.0 / math.pi
@@ -2037,9 +2057,10 @@ class ReportBuilder:
                     angle_str = f"{angle_deg:.1f}"
                 else:
                     angle_str = "?"
-            elif vec_obj is not None and hasattr(vec_obj, '_coords') and vec_obj._coords is not None:
+            elif vec_obj is not None and hasattr(vec_obj, "_coords") and vec_obj._coords is not None:
                 # Compute angle from coordinates
                 import math
+
                 coords = vec_obj._coords
                 if len(coords) >= 2:
                     angle_rad = math.atan2(coords[1], coords[0])
@@ -2061,7 +2082,7 @@ class ReportBuilder:
             if was_originally_known and vec_obj is not None:
                 # Get SI factor for unit conversion
                 si_factor = 1.0
-                if hasattr(vec_obj, '_unit') and vec_obj._unit:
+                if hasattr(vec_obj, "_unit") and vec_obj._unit:
                     si_factor = vec_obj._unit.si_factor
                 x_str, y_str = self._get_components_in_coordinate_system(vec_obj, si_factor)
 
@@ -2070,33 +2091,24 @@ class ReportBuilder:
             # Note: Don't fall back to angle_reference if problem has a coordinate system,
             # as angle_reference defaults to +x which may not match the coordinate system
             reference_str = self._get_default_reference_axis()
-            if vec_obj is not None and hasattr(vec_obj, '_original_wrt') and vec_obj._original_wrt is not None:
-                reference_str = vec_obj._original_wrt
-                # Handle vector-relative references like "@F_BA" -> LaTeX formatted vector
-                if reference_str.startswith('@'):
-                    vec_name_ref = reference_str[1:]  # Remove the @ prefix
-                    # Format as LaTeX vector: F_BA -> $\vec{F_{BA}}$
-                    if '_' in vec_name_ref:
-                        parts = vec_name_ref.split('_', 1)
-                        reference_str = f"$\\vec{{{parts[0]}_{{{parts[1]}}}}}$"
-                    else:
-                        reference_str = f"$\\vec{{{vec_name_ref}}}$"
-            elif getattr(self.problem, 'coordinate_system', None) is None:
+            if vec_obj is not None and hasattr(vec_obj, "_original_wrt") and vec_obj._original_wrt is not None:
+                reference_str = _format_vector_ref_as_latex(vec_obj._original_wrt)
+            elif getattr(self.problem, "coordinate_system", None) is None:
                 # Only use angle_reference fallback if no custom coordinate system
-                if vec_obj is not None and hasattr(vec_obj, 'angle_reference') and vec_obj.angle_reference is not None:
+                if vec_obj is not None and hasattr(vec_obj, "angle_reference") and vec_obj.angle_reference is not None:
                     ref = vec_obj.angle_reference
-                    if hasattr(ref, 'axis_label'):
+                    if hasattr(ref, "axis_label"):
                         reference_str = ref.axis_label
 
             vector_data = {
                 "symbol": vec_name,
-                "name": getattr(vec_obj, 'name', vec_name) if vec_obj else vec_name,
+                "name": getattr(vec_obj, "name", vec_name) if vec_obj else vec_name,
                 "magnitude": mag_str,
                 "angle": angle_str,
                 "unit": mag_unit,
                 "x": x_str,
                 "y": y_str,
-                "reference": reference_str
+                "reference": reference_str,
             }
 
             if was_originally_known:
@@ -2109,6 +2121,7 @@ class ReportBuilder:
     def _format_equation_list(self) -> list[str]:
         """Format equations for display in solving order."""
         from ...utils.shared_utilities import format_equation_list_from_history
+
         return format_equation_list_from_history(self.solving_history, self.equations)
 
     def _extract_solution_steps(self) -> list:
@@ -2143,13 +2156,15 @@ class ReportBuilder:
             # This allows equations to appear in "Equations Used" but not inline in the step
             equation_inline = step_data.get("equation_inline", equation_str)
 
-            steps.append(StepData(
-                equation_name=target,
-                equation_str=equation_inline,  # Use inline version for step rendering
-                substituted_equation=step_data.get("substituted_equation"),
-                result_value=str(result_value),
-                result_unit=str(result_unit)
-            ))
+            steps.append(
+                StepData(
+                    equation_name=target,
+                    equation_str=equation_inline,  # Use inline version for step rendering
+                    substituted_equation=step_data.get("substituted_equation"),
+                    result_value=str(result_value),
+                    result_unit=str(result_unit),
+                )
+            )
 
         return steps
 
@@ -2160,7 +2175,7 @@ class ReportBuilder:
         for symbol, var in self.problem.variables.items():
             if symbol not in self.known_variables and var.value is not None:
                 # Use Quantity.magnitude() for proper unit conversion
-                if hasattr(var, 'magnitude') and callable(var.magnitude):
+                if hasattr(var, "magnitude") and callable(var.magnitude):
                     try:
                         value = var.magnitude()
                         value_str = f"{value:.1f}"
@@ -2170,16 +2185,11 @@ class ReportBuilder:
                     value_str = f"{var.value:.1f}"
 
                 # Get unit string
-                if hasattr(var, 'preferred') and var.preferred:
+                if hasattr(var, "preferred") and var.preferred:
                     unit_str = var.preferred.symbol
                 else:
                     unit_str = ""
 
-                results.append({
-                    "symbol": symbol,
-                    "name": getattr(var, "name", symbol),
-                    "value": value_str,
-                    "unit": unit_str
-                })
+                results.append({"symbol": symbol, "name": getattr(var, "name", symbol), "value": value_str, "unit": unit_str})
 
         return results

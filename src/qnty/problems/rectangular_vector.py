@@ -13,11 +13,18 @@ from typing import Any
 from ..core.quantity import Quantity
 from ..solving.component_solver import ComponentSolver
 from ..spatial import _Vector
-from ..utils.shared_utilities import add_force_components_xy, capture_original_force_states, clone_unknown_force_vector, extract_force_vectors_from_class, handle_negative_magnitude
+from ..utils.shared_utilities import (
+    VariableStateTrackingMixin,
+    add_force_components_xy,
+    capture_original_force_states,
+    clone_unknown_force_vector,
+    extract_force_vectors_from_class,
+    handle_negative_magnitude,
+)
 from .problem import Problem
 
 
-class RectangularVectorProblem(Problem):
+class RectangularVectorProblem(VariableStateTrackingMixin, Problem):
     """
     Specialized Problem for 2D/3D vector equilibrium using the rectangular component method.
 
@@ -121,32 +128,6 @@ class RectangularVectorProblem(Problem):
         force_name = name or force.name
         self.forces[force_name] = force
         setattr(self, force_name, force)
-
-    def get_known_variables(self) -> dict[str, Quantity]:
-        """
-        Get known variables for report generation.
-
-        Returns:
-            Dictionary of variable names to Quantity objects that were originally known
-        """
-        known_vars = {}
-        for var_name, var in self.variables.items():
-            if self._original_variable_states.get(var_name, False):
-                known_vars[var_name] = var
-        return known_vars
-
-    def get_unknown_variables(self) -> dict[str, Quantity]:
-        """
-        Get unknown variables for report generation.
-
-        Returns:
-            Dictionary of variable names to Quantity objects that were originally unknown
-        """
-        unknown_vars = {}
-        for var_name, var in self.variables.items():
-            if not self._original_variable_states.get(var_name, False):
-                unknown_vars[var_name] = var
-        return unknown_vars
 
     def solve(self, max_iterations: int = 100, tolerance: float = 1e-10) -> dict[str, _Vector]:  # type: ignore[override]
         """

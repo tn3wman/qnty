@@ -10,6 +10,7 @@ from __future__ import annotations
 import math
 
 from ..core.unit import Unit
+from ..utils.shared_utilities import resolve_length_unit_from_string
 from .vector import _Vector
 
 
@@ -81,16 +82,7 @@ class VectorDirectionRatios:
             raise ValueError("Direction ratios cannot all be zero")
 
         # Resolve unit
-        if isinstance(unit, str):
-            from ..core.dimension_catalog import dim
-            from ..core.unit import ureg
-
-            resolved = ureg.resolve(unit, dim=dim.length)
-            if resolved is None:
-                raise ValueError(f"Unknown length unit '{unit}'")
-            self._unit = resolved
-        else:
-            self._unit = unit
+        self._unit = resolve_length_unit_from_string(unit)
 
         # Compute Cartesian components
         # v = magnitude * (a, b, c) / ||(a, b, c)||

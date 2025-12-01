@@ -1,214 +1,197 @@
 Analyzing 80 Python files...
-2 repetitions of complexity 68
+3 repetitions of complexity 53
 
-Line 208 - src/qnty/extensions/reporting/vector_diagram.py:
-def create_force_diagram(problem, output_path: str | x_0, title: str | None=None, show_components: bool=False, **kwargs) -> x_0:
-    """
-    Create vector diagram from a VectorEquilibriumProblem.
-
-    Args:
-        problem: VectorEquilibriumProblem instance (must be solved)
-        output_path: Output file path
-        title: Diagram title (uses problem.name if None)
-        show_components: Whether to show component projections
-        **kwargs: Additional arguments for VectorDiagram
-
-    Returns:
-        Path to saved diagram
-
-    Examples:
-        >>> problem = Problem_2_1()
-        >>> problem.solve()
-        >>> create_force_diagram(problem, "diagram.png")
-    """
-    x_1 = x_1 or x_2.name
-    x_3 = x_4(title=x_1, show_components=x_5, **x_6)
-    x_7(x_3, x_2)
-    return x_3.save(x_8)
-
-Line 45 - src/qnty/extensions/plotting/vector_diagram.py:
-def create_force_diagram(problem, output_path: str | x_0, title: str | None=None, show_components: bool=False, **kwargs) -> x_0:
-    """
-    Create vector diagram from a VectorEquilibriumProblem.
-
-    Args:
-        problem: VectorEquilibriumProblem instance (must be solved)
-        output_path: Output file path
-        title: Diagram title (uses problem.name if None)
-        show_components: Whether to show component projections
-        **kwargs: Additional arguments for VectorDiagram
-
-    Returns:
-        Path to saved diagram
-
-    Examples:
-        >>> problem = Problem_2_1()
-        >>> problem.solve()
-        >>> create_force_diagram(problem, "diagram.png")
-    """
-    x_1 = x_1 or x_2.name
-    x_3 = x_4(title=x_1, show_components=x_5, **x_6)
-    x_7(x_3, x_2)
-    return x_3.save(x_8)
-
-======================================================================
-
-3 repetitions of complexity 65
-
-Line 1080 - src/qnty/spatial/vectors.py:
+Line 285 - src/qnty/spatial/points.py:
 if isinstance(x_0, str):
+    from ..core.dimension_catalog import dim
     from ..core.unit import ureg
-    x_1 = x_2.resolve(x_0)
+    x_1 = x_2.resolve(x_0, dim=x_3.length)
     if x_1 is None:
-        raise ValueError(f"Unknown unit '{x_0}'")
-    x_3 = x_1
-elif x_0 is not None:
-    x_3 = x_0
-elif x_4:
-    x_3 = x_4[0]._unit
+        raise ValueError(f"Unknown length unit '{x_0}'")
+    x_4 = x_1
+else:
+    x_4 = x_0
 
-Line 1164 - src/qnty/spatial/vectors.py:
+Line 534 - src/qnty/spatial/points.py:
 if isinstance(x_0, str):
+    from ..core.dimension_catalog import dim
     from ..core.unit import ureg
-    x_1 = x_2.resolve(x_0)
+    x_1 = x_2.resolve(x_0, dim=x_3.length)
     if x_1 is None:
-        raise ValueError(f"Unknown unit '{x_0}'")
-    x_3 = x_1
-elif x_0 is not None:
-    x_3 = x_0
-elif x_4:
-    x_3 = x_4[0]._unit
+        raise ValueError(f"Unknown length unit '{x_0}'")
+    x_4 = x_1
+else:
+    x_4 = x_0
 
-Line 1284 - src/qnty/spatial/vectors.py:
+Line 712 - src/qnty/spatial/points.py:
 if isinstance(x_0, str):
+    from ..core.dimension_catalog import dim
     from ..core.unit import ureg
-    x_1 = x_2.resolve(x_0)
+    x_1 = x_2.resolve(x_0, dim=x_3.length)
     if x_1 is None:
-        raise ValueError(f"Unknown unit '{x_0}'")
-    x_3 = x_1
-elif x_0 is not None:
-    x_3 = x_0
-elif x_4:
-    x_3 = x_4[0]._unit
+        raise ValueError(f"Unknown length unit '{x_0}'")
+    x_4 = x_1
+else:
+    x_4 = x_0
 
 ======================================================================
 
-2 repetitions of complexity 64
+3 repetitions of complexity 52
 
-Line 308 - src/qnty/utils/scope_discovery.py:
-for x_0 in x_1.values():
-    if not x_2:
-        break
-    if x_3.is_variable(x_0):
-        x_4 = x_5._get_variable_name(x_0)
-        if x_4 in x_6:
-            x_7[x_4] = x_0
-            x_2.remove(x_4)
-            x_6.remove(x_4)
+Line 168 - src/qnty/extensions/reporting/report_ir.py:
+while x_0 < len(x_1) and x_2 > 0:
+    if x_1[x_0] == '{':
+        x_2 += 1
+    elif x_1[x_0] == '}':
+        x_2 -= 1
+    x_0 += 1
 
-Line 320 - src/qnty/utils/scope_discovery.py:
-for x_0 in x_1.values():
-    if not x_2:
-        break
-    if x_3.is_variable(x_0):
-        x_4 = x_5._get_variable_name(x_0)
-        if x_4 in x_6:
-            x_7[x_4] = x_0
-            x_2.remove(x_4)
-            x_6.remove(x_4)
+Line 197 - src/qnty/extensions/reporting/report_ir.py:
+while x_0 < len(x_1) and x_2 > 0:
+    if x_1[x_0] == '{':
+        x_2 += 1
+    elif x_1[x_0] == '}':
+        x_2 -= 1
+    x_0 += 1
 
-======================================================================
-
-2 repetitions of complexity 64
-
-Line 202 - src/qnty/extensions/reporting/formats.py:
-if x_0.returncode == 0:
-    x_1 = x_2.stem + '.pdf'
-    x_3 = x_4.parent / x_1
-    if x_3.exists():
-        if x_3 != x_4:
-            if x_4.exists():
-                x_4.unlink()
-            x_3.rename(x_4)
-        return True
-
-Line 235 - src/qnty/extensions/reporting/formats.py:
-if x_0.returncode == 0:
-    x_1 = x_2.stem + '.pdf'
-    x_3 = x_4.parent / x_1
-    if x_3.exists():
-        if x_3 != x_4:
-            if x_4.exists():
-                x_4.unlink()
-            x_3.rename(x_4)
-        return True
+Line 1177 - src/qnty/extensions/reporting/report_ir.py:
+while x_0 < len(x_1) and x_2 > 0:
+    if x_1[x_0] == '{':
+        x_2 += 1
+    elif x_1[x_0] == '}':
+        x_2 -= 1
+    x_0 += 1
 
 ======================================================================
 
-2 repetitions of complexity 64
+3 repetitions of complexity 52
 
-Line 717 - src/qnty/spatial/points.py:
-def to_radians(angle_val):
-    if x_0 is None:
-        return None
-    if x_1.lower() in ('degree', 'degrees', 'deg'):
-        return x_2.radians(float(x_0))
-    elif x_1.lower() in ('radian', 'radians', 'rad'):
-        return float(x_0)
-    else:
-        raise ValueError(f"Invalid angle_unit '{x_1}'. Use 'degree' or 'radian'")
+Line 1152 - src/qnty/extensions/reporting/report_ir.py:
+while x_0 < len(x_1) and x_2 > 0:
+    if x_1[x_0] == '(':
+        x_2 += 1
+    elif x_1[x_0] == ')':
+        x_2 -= 1
+    x_0 += 1
 
-Line 81 - src/qnty/spatial/vector_direction_angles.py:
-def to_radians(angle_val):
-    if x_0 is None:
-        return None
-    if x_1.lower() in ('degree', 'degrees', 'deg'):
-        return x_2.radians(float(x_0))
-    elif x_1.lower() in ('radian', 'radians', 'rad'):
-        return float(x_0)
-    else:
-        raise ValueError(f"Invalid angle_unit '{x_1}'. Use 'degree' or 'radian'")
+Line 1251 - src/qnty/extensions/reporting/report_ir.py:
+while x_0 < len(x_1) and x_2 > 0:
+    if x_1[x_0] == '(':
+        x_2 += 1
+    elif x_1[x_0] == ')':
+        x_2 -= 1
+    x_0 += 1
 
-======================================================================
-
-2 repetitions of complexity 60
-
-Line 934 - src/qnty/problems/composition.py:
-for x_0 in x_1.variables.values():
-    if hasattr(x_2, 'name') and hasattr(x_0, 'name') and (x_2.name == x_0.name) and (id(x_2) != id(x_0)):
-        x_3 = x_4(x_0)
-        x_5 = True
-        break
-
-Line 943 - src/qnty/problems/composition.py:
-for x_0 in x_1.variables.values():
-    if hasattr(x_2, 'name') and hasattr(x_0, 'name') and (x_2.name == x_0.name) and (id(x_2) != id(x_0)):
-        x_3 = x_4(x_0)
-        x_5 = True
-        break
+Line 1269 - src/qnty/extensions/reporting/report_ir.py:
+while x_0 < len(x_1) and x_2 > 0:
+    if x_1[x_0] == '(':
+        x_2 += 1
+    elif x_1[x_0] == ')':
+        x_2 -= 1
+    x_0 += 1
 
 ======================================================================
 
-2 repetitions of complexity 60
+2 repetitions of complexity 52
 
-Line 1697 - src/qnty/extensions/reporting/report_ir.py:
-if x_0.startswith('@'):
-    x_1 = x_0[1:]
-    if '_' in x_1:
-        x_2 = x_1.split('_', 1)
-        x_0 = f'$\\vec{{{x_2[0]}_{{{x_2[1]}}}}}$'
-    else:
-        x_0 = f'$\\vec{{{x_1}}}$'
+Line 317 - src/qnty/problems/parallelogram_law.py:
+x_0 = x_1.is_known and x_1.vector is not None and (x_1.magnitude is not None) and (x_1.magnitude.value is not None) and (x_1.angle is not None) and (x_1.angle.value is not None) and (not x_2)
 
-Line 2076 - src/qnty/extensions/reporting/report_ir.py:
-if x_0.startswith('@'):
-    x_1 = x_0[1:]
-    if '_' in x_1:
-        x_2 = x_1.split('_', 1)
-        x_0 = f'$\\vec{{{x_2[0]}_{{{x_2[1]}}}}}$'
-    else:
-        x_0 = f'$\\vec{{{x_1}}}$'
+Line 94 - src/qnty/problems/rectangular_vector.py:
+x_0 = x_1.is_known and x_1.vector is not None and (x_1.magnitude is not None) and (x_1.magnitude.value is not None) and (x_1.angle is not None) and (x_1.angle.value is not None) and (not x_2)
 
 ======================================================================
 
-Found 7 repeated patterns
+2 repetitions of complexity 51
+
+Line 1665 - src/qnty/extensions/reporting/report_ir.py:
+for x_0 in x_1.problem.variables:
+    if x_0.endswith('_mag'):
+        x_2.add(x_0[:-4])
+    elif x_0.endswith('_angle'):
+        x_2.add(x_0[:-6])
+
+Line 1951 - src/qnty/extensions/reporting/report_ir.py:
+for x_0 in x_1.problem.variables:
+    if x_0.endswith('_mag'):
+        x_2.add(x_0[:-4])
+    elif x_0.endswith('_angle'):
+        x_2.add(x_0[:-6])
+
+======================================================================
+
+2 repetitions of complexity 51
+
+Line 101 - src/qnty/algebra/nodes.py:
+if hasattr(x_0, 'value'):
+    x_0.value = x_1.value
+    if hasattr(x_0, 'preferred') and hasattr(x_1, 'preferred'):
+        x_0.preferred = x_1.preferred or getattr(x_0, 'preferred', None)
+    return True
+
+Line 127 - src/qnty/algebra/nodes.py:
+if hasattr(x_0, 'value'):
+    x_0.value = x_1.value
+    if hasattr(x_0, 'preferred') and hasattr(x_1, 'preferred'):
+        x_0.preferred = x_1.preferred or getattr(x_0, 'preferred', None)
+    return True
+
+======================================================================
+
+4 repetitions of complexity 50
+
+Line 403 - src/qnty/core/quantity.py:
+if x_0.dim != x_1.dim:
+    if not (x_1.dim.is_dimensionless() and abs(x_1.value) < 1e-15):
+        raise TypeError(f'Cannot compare quantities with different dimensions: {x_0.dim} vs {x_1.dim}')
+
+Line 420 - src/qnty/core/quantity.py:
+if x_0.dim != x_1.dim:
+    if not (x_1.dim.is_dimensionless() and abs(x_1.value) < 1e-15):
+        raise TypeError(f'Cannot compare quantities with different dimensions: {x_0.dim} vs {x_1.dim}')
+
+Line 437 - src/qnty/core/quantity.py:
+if x_0.dim != x_1.dim:
+    if not (x_1.dim.is_dimensionless() and abs(x_1.value) < 1e-15):
+        raise TypeError(f'Cannot compare quantities with different dimensions: {x_0.dim} vs {x_1.dim}')
+
+Line 454 - src/qnty/core/quantity.py:
+if x_0.dim != x_1.dim:
+    if not (x_1.dim.is_dimensionless() and abs(x_1.value) < 1e-15):
+        raise TypeError(f'Cannot compare quantities with different dimensions: {x_0.dim} vs {x_1.dim}')
+
+======================================================================
+
+2 repetitions of complexity 50
+
+Line 483 - src/qnty/spatial/vectors.py:
+if x_0 not in x_1:
+    raise ValueError(f"Reference axis '{x_2}' must be in plane '{x_3}'. Valid axes for {x_3} plane: {[f'+{x_4}' for x_4 in x_3] + [f'-{x_4}' for x_4 in x_3]}")
+
+Line 389 - src/qnty/spatial/points.py:
+if x_0 not in x_1:
+    raise ValueError(f"Reference axis '{x_2}' must be in plane '{x_3}'. Valid axes for {x_3} plane: {[f'+{x_4}' for x_4 in x_3] + [f'-{x_4}' for x_4 in x_3]}")
+
+======================================================================
+
+2 repetitions of complexity 50
+
+Line 475 - src/qnty/spatial/vector.py:
+if x_0._relative_to_force is None:
+    x_1 = x_0.angle_reference.to_standard(x_2, angle_unit='radian')
+else:
+    x_3 = x_0._relative_angle if x_0._relative_angle else 0.0
+    x_0._relative_angle = x_3 + x_2
+    x_1 = None
+
+Line 511 - src/qnty/spatial/vector.py:
+if x_0._relative_to_force is None:
+    x_1 = x_0.angle_reference.to_standard(x_2, angle_unit='radian')
+else:
+    x_3 = x_0._relative_angle if x_0._relative_angle else 0.0
+    x_0._relative_angle = x_3 + x_2
+    x_1 = None
+
+======================================================================
+
+Found 9 repeated patterns

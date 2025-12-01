@@ -299,33 +299,36 @@ class ScopeDiscoveryService:
         return discovered
 
     @classmethod
+    def _search_scope_for_variables(cls, scope_vars: dict, remaining_list: list[str], remaining_vars: set[str], discovered: dict[str, Any]) -> None:
+        """
+        Search a single scope (locals or globals) for variables by their symbol/name attribute.
+
+        Args:
+            scope_vars: Dictionary of variable names to values (e.g., locals() or globals())
+            remaining_list: Mutable list of remaining variable names to find (for early termination)
+            remaining_vars: Mutable set of remaining variable names (for O(1) lookup)
+            discovered: Dictionary to populate with found variable name -> variable object
+        """
+        for obj in scope_vars.values():
+            if not remaining_list:
+                break
+            if TypeRegistry.is_variable(obj):
+                obj_name = cls._get_variable_name(obj)
+                if obj_name in remaining_vars:
+                    discovered[obj_name] = obj
+                    remaining_list.remove(obj_name)
+                    remaining_vars.remove(obj_name)
+
+    @classmethod
     def _search_by_symbol_name_optimized(cls, local_vars: dict, global_vars: dict, remaining_vars: set[str], discovered: dict[str, Any]) -> None:
         """Optimized search for variables by their symbol/name attribute."""
         # Convert to list once to avoid repeated set operations
         remaining_list = list(remaining_vars)
 
-        # Search locals by symbol/name with early termination
-        for obj in local_vars.values():
-            if not remaining_list:  # Check list instead of set
-                break
-            if TypeRegistry.is_variable(obj):
-                obj_name = cls._get_variable_name(obj)
-                if obj_name in remaining_vars:  # Still check set for O(1) lookup
-                    discovered[obj_name] = obj
-                    remaining_list.remove(obj_name)
-                    remaining_vars.remove(obj_name)
-
-        # Search globals by symbol/name if still needed
+        # Search locals first, then globals if needed
+        cls._search_scope_for_variables(local_vars, remaining_list, remaining_vars, discovered)
         if remaining_list:
-            for obj in global_vars.values():
-                if not remaining_list:
-                    break
-                if TypeRegistry.is_variable(obj):
-                    obj_name = cls._get_variable_name(obj)
-                    if obj_name in remaining_vars:
-                        discovered[obj_name] = obj
-                        remaining_list.remove(obj_name)
-                        remaining_vars.remove(obj_name)
+            cls._search_scope_for_variables(global_vars, remaining_list, remaining_vars, discovered)
 
     @classmethod
     def _search_by_symbol_name(cls, local_vars: dict, global_vars: dict, remaining_vars: set[str], discovered: dict[str, Any]) -> None:

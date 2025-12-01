@@ -17,7 +17,9 @@ from matplotlib.patches import Arc
 from ..diagram_utils import (
     VectorDiagramBase,
     format_vector_label,
-    populate_force_diagram,
+)
+from ..diagram_utils import (
+    create_force_diagram as _create_force_diagram_impl,
 )
 
 
@@ -45,14 +47,7 @@ class VectorDiagram(VectorDiagramBase):
         >>> diagram.save("diagram.png")
     """
 
-    def __init__(
-        self,
-        title: str = "Vector Diagram",
-        figsize: tuple[float, float] = (10, 10),
-        show_grid: bool = True,
-        show_components: bool = False,
-        origin: tuple[float, float] = (0, 0)
-    ):
+    def __init__(self, title: str = "Vector Diagram", figsize: tuple[float, float] = (10, 10), show_grid: bool = True, show_components: bool = False, origin: tuple[float, float] = (0, 0)):
         """
         Initialize vector diagram.
 
@@ -92,17 +87,11 @@ class VectorDiagram(VectorDiagramBase):
         # Check against all existing label positions
         for ex, ey, ew, eh in self.angle_label_positions:
             # Simple bounding box overlap check
-            if (abs(x - ex) < (width + ew) / 2 and
-                abs(y - ey) < (height + eh) / 2):
+            if abs(x - ex) < (width + ew) / 2 and abs(y - ey) < (height + eh) / 2:
                 return True
         return False
 
-    def _find_non_overlapping_position(
-        self,
-        angle_deg: float,
-        base_radius: float,
-        max_attempts: int = 8
-    ) -> tuple[float, float, float]:
+    def _find_non_overlapping_position(self, angle_deg: float, base_radius: float, max_attempts: int = 8) -> tuple[float, float, float]:
         """
         Find a non-overlapping position for angle label.
 
@@ -121,14 +110,14 @@ class VectorDiagram(VectorDiagramBase):
         # Define candidate positions to try
         # Format: (arc_fraction, radius_multiplier)
         candidates = [
-            (0.5, 1.2),   # Midpoint, normal distance (default)
+            (0.5, 1.2),  # Midpoint, normal distance (default)
             (0.33, 1.2),  # Earlier on arc
             (0.67, 1.2),  # Later on arc
-            (0.5, 1.6),   # Midpoint, farther out
-            (0.5, 0.9),   # Midpoint, closer in
+            (0.5, 1.6),  # Midpoint, farther out
+            (0.5, 0.9),  # Midpoint, closer in
             (0.25, 1.4),  # Very early, bit farther
             (0.75, 1.4),  # Very late, bit farther
-            (0.4, 1.8),   # Fallback: far out
+            (0.4, 1.8),  # Fallback: far out
         ]
 
         for arc_frac, radius_mult in candidates[:max_attempts]:
@@ -163,11 +152,7 @@ class VectorDiagram(VectorDiagramBase):
             angle_deg -= 360
 
         # Draw arc from x-axis to vector
-        arc = Arc(
-            (0, 0), 2 * radius, 2 * radius,
-            angle=0, theta1=0, theta2=angle_deg,
-            color=color, linewidth=1.5, linestyle=':', zorder=2
-        )
+        arc = Arc((0, 0), 2 * radius, 2 * radius, angle=0, theta1=0, theta2=angle_deg, color=color, linewidth=1.5, linestyle=":", zorder=2)
         ax.add_patch(arc)
 
         # Find non-overlapping position for label
@@ -176,15 +161,15 @@ class VectorDiagram(VectorDiagramBase):
         # Format angle label with theta notation if label is provided
         if label:
             # Format label with subscript (e.g., F_1 becomes \theta_{F_1})
-            if '_' in label:
-                parts = label.split('_', 1)
+            if "_" in label:
+                parts = label.split("_", 1)
                 if len(parts) == 2:
                     base, subscript = parts
-                    theta_label = f'$\\theta_{{{base}_{{{subscript}}}}}$ = {angle_deg:.1f}°'
+                    theta_label = f"$\\theta_{{{base}_{{{subscript}}}}}$ = {angle_deg:.1f}°"
                 else:
-                    theta_label = f'$\\theta_{{{label}}}$ = {angle_deg:.1f}°'
+                    theta_label = f"$\\theta_{{{label}}}$ = {angle_deg:.1f}°"
             else:
-                theta_label = f'$\\theta_{{{label}}}$ = {angle_deg:.1f}°'
+                theta_label = f"$\\theta_{{{label}}}$ = {angle_deg:.1f}°"
         else:
             # Fallback to just the angle
             theta_label = f"{angle_deg:.1f}°"
@@ -194,24 +179,13 @@ class VectorDiagram(VectorDiagramBase):
         label_height = 0.5
 
         # Add label
-        ax.text(
-            label_x, label_y, theta_label,
-            fontsize=10, color=color,
-            ha='center', va='center',
-            bbox={'boxstyle': 'round,pad=0.2', 'facecolor': 'white', 'alpha': 0.7}
-        )
+        ax.text(label_x, label_y, theta_label, fontsize=10, color=color, ha="center", va="center", bbox={"boxstyle": "round,pad=0.2", "facecolor": "white", "alpha": 0.7})
 
         # Record this label's position to avoid future overlaps
         self.angle_label_positions.append((label_x, label_y, label_width, label_height))
 
 
-def create_force_diagram(
-    problem,
-    output_path: str | Path,
-    title: str | None = None,
-    show_components: bool = False,
-    **kwargs
-) -> Path:
+def create_force_diagram(problem, output_path: str | Path, title: str | None = None, show_components: bool = False, **kwargs) -> Path:
     """
     Create vector diagram from a VectorEquilibriumProblem.
 
@@ -230,7 +204,4 @@ def create_force_diagram(
         >>> problem.solve()
         >>> create_force_diagram(problem, "diagram.png")
     """
-    title = title or problem.name
-    diagram = VectorDiagram(title=title, show_components=show_components, **kwargs)
-    populate_force_diagram(diagram, problem)
-    return diagram.save(output_path)
+    return _create_force_diagram_impl(problem, output_path, VectorDiagram, title, show_components, **kwargs)

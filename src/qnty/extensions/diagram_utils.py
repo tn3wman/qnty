@@ -47,8 +47,8 @@ def compute_vector_bounds(
     max_x, min_x, max_y, min_y = 0.0, 0.0, 0.0, 0.0
 
     for vec_data in vectors:
-        mag = vec_data['magnitude']
-        angle = vec_data['angle']
+        mag = vec_data["magnitude"]
+        angle = vec_data["angle"]
         scaled_mag = mag * scale_factor
         x = scaled_mag * np.cos(angle)
         y = scaled_mag * np.sin(angle)
@@ -58,8 +58,8 @@ def compute_vector_bounds(
         min_y = min(min_y, y)
 
     if resultant:
-        mag = resultant['magnitude']
-        angle = resultant['angle']
+        mag = resultant["magnitude"]
+        angle = resultant["angle"]
         scaled_mag = mag * scale_factor
         x = scaled_mag * np.cos(angle)
         y = scaled_mag * np.sin(angle)
@@ -72,8 +72,8 @@ def compute_vector_bounds(
 
 
 # Color palette for force vectors
-FORCE_COLORS = ['#E74C3C', '#3498DB', '#F39C12', '#9B59B6', '#1ABC9C', '#E67E22']
-RESULTANT_COLOR = '#27AE60'
+FORCE_COLORS = ["#E74C3C", "#3498DB", "#F39C12", "#9B59B6", "#1ABC9C", "#E67E22"]
+RESULTANT_COLOR = "#27AE60"
 
 
 def extract_force_data(force: Any) -> tuple[float, float] | None:
@@ -119,15 +119,7 @@ def build_vector_data(
         return None
 
     mag, angle_rad = extracted
-    return {
-        'force': force,
-        'magnitude': mag,
-        'angle': angle_rad,
-        'color': color,
-        'label': label or force.name,
-        'show_angle': show_angle,
-        'linewidth': linewidth
-    }
+    return {"force": force, "magnitude": mag, "angle": angle_rad, "color": color, "label": label or force.name, "show_angle": show_angle, "linewidth": linewidth}
 
 
 def build_resultant_data(
@@ -153,14 +145,7 @@ def build_resultant_data(
         return None
 
     mag, angle_rad = extracted
-    return {
-        'force': force,
-        'magnitude': mag,
-        'angle': angle_rad,
-        'color': color,
-        'label': label or force.name,
-        'linewidth': linewidth
-    }
+    return {"force": force, "magnitude": mag, "angle": angle_rad, "color": color, "label": label or force.name, "linewidth": linewidth}
 
 
 def draw_axes(ax: Any, xlim_min: float, xlim_max: float, ylim_min: float, ylim_max: float) -> None:
@@ -175,15 +160,13 @@ def draw_axes(ax: Any, xlim_min: float, xlim_max: float, ylim_min: float, ylim_m
         ylim_max: Maximum y limit
     """
     # Origin marker
-    ax.plot(0, 0, 'ko', markersize=8, zorder=5)
+    ax.plot(0, 0, "ko", markersize=8, zorder=5)
 
     # X-axis spanning entire width
-    ax.annotate('', xy=(xlim_max * 0.95, 0), xytext=(xlim_min * 0.95, 0),
-                arrowprops={'arrowstyle': '->', 'lw': 2, 'color': 'black'}, zorder=1)
+    ax.annotate("", xy=(xlim_max * 0.95, 0), xytext=(xlim_min * 0.95, 0), arrowprops={"arrowstyle": "->", "lw": 2, "color": "black"}, zorder=1)
 
     # Y-axis spanning entire height
-    ax.annotate('', xy=(0, ylim_max * 0.95), xytext=(0, ylim_min * 0.95),
-                arrowprops={'arrowstyle': '->', 'lw': 2, 'color': 'black'}, zorder=1)
+    ax.annotate("", xy=(0, ylim_max * 0.95), xytext=(0, ylim_min * 0.95), arrowprops={"arrowstyle": "->", "lw": 2, "color": "black"}, zorder=1)
 
 
 def draw_components(ax: Any, x: float, y: float, color: str) -> None:
@@ -197,14 +180,14 @@ def draw_components(ax: Any, x: float, y: float, color: str) -> None:
         color: Color for the component lines
     """
     # X-component (vertical dashed line from tip to x-axis)
-    ax.plot([x, x], [0, y], color=color, linestyle=':', linewidth=1.5, alpha=0.6)
+    ax.plot([x, x], [0, y], color=color, linestyle=":", linewidth=1.5, alpha=0.6)
 
     # Y-component (horizontal dashed line from tip to y-axis)
-    ax.plot([0, x], [y, y], color=color, linestyle=':', linewidth=1.5, alpha=0.6)
+    ax.plot([0, x], [y, y], color=color, linestyle=":", linewidth=1.5, alpha=0.6)
 
     # Labels for components
-    ax.text(x, -0.3, f"{x:.1f}", fontsize=9, ha='center', color=color)
-    ax.text(-0.3, y, f"{y:.1f}", fontsize=9, va='center', color=color)
+    ax.text(x, -0.3, f"{x:.1f}", fontsize=9, ha="center", color=color)
+    ax.text(-0.3, y, f"{y:.1f}", fontsize=9, va="center", color=color)
 
 
 def get_unit_string(vectors: list[dict], resultant: dict | None) -> str:
@@ -219,11 +202,11 @@ def get_unit_string(vectors: list[dict], resultant: dict | None) -> str:
         Unit symbol string or empty string if no unit found
     """
     if vectors and len(vectors) > 0:
-        force = vectors[0]['force']
+        force = vectors[0]["force"]
         if force.magnitude and force.magnitude.preferred:
             return force.magnitude.preferred.symbol
     if resultant:
-        force = resultant['force']
+        force = resultant["force"]
         if force.magnitude and force.magnitude.preferred:
             return force.magnitude.preferred.symbol
     return ""
@@ -241,11 +224,11 @@ def format_label_for_legend(label: str) -> str:
     Returns:
         LaTeX formatted label string
     """
-    if '_' in label:
-        parts = label.split('_', 1)
+    if "_" in label:
+        parts = label.split("_", 1)
         if len(parts) == 2:
             base, subscript = parts
-            return f'${base}_{{{subscript}}}$'
+            return f"${base}_{{{subscript}}}$"
     return label
 
 
@@ -263,15 +246,15 @@ def format_vector_label(force: Any, label: str, include_magnitude_bars: bool = F
     """
     # Format the force name with LaTeX subscripts
     if include_magnitude_bars:
-        if '_' in label:
-            parts = label.split('_', 1)
+        if "_" in label:
+            parts = label.split("_", 1)
             if len(parts) == 2:
                 base, subscript = parts
-                latex_label = f'$|{base}_{{{subscript}}}|$'
+                latex_label = f"$|{base}_{{{subscript}}}|$"
             else:
-                latex_label = f'$|{label}|$'
+                latex_label = f"$|{label}|$"
         else:
-            latex_label = f'$|{label}|$'
+            latex_label = f"$|{label}|$"
     else:
         latex_label = format_label_for_legend(label)
 
@@ -311,12 +294,7 @@ def populate_force_diagram(
             continue  # Handle resultants separately
 
         if force.is_known and force.magnitude and force.angle:
-            diagram.add_vector(
-                force,
-                color=FORCE_COLORS[color_idx % len(FORCE_COLORS)],
-                label=name,
-                show_angle=True
-            )
+            diagram.add_vector(force, color=FORCE_COLORS[color_idx % len(FORCE_COLORS)], label=name, show_angle=True)
             color_idx += 1
 
     # Add resultant (if present)
@@ -324,6 +302,37 @@ def populate_force_diagram(
         if force.is_resultant and force.is_known:
             diagram.add_resultant(force, color=RESULTANT_COLOR, label=name)
             break
+
+
+def create_force_diagram(problem: Any, output_path: str | Path, diagram_class: type, title: str | None = None, show_components: bool = False, **kwargs) -> Path:
+    """
+    Create vector diagram from a VectorEquilibriumProblem.
+
+    This is a shared factory function used by both plotting and reporting modules.
+    It creates a diagram using the specified diagram class, populates it with
+    forces from the problem, and saves it.
+
+    Args:
+        problem: VectorEquilibriumProblem instance (must be solved)
+        output_path: Output file path
+        diagram_class: The VectorDiagram class to use (e.g., plotting.VectorDiagram or reporting.VectorDiagram)
+        title: Diagram title (uses problem.name if None)
+        show_components: Whether to show component projections
+        **kwargs: Additional arguments for VectorDiagram
+
+    Returns:
+        Path to saved diagram
+
+    Examples:
+        >>> from qnty.extensions.plotting.vector_diagram import VectorDiagram
+        >>> problem = Problem_2_1()
+        >>> problem.solve()
+        >>> create_force_diagram(problem, "diagram.png", VectorDiagram)
+    """
+    title = title or problem.name
+    diagram = diagram_class(title=title, show_components=show_components, **kwargs)
+    populate_force_diagram(diagram, problem)
+    return diagram.save(output_path)
 
 
 class VectorDiagramBase:
@@ -335,14 +344,7 @@ class VectorDiagramBase:
     methods to customize behavior (e.g., angle annotation style, label formatting).
     """
 
-    def __init__(
-        self,
-        title: str = "Vector Diagram",
-        figsize: tuple[float, float] = (10, 10),
-        show_grid: bool = True,
-        show_components: bool = False,
-        origin: tuple[float, float] = (0, 0)
-    ):
+    def __init__(self, title: str = "Vector Diagram", figsize: tuple[float, float] = (10, 10), show_grid: bool = True, show_components: bool = False, origin: tuple[float, float] = (0, 0)):
         """
         Initialize vector diagram.
 
@@ -366,14 +368,7 @@ class VectorDiagramBase:
         # Auto-scale parameters (computed when drawing)
         self.max_magnitude: float = 0.0
 
-    def add_vector(
-        self,
-        force: _Vector,
-        color: str = 'blue',
-        label: str | None = None,
-        show_angle: bool = True,
-        linewidth: float = 2.5
-    ) -> None:
+    def add_vector(self, force: _Vector, color: str = "blue", label: str | None = None, show_angle: bool = True, linewidth: float = 2.5) -> None:
         """
         Add a force vector to the diagram.
 
@@ -389,16 +384,10 @@ class VectorDiagramBase:
             return
 
         self.vectors.append(vec_data)
-        if vec_data['magnitude'] > self.max_magnitude:
-            self.max_magnitude = vec_data['magnitude']
+        if vec_data["magnitude"] > self.max_magnitude:
+            self.max_magnitude = vec_data["magnitude"]
 
-    def add_resultant(
-        self,
-        force: _Vector,
-        color: str = 'green',
-        label: str | None = None,
-        linewidth: float = 3.0
-    ) -> None:
+    def add_resultant(self, force: _Vector, color: str = "green", label: str | None = None, linewidth: float = 3.0) -> None:
         """
         Add resultant force vector (drawn with dashed line).
 
@@ -413,15 +402,10 @@ class VectorDiagramBase:
             return
 
         self.resultant = res_data
-        if res_data['magnitude'] > self.max_magnitude:
-            self.max_magnitude = res_data['magnitude']
+        if res_data["magnitude"] > self.max_magnitude:
+            self.max_magnitude = res_data["magnitude"]
 
-    def save(
-        self,
-        output_path: str | Path,
-        dpi: int = 300,
-        bbox_inches: str = 'tight'
-    ) -> Path:
+    def save(self, output_path: str | Path, dpi: int = 300, bbox_inches: str = "tight") -> Path:
         """
         Generate and save the vector diagram.
 
@@ -442,7 +426,7 @@ class VectorDiagramBase:
         fig, ax = plt.subplots(figsize=self.figsize)
 
         # Set title
-        ax.set_title(self.title, fontsize=16, fontweight='bold', pad=20)
+        ax.set_title(self.title, fontsize=16, fontweight="bold", pad=20)
 
         # Calculate scale factor and determine plot bounds
         scale_factor = 1.0
@@ -461,11 +445,11 @@ class VectorDiagramBase:
             self._draw_resultant(ax, self.resultant, scale_factor)
 
         # Set equal aspect ratio
-        ax.set_aspect('equal', adjustable='box')
+        ax.set_aspect("equal", adjustable="box")
 
         # Configure grid
         if self.show_grid:
-            ax.grid(True, alpha=0.3, linestyle='--', linewidth=0.5, zorder=0)
+            ax.grid(True, alpha=0.3, linestyle="--", linewidth=0.5, zorder=0)
 
         # Set limits with padding - ensure we show all quadrants with vectors
         # Always show at least a small margin even if vectors are in only one quadrant
@@ -496,18 +480,18 @@ class VectorDiagramBase:
             # Set tick positions explicitly, then set labels
             ax.set_xticks(xticks)
             ax.set_yticks(yticks)
-            ax.set_xticklabels([f'{x * unit_scale:.0f}' for x in xticks])
-            ax.set_yticklabels([f'{y * unit_scale:.0f}' for y in yticks])
+            ax.set_xticklabels([f"{x * unit_scale:.0f}" for x in xticks])
+            ax.set_yticklabels([f"{y * unit_scale:.0f}" for y in yticks])
 
             # Axis labels with units
-            ax.set_xlabel(f'x-component ({unit_str})', fontsize=12, fontweight='bold')
-            ax.set_ylabel(f'y-component ({unit_str})', fontsize=12, fontweight='bold')
+            ax.set_xlabel(f"x-component ({unit_str})", fontsize=12, fontweight="bold")
+            ax.set_ylabel(f"y-component ({unit_str})", fontsize=12, fontweight="bold")
         else:
-            ax.set_xlabel('x', fontsize=12, fontweight='bold')
-            ax.set_ylabel('y', fontsize=12, fontweight='bold')
+            ax.set_xlabel("x", fontsize=12, fontweight="bold")
+            ax.set_ylabel("y", fontsize=12, fontweight="bold")
 
         # Add legend
-        ax.legend(loc='best', fontsize=11, framealpha=0.9, fancybox=True, shadow=True)
+        ax.legend(loc="best", fontsize=11, framealpha=0.9, fancybox=True, shadow=True)
 
         # Save figure
         plt.savefig(output_path, dpi=dpi, bbox_inches=bbox_inches)
@@ -541,13 +525,13 @@ class VectorDiagramBase:
 
     def _draw_vector(self, ax, vec_data: dict, scale_factor: float) -> None:
         """Draw a force vector."""
-        mag = vec_data['magnitude']
-        angle = vec_data['angle']
-        color = vec_data['color']
-        label = vec_data['label']
-        show_angle = vec_data['show_angle']
-        linewidth = vec_data['linewidth']
-        force = vec_data['force']
+        mag = vec_data["magnitude"]
+        angle = vec_data["angle"]
+        color = vec_data["color"]
+        label = vec_data["label"]
+        show_angle = vec_data["show_angle"]
+        linewidth = vec_data["linewidth"]
+        force = vec_data["force"]
 
         # Calculate scaled magnitude
         scaled_mag = mag * scale_factor
@@ -558,13 +542,14 @@ class VectorDiagramBase:
 
         # Draw vector arrow with larger, more visible arrowhead
         arrow = FancyArrowPatch(
-            (0, 0), (x_end, y_end),
-            arrowstyle='->,head_width=0.4,head_length=0.6',
+            (0, 0),
+            (x_end, y_end),
+            arrowstyle="->,head_width=0.4,head_length=0.6",
             mutation_scale=20,  # Makes arrowhead larger
             color=color,
             linewidth=linewidth,
             label=self._format_label_for_legend(label),
-            zorder=3
+            zorder=3,
         )
         ax.add_patch(arrow)
 
@@ -576,11 +561,15 @@ class VectorDiagramBase:
         label_x = x_end + label_offset * math.cos(angle)
         label_y = y_end + label_offset * math.sin(angle)
         ax.text(
-            label_x, label_y, formatted_label,
-            fontsize=11, fontweight='bold',
+            label_x,
+            label_y,
+            formatted_label,
+            fontsize=11,
+            fontweight="bold",
             color=color,
-            ha='center', va='center',
-            bbox={'boxstyle': 'round,pad=0.4', 'facecolor': 'white', 'edgecolor': color, 'linewidth': 2, 'alpha': 0.9}
+            ha="center",
+            va="center",
+            bbox={"boxstyle": "round,pad=0.4", "facecolor": "white", "edgecolor": color, "linewidth": 2, "alpha": 0.9},
         )
 
         # Show angle annotation
@@ -593,12 +582,12 @@ class VectorDiagramBase:
 
     def _draw_resultant(self, ax, res_data: dict, scale_factor: float) -> None:
         """Draw resultant vector with dashed line."""
-        mag = res_data['magnitude']
-        angle = res_data['angle']
-        color = res_data['color']
-        label = res_data['label']
-        linewidth = res_data['linewidth']
-        force = res_data['force']
+        mag = res_data["magnitude"]
+        angle = res_data["angle"]
+        color = res_data["color"]
+        label = res_data["label"]
+        linewidth = res_data["linewidth"]
+        force = res_data["force"]
 
         # Calculate scaled magnitude
         scaled_mag = mag * scale_factor
@@ -609,14 +598,15 @@ class VectorDiagramBase:
 
         # Draw dashed vector arrow with larger, more visible arrowhead
         arrow = FancyArrowPatch(
-            (0, 0), (x_end, y_end),
-            arrowstyle='->,head_width=0.5,head_length=0.7',
+            (0, 0),
+            (x_end, y_end),
+            arrowstyle="->,head_width=0.5,head_length=0.7",
             mutation_scale=20,  # Makes arrowhead larger
             color=color,
             linewidth=linewidth,
-            linestyle='--',
+            linestyle="--",
             label=self._format_label_for_legend(label),
-            zorder=4
+            zorder=4,
         )
         ax.add_patch(arrow)
 
@@ -628,11 +618,15 @@ class VectorDiagramBase:
         label_x = x_end + label_offset * math.cos(angle)
         label_y = y_end + label_offset * math.sin(angle)
         ax.text(
-            label_x, label_y, formatted_label,
-            fontsize=12, fontweight='bold',
+            label_x,
+            label_y,
+            formatted_label,
+            fontsize=12,
+            fontweight="bold",
             color=color,
-            ha='center', va='center',
-            bbox={'boxstyle': 'round,pad=0.5', 'facecolor': 'white', 'edgecolor': color, 'linewidth': 2.5, 'alpha': 0.95}
+            ha="center",
+            va="center",
+            bbox={"boxstyle": "round,pad=0.5", "facecolor": "white", "edgecolor": color, "linewidth": 2.5, "alpha": 0.95},
         )
 
         # Always show angle for resultant
@@ -655,11 +649,7 @@ class VectorDiagramBase:
             angle_deg -= 360
 
         # Draw arc from x-axis to vector
-        arc = Arc(
-            (0, 0), 2 * radius, 2 * radius,
-            angle=0, theta1=0, theta2=angle_deg,
-            color=color, linewidth=1.5, linestyle=':', zorder=2
-        )
+        arc = Arc((0, 0), 2 * radius, 2 * radius, angle=0, theta1=0, theta2=angle_deg, color=color, linewidth=1.5, linestyle=":", zorder=2)
         ax.add_patch(arc)
 
         # Calculate label position at midpoint of arc using normalized angle
@@ -683,12 +673,7 @@ class VectorDiagramBase:
         else:
             label_text = f"{angle_deg:.1f}°"
 
-        ax.text(
-            label_x, label_y, label_text,
-            fontsize=10, color=color,
-            ha='center', va='center',
-            bbox={'boxstyle': 'round,pad=0.2', 'facecolor': 'white', 'alpha': 0.7}
-        )
+        ax.text(label_x, label_y, label_text, fontsize=10, color=color, ha="center", va="center", bbox={"boxstyle": "round,pad=0.2", "facecolor": "white", "alpha": 0.7})
 
     def _draw_components(self, ax, x: float, y: float, color: str) -> None:
         """Draw component projections (dashed lines)."""

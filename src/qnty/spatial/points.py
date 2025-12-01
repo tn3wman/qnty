@@ -11,7 +11,7 @@ from types import EllipsisType
 from typing import Any
 
 from ..core.unit import Unit
-from ..utils.shared_utilities import convert_angle_to_radians
+from ..utils.shared_utilities import convert_angle_to_radians, convert_angle_to_radians_optional
 from .point import _Point
 from .vector_helpers import compute_missing_direction_angle
 
@@ -62,7 +62,7 @@ class _PointWithUnknowns(_Point):
             coord: Coordinate name ('x', 'y', or 'z')
             value: Value in current unit
         """
-        if coord not in ('x', 'y', 'z'):
+        if coord not in ("x", "y", "z"):
             raise ValueError(f"Invalid coordinate '{coord}', must be 'x', 'y', or 'z'")
 
         # Remove from unknowns if present
@@ -70,7 +70,7 @@ class _PointWithUnknowns(_Point):
             del self._unknowns[coord]
 
         # Update internal coordinates
-        idx = {'x': 0, 'y': 1, 'z': 2}[coord]
+        idx = {"x": 0, "y": 1, "z": 2}[coord]
 
         # Convert value to SI
         if self._unit is not None:
@@ -85,14 +85,14 @@ class _PointWithUnknowns(_Point):
         Args:
             coord: Coordinate name ('x', 'y', or 'z')
         """
-        if coord not in ('x', 'y', 'z'):
+        if coord not in ("x", "y", "z"):
             raise ValueError(f"Invalid coordinate '{coord}', must be 'x', 'y', or 'z'")
 
         # Add to unknowns
         self._unknowns[coord] = coord
 
         # Set coordinate to 0 (placeholder)
-        idx = {'x': 0, 'y': 1, 'z': 2}[coord]
+        idx = {"x": 0, "y": 1, "z": 2}[coord]
         self._coords[idx] = 0.0
 
     def to_cartesian(self) -> _Point:
@@ -121,14 +121,7 @@ class _PointWithUnknowns(_Point):
         coords = self.to_array()
 
         # Create new point with converted values
-        result = _PointWithUnknowns(
-            x=coords[0],
-            y=coords[1],
-            z=coords[2],
-            unit=unit,
-            unknowns=self._unknowns.copy(),
-            name=self._name
-        )
+        result = _PointWithUnknowns(x=coords[0], y=coords[1], z=coords[2], unit=unit, unknowns=self._unknowns.copy(), name=self._name)
         return result
 
     def __str__(self) -> str:
@@ -394,29 +387,17 @@ def create_point_polar(
     # Validate wrt axis is in the specified plane
     axis_char = wrt_lower[1]  # 'x', 'y', or 'z'
     if axis_char not in plane_lower:
-        raise ValueError(
-            f"Reference axis '{wrt}' must be in plane '{plane}'. "
-            f"Valid axes for {plane} plane: {[f'+{c}' for c in plane] + [f'-{c}' for c in plane]}"
-        )
+        raise ValueError(f"Reference axis '{wrt}' must be in plane '{plane}'. Valid axes for {plane} plane: {[f'+{c}' for c in plane] + [f'-{c}' for c in plane]}")
 
     # Convert angle to radians
-    if angle_unit.lower() in ("degree", "degrees", "deg"):
-        angle_rad = math.radians(float(angle))
-    elif angle_unit.lower() in ("radian", "radians", "rad"):
-        angle_rad = float(angle)
-    else:
-        raise ValueError(f"Invalid angle_unit '{angle_unit}'. Use 'degree' or 'radian'")
+    angle_rad = convert_angle_to_radians(angle, angle_unit)
 
     # Resolve unit
+    from ..utils.shared_utilities import resolve_length_unit_from_string
+
     resolved_unit: Unit | None = None
     if isinstance(unit, str):
-        from ..core.dimension_catalog import dim
-        from ..core.unit import ureg
-
-        resolved = ureg.resolve(unit, dim=dim.length)
-        if resolved is None:
-            raise ValueError(f"Unknown length unit '{unit}'")
-        resolved_unit = resolved
+        resolved_unit = resolve_length_unit_from_string(unit)
     else:
         resolved_unit = unit
 
@@ -604,11 +585,11 @@ def create_point_along(
     import math
 
     # Convert to _Point if needed
-    if hasattr(from_point, 'to_cartesian'):
+    if hasattr(from_point, "to_cartesian"):
         from_pt = from_point.to_cartesian()
     else:
         from_pt = from_point
-    if hasattr(to_point, 'to_cartesian'):
+    if hasattr(to_point, "to_cartesian"):
         to_pt = to_point.to_cartesian()
     else:
         to_pt = to_point
@@ -713,20 +694,10 @@ def create_point_direction_angles(
 
     dist_val = float(dist)
 
-    # Convert angles to radians
-    def to_radians(angle_val):
-        if angle_val is None:
-            return None
-        if angle_unit.lower() in ("degree", "degrees", "deg"):
-            return math.radians(float(angle_val))
-        elif angle_unit.lower() in ("radian", "radians", "rad"):
-            return float(angle_val)
-        else:
-            raise ValueError(f"Invalid angle_unit '{angle_unit}'. Use 'degree' or 'radian'")
-
-    alpha_rad = to_radians(alpha)
-    beta_rad = to_radians(beta)
-    gamma_rad = to_radians(gamma)
+    # Convert angles to radians using shared utility
+    alpha_rad = convert_angle_to_radians_optional(alpha, angle_unit)
+    beta_rad = convert_angle_to_radians_optional(beta, angle_unit)
+    gamma_rad = convert_angle_to_radians_optional(gamma, angle_unit)
 
     # Calculate missing angle from constraint cos²α + cos²β + cos²γ = 1
     alpha_rad, beta_rad, gamma_rad = compute_missing_direction_angle(alpha_rad, beta_rad, gamma_rad)

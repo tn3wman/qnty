@@ -453,8 +453,8 @@ def capture_original_force_states(
         force_states[name] = force.is_known
         mag_known = force.magnitude is not None and force.magnitude.value is not None
         angle_known = force.angle is not None and force.angle.value is not None
-        variable_states[f'{name}_mag_known'] = mag_known
-        variable_states[f'{name}_angle_known'] = angle_known
+        variable_states[f"{name}_mag_known"] = mag_known
+        variable_states[f"{name}_angle_known"] = angle_known
 
 
 # ========== LATEX UTILITIES ==========
@@ -548,7 +548,7 @@ def extract_force_vectors_from_class(cls: type, instance: Any, forces: dict, clo
 
         attr = getattr(cls, attr_name)
         # Check if it's a Vector (duck typing by checking for is_known and magnitude attrs)
-        if hasattr(attr, 'is_known') and hasattr(attr, 'magnitude'):
+        if hasattr(attr, "is_known") and hasattr(attr, "magnitude"):
             # Clone to avoid sharing between instances
             force_copy = clone_func(attr)
             forces[attr_name] = force_copy
@@ -578,13 +578,7 @@ def add_force_magnitude_variable(
     from ..core.dimension_catalog import dim
     from ..core.quantity import Quantity
 
-    mag_var = Quantity(
-        name=f"{force.name} Magnitude",
-        dim=dim.force,
-        value=force.magnitude.value,
-        preferred=force.magnitude.preferred,
-        _symbol=f"{force_name}_mag"
-    )
+    mag_var = Quantity(name=f"{force.name} Magnitude", dim=dim.force, value=force.magnitude.value, preferred=force.magnitude.preferred, _symbol=f"{force_name}_mag")
     variables[f"{force_name}_mag"] = mag_var
     original_variable_states[f"{force_name}_mag"] = was_originally_known
 
@@ -612,6 +606,29 @@ def convert_angle_to_radians(angle: float, angle_unit: str) -> float:
         return float(angle)
     else:
         raise ValueError(f"Invalid angle_unit '{angle_unit}'. Use 'degree' or 'radian'")
+
+
+def convert_angle_to_radians_optional(angle: float | None, angle_unit: str) -> float | None:
+    """
+    Convert an optional angle from the given unit to radians.
+
+    This is a None-safe wrapper around convert_angle_to_radians for use
+    in functions where angles may be optional (e.g., direction angles where
+    only 2 of 3 angles are specified).
+
+    Args:
+        angle: Angle value or None
+        angle_unit: Unit string - "degree", "degrees", "deg", "radian", "radians", or "rad"
+
+    Returns:
+        Angle in radians, or None if input was None
+
+    Raises:
+        ValueError: If angle_unit is not recognized
+    """
+    if angle is None:
+        return None
+    return convert_angle_to_radians(angle, angle_unit)
 
 
 # ========== NUMERICAL VALUE EXTRACTION ==========
@@ -671,13 +688,7 @@ def add_force_component_variable(
     from ..core.dimension_catalog import dim
     from ..core.quantity import Quantity
 
-    var = Quantity(
-        name=f"{force.name} {component_name}-Component",
-        dim=dim.force,
-        value=component.value,
-        preferred=component.preferred,
-        _symbol=f"{force_name}_{component_attr}"
-    )
+    var = Quantity(name=f"{force.name} {component_name}-Component", dim=dim.force, value=component.value, preferred=component.preferred, _symbol=f"{force_name}_{component_attr}")
     variables[f"{force_name}_{component_attr}"] = var
 
 
@@ -756,7 +767,7 @@ def clone_unknown_force_vector(force: Any, Vector: type) -> Any:
     )
 
     # Preserve relative angle constraint if present
-    if hasattr(force, '_relative_to_force') and force._relative_to_force is not None:
+    if hasattr(force, "_relative_to_force") and force._relative_to_force is not None:
         cloned._relative_to_force = force._relative_to_force
         cloned._relative_angle = force._relative_angle
 
@@ -796,3 +807,159 @@ def normalize_range_specs(range_specs: tuple) -> list[range]:
         else:
             raise ValueError(f"Invalid range specification: {spec}")
     return ranges
+
+
+# ========== UNIT RESOLUTION UTILITIES ==========
+
+
+def resolve_length_unit_from_string(unit: str | Any) -> Any:
+    """
+    Resolve a unit from a string to a Unit object, specifically for length dimension.
+
+    This consolidates the repeated pattern of resolving length units from strings
+    that appears in vector_direction_ratios.py, point_direction_angles.py, and
+    vector_direction_angles.py.
+
+    Args:
+        unit: Unit specification - can be a string unit name or a Unit object
+
+    Returns:
+        Resolved Unit object
+
+    Raises:
+        ValueError: If unit is a string but cannot be resolved as a length unit
+    """
+    if isinstance(unit, str):
+        from ..core.dimension_catalog import dim
+        from ..core.unit import ureg
+
+        resolved = ureg.resolve(unit, dim=dim.length)
+        if resolved is None:
+            raise ValueError(f"Unknown length unit '{unit}'")
+        return resolved
+    return unit
+
+
+def resolve_unit_from_string_or_fallback(
+    unit: str | Any | None,
+    fallback_sources: list[Any] | None = None,
+    dim: Any = None,
+) -> Any:
+    """
+    Resolve a unit from a string, Unit object, or fallback to a default from sources.
+
+    This consolidates the common pattern of resolving units in vector factory functions.
+
+    Args:
+        unit: Unit specification - can be a string unit name, a Unit object, or None
+        fallback_sources: List of objects to check for _unit attribute if unit is None
+        dim: Optional dimension to validate the unit against
+
+    Returns:
+        Resolved Unit object or None if no unit could be determined
+
+    Raises:
+        ValueError: If unit is a string but cannot be resolved
+
+    Examples:
+        >>> from qnty.spatial import _Vector
+        >>> vectors = [v1, v2]
+        >>> resolved = resolve_unit_from_string_or_fallback("N", vectors)
+        >>> resolved = resolve_unit_from_string_or_fallback(None, vectors)  # Uses v1._unit
+    """
+    from ..core.unit import ureg
+
+    if isinstance(unit, str):
+        if dim is not None:
+            resolved = ureg.resolve(unit, dim=dim)
+        else:
+            resolved = ureg.resolve(unit)
+        if resolved is None:
+            raise ValueError(f"Unknown unit '{unit}'")
+        return resolved
+    elif unit is not None:
+        return unit
+    elif fallback_sources:
+        # Get unit from first source that has _unit attribute
+        for source in fallback_sources:
+            if hasattr(source, "_unit") and source._unit is not None:
+                return source._unit
+    return None
+
+
+# ========== MAGNITUDE QUANTITY UTILITIES ==========
+
+
+def create_magnitude_quantity(
+    magnitude: int | float | Any,
+    unit: Any,
+    name: str,
+) -> Any:
+    """
+    Create a Quantity for magnitude, handling both numeric values and existing Quantity objects.
+
+    This consolidates the repeated pattern in vector.py where magnitude can be either
+    a numeric value (requiring unit conversion) or an existing Quantity object.
+
+    Args:
+        magnitude: Either a numeric value (int/float) or a Quantity object
+        unit: The unit to use if magnitude is numeric (required if numeric)
+        name: Name prefix for the quantity (e.g., "F_1" will create "F_1_magnitude")
+
+    Returns:
+        Quantity object representing the magnitude
+
+    Raises:
+        ValueError: If magnitude is numeric but unit is None
+    """
+    from ..core.quantity import Quantity
+
+    if isinstance(magnitude, int | float):
+        if unit is None:
+            raise ValueError("unit must be specified")
+        mag_qty = Quantity.from_value(float(magnitude), unit, name=f"{name}_magnitude")
+        mag_qty.preferred = unit
+        return mag_qty
+    return magnitude
+
+
+# ========== VARIABLE STATE TRACKING MIXIN ==========
+
+
+class VariableStateTrackingMixin:
+    """
+    Mixin providing get_known_variables and get_unknown_variables methods.
+
+    This consolidates the repeated methods in CartesianVectorProblem and
+    RectangularVectorProblem that filter variables based on their original known state.
+
+    Classes using this mixin must have:
+    - self.variables: dict[str, Quantity] - dictionary of variable names to Quantity objects
+    - self._original_variable_states: dict[str, bool] - dictionary tracking original known states
+    """
+
+    def get_known_variables(self) -> dict[str, Any]:
+        """
+        Get known variables for report generation.
+
+        Returns:
+            Dictionary of variable names to Quantity objects that were originally known
+        """
+        known_vars = {}
+        for var_name, var in self.variables.items():  # type: ignore[attr-defined]
+            if self._original_variable_states.get(var_name, False):  # type: ignore[attr-defined]
+                known_vars[var_name] = var
+        return known_vars
+
+    def get_unknown_variables(self) -> dict[str, Any]:
+        """
+        Get unknown variables for report generation.
+
+        Returns:
+            Dictionary of variable names to Quantity objects that were originally unknown
+        """
+        unknown_vars = {}
+        for var_name, var in self.variables.items():  # type: ignore[attr-defined]
+            if not self._original_variable_states.get(var_name, False):  # type: ignore[attr-defined]
+                unknown_vars[var_name] = var
+        return unknown_vars
