@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING, Generic, Self, TypeVar, cast, overload
 
 from .dimension import Dimension
 from .unit import Unit, ureg
+from ..utils.shared_utilities import SharedConstants
 
 if TYPE_CHECKING:
     from . import quantity_catalog
@@ -543,12 +544,7 @@ class QuantitySetter(Generic[D]):
     def __getattr__(self, name: str) -> Quantity[D]:
         """Resolve attribute name to a Unit and apply."""
         # Guard against deepcopy and pickle operations that cause recursion
-        if name in {
-            '__setstate__', '__getstate__', '__getnewargs__', '__getnewargs_ex__',
-            '__reduce__', '__reduce_ex__', '__copy__', '__deepcopy__',
-            '__getattribute__', '__setattr__', '__delattr__',
-            '__dict__', '__weakref__', '__class__'
-        }:
+        if name in SharedConstants.WRAPPER_EXCLUDED_DUNDERS:
             raise AttributeError(f"{type(self).__name__} has no attribute '{name}'")
 
         unit = ureg.resolve(name, dim=self._dim)
@@ -605,12 +601,7 @@ class UnitApplier(Generic[D]):
 
     def __getattr__(self, name: str) -> Quantity[D]:
         # Guard against deepcopy and pickle operations that cause recursion
-        if name in {
-            '__setstate__', '__getstate__', '__getnewargs__', '__getnewargs_ex__',
-            '__reduce__', '__reduce_ex__', '__copy__', '__deepcopy__',
-            '__getattribute__', '__setattr__', '__delattr__',
-            '__dict__', '__weakref__', '__class__'
-        }:
+        if name in SharedConstants.WRAPPER_EXCLUDED_DUNDERS:
             raise AttributeError(f"{type(self).__name__} has no attribute '{name}'")
 
         # Check cache first for performance
@@ -671,12 +662,7 @@ class UnitChanger(Generic[D]):
 
     def __getattr__(self, name: str) -> Quantity[D]:
         # Guard against deepcopy and pickle operations that cause recursion
-        if name in {
-            '__setstate__', '__getstate__', '__getnewargs__', '__getnewargs_ex__',
-            '__reduce__', '__reduce_ex__', '__copy__', '__deepcopy__',
-            '__getattribute__', '__setattr__', '__delattr__',
-            '__dict__', '__weakref__', '__class__'
-        }:
+        if name in SharedConstants.WRAPPER_EXCLUDED_DUNDERS:
             raise AttributeError(f"{type(self).__name__} has no attribute '{name}'")
 
         unit = ureg.resolve(name, dim=self._dim)

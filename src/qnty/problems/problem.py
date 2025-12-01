@@ -20,7 +20,7 @@ from qnty.utils.logging import get_logger
 from ..algebra import BinaryOperation, Constant, Equation, EquationSystem, VariableReference
 from ..core.quantity import Quantity
 from ..core.unit_catalog import DimensionlessUnits
-from ..utils.shared_utilities import ContextDetectionHelper, SharedConstants, ValidationHelper
+from ..utils.shared_utilities import ContextDetectionHelper, SharedConstants, ValidationHelper, delegate_getattr, raise_if_excluded_dunder
 from .solving import EquationReconstructor
 from .validation import ValidationMixin
 
@@ -1119,13 +1119,7 @@ class Problem(ValidationMixin):
     def __getattr__(self, name: str) -> Any:
         """Dynamic attribute access for composed variables and other attributes."""
         # Guard against deepcopy and pickle operations that cause recursion
-        if name in {
-            '__setstate__', '__getstate__', '__getnewargs__', '__getnewargs_ex__',
-            '__reduce__', '__reduce_ex__', '__copy__', '__deepcopy__',
-            '__getattribute__', '__setattr__', '__delattr__',
-            '__dict__', '__weakref__', '__class__'
-        }:
-            raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
+        raise_if_excluded_dunder(name, self)
 
         # Avoid recursion by checking the dict directly instead of using hasattr
         try:
@@ -1168,19 +1162,9 @@ class Problem(ValidationMixin):
 
             def __getattr__(self, name):
                 # Guard against deepcopy and pickle operations that cause recursion
-                if name in {
-                    '__setstate__', '__getstate__', '__getnewargs__', '__getnewargs_ex__',
-                    '__reduce__', '__reduce_ex__', '__copy__', '__deepcopy__',
-                    '__getattribute__', '__setattr__', '__delattr__',
-                    '__dict__', '__weakref__', '__class__'
-                }:
-                    raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
-
+                raise_if_excluded_dunder(name, self)
                 # For all other attributes, delegate to the wrapped variable
-                try:
-                    return getattr(self._wrapped_var, name)
-                except AttributeError as err:
-                    raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'") from err
+                return delegate_getattr(self._wrapped_var, name, self)
 
             def set(self, value, unit=None):
                 # Call the original set method
@@ -1343,13 +1327,7 @@ class Problem(ValidationMixin):
 
             def __getattr__(self, name):
                 # Guard against deepcopy and pickle operations that cause recursion
-                if name in {
-                    '__setstate__', '__getstate__', '__getnewargs__', '__getnewargs_ex__',
-                    '__reduce__', '__reduce_ex__', '__copy__', '__deepcopy__',
-                    '__getattribute__', '__setattr__', '__delattr__',
-                    '__dict__', '__weakref__', '__class__'
-                }:
-                    raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
+                raise_if_excluded_dunder(name, self)
 
                 # When a unit is accessed, get the final variable and update problem
                 final_var = getattr(self._setter, name)
@@ -1378,16 +1356,10 @@ class Problem(ValidationMixin):
 
             def __getattr__(self, name):
                 # Guard against deepcopy and pickle operations that cause recursion
-                if name in {
-                    '__setstate__', '__getstate__', '__getnewargs__', '__getnewargs_ex__',
-                    '__reduce__', '__reduce_ex__', '__copy__', '__deepcopy__',
-                    '__getattribute__', '__setattr__', '__delattr__',
-                    '__dict__', '__weakref__', '__class__'
-                }:
-                    raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
+                raise_if_excluded_dunder(name, self)
 
                 # Prevent infinite recursion by checking if _wrapped_var exists
-                if not hasattr(self, '_wrapped_var'):
+                if not hasattr(self, "_wrapped_var"):
                     raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
 
                 # Delegate all other attributes to the wrapped variable

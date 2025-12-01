@@ -28,7 +28,7 @@ from qnty.spatial import (
     create_vector_cartesian,
     create_vector_from_points,
 )
-from qnty.spatial.plane import create_plane_rotated_y
+from qnty.spatial.plane import create_plane_rotated
 from qnty.spatial.points import create_point_along
 from qnty.spatial.vectors import create_point_at_midpoint, create_vector_direction_angles, create_vector_in_plane, create_vector_polar, create_vector_resultant, create_vector_resultant_cartesian, create_vector_spherical, create_vector_with_magnitude
 
@@ -1628,8 +1628,8 @@ class Chapter2Problem136(PositionVectorProblem):
         r=300, angle=-30, plane="xz", wrt="+z", unit="mm", offset=(-300, 300, 0)
     )
 
-    plane = create_plane_rotated_y(
-        angle=-30, name="inclined_plane",
+    plane = create_plane_rotated(
+        "y", angle=-30, name="inclined_plane",
         start_plane="zy")
 
     # Define force F at 30° from +y axis within the plane
@@ -1678,8 +1678,8 @@ class Chapter2Problem137(PositionVectorProblem):
         r=300, angle=-30, plane="xz", wrt="+z", unit="mm", offset=(-300, 300, 0)
     )
     
-    plane = create_plane_rotated_y(
-        angle=-30, name="inclined_plane",
+    plane = create_plane_rotated(
+        "y", angle=-30, name="inclined_plane",
         start_plane="zy")
 
     # Define force F at 30° from +y axis within the plane

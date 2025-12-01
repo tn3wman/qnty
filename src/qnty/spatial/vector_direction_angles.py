@@ -12,7 +12,7 @@ import math
 from ..core.unit import Unit
 from ..utils.shared_utilities import convert_angle_to_radians_optional, resolve_length_unit_from_string
 from .vector import _Vector
-from .vector_helpers import compute_missing_direction_angle
+from .vector_helpers import compute_missing_direction_angle, validate_direction_cosines
 
 
 class VectorDirectionAngles:
@@ -87,9 +87,7 @@ class VectorDirectionAngles:
         alpha_rad, beta_rad, gamma_rad = compute_missing_direction_angle(alpha_rad, beta_rad, gamma_rad)
 
         # Validate the constraint
-        sum_cos_sq = math.cos(alpha_rad) ** 2 + math.cos(beta_rad) ** 2 + math.cos(gamma_rad) ** 2
-        if abs(sum_cos_sq - 1.0) > 1e-6:
-            raise ValueError(f"Direction angles must satisfy cos²α + cos²β + cos²γ = 1, got {sum_cos_sq}")
+        validate_direction_cosines(alpha_rad, beta_rad, gamma_rad)
 
         self._alpha_rad = alpha_rad
         self._beta_rad = beta_rad

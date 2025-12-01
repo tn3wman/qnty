@@ -20,16 +20,29 @@ from typing import Any
 from ..core.quantity import Quantity
 from ..spatial.vector import _Vector
 from ..utils.geometry import normalize_angle_positive
+from ..utils.shared_utilities import compute_law_of_cosines
+
+
+def _format_latex_subscript(name: str) -> str:
+    """
+    Format a force name for LaTeX subscript rendering.
+
+    Converts names like 'F_R' to 'F_{R}' format for proper LaTeX rendering
+    in theta subscripts.
+
+    Args:
+        name: The force name (e.g., 'F_R', 'F_AB', 'force1')
+
+    Returns:
+        Formatted string suitable for LaTeX subscripts
+    """
+    if "_" in name:
+        return name.replace("_", "_{") + "}"
+    return name
 
 
 def _create_law_of_sines_step(
-    force_name: str,
-    resultant_name: str,
-    angle_opposite_force_deg: float,
-    angle_opposite_resultant_deg: float,
-    F_R: float,
-    F_computed: float,
-    force_unit: str
+    force_name: str, resultant_name: str, angle_opposite_force_deg: float, angle_opposite_resultant_deg: float, F_R: float, F_computed: float, force_unit: str
 ) -> dict[str, Any]:
     """
     Create a solution step for Law of Sines computation.
@@ -52,7 +65,7 @@ def _create_law_of_sines_step(
         "equation": f"{force_name}/sin(\\alpha_{{opp,{force_name}}}) = {resultant_name}/sin(\\alpha_{{opp,{resultant_name}}})",
         "substitution": f"{force_name}/sin({angle_opposite_force_deg:.1f}°) = {F_R:.2f} {force_unit}/sin({angle_opposite_resultant_deg:.1f}°)",
         "result_value": f"{F_computed:.2f}",
-        "result_unit": force_unit
+        "result_unit": force_unit,
     }
 
 
@@ -129,7 +142,7 @@ def create_law_of_cosines_step(
         "equation": f"{target_force_name}^2 = {force1_name}^2 + {force2_name}^2 - 2*{force1_name}*{force2_name}*cos({angle_expression})",
         "substitution": f"{target_force_name}^2 = ({force1_magnitude:.2f} {force_unit})^2 + ({force2_magnitude:.2f} {force_unit})^2 - 2 * ({force1_magnitude:.2f} {force_unit}) * ({force2_magnitude:.2f} {force_unit}) * cos({included_angle_deg:.1f}°)",
         "result_value": f"{computed_magnitude:.2f}",
-        "result_unit": force_unit
+        "result_unit": force_unit,
     }
 
 
@@ -156,6 +169,46 @@ class TriangleSolver:
         """Initialize the triangle solver."""
         self.solution_steps: list[dict[str, Any]] = []
 
+    def _append_law_of_cosines_step(
+        self,
+        target_force: _Vector,
+        force1: _Vector,
+        force2: _Vector,
+        angle_expression: str,
+        force1_magnitude: float,
+        force2_magnitude: float,
+        included_angle_deg: float,
+        computed_magnitude: float,
+        force_unit: str,
+    ) -> None:
+        """
+        Append a Law of Cosines solution step to the solution steps list.
+
+        Args:
+            target_force: The force being solved for (unknown)
+            force1: First known force
+            force2: Second known force
+            angle_expression: LaTeX expression for the included angle
+            force1_magnitude: Magnitude of first force
+            force2_magnitude: Magnitude of second force
+            included_angle_deg: Included angle in degrees
+            computed_magnitude: Computed result magnitude
+            force_unit: Unit symbol for display
+        """
+        self.solution_steps.append(
+            create_law_of_cosines_step(
+                target_force_name=target_force.name,
+                force1_name=force1.name,
+                force2_name=force2.name,
+                angle_expression=angle_expression,
+                force1_magnitude=force1_magnitude,
+                force2_magnitude=force2_magnitude,
+                included_angle_deg=included_angle_deg,
+                computed_magnitude=computed_magnitude,
+                force_unit=force_unit,
+            )
+        )
+
     def solve_resultant(self, known_forces: list[_Vector], forces_dict: dict[str, _Vector]) -> _Vector:
         """
         Compute resultant of known forces using vector addition (component summation).
@@ -167,16 +220,14 @@ class TriangleSolver:
         Returns:
             The resultant force vector
         """
-        self.solution_steps.append({
-            "method": "Vector Addition (Component Summation)",
-            "description": "Sum all force components to find resultant"
-        })
+        self.solution_steps.append({"method": "Vector Addition (Component Summation)", "description": "Sum all force components to find resultant"})
 
         # Sum components
         sum_x, sum_y, sum_z, ref_unit = sum_force_components(known_forces)
 
         # Create resultant vector
         from ..core.dimension_catalog import dim
+
         x_qty = Quantity(name="FR_x", dim=dim.force, value=sum_x, preferred=ref_unit)
         y_qty = Quantity(name="FR_y", dim=dim.force, value=sum_y, preferred=ref_unit)
         z_qty = Quantity(name="FR_z", dim=dim.force, value=sum_z, preferred=ref_unit)
@@ -201,20 +252,12 @@ class TriangleSolver:
 
         if ref_unit is not None and resultant.magnitude is not None and resultant.angle is not None:
             mag_value = resultant.magnitude.value / ref_unit.si_factor if resultant.magnitude.value is not None else 0.0
-            ang_value = resultant.angle.value * 180/math.pi if resultant.angle.value is not None else 0.0
-            self.solution_steps.append({
-                "result": f"Resultant: {mag_value:.2f} {ref_unit.symbol} at {ang_value:.1f}°"
-            })
+            ang_value = resultant.angle.value * 180 / math.pi if resultant.angle.value is not None else 0.0
+            self.solution_steps.append({"result": f"Resultant: {mag_value:.2f} {ref_unit.symbol} at {ang_value:.1f}°"})
 
         return resultant
 
-    def solve_single_unknown(
-        self,
-        known_forces: list[_Vector],
-        unknown_force: _Vector,
-        resultant_forces: list[_Vector],
-        forces_dict: dict[str, _Vector]
-    ) -> None:
+    def solve_single_unknown(self, known_forces: list[_Vector], unknown_force: _Vector, resultant_forces: list[_Vector], forces_dict: dict[str, _Vector]) -> None:
         """
         Solve for single unknown force given known forces.
 
@@ -257,12 +300,7 @@ class TriangleSolver:
             # Fall back to component summation
             self.solve_by_components(known_forces, unknown_force)
 
-    def solve_unknown_from_resultant_and_known(
-        self,
-        unknown_force: _Vector,
-        resultant: _Vector,
-        known_force: _Vector
-    ) -> None:
+    def solve_unknown_from_resultant_and_known(self, unknown_force: _Vector, resultant: _Vector, known_force: _Vector) -> None:
         """
         Solve for unknown force given known resultant and one known force.
 
@@ -298,8 +336,7 @@ class TriangleSolver:
 
         # Apply law of cosines: F_unknown² = F_R² + F_known² - 2·F_R·F_known·cos(γ)
         # This gives us the magnitude of the unknown force
-        F_unknown_squared = F_R**2 + F_known**2 - 2*F_R*F_known*math.cos(gamma)
-        F_unknown = math.sqrt(F_unknown_squared)
+        F_unknown = compute_law_of_cosines(F_R, F_known, gamma)
 
         # Now find the angle of the unknown force using vector addition
         # F_unknown = F_R - F_known (vector subtraction)
@@ -316,22 +353,11 @@ class TriangleSolver:
 
         # Step 1: Solve for unknown magnitude using Law of Cosines
         gamma_deg = math.degrees(gamma)
-        # Use LaTeX theta command for proper rendering - format subscript to handle underscores properly
-        # Convert F_R to F_{R} format for theta subscript
-        resultant_subscript = resultant.name.replace('_', '_{') + '}' if '_' in resultant.name else resultant.name
-        known_subscript = known_force.name.replace('_', '_{') + '}' if '_' in known_force.name else known_force.name
+        # Use LaTeX theta command for proper rendering
+        resultant_subscript = _format_latex_subscript(resultant.name)
+        known_subscript = _format_latex_subscript(known_force.name)
         angle_diff = f"\\theta_{{{resultant_subscript}}} - \\theta_{{{known_subscript}}}"
-        self.solution_steps.append(create_law_of_cosines_step(
-            target_force_name=unknown_force.name,
-            force1_name=resultant.name,
-            force2_name=known_force.name,
-            angle_expression=angle_diff,
-            force1_magnitude=F_R,
-            force2_magnitude=F_known,
-            included_angle_deg=gamma_deg,
-            computed_magnitude=F_unknown,
-            force_unit=force_unit,
-        ))
+        self._append_law_of_cosines_step(unknown_force, resultant, known_force, angle_diff, F_R, F_known, gamma_deg, F_unknown, force_unit)
 
         # Step 2: Solve for unknown direction using Law of Sines
         # Law of Sines: sin(α)/a = sin(β)/b
@@ -343,23 +369,25 @@ class TriangleSolver:
 
         # Format: sin(90° + θ)/F_known = sin(γ)/F_unknown
         # This matches the textbook format from Problem 2-2
-        unknown_subscript = unknown_force.name.replace('_', '_{') + '}' if '_' in unknown_force.name else unknown_force.name
-        resultant_subscript = resultant.name.replace('_', '_{') + '}' if '_' in resultant.name else resultant.name
-        known_subscript = known_force.name.replace('_', '_{') + '}' if '_' in known_force.name else known_force.name
+        unknown_subscript = _format_latex_subscript(unknown_force.name)
+        resultant_subscript = _format_latex_subscript(resultant.name)
+        known_subscript = _format_latex_subscript(known_force.name)
         angle_var = f"\\theta_{{{unknown_subscript}}}"
         theta_R_var = f"\\theta_{{{resultant_subscript}}}"
         theta_known_var = f"\\theta_{{{known_subscript}}}"
         angle_sum = f"({theta_R_var} + {angle_var})"
         # Use the same angle difference as in Law of Cosines for consistency
         gamma_angle = f"({theta_R_var} - {theta_known_var})"
-        self.solution_steps.append({
-            "target": f"{angle_var}",
-            "method": "Law of Sines",
-            "equation": f"sin({angle_sum})/{known_force.name} = sin({gamma_angle})/{unknown_force.name}",
-            "substitution": f"sin(({theta_R_deg:.1f}° + {angle_var}))/{F_known:.2f} = sin(({gamma_deg:.1f}°))/{F_unknown:.2f}",
-            "result_value": f"{theta_unknown_deg:.2f}",
-            "result_unit": "°"
-        })
+        self.solution_steps.append(
+            {
+                "target": f"{angle_var}",
+                "method": "Law of Sines",
+                "equation": f"sin({angle_sum})/{known_force.name} = sin({gamma_angle})/{unknown_force.name}",
+                "substitution": f"sin(({theta_R_deg:.1f}° + {angle_var}))/{F_known:.2f} = sin(({gamma_deg:.1f}°))/{F_unknown:.2f}",
+                "result_value": f"{theta_unknown_deg:.2f}",
+                "result_unit": "°",
+            }
+        )
 
         # Create unknown force vector
         ref_unit = resultant.magnitude.preferred
@@ -382,12 +410,7 @@ class TriangleSolver:
         unknown_force._angle = angle_qty
         unknown_force.is_known = True
 
-    def solve_resultant_from_two_forces(
-        self,
-        force1: _Vector,
-        force2: _Vector,
-        resultant: _Vector
-    ) -> None:
+    def solve_resultant_from_two_forces(self, force1: _Vector, force2: _Vector, resultant: _Vector) -> None:
         """
         Solve for resultant of two forces using law of cosines and law of sines.
 
@@ -423,8 +446,7 @@ class TriangleSolver:
         # Apply law of cosines: FR² = F1² + F2² - 2·F1·F2·cos(180° - γ)
         # Note: The angle in the triangle is (180° - γ) due to parallelogram law
         angle_in_triangle = math.pi - gamma
-        FR_squared = F1**2 + F2**2 - 2*F1*F2*math.cos(angle_in_triangle)
-        FR = math.sqrt(FR_squared)
+        FR = compute_law_of_cosines(F1, F2, angle_in_triangle)
 
         # Compute resultant using vector addition (this gives the correct angle)
         F1x = F1 * math.cos(theta1)
@@ -439,41 +461,31 @@ class TriangleSolver:
         force_unit = force1.magnitude.preferred.symbol if force1.magnitude.preferred else "N"
 
         # Step 1: Solve for resultant magnitude using Law of Cosines
-        # Format substitution like reference: value and unit separated, no complex nesting
         gamma_deg = math.degrees(angle_in_triangle)
-        # Use LaTeX theta command for proper rendering - format subscript to handle underscores properly
-        force2_subscript = force2.name.replace('_', '_{') + '}' if '_' in force2.name else force2.name
-        force1_subscript = force1.name.replace('_', '_{') + '}' if '_' in force1.name else force1.name
+        # Use LaTeX theta command for proper rendering
+        force2_subscript = _format_latex_subscript(force2.name)
+        force1_subscript = _format_latex_subscript(force1.name)
         angle_diff = f"180° - (\\theta_{{{force2_subscript}}} - \\theta_{{{force1_subscript}}})"
-        self.solution_steps.append(create_law_of_cosines_step(
-            target_force_name=resultant.name,
-            force1_name=force1.name,
-            force2_name=force2.name,
-            angle_expression=angle_diff,
-            force1_magnitude=F1,
-            force2_magnitude=F2,
-            included_angle_deg=gamma_deg,
-            computed_magnitude=FR,
-            force_unit=force_unit,
-        ))
+        self._append_law_of_cosines_step(resultant, force1, force2, angle_diff, F1, F2, gamma_deg, FR, force_unit)
 
         # Step 2: Solve for resultant direction using Law of Sines
-        # Law of Sines applied to find the angle
         theta_R_deg = math.degrees(theta_R)
-        resultant_subscript = resultant.name.replace('_', '_{') + '}' if '_' in resultant.name else resultant.name
+        resultant_subscript = _format_latex_subscript(resultant.name)
         angle_var = f"\\theta_{{{resultant_subscript}}}"
         angle_diff_sin = f"(180° - {angle_var})"
 
         # Using Law of Sines: sin(α)/a = sin(β)/b
         # This matches textbook format for engineering reports
-        self.solution_steps.append({
-            "target": f"{angle_var}",
-            "method": "Law of Sines",
-            "equation": f"sin({angle_var})/{force1.name} = sin({angle_diff_sin})/{force2.name}",
-            "substitution": f"sin(({angle_var}))/{F1:.2f} = sin(({angle_diff_sin}))/{F2:.2f}",
-            "result_value": f"{theta_R_deg:.2f}",
-            "result_unit": "°"
-        })
+        self.solution_steps.append(
+            {
+                "target": f"{angle_var}",
+                "method": "Law of Sines",
+                "equation": f"sin({angle_var})/{force1.name} = sin({angle_diff_sin})/{force2.name}",
+                "substitution": f"sin(({angle_var}))/{F1:.2f} = sin(({angle_diff_sin}))/{F2:.2f}",
+                "result_value": f"{theta_R_deg:.2f}",
+                "result_unit": "°",
+            }
+        )
 
         # Create resultant vector using the correct angle from atan2
         ref_unit = force1.magnitude.preferred
@@ -496,11 +508,7 @@ class TriangleSolver:
         resultant._angle = angle_qty
         resultant.is_known = True
 
-    def solve_two_unknowns_with_known_resultant(
-        self,
-        unknown_forces: list[_Vector],
-        resultant: _Vector
-    ) -> None:
+    def solve_two_unknowns_with_known_resultant(self, unknown_forces: list[_Vector], resultant: _Vector) -> None:
         """
         Solve for two unknown force magnitudes given known resultant and known angles.
 
@@ -597,14 +605,10 @@ class TriangleSolver:
         angle_opposite_R_deg = math.degrees(angle_opposite_R)
 
         # Step 1: Solve for Force 1 magnitude using Law of Sines
-        self.solution_steps.append(_create_law_of_sines_step(
-            force1.name, resultant.name, angle_opposite_1_deg, angle_opposite_R_deg, F_R, F1, force_unit
-        ))
+        self.solution_steps.append(_create_law_of_sines_step(force1.name, resultant.name, angle_opposite_1_deg, angle_opposite_R_deg, F_R, F1, force_unit))
 
         # Step 2: Solve for Force 2 magnitude using Law of Sines
-        self.solution_steps.append(_create_law_of_sines_step(
-            force2.name, resultant.name, angle_opposite_2_deg, angle_opposite_R_deg, F_R, F2, force_unit
-        ))
+        self.solution_steps.append(_create_law_of_sines_step(force2.name, resultant.name, angle_opposite_2_deg, angle_opposite_R_deg, F_R, F2, force_unit))
 
         # Create force vectors with computed magnitudes
         ref_unit = resultant.magnitude.preferred
@@ -647,10 +651,7 @@ class TriangleSolver:
             known_forces: List of known forces
             unknown_force: The unknown force to solve for
         """
-        self.solution_steps.append({
-            "method": "Component Summation (Equilibrium)",
-            "description": "ΣFx = 0, ΣFy = 0"
-        })
+        self.solution_steps.append({"method": "Component Summation (Equilibrium)", "description": "ΣFx = 0, ΣFy = 0"})
 
         # Sum known force components
         sum_x, sum_y, sum_z, ref_unit = sum_force_components(known_forces)
@@ -660,10 +661,7 @@ class TriangleSolver:
         unknown_y = -sum_y
         unknown_z = -sum_z
 
-        self.solution_steps.append({
-            "calculation": f"ΣFx = {sum_x:.2f} → Unknown Fx = {unknown_x:.2f}",
-            "calculation2": f"ΣFy = {sum_y:.2f} → Unknown Fy = {unknown_y:.2f}"
-        })
+        self.solution_steps.append({"calculation": f"ΣFx = {sum_x:.2f} → Unknown Fx = {unknown_x:.2f}", "calculation2": f"ΣFy = {sum_y:.2f} → Unknown Fy = {unknown_y:.2f}"})
 
         # Create unknown vector
         from ..core.dimension_catalog import dim

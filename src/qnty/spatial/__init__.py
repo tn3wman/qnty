@@ -35,7 +35,7 @@ from .vector import _Vector, _Vector, _Vector
 from .vectors import _VectorWithUnknowns, create_point_at_midpoint, create_vector_along, create_vector_cartesian, create_vector_direction_angles, create_vector_from_points, create_vector_from_ratio, create_vector_in_plane, create_vector_polar, create_vector_resultant, create_vector_resultant_cartesian, create_vector_resultant_polar, create_vector_spherical, create_vector_with_magnitude
 from .vector_direction_ratios import VectorDirectionRatios
 from .vector_between import VectorBetween
-from .plane import Plane, create_plane_rotated_x, create_plane_rotated_y, create_plane_rotated_z
+from .plane import Plane, create_plane_rotated
 
 __all__ = [
     "_Point",
@@ -66,7 +66,5 @@ __all__ = [
     "_Vector",
     "VectorBetween",
     "Plane",
-    "create_plane_rotated_x",
-    "create_plane_rotated_y",
-    "create_plane_rotated_z",
+    "create_plane_rotated",
 ]

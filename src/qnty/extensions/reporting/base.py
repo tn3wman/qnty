@@ -9,7 +9,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from ...utils.shared_utilities import format_equation_list_from_history
+from ...utils.shared_utilities import format_equation_list_from_history, get_angle_reference_label
 
 
 @dataclass
@@ -200,11 +200,7 @@ class ReportGenerator(ABC):
                         pass
 
             # Get angle reference (e.g., "+x", "-x", "+y", "-y")
-            reference_str = ""
-            if hasattr(force_obj, 'angle_reference') and force_obj.angle_reference is not None:
-                ref = force_obj.angle_reference
-                if hasattr(ref, 'axis_label'):
-                    reference_str = ref.axis_label
+            reference_str = get_angle_reference_label(force_obj)
 
             force_data = {
                 "symbol": force_name,

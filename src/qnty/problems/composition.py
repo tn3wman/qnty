@@ -23,7 +23,9 @@ from ..utils.shared_utilities import (
     ContextDetectionHelper,
     SharedConstants,
     VariableReferenceHelper,
+    delegate_getattr,
     is_private_or_excluded_dunder,
+    raise_if_excluded_dunder,
 )
 from .rules import Rules
 
@@ -160,23 +162,7 @@ class SubProblemProxy:
 
     def __getattr__(self, name):
         # Guard against deepcopy and pickle operations that cause recursion
-        if name in {
-            "__setstate__",
-            "__getstate__",
-            "__getnewargs__",
-            "__getnewargs_ex__",
-            "__reduce__",
-            "__reduce_ex__",
-            "__copy__",
-            "__deepcopy__",
-            "__getattribute__",
-            "__setattr__",
-            "__delattr__",
-            "__dict__",
-            "__weakref__",
-            "__class__",
-        }:
-            raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
+        raise_if_excluded_dunder(name, self)
 
         if name in self._variable_cache:
             return self._variable_cache[name]
@@ -293,23 +279,7 @@ class ConfigurableVariable:
     def __getattr__(self, name):
         """Delegate all other attributes to the wrapped variable."""
         # Guard against deepcopy and pickle operations that cause recursion
-        if name in {
-            "__setstate__",
-            "__getstate__",
-            "__getnewargs__",
-            "__getnewargs_ex__",
-            "__reduce__",
-            "__reduce_ex__",
-            "__copy__",
-            "__deepcopy__",
-            "__getattribute__",
-            "__setattr__",
-            "__delattr__",
-            "__dict__",
-            "__weakref__",
-            "__class__",
-        }:
-            raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+        raise_if_excluded_dunder(name, self)
 
         # Handle special case for _arithmetic_mode since it's accessed in __mul__ etc.
         if name == "_arithmetic_mode":
@@ -443,28 +413,17 @@ class TrackingSetterWrapper:
         self._original_symbol = original_symbol
         self._variable = variable
 
+    def _track_configuration(self) -> None:
+        """Track the configuration with the proxy if available."""
+        if self._proxy and self._original_symbol:
+            self._proxy.track_configuration(self._original_symbol, self._variable.quantity, self._variable.is_known)
+
     def __getattr__(self, name):
         """
         Intercept property access for unit properties and track configuration after application.
         """
         # Guard against deepcopy and pickle operations that cause recursion
-        if name in {
-            "__setstate__",
-            "__getstate__",
-            "__getnewargs__",
-            "__getnewargs_ex__",
-            "__reduce__",
-            "__reduce_ex__",
-            "__copy__",
-            "__deepcopy__",
-            "__getattribute__",
-            "__setattr__",
-            "__delattr__",
-            "__dict__",
-            "__weakref__",
-            "__class__",
-        }:
-            raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+        raise_if_excluded_dunder(name, self)
 
         # Prevent infinite recursion by checking if _original_setter exists
         if not hasattr(self, "_original_setter"):
@@ -480,18 +439,13 @@ class TrackingSetterWrapper:
         else:
             # It's a property access, call it and then track configuration
             result = attr  # This will set the variable quantity and return the variable
-
-            # Track the configuration after the unit is applied
-            if self._proxy and self._original_symbol:
-                self._proxy.track_configuration(self._original_symbol, self._variable.quantity, self._variable.is_known)
-
+            self._track_configuration()
             return result
 
     def with_unit(self, unit):
         """Delegate with_unit method and track configuration."""
         result = self._original_setter.with_unit(unit)
-        if self._proxy and self._original_symbol:
-            self._proxy.track_configuration(self._original_symbol, self._variable.quantity, self._variable.is_known)
+        self._track_configuration()
         return result
 
     def __deepcopy__(self, memo):
@@ -1157,10 +1111,7 @@ class CompositionMixin:
                     raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
 
                 # For all other attributes, delegate to the wrapped variable
-                try:
-                    return getattr(self._wrapped_var, name)
-                except AttributeError as err:
-                    raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'") from err
+                return delegate_getattr(self._wrapped_var, name, self)
 
             def __deepcopy__(self, memo):
                 # Don't allow deepcopy of NamespaceVariableWrapper - just return self

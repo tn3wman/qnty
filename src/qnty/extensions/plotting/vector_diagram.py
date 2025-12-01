@@ -8,13 +8,9 @@ images for inline display or file output.
 
 from __future__ import annotations
 
-from pathlib import Path
-
 from ..diagram_utils import (
     VectorDiagramBase,
-)
-from ..diagram_utils import (
-    create_force_diagram as _create_force_diagram_impl,
+    make_create_force_diagram,
 )
 
 
@@ -45,23 +41,5 @@ class VectorDiagram(VectorDiagramBase):
     pass
 
 
-def create_force_diagram(problem, output_path: str | Path, title: str | None = None, show_components: bool = False, **kwargs) -> Path:
-    """
-    Create vector diagram from a VectorEquilibriumProblem.
-
-    Args:
-        problem: VectorEquilibriumProblem instance (must be solved)
-        output_path: Output file path
-        title: Diagram title (uses problem.name if None)
-        show_components: Whether to show component projections
-        **kwargs: Additional arguments for VectorDiagram
-
-    Returns:
-        Path to saved diagram
-
-    Examples:
-        >>> problem = Problem_2_1()
-        >>> problem.solve()
-        >>> create_force_diagram(problem, "diagram.png")
-    """
-    return _create_force_diagram_impl(problem, output_path, VectorDiagram, title, show_components, **kwargs)
+# Create module-specific create_force_diagram using the factory
+create_force_diagram = make_create_force_diagram(VectorDiagram)

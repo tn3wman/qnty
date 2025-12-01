@@ -197,6 +197,24 @@ def compute_missing_direction_angle(
     return alpha_rad, beta_rad, gamma_rad
 
 
+def validate_direction_cosines(alpha_rad: float, beta_rad: float, gamma_rad: float, tolerance: float = 1e-6) -> None:
+    """
+    Validate that direction angles satisfy the constraint cos²α + cos²β + cos²γ = 1.
+
+    Args:
+        alpha_rad: Angle from +x axis in radians
+        beta_rad: Angle from +y axis in radians
+        gamma_rad: Angle from +z axis in radians
+        tolerance: Allowed deviation from 1.0 (default 1e-6)
+
+    Raises:
+        ValueError: If angles don't satisfy the constraint within tolerance
+    """
+    sum_cos_sq = math.cos(alpha_rad) ** 2 + math.cos(beta_rad) ** 2 + math.cos(gamma_rad) ** 2
+    if abs(sum_cos_sq - 1.0) > tolerance:
+        raise ValueError(f"Direction angles must satisfy cos²α + cos²β + cos²γ = 1, got {sum_cos_sq}")
+
+
 def init_coords_from_unit(
     x: float,
     y: float,

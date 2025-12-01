@@ -7,7 +7,6 @@ problems in three dimensions. This extends the 2D rectangular component method t
 
 from __future__ import annotations
 
-import math
 from typing import Any
 
 from ..core.quantity import Quantity
@@ -18,7 +17,10 @@ from ..utils.shared_utilities import (
     add_force_components_xyz,
     capture_original_force_states,
     clone_unknown_force_vector,
+    clone_vector_as_known,
     extract_force_vectors_from_class,
+    format_3d_force_with_direction_angles,
+    get_direction_angles_degrees,
     handle_negative_magnitude,
 )
 from .problem import Problem
@@ -87,16 +89,8 @@ class CartesianVectorProblem(VariableStateTrackingMixin, Problem):
     def _clone_force_vector(self, force: _Vector) -> _Vector:
         """Create a copy of a ForceVector."""
         if force.is_known and force.vector is not None:
-            # Known force - copy with same values
-            cloned = _Vector(
-                vector=force.vector,
-                name=force.name,
-                description=force.description,
-                is_known=True,
-                is_resultant=force.is_resultant,
-                coordinate_system=force.coordinate_system,
-                angle_reference=force.angle_reference,
-            )
+            # Known force - use shared utility
+            cloned = clone_vector_as_known(force)
             # If original had negative magnitude, restore it after cloning
             # (_compute_magnitude_and_angle converts to positive via sqrt)
             original_mag = force.magnitude.value if force.magnitude is not None else None
@@ -247,11 +241,9 @@ class CartesianVectorProblem(VariableStateTrackingMixin, Problem):
 
                         # For 3D forces, include direction angles if available
                         if hasattr(force, 'alpha') and force.alpha and force.alpha.value is not None:
-                            alpha_deg = force.alpha.value * 180 / math.pi
-                            beta_deg = (force.beta.value * 180 / math.pi) if (force.beta and force.beta.value is not None) else 0
-                            gamma_deg = (force.gamma.value * 180 / math.pi) if (force.gamma and force.gamma.value is not None) else 0
+                            alpha_deg, beta_deg, gamma_deg = get_direction_angles_degrees(force)
                             given_list: list[str] = content["given"]  # type: ignore[assignment]
-                            given_list.append(f"{name} = {mag_val:.1f} {mag_unit} (α={alpha_deg:.1f}°, β={beta_deg:.1f}°, γ={gamma_deg:.1f}°)")
+                            given_list.append(format_3d_force_with_direction_angles(name, mag_val, mag_unit, alpha_deg, beta_deg, gamma_deg))
                         else:
                             given_list_simple: list[str] = content["given"]  # type: ignore[assignment]
                             given_list_simple.append(f"{name} = {mag_val:.1f} {mag_unit}")
@@ -273,10 +265,8 @@ class CartesianVectorProblem(VariableStateTrackingMixin, Problem):
 
                         # Include direction angles for 3D forces
                         if hasattr(force, 'alpha') and force.alpha and force.alpha.value is not None:
-                            alpha_deg = force.alpha.value * 180 / math.pi
-                            beta_deg = (force.beta.value * 180 / math.pi) if (force.beta and force.beta.value is not None) else 0
-                            gamma_deg = (force.gamma.value * 180 / math.pi) if (force.gamma and force.gamma.value is not None) else 0
-                            results_list.append(f"{name} = {mag_val:.1f} {mag_unit} (α={alpha_deg:.1f}°, β={beta_deg:.1f}°, γ={gamma_deg:.1f}°)")
+                            alpha_deg, beta_deg, gamma_deg = get_direction_angles_degrees(force)
+                            results_list.append(format_3d_force_with_direction_angles(name, mag_val, mag_unit, alpha_deg, beta_deg, gamma_deg))
                         else:
                             results_list.append(f"{name} = {mag_val:.1f} {mag_unit}")
 

@@ -7,9 +7,20 @@ and solving components to eliminate code duplication.
 
 from __future__ import annotations
 
-from typing import Any
+from typing import TYPE_CHECKING, Any, TypeAlias
 
 from ..core.quantity import FieldQuantity
+
+if TYPE_CHECKING:
+    from ..algebra import Equation
+    from .order import Order
+
+# Type aliases for commonly repeated solver method signatures
+VariablesDict: TypeAlias = dict[str, FieldQuantity]
+UnknownsSet: TypeAlias = set[str]
+AnalysisDict: TypeAlias = dict[str, Any] | None
+DependencyGraph: TypeAlias = "Order | None"
+EquationList: TypeAlias = "list[Equation]"
 
 
 class SolvingUtils:

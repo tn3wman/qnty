@@ -13,8 +13,9 @@ from typing import TYPE_CHECKING, Any
 import numpy as np
 
 from ..core.unit import Unit
-from ..utils.shared_utilities import convert_angle_to_radians, convert_phi_to_standard, resolve_unit_from_string, resolve_unit_from_string_or_fallback
+from ..utils.shared_utilities import convert_angle_to_radians, convert_phi_to_standard, convert_to_si, resolve_unit_from_string, resolve_unit_from_string_or_fallback
 from .vector import _Vector
+from .vector_helpers import validate_direction_cosines
 
 if TYPE_CHECKING:
     from .point import _Point
@@ -118,11 +119,8 @@ class _VectorWithUnknowns(_Vector):
         # Update internal coordinates
         idx = {"u": 0, "v": 1, "w": 2}[comp]
 
-        # Convert value to SI
-        if self._unit is not None:
-            self._coords[idx] = value * self._unit.si_factor
-        else:
-            self._coords[idx] = value
+        # Convert value to SI and store
+        self._coords[idx] = convert_to_si(value, self._unit)
 
         # Check if all unknowns are resolved
         if not self._unknowns:
@@ -1341,10 +1339,10 @@ def create_vector_in_plane(
         _Vector object lying in the plane
 
     Examples:
-        >>> from qnty.spatial import create_plane_rotated_y, create_vector_in_plane
+        >>> from qnty.spatial import create_plane_rotated, create_vector_in_plane
         >>>
         >>> # Plane rotated -30° around y-axis (normal 30° from +z toward +x)
-        >>> plane = create_plane_rotated_y(angle=-30)
+        >>> plane = create_plane_rotated("y", angle=-30)
         >>>
         >>> # Force 30° from +y axis within the plane
         >>> F = create_vector_in_plane(
@@ -1530,9 +1528,7 @@ def create_vector_direction_angles(
         raise ValueError("Must provide at least 2 of the 3 coordinate direction angles")
 
     # Validate the constraint
-    sum_cos_sq = math.cos(alpha_rad) ** 2 + math.cos(beta_rad) ** 2 + math.cos(gamma_rad) ** 2
-    if abs(sum_cos_sq - 1.0) > 1e-6:
-        raise ValueError(f"Direction angles must satisfy cos²α + cos²β + cos²γ = 1, got {sum_cos_sq}")
+    validate_direction_cosines(alpha_rad, beta_rad, gamma_rad)
 
     # Resolve unit
     resolved_unit = resolve_unit_from_string(unit) if unit is not None else None

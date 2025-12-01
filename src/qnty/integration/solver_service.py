@@ -365,14 +365,7 @@ def _extract_solution_steps(problem) -> list[SolutionStepDTO]:
     if hasattr(problem, "solution_steps"):
         for step in problem.solution_steps:
             if isinstance(step, dict):
-                steps.append(
-                    SolutionStepDTO(
-                        description=step.get("description", ""),
-                        formula=step.get("formula"),
-                        result=step.get("result"),
-                        details=step.get("details", {}),
-                    )
-                )
+                steps.append(SolutionStepDTO.from_dict(step))
             elif isinstance(step, str):
                 steps.append(SolutionStepDTO(description=step))
 

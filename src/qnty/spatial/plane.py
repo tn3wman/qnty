@@ -134,93 +134,75 @@ class Plane:
         return self.__str__()
 
 
-def _create_rotated_plane(
-    angle: float,
-    normal_func: Callable[[float], np.ndarray],
-    point: tuple[float, float, float] | np.ndarray | None = None,
-    unit: Unit | str | None = None,
-    angle_unit: str = "degree",
-    name: str | None = None,
-) -> Plane:
+def _get_normal_for_axis_rotation(axis: str, start_plane: str | None = None) -> Callable[[float], np.ndarray]:
     """
-    Internal helper to create a plane with a rotated normal vector.
+    Get the normal vector function for rotation around a given axis.
 
     Args:
-        angle: Rotation angle
-        normal_func: Function that takes angle_rad and returns normal vector
-        point: A point on the plane (default: origin)
-        unit: Unit for point coordinates
-        angle_unit: Angle unit ("degree" or "radian")
-        name: Optional plane name
+        axis: Rotation axis ("x", "y", or "z")
+        start_plane: Starting plane orientation (only used for y-axis rotation)
+            - "xy": starts with normal = +z (default for y-axis)
+            - "zy": starts with normal = +x
 
     Returns:
-        Plane object with rotated normal
+        Function that takes angle_rad and returns normal vector
     """
-    angle_rad = convert_angle_to_radians(angle, angle_unit)
-    normal = normal_func(angle_rad)
-    resolved_unit = _resolve_unit(unit)
-    point_arr = _convert_point(point, resolved_unit)
-    return Plane(normal, point_arr, resolved_unit, name)
+    axis_lower = axis.lower()
+
+    if axis_lower == "x":
+        # Rotation around x-axis: Starting normal [0, 0, 1] (z-axis)
+        # After rotation: normal_y = sin(angle), normal_z = cos(angle)
+        def normal_func(angle_rad: float) -> np.ndarray:
+            return np.array([0.0, math.sin(angle_rad), math.cos(angle_rad)])
+    elif axis_lower == "y":
+        # Rotation around y-axis with different starting planes
+        start = (start_plane or "xy").lower()
+        if start == "xy":
+            # Starting normal: [0, 0, 1] (z-axis)
+            # After rotation: normal_x = -sin(angle), normal_z = cos(angle)
+            def normal_func(angle_rad: float) -> np.ndarray:
+                return np.array([-math.sin(angle_rad), 0.0, math.cos(angle_rad)])
+        elif start == "zy":
+            # Starting normal: [1, 0, 0] (x-axis)
+            # After rotation: normal_x = cos(angle), normal_z = -sin(angle)
+            def normal_func(angle_rad: float) -> np.ndarray:
+                return np.array([math.cos(angle_rad), 0.0, -math.sin(angle_rad)])
+        else:
+            raise ValueError(f"Invalid start_plane '{start_plane}'. Must be 'xy' or 'zy'")
+    elif axis_lower == "z":
+        # Rotation around z-axis: Starting normal [0, 1, 0] (y-axis)
+        # After rotation: normal_x = -sin(angle), normal_y = cos(angle)
+        def normal_func(angle_rad: float) -> np.ndarray:
+            return np.array([-math.sin(angle_rad), math.cos(angle_rad), 0.0])
+    else:
+        raise ValueError(f"Invalid axis '{axis}'. Must be 'x', 'y', or 'z'")
+
+    return normal_func
 
 
-def create_plane_rotated_x(
+def create_plane_rotated(
+    axis: str,
     angle: float,
     point: tuple[float, float, float] | np.ndarray | None = None,
     unit: Unit | str | None = None,
     angle_unit: str = "degree",
     name: str | None = None,
+    start_plane: str | None = None,
 ) -> Plane:
     """
-    Create a plane rotated around the x-axis by a given angle.
+    Create a plane rotated around a coordinate axis by a given angle.
 
-    The plane starts as the xy-plane (normal = +z) and rotates around
-    the x-axis. Positive angles rotate the normal from +z toward +y.
+    This is a unified function for creating planes rotated around any of the
+    three coordinate axes (x, y, or z).
 
     Args:
-        angle: Rotation angle around x-axis
+        axis: Rotation axis ("x", "y", or "z")
+        angle: Rotation angle around the specified axis
         point: A point on the plane (default: origin)
         unit: Unit for point coordinates
         angle_unit: Angle unit ("degree" or "radian")
         name: Optional plane name
-
-    Returns:
-        Plane object with rotated normal
-
-    Examples:
-        >>> from qnty.spatial import create_plane_rotated_x
-        >>>
-        >>> # Plane rotated 45° around x-axis
-        >>> p = create_plane_rotated_x(angle=45, name="inclined")
-        >>>
-        >>> # Plane rotated 90° (becomes xz-plane with normal +y)
-        >>> p2 = create_plane_rotated_x(angle=90)
-    """
-    # Rotation around x-axis: Starting normal [0, 0, 1] (z-axis)
-    # After rotation: normal_y = sin(angle), normal_z = cos(angle)
-    def normal_func(angle_rad: float) -> np.ndarray:
-        return np.array([0.0, math.sin(angle_rad), math.cos(angle_rad)])
-
-    return _create_rotated_plane(angle, normal_func, point, unit, angle_unit, name)
-
-
-def create_plane_rotated_y(
-    angle: float,
-    point: tuple[float, float, float] | np.ndarray | None = None,
-    unit: Unit | str | None = None,
-    angle_unit: str = "degree",
-    name: str | None = None,
-    start_plane: str = "xy",
-) -> Plane:
-    """
-    Create a plane rotated around the y-axis by a given angle.
-
-    Args:
-        angle: Rotation angle around y-axis
-        point: A point on the plane (default: origin)
-        unit: Unit for point coordinates
-        angle_unit: Angle unit ("degree" or "radian")
-        name: Optional plane name
-        start_plane: Starting plane orientation:
+        start_plane: Starting plane orientation (only used for y-axis rotation):
             - "xy": starts with normal = +z, rotates toward -x (default)
             - "zy": starts with normal = +x, rotates toward +z
 
@@ -228,69 +210,26 @@ def create_plane_rotated_y(
         Plane object with rotated normal
 
     Examples:
-        >>> from qnty.spatial import create_plane_rotated_y
+        >>> from qnty.spatial import create_plane_rotated
         >>>
-        >>> # xy-plane rotated 30° around y-axis (normal goes from +z toward -x)
-        >>> p = create_plane_rotated_y(angle=30, name="slope")
+        >>> # Plane rotated 45° around x-axis
+        >>> p = create_plane_rotated("x", angle=45, name="inclined")
         >>>
-        >>> # zy-plane rotated -30° around y-axis (normal goes from +x toward +z)
-        >>> p2 = create_plane_rotated_y(angle=-30, start_plane="zy")
-    """
-    # Rotation around y-axis with different starting planes
-    if start_plane.lower() == "xy":
-        # Starting normal: [0, 0, 1] (z-axis)
-        # After rotation: normal_x = -sin(angle), normal_z = cos(angle)
-        def normal_func(angle_rad: float) -> np.ndarray:
-            return np.array([-math.sin(angle_rad), 0.0, math.cos(angle_rad)])
-    elif start_plane.lower() == "zy":
-        # Starting normal: [1, 0, 0] (x-axis)
-        # After rotation: normal_x = cos(angle), normal_z = -sin(angle)
-        def normal_func(angle_rad: float) -> np.ndarray:
-            return np.array([math.cos(angle_rad), 0.0, -math.sin(angle_rad)])
-    else:
-        raise ValueError(f"Invalid start_plane '{start_plane}'. Must be 'xy' or 'zy'")
-
-    return _create_rotated_plane(angle, normal_func, point, unit, angle_unit, name)
-
-
-def create_plane_rotated_z(
-    angle: float,
-    point: tuple[float, float, float] | np.ndarray | None = None,
-    unit: Unit | str | None = None,
-    angle_unit: str = "degree",
-    name: str | None = None,
-) -> Plane:
-    """
-    Create a plane rotated around the z-axis by a given angle.
-
-    The plane starts as the xz-plane (normal = +y) and rotates around
-    the z-axis. Positive angles rotate the normal from +y toward -x.
-
-    Args:
-        angle: Rotation angle around z-axis
-        point: A point on the plane (default: origin)
-        unit: Unit for point coordinates
-        angle_unit: Angle unit ("degree" or "radian")
-        name: Optional plane name
-
-    Returns:
-        Plane object with rotated normal
-
-    Examples:
-        >>> from qnty.spatial import create_plane_rotated_z
+        >>> # Plane rotated 30° around y-axis
+        >>> p2 = create_plane_rotated("y", angle=30, name="slope")
         >>>
         >>> # Plane rotated 60° around z-axis
-        >>> p = create_plane_rotated_z(angle=60, name="angled")
+        >>> p3 = create_plane_rotated("z", angle=60, name="angled")
         >>>
-        >>> # Plane rotated 90° (becomes yz-plane with normal -x)
-        >>> p2 = create_plane_rotated_z(angle=90)
+        >>> # y-axis rotation with zy starting plane
+        >>> p4 = create_plane_rotated("y", angle=-30, start_plane="zy")
     """
-    # Rotation around z-axis: Starting normal [0, 1, 0] (y-axis)
-    # After rotation: normal_x = -sin(angle), normal_y = cos(angle)
-    def normal_func(angle_rad: float) -> np.ndarray:
-        return np.array([-math.sin(angle_rad), math.cos(angle_rad), 0.0])
-
-    return _create_rotated_plane(angle, normal_func, point, unit, angle_unit, name)
+    normal_func = _get_normal_for_axis_rotation(axis, start_plane)
+    angle_rad = convert_angle_to_radians(angle, angle_unit)
+    normal = normal_func(angle_rad)
+    resolved_unit = _resolve_unit(unit)
+    point_arr = _convert_point(point, resolved_unit)
+    return Plane(normal, point_arr, resolved_unit, name)
 
 
 def _resolve_unit(unit: Unit | str | None) -> Unit | None:

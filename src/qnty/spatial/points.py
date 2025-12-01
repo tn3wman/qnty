@@ -11,9 +11,9 @@ from types import EllipsisType
 from typing import Any
 
 from ..core.unit import Unit
-from ..utils.shared_utilities import convert_angle_to_radians, convert_angle_to_radians_optional, convert_phi_to_standard, resolve_length_unit_from_string, resolve_unit_from_string
+from ..utils.shared_utilities import convert_angle_to_radians, convert_angle_to_radians_optional, convert_phi_to_standard, convert_to_si, resolve_length_unit_from_string, resolve_unit_from_string
 from .point import _Point
-from .vector_helpers import compute_missing_direction_angle
+from .vector_helpers import compute_missing_direction_angle, validate_direction_cosines
 
 
 class _PointWithUnknowns(_Point):
@@ -72,11 +72,8 @@ class _PointWithUnknowns(_Point):
         # Update internal coordinates
         idx = {"x": 0, "y": 1, "z": 2}[coord]
 
-        # Convert value to SI
-        if self._unit is not None:
-            self._coords[idx] = value * self._unit.si_factor
-        else:
-            self._coords[idx] = value
+        # Convert value to SI and store
+        self._coords[idx] = convert_to_si(value, self._unit)
 
     def unlock_coordinate(self, coord: str) -> None:
         """
@@ -671,12 +668,9 @@ def create_point_direction_angles(
     alpha_rad, beta_rad, gamma_rad = compute_missing_direction_angle(alpha_rad, beta_rad, gamma_rad)
 
     # Validate the constraint
-    sum_cos_sq = math.cos(alpha_rad) ** 2 + math.cos(beta_rad) ** 2 + math.cos(gamma_rad) ** 2
-    if abs(sum_cos_sq - 1.0) > 1e-6:
-        raise ValueError(f"Direction angles must satisfy cos²α + cos²β + cos²γ = 1, got {sum_cos_sq}")
+    validate_direction_cosines(alpha_rad, beta_rad, gamma_rad)
 
     # Resolve unit
-    from ..utils.shared_utilities import resolve_length_unit_from_string
 
     resolved_unit: Unit | None = None
     if isinstance(unit, str):

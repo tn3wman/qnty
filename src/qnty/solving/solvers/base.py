@@ -7,7 +7,7 @@ from typing import Any
 
 from ...algebra import Equation
 from ...core.quantity import FieldQuantity
-from ..order import Order
+from ..utils import AnalysisDict, DependencyGraph, EquationList, UnknownsSet, VariablesDict
 
 
 @dataclass
@@ -30,7 +30,7 @@ class BaseSolver(ABC):
         self.steps: list[dict[str, Any]] = []
 
     @abstractmethod
-    def can_handle(self, equations: list[Equation], unknowns: set[str], dependency_graph: Order | None = None, analysis: dict[str, Any] | None = None) -> bool:
+    def can_handle(self, equations: EquationList, unknowns: UnknownsSet, dependency_graph: DependencyGraph = None, analysis: AnalysisDict = None) -> bool:
         """
         Check if this solver can handle the given problem.
 
@@ -46,7 +46,7 @@ class BaseSolver(ABC):
         ...
 
     @abstractmethod
-    def solve(self, equations: list[Equation], variables: dict[str, FieldQuantity], dependency_graph: Order | None = None, max_iterations: int = 100, tolerance: float = 1e-10) -> SolveResult:
+    def solve(self, equations: EquationList, variables: VariablesDict, dependency_graph: DependencyGraph = None, max_iterations: int = 100, tolerance: float = 1e-10) -> SolveResult:
         """
         Solve the system of equations.
 
@@ -149,15 +149,15 @@ class BaseSolver(ABC):
         if self.logger:
             self.logger.debug("Solved %s = %s", variable, result)
 
-    def _get_known_variables(self, variables: dict[str, FieldQuantity]) -> set[str]:
+    def _get_known_variables(self, variables: VariablesDict) -> set[str]:
         """Get symbols of known variables."""
         return {s for s, v in variables.items() if v.is_known}
 
-    def _get_unknown_variables(self, variables: dict[str, FieldQuantity]) -> set[str]:
+    def _get_unknown_variables(self, variables: VariablesDict) -> set[str]:
         """Get symbols of unknown variables."""
         return {s for s, v in variables.items() if not v.is_known}
 
-    def _partition_variables(self, variables: dict[str, FieldQuantity]) -> tuple[set[str], set[str]]:
+    def _partition_variables(self, variables: VariablesDict) -> tuple[set[str], set[str]]:
         """Partition variables into known and unknown sets efficiently."""
         known = set()
         unknown = set()
@@ -191,7 +191,7 @@ class BaseSolver(ABC):
                 raise ValueError(f"Cannot determine unit for variable {var_name}")
         return preferred_unit
 
-    def _create_error_result(self, variables: dict[str, FieldQuantity], message: str, iterations: int = 0) -> SolveResult:
+    def _create_error_result(self, variables: VariablesDict, message: str, iterations: int = 0) -> SolveResult:
         """Create a standardized error result.
 
         Args:

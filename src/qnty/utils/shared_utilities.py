@@ -436,22 +436,24 @@ class SharedConstants:
 
     # Special dunder methods that should raise AttributeError for wrapper classes
     # Used to guard against deepcopy/pickle operations that cause recursion
-    WRAPPER_EXCLUDED_DUNDERS = frozenset({
-        "__setstate__",
-        "__getstate__",
-        "__getnewargs__",
-        "__getnewargs_ex__",
-        "__reduce__",
-        "__reduce_ex__",
-        "__copy__",
-        "__deepcopy__",
-        "__getattribute__",
-        "__setattr__",
-        "__delattr__",
-        "__dict__",
-        "__weakref__",
-        "__class__",
-    })
+    WRAPPER_EXCLUDED_DUNDERS = frozenset(
+        {
+            "__setstate__",
+            "__getstate__",
+            "__getnewargs__",
+            "__getnewargs_ex__",
+            "__reduce__",
+            "__reduce_ex__",
+            "__copy__",
+            "__deepcopy__",
+            "__getattribute__",
+            "__setattr__",
+            "__delattr__",
+            "__dict__",
+            "__weakref__",
+            "__class__",
+        }
+    )
 
 
 def is_private_or_excluded_dunder(name: str) -> bool:
@@ -470,7 +472,144 @@ def is_private_or_excluded_dunder(name: str) -> bool:
     return name.startswith("_") or name in SharedConstants.WRAPPER_EXCLUDED_DUNDERS
 
 
+def is_excluded_dunder(name: str) -> bool:
+    """
+    Check if an attribute name is an excluded dunder method that should raise AttributeError.
+
+    This is used in __getattr__ methods to guard against deepcopy/pickle operations
+    that cause recursion. Unlike is_private_or_excluded_dunder, this only checks
+    the specific dunders, not all private attributes.
+
+    Args:
+        name: Attribute name to check
+
+    Returns:
+        True if the name is in WRAPPER_EXCLUDED_DUNDERS
+    """
+    return name in SharedConstants.WRAPPER_EXCLUDED_DUNDERS
+
+
+def raise_if_excluded_dunder(name: str, obj: Any) -> None:
+    """
+    Raise AttributeError if the attribute name is an excluded dunder.
+
+    This consolidates the repeated pattern:
+        if name in {'__setstate__', '__getstate__', ...}:
+            raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
+
+    Args:
+        name: Attribute name to check
+        obj: Object to use for type name in error message
+
+    Raises:
+        AttributeError: If name is in WRAPPER_EXCLUDED_DUNDERS
+    """
+    if name in SharedConstants.WRAPPER_EXCLUDED_DUNDERS:
+        raise AttributeError(f"'{type(obj).__name__}' object has no attribute '{name}'")
+
+
+def delegate_getattr(wrapped_obj: Any, name: str, wrapper_obj: Any) -> Any:
+    """
+    Delegate attribute access to wrapped object with proper error handling.
+
+    This consolidates the repeated pattern:
+        try:
+            return getattr(self._wrapped_var, name)
+        except AttributeError as err:
+            raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'") from err
+
+    Args:
+        wrapped_obj: The object to delegate attribute access to
+        name: The attribute name being accessed
+        wrapper_obj: The wrapper object (for error message type name)
+
+    Returns:
+        The attribute value from the wrapped object
+
+    Raises:
+        AttributeError: If the wrapped object has no such attribute
+    """
+    try:
+        return getattr(wrapped_obj, name)
+    except AttributeError as err:
+        raise AttributeError(f"'{type(wrapper_obj).__name__}' object has no attribute '{name}'") from err
+
+
 # ========== FORCE VECTOR UTILITIES ==========
+
+
+def clone_vector_as_known(force: Any) -> Any:
+    """
+    Clone a force vector as a known force.
+
+    Creates a new _Vector instance with the same properties as the original,
+    but explicitly marked as known. This is used during problem initialization
+    to create independent copies of force vectors.
+
+    Args:
+        force: The original force vector to clone
+
+    Returns:
+        A new _Vector instance with is_known=True
+    """
+    # Import here to avoid circular imports
+    from qnty.spatial.vector import _Vector
+
+    return _Vector(
+        vector=force.vector,
+        name=force.name,
+        description=force.description,
+        is_known=True,
+        is_resultant=force.is_resultant,
+        coordinate_system=force.coordinate_system,
+        angle_reference=force.angle_reference,
+    )
+
+
+def get_angle_reference_label(obj: Any) -> str:
+    """
+    Get the axis label from an object's angle_reference attribute.
+
+    This consolidates the common pattern:
+        reference_str = ""
+        if hasattr(obj, 'angle_reference') and obj.angle_reference is not None:
+            ref = obj.angle_reference
+            if hasattr(ref, 'axis_label'):
+                reference_str = ref.axis_label
+
+    Args:
+        obj: Object with potential angle_reference attribute
+
+    Returns:
+        The axis_label string, or empty string if not available
+    """
+    if hasattr(obj, "angle_reference") and obj.angle_reference is not None:
+        ref = obj.angle_reference
+        if hasattr(ref, "axis_label"):
+            return ref.axis_label
+    return ""
+
+
+def convert_to_si(value: float, unit: Any) -> float:
+    """
+    Convert a value to SI units if a unit is provided.
+
+    This consolidates the common pattern:
+        if unit is not None:
+            return value * unit.si_factor
+        else:
+            return value
+
+    Args:
+        value: The value to convert
+        unit: The unit object with si_factor attribute, or None
+
+    Returns:
+        The value converted to SI units, or the original value if no unit
+    """
+    if unit is not None:
+        return value * unit.si_factor
+    return value
 
 
 def handle_negative_magnitude(cloned: Any, original_magnitude_value: float | None) -> None:
@@ -650,6 +789,59 @@ def extract_force_vectors_from_class(cls: type, instance: Any, forces: dict, clo
             setattr(instance, attr_name, force_copy)
 
 
+def create_force_magnitude_quantity(
+    force: Any,
+    force_name: str,
+) -> Any | None:
+    """
+    Create a Quantity for force magnitude if valid.
+
+    This is the core function for creating magnitude quantities from forces.
+    Used by both add_force_magnitude_variable and add_force_magnitude_to_variables.
+
+    Args:
+        force: ForceVector with magnitude attribute
+        force_name: Name/key of the force
+
+    Returns:
+        Quantity object or None if magnitude is not valid
+    """
+    if force.magnitude is None or force.magnitude.value is None:
+        return None
+
+    from ..core.dimension_catalog import dim
+    from ..core.quantity import Quantity
+
+    return Quantity(
+        name=f"{force.name} Magnitude",
+        dim=dim.force,
+        value=force.magnitude.value,
+        preferred=force.magnitude.preferred,
+        _symbol=f"{force_name}_mag",
+    )
+
+
+def add_force_magnitude_to_variables(
+    force: Any,
+    force_name: str,
+    variables: dict[str, Any],
+) -> None:
+    """
+    Add force magnitude as a variable for report generation (simple version).
+
+    This version doesn't track original_variable_states - use add_force_magnitude_variable
+    if you need state tracking.
+
+    Args:
+        force: ForceVector with magnitude attribute
+        force_name: Name/key of the force
+        variables: Dictionary to add the magnitude variable to
+    """
+    mag_var = create_force_magnitude_quantity(force, force_name)
+    if mag_var is not None:
+        variables[f"{force_name}_mag"] = mag_var
+
+
 def add_force_magnitude_variable(
     force: Any,
     force_name: str,
@@ -658,7 +850,7 @@ def add_force_magnitude_variable(
     original_variable_states: dict[str, bool],
 ) -> None:
     """
-    Add force magnitude as a variable for report generation.
+    Add force magnitude as a variable for report generation with state tracking.
 
     Args:
         force: ForceVector with magnitude attribute
@@ -667,15 +859,10 @@ def add_force_magnitude_variable(
         variables: Dictionary to add the magnitude variable to
         original_variable_states: Dictionary to track original state
     """
-    if force.magnitude is None or force.magnitude.value is None:
-        return
-
-    from ..core.dimension_catalog import dim
-    from ..core.quantity import Quantity
-
-    mag_var = Quantity(name=f"{force.name} Magnitude", dim=dim.force, value=force.magnitude.value, preferred=force.magnitude.preferred, _symbol=f"{force_name}_mag")
-    variables[f"{force_name}_mag"] = mag_var
-    original_variable_states[f"{force_name}_mag"] = was_originally_known
+    mag_var = create_force_magnitude_quantity(force, force_name)
+    if mag_var is not None:
+        variables[f"{force_name}_mag"] = mag_var
+        original_variable_states[f"{force_name}_mag"] = was_originally_known
 
 
 def convert_angle_to_radians(angle: float, angle_unit: str) -> float:
@@ -823,6 +1010,35 @@ def add_force_components_xy(
 
 
 # ========== FORCE VECTOR CLONING ==========
+
+
+def clone_force_vector(force: Any, Vector: type) -> Any:
+    """
+    Clone a force vector, handling both known and unknown forces.
+
+    This is the unified function for cloning force vectors, used by both
+    ParallelogramLawProblem and RectangularVectorProblem. It checks whether
+    the force has valid computed data and routes to the appropriate cloning
+    strategy.
+
+    Args:
+        force: The original force vector to clone
+        Vector: The _Vector class to use for creating the clone
+
+    Returns:
+        A cloned force vector with the same properties as the original
+    """
+    has_valid_vector = ValidationHelper.vector_has_valid_computed_data(force)
+
+    if has_valid_vector:
+        cloned = clone_vector_as_known(force)
+        # Handle negative magnitude
+        original_mag = force.magnitude.value if force.magnitude is not None else None
+        handle_negative_magnitude(cloned, original_mag)
+        return cloned
+    else:
+        # Unknown force - use shared utility
+        return clone_unknown_force_vector(force, Vector)
 
 
 def clone_unknown_force_vector(force: Any, Vector: type) -> Any:
@@ -1229,10 +1445,12 @@ def build_equilibrium_matrix(theta1: float, theta2: float) -> np.ndarray:
 
     import numpy as np
 
-    return np.array([
-        [math.cos(theta1), -math.cos(theta2)],
-        [math.sin(theta1), -math.sin(theta2)],
-    ])
+    return np.array(
+        [
+            [math.cos(theta1), -math.cos(theta2)],
+            [math.sin(theta1), -math.sin(theta2)],
+        ]
+    )
 
 
 def solve_two_unknown_magnitudes(
@@ -1300,3 +1518,276 @@ def convert_phi_to_standard(phi_input_rad: float, phi_wrt: str) -> float:
         return math.pi - phi_input_rad
     else:  # xy
         return math.pi / 2 - phi_input_rad
+
+
+# ========== 3D VECTOR DIRECTION ANGLES UTILITIES ==========
+
+
+def convert_direction_angle_to_degrees(angle_value: float | None, default: float = 0.0) -> float:
+    """
+    Convert direction angle from radians to degrees with None handling.
+
+    This consolidates the repeated pattern in cartesian_vector.py for converting
+    direction angles (alpha, beta, gamma) from radians to degrees.
+
+    Args:
+        angle_value: Angle value in radians, or None
+        default: Default value to return if angle_value is None (default: 0.0)
+
+    Returns:
+        Angle in degrees, or default if input was None
+    """
+    import math
+
+    if angle_value is None:
+        return default
+    return angle_value * 180 / math.pi
+
+
+def format_3d_force_with_direction_angles(
+    name: str,
+    mag_val: float,
+    mag_unit: str,
+    alpha_deg: float,
+    beta_deg: float,
+    gamma_deg: float,
+) -> str:
+    """
+    Format a 3D force with direction angles (α, β, γ) as a string.
+
+    This consolidates the repeated pattern in cartesian_vector.py for formatting
+    force vectors with direction angles.
+
+    Args:
+        name: Name of the force
+        mag_val: Magnitude value
+        mag_unit: Unit symbol for magnitude
+        alpha_deg: Alpha angle in degrees
+        beta_deg: Beta angle in degrees
+        gamma_deg: Gamma angle in degrees
+
+    Returns:
+        Formatted string like "F = 100.0 N (α=60.0°, β=45.0°, γ=60.0°)"
+    """
+    return f"{name} = {mag_val:.1f} {mag_unit} (α={alpha_deg:.1f}°, β={beta_deg:.1f}°, γ={gamma_deg:.1f}°)"
+
+
+def get_direction_angles_degrees(force: Any) -> tuple[float, float, float]:
+    """
+    Get direction angles (alpha, beta, gamma) from a 3D force vector in degrees.
+
+    This consolidates the repeated pattern in cartesian_vector.py for extracting
+    and converting direction angles.
+
+    Args:
+        force: Force vector with alpha, beta, gamma Quantity attributes
+
+    Returns:
+        Tuple of (alpha_deg, beta_deg, gamma_deg)
+    """
+    import math
+
+    alpha_deg = force.alpha.value * 180 / math.pi if (force.alpha and force.alpha.value is not None) else 0
+    beta_deg = (force.beta.value * 180 / math.pi) if (force.beta and force.beta.value is not None) else 0
+    gamma_deg = (force.gamma.value * 180 / math.pi) if (force.gamma and force.gamma.value is not None) else 0
+    return alpha_deg, beta_deg, gamma_deg
+
+
+# ========== LAW OF SINES/COSINES FORMATTING UTILITIES ==========
+
+
+def format_law_of_sines_substitution(
+    vector_name: str,
+    known_mag: float,
+    angle1_deg: float,
+    angle2_deg: float,
+    result_mag: float,
+    unit_symbol: str,
+) -> str:
+    """
+    Format a Law of Sines substitution step.
+
+    This consolidates the repeated pattern in parallelogram_law.py for formatting
+    Law of Sines solution steps.
+
+    Args:
+        vector_name: LaTeX name of the vector being solved
+        known_mag: Known magnitude value
+        angle1_deg: First angle in degrees (numerator sin)
+        angle2_deg: Second angle in degrees (denominator sin)
+        result_mag: Resulting magnitude
+        unit_symbol: Unit symbol for display
+
+    Returns:
+        Formatted LaTeX string showing the calculation
+    """
+    return f"|{vector_name}| = {known_mag:.0f} · sin({angle1_deg:.0f}°)/sin({angle2_deg:.0f}°)\n= {result_mag:.0f}\\ \\text{{{unit_symbol}}}"
+
+
+def format_law_of_sines_angle_substitution(
+    angle_name_from: str,
+    angle_name_to: str,
+    known_mag: float,
+    interior_angle_deg: float,
+    other_mag: float,
+    result_angle_deg: float,
+) -> str:
+    """
+    Format a Law of Sines angle substitution step.
+
+    This consolidates the repeated pattern in parallelogram_law.py for formatting
+    Law of Sines angle solution steps.
+
+    Args:
+        angle_name_from: First vector name for angle
+        angle_name_to: Second vector name for angle
+        known_mag: Known magnitude value
+        interior_angle_deg: Interior angle in degrees
+        other_mag: Other magnitude value
+        result_angle_deg: Resulting angle in degrees
+
+    Returns:
+        Formatted string showing the calculation
+    """
+    return f"∠({angle_name_from},{angle_name_to}) = sin⁻¹({known_mag:.1f}·sin({interior_angle_deg:.0f}°)/{other_mag:.1f})\n= {result_angle_deg:.1f}°"
+
+
+# ========== LAW OF COSINES UTILITIES ==========
+
+
+def compute_law_of_cosines(side_a: float, side_b: float, angle_rad: float) -> float:
+    """
+    Apply the Law of Cosines to compute the third side of a triangle.
+
+    Formula: c² = a² + b² - 2·a·b·cos(C)
+
+    This consolidates the repeated pattern in triangle_solver.py for computing
+    magnitudes using the Law of Cosines.
+
+    Args:
+        side_a: Length of first side
+        side_b: Length of second side
+        angle_rad: Angle opposite to the side being computed, in radians
+
+    Returns:
+        Length of the third side
+    """
+    import math
+
+    c_squared = side_a**2 + side_b**2 - 2 * side_a * side_b * math.cos(angle_rad)
+    return math.sqrt(c_squared)
+
+
+# ========== TABLE ROW BUILDING UTILITIES ==========
+
+
+def build_variable_table_rows(data: list[dict], row_class: type, keys: list[str] | None = None) -> list:
+    """
+    Build table rows from variable data dictionaries.
+
+    This consolidates the repeated pattern in report_ir.py for building table rows
+    from variable dictionaries.
+
+    Args:
+        data: List of dictionaries containing variable data
+        row_class: The TableRow class to use for creating rows
+        keys: Keys to extract from each dict (default: ['symbol', 'name', 'value', 'unit'])
+
+    Returns:
+        List of TableRow objects
+    """
+    if keys is None:
+        keys = ["symbol", "name", "value", "unit"]
+
+    rows = []
+    for item in data:
+        rows.append(row_class([item[key] for key in keys]))
+    return rows
+
+
+# ========== LATEX PARSING UTILITIES ==========
+
+
+def scan_backwards_for_latex_command(text: str, start_pos: int) -> int:
+    """
+    Scan backwards in text to find the start of a LaTeX command or function name.
+
+    This consolidates the repeated pattern in report_ir.py for scanning backwards
+    to find LaTeX command boundaries (e.g., finding '\\sin' before a parenthesis).
+
+    Args:
+        text: The text to scan
+        start_pos: Position to start scanning backwards from
+
+    Returns:
+        Position of the start of the command/function name
+    """
+    pos = start_pos
+    while pos > 0 and (text[pos - 1].isalpha() or text[pos - 1] == "\\"):
+        pos -= 1
+    return pos
+
+
+# ========== PROXY GETATTR UTILITIES ==========
+
+
+def proxy_getattr_with_delegation(
+    proxy_obj: Any,
+    attr_name: str,
+    wrapped_attr: str = "_wrapped_var",
+) -> Any:
+    """
+    Get attribute from a proxy object, delegating to the wrapped variable.
+
+    This consolidates the repeated pattern in problem.py and composition.py for
+    proxy __getattr__ implementations.
+
+    Args:
+        proxy_obj: The proxy object
+        attr_name: Name of the attribute to get
+        wrapped_attr: Name of the attribute on proxy_obj that holds the wrapped variable
+
+    Returns:
+        The attribute from the wrapped variable
+
+    Raises:
+        AttributeError: If the wrapped variable doesn't have the attribute
+    """
+    try:
+        wrapped = getattr(proxy_obj, wrapped_attr)
+        return getattr(wrapped, attr_name)
+    except AttributeError as err:
+        raise AttributeError(f"'{type(proxy_obj).__name__}' object has no attribute '{attr_name}'") from err
+
+
+# ========== ARC DRAWING UTILITIES ==========
+
+
+def create_angle_arc(arc_class: type, radius: float, angle_deg: float, color: str) -> Any:
+    """
+    Create an angle arc patch for matplotlib.
+
+    This consolidates the repeated pattern in diagram_utils.py and vector_diagram.py
+    for creating Arc patches to show angles.
+
+    Args:
+        arc_class: The matplotlib Arc class (matplotlib.patches.Arc)
+        radius: Radius of the arc
+        angle_deg: Angle in degrees (from 0 to this value)
+        color: Color of the arc
+
+    Returns:
+        Arc patch object
+    """
+    return arc_class(
+        (0, 0),
+        2 * radius,
+        2 * radius,
+        angle=0,
+        theta1=0,
+        theta2=angle_deg,
+        color=color,
+        linewidth=1.5,
+        linestyle=":",
+        zorder=2,
+    )

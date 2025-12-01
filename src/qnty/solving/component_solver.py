@@ -484,9 +484,7 @@ class ComponentSolver:
 
         return resultant
 
-    def solve_constrained_equilibrium(
-        self, known_forces: list[_Vector], unknown_force: _Vector, unknown_resultant: _Vector, force_unit: str | None = None
-    ) -> tuple[_Vector, _Vector]:
+    def solve_constrained_equilibrium(self, known_forces: list[_Vector], unknown_force: _Vector, unknown_resultant: _Vector, force_unit: str | None = None) -> tuple[_Vector, _Vector]:
         """
         Solve for unknown force and resultant magnitudes when both have known directions.
 
@@ -553,10 +551,7 @@ class ComponentSolver:
 
         from ..utils.shared_utilities import solve_two_unknown_magnitudes
 
-        mag_unknown, mag_R = solve_two_unknown_magnitudes(
-            theta_unknown, theta_R, sum_known_x, sum_known_y,
-            error_context="constrained equilibrium"
-        )
+        mag_unknown, mag_R = solve_two_unknown_magnitudes(theta_unknown, theta_R, sum_known_x, sum_known_y, error_context="constrained equilibrium")
 
         self.solution_steps.append({"description": "Solved for magnitudes", "results": [f"|F_unknown| = {mag_unknown:.3f} N", f"|FR| = {mag_R:.3f} N"]})
 

@@ -17,9 +17,8 @@ from ..utils.shared_utilities import (
     VariableStateTrackingMixin,
     add_force_components_xy,
     capture_original_force_states,
-    clone_unknown_force_vector,
+    clone_force_vector,
     extract_force_vectors_from_class,
-    handle_negative_magnitude,
 )
 from .problem import Problem
 
@@ -86,31 +85,7 @@ class RectangularVectorProblem(VariableStateTrackingMixin, Problem):
 
     def _clone_force_vector(self, force: _Vector) -> _Vector:
         """Create a copy of a ForceVector."""
-        from ..utils.shared_utilities import ValidationHelper
-
-        # A force is fully computable only if it has both magnitude and angle with known values
-        # Otherwise the vector coords might be placeholder zeros from _init_magnitude_only
-        has_valid_vector = ValidationHelper.vector_has_valid_computed_data(force)
-
-        if has_valid_vector:
-            # Known force with computed vector - copy with same values
-            cloned = _Vector(
-                vector=force.vector,
-                name=force.name,
-                description=force.description,
-                is_known=True,
-                is_resultant=force.is_resultant,
-                coordinate_system=force.coordinate_system,
-                angle_reference=force.angle_reference,
-            )
-            # If original had negative magnitude, restore it after cloning
-            # (_compute_magnitude_and_angle converts to positive via sqrt)
-            original_mag = force.magnitude.value if force.magnitude is not None else None
-            handle_negative_magnitude(cloned, original_mag)
-            return cloned
-        else:
-            # Unknown force - use shared utility
-            return clone_unknown_force_vector(force, _Vector)
+        return clone_force_vector(force, _Vector)
 
     def solve(self, max_iterations: int = 100, tolerance: float = 1e-10) -> dict[str, _Vector]:  # type: ignore[override]
         """

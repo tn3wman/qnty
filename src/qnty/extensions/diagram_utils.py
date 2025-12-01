@@ -15,6 +15,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.patches import Arc, FancyArrowPatch
 
+from ..utils.shared_utilities import create_angle_arc
+
 if TYPE_CHECKING:
     from typing import Protocol
 
@@ -335,6 +337,44 @@ def create_force_diagram(problem: Any, output_path: str | Path, diagram_class: t
     return diagram.save(output_path)
 
 
+def make_create_force_diagram(diagram_class: type):
+    """
+    Factory function to create a module-specific create_force_diagram function.
+
+    This eliminates the need for duplicate wrapper functions in each module
+    by binding the diagram_class at module import time.
+
+    Args:
+        diagram_class: The VectorDiagram class to bind
+
+    Returns:
+        A create_force_diagram function with the diagram_class pre-bound
+    """
+
+    def _create_force_diagram(problem: Any, output_path: str | Path, title: str | None = None, show_components: bool = False, **kwargs) -> Path:
+        """
+        Create vector diagram from a VectorEquilibriumProblem.
+
+        Args:
+            problem: VectorEquilibriumProblem instance (must be solved)
+            output_path: Output file path
+            title: Diagram title (uses problem.name if None)
+            show_components: Whether to show component projections
+            **kwargs: Additional arguments for VectorDiagram
+
+        Returns:
+            Path to saved diagram
+
+        Examples:
+            >>> problem = Problem_2_1()
+            >>> problem.solve()
+            >>> create_force_diagram(problem, "diagram.png")
+        """
+        return create_force_diagram(problem, output_path, diagram_class, title, show_components, **kwargs)
+
+    return _create_force_diagram
+
+
 class VectorDiagramBase:
     """
     Base class for vector diagrams providing shared functionality.
@@ -649,7 +689,7 @@ class VectorDiagramBase:
             angle_deg -= 360
 
         # Draw arc from x-axis to vector
-        arc = Arc((0, 0), 2 * radius, 2 * radius, angle=0, theta1=0, theta2=angle_deg, color=color, linewidth=1.5, linestyle=":", zorder=2)
+        arc = create_angle_arc(Arc, radius, angle_deg, color)
         ax.add_patch(arc)
 
         # Calculate label position at midpoint of arc using normalized angle

@@ -54,6 +54,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Literal
 
+from ...integration.converters import dto_to_vector
 from ...integration.dto import (
     PointDTO,
     ProblemInputDTO,
@@ -226,14 +227,7 @@ class Result:
         steps_dto = []
         for step in self._steps:
             if isinstance(step, dict):
-                steps_dto.append(
-                    SolutionStepDTO(
-                        description=step.get("description", ""),
-                        formula=step.get("formula"),
-                        result=step.get("result"),
-                        details=step.get("details", {}),
-                    )
-                )
+                steps_dto.append(SolutionStepDTO.from_dict(step))
 
         return ResultDTO(
             success=self.success,
@@ -406,26 +400,8 @@ def _vector_to_dto(
     )
 
 
-def _dto_to_vector(dto: VectorDTO) -> _Vector:
-    """Convert VectorDTO to internal _Vector."""
-    if dto.magnitude is not None and dto.angle is not None:
-        return create_vector_polar(
-            magnitude=dto.magnitude,
-            unit=dto.unit,
-            angle=dto.angle,
-            angle_unit=dto.angle_unit,
-            wrt=dto.angle_wrt,
-            plane=dto.plane,
-            name=dto.name,
-        )
-    else:
-        return create_vector_cartesian(
-            u=dto.u,
-            v=dto.v,
-            w=dto.w,
-            unit=dto.unit,
-            name=dto.name,
-        )
+# Use dto_to_vector from integration.converters for DTO-to-vector conversion
+_dto_to_vector = dto_to_vector
 
 
 # =============================================================================

@@ -156,11 +156,7 @@ def create_law_of_cosines_step(
         method="Law of Cosines",
         description=description or f"Calculate {target} using Law of Cosines",
         equation_for_list=f"|{side_c}|^2 = |{side_a}|^2 + |{side_b}|^2 - 2*|{side_a}|*|{side_b}|*cos({angle_name})",
-        substitution=(
-            f"|{side_c}| = sqrt(({a_val:.1f})^2 + ({b_val:.1f})^2 - "
-            f"2({a_val:.1f})({b_val:.1f})cos({angle_val_deg:.0f} deg))\n"
-            f"= {result_val:.1f} {unit}"
-        ),
+        substitution=(f"|{side_c}| = sqrt(({a_val:.1f})^2 + ({b_val:.1f})^2 - 2({a_val:.1f})({b_val:.1f})cos({angle_val_deg:.0f} deg))\n= {result_val:.1f} {unit}"),
     )
 
 
@@ -195,10 +191,7 @@ def create_law_of_sines_step(
         method="Law of Sines",
         description=description or f"Calculate {target} using Law of Sines",
         equation_for_list=f"sin({angle_a})/|{side_a}| = sin({angle_b})/|{side_b}|",
-        substitution=(
-            f"{target} = sin^-1({a_val:.1f}*sin({angle_a_deg:.0f} deg)/{result_val_deg:.1f})\n"
-            f"= {result_val_deg:.1f} deg"
-        ),
+        substitution=(f"{target} = sin^-1({a_val:.1f}*sin({angle_a_deg:.0f} deg)/{result_val_deg:.1f})\n= {result_val_deg:.1f} deg"),
     )
 
 

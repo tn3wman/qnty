@@ -19,7 +19,7 @@ from ..spatial import _Vector
 from ..spatial.point import _Point
 from ..spatial.vector_between import VectorBetween
 from ..spatial.vectors import _VectorWithUnknowns, create_vector_cartesian, create_vector_from_points
-from ..utils.shared_utilities import add_force_components_xyz
+from ..utils.shared_utilities import add_force_components_xyz, add_force_magnitude_to_variables, clone_vector_as_known
 from .problem import Problem
 
 
@@ -203,16 +203,8 @@ class PositionVectorProblem(Problem):
     def _clone_force_vector(self, force: _Vector) -> _Vector:
         """Create a copy of a ForceVector."""
         if force.is_known and force.vector is not None:
-            cloned = _Vector(
-                vector=force.vector,
-                name=force.name,
-                description=force.description,
-                is_known=True,
-                is_resultant=force.is_resultant,
-                coordinate_system=force.coordinate_system,
-                angle_reference=force.angle_reference,
-            )
-            return cloned
+            # Known force - use shared utility
+            return clone_vector_as_known(force)
         else:
             # Unknown force
             cloned = _Vector(
@@ -972,15 +964,8 @@ class PositionVectorProblem(Problem):
         from ..core.dimension_catalog import dim
 
         for force_name, force in self.forces.items():
-            if force.magnitude is not None and force.magnitude.value is not None:
-                mag_var = Quantity(
-                    name=f"{force.name} Magnitude",
-                    dim=dim.force,
-                    value=force.magnitude.value,
-                    preferred=force.magnitude.preferred,
-                    _symbol=f"{force_name}_mag",
-                )
-                self.variables[f"{force_name}_mag"] = mag_var
+            # Add magnitude using shared utility
+            add_force_magnitude_to_variables(force, force_name, self.variables)
 
             # Add 3D components (X, Y, Z) using shared utility
             add_force_components_xyz(force, force_name, self.variables)

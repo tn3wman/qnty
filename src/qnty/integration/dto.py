@@ -147,6 +147,16 @@ class SolutionStepDTO:
     result: str | None = None
     details: dict[str, str] = field(default_factory=dict)
 
+    @classmethod
+    def from_dict(cls, step_dict: dict) -> "SolutionStepDTO":
+        """Create a SolutionStepDTO from a dictionary."""
+        return cls(
+            description=step_dict.get("description", ""),
+            formula=step_dict.get("formula"),
+            result=step_dict.get("result"),
+            details=step_dict.get("details", {}),
+        )
+
 
 @dataclass
 class SolutionDTO:

@@ -9,17 +9,15 @@ images for inclusion in PDF reports.
 from __future__ import annotations
 
 import math
-from pathlib import Path
 from typing import Any
 
 from matplotlib.patches import Arc
 
+from ...utils.shared_utilities import create_angle_arc
 from ..diagram_utils import (
     VectorDiagramBase,
     format_vector_label,
-)
-from ..diagram_utils import (
-    create_force_diagram as _create_force_diagram_impl,
+    make_create_force_diagram,
 )
 
 
@@ -47,20 +45,9 @@ class VectorDiagram(VectorDiagramBase):
         >>> diagram.save("diagram.png")
     """
 
-    def __init__(self, title: str = "Vector Diagram", figsize: tuple[float, float] = (10, 10), show_grid: bool = True, show_components: bool = False, origin: tuple[float, float] = (0, 0)):
-        """
-        Initialize vector diagram.
-
-        Args:
-            title: Diagram title
-            figsize: Figure size in inches (width, height)
-            show_grid: Whether to show grid
-            show_components: Whether to show component projections
-            origin: Origin point (x, y) for vectors
-        """
-        super().__init__(title, figsize, show_grid, show_components, origin)
-
-        # Track angle label positions to avoid overlap
+    def __init__(self, *args, **kwargs):
+        """Initialize with angle label overlap tracking."""
+        super().__init__(*args, **kwargs)
         self.angle_label_positions: list[tuple[float, float, float, float]] = []  # (x, y, width, height)
 
     def _pre_save_hook(self) -> None:
@@ -152,7 +139,7 @@ class VectorDiagram(VectorDiagramBase):
             angle_deg -= 360
 
         # Draw arc from x-axis to vector
-        arc = Arc((0, 0), 2 * radius, 2 * radius, angle=0, theta1=0, theta2=angle_deg, color=color, linewidth=1.5, linestyle=":", zorder=2)
+        arc = create_angle_arc(Arc, radius, angle_deg, color)
         ax.add_patch(arc)
 
         # Find non-overlapping position for label
@@ -185,23 +172,5 @@ class VectorDiagram(VectorDiagramBase):
         self.angle_label_positions.append((label_x, label_y, label_width, label_height))
 
 
-def create_force_diagram(problem, output_path: str | Path, title: str | None = None, show_components: bool = False, **kwargs) -> Path:
-    """
-    Create vector diagram from a VectorEquilibriumProblem.
-
-    Args:
-        problem: VectorEquilibriumProblem instance (must be solved)
-        output_path: Output file path
-        title: Diagram title (uses problem.name if None)
-        show_components: Whether to show component projections
-        **kwargs: Additional arguments for VectorDiagram
-
-    Returns:
-        Path to saved diagram
-
-    Examples:
-        >>> problem = Problem_2_1()
-        >>> problem.solve()
-        >>> create_force_diagram(problem, "diagram.png")
-    """
-    return _create_force_diagram_impl(problem, output_path, VectorDiagram, title, show_components, **kwargs)
+# Create module-specific create_force_diagram using the factory
+create_force_diagram = make_create_force_diagram(VectorDiagram)

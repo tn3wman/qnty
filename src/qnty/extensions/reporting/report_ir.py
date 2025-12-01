@@ -12,9 +12,12 @@ from datetime import datetime
 from enum import Enum
 from pathlib import Path
 
+from ...utils.shared_utilities import build_variable_table_rows as _build_variable_table_rows
 from ...utils.shared_utilities import convert_angle_to_direction as _convert_angle_to_direction
 from ...utils.shared_utilities import escape_latex as _escape_latex_util
 from ...utils.shared_utilities import extract_magnitude_string as _extract_magnitude_string
+from ...utils.shared_utilities import get_angle_reference_label
+from ...utils.shared_utilities import scan_backwards_for_latex_command as _scan_backwards_for_latex_command
 
 
 def _find_matching_delimiter(text: str, start: int, open_char: str, close_char: str) -> int:
@@ -1226,8 +1229,7 @@ class LaTeXRenderer(ReportRenderer):
                                 num_start -= 1
                             num_start += 1
                             # Check if preceded by function name like \sin
-                            while num_start > 0 and (text[num_start - 1].isalpha() or text[num_start - 1] == "\\"):
-                                num_start -= 1
+                            num_start = _scan_backwards_for_latex_command(text, num_start)
                         elif text[num_start] == "|":
                             # Find matching open |
                             num_start -= 1
@@ -1245,8 +1247,7 @@ class LaTeXRenderer(ReportRenderer):
                                 num_start -= 1
                             num_start += 1
                             # Include preceding command like \magn
-                            while num_start > 0 and (text[num_start - 1].isalpha() or text[num_start - 1] == "\\"):
-                                num_start -= 1
+                            num_start = _scan_backwards_for_latex_command(text, num_start)
                         else:
                             # Single term - go back to start of term
                             while num_start > 0 and (text[num_start - 1].isalnum() or text[num_start - 1] in "_\\{}^"):
@@ -1598,19 +1599,7 @@ class ReportBuilder:
             TableColumn("Unit", TableAlignment.LEFT),
         ]
 
-        rows = []
-        for var in data:
-            rows.append(
-                TableRow(
-                    [
-                        var["symbol"],
-                        var["name"],
-                        var["value"],
-                        var["unit"],
-                    ]
-                )
-            )
-
+        rows = _build_variable_table_rows(data, TableRow, ["symbol", "name", "value", "unit"])
         return Table(columns=columns, rows=rows)
 
     def _build_standard_unknown_table(self, data: list[dict]) -> Table:
@@ -1766,19 +1755,7 @@ class ReportBuilder:
             TableColumn("Unit", TableAlignment.LEFT),
         ]
 
-        rows = []
-        for res in results:
-            rows.append(
-                TableRow(
-                    [
-                        res["symbol"],
-                        res["name"],
-                        res["value"],
-                        res["unit"],
-                    ]
-                )
-            )
-
+        rows = _build_variable_table_rows(results, TableRow, ["symbol", "name", "value", "unit"])
         return Table(columns=columns, rows=rows)
 
     def _get_known_variable_data(self) -> list[dict]:
@@ -1892,11 +1869,7 @@ class ReportBuilder:
                 x_str, y_str = self._get_components_in_coordinate_system(force_obj, si_factor)
 
             # Get angle reference
-            reference_str = ""
-            if hasattr(force_obj, "angle_reference") and force_obj.angle_reference is not None:
-                ref = force_obj.angle_reference
-                if hasattr(ref, "axis_label"):
-                    reference_str = ref.axis_label
+            reference_str = get_angle_reference_label(force_obj)
 
             force_data = {
                 "symbol": force_name,
