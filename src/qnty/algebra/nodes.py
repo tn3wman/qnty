@@ -29,6 +29,25 @@ def _create_binary_operation(operator: str, left: "Expression", right) -> "Binar
 _has_valid_value = ValidationHelper.has_valid_value
 
 
+def _copy_value_to_quantity(quantity, source) -> bool:
+    """
+    Copy value and preferred unit from source to quantity.
+
+    Args:
+        quantity: Target quantity object with value and optionally preferred attributes
+        source: Source object with value and optionally preferred attributes
+
+    Returns:
+        True if value was copied successfully
+    """
+    if hasattr(quantity, "value"):
+        quantity.value = source.value
+        if hasattr(quantity, "preferred") and hasattr(source, "preferred"):
+            quantity.preferred = source.preferred or getattr(quantity, "preferred", None)
+        return True
+    return False
+
+
 class Expression(ABC):
     """Abstract base class for mathematical expressions."""
 
@@ -98,10 +117,7 @@ class Expression(ABC):
                         raise TypeError(f"Dimension mismatch: cannot assign {result.dim} to {quantity.dim}")
 
                 # Assign the value
-                if hasattr(quantity, "value"):
-                    quantity.value = result.value
-                    if hasattr(quantity, "preferred") and hasattr(result, "preferred"):
-                        quantity.preferred = result.preferred or getattr(quantity, "preferred", None)
+                if _copy_value_to_quantity(quantity, result):
                     return True
         except Exception:
             # If direct evaluation fails, try symbolic solving
@@ -124,10 +140,7 @@ class Expression(ABC):
             solved_value = equation.solve_for(symbol, all_variables)
 
             if solved_value is not None and _has_valid_value(solved_value):
-                if hasattr(quantity, "value"):
-                    quantity.value = solved_value.value
-                    if hasattr(quantity, "preferred") and hasattr(solved_value, "preferred"):
-                        quantity.preferred = solved_value.preferred or getattr(quantity, "preferred", None)
+                if _copy_value_to_quantity(quantity, solved_value):
                     return True
         except Exception:
             # If symbolic solving fails, return False

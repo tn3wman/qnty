@@ -23,6 +23,7 @@ from ..utils.shared_utilities import (
     ContextDetectionHelper,
     SharedConstants,
     VariableReferenceHelper,
+    is_private_or_excluded_dunder,
 )
 from .rules import Rules
 
@@ -679,10 +680,8 @@ class DelayedFunction(Expression, ArithmeticOperationsMixin):
                 result = BinaryOperation("+", result, wrap_operand(arg))
             return result
         elif self.func_name == "summation":
-            import itertools
-
             from ..algebra.nodes import BinaryOperation, wrap_operand
-            from ..utils.shared_utilities import normalize_range_specs
+            from ..utils.shared_utilities import generate_terms_from_product, normalize_range_specs
 
             # summation(term_generator, range_specs, kwargs)
             # Args are: term_generator, tuple of range_specs, dict of kwargs
@@ -690,19 +689,9 @@ class DelayedFunction(Expression, ArithmeticOperationsMixin):
             range_specs = resolved_args[1] if len(resolved_args) > 1 else ()
             kwargs = resolved_args[2] if len(resolved_args) > 2 else {}
 
-            # Convert range_specs to actual ranges using shared utility
+            # Convert range_specs to actual ranges and generate terms using shared utilities
             ranges = normalize_range_specs(range_specs)
-
-            # Generate all terms
-            terms = []
-            for indices in itertools.product(*ranges):
-                if kwargs:
-                    # Pass both indices and captured variables
-                    term = term_generator(*indices, **kwargs)
-                else:
-                    # Just pass indices (closure-based)
-                    term = term_generator(*indices)
-                terms.append(term)
+            terms = generate_terms_from_product(ranges, term_generator, kwargs if kwargs else None)
 
             # Sum all terms
             if len(terms) == 0:
@@ -1160,22 +1149,7 @@ class CompositionMixin:
 
             def __getattr__(self, name):
                 # Guard against deepcopy and pickle operations that cause recursion
-                if name.startswith("_") or name in {
-                    "__setstate__",
-                    "__getstate__",
-                    "__getnewargs__",
-                    "__getnewargs_ex__",
-                    "__reduce__",
-                    "__reduce_ex__",
-                    "__copy__",
-                    "__deepcopy__",
-                    "__getattribute__",
-                    "__setattr__",
-                    "__delattr__",
-                    "__dict__",
-                    "__weakref__",
-                    "__class__",
-                }:
+                if is_private_or_excluded_dunder(name):
                     raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
 
                 # Prevent infinite recursion by checking if _wrapped_var exists
@@ -1228,22 +1202,7 @@ class CompositionMixin:
 
             def __getattr__(self, name):
                 # Guard against deepcopy and pickle operations that cause recursion
-                if name.startswith("_") or name in {
-                    "__setstate__",
-                    "__getstate__",
-                    "__getnewargs__",
-                    "__getnewargs_ex__",
-                    "__reduce__",
-                    "__reduce_ex__",
-                    "__copy__",
-                    "__deepcopy__",
-                    "__getattribute__",
-                    "__setattr__",
-                    "__delattr__",
-                    "__dict__",
-                    "__weakref__",
-                    "__class__",
-                }:
+                if is_private_or_excluded_dunder(name):
                     raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
 
                 # Prevent infinite recursion by checking if _setter exists

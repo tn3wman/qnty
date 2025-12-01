@@ -23,7 +23,7 @@ Usage:
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import Literal
 
 from .dto import (
     PointDTO,
@@ -34,10 +34,6 @@ from .dto import (
     VectorDTO,
 )
 from .solver_service import solve_problem
-
-if TYPE_CHECKING:
-    from typing import Literal
-
 
 # =============================================================================
 # Shared Factory Functions
@@ -66,15 +62,28 @@ def _create_vector_dto(
     avoiding code duplication across equilibrium, component_method, etc.
     """
     return VectorDTO(
-        u=u, v=v, w=w, unit=unit, name=name,
-        magnitude=magnitude, angle=angle, angle_unit=angle_unit,
-        angle_wrt=angle_wrt, plane=plane,
-        is_known=is_known, is_resultant=is_resultant,
+        u=u,
+        v=v,
+        w=w,
+        unit=unit,
+        name=name,
+        magnitude=magnitude,
+        angle=angle,
+        angle_unit=angle_unit,
+        angle_wrt=angle_wrt,
+        plane=plane,
+        is_known=is_known,
+        is_resultant=is_resultant,
     )
 
 
 def _create_point_dto(
-    *, x: float, y: float, z: float = 0.0, unit: str = "m", name: str | None = None,
+    *,
+    x: float,
+    y: float,
+    z: float = 0.0,
+    unit: str = "m",
+    name: str | None = None,
 ) -> PointDTO:
     """
     Create a PointDTO with the given parameters.
@@ -82,6 +91,112 @@ def _create_point_dto(
     This shared function is used by all facade classes to create points.
     """
     return PointDTO(x=x, y=y, z=z, unit=unit, name=name)
+
+
+ProblemType = Literal["parallelogram_law", "equilibrium", "component_method"]
+
+
+def _create_input_dto(
+    problem_type: ProblemType,
+    *,
+    vectors: list[VectorDTO] | None = None,
+    points: list[PointDTO] | None = None,
+    output_unit: str = "N",
+    output_angle_unit: str = "degree",
+    name: str | None = None,
+    description: str | None = None,
+) -> ProblemInputDTO:
+    """
+    Create a ProblemInputDTO for the specified problem type.
+
+    This shared function is used by all facade classes to create input DTOs.
+    """
+    return ProblemInputDTO(
+        problem_type=problem_type,
+        vectors=vectors or [],
+        points=points or [],
+        output_unit=output_unit,
+        output_angle_unit=output_angle_unit,
+        name=name,
+        description=description,
+    )
+
+
+def _solve_problem(
+    problem_type: ProblemType,
+    *,
+    vectors: list[VectorDTO] | None = None,
+    points: list[PointDTO] | None = None,
+    input_dto: ProblemInputDTO | None = None,
+    output_unit: str = "N",
+    output_angle_unit: str = "degree",
+) -> SolutionDTO:
+    """
+    Solve a problem of the specified type.
+
+    This shared function is used by all facade classes to solve problems.
+    """
+    if input_dto is not None:
+        return solve_problem(input_dto)
+
+    dto = ProblemInputDTO(
+        problem_type=problem_type,
+        vectors=vectors or [],
+        points=points or [],
+        output_unit=output_unit,
+        output_angle_unit=output_angle_unit,
+    )
+    return solve_problem(dto)
+
+
+def _make_create_input(problem_type: ProblemType):
+    """Factory for create_input methods bound to a specific problem type."""
+
+    def create_input(
+        *,
+        vectors: list[VectorDTO] | None = None,
+        points: list[PointDTO] | None = None,
+        output_unit: str = "N",
+        output_angle_unit: str = "degree",
+        name: str | None = None,
+        description: str | None = None,
+    ) -> ProblemInputDTO:
+        """Create an input specification for this problem."""
+        return _create_input_dto(
+            problem_type,
+            vectors=vectors,
+            points=points,
+            output_unit=output_unit,
+            output_angle_unit=output_angle_unit,
+            name=name,
+            description=description,
+        )
+
+    return staticmethod(create_input)
+
+
+def _make_solve(problem_type: ProblemType):
+    """Factory for solve methods bound to a specific problem type."""
+
+    def solve(
+        *,
+        vectors: list[VectorDTO] | None = None,
+        points: list[PointDTO] | None = None,
+        input_dto: ProblemInputDTO | None = None,
+        output_unit: str = "N",
+        output_angle_unit: str = "degree",
+    ) -> SolutionDTO:
+        """Solve the problem and return results."""
+        return _solve_problem(
+            problem_type,
+            vectors=vectors,
+            points=points,
+            input_dto=input_dto,
+            output_unit=output_unit,
+            output_angle_unit=output_angle_unit,
+        )
+
+    return staticmethod(solve)
 
 
 # =============================================================================
@@ -151,78 +266,8 @@ class parallelogram_law:
     # Use shared factory functions
     create_vector = staticmethod(_create_vector_dto)
     create_point = staticmethod(_create_point_dto)
-
-    @staticmethod
-    def create_input(
-        *,
-        vectors: list[VectorDTO] | None = None,
-        points: list[PointDTO] | None = None,
-        output_unit: str = "N",
-        output_angle_unit: str = "degree",
-        name: str | None = None,
-        description: str | None = None,
-    ) -> ProblemInputDTO:
-        """
-        Create an input specification for this problem.
-
-        Args:
-            vectors: List of vectors for the problem
-            points: List of points for the problem
-            output_unit: Unit for force results
-            output_angle_unit: Unit for angle results
-            name: Problem name
-            description: Problem description
-
-        Returns:
-            ProblemInputDTO ready for solve()
-        """
-        return ProblemInputDTO(
-            problem_type="parallelogram_law",
-            vectors=vectors or [],
-            points=points or [],
-            output_unit=output_unit,
-            output_angle_unit=output_angle_unit,
-            name=name,
-            description=description,
-        )
-
-    @staticmethod
-    def solve(
-        *,
-        vectors: list[VectorDTO] | None = None,
-        points: list[PointDTO] | None = None,
-        input_dto: ProblemInputDTO | None = None,
-        output_unit: str = "N",
-        output_angle_unit: str = "degree",
-    ) -> SolutionDTO:
-        """
-        Solve the problem and return results.
-
-        Can be called with either:
-        - vectors/points directly (convenience)
-        - input_dto (full control)
-
-        Args:
-            vectors: List of vectors (convenience API)
-            points: List of points (convenience API)
-            input_dto: Full input specification (overrides vectors/points)
-            output_unit: Unit for results
-            output_angle_unit: Unit for angles
-
-        Returns:
-            SolutionDTO with success status, solved values, and steps
-        """
-        if input_dto is not None:
-            return solve_problem(input_dto)
-
-        dto = ProblemInputDTO(
-            problem_type="parallelogram_law",
-            vectors=vectors or [],
-            points=points or [],
-            output_unit=output_unit,
-            output_angle_unit=output_angle_unit,
-        )
-        return solve_problem(dto)
+    create_input = _make_create_input("parallelogram_law")
+    solve = _make_solve("parallelogram_law")
 
 
 # =============================================================================
@@ -264,49 +309,8 @@ class equilibrium:
     # Use shared factory functions
     create_vector = staticmethod(_create_vector_dto)
     create_point = staticmethod(_create_point_dto)
-
-    @staticmethod
-    def create_input(
-        *,
-        vectors: list[VectorDTO] | None = None,
-        points: list[PointDTO] | None = None,
-        output_unit: str = "N",
-        output_angle_unit: str = "degree",
-        name: str | None = None,
-        description: str | None = None,
-    ) -> ProblemInputDTO:
-        """Create an input specification for this problem."""
-        return ProblemInputDTO(
-            problem_type="equilibrium",
-            vectors=vectors or [],
-            points=points or [],
-            output_unit=output_unit,
-            output_angle_unit=output_angle_unit,
-            name=name,
-            description=description,
-        )
-
-    @staticmethod
-    def solve(
-        *,
-        vectors: list[VectorDTO] | None = None,
-        points: list[PointDTO] | None = None,
-        input_dto: ProblemInputDTO | None = None,
-        output_unit: str = "N",
-        output_angle_unit: str = "degree",
-    ) -> SolutionDTO:
-        """Solve the problem and return results."""
-        if input_dto is not None:
-            return solve_problem(input_dto)
-
-        dto = ProblemInputDTO(
-            problem_type="equilibrium",
-            vectors=vectors or [],
-            points=points or [],
-            output_unit=output_unit,
-            output_angle_unit=output_angle_unit,
-        )
-        return solve_problem(dto)
+    create_input = _make_create_input("equilibrium")
+    solve = _make_solve("equilibrium")
 
 
 # =============================================================================
@@ -347,46 +351,5 @@ class component_method:
     # Use shared factory functions
     create_vector = staticmethod(_create_vector_dto)
     create_point = staticmethod(_create_point_dto)
-
-    @staticmethod
-    def create_input(
-        *,
-        vectors: list[VectorDTO] | None = None,
-        points: list[PointDTO] | None = None,
-        output_unit: str = "N",
-        output_angle_unit: str = "degree",
-        name: str | None = None,
-        description: str | None = None,
-    ) -> ProblemInputDTO:
-        """Create an input specification for this problem."""
-        return ProblemInputDTO(
-            problem_type="component_method",
-            vectors=vectors or [],
-            points=points or [],
-            output_unit=output_unit,
-            output_angle_unit=output_angle_unit,
-            name=name,
-            description=description,
-        )
-
-    @staticmethod
-    def solve(
-        *,
-        vectors: list[VectorDTO] | None = None,
-        points: list[PointDTO] | None = None,
-        input_dto: ProblemInputDTO | None = None,
-        output_unit: str = "N",
-        output_angle_unit: str = "degree",
-    ) -> SolutionDTO:
-        """Solve the problem and return results."""
-        if input_dto is not None:
-            return solve_problem(input_dto)
-
-        dto = ProblemInputDTO(
-            problem_type="component_method",
-            vectors=vectors or [],
-            points=points or [],
-            output_unit=output_unit,
-            output_angle_unit=output_angle_unit,
-        )
-        return solve_problem(dto)
+    create_input = _make_create_input("component_method")
+    solve = _make_solve("component_method")

@@ -11,7 +11,7 @@ from types import EllipsisType
 from typing import Any
 
 from ..core.unit import Unit
-from ..utils.shared_utilities import convert_angle_to_radians, convert_angle_to_radians_optional
+from ..utils.shared_utilities import convert_angle_to_radians, convert_angle_to_radians_optional, resolve_length_unit_from_string, resolve_unit_from_string
 from .point import _Point
 from .vector_helpers import compute_missing_direction_angle
 
@@ -109,13 +109,7 @@ class _PointWithUnknowns(_Point):
         Returns:
             New _PointWithUnknowns with coordinates in target unit
         """
-        if isinstance(unit, str):
-            from ..core.unit import ureg
-
-            resolved = ureg.resolve(unit, dim=self._dim)
-            if resolved is None:
-                raise ValueError(f"Unknown unit '{unit}'")
-            unit = resolved
+        unit = resolve_unit_from_string(unit, dim=self._dim)
 
         # Get coordinates in new unit
         coords = self.to_array()
@@ -175,14 +169,7 @@ def create_point_cartesian(
         >>> C = create_point_cartesian(x=4, y=2, z=..., unit="m")
     """
     # Resolve unit if string
-    if isinstance(unit, str):
-        from ..core.dimension_catalog import dim
-        from ..core.unit import ureg
-
-        resolved = ureg.resolve(unit, dim=dim.length)
-        if resolved is None:
-            raise ValueError(f"Unknown length unit '{unit}'")
-        unit = resolved
+    unit = resolve_length_unit_from_string(unit) if unit is not None else None
 
     # Track unknowns
     unknowns: dict[str, str] = {}
@@ -281,15 +268,11 @@ def create_point_from_ratio(
         raise ValueError("Direction ratios cannot all be zero")
 
     # Resolve unit
+    from ..utils.shared_utilities import resolve_length_unit_from_string
+
     resolved_unit: Unit | None = None
     if isinstance(unit, str):
-        from ..core.dimension_catalog import dim
-        from ..core.unit import ureg
-
-        resolved = ureg.resolve(unit, dim=dim.length)
-        if resolved is None:
-            raise ValueError(f"Unknown length unit '{unit}'")
-        resolved_unit = resolved
+        resolved_unit = resolve_length_unit_from_string(unit)
     else:
         resolved_unit = unit
 
@@ -385,9 +368,9 @@ def create_point_polar(
         raise ValueError(f"Invalid wrt axis '{wrt}'. Must be one of: {valid_axes}")
 
     # Validate wrt axis is in the specified plane
-    axis_char = wrt_lower[1]  # 'x', 'y', or 'z'
-    if axis_char not in plane_lower:
-        raise ValueError(f"Reference axis '{wrt}' must be in plane '{plane}'. Valid axes for {plane} plane: {[f'+{c}' for c in plane] + [f'-{c}' for c in plane]}")
+    from ..utils.shared_utilities import validate_axis_in_plane
+
+    validate_axis_in_plane(wrt_lower, plane_lower)
 
     # Convert angle to radians
     angle_rad = convert_angle_to_radians(angle, angle_unit)
@@ -530,15 +513,11 @@ def create_point_spherical(
         phi_rad = math.pi / 2 - phi_input_rad
 
     # Resolve unit
+    from ..utils.shared_utilities import resolve_length_unit_from_string
+
     resolved_unit: Unit | None = None
     if isinstance(unit, str):
-        from ..core.dimension_catalog import dim
-        from ..core.unit import ureg
-
-        resolved = ureg.resolve(unit, dim=dim.length)
-        if resolved is None:
-            raise ValueError(f"Unknown length unit '{unit}'")
-        resolved_unit = resolved
+        resolved_unit = resolve_length_unit_from_string(unit)
     else:
         resolved_unit = unit
 
@@ -708,15 +687,11 @@ def create_point_direction_angles(
         raise ValueError(f"Direction angles must satisfy cos²α + cos²β + cos²γ = 1, got {sum_cos_sq}")
 
     # Resolve unit
+    from ..utils.shared_utilities import resolve_length_unit_from_string
+
     resolved_unit: Unit | None = None
     if isinstance(unit, str):
-        from ..core.dimension_catalog import dim
-        from ..core.unit import ureg
-
-        resolved = ureg.resolve(unit, dim=dim.length)
-        if resolved is None:
-            raise ValueError(f"Unknown length unit '{unit}'")
-        resolved_unit = resolved
+        resolved_unit = resolve_length_unit_from_string(unit)
     else:
         resolved_unit = unit
 

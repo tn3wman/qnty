@@ -18,8 +18,8 @@ from ..solving.triangle_solver import TriangleSolver
 from ..spatial.vector import _Vector
 from ..spatial.vector_helpers import vector_helper as _helper
 from ..spatial.vectors import _VectorWithUnknowns
-from ..utils.geometry import compute_angle_between_display, format_axis_ref, interior_angle, normalize_angle_positive
-from ..utils.shared_utilities import capture_original_force_states, clone_unknown_force_vector, handle_negative_magnitude
+from ..utils.geometry import _format_angle_difference_display, compute_angle_between_display, format_axis_ref, interior_angle, normalize_angle_positive
+from ..utils.shared_utilities import capture_original_force_states, clone_unknown_force_vector, convert_angle_to_direction, handle_negative_magnitude
 from .problem import Problem
 
 # =============================================================================
@@ -52,19 +52,7 @@ def _convert_angle_for_display(angle_deg: float, angle_dir: str | None) -> float
         - "cw": Negative for clockwise angles (e.g., 358.8° -> -1.2°)
         - "signed": -180 to 180 range
     """
-    if angle_dir == "cw":
-        # Convert to clockwise: if angle > 180, show as negative
-        if angle_deg > 180:
-            return angle_deg - 360
-        return angle_deg
-    elif angle_dir == "signed":
-        # Convert to signed range: -180 to 180
-        if angle_deg > 180:
-            return angle_deg - 360
-        return angle_deg
-    else:
-        # Default: CCW, 0-360
-        return angle_deg
+    return convert_angle_to_direction(angle_deg, angle_dir)
 
 
 def _magnitude_and_angle_from_coords(coords: np.ndarray) -> tuple[float, float]:
@@ -313,16 +301,9 @@ class ParallelogramLawProblem(Problem):
 
     def _clone_force_vector(self, force: _Vector) -> _Vector:
         """Create a copy of a ForceVector."""
-        has_relative_angle = hasattr(force, "_relative_to_force") and force._relative_to_force is not None
-        has_valid_vector = (
-            force.is_known
-            and force.vector is not None
-            and force.magnitude is not None
-            and force.magnitude.value is not None
-            and force.angle is not None
-            and force.angle.value is not None
-            and not has_relative_angle
-        )
+        from ..utils.shared_utilities import ValidationHelper
+
+        has_valid_vector = ValidationHelper.vector_has_valid_computed_data(force)
 
         if has_valid_vector:
             cloned: _Vector = _Vector(
@@ -1472,8 +1453,6 @@ class ParallelogramLawProblem(Problem):
         coord_sys = getattr(self, 'coordinate_system', None)
 
         # Step 1: Compute triangle angles
-        from qnty.utils.geometry import compute_angle_between_display
-
         # Get the input angles in degrees for display
         known_input_deg = math.degrees(getattr(known_vec, '_polar_angle_rad', 0.0))
         if known_input_deg == 0 and hasattr(known_vec, '_original_angle'):
@@ -2035,29 +2014,27 @@ class ParallelogramLawProblem(Problem):
             if known_wrt == "-x" and resultant_wrt == "+y":
                 display_known = known_original_angle
                 display_resultant = 90 + resultant_original_angle
-                return f"∠({known_name},{resultant_name}) = |∠({known_axis},{known_name}) + ∠(x,{resultant_name})|\n= |{display_known:.0f}° + {display_resultant:.0f}°|\n= {gamma_deg:.0f}°"
-            elif known_wrt == "-x" and resultant_wrt == "+x":
-                return (
-                    f"∠({known_name},{resultant_name}) = |∠({known_axis},{known_name}) + ∠({resultant_axis},{resultant_name})|\n"
-                    f"= |{known_original_angle:.0f}° + {resultant_original_angle:.0f}°|\n"
-                    f"= {gamma_deg:.0f}°"
+                return _format_angle_difference_display(
+                    known_name, resultant_name, known_axis, "x",
+                    display_known, display_resultant, gamma_deg,
+                    operator="+", use_absolute=True
                 )
-            elif known_wrt == "+x" and resultant_wrt == "-x":
-                return (
-                    f"∠({known_name},{resultant_name}) = |∠({known_axis},{known_name}) + ∠({resultant_axis},{resultant_name})|\n"
-                    f"= |{known_original_angle:.0f}° + {resultant_original_angle:.0f}°|\n"
-                    f"= {gamma_deg:.0f}°"
-                )
-            else:
-                return (
-                    f"∠({known_name},{resultant_name}) = |∠({known_axis},{known_name}) - ∠({resultant_axis},{resultant_name})|\n"
-                    f"= |{known_original_angle:.0f}° - {resultant_original_angle:.0f}°|\n"
-                    f"= {gamma_deg:.0f}°"
-                )
+            # Determine operator based on axis combination
+            use_addition = (known_wrt == "-x" and resultant_wrt == "+x") or (known_wrt == "+x" and resultant_wrt == "-x")
+            op = "+" if use_addition else "-"
+            return _format_angle_difference_display(
+                known_name, resultant_name, known_axis, resultant_axis,
+                known_original_angle, resultant_original_angle, gamma_deg,
+                operator=op, use_absolute=True
+            )
         else:
             F_known_angle_deg = math.degrees(F_known_angle)
             FR_angle_deg = math.degrees(FR_angle)
-            return f"∠({known_name},{resultant_name}) = |∠(x,{known_name}) - ∠(x,{resultant_name})|\n= |{F_known_angle_deg:.0f}° - {FR_angle_deg:.0f}°|\n= {gamma_deg:.0f}°"
+            return _format_angle_difference_display(
+                known_name, resultant_name, "x", "x",
+                F_known_angle_deg, FR_angle_deg, gamma_deg,
+                operator="-", use_absolute=True
+            )
 
     def _add_triangle_method_steps(self, force1: _Vector, force2: _Vector, resultant: _VectorWithUnknowns, resultant_name: str, mag_si: float, angle_rad: float) -> None:
         """Add solution steps using the parallelogram law (Law of Cosines and Law of Sines)."""
@@ -2262,12 +2239,15 @@ class ParallelogramLawProblem(Problem):
                     f"= {axis_offset:.1f}° + {theta_ref_display:.1f}° + {phi_deg:.1f}°\n"
                     f"= {display_angle:.1f}°"
                 )
-            elif abs(intermediate_sum - final_angle) > 0.1 and abs(intermediate_sum + 360 - final_angle) > 0.1 and abs(intermediate_sum - 360 - final_angle) > 0.1:
-                substitution = f"∠({ref_axis},{resultant_name}) = ∠({axis_for_step4},{force_for_step4}) + ∠({force_for_step4},{resultant_name})\n= {theta_ref_display:.1f}° + {phi_deg:.1f}°\n= {display_intermediate_sum:.1f}°\n= {display_angle:.1f}°"
             else:
-                substitution = (
-                    f"∠({ref_axis},{resultant_name}) = ∠({axis_for_step4},{force_for_step4}) + ∠({force_for_step4},{resultant_name})\n= {theta_ref_display:.1f}° + {phi_deg:.1f}°\n= {display_angle:.1f}°"
-                )
+                # Build base formula for angle addition
+                base_formula = f"∠({ref_axis},{resultant_name}) = ∠({axis_for_step4},{force_for_step4}) + ∠({force_for_step4},{resultant_name})\n= {theta_ref_display:.1f}° + {phi_deg:.1f}°"
+                # Show intermediate step if sum differs significantly from final angle
+                needs_intermediate = abs(intermediate_sum - final_angle) > 0.1 and abs(intermediate_sum + 360 - final_angle) > 0.1 and abs(intermediate_sum - 360 - final_angle) > 0.1
+                if needs_intermediate:
+                    substitution = f"{base_formula}\n= {display_intermediate_sum:.1f}°\n= {display_angle:.1f}°"
+                else:
+                    substitution = f"{base_formula}\n= {display_angle:.1f}°"
 
         self._add_solution_step(
             SolutionStep(
@@ -2628,14 +2608,11 @@ class ParallelogramLawProblem(Problem):
         theta_res: float = _require_angle(resultant, "Resultant")
 
         # Solve linear system
-        A = np.array([[math.cos(theta_comp), -math.cos(theta_res)], [math.sin(theta_comp), -math.sin(theta_res)]])
-        b = np.array([-sum_x, -sum_y])
+        from ..utils.shared_utilities import solve_two_unknown_magnitudes
 
-        try:
-            magnitudes = np.linalg.solve(A, b)
-            M_comp, M_res = float(magnitudes[0]), float(magnitudes[1])
-        except np.linalg.LinAlgError as err:
-            raise ValueError("Cannot solve: system is singular") from err
+        M_comp, M_res = solve_two_unknown_magnitudes(
+            theta_comp, theta_res, sum_x, sum_y, error_context="component equilibrium"
+        )
 
         # Update forces
         _helper.update_force_from_polar(component_force, M_comp, theta_comp, ref_unit)

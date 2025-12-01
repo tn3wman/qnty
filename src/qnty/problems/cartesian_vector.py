@@ -106,18 +106,6 @@ class CartesianVectorProblem(VariableStateTrackingMixin, Problem):
             # Unknown force - use shared utility
             return clone_unknown_force_vector(force, _Vector)
 
-    def add_force(self, force: _Vector, name: str | None = None) -> None:
-        """
-        Add a force to the problem.
-
-        Args:
-            force: ForceVector to add
-            name: Optional name (uses force.name if not provided)
-        """
-        force_name = name or force.name
-        self.forces[force_name] = force
-        setattr(self, force_name, force)
-
     def solve(self, max_iterations: int = 100, tolerance: float = 1e-10) -> dict[str, _Vector]:  # type: ignore[override]
         """
         Solve the vector equilibrium problem using the 3D Cartesian vector method.

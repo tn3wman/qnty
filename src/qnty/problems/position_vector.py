@@ -8,7 +8,10 @@ then solves for forces and resultants using the component method.
 from __future__ import annotations
 
 import math
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    import numpy as np
 
 from ..core.quantity import Quantity
 from ..solving.component_solver import ComponentSolver
@@ -560,6 +563,52 @@ class PositionVectorProblem(Problem):
                     setattr(self, vb_name_key, solved_vector_cartesian)
                     break
 
+    def _create_solved_point(self, coords: np.ndarray, length_unit: Any) -> _Point:
+        """Create a solved _Point with the given coordinates."""
+        from ..core.dimension_catalog import dim
+
+        solved_point = object.__new__(_Point)
+        solved_point._coords = coords
+        solved_point._dim = dim.length
+        solved_point._unit = length_unit
+        solved_point._is_unknown = False
+        solved_point._distance = None
+        return solved_point
+
+    def _register_solved_point(self, unknown_point: Any, solved_point: _Point) -> str | None:
+        """Find the point name and register the solved point in dictionaries."""
+        unknown_point_name: str | None = None
+        for pname, p in self.points.items():
+            if p is unknown_point:
+                unknown_point_name = pname
+                break
+
+        if unknown_point_name:
+            self.solved_points[unknown_point_name] = solved_point
+            self.points[unknown_point_name] = solved_point
+            setattr(self, unknown_point_name, solved_point)
+
+        return unknown_point_name
+
+    def _add_magnitude_solution_step(
+        self,
+        point_name: str | None,
+        unknown_coord: str,
+        vector_name: str,
+        magnitude: float,
+        solved_value: float,
+        length_unit: Any,
+    ) -> None:
+        """Add a solution step for solving a coordinate using magnitude constraint."""
+        unit_str = length_unit.symbol if length_unit else ""
+        self.solution_steps.append({
+            "target": point_name or "unknown",
+            "method": "magnitude_constraint",
+            "description": f"Solved {unknown_coord} using |{vector_name}| = {magnitude} {unit_str}",
+            "result_value": f"{solved_value:.2f}",
+            "result_unit": unit_str,
+        })
+
     def _solve_single_constraint(
         self,
         name: str,
@@ -571,8 +620,6 @@ class PositionVectorProblem(Problem):
     ) -> None:
         """Solve a single magnitude constraint for unknown coordinates."""
         import numpy as np
-
-        from ..core.dimension_catalog import dim
 
         # Check which point has unknowns
         from_unknowns = getattr(from_point, 'unknowns', {}) if hasattr(from_point, 'unknowns') else {}
@@ -649,26 +696,11 @@ class PositionVectorProblem(Problem):
                 solved_coords = np.array([bx, by, bz], dtype=float)
                 unknown_point = to_point
 
-            # Create solved point
-            solved_point = object.__new__(_Point)
-            solved_point._coords = solved_coords
-            solved_point._dim = dim.length
-            solved_point._unit = length_unit
-            solved_point._is_unknown = False
-            solved_point._distance = None
+            # Create and register solved point
+            solved_point = self._create_solved_point(solved_coords, length_unit)
+            unknown_point_name = self._register_solved_point(unknown_point, solved_point)
 
-            # Find point name
-            for pname, p in self.points.items():
-                if p is unknown_point:
-                    unknown_point_name = pname
-                    break
-
-            if unknown_point_name:
-                self.solved_points[unknown_point_name] = solved_point
-                self.points[unknown_point_name] = solved_point
-                setattr(self, unknown_point_name, solved_point)
-
-            # Add solution step
+            # Add solution step for direction vector case
             display_coords = solved_point.to_array()
             self.solution_steps.append({
                 "target": unknown_point_name or "unknown",
@@ -719,36 +751,12 @@ class PositionVectorProblem(Problem):
             else:
                 return
 
-            # Create solved _Point first (internal representation)
-            solved_point = object.__new__(_Point)
-            solved_point._coords = solved_coords
-            solved_point._dim = dim.length
-            solved_point._unit = length_unit
-            solved_point._is_unknown = False
-            solved_point._distance = None
-
-            # Find the point name - need to search through points dict
-            for pname, p in self.points.items():
-                if p is to_point:
-                    unknown_point_name = pname
-                    break
-
-            if unknown_point_name:
-                self.solved_points[unknown_point_name] = solved_point
-                self.points[unknown_point_name] = solved_point
-                # Update instance attribute so prob.B returns solved _Point
-                setattr(self, unknown_point_name, solved_point)
-
-            # Add solution step
-            unit_str = length_unit.symbol if length_unit else ""
-            self.solution_steps.append({
-                "target": unknown_point_name or "unknown",
-                "method": "magnitude_constraint",
-                "description": f"Solved {unknown_coord} using |{name}| = {magnitude} {unit_str}",
-                "result_value": f"{solved_value:.2f}",
-                "result_unit": unit_str,
-            })
-
+            # Create, register, and add solution step using helpers
+            solved_point = self._create_solved_point(solved_coords, length_unit)
+            unknown_point_name = self._register_solved_point(to_point, solved_point)
+            self._add_magnitude_solution_step(
+                unknown_point_name, unknown_coord, name, magnitude, solved_value, length_unit
+            )
             self._update_vector_between(vector_between, from_cart, solved_point, length_unit)
 
         elif len(from_unknowns) == 1:
@@ -767,36 +775,12 @@ class PositionVectorProblem(Problem):
             else:
                 return
 
-            # Create solved _Point first (internal representation)
-            solved_point = object.__new__(_Point)
-            solved_point._coords = solved_coords
-            solved_point._dim = dim.length
-            solved_point._unit = length_unit
-            solved_point._is_unknown = False
-            solved_point._distance = None
-
-            # Find the point name
-            for pname, p in self.points.items():
-                if p is from_point:
-                    unknown_point_name = pname
-                    break
-
-            if unknown_point_name:
-                self.solved_points[unknown_point_name] = solved_point
-                self.points[unknown_point_name] = solved_point
-                # Update instance attribute so prob.A returns solved _Point
-                setattr(self, unknown_point_name, solved_point)
-
-            # Add solution step
-            unit_str = length_unit.symbol if length_unit else ""
-            self.solution_steps.append({
-                "target": unknown_point_name or "unknown",
-                "method": "magnitude_constraint",
-                "description": f"Solved {unknown_coord} using |{name}| = {magnitude} {unit_str}",
-                "result_value": f"{solved_value:.2f}",
-                "result_unit": unit_str,
-            })
-
+            # Create, register, and add solution step using helpers
+            solved_point = self._create_solved_point(solved_coords, length_unit)
+            unknown_point_name = self._register_solved_point(from_point, solved_point)
+            self._add_magnitude_solution_step(
+                unknown_point_name, unknown_coord, name, magnitude, solved_value, length_unit
+            )
             self._update_vector_between(vector_between, solved_point, to_cart, length_unit)
 
     def solve(self, max_iterations: int = 100, tolerance: float = 1e-10) -> dict[str, _Vector]:  # type: ignore[override]

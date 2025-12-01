@@ -513,8 +513,6 @@ class ComponentSolver:
             With F_unknown_x = |F_unknown| * cos(θ_unknown) and FRx = |FR| * cos(θ_R)
             This gives 2 equations with 2 unknowns (|F_unknown| and |FR|)
         """
-        import numpy as np
-
         from ..core.dimension_catalog import dim
         from ..core.unit import ureg
 
@@ -553,16 +551,12 @@ class ComponentSolver:
         # [ cos(θ_u)  -cos(θ_R) ] [ |F_u| ]   [ -sum_known_x ]
         # [ sin(θ_u)  -sin(θ_R) ] [ |FR|  ] = [ -sum_known_y ]
 
-        A = np.array([[math.cos(theta_unknown), -math.cos(theta_R)], [math.sin(theta_unknown), -math.sin(theta_R)]])
-        b = np.array([-sum_known_x, -sum_known_y])
+        from ..utils.shared_utilities import solve_two_unknown_magnitudes
 
-        # Solve for [|F_unknown|, |FR|]
-        try:
-            magnitudes = np.linalg.solve(A, b)
-            mag_unknown = magnitudes[0]
-            mag_R = magnitudes[1]
-        except np.linalg.LinAlgError as err:
-            raise ValueError("Cannot solve constrained equilibrium - system is singular. The unknown force and resultant may be parallel.") from err
+        mag_unknown, mag_R = solve_two_unknown_magnitudes(
+            theta_unknown, theta_R, sum_known_x, sum_known_y,
+            error_context="constrained equilibrium"
+        )
 
         self.solution_steps.append({"description": "Solved for magnitudes", "results": [f"|F_unknown| = {mag_unknown:.3f} N", f"|FR| = {mag_R:.3f} N"]})
 

@@ -403,6 +403,15 @@ def _caller_var_name(fn: str) -> str:
     return m.group(1)
 
 
+def _register_dimension_aliases(d: Dimension, name: str, aliases: Iterable[str]) -> None:
+    """Register dimension aliases, raising KeyError if any alias is already in use."""
+    for a in aliases:
+        if a in _dim_registry or a in _dim_aliases:
+            raise KeyError(f"Dimension alias '{a}' already in use.")
+        setattr(dim, a, d)
+        _dim_aliases[a] = name
+
+
 def add_dimension(exps: DimVec, *, name: str | None = None, aliases: Iterable[str] = ()) -> Dimension:
     """Create a base Dimension from raw exponents, register on `dim`, support aliases."""
     if name is None:
@@ -413,11 +422,7 @@ def add_dimension(exps: DimVec, *, name: str | None = None, aliases: Iterable[st
     d = Dimension(v, BACKEND.encode(v))
     setattr(dim, name, d)
     _dim_registry[name] = d
-    for a in aliases:
-        if a in _dim_registry or a in _dim_aliases:
-            raise KeyError(f"Dimension alias '{a}' already in use.")
-        setattr(dim, a, d)
-        _dim_aliases[a] = name
+    _register_dimension_aliases(d, name, aliases)
     return d
 
 
@@ -429,11 +434,7 @@ def add_derived(d: Dimension, *, name: str | None = None, aliases: Iterable[str]
         raise KeyError(f"Dimension name '{name}' already defined.")
     setattr(dim, name, d)
     _dim_registry[name] = d
-    for a in aliases:
-        if a in _dim_registry or a in _dim_aliases:
-            raise KeyError(f"Dimension alias '{a}' already in use.")
-        setattr(dim, a, d)
-        _dim_aliases[a] = name
+    _register_dimension_aliases(d, name, aliases)
     return d
 
 

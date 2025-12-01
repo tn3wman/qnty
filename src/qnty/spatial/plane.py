@@ -8,6 +8,7 @@ oriented around coordinate axes.
 from __future__ import annotations
 
 import math
+from collections.abc import Callable
 
 import numpy as np
 
@@ -133,6 +134,35 @@ class Plane:
         return self.__str__()
 
 
+def _create_rotated_plane(
+    angle: float,
+    normal_func: Callable[[float], np.ndarray],
+    point: tuple[float, float, float] | np.ndarray | None = None,
+    unit: Unit | str | None = None,
+    angle_unit: str = "degree",
+    name: str | None = None,
+) -> Plane:
+    """
+    Internal helper to create a plane with a rotated normal vector.
+
+    Args:
+        angle: Rotation angle
+        normal_func: Function that takes angle_rad and returns normal vector
+        point: A point on the plane (default: origin)
+        unit: Unit for point coordinates
+        angle_unit: Angle unit ("degree" or "radian")
+        name: Optional plane name
+
+    Returns:
+        Plane object with rotated normal
+    """
+    angle_rad = convert_angle_to_radians(angle, angle_unit)
+    normal = normal_func(angle_rad)
+    resolved_unit = _resolve_unit(unit)
+    point_arr = _convert_point(point, resolved_unit)
+    return Plane(normal, point_arr, resolved_unit, name)
+
+
 def create_plane_rotated_x(
     angle: float,
     point: tuple[float, float, float] | np.ndarray | None = None,
@@ -165,21 +195,12 @@ def create_plane_rotated_x(
         >>> # Plane rotated 90° (becomes xz-plane with normal +y)
         >>> p2 = create_plane_rotated_x(angle=90)
     """
-    # Convert angle to radians
-    angle_rad = convert_angle_to_radians(angle, angle_unit)
-
-    # Rotation around x-axis
-    # Starting normal: [0, 0, 1] (z-axis)
+    # Rotation around x-axis: Starting normal [0, 0, 1] (z-axis)
     # After rotation: normal_y = sin(angle), normal_z = cos(angle)
-    normal = np.array([0.0, math.sin(angle_rad), math.cos(angle_rad)])
+    def normal_func(angle_rad: float) -> np.ndarray:
+        return np.array([0.0, math.sin(angle_rad), math.cos(angle_rad)])
 
-    # Resolve unit
-    resolved_unit = _resolve_unit(unit)
-
-    # Convert point to numpy array
-    point_arr = _convert_point(point, resolved_unit)
-
-    return Plane(normal, point_arr, resolved_unit, name)
+    return _create_rotated_plane(angle, normal_func, point, unit, angle_unit, name)
 
 
 def create_plane_rotated_y(
@@ -215,29 +236,21 @@ def create_plane_rotated_y(
         >>> # zy-plane rotated -30° around y-axis (normal goes from +x toward +z)
         >>> p2 = create_plane_rotated_y(angle=-30, start_plane="zy")
     """
-    # Convert angle to radians
-    angle_rad = convert_angle_to_radians(angle, angle_unit)
-
-    # Rotation around y-axis
+    # Rotation around y-axis with different starting planes
     if start_plane.lower() == "xy":
         # Starting normal: [0, 0, 1] (z-axis)
         # After rotation: normal_x = -sin(angle), normal_z = cos(angle)
-        normal = np.array([-math.sin(angle_rad), 0.0, math.cos(angle_rad)])
+        def normal_func(angle_rad: float) -> np.ndarray:
+            return np.array([-math.sin(angle_rad), 0.0, math.cos(angle_rad)])
     elif start_plane.lower() == "zy":
         # Starting normal: [1, 0, 0] (x-axis)
         # After rotation: normal_x = cos(angle), normal_z = -sin(angle)
-        # Positive angle rotates normal from +x toward -z (consistent with right-hand rule)
-        normal = np.array([math.cos(angle_rad), 0.0, -math.sin(angle_rad)])
+        def normal_func(angle_rad: float) -> np.ndarray:
+            return np.array([math.cos(angle_rad), 0.0, -math.sin(angle_rad)])
     else:
         raise ValueError(f"Invalid start_plane '{start_plane}'. Must be 'xy' or 'zy'")
 
-    # Resolve unit
-    resolved_unit = _resolve_unit(unit)
-
-    # Convert point to numpy array
-    point_arr = _convert_point(point, resolved_unit)
-
-    return Plane(normal, point_arr, resolved_unit, name)
+    return _create_rotated_plane(angle, normal_func, point, unit, angle_unit, name)
 
 
 def create_plane_rotated_z(
@@ -272,21 +285,12 @@ def create_plane_rotated_z(
         >>> # Plane rotated 90° (becomes yz-plane with normal -x)
         >>> p2 = create_plane_rotated_z(angle=90)
     """
-    # Convert angle to radians
-    angle_rad = convert_angle_to_radians(angle, angle_unit)
-
-    # Rotation around z-axis
-    # Starting normal: [0, 1, 0] (y-axis)
+    # Rotation around z-axis: Starting normal [0, 1, 0] (y-axis)
     # After rotation: normal_x = -sin(angle), normal_y = cos(angle)
-    normal = np.array([-math.sin(angle_rad), math.cos(angle_rad), 0.0])
+    def normal_func(angle_rad: float) -> np.ndarray:
+        return np.array([-math.sin(angle_rad), math.cos(angle_rad), 0.0])
 
-    # Resolve unit
-    resolved_unit = _resolve_unit(unit)
-
-    # Convert point to numpy array
-    point_arr = _convert_point(point, resolved_unit)
-
-    return Plane(normal, point_arr, resolved_unit, name)
+    return _create_rotated_plane(angle, normal_func, point, unit, angle_unit, name)
 
 
 def _resolve_unit(unit: Unit | str | None) -> Unit | None:

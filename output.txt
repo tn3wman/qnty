@@ -1,197 +1,38 @@
 Analyzing 80 Python files...
-3 repetitions of complexity 53
+2 repetitions of complexity 49
 
-Line 285 - src/qnty/spatial/points.py:
-if isinstance(x_0, str):
-    from ..core.dimension_catalog import dim
-    from ..core.unit import ureg
-    x_1 = x_2.resolve(x_0, dim=x_3.length)
-    if x_1 is None:
-        raise ValueError(f"Unknown length unit '{x_0}'")
-    x_4 = x_1
-else:
-    x_4 = x_0
+Line 0 - src/qnty/spatial/plane.py:
+angle: float, point: tuple[float, float, float] | x_0.ndarray | None=None, unit: x_1 | str | None=None, angle_unit: str='degree', name: str | None=None
 
-Line 534 - src/qnty/spatial/points.py:
-if isinstance(x_0, str):
-    from ..core.dimension_catalog import dim
-    from ..core.unit import ureg
-    x_1 = x_2.resolve(x_0, dim=x_3.length)
-    if x_1 is None:
-        raise ValueError(f"Unknown length unit '{x_0}'")
-    x_4 = x_1
-else:
-    x_4 = x_0
-
-Line 712 - src/qnty/spatial/points.py:
-if isinstance(x_0, str):
-    from ..core.dimension_catalog import dim
-    from ..core.unit import ureg
-    x_1 = x_2.resolve(x_0, dim=x_3.length)
-    if x_1 is None:
-        raise ValueError(f"Unknown length unit '{x_0}'")
-    x_4 = x_1
-else:
-    x_4 = x_0
+Line 0 - src/qnty/spatial/plane.py:
+angle: float, point: tuple[float, float, float] | x_0.ndarray | None=None, unit: x_1 | str | None=None, angle_unit: str='degree', name: str | None=None
 
 ======================================================================
 
-3 repetitions of complexity 52
+3 repetitions of complexity 46
 
-Line 168 - src/qnty/extensions/reporting/report_ir.py:
-while x_0 < len(x_1) and x_2 > 0:
-    if x_1[x_0] == '{':
-        x_2 += 1
-    elif x_1[x_0] == '}':
-        x_2 -= 1
-    x_0 += 1
+Line 1482 - src/qnty/problems/parallelogram_law.py:
+x_0 = x_1(theta1_std_deg=x_2.degrees(x_3), theta2_std_deg=x_2.degrees(x_4), theta1_input_deg=x_5, theta2_input_deg=x_6, wrt1=x_7, wrt2=x_8, vec1_name=x_9, vec2_name=x_10, result_deg=x_11, coordinate_system=x_12)
 
-Line 197 - src/qnty/extensions/reporting/report_ir.py:
-while x_0 < len(x_1) and x_2 > 0:
-    if x_1[x_0] == '{':
-        x_2 += 1
-    elif x_1[x_0] == '}':
-        x_2 -= 1
-    x_0 += 1
+Line 1497 - src/qnty/problems/parallelogram_law.py:
+x_0 = x_1(theta1_std_deg=x_2.degrees(x_3), theta2_std_deg=x_2.degrees(x_4), theta1_input_deg=x_5, theta2_input_deg=x_6, wrt1=x_7, wrt2=x_8, vec1_name=x_9, vec2_name=x_10, result_deg=x_11, coordinate_system=x_12)
 
-Line 1177 - src/qnty/extensions/reporting/report_ir.py:
-while x_0 < len(x_1) and x_2 > 0:
-    if x_1[x_0] == '{':
-        x_2 += 1
-    elif x_1[x_0] == '}':
-        x_2 -= 1
-    x_0 += 1
+Line 2070 - src/qnty/problems/parallelogram_law.py:
+x_0 = x_1(theta1_std_deg=x_2.degrees(x_3), theta2_std_deg=x_2.degrees(x_4), theta1_input_deg=x_5, theta2_input_deg=x_6, wrt1=x_7, wrt2=x_8, vec1_name=x_9, vec2_name=x_10, result_deg=x_11, coordinate_system=x_12)
 
 ======================================================================
 
-3 repetitions of complexity 52
+3 repetitions of complexity 45
 
-Line 1152 - src/qnty/extensions/reporting/report_ir.py:
-while x_0 < len(x_1) and x_2 > 0:
-    if x_1[x_0] == '(':
-        x_2 += 1
-    elif x_1[x_0] == ')':
-        x_2 -= 1
-    x_0 += 1
+Line 0 - src/qnty/integration/facade.py:
+*, vectors: list[x_0] | None=None, points: list[x_1] | None=None, output_unit: str='N', output_angle_unit: str='degree', name: str | None=None, description: str | None=None
 
-Line 1251 - src/qnty/extensions/reporting/report_ir.py:
-while x_0 < len(x_1) and x_2 > 0:
-    if x_1[x_0] == '(':
-        x_2 += 1
-    elif x_1[x_0] == ')':
-        x_2 -= 1
-    x_0 += 1
+Line 0 - src/qnty/integration/facade.py:
+*, vectors: list[x_0] | None=None, points: list[x_1] | None=None, output_unit: str='N', output_angle_unit: str='degree', name: str | None=None, description: str | None=None
 
-Line 1269 - src/qnty/extensions/reporting/report_ir.py:
-while x_0 < len(x_1) and x_2 > 0:
-    if x_1[x_0] == '(':
-        x_2 += 1
-    elif x_1[x_0] == ')':
-        x_2 -= 1
-    x_0 += 1
+Line 0 - src/qnty/integration/facade.py:
+*, vectors: list[x_0] | None=None, points: list[x_1] | None=None, output_unit: str='N', output_angle_unit: str='degree', name: str | None=None, description: str | None=None
 
 ======================================================================
 
-2 repetitions of complexity 52
-
-Line 317 - src/qnty/problems/parallelogram_law.py:
-x_0 = x_1.is_known and x_1.vector is not None and (x_1.magnitude is not None) and (x_1.magnitude.value is not None) and (x_1.angle is not None) and (x_1.angle.value is not None) and (not x_2)
-
-Line 94 - src/qnty/problems/rectangular_vector.py:
-x_0 = x_1.is_known and x_1.vector is not None and (x_1.magnitude is not None) and (x_1.magnitude.value is not None) and (x_1.angle is not None) and (x_1.angle.value is not None) and (not x_2)
-
-======================================================================
-
-2 repetitions of complexity 51
-
-Line 1665 - src/qnty/extensions/reporting/report_ir.py:
-for x_0 in x_1.problem.variables:
-    if x_0.endswith('_mag'):
-        x_2.add(x_0[:-4])
-    elif x_0.endswith('_angle'):
-        x_2.add(x_0[:-6])
-
-Line 1951 - src/qnty/extensions/reporting/report_ir.py:
-for x_0 in x_1.problem.variables:
-    if x_0.endswith('_mag'):
-        x_2.add(x_0[:-4])
-    elif x_0.endswith('_angle'):
-        x_2.add(x_0[:-6])
-
-======================================================================
-
-2 repetitions of complexity 51
-
-Line 101 - src/qnty/algebra/nodes.py:
-if hasattr(x_0, 'value'):
-    x_0.value = x_1.value
-    if hasattr(x_0, 'preferred') and hasattr(x_1, 'preferred'):
-        x_0.preferred = x_1.preferred or getattr(x_0, 'preferred', None)
-    return True
-
-Line 127 - src/qnty/algebra/nodes.py:
-if hasattr(x_0, 'value'):
-    x_0.value = x_1.value
-    if hasattr(x_0, 'preferred') and hasattr(x_1, 'preferred'):
-        x_0.preferred = x_1.preferred or getattr(x_0, 'preferred', None)
-    return True
-
-======================================================================
-
-4 repetitions of complexity 50
-
-Line 403 - src/qnty/core/quantity.py:
-if x_0.dim != x_1.dim:
-    if not (x_1.dim.is_dimensionless() and abs(x_1.value) < 1e-15):
-        raise TypeError(f'Cannot compare quantities with different dimensions: {x_0.dim} vs {x_1.dim}')
-
-Line 420 - src/qnty/core/quantity.py:
-if x_0.dim != x_1.dim:
-    if not (x_1.dim.is_dimensionless() and abs(x_1.value) < 1e-15):
-        raise TypeError(f'Cannot compare quantities with different dimensions: {x_0.dim} vs {x_1.dim}')
-
-Line 437 - src/qnty/core/quantity.py:
-if x_0.dim != x_1.dim:
-    if not (x_1.dim.is_dimensionless() and abs(x_1.value) < 1e-15):
-        raise TypeError(f'Cannot compare quantities with different dimensions: {x_0.dim} vs {x_1.dim}')
-
-Line 454 - src/qnty/core/quantity.py:
-if x_0.dim != x_1.dim:
-    if not (x_1.dim.is_dimensionless() and abs(x_1.value) < 1e-15):
-        raise TypeError(f'Cannot compare quantities with different dimensions: {x_0.dim} vs {x_1.dim}')
-
-======================================================================
-
-2 repetitions of complexity 50
-
-Line 483 - src/qnty/spatial/vectors.py:
-if x_0 not in x_1:
-    raise ValueError(f"Reference axis '{x_2}' must be in plane '{x_3}'. Valid axes for {x_3} plane: {[f'+{x_4}' for x_4 in x_3] + [f'-{x_4}' for x_4 in x_3]}")
-
-Line 389 - src/qnty/spatial/points.py:
-if x_0 not in x_1:
-    raise ValueError(f"Reference axis '{x_2}' must be in plane '{x_3}'. Valid axes for {x_3} plane: {[f'+{x_4}' for x_4 in x_3] + [f'-{x_4}' for x_4 in x_3]}")
-
-======================================================================
-
-2 repetitions of complexity 50
-
-Line 475 - src/qnty/spatial/vector.py:
-if x_0._relative_to_force is None:
-    x_1 = x_0.angle_reference.to_standard(x_2, angle_unit='radian')
-else:
-    x_3 = x_0._relative_angle if x_0._relative_angle else 0.0
-    x_0._relative_angle = x_3 + x_2
-    x_1 = None
-
-Line 511 - src/qnty/spatial/vector.py:
-if x_0._relative_to_force is None:
-    x_1 = x_0.angle_reference.to_standard(x_2, angle_unit='radian')
-else:
-    x_3 = x_0._relative_angle if x_0._relative_angle else 0.0
-    x_0._relative_angle = x_3 + x_2
-    x_1 = None
-
-======================================================================
-
-Found 9 repeated patterns
+Found 3 repeated patterns

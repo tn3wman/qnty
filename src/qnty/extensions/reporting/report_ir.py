@@ -12,7 +12,55 @@ from datetime import datetime
 from enum import Enum
 from pathlib import Path
 
+from ...utils.shared_utilities import convert_angle_to_direction as _convert_angle_to_direction
 from ...utils.shared_utilities import escape_latex as _escape_latex_util
+from ...utils.shared_utilities import extract_magnitude_string as _extract_magnitude_string
+
+
+def _find_matching_delimiter(text: str, start: int, open_char: str, close_char: str) -> int:
+    """
+    Find the position after the matching closing delimiter.
+
+    Starts searching from `start` position, tracking nested delimiters.
+    Returns the index immediately after the matching close delimiter.
+
+    Args:
+        text: The text to search in
+        start: Starting position (should be after the opening delimiter)
+        open_char: The opening delimiter character (e.g., '{' or '(')
+        close_char: The closing delimiter character (e.g., '}' or ')')
+
+    Returns:
+        Index immediately after the matching closing delimiter
+    """
+    depth = 1
+    j = start
+    while j < len(text) and depth > 0:
+        if text[j] == open_char:
+            depth += 1
+        elif text[j] == close_char:
+            depth -= 1
+        j += 1
+    return j
+
+
+def _extract_vector_names_from_variables(variables: dict) -> set[str]:
+    """
+    Extract vector names from a variables dictionary by finding *_mag and *_angle pairs.
+
+    Args:
+        variables: Dictionary of variable names to their values
+
+    Returns:
+        Set of vector base names (without _mag or _angle suffix)
+    """
+    vector_names = set()
+    for var_name in variables:
+        if var_name.endswith("_mag"):
+            vector_names.add(var_name[:-4])  # Remove '_mag' suffix
+        elif var_name.endswith("_angle"):
+            vector_names.add(var_name[:-6])  # Remove '_angle' suffix
+    return vector_names
 
 
 def _format_vector_ref_as_latex(ref: str) -> str:
@@ -163,14 +211,7 @@ class MarkdownRenderer(ReportRenderer):
                 if text[i : i + 4] == r"\vv{":
                     # Find matching closing brace
                     start = i + 4
-                    depth = 1
-                    j = start
-                    while j < len(text) and depth > 0:
-                        if text[j] == "{":
-                            depth += 1
-                        elif text[j] == "}":
-                            depth -= 1
-                        j += 1
+                    j = _find_matching_delimiter(text, start, "{", "}")
                     inner = text[start : j - 1]
                     # Recursively expand any nested \vv
                     inner = expand_vv(inner)
@@ -192,14 +233,7 @@ class MarkdownRenderer(ReportRenderer):
                 if text[i : i + 6] == r"\magn{":
                     # Find matching closing brace
                     start = i + 6
-                    depth = 1
-                    j = start
-                    while j < len(text) and depth > 0:
-                        if text[j] == "{":
-                            depth += 1
-                        elif text[j] == "}":
-                            depth -= 1
-                        j += 1
+                    j = _find_matching_delimiter(text, start, "{", "}")
                     inner = text[start : j - 1]
                     # Recursively expand any nested \magn
                     inner = expand_magn(inner)
@@ -1147,14 +1181,7 @@ class LaTeXRenderer(ReportRenderer):
                 if text[i : i + 5] == "sqrt(":
                     # Find the matching closing parenthesis
                     start = i + 5
-                    depth = 1
-                    j = start
-                    while j < len(text) and depth > 0:
-                        if text[j] == "(":
-                            depth += 1
-                        elif text[j] == ")":
-                            depth -= 1
-                        j += 1
+                    j = _find_matching_delimiter(text, start, "(", ")")
                     # j now points to one past the closing paren
                     inner = text[start : j - 1]
                     output.append(r"\sqrt{" + inner + "}")
@@ -1172,15 +1199,7 @@ class LaTeXRenderer(ReportRenderer):
             """Find the end of balanced braces starting at start (which should be '{')."""
             if start >= len(text) or text[start] != "{":
                 return start
-            depth = 1
-            i = start + 1
-            while i < len(text) and depth > 0:
-                if text[i] == "{":
-                    depth += 1
-                elif text[i] == "}":
-                    depth -= 1
-                i += 1
-            return i
+            return _find_matching_delimiter(text, start + 1, "{", "}")
 
         def replace_fractions(text):
             """Replace a/b patterns with \\frac{a}{b}."""
@@ -1246,14 +1265,7 @@ class LaTeXRenderer(ReportRenderer):
                             den_end += 1  # Include the closing |
                         elif text[den_start] == "(":
                             # Find matching close paren
-                            depth = 1
-                            den_end += 1
-                            while den_end < len(text) and depth > 0:
-                                if text[den_end] == "(":
-                                    depth += 1
-                                elif text[den_end] == ")":
-                                    depth -= 1
-                                den_end += 1
+                            den_end = _find_matching_delimiter(text, den_start + 1, "(", ")")
                         elif text[den_start] == "\\":
                             # LaTeX command like \sin(...) or \magn{...}
                             den_end += 1
@@ -1264,14 +1276,7 @@ class LaTeXRenderer(ReportRenderer):
                                 den_end = find_balanced_braces(text, den_end)
                             # Check for (...) argument
                             elif den_end < len(text) and text[den_end] == "(":
-                                depth = 1
-                                den_end += 1
-                                while den_end < len(text) and depth > 0:
-                                    if text[den_end] == "(":
-                                        depth += 1
-                                    elif text[den_end] == ")":
-                                        depth -= 1
-                                    den_end += 1
+                                den_end = _find_matching_delimiter(text, den_end + 1, "(", ")")
                         else:
                             # Single term (include decimal point for numbers like 700.000)
                             while den_end < len(text) and (text[den_end].isalnum() or text[den_end] in "_\\{}^."):
@@ -1345,20 +1350,7 @@ class ReportBuilder:
         if angle_dir is None:
             angle_dir = getattr(self.problem, "angle_dir", None)
 
-        if angle_dir == "cw":
-            # Convert to clockwise: if angle > 180, show as negative
-            # e.g., 358.8° CCW = -1.2° (which is 1.2° CW)
-            if angle_deg > 180:
-                return angle_deg - 360
-            return angle_deg
-        elif angle_dir == "signed":
-            # Convert to signed range: -180 to 180
-            if angle_deg > 180:
-                return angle_deg - 360
-            return angle_deg
-        else:
-            # Default: CCW, 0-360
-            return angle_deg
+        return _convert_angle_to_direction(angle_deg, angle_dir)
 
     def build(self) -> ReportIR:
         """Build the complete report intermediate representation."""
@@ -1661,12 +1653,7 @@ class ReportBuilder:
         original_var_states = getattr(self.problem, "_original_variable_states", {})
 
         # Find all vector-related variables by looking for *_mag and *_angle pairs
-        vector_names = set()
-        for var_name in self.problem.variables:
-            if var_name.endswith("_mag"):
-                vector_names.add(var_name[:-4])  # Remove '_mag' suffix
-            elif var_name.endswith("_angle"):
-                vector_names.add(var_name[:-6])  # Remove '_angle' suffix
+        vector_names = _extract_vector_names_from_variables(self.problem.variables)
 
         if not vector_names:
             return None
@@ -1876,18 +1863,10 @@ class ReportBuilder:
 
             # Get magnitude using proper qnty unit handling
             if mag_was_originally_known:
-                if hasattr(mag_var, "magnitude") and callable(mag_var.magnitude):
-                    try:
-                        mag_value = mag_var.magnitude()
-                        mag_str = f"{mag_value:.1f}"
-                    except (ValueError, AttributeError):
-                        mag_str = "?"
-                else:
-                    mag_str = "?"
-                mag_unit = mag_var.preferred.symbol if hasattr(mag_var, "preferred") and mag_var.preferred else ""
+                mag_str = _extract_magnitude_string(mag_var)
             else:
                 mag_str = "?"
-                mag_unit = mag_var.preferred.symbol if hasattr(mag_var, "preferred") and mag_var.preferred else ""
+            mag_unit = mag_var.preferred.symbol if hasattr(mag_var, "preferred") and mag_var.preferred else ""
 
             # Get angle
             if angle_was_originally_known and angle_var.value is not None:
@@ -1947,12 +1926,7 @@ class ReportBuilder:
         original_var_states = getattr(self.problem, "_original_variable_states", {})
 
         # Find all vector-related variables by looking for *_mag and *_angle pairs
-        vector_names = set()
-        for var_name in self.problem.variables:
-            if var_name.endswith("_mag"):
-                vector_names.add(var_name[:-4])  # Remove '_mag' suffix
-            elif var_name.endswith("_angle"):
-                vector_names.add(var_name[:-6])  # Remove '_angle' suffix
+        vector_names = _extract_vector_names_from_variables(self.problem.variables)
 
         for vec_name in sorted(vector_names):
             mag_var = self.problem.variables.get(f"{vec_name}_mag")
@@ -2007,14 +1981,7 @@ class ReportBuilder:
 
             # Get magnitude using proper qnty unit handling
             if mag_was_known and mag_var.value is not None:
-                if hasattr(mag_var, "magnitude") and callable(mag_var.magnitude):
-                    try:
-                        mag_value = mag_var.magnitude()
-                        mag_str = f"{mag_value:.1f}"
-                    except (ValueError, AttributeError):
-                        mag_str = "?"
-                else:
-                    mag_str = "?"
+                mag_str = _extract_magnitude_string(mag_var)
             else:
                 mag_str = "?"
 

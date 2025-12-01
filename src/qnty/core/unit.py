@@ -236,26 +236,26 @@ class UnitRegistry:
         if cache_key in self._resolve_cache:
             return None
 
+        def _cache_and_return(unit: Unit | None) -> Unit | None:
+            """Cache the result and return it, checking dimension compatibility."""
+            if unit is not None and (dim is None or unit.dim == dim):
+                self._resolve_cache[cache_key] = unit
+                return unit
+            self._resolve_cache[cache_key] = None
+            return None
+
         # Fast path: try symbols (avoid normalization)
         u = self._intern_by_symbol.get(name_or_symbol)
         if u is None:
             u = self._by_symbol.get(name_or_symbol)
         if u is not None:
-            if dim is None or u.dim == dim:
-                self._resolve_cache[cache_key] = u
-                return u
-            self._resolve_cache[cache_key] = None
-            return None
+            return _cache_and_return(u)
 
         # Fallback: normalized name/alias lookup (use cached version)
         nk = _norm_cached(name_or_symbol)
         u = self._by_name.get(nk)
         if u is not None:
-            if dim is None or u.dim == dim:
-                self._resolve_cache[cache_key] = u
-                return u
-            self._resolve_cache[cache_key] = None
-            return None
+            return _cache_and_return(u)
 
         # Cache the miss
         self._resolve_cache[cache_key] = None

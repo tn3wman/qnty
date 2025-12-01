@@ -14,6 +14,7 @@ from numpy.typing import NDArray
 
 from ..core.quantity import Quantity
 from ..core.unit import Unit
+from ..utils.shared_utilities import resolve_length_unit_from_string, resolve_unit_from_string
 
 if TYPE_CHECKING:
     from .vector import _Vector
@@ -59,14 +60,7 @@ class _Point(Generic[D]):
         self._is_unknown = False
         self._distance: float | None = None
         # Resolve unit if string
-        if isinstance(unit, str):
-            from ..core.dimension_catalog import dim
-            from ..core.unit import ureg
-
-            resolved = ureg.resolve(unit, dim=dim.length)
-            if resolved is None:
-                raise ValueError(f"Unknown length unit '{unit}'")
-            unit = resolved
+        unit = resolve_length_unit_from_string(unit) if unit is not None else None
 
         # Store as numpy array for vectorized operations
         from .vector_helpers import init_coords_from_unit
@@ -85,14 +79,7 @@ class _Point(Generic[D]):
             Unknown point with unset coordinates
         """
         # Resolve unit if string
-        if isinstance(unit, str):
-            from ..core.dimension_catalog import dim
-            from ..core.unit import ureg
-
-            resolved = ureg.resolve(unit, dim=dim.length)
-            if resolved is None:
-                raise ValueError(f"Unknown length unit '{unit}'")
-            unit = resolved
+        unit = resolve_length_unit_from_string(unit)
 
         # Create point with NaN coordinates to indicate unknown
         result = object.__new__(cls)
@@ -285,13 +272,7 @@ class _Point(Generic[D]):
         Returns:
             New Point with updated display unit
         """
-        if isinstance(unit, str):
-            from ..core.unit import ureg
-
-            resolved = ureg.resolve(unit, dim=self._dim)
-            if resolved is None:
-                raise ValueError(f"Unknown unit '{unit}'")
-            unit = resolved
+        unit = resolve_unit_from_string(unit, dim=self._dim)
 
         # Create new _Point with same SI values, different display unit
         result = object.__new__(_Point)

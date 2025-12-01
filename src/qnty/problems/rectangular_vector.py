@@ -86,16 +86,11 @@ class RectangularVectorProblem(VariableStateTrackingMixin, Problem):
 
     def _clone_force_vector(self, force: _Vector) -> _Vector:
         """Create a copy of a ForceVector."""
-        # Check if force has unresolved relative angle
-        has_relative_angle = hasattr(force, '_relative_to_force') and force._relative_to_force is not None
+        from ..utils.shared_utilities import ValidationHelper
 
         # A force is fully computable only if it has both magnitude and angle with known values
         # Otherwise the vector coords might be placeholder zeros from _init_magnitude_only
-        has_valid_vector = (force.is_known and
-                           force.vector is not None and
-                           force.magnitude is not None and force.magnitude.value is not None and
-                           force.angle is not None and force.angle.value is not None and
-                           not has_relative_angle)
+        has_valid_vector = ValidationHelper.vector_has_valid_computed_data(force)
 
         if has_valid_vector:
             # Known force with computed vector - copy with same values
@@ -116,18 +111,6 @@ class RectangularVectorProblem(VariableStateTrackingMixin, Problem):
         else:
             # Unknown force - use shared utility
             return clone_unknown_force_vector(force, _Vector)
-
-    def add_force(self, force: _Vector, name: str | None = None) -> None:
-        """
-        Add a force to the problem.
-
-        Args:
-            force: ForceVector to add
-            name: Optional name (uses force.name if not provided)
-        """
-        force_name = name or force.name
-        self.forces[force_name] = force
-        setattr(self, force_name, force)
 
     def solve(self, max_iterations: int = 100, tolerance: float = 1e-10) -> dict[str, _Vector]:  # type: ignore[override]
         """

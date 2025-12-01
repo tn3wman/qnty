@@ -13,7 +13,7 @@ from typing import TYPE_CHECKING, Any
 import numpy as np
 
 from ..core.unit import Unit
-from ..utils.shared_utilities import convert_angle_to_radians, resolve_unit_from_string_or_fallback
+from ..utils.shared_utilities import convert_angle_to_radians, resolve_unit_from_string, resolve_unit_from_string_or_fallback
 from .vector import _Vector
 
 if TYPE_CHECKING:
@@ -363,16 +363,7 @@ def create_vector_from_ratio(
         raise ValueError("Direction ratios cannot all be zero")
 
     # Resolve unit
-    resolved_unit: Unit | None = None
-    if isinstance(unit, str):
-        from ..core.unit import ureg
-
-        resolved = ureg.resolve(unit)
-        if resolved is None:
-            raise ValueError(f"Unknown unit '{unit}'")
-        resolved_unit = resolved
-    else:
-        resolved_unit = unit
+    resolved_unit = resolve_unit_from_string(unit) if unit is not None else None
 
     # Compute vector components
     ru, rv, rw = float(u), float(v), float(w)
@@ -479,23 +470,14 @@ def create_vector_polar(
 
         # For standard axes, validate they're in the specified plane
         if is_standard_axis:
-            axis_char = wrt_str.lower()[1]  # 'x', 'y', or 'z'
-            if axis_char not in plane_lower:
-                raise ValueError(f"Reference axis '{wrt_str}' must be in plane '{plane}'. Valid axes for {plane} plane: {[f'+{c}' for c in plane] + [f'-{c}' for c in plane]}")
+            from ..utils.shared_utilities import validate_axis_in_plane
+
+            validate_axis_in_plane(wrt_str.lower(), plane_lower)
         # For custom axes (like +u, +v), we defer validation to solve time
         # when the coordinate system is known
 
     # Resolve unit
-    resolved_unit: Unit | None = None
-    if isinstance(unit, str):
-        from ..core.unit import ureg
-
-        resolved = ureg.resolve(unit)
-        if resolved is None:
-            raise ValueError(f"Unknown unit '{unit}'")
-        resolved_unit = resolved
-    else:
-        resolved_unit = unit
+    resolved_unit = resolve_unit_from_string(unit) if unit is not None else None
 
     # Handle unknown values - return _VectorWithUnknowns
     if has_unknowns:
@@ -699,16 +681,7 @@ def create_vector_spherical(
         phi_rad = math.pi / 2 - phi_input_rad
 
     # Resolve unit
-    resolved_unit: Unit | None = None
-    if isinstance(unit, str):
-        from ..core.unit import ureg
-
-        resolved = ureg.resolve(unit)
-        if resolved is None:
-            raise ValueError(f"Unknown unit '{unit}'")
-        resolved_unit = resolved
-    else:
-        resolved_unit = unit
+    resolved_unit = resolve_unit_from_string(unit) if unit is not None else None
 
     # Compute Cartesian components
     mag_val = float(magnitude)
@@ -1573,16 +1546,7 @@ def create_vector_direction_angles(
         raise ValueError(f"Direction angles must satisfy cos²α + cos²β + cos²γ = 1, got {sum_cos_sq}")
 
     # Resolve unit
-    resolved_unit = None
-    if isinstance(unit, str):
-        from ..core.unit import ureg
-
-        resolved = ureg.resolve(unit)
-        if resolved is None:
-            raise ValueError(f"Unknown unit '{unit}'")
-        resolved_unit = resolved
-    else:
-        resolved_unit = unit
+    resolved_unit = resolve_unit_from_string(unit) if unit is not None else None
 
     # Compute Cartesian components using direction cosines
     u = mag_val * math.cos(alpha_rad)

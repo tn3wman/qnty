@@ -10,7 +10,10 @@ from __future__ import annotations
 import re
 from abc import ABC, abstractmethod
 from collections.abc import Callable
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    import numpy as np
 
 # Type aliases
 OperandType = Any  # Expression | FieldQuantity | Quantity | int | float
@@ -75,6 +78,31 @@ class ValidationHelper:
         if not symbol or not isinstance(symbol, str):
             return False
         return symbol.isidentifier() and not any(char in symbol for char in ["(", ")", "+", "-", "*", "/", " "])
+
+    @staticmethod
+    def vector_has_valid_computed_data(force: Any) -> bool:
+        """
+        Check if a vector/force has fully computed data.
+
+        A vector is fully computable only if it has both magnitude and angle
+        with known values, and doesn't have an unresolved relative angle.
+
+        Args:
+            force: A _Vector or similar object with is_known, vector, magnitude, and angle attributes
+
+        Returns:
+            True if the vector has all necessary data for computation
+        """
+        has_relative_angle = hasattr(force, "_relative_to_force") and force._relative_to_force is not None
+        return (
+            force.is_known
+            and force.vector is not None
+            and force.magnitude is not None
+            and force.magnitude.value is not None
+            and force.angle is not None
+            and force.angle.value is not None
+            and not has_relative_angle
+        )
 
     @staticmethod
     def get_effective_unit(quantity):
@@ -406,6 +434,41 @@ class SharedConstants:
     RESERVED_ATTRIBUTES = {"name", "description"}
     PRIVATE_ATTRIBUTE_PREFIX = "_"
 
+    # Special dunder methods that should raise AttributeError for wrapper classes
+    # Used to guard against deepcopy/pickle operations that cause recursion
+    WRAPPER_EXCLUDED_DUNDERS = frozenset({
+        "__setstate__",
+        "__getstate__",
+        "__getnewargs__",
+        "__getnewargs_ex__",
+        "__reduce__",
+        "__reduce_ex__",
+        "__copy__",
+        "__deepcopy__",
+        "__getattribute__",
+        "__setattr__",
+        "__delattr__",
+        "__dict__",
+        "__weakref__",
+        "__class__",
+    })
+
+
+def is_private_or_excluded_dunder(name: str) -> bool:
+    """
+    Check if an attribute name is private or an excluded dunder method.
+
+    This consolidates the repeated pattern used in wrapper classes to guard
+    against deepcopy/pickle operations that cause recursion.
+
+    Args:
+        name: Attribute name to check
+
+    Returns:
+        True if the name starts with '_' or is in WRAPPER_EXCLUDED_DUNDERS
+    """
+    return name.startswith("_") or name in SharedConstants.WRAPPER_EXCLUDED_DUNDERS
+
 
 # ========== FORCE VECTOR UTILITIES ==========
 
@@ -527,6 +590,38 @@ def format_equation_list_from_history(solving_history: list[dict], equations: li
 
 
 # ========== ANGLE CONVERSION UTILITIES ==========
+
+
+def convert_angle_to_direction(angle_deg: float, angle_dir: str | None) -> float:
+    """
+    Convert an angle from standard CCW convention to specified direction convention.
+
+    This consolidates the repeated pattern in parallelogram_law.py and report_ir.py
+    for converting angles based on direction preference.
+
+    Args:
+        angle_deg: Angle in degrees (standard CCW convention, 0-360)
+        angle_dir: Direction convention - "ccw" (default), "cw", or "signed"
+
+    Returns:
+        Converted angle based on angle_dir:
+        - "ccw" (default/None): 0 to 360, counterclockwise from reference
+        - "cw": Negative for clockwise angles (e.g., 358.8° -> -1.2°)
+        - "signed": -180 to 180 range
+    """
+    if angle_dir == "cw":
+        # Convert to clockwise: if angle > 180, show as negative
+        if angle_deg > 180:
+            return angle_deg - 360
+        return angle_deg
+    elif angle_dir == "signed":
+        # Convert to signed range: -180 to 180
+        if angle_deg > 180:
+            return angle_deg - 360
+        return angle_deg
+    else:
+        # Default: CCW, 0-360
+        return angle_deg
 
 
 # ========== FORCE VECTOR EXTRACTION ==========
@@ -809,7 +904,54 @@ def normalize_range_specs(range_specs: tuple) -> list[range]:
     return ranges
 
 
+def generate_terms_from_product(
+    ranges: list[range],
+    term_generator: Callable,
+    kwargs: dict | None = None,
+) -> list[Any]:
+    """
+    Generate terms by iterating over the Cartesian product of ranges.
+
+    This consolidates the repeated pattern in algebra/functions.py and
+    problems/composition.py for generating summation terms.
+
+    Args:
+        ranges: List of range objects to iterate over
+        term_generator: Callable that takes indices and returns a term
+        kwargs: Optional keyword arguments to pass to term_generator
+
+    Returns:
+        List of generated terms
+    """
+    import itertools
+
+    terms = []
+    for indices in itertools.product(*ranges):
+        if kwargs:
+            term = term_generator(*indices, **kwargs)
+        else:
+            term = term_generator(*indices)
+        terms.append(term)
+    return terms
+
+
 # ========== UNIT RESOLUTION UTILITIES ==========
+
+
+def validate_axis_in_plane(axis: str, plane: str) -> None:
+    """
+    Validate that an axis is in the specified plane.
+
+    Args:
+        axis: Axis string like '+x', '-y', etc. (lowercase)
+        plane: Plane string like 'xy', 'xz', 'yz' (lowercase)
+
+    Raises:
+        ValueError: If axis is not in the plane
+    """
+    axis_char = axis[1]  # 'x', 'y', or 'z' from '+x', '-x', etc.
+    if axis_char not in plane:
+        raise ValueError(f"Reference axis '{axis}' must be in plane '{plane}'. Valid axes for {plane} plane: {[f'+{c}' for c in plane] + [f'-{c}' for c in plane]}")
 
 
 def resolve_length_unit_from_string(unit: str | Any) -> Any:
@@ -836,6 +978,63 @@ def resolve_length_unit_from_string(unit: str | Any) -> Any:
         resolved = ureg.resolve(unit, dim=dim.length)
         if resolved is None:
             raise ValueError(f"Unknown length unit '{unit}'")
+        return resolved
+    return unit
+
+
+def resolve_angle_unit_from_string(unit: str | Any) -> Any:
+    """
+    Resolve a unit from a string to a Unit object, specifically for angle (dimensionless) dimension.
+
+    This consolidates the repeated pattern of resolving angle units from strings
+    that appears in vector.py and other spatial modules.
+
+    Args:
+        unit: Unit specification - can be a string unit name or a Unit object
+
+    Returns:
+        Resolved Unit object
+
+    Raises:
+        ValueError: If unit is a string but cannot be resolved as an angle unit
+    """
+    if isinstance(unit, str):
+        from ..core.dimension_catalog import dim
+        from ..core.unit import ureg
+
+        resolved = ureg.resolve(unit, dim=dim.D)
+        if resolved is None:
+            raise ValueError(f"Unknown angle unit '{unit}'")
+        return resolved
+    return unit
+
+
+def resolve_unit_from_string(unit: str | Any, dim: Any = None) -> Any:
+    """
+    Resolve a unit from a string to a Unit object with optional dimension constraint.
+
+    This consolidates the general pattern of resolving units from strings
+    that appears across multiple modules.
+
+    Args:
+        unit: Unit specification - can be a string unit name or a Unit object
+        dim: Optional dimension to constrain the unit lookup
+
+    Returns:
+        Resolved Unit object
+
+    Raises:
+        ValueError: If unit is a string but cannot be resolved
+    """
+    if isinstance(unit, str):
+        from ..core.unit import ureg
+
+        if dim is not None:
+            resolved = ureg.resolve(unit, dim=dim)
+        else:
+            resolved = ureg.resolve(unit)
+        if resolved is None:
+            raise ValueError(f"Unknown unit '{unit}'")
         return resolved
     return unit
 
@@ -885,6 +1084,32 @@ def resolve_unit_from_string_or_fallback(
             if hasattr(source, "_unit") and source._unit is not None:
                 return source._unit
     return None
+
+
+# ========== MAGNITUDE EXTRACTION UTILITIES ==========
+
+
+def extract_magnitude_string(obj: Any, decimal_places: int = 1) -> str:
+    """
+    Extract magnitude value from an object and format it as a string.
+
+    This consolidates the repeated pattern of extracting magnitude from objects
+    that may have a callable magnitude() method.
+
+    Args:
+        obj: Object that may have a magnitude() callable method
+        decimal_places: Number of decimal places for formatting (default: 1)
+
+    Returns:
+        Formatted magnitude string, or "?" if magnitude cannot be extracted
+    """
+    if hasattr(obj, "magnitude") and callable(obj.magnitude):
+        try:
+            mag_value = obj.magnitude()
+            return f"{mag_value:.{decimal_places}f}"
+        except (ValueError, AttributeError):
+            return "?"
+    return "?"
 
 
 # ========== MAGNITUDE QUANTITY UTILITIES ==========
@@ -963,3 +1188,87 @@ class VariableStateTrackingMixin:
             if not self._original_variable_states.get(var_name, False):  # type: ignore[attr-defined]
                 unknown_vars[var_name] = var
         return unknown_vars
+
+    def add_force(self, force: Any, name: str | None = None) -> None:
+        """
+        Add a force to the problem.
+
+        This method consolidates the repeated pattern in CartesianVectorProblem and
+        RectangularVectorProblem for adding forces.
+
+        Args:
+            force: ForceVector to add (must have a 'name' attribute)
+            name: Optional name (uses force.name if not provided)
+        """
+        force_name = name or force.name
+        self.forces[force_name] = force  # type: ignore[attr-defined]
+        setattr(self, force_name, force)
+
+
+# ========== LINEAR SYSTEM SOLVING UTILITIES ==========
+
+
+def build_equilibrium_matrix(theta1: float, theta2: float) -> np.ndarray:
+    """
+    Build the 2x2 coefficient matrix for solving two unknown force magnitudes.
+
+    This constructs the matrix for the equilibrium equations:
+        sum_x + |F1| * cos(θ1) = |F2| * cos(θ2)
+        sum_y + |F1| * sin(θ1) = |F2| * sin(θ2)
+
+    Rearranged to: A * [|F1|, |F2|]^T = b
+
+    Args:
+        theta1: Angle of first unknown force (radians)
+        theta2: Angle of second unknown force (radians)
+
+    Returns:
+        2x2 numpy array: [[cos(θ1), -cos(θ2)], [sin(θ1), -sin(θ2)]]
+    """
+    import math
+
+    import numpy as np
+
+    return np.array([
+        [math.cos(theta1), -math.cos(theta2)],
+        [math.sin(theta1), -math.sin(theta2)],
+    ])
+
+
+def solve_two_unknown_magnitudes(
+    theta1: float,
+    theta2: float,
+    sum_x: float,
+    sum_y: float,
+    error_context: str = "system",
+) -> tuple[float, float]:
+    """
+    Solve for two unknown force magnitudes given their angles and known force sums.
+
+    Solves the linear system:
+        |F1| * cos(θ1) - |F2| * cos(θ2) = -sum_x
+        |F1| * sin(θ1) - |F2| * sin(θ2) = -sum_y
+
+    Args:
+        theta1: Angle of first unknown force (radians)
+        theta2: Angle of second unknown force (radians)
+        sum_x: Sum of known force x-components
+        sum_y: Sum of known force y-components
+        error_context: Context string for error messages
+
+    Returns:
+        Tuple of (magnitude1, magnitude2)
+
+    Raises:
+        ValueError: If the system is singular (forces are parallel)
+    """
+    import numpy as np
+
+    A = build_equilibrium_matrix(theta1, theta2)
+    b = np.array([-sum_x, -sum_y])
+
+    try:
+        magnitudes = np.linalg.solve(A, b)
+        return float(magnitudes[0]), float(magnitudes[1])
+    except np.linalg.LinAlgError as err:
+        raise ValueError(f"Cannot solve {error_context}: system is singular. Forces may be parallel.") from err

@@ -27,6 +27,57 @@ DEFAULT_ANGLE_UNIT = "degree"
 
 
 # =============================================================================
+# Angle Display String Helpers
+# =============================================================================
+
+
+def _format_angle_difference_display(
+    vec1_name: str,
+    vec2_name: str,
+    axis1_label: str,
+    axis2_label: str,
+    theta1_deg: float,
+    theta2_deg: float,
+    result_deg: float,
+    operator: str = "-",
+    use_absolute: bool = False,
+) -> str:
+    """
+    Format an angle calculation string showing difference/sum between two angles.
+
+    This consolidates the repeated pattern:
+        ∠(vec1,vec2) = |∠(axis1,vec1) ± ∠(axis2,vec2)|
+        = |θ1° ± θ2°|
+        = result°
+
+    Args:
+        vec1_name: Name of first vector
+        vec2_name: Name of second vector
+        axis1_label: Reference axis for first angle
+        axis2_label: Reference axis for second angle
+        theta1_deg: First angle in degrees
+        theta2_deg: Second angle in degrees
+        result_deg: Result angle in degrees
+        operator: "-" for subtraction, "+" for addition
+        use_absolute: If True, show |∠(...)| notation
+
+    Returns:
+        Formatted angle calculation string
+    """
+    if use_absolute:
+        return (
+            f"∠({vec1_name},{vec2_name}) = |∠({axis1_label},{vec1_name}) {operator} ∠({axis2_label},{vec2_name})|\n"
+            f"= |{theta1_deg:.0f}° {operator} {theta2_deg:.0f}°|\n"
+            f"= {result_deg:.0f}°"
+        )
+    return (
+        f"∠({vec1_name},{vec2_name}) = ∠({axis1_label},{vec1_name}) {operator} ∠({axis2_label},{vec2_name})\n"
+        f"= {theta1_deg:.0f}° {operator} {theta2_deg:.0f}°\n"
+        f"= {result_deg:.0f}°"
+    )
+
+
+# =============================================================================
 # Angle Normalization Functions
 # =============================================================================
 
@@ -335,10 +386,10 @@ def compute_angle_between_display(
     if wrt1 == wrt2:
         # Simple difference of angles from the same reference
         axis_label = format_axis_ref(wrt1)
-        return (
-            f"∠({vec1_name},{vec2_name}) = |∠({axis_label},{vec1_name}) - ∠({axis_label},{vec2_name})|\n"
-            f"= |{theta1_input_deg:.0f}° - {theta2_input_deg:.0f}°|\n"
-            f"= {result_deg:.0f}°"
+        return _format_angle_difference_display(
+            vec1_name, vec2_name, axis_label, axis_label,
+            theta1_input_deg, theta2_input_deg, result_deg,
+            operator="-", use_absolute=True
         )
 
     # Case 2: Custom coordinate system - show using axis relationships
@@ -434,10 +485,10 @@ def compute_angle_between_display(
 
             # Case 2c: Same axis - simple difference
             if wrt1_stripped == wrt2_stripped:
-                return (
-                    f"∠({vec1_name},{vec2_name}) = |∠({axis1_label},{vec1_name}) - ∠({axis1_label},{vec2_name})|\n"
-                    f"= |{theta1_input_deg:.0f}° - {theta2_input_deg:.0f}°|\n"
-                    f"= {result_deg:.0f}°"
+                return _format_angle_difference_display(
+                    vec1_name, vec2_name, axis1_label, axis1_label,
+                    theta1_input_deg, theta2_input_deg, result_deg,
+                    operator="-", use_absolute=True
                 )
 
         # Fallback: show using angle between vectors in the triangle
@@ -458,10 +509,10 @@ def compute_angle_between_display(
 
     # If axes are of the same type (both x or both y), show as difference
     if axis1_type == axis2_type:
-        return (
-            f"∠({vec1_name},{vec2_name}) = |∠({axis1_label},{vec1_name}) - ∠({axis2_label},{vec2_name})|\n"
-            f"= |{theta1_input_deg:.0f}° - {theta2_input_deg:.0f}°|\n"
-            f"= {result_deg:.0f}°"
+        return _format_angle_difference_display(
+            vec1_name, vec2_name, axis1_label, axis2_label,
+            theta1_input_deg, theta2_input_deg, result_deg,
+            operator="-", use_absolute=True
         )
 
     # Axes are orthogonal (one is x-type, one is y-type)

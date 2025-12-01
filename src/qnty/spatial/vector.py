@@ -18,7 +18,7 @@ from numpy.typing import NDArray
 
 from ..core.quantity import Quantity
 from ..core.unit import Unit
-from ..utils.shared_utilities import create_magnitude_quantity
+from ..utils.shared_utilities import create_magnitude_quantity, resolve_angle_unit_from_string, resolve_unit_from_string
 
 if TYPE_CHECKING:
     from .angle_reference import AngleReference
@@ -166,13 +166,7 @@ class _Vector(Generic[D]):
                 # Convert angle to radians and store as relative angle
                 if isinstance(angle, int | float):
                     # Resolve angle unit for conversion
-                    if isinstance(angle_unit, str):
-                        from ..core.dimension_catalog import dim as dim_cat
-                        from ..core.unit import ureg
-                        resolved_angle_unit = ureg.resolve(angle_unit, dim=dim_cat.D)
-                        if resolved_angle_unit is None:
-                            raise ValueError(f"Unknown angle unit '{angle_unit}'")
-                        angle_unit = resolved_angle_unit
+                    angle_unit = resolve_angle_unit_from_string(angle_unit)
                     self._relative_angle = float(angle) * angle_unit.si_factor
                 else:
                     # Angle is a Quantity
@@ -186,22 +180,10 @@ class _Vector(Generic[D]):
             self.angle_reference = AngleReference.standard()
 
         # Resolve unit if string
-        if isinstance(unit, str):
-            from ..core.unit import ureg
-            # Try to resolve without dimension hint first
-            resolved = ureg.resolve(unit)
-            if resolved is None:
-                raise ValueError(f"Unknown unit '{unit}'")
-            unit = resolved
+        unit = resolve_unit_from_string(unit) if unit is not None else None
 
         # Resolve angle unit
-        if isinstance(angle_unit, str):
-            from ..core.dimension_catalog import dim as dim_cat
-            from ..core.unit import ureg
-            resolved = ureg.resolve(angle_unit, dim=dim_cat.D)
-            if resolved is None:
-                raise ValueError(f"Unknown angle unit '{angle_unit}'")
-            angle_unit = resolved
+        angle_unit = resolve_angle_unit_from_string(angle_unit)
 
         # Determine construction mode
         # Mode 0: From existing vector
@@ -328,6 +310,23 @@ class _Vector(Generic[D]):
             return AngleReference.standard()
 
         return _Vector.parse_wrt_static(wrt, self.coordinate_system)
+
+    def _compute_standard_angle_or_relative(self, angle_in_ref: float) -> float | None:
+        """
+        Compute the standard angle, or update relative angle if this is a relative force.
+
+        Args:
+            angle_in_ref: The angle in the reference frame (radians)
+
+        Returns:
+            The standard angle (radians) if not relative, None if relative
+        """
+        if self._relative_to_force is None:
+            return self.angle_reference.to_standard(angle_in_ref, angle_unit="radian")
+        else:
+            base_offset = self._relative_angle if self._relative_angle else 0.0
+            self._relative_angle = base_offset + angle_in_ref
+            return None
 
     @staticmethod
     def parse_wrt(wrt: str, coordinate_system: "CoordinateSystem | None" = None) -> "AngleReference":
@@ -471,13 +470,9 @@ class _Vector(Generic[D]):
 
         if isinstance(angle, int | float):
             from ..core.dimension_catalog import dim
+
             angle_in_ref = float(angle) * angle_unit.si_factor
-            if self._relative_to_force is None:
-                angle_standard = self.angle_reference.to_standard(angle_in_ref, angle_unit="radian")
-            else:
-                base_offset = self._relative_angle if self._relative_angle else 0.0
-                self._relative_angle = base_offset + angle_in_ref
-                angle_standard = None
+            angle_standard = self._compute_standard_angle_or_relative(angle_in_ref)
             angle_qty = Quantity(name=f"{self.name}_angle", dim=dim.D, value=angle_standard, preferred=angle_unit)
         else:
             angle_in_ref = angle.value
@@ -508,12 +503,7 @@ class _Vector(Generic[D]):
 
         if isinstance(angle, int | float):
             angle_in_ref = float(angle) * angle_unit.si_factor
-            if self._relative_to_force is None:
-                angle_standard = self.angle_reference.to_standard(angle_in_ref, angle_unit="radian")
-            else:
-                base_offset = self._relative_angle if self._relative_angle else 0.0
-                self._relative_angle = base_offset + angle_in_ref
-                angle_standard = None
+            angle_standard = self._compute_standard_angle_or_relative(angle_in_ref)
             angle_qty = Quantity(name=f"{self.name}_angle", dim=dim.D, value=angle_standard, preferred=angle_unit)
         else:
             angle_in_ref = angle.value
@@ -1293,13 +1283,7 @@ class _Vector(Generic[D]):
         Returns:
             New Vector with updated display unit
         """
-        if isinstance(unit, str):
-            from ..core.unit import ureg
-
-            resolved = ureg.resolve(unit, dim=self._dim)
-            if resolved is None:
-                raise ValueError(f"Unknown unit '{unit}'")
-            unit = resolved
+        unit = resolve_unit_from_string(unit, dim=self._dim)
 
         # Create new _Vector with same SI values, different display unit
         result = object.__new__(_Vector)

@@ -213,23 +213,11 @@ def summation(term_generator, *range_specs, **kwargs):
 
         return DelayedFunction("summation", term_generator, range_specs, kwargs)
 
-    # Convert range_specs to actual ranges using shared utility
-    from ..utils.shared_utilities import normalize_range_specs
+    # Convert range_specs to actual ranges and generate terms using shared utilities
+    from ..utils.shared_utilities import generate_terms_from_product, normalize_range_specs
 
     ranges = normalize_range_specs(range_specs)
-
-    # Generate all terms by iterating over the Cartesian product of ranges
-    import itertools
-
-    terms = []
-    for indices in itertools.product(*ranges):
-        if kwargs:
-            # Pass both indices and captured variables
-            term = term_generator(*indices, **kwargs)
-        else:
-            # Just pass indices (closure-based)
-            term = term_generator(*indices)
-        terms.append(term)
+    terms = generate_terms_from_product(ranges, term_generator, kwargs if kwargs else None)
 
     # Use sum_expr to combine all terms
     return sum_expr(*terms)

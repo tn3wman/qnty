@@ -7,12 +7,10 @@ magnitude constraint when one or more point coordinates are unknown.
 
 from __future__ import annotations
 
-import math
 from typing import Any
 
-import numpy as np
-
 from ..core.unit import Unit
+from ..utils.shared_utilities import resolve_length_unit_from_string
 from .point import _Point
 from .vector import _Vector
 
@@ -74,16 +72,7 @@ class VectorBetween:
         self._vector: _Vector | None = None
 
         # Resolve unit
-        if isinstance(unit, str):
-            from ..core.dimension_catalog import dim
-            from ..core.unit import ureg
-
-            resolved = ureg.resolve(unit, dim=dim.length)
-            if resolved is None:
-                raise ValueError(f"Unknown length unit '{unit}'")
-            unit = resolved
-
-        self._unit = unit
+        self._unit = resolve_length_unit_from_string(unit) if unit is not None else None
 
         # If both points are fully known, compute the vector immediately
         if not self.has_unknowns():
