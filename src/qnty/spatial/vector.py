@@ -18,7 +18,7 @@ from numpy.typing import NDArray
 
 from ..core.quantity import Quantity
 from ..core.unit import Unit
-from ..utils.shared_utilities import create_magnitude_quantity, resolve_angle_unit_from_string, resolve_unit_from_string
+from ..utils.shared_utilities import compute_dimension_product, create_magnitude_quantity, resolve_angle_unit_from_string, resolve_unit_from_string
 
 if TYPE_CHECKING:
     from .angle_reference import AngleReference
@@ -803,7 +803,7 @@ class _Vector(Generic[D]):
             # Dot with another vector
             dot_product = float(np.dot(self._coords, other._coords))
             # Result dimension is product of vector dimensions
-            result_dim = self._dim * other._dim if self._dim is not None and other._dim is not None else None
+            result_dim = compute_dimension_product(self._dim, other._dim)
             return self._create_quantity("dot_product", result_dim, dot_product, None)
         else:
             raise TypeError(f"Cannot compute dot product with {type(other)}")
@@ -845,7 +845,7 @@ class _Vector(Generic[D]):
             # Cross with another vector
             cross_coords = np.cross(self._coords, other._coords)
             # Result dimension is product of vector dimensions
-            result_dim = self._dim * other._dim if self._dim is not None and other._dim is not None else None
+            result_dim = compute_dimension_product(self._dim, other._dim)
             result = object.__new__(_Vector)
             result._coords = cross_coords
             result._dim = result_dim

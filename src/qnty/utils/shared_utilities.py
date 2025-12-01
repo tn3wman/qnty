@@ -193,6 +193,29 @@ class VariableReferenceHelper:
         return hasattr(obj, "symbol") and hasattr(obj, "value") and hasattr(obj, "dim") and not hasattr(obj, "evaluate")
 
 
+def reconstruct_unary_expression(expr: Any, new_operand: Any) -> Any:
+    """
+    Reconstruct a unary expression with a new operand.
+
+    This consolidates the common pattern:
+        if hasattr(expr, "function_name"):
+            return type(expr)(expr.function_name, new_operand)
+        else:
+            return type(expr)(expr.operator, new_operand)
+
+    Args:
+        expr: Original unary expression (UnaryFunction or UnaryOperation)
+        new_operand: New operand to use in reconstruction
+
+    Returns:
+        New expression of same type with new operand
+    """
+    if hasattr(expr, "function_name"):
+        return type(expr)(expr.function_name, new_operand)
+    else:
+        return type(expr)(expr.operator, new_operand)
+
+
 # ========== EXPRESSION TREE UTILITIES ==========
 
 
@@ -633,6 +656,47 @@ def handle_negative_magnitude(cloned: Any, original_magnitude_value: float | Non
             # Also flip the angle by 180° since negative magnitude means opposite direction
             if cloned._angle is not None and cloned._angle.value is not None:
                 cloned._angle.value = (cloned._angle.value + math.pi) % (2 * math.pi)
+
+
+def build_force_data_dict(
+    symbol: str,
+    force_obj: Any,
+    magnitude_str: str,
+    angle_str: str,
+    unit_str: str,
+    x_str: str,
+    y_str: str,
+    reference_str: str,
+) -> dict[str, str]:
+    """
+    Build a standardized force data dictionary for reporting.
+
+    This consolidates the common pattern of building force data dicts
+    in reporting modules (base.py and report_ir.py).
+
+    Args:
+        symbol: Force symbol/name identifier
+        force_obj: Force object (used to get display name)
+        magnitude_str: Formatted magnitude string (value or "?")
+        angle_str: Formatted angle string (value or "?")
+        unit_str: Unit symbol string
+        x_str: X component string
+        y_str: Y component string
+        reference_str: Angle reference label (e.g., "+x", "-y")
+
+    Returns:
+        Dictionary with keys: symbol, name, magnitude, angle, unit, x, y, reference
+    """
+    return {
+        "symbol": symbol,
+        "name": getattr(force_obj, "name", symbol),
+        "magnitude": magnitude_str,
+        "angle": angle_str,
+        "unit": unit_str,
+        "x": x_str,
+        "y": y_str,
+        "reference": reference_str,
+    }
 
 
 def capture_original_force_states(
@@ -1791,3 +1855,155 @@ def create_angle_arc(arc_class: type, radius: float, angle_deg: float, color: st
         linestyle=":",
         zorder=2,
     )
+
+
+# ========== MAGNITUDE EXTRACTION UTILITIES ==========
+
+
+def get_magnitude_in_preferred_unit(magnitude_obj: Any) -> float:
+    """
+    Extract magnitude value in preferred unit from a Quantity-like object.
+
+    This consolidates the repeated pattern:
+        mag_val = magnitude.value / magnitude.preferred.si_factor if magnitude.preferred else magnitude.value
+
+    Args:
+        magnitude_obj: Object with value and preferred attributes (typically a Quantity)
+
+    Returns:
+        The magnitude value in preferred units, or raw value if no preferred unit
+    """
+    if magnitude_obj is None or magnitude_obj.value is None:
+        return 0.0
+    if magnitude_obj.preferred:
+        return magnitude_obj.value / magnitude_obj.preferred.si_factor
+    return magnitude_obj.value
+
+
+def get_unit_symbol(magnitude_obj: Any) -> str:
+    """
+    Get the unit symbol from a Quantity-like object.
+
+    Args:
+        magnitude_obj: Object with preferred attribute (typically a Quantity)
+
+    Returns:
+        The unit symbol string, or empty string if no preferred unit
+    """
+    if magnitude_obj is None:
+        return ""
+    if magnitude_obj.preferred:
+        return magnitude_obj.preferred.symbol
+    return ""
+
+
+# ========== SMALL INTEGER CACHING UTILITIES ==========
+
+
+def is_small_cacheable_integer(value: int | float) -> bool:
+    """
+    Check if a value is a small integer suitable for caching.
+
+    This consolidates the repeated pattern:
+        isinstance(value, int | float) and -10 <= value <= 10 and value == int(value)
+
+    Args:
+        value: Value to check
+
+    Returns:
+        True if value is an integer between -10 and 10 inclusive
+    """
+    return isinstance(value, int | float) and -10 <= value <= 10 and value == int(value)
+
+
+# ========== COORDINATE CONVERSION UTILITIES ==========
+
+
+def convert_coords_to_unit(coords_si: list[float], target_unit: Any) -> list[float]:
+    """
+    Convert coordinates from SI units to a target unit.
+
+    This consolidates the repeated pattern:
+        if target_unit is not None:
+            coords_output = [c / target_unit.si_factor for c in coords_si]
+        else:
+            coords_output = list(coords_si)
+
+    Args:
+        coords_si: List of coordinate values in SI units
+        target_unit: Target unit with si_factor attribute, or None
+
+    Returns:
+        List of coordinate values in target unit
+    """
+    if target_unit is not None:
+        return [c / target_unit.si_factor for c in coords_si]
+    return list(coords_si)
+
+
+# ========== DIMENSION PRODUCT UTILITIES ==========
+
+
+def compute_dimension_product(dim1: Any, dim2: Any) -> Any:
+    """
+    Compute the product of two dimensions, handling None values.
+
+    This consolidates the repeated pattern:
+        result_dim = dim1 * dim2 if dim1 is not None and dim2 is not None else None
+
+    Args:
+        dim1: First dimension (may be None)
+        dim2: Second dimension (may be None)
+
+    Returns:
+        Product of dimensions, or None if either is None
+    """
+    if dim1 is not None and dim2 is not None:
+        return dim1 * dim2
+    return None
+
+
+# ========== SAFE COMPUTATION UTILITIES ==========
+
+
+def safe_compute_difference(val1: float | None, val2: float | None) -> float:
+    """
+    Compute absolute difference between two values, handling None.
+
+    This consolidates the repeated pattern:
+        if val1 is not None and val2 is not None:
+            diff = abs(val1 - val2)
+        else:
+            diff = float('inf')
+
+    Args:
+        val1: First value (may be None)
+        val2: Second value (may be None)
+
+    Returns:
+        Absolute difference, or infinity if either value is None
+    """
+    if val1 is not None and val2 is not None:
+        return abs(val1 - val2)
+    return float("inf")
+
+
+# ========== ERROR RESULT UTILITIES ==========
+
+
+def format_exception_with_traceback(exc: Exception) -> str:
+    """
+    Format an exception with its traceback for error reporting.
+
+    This consolidates the repeated pattern:
+        f"{type(e).__name__}: {e}\n{traceback.format_exc()}"
+
+    Args:
+        exc: The exception to format
+
+    Returns:
+        Formatted error string with exception type, message, and traceback
+    """
+    import traceback
+
+    return f"{type(exc).__name__}: {exc}\n{traceback.format_exc()}"

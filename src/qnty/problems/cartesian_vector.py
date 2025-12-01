@@ -21,6 +21,8 @@ from ..utils.shared_utilities import (
     extract_force_vectors_from_class,
     format_3d_force_with_direction_angles,
     get_direction_angles_degrees,
+    get_magnitude_in_preferred_unit,
+    get_unit_symbol,
     handle_negative_magnitude,
 )
 from .problem import Problem
@@ -236,8 +238,8 @@ class CartesianVectorProblem(VariableStateTrackingMixin, Problem):
             if self._original_force_states.get(name, False) and not force.is_resultant:
                 if force.magnitude is not None:
                     if force.magnitude.value is not None:
-                        mag_val = force.magnitude.value / force.magnitude.preferred.si_factor if force.magnitude.preferred else force.magnitude.value
-                        mag_unit = force.magnitude.preferred.symbol if force.magnitude.preferred else ""
+                        mag_val = get_magnitude_in_preferred_unit(force.magnitude)
+                        mag_unit = get_unit_symbol(force.magnitude)
 
                         # For 3D forces, include direction angles if available
                         if hasattr(force, 'alpha') and force.alpha and force.alpha.value is not None:
@@ -260,8 +262,8 @@ class CartesianVectorProblem(VariableStateTrackingMixin, Problem):
             for name, force in self.forces.items():
                 if force.is_resultant or not self._original_force_states.get(name, False):
                     if force.magnitude and force.magnitude.value is not None:
-                        mag_val = force.magnitude.value / force.magnitude.preferred.si_factor if force.magnitude.preferred else force.magnitude.value
-                        mag_unit = force.magnitude.preferred.symbol if force.magnitude.preferred else ""
+                        mag_val = get_magnitude_in_preferred_unit(force.magnitude)
+                        mag_unit = get_unit_symbol(force.magnitude)
 
                         # Include direction angles for 3D forces
                         if hasattr(force, 'alpha') and force.alpha and force.alpha.value is not None:

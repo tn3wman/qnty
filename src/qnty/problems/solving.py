@@ -23,6 +23,7 @@ from typing import Any
 from ..algebra import BinaryOperation, ConditionalExpression, Constant, Equation, UnaryFunction, VariableReference, cos, sin
 from ..algebra import equation as create_equation
 from ..core.quantity import Quantity
+from ..solving.utils import SolvingUtils
 from ..utils.shared_utilities import (
     PatternMatchingHelper,
     SafeExecutionMixin,
@@ -386,11 +387,7 @@ class ExpressionParser(BaseExpressionHandler):
             return None
 
         # Create substitution mapping
-        substitution_map = {}
-        for var_name in var_matches:
-            namespaced_name = f"{best_namespace}_{var_name}"
-            if namespaced_name in self.variables:
-                substitution_map[var_name] = namespaced_name
+        substitution_map = SolvingUtils.create_symbol_mapping(var_matches, best_namespace, self.variables)
 
         if not substitution_map:
             return None

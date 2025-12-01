@@ -199,10 +199,10 @@ class TupleBackend:
         return v
 
     def mul(self, a: DimVec, b: DimVec) -> DimVec:
-        return tuple(a[i] + b[i] for i in range(len(a)))
+        return vadd(a, b)
 
     def div(self, a: DimVec, b: DimVec) -> DimVec:
-        return tuple(a[i] - b[i] for i in range(len(a)))
+        return vsub(a, b)
 
     def pow(self, a: DimVec, k: int) -> DimVec:
         if k == 0:

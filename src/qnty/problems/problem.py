@@ -15,12 +15,13 @@ from typing import Any, cast
 
 from qnty.solving.order import Order
 from qnty.solving.solvers import SolverManager
+from qnty.solving.utils import SolvingUtils
 from qnty.utils.logging import get_logger
 
 from ..algebra import BinaryOperation, Constant, Equation, EquationSystem, VariableReference
 from ..core.quantity import Quantity
 from ..core.unit_catalog import DimensionlessUnits
-from ..utils.shared_utilities import ContextDetectionHelper, SharedConstants, ValidationHelper, delegate_getattr, raise_if_excluded_dunder
+from ..utils.shared_utilities import ContextDetectionHelper, SharedConstants, ValidationHelper, delegate_getattr, raise_if_excluded_dunder, reconstruct_unary_expression
 from .solving import EquationReconstructor
 from .validation import ValidationMixin
 
@@ -399,27 +400,30 @@ class Problem(ValidationMixin):
         Update variables with solution, preserving original units for display.
         """
         for symbol, solved_var in solved_variables.items():
-            if symbol in self.variables:
-                original_var = self.variables[symbol]
+            if symbol not in self.variables or solved_var.value is None:
+                continue
 
-                # If we have a solved quantity and an original unit to preserve
-                if (
-                    solved_var.value is not None and symbol in self._original_variable_units and symbol in self._original_variable_states and not self._original_variable_states[symbol]
-                ):  # Was originally unknown
-                    # Convert solved quantity to original unit for display
-                    original_unit = self._original_variable_units[symbol]
-                    try:
-                        # The solved_var already has the correct SI value and we want to preserve the original_unit
-                        # Just use the SI value directly with the original unit as preferred
-                        self._update_variable_value(symbol, solved_var.value, original_unit)
-                    except Exception:
-                        # If conversion fails, use the solved quantity as-is
-                        if solved_var.value is not None:
-                            self._update_variable_value(symbol, solved_var.value, solved_var.preferred or original_var.preferred)
-                else:
-                    # For originally known variables or if no unit conversion needed
-                    if solved_var.value is not None:
-                        self._update_variable_value(symbol, solved_var.value, solved_var.preferred or original_var.preferred)
+            original_var = self.variables[symbol]
+            preferred_unit = solved_var.preferred or original_var.preferred
+
+            # Check if this was an originally unknown variable with a saved unit
+            was_originally_unknown = (
+                symbol in self._original_variable_units
+                and symbol in self._original_variable_states
+                and not self._original_variable_states[symbol]
+            )
+
+            if was_originally_unknown:
+                # Try to preserve the original unit for display
+                original_unit = self._original_variable_units[symbol]
+                try:
+                    self._update_variable_value(symbol, solved_var.value, original_unit)
+                    continue
+                except Exception:
+                    pass  # Fall through to default handling
+
+            # Default: use solved or original preferred unit
+            self._update_variable_value(symbol, solved_var.value, preferred_unit)
 
     def _sync_variables_to_instance_attributes(self):
         """
@@ -613,10 +617,7 @@ class Problem(ValidationMixin):
 
         elif hasattr(expr, "operand"):
             new_operand = self._substitute_variables_in_expression(expr.operand, substitutions)
-            if hasattr(expr, "function_name"):
-                return type(expr)(expr.function_name, new_operand)
-            else:
-                return type(expr)(expr.operator, new_operand)
+            return reconstruct_unary_expression(expr, new_operand)
 
         elif hasattr(expr, "function_name") and hasattr(expr, "left") and hasattr(expr, "right"):
             new_left = self._substitute_variables_in_expression(expr.left, substitutions)
@@ -745,11 +746,7 @@ class Problem(ValidationMixin):
             variables_in_eq = equation.get_all_variables()
 
             # Create mapping from original symbols to namespaced symbols
-            symbol_mapping = {}
-            for var_symbol in variables_in_eq:
-                namespaced_symbol = f"{namespace}_{var_symbol}"
-                if namespaced_symbol in self.variables:
-                    symbol_mapping[var_symbol] = namespaced_symbol
+            symbol_mapping = SolvingUtils.create_symbol_mapping(variables_in_eq, namespace, self.variables)
 
             if not symbol_mapping:
                 return None
@@ -863,11 +860,7 @@ class Problem(ValidationMixin):
         elif hasattr(expr, "operand"):
             # Recursively fix operand (UnaryFunction, UnaryOperation, etc.)
             fixed_operand = self._fix_expression_variables(expr.operand)
-            # UnaryFunction uses function_name, UnaryOperation uses operator
-            if hasattr(expr, "function_name"):
-                return type(expr)(expr.function_name, fixed_operand)
-            else:
-                return type(expr)(expr.operator, fixed_operand)
+            return reconstruct_unary_expression(expr, fixed_operand)
 
         elif hasattr(expr, "function_name"):
             # Recursively fix left and right operands

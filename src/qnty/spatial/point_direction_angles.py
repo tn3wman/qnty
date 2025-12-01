@@ -12,6 +12,7 @@ import math
 from ..core.unit import Unit
 from ..utils.shared_utilities import resolve_length_unit_from_string
 from .point import _Point
+from .vector_helpers import compute_direction_cosines
 
 
 class PointDirectionAngles:
@@ -184,11 +185,7 @@ class PointDirectionAngles:
     @property
     def direction_cosines(self) -> tuple[float, float, float]:
         """Direction cosines (cos(alpha), cos(beta), cos(gamma))."""
-        return (
-            math.cos(self._alpha_rad),
-            math.cos(self._beta_rad),
-            math.cos(self._gamma_rad),
-        )
+        return compute_direction_cosines(self._alpha_rad, self._beta_rad, self._gamma_rad)
 
     @property
     def unit(self) -> Unit | None:

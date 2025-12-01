@@ -19,6 +19,9 @@ from typing import Any, Protocol
 
 from ..utils.shared_utilities import SafeExecutionMixin, SharedConstants
 
+# Type alias for validation check callable signature
+ValidationCheckFunc = Callable[[Any], dict[str, Any] | None]
+
 # Use shared constants
 MSG_VALIDATION_CHECK_FAILED = SharedConstants.MSG_VALIDATION_CHECK_FAILED
 MSG_WARNING_ATTR_UNINITIALIZED = "Problem warnings attribute is not properly initialized"
@@ -42,7 +45,7 @@ class ProblemAttributes(Protocol):
 
     logger: logging.Logger
     warnings: list[dict[str, Any]]
-    validation_checks: list[Callable[[Any], dict[str, Any] | None]]
+    validation_checks: list[ValidationCheckFunc]
     variables: dict[str, Any]
 
 
@@ -52,10 +55,10 @@ class ValidationMixin(SafeExecutionMixin):
     # These attributes will be provided by other mixins in the final Problem class
     logger: logging.Logger
     warnings: list[dict[str, Any]]
-    validation_checks: list[Callable[[Any], dict[str, Any] | None]]
+    validation_checks: list[ValidationCheckFunc]
     variables: dict[str, Any]
 
-    def add_validation_check(self, check_function: Callable[[Any], dict[str, Any] | None]) -> None:
+    def add_validation_check(self, check_function: ValidationCheckFunc) -> None:
         """Add a validation check function."""
         if not callable(check_function):
             raise TypeError("check_function must be callable")
@@ -178,7 +181,7 @@ class ValidationMixin(SafeExecutionMixin):
             validation_function = self._create_validation_function(check_obj)
             self.validation_checks.append(validation_function)
 
-    def _create_validation_function(self, check_obj: ValidationResult) -> Callable[[Any], dict[str, Any] | None]:
+    def _create_validation_function(self, check_obj: ValidationResult) -> ValidationCheckFunc:
         """Create a validation function from a check object, avoiding closure issues."""
 
         def check_function(problem_instance: Any) -> dict[str, Any] | None:

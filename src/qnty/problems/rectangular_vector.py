@@ -19,6 +19,8 @@ from ..utils.shared_utilities import (
     capture_original_force_states,
     clone_force_vector,
     extract_force_vectors_from_class,
+    get_magnitude_in_preferred_unit,
+    get_unit_symbol,
 )
 from .problem import Problem
 
@@ -206,9 +208,9 @@ class RectangularVectorProblem(VariableStateTrackingMixin, Problem):
             if self._original_force_states.get(name, False) and not force.is_resultant:
                 if force.magnitude is not None and force.angle is not None:
                     if force.magnitude.value is not None and force.angle.value is not None:
-                        mag_val = force.magnitude.value / force.magnitude.preferred.si_factor if force.magnitude.preferred else force.magnitude.value
+                        mag_val = get_magnitude_in_preferred_unit(force.magnitude)
                         ang_val = force.angle.value * 180 / math.pi
-                        mag_unit = force.magnitude.preferred.symbol if force.magnitude.preferred else ""
+                        mag_unit = get_unit_symbol(force.magnitude)
 
                         content["given"].append(f"{name} = {mag_val:.1f} {mag_unit} at {ang_val:.1f}°")
 
@@ -222,9 +224,9 @@ class RectangularVectorProblem(VariableStateTrackingMixin, Problem):
             for name, force in self.forces.items():
                 if force.is_resultant or not self._original_force_states.get(name, False):
                     if force.magnitude and force.angle and force.magnitude.value is not None and force.angle.value is not None:
-                        mag_val = force.magnitude.value / force.magnitude.preferred.si_factor if force.magnitude.preferred else force.magnitude.value
+                        mag_val = get_magnitude_in_preferred_unit(force.magnitude)
                         ang_val = force.angle.value * 180 / math.pi
-                        mag_unit = force.magnitude.preferred.symbol if force.magnitude.preferred else ""
+                        mag_unit = get_unit_symbol(force.magnitude)
 
                         content["results"].append(f"{name} = {mag_val:.1f} {mag_unit} at {ang_val:.1f}°")
 

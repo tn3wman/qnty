@@ -7,7 +7,7 @@ from typing import Any
 
 from ...algebra import Equation
 from ...core.quantity import FieldQuantity
-from ..utils import AnalysisDict, DependencyGraph, EquationList, UnknownsSet, VariablesDict
+from ..utils import AnalysisDict, DependencyGraph, EquationList, SolvingUtils, UnknownsSet, VariablesDict
 
 
 @dataclass
@@ -151,45 +151,19 @@ class BaseSolver(ABC):
 
     def _get_known_variables(self, variables: VariablesDict) -> set[str]:
         """Get symbols of known variables."""
-        return {s for s, v in variables.items() if v.is_known}
+        return SolvingUtils.get_known_variables(variables)
 
     def _get_unknown_variables(self, variables: VariablesDict) -> set[str]:
         """Get symbols of unknown variables."""
-        return {s for s, v in variables.items() if not v.is_known}
+        return SolvingUtils.get_unknown_variables(variables)
 
     def _partition_variables(self, variables: VariablesDict) -> tuple[set[str], set[str]]:
         """Partition variables into known and unknown sets efficiently."""
-        known = set()
-        unknown = set()
-        for symbol, variable in variables.items():
-            if variable.is_known:
-                known.add(symbol)
-            else:
-                unknown.add(symbol)
-        return known, unknown
+        return SolvingUtils.partition_variables(variables)
 
     def _resolve_preferred_unit(self, variable: FieldQuantity, variable_name: str | None = None):
-        """Resolve preferred unit for a variable, falling back to SI unit.
-
-        Args:
-            variable: The variable to resolve unit for
-            variable_name: Optional name for error messages (defaults to variable.name)
-
-        Returns:
-            Unit object for the variable
-
-        Raises:
-            ValueError: If no unit can be determined
-        """
-        preferred_unit = variable.preferred
-        if preferred_unit is None:
-            from ...core.unit import ureg
-
-            preferred_unit = ureg.si_unit_for(variable.dim)
-            if preferred_unit is None:
-                var_name = variable_name or getattr(variable, "name", "unknown")
-                raise ValueError(f"Cannot determine unit for variable {var_name}")
-        return preferred_unit
+        """Resolve preferred unit for a variable, falling back to SI unit."""
+        return SolvingUtils.resolve_preferred_unit(variable, variable_name)
 
     def _create_error_result(self, variables: VariablesDict, message: str, iterations: int = 0) -> SolveResult:
         """Create a standardized error result.

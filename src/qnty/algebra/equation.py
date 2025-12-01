@@ -14,7 +14,7 @@ from typing import TYPE_CHECKING, Protocol, cast
 
 from ..core.quantity import FieldQuantity
 from ..utils.scope_discovery import ScopeDiscoveryService
-from ..utils.shared_utilities import SharedConstants, ValidationHelper
+from ..utils.shared_utilities import SharedConstants, ValidationHelper, safe_compute_difference
 from .nodes import BinaryOperation, Expression, VariableReference
 
 if TYPE_CHECKING:
@@ -433,17 +433,11 @@ class Equation:
                 rhs_converted = rhs_value.to(lhs_unit)
                 lhs_val = self._get_quantity_value(lhs_value)
                 rhs_val = self._get_quantity_value(rhs_converted)
-                if lhs_val is not None and rhs_val is not None:
-                    residual = abs(lhs_val - rhs_val)
-                else:
-                    residual = float("inf")
+                residual = safe_compute_difference(lhs_val, rhs_val)
             else:
                 lhs_val = self._get_quantity_value(lhs_value)
                 rhs_val = self._get_quantity_value(rhs_value)
-                if lhs_val is not None and rhs_val is not None:
-                    residual = abs(lhs_val - rhs_val)
-                else:
-                    residual = float("inf")
+                residual = safe_compute_difference(lhs_val, rhs_val)
 
             return residual < tolerance
         except (ValueError, TypeError, AttributeError, KeyError) as e:

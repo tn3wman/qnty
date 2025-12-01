@@ -71,6 +71,7 @@ from ...spatial.vectors import (
     create_vector_resultant,
     create_vector_resultant_polar,
 )
+from ...utils.shared_utilities import format_exception_with_traceback
 
 if TYPE_CHECKING:
     from ...core.quantity import Quantity
@@ -778,11 +779,9 @@ def solve_class(
         )
 
     except Exception as e:
-        import traceback
-
         return Result(
             success=False,
-            error=f"{type(e).__name__}: {e}\n{traceback.format_exc()}",
+            error=format_exception_with_traceback(e),
         )
 
 
@@ -892,11 +891,9 @@ def solve(
         )
 
     except Exception as e:
-        import traceback
-
         return Result(
             success=False,
-            error=f"{type(e).__name__}: {e}\n{traceback.format_exc()}",
+            error=format_exception_with_traceback(e),
         )
 
 

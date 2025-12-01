@@ -12,6 +12,7 @@ from datetime import datetime
 from enum import Enum
 from pathlib import Path
 
+from ...utils.shared_utilities import build_force_data_dict
 from ...utils.shared_utilities import build_variable_table_rows as _build_variable_table_rows
 from ...utils.shared_utilities import convert_angle_to_direction as _convert_angle_to_direction
 from ...utils.shared_utilities import escape_latex as _escape_latex_util
@@ -1871,16 +1872,7 @@ class ReportBuilder:
             # Get angle reference
             reference_str = get_angle_reference_label(force_obj)
 
-            force_data = {
-                "symbol": force_name,
-                "name": getattr(force_obj, "name", force_name),
-                "magnitude": mag_str,
-                "angle": angle_str,
-                "unit": mag_unit,
-                "x": x_str,
-                "y": y_str,
-                "reference": reference_str,
-            }
+            force_data = build_force_data_dict(force_name, force_obj, mag_str, angle_str, mag_unit, x_str, y_str, reference_str)
 
             if was_originally_known:
                 known_data.append(force_data)

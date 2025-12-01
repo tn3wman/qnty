@@ -96,6 +96,25 @@ class SolvingUtils:
 
         return extract_numerical_value(value)
 
+    @staticmethod
+    def create_symbol_mapping(var_names: set[str] | list[str], namespace: str, variables: dict[str, Any]) -> dict[str, str]:
+        """Create mapping from original variable names to namespaced symbols.
+
+        Args:
+            var_names: Set or list of variable names to map
+            namespace: Namespace prefix to apply
+            variables: Dictionary of available variables to check against
+
+        Returns:
+            Dictionary mapping original names to namespaced names
+        """
+        symbol_mapping = {}
+        for var_name in var_names:
+            namespaced_name = f"{namespace}_{var_name}"
+            if namespaced_name in variables:
+                symbol_mapping[var_name] = namespaced_name
+        return symbol_mapping
+
 
 class SolverConstants:
     """Constants used across different solvers."""

@@ -13,6 +13,7 @@ from __future__ import annotations
 import math
 from typing import TYPE_CHECKING
 
+from ..utils.shared_utilities import convert_coords_to_unit
 from .dto import PointDTO, QuantityDTO, VectorDTO
 
 if TYPE_CHECKING:
@@ -58,11 +59,7 @@ def vector_to_dto(
 
     # Convert to output unit
     target_unit = ureg.resolve(output_unit)
-    if target_unit is not None:
-        # coords are in SI, divide by target's si_factor to get in target unit
-        coords_output = [c / target_unit.si_factor for c in coords_si]
-    else:
-        coords_output = list(coords_si)
+    coords_output = convert_coords_to_unit(list(coords_si), target_unit)
 
     # Calculate magnitude
     magnitude = math.sqrt(sum(c**2 for c in coords_output))
@@ -172,10 +169,7 @@ def point_to_dto(point: "_Point", output_unit: str | None = None) -> PointDTO:
 
     # Convert to output unit
     target_unit = ureg.resolve(output_unit)
-    if target_unit is not None:
-        coords_output = [c / target_unit.si_factor for c in coords_si]
-    else:
-        coords_output = list(coords_si)
+    coords_output = convert_coords_to_unit(list(coords_si), target_unit)
 
     return PointDTO(
         x=coords_output[0],

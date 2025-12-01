@@ -18,6 +18,7 @@ from ..algebra import BinaryOperation, ConditionalExpression, Constant, Equation
 from ..algebra.nodes import Expression, wrap_operand
 from ..core.quantity import FieldQuantity
 from ..core.quantity_catalog import Dimensionless
+from ..solving.utils import SolvingUtils
 from ..utils.shared_utilities import (
     ArithmeticOperationsMixin,
     ContextDetectionHelper,
@@ -678,45 +679,28 @@ class DelayedFunction(Expression, ArithmeticOperationsMixin):
                 return None
 
             # Build nested conditionals from right to left
+            from ..algebra.functions import cond_expr as create_cond_expr
+
             for condition, expression in reversed(list(cases)):
                 wrapped_expression = wrap_operand(expression)
 
                 if condition.lower is not None and condition.upper is not None:
                     # Both bounds: create nested conditionals to implement AND logic
-                    if condition.lower_inclusive:
-                        lower_cond = wrapped_var >= wrap_operand(condition.lower)
-                    else:
-                        lower_cond = wrapped_var > wrap_operand(condition.lower)
-
-                    if condition.upper_inclusive:
-                        upper_cond = wrapped_var <= wrap_operand(condition.upper)
-                    else:
-                        upper_cond = wrapped_var < wrap_operand(condition.upper)
+                    lower_cond = condition.build_lower_condition(wrapped_var)
+                    upper_cond = condition.build_upper_condition(wrapped_var)
 
                     # Nest the conditions
-                    from ..algebra.functions import cond_expr as create_cond_expr
-
                     inner_cond = create_cond_expr(upper_cond, wrapped_expression, result)
                     result = create_cond_expr(lower_cond, inner_cond, result)
 
                 elif condition.lower is not None:
                     # Only lower bound
-                    if condition.lower_inclusive:
-                        combined_cond = wrapped_var >= wrap_operand(condition.lower)
-                    else:
-                        combined_cond = wrapped_var > wrap_operand(condition.lower)
-                    from ..algebra.functions import cond_expr as create_cond_expr
-
+                    combined_cond = condition.build_lower_condition(wrapped_var)
                     result = create_cond_expr(combined_cond, wrapped_expression, result)
 
                 elif condition.upper is not None:
                     # Only upper bound
-                    if condition.upper_inclusive:
-                        combined_cond = wrapped_var <= wrap_operand(condition.upper)
-                    else:
-                        combined_cond = wrapped_var < wrap_operand(condition.upper)
-                    from ..algebra.functions import cond_expr as create_cond_expr
-
+                    combined_cond = condition.build_upper_condition(wrapped_var)
                     result = create_cond_expr(combined_cond, wrapped_expression, result)
 
             return result
@@ -1236,12 +1220,7 @@ class CompositionMixin:
 
     def _create_symbol_mapping(self, variables_in_eq: set[str], namespace: str) -> dict[str, str]:
         """Create mapping from original symbols to namespaced symbols."""
-        symbol_mapping = {}
-        for var_symbol in variables_in_eq:
-            namespaced_symbol = f"{namespace}_{var_symbol}"
-            if namespaced_symbol in self.variables:
-                symbol_mapping[var_symbol] = namespaced_symbol
-        return symbol_mapping
+        return SolvingUtils.create_symbol_mapping(variables_in_eq, namespace, self.variables)
 
     def _create_namespaced_equation(self, equation: Equation, symbol_mapping: dict[str, str]) -> Equation | None:
         """Create new equation with namespaced references."""

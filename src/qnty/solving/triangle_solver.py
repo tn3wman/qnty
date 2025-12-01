@@ -41,6 +41,48 @@ def _format_latex_subscript(name: str) -> str:
     return name
 
 
+def validate_force_magnitude(force: _Vector, label: str = "Force") -> None:
+    """Validate that a force has a known magnitude value.
+
+    Args:
+        force: The force vector to validate
+        label: Label to use in error message (e.g., "Force", "Resultant")
+
+    Raises:
+        ValueError: If magnitude is None or has no value
+    """
+    if force.magnitude is None or force.magnitude.value is None:
+        raise ValueError(f"{label} {force.name} has no magnitude")
+
+
+def validate_force_angle(force: _Vector, label: str = "Force") -> None:
+    """Validate that a force has a known angle value.
+
+    Args:
+        force: The force vector to validate
+        label: Label to use in error message (e.g., "Force", "Resultant")
+
+    Raises:
+        ValueError: If angle is None or has no value
+    """
+    if force.angle is None or force.angle.value is None:
+        raise ValueError(f"{label} {force.name} has no angle")
+
+
+def validate_force_magnitude_and_angle(force: _Vector, label: str = "Force") -> None:
+    """Validate that a force has both known magnitude and angle values.
+
+    Args:
+        force: The force vector to validate
+        label: Label to use in error message
+
+    Raises:
+        ValueError: If magnitude or angle is missing
+    """
+    validate_force_magnitude(force, label)
+    validate_force_angle(force, label)
+
+
 def _create_law_of_sines_step(
     force_name: str, resultant_name: str, angle_opposite_force_deg: float, angle_opposite_resultant_deg: float, F_R: float, F_computed: float, force_unit: str
 ) -> dict[str, Any]:
@@ -312,15 +354,9 @@ class TriangleSolver:
             resultant: The known resultant force
             known_force: The known force
         """
-        # Get magnitudes and angles
-        if resultant.magnitude is None or resultant.magnitude.value is None:
-            raise ValueError(f"Resultant {resultant.name} has no magnitude")
-        if known_force.magnitude is None or known_force.magnitude.value is None:
-            raise ValueError(f"Force {known_force.name} has no magnitude")
-        if resultant.angle is None or resultant.angle.value is None:
-            raise ValueError(f"Resultant {resultant.name} has no angle")
-        if known_force.angle is None or known_force.angle.value is None:
-            raise ValueError(f"Force {known_force.name} has no angle")
+        # Validate magnitudes and angles
+        validate_force_magnitude_and_angle(resultant, "Resultant")
+        validate_force_magnitude_and_angle(known_force, "Force")
 
         F_R = resultant.magnitude.value
         F_known = known_force.magnitude.value
@@ -421,15 +457,9 @@ class TriangleSolver:
             force2: Second known force
             resultant: The resultant force to solve for
         """
-        # Get magnitudes and angles
-        if force1.magnitude is None or force1.magnitude.value is None:
-            raise ValueError(f"Force {force1.name} has no magnitude")
-        if force2.magnitude is None or force2.magnitude.value is None:
-            raise ValueError(f"Force {force2.name} has no magnitude")
-        if force1.angle is None or force1.angle.value is None:
-            raise ValueError(f"Force {force1.name} has no angle")
-        if force2.angle is None or force2.angle.value is None:
-            raise ValueError(f"Force {force2.name} has no angle")
+        # Validate magnitudes and angles
+        validate_force_magnitude_and_angle(force1, "Force")
+        validate_force_magnitude_and_angle(force2, "Force")
 
         F1 = force1.magnitude.value
         F2 = force2.magnitude.value
@@ -527,19 +557,14 @@ class TriangleSolver:
             raise ValueError(f"Expected exactly 2 unknown forces, got {len(unknown_forces)}")
 
         # Verify resultant has magnitude and angle
-        if resultant.magnitude is None or resultant.magnitude.value is None:
-            raise ValueError(f"Resultant {resultant.name} must have a known magnitude")
-        if resultant.angle is None or resultant.angle.value is None:
-            raise ValueError(f"Resultant {resultant.name} must have a known angle")
+        validate_force_magnitude_and_angle(resultant, "Resultant")
 
         force1 = unknown_forces[0]
         force2 = unknown_forces[1]
 
-        # Verify both unknowns have angles but not magnitudes
-        if force1.angle is None or force1.angle.value is None:
-            raise ValueError(f"Force {force1.name} must have a known angle")
-        if force2.angle is None or force2.angle.value is None:
-            raise ValueError(f"Force {force2.name} must have a known angle")
+        # Verify both unknowns have angles (they have unknown magnitudes)
+        validate_force_angle(force1, "Force")
+        validate_force_angle(force2, "Force")
 
         # Use absolute value of resultant magnitude for decomposition
         # (negative magnitude means force points opposite to specified angle)

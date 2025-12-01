@@ -1,386 +1,576 @@
 Analyzing 80 Python files...
-3 repetitions of complexity 34
+4 repetitions of complexity 29
 
-Line 390 - src/qnty/problems/solving.py:
-for x_0 in x_1:
-    x_2 = f'{x_3}_{x_0}'
-    if x_2 in x_4.variables:
-        x_5[x_0] = x_2
+Line 443 - src/qnty/problems/position_vector.py:
+f'({x_0[0]:.2f}, {x_0[1]:.2f}, {x_0[2]:.2f})'
 
-Line 749 - src/qnty/problems/problem.py:
-for x_0 in x_1:
-    x_2 = f'{x_3}_{x_0}'
-    if x_2 in x_4.variables:
-        x_5[x_0] = x_2
+Line 701 - src/qnty/problems/position_vector.py:
+f'({x_0[0]:.2f}, {x_0[1]:.2f}, {x_0[2]:.2f})'
 
-Line 1240 - src/qnty/problems/composition.py:
-for x_0 in x_1:
-    x_2 = f'{x_3}_{x_0}'
-    if x_2 in x_4.variables:
-        x_5[x_0] = x_2
+Line 876 - src/qnty/problems/position_vector.py:
+f'({x_0[0]:.2f}, {x_0[1]:.2f}, {x_0[2]:.2f})'
+
+Line 958 - src/qnty/problems/position_vector.py:
+f'({x_0[0]:.2f}, {x_0[1]:.2f}, {x_0[2]:.2f})'
 
 ======================================================================
 
-2 repetitions of complexity 34
+2 repetitions of complexity 29
 
-Line 1874 - src/qnty/extensions/reporting/report_ir.py:
-x_0 = {'symbol': x_0, 'name': getattr(x_1, 'name', x_0), 'magnitude': x_2, 'angle': x_3, 'unit': x_4, 'x': x_5, 'y': x_6, 'reference': x_7}
+Line 54 - src/qnty/core/unit.py:
+if x_0 is None or x_0.f_back is None or x_0.f_back.f_back is None:
+    raise RuntimeError('Could not access call stack for variable name detection')
 
-Line 205 - src/qnty/extensions/reporting/base.py:
-x_0 = {'symbol': x_0, 'name': getattr(x_1, 'name', x_0), 'magnitude': x_2, 'angle': x_3, 'unit': x_4, 'x': x_5, 'y': x_6, 'reference': x_7}
-
-======================================================================
-
-4 repetitions of complexity 33
-
-Line 686 - src/qnty/problems/composition.py:
-if x_0.lower_inclusive:
-    x_1 = x_2 >= x_3(x_0.lower)
-else:
-    x_1 = x_2 > x_3(x_0.lower)
-
-Line 704 - src/qnty/problems/composition.py:
-if x_0.lower_inclusive:
-    x_1 = x_2 >= x_3(x_0.lower)
-else:
-    x_1 = x_2 > x_3(x_0.lower)
-
-Line 406 - src/qnty/algebra/functions.py:
-if x_0.lower_inclusive:
-    x_1 = x_2 >= x_3(x_0.lower)
-else:
-    x_1 = x_2 > x_3(x_0.lower)
-
-Line 422 - src/qnty/algebra/functions.py:
-if x_0.lower_inclusive:
-    x_1 = x_2 >= x_3(x_0.lower)
-else:
-    x_1 = x_2 > x_3(x_0.lower)
+Line 392 - src/qnty/core/dimension.py:
+if x_0 is None or x_0.f_back is None or x_0.f_back.f_back is None:
+    raise RuntimeError('Could not access call stack for variable name detection')
 
 ======================================================================
 
-4 repetitions of complexity 33
+2 repetitions of complexity 29
 
-Line 691 - src/qnty/problems/composition.py:
-if x_0.upper_inclusive:
-    x_1 = x_2 <= x_3(x_0.upper)
-else:
-    x_1 = x_2 < x_3(x_0.upper)
-
-Line 714 - src/qnty/problems/composition.py:
-if x_0.upper_inclusive:
-    x_1 = x_2 <= x_3(x_0.upper)
-else:
-    x_1 = x_2 < x_3(x_0.upper)
-
-Line 411 - src/qnty/algebra/functions.py:
-if x_0.upper_inclusive:
-    x_1 = x_2 <= x_3(x_0.upper)
-else:
-    x_1 = x_2 < x_3(x_0.upper)
-
-Line 430 - src/qnty/algebra/functions.py:
-if x_0.upper_inclusive:
-    x_1 = x_2 <= x_3(x_0.upper)
-else:
-    x_1 = x_2 < x_3(x_0.upper)
-
-======================================================================
-
-2 repetitions of complexity 33
-
-Line 431 - src/qnty/problems/parallelogram_law.py:
-x_0 = x_0(name=f'{x_1} Angle', dim=x_2.dim.D, value=x_3, preferred=x_2.degree_unit, _symbol=f'θ_{x_1}')
-
-Line 1847 - src/qnty/problems/parallelogram_law.py:
-x_0 = x_0(name=f'{x_1} Angle', dim=x_2.dim.D, value=x_3, preferred=x_2.degree_unit, _symbol=f'θ_{x_1}')
-
-======================================================================
-
-2 repetitions of complexity 33
-
-Line 616 - src/qnty/problems/problem.py:
-if hasattr(x_0, 'function_name'):
-    return type(x_0)(x_0.function_name, x_1)
-else:
-    return type(x_0)(x_0.operator, x_1)
-
-Line 867 - src/qnty/problems/problem.py:
-if hasattr(x_0, 'function_name'):
-    return type(x_0)(x_0.function_name, x_1)
-else:
-    return type(x_0)(x_0.operator, x_1)
-
-======================================================================
-
-2 repetitions of complexity 33
-
-Line 51 - src/qnty/solving/utils.py:
-for x_0, x_1 in x_2.items():
-    if x_1.is_known:
-        x_3.add(x_0)
-    else:
-        x_4.add(x_0)
-
-Line 164 - src/qnty/solving/solvers/base.py:
-for x_0, x_1 in x_2.items():
-    if x_1.is_known:
-        x_3.add(x_0)
-    else:
-        x_4.add(x_0)
-
-======================================================================
-
-4 repetitions of complexity 32
-
-Line 239 - src/qnty/problems/cartesian_vector.py:
-x_0 = x_1.magnitude.value / x_1.magnitude.preferred.si_factor if x_1.magnitude.preferred else x_1.magnitude.value
-
-Line 263 - src/qnty/problems/cartesian_vector.py:
-x_0 = x_1.magnitude.value / x_1.magnitude.preferred.si_factor if x_1.magnitude.preferred else x_1.magnitude.value
-
-Line 209 - src/qnty/problems/rectangular_vector.py:
-x_0 = x_1.magnitude.value / x_1.magnitude.preferred.si_factor if x_1.magnitude.preferred else x_1.magnitude.value
-
-Line 225 - src/qnty/problems/rectangular_vector.py:
-x_0 = x_1.magnitude.value / x_1.magnitude.preferred.si_factor if x_1.magnitude.preferred else x_1.magnitude.value
-
-======================================================================
-
-2 repetitions of complexity 32
-
-Line 70 - src/qnty/problems/parallelogram_law.py:
-x_0 ** 2 + x_1 ** 2 - 2 * x_0 * x_1 * x_2.cos(x_3)
-
-Line 1677 - src/qnty/utils/shared_utilities.py:
-x_0 ** 2 + x_1 ** 2 - 2 * x_0 * x_1 * x_2.cos(x_3)
-
-======================================================================
-
-2 repetitions of complexity 32
-
-Line 780 - src/qnty/problems/statics/parallelogram_law.py:
-except Exception as e:
-    import traceback
-    return x_0(success=False, error=f'{type(x_1).__name__}: {x_1}\n{x_2.format_exc()}')
-
-Line 894 - src/qnty/problems/statics/parallelogram_law.py:
-except Exception as e:
-    import traceback
-    return x_0(success=False, error=f'{type(x_1).__name__}: {x_1}\n{x_2.format_exc()}')
-
-======================================================================
-
-2 repetitions of complexity 32
-
-Line 192 - src/qnty/extensions/reporting/base.py:
-if x_0 is not None and x_0.value is not None:
-    x_1 = x_0.magnitude()
-    x_2 = f'{x_1:.6g}'
-
-Line 196 - src/qnty/extensions/reporting/base.py:
-if x_0 is not None and x_0.value is not None:
-    x_1 = x_0.magnitude()
-    x_2 = f'{x_1:.6g}'
-
-======================================================================
-
-2 repetitions of complexity 32
-
-Line 436 - src/qnty/algebra/equation.py:
-if x_0 is not None and x_1 is not None:
-    x_2 = abs(x_0 - x_1)
-else:
-    x_2 = float('inf')
-
-Line 443 - src/qnty/algebra/equation.py:
-if x_0 is not None and x_1 is not None:
-    x_2 = abs(x_0 - x_1)
-else:
-    x_2 = float('inf')
-
-======================================================================
-
-3 repetitions of complexity 31
-
-Line 318 - src/qnty/solving/triangle_solver.py:
-if x_0.magnitude is None or x_0.magnitude.value is None:
-    raise ValueError(f'Force {x_0.name} has no magnitude')
-
-Line 425 - src/qnty/solving/triangle_solver.py:
-if x_0.magnitude is None or x_0.magnitude.value is None:
-    raise ValueError(f'Force {x_0.name} has no magnitude')
-
-Line 427 - src/qnty/solving/triangle_solver.py:
-if x_0.magnitude is None or x_0.magnitude.value is None:
-    raise ValueError(f'Force {x_0.name} has no magnitude')
-
-======================================================================
-
-3 repetitions of complexity 31
-
-Line 322 - src/qnty/solving/triangle_solver.py:
-if x_0.angle is None or x_0.angle.value is None:
-    raise ValueError(f'Force {x_0.name} has no angle')
-
-Line 429 - src/qnty/solving/triangle_solver.py:
-if x_0.angle is None or x_0.angle.value is None:
-    raise ValueError(f'Force {x_0.name} has no angle')
-
-Line 431 - src/qnty/solving/triangle_solver.py:
-if x_0.angle is None or x_0.angle.value is None:
-    raise ValueError(f'Force {x_0.name} has no angle')
-
-======================================================================
-
-2 repetitions of complexity 31
-
-Line 61 - src/qnty/integration/converters.py:
+Line 1312 - src/qnty/utils/shared_utilities.py:
 if x_0 is not None:
-    x_1 = [x_2 / x_0.si_factor for x_2 in x_3]
+    x_1 = x_2.resolve(x_3, dim=x_0)
 else:
-    x_1 = list(x_3)
+    x_1 = x_2.resolve(x_3)
 
-Line 175 - src/qnty/integration/converters.py:
+Line 1352 - src/qnty/utils/shared_utilities.py:
 if x_0 is not None:
-    x_1 = [x_2 / x_0.si_factor for x_2 in x_3]
+    x_1 = x_2.resolve(x_3, dim=x_0)
 else:
-    x_1 = list(x_3)
+    x_1 = x_2.resolve(x_3)
 
 ======================================================================
 
-2 repetitions of complexity 31
+2 repetitions of complexity 29
 
-Line 1831 - src/qnty/problems/parallelogram_law.py:
-equation_for_list=f'|{x_0}|² = |{x_1}|² + |{x_2}|² - 2·|{x_1}|·|{x_2}|·cos(∠({x_1},{x_2}))'
+Line 716 - src/qnty/extensions/diagram_utils.py:
+x_0.text(x_1, x_2, x_3, fontsize=10, color=x_4, ha='center', va='center', bbox={'boxstyle': 'round,pad=0.2', 'facecolor': 'white', 'alpha': 0.7})
 
-Line 1919 - src/qnty/problems/parallelogram_law.py:
-equation_for_list=f'|{x_0}|² = |{x_1}|² + |{x_2}|² - 2·|{x_1}|·|{x_2}|·cos(∠({x_1},{x_2}))'
-
-======================================================================
-
-2 repetitions of complexity 31
-
-Line 218 - src/qnty/utils/caching/manager.py:
-isinstance(x_0, int | float) and -10 <= x_0 <= 10 and (x_0 == int(x_0))
-
-Line 229 - src/qnty/utils/caching/manager.py:
-isinstance(x_0, int | float) and -10 <= x_0 <= 10 and (x_0 == int(x_0))
+Line 169 - src/qnty/extensions/reporting/vector_diagram.py:
+x_0.text(x_1, x_2, x_3, fontsize=10, color=x_4, ha='center', va='center', bbox={'boxstyle': 'round,pad=0.2', 'facecolor': 'white', 'alpha': 0.7})
 
 ======================================================================
 
-2 repetitions of complexity 31
+2 repetitions of complexity 29
 
-Line 1874 - src/qnty/extensions/reporting/report_ir.py:
-{'symbol': x_0, 'name': getattr(x_1, 'name', x_0), 'magnitude': x_2, 'angle': x_3, 'unit': x_4, 'x': x_5, 'y': x_6, 'reference': x_7}
+Line 81 - src/qnty/extensions/reporting/formats.py:
+x_0 = x_0(problem=x_1.problem, known_variables=x_1.known_variables, equations=x_1.equations, solving_history=x_1.solving_history, diagram_path=x_2)
 
-Line 205 - src/qnty/extensions/reporting/base.py:
-{'symbol': x_0, 'name': getattr(x_1, 'name', x_0), 'magnitude': x_2, 'angle': x_3, 'unit': x_4, 'x': x_5, 'y': x_6, 'reference': x_7}
-
-======================================================================
-
-2 repetitions of complexity 31
-
-Line 539 - src/qnty/solving/triangle_solver.py:
-if x_0.angle is None or x_0.angle.value is None:
-    raise ValueError(f'Force {x_0.name} must have a known angle')
-
-Line 541 - src/qnty/solving/triangle_solver.py:
-if x_0.angle is None or x_0.angle.value is None:
-    raise ValueError(f'Force {x_0.name} must have a known angle')
+Line 106 - src/qnty/extensions/reporting/formats.py:
+x_0 = x_0(problem=x_1.problem, known_variables=x_1.known_variables, equations=x_1.equations, solving_history=x_1.solving_history, diagram_path=x_2)
 
 ======================================================================
 
-2 repetitions of complexity 31
+2 repetitions of complexity 29
 
-Line 806 - src/qnty/spatial/vector.py:
-x_0 = x_1._dim * x_2._dim if x_1._dim is not None and x_2._dim is not None else None
+Line 633 - src/qnty/solving/triangle_solver.py:
+x_0.solution_steps.append(x_1(x_2.name, x_3.name, x_4, x_5, x_6, x_7, x_8))
 
-Line 848 - src/qnty/spatial/vector.py:
-x_0 = x_1._dim * x_2._dim if x_1._dim is not None and x_2._dim is not None else None
-
-======================================================================
-
-2 repetitions of complexity 30
-
-Line 25 - src/qnty/core/dimension.py:
-return tuple((x_0[x_1] + x_2[x_1] for x_1 in range(len(x_0))))
-
-Line 202 - src/qnty/core/dimension.py:
-return tuple((x_0[x_1] + x_2[x_1] for x_1 in range(len(x_0))))
+Line 636 - src/qnty/solving/triangle_solver.py:
+x_0.solution_steps.append(x_1(x_2.name, x_3.name, x_4, x_5, x_6, x_7, x_8))
 
 ======================================================================
 
-2 repetitions of complexity 30
+9 repetitions of complexity 28
 
-Line 29 - src/qnty/core/dimension.py:
-return tuple((x_0[x_1] - x_2[x_1] for x_1 in range(len(x_0))))
+Line 1510 - src/qnty/spatial/vectors.py:
+x_0 = 1 - x_0.cos(x_1) ** 2 - x_0.cos(x_2) ** 2
 
-Line 205 - src/qnty/core/dimension.py:
-return tuple((x_0[x_1] - x_2[x_1] for x_1 in range(len(x_0))))
+Line 1516 - src/qnty/spatial/vectors.py:
+x_0 = 1 - x_0.cos(x_1) ** 2 - x_0.cos(x_2) ** 2
 
-======================================================================
+Line 1522 - src/qnty/spatial/vectors.py:
+x_0 = 1 - x_0.cos(x_1) ** 2 - x_0.cos(x_2) ** 2
 
-2 repetitions of complexity 30
+Line 406 - src/qnty/spatial/vector.py:
+x_0 = 1 - x_0.cos(x_1) ** 2 - x_0.cos(x_2) ** 2
 
-Line 431 - src/qnty/problems/parallelogram_law.py:
-x_0(name=f'{x_1} Angle', dim=x_2.dim.D, value=x_3, preferred=x_2.degree_unit, _symbol=f'θ_{x_1}')
+Line 411 - src/qnty/spatial/vector.py:
+x_0 = 1 - x_0.cos(x_1) ** 2 - x_0.cos(x_2) ** 2
 
-Line 1847 - src/qnty/problems/parallelogram_law.py:
-x_0(name=f'{x_1} Angle', dim=x_2.dim.D, value=x_3, preferred=x_2.degree_unit, _symbol=f'θ_{x_1}')
+Line 419 - src/qnty/spatial/vector.py:
+x_0 = 1 - x_0.cos(x_1) ** 2 - x_0.cos(x_2) ** 2
 
-======================================================================
+Line 177 - src/qnty/spatial/vector_helpers.py:
+x_0 = 1 - x_0.cos(x_1) ** 2 - x_0.cos(x_2) ** 2
 
-2 repetitions of complexity 30
+Line 183 - src/qnty/spatial/vector_helpers.py:
+x_0 = 1 - x_0.cos(x_1) ** 2 - x_0.cos(x_2) ** 2
 
-Line 1831 - src/qnty/problems/parallelogram_law.py:
-f'|{x_0}|² = |{x_1}|² + |{x_2}|² - 2·|{x_1}|·|{x_2}|·cos(∠({x_1},{x_2}))'
-
-Line 1919 - src/qnty/problems/parallelogram_law.py:
-f'|{x_0}|² = |{x_1}|² + |{x_2}|² - 2·|{x_1}|·|{x_2}|·cos(∠({x_1},{x_2}))'
-
-======================================================================
-
-2 repetitions of complexity 30
-
-Line 2403 - src/qnty/problems/parallelogram_law.py:
-x_0 = all((x_1.angle is not None and x_1.angle.value is not None for x_1 in x_2))
-
-Line 2506 - src/qnty/problems/parallelogram_law.py:
-x_0 = all((x_1.angle is not None and x_1.angle.value is not None for x_1 in x_2))
+Line 189 - src/qnty/spatial/vector_helpers.py:
+x_0 = 1 - x_0.cos(x_1) ** 2 - x_0.cos(x_2) ** 2
 
 ======================================================================
 
-2 repetitions of complexity 30
+3 repetitions of complexity 28
 
-Line 417 - src/qnty/problems/problem.py:
-if x_0.value is not None:
-    x_1._update_variable_value(x_2, x_0.value, x_0.preferred or x_3.preferred)
+Line 724 - src/qnty/spatial/vectors.py:
+if x_0._dim != x_1._dim:
+    raise ValueError(f'Points must have same dimension: {x_0._dim} vs {x_1._dim}')
 
-Line 421 - src/qnty/problems/problem.py:
-if x_0.value is not None:
-    x_1._update_variable_value(x_2, x_0.value, x_0.preferred or x_3.preferred)
+Line 794 - src/qnty/spatial/vectors.py:
+if x_0._dim != x_1._dim:
+    raise ValueError(f'Points must have same dimension: {x_0._dim} vs {x_1._dim}')
 
-======================================================================
-
-2 repetitions of complexity 30
-
-Line 45 - src/qnty/problems/validation.py:
-x_0: list[x_1[[x_2], dict[str, x_2] | None]]
-
-Line 55 - src/qnty/problems/validation.py:
-x_0: list[x_1[[x_2], dict[str, x_2] | None]]
+Line 1409 - src/qnty/spatial/vector.py:
+if x_0._dim != x_1._dim:
+    raise ValueError(f'Points must have same dimension: {x_0._dim} vs {x_1._dim}')
 
 ======================================================================
 
-2 repetitions of complexity 30
+2 repetitions of complexity 28
 
-Line 187 - src/qnty/spatial/point_direction_angles.py:
-return (x_0.cos(x_1._alpha_rad), x_0.cos(x_1._beta_rad), x_0.cos(x_1._gamma_rad))
+Line 71 - src/qnty/integration/converters.py:
+if x_0.lower() in ('degree', 'degrees', 'deg'):
+    x_1 = x_2.degrees(x_3)
+else:
+    x_1 = x_3
 
-Line 173 - src/qnty/spatial/vector_direction_angles.py:
-return (x_0.cos(x_1._alpha_rad), x_0.cos(x_1._beta_rad), x_0.cos(x_1._gamma_rad))
+Line 373 - src/qnty/problems/statics/parallelogram_law.py:
+if x_0.lower() in ('degree', 'degrees', 'deg'):
+    x_1 = x_2.degrees(x_3)
+else:
+    x_1 = x_3
 
 ======================================================================
 
-Found 28 repeated patterns
+2 repetitions of complexity 28
+
+Line 1434 - src/qnty/problems/parallelogram_law.py:
+if x_0 is not None:
+    x_1 = x_0
+else:
+    x_1 = x_2._get_standard_angle(getattr(x_3, '_polar_angle_rad', 0.0), x_4)
+
+Line 1448 - src/qnty/problems/parallelogram_law.py:
+if x_0 is not None:
+    x_1 = x_0
+else:
+    x_1 = x_2._get_standard_angle(getattr(x_3, '_polar_angle_rad', 0.0), x_4)
+
+======================================================================
+
+2 repetitions of complexity 28
+
+Line 1355 - src/qnty/problems/problem.py:
+if not hasattr(x_0, '_wrapped_var'):
+    raise AttributeError(f"'{type(x_0).__name__}' object has no attribute '{x_1}'")
+
+Line 1094 - src/qnty/problems/composition.py:
+if not hasattr(x_0, '_wrapped_var'):
+    raise AttributeError(f"'{type(x_0).__name__}' object has no attribute '{x_1}'")
+
+======================================================================
+
+2 repetitions of complexity 28
+
+Line 716 - src/qnty/extensions/diagram_utils.py:
+x_0.text(x_1, x_2, x_3, fontsize=10, color=x_4, ha='center', va='center', bbox={'boxstyle': 'round,pad=0.2', 'facecolor': 'white', 'alpha': 0.7})
+
+Line 169 - src/qnty/extensions/reporting/vector_diagram.py:
+x_0.text(x_1, x_2, x_3, fontsize=10, color=x_4, ha='center', va='center', bbox={'boxstyle': 'round,pad=0.2', 'facecolor': 'white', 'alpha': 0.7})
+
+======================================================================
+
+2 repetitions of complexity 28
+
+Line 633 - src/qnty/solving/triangle_solver.py:
+x_0.solution_steps.append(x_1(x_2.name, x_3.name, x_4, x_5, x_6, x_7, x_8))
+
+Line 636 - src/qnty/solving/triangle_solver.py:
+x_0.solution_steps.append(x_1(x_2.name, x_3.name, x_4, x_5, x_6, x_7, x_8))
+
+======================================================================
+
+5 repetitions of complexity 27
+
+Line 319 - src/qnty/integration/solver_service.py:
+x_0 = x_1.sqrt(x_2 ** 2 + x_3 ** 2 + x_4 ** 2)
+
+Line 403 - src/qnty/problems/position_vector.py:
+x_0 = x_1.sqrt(x_2 ** 2 + x_3 ** 2 + x_4 ** 2)
+
+Line 365 - src/qnty/spatial/vectors.py:
+x_0 = x_1.sqrt(x_2 ** 2 + x_3 ** 2 + x_4 ** 2)
+
+Line 281 - src/qnty/spatial/points.py:
+x_0 = x_1.sqrt(x_2 ** 2 + x_3 ** 2 + x_4 ** 2)
+
+Line 80 - src/qnty/spatial/vector_direction_ratios.py:
+x_0 = x_1.sqrt(x_2 ** 2 + x_3 ** 2 + x_4 ** 2)
+
+======================================================================
+
+4 repetitions of complexity 27
+
+Line 300 - src/qnty/core/unit.py:
+if x_0 in x_1.WRAPPER_EXCLUDED_DUNDERS:
+    raise AttributeError(f"{type(x_2).__name__} has no attribute '{x_0}'")
+
+Line 547 - src/qnty/core/quantity.py:
+if x_0 in x_1.WRAPPER_EXCLUDED_DUNDERS:
+    raise AttributeError(f"{type(x_2).__name__} has no attribute '{x_0}'")
+
+Line 604 - src/qnty/core/quantity.py:
+if x_0 in x_1.WRAPPER_EXCLUDED_DUNDERS:
+    raise AttributeError(f"{type(x_2).__name__} has no attribute '{x_0}'")
+
+Line 665 - src/qnty/core/quantity.py:
+if x_0 in x_1.WRAPPER_EXCLUDED_DUNDERS:
+    raise AttributeError(f"{type(x_2).__name__} has no attribute '{x_0}'")
+
+======================================================================
+
+3 repetitions of complexity 27
+
+Line 279 - src/qnty/spatial/vector.py:
+x_0._coords = x_1.array([x_2.value, x_3.value, x_4.value], dtype=float)
+
+Line 551 - src/qnty/spatial/vector.py:
+x_0._coords = x_1.array([x_2.value, x_3.value, x_4.value], dtype=float)
+
+Line 130 - src/qnty/spatial/point.py:
+x_0._coords = x_1.array([x_2.value, x_3.value, x_4.value], dtype=float)
+
+======================================================================
+
+3 repetitions of complexity 27
+
+Line 1449 - src/qnty/spatial/vector.py:
+if not hasattr(x_0, '_coords') or x_0._coords is None or x_0._dim is None:
+    return None
+
+Line 1456 - src/qnty/spatial/vector.py:
+if not hasattr(x_0, '_coords') or x_0._coords is None or x_0._dim is None:
+    return None
+
+Line 1463 - src/qnty/spatial/vector.py:
+if not hasattr(x_0, '_coords') or x_0._coords is None or x_0._dim is None:
+    return None
+
+======================================================================
+
+2 repetitions of complexity 27
+
+Line 70 - src/qnty/core/dimension_catalog.py:
+x_0 * x_1 ** 2 * x_2 ** (-2) * x_3 ** (-2)
+
+Line 169 - src/qnty/core/dimension_catalog.py:
+x_0 * x_1 ** 2 * x_2 ** (-2) * x_3 ** (-2)
+
+======================================================================
+
+2 repetitions of complexity 27
+
+Line 1803 - src/qnty/problems/parallelogram_law.py:
+equation_for_list=f'sin(∠({x_0},{x_1}))/|{x_2}| = sin(∠({x_2},{x_0}))/|{x_1}|'
+
+Line 1941 - src/qnty/problems/parallelogram_law.py:
+equation_for_list=f'sin(∠({x_0},{x_1}))/|{x_2}| = sin(∠({x_2},{x_0}))/|{x_1}|'
+
+======================================================================
+
+2 repetitions of complexity 27
+
+Line 483 - src/qnty/spatial/vector.py:
+x_0 = x_1(name=f'{x_2.name}_angle', dim=x_3.dim, value=x_4, preferred=x_3.preferred)
+
+Line 514 - src/qnty/spatial/vector.py:
+x_0 = x_1(name=f'{x_2.name}_angle', dim=x_3.dim, value=x_4, preferred=x_3.preferred)
+
+======================================================================
+
+3 repetitions of complexity 26
+
+Line 1785 - src/qnty/extensions/reporting/report_ir.py:
+if hasattr(x_0, 'preferred') and x_0.preferred:
+    x_1 = x_0.preferred.symbol
+else:
+    x_1 = ''
+
+Line 1805 - src/qnty/extensions/reporting/report_ir.py:
+if hasattr(x_0, 'preferred') and x_0.preferred:
+    x_1 = x_0.preferred.symbol
+else:
+    x_1 = ''
+
+Line 2120 - src/qnty/extensions/reporting/report_ir.py:
+if hasattr(x_0, 'preferred') and x_0.preferred:
+    x_1 = x_0.preferred.symbol
+else:
+    x_1 = ''
+
+======================================================================
+
+2 repetitions of complexity 26
+
+Line 256 - src/qnty/problems/cartesian_vector.py:
+not x_0._original_force_states.get(x_1, False) or (x_2.is_resultant and (not x_0.is_solved))
+
+Line 219 - src/qnty/problems/rectangular_vector.py:
+not x_0._original_force_states.get(x_1, False) or (x_2.is_resultant and (not x_0.is_solved))
+
+======================================================================
+
+2 repetitions of complexity 26
+
+Line 1803 - src/qnty/problems/parallelogram_law.py:
+f'sin(∠({x_0},{x_1}))/|{x_2}| = sin(∠({x_2},{x_0}))/|{x_1}|'
+
+Line 1941 - src/qnty/problems/parallelogram_law.py:
+f'sin(∠({x_0},{x_1}))/|{x_2}| = sin(∠({x_2},{x_0}))/|{x_1}|'
+
+======================================================================
+
+2 repetitions of complexity 26
+
+Line 0 - src/qnty/utils/scope_discovery.py:
+cls, local_vars: dict, global_vars: dict, remaining_vars: set[str], discovered: dict[str, x_0]
+
+Line 0 - src/qnty/utils/scope_discovery.py:
+cls, local_vars: dict, global_vars: dict, remaining_vars: set[str], discovered: dict[str, x_0]
+
+======================================================================
+
+2 repetitions of complexity 26
+
+Line 364 - src/qnty/extensions/reporting/report_ir.py:
+x_0 = {'ₓ': 'x', 'ᵧ': 'y', 'ᵤ': 'u', 'ᵥ': 'v', 'ₙ': 'n', 'ₜ': 't', '₁': '1', '₂': '2', '₃': '3', 'ₐ': 'a', 'ᵦ': 'b'}
+
+Line 975 - src/qnty/extensions/reporting/report_ir.py:
+x_0 = {'ₓ': 'x', 'ᵧ': 'y', 'ᵤ': 'u', 'ᵥ': 'v', 'ₙ': 'n', 'ₜ': 't', '₁': '1', '₂': '2', '₃': '3', 'ₐ': 'a', 'ᵦ': 'b'}
+
+======================================================================
+
+2 repetitions of complexity 26
+
+Line 81 - src/qnty/extensions/reporting/formats.py:
+x_0(problem=x_1.problem, known_variables=x_1.known_variables, equations=x_1.equations, solving_history=x_1.solving_history, diagram_path=x_2)
+
+Line 106 - src/qnty/extensions/reporting/formats.py:
+x_0(problem=x_1.problem, known_variables=x_1.known_variables, equations=x_1.equations, solving_history=x_1.solving_history, diagram_path=x_2)
+
+======================================================================
+
+2 repetitions of complexity 26
+
+Line 186 - src/qnty/spatial/vectors.py:
+x_0.name = x_1 if x_1 is not None else x_2 if x_2 and x_2 != 'Vector' else ''
+
+Line 1610 - src/qnty/spatial/vector.py:
+x_0.name = x_1 if x_1 is not None else x_2 if x_2 and x_2 != 'Vector' else ''
+
+======================================================================
+
+2 repetitions of complexity 26
+
+Line 361 - src/qnty/spatial/vectors.py:
+x_0, x_1, x_2 = (float(x_3), float(x_4), float(x_5))
+
+Line 277 - src/qnty/spatial/points.py:
+x_0, x_1, x_2 = (float(x_3), float(x_4), float(x_5))
+
+======================================================================
+
+2 repetitions of complexity 26
+
+Line 200 - src/qnty/spatial/vector.py:
+x_0._coords, x_0._dim, x_0._unit = x_1(x_2, x_3, x_4, x_5)
+
+Line 67 - src/qnty/spatial/point.py:
+x_0._coords, x_0._dim, x_0._unit = x_1(x_2, x_3, x_4, x_5)
+
+======================================================================
+
+9 repetitions of complexity 25
+
+Line 1510 - src/qnty/spatial/vectors.py:
+1 - x_0.cos(x_1) ** 2 - x_0.cos(x_2) ** 2
+
+Line 1516 - src/qnty/spatial/vectors.py:
+1 - x_0.cos(x_1) ** 2 - x_0.cos(x_2) ** 2
+
+Line 1522 - src/qnty/spatial/vectors.py:
+1 - x_0.cos(x_1) ** 2 - x_0.cos(x_2) ** 2
+
+Line 406 - src/qnty/spatial/vector.py:
+1 - x_0.cos(x_1) ** 2 - x_0.cos(x_2) ** 2
+
+Line 411 - src/qnty/spatial/vector.py:
+1 - x_0.cos(x_1) ** 2 - x_0.cos(x_2) ** 2
+
+Line 419 - src/qnty/spatial/vector.py:
+1 - x_0.cos(x_1) ** 2 - x_0.cos(x_2) ** 2
+
+Line 177 - src/qnty/spatial/vector_helpers.py:
+1 - x_0.cos(x_1) ** 2 - x_0.cos(x_2) ** 2
+
+Line 183 - src/qnty/spatial/vector_helpers.py:
+1 - x_0.cos(x_1) ** 2 - x_0.cos(x_2) ** 2
+
+Line 189 - src/qnty/spatial/vector_helpers.py:
+1 - x_0.cos(x_1) ** 2 - x_0.cos(x_2) ** 2
+
+======================================================================
+
+4 repetitions of complexity 25
+
+Line 1790 - src/qnty/extensions/reporting/report_ir.py:
+x_0.append({'symbol': x_1, 'name': getattr(x_2, 'name', x_1), 'value': x_3, 'unit': x_4})
+
+Line 2125 - src/qnty/extensions/reporting/report_ir.py:
+x_0.append({'symbol': x_1, 'name': getattr(x_2, 'name', x_1), 'value': x_3, 'unit': x_4})
+
+Line 119 - src/qnty/extensions/reporting/base.py:
+x_0.append({'symbol': x_1, 'name': getattr(x_2, 'name', x_1), 'value': x_3, 'unit': x_4})
+
+Line 299 - src/qnty/extensions/reporting/base.py:
+x_0.append({'symbol': x_1, 'name': getattr(x_2, 'name', x_1), 'value': x_3, 'unit': x_4})
+
+======================================================================
+
+4 repetitions of complexity 25
+
+Line 438 - src/qnty/solving/triangle_solver.py:
+x_0 = x_1(name=f'{x_2.name}_x', dim=x_3.force, value=x_4, preferred=x_5)
+
+Line 651 - src/qnty/solving/triangle_solver.py:
+x_0 = x_1(name=f'{x_2.name}_x', dim=x_3.force, value=x_4, preferred=x_5)
+
+Line 663 - src/qnty/solving/triangle_solver.py:
+x_0 = x_1(name=f'{x_2.name}_x', dim=x_3.force, value=x_4, preferred=x_5)
+
+Line 694 - src/qnty/solving/triangle_solver.py:
+x_0 = x_1(name=f'{x_2.name}_x', dim=x_3.force, value=x_4, preferred=x_5)
+
+======================================================================
+
+4 repetitions of complexity 25
+
+Line 439 - src/qnty/solving/triangle_solver.py:
+x_0 = x_1(name=f'{x_2.name}_y', dim=x_3.force, value=x_4, preferred=x_5)
+
+Line 652 - src/qnty/solving/triangle_solver.py:
+x_0 = x_1(name=f'{x_2.name}_y', dim=x_3.force, value=x_4, preferred=x_5)
+
+Line 664 - src/qnty/solving/triangle_solver.py:
+x_0 = x_1(name=f'{x_2.name}_y', dim=x_3.force, value=x_4, preferred=x_5)
+
+Line 695 - src/qnty/solving/triangle_solver.py:
+x_0 = x_1(name=f'{x_2.name}_y', dim=x_3.force, value=x_4, preferred=x_5)
+
+======================================================================
+
+3 repetitions of complexity 25
+
+Line 433 - src/qnty/solving/triangle_solver.py:
+x_0 = x_1(name=f'{x_2.name}_magnitude', dim=x_3.force, value=x_4, preferred=x_5)
+
+Line 646 - src/qnty/solving/triangle_solver.py:
+x_0 = x_1(name=f'{x_2.name}_magnitude', dim=x_3.force, value=x_4, preferred=x_5)
+
+Line 658 - src/qnty/solving/triangle_solver.py:
+x_0 = x_1(name=f'{x_2.name}_magnitude', dim=x_3.force, value=x_4, preferred=x_5)
+
+======================================================================
+
+3 repetitions of complexity 25
+
+Line 435 - src/qnty/solving/triangle_solver.py:
+x_0 = x_1(name=f'{x_2.name}_angle', dim=x_3.D, value=x_4, preferred=x_5)
+
+Line 476 - src/qnty/spatial/vector.py:
+x_0 = x_1(name=f'{x_2.name}_angle', dim=x_3.D, value=x_4, preferred=x_5)
+
+Line 507 - src/qnty/spatial/vector.py:
+x_0 = x_1(name=f'{x_2.name}_angle', dim=x_3.D, value=x_4, preferred=x_5)
+
+======================================================================
+
+2 repetitions of complexity 25
+
+Line 419 - src/qnty/core/dimension.py:
+if x_0 in x_1 or x_0 in x_2:
+    raise KeyError(f"Dimension name '{x_0}' already defined.")
+
+Line 433 - src/qnty/core/dimension.py:
+if x_0 in x_1 or x_0 in x_2:
+    raise KeyError(f"Dimension name '{x_0}' already defined.")
+
+======================================================================
+
+2 repetitions of complexity 25
+
+Line 2258 - src/qnty/problems/parallelogram_law.py:
+x_0.solution_steps.append(x_1(x_2, 'x', x_3, x_4, x_5[0], x_6))
+
+Line 2263 - src/qnty/problems/parallelogram_law.py:
+x_0.solution_steps.append(x_1(x_2, 'x', x_3, x_4, x_5[0], x_6))
+
+======================================================================
+
+2 repetitions of complexity 25
+
+Line 2259 - src/qnty/problems/parallelogram_law.py:
+x_0.solution_steps.append(x_1(x_2, 'y', x_3, x_4, x_5[1], x_6))
+
+Line 2266 - src/qnty/problems/parallelogram_law.py:
+x_0.solution_steps.append(x_1(x_2, 'y', x_3, x_4, x_5[1], x_6))
+
+======================================================================
+
+2 repetitions of complexity 25
+
+Line 740 - src/qnty/problems/position_vector.py:
+x_0 = x_1.array([x_2[0], x_2[1], x_3], dtype=float)
+
+Line 765 - src/qnty/problems/position_vector.py:
+x_0 = x_1.array([x_2[0], x_2[1], x_3], dtype=float)
+
+======================================================================
+
+2 repetitions of complexity 25
+
+Line 1090 - src/qnty/problems/composition.py:
+if x_0(x_1):
+    raise AttributeError(f"'{type(x_2).__name__}' object has no attribute '{x_1}'")
+
+Line 1140 - src/qnty/problems/composition.py:
+if x_0(x_1):
+    raise AttributeError(f"'{type(x_2).__name__}' object has no attribute '{x_1}'")
+
+======================================================================
+
+2 repetitions of complexity 25
+
+Line 565 - src/qnty/problems/statics/parallelogram_law.py:
+{[f'+{x_0}' for x_0 in x_1] + [f'-{x_0}' for x_0 in x_1]}
+
+Line 1234 - src/qnty/utils/shared_utilities.py:
+{[f'+{x_0}' for x_0 in x_1] + [f'-{x_0}' for x_0 in x_1]}
+
+======================================================================
+
+2 repetitions of complexity 25
+
+Line 88 - src/qnty/solving/order.py:
+x_0 = any((x_1._is_simple_assignment(x_2) for x_2 in x_1.solvers[x_3]))
+
+Line 117 - src/qnty/solving/order.py:
+x_0 = any((x_1._is_simple_assignment(x_2) for x_2 in x_1.solvers[x_3]))
+
+======================================================================
+
+2 repetitions of complexity 25
+
+Line 413 - src/qnty/solving/component_solver.py:
+x_0.append(f'{x_1.name}: Fx = {x_2:.3f} N, Fy = {x_3:.3f} N')
+
+Line 620 - src/qnty/solving/component_solver.py:
+x_0.append(f'{x_1.name}: Fx = {x_2:.3f} N, Fy = {x_3:.3f} N')
+
+======================================================================
+
+Found 43 repeated patterns

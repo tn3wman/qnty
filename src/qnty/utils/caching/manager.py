@@ -12,6 +12,8 @@ from collections.abc import Callable
 from typing import Any, TypeVar
 from weakref import WeakValueDictionary
 
+from ..shared_utilities import is_small_cacheable_integer
+
 # Type variables for cache keys and values
 K = TypeVar("K")
 V = TypeVar("V")
@@ -215,7 +217,7 @@ class UnifiedCacheManager:
     # Quantity-specific Cache Operations
     def get_cached_quantity(self, value: int | float, unit_name: str) -> Any | None:
         """Get cached quantity for small integers."""
-        if isinstance(value, int | float) and -10 <= value <= 10 and value == int(value):
+        if is_small_cacheable_integer(value):
             key = (int(value), unit_name)
             if key in self._small_integer_cache:
                 self._stats["small_integer"].hit()
@@ -226,7 +228,7 @@ class UnifiedCacheManager:
 
     def cache_quantity(self, value: int | float, unit_name: str, quantity: Any) -> None:
         """Cache quantity if it's a small integer."""
-        if isinstance(value, int | float) and -10 <= value <= 10 and value == int(value):
+        if is_small_cacheable_integer(value):
             key = (int(value), unit_name)
             self._small_integer_cache[key] = quantity
 

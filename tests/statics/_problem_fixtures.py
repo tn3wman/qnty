@@ -276,7 +276,7 @@ class Chapter2Problem3:
 
 class Chapter2Problem4:
     name = "Problem 2-4"
-    generate_debug_reports = True
+    generate_debug_reports = False
     F_AB = pl.create_vector_polar(magnitude=..., unit="N", angle=-45, wrt="-y")
     F_AC = pl.create_vector_polar(magnitude=..., unit="N", angle=-30, wrt="+x")
     F_R = pl.create_vector_resultant_polar(
@@ -341,7 +341,7 @@ class Chapter2Problem4:
 
 class Chapter2Problem5:
     name = "Problem 2-5"
-    generate_debug_reports = True
+    generate_debug_reports = False
     F_AB = pl.create_vector_polar(magnitude=..., unit="lbf", angle=225, wrt="+x")
     F_AC = pl.create_vector_polar(magnitude=..., unit="lbf", angle=330, wrt="+x")
     F_R = pl.create_vector_resultant_polar(
@@ -505,7 +505,7 @@ class Chapter2Problem15:
 
 class Chapter2Problem16:
     name = "Problem 2-16"
-    generate_debug_reports = True
+    generate_debug_reports = False
     F_BA = pl.create_vector_polar(magnitude=650, unit="lbf", angle=..., wrt="-x")
     F_BC = pl.create_vector_polar(magnitude=..., unit="lbf", angle=-45, wrt="+x")
     F_R = pl.create_vector_resultant_polar(
@@ -519,12 +519,8 @@ class Chapter2Problem16:
         F_R = pl.create_vector_polar(magnitude=850, unit="lbf", angle=30, wrt=F_BA)
 
 class Chapter2Problem17:
-    """
-    Determine the magnitude and direction of the resultant of the three forces by first
-    finding the resultant F' = F1 + F2 and then forming FR = F' + F3.
-    """
     name = "Problem 2-17"
-
+    generate_debug_reports = True
     F_1 = pl.create_vector_polar(magnitude=30, unit="N", angle=-36.87, wrt="-x")
     F_2 = pl.create_vector_polar(magnitude=20, unit="N", angle=-20, wrt="-y")
     F_3 = pl.create_vector_polar(magnitude=50, unit="N", angle=0, wrt="+x")

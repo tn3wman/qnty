@@ -145,6 +145,7 @@ def sum_expr(*expressions: ExpressionOperand) -> Expression:
         try:
             # Check if it's iterable (but not a string or Quantity)
             from collections.abc import Iterable
+
             if isinstance(expressions[0], Iterable) and not isinstance(expressions[0], str | Quantity | FieldQuantity):
                 expressions = tuple(expressions[0])
         except (TypeError, ImportError):
@@ -303,6 +304,34 @@ class When:
         """Attach an expression to this range condition."""
         return (self, expression)
 
+    def build_lower_condition(self, wrapped_var: Expression) -> BinaryOperation:
+        """Build the lower bound condition for this When.
+
+        Args:
+            wrapped_var: The wrapped variable to compare against
+
+        Returns:
+            BinaryOperation representing the lower bound check
+        """
+        if self.lower_inclusive:
+            return wrapped_var >= wrap_operand(self.lower)
+        else:
+            return wrapped_var > wrap_operand(self.lower)
+
+    def build_upper_condition(self, wrapped_var: Expression) -> BinaryOperation:
+        """Build the upper bound condition for this When.
+
+        Args:
+            wrapped_var: The wrapped variable to compare against
+
+        Returns:
+            BinaryOperation representing the upper bound check
+        """
+        if self.upper_inclusive:
+            return wrapped_var <= wrap_operand(self.upper)
+        else:
+            return wrapped_var < wrap_operand(self.upper)
+
 
 def range_expr(variable: ExpressionOperand, *cases, otherwise=None) -> ConditionalExpression | Expression:
     """
@@ -400,18 +429,8 @@ def range_expr(variable: ExpressionOperand, *cases, otherwise=None) -> Condition
 
         if condition.lower is not None and condition.upper is not None:
             # Both bounds: create nested conditionals to implement AND logic
-            # For example: (lower <= var) AND (var <= upper)
-            # Implemented as: if(lower <= var, if(var <= upper, expr, else_val), else_val)
-
-            if condition.lower_inclusive:
-                lower_cond = wrapped_var >= wrap_operand(condition.lower)
-            else:
-                lower_cond = wrapped_var > wrap_operand(condition.lower)
-
-            if condition.upper_inclusive:
-                upper_cond = wrapped_var <= wrap_operand(condition.upper)
-            else:
-                upper_cond = wrapped_var < wrap_operand(condition.upper)
+            lower_cond = condition.build_lower_condition(wrapped_var)
+            upper_cond = condition.build_upper_condition(wrapped_var)
 
             # Nest the conditions: if lower_cond then (if upper_cond then expr else result) else result
             inner_cond = cond_expr(upper_cond, wrapped_expression, result)
@@ -419,18 +438,12 @@ def range_expr(variable: ExpressionOperand, *cases, otherwise=None) -> Condition
 
         elif condition.lower is not None:
             # Only lower bound
-            if condition.lower_inclusive:
-                combined_cond = wrapped_var >= wrap_operand(condition.lower)
-            else:
-                combined_cond = wrapped_var > wrap_operand(condition.lower)
+            combined_cond = condition.build_lower_condition(wrapped_var)
             result = cond_expr(combined_cond, wrapped_expression, result)
 
         elif condition.upper is not None:
             # Only upper bound
-            if condition.upper_inclusive:
-                combined_cond = wrapped_var <= wrap_operand(condition.upper)
-            else:
-                combined_cond = wrapped_var < wrap_operand(condition.upper)
+            combined_cond = condition.build_upper_condition(wrapped_var)
             result = cond_expr(combined_cond, wrapped_expression, result)
 
         else:

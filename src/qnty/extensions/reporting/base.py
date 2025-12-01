@@ -9,7 +9,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from ...utils.shared_utilities import format_equation_list_from_history, get_angle_reference_label
+from ...utils.shared_utilities import build_force_data_dict, format_equation_list_from_history, get_angle_reference_label
 
 
 @dataclass
@@ -53,6 +53,13 @@ class ReportGenerator(ABC):
         """
         pass
 
+    def _format_quantity_magnitude(self, qty) -> str:
+        """Format a quantity's magnitude for display, returning empty string if unavailable."""
+        if qty is not None and qty.value is not None:
+            mag = qty.magnitude()
+            return f"{mag:.6g}"
+        return ""
+
     def _get_unit_string(self, var) -> str:
         """Get a readable unit string for a variable."""
         # Try to get output unit first (for display/reporting preference)
@@ -78,7 +85,7 @@ class ReportGenerator(ABC):
     def _is_vector_equilibrium_problem(self) -> bool:
         """Check if problem is a VectorEquilibriumProblem."""
         class_names = [cls.__name__ for cls in self.problem.__class__.__mro__]
-        return 'VectorEquilibriumProblem' in class_names
+        return "VectorEquilibriumProblem" in class_names
 
     def _format_variable_table_data(self) -> tuple[list[dict], list[dict]]:
         """
@@ -134,9 +141,9 @@ class ReportGenerator(ABC):
         unknown_data = []
 
         # Get forces from the problem
-        forces = getattr(self.problem, 'forces', {})
+        forces = getattr(self.problem, "forces", {})
         # Get original force states (tracked before solving)
-        original_force_states = getattr(self.problem, '_original_force_states', {})
+        original_force_states = getattr(self.problem, "_original_force_states", {})
 
         for force_name, force_obj in forces.items():
             # Check if this is a known force (has both magnitude and angle known)
@@ -147,11 +154,11 @@ class ReportGenerator(ABC):
                 continue
 
             # Determine what was originally known by checking the force's original is_known state
-            force_was_originally_known = original_force_states.get(force_name, getattr(force_obj, 'is_known', True))
+            force_was_originally_known = original_force_states.get(force_name, getattr(force_obj, "is_known", True))
 
             # Check which individual components were originally known
             # This handles partially known forces (e.g., known angle, unknown magnitude)
-            original_var_states = getattr(self.problem, '_original_variable_states', {})
+            original_var_states = getattr(self.problem, "_original_variable_states", {})
             mag_was_originally_known = original_var_states.get(f"{force_name}_mag_known", force_was_originally_known)
             angle_was_originally_known = original_var_states.get(f"{force_name}_angle_known", force_was_originally_known)
 
@@ -183,35 +190,21 @@ class ReportGenerator(ABC):
             # Get X and Y components using Quantity's magnitude() method for proper unit handling
             x_str = ""
             y_str = ""
-            if hasattr(force_obj, 'u') and hasattr(force_obj, 'v') and force_obj._coords is not None:
+            if hasattr(force_obj, "u") and hasattr(force_obj, "v") and force_obj._coords is not None:
                 # Only show if we have actual values (not computed from unknowns)
                 if was_originally_known or (mag_var.value is not None and angle_var.value is not None):
                     try:
                         u_qty = force_obj.u  # Returns Quantity with proper unit
                         v_qty = force_obj.v
-                        if u_qty is not None and u_qty.value is not None:
-                            # Use Quantity.magnitude() for proper unit conversion
-                            x_val = u_qty.magnitude()  # Returns value in preferred/SI unit
-                            x_str = f"{x_val:.6g}"
-                        if v_qty is not None and v_qty.value is not None:
-                            y_val = v_qty.magnitude()
-                            y_str = f"{y_val:.6g}"
+                        x_str = self._format_quantity_magnitude(u_qty)
+                        y_str = self._format_quantity_magnitude(v_qty)
                     except (ValueError, AttributeError):
                         pass
 
             # Get angle reference (e.g., "+x", "-x", "+y", "-y")
             reference_str = get_angle_reference_label(force_obj)
 
-            force_data = {
-                "symbol": force_name,
-                "name": getattr(force_obj, 'name', force_name),
-                "magnitude": mag_str,
-                "angle": angle_str,
-                "unit": mag_unit,
-                "x": x_str,
-                "y": y_str,
-                "reference": reference_str
-            }
+            force_data = build_force_data_dict(force_name, force_obj, mag_str, angle_str, mag_unit, x_str, y_str, reference_str)
 
             if was_originally_known:
                 known_data.append(force_data)

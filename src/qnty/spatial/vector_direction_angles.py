@@ -12,7 +12,7 @@ import math
 from ..core.unit import Unit
 from ..utils.shared_utilities import convert_angle_to_radians_optional, resolve_length_unit_from_string
 from .vector import _Vector
-from .vector_helpers import compute_missing_direction_angle, validate_direction_cosines
+from .vector_helpers import compute_direction_cosines, compute_missing_direction_angle, validate_direction_cosines
 
 
 class VectorDirectionAngles:
@@ -170,11 +170,7 @@ class VectorDirectionAngles:
     @property
     def direction_cosines(self) -> tuple[float, float, float]:
         """Direction cosines (cos α, cos β, cos γ)."""
-        return (
-            math.cos(self._alpha_rad),
-            math.cos(self._beta_rad),
-            math.cos(self._gamma_rad),
-        )
+        return compute_direction_cosines(self._alpha_rad, self._beta_rad, self._gamma_rad)
 
     @property
     def unit(self) -> Unit | None:

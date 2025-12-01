@@ -22,6 +22,7 @@ from ..utils.geometry import _format_angle_difference_display, compute_angle_bet
 from ..utils.shared_utilities import (
     capture_original_force_states,
     clone_force_vector,
+    compute_law_of_cosines,
     convert_angle_to_direction,
     format_law_of_sines_angle_substitution,
     format_law_of_sines_substitution,
@@ -53,21 +54,46 @@ def _latex_name(name: str) -> str:
     return name
 
 
-def _law_of_cosines(a: float, b: float, angle: float) -> float:
-    """Compute the third side of a triangle using the Law of Cosines.
-
-    Given sides a and b and the angle between them, computes c where:
-    c² = a² + b² - 2·a·b·cos(angle)
+def _format_law_of_cosines_equation(result_name: str, side1_name: str, side2_name: str) -> str:
+    """Format the Law of Cosines equation string for display.
 
     Args:
-        a: Length of first side
-        b: Length of second side
-        angle: Angle between the sides (in radians)
+        result_name: Name of the result vector (e.g., "F_R")
+        side1_name: Name of first side vector
+        side2_name: Name of second side vector
 
     Returns:
-        Length of the third side (c)
+        Formatted equation string like "|F_R|² = |F_1|² + |F_2|² - 2·|F_1|·|F_2|·cos(∠(F_1,F_2))"
     """
-    return math.sqrt(a**2 + b**2 - 2 * a * b * math.cos(angle))
+    return f"|{result_name}|² = |{side1_name}|² + |{side2_name}|² - 2·|{side1_name}|·|{side2_name}|·cos(∠({side1_name},{side2_name}))"
+
+
+def _all_angles_known(forces: list[_Vector]) -> bool:
+    """Check if all forces in the list have known angles.
+
+    Args:
+        forces: List of force vectors to check
+
+    Returns:
+        True if all forces have non-None angle values
+    """
+    return all(f.angle is not None and f.angle.value is not None for f in forces)
+
+
+def _all_magnitudes_known(forces: list[_Vector]) -> bool:
+    """Check if all forces in the list have known magnitudes.
+
+    Args:
+        forces: List of force vectors to check
+
+    Returns:
+        True if all forces have non-None magnitude values
+    """
+    return all(f.magnitude is not None and f.magnitude.value is not None for f in forces)
+
+
+# Use the shared utility for Law of Cosines computation
+_law_of_cosines = compute_law_of_cosines
 
 
 def _convert_angle_for_display(angle_deg: float, angle_dir: str | None) -> float:
@@ -418,25 +444,7 @@ class ParallelogramLawProblem(Problem):
         # Add resultant as solved variable
         if resultant._dim is None:
             raise ValueError("Resultant has no dimension")
-        mag_var = Quantity(
-            name=f"{resultant_name} Magnitude",
-            dim=resultant._dim,
-            value=mag_si,
-            preferred=resultant._unit,
-            _symbol=f"|{resultant_name}|",
-        )
-        self.variables[f"{resultant_name}_mag"] = mag_var
-        self._original_variable_states[f"{resultant_name}_mag"] = False
-
-        angle_var = Quantity(
-            name=f"{resultant_name} Angle",
-            dim=_helper.dim.D,
-            value=angle_rad,
-            preferred=_helper.degree_unit,
-            _symbol=f"θ_{resultant_name}",
-        )
-        self.variables[f"{resultant_name}_angle"] = angle_var
-        self._original_variable_states[f"{resultant_name}_angle"] = False
+        self._add_force_variables(resultant_name, mag_si, angle_rad, resultant._dim, resultant._unit, is_known=False)
 
         # Add solution steps
         if len(resultant.component_vectors) == 2:
@@ -1828,7 +1836,7 @@ class ParallelogramLawProblem(Problem):
                 target=f"|{resultant_name}| using Eq 2",
                 method="Law of Cosines",
                 description=f"Calculate |{resultant_name}| using Law of Cosines",
-                equation_for_list=f"|{resultant_name}|² = |{unknown_name}|² + |{known_name}|² - 2·|{unknown_name}|·|{known_name}|·cos(∠({unknown_name},{known_name}))",
+                equation_for_list=_format_law_of_cosines_equation(resultant_name, unknown_name, known_name),
                 substitution=(
                     f"|{resultant_name}| = sqrt(({F_unknown_display:.0f})² + ({F_known_display:.0f})² - "
                     f"2({F_unknown_display:.0f})({F_known_display:.0f})cos({phi_deg:.1f}°))\n"
@@ -1916,7 +1924,7 @@ class ParallelogramLawProblem(Problem):
                 target=f"|{unknown_name}| using Eq 1",
                 method="Law of Cosines",
                 description=f"Calculate {unknown_name} magnitude using Law of Cosines",
-                equation_for_list=f"|{unknown_name}|² = |{known_name}|² + |{resultant_name}|² - 2·|{known_name}|·|{resultant_name}|·cos(∠({known_name},{resultant_name}))",
+                equation_for_list=_format_law_of_cosines_equation(unknown_name, known_name, resultant_name),
                 substitution=(
                     f"|{unknown_name}| = sqrt(({F_known_display:.0f})² + ({FR_display:.0f})² - "
                     f"2({F_known_display:.0f})({FR_display:.0f})cos({gamma_deg:.0f}°))\n"
@@ -2400,8 +2408,8 @@ class ParallelogramLawProblem(Problem):
                 if has_known_mag and has_known_angle:
                     return "two_partially_known", (known_forces, partially_known, resultant_forces[0])
 
-                all_angles_known = all(f.angle is not None and f.angle.value is not None for f in partially_known)
-                all_mags_known = all(f.magnitude is not None and f.magnitude.value is not None for f in partially_known)
+                all_angles_known = _all_angles_known(partially_known)
+                all_mags_known = _all_magnitudes_known(partially_known)
 
                 if all_angles_known:
                     return "two_unknowns_resultant", (known_forces, unknown_forces, resultant_forces[0])
@@ -2503,7 +2511,7 @@ class ParallelogramLawProblem(Problem):
             self.solution_steps.extend(self.solver.solution_steps)
             self.solver.solution_steps = []
         else:
-            all_angles_known = all(f.angle is not None and f.angle.value is not None for f in unknown_forces)
+            all_angles_known = _all_angles_known(unknown_forces)
             if not all_angles_known or resultant.angle is None or resultant.angle.value is None:
                 raise ValueError("Cannot solve: all angles must be known to solve for magnitudes")
             self._solve_two_magnitudes_with_known_angles(known_forces, unknown_forces, resultant)
