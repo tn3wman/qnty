@@ -11,7 +11,7 @@ from types import EllipsisType
 from typing import Any
 
 from ..core.unit import Unit
-from ..utils.shared_utilities import convert_angle_to_radians, convert_angle_to_radians_optional, resolve_length_unit_from_string, resolve_unit_from_string
+from ..utils.shared_utilities import convert_angle_to_radians, convert_angle_to_radians_optional, convert_phi_to_standard, resolve_length_unit_from_string, resolve_unit_from_string
 from .point import _Point
 from .vector_helpers import compute_missing_direction_angle
 
@@ -505,21 +505,10 @@ def create_point_spherical(
     theta_rad = theta_base_rad + theta_input_rad
 
     # Convert phi to standard form (from +z)
-    if phi_wrt_lower == "+z":
-        phi_rad = phi_input_rad
-    elif phi_wrt_lower == "-z":
-        phi_rad = math.pi - phi_input_rad
-    else:  # xy
-        phi_rad = math.pi / 2 - phi_input_rad
+    phi_rad = convert_phi_to_standard(phi_input_rad, phi_wrt_lower)
 
     # Resolve unit
-    from ..utils.shared_utilities import resolve_length_unit_from_string
-
-    resolved_unit: Unit | None = None
-    if isinstance(unit, str):
-        resolved_unit = resolve_length_unit_from_string(unit)
-    else:
-        resolved_unit = unit
+    resolved_unit = resolve_length_unit_from_string(unit) if isinstance(unit, str) else unit
 
     # Compute Cartesian coordinates
     dist_val = float(r)

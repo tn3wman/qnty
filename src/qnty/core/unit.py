@@ -339,6 +339,15 @@ _unit_registry: dict[str, Unit] = {}
 _unit_aliases: dict[str, str] = {}
 
 
+def _expose_aliases_on_u(aliases: Iterable[str], target_unit: Unit, canonical_name: str) -> None:
+    """Expose aliases on the u namespace if not already registered."""
+    for a in aliases:
+        if a in _unit_registry or a in _unit_aliases:
+            continue
+        setattr(u, a, target_unit)
+        _unit_aliases[a] = canonical_name
+
+
 # =======================
 # Prefix generation
 # =======================
@@ -463,11 +472,7 @@ def attach_composed(
         setattr(u, name, existing)
         _unit_registry[name] = existing
 
-        for a in aliases:
-            if a in _unit_registry or a in _unit_aliases:
-                continue
-            setattr(u, a, existing)
-            _unit_aliases[a] = name
+        _expose_aliases_on_u(aliases, existing, name)
 
         if set_preferred:
             ureg.set_preferred(existing)
@@ -485,12 +490,7 @@ def attach_composed(
     setattr(u, name, named)
     _unit_registry[name] = named
 
-    # Optionally expose extra aliases on `u` (comment out if too noisy)
-    for a in aliases:
-        if a in _unit_registry or a in _unit_aliases:
-            continue
-        setattr(u, a, named)
-        _unit_aliases[a] = name
+    _expose_aliases_on_u(aliases, named, name)
 
     if set_preferred:
         ureg.set_preferred(named)

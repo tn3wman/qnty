@@ -336,15 +336,15 @@ def _format_angle_calculation(
 
 
 def compute_angle_between_display(
-    theta1_std_deg: float,
-    theta2_std_deg: float,
-    theta1_input_deg: float,
-    theta2_input_deg: float,
-    wrt1: str,
-    wrt2: str,
-    vec1_name: str,
-    vec2_name: str,
-    result_deg: float,
+    first_vector_standard_angle_deg: float,
+    second_vector_standard_angle_deg: float,
+    first_vector_input_angle_deg: float,
+    second_vector_input_angle_deg: float,
+    first_vector_reference_axis: str,
+    second_vector_reference_axis: str,
+    first_vector_name: str,
+    second_vector_name: str,
+    interior_angle_result_deg: float,
     coordinate_system=None,
 ) -> str:
     """
@@ -355,20 +355,31 @@ def compute_angle_between_display(
     for the angle calculation based on the reference axes used.
 
     Args:
-        theta1_std_deg: First vector's angle in degrees from +x (standard form)
-        theta2_std_deg: Second vector's angle in degrees from +x (standard form)
-        theta1_input_deg: First vector's angle as originally specified
-        theta2_input_deg: Second vector's angle as originally specified
-        wrt1: Reference axis for first vector (e.g., '+x', '-y')
-        wrt2: Reference axis for second vector
-        vec1_name: Display name for first vector (LaTeX formatted)
-        vec2_name: Display name for second vector (LaTeX formatted)
-        result_deg: The resulting interior angle in degrees
-        coordinate_system: Optional coordinate system object with axis angles
+        first_vector_standard_angle_deg: First vector's angle in degrees from +x (standard form)
+        second_vector_standard_angle_deg: Second vector's angle in degrees from +x (standard form)
+        first_vector_input_angle_deg: First vector's angle as originally specified by user
+        second_vector_input_angle_deg: Second vector's angle as originally specified by user
+        first_vector_reference_axis: Reference axis for first vector (e.g., '+x', '-y', '+u')
+        second_vector_reference_axis: Reference axis for second vector (e.g., '+x', '-y', '+v')
+        first_vector_name: Display name for first vector (LaTeX formatted, e.g., 'F_1')
+        second_vector_name: Display name for second vector (LaTeX formatted, e.g., 'F_2')
+        interior_angle_result_deg: The computed interior angle between vectors in degrees
+        coordinate_system: Optional coordinate system object with axis angles for non-orthogonal systems
 
     Returns:
         A formatted string showing the calculation steps
     """
+    # Local aliases for shorter names within function body
+    theta1_std_deg = first_vector_standard_angle_deg
+    theta2_std_deg = second_vector_standard_angle_deg
+    theta1_input_deg = first_vector_input_angle_deg
+    theta2_input_deg = second_vector_input_angle_deg
+    wrt1 = first_vector_reference_axis
+    wrt2 = second_vector_reference_axis
+    vec1_name = first_vector_name
+    vec2_name = second_vector_name
+    result_deg = interior_angle_result_deg
+
     # Normalize standard angles to [0, 360)
     theta1_std_deg = theta1_std_deg % 360
     theta2_std_deg = theta2_std_deg % 360

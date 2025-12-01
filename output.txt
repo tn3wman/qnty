@@ -11,28 +11,106 @@ angle: float, point: tuple[float, float, float] | x_0.ndarray | None=None, unit:
 
 3 repetitions of complexity 46
 
-Line 1482 - src/qnty/problems/parallelogram_law.py:
-x_0 = x_1(theta1_std_deg=x_2.degrees(x_3), theta2_std_deg=x_2.degrees(x_4), theta1_input_deg=x_5, theta2_input_deg=x_6, wrt1=x_7, wrt2=x_8, vec1_name=x_9, vec2_name=x_10, result_deg=x_11, coordinate_system=x_12)
+Line 1498 - src/qnty/problems/parallelogram_law.py:
+x_0 = x_0(first_vector_standard_angle_deg=x_1.degrees(x_2), second_vector_standard_angle_deg=x_1.degrees(x_3), first_vector_input_angle_deg=x_4, second_vector_input_angle_deg=x_5, first_vector_reference_axis=x_6, second_vector_reference_axis=x_7, first_vector_name=x_8, second_vector_name=x_9, interior_angle_result_deg=x_10, coordinate_system=x_11)
 
-Line 1497 - src/qnty/problems/parallelogram_law.py:
-x_0 = x_1(theta1_std_deg=x_2.degrees(x_3), theta2_std_deg=x_2.degrees(x_4), theta1_input_deg=x_5, theta2_input_deg=x_6, wrt1=x_7, wrt2=x_8, vec1_name=x_9, vec2_name=x_10, result_deg=x_11, coordinate_system=x_12)
+Line 1513 - src/qnty/problems/parallelogram_law.py:
+x_0 = x_0(first_vector_standard_angle_deg=x_1.degrees(x_2), second_vector_standard_angle_deg=x_1.degrees(x_3), first_vector_input_angle_deg=x_4, second_vector_input_angle_deg=x_5, first_vector_reference_axis=x_6, second_vector_reference_axis=x_7, first_vector_name=x_8, second_vector_name=x_9, interior_angle_result_deg=x_10, coordinate_system=x_11)
 
-Line 2070 - src/qnty/problems/parallelogram_law.py:
-x_0 = x_1(theta1_std_deg=x_2.degrees(x_3), theta2_std_deg=x_2.degrees(x_4), theta1_input_deg=x_5, theta2_input_deg=x_6, wrt1=x_7, wrt2=x_8, vec1_name=x_9, vec2_name=x_10, result_deg=x_11, coordinate_system=x_12)
-
-======================================================================
-
-3 repetitions of complexity 45
-
-Line 0 - src/qnty/integration/facade.py:
-*, vectors: list[x_0] | None=None, points: list[x_1] | None=None, output_unit: str='N', output_angle_unit: str='degree', name: str | None=None, description: str | None=None
-
-Line 0 - src/qnty/integration/facade.py:
-*, vectors: list[x_0] | None=None, points: list[x_1] | None=None, output_unit: str='N', output_angle_unit: str='degree', name: str | None=None, description: str | None=None
-
-Line 0 - src/qnty/integration/facade.py:
-*, vectors: list[x_0] | None=None, points: list[x_1] | None=None, output_unit: str='N', output_angle_unit: str='degree', name: str | None=None, description: str | None=None
+Line 2087 - src/qnty/problems/parallelogram_law.py:
+x_0 = x_0(first_vector_standard_angle_deg=x_1.degrees(x_2), second_vector_standard_angle_deg=x_1.degrees(x_3), first_vector_input_angle_deg=x_4, second_vector_input_angle_deg=x_5, first_vector_reference_axis=x_6, second_vector_reference_axis=x_7, first_vector_name=x_8, second_vector_name=x_9, interior_angle_result_deg=x_10, coordinate_system=x_11)
 
 ======================================================================
 
-Found 3 repeated patterns
+2 repetitions of complexity 44
+
+Line 0 - src/qnty/extensions/diagram_utils.py:
+self, title: str='Vector Diagram', figsize: tuple[float, float]=(10, 10), show_grid: bool=True, show_components: bool=False, origin: tuple[float, float]=(0, 0)
+
+Line 0 - src/qnty/extensions/reporting/vector_diagram.py:
+self, title: str='Vector Diagram', figsize: tuple[float, float]=(10, 10), show_grid: bool=True, show_components: bool=False, origin: tuple[float, float]=(0, 0)
+
+======================================================================
+
+2 repetitions of complexity 44
+
+Line 324 - src/qnty/solving/triangle_solver.py:
+x_0.solution_steps.append(x_1(target_force_name=x_2.name, force1_name=x_3.name, force2_name=x_4.name, angle_expression=x_5, force1_magnitude=x_6, force2_magnitude=x_7, included_angle_deg=x_8, computed_magnitude=x_9, force_unit=x_10))
+
+Line 448 - src/qnty/solving/triangle_solver.py:
+x_0.solution_steps.append(x_1(target_force_name=x_2.name, force1_name=x_3.name, force2_name=x_4.name, angle_expression=x_5, force1_magnitude=x_6, force2_magnitude=x_7, included_angle_deg=x_8, computed_magnitude=x_9, force_unit=x_10))
+
+======================================================================
+
+3 repetitions of complexity 43
+
+Line 1498 - src/qnty/problems/parallelogram_law.py:
+x_0(first_vector_standard_angle_deg=x_1.degrees(x_2), second_vector_standard_angle_deg=x_1.degrees(x_3), first_vector_input_angle_deg=x_4, second_vector_input_angle_deg=x_5, first_vector_reference_axis=x_6, second_vector_reference_axis=x_7, first_vector_name=x_8, second_vector_name=x_9, interior_angle_result_deg=x_10, coordinate_system=x_11)
+
+Line 1513 - src/qnty/problems/parallelogram_law.py:
+x_0(first_vector_standard_angle_deg=x_1.degrees(x_2), second_vector_standard_angle_deg=x_1.degrees(x_3), first_vector_input_angle_deg=x_4, second_vector_input_angle_deg=x_5, first_vector_reference_axis=x_6, second_vector_reference_axis=x_7, first_vector_name=x_8, second_vector_name=x_9, interior_angle_result_deg=x_10, coordinate_system=x_11)
+
+Line 2087 - src/qnty/problems/parallelogram_law.py:
+x_0(first_vector_standard_angle_deg=x_1.degrees(x_2), second_vector_standard_angle_deg=x_1.degrees(x_3), first_vector_input_angle_deg=x_4, second_vector_input_angle_deg=x_5, first_vector_reference_axis=x_6, second_vector_reference_axis=x_7, first_vector_name=x_8, second_vector_name=x_9, interior_angle_result_deg=x_10, coordinate_system=x_11)
+
+======================================================================
+
+2 repetitions of complexity 43
+
+Line 188 - src/qnty/extensions/reporting/vector_diagram.py:
+def create_force_diagram(problem, output_path: str | x_0, title: str | None=None, show_components: bool=False, **kwargs) -> x_0:
+    """
+    Create vector diagram from a VectorEquilibriumProblem.
+
+    Args:
+        problem: VectorEquilibriumProblem instance (must be solved)
+        output_path: Output file path
+        title: Diagram title (uses problem.name if None)
+        show_components: Whether to show component projections
+        **kwargs: Additional arguments for VectorDiagram
+
+    Returns:
+        Path to saved diagram
+
+    Examples:
+        >>> problem = Problem_2_1()
+        >>> problem.solve()
+        >>> create_force_diagram(problem, "diagram.png")
+    """
+    return x_1(x_2, x_3, x_4, x_5, x_6, **x_7)
+
+Line 48 - src/qnty/extensions/plotting/vector_diagram.py:
+def create_force_diagram(problem, output_path: str | x_0, title: str | None=None, show_components: bool=False, **kwargs) -> x_0:
+    """
+    Create vector diagram from a VectorEquilibriumProblem.
+
+    Args:
+        problem: VectorEquilibriumProblem instance (must be solved)
+        output_path: Output file path
+        title: Diagram title (uses problem.name if None)
+        show_components: Whether to show component projections
+        **kwargs: Additional arguments for VectorDiagram
+
+    Returns:
+        Path to saved diagram
+
+    Examples:
+        >>> problem = Problem_2_1()
+        >>> problem.solve()
+        >>> create_force_diagram(problem, "diagram.png")
+    """
+    return x_1(x_2, x_3, x_4, x_5, x_6, **x_7)
+
+======================================================================
+
+2 repetitions of complexity 43
+
+Line 324 - src/qnty/solving/triangle_solver.py:
+x_0.solution_steps.append(x_1(target_force_name=x_2.name, force1_name=x_3.name, force2_name=x_4.name, angle_expression=x_5, force1_magnitude=x_6, force2_magnitude=x_7, included_angle_deg=x_8, computed_magnitude=x_9, force_unit=x_10))
+
+Line 448 - src/qnty/solving/triangle_solver.py:
+x_0.solution_steps.append(x_1(target_force_name=x_2.name, force1_name=x_3.name, force2_name=x_4.name, angle_expression=x_5, force1_magnitude=x_6, force2_magnitude=x_7, included_angle_deg=x_8, computed_magnitude=x_9, force_unit=x_10))
+
+======================================================================
+
+Found 7 repeated patterns

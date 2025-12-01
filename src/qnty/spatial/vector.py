@@ -1374,12 +1374,7 @@ class _Vector(Generic[D]):
         if isinstance(magnitude, int | float):
             if unit is None:
                 raise ValueError("unit must be specified")
-            if isinstance(unit, str):
-                from ..core.unit import ureg
-                resolved = ureg.resolve(unit)
-                if resolved is None:
-                    raise ValueError(f"Unknown unit '{unit}'")
-                unit = resolved
+            unit = resolve_unit_from_string(unit)
             mag_si = float(magnitude) * unit.si_factor
         else:
             if magnitude.value is None:

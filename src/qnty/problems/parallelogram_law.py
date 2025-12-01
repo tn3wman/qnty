@@ -39,6 +39,31 @@ def _to_display_value(si_value: float, si_factor: float) -> float:
     return si_value / si_factor
 
 
+def _latex_name(name: str) -> str:
+    """Format a name for LaTeX (convert F_BA to F_{BA} for proper subscripts)."""
+    if '_' in name:
+        parts = name.split('_', 1)
+        return f"{parts[0]}_{{{parts[1]}}}"
+    return name
+
+
+def _law_of_cosines(a: float, b: float, angle: float) -> float:
+    """Compute the third side of a triangle using the Law of Cosines.
+
+    Given sides a and b and the angle between them, computes c where:
+    c² = a² + b² - 2·a·b·cos(angle)
+
+    Args:
+        a: Length of first side
+        b: Length of second side
+        angle: Angle between the sides (in radians)
+
+    Returns:
+        Length of the third side (c)
+    """
+    return math.sqrt(a**2 + b**2 - 2 * a * b * math.cos(angle))
+
+
 def _convert_angle_for_display(angle_deg: float, angle_dir: str | None) -> float:
     """Convert angle based on the angle_dir setting.
 
@@ -751,9 +776,7 @@ class ParallelogramLawProblem(Problem):
 
             # Law of Cosines to find |F2|:
             # |F2|² = |FR|² + |F1|² - 2·|FR|·|F1|·cos(θ_R_from_F1)
-            F2_mag = math.sqrt(
-                FR_mag**2 + F1_mag**2 - 2 * FR_mag * F1_mag * math.cos(theta_R_from_F1)
-            )
+            F2_mag = _law_of_cosines(FR_mag, F1_mag, theta_R_from_F1)
 
             # Get base angle for F2 (known angle)
             base2 = _get_axis_angle(wrt2, coord_sys)
@@ -982,16 +1005,9 @@ class ParallelogramLawProblem(Problem):
         vec1_name = vec1.name or "F_1"
         vec2_name = vec2.name or "F_2"
 
-        # Format vector names for LaTeX (convert F_BA to F_{BA} for proper subscripts)
-        def latex_name(name: str) -> str:
-            if '_' in name:
-                parts = name.split('_', 1)
-                return f"{parts[0]}_{{{parts[1]}}}"
-            return name
-
-        vec1_latex = latex_name(vec1_name)
-        vec2_latex = latex_name(vec2_name)
-        resultant_latex = latex_name(resultant_name)
+        vec1_latex = _latex_name(vec1_name)
+        vec2_latex = _latex_name(vec2_name)
+        resultant_latex = _latex_name(resultant_name)
 
         theta1_input_deg = math.degrees(theta1_input)
         theta2_input_deg = math.degrees(theta2_input)
@@ -1480,30 +1496,30 @@ class ParallelogramLawProblem(Problem):
 
         # Angle between unknown and resultant (opposite to known vector)
         display_ur = compute_angle_between_display(
-            theta1_std_deg=math.degrees(unknown_std),
-            theta2_std_deg=math.degrees(resultant_std),
-            theta1_input_deg=unknown_input_deg,
-            theta2_input_deg=resultant_input_deg,
-            wrt1=unknown_wrt,
-            wrt2=resultant_wrt,
-            vec1_name=unknown_name,
-            vec2_name=resultant_name,
-            result_deg=alpha_deg,
+            first_vector_standard_angle_deg=math.degrees(unknown_std),
+            second_vector_standard_angle_deg=math.degrees(resultant_std),
+            first_vector_input_angle_deg=unknown_input_deg,
+            second_vector_input_angle_deg=resultant_input_deg,
+            first_vector_reference_axis=unknown_wrt,
+            second_vector_reference_axis=resultant_wrt,
+            first_vector_name=unknown_name,
+            second_vector_name=resultant_name,
+            interior_angle_result_deg=alpha_deg,
             coordinate_system=coord_sys
         )
         angle_displays.append(display_ur)
 
         # Angle between known and resultant (opposite to unknown vector)
         display_kr = compute_angle_between_display(
-            theta1_std_deg=math.degrees(known_std),
-            theta2_std_deg=math.degrees(resultant_std),
-            theta1_input_deg=known_input_deg,
-            theta2_input_deg=resultant_input_deg,
-            wrt1=known_wrt,
-            wrt2=resultant_wrt,
-            vec1_name=known_name,
-            vec2_name=resultant_name,
-            result_deg=beta_deg,
+            first_vector_standard_angle_deg=math.degrees(known_std),
+            second_vector_standard_angle_deg=math.degrees(resultant_std),
+            first_vector_input_angle_deg=known_input_deg,
+            second_vector_input_angle_deg=resultant_input_deg,
+            first_vector_reference_axis=known_wrt,
+            second_vector_reference_axis=resultant_wrt,
+            first_vector_name=known_name,
+            second_vector_name=resultant_name,
+            interior_angle_result_deg=beta_deg,
             coordinate_system=coord_sys
         )
         angle_displays.append(display_kr)
@@ -1580,16 +1596,9 @@ class ParallelogramLawProblem(Problem):
         beta_deg = math.degrees(beta)
         gamma_deg = math.degrees(gamma)
 
-        # Format vector names for LaTeX (convert F_AB to F_{AB} for proper subscripts)
-        def latex_name(name: str) -> str:
-            if '_' in name:
-                parts = name.split('_', 1)
-                return f"{parts[0]}_{{{parts[1]}}}"
-            return name
-
-        vec1_latex = latex_name(vec1_name)
-        vec2_latex = latex_name(vec2_name)
-        resultant_latex = latex_name(resultant_name)
+        vec1_latex = _latex_name(vec1_name)
+        vec2_latex = _latex_name(vec2_name)
+        resultant_latex = _latex_name(resultant_name)
 
         # Get original angle specs for display
         wrt1 = getattr(vec1, '_original_wrt', '+x')
@@ -1633,19 +1642,27 @@ class ParallelogramLawProblem(Problem):
         # Step 1: Calculate all triangle angles with proper geometric explanations
         # Generate display strings for each angle calculation
         angle_vec1_FR_display = compute_angle_between_display(
-            theta1_std_deg, resultant_std_deg,
-            theta1_input_deg, resultant_input_deg,
-            wrt1, resultant_wrt,
-            vec1_latex, resultant_latex,
-            beta_deg,
+            first_vector_standard_angle_deg=theta1_std_deg,
+            second_vector_standard_angle_deg=resultant_std_deg,
+            first_vector_input_angle_deg=theta1_input_deg,
+            second_vector_input_angle_deg=resultant_input_deg,
+            first_vector_reference_axis=wrt1,
+            second_vector_reference_axis=resultant_wrt,
+            first_vector_name=vec1_latex,
+            second_vector_name=resultant_latex,
+            interior_angle_result_deg=beta_deg,
             coordinate_system=coord_sys
         )
         angle_vec2_FR_display = compute_angle_between_display(
-            theta2_std_deg, resultant_std_deg,
-            theta2_input_deg, resultant_input_deg,
-            wrt2, resultant_wrt,
-            vec2_latex, resultant_latex,
-            alpha_deg,
+            first_vector_standard_angle_deg=theta2_std_deg,
+            second_vector_standard_angle_deg=resultant_std_deg,
+            first_vector_input_angle_deg=theta2_input_deg,
+            second_vector_input_angle_deg=resultant_input_deg,
+            first_vector_reference_axis=wrt2,
+            second_vector_reference_axis=resultant_wrt,
+            first_vector_name=vec2_latex,
+            second_vector_name=resultant_latex,
+            interior_angle_result_deg=alpha_deg,
             coordinate_system=coord_sys
         )
 
@@ -2068,15 +2085,15 @@ class ParallelogramLawProblem(Problem):
         # Pass coordinate system if available for proper display of non-orthogonal systems
         coord_sys = getattr(self, 'coordinate_system', None)
         substitution = compute_angle_between_display(
-            theta1_std_deg=np.degrees(theta1),
-            theta2_std_deg=np.degrees(theta2),
-            theta1_input_deg=theta1_display,
-            theta2_input_deg=theta2_display,
-            wrt1=wrt1,
-            wrt2=wrt2,
-            vec1_name=f1_name,
-            vec2_name=f2_name,
-            result_deg=angle_in_triangle_deg,
+            first_vector_standard_angle_deg=np.degrees(theta1),
+            second_vector_standard_angle_deg=np.degrees(theta2),
+            first_vector_input_angle_deg=theta1_display,
+            second_vector_input_angle_deg=theta2_display,
+            first_vector_reference_axis=wrt1,
+            second_vector_reference_axis=wrt2,
+            first_vector_name=f1_name,
+            second_vector_name=f2_name,
+            interior_angle_result_deg=angle_in_triangle_deg,
             coordinate_system=coord_sys,
         )
 
@@ -2718,7 +2735,7 @@ class ParallelogramLawProblem(Problem):
         ref_unit = parametric_force.magnitude.preferred if parametric_force.magnitude else None
 
         angle_between = abs(angle_offset)
-        M_indep_si = math.sqrt(M_ref_si**2 + M_param_si**2 - 2 * M_ref_si * M_param_si * math.cos(angle_between))
+        M_indep_si = _law_of_cosines(M_ref_si, M_param_si, angle_between)
 
         sin_angle_at_indep = (M_param_si * math.sin(angle_between)) / M_indep_si
         angle_at_indep_interior = math.asin(sin_angle_at_indep)

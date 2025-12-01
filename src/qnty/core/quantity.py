@@ -16,6 +16,16 @@ if TYPE_CHECKING:
 D = TypeVar("D")
 
 
+def _resolve_unit(unit: Unit[D] | str, dim: Dimension) -> Unit[D]:
+    """Resolve a string unit name to a Unit object, raising ValueError if not found."""
+    if isinstance(unit, str):
+        resolved = ureg.resolve(unit, dim=dim)
+        if resolved is None:
+            raise ValueError(f"Unknown unit '{unit}'")
+        return resolved
+    return unit
+
+
 @dataclass
 class Quantity(Generic[D]):
     """
@@ -136,12 +146,7 @@ class Quantity(Generic[D]):
                 return self._require_value()
             return self._value_in_unit(target)
 
-        if isinstance(unit, str):
-            resolved = ureg.resolve(unit, dim=self.dim)
-            if resolved is None:
-                raise ValueError(f"Unknown unit '{unit}'")
-            unit = resolved
-
+        unit = _resolve_unit(unit, self.dim)
         return self._value_in_unit(unit)
 
     # ---- Setting values ----
@@ -157,11 +162,7 @@ class Quantity(Generic[D]):
         if unit is None:
             return QuantitySetter(self, value)
 
-        if isinstance(unit, str):
-            resolved = ureg.resolve(unit, dim=self.dim)
-            if resolved is None:
-                raise ValueError(f"Unknown unit '{unit}'")
-            unit = resolved
+        unit = _resolve_unit(unit, self.dim)
 
         # Create new instance with value set
         new_q = Quantity(name=self.name, dim=self.dim, value=unit.si_factor * value + unit.si_offset, preferred=self.preferred or unit)
@@ -173,11 +174,7 @@ class Quantity(Generic[D]):
 
     def output_unit(self, unit: Unit[D] | str) -> Quantity[D]:
         """Set desired output unit for display and reporting."""
-        if isinstance(unit, str):
-            resolved = ureg.resolve(unit, dim=self.dim)
-            if resolved is None:
-                raise ValueError(f"Unknown unit '{unit}'")
-            unit = resolved
+        unit = _resolve_unit(unit, self.dim)
 
         # Create new instance with output unit set, preserving all other attributes
         new_q = Quantity(name=self.name, dim=self.dim, value=self.value, preferred=self.preferred, _symbol=self._symbol, _output_unit=unit)
@@ -185,11 +182,7 @@ class Quantity(Generic[D]):
 
     def to(self, unit: Unit[D] | str) -> Quantity[D]:
         """Direct conversion method for maximum performance."""
-        if isinstance(unit, str):
-            resolved = ureg.resolve(unit, dim=self.dim)
-            if resolved is None:
-                raise ValueError(f"Unknown unit '{unit}'")
-            unit = resolved
+        unit = _resolve_unit(unit, self.dim)
 
         if self.value is None:
             raise ValueError(f"Cannot convert unknown quantity '{self.name}' to unit")

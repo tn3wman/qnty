@@ -1272,3 +1272,31 @@ def solve_two_unknown_magnitudes(
         return float(magnitudes[0]), float(magnitudes[1])
     except np.linalg.LinAlgError as err:
         raise ValueError(f"Cannot solve {error_context}: system is singular. Forces may be parallel.") from err
+
+
+# ========== SPHERICAL COORDINATE CONVERSION UTILITIES ==========
+
+
+def convert_phi_to_standard(phi_input_rad: float, phi_wrt: str) -> float:
+    """
+    Convert phi angle to standard form (measured from +z axis).
+
+    This consolidates the repeated pattern for converting phi angles in spherical
+    coordinates based on the reference axis.
+
+    Args:
+        phi_input_rad: Input phi angle in radians
+        phi_wrt: Reference axis for phi - "+z", "-z", or "xy"
+
+    Returns:
+        Phi angle in standard form (measured from +z axis) in radians
+    """
+    import math
+
+    phi_wrt_lower = phi_wrt.lower()
+    if phi_wrt_lower == "+z":
+        return phi_input_rad
+    elif phi_wrt_lower == "-z":
+        return math.pi - phi_input_rad
+    else:  # xy
+        return math.pi / 2 - phi_input_rad

@@ -13,7 +13,7 @@ from typing import TYPE_CHECKING, Any
 import numpy as np
 
 from ..core.unit import Unit
-from ..utils.shared_utilities import convert_angle_to_radians, resolve_unit_from_string, resolve_unit_from_string_or_fallback
+from ..utils.shared_utilities import convert_angle_to_radians, convert_phi_to_standard, resolve_unit_from_string, resolve_unit_from_string_or_fallback
 from .vector import _Vector
 
 if TYPE_CHECKING:
@@ -293,15 +293,9 @@ def create_vector_cartesian(
         >>> F = create_vector_cartesian(u=60, v=12, w=-40, unit="N", from_point=A)
     """
     # Resolve unit if string
-    if isinstance(unit, str):
-        from ..core.unit import ureg
+    resolved_unit = resolve_unit_from_string(unit) if unit is not None else None
 
-        resolved = ureg.resolve(unit)
-        if resolved is None:
-            raise ValueError(f"Unknown unit '{unit}'")
-        unit = resolved
-
-    vec = _Vector(float(u), float(v), float(w), unit=unit, name=name)
+    vec = _Vector(float(u), float(v), float(w), unit=resolved_unit, name=name)
 
     # If a point of application is specified, store it
     if from_point is not None:
@@ -673,12 +667,7 @@ def create_vector_spherical(
     theta_rad = theta_base_rad + theta_input_rad
 
     # Convert phi to standard form (from +z)
-    if phi_wrt_lower == "+z":
-        phi_rad = phi_input_rad
-    elif phi_wrt_lower == "-z":
-        phi_rad = math.pi - phi_input_rad
-    else:  # xy
-        phi_rad = math.pi / 2 - phi_input_rad
+    phi_rad = convert_phi_to_standard(phi_input_rad, phi_wrt_lower)
 
     # Resolve unit
     resolved_unit = resolve_unit_from_string(unit) if unit is not None else None

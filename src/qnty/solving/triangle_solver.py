@@ -94,35 +94,41 @@ def create_law_of_cosines_step(
     force1_name: str,
     force2_name: str,
     angle_expression: str,
-    F1: float,
-    F2: float,
-    gamma_deg: float,
-    result_value: float,
+    force1_magnitude: float,
+    force2_magnitude: float,
+    included_angle_deg: float,
+    computed_magnitude: float,
     force_unit: str,
 ) -> dict:
     """
     Create a Law of Cosines solution step dictionary.
 
+    The Law of Cosines relates three sides and one angle of a triangle:
+    c² = a² + b² - 2ab·cos(C)
+
+    In the force triangle context, this computes the third force magnitude
+    when two force magnitudes and the included angle are known.
+
     Args:
-        target_force_name: Name of the force being solved for
-        force1_name: Name of first known force
-        force2_name: Name of second known force
-        angle_expression: LaTeX expression for the angle (e.g., "\\theta_{R} - \\theta_{1}")
-        F1: Magnitude of first force
-        F2: Magnitude of second force
-        gamma_deg: Angle in degrees
-        result_value: Computed result value
-        force_unit: Unit symbol for display
+        target_force_name: Name of the force being solved for (the unknown side)
+        force1_name: Name of first known force (side a)
+        force2_name: Name of second known force (side b)
+        angle_expression: LaTeX expression for the included angle between force1 and force2
+        force1_magnitude: Magnitude of first force (|a|)
+        force2_magnitude: Magnitude of second force (|b|)
+        included_angle_deg: Angle between force1 and force2 in degrees (angle C)
+        computed_magnitude: The computed result magnitude for the target force
+        force_unit: Unit symbol for display (e.g., "N", "lb")
 
     Returns:
-        Dictionary with solution step data
+        Dictionary with solution step data including equation, substitution, and result
     """
     return {
         "target": f"|{target_force_name}|",
         "method": "Law of Cosines",
         "equation": f"{target_force_name}^2 = {force1_name}^2 + {force2_name}^2 - 2*{force1_name}*{force2_name}*cos({angle_expression})",
-        "substitution": f"{target_force_name}^2 = ({F1:.2f} {force_unit})^2 + ({F2:.2f} {force_unit})^2 - 2 * ({F1:.2f} {force_unit}) * ({F2:.2f} {force_unit}) * cos({gamma_deg:.1f}°)",
-        "result_value": f"{result_value:.2f}",
+        "substitution": f"{target_force_name}^2 = ({force1_magnitude:.2f} {force_unit})^2 + ({force2_magnitude:.2f} {force_unit})^2 - 2 * ({force1_magnitude:.2f} {force_unit}) * ({force2_magnitude:.2f} {force_unit}) * cos({included_angle_deg:.1f}°)",
+        "result_value": f"{computed_magnitude:.2f}",
         "result_unit": force_unit
     }
 
@@ -320,10 +326,10 @@ class TriangleSolver:
             force1_name=resultant.name,
             force2_name=known_force.name,
             angle_expression=angle_diff,
-            F1=F_R,
-            F2=F_known,
-            gamma_deg=gamma_deg,
-            result_value=F_unknown,
+            force1_magnitude=F_R,
+            force2_magnitude=F_known,
+            included_angle_deg=gamma_deg,
+            computed_magnitude=F_unknown,
             force_unit=force_unit,
         ))
 
@@ -444,10 +450,10 @@ class TriangleSolver:
             force1_name=force1.name,
             force2_name=force2.name,
             angle_expression=angle_diff,
-            F1=F1,
-            F2=F2,
-            gamma_deg=gamma_deg,
-            result_value=FR,
+            force1_magnitude=F1,
+            force2_magnitude=F2,
+            included_angle_deg=gamma_deg,
+            computed_magnitude=FR,
             force_unit=force_unit,
         ))
 
