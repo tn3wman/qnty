@@ -6,7 +6,7 @@ import pytest
 from dataclasses import dataclass
 
 from qnty import Dimensionless, Length, Pressure, Problem
-from qnty.algebra import SelectOption, SelectVariable, equation, match_expr
+from qnty.algebra import Constant, SelectOption, SelectVariable, equation, match_expr
 
 
 @dataclass(frozen=True)
@@ -145,11 +145,19 @@ def test_match_expr_with_expressions():
     evaluated_self = result.evaluate({})
 
     # Self-energized should be less (no second term)
-    assert evaluated_self.value < evaluated_non_self.value
+    val_self = evaluated_self.value
+    val_non_self = evaluated_non_self.value
+    assert isinstance(val_self, (int, float)) and isinstance(val_non_self, (int, float))
+    assert val_self < val_non_self
 
 
 def test_match_expr_in_problem():
     """Test using match_expr in a Problem class."""
+    # Create known Pressure constants for use in match_expr
+    # Wrap in Constant to ensure they're treated as constants, not variables
+    grade_a_stress = Constant(Pressure("grade_a").set(20000).pascal)
+    grade_b_stress = Constant(Pressure("grade_b").set(25000).pascal)
+    grade_c_stress = Constant(Pressure("grade_c").set(30000).pascal)
 
     class SimpleMatchProblem(Problem):
         name = "Simple Match Problem"
@@ -161,22 +169,21 @@ def test_match_expr_in_problem():
         allowable_stress = Pressure("Allowable Stress")
 
         # Use match to set allowable stress based on material
+        # Values must be Pressure quantities to maintain dimensional consistency
         allowable_stress_eqn = equation(
             allowable_stress,
             match_expr(
                 material,
-                MaterialGrade.grade_a, 20000,
-                MaterialGrade.grade_b, 25000,
-                MaterialGrade.grade_c, 30000
+                MaterialGrade.grade_a, grade_a_stress,
+                MaterialGrade.grade_b, grade_b_stress,
+                MaterialGrade.grade_c, grade_c_stress
             )
         )
 
     problem = SimpleMatchProblem()
     problem.solve()
 
-    # Check grade A (values are dimensionless in this test, stored in SI which is Pa for Pressure)
-    # Since we're providing dimensionless numbers, they're treated as SI units (Pa)
-    # 20000 psi = 137895145 Pa, but since we're giving dimensionless 20000, it's stored as 20000 Pa
+    # Check grade A - values are in SI units (Pa)
     assert pytest.approx(problem.allowable_stress.value, rel=1e-3) == 20000  # Value in Pa
 
     # Change to grade B

@@ -156,6 +156,10 @@ class IterativeSolver(BaseSolver):
 
             return True
 
+        except TypeError:
+            # Re-raise TypeError - these are critical errors like dimension mismatches
+            # that should not be silently caught
+            raise
         except Exception as e:
             if self.logger:
                 self.logger.error(f"Failed to solve for {var_symbol}: {e}")

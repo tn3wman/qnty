@@ -8,7 +8,7 @@ which is critical for frameworks like Reflex that automatically deepcopy state v
 import copy
 import pytest
 
-from qnty import Dimensionless, Length, Pressure, Problem
+from qnty import Area, Dimensionless, Length, Pressure, Problem
 from qnty.algebra import equation, geq, gt
 from qnty.problems.rules import add_rule
 
@@ -74,7 +74,7 @@ class PipeBranch(Problem):
     T = Length("Branch Wall Thickness").set(0.1).inch
 
     # Simple equation for branch area
-    A = Length("Branch Area")
+    A = Area("Branch Area")
     A_eqn = equation(A, (D - 2 * T) ** 2 * 3.14159 / 4)
 
 
@@ -388,9 +388,9 @@ class TestDeepCopyEdgeCases:
             if isinstance(current_copy, dict):
                 current_copy = current_copy["problem"]
 
-        # Should still be functional
-        if hasattr(current_copy, 'solve'):
-            current_copy.solve()
+        # Should still be functional - current_copy is now a Problem instance
+        assert isinstance(current_copy, Problem)
+        current_copy.solve()
 
 
 def test_integration_with_existing_functionality():

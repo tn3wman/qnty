@@ -621,8 +621,8 @@ class UnaryFunction(Expression):
             "sin": lambda x: self._create_dimensionless_quantity(math.sin(self._to_radians_if_angle(x))),
             "cos": lambda x: self._create_dimensionless_quantity(math.cos(self._to_radians_if_angle(x))),
             "tan": lambda x: self._create_dimensionless_quantity(math.tan(self._to_radians_if_angle(x))),
-            "sqrt": lambda x: x if not (hasattr(x, "value") and x.value is not None) else self._create_dimensionless_quantity(math.sqrt(x.value)),
-            "abs": lambda x: x if not (hasattr(x, "value") and x.value is not None) else self._create_dimensionless_quantity(abs(x.value)),
+            "sqrt": lambda x: self._evaluate_sqrt(x),
+            "abs": lambda x: self._evaluate_abs(x),
             "ln": lambda x: self._create_dimensionless_quantity(math.log(x.value)) if _has_valid_value(x) else x,
             "log10": lambda x: self._create_dimensionless_quantity(math.log10(x.value)) if _has_valid_value(x) else x,
             "exp": lambda x: self._create_dimensionless_quantity(math.exp(x.value)) if _has_valid_value(x) else x,
@@ -633,6 +633,40 @@ class UnaryFunction(Expression):
             return func(operand_val)
         else:
             raise ValueError(f"Unknown function: {self.function_name}")
+
+    def _evaluate_sqrt(self, x: "Quantity") -> "Quantity":
+        """Evaluate square root while preserving dimensional consistency."""
+        if not (hasattr(x, "value") and x.value is not None):
+            return x
+
+        result_value = math.sqrt(x.value)
+
+        # Try to compute sqrt of dimension (halve all exponents if possible)
+        if hasattr(x, "dim") and hasattr(x.dim, "exps"):
+            exps = x.dim.exps
+            # Check if all exponents are even (required for integer sqrt)
+            if all(e % 2 == 0 for e in exps):
+                sqrt_exps = tuple(e // 2 for e in exps)
+                # Import Dimension to create new dimension with halved exponents
+                from ..core.dimension import Dimension, BACKEND
+                sqrt_dim = Dimension(sqrt_exps, BACKEND.encode(sqrt_exps))
+                return Quantity(name=f"{result_value}", dim=sqrt_dim, value=result_value)
+
+        # Fallback to dimensionless if dimension can't be sqrt'd properly
+        return self._create_dimensionless_quantity(result_value)
+
+    def _evaluate_abs(self, x: "Quantity") -> "Quantity":
+        """Evaluate absolute value while preserving dimensions."""
+        if not (hasattr(x, "value") and x.value is not None):
+            return x
+
+        result_value = abs(x.value)
+
+        # Preserve the original dimension for abs
+        if hasattr(x, "dim"):
+            return Quantity(name=f"{result_value}", dim=x.dim, value=result_value)
+
+        return self._create_dimensionless_quantity(result_value)
 
     def _to_radians_if_angle(self, quantity: "Quantity") -> float:
         """Convert angle quantities to radians for trigonometric functions."""

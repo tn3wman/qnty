@@ -237,8 +237,9 @@ def main():
         if result.success and result.resultant:
             # Access rich objects for detailed analysis
             dto = result.to_dto()
-            print(f"    Problem {i+1}: {len(vectors)} vectors -> "
-                  f"F_R = {dto.resultant.magnitude:.2f} N at {dto.resultant.angle:.1f}°")
+            if dto.resultant:
+                print(f"    Problem {i+1}: {len(vectors)} vectors -> "
+                      f"F_R = {dto.resultant.magnitude:.2f} N at {dto.resultant.angle:.1f}°")
 
     # =========================================================================
     # Example 7: The Key Benefit - ONE API to learn

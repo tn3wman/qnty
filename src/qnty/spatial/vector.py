@@ -631,20 +631,21 @@ class _Vector(Generic[D]):
         return self._create_quantity(name, self._dim, value, self._unit)
 
     @property
-    def magnitude(self) -> Quantity[D] | None:
+    def magnitude(self) -> Quantity[D]:
         """
         Vector magnitude/length.
 
         Returns:
-            Magnitude as Quantity with same dimension as components, or None for unknown vectors
+            Magnitude as Quantity with same dimension as components.
+            For unknown vectors, returns a Quantity with value=None.
         """
         # For ForceVector compatibility - return stored magnitude if it exists
         if hasattr(self, '_magnitude') and self._magnitude is not None:
             return self._magnitude
 
-        # For unknown vectors without magnitude
+        # For unknown vectors without magnitude, return Quantity with value=None
         if hasattr(self, 'is_known') and not self.is_known:
-            return None
+            return self._create_quantity("magnitude", self._dim, None, self._unit)  # type: ignore[arg-type]
 
         if self._dim is None:
             raise ValueError("Cannot compute magnitude of dimensionless vector")

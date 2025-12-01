@@ -33,7 +33,14 @@ def _create_unary_function(name: str, docstring: str) -> "Callable[[ExpressionOp
         wrapped_expr = wrap_operand(expr)
 
         # For known quantities (FieldQnty with known values), check context before auto-evaluating
+        should_auto_evaluate = False
         if hasattr(expr, "quantity") and getattr(expr, "quantity", None) is not None:
+            should_auto_evaluate = True
+        # Also auto-evaluate for Quantity objects with values
+        elif hasattr(expr, "value") and hasattr(expr, "dim") and getattr(expr, "value", None) is not None:
+            should_auto_evaluate = True
+
+        if should_auto_evaluate:
             # No Problem class context found, safe to auto-evaluate
             try:
                 unary_func = UnaryFunction(name, wrapped_expr)

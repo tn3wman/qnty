@@ -209,14 +209,17 @@ class TestClosureVsExplicit:
         accessible from closures during class definition. Use explicit variable
         passing via kwargs instead.
         """
+        # Define M outside the class so closure can capture it
+        M_outer = np.array([[1.0, 2.0], [3.0, 4.0]])
+
         class ClosureSum(Problem):
-            M = np.array([[1.0, 2.0], [3.0, 4.0]])
+            M = M_outer
 
             result = Dimensionless("result")
-            # Using closure - M is captured from class namespace
+            # Using closure - M_outer is captured from enclosing scope
             result_eqn = equation(
                 result,
-                summation(lambda i, j: M[i, j], 2, 2)
+                summation(lambda i, j: M_outer[i, j], 2, 2)
             )
 
         problem = ClosureSum()
@@ -254,9 +257,10 @@ class TestClosureVsExplicit:
         class ClosureVersion(Problem):
             matrix = M
             result = Dimensionless("result")
+            # Use M from enclosing scope (not class attribute 'matrix')
             result_eqn = equation(
                 result,
-                summation(lambda i, j: matrix[i, j] * i * j, 3, 3)
+                summation(lambda i, j: M[i, j] * i * j, 3, 3)
             )
 
         class ExplicitVersion(Problem):
@@ -264,7 +268,7 @@ class TestClosureVsExplicit:
             result = Dimensionless("result")
             result_eqn = equation(
                 result,
-                summation(lambda i, j, matrix: matrix[i, j] * i * j, 3, 3, matrix=matrix)
+                summation(lambda i, j, mat: mat[i, j] * i * j, 3, 3, mat=M)
             )
 
         problem1 = ClosureVersion()
@@ -348,6 +352,8 @@ class TestEdgeCases:
                     result,
                     summation(lambda i: i, 0)  # No terms
                 )
+
+            _ = EmptySum  # Reference to satisfy linter (class definition raises before this)
 
     def test_single_term(self):
         """Test summation with single term"""

@@ -10,8 +10,6 @@ import json
 import math
 from dataclasses import asdict
 
-import pytest
-
 from qnty.problems.statics import parallelogram_law as pl
 
 
@@ -77,6 +75,8 @@ class TestSolveClass:
 
         # Resultant of (100, 0) + (0, 100) = (100, 100)
         # Magnitude = sqrt(100^2 + 100^2) = 141.42
+        assert dto.resultant is not None
+        assert dto.resultant.magnitude is not None
         assert abs(dto.resultant.magnitude - 141.421) < 0.1
 
     def test_solve_class_resultant_angle(self):
@@ -90,6 +90,8 @@ class TestSolveClass:
         dto = result.to_dto()
 
         # Resultant of (100, 0) + (0, 100) should be at 45°
+        assert dto.resultant is not None
+        assert dto.resultant.angle is not None
         assert abs(dto.resultant.angle - 45.0) < 0.1
 
     def test_solve_class_three_vectors(self):
@@ -105,6 +107,8 @@ class TestSolveClass:
         assert result.success
         # Three equal vectors at 120° apart should sum to ~0
         dto = result.to_dto()
+        assert dto.resultant is not None
+        assert dto.resultant.magnitude is not None
         assert dto.resultant.magnitude < 1.0  # Should be very small
 
     def test_solve_empty_returns_error(self):
@@ -112,6 +116,7 @@ class TestSolveClass:
         result = pl.solve()
 
         assert not result.success
+        assert result.error is not None
         assert "No vectors" in result.error
 
 
@@ -156,6 +161,7 @@ class TestResultToDTO:
         result = pl.solve_class(Problem)
         dto = result.to_dto()
 
+        assert dto.resultant is not None
         assert abs(dto.resultant.u - 100) < 0.01
         assert abs(dto.resultant.v - 100) < 0.01
 
@@ -171,6 +177,7 @@ class TestDTOConversion:
         assert isinstance(dto, pl.Vector)
         assert dto.name == "F_1"
         assert dto.unit == "N"
+        assert dto.magnitude is not None
         assert abs(dto.magnitude - 100) < 0.1
 
     def test_from_vector_dto(self):
@@ -225,6 +232,8 @@ class TestUnitConversion:
         dto = result.to_dto()
 
         # 100 N ≈ 22.48 lbf
+        assert dto.resultant is not None
+        assert dto.resultant.magnitude is not None
         assert dto.resultant.unit == "lbf"
         assert abs(dto.resultant.magnitude - 22.48) < 0.1
 
@@ -252,7 +261,10 @@ class TestReflexIntegration:
 
         # Verify
         assert len(state_vectors) == 2
+        assert state_result is not None
         assert state_result.success
+        assert state_result.resultant is not None
+        assert state_result.resultant.magnitude is not None
         assert abs(state_result.resultant.magnitude - 141.421) < 0.1
 
     def test_state_is_json_serializable(self):

@@ -10,7 +10,6 @@ These tests verify that:
 from dataclasses import asdict
 import json
 import math
-import pytest
 
 from qnty.integration import (
     PointDTO,
@@ -20,11 +19,9 @@ from qnty.integration import (
     SolutionStepDTO,
     VectorDTO,
     dto_to_point,
-    dto_to_quantity,
     dto_to_vector,
     get_components,
     point_to_dto,
-    quantity_to_dto,
     solve_problem,
     sum_vectors,
     vector_to_dto,
@@ -202,6 +199,7 @@ class TestSolverService:
         assert "F_R" in result.vectors
 
         fr = result.vectors["F_R"]
+        assert fr.u is not None and fr.v is not None and fr.magnitude is not None
         assert abs(fr.u - 100.0) < 1e-6
         assert abs(fr.v - 100.0) < 1e-6
         assert abs(fr.magnitude - 141.421) < 0.1
@@ -220,6 +218,7 @@ class TestSolverService:
 
         assert result.success
         fr = result.vectors["F_R"]
+        assert fr.magnitude is not None and fr.angle is not None
         assert abs(fr.magnitude - 141.421) < 0.1
         assert abs(fr.angle - 45.0) < 0.1
 
@@ -267,6 +266,7 @@ class TestSolverService:
         result = solve_problem(input_dto)
 
         assert not result.success
+        assert result.error is not None
         assert "not in equilibrium" in result.error.lower()
 
     def test_unknown_problem_type(self):
@@ -278,6 +278,7 @@ class TestSolverService:
         result = solve_problem(input_dto)
 
         assert not result.success
+        assert result.error is not None
         assert "Unknown problem type" in result.error
 
 
@@ -294,6 +295,7 @@ class TestConvenienceFunctions:
 
         assert result.success
         fr = result.vectors["F_R"]
+        assert fr.magnitude is not None
         assert abs(fr.magnitude - 141.421) < 0.1
 
     def test_get_components(self):
@@ -305,6 +307,7 @@ class TestConvenienceFunctions:
 
         assert result.success
         f = result.vectors.get("F")
+        assert f is not None and f.u is not None and f.v is not None
         expected = 100 * math.cos(math.radians(45))  # ~70.7
         assert abs(f.u - expected) < 0.1
         assert abs(f.v - expected) < 0.1
@@ -322,6 +325,7 @@ class TestEdgeCases:
         result = solve_problem(input_dto)
 
         assert not result.success
+        assert result.error is not None
         assert "No vectors" in result.error
 
     def test_single_vector(self):
@@ -388,6 +392,7 @@ class TestFacadePattern:
         assert result.success
         assert "F_R" in result.vectors
         fr = result.vectors["F_R"]
+        assert fr.magnitude is not None
         assert abs(fr.magnitude - 141.421) < 0.1
 
     def test_equilibrium_facade(self):
@@ -409,6 +414,7 @@ class TestFacadePattern:
 
         assert result.success
         f = result.vectors.get("F")
+        assert f is not None and f.u is not None
         assert abs(f.u - 86.603) < 0.1
 
     def test_facade_with_input_dto(self):

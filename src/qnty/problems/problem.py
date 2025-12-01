@@ -965,6 +965,10 @@ class Problem(ValidationMixin):
 
         except SolverError:
             raise
+        except TypeError:
+            # Re-raise TypeError - these are critical errors like dimension mismatches
+            # that should be surfaced directly to the user
+            raise
         except Exception as e:
             self.logger.error(f"Solving failed: {e}")
             raise SolverError(f"Unexpected error during solving: {e}") from e

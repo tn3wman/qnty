@@ -88,7 +88,7 @@ def extract_force_data(force: Any) -> tuple[float, float] | None:
     Returns:
         Tuple of (magnitude, angle_rad) or None if force is not fully known
     """
-    if not force.is_known or force.magnitude is None or force.angle is None:
+    if not force.is_known or force.magnitude.value is None or force.angle is None:
         return None
 
     mag = force.magnitude.value if force.magnitude.value else 0.0

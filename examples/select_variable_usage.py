@@ -43,8 +43,8 @@ class SimpleFlangeCalculation(Problem):
     b = Length("Effective Gasket Width").set(0.15).inch
     m = Dimensionless("Gasket Factor").set(2.0).dimensionless
 
-    # Calculate bolt load based on gasket type
-    W_o = Force("Design Bolt Load", is_known=False)
+    # Calculate bolt load based on gasket type (value=None means unknown)
+    W_o = Force("Design Bolt Load")
     pi = 3.14159
 
     W_o_eqn = equation(

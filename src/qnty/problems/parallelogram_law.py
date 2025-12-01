@@ -146,7 +146,7 @@ def _sum_force_components(forces: list[_Vector], skip_resultants: bool = False) 
 
 def _require_magnitude(force: _Vector, name: str = "Force") -> float:
     """Validate and return magnitude value, raising ValueError if None."""
-    if force.magnitude is None or force.magnitude.value is None:
+    if force.magnitude.value is None:
         raise ValueError(f"{name} has no magnitude value")
     return force.magnitude.value
 
@@ -160,7 +160,7 @@ def _require_angle(force: _Vector, name: str = "Force") -> float:
 
 def _get_force_display_value(force: _Vector) -> tuple[float, str]:
     """Get magnitude in display units and unit symbol."""
-    if force.magnitude is None or force.magnitude.value is None:
+    if force.magnitude.value is None:
         return 0.0, ""
     si_value = force.magnitude.value
     if force.magnitude.preferred:
@@ -170,7 +170,7 @@ def _get_force_display_value(force: _Vector) -> tuple[float, str]:
 
 def _format_force_string(name: str, force: _Vector) -> str | None:
     """Format force as 'name = magnitude unit at angle°'. Returns None if force lacks required values."""
-    if force.magnitude is None or force.magnitude.value is None:
+    if force.magnitude.value is None:
         return None
     if force.angle is None or force.angle.value is None:
         return None
@@ -2021,7 +2021,7 @@ class ParallelogramLawProblem(Problem):
             FR_angle_deg = math.degrees(FR_angle)
             return _format_angle_difference_display(known_name, resultant_name, "x", "x", F_known_angle_deg, FR_angle_deg, gamma_deg, operator="-", use_absolute=True)
 
-    def _add_triangle_method_steps(self, force1: _Vector, force2: _Vector, resultant: _VectorWithUnknowns, resultant_name: str, mag_si: float, angle_rad: float, eq_num_offset: int = 0) -> None:
+    def _add_triangle_method_steps(self, force1: _Vector, force2: _Vector, resultant: _Vector, resultant_name: str, mag_si: float, angle_rad: float, eq_num_offset: int = 0) -> None:
         """Add solution steps using the parallelogram law (Law of Cosines and Law of Sines).
 
         Args:
@@ -2468,7 +2468,7 @@ class ParallelogramLawProblem(Problem):
         total_unknowns = 0
 
         for force in self.forces.values():
-            mag_unknown = force.magnitude is None or force.magnitude.value is None
+            mag_unknown = force.magnitude.value is None
             angle_unknown = force.angle is None or force.angle.value is None or force.has_relative_angle()
             is_parametric = angle_unknown and force._relative_to_force is not None
             angle_unknown_for_count = angle_unknown and not is_parametric

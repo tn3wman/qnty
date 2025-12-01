@@ -11,9 +11,7 @@ Tests cover:
 
 import math
 
-import pytest
-
-from qnty.core import Q, u
+from qnty.core import u
 from qnty.spatial import Point, _Vector
 
 
@@ -72,6 +70,7 @@ class TestPointVectorIntegration:
         distance = p1.distance_to(p2)
 
         # Magnitudes should be equal
+        assert v.magnitude is not None
         assert abs(v.magnitude.magnitude() - distance.magnitude()) < 1e-10
 
     def test_triangle_inequality(self):
@@ -90,6 +89,9 @@ class TestPointVectorIntegration:
         assert v_sum == v3
 
         # Triangle inequality
+        assert v_sum.magnitude is not None
+        assert v1.magnitude is not None
+        assert v2.magnitude is not None
         mag_sum = v_sum.magnitude.magnitude()
         mag1 = v1.magnitude.magnitude()
         mag2 = v2.magnitude.magnitude()
@@ -212,6 +214,7 @@ class TestUnitConversionsIntegrated:
         v_sum = v1_m + v2_cm
 
         # Should be 2 meters total
+        assert v_sum.magnitude is not None
         assert abs(v_sum.magnitude.magnitude() - 2.0) < 1e-10
 
 
@@ -281,6 +284,9 @@ class TestEngineeringScenarios:
         assert abs(final.z.magnitude() - 0.4) < 1e-10
 
         # Total distance traveled
+        assert move1.magnitude is not None
+        assert move2.magnitude is not None
+        assert move3.magnitude is not None
         total_distance = move1.magnitude.magnitude() + move2.magnitude.magnitude() + move3.magnitude.magnitude()
         expected_total = 0.2 + 0.15 + 0.1  # 0.45 m
 
@@ -335,6 +341,8 @@ class TestVectorFieldOperations:
         assert v_x.is_perpendicular_to(v_y)
 
         # Magnitudes should match step sizes
+        assert v_x.magnitude is not None
+        assert v_y.magnitude is not None
         assert abs(v_x.magnitude.magnitude() - dx) < 1e-10
         assert abs(v_y.magnitude.magnitude() - dy) < 1e-10
 
@@ -387,6 +395,7 @@ class TestNumericalStability:
         distance = p1.distance_to(p2)
 
         # Magnitude should equal distance
+        assert v.magnitude is not None
         assert abs(v.magnitude.magnitude() - distance.magnitude()) < 1e-3
 
     def test_nearly_parallel_vectors(self):

@@ -51,7 +51,7 @@ def validate_force_magnitude(force: _Vector, label: str = "Force") -> None:
     Raises:
         ValueError: If magnitude is None or has no value
     """
-    if force.magnitude is None or force.magnitude.value is None:
+    if force.magnitude.value is None:
         raise ValueError(f"{label} {force.name} has no magnitude")
 
 

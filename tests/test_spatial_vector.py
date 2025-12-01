@@ -13,7 +13,6 @@ Tests cover:
 
 import math
 
-import numpy as np
 import pytest
 
 from qnty.core import Q, u

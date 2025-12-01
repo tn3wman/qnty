@@ -954,7 +954,7 @@ def create_force_magnitude_quantity(
     Returns:
         Quantity object or None if magnitude is not valid
     """
-    if force.magnitude is None or force.magnitude.value is None:
+    if force.magnitude.value is None:
         return None
 
     from ..core.dimension_catalog import dim

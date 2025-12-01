@@ -105,6 +105,9 @@ class InverseProblemState:
         # Define the problem class dynamically
         class Problem2_2:
             name = "Problem 2-2"
+            F_1: object = None
+            F_2: object = None
+            F_R: object = None
 
         Problem2_2.F_1 = F_1
         Problem2_2.F_2 = F_2
@@ -188,6 +191,8 @@ def main():
         print("\n4. Comparison with textbook solution:")
         expected_mag = 960.0
         expected_angle = 45.2
+        assert state.solved_f1_magnitude is not None, "F_1 magnitude should be solved"
+        assert state.solved_f1_angle is not None, "F_1 angle should be solved"
         mag_error = abs(state.solved_f1_magnitude - expected_mag) / expected_mag * 100
         angle_error = abs(state.solved_f1_angle - expected_angle)
         print(f"   Expected magnitude: {expected_mag} N, Got: {state.solved_f1_magnitude:.1f} N (error: {mag_error:.2f}%)")

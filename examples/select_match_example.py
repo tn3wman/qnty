@@ -102,10 +102,12 @@ def main():
     problem.gasket_type.select(GasketType.non_self_energized)
     problem.solve()
     W_o_non_self = problem.W_o.value
+    assert W_o_non_self is not None, "W_o_non_self should be solved"
 
     problem.gasket_type.select(GasketType.self_energized)
     problem.solve()
     W_o_self = problem.W_o.value
+    assert W_o_self is not None, "W_o_self should be solved"
 
     print("=" * 70)
     print("Comparison:")

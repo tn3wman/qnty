@@ -331,6 +331,11 @@ class Equation:
 
         # Get the variable object to update
         var_obj = variable_values.get(target_var)
+
+        # Validate dimensional consistency between result and target variable
+        if var_obj is not None and hasattr(var_obj, "dim") and hasattr(result_qty, "dim"):
+            if var_obj.dim != result_qty.dim:
+                raise TypeError(f"Dimension mismatch: cannot assign {result_qty.dim} to {var_obj.dim} for variable '{target_var}'")
         if var_obj is None:
             raise ValueError(f"Variable '{target_var}' not found in variable_values")
 
