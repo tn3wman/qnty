@@ -16,6 +16,7 @@ import re
 from pathlib import Path
 
 from numpy import angle
+from pyparsing import C
 
 from qnty.problems.statics import parallelogram_law as pl
 
@@ -525,8 +526,9 @@ class Chapter2Problem16:
 
 class Chapter2Problem17:
     name = "Problem 2-17"
-    generate_debug_reports = True
-    F_1 = pl.create_vector_polar(magnitude=30, unit="N", angle=-36.87, wrt="-x")
+    generate_debug_reports = False
+    # F_1 = pl.create_vector_polar(magnitude=30, unit="N", angle=-36.87, wrt="-x")
+    F_1 = pl.create_vector_from_ratio(magnitude=30, unit="N", u=-4, v=3)
     F_2 = pl.create_vector_polar(magnitude=20, unit="N", angle=-20, wrt="-y")
     F_3 = pl.create_vector_polar(magnitude=50, unit="N", angle=0, wrt="+x")
     F_R = pl.create_vector_resultant(F_1, F_2, F_3, angle_dir="cw")
@@ -538,17 +540,13 @@ class Chapter2Problem17:
         F_R = pl.create_vector_polar(magnitude=19.2, unit="N", angle=-2.37, wrt="+x")
 
 class Chapter2Problem18:
-    """
-    Determine the magnitude and direction of the resultant of the three forces by first
-    finding the resultant F' = F2 + F3 and then forming FR = F' + F1.
-    (Same result as 2-17, just different order of operations)
-    """
+    # Same as Problem 2-17 (Book solves in a different order than 2-17 but not doing that here)
     name = "Problem 2-18"
-
+    generate_debug_reports = False
     F_1 = pl.create_vector_polar(magnitude=30, unit="N", angle=-36.87, wrt="-x")
     F_2 = pl.create_vector_polar(magnitude=20, unit="N", angle=-20, wrt="-y")
     F_3 = pl.create_vector_polar(magnitude=50, unit="N", angle=0, wrt="+x")
-    F_R = pl.create_vector_resultant(F_1, F_2, F_3)
+    F_R = pl.create_vector_resultant(F_1, F_2, F_3, angle_dir="cw")
 
     class expected:
         F_1 = pl.create_vector_polar(magnitude=30, unit="N", angle=-36.87, wrt="-x")
@@ -557,49 +555,95 @@ class Chapter2Problem18:
         F_R = pl.create_vector_polar(magnitude=19.2, unit="N", angle=-2.37, wrt="+x")
 
 class Chapter2Problem19:
-    """
-    NOTE: Uses force-relative reference (wrt="+F_AB"). Skipped for now.
-    """
-    pass
+    name = "Problem 2-19"
+    generate_debug_reports = False
+    F_AB = pl.create_vector_polar(magnitude=..., unit="lbf", angle=..., wrt="+x")
+    F_AC = pl.create_vector_polar(magnitude=500, unit="lbf", angle=-40, wrt=F_AB)
+    F_R = pl.create_vector_resultant_polar(
+        F_AB, F_AC,
+        magnitude=400, unit="lbf", angle=0, wrt="-x"
+    )
+
+    class expected:
+        F_AB = pl.create_vector_polar(magnitude=-621.15, unit="lbf", angle=-53.46, wrt="+x")
+        F_AC = pl.create_vector_polar(magnitude=500, unit="lbf", angle=-93.46, wrt="+x")
+        F_R = pl.create_vector_polar(magnitude=400, unit="lbf", angle=0, wrt="-x")
 
 class Chapter2Problem20:
-    """
-    NOTE: Uses force-relative reference (wrt="-F_AB"). Skipped for now.
-    """
-    pass
+    name = "Problem 2-20"
+    generate_debug_reports = False
+    F_AB = pl.create_vector_polar(magnitude=-600, unit="lbf", angle=-30, wrt="+x")
+    F_AC = pl.create_vector_polar(magnitude=..., unit="lbf", angle=..., wrt=F_AB)
+    F_R = pl.create_vector_resultant_polar(
+        F_AB, F_AC,
+        magnitude=400, unit="lbf", angle=0, wrt="-x"
+    )
+
+    class expected:
+        F_AB = pl.create_vector_polar(magnitude=-600, unit="lbf", angle=-30, wrt="+x")
+        F_AC = pl.create_vector_polar(magnitude=322.97, unit="lbf", angle=-68.3, wrt="+x")
+        F_R = pl.create_vector_polar(magnitude=400, unit="lbf", angle=0, wrt="-x")
 
 class Chapter2Problem21:
     """
-    NOTE: Uses force-relative reference (wrt="+F_2"). Skipped for now.
+    Determine the magnitude and direction of the resultant force, FR measured
+    counterclockwise from the positive x axis. Solve the problem by first finding
+    the resultant F′ = F1 + F2 and then forming FR = F′ + F3.
+
+    NOTE: Uses force-relative reference (wrt="+F_2"). May need special handling.
     """
-    pass
+    name = "Problem 2-21"
+    generate_debug_reports = False
+
+    F_1 = pl.create_vector_polar(magnitude=400, unit="N", angle=90, wrt="F_2")
+    F_2 = pl.create_vector_polar(magnitude=200, unit="N", angle=150, wrt="-y")
+    F_3 = pl.create_vector_polar(magnitude=300, unit="N", angle=0, wrt="-y")
+    F_R = pl.create_vector_resultant(F_1, F_2, F_3)
+
+    class expected:
+        F_1 = pl.create_vector_polar(magnitude=400, unit="N", angle=240, wrt="-y")
+        F_2 = pl.create_vector_polar(magnitude=200, unit="N", angle=150, wrt="-y")
+        F_3 = pl.create_vector_polar(magnitude=300, unit="N", angle=0, wrt="-y")
+        F_R = pl.create_vector_polar(magnitude=257.05, unit="N", angle=163.45, wrt="+x")
 
 class Chapter2Problem22:
-    """
-    NOTE: Uses force-relative reference (wrt="+F_2"). Skipped for now.
-    """
-    pass
+    name = "Problem 2-22"
+    generate_debug_reports = False
+    F_1 = pl.create_vector_polar(magnitude=400, unit="N", angle=90, wrt="F_2")
+    F_2 = pl.create_vector_polar(magnitude=200, unit="N", angle=150, wrt="-y")
+    F_3 = pl.create_vector_polar(magnitude=300, unit="N", angle=0, wrt="-y")
+    F_R = pl.create_vector_resultant(F_1, F_2, F_3)
+
+    class expected:
+        F_1 = pl.create_vector_polar(magnitude=400, unit="N", angle=90, wrt="F_2")
+        F_2 = pl.create_vector_polar(magnitude=200, unit="N", angle=150, wrt="-y")
+        F_3 = pl.create_vector_polar(magnitude=300, unit="N", angle=0, wrt="-y")
+        F_R = pl.create_vector_polar(magnitude=257.05, unit="N", angle=163.45, wrt="+x")
 
 class Chapter2Problem23:
-    """
-    NOTE: Complex angle relationships between forces (angle between F_1 and F_2).
-    May need special handling. Skipped for now.
-    """
-    pass
+    name = "Problem 2-23"
+    generate_debug_reports = False
+    F_1 = pl.create_vector_polar(magnitude=400, unit="N", angle=..., wrt="+x")
+    F_2 = pl.create_vector_polar(magnitude=600, unit="N", angle=..., wrt="+x")
+    F_R = pl.create_vector_resultant_polar(
+        F_1, F_2,
+        magnitude=800, unit="N", angle=..., wrt="+x"
+    )
+
+    class expected:
+        F_1 = pl.create_vector_polar(magnitude=400, unit="N", angle=75.5, wrt="F_2")
+        F_2 = pl.create_vector_polar(magnitude=600, unit="N", angle=-75.5, wrt="F_1")
+        F_R = pl.create_vector_polar(magnitude=800, unit="N", angle=0, wrt="+x")
 
 class Chapter2Problem24:
     """
     NOTE: Problem 2-24 is symbolic according to original test file.
+    Skipped - requires symbolic solving capabilities.
     """
     pass
 
 class Chapter2Problem25:
-    """
-    If F1 = 30 lb and F2 = 40 lb, determine the angles u and f so that the resultant
-    force is directed along the positive x axis and has a magnitude of FR = 60 lb.
-    """
     name = "Problem 2-25"
-
     F_1 = pl.create_vector_polar(magnitude=30, unit="lbf", angle=..., wrt="+x")
     F_2 = pl.create_vector_polar(magnitude=40, unit="lbf", angle=..., wrt="+x")
     F_R = pl.create_vector_resultant_polar(F_1, F_2, magnitude=60, unit="lbf", angle=0, wrt="+x")
@@ -610,10 +654,6 @@ class Chapter2Problem25:
         F_R = pl.create_vector_polar(magnitude=60, unit="lbf", angle=0, wrt="+x")
 
 class Chapter2Problem26:
-    """
-    Determine the magnitude and direction u of FA so that the resultant force is
-    directed along the positive x axis and has a magnitude of 1250 N.
-    """
     name = "Problem 2-26"
 
     F_A = pl.create_vector_polar(magnitude=..., unit="N", angle=..., wrt="+x")
@@ -626,12 +666,7 @@ class Chapter2Problem26:
         F_R = pl.create_vector_polar(magnitude=1250, unit="N", angle=0, wrt="+x")
 
 class Chapter2Problem27:
-    """
-    Determine the magnitude and direction, measured counterclockwise from the positive
-    x axis, of the resultant force acting on the ring at O, if FA = 750 N and u = 45°.
-    """
     name = "Problem 2-27"
-
     F_A = pl.create_vector_polar(magnitude=750, unit="N", angle=-45, wrt="+y")
     F_B = pl.create_vector_polar(magnitude=800, unit="N", angle=-30, wrt="+x")
     F_R = pl.create_vector_resultant(F_A, F_B)
@@ -642,18 +677,24 @@ class Chapter2Problem27:
         F_R = pl.create_vector_polar(magnitude=1230, unit="N", angle=6.08, wrt="+x")
 
 class Chapter2Problem28:
-    """
-    NOTE: Uses force-relative reference (wrt="+F_3"). Skipped for now.
-    """
-    pass
+    name = "Problem 2-28"
+    generate_debug_reports = False
+    F_1 = pl.create_vector_polar(magnitude=8000, unit="N", angle=0, wrt="-y")
+    F_2 = pl.create_vector_polar(magnitude=6000, unit="N", angle=0, wrt="+x")
+    F_3 = pl.create_vector_polar(magnitude=..., unit="N", angle=30, wrt="-y")
+    F_R = pl.create_vector_resultant_polar(
+        F_1, F_2, F_3,
+        magnitude=..., unit="N", angle=90, wrt="F_3"
+    )
+
+    class expected:
+        F_1 = pl.create_vector_polar(magnitude=8000, unit="N", angle=0, wrt="-y")
+        F_2 = pl.create_vector_polar(magnitude=6000, unit="N", angle=0, wrt="+x")
+        F_3 = pl.create_vector_polar(magnitude=1196, unit="N", angle=30, wrt="-y")
+        F_R = pl.create_vector_polar(magnitude=9928, unit="N", angle=90, wrt="F_3")
 
 class Chapter2Problem29:
-    """
-    If the resultant force of the two tugboats is FR, directed along the positive x axis,
-    determine the required magnitude of force FB and its direction u.
-    """
     name = "Problem 2-29"
-
     F_A = pl.create_vector_polar(magnitude=2000, unit="N", angle=30, wrt="+x")
     F_B = pl.create_vector_polar(magnitude=..., unit="N", angle=..., wrt="+x")
     F_R = pl.create_vector_resultant_polar(F_A, F_B, magnitude=3000, unit="N", angle=0, wrt="+x")
@@ -664,11 +705,6 @@ class Chapter2Problem29:
         F_R = pl.create_vector_polar(magnitude=3000, unit="N", angle=0, wrt="+x")
 
 class Chapter2Problem30:
-    """
-    If FA = 2000 N and FB = 3000 N at 45° below horizontal, determine the magnitude
-    of the resultant force of the two tugboats and its direction measured clockwise
-    from the positive x axis.
-    """
     name = "Problem 2-30"
 
     F_A = pl.create_vector_polar(magnitude=2000, unit="N", angle=30, wrt="+x")
@@ -681,10 +717,19 @@ class Chapter2Problem30:
         F_R = pl.create_vector_polar(magnitude=4013, unit="N", angle=-16.2, wrt="+x")
 
 class Chapter2Problem31:
-    """
-    NOTE: Uses force-relative reference (wrt="+F_R"). Skipped for now.
-    """
-    pass
+    name = "Problem 2-31"
+    generate_debug_reports = False
+    F_A = pl.create_vector_polar(magnitude=2000, unit="N", angle=30, wrt="+x")
+    F_B = pl.create_vector_polar(magnitude=..., unit="N", angle=-90, wrt="F_R")
+    F_R = pl.create_vector_resultant_polar(
+        F_A, F_B,
+        magnitude=..., unit="N", angle=0, wrt="+x"
+    )
+
+    class expected:
+        F_A = pl.create_vector_polar(magnitude=2000, unit="N", angle=30, wrt="+x")
+        F_B = pl.create_vector_polar(magnitude=1000, unit="N", angle=-90, wrt="+x")
+        F_R = pl.create_vector_polar(magnitude=1730, unit="N", angle=0, wrt="+x")
 
 # endregion // Parallelogram Law Problems
 
@@ -746,14 +791,6 @@ class Chapter2Problem49:
 
 class Chapter2Problem50:
     pass
-
-
-
-
-
-
-
-
 
 # =============================================================================
 # Problem 2-1 Mixed Units (Variant)
@@ -899,16 +936,19 @@ PARALLELOGRAM_LAW_PROBLEMS = [
     Chapter2Problem16,
     Chapter2Problem17,
     Chapter2Problem18,
-    # Problems 19-22: Force-relative references - not yet supported
-    # Problem 23: Complex angle relationships - not yet supported
+    Chapter2Problem19,
+    Chapter2Problem20,
+    Chapter2Problem21,
+    Chapter2Problem22,
+    Chapter2Problem23,
     # Problem 24: Symbolic problem
-    # Chapter2Problem25,
+    Chapter2Problem25,
     Chapter2Problem26,
     Chapter2Problem27,
-    # Problem 28: Force-relative reference - not yet supported
+    Chapter2Problem28,
     Chapter2Problem29,
     Chapter2Problem30,
-    # Problem 31: Force-relative reference - not yet supported
+    Chapter2Problem31,
 ]
 
 PROBLEMS_EXPECT_FAIL = [
@@ -936,11 +976,18 @@ ALL_PROBLEM_CLASSES = [
     Chapter2Problem16,
     Chapter2Problem17,
     Chapter2Problem18,
-    # Chapter2Problem25,
+    Chapter2Problem19,
+    Chapter2Problem20,
+    Chapter2Problem21,
+    Chapter2Problem22,
+    Chapter2Problem23,
+    # Chapter2Problem24,  # Symbolic problem - skipped
+    Chapter2Problem25,
     Chapter2Problem26,
     Chapter2Problem27,
     Chapter2Problem29,
     Chapter2Problem30,
+    Chapter2Problem31,
 ]
 
 PROBLEMS_WITH_GOLDEN_FILES = [

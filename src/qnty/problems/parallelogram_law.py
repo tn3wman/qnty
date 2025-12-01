@@ -356,6 +356,33 @@ class ParallelogramLawProblem(Problem):
                 self.forces[attr_name] = force_copy
                 setattr(self, attr_name, force_copy)
 
+        # Fourth pass: resolve force references now that all vectors have names
+        # This handles cases where F_AC references F_AB by vector object,
+        # but F_AB was cloned later and now has its proper name
+        for original_id, cloned_vec in vector_clones.items():
+            force_vec_ref = getattr(cloned_vec, "_relative_to_force_vec", None)
+            if force_vec_ref is None:
+                # Also check the original class-level vector for the reference
+                for attr_name in dir(self.__class__):
+                    if attr_name.startswith("_"):
+                        continue
+                    attr = getattr(self.__class__, attr_name)
+                    if id(attr) == original_id:
+                        force_vec_ref = getattr(attr, "_relative_to_force_vec", None)
+                        break
+
+            if force_vec_ref is not None:
+                # Find the cloned version of the referenced vector
+                cloned_ref = vector_clones.get(id(force_vec_ref))
+                if cloned_ref and cloned_ref.name:
+                    cloned_vec._relative_to_force = cloned_ref.name
+                    # Also update _original_wrt
+                    old_wrt = getattr(cloned_vec, "_original_wrt", "")
+                    if old_wrt.startswith("+"):
+                        cloned_vec._original_wrt = f"+{cloned_ref.name}"
+                    elif old_wrt.startswith("-"):
+                        cloned_vec._original_wrt = f"-{cloned_ref.name}"
+
     def _clone_force_vector(self, force: _Vector) -> _Vector:
         """Create a copy of a ForceVector."""
         return clone_force_vector(force, _Vector)
@@ -366,7 +393,8 @@ class ParallelogramLawProblem(Problem):
 
     def _compute_vector_resultants(self) -> None:
         """Compute resultant vectors from _VectorWithUnknowns placeholders."""
-        has_vector_resultants = False
+        solved_any = False
+        needs_parametric_solve = False
 
         for attr_name in dir(self):
             if attr_name.startswith("_"):
@@ -375,19 +403,44 @@ class ParallelogramLawProblem(Problem):
             if not isinstance(attr, _VectorWithUnknowns) or not attr.component_vectors:
                 continue
 
-            has_vector_resultants = True
             is_constraint = getattr(attr, "_is_constraint", False)
 
             if is_constraint:
-                self._solve_inverse_resultant(attr, attr_name)
+                if self._solve_inverse_resultant(attr, attr_name):
+                    solved_any = True
+                else:
+                    # Parametric constraint: populate forces dict for main solve() method
+                    needs_parametric_solve = True
+                    self._populate_forces_for_parametric_solve(attr, attr_name)
                 continue
 
             # Forward problem: sum component vectors
             self._compute_forward_resultant(attr, attr_name)
+            solved_any = True
 
-        if has_vector_resultants:
+        if solved_any:
             self.is_solved = True
             self._populate_solving_history()
+        elif needs_parametric_solve:
+            # Don't mark as solved - the main solve() method will handle it
+            self.is_solved = False
+
+    def _populate_forces_for_parametric_solve(self, resultant: _VectorWithUnknowns, resultant_name: str) -> None:
+        """Populate the forces dict for parametric constraint problems.
+
+        When a resultant has parametric constraints (vectors with _relative_to_force),
+        we need to add all component vectors to the forces dict so the main solve()
+        method can process them.
+        """
+        # Add component vectors to forces dict
+        for vec in resultant.component_vectors:
+            vec_name = getattr(vec, "name", None)
+            if vec_name and vec_name not in self.forces:
+                self.forces[vec_name] = vec
+
+        # Add the resultant itself
+        if resultant_name not in self.forces:
+            self.forces[resultant_name] = resultant
 
     def _compute_forward_resultant(self, resultant: _VectorWithUnknowns, resultant_name: str) -> None:
         """Compute forward resultant by summing component vectors."""
@@ -468,11 +521,22 @@ class ParallelogramLawProblem(Problem):
                 resultant_name,
             )
 
-    def _solve_inverse_resultant(self, resultant: _VectorWithUnknowns, resultant_name: str) -> None:
-        """Solve for unknown component vectors given a known resultant constraint."""
+    def _solve_inverse_resultant(self, resultant: _VectorWithUnknowns, resultant_name: str) -> bool:
+        """Solve for unknown component vectors given a known resultant constraint.
+
+        Returns:
+            True if the problem was solved, False if it requires parametric solving.
+        """
         component_vectors = resultant.component_vectors
         known_vectors: list[_Vector] = []
         unknown_vectors: list[_VectorWithUnknowns] = []
+
+        # Check if any vectors have parametric constraints (relative to another force)
+        has_parametric_constraint = any(getattr(vec, "_relative_to_force", None) is not None for vec in component_vectors)
+        if has_parametric_constraint:
+            # Parametric constraints require the main solve() method which handles
+            # the coupled equations properly. Skip inverse solve and let solve() handle it.
+            return False
 
         for vec in component_vectors:
             if isinstance(vec, _VectorWithUnknowns) and vec.has_unknowns:
@@ -492,7 +556,7 @@ class ParallelogramLawProblem(Problem):
                 FR_angle = math.atan2(resultant._coords[1], resultant._coords[0])
             unit = resultant._unit
             self._solve_with_unknown_resultant_magnitude(known_vectors, unknown_vectors, resultant, resultant_name, FR_angle, unit)
-            return
+            return True
 
         FR_coords = resultant._coords
         FR_mag, FR_angle = _magnitude_and_angle_from_coords(FR_coords)
@@ -528,6 +592,8 @@ class ParallelogramLawProblem(Problem):
                 raise NotImplementedError("Inverse resultant solve requires either both unknown magnitudes or one unknown angle + one unknown magnitude")
         else:
             raise NotImplementedError(f"Inverse resultant solve not implemented for {len(known_vectors)} known + {len(unknown_vectors)} unknown vectors")
+
+        return True
 
     def _solve_one_known_one_unknown_inverse(
         self, known_vec: _Vector, unknown_vec: _VectorWithUnknowns, resultant: _VectorWithUnknowns, resultant_name: str, FR_coords: np.ndarray, FR_mag: float, FR_angle: float, unit

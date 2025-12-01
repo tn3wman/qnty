@@ -66,6 +66,7 @@ class _Vector(Generic[D]):
         # ForceVector attributes
         "_magnitude", "_angle", "name", "is_known", "is_resultant", "_description",
         "coordinate_system", "angle_reference", "_relative_to_force", "_relative_angle",
+        "_relative_to_force_vec",  # Actual vector reference for deferred name resolution
         # PositionVector attributes
         "_from_point", "_to_point", "_constraint_magnitude",
         # Original polar coordinates for reporting

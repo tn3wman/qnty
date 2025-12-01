@@ -207,11 +207,27 @@ class _VectorWithUnknowns(_Vector):
         result._relative_to_force = getattr(self, "_relative_to_force", None)
         result._relative_angle = getattr(self, "_relative_angle", None)
 
-        # Copy original angle and wrt for reporting
+        # Copy original angle and wrt for reporting (do this first)
         if hasattr(self, "_original_angle"):
             result._original_angle = self._original_angle
         if hasattr(self, "_original_wrt"):
             result._original_wrt = self._original_wrt
+
+        # Resolve force reference name from vector if available (update after copying)
+        force_vec_ref = getattr(self, "_relative_to_force_vec", None)
+        if force_vec_ref is not None and vector_clones:
+            # Look up the cloned vector to get its resolved name
+            cloned_ref = vector_clones.get(id(force_vec_ref))
+            if cloned_ref and cloned_ref.name:
+                result._relative_to_force = cloned_ref.name
+                # Also update _original_wrt if it was a vector reference
+                old_wrt = getattr(result, "_original_wrt", "")
+                if old_wrt.startswith("+"):
+                    result._original_wrt = f"+{cloned_ref.name}"
+                elif old_wrt.startswith("-"):
+                    result._original_wrt = f"-{cloned_ref.name}"
+                else:
+                    result._original_wrt = cloned_ref.name
 
         # Copy _VectorWithUnknowns-specific attributes
         result._unknowns = self._unknowns.copy() if hasattr(self, "_unknowns") else {}
@@ -444,20 +460,33 @@ def create_vector_polar(
     wrt_is_vector = isinstance(wrt, _Vector)
     wrt_vector_angle_rad: float | None = None
 
+    # Track if we need deferred force reference resolution
+    wrt_vector_is_unknown = False
+
     if wrt_is_vector:
         # wrt is a _Vector - compute the reference angle from the vector's direction
         # Get the angle of the reference vector in the specified plane using raw coordinates
         ref_vec = wrt
         # Access internal _coords array to avoid Quantity conversion issues
         coords = ref_vec._coords  # type: ignore[union-attr]
-        if plane_lower == "xy":
-            wrt_vector_angle_rad = math.atan2(coords[1], coords[0])  # v, u
-        elif plane_lower == "xz":
-            wrt_vector_angle_rad = math.atan2(coords[2], coords[0])  # w, u
-        else:  # yz
-            wrt_vector_angle_rad = math.atan2(coords[2], coords[1])  # w, v
-        # Store string representation for later use
-        wrt_str = f"@{ref_vec.name}" if ref_vec.name else "@vector"
+
+        # Check if the reference vector is unknown (has placeholder zero coordinates or is marked unknown)
+        is_unknown = getattr(ref_vec, "is_known", True) is False or (coords[0] == 0 and coords[1] == 0 and coords[2] == 0)
+
+        if is_unknown:
+            # Reference vector is unknown - treat like a force reference for deferred resolution
+            # Store the actual vector object so we can resolve its name later (after cloning assigns names)
+            wrt_vector_is_unknown = True
+            wrt_str = f"+{ref_vec.name}" if ref_vec.name else "+Vector"  # Temporary name, will be updated during clone
+        else:
+            if plane_lower == "xy":
+                wrt_vector_angle_rad = math.atan2(coords[1], coords[0])  # v, u
+            elif plane_lower == "xz":
+                wrt_vector_angle_rad = math.atan2(coords[2], coords[0])  # w, u
+            else:  # yz
+                wrt_vector_angle_rad = math.atan2(coords[2], coords[1])  # w, v
+            # Store string representation for later use
+            wrt_str = f"@{ref_vec.name}" if ref_vec.name else "@vector"
     else:
         # wrt is a string axis
         wrt_str = wrt
@@ -475,6 +504,34 @@ def create_vector_polar(
             validate_axis_in_plane(wrt_str.lower(), plane_lower)
         # For custom axes (like +u, +v), we defer validation to solve time
         # when the coordinate system is known
+
+    # Check for force reference in wrt string (e.g., "+F_AB", "F_1", "-F_R")
+    # Force references contain uppercase letters or underscores
+    # Also treat unknown vector references as force references for deferred resolution
+    is_force_reference = False
+    force_ref_name: str | None = None
+    force_ref_angle_offset: float = 0.0
+
+    if wrt_vector_is_unknown:
+        # Unknown vector reference - treat like a force reference
+        is_force_reference = True
+        ref_part = wrt_str
+        ref_without_sign = ref_part.lstrip("+-")
+        is_negative_ref = ref_part.startswith("-")
+        force_ref_name = ref_without_sign
+        if is_negative_ref:
+            force_ref_angle_offset = math.pi  # 180 degrees in radians
+    elif not wrt_is_vector:
+        ref_part = wrt_str
+        ref_without_sign = ref_part.lstrip("+-")
+        is_negative_ref = ref_part.startswith("-")
+
+        # Detect force reference: has uppercase or underscore (not just lowercase axis like +x)
+        if any(c.isupper() or c == "_" for c in ref_without_sign):
+            is_force_reference = True
+            force_ref_name = ref_without_sign
+            if is_negative_ref:
+                force_ref_angle_offset = math.pi  # 180 degrees in radians
 
     # Resolve unit
     resolved_unit = resolve_unit_from_string(unit) if unit is not None else None
@@ -519,6 +576,22 @@ def create_vector_polar(
         if wrt_is_vector:
             result._wrt_vector_angle_rad = wrt_vector_angle_rad
 
+        # Store force reference attributes for solver resolution
+        if is_force_reference:
+            result._relative_to_force = force_ref_name
+            # Combine the angle offset from -F_ref with the angle parameter
+            if not has_unknown_angle:
+                angle_rad = result._polar_angle_rad if result._polar_angle_rad is not None else 0.0
+                result._relative_angle = force_ref_angle_offset + angle_rad
+            else:
+                result._relative_angle = force_ref_angle_offset
+            # Store actual vector reference for name resolution during cloning
+            if wrt_vector_is_unknown and wrt_is_vector:
+                result._relative_to_force_vec = wrt  # Store actual vector for later name lookup
+        else:
+            result._relative_to_force = None
+            result._relative_angle = None
+
         return result
 
     # Both magnitude and angle are known - compute Cartesian components
@@ -549,10 +622,31 @@ def create_vector_polar(
 
     # Get the base angle for the reference axis
     base_angle_rad: float
-    if wrt_is_vector:
-        # When wrt is a vector, use the vector's angle as the base
-        assert wrt_vector_angle_rad is not None  # Set above when wrt_is_vector is True
+    if wrt_is_vector and not wrt_vector_is_unknown:
+        # When wrt is a known vector, use the vector's angle as the base
+        assert wrt_vector_angle_rad is not None  # Set above when wrt_is_vector is True and not unknown
         base_angle_rad = wrt_vector_angle_rad
+    elif is_force_reference:
+        # Force reference (like +F_AB) - defer computation until reference force is resolved
+        vec = _Vector(0.0, 0.0, 0.0, unit=resolved_unit, name=name)
+        vec._original_angle = angle_value
+        vec._original_wrt = wrt_str
+        vec._deferred_magnitude = magnitude_value
+        vec._deferred_angle_rad = angle_rad
+        vec._relative_to_force = force_ref_name
+        vec._relative_angle = force_ref_angle_offset + angle_rad
+        vec.is_known = True  # Magnitude and angle are known, just need reference resolution
+        # Store actual vector reference for name resolution during cloning
+        if wrt_vector_is_unknown and wrt_is_vector:
+            vec._relative_to_force_vec = wrt  # Store actual vector for later name lookup
+        # Store magnitude as a proper Quantity so solver can access it via magnitude property
+        # This is critical for parametric solving which reads magnitude.value
+        # Convert to SI units - magnitude_value is in display units, multiply by si_factor
+        from ..core.dimension_catalog import dim
+        from ..core.quantity import Quantity
+        magnitude_si = magnitude_value * resolved_unit.si_factor if resolved_unit else magnitude_value
+        vec._magnitude = Quantity("magnitude", dim.force, magnitude_si, resolved_unit)
+        return vec
     else:
         wrt_lower = wrt_str.lower()
         if wrt_lower in axis_angles.get(plane_lower, {}):
@@ -1208,8 +1302,14 @@ def create_vector_resultant_polar(
     """
     import math
 
-    # Convert angle to radians
-    angle_rad = convert_angle_to_radians(angle, angle_unit)
+    # Check for unknown angle first (before conversion)
+    has_unknown_angle = angle is ...
+
+    # Convert angle to radians (use 0.0 placeholder if unknown)
+    if has_unknown_angle:
+        angle_rad = 0.0  # Placeholder - actual angle will be solved
+    else:
+        angle_rad = convert_angle_to_radians(angle, angle_unit)
 
     # Handle wrt as either a string axis or a reference vector
     wrt_is_vector = isinstance(wrt, _Vector)
@@ -1274,13 +1374,15 @@ def create_vector_resultant_polar(
         w = 0.0
 
     # Determine unknowns dict based on what's unknown
+    unknowns: dict[str, str] = {}
     if has_unknown_magnitude:
-        unknowns = {"magnitude": "magnitude"}
-    else:
-        unknowns = {}
+        unknowns["magnitude"] = "magnitude"
+    if has_unknown_angle:
+        unknowns["angle"] = "angle"
 
     # Create with the resultant values
     # If magnitude is unknown, components are direction only (unit vector scaled)
+    # If angle is unknown, components are placeholders
     result = _VectorWithUnknowns(
         u=u,
         v=v,
@@ -1291,11 +1393,11 @@ def create_vector_resultant_polar(
         name=name,
     )
     result.is_resultant = True
-    result.is_known = not has_unknown_magnitude  # Only known if magnitude is known
+    result.is_known = not has_unknown_magnitude and not has_unknown_angle
     result._is_constraint = True  # Mark this as a constraint for inverse solving
 
     # Store original angle and reference for reporting
-    result._original_angle = float(angle)
+    result._original_angle = None if has_unknown_angle else float(angle)
     result._original_wrt = wrt_str
 
     # Store polar-specific attributes for solving
@@ -1303,7 +1405,25 @@ def create_vector_resultant_polar(
         result._polar_magnitude = None
     else:
         result._polar_magnitude = mag_val
-    result._polar_angle_rad = angle_rad
+
+    if has_unknown_angle:
+        result._polar_angle_rad = None
+    else:
+        result._polar_angle_rad = angle_rad
+        # Also set _angle as a Quantity for solver compatibility (solver reads angle.value)
+        from ..core.dimension_catalog import dim
+        from ..core.quantity import Quantity
+        from ..core.unit import ureg
+        degree_unit = ureg.resolve("degree", dim=dim.D)
+        # Use total angle (base + relative) in radians, converted back to the standard reference
+        if wrt_is_vector:
+            total_angle_rad = wrt_vector_angle_rad + angle_rad  # type: ignore[operator]
+        elif wrt_lower in standard_axis_angles:
+            base_angle_rad = math.radians(standard_axis_angles[wrt_lower])
+            total_angle_rad = base_angle_rad + angle_rad
+        else:
+            total_angle_rad = angle_rad  # Custom axis - deferred
+        result._angle = Quantity("angle", dim.D, total_angle_rad, degree_unit)
 
     # Store vector reference if wrt was a vector
     if wrt_is_vector:

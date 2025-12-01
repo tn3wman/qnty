@@ -67,6 +67,7 @@ from ...spatial.coordinate_system import CoordinateSystem
 from ...spatial.vector import _Vector
 from ...spatial.vectors import (
     create_vector_cartesian,
+    create_vector_from_ratio,
     create_vector_polar,
     create_vector_resultant,
     create_vector_resultant_polar,
@@ -709,6 +710,28 @@ def solve_class(
                 vector_map[old_id] = attr
                 setattr(DynamicProblem, attr_name, attr)
 
+        # Update force references now that all vectors have proper names
+        # This handles cases like F_AC referencing F_AB where F_AB's name was "Vector" at definition time
+        for attr_name in dir(problem_class):
+            if attr_name.startswith('_'):
+                continue
+            attr = getattr(DynamicProblem, attr_name, None)
+            if attr is None or not isinstance(attr, _Vector):
+                continue
+            # Check if this vector has a force reference that needs updating
+            force_vec_ref = getattr(attr, '_relative_to_force_vec', None)
+            if force_vec_ref is not None:
+                # Find the resolved version of the referenced vector
+                resolved_ref = vector_map.get(id(force_vec_ref), force_vec_ref)
+                if resolved_ref is not None and resolved_ref.name and resolved_ref.name != "Vector":
+                    attr._relative_to_force = resolved_ref.name
+                    # Also update _original_wrt
+                    old_wrt = getattr(attr, '_original_wrt', "")
+                    if old_wrt.startswith("+"):
+                        attr._original_wrt = f"+{resolved_ref.name}"
+                    elif old_wrt.startswith("-"):
+                        attr._original_wrt = f"-{resolved_ref.name}"
+
         # Update component_vectors references in resultant vectors
         for attr_name in dir(problem_class):
             if attr_name.startswith('_'):
@@ -748,6 +771,11 @@ def solve_class(
 
         # Instantiate and solve (coordinate_system is already set as class attribute)
         problem = DynamicProblem()
+
+        # If the problem wasn't fully solved during instantiation (e.g., parametric constraints),
+        # call solve() explicitly
+        if not problem.is_solved:
+            problem.solve()
 
         # Extract results using attribute names from problem_class
         result_vectors = {}
