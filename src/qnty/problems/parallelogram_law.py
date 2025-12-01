@@ -19,6 +19,7 @@ from ..spatial.vector import _Vector
 from ..spatial.vector_helpers import vector_helper as _helper
 from ..spatial.vectors import _VectorWithUnknowns
 from ..utils.geometry import compute_angle_between_display, format_axis_ref, interior_angle, normalize_angle_positive
+from ..utils.shared_utilities import capture_original_force_states, clone_unknown_force_vector, handle_negative_magnitude
 from .problem import Problem
 
 # =============================================================================
@@ -160,6 +161,42 @@ def _create_sum_step(resultant_name: str, component: str, component_names: list[
     }
 
 
+def _get_axis_angle(wrt: str, coord_sys: Any) -> float:
+    """
+    Get the standard angle (in radians) for an axis reference.
+
+    Args:
+        wrt: Axis reference like "+x", "-y", or custom axis label
+        coord_sys: Coordinate system object with axis1_label, axis2_label, axis1_angle, axis2_angle
+
+    Returns:
+        Angle in radians from +x axis (counterclockwise)
+
+    Raises:
+        ValueError: If axis is unknown and no coordinate system is defined
+    """
+    standard_axis_angles = {"+x": 0, "+y": math.pi / 2, "-x": math.pi, "-y": 3 * math.pi / 2}
+    wrt_lower = wrt.lower()
+
+    if wrt_lower in standard_axis_angles:
+        return standard_axis_angles[wrt_lower]
+
+    if coord_sys is not None:
+        wrt_stripped = wrt.lstrip('+-')
+        is_negative = wrt.startswith('-')
+        if wrt_stripped == coord_sys.axis1_label:
+            base_angle = coord_sys.axis1_angle
+        elif wrt_stripped == coord_sys.axis2_label:
+            base_angle = coord_sys.axis2_angle
+        else:
+            raise ValueError(f"Unknown axis '{wrt}'")
+        if is_negative:
+            base_angle += math.pi
+        return base_angle
+
+    raise ValueError(f"Unknown axis '{wrt}' and no coordinate system defined")
+
+
 # =============================================================================
 # ParallelogramLawProblem class
 # =============================================================================
@@ -298,37 +335,12 @@ class ParallelogramLawProblem(Problem):
                 angle_reference=force.angle_reference,
             )
             # Handle negative magnitude
-            if force.magnitude is not None and force.magnitude.value is not None and force.magnitude.value < 0:
-                if cloned._magnitude is not None and cloned._magnitude.value is not None:
-                    cloned._magnitude.value = -abs(cloned._magnitude.value)
-                    if cloned._angle is not None and cloned._angle.value is not None:
-                        cloned._angle.value = (cloned._angle.value + math.pi) % (2 * math.pi)
+            original_mag = force.magnitude.value if force.magnitude is not None else None
+            handle_negative_magnitude(cloned, original_mag)
             return cloned
         else:
-            angle_value = None
-            angle_unit = None
-            if force.angle is not None and force.angle.value is not None:
-                angle_value = force.angle_reference.from_standard(force.angle.value, angle_unit="degree")
-                angle_unit = "degree"
-
-            cloned = _Vector(
-                name=force.name,
-                magnitude=force.magnitude,
-                angle=angle_value if angle_value is not None else None,
-                unit=force.magnitude.preferred if force.magnitude else None,
-                angle_unit=angle_unit if angle_unit else "degree",
-                description=force.description,
-                is_known=force.is_known,
-                is_resultant=force.is_resultant,
-                coordinate_system=force.coordinate_system,
-                angle_reference=force.angle_reference,
-            )
-
-            if hasattr(force, "_relative_to_force") and force._relative_to_force is not None:
-                cloned._relative_to_force = force._relative_to_force
-                cloned._relative_angle = force._relative_angle
-
-            return cloned
+            # Unknown force - use shared utility
+            return clone_unknown_force_vector(force, _Vector)
 
     # =========================================================================
     # Vector resultant computation
@@ -600,32 +612,9 @@ class ParallelogramLawProblem(Problem):
 
         # Convert wrt to standard angle from +x
         # Support both standard axes and custom coordinate system axes
-        standard_axis_angles = {"+x": 0, "+y": 90, "-x": 180, "-y": 270}
         coord_sys = getattr(self, 'coordinate_system', None)
-
-        def get_axis_base_angle(wrt: str) -> float:
-            """Get the base angle for an axis reference, supporting custom coordinate systems."""
-            wrt_lower = wrt.lower()
-            if wrt_lower in standard_axis_angles:
-                return math.radians(standard_axis_angles[wrt_lower])
-            elif coord_sys is not None:
-                # Custom axis - look it up in the coordinate system
-                wrt_stripped = wrt.lstrip('+-')
-                is_negative = wrt.startswith('-')
-                if wrt_stripped == coord_sys.axis1_label:
-                    base = coord_sys.axis1_angle
-                elif wrt_stripped == coord_sys.axis2_label:
-                    base = coord_sys.axis2_angle
-                else:
-                    raise ValueError(f"Unknown axis '{wrt}' for coordinate system with axes '{coord_sys.axis1_label}', '{coord_sys.axis2_label}'")
-                if is_negative:
-                    base += math.pi
-                return base
-            else:
-                raise ValueError(f"Unknown axis '{wrt}' and no coordinate system defined")
-
-        base1 = get_axis_base_angle(wrt1)
-        base2 = get_axis_base_angle(wrt2)
+        base1 = _get_axis_angle(wrt1, coord_sys)
+        base2 = _get_axis_angle(wrt2, coord_sys)
 
         # Compute standard angles from +x axis
         theta1_std = base1 + theta1_input
@@ -768,28 +757,7 @@ class ParallelogramLawProblem(Problem):
         wrt2 = getattr(vec_with_unknown_magnitude, '_original_wrt', '+x')
         wrt_R = getattr(resultant, '_original_wrt', '+x')
 
-        standard_axis_angles = {"+x": 0, "+y": 90, "-x": 180, "-y": 270}
         coord_sys = getattr(self, 'coordinate_system', None)
-
-        def get_axis_base_angle(wrt: str) -> float:
-            """Get the base angle for an axis reference."""
-            wrt_lower = wrt.lower()
-            if wrt_lower in standard_axis_angles:
-                return math.radians(standard_axis_angles[wrt_lower])
-            elif coord_sys is not None:
-                wrt_stripped = wrt.lstrip('+-')
-                is_negative = wrt.startswith('-')
-                if wrt_stripped == coord_sys.axis1_label:
-                    base = coord_sys.axis1_angle
-                elif wrt_stripped == coord_sys.axis2_label:
-                    base = coord_sys.axis2_angle
-                else:
-                    raise ValueError(f"Unknown axis '{wrt}'")
-                if is_negative:
-                    base += math.pi
-                return base
-            else:
-                raise ValueError(f"Unknown axis '{wrt}'")
 
         # Check if resultant is specified relative to F1 (the vector with unknown angle)
         # This is indicated by wrt_R starting with '@' (vector reference)
@@ -807,7 +775,7 @@ class ParallelogramLawProblem(Problem):
             )
 
             # Get base angle for F2 (known angle)
-            base2 = get_axis_base_angle(wrt2)
+            base2 = _get_axis_angle(wrt2, coord_sys)
             theta2_std = base2 + theta2_input  # F2's absolute angle (standard)
 
             # Solve for θ1 (F1's standard angle) using vector equation:
@@ -860,8 +828,8 @@ class ParallelogramLawProblem(Problem):
             gamma2 = math.pi - gamma1
 
             # Get base angle for wrt1 and wrt2
-            base1 = get_axis_base_angle(wrt1)
-            base2 = get_axis_base_angle(wrt2)
+            base1 = _get_axis_angle(wrt1, coord_sys)
+            base2 = _get_axis_angle(wrt2, coord_sys)
             theta2_std = base2 + theta2_input  # F2's absolute angle (standard)
 
             # The angle γ is between (-F1 direction) and (F2 direction)
@@ -1210,26 +1178,8 @@ class ParallelogramLawProblem(Problem):
 
         # Get wrt reference for unknown vector to compute base angle
         wrt = getattr(unknown_vec, '_original_wrt', '+x')
-        standard_axis_angles = {"+x": 0, "+y": 90, "-x": 180, "-y": 270}
-
         coord_sys = getattr(self, 'coordinate_system', None)
-        wrt_lower = wrt.lower()
-
-        if wrt_lower in standard_axis_angles:
-            base_angle_rad = math.radians(standard_axis_angles[wrt_lower])
-        elif coord_sys is not None:
-            wrt_stripped = wrt.lstrip('+-')
-            is_negative = wrt.startswith('-')
-            if wrt_stripped == coord_sys.axis1_label:
-                base_angle_rad = coord_sys.axis1_angle
-            elif wrt_stripped == coord_sys.axis2_label:
-                base_angle_rad = coord_sys.axis2_angle
-            else:
-                raise ValueError(f"Unknown axis '{wrt}'")
-            if is_negative:
-                base_angle_rad += math.pi
-        else:
-            raise ValueError(f"Unknown axis '{wrt}' and no coordinate system defined")
+        base_angle_rad = _get_axis_angle(wrt, coord_sys)
 
         # The constraint is that F_R is along the direction FR_angle.
         # F_R = F_unknown + F_known
@@ -1482,27 +1432,8 @@ class ParallelogramLawProblem(Problem):
 
     def _get_standard_angle(self, input_angle_rad: float, wrt: str) -> float:
         """Convert an input angle (relative to wrt axis) to standard angle (from +x CCW)."""
-        standard_axis_angles = {"+x": 0, "+y": math.pi/2, "-x": math.pi, "-y": 3*math.pi/2}
-        wrt_lower = wrt.lower()
-
-        if wrt_lower in standard_axis_angles:
-            base_angle = standard_axis_angles[wrt_lower]
-        else:
-            coord_sys = getattr(self, 'coordinate_system', None)
-            if coord_sys is not None:
-                wrt_stripped = wrt.lstrip('+-')
-                is_negative = wrt.startswith('-')
-                if wrt_stripped == coord_sys.axis1_label:
-                    base_angle = coord_sys.axis1_angle
-                elif wrt_stripped == coord_sys.axis2_label:
-                    base_angle = coord_sys.axis2_angle
-                else:
-                    raise ValueError(f"Unknown axis '{wrt}'")
-                if is_negative:
-                    base_angle += math.pi
-            else:
-                raise ValueError(f"Unknown axis '{wrt}' and no coordinate system defined")
-
+        coord_sys = getattr(self, 'coordinate_system', None)
+        base_angle = _get_axis_angle(wrt, coord_sys)
         return normalize_angle_positive(base_angle + input_angle_rad)
 
     def _add_known_angles_unknown_magnitudes_steps(
@@ -2545,12 +2476,7 @@ class ParallelogramLawProblem(Problem):
 
         # Save original states
         if not self._original_force_states:
-            for force_name, force in self.forces.items():
-                self._original_force_states[force_name] = force.is_known
-                mag_known = force.magnitude is not None and force.magnitude.value is not None
-                angle_known = force.angle is not None and force.angle.value is not None
-                self._original_variable_states[f"{force_name}_mag_known"] = mag_known
-                self._original_variable_states[f"{force_name}_angle_known"] = angle_known
+            capture_original_force_states(self.forces, self._original_force_states, self._original_variable_states)
 
         self._resolve_relative_angles()
 

@@ -213,17 +213,10 @@ def summation(term_generator, *range_specs, **kwargs):
 
         return DelayedFunction("summation", term_generator, range_specs, kwargs)
 
-    # Convert range_specs to actual ranges
-    ranges = []
-    for spec in range_specs:
-        if isinstance(spec, int):
-            ranges.append(range(spec))
-        elif isinstance(spec, tuple):
-            ranges.append(range(*spec))
-        elif isinstance(spec, range):
-            ranges.append(spec)
-        else:
-            raise ValueError(f"Invalid range specification: {spec}")
+    # Convert range_specs to actual ranges using shared utility
+    from ..utils.shared_utilities import normalize_range_specs
+
+    ranges = normalize_range_specs(range_specs)
 
     # Generate all terms by iterating over the Cartesian product of ranges
     import itertools

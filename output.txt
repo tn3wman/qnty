@@ -1,0 +1,214 @@
+Analyzing 80 Python files...
+2 repetitions of complexity 68
+
+Line 208 - src/qnty/extensions/reporting/vector_diagram.py:
+def create_force_diagram(problem, output_path: str | x_0, title: str | None=None, show_components: bool=False, **kwargs) -> x_0:
+    """
+    Create vector diagram from a VectorEquilibriumProblem.
+
+    Args:
+        problem: VectorEquilibriumProblem instance (must be solved)
+        output_path: Output file path
+        title: Diagram title (uses problem.name if None)
+        show_components: Whether to show component projections
+        **kwargs: Additional arguments for VectorDiagram
+
+    Returns:
+        Path to saved diagram
+
+    Examples:
+        >>> problem = Problem_2_1()
+        >>> problem.solve()
+        >>> create_force_diagram(problem, "diagram.png")
+    """
+    x_1 = x_1 or x_2.name
+    x_3 = x_4(title=x_1, show_components=x_5, **x_6)
+    x_7(x_3, x_2)
+    return x_3.save(x_8)
+
+Line 45 - src/qnty/extensions/plotting/vector_diagram.py:
+def create_force_diagram(problem, output_path: str | x_0, title: str | None=None, show_components: bool=False, **kwargs) -> x_0:
+    """
+    Create vector diagram from a VectorEquilibriumProblem.
+
+    Args:
+        problem: VectorEquilibriumProblem instance (must be solved)
+        output_path: Output file path
+        title: Diagram title (uses problem.name if None)
+        show_components: Whether to show component projections
+        **kwargs: Additional arguments for VectorDiagram
+
+    Returns:
+        Path to saved diagram
+
+    Examples:
+        >>> problem = Problem_2_1()
+        >>> problem.solve()
+        >>> create_force_diagram(problem, "diagram.png")
+    """
+    x_1 = x_1 or x_2.name
+    x_3 = x_4(title=x_1, show_components=x_5, **x_6)
+    x_7(x_3, x_2)
+    return x_3.save(x_8)
+
+======================================================================
+
+3 repetitions of complexity 65
+
+Line 1080 - src/qnty/spatial/vectors.py:
+if isinstance(x_0, str):
+    from ..core.unit import ureg
+    x_1 = x_2.resolve(x_0)
+    if x_1 is None:
+        raise ValueError(f"Unknown unit '{x_0}'")
+    x_3 = x_1
+elif x_0 is not None:
+    x_3 = x_0
+elif x_4:
+    x_3 = x_4[0]._unit
+
+Line 1164 - src/qnty/spatial/vectors.py:
+if isinstance(x_0, str):
+    from ..core.unit import ureg
+    x_1 = x_2.resolve(x_0)
+    if x_1 is None:
+        raise ValueError(f"Unknown unit '{x_0}'")
+    x_3 = x_1
+elif x_0 is not None:
+    x_3 = x_0
+elif x_4:
+    x_3 = x_4[0]._unit
+
+Line 1284 - src/qnty/spatial/vectors.py:
+if isinstance(x_0, str):
+    from ..core.unit import ureg
+    x_1 = x_2.resolve(x_0)
+    if x_1 is None:
+        raise ValueError(f"Unknown unit '{x_0}'")
+    x_3 = x_1
+elif x_0 is not None:
+    x_3 = x_0
+elif x_4:
+    x_3 = x_4[0]._unit
+
+======================================================================
+
+2 repetitions of complexity 64
+
+Line 308 - src/qnty/utils/scope_discovery.py:
+for x_0 in x_1.values():
+    if not x_2:
+        break
+    if x_3.is_variable(x_0):
+        x_4 = x_5._get_variable_name(x_0)
+        if x_4 in x_6:
+            x_7[x_4] = x_0
+            x_2.remove(x_4)
+            x_6.remove(x_4)
+
+Line 320 - src/qnty/utils/scope_discovery.py:
+for x_0 in x_1.values():
+    if not x_2:
+        break
+    if x_3.is_variable(x_0):
+        x_4 = x_5._get_variable_name(x_0)
+        if x_4 in x_6:
+            x_7[x_4] = x_0
+            x_2.remove(x_4)
+            x_6.remove(x_4)
+
+======================================================================
+
+2 repetitions of complexity 64
+
+Line 202 - src/qnty/extensions/reporting/formats.py:
+if x_0.returncode == 0:
+    x_1 = x_2.stem + '.pdf'
+    x_3 = x_4.parent / x_1
+    if x_3.exists():
+        if x_3 != x_4:
+            if x_4.exists():
+                x_4.unlink()
+            x_3.rename(x_4)
+        return True
+
+Line 235 - src/qnty/extensions/reporting/formats.py:
+if x_0.returncode == 0:
+    x_1 = x_2.stem + '.pdf'
+    x_3 = x_4.parent / x_1
+    if x_3.exists():
+        if x_3 != x_4:
+            if x_4.exists():
+                x_4.unlink()
+            x_3.rename(x_4)
+        return True
+
+======================================================================
+
+2 repetitions of complexity 64
+
+Line 717 - src/qnty/spatial/points.py:
+def to_radians(angle_val):
+    if x_0 is None:
+        return None
+    if x_1.lower() in ('degree', 'degrees', 'deg'):
+        return x_2.radians(float(x_0))
+    elif x_1.lower() in ('radian', 'radians', 'rad'):
+        return float(x_0)
+    else:
+        raise ValueError(f"Invalid angle_unit '{x_1}'. Use 'degree' or 'radian'")
+
+Line 81 - src/qnty/spatial/vector_direction_angles.py:
+def to_radians(angle_val):
+    if x_0 is None:
+        return None
+    if x_1.lower() in ('degree', 'degrees', 'deg'):
+        return x_2.radians(float(x_0))
+    elif x_1.lower() in ('radian', 'radians', 'rad'):
+        return float(x_0)
+    else:
+        raise ValueError(f"Invalid angle_unit '{x_1}'. Use 'degree' or 'radian'")
+
+======================================================================
+
+2 repetitions of complexity 60
+
+Line 934 - src/qnty/problems/composition.py:
+for x_0 in x_1.variables.values():
+    if hasattr(x_2, 'name') and hasattr(x_0, 'name') and (x_2.name == x_0.name) and (id(x_2) != id(x_0)):
+        x_3 = x_4(x_0)
+        x_5 = True
+        break
+
+Line 943 - src/qnty/problems/composition.py:
+for x_0 in x_1.variables.values():
+    if hasattr(x_2, 'name') and hasattr(x_0, 'name') and (x_2.name == x_0.name) and (id(x_2) != id(x_0)):
+        x_3 = x_4(x_0)
+        x_5 = True
+        break
+
+======================================================================
+
+2 repetitions of complexity 60
+
+Line 1697 - src/qnty/extensions/reporting/report_ir.py:
+if x_0.startswith('@'):
+    x_1 = x_0[1:]
+    if '_' in x_1:
+        x_2 = x_1.split('_', 1)
+        x_0 = f'$\\vec{{{x_2[0]}_{{{x_2[1]}}}}}$'
+    else:
+        x_0 = f'$\\vec{{{x_1}}}$'
+
+Line 2076 - src/qnty/extensions/reporting/report_ir.py:
+if x_0.startswith('@'):
+    x_1 = x_0[1:]
+    if '_' in x_1:
+        x_2 = x_1.split('_', 1)
+        x_0 = f'$\\vec{{{x_2[0]}_{{{x_2[1]}}}}}$'
+    else:
+        x_0 = f'$\\vec{{{x_1}}}$'
+
+======================================================================
+
+Found 7 repeated patterns

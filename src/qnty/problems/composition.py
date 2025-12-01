@@ -652,6 +652,7 @@ class DelayedFunction(Expression, ArithmeticOperationsMixin):
             import itertools
 
             from ..algebra.nodes import BinaryOperation, wrap_operand
+            from ..utils.shared_utilities import normalize_range_specs
 
             # summation(term_generator, range_specs, kwargs)
             # Args are: term_generator, tuple of range_specs, dict of kwargs
@@ -659,17 +660,8 @@ class DelayedFunction(Expression, ArithmeticOperationsMixin):
             range_specs = resolved_args[1] if len(resolved_args) > 1 else ()
             kwargs = resolved_args[2] if len(resolved_args) > 2 else {}
 
-            # Convert range_specs to actual ranges
-            ranges = []
-            for spec in range_specs:
-                if isinstance(spec, int):
-                    ranges.append(range(spec))
-                elif isinstance(spec, tuple):
-                    ranges.append(range(*spec))
-                elif isinstance(spec, range):
-                    ranges.append(spec)
-                else:
-                    raise ValueError(f"Invalid range specification: {spec}")
+            # Convert range_specs to actual ranges using shared utility
+            ranges = normalize_range_specs(range_specs)
 
             # Generate all terms
             terms = []

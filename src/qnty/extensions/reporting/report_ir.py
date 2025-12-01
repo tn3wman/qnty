@@ -12,6 +12,8 @@ from datetime import datetime
 from enum import Enum
 from pathlib import Path
 
+from ...utils.shared_utilities import escape_latex as _escape_latex_util
+
 
 class TableAlignment(Enum):
     """Column alignment for tables."""
@@ -873,24 +875,7 @@ class LaTeXRenderer(ReportRenderer):
 
     def _escape_latex(self, text: str) -> str:
         """Escape special LaTeX characters."""
-        if not text:
-            return ""
-        replacements = [
-            ("\\", r"\textbackslash{}"),
-            ("&", r"\&"),
-            ("%", r"\%"),
-            ("$", r"\$"),
-            ("#", r"\#"),
-            ("_", r"\_"),
-            ("{", r"\{"),
-            ("}", r"\}"),
-            ("~", r"\textasciitilde{}"),
-            ("^", r"\textasciicircum{}"),
-        ]
-        result = text
-        for old, new in replacements:
-            result = result.replace(old, new)
-        return result
+        return _escape_latex_util(text)
 
     def _format_table_header(self, header: str) -> str:
         """Format a table header with proper LaTeX notation for vectors and magnitudes.
@@ -1537,6 +1522,34 @@ class ReportBuilder:
                 y_display = abs(y_display)
             return (f"{x_display:.1f}", f"{y_display:.1f}")
 
+    # Subscript map for axis labels - use Unicode subscripts where available
+    _AXIS_SUBSCRIPT_MAP = {
+        'x': 'ₓ', 'y': 'ᵧ', 'u': 'ᵤ', 'v': 'ᵥ', 'n': 'ₙ', 't': 'ₜ',
+        'a': 'ₐ', 'b': 'ᵦ'
+    }
+
+    def _build_force_table_columns(self, unit: str) -> list[TableColumn]:
+        """Build standard columns for force vector tables.
+
+        Args:
+            unit: Unit symbol for force values (e.g., "N", "lbf")
+
+        Returns:
+            List of TableColumn objects for force vector tables
+        """
+        axis1, axis2 = self._get_axis_labels()
+        sub1 = self._AXIS_SUBSCRIPT_MAP.get(axis1.lower(), f'_{axis1}')
+        sub2 = self._AXIS_SUBSCRIPT_MAP.get(axis2.lower(), f'_{axis2}')
+
+        return [
+            TableColumn("Vector", TableAlignment.LEFT),
+            TableColumn(f"F{sub1} ({unit})", TableAlignment.DECIMAL),
+            TableColumn(f"F{sub2} ({unit})", TableAlignment.DECIMAL),
+            TableColumn(f"|F| ({unit})", TableAlignment.DECIMAL),
+            TableColumn("θ (deg)", TableAlignment.DECIMAL),
+            TableColumn("Reference", TableAlignment.LEFT),
+        ]
+
     def _build_force_table(self, data: list[dict]) -> Table:
         """Build a table for force vectors with component, Magnitude, Angle, Reference columns.
 
@@ -1546,24 +1559,7 @@ class ReportBuilder:
         - Component headers use the coordinate system axes (e.g., Fᵤ, Fᵥ for u-v system)
         """
         unit = data[0].get('unit', 'unit') if data else 'unit'
-        axis1, axis2 = self._get_axis_labels()
-
-        # Build subscript characters for axis labels
-        # Use Unicode subscripts where available, otherwise use underscore notation
-        # which will be converted to LaTeX by _format_table_header_md
-        subscript_map = {'x': 'ₓ', 'y': 'ᵧ', 'u': 'ᵤ', 'v': 'ᵥ', 'n': 'ₙ', 't': 'ₜ',
-                         'a': 'ₐ', 'b': 'ᵦ'}  # Added a and b for custom coordinate systems
-        sub1 = subscript_map.get(axis1.lower(), f'_{axis1}')
-        sub2 = subscript_map.get(axis2.lower(), f'_{axis2}')
-
-        columns = [
-            TableColumn("Vector", TableAlignment.LEFT),
-            TableColumn(f"F{sub1} ({unit})", TableAlignment.DECIMAL),
-            TableColumn(f"F{sub2} ({unit})", TableAlignment.DECIMAL),
-            TableColumn(f"|F| ({unit})", TableAlignment.DECIMAL),
-            TableColumn("θ (deg)", TableAlignment.DECIMAL),
-            TableColumn("Reference", TableAlignment.LEFT),
-        ]
+        columns = self._build_force_table_columns(unit)
 
         rows = []
         for var in data:
@@ -1652,24 +1648,7 @@ class ReportBuilder:
                 unit = mag_var.preferred.symbol
                 break
 
-        # Get axis labels from coordinate system
-        axis1, axis2 = self._get_axis_labels()
-
-        # Build subscript characters for axis labels
-        # Use Unicode subscripts where available, otherwise use underscore notation
-        subscript_map = {'x': 'ₓ', 'y': 'ᵧ', 'u': 'ᵤ', 'v': 'ᵥ', 'n': 'ₙ', 't': 'ₜ',
-                         'a': 'ₐ', 'b': 'ᵦ'}  # Added a and b for custom coordinate systems
-        sub1 = subscript_map.get(axis1.lower(), f'_{axis1}')
-        sub2 = subscript_map.get(axis2.lower(), f'_{axis2}')
-
-        columns = [
-            TableColumn("Vector", TableAlignment.LEFT),
-            TableColumn(f"F{sub1} ({unit})", TableAlignment.DECIMAL),
-            TableColumn(f"F{sub2} ({unit})", TableAlignment.DECIMAL),
-            TableColumn(f"|F| ({unit})", TableAlignment.DECIMAL),
-            TableColumn("θ (deg)", TableAlignment.DECIMAL),
-            TableColumn("Reference", TableAlignment.LEFT),
-        ]
+        columns = self._build_force_table_columns(unit)
 
         rows = []
 
@@ -2129,24 +2108,8 @@ class ReportBuilder:
 
     def _format_equation_list(self) -> list[str]:
         """Format equations for display in solving order."""
-        if self.solving_history:
-            equation_strs = []
-            used_equations = set()
-
-            for step_data in self.solving_history:
-                equation_str = step_data.get("equation_str", "")
-                if equation_str and equation_str not in used_equations:
-                    equation_strs.append(equation_str)
-                    used_equations.add(equation_str)
-
-            for eq in self.equations:
-                eq_str = str(eq)
-                if eq_str not in used_equations:
-                    equation_strs.append(eq_str)
-
-            return equation_strs
-
-        return [str(eq) for eq in self.equations]
+        from ...utils.shared_utilities import format_equation_list_from_history
+        return format_equation_list_from_history(self.solving_history, self.equations)
 
     def _extract_solution_steps(self) -> list:
         """Extract solution steps from solving history.

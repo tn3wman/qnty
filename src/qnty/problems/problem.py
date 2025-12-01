@@ -20,7 +20,7 @@ from qnty.utils.logging import get_logger
 from ..algebra import BinaryOperation, Constant, Equation, EquationSystem, VariableReference
 from ..core.quantity import Quantity
 from ..core.unit_catalog import DimensionlessUnits
-from ..utils.shared_utilities import SharedConstants, ValidationHelper
+from ..utils.shared_utilities import ContextDetectionHelper, SharedConstants, ValidationHelper
 from .solving import EquationReconstructor
 from .validation import ValidationMixin
 
@@ -1365,22 +1365,7 @@ class Problem(ValidationMixin):
 
     def _should_use_delayed_arithmetic(self) -> bool:
         """Check if we should use delayed arithmetic based on context."""
-        import inspect
-
-        frame = inspect.currentframe()
-        try:
-            while frame:
-                code = frame.f_code
-                filename = code.co_filename
-                locals_dict = frame.f_locals
-
-                # Check if we're in a class definition context
-                if "<class" in code.co_name or "problem" in filename.lower() or any("Problem" in str(base) for base in locals_dict.get("__bases__", [])) or "test_composed_problem" in filename:
-                    return True
-                frame = frame.f_back
-            return False
-        finally:
-            del frame
+        return ContextDetectionHelper.should_use_delayed_arithmetic()
 
     def _create_delayed_arithmetic_wrapper(self, variable, var_name):
         """Create a wrapper that enables delayed arithmetic for class definition."""

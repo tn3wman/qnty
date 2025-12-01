@@ -8,6 +8,7 @@ import subprocess
 from pathlib import Path
 
 from .base import ReportGenerator
+from ...utils.shared_utilities import escape_latex
 
 
 def _is_vector_equilibrium_problem(problem) -> bool:
@@ -97,24 +98,7 @@ class LatexReportGenerator(ReportGenerator):
     # Keep helper methods for backward compatibility with PdfReportGenerator
     def _escape_latex(self, text: str) -> str:
         """Escape special LaTeX characters."""
-        if not text:
-            return ""
-        replacements = [
-            ("\\", r"\textbackslash{}"),
-            ("&", r"\&"),
-            ("%", r"\%"),
-            ("$", r"\$"),
-            ("#", r"\#"),
-            ("_", r"\_"),
-            ("{", r"\{"),
-            ("}", r"\}"),
-            ("~", r"\textasciitilde{}"),
-            ("^", r"\textasciicircum{}"),
-        ]
-        result = text
-        for old, new in replacements:
-            result = result.replace(old, new)
-        return result
+        return escape_latex(text)
 
     def _format_disclaimer(self) -> list[str]:
         """Disclaimer is handled by the LaTeXRenderer."""

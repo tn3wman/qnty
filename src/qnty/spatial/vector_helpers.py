@@ -12,6 +12,10 @@ import math
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+    import numpy as np
+    from numpy.typing import NDArray
+
+    from ..core.dimension import Dimension
     from ..core.quantity import Quantity
     from ..core.unit import Unit
     from .vector import _Vector
@@ -145,6 +149,85 @@ class VectorUpdateHelper:
             value: Angle in radians
         """
         force._angle = self.create_angle_quantity(f"{force.name}_angle", value)
+
+
+def compute_missing_direction_angle(
+    alpha_rad: float | None,
+    beta_rad: float | None,
+    gamma_rad: float | None,
+) -> tuple[float, float, float]:
+    """
+    Compute the missing direction angle from the constraint cos²α + cos²β + cos²γ = 1.
+
+    Given at least 2 of the 3 coordinate direction angles, calculates the missing one.
+    All angles are in radians.
+
+    Args:
+        alpha_rad: Angle from +x axis in radians (or None if unknown)
+        beta_rad: Angle from +y axis in radians (or None if unknown)
+        gamma_rad: Angle from +z axis in radians (or None if unknown)
+
+    Returns:
+        Tuple of (alpha_rad, beta_rad, gamma_rad) with all values computed
+
+    Raises:
+        ValueError: If angles don't satisfy the constraint or fewer than 2 provided
+    """
+    if alpha_rad is None and beta_rad is not None and gamma_rad is not None:
+        cos_alpha_sq = 1 - math.cos(beta_rad) ** 2 - math.cos(gamma_rad) ** 2
+        if cos_alpha_sq < 0:
+            raise ValueError("Invalid angle combination: cos²α + cos²β + cos²γ > 1")
+        cos_alpha = math.sqrt(cos_alpha_sq)
+        alpha_rad = math.acos(cos_alpha)
+    elif beta_rad is None and alpha_rad is not None and gamma_rad is not None:
+        cos_beta_sq = 1 - math.cos(alpha_rad) ** 2 - math.cos(gamma_rad) ** 2
+        if cos_beta_sq < 0:
+            raise ValueError("Invalid angle combination: cos²α + cos²β + cos²γ > 1")
+        cos_beta = math.sqrt(cos_beta_sq)
+        beta_rad = math.acos(cos_beta)
+    elif gamma_rad is None and alpha_rad is not None and beta_rad is not None:
+        cos_gamma_sq = 1 - math.cos(alpha_rad) ** 2 - math.cos(beta_rad) ** 2
+        if cos_gamma_sq < 0:
+            raise ValueError("Invalid angle combination: cos²α + cos²β + cos²γ > 1")
+        cos_gamma = math.sqrt(cos_gamma_sq)
+        gamma_rad = math.acos(cos_gamma)
+    elif alpha_rad is None or beta_rad is None or gamma_rad is None:
+        raise ValueError("Must provide at least 2 of the 3 coordinate direction angles")
+
+    return alpha_rad, beta_rad, gamma_rad
+
+
+def init_coords_from_unit(
+    x: float,
+    y: float,
+    z: float,
+    unit: "Unit | None",
+) -> tuple["NDArray", "Dimension | None", "Unit | None"]:
+    """
+    Initialize coordinate array and dimension/unit from input values.
+
+    This is a shared utility for _Vector and _Point initialization that
+    handles unit conversion to SI and dimension tracking.
+
+    Args:
+        x: X/U coordinate value in the specified unit
+        y: Y/V coordinate value in the specified unit
+        z: Z/W coordinate value in the specified unit
+        unit: Unit for all coordinates (if None, assumes SI units)
+
+    Returns:
+        Tuple of (coords_array, dimension, unit) where:
+        - coords_array: numpy array of coordinates in SI units
+        - dimension: The dimension from the unit, or None if unitless
+        - unit: The original unit, or None if unitless
+    """
+    import numpy as np
+
+    if unit is None:
+        return np.array([x, y, z], dtype=float), None, None
+
+    si_values = unit.si_factor * np.array([x, y, z], dtype=float) + unit.si_offset
+    return si_values, unit.dim, unit
 
 
 # Global helper instance for convenience

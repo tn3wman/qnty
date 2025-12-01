@@ -9,6 +9,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from ...utils.shared_utilities import format_equation_list_from_history
+
 
 @dataclass
 class ReportStep:
@@ -229,30 +231,7 @@ class ReportGenerator(ABC):
         Returns:
             List of formatted equation strings in solving order
         """
-        # If we have solving history, use that order
-        if self.solving_history:
-            equation_strs = []
-            used_equations = set()  # Track equations we've already added
-
-            for step_data in self.solving_history:
-                equation_str = step_data.get("equation_str", "")
-                if equation_str and equation_str not in used_equations:
-                    equation_strs.append(equation_str)
-                    used_equations.add(equation_str)
-
-            # Add any remaining equations that weren't used in solving
-            for eq in self.equations:
-                eq_str = str(eq)
-                if eq_str not in used_equations:
-                    equation_strs.append(eq_str)
-
-            return equation_strs
-
-        # Fallback to original order if no solving history
-        equation_strs = []
-        for eq in self.equations:
-            equation_strs.append(str(eq))
-        return equation_strs
+        return format_equation_list_from_history(self.solving_history, self.equations)
 
     def _extract_solution_steps(self) -> list[ReportStep]:
         """

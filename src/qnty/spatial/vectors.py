@@ -13,6 +13,7 @@ from typing import TYPE_CHECKING, Any
 import numpy as np
 
 from ..core.unit import Unit
+from ..utils.shared_utilities import convert_angle_to_radians
 from .vector import _Vector
 
 if TYPE_CHECKING:
@@ -665,14 +666,8 @@ def create_vector_spherical(
         raise ValueError(f"Invalid phi_wrt '{phi_wrt}'. Must be one of: {valid_phi_axes}")
 
     # Convert angles to radians
-    if angle_unit.lower() in ("degree", "degrees", "deg"):
-        theta_input_rad = math.radians(float(theta))
-        phi_input_rad = math.radians(float(phi))
-    elif angle_unit.lower() in ("radian", "radians", "rad"):
-        theta_input_rad = float(theta)
-        phi_input_rad = float(phi)
-    else:
-        raise ValueError(f"Invalid angle_unit '{angle_unit}'. Use 'degree' or 'radian'")
+    theta_input_rad = convert_angle_to_radians(theta, angle_unit)
+    phi_input_rad = convert_angle_to_radians(phi, angle_unit)
 
     # Convert theta to standard form (CCW from +x)
     theta_base_angles = {

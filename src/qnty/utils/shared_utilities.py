@@ -10,11 +10,7 @@ from __future__ import annotations
 import re
 from abc import ABC, abstractmethod
 from collections.abc import Callable
-from typing import TYPE_CHECKING, Any, Protocol
-
-if TYPE_CHECKING:
-    from ..core.quantity import FieldQuantity, Quantity
-
+from typing import Any
 
 # Type aliases
 OperandType = Any  # Expression | FieldQuantity | Quantity | int | float
@@ -409,3 +405,394 @@ class SharedConstants:
     # Reserved attributes for metaclass
     RESERVED_ATTRIBUTES = {"name", "description"}
     PRIVATE_ATTRIBUTE_PREFIX = "_"
+
+
+# ========== FORCE VECTOR UTILITIES ==========
+
+
+def handle_negative_magnitude(cloned: Any, original_magnitude_value: float | None) -> None:
+    """
+    Handle negative magnitude restoration after cloning a force vector.
+
+    When cloning a force with a negative magnitude, the cloned force will have
+    a positive magnitude (due to sqrt in magnitude computation). This function
+    restores the negative magnitude and flips the angle by 180°.
+
+    Args:
+        cloned: The cloned force vector with _magnitude and _angle attributes
+        original_magnitude_value: The original magnitude value (may be negative)
+    """
+    import math
+
+    if original_magnitude_value is not None and original_magnitude_value < 0:
+        if cloned._magnitude is not None and cloned._magnitude.value is not None:
+            # Flip the sign to preserve the negative
+            cloned._magnitude.value = -abs(cloned._magnitude.value)
+            # Also flip the angle by 180° since negative magnitude means opposite direction
+            if cloned._angle is not None and cloned._angle.value is not None:
+                cloned._angle.value = (cloned._angle.value + math.pi) % (2 * math.pi)
+
+
+def capture_original_force_states(
+    forces: dict[str, Any],
+    force_states: dict[str, bool],
+    variable_states: dict[str, bool],
+) -> None:
+    """
+    Capture original force states for restoration after solving.
+
+    This saves the is_known state and magnitude/angle known states for each force,
+    allowing the problem to be reset to its original state.
+
+    Args:
+        forces: Dictionary of force name -> force vector
+        force_states: Dictionary to populate with force name -> is_known
+        variable_states: Dictionary to populate with variable state flags
+    """
+    for name, force in forces.items():
+        force_states[name] = force.is_known
+        mag_known = force.magnitude is not None and force.magnitude.value is not None
+        angle_known = force.angle is not None and force.angle.value is not None
+        variable_states[f'{name}_mag_known'] = mag_known
+        variable_states[f'{name}_angle_known'] = angle_known
+
+
+# ========== LATEX UTILITIES ==========
+
+
+# Constant list of LaTeX character replacements
+_LATEX_CHAR_REPLACEMENTS = [
+    ("\\", r"\textbackslash{}"),
+    ("&", r"\&"),
+    ("%", r"\%"),
+    ("$", r"\$"),
+    ("#", r"\#"),
+    ("_", r"\_"),
+    ("{", r"\{"),
+    ("}", r"\}"),
+    ("~", r"\textasciitilde{}"),
+    ("^", r"\textasciicircum{}"),
+]
+
+
+def escape_latex(text: str) -> str:
+    """
+    Escape special LaTeX characters in text.
+
+    Args:
+        text: Input text that may contain special LaTeX characters
+
+    Returns:
+        Text with all special LaTeX characters properly escaped
+    """
+    if not text:
+        return ""
+    result = text
+    for old, new in _LATEX_CHAR_REPLACEMENTS:
+        result = result.replace(old, new)
+    return result
+
+
+def format_equation_list_from_history(solving_history: list[dict], equations: list) -> list[str]:
+    """
+    Format equations for display in the order they were solved.
+
+    Args:
+        solving_history: List of solving step dictionaries with 'equation_str' key
+        equations: List of equation objects (fallback if no solving history)
+
+    Returns:
+        List of formatted equation strings in solving order
+    """
+    if solving_history:
+        equation_strs = []
+        used_equations: set[str] = set()
+
+        for step_data in solving_history:
+            equation_str = step_data.get("equation_str", "")
+            if equation_str and equation_str not in used_equations:
+                equation_strs.append(equation_str)
+                used_equations.add(equation_str)
+
+        # Add any remaining equations that weren't used in solving
+        for eq in equations:
+            eq_str = str(eq)
+            if eq_str not in used_equations:
+                equation_strs.append(eq_str)
+
+        return equation_strs
+
+    # Fallback to original order if no solving history
+    return [str(eq) for eq in equations]
+
+
+# ========== ANGLE CONVERSION UTILITIES ==========
+
+
+# ========== FORCE VECTOR EXTRACTION ==========
+
+
+def extract_force_vectors_from_class(cls: type, instance: Any, forces: dict, clone_func) -> None:
+    """
+    Extract ForceVector objects defined at class level.
+
+    Args:
+        cls: The class to scan for force vectors
+        instance: The instance to set attributes on
+        forces: Dictionary to populate with force name -> force vector
+        clone_func: Function to clone force vectors (receives force, returns cloned force)
+    """
+    for attr_name in dir(cls):
+        if attr_name.startswith("_"):
+            continue
+
+        attr = getattr(cls, attr_name)
+        # Check if it's a Vector (duck typing by checking for is_known and magnitude attrs)
+        if hasattr(attr, 'is_known') and hasattr(attr, 'magnitude'):
+            # Clone to avoid sharing between instances
+            force_copy = clone_func(attr)
+            forces[attr_name] = force_copy
+            setattr(instance, attr_name, force_copy)
+
+
+def add_force_magnitude_variable(
+    force: Any,
+    force_name: str,
+    was_originally_known: bool,
+    variables: dict[str, Any],
+    original_variable_states: dict[str, bool],
+) -> None:
+    """
+    Add force magnitude as a variable for report generation.
+
+    Args:
+        force: ForceVector with magnitude attribute
+        force_name: Name/key of the force
+        was_originally_known: Whether the force was originally known
+        variables: Dictionary to add the magnitude variable to
+        original_variable_states: Dictionary to track original state
+    """
+    if force.magnitude is None or force.magnitude.value is None:
+        return
+
+    from ..core.dimension_catalog import dim
+    from ..core.quantity import Quantity
+
+    mag_var = Quantity(
+        name=f"{force.name} Magnitude",
+        dim=dim.force,
+        value=force.magnitude.value,
+        preferred=force.magnitude.preferred,
+        _symbol=f"{force_name}_mag"
+    )
+    variables[f"{force_name}_mag"] = mag_var
+    original_variable_states[f"{force_name}_mag"] = was_originally_known
+
+
+def convert_angle_to_radians(angle: float, angle_unit: str) -> float:
+    """
+    Convert an angle from the given unit to radians.
+
+    Args:
+        angle: Angle value
+        angle_unit: Unit string - "degree", "degrees", "deg", "radian", "radians", or "rad"
+
+    Returns:
+        Angle in radians
+
+    Raises:
+        ValueError: If angle_unit is not recognized
+    """
+    import math
+
+    angle_unit_lower = angle_unit.lower()
+    if angle_unit_lower in ("degree", "degrees", "deg"):
+        return math.radians(float(angle))
+    elif angle_unit_lower in ("radian", "radians", "rad"):
+        return float(angle)
+    else:
+        raise ValueError(f"Invalid angle_unit '{angle_unit}'. Use 'degree' or 'radian'")
+
+
+# ========== NUMERICAL VALUE EXTRACTION ==========
+
+
+def extract_numerical_value(value: Any) -> float:
+    """
+    Extract numerical value from various quantity types.
+
+    This function handles the common pattern of extracting a float from different
+    types of objects that may have a .value attribute or be directly convertible.
+
+    Args:
+        value: Value to extract from (Quantity, int, float, or object with .value)
+
+    Returns:
+        Float representation of the value
+
+    Raises:
+        ValueError: If value cannot be converted to float
+    """
+    try:
+        if hasattr(value, "value") and value.value is not None:
+            return float(value.value)
+        elif isinstance(value, int | float):
+            return float(value)
+        else:
+            return float(value)
+    except (TypeError, ValueError) as e:
+        raise ValueError(f"Cannot extract numerical value from {type(value)}: {value}") from e
+
+
+# ========== FORCE COMPONENT UTILITIES ==========
+
+
+def add_force_component_variable(
+    force: Any,
+    component_name: str,
+    force_name: str,
+    component_attr: str,
+    variables: dict[str, Any],
+) -> None:
+    """
+    Add a single force component (X, Y, or Z) as a variable for report generation.
+
+    Args:
+        force: ForceVector with component attributes (x, y, z)
+        component_name: Display name for component ("X", "Y", or "Z")
+        force_name: Name/key of the force
+        component_attr: Attribute name on force ("x", "y", or "z")
+        variables: Dictionary to add the component variable to
+    """
+    component = getattr(force, component_attr, None)
+    if component is None or component.value is None:
+        return
+
+    from ..core.dimension_catalog import dim
+    from ..core.quantity import Quantity
+
+    var = Quantity(
+        name=f"{force.name} {component_name}-Component",
+        dim=dim.force,
+        value=component.value,
+        preferred=component.preferred,
+        _symbol=f"{force_name}_{component_attr}"
+    )
+    variables[f"{force_name}_{component_attr}"] = var
+
+
+def add_force_components_xyz(
+    force: Any,
+    force_name: str,
+    variables: dict[str, Any],
+) -> None:
+    """
+    Add X, Y, and Z force components as variables for report generation.
+
+    Args:
+        force: ForceVector with x, y, z component attributes
+        force_name: Name/key of the force
+        variables: Dictionary to add the component variables to
+    """
+    add_force_component_variable(force, "X", force_name, "x", variables)
+    add_force_component_variable(force, "Y", force_name, "y", variables)
+    add_force_component_variable(force, "Z", force_name, "z", variables)
+
+
+def add_force_components_xy(
+    force: Any,
+    force_name: str,
+    variables: dict[str, Any],
+) -> None:
+    """
+    Add X and Y force components as variables for report generation (2D).
+
+    Args:
+        force: ForceVector with x, y component attributes
+        force_name: Name/key of the force
+        variables: Dictionary to add the component variables to
+    """
+    add_force_component_variable(force, "X", force_name, "x", variables)
+    add_force_component_variable(force, "Y", force_name, "y", variables)
+
+
+# ========== FORCE VECTOR CLONING ==========
+
+
+def clone_unknown_force_vector(force: Any, Vector: type) -> Any:
+    """
+    Clone an unknown (or partially known) force vector.
+
+    This handles force vectors that may have known angle but unknown magnitude,
+    or vice versa. It properly handles angle reference system conversion.
+
+    Args:
+        force: The original force vector to clone
+        Vector: The _Vector class to use for creating the clone
+
+    Returns:
+        A cloned force vector with the same properties as the original
+    """
+    angle_value = None
+    angle_unit = None
+    if force.angle is not None and force.angle.value is not None:
+        # Angle is stored internally as standard (CCW from +x)
+        # Convert back to the angle_reference system for cloning
+        angle_value = force.angle_reference.from_standard(force.angle.value, angle_unit="degree")
+        angle_unit = "degree"
+
+    # Create cloned force with Quantity objects to avoid double conversion
+    cloned = Vector(
+        name=force.name,
+        magnitude=force.magnitude,  # Pass Quantity object directly
+        angle=angle_value if angle_value is not None else None,
+        unit=force.magnitude.preferred if force.magnitude else None,
+        angle_unit=angle_unit if angle_unit else "degree",
+        description=force.description,
+        is_known=force.is_known,
+        is_resultant=force.is_resultant,
+        coordinate_system=force.coordinate_system,
+        angle_reference=force.angle_reference,
+    )
+
+    # Preserve relative angle constraint if present
+    if hasattr(force, '_relative_to_force') and force._relative_to_force is not None:
+        cloned._relative_to_force = force._relative_to_force
+        cloned._relative_angle = force._relative_angle
+
+    return cloned
+
+
+# ========== RANGE SPECIFICATION UTILITIES ==========
+
+
+def normalize_range_specs(range_specs: tuple) -> list[range]:
+    """
+    Convert range specifications to a list of range objects.
+
+    This handles the common pattern of accepting flexible range specifications
+    and normalizing them to actual range objects.
+
+    Args:
+        range_specs: Tuple of range specifications. Each can be:
+            - An integer (creates range(n))
+            - A tuple (start, stop) or (start, stop, step)
+            - A range object
+
+    Returns:
+        List of range objects
+
+    Raises:
+        ValueError: If a specification is not a valid range type
+    """
+    ranges = []
+    for spec in range_specs:
+        if isinstance(spec, int):
+            ranges.append(range(spec))
+        elif isinstance(spec, tuple):
+            ranges.append(range(*spec))
+        elif isinstance(spec, range):
+            ranges.append(spec)
+        else:
+            raise ValueError(f"Invalid range specification: {spec}")
+    return ranges

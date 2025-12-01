@@ -40,6 +40,51 @@ if TYPE_CHECKING:
 
 
 # =============================================================================
+# Shared Factory Functions
+# =============================================================================
+
+
+def _create_vector_dto(
+    *,
+    u: float = 0.0,
+    v: float = 0.0,
+    w: float = 0.0,
+    magnitude: float | None = None,
+    angle: float | None = None,
+    angle_unit: str = "degree",
+    angle_wrt: str = "+x",
+    plane: str = "xy",
+    unit: str = "N",
+    name: str | None = None,
+    is_known: bool = True,
+    is_resultant: bool = False,
+) -> VectorDTO:
+    """
+    Create a VectorDTO with the given parameters.
+
+    This shared function is used by all facade classes to create vectors,
+    avoiding code duplication across equilibrium, component_method, etc.
+    """
+    return VectorDTO(
+        u=u, v=v, w=w, unit=unit, name=name,
+        magnitude=magnitude, angle=angle, angle_unit=angle_unit,
+        angle_wrt=angle_wrt, plane=plane,
+        is_known=is_known, is_resultant=is_resultant,
+    )
+
+
+def _create_point_dto(
+    *, x: float, y: float, z: float = 0.0, unit: str = "m", name: str | None = None,
+) -> PointDTO:
+    """
+    Create a PointDTO with the given parameters.
+
+    This shared function is used by all facade classes to create points.
+    """
+    return PointDTO(x=x, y=y, z=z, unit=unit, name=name)
+
+
+# =============================================================================
 # Parallelogram Law Problem Facade
 # =============================================================================
 
@@ -289,36 +334,9 @@ class equilibrium:
     default_output_unit: str = "N"
     default_angle_unit: str = "degree"
 
-    @staticmethod
-    def create_vector(
-        *,
-        u: float = 0.0,
-        v: float = 0.0,
-        w: float = 0.0,
-        magnitude: float | None = None,
-        angle: float | None = None,
-        angle_unit: str = "degree",
-        angle_wrt: str = "+x",
-        plane: str = "xy",
-        unit: str = "N",
-        name: str | None = None,
-        is_known: bool = True,
-        is_resultant: bool = False,
-    ) -> VectorDTO:
-        """Create a vector for this problem."""
-        return VectorDTO(
-            u=u, v=v, w=w, unit=unit, name=name,
-            magnitude=magnitude, angle=angle, angle_unit=angle_unit,
-            angle_wrt=angle_wrt, plane=plane,
-            is_known=is_known, is_resultant=is_resultant,
-        )
-
-    @staticmethod
-    def create_point(
-        *, x: float, y: float, z: float = 0.0, unit: str = "m", name: str | None = None,
-    ) -> PointDTO:
-        """Create a point for this problem."""
-        return PointDTO(x=x, y=y, z=z, unit=unit, name=name)
+    # Use shared factory functions
+    create_vector = staticmethod(_create_vector_dto)
+    create_point = staticmethod(_create_point_dto)
 
     @staticmethod
     def create_input(
@@ -399,36 +417,9 @@ class component_method:
     default_output_unit: str = "N"
     default_angle_unit: str = "degree"
 
-    @staticmethod
-    def create_vector(
-        *,
-        u: float = 0.0,
-        v: float = 0.0,
-        w: float = 0.0,
-        magnitude: float | None = None,
-        angle: float | None = None,
-        angle_unit: str = "degree",
-        angle_wrt: str = "+x",
-        plane: str = "xy",
-        unit: str = "N",
-        name: str | None = None,
-        is_known: bool = True,
-        is_resultant: bool = False,
-    ) -> VectorDTO:
-        """Create a vector for this problem."""
-        return VectorDTO(
-            u=u, v=v, w=w, unit=unit, name=name,
-            magnitude=magnitude, angle=angle, angle_unit=angle_unit,
-            angle_wrt=angle_wrt, plane=plane,
-            is_known=is_known, is_resultant=is_resultant,
-        )
-
-    @staticmethod
-    def create_point(
-        *, x: float, y: float, z: float = 0.0, unit: str = "m", name: str | None = None,
-    ) -> PointDTO:
-        """Create a point for this problem."""
-        return PointDTO(x=x, y=y, z=z, unit=unit, name=name)
+    # Use shared factory functions
+    create_vector = staticmethod(_create_vector_dto)
+    create_point = staticmethod(_create_point_dto)
 
     @staticmethod
     def create_input(

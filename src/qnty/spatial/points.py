@@ -10,10 +10,10 @@ from __future__ import annotations
 from types import EllipsisType
 from typing import Any
 
-import numpy as np
-
 from ..core.unit import Unit
+from ..utils.shared_utilities import convert_angle_to_radians
 from .point import _Point
+from .vector_helpers import compute_missing_direction_angle
 
 
 class _PointWithUnknowns(_Point):
@@ -527,14 +527,8 @@ def create_point_spherical(
         raise ValueError(f"Invalid phi_wrt '{phi_wrt}'. Must be one of: {valid_phi_axes}")
 
     # Convert angles to radians
-    if angle_unit.lower() in ("degree", "degrees", "deg"):
-        theta_input_rad = math.radians(float(theta))
-        phi_input_rad = math.radians(float(phi))
-    elif angle_unit.lower() in ("radian", "radians", "rad"):
-        theta_input_rad = float(theta)
-        phi_input_rad = float(phi)
-    else:
-        raise ValueError(f"Invalid angle_unit '{angle_unit}'. Use 'degree' or 'radian'")
+    theta_input_rad = convert_angle_to_radians(theta, angle_unit)
+    phi_input_rad = convert_angle_to_radians(phi, angle_unit)
 
     # Convert theta to standard form (CCW from +x)
     theta_base_angles = {
@@ -735,26 +729,7 @@ def create_point_direction_angles(
     gamma_rad = to_radians(gamma)
 
     # Calculate missing angle from constraint cos²α + cos²β + cos²γ = 1
-    if alpha_rad is None and beta_rad is not None and gamma_rad is not None:
-        cos_alpha_sq = 1 - math.cos(beta_rad) ** 2 - math.cos(gamma_rad) ** 2
-        if cos_alpha_sq < 0:
-            raise ValueError("Invalid angle combination: cos²α + cos²β + cos²γ > 1")
-        cos_alpha = math.sqrt(cos_alpha_sq)
-        alpha_rad = math.acos(cos_alpha)
-    elif beta_rad is None and alpha_rad is not None and gamma_rad is not None:
-        cos_beta_sq = 1 - math.cos(alpha_rad) ** 2 - math.cos(gamma_rad) ** 2
-        if cos_beta_sq < 0:
-            raise ValueError("Invalid angle combination: cos²α + cos²β + cos²γ > 1")
-        cos_beta = math.sqrt(cos_beta_sq)
-        beta_rad = math.acos(cos_beta)
-    elif gamma_rad is None and alpha_rad is not None and beta_rad is not None:
-        cos_gamma_sq = 1 - math.cos(alpha_rad) ** 2 - math.cos(beta_rad) ** 2
-        if cos_gamma_sq < 0:
-            raise ValueError("Invalid angle combination: cos²α + cos²β + cos²γ > 1")
-        cos_gamma = math.sqrt(cos_gamma_sq)
-        gamma_rad = math.acos(cos_gamma)
-    elif alpha_rad is None or beta_rad is None or gamma_rad is None:
-        raise ValueError("Must provide at least 2 of the 3 coordinate direction angles")
+    alpha_rad, beta_rad, gamma_rad = compute_missing_direction_angle(alpha_rad, beta_rad, gamma_rad)
 
     # Validate the constraint
     sum_cos_sq = math.cos(alpha_rad) ** 2 + math.cos(beta_rad) ** 2 + math.cos(gamma_rad) ** 2

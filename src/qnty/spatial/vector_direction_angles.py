@@ -11,6 +11,7 @@ import math
 
 from ..core.unit import Unit
 from .vector import _Vector
+from .vector_helpers import compute_missing_direction_angle
 
 
 class VectorDirectionAngles:
@@ -92,26 +93,7 @@ class VectorDirectionAngles:
         gamma_rad = to_radians(gamma)
 
         # Calculate missing angle from constraint cos²α + cos²β + cos²γ = 1
-        if alpha_rad is None and beta_rad is not None and gamma_rad is not None:
-            cos_alpha_sq = 1 - math.cos(beta_rad) ** 2 - math.cos(gamma_rad) ** 2
-            if cos_alpha_sq < 0:
-                raise ValueError("Invalid angle combination: cos²α + cos²β + cos²γ > 1")
-            cos_alpha = math.sqrt(cos_alpha_sq)
-            alpha_rad = math.acos(cos_alpha)
-        elif beta_rad is None and alpha_rad is not None and gamma_rad is not None:
-            cos_beta_sq = 1 - math.cos(alpha_rad) ** 2 - math.cos(gamma_rad) ** 2
-            if cos_beta_sq < 0:
-                raise ValueError("Invalid angle combination: cos²α + cos²β + cos²γ > 1")
-            cos_beta = math.sqrt(cos_beta_sq)
-            beta_rad = math.acos(cos_beta)
-        elif gamma_rad is None and alpha_rad is not None and beta_rad is not None:
-            cos_gamma_sq = 1 - math.cos(alpha_rad) ** 2 - math.cos(beta_rad) ** 2
-            if cos_gamma_sq < 0:
-                raise ValueError("Invalid angle combination: cos²α + cos²β + cos²γ > 1")
-            cos_gamma = math.sqrt(cos_gamma_sq)
-            gamma_rad = math.acos(cos_gamma)
-        elif alpha_rad is None or beta_rad is None or gamma_rad is None:
-            raise ValueError("Must provide at least 2 of the 3 coordinate direction angles")
+        alpha_rad, beta_rad, gamma_rad = compute_missing_direction_angle(alpha_rad, beta_rad, gamma_rad)
 
         # Validate the constraint
         sum_cos_sq = math.cos(alpha_rad) ** 2 + math.cos(beta_rad) ** 2 + math.cos(gamma_rad) ** 2

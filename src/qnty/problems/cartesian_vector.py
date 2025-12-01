@@ -13,6 +13,7 @@ from typing import Any
 from ..core.quantity import Quantity
 from ..solving.component_solver import ComponentSolver
 from ..spatial import _Vector
+from ..utils.shared_utilities import add_force_components_xyz, capture_original_force_states, clone_unknown_force_vector, extract_force_vectors_from_class, handle_negative_magnitude
 from .problem import Problem
 
 
@@ -74,16 +75,7 @@ class CartesianVectorProblem(Problem):
 
     def _extract_force_vectors(self) -> None:
         """Extract ForceVector objects defined at class level."""
-        for attr_name in dir(self.__class__):
-            if attr_name.startswith("_"):
-                continue
-
-            attr = getattr(self.__class__, attr_name)
-            if isinstance(attr, _Vector):
-                # Clone to avoid sharing between instances
-                force_copy = self._clone_force_vector(attr)
-                self.forces[attr_name] = force_copy
-                setattr(self, attr_name, force_copy)
+        extract_force_vectors_from_class(self.__class__, self, self.forces, self._clone_force_vector)
 
     def _clone_force_vector(self, force: _Vector) -> _Vector:
         """Create a copy of a ForceVector."""
@@ -100,46 +92,12 @@ class CartesianVectorProblem(Problem):
             )
             # If original had negative magnitude, restore it after cloning
             # (_compute_magnitude_and_angle converts to positive via sqrt)
-            if force.magnitude is not None and force.magnitude.value is not None and force.magnitude.value < 0:
-                if cloned._magnitude is not None and cloned._magnitude.value is not None:
-                    # The cloned magnitude is now in SI units (from vector computation)
-                    # Flip the sign to preserve the negative
-                    cloned._magnitude.value = -abs(cloned._magnitude.value)
-                    # Also flip the angle by 180° since negative magnitude means opposite direction
-                    if cloned._angle is not None and cloned._angle.value is not None:
-                        cloned._angle.value = (cloned._angle.value + math.pi) % (2 * math.pi)
+            original_mag = force.magnitude.value if force.magnitude is not None else None
+            handle_negative_magnitude(cloned, original_mag)
             return cloned
         else:
-            # Unknown force - may have known angle or known magnitude
-            angle_value = None
-            angle_unit = None
-            if force.angle is not None and force.angle.value is not None:
-                # Angle is stored internally as standard (CCW from +x)
-                # Convert back to the angle_reference system for cloning
-                angle_value = force.angle_reference.from_standard(force.angle.value, angle_unit="degree")
-                angle_unit = "degree"
-
-            # Create cloned force with Quantity objects to avoid double conversion
-            # Use the main constructor which accepts Quantity objects
-            cloned = _Vector(
-                name=force.name,
-                magnitude=force.magnitude,  # Pass Quantity object directly
-                angle=angle_value if angle_value is not None else None,  # This is a float in degrees
-                unit=force.magnitude.preferred if force.magnitude else None,
-                angle_unit=angle_unit if angle_unit else "degree",
-                description=force.description,
-                is_known=force.is_known,  # Preserve original is_known state
-                is_resultant=force.is_resultant,
-                coordinate_system=force.coordinate_system,
-                angle_reference=force.angle_reference,
-            )
-
-            # Preserve relative angle constraint if present
-            if hasattr(force, '_relative_to_force') and force._relative_to_force is not None:
-                cloned._relative_to_force = force._relative_to_force
-                cloned._relative_angle = force._relative_angle
-
-            return cloned
+            # Unknown force - use shared utility
+            return clone_unknown_force_vector(force, _Vector)
 
     def add_force(self, force: _Vector, name: str | None = None) -> None:
         """
@@ -197,16 +155,7 @@ class CartesianVectorProblem(Problem):
 
         # Save original is_known state for each force (for report generation)
         if not self._original_force_states:  # Only save once
-            for force_name, force in self.forces.items():
-                # Save whether the force was known
-                self._original_force_states[force_name] = force.is_known
-
-                # Also track which individual components were known before solving
-                # This handles partially known forces (e.g., known angle, unknown magnitude)
-                mag_known = force.magnitude is not None and force.magnitude.value is not None
-                angle_known = force.angle is not None and force.angle.value is not None
-                self._original_variable_states[f"{force_name}_mag_known"] = mag_known
-                self._original_variable_states[f"{force_name}_angle_known"] = angle_known
+            capture_original_force_states(self.forces, self._original_force_states, self._original_variable_states)
 
         # Convert forces dict to list for solver
         forces_list = list(self.forces.values())
@@ -237,55 +186,16 @@ class CartesianVectorProblem(Problem):
         This ensures compatibility with qnty's report generation system.
         """
         from ..core.dimension_catalog import dim
+        from ..utils.shared_utilities import add_force_magnitude_variable
 
         for force_name, force in self.forces.items():
             # Determine if this was originally known or unknown
             was_originally_known = self._original_force_states.get(force_name, force.is_known)
 
-            if force.magnitude is not None and force.magnitude.value is not None:
-                # Add magnitude as a variable
-                mag_var = Quantity(
-                    name=f"{force.name} Magnitude",
-                    dim=dim.force,
-                    value=force.magnitude.value,
-                    preferred=force.magnitude.preferred,
-                    _symbol=f"{force_name}_mag"
-                )
-                self.variables[f"{force_name}_mag"] = mag_var
+            add_force_magnitude_variable(force, force_name, was_originally_known, self.variables, self._original_variable_states)
 
-                # Store original state for report generator
-                self._original_variable_states[f"{force_name}_mag"] = was_originally_known
-
-            # Add 3D components if available
-            if force.x is not None and force.x.value is not None:
-                x_var = Quantity(
-                    name=f"{force.name} X-Component",
-                    dim=dim.force,
-                    value=force.x.value,
-                    preferred=force.x.preferred,
-                    _symbol=f"{force_name}_x"
-                )
-                self.variables[f"{force_name}_x"] = x_var
-
-            if force.y is not None and force.y.value is not None:
-                y_var = Quantity(
-                    name=f"{force.name} Y-Component",
-                    dim=dim.force,
-                    value=force.y.value,
-                    preferred=force.y.preferred,
-                    _symbol=f"{force_name}_y"
-                )
-                self.variables[f"{force_name}_y"] = y_var
-
-            if force.z is not None and force.z.value is not None:
-                z_var = Quantity(
-                    name=f"{force.name} Z-Component",
-                    dim=dim.force,
-                    value=force.z.value,
-                    preferred=force.z.preferred,
-                    _symbol=f"{force_name}_z"
-                )
-                self.variables[f"{force_name}_z"] = z_var
+            # Add 3D components (X, Y, Z) using shared utility
+            add_force_components_xyz(force, force_name, self.variables)
 
             # Add direction angles if available
             if hasattr(force, 'alpha') and force.alpha is not None and force.alpha.value is not None:

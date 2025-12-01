@@ -213,15 +213,8 @@ class _Vector(Generic[D]):
 
         # Mode 1: Basic u, v, w construction
         if u is not None and v is not None:
-            if unit is None:
-                self._coords = np.array([u, v, w], dtype=float)
-                self._dim = None
-                self._unit = None
-            else:
-                si_values = unit.si_factor * np.array([u, v, w], dtype=float) + unit.si_offset
-                self._coords = si_values
-                self._dim = unit.dim
-                self._unit = unit
+            from .vector_helpers import init_coords_from_unit
+            self._coords, self._dim, self._unit = init_coords_from_unit(u, v, w, unit)
             return
 
         # Mode 2: Coordinate direction angles (3D)

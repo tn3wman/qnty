@@ -216,12 +216,6 @@ class BaseSolver(ABC):
         Raises:
             ValueError: If value cannot be converted to float
         """
-        try:
-            if hasattr(value, "value") and value.value is not None:
-                return float(value.value)
-            elif isinstance(value, int | float):
-                return float(value)
-            else:
-                return float(value)
-        except (TypeError, ValueError) as e:
-            raise ValueError(f"Cannot extract numerical value from {type(value)}: {value}") from e
+        from ...utils.shared_utilities import extract_numerical_value
+
+        return extract_numerical_value(value)

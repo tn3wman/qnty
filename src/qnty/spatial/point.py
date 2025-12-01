@@ -69,17 +69,8 @@ class _Point(Generic[D]):
             unit = resolved
 
         # Store as numpy array for vectorized operations
-        if unit is None:
-            # Store directly as dimensionless SI values
-            self._coords = np.array([x, y, z], dtype=float)
-            self._dim = None
-            self._unit = None
-        else:
-            # Convert to SI for internal storage
-            si_values = unit.si_factor * np.array([x, y, z], dtype=float) + unit.si_offset
-            self._coords = si_values
-            self._dim = unit.dim
-            self._unit = unit  # Preferred display unit
+        from .vector_helpers import init_coords_from_unit
+        self._coords, self._dim, self._unit = init_coords_from_unit(x, y, z, unit)
 
     @classmethod
     def unknown(cls, unit: Unit | str = "m", distance: float | None = None) -> _Point:

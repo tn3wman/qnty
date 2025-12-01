@@ -12,10 +12,11 @@ from typing import Any
 
 from ..core.quantity import Quantity
 from ..solving.component_solver import ComponentSolver
-from ..spatial import _Vector, _Vector
+from ..spatial import _Vector
 from ..spatial.point import _Point
-from ..spatial.vectors import _VectorWithUnknowns, create_vector_cartesian, create_vector_from_points
 from ..spatial.vector_between import VectorBetween
+from ..spatial.vectors import _VectorWithUnknowns, create_vector_cartesian, create_vector_from_points
+from ..utils.shared_utilities import add_force_components_xyz
 from .problem import Problem
 
 
@@ -329,10 +330,9 @@ class PositionVectorProblem(Problem):
 
     def _solve_unknown_points(self) -> None:
         """Solve for unknown points given position vector magnitude constraints or force vectors."""
-        from ..core.dimension_catalog import dim
-        from ..core.unit import ureg
-
         import numpy as np
+
+        from ..core.dimension_catalog import dim
 
         # First, handle PointCartesian with ellipsis unknowns and magnitude constraints
         self._solve_points_from_magnitude_constraints()
@@ -451,10 +451,9 @@ class PositionVectorProblem(Problem):
 
     def _solve_points_from_magnitude_constraints(self) -> None:
         """Solve for unknown point coordinates using position vector magnitude constraints."""
+
         from ..core.dimension_catalog import dim
         from ..core.unit import ureg
-
-        import numpy as np
 
         # Process VectorBetween objects first
         for vb_name, vb in self.vector_betweens.items():
@@ -526,6 +525,41 @@ class PositionVectorProblem(Problem):
                 pv_name, from_point, to_point, magnitude, length_unit, None
             )
 
+    def _update_vector_between(
+        self,
+        vector_between: VectorBetween | None,
+        point1: _Point,
+        point2: _Point,
+        length_unit: Any,
+    ) -> None:
+        """
+        Update VectorBetween's internal vector and replace with create_vector_cartesian.
+
+        Args:
+            vector_between: The VectorBetween to update
+            point1: First point for computing vector
+            point2: Second point for computing vector
+            length_unit: Unit for the resulting vector
+        """
+        if vector_between is None:
+            return
+
+        vector_between._compute_vector(point1, point2)
+        vec = vector_between._vector
+        if vec is not None:
+            vec_coords = vec.to_array()
+            solved_vector_cartesian = create_vector_cartesian(
+                u=vec_coords[0],
+                v=vec_coords[1],
+                w=vec_coords[2],
+                unit=length_unit
+            )
+            # Find the VectorBetween name and update instance attribute
+            for vb_name_key, vb_obj in self.vector_betweens.items():
+                if vb_obj is vector_between:
+                    setattr(self, vb_name_key, solved_vector_cartesian)
+                    break
+
     def _solve_single_constraint(
         self,
         name: str,
@@ -536,9 +570,9 @@ class PositionVectorProblem(Problem):
         vector_between: VectorBetween | None,
     ) -> None:
         """Solve a single magnitude constraint for unknown coordinates."""
-        from ..core.dimension_catalog import dim
-
         import numpy as np
+
+        from ..core.dimension_catalog import dim
 
         # Check which point has unknowns
         from_unknowns = getattr(from_point, 'unknowns', {}) if hasattr(from_point, 'unknowns') else {}
@@ -715,24 +749,7 @@ class PositionVectorProblem(Problem):
                 "result_unit": unit_str,
             })
 
-            # Update VectorBetween's internal vector and replace with create_vector_cartesian
-            if vector_between is not None:
-                vector_between._compute_vector(from_cart, solved_point)
-                # Create create_vector_cartesian wrapper for user-friendly output
-                vec = vector_between._vector
-                if vec is not None:
-                    vec_coords = vec.to_array()
-                    solved_vector_cartesian = create_vector_cartesian(
-                        u=vec_coords[0],
-                        v=vec_coords[1],
-                        w=vec_coords[2],
-                        unit=length_unit
-                    )
-                    # Find the VectorBetween name and update instance attribute
-                    for vb_name_key, vb_obj in self.vector_betweens.items():
-                        if vb_obj is vector_between:
-                            setattr(self, vb_name_key, solved_vector_cartesian)
-                            break
+            self._update_vector_between(vector_between, from_cart, solved_point, length_unit)
 
         elif len(from_unknowns) == 1:
             unknown_coord = list(from_unknowns.keys())[0]
@@ -780,24 +797,7 @@ class PositionVectorProblem(Problem):
                 "result_unit": unit_str,
             })
 
-            # Update VectorBetween's internal vector and replace with create_vector_cartesian
-            if vector_between is not None:
-                vector_between._compute_vector(solved_point, to_cart)
-                # Create create_vector_cartesian wrapper for user-friendly output
-                vec = vector_between._vector
-                if vec is not None:
-                    vec_coords = vec.to_array()
-                    solved_vector_cartesian = create_vector_cartesian(
-                        u=vec_coords[0],
-                        v=vec_coords[1],
-                        w=vec_coords[2],
-                        unit=length_unit
-                    )
-                    # Find the VectorBetween name and update instance attribute
-                    for vb_name_key, vb_obj in self.vector_betweens.items():
-                        if vb_obj is vector_between:
-                            setattr(self, vb_name_key, solved_vector_cartesian)
-                            break
+            self._update_vector_between(vector_between, solved_point, to_cart, length_unit)
 
     def solve(self, max_iterations: int = 100, tolerance: float = 1e-10) -> dict[str, _Vector]:  # type: ignore[override]
         """
@@ -998,35 +998,8 @@ class PositionVectorProblem(Problem):
                 )
                 self.variables[f"{force_name}_mag"] = mag_var
 
-            if force.x is not None and force.x.value is not None:
-                x_var = Quantity(
-                    name=f"{force.name} X-Component",
-                    dim=dim.force,
-                    value=force.x.value,
-                    preferred=force.x.preferred,
-                    _symbol=f"{force_name}_x",
-                )
-                self.variables[f"{force_name}_x"] = x_var
-
-            if force.y is not None and force.y.value is not None:
-                y_var = Quantity(
-                    name=f"{force.name} Y-Component",
-                    dim=dim.force,
-                    value=force.y.value,
-                    preferred=force.y.preferred,
-                    _symbol=f"{force_name}_y",
-                )
-                self.variables[f"{force_name}_y"] = y_var
-
-            if force.z is not None and force.z.value is not None:
-                z_var = Quantity(
-                    name=f"{force.name} Z-Component",
-                    dim=dim.force,
-                    value=force.z.value,
-                    preferred=force.z.preferred,
-                    _symbol=f"{force_name}_z",
-                )
-                self.variables[f"{force_name}_z"] = z_var
+            # Add 3D components (X, Y, Z) using shared utility
+            add_force_components_xyz(force, force_name, self.variables)
 
             # Add direction angles
             if hasattr(force, "alpha") and force.alpha is not None and force.alpha.value is not None:

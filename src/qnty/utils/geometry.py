@@ -228,6 +228,62 @@ def components_from_polar(magnitude: float, angle: float) -> tuple[float, float]
 # =============================================================================
 
 
+def _format_angle_calculation(
+    vec1_name: str,
+    vec2_name: str,
+    theta1_std_deg: float,
+    theta2_std_deg: float,
+    raw_diff: float,
+    interior_deg: float,
+    result_deg: float,
+    is_supplementary: bool,
+) -> str:
+    """
+    Format angle calculation string for interior or supplementary angle.
+
+    Args:
+        vec1_name: Display name for first vector
+        vec2_name: Display name for second vector
+        theta1_std_deg: First vector's angle from +x in degrees
+        theta2_std_deg: Second vector's angle from +x in degrees
+        raw_diff: Raw absolute difference between standard angles
+        interior_deg: Interior angle in degrees
+        result_deg: Result angle in degrees
+        is_supplementary: True if showing supplementary (180° - interior) angle
+
+    Returns:
+        Formatted string showing the calculation steps
+    """
+    if not is_supplementary:
+        # Result matches the interior angle
+        if raw_diff <= 180:
+            return (
+                f"∠({vec1_name},{vec2_name}) = |{theta1_std_deg:.0f}° - {theta2_std_deg:.0f}°|\n"
+                f"= {result_deg:.0f}°"
+            )
+        else:
+            return (
+                f"∠({vec1_name},{vec2_name}) = 360° - |{theta1_std_deg:.0f}° - {theta2_std_deg:.0f}°|\n"
+                f"= 360° - {raw_diff:.0f}°\n"
+                f"= {result_deg:.0f}°"
+            )
+    else:
+        # Result is the supplementary angle (used in parallelogram law)
+        if raw_diff <= 180:
+            return (
+                f"∠({vec1_name},{vec2_name}) = 180° - |{theta1_std_deg:.0f}° - {theta2_std_deg:.0f}°|\n"
+                f"= 180° - {interior_deg:.0f}°\n"
+                f"= {result_deg:.0f}°"
+            )
+        else:
+            return (
+                f"∠({vec1_name},{vec2_name}) = 180° - (360° - |{theta1_std_deg:.0f}° - {theta2_std_deg:.0f}°|)\n"
+                f"= 180° - (360° - {raw_diff:.0f}°)\n"
+                f"= 180° - {interior_deg:.0f}°\n"
+                f"= {result_deg:.0f}°"
+            )
+
+
 def compute_angle_between_display(
     theta1_std_deg: float,
     theta2_std_deg: float,
@@ -387,38 +443,11 @@ def compute_angle_between_display(
         # Fallback: show using angle between vectors in the triangle
         # For force triangles, the interior angle is 180° - gamma only when dealing with parallelogram law
         # For decomposition triangles, the interior angle may be gamma directly
-        #
-        # Important: The interior angle formula depends on whether raw_diff > 180°
-        # If raw_diff <= 180: interior = raw_diff, shown as |θ1 - θ2|
-        # If raw_diff > 180: interior = 360 - raw_diff, shown as 360° - |θ1 - θ2|
-        if abs(gamma - result_deg) < 0.5:
-            # Result matches the interior angle (gamma)
-            if raw_diff <= 180:
-                return (
-                    f"∠({vec1_name},{vec2_name}) = |{theta1_std_deg:.0f}° - {theta2_std_deg:.0f}°|\n"
-                    f"= {result_deg:.0f}°"
-                )
-            else:
-                return (
-                    f"∠({vec1_name},{vec2_name}) = 360° - |{theta1_std_deg:.0f}° - {theta2_std_deg:.0f}°|\n"
-                    f"= 360° - {raw_diff:.0f}°\n"
-                    f"= {result_deg:.0f}°"
-                )
-        else:
-            # Result is the supplementary angle (used in parallelogram law)
-            if raw_diff <= 180:
-                return (
-                    f"∠({vec1_name},{vec2_name}) = 180° - |{theta1_std_deg:.0f}° - {theta2_std_deg:.0f}°|\n"
-                    f"= 180° - {gamma:.0f}°\n"
-                    f"= {result_deg:.0f}°"
-                )
-            else:
-                return (
-                    f"∠({vec1_name},{vec2_name}) = 180° - (360° - |{theta1_std_deg:.0f}° - {theta2_std_deg:.0f}°|)\n"
-                    f"= 180° - (360° - {raw_diff:.0f}°)\n"
-                    f"= 180° - {gamma:.0f}°\n"
-                    f"= {result_deg:.0f}°"
-                )
+        is_supplementary = abs(gamma - result_deg) >= 0.5
+        return _format_angle_calculation(
+            vec1_name, vec2_name, theta1_std_deg, theta2_std_deg,
+            raw_diff, gamma, result_deg, is_supplementary
+        )
 
     # Case 3: Both vectors reference standard axes - need to find the relationship
     axis1_type, _ = get_axis_info(wrt1)
@@ -572,33 +601,8 @@ def compute_angle_between_display(
     raw_diff = abs(theta1_std_deg - theta2_std_deg)
     interior_deg = raw_diff if raw_diff <= 180 else 360 - raw_diff
 
-    # Check if result matches the interior angle
-    if abs(interior_deg - result_deg) < 0.5:
-        # Result is the interior angle - show the calculation
-        if raw_diff <= 180:
-            return (
-                f"∠({vec1_name},{vec2_name}) = |{theta1_std_deg:.0f}° - {theta2_std_deg:.0f}°|\n"
-                f"= {interior_deg:.0f}°"
-            )
-        else:
-            return (
-                f"∠({vec1_name},{vec2_name}) = 360° - |{theta1_std_deg:.0f}° - {theta2_std_deg:.0f}°|\n"
-                f"= 360° - {raw_diff:.0f}°\n"
-                f"= {interior_deg:.0f}°"
-            )
-    else:
-        # Result is the supplementary angle (used in parallelogram law)
-        # Show the calculation through the interior angle
-        if raw_diff <= 180:
-            return (
-                f"∠({vec1_name},{vec2_name}) = 180° - |{theta1_std_deg:.0f}° - {theta2_std_deg:.0f}°|\n"
-                f"= 180° - {interior_deg:.0f}°\n"
-                f"= {result_deg:.0f}°"
-            )
-        else:
-            return (
-                f"∠({vec1_name},{vec2_name}) = 180° - (360° - |{theta1_std_deg:.0f}° - {theta2_std_deg:.0f}°|)\n"
-                f"= 180° - (360° - {raw_diff:.0f}°)\n"
-                f"= 180° - {interior_deg:.0f}°\n"
-                f"= {result_deg:.0f}°"
-            )
+    is_supplementary = abs(interior_deg - result_deg) >= 0.5
+    return _format_angle_calculation(
+        vec1_name, vec2_name, theta1_std_deg, theta2_std_deg,
+        raw_diff, interior_deg, result_deg, is_supplementary
+    )
