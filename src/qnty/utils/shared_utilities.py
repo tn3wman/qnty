@@ -461,6 +461,10 @@ class ContextDetectionHelper:
                     frame = frame.f_back
                     continue
 
+                # Skip if we're in the equations module or solver modules - they should evaluate concretely
+                if ("equations" in filename.lower() or "_solver" in filename.lower() or "_solve" in code.co_name.lower()) and "qnty" in filename.lower():
+                    return False
+
                 # If we find a frame in Problem-related code or class definition,
                 # don't auto-evaluate to preserve symbolic expressions
                 if (
@@ -859,7 +863,8 @@ def format_equation_list_from_history(solving_history: list[dict], equations: li
         used_equations: set[str] = set()
 
         for step_data in solving_history:
-            equation_str = step_data.get("equation_str", "")
+            # Look for equation_for_list first (from equations module), then equation_str
+            equation_str = step_data.get("equation_for_list", "") or step_data.get("equation_str", "")
             if equation_str and equation_str not in used_equations:
                 equation_strs.append(equation_str)
                 used_equations.add(equation_str)

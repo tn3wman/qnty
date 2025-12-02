@@ -7,6 +7,7 @@ with various component specifications.
 
 from __future__ import annotations
 
+import math
 from types import EllipsisType
 from typing import TYPE_CHECKING, Any
 
@@ -396,7 +397,43 @@ def create_vector_from_ratio(
     v_comp = rv * scale
     w_comp = rw * scale
 
-    return _Vector(u_comp, v_comp, w_comp, unit=resolved_unit, name=name)
+    vec = _Vector(u_comp, v_comp, w_comp, unit=resolved_unit, name=name)
+
+    # Compute original angle and reference axis for reporting
+    # This preserves the "right triangle" interpretation of ratio vectors
+    # For 2D vectors (w=0), compute angle relative to the dominant axis
+    if rw == 0 and (ru != 0 or rv != 0):
+        abs_u, abs_v = abs(ru), abs(rv)
+
+        if abs_u >= abs_v:
+            # Dominant direction is along u (x-axis)
+            # Reference axis is +x or -x depending on sign of u
+            wrt = "+x" if ru >= 0 else "-x"
+            # Angle is arctan(v/|u|), measured from the reference axis
+            # Sign of angle depends on sign of v relative to the "positive" direction from reference
+            if ru >= 0:
+                # Reference is +x, positive angle goes toward +y
+                angle_rad = math.atan2(rv, abs_u)
+            else:
+                # Reference is -x, positive angle goes toward -y (convention)
+                # So positive v means negative angle from -x
+                angle_rad = -math.atan2(rv, abs_u)
+        else:
+            # Dominant direction is along v (y-axis)
+            # Reference axis is +y or -y depending on sign of v
+            wrt = "+y" if rv >= 0 else "-y"
+            # Angle is arctan(u/|v|), measured from the reference axis
+            if rv >= 0:
+                # Reference is +y, positive angle goes toward -x (CCW)
+                angle_rad = -math.atan2(ru, abs_v)
+            else:
+                # Reference is -y, positive angle goes toward +x
+                angle_rad = math.atan2(ru, abs_v)
+
+        vec._original_angle = math.degrees(angle_rad)
+        vec._original_wrt = wrt
+
+    return vec
 
 
 def create_vector_polar(

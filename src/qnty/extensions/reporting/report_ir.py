@@ -459,9 +459,13 @@ class MarkdownRenderer(ReportRenderer):
                 lines.append(r"\begin{aligned}")
                 for sub_line in step.substituted.split("\n"):
                     latex_line = self._expand_custom_macros(self._latex._to_latex_math(sub_line.strip()))
-                    if "=" in latex_line:
+                    # Only add &= alignment if not already present
+                    if "=" in latex_line and "&=" not in latex_line:
                         latex_line = latex_line.replace("=", "&=", 1)
-                    lines.append(latex_line + r" \\")
+                    # Only add line break if not already present at end
+                    if not latex_line.rstrip().endswith(r"\\"):
+                        latex_line = latex_line + r" \\"
+                    lines.append(latex_line)
                 lines.append(r"\end{aligned}")
                 lines.append("$$")
                 lines.append("")

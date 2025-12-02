@@ -280,3 +280,4 @@
 {"timestamp": "2025-12-01T13:08:36-0600", "python_version": "3.13.8", "iterations": 20000, "ops_per_loop": 5, "time_s": 0.0917895840248093, "time_per_loop_ns": 4589.479201240465, "time_per_op_ns": 917.895840248093, "unit_calls": 240002}
 {"timestamp": "2025-12-01T15:49:15-0600", "python_version": "3.13.2", "iterations": 20000, "ops_per_loop": 5, "time_s": 0.12663810001686215, "time_per_loop_ns": 6331.905000843108, "time_per_op_ns": 1266.3810001686215, "unit_calls": 240002}
 {"timestamp": "2025-12-01T16:05:23-0600", "python_version": "3.13.2", "iterations": 20000, "ops_per_loop": 5, "time_s": 0.1216721999226138, "time_per_loop_ns": 6083.60999613069, "time_per_op_ns": 1216.721999226138, "unit_calls": 240002}
+{"timestamp": "2025-12-01T20:45:23-0600", "python_version": "3.13.8", "iterations": 20000, "ops_per_loop": 5, "time_s": 0.0947880829917267, "time_per_loop_ns": 4739.404149586335, "time_per_op_ns": 947.880829917267, "unit_calls": 240002}

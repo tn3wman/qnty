@@ -556,7 +556,7 @@ class Chapter2Problem18:
 
 class Chapter2Problem19:
     name = "Problem 2-19"
-    generate_debug_reports = False
+    generate_debug_reports = True
     F_AB = pl.create_vector_polar(magnitude=..., unit="lbf", angle=..., wrt="+x")
     F_AC = pl.create_vector_polar(magnitude=500, unit="lbf", angle=-40, wrt=F_AB)
     F_R = pl.create_vector_resultant_polar(
@@ -941,14 +941,14 @@ PARALLELOGRAM_LAW_PROBLEMS = [
     Chapter2Problem21,
     Chapter2Problem22,
     Chapter2Problem23,
-    # Problem 24: Symbolic problem
-    Chapter2Problem25,
-    Chapter2Problem26,
-    Chapter2Problem27,
-    Chapter2Problem28,
-    Chapter2Problem29,
-    Chapter2Problem30,
-    Chapter2Problem31,
+    # # Problem 24: Symbolic problem
+    # Chapter2Problem25,
+    # Chapter2Problem26,
+    # Chapter2Problem27,
+    # Chapter2Problem28,
+    # Chapter2Problem29,
+    # Chapter2Problem30,
+    # Chapter2Problem31,
 ]
 
 PROBLEMS_EXPECT_FAIL = [
