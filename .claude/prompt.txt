@@ -1,0 +1,11 @@
+# Prompt for Claude
+
+I have a lot of bloated code because I was an idiot and completely trusted you. I created a new parallelogram solver here: /Users/tyler/Projects/qnty/src/qnty/problems/statics/parallelogram_solver.py which dispatches calculations to equations here: /Users/tyler/Projects/qnty/src/qnty/equations which returns both the final results and a step by step solution. It still sucks.
+
+Step 1: Remove Problem from ParallelogramLawProblem
+Step 2: Update ParallelogramLawProblem to be smarter. Use a dependency tree/ast to figure out what equations to call with what arguments based on knowns/unknowns instead of using if else statements for every possible combination of knowns/unknowns.
+    Step 2.1: For the parallelogram law has to organize vectors into a triangle of vectors. 2 vectors go tip to tail and the tail of vector 1 to the tip of vector 2 is the resultant vector.
+    Step 2.2: Use geometry rules to figure out the interior angles of the trisngle based on geometry rules for angles.
+Step 3: The parallelogram solver calls the equations in the right order collecting results and step by step solutions.
+Step 4: Create a new report generator that takes the step by step solutions from each equation and combines them into a single report with sections for knowns, unknowns, equations used, step by step solution, and summary of results. The report generator should have one source of truth (latex) and export to markdown and pdf.
+Step 5: The final report must match /Users/tyler/Projects/qnty/tests/statics/golden/problem_2_1_report.tex and /Users/tyler/Projects/qnty/tests/statics/golden/problem_2_1_report.md exactly.

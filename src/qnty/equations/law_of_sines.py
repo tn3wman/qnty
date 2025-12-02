@@ -29,9 +29,9 @@ class LawOfSines:
     def __init__(
         self,
         target: str,
-        opposite_side: "Quantity",
-        known_angle: "Quantity",
-        known_side: "Quantity",
+        opposite_side: Quantity,
+        known_angle: Quantity,
+        known_side: Quantity,
         use_obtuse: bool = False,
         description: str = "",
     ):
@@ -72,14 +72,25 @@ class LawOfSines:
         - B is the known_angle (triangle angle)
         - b is the known_side (e.g., F_R)
         """
+        # Extract vector names for the equation
+        # The target tells us what we're solving for, e.g., "\angle(\vec{F_1}, \vec{F_R})"
         opp_name = self._clean_name(self.opposite_side.name.replace("_mag", ""))
         result_name = self._clean_name(self.known_side.name.replace("_mag", ""))
+
+        # Extract the angle we're solving for from target
+        # e.g., "\angle(\vec{F_1}, \vec{F_R}) using Eq 2" -> \angle(\vec{F_1}, \vec{F_R})
+        target_angle = self.target.split(" using")[0] if " using" in self.target else self.target
+
+        # Extract the known angle representation - this is the interior angle
+        # Usually like "\angle(\vec{F_1}, \vec{F_2})"
+        known_angle_repr = getattr(self.known_angle, 'name', '\\angle')
+
         return (
-            f"\\frac{{\\sin(\\theta)}}{{|\\vec{{{opp_name}}}|}} = "
-            f"\\frac{{\\sin(\\gamma)}}{{|\\vec{{{result_name}}}|}}"
+            f"\\frac{{\\sin({target_angle})}}{{|\\vec{{{opp_name}}}|}} = "
+            f"\\frac{{\\sin({known_angle_repr})}}{{|\\vec{{{result_name}}}|}}"
         )
 
-    def solve(self) -> tuple["Quantity", dict]:
+    def solve(self) -> tuple[Quantity, dict]:
         """
         Solve for the unknown angle using Law of Sines.
 

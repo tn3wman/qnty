@@ -25,8 +25,8 @@ class AngleBetween:
     def __init__(
         self,
         target: str,
-        vec1: "_Vector",
-        vec2: "_Vector",
+        vec1: _Vector,
+        vec2: _Vector,
         description: str = "",
     ):
         """
@@ -43,7 +43,7 @@ class AngleBetween:
         self.vec2 = vec2
         self.description = description or "Calculate the angle between vectors"
 
-    def solve(self) -> tuple["Quantity", dict]:
+    def solve(self) -> tuple[Quantity, dict]:
         """
         Calculate the triangle angle between two vectors for parallelogram law.
 
@@ -68,10 +68,14 @@ class AngleBetween:
         result.name = self.target
 
         # Format substitution with proper LaTeX notation
+        # Use "x" instead of "+x" for cleaner notation
+        vec1_ref_display = vec1_ref.lstrip('+') if vec1_ref.startswith('+') else vec1_ref
+        vec2_ref_display = vec2_ref.lstrip('+') if vec2_ref.startswith('+') else vec2_ref
+
         substitution = (
             f"\\angle(\\vec{{{vec1_name}}}, \\vec{{{vec2_name}}}) &= "
-            f"|\\angle(\\vec{{{vec1_ref}}}, \\vec{{{vec1_name}}}) - "
-            f"\\angle(\\vec{{{vec2_ref}}}, \\vec{{{vec2_name}}})| \\\\\n"
+            f"|\\angle(\\vec{{{vec1_ref_display}}}, \\vec{{{vec1_name}}}) - "
+            f"\\angle(\\vec{{{vec2_ref_display}}}, \\vec{{{vec2_name}}})| \\\\\n"
             f"&= |{format_angle(vec1_angle_deg)} - {format_angle(vec2_angle_deg)}| \\\\\n"
             f"&= {format_angle(result_deg)} \\\\"
         )
@@ -95,8 +99,8 @@ class AngleSum:
     def __init__(
         self,
         target: str,
-        base_angle: "Quantity",
-        offset_angle: "Quantity",
+        base_angle: Quantity,
+        offset_angle: Quantity,
         result_ref: str = "+x",
         description: str = "",
     ):
@@ -116,7 +120,7 @@ class AngleSum:
         self.result_ref = result_ref
         self.description = description or f"Calculate direction relative to {result_ref} axis"
 
-    def solve(self) -> tuple["Quantity", dict]:
+    def solve(self) -> tuple[Quantity, dict]:
         """
         Calculate the sum of two angles.
 

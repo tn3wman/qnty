@@ -1,37 +1,277 @@
 """
-Parallelogram Law Problem - A Problem class for solving vector addition.
+Parallelogram Law Problem Solver - Clean implementation with pattern-based dispatch.
 
-This problem uses the triangle method with Law of Cosines and Law of Sines
-to solve parallelogram law problems. It dispatches to the equations module
-for step-by-step solution generation.
+This module provides a solver for vector addition problems using the parallelogram
+law (triangle method). It uses a TriangleState model to classify the problem by
+known/unknown quantities and dispatches to the appropriate solving strategy.
 
-The parallelogram law states that the resultant of two vectors can be found by
-forming a parallelogram where:
-- The two vectors form adjacent sides
-- The diagonal represents the resultant
+Key Design Principles:
+1. No inheritance from Problem base class - keeps it simple and focused
+2. TriangleState models the 6 quantities of the vector triangle
+3. Pattern matching on knowns determines which equations to call
+4. Standard triangle solving cases: SAS, SSS, ASA, AAS, SSA
+
+Triangle Quantities:
+- 3 sides (magnitudes): |F₁|, |F₂|, |F_R|
+- 3 interior angles: ∠(F₁,F₂), ∠(F₁,F_R), ∠(F₂,F_R)
+
+Plus direction information for each vector (needed to compute interior angles
+and final resultant direction).
 """
 
 from __future__ import annotations
 
-import math
+from dataclasses import dataclass, field
+from enum import Enum, auto
 from typing import TYPE_CHECKING, Any
 
 from ...core import Q
 from ...equations import AngleBetween, AngleSum, LawOfCosines, LawOfSines
-from ..problem import Problem
 
 if TYPE_CHECKING:
+    from ...core.quantity import Quantity
     from ...spatial.vector import _Vector
-    from ...spatial.vectors import _VectorWithUnknowns
 
 
-class ParallelogramLawProblem(Problem):
+# =============================================================================
+# Triangle State Model
+# =============================================================================
+
+
+class TriangleCase(Enum):
+    """Classification of triangle solving cases based on known quantities."""
+    SAS = auto()  # Two sides + included angle → Law of Cosines
+    SSS = auto()  # Three sides → Law of Cosines for angles
+    ASA = auto()  # Two angles + included side → Angle sum + Law of Sines
+    AAS = auto()  # Two angles + non-included side → Angle sum + Law of Sines
+    SSA = auto()  # Two sides + non-included angle → Law of Sines (ambiguous)
+    UNKNOWN = auto()  # Cannot determine case
+
+
+@dataclass
+class TriangleState:
     """
-    Problem class for solving parallelogram law (vector addition) problems.
+    Models the state of a vector triangle for parallelogram law solving.
 
-    Uses the triangle method with Law of Cosines and Law of Sines to find
-    unknown magnitudes and angles. Integrates with the report generator
-    for Markdown and PDF output.
+    The triangle has 6 quantities that can be known or unknown:
+    - 3 magnitudes: mag_a, mag_b, mag_r (sides of the triangle)
+    - 3 interior angles: angle_ab, angle_ar, angle_br
+
+    Additionally, we track vector directions (needed to compute interior angles
+    from geometry and to determine the final resultant direction).
+    """
+    # Vector references
+    vec_a: _Vector
+    vec_b: _Vector
+    vec_r: _Vector
+
+    # Magnitudes (as Quantity or None if unknown)
+    mag_a: Quantity | None = None
+    mag_b: Quantity | None = None
+    mag_r: Quantity | None = None
+
+    # Interior angles of triangle (as Quantity or None if unknown)
+    angle_ab: Quantity | None = None  # Angle at vertex opposite to resultant
+    angle_ar: Quantity | None = None  # Angle at vertex opposite to vec_b
+    angle_br: Quantity | None = None  # Angle at vertex opposite to vec_a
+
+    # Direction info (for computing interior angles and final direction)
+    dir_a: float | None = None  # Direction of vec_a in degrees from +x
+    dir_b: float | None = None  # Direction of vec_b in degrees from +x
+    dir_r: float | None = None  # Direction of resultant in degrees from +x
+
+    # Solution tracking
+    solving_steps: list[dict[str, Any]] = field(default_factory=list)
+    equations_used: list[str] = field(default_factory=list)
+
+    @property
+    def known_sides(self) -> int:
+        """Count of known side magnitudes."""
+        return sum(1 for m in [self.mag_a, self.mag_b, self.mag_r] if m is not None)
+
+    @property
+    def known_angles(self) -> int:
+        """Count of known interior angles."""
+        return sum(1 for a in [self.angle_ab, self.angle_ar, self.angle_br] if a is not None)
+
+    @property
+    def known_directions(self) -> int:
+        """Count of known vector directions."""
+        return sum(1 for d in [self.dir_a, self.dir_b, self.dir_r] if d is not None)
+
+    def classify(self) -> TriangleCase:
+        """
+        Classify the triangle case based on known quantities.
+
+        Returns the appropriate TriangleCase for dispatch to solving strategy.
+        """
+        sides = self.known_sides
+        angles = self.known_angles
+
+        # Note: If we have 2 directions, we can compute the included angle (angle_ab)
+        # So effectively we can derive angle_ab from dir_a and dir_b
+        can_compute_angle_ab = (self.dir_a is not None and self.dir_b is not None)
+
+        if sides == 2 and (angles >= 1 or can_compute_angle_ab):
+            # Check if the known angle is the included angle
+            if self.angle_ab is not None or can_compute_angle_ab:
+                return TriangleCase.SAS
+            else:
+                return TriangleCase.SSA
+
+        if sides == 3:
+            return TriangleCase.SSS
+
+        if angles >= 2 and sides >= 1:
+            # Determine if we have ASA or AAS based on which quantities are known
+            return TriangleCase.ASA  # Simplified - actual logic would check positions
+
+        return TriangleCase.UNKNOWN
+
+
+# =============================================================================
+# Solving Strategies
+# =============================================================================
+
+
+def solve_sas(state: TriangleState) -> None:
+    """
+    Solve SAS case: Two sides and included angle known.
+
+    Strategy:
+    1. If angle_ab not known, compute from directions (AngleBetween)
+    2. Law of Cosines to find unknown side
+    3. Law of Sines to find one unknown angle
+    4. Angle sum to find the other angle (or compute from third interior angle)
+    """
+    # Step 1: Compute angle_ab if not already known
+    if state.angle_ab is None and state.dir_a is not None and state.dir_b is not None:
+        angle_eq = AngleBetween(
+            target=f"\\angle(\\vec{{{state.vec_a.name}}}, \\vec{{{state.vec_b.name}}})",
+            vec1=state.vec_a,
+            vec2=state.vec_b,
+        )
+        state.angle_ab, step = angle_eq.solve()
+        state.solving_steps.append(step)
+
+    if state.angle_ab is None:
+        raise ValueError("Cannot solve SAS: included angle (angle_ab) is not known and cannot be computed")
+
+    # Step 2: Use Law of Cosines to find unknown side
+    if state.mag_r is None and state.mag_a is not None and state.mag_b is not None:
+        # Finding resultant magnitude: c² = a² + b² - 2ab·cos(C)
+        state.mag_a.name = f"{state.vec_a.name}_mag"
+        state.mag_b.name = f"{state.vec_b.name}_mag"
+
+        loc = LawOfCosines(
+            target=f"|\\vec{{{state.vec_r.name}}}| using Eq 1",
+            side_a=state.mag_a,
+            side_b=state.mag_b,
+            angle=state.angle_ab,
+        )
+        state.mag_r, step = loc.solve()
+        state.solving_steps.append(step)
+        state.equations_used.append(loc.equation_for_list())
+
+    # Step 3: Use Law of Sines to find angle_ar (angle from vec_a to resultant)
+    if state.angle_ar is None and state.mag_b is not None and state.mag_r is not None:
+        # Determine if we need obtuse angle
+        use_obtuse = state.mag_b.value > state.mag_r.value
+
+        los = LawOfSines(
+            target=f"\\angle(\\vec{{{state.vec_a.name}}}, \\vec{{{state.vec_r.name}}}) using Eq 2",
+            opposite_side=state.mag_b,
+            known_angle=state.angle_ab,
+            known_side=state.mag_r,
+            use_obtuse=use_obtuse,
+        )
+        state.angle_ar, step = los.solve()
+        state.solving_steps.append(step)
+        state.equations_used.append(los.equation_for_list())
+
+    # Step 4: Compute resultant direction from vec_a direction + angle_ar
+    if state.dir_r is None and state.dir_a is not None and state.angle_ar is not None:
+        dir_a_qty = Q(state.dir_a, 'degree')
+        dir_a_qty.name = f"\\angle(\\vec{{x}}, \\vec{{{state.vec_a.name}}})"
+
+        angle_sum = AngleSum(
+            target=f"\\angle(\\vec{{x}}, \\vec{{{state.vec_r.name}}}) with respect to +x",
+            base_angle=dir_a_qty,
+            offset_angle=state.angle_ar,
+            result_ref="+x",
+        )
+        dir_r_qty, step = angle_sum.solve()
+        state.dir_r = dir_r_qty.magnitude()
+        state.solving_steps.append(step)
+
+
+def solve_sss(state: TriangleState) -> None:
+    """
+    Solve SSS case: All three sides known, find angles.
+
+    Strategy:
+    1. Law of Cosines to find largest angle (opposite longest side)
+    2. Law of Sines for second angle
+    3. Third angle = 180° - first - second
+    """
+    if state.mag_a is None or state.mag_b is None or state.mag_r is None:
+        raise ValueError("SSS requires all three magnitudes to be known")
+
+    # Find the largest side to get the largest angle first
+    # This avoids ambiguity in Law of Sines
+    mags = [
+        (state.mag_a.value, 'a', state.angle_br),  # angle opposite to a
+        (state.mag_b.value, 'b', state.angle_ar),  # angle opposite to b
+        (state.mag_r.value, 'r', state.angle_ab),  # angle opposite to r
+    ]
+    mags.sort(key=lambda x: x[0], reverse=True)
+
+    # Use Law of Cosines for largest angle
+    # cos(C) = (a² + b² - c²) / (2ab)
+    # This requires a modified form - for now, use the standard form
+    # TODO: Implement Law of Cosines for finding angles
+
+    raise NotImplementedError("SSS case not yet implemented")
+
+
+def solve_ssa(state: TriangleState) -> None:
+    """
+    Solve SSA case: Two sides and non-included angle known.
+
+    This is the ambiguous case - may have 0, 1, or 2 solutions.
+
+    Strategy:
+    1. Law of Sines to find angle opposite known side
+    2. Check for ambiguity (may need to consider both acute and obtuse solutions)
+    3. Third angle = 180° - known angles
+    4. Law of Sines for unknown side
+    """
+    raise NotImplementedError("SSA case not yet implemented")
+
+
+# Strategy dispatch table
+SOLVING_STRATEGIES = {
+    TriangleCase.SAS: solve_sas,
+    TriangleCase.SSS: solve_sss,
+    TriangleCase.SSA: solve_ssa,
+}
+
+
+# =============================================================================
+# Main Problem Class
+# =============================================================================
+
+
+class ParallelogramLawProblem:
+    """
+    Solver for parallelogram law (vector addition) problems.
+
+    This is a standalone solver that:
+    1. Extracts vectors from class-level attributes
+    2. Builds a TriangleState from the vectors
+    3. Classifies the problem (SAS, SSS, etc.)
+    4. Dispatches to the appropriate solving strategy
+    5. Collects step-by-step solutions for reporting
 
     Example:
         >>> from qnty.problems.statics import parallelogram_law as pl
@@ -46,20 +286,32 @@ class ParallelogramLawProblem(Problem):
         >>> problem.generate_report("report.pdf", format="pdf")
     """
 
+    name: str = "Parallelogram Law Problem"
+
     def __init__(self, name: str | None = None, description: str = ""):
-        super().__init__(name=name, description=description)
+        self.name = name or getattr(self.__class__, "name", self.__class__.__name__)
+        self.description = description
+
+        # Storage
         self.forces: dict[str, _Vector] = {}
         self._output_unit = "N"
-        self._equations_used: list[str] = []
-
-        # Track original states for reporting
         self._original_force_states: dict[str, bool] = {}
+
+        # For compatibility with report generator
+        self.variables: dict[str, Quantity] = {}
+        self._original_variable_states: dict[str, bool] = {}
+
+        # Solving state
+        self.is_solved = False
+        self.solving_history: list[dict[str, Any]] = []
+        self._equations_used: list[str] = []
+        self._triangle_state: TriangleState | None = None
 
         # Extract vectors from class attributes
         self._extract_vectors()
 
     def _extract_vectors(self) -> None:
-        """Extract vector objects defined at class level and create mag/angle variables."""
+        """Extract vector objects defined at class level and create variables for reporting."""
         from ...spatial.vector import _Vector
         from ...spatial.vectors import _VectorWithUnknowns
 
@@ -76,11 +328,9 @@ class ParallelogramLawProblem(Problem):
                 setattr(self, attr_name, clone)
                 self.forces[attr_name] = clone
                 self._original_force_states[attr_name] = True
-
-                # Create magnitude and angle variables for report generation
                 self._create_vector_variables(attr_name, clone, is_known=True)
 
-        # Second pass: clone _VectorWithUnknowns (which may reference other vectors)
+        # Second pass: clone _VectorWithUnknowns (may reference other vectors)
         for attr_name in dir(self.__class__):
             if attr_name.startswith("_"):
                 continue
@@ -91,28 +341,23 @@ class ParallelogramLawProblem(Problem):
                 setattr(self, attr_name, clone)
                 self.forces[attr_name] = clone
                 self._original_force_states[attr_name] = False
-
-                # Create magnitude and angle variables for report generation (unknown)
                 self._create_vector_variables(attr_name, clone, is_known=False)
 
     def _create_vector_variables(self, name: str, vec: _Vector, is_known: bool) -> None:
-        """Create magnitude and angle Quantity variables for a vector."""
-        from ...core import Q
-
-        # Get magnitude from vector's magnitude property (returns a Quantity)
+        """Create magnitude and angle Quantity variables for reporting compatibility."""
+        # Magnitude
         if is_known and vec.magnitude is not None:
             mag_qty = vec.magnitude
             mag_qty.name = f"{name}_mag"
         else:
-            # Create unknown magnitude quantity
             mag_qty = Q(0, self._output_unit)
             mag_qty.name = f"{name}_mag"
-            mag_qty.value = None  # Mark as unknown
+            mag_qty.value = None
 
         self.variables[f"{name}_mag"] = mag_qty
         self._original_variable_states[f"{name}_mag"] = is_known
 
-        # Get angle from vector's _original_angle attribute
+        # Angle
         if is_known:
             original_angle = getattr(vec, "_original_angle", None)
             if original_angle is not None:
@@ -125,30 +370,67 @@ class ParallelogramLawProblem(Problem):
         else:
             angle_qty = Q(0, 'degree')
             angle_qty.name = f"{name}_angle"
-            angle_qty.value = None  # Mark as unknown
+            angle_qty.value = None
 
         self.variables[f"{name}_angle"] = angle_qty
         self._original_variable_states[f"{name}_angle"] = is_known
 
     def get_known_variables(self) -> dict[str, Any]:
         """Get known variables for report generation."""
-        known = {}
-        for name, vec in self.forces.items():
-            if self._original_force_states.get(name, True):
-                known[name] = vec
-        return known
+        return {name: vec for name, vec in self.forces.items()
+                if self._original_force_states.get(name, True)}
 
     def get_unknown_variables(self) -> dict[str, Any]:
         """Get unknown variables for report generation."""
-        unknown = {}
-        for name, vec in self.forces.items():
-            if not self._original_force_states.get(name, True):
-                unknown[name] = vec
-        return unknown
+        return {name: vec for name, vec in self.forces.items()
+                if not self._original_force_states.get(name, True)}
+
+    def _build_triangle_state(self) -> TriangleState:
+        """Build TriangleState from the extracted vectors."""
+        components = []
+        resultant = None
+
+        for vec in self.forces.values():
+            if getattr(vec, "is_resultant", False):
+                resultant = vec
+            else:
+                components.append(vec)
+
+        if len(components) != 2:
+            raise ValueError(f"Expected 2 component vectors, got {len(components)}")
+        if resultant is None:
+            raise ValueError("No resultant vector found")
+
+        vec_a, vec_b = components
+
+        # Build state from vectors
+        state = TriangleState(
+            vec_a=vec_a,
+            vec_b=vec_b,
+            vec_r=resultant,
+        )
+
+        # Populate magnitudes
+        if vec_a.magnitude is not None and vec_a.is_known:
+            state.mag_a = vec_a.magnitude
+        if vec_b.magnitude is not None and vec_b.is_known:
+            state.mag_b = vec_b.magnitude
+        if resultant.magnitude is not None and resultant.is_known:
+            state.mag_r = resultant.magnitude
+
+        # Populate directions
+        state.dir_a = getattr(vec_a, '_original_angle', None)
+        state.dir_b = getattr(vec_b, '_original_angle', None)
+        state.dir_r = getattr(resultant, '_original_angle', None)
+
+        return state
 
     def solve(self, output_unit: str = "N") -> ParallelogramLawProblem:
         """
         Solve the parallelogram law problem.
+
+        Uses pattern matching to classify the problem and dispatch to
+        the appropriate solving strategy.
 
         Args:
             output_unit: Unit for output values (default "N")
@@ -158,199 +440,70 @@ class ParallelogramLawProblem(Problem):
         """
         self._output_unit = output_unit
 
-        # Find component vectors and resultant
-        components = []
-        resultant = None
+        # Build triangle state
+        state = self._build_triangle_state()
+        self._triangle_state = state
 
-        for name, vec in self.forces.items():
-            if getattr(vec, "is_resultant", False):
-                resultant = (name, vec)
-            else:
-                components.append((name, vec))
+        # Classify the problem
+        case = state.classify()
 
-        if len(components) != 2:
-            raise ValueError(f"Expected 2 component vectors, got {len(components)}")
+        # Dispatch to solving strategy
+        strategy = SOLVING_STRATEGIES.get(case)
+        if strategy is None:
+            raise ValueError(f"No solving strategy for case: {case}")
 
-        if resultant is None:
-            raise ValueError("No resultant vector found")
+        strategy(state)
 
-        v1_name, v1 = components[0]
-        v2_name, v2 = components[1]
-        vr_name, vr = resultant
+        # Copy results back to instance
+        self.solving_history = state.solving_steps
+        self._equations_used = state.equations_used
 
-        # Solve using triangle method with vectors directly
-        self._solve_forward(v1_name, v1, v2_name, v2, vr_name, vr)
+        # Update resultant vector with solved values
+        self._update_resultant_from_state(state)
 
         self.is_solved = True
         return self
 
-    def _extract_vector_info(self, name: str, vector: _Vector) -> dict[str, Any]:
-        """Extract magnitude, angle, and reference from a vector."""
-        info: dict[str, Any] = {
-            "name": name,
-            "magnitude": None,
-            "angle_deg": None,
-            "wrt": "+x",
-        }
-
-        # Check for polar info
-        polar_mag = getattr(vector, "_polar_magnitude", None)
-        if polar_mag is not None:
-            info["magnitude"] = polar_mag
-
-        polar_angle_rad = getattr(vector, "_polar_angle_rad", None)
-        if polar_angle_rad is not None:
-            info["angle_deg"] = math.degrees(polar_angle_rad)
-
-        original_wrt = getattr(vector, "_original_wrt", None)
-        if original_wrt is not None:
-            info["wrt"] = original_wrt
-
-        original_angle = getattr(vector, "_original_angle", None)
-        if original_angle is not None:
-            info["angle_deg"] = original_angle
-
-        # Check for magnitude property
-        vec_magnitude = getattr(vector, "_magnitude", None)
-        if info["magnitude"] is None and vec_magnitude is not None:
-            if isinstance(vec_magnitude, Quantity) and vec_magnitude.value is not None:
-                # Convert from SI to display unit
-                from ...core.unit import ureg
-                force_unit = ureg.resolve(self._output_unit)
-                if force_unit:
-                    info["magnitude"] = vec_magnitude.value / force_unit.si_factor
-
-        # Compute from components if needed
-        coords = getattr(vector, "_coords", None)
-        if coords is not None and len(coords) >= 2:
-            unknowns = getattr(vector, "_unknowns", None) or {}
-            if "u" not in unknowns and "v" not in unknowns:
-                x_si, y_si = float(coords[0]), float(coords[1])
-                if info["magnitude"] is None:
-                    mag_si = math.sqrt(x_si**2 + y_si**2)
-                    from ...core.unit import ureg
-                    force_unit = ureg.resolve(self._output_unit)
-                    if force_unit:
-                        info["magnitude"] = mag_si / force_unit.si_factor
-                if info["angle_deg"] is None:
-                    angle_rad = math.atan2(y_si, x_si)
-                    info["angle_deg"] = math.degrees(angle_rad)
-                    if info["angle_deg"] < 0:
-                        info["angle_deg"] += 360
-
-        return info
-
-    def _solve_forward(
-        self,
-        v1_name: str,
-        v1: _Vector,
-        v2_name: str,
-        v2: _Vector,
-        vr_name: str,
-        vr: _Vector,
-    ) -> None:
-        """Solve forward problem: find resultant from two known component vectors."""
-        from ...core import u
-        from ...core.quantity import Quantity
+    def _update_resultant_from_state(self, state: TriangleState) -> None:
+        """Update the resultant vector with values from solved state."""
+        from ...algebra.functions import cos, sin
         from ...core.unit import ureg
 
-        force_unit = ureg.resolve(self._output_unit) or u.newton
+        vr = state.vec_r
+        force_unit = ureg.resolve(self._output_unit)
 
-        # Get magnitude Quantities from vectors and set names for equation formatting
-        mag1_qty = v1.magnitude
-        mag2_qty = v2.magnitude
+        if state.mag_r is not None and state.dir_r is not None:
+            mag_r = state.mag_r.magnitude()
+            theta_r = state.dir_r
 
-        if mag1_qty is None or mag2_qty is None:
-            raise ValueError("Both component vectors must have known magnitude")
+            # Compute components
+            theta_r_qty = Q(theta_r, 'degree')
+            x_r = mag_r * cos(theta_r_qty).magnitude()
+            y_r = mag_r * sin(theta_r_qty).magnitude()
 
-        # Set names on magnitude quantities for proper equation formatting
-        mag1_qty.name = f"{v1_name}_mag"
-        mag2_qty.name = f"{v2_name}_mag"
+            # Store in SI units
+            vr._coords[0] = x_r * force_unit.si_factor
+            vr._coords[1] = y_r * force_unit.si_factor
+            vr._coords[2] = 0.0
 
-        # Step 1: Calculate triangle angle between the two vectors
-        angle_between_eq = AngleBetween(
-            target=f"\\angle(\\vec{{{v1_name}}}, \\vec{{{v2_name}}})",
-            vec1=v1,
-            vec2=v2,
-        )
-        triangle_angle_qty, step1 = angle_between_eq.solve()
-        self.solving_history.append(step1)
+            # Store for reporting
+            vr._original_angle = theta_r
+            vr._original_wrt = "+x"
+            vr.is_known = True
 
-        # Step 2: Law of Cosines to find resultant magnitude
-        loc = LawOfCosines(
-            target=f"|\\vec{{{vr_name}}}| using Eq 1",
-            side_a=mag1_qty,
-            side_b=mag2_qty,
-            angle=triangle_angle_qty,
-        )
-        mag_r_qty, step2 = loc.solve()
-        self.solving_history.append(step2)
-        self._equations_used.append(loc.equation_for_list())
+            if hasattr(vr, "_unknowns"):
+                vr._unknowns.clear()
 
-        # Step 3: Law of Sines to find angle from v1 to resultant
-        use_obtuse = mag2_qty.value > mag_r_qty.value
+            # Update variables for report
+            vr_name = vr.name
+            if f"{vr_name}_mag" in self.variables:
+                self.variables[f"{vr_name}_mag"] = state.mag_r
+            if f"{vr_name}_angle" in self.variables:
+                dir_r_qty = Q(theta_r, 'degree')
+                dir_r_qty.name = f"{vr_name}_angle"
+                self.variables[f"{vr_name}_angle"] = dir_r_qty
 
-        los = LawOfSines(
-            target=f"\\angle(\\vec{{{v1_name}}}, \\vec{{{vr_name}}}) using Eq 2",
-            opposite_side=mag2_qty,
-            known_angle=triangle_angle_qty,
-            known_side=mag_r_qty,
-            use_obtuse=use_obtuse,
-        )
-        angle_v1_vr_qty, step3 = los.solve()
-        self.solving_history.append(step3)
-        self._equations_used.append(los.equation_for_list())
-
-        # Step 4: Calculate resultant angle with respect to reference axis
-        # Get v1's original angle as a Quantity using Q()
-        v1_angle_deg = getattr(v1, '_original_angle', 0.0)
-        v1_angle_qty = Q(v1_angle_deg, 'degree')
-        v1_angle_qty.name = f"\\angle(\\vec{{x}}, \\vec{{{v1_name}}})"
-
-        angle_sum = AngleSum(
-            target=f"\\angle(\\vec{{x}}, \\vec{{{vr_name}}}) with respect to +x",
-            base_angle=v1_angle_qty,
-            offset_angle=angle_v1_vr_qty,
-            result_ref="+x",
-        )
-        theta_r_qty, step4 = angle_sum.solve()
-        self.solving_history.append(step4)
-
-        # Get values using magnitude() for display units
-        mag_r = mag_r_qty.magnitude()
-        theta_r = theta_r_qty.magnitude()
-
-        # Update resultant vector with computed values
-        from ...algebra.functions import cos, sin
-        theta_r_rad_qty = Q(theta_r, 'degree')
-        x_r = mag_r * cos(theta_r_rad_qty).magnitude()
-        y_r = mag_r * sin(theta_r_rad_qty).magnitude()
-
-        # Store in SI units internally
-        vr._coords[0] = x_r * force_unit.si_factor
-        vr._coords[1] = y_r * force_unit.si_factor
-        vr._coords[2] = 0.0
-
-        # Store magnitude and angle for reporting
-        vr._original_angle = theta_r
-        vr._original_wrt = "+x"
-        vr.is_known = True
-
-        # Clear unknowns
-        if hasattr(vr, "_unknowns"):
-            vr._unknowns.clear()
-
-        # Update the result variables for report generation
-        if f"{vr_name}_mag" in self.variables:
-            self.variables[f"{vr_name}_mag"] = mag_r_qty
-        if f"{vr_name}_angle" in self.variables:
-            self.variables[f"{vr_name}_angle"] = theta_r_qty
-
-    def generate_report(
-        self,
-        output_path: str,
-        format: str = "pdf",
-    ) -> None:
+    def generate_report(self, output_path: str, format: str = "markdown") -> None:
         """
         Generate a report (Markdown, LaTeX, or PDF).
 
@@ -361,7 +514,7 @@ class ParallelogramLawProblem(Problem):
         if not self.is_solved:
             raise ValueError("Problem must be solved before generating report")
 
-        from ...extensions.reporting import generate_report as _generate_report
+        from .parallelogram_report import generate_report as _generate_report
         _generate_report(self, output_path, format=format)
 
 
@@ -375,26 +528,17 @@ def solve_class(problem_class: type, output_unit: str = "N") -> ParallelogramLaw
 
     Returns:
         Solved ParallelogramLawProblem instance
-
-    Example:
-        >>> class MyProblem:
-        ...     F_1 = create_vector_polar(magnitude=450, unit="N", angle=60, wrt="+x")
-        ...     F_2 = create_vector_polar(magnitude=700, unit="N", angle=15, wrt="-x")
-        ...     F_R = create_vector_resultant(F_1, F_2)
-        >>> problem = solve_class(MyProblem)
-        >>> problem.generate_report("report.md", format="markdown")
     """
-    # Create a dynamic problem class
-    class DynamicProblem(ParallelogramLawProblem):
-        pass
-
-    # Copy class attributes
-    DynamicProblem.name = getattr(problem_class, "name", problem_class.__name__)
-
-    # Copy vector attributes
     from ...spatial.vector import _Vector
     from ...spatial.vectors import _VectorWithUnknowns
 
+    # Create dynamic problem class
+    class DynamicProblem(ParallelogramLawProblem):
+        pass
+
+    DynamicProblem.name = getattr(problem_class, "name", problem_class.__name__)
+
+    # Copy vector attributes
     for attr_name in dir(problem_class):
         if attr_name.startswith("_"):
             continue
