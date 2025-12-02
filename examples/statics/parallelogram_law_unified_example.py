@@ -25,7 +25,7 @@ import json
 from dataclasses import asdict
 
 # THE UNIFIED IMPORT - works for both code and UI
-from qnty.problems.statics import parallelogram_law
+from qnty.problems.statics import _old_parallelogram_law
 
 
 def main():
@@ -42,14 +42,14 @@ def main():
     print("-" * 70)
 
     # Create vectors - SAME syntax for both use cases
-    F_1 = parallelogram_law.create_vector_polar(magnitude=450, angle=60, unit="N", name="F_1")
-    F_2 = parallelogram_law.create_vector_polar(magnitude=700, angle=-15, unit="N", name="F_2")
+    F_1 = _old_parallelogram_law.create_vector_polar(magnitude=450, angle=60, unit="N", name="F_1")
+    F_2 = _old_parallelogram_law.create_vector_polar(magnitude=700, angle=-15, unit="N", name="F_2")
 
     print(f"\n  F_1: {F_1.name} = 450 N at 60°")
     print(f"  F_2: {F_2.name} = 700 N at -15°")
 
     # Solve - SAME syntax for both use cases
-    result = parallelogram_law.solve(F_1, F_2)
+    result = _old_parallelogram_law.solve(F_1, F_2)
 
     print("\n  Result (code-based access):")
     if result.success and result.resultant:
@@ -109,18 +109,18 @@ def main():
 
         def __init__(self):
             # Store DTOs (JSON-serializable)
-            self.vectors: list[parallelogram_law.Vector] = []
-            self.result: parallelogram_law.ResultDTO | None = None
+            self.vectors: list[_old_parallelogram_law.Vector] = []
+            self.result: _old_parallelogram_law.ResultDTO | None = None
 
         def add_vector(self, magnitude: float, angle: float, name: str):
             # Create vector and convert to DTO for storage
-            v = parallelogram_law.create_vector_polar(magnitude=magnitude, angle=angle, unit="N", name=name)
-            self.vectors.append(parallelogram_law.to_vector_dto(v))
+            v = _old_parallelogram_law.create_vector_polar(magnitude=magnitude, angle=angle, unit="N", name=name)
+            self.vectors.append(_old_parallelogram_law.to_vector_dto(v))
 
         def solve(self):
             # Convert DTOs back to vectors, solve, convert result to DTO
-            vecs = [parallelogram_law.from_vector_dto(d) for d in self.vectors]
-            result = parallelogram_law.solve(*vecs)
+            vecs = [_old_parallelogram_law.from_vector_dto(d) for d in self.vectors]
+            result = _old_parallelogram_law.solve(*vecs)
             self.result = result.to_dto()
 
     # Use it like Reflex
@@ -180,11 +180,11 @@ def main():
     """)
 
     # Simulate frontend input (user enters values in Newtons)
-    F_1 = parallelogram_law.create_vector_polar(magnitude=450, angle=60, unit="N", name="F_1")
-    F_2 = parallelogram_law.create_vector_polar(magnitude=700, angle=-15, unit="N", name="F_2")
+    F_1 = _old_parallelogram_law.create_vector_polar(magnitude=450, angle=60, unit="N", name="F_1")
+    F_2 = _old_parallelogram_law.create_vector_polar(magnitude=700, angle=-15, unit="N", name="F_2")
 
     # Solve (internally uses SI)
-    result = parallelogram_law.solve(F_1, F_2)
+    result = _old_parallelogram_law.solve(F_1, F_2)
 
     print("\n  Same result, different display units:")
     print()
@@ -229,10 +229,10 @@ def main():
     print("\n  Batch analysis:")
     for i, p in enumerate(problems):
         vectors = [
-            parallelogram_law.create_vector_polar(magnitude=mag, angle=ang, unit="N", name=name)
+            _old_parallelogram_law.create_vector_polar(magnitude=mag, angle=ang, unit="N", name=name)
             for name, (mag, ang) in p.items()
         ]
-        result = parallelogram_law.solve(*vectors, output_unit="N")
+        result = _old_parallelogram_law.solve(*vectors, output_unit="N")
 
         if result.success and result.resultant:
             # Access rich objects for detailed analysis

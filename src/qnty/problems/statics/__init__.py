@@ -22,8 +22,8 @@ Example:
     >>> dto = result.to_dto()
 """
 
-from . import parallelogram_law
+from . import _old_parallelogram_law
 
 __all__ = [
-    "parallelogram_law",
+    "_old_parallelogram_law",
 ]

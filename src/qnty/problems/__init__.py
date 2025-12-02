@@ -13,7 +13,6 @@ The system maintains full backward compatibility with the original Problem API.
 # Unified API modules (recommended for new code)
 from . import statics
 
-from .cartesian_vector import CartesianVectorProblem
 from .composition import (
     CompositionMixin,
     ConfigurableVariable,
@@ -31,11 +30,9 @@ from .composition import (
     delayed_min_expr,
     delayed_sin,
 )
-from .parallelogram_law import ParallelogramLawProblem
 from .position_vector import PositionVectorProblem
 from .problem import EquationValidationError, SolverError, VariableNotFoundError
 from .problem import Problem as BaseProblem
-from .rectangular_vector import RectangularVectorProblem
 from .solving import (
     CompositeExpressionRebuilder,
     DelayedExpressionResolver,
@@ -122,10 +119,7 @@ __all__ = [
     # Main classes
     "Problem",
     "EngineeringProblem",
-    "ParallelogramLawProblem",
     "PositionVectorProblem",
-    "RectangularVectorProblem",
-    "CartesianVectorProblem",
     # Mixins
     "ValidationMixin",
     "CompositionMixin",

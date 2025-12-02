@@ -18,7 +18,7 @@ The example simulates user interactions by:
 from pathlib import Path
 from typing import Literal
 
-from qnty.problems.statics import parallelogram_law
+from qnty.problems.statics import _old_parallelogram_law
 
 # =============================================================================
 # Simulated Reflex State
@@ -60,7 +60,7 @@ class ProblemState:
         self.fr_components: tuple[float, float] | None = None
 
         # Result object
-        self._result: parallelogram_law.Result | None = None
+        self._result: _old_parallelogram_law.Result | None = None
 
     def solve(self) -> None:
         """
@@ -70,7 +70,7 @@ class ProblemState:
         clicks "Solve" in the UI.
         """
         # Create vectors using the unified API
-        F_1 = parallelogram_law.create_vector_polar(
+        F_1 = _old_parallelogram_law.create_vector_polar(
             magnitude=self.f1_magnitude,
             angle=self.f1_angle,
             unit=self.f1_unit,
@@ -78,7 +78,7 @@ class ProblemState:
             wrt=self.f1_wrt,
         )
 
-        F_2 = parallelogram_law.create_vector_polar(
+        F_2 = _old_parallelogram_law.create_vector_polar(
             magnitude=self.f2_magnitude,
             angle=self.f2_angle,
             unit=self.f2_unit,
@@ -87,7 +87,7 @@ class ProblemState:
         )
 
         # Solve using the unified API
-        self._result = parallelogram_law.solve(F_1, F_2, name="Problem 2-1")
+        self._result = _old_parallelogram_law.solve(F_1, F_2, name="Problem 2-1")
 
         # Extract results in user's preferred units
         self._update_results()

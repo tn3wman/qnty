@@ -22,7 +22,7 @@ Solution (from textbook):
 from pathlib import Path
 from typing import Literal
 
-from qnty.problems.statics import parallelogram_law as pl
+from qnty.problems.statics import _old_parallelogram_law as pl
 
 
 class InverseProblemState:

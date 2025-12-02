@@ -105,7 +105,7 @@ class LawOfSines:
         # Get values for calculation
         a = self.opposite_side.magnitude()  # Side opposite to unknown angle
         b = self.known_side.magnitude()      # Side opposite to known angle
-        known_angle_deg = self.known_angle.magnitude()
+        known_angle_deg = self.known_angle.to_unit.degree.magnitude()
 
         # sin(A) = a · sin(B) / b
         # We need to compute this carefully since we need asin at the end

@@ -25,24 +25,24 @@
 
 \section{Known Variables}
 
-\begin{longtable}{lSSSSl}
+\begin{longtable}{lSSl}
 \toprule
-Vector & {$F_{x}$ (N)} & {$F_{y}$ (N)} & {$\magn{\vv{F}}$ (N)} & {$\theta$ (deg)} & Reference \\
+Vector & {$\magn{\vv{F}}$ (N)} & {$\theta$ (deg)} & Reference \\
 \midrule
 \endhead
-$\vv{F_1}$ & 225.0 & 389.7 & 450.0 & 60.0 & +x \\
-$\vv{F_2}$ & -676.1 & -181.2 & 700.0 & 15.0 & -x \\
+$\vv{F_1}$ & 450.0 & 60.0 & +x \\
+$\vv{F_2}$ & 700.0 & 15.0 & -x \\
 \bottomrule
 \end{longtable}
 
 \section{Unknown Variables}
 
-\begin{longtable}{lSSSSl}
+\begin{longtable}{lSSl}
 \toprule
-Vector & {$F_{x}$ (N)} & {$F_{y}$ (N)} & {$\magn{\vv{F}}$ (N)} & {$\theta$ (deg)} & Reference \\
+Vector & {$\magn{\vv{F}}$ (N)} & {$\theta$ (deg)} & Reference \\
 \midrule
 \endhead
-$\vv{F_R}$ & ? & ? & ? & ? & +x \\
+$\vv{F_R}$ & ? & ? & +x \\
 \bottomrule
 \end{longtable}
 
@@ -56,21 +56,7 @@ $\vv{F_R}$ & ? & ? & ? & ? & +x \\
 \section{Step-by-Step Solution}
 
 \vspace{0.2em}
-\noindent\hspace{1em}\textbf{Step 1: Solve for $\angle(\vv{F_1}, \vv{F_2})$}
-\vspace{0.1em}
-
-\begin{adjustwidth}{2em}{}
-\vspace{-0.8em}
-\begin{flalign*}
-\quad \angle(\vv{F_1}, \vv{F_2}) &= \magn{\angle(\vv{x}, \vv{F_1}) - \angle(\vv{-x}, \vv{F_2})} && \\
-\quad &= \magn{60^{\circ} - 15^{\circ}} && \\
-\quad &= 45^{\circ} &&
-\end{flalign*}
-\vspace{-0.8em}
-\end{adjustwidth}
-
-\vspace{0.2em}
-\noindent\hspace{1em}\textbf{Step 2: Solve for $\magn{\vv{F_R}}$ using Eq 1}
+\noindent\hspace{1em}\textbf{Step 1: Solve for $\magn{\vv{F_R}}$ using Eq 1}
 \vspace{0.1em}
 
 \begin{adjustwidth}{2em}{}
@@ -83,7 +69,7 @@ $\vv{F_R}$ & ? & ? & ? & ? & +x \\
 \end{adjustwidth}
 
 \vspace{0.2em}
-\noindent\hspace{1em}\textbf{Step 3: Solve for $\angle(\vv{F_1}, \vv{F_R})$ using Eq 2}
+\noindent\hspace{1em}\textbf{Step 2: Solve for $\angle(\vv{F_1}, \vv{F_R})$ using Eq 2}
 \vspace{0.1em}
 
 \begin{adjustwidth}{2em}{}
@@ -96,7 +82,7 @@ $\vv{F_R}$ & ? & ? & ? & ? & +x \\
 \end{adjustwidth}
 
 \vspace{0.2em}
-\noindent\hspace{1em}\textbf{Step 4: Solve for $\angle(\vv{x}, \vv{F_R})$ with respect to +x}
+\noindent\hspace{1em}\textbf{Step 3: Solve for $\angle(\vv{x}, \vv{F_R})$ with respect to +x}
 \vspace{0.1em}
 
 \begin{adjustwidth}{2em}{}
@@ -111,12 +97,12 @@ $\vv{F_R}$ & ? & ? & ? & ? & +x \\
 
 \section{Summary of Results}
 
-\begin{longtable}{lSSSSl}
+\begin{longtable}{lSSl}
 \toprule
-Vector & {$F_{x}$ (N)} & {$F_{y}$ (N)} & {$\magn{\vv{F}}$ (N)} & {$\theta$ (deg)} & Reference \\
+Vector & {$\magn{\vv{F}}$ (N)} & {$\theta$ (deg)} & Reference \\
 \midrule
 \endhead
-$\vv{F_R}$ & -451.1 & 208.5 & 497.0 & 155.2 & +x \\
+$\vv{F_R}$ & 497.0 & 155.2 & +x \\
 \bottomrule
 \end{longtable}
 

@@ -13,7 +13,29 @@ from .base import SolutionStepBuilder, format_angle
 
 if TYPE_CHECKING:
     from ..core.quantity import Quantity
-    from ..spatial.vector import _Vector
+    from ..linalg.vector2 import Vector
+
+
+def get_absolute_angle(vec: Vector) -> Quantity:
+    """
+    Get the absolute angle from the coordinate system's primary axis.
+
+    The absolute angle is computed as:
+        absolute_angle = axis_angle(wrt) + vector.angle
+
+    where axis_angle(wrt) is the angle of the reference axis in the coordinate system.
+
+    Args:
+        vec: Vector with angle, wrt, and coordinate_system attributes
+
+    Returns:
+        Absolute angle as a Quantity
+    """
+    # Get the angle of the reference axis from the coordinate system
+    axis_angle = vec.coordinate_system.get_axis_angle(vec.wrt)
+
+    # Add the vector's angle to get absolute angle
+    return axis_angle + vec.angle
 
 
 class AngleBetween:
@@ -25,8 +47,8 @@ class AngleBetween:
     def __init__(
         self,
         target: str,
-        vec1: _Vector,
-        vec2: _Vector,
+        vec1: Vector,
+        vec2: Vector,
         description: str = "",
     ):
         """
@@ -52,32 +74,39 @@ class AngleBetween:
         """
         from ..core import Q
 
-        # Get original angles and references from vectors
-        vec1_angle_deg = getattr(self.vec1, '_original_angle', 0.0)
-        vec2_angle_deg = getattr(self.vec2, '_original_angle', 0.0)
-        vec1_ref = getattr(self.vec1, '_original_wrt', '+x')
-        vec2_ref = getattr(self.vec2, '_original_wrt', '+x')
-        vec1_name = getattr(self.vec1, 'name', 'V_1')
-        vec2_name = getattr(self.vec2, 'name', 'V_2')
+        # Get absolute angles using coordinate system
+        vec1_abs_angle = get_absolute_angle(self.vec1)
+        vec2_abs_angle = get_absolute_angle(self.vec2)
 
-        # Compute triangle angle as absolute difference
-        result_deg = abs(vec1_angle_deg - vec2_angle_deg)
+        # Compute angle between as difference (using Quantity arithmetic)
+        angle_diff = vec1_abs_angle - vec2_abs_angle
 
-        # Create result Quantity using Q() - handles unit conversion automatically
-        result = Q(result_deg, 'degree')
+        # Get the numeric value and take absolute value
+        # Create result as absolute difference
+        diff_value = angle_diff.magnitude()
+        result = Q(abs(diff_value), "degree")
         result.name = self.target
 
-        # Format substitution with proper LaTeX notation
-        # Use "x" instead of "+x" for cleaner notation
+        # Get display values for the solution step
+        vec1_name = self.vec1.name or 'V_1'
+        vec2_name = self.vec2.name or 'V_2'
+        vec1_ref = self.vec1.wrt
+        vec2_ref = self.vec2.wrt
+
         vec1_ref_display = vec1_ref.lstrip('+') if vec1_ref.startswith('+') else vec1_ref
         vec2_ref_display = vec2_ref.lstrip('+') if vec2_ref.startswith('+') else vec2_ref
+
+        # Format angles for display (convert to degrees for readability)
+        vec1_angle_display = self.vec1.angle.as_unit.degree.magnitude()
+        vec2_angle_display = self.vec2.angle.as_unit.degree.magnitude()
+        result_display = result.magnitude()
 
         substitution = (
             f"\\angle(\\vec{{{vec1_name}}}, \\vec{{{vec2_name}}}) &= "
             f"|\\angle(\\vec{{{vec1_ref_display}}}, \\vec{{{vec1_name}}}) - "
             f"\\angle(\\vec{{{vec2_ref_display}}}, \\vec{{{vec2_name}}})| \\\\\n"
-            f"&= |{format_angle(vec1_angle_deg)} - {format_angle(vec2_angle_deg)}| \\\\\n"
-            f"&= {format_angle(result_deg)} \\\\"
+            f"&= |{format_angle(vec1_angle_display)} - {format_angle(vec2_angle_display)}| \\\\\n"
+            f"&= {format_angle(result_display)} \\\\"
         )
 
         step = SolutionStepBuilder(
@@ -127,19 +156,17 @@ class AngleSum:
         Returns:
             Tuple of (angle_quantity, solution_step_dict)
         """
-        from ..core import Q
-
-        # Get angle values in degrees using magnitude()
-        base_deg = self.base_angle.magnitude()
-        offset_deg = self.offset_angle.magnitude()
-        result_deg = base_deg + offset_deg
-
-        # Create result Quantity using Q()
-        result = Q(result_deg, 'degree')
+        # Use Quantity arithmetic for the sum (handles unit conversion automatically)
+        result = self.base_angle + self.offset_angle
         result.name = self.target.split(" with")[0]
 
         # Extract target name without "with respect to" suffix
         target_name = self.target.split(" with")[0]
+
+        # Get display values in degrees for the solution step
+        base_deg = self.base_angle.to_unit.degree.magnitude()
+        offset_deg = self.offset_angle.to_unit.degree.magnitude()
+        result_deg = result.to_unit.degree.magnitude()
 
         # Format substitution with proper LaTeX notation
         substitution = (

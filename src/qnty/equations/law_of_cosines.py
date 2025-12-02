@@ -88,7 +88,7 @@ class LawOfCosines:
         # Get display values for step formatting
         a = self.side_a.magnitude()
         b = self.side_b.magnitude()
-        angle_deg = self.angle.magnitude()
+        angle_deg = self.angle.to_unit.degree.magnitude()
         c = result.magnitude()
         unit_str = self.side_a.preferred.symbol if self.side_a.preferred else "N"
 

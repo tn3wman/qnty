@@ -30,8 +30,6 @@ if TYPE_CHECKING:
 class VectorRow:
     """Data for a vector table row."""
     name: str  # e.g., "F_1", "F_R"
-    fx: str    # formatted x-component or "?"
-    fy: str    # formatted y-component or "?"
     mag: str   # formatted magnitude or "?"
     angle: str # formatted angle or "?"
     ref: str   # reference axis, e.g., "+x", "-x"
@@ -88,50 +86,30 @@ class ReportDataBuilder:
 
     def _get_vector_row(self, name: str, vec: Any, show_values: bool) -> VectorRow:
         """Extract a VectorRow from a vector."""
-        from ...core.unit import ureg
-
-        force_unit = ureg.resolve(self.unit)
-        si_factor = force_unit.si_factor if force_unit else 1.0
-
         if show_values:
-            # Get components
-            coords = getattr(vec, "_coords", None)
-            if coords is not None and len(coords) >= 2:
-                fx = float(coords[0]) / si_factor
-                fy = float(coords[1]) / si_factor
-                fx_str = f"{fx:.1f}"
-                fy_str = f"{fy:.1f}"
-            else:
-                fx_str = "?"
-                fy_str = "?"
-
             # Get magnitude
             mag_qty = vec.magnitude
             if mag_qty is not None and mag_qty.value is not None:
-                mag = mag_qty.magnitude()
-                mag_str = f"{mag:.1f}"
+                mag_str = f"{mag_qty.magnitude():.1f}"
             else:
                 mag_str = "?"
 
-            # Get angle
-            angle = getattr(vec, "_original_angle", None)
-            if angle is not None:
-                angle_str = f"{angle:.1f}"
+            # Get angle in degrees
+            angle_qty = vec.angle
+            if angle_qty is not None and angle_qty.value is not None:
+                angle_deg = angle_qty.to_unit.degree.magnitude()
+                angle_str = f"{angle_deg:.1f}"
             else:
                 angle_str = "?"
         else:
-            fx_str = "?"
-            fy_str = "?"
             mag_str = "?"
             angle_str = "?"
 
-        # Get reference
-        ref = getattr(vec, "_original_wrt", "+x")
+        # Get reference (wrt attribute)
+        ref = getattr(vec, "wrt", "+x")
 
         return VectorRow(
             name=name,
-            fx=fx_str,
-            fy=fy_str,
             mag=mag_str,
             angle=angle_str,
             ref=ref,
@@ -140,24 +118,24 @@ class ReportDataBuilder:
     def _build_known_vectors(self) -> list[VectorRow]:
         """Build known vector rows."""
         rows = []
-        for name, vec in self.problem.forces.items():
-            if self.problem._original_force_states.get(name, True):
+        for name, vec in self.problem.vectors.items():
+            if self.problem._original_vector_states.get(name, True):
                 rows.append(self._get_vector_row(name, vec, show_values=True))
         return rows
 
     def _build_unknown_vectors(self) -> list[VectorRow]:
         """Build unknown vector rows (showing ? for values)."""
         rows = []
-        for name, vec in self.problem.forces.items():
-            if not self.problem._original_force_states.get(name, True):
+        for name, vec in self.problem.vectors.items():
+            if not self.problem._original_vector_states.get(name, True):
                 rows.append(self._get_vector_row(name, vec, show_values=False))
         return rows
 
     def _build_result_vectors(self) -> list[VectorRow]:
         """Build result vector rows (showing solved values)."""
         rows = []
-        for name, vec in self.problem.forces.items():
-            if not self.problem._original_force_states.get(name, True):
+        for name, vec in self.problem.vectors.items():
+            if not self.problem._original_vector_states.get(name, True):
                 rows.append(self._get_vector_row(name, vec, show_values=True))
         return rows
 
@@ -239,11 +217,11 @@ class LaTeXRenderer:
         rows = []
         for v in vectors:
             name_latex = self._format_vec_name(v.name)
-            rows.append(f"{name_latex} & {v.fx} & {v.fy} & {v.mag} & {v.angle} & {v.ref} \\\\")
+            rows.append(f"{name_latex} & {v.mag} & {v.angle} & {v.ref} \\\\")
 
-        return rf"""\begin{{longtable}}{{lSSSSl}}
+        return rf"""\begin{{longtable}}{{lSSl}}
 \toprule
-Vector & {{$F_{{x}}$ ({unit})}} & {{$F_{{y}}$ ({unit})}} & {{$\magn{{\vv{{F}}}}$ ({unit})}} & {{$\theta$ (deg)}} & Reference \\
+Vector & {{$\magn{{\vv{{F}}}}$ ({unit})}} & {{$\theta$ (deg)}} & Reference \\
 \midrule
 \endhead
 {chr(10).join(rows)}
@@ -461,12 +439,12 @@ class MarkdownRenderer:
         lines = [
             "<div align=\"center\">",
             "",
-            f"| Vector | $F_x$ ({unit}) | $F_y$ ({unit}) | $\\|\\vec{{F}}\\|$ ({unit}) | $\\theta$ (deg) | Reference |",
-            "| :--- | ---: | ---: | ---: | ---: | :--- |",
+            f"| Vector | $\\|\\vec{{F}}\\|$ ({unit}) | $\\theta$ (deg) | Reference |",
+            "| :--- | ---: | ---: | :--- |",
         ]
         for v in vectors:
             name_md = self._format_vec_name_md(v.name)
-            lines.append(f"| {name_md} | {v.fx} | {v.fy} | {v.mag} | {v.angle} | {v.ref} |")
+            lines.append(f"| {name_md} | {v.mag} | {v.angle} | {v.ref} |")
         lines.extend(["", "</div>"])
         return "\n".join(lines)
 
@@ -620,8 +598,10 @@ class ParallelogramReportGenerator:
             tex_path = Path(f.name)
 
         try:
-            # Try tectonic first
-            tectonic_path = Path(__file__).parent.parent.parent / "extensions" / "reporting" / "tectonic"
+            # Try tectonic first (use .exe on Windows)
+            import sys
+            tectonic_name = "tectonic.exe" if sys.platform == "win32" else "tectonic"
+            tectonic_path = Path(__file__).parent.parent.parent / "extensions" / "reporting" / tectonic_name
             if tectonic_path.exists():
                 result = subprocess.run(
                     [str(tectonic_path), str(tex_path), "-o", str(output_path.parent)],
@@ -631,6 +611,7 @@ class ParallelogramReportGenerator:
                 if result.returncode == 0:
                     generated = output_path.parent / (tex_path.stem + ".pdf")
                     if generated.exists() and generated != output_path:
+                        output_path.unlink(missing_ok=True)  # Remove existing file first
                         generated.rename(output_path)
                     return
 

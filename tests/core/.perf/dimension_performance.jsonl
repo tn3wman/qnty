@@ -1,0 +1,1 @@
+{"timestamp": "2025-12-02T15:49:22-0600", "python_version": "3.13.2", "backend": "PrimeIntBackend", "iterations": 20000, "ops_per_loop": 7, "time_s": 0.11146199994254857, "time_per_loop_ns": 5573.099997127429, "time_per_op_ns": 796.1571424467755, "dimension_calls": 200011, "reduce_calls": 1}
