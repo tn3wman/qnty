@@ -217,17 +217,17 @@ class Chapter2Problem2:
                 "angle": 45.2,
                 "reference": "+x",
             }
-"""
+
 class Chapter2Problem3:
     name = "Problem 2-3"
-    F_1 = create_vectors_polar(magnitude=250, unit="N", angle=-30, wrt="+y")
-    F_2 = create_vectors_polar(magnitude=375, unit="N", angle=-45, wrt="+x")
-    F_R = pl.create_vector_resultant(F_1, F_2)
+    F_1 = create_vectors_polar(250, "N", -30, wrt="+y")
+    F_2 = create_vectors_polar(375, "N", -45, wrt="+x")
+    F_R = create_vector_resultant(F_1, F_2)
 
     class expected:
-        F_1 = create_vectors_polar(magnitude=250, unit="N", angle=-30, wrt="+y")
-        F_2 = create_vectors_polar(magnitude=375, unit="N", angle=-45, wrt="+x")
-        F_R = create_vectors_polar(magnitude=393.2, unit="N", angle=352.9, wrt="+x")
+        F_1 = create_vectors_polar(250, "N", -30, wrt="+y")
+        F_2 = create_vectors_polar(375, "N", -45, wrt="+x")
+        F_R = create_vectors_polar(393.2, "N", 352.9, wrt="+x")
 
     class report:
         class known_variables:
@@ -286,6 +286,7 @@ class Chapter2Problem3:
                 "reference": "+x",
             }
 
+"""
 class Chapter2Problem4:
     name = "Problem 2-4"
     generate_debug_reports = False
@@ -909,7 +910,7 @@ PARALLELOGRAM_LAW_PROBLEMS = [
     Chapter2Problem1,
     # Chapter2Problem1MixedUnits,
     Chapter2Problem2,
-    # Chapter2Problem3,
+    Chapter2Problem3,
     # Chapter2Problem4,
     # Chapter2Problem5,
     # Chapter2Problem6,
@@ -949,7 +950,7 @@ ALL_PROBLEM_CLASSES = [
     Chapter2Problem1,
     # Chapter2Problem1MixedUnits,
     Chapter2Problem2,
-    # Chapter2Problem3,
+    Chapter2Problem3,
     # Chapter2Problem4,
     # Chapter2Problem5,
     # Chapter2Problem6,

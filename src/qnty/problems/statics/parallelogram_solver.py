@@ -25,13 +25,13 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any
 
-from ...core import Q
-from ...equations import AngleBetween, AngleSum, LawOfCosines, LawOfSines
+from ...equations import AngleSum, LawOfCosines, LawOfSines
 from ...geometry.triangle import Triangle, TriangleCase, from_vectors_dynamic
 from ...linalg.vector2 import Vector, VectorUnknown
 
 if TYPE_CHECKING:
     from ...core.quantity import Quantity
+    from ...linalg.vector2 import VectorDTO
 
 
 # =============================================================================
@@ -50,6 +50,7 @@ class SolvingState:
     - Solution tracking (steps, equations used)
     - Solved values for angles not stored in Triangle
     """
+
     triangle: Triangle
 
     # Additional solved angles (Triangle only stores angle_C initially)
@@ -108,11 +109,13 @@ def solve_sas(state: SolvingState) -> None:
         mag_1.name = f"{known_side_1.name}_mag"
         mag_2.name = f"{known_side_2.name}_mag"
 
+        # LawOfCosines handles LaTeX formatting internally
         loc = LawOfCosines(
-            target=f"|\\vec{{{unknown_side.name}}}| using Eq 1",
             side_a=mag_1,
             side_b=mag_2,
             angle=angle_included,
+            result_vector_name=unknown_side.name,
+            equation_number=1,
         )
         mag_unknown, step = loc.solve()
         state.solving_steps.append(step)
@@ -155,27 +158,36 @@ def solve_sas(state: SolvingState) -> None:
     # Determine if we need obtuse angle
     use_obtuse = mag_opposite.magnitude() > mag_unknown.magnitude()
 
-    # Build proper angle name using adjacent side names (e.g., \angle(\vec{F_1}, \vec{F_R}))
+    # Find the adjacent side names for the angle we're solving
     # The angle at a vertex is between the two sides adjacent to that vertex
-    # For angle_A at vertex A: between side_b (R) and side_c (C1)
-    # We need to find the names of those two adjacent sides
     adjacent_side_names = []
     for side in [known_side_1, known_side_2, unknown_side]:
         if side.start == unknown_angle_1.vertex or side.end == unknown_angle_1.vertex:
             adjacent_side_names.append(side.name)
 
+    # LawOfSines handles LaTeX formatting internally
     if len(adjacent_side_names) == 2:
-        angle_target_name = f"\\angle(\\vec{{{adjacent_side_names[0]}}}, \\vec{{{adjacent_side_names[1]}}}) using Eq 2"
+        los = LawOfSines(
+            opposite_side=mag_opposite,
+            known_angle=angle_included,
+            known_side=mag_unknown,
+            angle_vector_1=adjacent_side_names[0],
+            angle_vector_2=adjacent_side_names[1],
+            equation_number=2,
+            use_obtuse=use_obtuse,
+        )
     else:
-        angle_target_name = f"\\angle at vertex {unknown_angle_1.vertex.value if unknown_angle_1.vertex else '?'} using Eq 2"
+        # Fallback - shouldn't happen in normal cases
+        los = LawOfSines(
+            opposite_side=mag_opposite,
+            known_angle=angle_included,
+            known_side=mag_unknown,
+            angle_vector_1=known_side_1.name or "V1",
+            angle_vector_2=unknown_side.name or "R",
+            equation_number=2,
+            use_obtuse=use_obtuse,
+        )
 
-    los = LawOfSines(
-        target=angle_target_name,
-        opposite_side=mag_opposite,
-        known_angle=angle_included,
-        known_side=mag_unknown,
-        use_obtuse=use_obtuse,
-    )
     solved_angle, step = los.solve()
     state.solving_steps.append(step)
     state.equations_used.append(los.equation_for_list())
@@ -195,7 +207,7 @@ def solve_sas(state: SolvingState) -> None:
         if computed_dir is not None:
             state.dir_r = computed_dir
 
-            # Find the adjacent known side to build the proper step with AngleSum formatting
+            # Find the adjacent known side to build the proper step with AngleSum
             # The side at vertex A that's not the unknown side (resultant)
             adjacent_known_side = None
             for side in [known_side_1, known_side_2]:
@@ -205,42 +217,30 @@ def solve_sas(state: SolvingState) -> None:
                         adjacent_known_side = side
                         break
                     # Fall back to any adjacent side
-                    elif (side.end == unknown_side.start or
-                          side.start == unknown_side.end or
-                          side.end == unknown_side.end):
+                    elif side.end == unknown_side.start or side.start == unknown_side.end or side.end == unknown_side.end:
                         if adjacent_known_side is None:
                             adjacent_known_side = side
 
             if adjacent_known_side is not None and solved_angle is not None:
-                # Create a copy of the direction for display (don't modify original)
-                base_angle_deg = adjacent_known_side.direction.to_unit.degree.magnitude()
-                offset_angle_deg = solved_angle.to_unit.degree.magnitude()
-                result_deg = computed_dir.to_unit.degree.magnitude()
-
-                # Build the step with proper LaTeX formatting
-                from ...equations.base import SolutionStepBuilder
-                target_name = f"\\angle(\\vec{{x}}, \\vec{{{unknown_side.name}}})"
-                base_name = f"\\angle(\\vec{{x}}, \\vec{{{adjacent_known_side.name}}})"
-                offset_name = f"\\angle(\\vec{{{adjacent_known_side.name}}}, \\vec{{{unknown_side.name}}})"
-
-                substitution = (
-                    f"{target_name} &= {base_name} + {offset_name} \\\\\n"
-                    f"&= {base_angle_deg:.1f}^{{\\circ}} + {offset_angle_deg:.1f}^{{\\circ}} \\\\\n"
-                    f"&= {result_deg:.1f}^{{\\circ}} \\\\"
+                # AngleSum handles LaTeX formatting internally
+                angle_sum = AngleSum(
+                    base_angle=adjacent_known_side.direction,
+                    offset_angle=solved_angle,
+                    result_vector_name=unknown_side.name,
+                    base_vector_name=adjacent_known_side.name,
+                    offset_vector_1=adjacent_known_side.name,
+                    offset_vector_2=unknown_side.name,
+                    result_ref="+x",
                 )
-
-                step = SolutionStepBuilder(
-                    target=f"{target_name} with respect to +x",
-                    method="Angle Addition",
-                    description="Compute direction relative to +x axis",
-                    substitution=substitution,
-                ).build()
+                _, step = angle_sum.solve()
                 state.solving_steps.append(step)
             else:
-                # Fallback: simple step
-                from ...equations.base import SolutionStepBuilder
+                # Fallback: simple step using SolutionStepBuilder directly
+                from ...equations.base import SolutionStepBuilder, latex_name
+
+                result_name = latex_name(unknown_side.name)
                 step = SolutionStepBuilder(
-                    target=f"\\angle(\\vec{{x}}, \\vec{{{unknown_side.name}}}) with respect to +x",
+                    target=f"\\angle(\\vec{{x}}, \\vec{{{result_name}}}) with respect to +x",
                     method="Vertex Geometry",
                     description="Compute direction using vertex-based geometry",
                     substitution=f"\\theta = {computed_dir.to_unit.degree.magnitude():.1f}°",
@@ -268,7 +268,7 @@ def solve_sss(state: SolvingState) -> None:
     raise NotImplementedError("SSS case not yet implemented")
 
 
-def solve_ssa(state: SolvingState) -> None:
+def solve_ssa(_state: SolvingState) -> None:
     """
     Solve SSA case: Two sides and non-included angle known.
 
@@ -362,7 +362,7 @@ class ParallelogramLawProblem:
                     _is_resultant=attr._is_resultant,
                 )
                 # Copy component vectors if present
-                if hasattr(attr, '_component_vectors'):
+                if hasattr(attr, "_component_vectors"):
                     vec_copy._component_vectors = attr._component_vectors  # type: ignore[attr-defined]
                 setattr(self, attr_name, vec_copy)
                 self.vectors[attr_name] = vec_copy
@@ -383,7 +383,7 @@ class ParallelogramLawProblem:
                     _is_resultant=attr._is_resultant,
                 )
                 # Copy component vectors if present
-                if hasattr(attr, '_component_vectors'):
+                if hasattr(attr, "_component_vectors"):
                     vec_copy._component_vectors = attr._component_vectors  # type: ignore[attr-defined]
                 setattr(self, attr_name, vec_copy)
                 self.vectors[attr_name] = vec_copy
@@ -431,13 +431,11 @@ class ParallelogramLawProblem:
 
     def get_known_variables(self) -> dict[str, Any]:
         """Get known variables for report generation."""
-        return {name: vec for name, vec in self.vectors.items()
-                if self._original_vector_states.get(name, True)}
+        return {name: vec for name, vec in self.vectors.items() if self._original_vector_states.get(name, True)}
 
     def get_unknown_variables(self) -> dict[str, Any]:
         """Get unknown variables for report generation."""
-        return {name: vec for name, vec in self.vectors.items()
-                if not self._original_vector_states.get(name, True)}
+        return {name: vec for name, vec in self.vectors.items() if not self._original_vector_states.get(name, True)}
 
     def _build_triangle(self) -> Triangle:
         """
@@ -529,6 +527,9 @@ class ParallelogramLawProblem:
             return
 
         name = unknown_side.name
+        if name is None:
+            return
+
         vec = self.vectors.get(name)
 
         if vec is None or not isinstance(vec, VectorUnknown):
@@ -564,13 +565,14 @@ class ParallelogramLawProblem:
             raise ValueError("Problem must be solved before generating report")
 
         from .parallelogram_report import generate_report as _generate_report
+
         _generate_report(self, output_path, format=format)
 
     def to_dto(
         self,
         magnitude_unit: str = "N",
         angle_unit: str = "degree",
-    ) -> dict[str, "VectorDTO"]:
+    ) -> dict[str, VectorDTO]:
         """
         Convert solved problem vectors to JSON-serializable VectorDTOs.
 
@@ -597,8 +599,6 @@ class ParallelogramLawProblem:
         if not self.is_solved:
             raise ValueError("Problem must be solved before converting to DTO")
 
-        from ...linalg.vector2 import VectorDTO
-
         # Convert all vectors to DTOs
         vector_dtos: dict[str, VectorDTO] = {}
         for name, vec in self.vectors.items():
@@ -618,6 +618,7 @@ def solve_class(problem_class: type, output_unit: str = "N") -> ParallelogramLaw
     Returns:
         Solved ParallelogramLawProblem instance
     """
+
     # Create dynamic problem class
     class DynamicProblem(ParallelogramLawProblem):
         pass

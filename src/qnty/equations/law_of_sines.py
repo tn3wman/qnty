@@ -12,7 +12,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from .base import SolutionStepBuilder, format_angle
+from .base import SolutionStepBuilder, format_angle, latex_name
 
 if TYPE_CHECKING:
     from ..core.quantity import Quantity
@@ -24,14 +24,19 @@ class LawOfSines:
 
     Used to find angles in the force triangle.
     Takes Quantity objects as input and returns a Quantity as output.
+
+    The class handles LaTeX formatting internally - callers should pass
+    vector names and the class will generate proper LaTeX notation.
     """
 
     def __init__(
         self,
-        target: str,
         opposite_side: Quantity,
         known_angle: Quantity,
         known_side: Quantity,
+        angle_vector_1: str,
+        angle_vector_2: str,
+        equation_number: int = 2,
         use_obtuse: bool = False,
         description: str = "",
     ):
@@ -43,25 +48,37 @@ class LawOfSines:
         - A = sin⁻¹(a · sin(B) / b)
 
         Args:
-            target: Name of variable being solved for (e.g., "∠(F_1,F_R) using Eq 2")
             opposite_side: Side opposite to unknown angle as a Quantity
             known_angle: Known angle as a Quantity
             known_side: Side opposite to known angle as a Quantity
+            angle_vector_1: First vector forming the angle (e.g., "F_1")
+            angle_vector_2: Second vector forming the angle (e.g., "F_R")
+            equation_number: Equation number for reference (default 2)
             use_obtuse: If True, use the obtuse angle (180° - asin result)
             description: Description for the step
         """
-        self.target = target
         self.opposite_side = opposite_side
         self.known_angle = known_angle
         self.known_side = known_side
+        self.angle_vector_1 = angle_vector_1
+        self.angle_vector_2 = angle_vector_2
+        self.equation_number = equation_number
         self.use_obtuse = use_obtuse
         self.description = description or "Calculate angle using Law of Sines"
 
-    def _clean_name(self, name: str) -> str:
-        """Remove existing \\vec{} wrapper if present and return clean name."""
-        if name.startswith("\\vec{") and name.endswith("}"):
-            return name[5:-1]  # Remove \vec{ and }
-        return name
+        # Generate the angle name with LaTeX formatting
+        v1 = latex_name(angle_vector_1)
+        v2 = latex_name(angle_vector_2)
+        self.angle_name = f"\\angle(\\vec{{{v1}}}, \\vec{{{v2}}})"
+        self.target = f"{self.angle_name} using Eq {equation_number}"
+
+    def _get_vector_name(self, qty: Quantity) -> str:
+        """Extract clean vector name from a Quantity, removing _mag suffix."""
+        name = qty.name if qty.name else "V"
+        # Remove _mag suffix if present
+        if name.endswith("_mag"):
+            name = name[:-4]
+        return latex_name(name)
 
     def equation_for_list(self) -> str:
         """Return the equation string for the 'Equations Used' section with proper LaTeX.
@@ -72,23 +89,14 @@ class LawOfSines:
         - B is the known_angle (triangle angle)
         - b is the known_side (e.g., F_R)
         """
-        # Extract vector names for the equation
-        # The target tells us what we're solving for, e.g., "\angle(\vec{F_1}, \vec{F_R})"
-        opp_name = self._clean_name(self.opposite_side.name.replace("_mag", ""))
-        result_name = self._clean_name(self.known_side.name.replace("_mag", ""))
+        opp_name = self._get_vector_name(self.opposite_side)
+        result_name = self._get_vector_name(self.known_side)
 
-        # Extract the angle we're solving for from target
-        # e.g., "\angle(\vec{F_1}, \vec{F_R}) using Eq 2" -> \angle(\vec{F_1}, \vec{F_R})
-        target_angle = self.target.split(" using")[0] if " using" in self.target else self.target
-
+        # Use the generated angle_name for the angle being solved
         # Extract the known angle representation - this is the interior angle
-        # Usually like "\angle(\vec{F_1}, \vec{F_2})"
-        known_angle_repr = getattr(self.known_angle, 'name', '\\angle')
+        known_angle_repr = getattr(self.known_angle, "name", "\\angle")
 
-        return (
-            f"\\frac{{\\sin({target_angle})}}{{|\\vec{{{opp_name}}}|}} = "
-            f"\\frac{{\\sin({known_angle_repr})}}{{|\\vec{{{result_name}}}|}}"
-        )
+        return f"\\frac{{\\sin({self.angle_name})}}{{|\\vec{{{opp_name}}}|}} = \\frac{{\\sin({known_angle_repr})}}{{|\\vec{{{result_name}}}|}}"
 
     def solve(self) -> tuple[Quantity, dict]:
         """
@@ -101,15 +109,21 @@ class LawOfSines:
 
         from ..algebra.functions import sin
         from ..core import Q
+        from ..core.quantity import Quantity
 
         # Get values for calculation
         a = self.opposite_side.magnitude()  # Side opposite to unknown angle
-        b = self.known_side.magnitude()      # Side opposite to known angle
+        b = self.known_side.magnitude()  # Side opposite to known angle
         known_angle_deg = self.known_angle.to_unit.degree.magnitude()
 
         # sin(A) = a · sin(B) / b
         # We need to compute this carefully since we need asin at the end
         sin_known = sin(self.known_angle)
+
+        # Ensure sin_known is a Quantity (should always be true for concrete angle inputs)
+        if not isinstance(sin_known, Quantity):
+            raise TypeError(f"Expected Quantity result from sin(), got {type(sin_known).__name__}")
+
         sin_result_value = a * sin_known.magnitude() / b
 
         # Clamp to valid range for asin
@@ -121,17 +135,12 @@ class LawOfSines:
             result_deg = 180.0 - result_deg
 
         # Create result Quantity using Q()
-        result = Q(result_deg, 'degree')
+        result = Q(result_deg, "degree")
 
-        # Extract angle name (everything before " using" if present)
-        angle_name = self.target.split(" using")[0] if " using" in self.target else self.target
-        result.name = angle_name
+        # Use the generated angle_name for the result
+        result.name = self.angle_name
 
-        substitution = (
-            f"{angle_name} &= \\sin^{{-1}}({a:.1f} \\cdot "
-            f"\\frac{{\\sin({format_angle(known_angle_deg)})}}{{{b:.1f}}}) \\\\\n"
-            f"&= {format_angle(result_deg, precision=1)} \\\\"
-        )
+        substitution = f"{self.angle_name} &= \\sin^{{-1}}({a:.1f} \\cdot \\frac{{\\sin({format_angle(known_angle_deg)})}}{{{b:.1f}}}) \\\\\n&= {format_angle(result_deg, precision=1)} \\\\"
 
         step = SolutionStepBuilder(
             target=self.target,

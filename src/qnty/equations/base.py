@@ -67,10 +67,17 @@ class SolutionStepBuilder:
 
 
 def latex_name(name: str) -> str:
-    """Format a name for LaTeX (convert F_BA to F_{BA} for proper subscripts)."""
+    """Format a name for LaTeX (convert F_BA to F_{BA} for proper subscripts).
+
+    Only adds braces for multi-character subscripts. Single-character subscripts
+    like F_1 or F_R are left unchanged for cleaner output.
+    """
     if "_" in name:
         parts = name.split("_", 1)
-        return f"{parts[0]}_{{{parts[1]}}}"
+        subscript = parts[1]
+        # Only add braces for multi-character subscripts
+        if len(subscript) > 1:
+            return f"{parts[0]}_{{{subscript}}}"
     return name
 
 

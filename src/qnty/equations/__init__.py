@@ -45,10 +45,10 @@ Example usage for Problem 2-1:
     >>> theta_R, step4 = angle_sum.solve()  # 155.2°
 """
 
-from .law_of_cosines import LawOfCosines
-from .law_of_sines import LawOfSines
 from .angle_finder import AngleBetween, AngleSum
 from .base import SolutionStepBuilder
+from .law_of_cosines import LawOfCosines
+from .law_of_sines import LawOfSines
 
 __all__ = [
     "LawOfCosines",

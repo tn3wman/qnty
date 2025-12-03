@@ -151,3 +151,42 @@ class VectorUnknown:
         mag_str = "..." if self.magnitude is ... else str(self.magnitude)
         angle_str = "..." if self.angle is ... else str(self.angle)
         return f"VectorUnknown({name_str}magnitude={mag_str}, angle={angle_str}, wrt='{self.wrt}')"
+
+    def to_dto(
+        self,
+        magnitude_unit: str = "N",
+        angle_unit: str = "degree",
+    ) -> VectorDTO:
+        """
+        Convert this VectorUnknown to a JSON-serializable VectorDTO.
+
+        If magnitude or angle are unknown (ellipsis), they will be converted
+        to float('nan') in the DTO.
+
+        Args:
+            magnitude_unit: Target unit for magnitude (e.g., "N", "lbf", "kN")
+            angle_unit: Target unit for angle (e.g., "degree", "radian")
+
+        Returns:
+            VectorDTO with converted values (NaN for unknowns)
+
+        Raises:
+            ValueError: If trying to convert an unsolved VectorUnknown
+        """
+        if self.magnitude is ... or self.angle is ...:
+            raise ValueError("Cannot convert VectorUnknown with unknown values to DTO. Solve the problem first.")
+
+        # Convert magnitude to requested unit
+        mag_converted = self.magnitude.to_unit(magnitude_unit)
+        mag_value = mag_converted.magnitude()
+
+        # Convert angle to requested unit
+        angle_converted = self.angle.to_unit(angle_unit)
+        angle_value = angle_converted.magnitude()
+
+        return VectorDTO(
+            name=self.name,
+            magnitude=mag_value,
+            angle=angle_value,
+            reference=self.wrt,
+        )

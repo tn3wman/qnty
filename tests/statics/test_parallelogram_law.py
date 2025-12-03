@@ -11,11 +11,8 @@ Uses the new solver: qnty.problems.statics.parallelogram_solver
 
 import pytest
 
-from qnty.linalg.vector2 import Vector
-from qnty.problems.statics.parallelogram_solver import (
-    ParallelogramLawProblem,
-    solve_class,
-)
+from qnty.linalg.vector2 import Vector, VectorUnknown
+from qnty.problems.statics.parallelogram_solver import solve_class
 
 # Import problem fixtures
 from tests.statics._problem_fixtures import (
@@ -32,7 +29,7 @@ from tests.statics._problem_fixtures import (
 # =============================================================================
 
 
-def assert_vectors_close(actual: Vector, expected: Vector, rtol: float = 0.01, name: str = ""):
+def assert_vectors_close(actual: Vector | VectorUnknown, expected: Vector, rtol: float = 0.01, name: str = ""):
     """
     Assert that two polar vectors are close within tolerance.
 
@@ -590,17 +587,17 @@ def test_report_latex_matches_golden(problem_class, tmp_path):
 def test_problem_EXPECT_FAIL(problem_class):
     """Test that WRONG expected vectors are detected as failures."""
     rtol = 0.01
-    result = pl.solve_class(problem_class, output_unit="N")
-    assert result.success, f"Solve failed: {result.error}"
+    problem = solve_class(problem_class, output_unit="N")
+    assert problem.is_solved, "Solve failed"
 
     expected = problem_class.expected
     for attr_name in dir(expected):
         if attr_name.startswith('_'):
             continue
         expected_vec = getattr(expected, attr_name)
-        if not isinstance(expected_vec, _Vector):
+        if not isinstance(expected_vec, Vector):
             continue
-        actual_vec = result.vectors.get(attr_name)
+        actual_vec = problem.vectors.get(attr_name)
         assert actual_vec is not None
         assert_vectors_close(actual_vec, expected_vec, rtol=rtol, name=attr_name)
 

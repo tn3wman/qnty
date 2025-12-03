@@ -61,7 +61,7 @@ def _get_angle_constants() -> tuple[Quantity, Quantity, Quantity]:
     while preventing repeated object creation.
     """
     global _ZERO_ANGLE, _HALF_ROTATION, _FULL_ROTATION
-    if _ZERO_ANGLE is None:
+    if _ZERO_ANGLE is None or _HALF_ROTATION is None or _FULL_ROTATION is None:
         _ZERO_ANGLE = Q(0, "degree")
         _HALF_ROTATION = Q(180, "degree")
         _FULL_ROTATION = Q(360, "degree")
@@ -154,7 +154,7 @@ def _check_sas_configuration(triangle: Triangle) -> tuple[str, str, str, str, st
                   unknown_angle1_name, unknown_angle2_name) if SAS, None otherwise
     """
     for config in SAS_CONFIGURATIONS:
-        side1_name, side2_name, angle_name, unknown_name, unk_angle1, unk_angle2 = config
+        side1_name, side2_name, angle_name, *_ = config
         side1 = getattr(triangle, side1_name)
         side2 = getattr(triangle, side2_name)
         angle = getattr(triangle, angle_name)
@@ -368,8 +368,15 @@ class Triangle:
             mag: Quantity | EllipsisType = ...
             is_known = False
         else:
+            # At this point, vec.magnitude is Quantity (either Vector always has Quantity,
+            # or VectorUnknown with non-ellipsis magnitude)
             mag = vec.magnitude
-            is_known = mag.value is not None and mag.value != 0
+            # Type narrowing: if we're here, mag is Quantity not EllipsisType
+            if mag is ...:
+                # This branch is unreachable, but satisfies the type checker
+                is_known = False
+            else:
+                is_known = mag.value is not None and mag.value != 0
 
         # Get direction
         direction: Quantity | None = None
@@ -612,8 +619,12 @@ class Triangle:
         The direction is computed by:
         1. Find the vertex where the unknown side starts or ends
         2. Find the other (known) side at that vertex
-        3. Use the interior angle to compute the outgoing direction
-        4. Determine which of the two possible directions (+/-) is geometrically consistent
+        3. Use the interior angle to compute two candidate outgoing directions (±)
+        4. Use the triangle angle sum rule to select the geometrically consistent direction
+
+        The key insight is that we can validate each candidate direction by computing
+        what the third angle (angle_C) would be if that direction were correct. The
+        correct direction will give angle_C = 180° - angle_A - angle_B.
 
         Args:
             unknown_side: The side whose direction we want to compute
@@ -622,6 +633,8 @@ class Triangle:
         Returns:
             The absolute direction of the unknown side as a Quantity, or None if cannot be computed
         """
+        from ..core import Q
+
         _, half, _ = _get_angle_constants()
 
         vertex = known_angle_at_vertex.vertex
@@ -659,26 +672,135 @@ class Triangle:
         dir_plus = _normalize_angle(known_dir_from_vertex + interior_angle)
         dir_minus = _normalize_angle(known_dir_from_vertex - interior_angle)
 
-        # Determine which direction is geometrically consistent
-        # Use the _is_resultant flag to determine the correct direction
+        # Determine which direction is geometrically consistent using the triangle angle sum rule.
+        # We know angle_A and angle_B. The correct direction will give an angle_C such that:
+        #   angle_A + angle_B + angle_C = 180°
         #
-        # Key insight from parallelogram law geometry:
-        # - When finding the RESULTANT direction from a COMPONENT: use dir_plus
-        #   (the resultant "opens out" from the component)
-        # - When finding a COMPONENT direction from the RESULTANT: use dir_minus
-        #   (the component "closes in" toward the resultant)
-        #
-        # This is because in C1 + C2 = R:
-        # - R "spans" further than individual components
-        # - Components "point toward" the resultant
+        # To compute angle_C for a candidate direction:
+        # 1. Find the third vertex (C) where the unknown side meets the other known side
+        # 2. Compute the interior angle at C from the arriving directions of both sides
 
-        # Choose direction based on whether unknown is resultant or component
-        # Finding resultant from component: use dir_plus (opens out)
-        # Finding component from resultant: use dir_minus (closes in)
-        if self._is_side_resultant(unknown_side):
-            chosen_dir = dir_plus
+        # Find the third vertex (not the vertex where known_angle_at_vertex is located)
+        # For the unknown side, this is the OTHER endpoint
+        third_vertex = unknown_side.end if vertex == unknown_side.start else unknown_side.start
+
+        if third_vertex is None:
+            # Fallback to heuristic
+            if self._is_side_resultant(unknown_side):
+                chosen_dir = dir_plus
+            else:
+                chosen_dir = dir_minus
+            # Convert from outgoing direction at vertex to absolute direction
+            if vertex == unknown_side.start:
+                return chosen_dir
+            elif vertex == unknown_side.end:
+                return _normalize_angle(chosen_dir - half)
+            return None
+
+        # Find the other side at the third vertex (not the unknown side)
+        sides_at_third = _get_adjacent_sides(self, third_vertex)
+        other_side_at_third = None
+        for side in sides_at_third:
+            if side is not unknown_side:
+                other_side_at_third = side
+                break
+
+        if other_side_at_third is None or other_side_at_third.direction is None:
+            # Fallback to heuristic if we can't verify geometrically
+            if self._is_side_resultant(unknown_side):
+                chosen_dir = dir_plus
+            else:
+                chosen_dir = dir_minus
         else:
-            chosen_dir = dir_minus
+            # Get the outgoing direction of the other side at the third vertex
+            other_dir_at_third = other_side_at_third.direction_from(third_vertex)
+
+            if other_dir_at_third is None:
+                # Fallback
+                if self._is_side_resultant(unknown_side):
+                    chosen_dir = dir_plus
+                else:
+                    chosen_dir = dir_minus
+            else:
+                # Compute expected angle_C from the triangle angle sum rule
+                # angle_C = 180° - angle_A - angle_B
+                # We need to find angle_A and angle_B
+                # known_angle_at_vertex is one of them (angle_A or angle_B depending on vertex)
+                # We need to find the other known angle
+
+                known_angle_value = known_angle_at_vertex.angle
+                other_known_angle = None
+
+                # Find the other known interior angle (at the junction vertex B)
+                for angle in (self.angle_A, self.angle_B, self.angle_C):
+                    if angle is not known_angle_at_vertex and angle.is_known and angle.angle is not None:
+                        other_known_angle = angle.angle
+                        break
+
+                if other_known_angle is None or known_angle_value is None:
+                    # Can't verify, use heuristic
+                    if self._is_side_resultant(unknown_side):
+                        chosen_dir = dir_plus
+                    else:
+                        chosen_dir = dir_minus
+                else:
+                    # Expected angle_C
+                    expected_angle_C = Q(180, "degree") - known_angle_value - other_known_angle
+
+                    # Compute what angle_C would be for each candidate direction
+                    # The outgoing direction at the third vertex for the unknown side
+                    # depends on whether the third vertex is the start or end
+
+                    # For dir_plus candidate:
+                    if third_vertex == unknown_side.end:
+                        # unknown side arrives at third vertex, outgoing = direction + 180
+                        unknown_outgoing_plus = _normalize_angle(dir_plus + half)
+                    else:
+                        # unknown side leaves from third vertex, outgoing = direction
+                        unknown_outgoing_plus = dir_plus
+
+                    # Compute angle between the two outgoing directions at third vertex
+                    angle_diff_plus = other_dir_at_third - unknown_outgoing_plus
+                    zero, _, _ = _get_angle_constants()
+                    if (angle_diff_plus - zero).magnitude() < 0:
+                        angle_diff_plus = zero - angle_diff_plus
+                    angle_diff_plus = _normalize_angle(angle_diff_plus)
+                    angle_C_plus = _get_interior_angle(angle_diff_plus)
+
+                    # For dir_minus candidate:
+                    if third_vertex == unknown_side.end:
+                        unknown_outgoing_minus = _normalize_angle(dir_minus + half)
+                    else:
+                        unknown_outgoing_minus = dir_minus
+
+                    angle_diff_minus = other_dir_at_third - unknown_outgoing_minus
+                    if (angle_diff_minus - zero).magnitude() < 0:
+                        angle_diff_minus = zero - angle_diff_minus
+                    angle_diff_minus = _normalize_angle(angle_diff_minus)
+                    angle_C_minus = _get_interior_angle(angle_diff_minus)
+
+                    # Compare with expected angle_C to choose the correct direction
+                    # Use a tolerance of 1° for comparison
+                    tolerance = Q(1, "degree")
+
+                    diff_plus = expected_angle_C - angle_C_plus
+                    if (diff_plus - zero).magnitude() < 0:
+                        diff_plus = zero - diff_plus
+
+                    diff_minus = expected_angle_C - angle_C_minus
+                    if (diff_minus - zero).magnitude() < 0:
+                        diff_minus = zero - diff_minus
+
+                    if (diff_plus - tolerance).magnitude() < 0:
+                        chosen_dir = dir_plus
+                    elif (diff_minus - tolerance).magnitude() < 0:
+                        chosen_dir = dir_minus
+                    else:
+                        # Neither matches exactly, pick the closer one
+                        if (diff_plus - diff_minus).magnitude() < 0:
+                            chosen_dir = dir_plus
+                        else:
+                            chosen_dir = dir_minus
 
         # Convert from outgoing direction at vertex to absolute direction
         if vertex == unknown_side.start:
