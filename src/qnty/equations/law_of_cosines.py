@@ -102,15 +102,11 @@ class LawOfCosines:
         result_name = latex_name(self.result_vector_name)
         result.name = f"{self.result_vector_name}_mag"
 
-        # Get display values for step formatting
-        a = self.side_a.magnitude()
-        b = self.side_b.magnitude()
-        angle_deg = self.angle.to_unit.degree.magnitude()
-        c = result.magnitude()
-        unit_str = self.side_a.preferred.symbol if self.side_a.preferred else "N"
+        # Get display values for step formatting - use Quantity string representation
+        angle_deg = self.angle.to_unit.degree
 
         # Format substitution with proper LaTeX notation
-        substitution = f"|\\vec{{{result_name}}}| &= \\sqrt{{({a:.1f})^2 + ({b:.1f})^2 - 2({a:.1f})({b:.1f})\\cos({format_angle(angle_deg)})}} \\\\\n&= {c:.1f}\\ \\text{{{unit_str}}} \\\\"
+        substitution = f"|\\vec{{{result_name}}}| &= \\sqrt{{({self.side_a})^2 + ({self.side_b})^2 - 2({self.side_a})({self.side_b})\\cos({format_angle(angle_deg)})}} \\\\\n&= {result} \\\\"
 
         step = SolutionStepBuilder(
             target=self.target,

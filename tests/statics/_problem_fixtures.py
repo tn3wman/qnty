@@ -20,7 +20,7 @@ from pathlib import Path
 
 # Import vector creation functions from new vectors2 module
 from qnty.linalg.vectors2 import create_resultant_polar, create_vector_resultant, create_vectors_polar
-
+from qnty.coordinates.oblique import Oblique
 # Import from the new parallelogram_solver module
 from qnty.problems.statics.parallelogram_solver import (
     solve_class,
@@ -146,7 +146,7 @@ class Chapter2Problem1:
 
 class Chapter2Problem2:
     name = "Problem 2-2"
-
+    generate_debug_reports = False
     F_1 = create_vectors_polar(..., "N", ..., wrt="+x")
     F_2 = create_vectors_polar(700, "N", 15, wrt="-x")
     F_R = create_resultant_polar(
@@ -220,6 +220,7 @@ class Chapter2Problem2:
 
 class Chapter2Problem3:
     name = "Problem 2-3"
+    generate_debug_reports = False
     F_1 = create_vectors_polar(250, "N", -30, wrt="+y")
     F_2 = create_vectors_polar(375, "N", -45, wrt="+x")
     F_R = create_vector_resultant(F_1, F_2)
@@ -286,21 +287,20 @@ class Chapter2Problem3:
                 "reference": "+x",
             }
 
-"""
 class Chapter2Problem4:
     name = "Problem 2-4"
     generate_debug_reports = False
-    F_AB = create_vectors_polar(magnitude=..., unit="N", angle=-45, wrt="-y")
-    F_AC = create_vectors_polar(magnitude=..., unit="N", angle=-30, wrt="+x")
-    F_R = pl.create_vector_resultant_polar(
+    F_AB = create_vectors_polar(..., "N", -45, wrt="-y")
+    F_AC = create_vectors_polar(..., "N", -30, wrt="+x")
+    F_R = create_resultant_polar(
         F_AB, F_AC,
         magnitude=500, unit="N", angle=0, wrt="-y"
     )
 
     class expected:
-        F_AB = create_vectors_polar(magnitude=448, unit="N", angle=-45, wrt="-y")
-        F_AC = create_vectors_polar(magnitude=366, unit="N", angle=-30, wrt="+x")
-        F_R = create_vectors_polar(magnitude=500, unit="N", angle=0, wrt="-y")
+        F_AB = create_vectors_polar(448, "N", 225, wrt="+x")
+        F_AC = create_vectors_polar(366, "N", -30, wrt="+x")
+        F_R = create_vectors_polar(500, "N", 0, wrt="-y")
 
     class report:
         # Expected content for report generation tests.
@@ -355,32 +355,38 @@ class Chapter2Problem4:
 class Chapter2Problem5:
     name = "Problem 2-5"
     generate_debug_reports = False
-    F_AB = create_vectors_polar(magnitude=..., unit="lbf", angle=225, wrt="+x")
-    F_AC = create_vectors_polar(magnitude=..., unit="lbf", angle=330, wrt="+x")
-    F_R = pl.create_vector_resultant_polar(
+    F_AB = create_vectors_polar(..., "lbf", 225, wrt="+x")
+    F_AC = create_vectors_polar(..., "lbf", 330, wrt="+x")
+    F_R = create_resultant_polar(
         F_AB, F_AC,
         magnitude=350, unit="lbf", angle=270, wrt="+x"
     )
 
     class expected:
-        F_AB = create_vectors_polar(magnitude=314, unit="lbf", angle=225, wrt="+x")
-        F_AC = create_vectors_polar(magnitude=256, unit="lbf", angle=330, wrt="+x")
-        F_R = create_vectors_polar(magnitude=350, unit="lbf", angle=270, wrt="+x")
+        F_AB = create_vectors_polar(314, "lbf", 225, wrt="+x")
+        F_AC = create_vectors_polar(256, "lbf", 330, wrt="+x")
+        F_R = create_vectors_polar(350, "lbf", 270, wrt="+x")
+
 
 class Chapter2Problem6:
     name = "Problem 2-6"
-    coordinate_system = pl.create_coord_angle_between(
-        "u", "v", angle_between=75
+    cs = Oblique.from_angle_between(
+        "u", "v", 0, 75
     )
-    F_1 = create_vectors_polar(magnitude=4000, unit="N", angle=-30, wrt="+v")
-    F_2 = create_vectors_polar(magnitude=6000, unit="N", angle=-30, wrt="+u")
-    F_R = pl.create_vector_resultant(F_1, F_2, angle_dir="cw")
+    F_1 = create_vectors_polar(4000, "N", -30, wrt="+v", coordinate_system=cs)
+    F_2 = create_vectors_polar(6000, "N", -30, wrt="+u", coordinate_system=cs)
+    F_R = create_vector_resultant(
+        F_1, F_2, wrt="+u",
+        angle_dir="cw", coordinate_system=cs
+    )
 
     class expected:
-        F_1 = create_vectors_polar(magnitude=4000, unit="N", angle=-30, wrt="+v")
-        F_2 = create_vectors_polar(magnitude=6000, unit="N", angle=-30, wrt="+u")
-        F_R = create_vectors_polar(magnitude=8026, unit="N", angle=-1.22, wrt="+u")
+        _cs = Oblique.from_angle_between("u", "v", 0, 75)
+        F_1 = create_vectors_polar(4000, "N", -30, wrt="+v", coordinate_system=_cs)
+        F_2 = create_vectors_polar(6000, "N", -30, wrt="+u", coordinate_system=_cs)
+        F_R = create_vectors_polar(8026.41, "N", -1.22, wrt="+u", coordinate_system=_cs)
 
+"""
 class Chapter2Problem7:
     name = "Problem 2-7"
     coordinate_system = pl.create_coord_angle_between(
@@ -911,9 +917,9 @@ PARALLELOGRAM_LAW_PROBLEMS = [
     # Chapter2Problem1MixedUnits,
     Chapter2Problem2,
     Chapter2Problem3,
-    # Chapter2Problem4,
-    # Chapter2Problem5,
-    # Chapter2Problem6,
+    Chapter2Problem4,
+    Chapter2Problem5,
+    Chapter2Problem6,
     # Chapter2Problem7,
     # Chapter2Problem8,
     # Chapter2Problem9,
@@ -951,7 +957,7 @@ ALL_PROBLEM_CLASSES = [
     # Chapter2Problem1MixedUnits,
     Chapter2Problem2,
     Chapter2Problem3,
-    # Chapter2Problem4,
+    Chapter2Problem4,
     # Chapter2Problem5,
     # Chapter2Problem6,
     # Chapter2Problem7,

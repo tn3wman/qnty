@@ -621,6 +621,9 @@ class UnaryFunction(Expression):
             "sin": lambda x: self._create_dimensionless_quantity(math.sin(self._to_radians_if_angle(x))),
             "cos": lambda x: self._create_dimensionless_quantity(math.cos(self._to_radians_if_angle(x))),
             "tan": lambda x: self._create_dimensionless_quantity(math.tan(self._to_radians_if_angle(x))),
+            "asin": lambda x: self._create_angle_quantity(math.asin(self._to_dimensionless_value(x))),
+            "acos": lambda x: self._create_angle_quantity(math.acos(self._to_dimensionless_value(x))),
+            "atan": lambda x: self._create_angle_quantity(math.atan(self._to_dimensionless_value(x))),
             "sqrt": lambda x: self._evaluate_sqrt(x),
             "abs": lambda x: self._evaluate_abs(x),
             "ln": lambda x: self._create_dimensionless_quantity(math.log(x.value)) if _has_valid_value(x) else x,
@@ -684,6 +687,20 @@ class UnaryFunction(Expression):
     def _create_dimensionless_quantity(self, value: float) -> "Quantity":
         """Create a dimensionless quantity from a float value."""
         return _create_dimensionless_quantity(value)
+
+    def _create_angle_quantity(self, radians: float) -> "Quantity":
+        """Create an angle quantity from a radian value."""
+        # Import here to avoid circular imports
+        from ..core import Q
+
+        # Create angle in radians (SI unit for angles)
+        return Q(radians, "radian")
+
+    def _to_dimensionless_value(self, quantity: "Quantity") -> float:
+        """Extract the dimensionless value from a quantity for inverse trig functions."""
+        if _has_valid_value(quantity) and quantity.value is not None:
+            return quantity.value
+        raise ValueError("Quantity has no numeric value")
 
     def get_variables(self) -> set[str]:
         return self.operand.get_variables()

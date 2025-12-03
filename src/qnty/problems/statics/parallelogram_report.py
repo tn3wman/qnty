@@ -97,8 +97,8 @@ class ReportDataBuilder:
             # Get angle in degrees
             angle_qty = vec.angle
             if angle_qty is not None and angle_qty.value is not None:
-                angle_deg = angle_qty.to_unit.degree.magnitude()
-                angle_str = f"{angle_deg:.1f}"
+                angle_deg = angle_qty.to_unit.degree
+                angle_str = f"{angle_deg.magnitude():.1f}"
             else:
                 angle_str = "?"
         else:

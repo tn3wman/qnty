@@ -35,8 +35,8 @@
 
 $$
 \begin{aligned}
-|\vec{F_R}| &= \sqrt{(700.0)^2 + (450.0)^2 - 2(700.0)(450.0)\cos(45^{\circ})} \\
-&= 497.0\ \text{N} \\
+|\vec{F_R}| &= \sqrt{(700 N)^2 + (450 N)^2 - 2(700 N)(450 N)\cos(45^{\circ})} \\
+&= 497.014 N \\
 \end{aligned}
 $$
 
@@ -44,8 +44,8 @@ $$
 
 $$
 \begin{aligned}
-\angle(\vec{F_1}, \vec{F_R}) &= \sin^{-1}(700.0 \cdot \frac{\sin(45^{\circ})}{497.0}) \\
-&= 95.2^{\circ} \\
+\angle(\vec{F_1}, \vec{F_R}) &= \sin^{-1}(700 N \cdot \frac{\sin(45^{\circ})}{497.014 N}) \\
+&= 95^{\circ} \\
 \end{aligned}
 $$
 

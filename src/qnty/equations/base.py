@@ -81,8 +81,23 @@ def latex_name(name: str) -> str:
     return name
 
 
-def format_angle(angle_deg: float, precision: int = 0) -> str:
-    """Format an angle for display with LaTeX degree notation."""
+def format_angle(angle: float | "Quantity", precision: int = 0) -> str:
+    """Format an angle for display with LaTeX degree notation.
+
+    Args:
+        angle: Angle value - either a float (assumed degrees) or a Quantity
+        precision: Number of decimal places
+
+    Returns:
+        LaTeX-formatted angle string
+    """
+    # Handle Quantity objects - convert to degrees and extract value
+    if hasattr(angle, "to_unit") and hasattr(angle, "magnitude"):
+        angle_qty = angle.to_unit.degree
+        angle_deg = angle_qty.magnitude() if angle_qty.value is not None else 0.0
+    else:
+        angle_deg = float(angle)
+
     if precision == 0:
         return f"{angle_deg:.0f}^{{\\circ}}"
     return f"{angle_deg:.{precision}f}^{{\\circ}}"

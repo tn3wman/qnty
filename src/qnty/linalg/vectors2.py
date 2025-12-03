@@ -8,6 +8,7 @@ from types import EllipsisType
 
 from ..coordinates import Cartesian, CoordinateSystem
 from ..core.quantity import Q
+from ..spatial.angle_reference import AngleDirection
 from .vector2 import Vector, VectorUnknown
 
 
@@ -77,6 +78,9 @@ def create_vectors_polar(
 
 def create_vector_resultant(
     *vectors: Vector | VectorUnknown,
+    wrt: str | None = None,
+    angle_dir: AngleDirection | str = AngleDirection.COUNTERCLOCKWISE,
+    coordinate_system: CoordinateSystem | None = None,
     name: str = "F_R",
 ) -> VectorUnknown:
     """
@@ -88,6 +92,15 @@ def create_vector_resultant(
 
     Args:
         *vectors: Variable number of vectors to sum
+        wrt: The axis the resultant angle is measured from (e.g., "+x", "+u").
+            If None, defaults to the first axis of the coordinate system (e.g., "+x" for
+            Cartesian, "+u" for Oblique with axis1_label="u").
+        angle_dir: Direction for measuring the resultant angle - clockwise (CW) or
+            counterclockwise (CCW) from the reference axis. Accepts AngleDirection enum
+            or strings: "counterclockwise", "ccw", "clockwise", "cw".
+            Default: AngleDirection.COUNTERCLOCKWISE
+        coordinate_system: The coordinate system for the resultant. If None, uses the
+            coordinate system from the first vector, or Cartesian if no vectors provided.
         name: Name for the resultant vector (default "F_R")
 
     Returns:
@@ -102,19 +115,38 @@ def create_vector_resultant(
         >>>
         >>> # Create resultant (magnitude and angle will be solved)
         >>> F_R = create_vector_resultant(F_1, F_2)
+        >>>
+        >>> # Create resultant with angle measured clockwise from +y axis
+        >>> F_R = create_vector_resultant(F_1, F_2, wrt="+y", angle_dir="cw")
     """
-    # Get coordinate system from first vector if available
-    coordinate_system = Cartesian()
-    if vectors:
-        first_vec = vectors[0]
-        if hasattr(first_vec, "coordinate_system") and first_vec.coordinate_system is not None:
-            coordinate_system = first_vec.coordinate_system
+    # Normalize angle_dir to AngleDirection enum
+    if isinstance(angle_dir, str):
+        angle_dir_lower = angle_dir.lower()
+        if angle_dir_lower in ("counterclockwise", "ccw"):
+            angle_dir = AngleDirection.COUNTERCLOCKWISE
+        elif angle_dir_lower in ("clockwise", "cw"):
+            angle_dir = AngleDirection.CLOCKWISE
+        else:
+            raise ValueError(f"Unknown angle_dir: {angle_dir}. Use 'counterclockwise', 'ccw', 'clockwise', or 'cw'")
+
+    # Determine coordinate system
+    if coordinate_system is None:
+        # Get coordinate system from first vector if available
+        coordinate_system = Cartesian()
+        if vectors:
+            first_vec = vectors[0]
+            if hasattr(first_vec, "coordinate_system") and first_vec.coordinate_system is not None:
+                coordinate_system = first_vec.coordinate_system
+
+    # Determine wrt (reference axis) - default to first axis of coordinate system
+    if wrt is None:
+        wrt = f"+{coordinate_system.axis1_label}"
 
     # Create the resultant with unknown magnitude and angle
     resultant = VectorUnknown(
         magnitude=...,
         angle=...,
-        wrt="+x",
+        wrt=wrt,
         coordinate_system=coordinate_system,
         name=name,
         _is_resultant=True,
@@ -122,6 +154,9 @@ def create_vector_resultant(
 
     # Store component vectors for later computation
     resultant._component_vectors = list(vectors)  # type: ignore[attr-defined]
+
+    # Store angle direction for solver to use when reporting the result
+    resultant._angle_dir = angle_dir  # type: ignore[attr-defined]
 
     return resultant
 

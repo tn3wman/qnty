@@ -9,6 +9,7 @@ from types import EllipsisType
 
 from ..coordinates import Cartesian, CoordinateSystem
 from ..core.quantity import Quantity
+from ..equations.angle_finder import angles_are_equivalent, get_absolute_angle
 
 
 @dataclass
@@ -98,6 +99,40 @@ class Vector:
             magnitude=mag_value,
             angle=angle_value,
             reference=self.wrt,
+        )
+
+    def __eq__(self, other: object) -> bool:
+        """
+        Check equality based on magnitude and absolute angle.
+
+        Two vectors are equal if they have the same magnitude and point
+        in the same direction, regardless of how the angle is represented.
+        """
+        if not isinstance(other, Vector):
+            return NotImplemented
+
+        return self.magnitude == other.magnitude and get_absolute_angle(self) == get_absolute_angle(other)
+
+    def is_close(self, other: Vector, rtol: float = 0.01) -> bool:
+        """
+        Check if this vector is close to another within tolerance.
+
+        Handles angle equivalence properly - angles that differ by 360° are
+        considered equal (e.g., 352.9° and -7.1° are equivalent).
+
+        Args:
+            other: Vector to compare against
+            rtol: Relative tolerance (default 1%)
+
+        Returns:
+            True if vectors are close within tolerances
+        """
+        if not isinstance(other, Vector):
+            return False
+
+        return (
+            self.magnitude.is_close(other.magnitude, rtol=rtol)
+            and angles_are_equivalent(get_absolute_angle(self), get_absolute_angle(other), rtol=rtol)
         )
 
 

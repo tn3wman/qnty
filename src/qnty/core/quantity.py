@@ -7,9 +7,9 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Generic, Self, TypeVar, cast, overload
 
+from ..utils.shared_utilities import SharedConstants
 from .dimension import Dimension
 from .unit import Unit, ureg
-from ..utils.shared_utilities import SharedConstants
 
 if TYPE_CHECKING:
     from . import quantity_catalog
@@ -266,7 +266,7 @@ class Quantity(Generic[D]):
             result_value = self.value - other.value
             return Quantity(name=f"{result_value}", dim=self.dim, value=result_value)
         # Handle numeric types - only for dimensionless quantities
-        # TODO: ensure dimensionless angles are handled correctly later
+        # TODO: ensure dimensionless angles are handled correctly
         if not self.dim.is_dimensionless():
             raise TypeError(f"Cannot subtract dimensionless number from dimensional quantity {self.dim}")
         if self.value is None:
@@ -278,7 +278,7 @@ class Quantity(Generic[D]):
     def __radd__(self, other: float | int) -> Quantity:
         """Handle: number + quantity"""
         # Only allowed for dimensionless quantities
-        # TODO: ensure dimensionless angles are handled correctly later
+        # TODO: ensure dimensionless angles are handled correctly
         if not self.dim.is_dimensionless():
             raise TypeError(f"Cannot add dimensional quantity {self.dim} to dimensionless number")
         if self.value is None:
@@ -289,7 +289,7 @@ class Quantity(Generic[D]):
     def __rsub__(self, other: float | int) -> Quantity:
         """Handle: number - quantity"""
         # Only allowed for dimensionless quantities
-        # TODO: ensure dimensionless angles are handled correctly later
+        # TODO: ensure dimensionless angles are handled correctly
         if not self.dim.is_dimensionless():
             raise TypeError(f"Cannot subtract dimensional quantity {self.dim} from dimensionless number")
         if self.value is None:
@@ -508,8 +508,6 @@ def Q(val: float, unit: Unit[D] | str | type) -> Quantity:
         else:
             raise ValueError(f"Invalid unit type: {type(unit)}")
 
-    # Import quantity classes here to avoid circular imports
-    from . import quantity_catalog
 
     # At this point, unit is guaranteed to be a Unit object, not a string or type
     assert not isinstance(unit, str | type)

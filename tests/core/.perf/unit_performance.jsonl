@@ -1,1 +1,2 @@
 {"timestamp": "2025-12-02T15:49:23-0600", "python_version": "3.13.2", "iterations": 20000, "ops_per_loop": 5, "time_s": 0.13107920007314533, "time_per_loop_ns": 6553.9600036572665, "time_per_op_ns": 1310.7920007314533, "unit_calls": 240002}
+{"timestamp": "2025-12-03T15:46:14-0600", "python_version": "3.13.2", "iterations": 20000, "ops_per_loop": 5, "time_s": 0.12418519996572286, "time_per_loop_ns": 6209.259998286143, "time_per_op_ns": 1241.8519996572286, "unit_calls": 240002}

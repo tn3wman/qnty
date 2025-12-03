@@ -105,42 +105,52 @@ class LawOfSines:
         Returns:
             Tuple of (result_angle_quantity, solution_step_dict)
         """
-        import math
-
-        from ..algebra.functions import sin
+        from ..algebra.functions import asin, sin
         from ..core import Q
         from ..core.quantity import Quantity
+        from ..geometry.triangle import _get_angle_constants
 
-        # Get values for calculation
-        a = self.opposite_side.magnitude()  # Side opposite to unknown angle
-        b = self.known_side.magnitude()  # Side opposite to known angle
-        known_angle_deg = self.known_angle.to_unit.degree.magnitude()
+        _, half_rotation, _ = _get_angle_constants()
 
         # sin(A) = a · sin(B) / b
-        # We need to compute this carefully since we need asin at the end
+        # A = asin(a · sin(B) / b)
         sin_known = sin(self.known_angle)
 
         # Ensure sin_known is a Quantity (should always be true for concrete angle inputs)
         if not isinstance(sin_known, Quantity):
             raise TypeError(f"Expected Quantity result from sin(), got {type(sin_known).__name__}")
 
-        sin_result_value = a * sin_known.magnitude() / b
+        # Compute sin(A) using Quantity arithmetic: a * sin(B) / b
+        sin_result = self.opposite_side * sin_known / self.known_side
 
-        # Clamp to valid range for asin
-        sin_result_value = max(-1.0, min(1.0, sin_result_value))
-        result_deg = math.degrees(math.asin(sin_result_value))
+        # Clamp to valid range for asin [-1, 1]
+        # We need to check the value and clamp if needed
+        sin_value = sin_result.value
+        if sin_value is not None:
+            if sin_value > 1.0:
+                sin_result = Q(1.0, "dimensionless")
+            elif sin_value < -1.0:
+                sin_result = Q(-1.0, "dimensionless")
+
+        # Use asin to get the angle
+        result = asin(sin_result)
 
         # Use obtuse angle if requested (180° - acute)
         if self.use_obtuse:
-            result_deg = 180.0 - result_deg
+            result = half_rotation - result
 
-        # Create result Quantity using Q()
-        result = Q(result_deg, "degree")
+        # Convert to degrees for display
+        result = result.to_unit.degree
 
         # Use the generated angle_name for the result
         result.name = self.angle_name
 
-        substitution = f"{self.angle_name} &= \\sin^{{-1}}({a:.1f} \\cdot \\frac{{\\sin({format_angle(known_angle_deg)})}}{{{b:.1f}}}) \\\\\n&= {format_angle(result_deg, precision=1)} \\\\"
+        # Get display values for substitution
+        a_display = self.opposite_side.to_unit.newton if hasattr(self.opposite_side, 'to_unit') else self.opposite_side
+        b_display = self.known_side.to_unit.newton if hasattr(self.known_side, 'to_unit') else self.known_side
+        known_angle_deg = self.known_angle.to_unit.degree
+
+        substitution = f"{self.angle_name} &= \\sin^{{-1}}({a_display} \\cdot \\frac{{\\sin({format_angle(known_angle_deg)})}}{{{b_display}}}) \\\\\n&= {format_angle(result)} \\\\"
 
         step = SolutionStepBuilder(
             target=self.target,

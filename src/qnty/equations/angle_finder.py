@@ -10,10 +10,46 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from .base import SolutionStepBuilder, format_angle
+from ..spatial.angle_reference import AngleDirection
 
 if TYPE_CHECKING:
+    from ..coordinates import CoordinateSystem
     from ..core.quantity import Quantity
     from ..linalg.vector2 import Vector, VectorUnknown
+
+
+def angles_are_equivalent(angle1: Quantity, angle2: Quantity, rtol: float = 0.01) -> bool:
+    """
+    Check if two angles are equivalent within tolerance.
+
+    Two angles are equivalent if they differ by a multiple of 360° (2π radians).
+    For example, 352.9° and -7.1° are equivalent (352.9 - 360 = -7.1).
+
+    Args:
+        angle1: First angle as a Quantity
+        angle2: Second angle as a Quantity
+        rtol: Relative tolerance (default 1%)
+
+    Returns:
+        True if the angles are equivalent within tolerance
+    """
+    from ..geometry.triangle import _get_angle_constants
+
+    _, _, full_rotation = _get_angle_constants()
+
+    # Direct comparison
+    if angle1.is_close(angle2, rtol=rtol):
+        return True
+
+    # Check if (angle1 + 360°) is close to angle2
+    if (angle1 + full_rotation).is_close(angle2, rtol=rtol):
+        return True
+
+    # Check if (angle2 + 360°) is close to angle1
+    if (angle2 + full_rotation).is_close(angle1, rtol=rtol):
+        return True
+
+    return False
 
 
 def get_absolute_angle(vec: Vector | VectorUnknown) -> Quantity:
@@ -44,6 +80,73 @@ def get_absolute_angle(vec: Vector | VectorUnknown) -> Quantity:
 
     # Add the vector's angle to get absolute angle
     return axis_angle + angle
+
+
+def get_relative_angle(
+    absolute_angle: Quantity,
+    wrt: str,
+    coordinate_system: CoordinateSystem,
+    angle_dir: AngleDirection = AngleDirection.COUNTERCLOCKWISE,
+) -> Quantity:
+    """
+    Convert an absolute angle to a relative angle from a reference axis.
+
+    This is the inverse of get_absolute_angle. Given an absolute angle
+    (measured CCW from the coordinate system's primary axis), compute
+    the relative angle from the specified reference axis.
+
+    Sign convention:
+        - Counterclockwise (CCW) angles are positive
+        - Clockwise (CW) angles are negative
+
+    When angle_dir=CW, the measurement is taken going clockwise from the
+    reference axis, but expressed with the standard sign convention
+    (CW = negative).
+
+    The result is normalized to the range (-180°, 180°].
+
+    Args:
+        absolute_angle: The absolute angle as a Quantity
+        wrt: The reference axis (e.g., "+x", "+u", "-y")
+        coordinate_system: The coordinate system defining axis angles
+        angle_dir: Direction for measuring the angle (CCW or CW).
+            Default: COUNTERCLOCKWISE
+
+    Returns:
+        Relative angle as a Quantity
+
+    Example:
+        >>> # Vector at 358.78° absolute, relative to +u axis (0°)
+        >>> # CCW: 358.78° - 0° = 358.78° -> normalized to -1.22°
+        >>> # CW: measure CW from +u = 1.22°, but CW is negative = -1.22°
+    """
+    from ..geometry.triangle import _get_angle_constants
+
+    zero, half_rotation, full_rotation = _get_angle_constants()
+
+    # Get the angle of the reference axis from the coordinate system
+    axis_angle = coordinate_system.get_axis_angle(wrt)
+
+    # Compute CCW angle from axis to vector
+    relative_angle = absolute_angle - axis_angle
+
+    # Normalize to range (-180, 180] degrees for better readability
+    # First normalize to [0, 360)
+    while relative_angle >= full_rotation:
+        relative_angle = relative_angle - full_rotation
+    while relative_angle < zero:
+        relative_angle = relative_angle + full_rotation
+
+    # Then shift to (-180, 180]
+    if relative_angle > half_rotation:
+        relative_angle = relative_angle - full_rotation
+
+    # Note: angle_dir indicates the measurement direction preference but
+    # doesn't change the result since the standard convention (CCW=positive,
+    # CW=negative) already expresses angles correctly. A negative angle
+    # already indicates clockwise direction.
+
+    return relative_angle
 
 
 class AngleBetween:
@@ -89,10 +192,14 @@ class AngleBetween:
         # Compute angle between as difference (using Quantity arithmetic)
         angle_diff = vec1_abs_angle - vec2_abs_angle
 
-        # Get the numeric value and take absolute value
-        # Create result as absolute difference
-        diff_value = angle_diff.magnitude()
-        result = Q(abs(diff_value), "degree")
+        # Take absolute value using Quantity comparison
+        from ..geometry.triangle import _get_angle_constants
+
+        zero, _, _ = _get_angle_constants()
+        if angle_diff < zero:
+            angle_diff = zero - angle_diff
+
+        result = angle_diff.to_unit.degree
         result.name = self.target
 
         # Get display values for the solution step
@@ -105,16 +212,15 @@ class AngleBetween:
         vec2_ref_display = vec2_ref.lstrip("+") if vec2_ref.startswith("+") else vec2_ref
 
         # Format angles for display (convert to degrees for readability)
-        vec1_angle_display = self.vec1.angle.as_unit.degree.magnitude()
-        vec2_angle_display = self.vec2.angle.as_unit.degree.magnitude()
-        result_display = result.magnitude()
+        vec1_angle_display = self.vec1.angle.to_unit.degree
+        vec2_angle_display = self.vec2.angle.to_unit.degree
 
         substitution = (
             f"\\angle(\\vec{{{vec1_name}}}, \\vec{{{vec2_name}}}) &= "
             f"|\\angle(\\vec{{{vec1_ref_display}}}, \\vec{{{vec1_name}}}) - "
             f"\\angle(\\vec{{{vec2_ref_display}}}, \\vec{{{vec2_name}}})| \\\\\n"
             f"&= |{format_angle(vec1_angle_display)} - {format_angle(vec2_angle_display)}| \\\\\n"
-            f"&= {format_angle(result_display)} \\\\"
+            f"&= {format_angle(result)} \\\\"
         )
 
         step = SolutionStepBuilder(
@@ -195,9 +301,9 @@ class AngleSum:
         result.name = self.target_name
 
         # Get display values in degrees for the solution step
-        base_deg = self.base_angle.to_unit.degree.magnitude()
-        offset_deg = self.offset_angle.to_unit.degree.magnitude()
-        result_deg = result.to_unit.degree.magnitude()
+        base_deg = self.base_angle.to_unit.degree
+        offset_deg = self.offset_angle.to_unit.degree
+        result_deg = result.to_unit.degree
 
         # Format substitution with proper LaTeX notation
         substitution = (

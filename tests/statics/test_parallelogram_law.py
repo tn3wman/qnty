@@ -120,8 +120,12 @@ def test_problem(problem_class):
         actual_vec = problem.vectors.get(attr_name)
         assert actual_vec is not None, f"Expected vector '{attr_name}' not found in problem.vectors. Available: {list(problem.vectors.keys())}"
 
-        # Compare
-        assert_vectors_close(actual_vec, expected_vec, rtol=rtol, name=attr_name)
+        # Compare using Vector.is_close which compares magnitude and absolute angle with tolerance
+        assert actual_vec.is_close(expected_vec, rtol=rtol), (
+            f"{attr_name}: vectors not close.\n"
+            f"  Actual:   {actual_vec}\n"
+            f"  Expected: {expected_vec}"
+        )
 
 
 # @pytest.mark.skip(reason="DTO serialization not yet implemented in new solver")

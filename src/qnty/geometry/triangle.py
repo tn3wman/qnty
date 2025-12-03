@@ -82,10 +82,10 @@ def _normalize_angle(angle: Quantity) -> Quantity:
     """
     zero, _, full = _get_angle_constants()
 
-    # Normalize to [0, 360) using modulo-style arithmetic
-    while (angle - full).magnitude() >= 0:
+    # Normalize to [0, 360) using Quantity comparison operators
+    while angle >= full:
         angle = angle - full
-    while (angle - zero).magnitude() < 0:
+    while angle < zero:
         angle = angle + full
 
     return angle
@@ -106,7 +106,7 @@ def _get_interior_angle(angle: Quantity) -> Quantity:
     """
     _, half, full = _get_angle_constants()
 
-    if (angle - half).magnitude() > 0:
+    if angle > half:
         angle = full - angle
 
     return angle
@@ -432,7 +432,7 @@ class Triangle:
         angle_diff = dir2 - dir1
 
         # Make positive (absolute value)
-        if (angle_diff - zero).magnitude() < 0:
+        if angle_diff < zero:
             angle_diff = zero - angle_diff
 
         # Normalize to [0, 360) and get interior angle (0-180°)
@@ -762,7 +762,7 @@ class Triangle:
                     # Compute angle between the two outgoing directions at third vertex
                     angle_diff_plus = other_dir_at_third - unknown_outgoing_plus
                     zero, _, _ = _get_angle_constants()
-                    if (angle_diff_plus - zero).magnitude() < 0:
+                    if angle_diff_plus < zero:
                         angle_diff_plus = zero - angle_diff_plus
                     angle_diff_plus = _normalize_angle(angle_diff_plus)
                     angle_C_plus = _get_interior_angle(angle_diff_plus)
@@ -774,7 +774,7 @@ class Triangle:
                         unknown_outgoing_minus = dir_minus
 
                     angle_diff_minus = other_dir_at_third - unknown_outgoing_minus
-                    if (angle_diff_minus - zero).magnitude() < 0:
+                    if angle_diff_minus < zero:
                         angle_diff_minus = zero - angle_diff_minus
                     angle_diff_minus = _normalize_angle(angle_diff_minus)
                     angle_C_minus = _get_interior_angle(angle_diff_minus)
@@ -784,20 +784,20 @@ class Triangle:
                     tolerance = Q(1, "degree")
 
                     diff_plus = expected_angle_C - angle_C_plus
-                    if (diff_plus - zero).magnitude() < 0:
+                    if diff_plus < zero:
                         diff_plus = zero - diff_plus
 
                     diff_minus = expected_angle_C - angle_C_minus
-                    if (diff_minus - zero).magnitude() < 0:
+                    if diff_minus < zero:
                         diff_minus = zero - diff_minus
 
-                    if (diff_plus - tolerance).magnitude() < 0:
+                    if diff_plus < tolerance:
                         chosen_dir = dir_plus
-                    elif (diff_minus - tolerance).magnitude() < 0:
+                    elif diff_minus < tolerance:
                         chosen_dir = dir_minus
                     else:
                         # Neither matches exactly, pick the closer one
-                        if (diff_plus - diff_minus).magnitude() < 0:
+                        if diff_plus < diff_minus:
                             chosen_dir = dir_plus
                         else:
                             chosen_dir = dir_minus
