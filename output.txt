@@ -1,303 +1,1350 @@
-Analyzing 80 Python files...
-2 repetitions of complexity 41
+Analyzing 1 Python files...
+2 repetitions of complexity 17
 
-Line 2313 - src/qnty/problems/parallelogram_law.py:
-x_0 = f'∠({x_0},{x_1}) = ∠({x_2},{x_3}) + ∠({x_3},{x_1})\n= {x_4:.1f}° + {x_5:.1f}°'
+Line 157 - src/qnty/geometry/triangle.py:
+x_0, x_1, x_2, x_3, x_4, x_5 = x_6
 
-Line 2316 - src/qnty/problems/parallelogram_law.py:
-x_0 = f'∠({x_0},{x_1}) = ∠({x_2},{x_3}) + ∠({x_3},{x_1})\n= {x_4:.1f}° + {x_5:.1f}°'
-
-======================================================================
-
-2 repetitions of complexity 38
-
-Line 381 - src/qnty/problems/parallelogram_law.py:
-if x_0.startswith('+'):
-    x_1._original_wrt = f'+{x_2.name}'
-elif x_0.startswith('-'):
-    x_1._original_wrt = f'-{x_2.name}'
-
-Line 730 - src/qnty/problems/statics/parallelogram_law.py:
-if x_0.startswith('+'):
-    x_1._original_wrt = f'+{x_2.name}'
-elif x_0.startswith('-'):
-    x_1._original_wrt = f'-{x_2.name}'
+Line 595 - src/qnty/geometry/triangle.py:
+x_0, x_1, x_2, x_3, x_4, x_5 = x_6
 
 ======================================================================
 
-2 repetitions of complexity 38
+2 repetitions of complexity 14
 
-Line 2313 - src/qnty/problems/parallelogram_law.py:
-f'∠({x_0},{x_1}) = ∠({x_2},{x_3}) + ∠({x_3},{x_1})\n= {x_4:.1f}° + {x_5:.1f}°'
+Line 127 - src/qnty/geometry/triangle.py:
+(x_0.side_a, x_0.side_b, x_0.side_c)
 
-Line 2316 - src/qnty/problems/parallelogram_law.py:
-f'∠({x_0},{x_1}) = ∠({x_2},{x_3}) + ∠({x_3},{x_1})\n= {x_4:.1f}° + {x_5:.1f}°'
-
-======================================================================
-
-2 repetitions of complexity 32
-
-Line 2697 - src/qnty/problems/parallelogram_law.py:
-if x_0._angle and x_0._angle.value is not None:
-    x_0._original_angle = x_1.degrees(x_0._angle.value)
-
-Line 2732 - src/qnty/problems/parallelogram_law.py:
-if x_0._angle and x_0._angle.value is not None:
-    x_0._original_angle = x_1.degrees(x_0._angle.value)
+Line 462 - src/qnty/geometry/triangle.py:
+(x_0.side_a, x_0.side_b, x_0.side_c)
 
 ======================================================================
 
-2 repetitions of complexity 29
+2 repetitions of complexity 14
 
-Line 652 - src/qnty/solving/triangle_solver.py:
-x_0.solution_steps.append(x_1(x_2.name, x_3.name, x_4, x_5, x_6, x_7, x_8))
+Line 157 - src/qnty/geometry/triangle.py:
+(x_0, x_1, x_2, x_3, x_4, x_5)
 
-Line 655 - src/qnty/solving/triangle_solver.py:
-x_0.solution_steps.append(x_1(x_2.name, x_3.name, x_4, x_5, x_6, x_7, x_8))
-
-======================================================================
-
-2 repetitions of complexity 28
-
-Line 1508 - src/qnty/problems/parallelogram_law.py:
-if x_0 is not None:
-    x_1 = x_0
-else:
-    x_1 = x_2._get_standard_angle(getattr(x_3, '_polar_angle_rad', 0.0), x_4)
-
-Line 1522 - src/qnty/problems/parallelogram_law.py:
-if x_0 is not None:
-    x_1 = x_0
-else:
-    x_1 = x_2._get_standard_angle(getattr(x_3, '_polar_angle_rad', 0.0), x_4)
+Line 595 - src/qnty/geometry/triangle.py:
+(x_0, x_1, x_2, x_3, x_4, x_5)
 
 ======================================================================
 
-2 repetitions of complexity 28
+2 repetitions of complexity 14
 
-Line 652 - src/qnty/solving/triangle_solver.py:
-x_0.solution_steps.append(x_1(x_2.name, x_3.name, x_4, x_5, x_6, x_7, x_8))
+Line 162 - src/qnty/geometry/triangle.py:
+x_0.is_known and x_0.is_known and x_0.is_known
 
-Line 655 - src/qnty/solving/triangle_solver.py:
-x_0.solution_steps.append(x_1(x_2.name, x_3.name, x_4, x_5, x_6, x_7, x_8))
-
-======================================================================
-
-4 repetitions of complexity 27
-
-Line 289 - src/qnty/core/unit.py:
-if x_0 in x_1.WRAPPER_EXCLUDED_DUNDERS:
-    raise AttributeError(f"{type(x_2).__name__} has no attribute '{x_0}'")
-
-Line 555 - src/qnty/core/quantity.py:
-if x_0 in x_1.WRAPPER_EXCLUDED_DUNDERS:
-    raise AttributeError(f"{type(x_2).__name__} has no attribute '{x_0}'")
-
-Line 612 - src/qnty/core/quantity.py:
-if x_0 in x_1.WRAPPER_EXCLUDED_DUNDERS:
-    raise AttributeError(f"{type(x_2).__name__} has no attribute '{x_0}'")
-
-Line 673 - src/qnty/core/quantity.py:
-if x_0 in x_1.WRAPPER_EXCLUDED_DUNDERS:
-    raise AttributeError(f"{type(x_2).__name__} has no attribute '{x_0}'")
+Line 522 - src/qnty/geometry/triangle.py:
+x_0.is_known and x_0.is_known and x_0.is_known
 
 ======================================================================
 
-3 repetitions of complexity 27
+3 repetitions of complexity 12
 
-Line 280 - src/qnty/spatial/vector.py:
-x_0._coords = x_1.array([x_2.value, x_3.value, x_4.value], dtype=float)
+Line 56 - src/qnty/geometry/triangle.py:
+tuple[x_0, x_0, x_0]
 
-Line 554 - src/qnty/spatial/vector.py:
-x_0._coords = x_1.array([x_2.value, x_3.value, x_4.value], dtype=float)
+Line 460 - src/qnty/geometry/triangle.py:
+tuple[x_0, x_0, x_0]
 
-Line 130 - src/qnty/spatial/point.py:
-x_0._coords = x_1.array([x_2.value, x_3.value, x_4.value], dtype=float)
-
-======================================================================
-
-2 repetitions of complexity 27
-
-Line 70 - src/qnty/core/dimension_catalog.py:
-x_0 * x_1 ** 2 * x_2 ** (-2) * x_3 ** (-2)
-
-Line 169 - src/qnty/core/dimension_catalog.py:
-x_0 * x_1 ** 2 * x_2 ** (-2) * x_3 ** (-2)
+Line 465 - src/qnty/geometry/triangle.py:
+tuple[x_0, x_0, x_0]
 
 ======================================================================
 
-2 repetitions of complexity 27
+2 repetitions of complexity 12
 
-Line 319 - src/qnty/integration/solver_service.py:
-x_0 = x_1.sqrt(x_2 ** 2 + x_3 ** 2 + x_4 ** 2)
+Line 83 - src/qnty/geometry/triangle.py:
+x_0, x_1, x_2 = x_3()
 
-Line 405 - src/qnty/problems/position_vector.py:
-x_0 = x_1.sqrt(x_2 ** 2 + x_3 ** 2 + x_4 ** 2)
-
-======================================================================
-
-2 repetitions of complexity 27
-
-Line 1877 - src/qnty/problems/parallelogram_law.py:
-equation_for_list=f'sin(∠({x_0},{x_1}))/|{x_2}| = sin(∠({x_2},{x_0}))/|{x_1}|'
-
-Line 2015 - src/qnty/problems/parallelogram_law.py:
-equation_for_list=f'sin(∠({x_0},{x_1}))/|{x_2}| = sin(∠({x_2},{x_0}))/|{x_1}|'
+Line 107 - src/qnty/geometry/triangle.py:
+x_0, x_1, x_2 = x_3()
 
 ======================================================================
 
-2 repetitions of complexity 27
+2 repetitions of complexity 12
 
-Line 486 - src/qnty/spatial/vector.py:
-x_0 = x_1(name=f'{x_2.name}_angle', dim=x_3.dim, value=x_4, preferred=x_3.preferred)
+Line 88 - src/qnty/geometry/triangle.py:
+(x_0 - x_1).magnitude() < 0
 
-Line 517 - src/qnty/spatial/vector.py:
-x_0 = x_1(name=f'{x_2.name}_angle', dim=x_3.dim, value=x_4, preferred=x_3.preferred)
-
-======================================================================
-
-2 repetitions of complexity 26
-
-Line 256 - src/qnty/problems/cartesian_vector.py:
-not x_0._original_force_states.get(x_1, False) or (x_2.is_resultant and (not x_0.is_solved))
-
-Line 219 - src/qnty/problems/rectangular_vector.py:
-not x_0._original_force_states.get(x_1, False) or (x_2.is_resultant and (not x_0.is_solved))
+Line 428 - src/qnty/geometry/triangle.py:
+(x_0 - x_1).magnitude() < 0
 
 ======================================================================
 
-2 repetitions of complexity 26
+2 repetitions of complexity 12
 
-Line 1877 - src/qnty/problems/parallelogram_law.py:
-f'sin(∠({x_0},{x_1}))/|{x_2}| = sin(∠({x_2},{x_0}))/|{x_1}|'
+Line 246 - src/qnty/geometry/triangle.py:
+x_0, x_1, x_0 = x_2()
 
-Line 2015 - src/qnty/problems/parallelogram_law.py:
-f'sin(∠({x_0},{x_1}))/|{x_2}| = sin(∠({x_2},{x_0}))/|{x_1}|'
-
-======================================================================
-
-2 repetitions of complexity 26
-
-Line 0 - src/qnty/utils/scope_discovery.py:
-cls, local_vars: dict, global_vars: dict, remaining_vars: set[str], discovered: dict[str, x_0]
-
-Line 0 - src/qnty/utils/scope_discovery.py:
-cls, local_vars: dict, global_vars: dict, remaining_vars: set[str], discovered: dict[str, x_0]
+Line 625 - src/qnty/geometry/triangle.py:
+x_0, x_1, x_0 = x_2()
 
 ======================================================================
 
-2 repetitions of complexity 26
+2 repetitions of complexity 11
 
-Line 386 - src/qnty/spatial/vectors.py:
-x_0, x_1, x_2 = (float(x_3), float(x_4), float(x_5))
+Line 412 - src/qnty/geometry/triangle.py:
+if len(x_0) != 2:
+    return None
 
-Line 277 - src/qnty/spatial/points.py:
-x_0, x_1, x_2 = (float(x_3), float(x_4), float(x_5))
-
-======================================================================
-
-2 repetitions of complexity 26
-
-Line 201 - src/qnty/spatial/vector.py:
-x_0._coords, x_0._dim, x_0._unit = x_1(x_2, x_3, x_4, x_5)
-
-Line 67 - src/qnty/spatial/point.py:
-x_0._coords, x_0._dim, x_0._unit = x_1(x_2, x_3, x_4, x_5)
+Line 634 - src/qnty/geometry/triangle.py:
+if len(x_0) != 2:
+    return None
 
 ======================================================================
 
-2 repetitions of complexity 25
+2 repetitions of complexity 11
 
-Line 412 - src/qnty/core/dimension.py:
-if x_0 in x_1 or x_0 in x_2:
-    raise KeyError(f"Dimension name '{x_0}' already defined.")
+Line 848 - src/qnty/geometry/triangle.py:
+x_0: list[x_0] = []
 
-Line 426 - src/qnty/core/dimension.py:
-if x_0 in x_1 or x_0 in x_2:
-    raise KeyError(f"Dimension name '{x_0}' already defined.")
+Line 858 - src/qnty/geometry/triangle.py:
+x_0: list[x_0] = []
 
 ======================================================================
 
-2 repetitions of complexity 25
+7 repetitions of complexity 10
 
-Line 2431 - src/qnty/problems/parallelogram_law.py:
-x_0.solution_steps.append(x_1(x_2, 'x', x_3, x_4, x_5[0], x_6))
+Line 158 - src/qnty/geometry/triangle.py:
+x_0 = getattr(x_0, x_1)
 
-Line 2436 - src/qnty/problems/parallelogram_law.py:
-x_0.solution_steps.append(x_1(x_2, 'x', x_3, x_4, x_5[0], x_6))
+Line 159 - src/qnty/geometry/triangle.py:
+x_0 = getattr(x_0, x_1)
 
-======================================================================
+Line 160 - src/qnty/geometry/triangle.py:
+x_0 = getattr(x_0, x_1)
 
-2 repetitions of complexity 25
+Line 450 - src/qnty/geometry/triangle.py:
+x_0 = getattr(x_0, x_1)
 
-Line 2432 - src/qnty/problems/parallelogram_law.py:
-x_0.solution_steps.append(x_1(x_2, 'y', x_3, x_4, x_5[1], x_6))
+Line 518 - src/qnty/geometry/triangle.py:
+x_0 = getattr(x_0, x_1)
 
-Line 2439 - src/qnty/problems/parallelogram_law.py:
-x_0.solution_steps.append(x_1(x_2, 'y', x_3, x_4, x_5[1], x_6))
+Line 519 - src/qnty/geometry/triangle.py:
+x_0 = getattr(x_0, x_1)
 
-======================================================================
-
-2 repetitions of complexity 25
-
-Line 742 - src/qnty/problems/position_vector.py:
-x_0 = x_1.array([x_2[0], x_2[1], x_3], dtype=float)
-
-Line 767 - src/qnty/problems/position_vector.py:
-x_0 = x_1.array([x_2[0], x_2[1], x_3], dtype=float)
+Line 520 - src/qnty/geometry/triangle.py:
+x_0 = getattr(x_0, x_1)
 
 ======================================================================
 
-2 repetitions of complexity 25
+6 repetitions of complexity 10
 
-Line 1093 - src/qnty/problems/composition.py:
-if x_0(x_1):
-    raise AttributeError(f"'{type(x_2).__name__}' object has no attribute '{x_1}'")
+Line 303 - src/qnty/geometry/triangle.py:
+x_0: x_1 = x_0(init=False)
 
-Line 1142 - src/qnty/problems/composition.py:
-if x_0(x_1):
-    raise AttributeError(f"'{type(x_2).__name__}' object has no attribute '{x_1}'")
+Line 304 - src/qnty/geometry/triangle.py:
+x_0: x_1 = x_0(init=False)
 
-======================================================================
+Line 305 - src/qnty/geometry/triangle.py:
+x_0: x_1 = x_0(init=False)
 
-2 repetitions of complexity 25
+Line 308 - src/qnty/geometry/triangle.py:
+x_0: x_1 = x_0(init=False)
 
-Line 561 - src/qnty/problems/statics/parallelogram_law.py:
-{[f'+{x_0}' for x_0 in x_1] + [f'-{x_0}' for x_0 in x_1]}
+Line 309 - src/qnty/geometry/triangle.py:
+x_0: x_1 = x_0(init=False)
 
-Line 1318 - src/qnty/utils/shared_utilities.py:
-{[f'+{x_0}' for x_0 in x_1] + [f'-{x_0}' for x_0 in x_1]}
-
-======================================================================
-
-2 repetitions of complexity 25
-
-Line 88 - src/qnty/solving/order.py:
-x_0 = any((x_1._is_simple_assignment(x_2) for x_2 in x_1.solvers[x_3]))
-
-Line 117 - src/qnty/solving/order.py:
-x_0 = any((x_1._is_simple_assignment(x_2) for x_2 in x_1.solvers[x_3]))
+Line 310 - src/qnty/geometry/triangle.py:
+x_0: x_1 = x_0(init=False)
 
 ======================================================================
 
-2 repetitions of complexity 25
+2 repetitions of complexity 10
 
-Line 415 - src/qnty/solving/component_solver.py:
-x_0.append(f'{x_1.name}: Fx = {x_2:.3f} N, Fy = {x_3:.3f} N')
+Line 335 - src/qnty/geometry/triangle.py:
+setattr(x_0, x_1, x_2)
 
-Line 622 - src/qnty/solving/component_solver.py:
-x_0.append(f'{x_1.name}: Fx = {x_2:.3f} N, Fy = {x_3:.3f} N')
-
-======================================================================
-
-2 repetitions of complexity 25
-
-Line 479 - src/qnty/spatial/vector.py:
-x_0 = x_1(name=f'{x_2.name}_angle', dim=x_3.D, value=x_4, preferred=x_5)
-
-Line 510 - src/qnty/spatial/vector.py:
-x_0 = x_1(name=f'{x_2.name}_angle', dim=x_3.D, value=x_4, preferred=x_5)
+Line 457 - src/qnty/geometry/triangle.py:
+setattr(x_0, x_1, x_2)
 
 ======================================================================
 
-Found 27 repeated patterns
+2 repetitions of complexity 10
+
+Line 410 - src/qnty/geometry/triangle.py:
+x_0 = x_0(x_1, x_2)
+
+Line 632 - src/qnty/geometry/triangle.py:
+x_0 = x_0(x_1, x_2)
+
+======================================================================
+
+7 repetitions of complexity 9
+
+Line 219 - src/qnty/geometry/triangle.py:
+x_0: x_0 | x_1
+
+Line 298 - src/qnty/geometry/triangle.py:
+x_0: x_0 | x_1
+
+Line 299 - src/qnty/geometry/triangle.py:
+x_0: x_0 | x_1
+
+Line 750 - src/qnty/geometry/triangle.py:
+x_0: x_0 | x_1
+
+Line 787 - src/qnty/geometry/triangle.py:
+x_0: x_0 | x_1
+
+Line 788 - src/qnty/geometry/triangle.py:
+x_0: x_0 | x_1
+
+Line 789 - src/qnty/geometry/triangle.py:
+x_0: x_0 | x_1
+
+======================================================================
+
+6 repetitions of complexity 9
+
+Line 222 - src/qnty/geometry/triangle.py:
+x_0: x_0 | None = None
+
+Line 223 - src/qnty/geometry/triangle.py:
+x_0: x_0 | None = None
+
+Line 224 - src/qnty/geometry/triangle.py:
+x_0: x_0 | None = None
+
+Line 267 - src/qnty/geometry/triangle.py:
+x_0: x_0 | None = None
+
+Line 375 - src/qnty/geometry/triangle.py:
+x_0: x_0 | None = None
+
+Line 857 - src/qnty/geometry/triangle.py:
+x_0: x_0 | None = None
+
+======================================================================
+
+4 repetitions of complexity 9
+
+Line 86 - src/qnty/geometry/triangle.py:
+(x_0 - x_1).magnitude()
+
+Line 88 - src/qnty/geometry/triangle.py:
+(x_0 - x_1).magnitude()
+
+Line 109 - src/qnty/geometry/triangle.py:
+(x_0 - x_1).magnitude()
+
+Line 428 - src/qnty/geometry/triangle.py:
+(x_0 - x_1).magnitude()
+
+======================================================================
+
+3 repetitions of complexity 9
+
+Line 300 - src/qnty/geometry/triangle.py:
+x_0 | x_1 | None
+
+Line 338 - src/qnty/geometry/triangle.py:
+x_0 | x_1 | None
+
+Line 704 - src/qnty/geometry/triangle.py:
+x_0 | x_1 | None
+
+======================================================================
+
+2 repetitions of complexity 9
+
+Line 110 - src/qnty/geometry/triangle.py:
+x_0 = x_0 - x_1
+
+Line 429 - src/qnty/geometry/triangle.py:
+x_0 = x_0 - x_1
+
+======================================================================
+
+2 repetitions of complexity 9
+
+Line 221 - src/qnty/geometry/triangle.py:
+x_0: str | None = None
+
+Line 266 - src/qnty/geometry/triangle.py:
+x_0: str | None = None
+
+======================================================================
+
+2 repetitions of complexity 9
+
+Line 335 - src/qnty/geometry/triangle.py:
+setattr(x_0, x_1, x_2)
+
+Line 457 - src/qnty/geometry/triangle.py:
+setattr(x_0, x_1, x_2)
+
+======================================================================
+
+2 repetitions of complexity 9
+
+Line 660 - src/qnty/geometry/triangle.py:
+x_0(x_0 - x_1)
+
+Line 689 - src/qnty/geometry/triangle.py:
+x_0(x_0 - x_1)
+
+======================================================================
+
+5 repetitions of complexity 8
+
+Line 592 - src/qnty/geometry/triangle.py:
+if x_0 is None:
+    return None
+
+Line 628 - src/qnty/geometry/triangle.py:
+if x_0 is None:
+    return None
+
+Line 644 - src/qnty/geometry/triangle.py:
+if x_0 is None:
+    return None
+
+Line 649 - src/qnty/geometry/triangle.py:
+if x_0 is None:
+    return None
+
+Line 654 - src/qnty/geometry/triangle.py:
+if x_0 is None:
+    return None
+
+======================================================================
+
+4 repetitions of complexity 8
+
+Line 86 - src/qnty/geometry/triangle.py:
+(x_0 - x_1).magnitude
+
+Line 88 - src/qnty/geometry/triangle.py:
+(x_0 - x_1).magnitude
+
+Line 109 - src/qnty/geometry/triangle.py:
+(x_0 - x_1).magnitude
+
+Line 428 - src/qnty/geometry/triangle.py:
+(x_0 - x_1).magnitude
+
+======================================================================
+
+3 repetitions of complexity 8
+
+Line 56 - src/qnty/geometry/triangle.py:
+(x_0, x_0, x_0)
+
+Line 460 - src/qnty/geometry/triangle.py:
+(x_0, x_0, x_0)
+
+Line 465 - src/qnty/geometry/triangle.py:
+(x_0, x_0, x_0)
+
+======================================================================
+
+3 repetitions of complexity 8
+
+Line 83 - src/qnty/geometry/triangle.py:
+(x_0, x_1, x_2)
+
+Line 107 - src/qnty/geometry/triangle.py:
+(x_0, x_1, x_2)
+
+Line 517 - src/qnty/geometry/triangle.py:
+(x_0, x_1, x_2)
+
+======================================================================
+
+3 repetitions of complexity 8
+
+Line 412 - src/qnty/geometry/triangle.py:
+len(x_0) != 2
+
+Line 634 - src/qnty/geometry/triangle.py:
+len(x_0) != 2
+
+Line 871 - src/qnty/geometry/triangle.py:
+len(x_0) != 2
+
+======================================================================
+
+2 repetitions of complexity 8
+
+Line 129 - src/qnty/geometry/triangle.py:
+x_0.append(x_1)
+
+Line 866 - src/qnty/geometry/triangle.py:
+x_0.append(x_1)
+
+======================================================================
+
+2 repetitions of complexity 8
+
+Line 242 - src/qnty/geometry/triangle.py:
+x_0 == x_0.start
+
+Line 684 - src/qnty/geometry/triangle.py:
+x_0 == x_0.start
+
+======================================================================
+
+2 repetitions of complexity 8
+
+Line 244 - src/qnty/geometry/triangle.py:
+x_0 == x_0.end
+
+Line 687 - src/qnty/geometry/triangle.py:
+x_0 == x_0.end
+
+======================================================================
+
+2 repetitions of complexity 8
+
+Line 246 - src/qnty/geometry/triangle.py:
+(x_0, x_1, x_0)
+
+Line 625 - src/qnty/geometry/triangle.py:
+(x_0, x_1, x_0)
+
+======================================================================
+
+2 repetitions of complexity 8
+
+Line 378 - src/qnty/geometry/triangle.py:
+x_0 = x_0(x_1)
+
+Line 591 - src/qnty/geometry/triangle.py:
+x_0 = x_0(x_1)
+
+======================================================================
+
+13 repetitions of complexity 7
+
+Line 158 - src/qnty/geometry/triangle.py:
+getattr(x_0, x_1)
+
+Line 159 - src/qnty/geometry/triangle.py:
+getattr(x_0, x_1)
+
+Line 160 - src/qnty/geometry/triangle.py:
+getattr(x_0, x_1)
+
+Line 450 - src/qnty/geometry/triangle.py:
+getattr(x_0, x_1)
+
+Line 518 - src/qnty/geometry/triangle.py:
+getattr(x_0, x_1)
+
+Line 519 - src/qnty/geometry/triangle.py:
+getattr(x_0, x_1)
+
+Line 520 - src/qnty/geometry/triangle.py:
+getattr(x_0, x_1)
+
+Line 597 - src/qnty/geometry/triangle.py:
+getattr(x_0, x_1)
+
+Line 598 - src/qnty/geometry/triangle.py:
+getattr(x_0, x_1)
+
+Line 599 - src/qnty/geometry/triangle.py:
+getattr(x_0, x_1)
+
+Line 600 - src/qnty/geometry/triangle.py:
+getattr(x_0, x_1)
+
+Line 601 - src/qnty/geometry/triangle.py:
+getattr(x_0, x_1)
+
+Line 602 - src/qnty/geometry/triangle.py:
+getattr(x_0, x_1)
+
+======================================================================
+
+3 repetitions of complexity 7
+
+Line 367 - src/qnty/geometry/triangle.py:
+isinstance(x_0, x_1)
+
+Line 376 - src/qnty/geometry/triangle.py:
+isinstance(x_0, x_1)
+
+Line 807 - src/qnty/geometry/triangle.py:
+isinstance(x_0, x_1)
+
+======================================================================
+
+3 repetitions of complexity 7
+
+Line 410 - src/qnty/geometry/triangle.py:
+x_0(x_1, x_2)
+
+Line 632 - src/qnty/geometry/triangle.py:
+x_0(x_1, x_2)
+
+Line 851 - src/qnty/geometry/triangle.py:
+x_0(x_1, x_2)
+
+======================================================================
+
+2 repetitions of complexity 7
+
+Line 129 - src/qnty/geometry/triangle.py:
+x_0.append(x_1)
+
+Line 866 - src/qnty/geometry/triangle.py:
+x_0.append(x_1)
+
+======================================================================
+
+14 repetitions of complexity 6
+
+Line 219 - src/qnty/geometry/triangle.py:
+x_0 | x_1
+
+Line 298 - src/qnty/geometry/triangle.py:
+x_0 | x_1
+
+Line 299 - src/qnty/geometry/triangle.py:
+x_0 | x_1
+
+Line 300 - src/qnty/geometry/triangle.py:
+x_0 | x_1
+
+Line 338 - src/qnty/geometry/triangle.py:
+x_0 | x_1
+
+Line 368 - src/qnty/geometry/triangle.py:
+x_0 | x_1
+
+Line 704 - src/qnty/geometry/triangle.py:
+x_0 | x_1
+
+Line 750 - src/qnty/geometry/triangle.py:
+x_0 | x_1
+
+Line 787 - src/qnty/geometry/triangle.py:
+x_0 | x_1
+
+Line 788 - src/qnty/geometry/triangle.py:
+x_0 | x_1
+
+Line 789 - src/qnty/geometry/triangle.py:
+x_0 | x_1
+
+Line 792 - src/qnty/geometry/triangle.py:
+x_0 | x_1
+
+Line 818 - src/qnty/geometry/triangle.py:
+x_0 | x_1
+
+Line 850 - src/qnty/geometry/triangle.py:
+x_0 | x_1
+
+======================================================================
+
+10 repetitions of complexity 6
+
+Line 86 - src/qnty/geometry/triangle.py:
+x_0 - x_1
+
+Line 87 - src/qnty/geometry/triangle.py:
+x_0 - x_1
+
+Line 88 - src/qnty/geometry/triangle.py:
+x_0 - x_1
+
+Line 109 - src/qnty/geometry/triangle.py:
+x_0 - x_1
+
+Line 110 - src/qnty/geometry/triangle.py:
+x_0 - x_1
+
+Line 425 - src/qnty/geometry/triangle.py:
+x_0 - x_1
+
+Line 428 - src/qnty/geometry/triangle.py:
+x_0 - x_1
+
+Line 429 - src/qnty/geometry/triangle.py:
+x_0 - x_1
+
+Line 660 - src/qnty/geometry/triangle.py:
+x_0 - x_1
+
+Line 689 - src/qnty/geometry/triangle.py:
+x_0 - x_1
+
+======================================================================
+
+6 repetitions of complexity 6
+
+Line 169 - src/qnty/geometry/triangle.py:
+x_0 = x_1()
+
+Line 170 - src/qnty/geometry/triangle.py:
+x_0 = x_1()
+
+Line 171 - src/qnty/geometry/triangle.py:
+x_0 = x_1()
+
+Line 172 - src/qnty/geometry/triangle.py:
+x_0 = x_1()
+
+Line 173 - src/qnty/geometry/triangle.py:
+x_0 = x_1()
+
+Line 174 - src/qnty/geometry/triangle.py:
+x_0 = x_1()
+
+======================================================================
+
+4 repetitions of complexity 6
+
+Line 333 - src/qnty/geometry/triangle.py:
+(x_0, x_1)
+
+Line 353 - src/qnty/geometry/triangle.py:
+(x_0, x_1)
+
+Line 443 - src/qnty/geometry/triangle.py:
+(x_0, x_1)
+
+Line 849 - src/qnty/geometry/triangle.py:
+(x_0, x_1)
+
+======================================================================
+
+3 repetitions of complexity 6
+
+Line 115 - src/qnty/geometry/triangle.py:
+list[x_0]
+
+Line 848 - src/qnty/geometry/triangle.py:
+list[x_0]
+
+Line 858 - src/qnty/geometry/triangle.py:
+list[x_0]
+
+======================================================================
+
+2 repetitions of complexity 6
+
+Line 89 - src/qnty/geometry/triangle.py:
+x_0 + x_1
+
+Line 659 - src/qnty/geometry/triangle.py:
+x_0 + x_1
+
+======================================================================
+
+2 repetitions of complexity 6
+
+Line 248 - src/qnty/geometry/triangle.py:
+return x_0(x_1)
+
+Line 433 - src/qnty/geometry/triangle.py:
+return x_0(x_1)
+
+======================================================================
+
+2 repetitions of complexity 6
+
+Line 695 - src/qnty/geometry/triangle.py:
+x_0.angle_C.angle
+
+Line 695 - src/qnty/geometry/triangle.py:
+x_0.angle_C.angle
+
+======================================================================
+
+2 repetitions of complexity 6
+
+Line 854 - src/qnty/geometry/triangle.py:
+{len(x_0)}
+
+Line 872 - src/qnty/geometry/triangle.py:
+{len(x_0)}
+
+======================================================================
+
+10 repetitions of complexity 5
+
+Line 64 - src/qnty/geometry/triangle.py:
+x_0 is None
+
+Line 355 - src/qnty/geometry/triangle.py:
+x_0 is None
+
+Line 419 - src/qnty/geometry/triangle.py:
+x_0 is None
+
+Line 419 - src/qnty/geometry/triangle.py:
+x_0 is None
+
+Line 592 - src/qnty/geometry/triangle.py:
+x_0 is None
+
+Line 628 - src/qnty/geometry/triangle.py:
+x_0 is None
+
+Line 644 - src/qnty/geometry/triangle.py:
+x_0 is None
+
+Line 649 - src/qnty/geometry/triangle.py:
+x_0 is None
+
+Line 654 - src/qnty/geometry/triangle.py:
+x_0 is None
+
+Line 868 - src/qnty/geometry/triangle.py:
+x_0 is None
+
+======================================================================
+
+10 repetitions of complexity 5
+
+Line 222 - src/qnty/geometry/triangle.py:
+x_0 | None
+
+Line 223 - src/qnty/geometry/triangle.py:
+x_0 | None
+
+Line 224 - src/qnty/geometry/triangle.py:
+x_0 | None
+
+Line 226 - src/qnty/geometry/triangle.py:
+x_0 | None
+
+Line 264 - src/qnty/geometry/triangle.py:
+x_0 | None
+
+Line 267 - src/qnty/geometry/triangle.py:
+x_0 | None
+
+Line 375 - src/qnty/geometry/triangle.py:
+x_0 | None
+
+Line 391 - src/qnty/geometry/triangle.py:
+x_0 | None
+
+Line 605 - src/qnty/geometry/triangle.py:
+x_0 | None
+
+Line 857 - src/qnty/geometry/triangle.py:
+x_0 | None
+
+======================================================================
+
+6 repetitions of complexity 5
+
+Line 248 - src/qnty/geometry/triangle.py:
+x_0(x_1)
+
+Line 378 - src/qnty/geometry/triangle.py:
+x_0(x_1)
+
+Line 432 - src/qnty/geometry/triangle.py:
+x_0(x_1)
+
+Line 433 - src/qnty/geometry/triangle.py:
+x_0(x_1)
+
+Line 557 - src/qnty/geometry/triangle.py:
+x_0(x_1)
+
+Line 591 - src/qnty/geometry/triangle.py:
+x_0(x_1)
+
+======================================================================
+
+6 repetitions of complexity 5
+
+Line 303 - src/qnty/geometry/triangle.py:
+x_0(init=False)
+
+Line 304 - src/qnty/geometry/triangle.py:
+x_0(init=False)
+
+Line 305 - src/qnty/geometry/triangle.py:
+x_0(init=False)
+
+Line 308 - src/qnty/geometry/triangle.py:
+x_0(init=False)
+
+Line 309 - src/qnty/geometry/triangle.py:
+x_0(init=False)
+
+Line 310 - src/qnty/geometry/triangle.py:
+x_0(init=False)
+
+======================================================================
+
+6 repetitions of complexity 5
+
+Line 412 - src/qnty/geometry/triangle.py:
+len(x_0)
+
+Line 634 - src/qnty/geometry/triangle.py:
+len(x_0)
+
+Line 853 - src/qnty/geometry/triangle.py:
+len(x_0)
+
+Line 854 - src/qnty/geometry/triangle.py:
+len(x_0)
+
+Line 871 - src/qnty/geometry/triangle.py:
+len(x_0)
+
+Line 872 - src/qnty/geometry/triangle.py:
+len(x_0)
+
+======================================================================
+
+5 repetitions of complexity 5
+
+Line 220 - src/qnty/geometry/triangle.py:
+x_0: bool
+
+Line 265 - src/qnty/geometry/triangle.py:
+x_0: bool
+
+Line 751 - src/qnty/geometry/triangle.py:
+x_0: bool
+
+Line 752 - src/qnty/geometry/triangle.py:
+x_0: bool
+
+Line 753 - src/qnty/geometry/triangle.py:
+x_0: bool
+
+======================================================================
+
+4 repetitions of complexity 5
+
+Line 641 - src/qnty/geometry/triangle.py:
+x_0 = x_1
+
+Line 679 - src/qnty/geometry/triangle.py:
+x_0 = x_1
+
+Line 681 - src/qnty/geometry/triangle.py:
+x_0 = x_1
+
+Line 864 - src/qnty/geometry/triangle.py:
+x_0 = x_1
+
+======================================================================
+
+3 repetitions of complexity 5
+
+Line 447 - src/qnty/geometry/triangle.py:
+x_0 is not None
+
+Line 453 - src/qnty/geometry/triangle.py:
+x_0 is not None
+
+Line 862 - src/qnty/geometry/triangle.py:
+x_0 is not None
+
+======================================================================
+
+3 repetitions of complexity 5
+
+Line 556 - src/qnty/geometry/triangle.py:
+x_0 >= 1
+
+Line 563 - src/qnty/geometry/triangle.py:
+x_0 >= 1
+
+Line 572 - src/qnty/geometry/triangle.py:
+x_0 >= 1
+
+======================================================================
+
+3 repetitions of complexity 5
+
+Line 781 - src/qnty/geometry/triangle.py:
+x_0: x_1
+
+Line 782 - src/qnty/geometry/triangle.py:
+x_0: x_1
+
+Line 783 - src/qnty/geometry/triangle.py:
+x_0: x_1
+
+======================================================================
+
+2 repetitions of complexity 5
+
+Line 221 - src/qnty/geometry/triangle.py:
+str | None
+
+Line 266 - src/qnty/geometry/triangle.py:
+str | None
+
+======================================================================
+
+2 repetitions of complexity 5
+
+Line 0 - src/qnty/geometry/triangle.py:
+self, vertex: x_0
+
+Line 0 - src/qnty/geometry/triangle.py:
+self, vertex: x_0
+
+======================================================================
+
+2 repetitions of complexity 5
+
+Line 416 - src/qnty/geometry/triangle.py:
+x_0[0]
+
+Line 885 - src/qnty/geometry/triangle.py:
+x_0[0]
+
+======================================================================
+
+2 repetitions of complexity 5
+
+Line 417 - src/qnty/geometry/triangle.py:
+x_0[1]
+
+Line 886 - src/qnty/geometry/triangle.py:
+x_0[1]
+
+======================================================================
+
+2 repetitions of complexity 5
+
+Line 443 - src/qnty/geometry/triangle.py:
+x_0.items()
+
+Line 849 - src/qnty/geometry/triangle.py:
+x_0.items()
+
+======================================================================
+
+2 repetitions of complexity 5
+
+Line 556 - src/qnty/geometry/triangle.py:
+x_0 == 2
+
+Line 567 - src/qnty/geometry/triangle.py:
+x_0 == 2
+
+======================================================================
+
+2 repetitions of complexity 5
+
+Line 560 - src/qnty/geometry/triangle.py:
+return x_0.SSA
+
+Line 569 - src/qnty/geometry/triangle.py:
+return x_0.SSA
+
+======================================================================
+
+2 repetitions of complexity 5
+
+Line 567 - src/qnty/geometry/triangle.py:
+x_0 == 1
+
+Line 572 - src/qnty/geometry/triangle.py:
+x_0 == 1
+
+======================================================================
+
+2 repetitions of complexity 5
+
+Line 573 - src/qnty/geometry/triangle.py:
+return x_0.UNKNOWN
+
+Line 575 - src/qnty/geometry/triangle.py:
+return x_0.UNKNOWN
+
+======================================================================
+
+8 repetitions of complexity 4
+
+Line 162 - src/qnty/geometry/triangle.py:
+x_0.is_known
+
+Line 162 - src/qnty/geometry/triangle.py:
+x_0.is_known
+
+Line 162 - src/qnty/geometry/triangle.py:
+x_0.is_known
+
+Line 472 - src/qnty/geometry/triangle.py:
+x_0.is_known
+
+Line 477 - src/qnty/geometry/triangle.py:
+x_0.is_known
+
+Line 522 - src/qnty/geometry/triangle.py:
+x_0.is_known
+
+Line 522 - src/qnty/geometry/triangle.py:
+x_0.is_known
+
+Line 522 - src/qnty/geometry/triangle.py:
+x_0.is_known
+
+======================================================================
+
+4 repetitions of complexity 4
+
+Line 51 - src/qnty/geometry/triangle.py:
+x_0 = None
+
+Line 52 - src/qnty/geometry/triangle.py:
+x_0 = None
+
+Line 53 - src/qnty/geometry/triangle.py:
+x_0 = None
+
+Line 638 - src/qnty/geometry/triangle.py:
+x_0 = None
+
+======================================================================
+
+4 repetitions of complexity 4
+
+Line 127 - src/qnty/geometry/triangle.py:
+x_0.side_b
+
+Line 462 - src/qnty/geometry/triangle.py:
+x_0.side_b
+
+Line 490 - src/qnty/geometry/triangle.py:
+x_0.side_b
+
+Line 694 - src/qnty/geometry/triangle.py:
+x_0.side_b
+
+======================================================================
+
+4 repetitions of complexity 4
+
+Line 240 - src/qnty/geometry/triangle.py:
+x_0.direction
+
+Line 243 - src/qnty/geometry/triangle.py:
+x_0.direction
+
+Line 247 - src/qnty/geometry/triangle.py:
+x_0.direction
+
+Line 640 - src/qnty/geometry/triangle.py:
+x_0.direction
+
+======================================================================
+
+4 repetitions of complexity 4
+
+Line 330 - src/qnty/geometry/triangle.py:
+x_0.vec_r
+
+Line 494 - src/qnty/geometry/triangle.py:
+x_0.vec_r
+
+Line 494 - src/qnty/geometry/triangle.py:
+x_0.vec_r
+
+Line 495 - src/qnty/geometry/triangle.py:
+x_0.vec_r
+
+======================================================================
+
+4 repetitions of complexity 4
+
+Line 367 - src/qnty/geometry/triangle.py:
+x_0.magnitude
+
+Line 371 - src/qnty/geometry/triangle.py:
+x_0.magnitude
+
+Line 808 - src/qnty/geometry/triangle.py:
+x_0.magnitude
+
+Line 811 - src/qnty/geometry/triangle.py:
+x_0.magnitude
+
+======================================================================
+
+4 repetitions of complexity 4
+
+Line 376 - src/qnty/geometry/triangle.py:
+x_0.angle
+
+Line 653 - src/qnty/geometry/triangle.py:
+x_0.angle
+
+Line 809 - src/qnty/geometry/triangle.py:
+x_0.angle
+
+Line 812 - src/qnty/geometry/triangle.py:
+x_0.angle
+
+======================================================================
+
+4 repetitions of complexity 4
+
+Line 385 - src/qnty/geometry/triangle.py:
+x_0.name
+
+Line 454 - src/qnty/geometry/triangle.py:
+x_0.name
+
+Line 494 - src/qnty/geometry/triangle.py:
+x_0.name
+
+Line 764 - src/qnty/geometry/triangle.py:
+x_0.name
+
+======================================================================
+
+3 repetitions of complexity 4
+
+Line 127 - src/qnty/geometry/triangle.py:
+x_0.side_a
+
+Line 462 - src/qnty/geometry/triangle.py:
+x_0.side_a
+
+Line 694 - src/qnty/geometry/triangle.py:
+x_0.side_a
+
+======================================================================
+
+3 repetitions of complexity 4
+
+Line 127 - src/qnty/geometry/triangle.py:
+x_0.side_c
+
+Line 462 - src/qnty/geometry/triangle.py:
+x_0.side_c
+
+Line 694 - src/qnty/geometry/triangle.py:
+x_0.side_c
+
+======================================================================
+
+3 repetitions of complexity 4
+
+Line 128 - src/qnty/geometry/triangle.py:
+x_0.start
+
+Line 242 - src/qnty/geometry/triangle.py:
+x_0.start
+
+Line 684 - src/qnty/geometry/triangle.py:
+x_0.start
+
+======================================================================
+
+3 repetitions of complexity 4
+
+Line 128 - src/qnty/geometry/triangle.py:
+x_0.end
+
+Line 244 - src/qnty/geometry/triangle.py:
+x_0.end
+
+Line 687 - src/qnty/geometry/triangle.py:
+x_0.end
+
+======================================================================
+
+3 repetitions of complexity 4
+
+Line 129 - src/qnty/geometry/triangle.py:
+x_0.append
+
+Line 851 - src/qnty/geometry/triangle.py:
+x_0.append
+
+Line 866 - src/qnty/geometry/triangle.py:
+x_0.append
+
+======================================================================
+
+3 repetitions of complexity 4
+
+Line 467 - src/qnty/geometry/triangle.py:
+x_0.angle_C
+
+Line 695 - src/qnty/geometry/triangle.py:
+x_0.angle_C
+
+Line 695 - src/qnty/geometry/triangle.py:
+x_0.angle_C
+
+======================================================================
+
+3 repetitions of complexity 4
+
+Line 723 - src/qnty/geometry/triangle.py:
+x_0.B
+
+Line 725 - src/qnty/geometry/triangle.py:
+x_0.B
+
+Line 730 - src/qnty/geometry/triangle.py:
+x_0.B
+
+======================================================================
+
+3 repetitions of complexity 4
+
+Line 723 - src/qnty/geometry/triangle.py:
+x_0.C
+
+Line 724 - src/qnty/geometry/triangle.py:
+x_0.C
+
+Line 731 - src/qnty/geometry/triangle.py:
+x_0.C
+
+======================================================================
+
+3 repetitions of complexity 4
+
+Line 724 - src/qnty/geometry/triangle.py:
+x_0.A
+
+Line 725 - src/qnty/geometry/triangle.py:
+x_0.A
+
+Line 729 - src/qnty/geometry/triangle.py:
+x_0.A
+
+======================================================================
+
+3 repetitions of complexity 4
+
+Line 758 - src/qnty/geometry/triangle.py:
+x_0.angle_known
+
+Line 762 - src/qnty/geometry/triangle.py:
+x_0.angle_known
+
+Line 876 - src/qnty/geometry/triangle.py:
+x_0.angle_known
+
+======================================================================
+
+3 repetitions of complexity 4
+
+Line 893 - src/qnty/geometry/triangle.py:
+x_0.vector
+
+Line 894 - src/qnty/geometry/triangle.py:
+x_0.vector
+
+Line 895 - src/qnty/geometry/triangle.py:
+x_0.vector
+
+======================================================================
+
+2 repetitions of complexity 4
+
+Line 0 - src/qnty/geometry/triangle.py:
+angle: x_0
+
+Line 0 - src/qnty/geometry/triangle.py:
+angle: x_0
+
+======================================================================
+
+2 repetitions of complexity 4
+
+Line 328 - src/qnty/geometry/triangle.py:
+x_0.vec_1
+
+Line 448 - src/qnty/geometry/triangle.py:
+x_0.vec_1
+
+======================================================================
+
+2 repetitions of complexity 4
+
+Line 329 - src/qnty/geometry/triangle.py:
+x_0.vec_2
+
+Line 448 - src/qnty/geometry/triangle.py:
+x_0.vec_2
+
+======================================================================
+
+2 repetitions of complexity 4
+
+Line 372 - src/qnty/geometry/triangle.py:
+x_0.value
+
+Line 372 - src/qnty/geometry/triangle.py:
+x_0.value
+
+======================================================================
+
+2 repetitions of complexity 4
+
+Line 443 - src/qnty/geometry/triangle.py:
+x_0.items
+
+Line 849 - src/qnty/geometry/triangle.py:
+x_0.items
+
+======================================================================
+
+2 repetitions of complexity 4
+
+Line 560 - src/qnty/geometry/triangle.py:
+x_0.SSA
+
+Line 569 - src/qnty/geometry/triangle.py:
+x_0.SSA
+
+======================================================================
+
+2 repetitions of complexity 4
+
+Line 573 - src/qnty/geometry/triangle.py:
+x_0.UNKNOWN
+
+Line 575 - src/qnty/geometry/triangle.py:
+x_0.UNKNOWN
+
+======================================================================
+
+2 repetitions of complexity 4
+
+Line 722 - src/qnty/geometry/triangle.py:
+x_0.update
+
+Line 728 - src/qnty/geometry/triangle.py:
+x_0.update
+
+======================================================================
+
+2 repetitions of complexity 4
+
+Line 758 - src/qnty/geometry/triangle.py:
+x_0.magnitude_known
+
+Line 761 - src/qnty/geometry/triangle.py:
+x_0.magnitude_known
+
+======================================================================
+
+2 repetitions of complexity 4
+
+Line 763 - src/qnty/geometry/triangle.py:
+x_0.is_resultant
+
+Line 861 - src/qnty/geometry/triangle.py:
+x_0.is_resultant
+
+======================================================================
+
+Found 93 repeated patterns

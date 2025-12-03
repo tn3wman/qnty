@@ -25,7 +25,7 @@
 
 ## 3. Equations Used
 
-1. $|\vec{F_R}|^2 = |\vec{F_1}|^2 + |\vec{F_2}|^2 - 2 \cdot |\vec{F_1}| \cdot |\vec{F_2}| \cdot \cos(\angle(\vec{F_1}, \vec{F_2}))$
+1. $|\vec{F_R}|^2 = |\vec{F_2}|^2 + |\vec{F_1}|^2 - 2 \cdot |\vec{F_2}| \cdot |\vec{F_1}| \cdot \cos(\angle(\vec{F_2}, \vec{F_1}))$
 
 2. $\frac{\sin(\angle(\vec{F_1}, \vec{F_R}))}{|\vec{F_2}|} = \frac{\sin(\angle(\vec{F_1}, \vec{F_2}))}{|\vec{F_R}|}$
 
@@ -35,7 +35,7 @@
 
 $$
 \begin{aligned}
-|\vec{F_R}| &= \sqrt{(450.0)^2 + (700.0)^2 - 2(450.0)(700.0)\cos(45^{\circ})} \\
+|\vec{F_R}| &= \sqrt{(700.0)^2 + (450.0)^2 - 2(700.0)(450.0)\cos(45^{\circ})} \\
 &= 497.0\ \text{N} \\
 \end{aligned}
 $$
