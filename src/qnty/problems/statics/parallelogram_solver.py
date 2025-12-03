@@ -27,7 +27,7 @@ from typing import TYPE_CHECKING, Any
 
 from ...core import Q
 from ...equations import AngleBetween, AngleSum, LawOfCosines, LawOfSines
-from ...geometry.triangle import Triangle, TriangleCase, from_vectors
+from ...geometry.triangle import Triangle, TriangleCase, from_vectors_dynamic
 from ...linalg.vector2 import Vector, VectorUnknown
 
 if TYPE_CHECKING:
@@ -114,47 +114,109 @@ def solve_sas(state: SolvingState) -> None:
         triangle.side_c.magnitude = mag_r
         triangle.side_c.is_known = True
 
-    # Step 2: Use Law of Sines to find angle_ar (angle from vec_a to resultant)
-    if state.angle_ar is None:
-        mag_b = triangle.side_b.magnitude
-        mag_r = triangle.side_c.magnitude
+    # Step 2: Use Law of Sines to find an interior angle
+    # Which angle we need depends on the geometric configuration
+    v1_is_resultant = getattr(triangle.vec_1, "_is_resultant", False)
+    v2_is_resultant = getattr(triangle.vec_2, "_is_resultant", False)
 
-        if mag_b is ... or mag_r is ...:
-            raise ValueError("Cannot compute angle_ar: sides not known")
+    if not v1_is_resultant and not v2_is_resultant:
+        # Case 1: side_c is the resultant (Problem 2-1 type)
+        # We need angle_B (opposite side_b), which is at the vertex shared by vec_1 and side_c
+        # This is the angle from vec_1 to the resultant
+        if state.angle_br is None:
+            mag_b = triangle.side_b.magnitude  # Side opposite angle_B
+            mag_r = triangle.side_c.magnitude  # The resultant we just computed
 
-        # Determine if we need obtuse angle
-        use_obtuse = mag_b > mag_r
+            if mag_b is ... or mag_r is ...:
+                raise ValueError("Cannot compute angle_B: sides not known")
 
-        los = LawOfSines(
-            target=f"\\angle(\\vec{{{triangle.vec_1.name}}}, \\vec{{{triangle.side_c.name}}}) using Eq 2",
-            opposite_side=mag_b,
-            known_angle=angle_ab,
-            known_side=mag_r,
-            use_obtuse=use_obtuse,
-        )
-        state.angle_ar, step = los.solve()
-        state.solving_steps.append(step)
-        state.equations_used.append(los.equation_for_list())
+            # Determine if we need obtuse angle
+            use_obtuse = mag_b > mag_r
 
-        # Update triangle angle_A
-        triangle.angle_A.angle = state.angle_ar
-        triangle.angle_A.is_known = True
+            los = LawOfSines(
+                target=f"\\angle(\\vec{{{triangle.vec_1.name}}}, \\vec{{{triangle.side_c.name}}}) using Eq 2",
+                opposite_side=mag_b,  # side_b is opposite angle_B
+                known_angle=angle_ab,  # angle_C
+                known_side=mag_r,  # side_c
+                use_obtuse=use_obtuse,
+            )
+            state.angle_br, step = los.solve()
+            state.solving_steps.append(step)
+            state.equations_used.append(los.equation_for_list())
 
-    # Step 3: Compute resultant direction from vec_1 direction + angle_ar
-    if state.dir_r is None and state.angle_ar is not None:
-        # Get vec_1's absolute direction
+            # Update triangle angle_B
+            triangle.angle_B.angle = state.angle_br
+            triangle.angle_B.is_known = True
+    else:
+        # Case 2: side_c is a component (Problem 2-2 type)
+        # We need angle_A (opposite side_a), which is at the vertex shared by resultant and side_c
+        # This is the angle from the resultant to the unknown component
+        if state.angle_ar is None:
+            mag_a = triangle.side_a.magnitude  # Side opposite angle_A
+            mag_r = triangle.side_c.magnitude  # The unknown side we just computed
+
+            if mag_a is ... or mag_r is ...:
+                raise ValueError("Cannot compute angle_A: sides not known")
+
+            # Determine if we need obtuse angle
+            use_obtuse = mag_a > mag_r
+
+            los = LawOfSines(
+                target=f"\\angle(\\vec{{{triangle.side_c.name}}}, resultant) using Eq 2",
+                opposite_side=mag_a,  # side_a is opposite angle_A
+                known_angle=angle_ab,  # angle_C
+                known_side=mag_r,  # side_c
+                use_obtuse=use_obtuse,
+            )
+            state.angle_ar, step = los.solve()
+            state.solving_steps.append(step)
+            state.equations_used.append(los.equation_for_list())
+
+            # Update triangle angle_A
+            triangle.angle_A.angle = state.angle_ar
+            triangle.angle_A.is_known = True
+
+    # Step 3: Compute direction of the unknown side (side_c)
+    if state.dir_r is None:
         from ...equations.angle_finder import get_absolute_angle
-        dir_a = get_absolute_angle(triangle.vec_1)
-        dir_a.name = f"\\angle(\\vec{{x}}, \\vec{{{triangle.vec_1.name}}})"
 
-        angle_sum = AngleSum(
-            target=f"\\angle(\\vec{{x}}, \\vec{{{triangle.side_c.name}}}) with respect to +x",
-            base_angle=dir_a,
-            offset_angle=state.angle_ar,
-            result_ref="+x",
-        )
-        state.dir_r, step = angle_sum.solve()
-        state.solving_steps.append(step)
+        if not v1_is_resultant and not v2_is_resultant:
+            # Case 1: side_c is the resultant
+            # dir(resultant) = dir(vec_1) + angle_B
+            dir_ref = get_absolute_angle(triangle.vec_1)
+            dir_ref.name = f"\\angle(\\vec{{x}}, \\vec{{{triangle.vec_1.name}}})"
+
+            angle_sum = AngleSum(
+                target=f"\\angle(\\vec{{x}}, \\vec{{{triangle.side_c.name}}}) with respect to +x",
+                base_angle=dir_ref,
+                offset_angle=state.angle_br,
+                result_ref="+x",
+            )
+            state.dir_r, step = angle_sum.solve()
+            state.solving_steps.append(step)
+        else:
+            # Case 2: side_c is a component
+            # Find the resultant vector
+            if v2_is_resultant:
+                resultant_vec = triangle.vec_2
+            else:
+                resultant_vec = triangle.vec_1
+
+            dir_resultant = get_absolute_angle(resultant_vec)
+            dir_resultant.name = f"\\angle(\\vec{{x}}, \\vec{{{resultant_vec.name}}})"
+
+            # dir(component) = dir(resultant) - angle_A
+            neg_angle_ar = Q(0, "degree") - state.angle_ar
+            neg_angle_ar.name = f"-\\angle_A"
+
+            angle_sum = AngleSum(
+                target=f"\\angle(\\vec{{x}}, \\vec{{{triangle.side_c.name}}}) with respect to +x",
+                base_angle=dir_resultant,
+                offset_angle=neg_angle_ar,
+                result_ref="+x",
+            )
+            state.dir_r, step = angle_sum.solve()
+            state.solving_steps.append(step)
 
 
 def solve_sss(state: SolvingState) -> None:
@@ -266,7 +328,11 @@ class ParallelogramLawProblem:
                     wrt=attr.wrt,
                     coordinate_system=attr.coordinate_system,
                     name=attr.name or attr_name,
+                    _is_resultant=attr._is_resultant,
                 )
+                # Copy component vectors if present
+                if hasattr(attr, '_component_vectors'):
+                    vec_copy._component_vectors = attr._component_vectors  # type: ignore[attr-defined]
                 setattr(self, attr_name, vec_copy)
                 self.vectors[attr_name] = vec_copy
 
@@ -283,10 +349,11 @@ class ParallelogramLawProblem:
                     wrt=attr.wrt,
                     coordinate_system=attr.coordinate_system,
                     name=attr.name or attr_name,
+                    _is_resultant=attr._is_resultant,
                 )
                 # Copy component vectors if present
                 if hasattr(attr, '_component_vectors'):
-                    vec_copy._component_vectors = attr._component_vectors
+                    vec_copy._component_vectors = attr._component_vectors  # type: ignore[attr-defined]
                 setattr(self, attr_name, vec_copy)
                 self.vectors[attr_name] = vec_copy
 
@@ -342,28 +409,17 @@ class ParallelogramLawProblem:
                 if not self._original_vector_states.get(name, True)}
 
     def _build_triangle(self) -> Triangle:
-        """Build Triangle from the extracted vectors."""
-        components: list[Vector] = []
-        resultant: Vector | VectorUnknown | None = None
+        """
+        Build Triangle from the extracted vectors using dependency analysis.
 
-        for name, vec in self.vectors.items():
-            # Determine if this is a resultant based on type or naming convention
-            if isinstance(vec, VectorUnknown):
-                resultant = vec
-            elif name.endswith("_R") or name == "F_R":
-                resultant = vec
-            else:
-                components.append(vec)
-
-        if len(components) != 2:
-            raise ValueError(f"Expected 2 component vectors, got {len(components)}")
-        if resultant is None:
-            raise ValueError("No resultant vector found")
-
-        vec_1, vec_2 = components
-
-        # Build triangle using the geometry module
-        return from_vectors(vec_1, vec_2, resultant)
+        Uses from_vectors_dynamic to automatically determine which vectors
+        should form the computable interior angle based on which vectors
+        have known directions.
+        """
+        # Use the new dependency-based triangle builder
+        # It will analyze which vectors have known angles and assign them
+        # appropriately so that the interior angle can be computed
+        return from_vectors_dynamic(self.vectors)
 
     def solve(self, output_unit: str = "N") -> ParallelogramLawProblem:
         """

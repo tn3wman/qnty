@@ -13,10 +13,10 @@ from .base import SolutionStepBuilder, format_angle
 
 if TYPE_CHECKING:
     from ..core.quantity import Quantity
-    from ..linalg.vector2 import Vector
+    from ..linalg.vector2 import Vector, VectorUnknown
 
 
-def get_absolute_angle(vec: Vector) -> Quantity:
+def get_absolute_angle(vec: Vector | VectorUnknown) -> Quantity:
     """
     Get the absolute angle from the coordinate system's primary axis.
 

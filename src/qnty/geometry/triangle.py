@@ -17,12 +17,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import Enum, auto
-from typing import TYPE_CHECKING
-
 from ..core.quantity import Q, Quantity
-
-if TYPE_CHECKING:
-    from ..linalg.vector2 import Vector, VectorUnknown
+from ..linalg.vector2 import Vector, VectorUnknown
 
 
 class TriangleCase(Enum):
@@ -90,10 +86,10 @@ class Triangle:
     The interior angles sum to the straight angle of the coordinate system.
     """
 
-    # The original vectors
-    vec_1: Vector
-    vec_2: Vector
-    vec_r: Vector | None = None
+    # The original vectors (can be Vector or VectorUnknown)
+    vec_1: Vector | VectorUnknown
+    vec_2: Vector | VectorUnknown
+    vec_r: Vector | VectorUnknown | None = None
 
     # Sides of the triangle (magnitudes) - alphanumeric order
     side_a: TriangleSide = field(init=False)  # Vector 1 (F_1) magnitude
@@ -162,14 +158,20 @@ class Triangle:
         """
         Compute the interior angles of the triangle from vector directions.
 
-        The key insight: when vectors are placed tail-to-tip, the interior angle
-        at vertex C (where V1 tip meets V2 tail) is related to the directions
-        of V1 and V2 in their coordinate systems.
+        The triangle is formed by:
+        - vec_1 and vec_2: the two vectors with known directions
+        - vec_r: the third vector (opposite the computable angle)
 
-        With alphanumeric ordering:
-        - angle_A is opposite side_a (F_1) - unknown until solved
-        - angle_B is opposite side_b (F_2) - unknown until solved
-        - angle_C is opposite side_c (F_R) - computed from vector directions
+        The interior angle computation depends on the geometric relationship:
+
+        Case 1: Both vec_1 and vec_2 are component vectors (tail-to-tip)
+            - They meet at a junction where vec_1 ends and vec_2 starts
+            - Interior angle = 180° - |dir_diff|
+
+        Case 2: One is a component, one is the resultant (share a vertex)
+            - If both START at the same vertex: angle = |dir_diff|
+            - If both END at the same vertex: angle = |dir_diff|
+            - The interior angle is simply the absolute difference in directions
         """
         from ..equations.angle_finder import get_absolute_angle
 
@@ -177,25 +179,18 @@ class Triangle:
         abs_dir_v1 = get_absolute_angle(self.vec_1)
         abs_dir_v2 = get_absolute_angle(self.vec_2)
 
-        # Get the straight angle from the coordinate system
-        # This is the sum of the two axis angles (angle_between gives the separation)
-        coord_sys = self.vec_1.coordinate_system
-        straight_angle = coord_sys.axis1_angle + coord_sys.axis2_angle + coord_sys.angle_between
-
         # Direction difference (all Quantity arithmetic)
         dir_diff = abs_dir_v2 - abs_dir_v1
 
-        # Interior angle at C (where V1 tip meets V2 tail): straight_angle - |dir_diff|
-        # We need absolute value - check if negative by comparing to zero
+        # Make positive (absolute value)
         zero_angle = Q(0, "degree")
         if (dir_diff - zero_angle).value < 0:
-            dir_diff = zero_angle - dir_diff  # Make positive
+            dir_diff = zero_angle - dir_diff
 
         # Normalize to within one full rotation
         full_rotation = Q(360, "degree")
         half_rotation = Q(180, "degree")
 
-        # Keep subtracting full rotation until within range
         while (dir_diff - full_rotation).value > 0:
             dir_diff = dir_diff - full_rotation
 
@@ -203,8 +198,18 @@ class Triangle:
         if (dir_diff - half_rotation).value > 0:
             dir_diff = full_rotation - dir_diff
 
-        # Interior angle at C (opposite side_c which is the resultant)
-        angle_C = half_rotation - dir_diff
+        # Determine the geometric relationship
+        v1_is_resultant = getattr(self.vec_1, "_is_resultant", False)
+        v2_is_resultant = getattr(self.vec_2, "_is_resultant", False)
+
+        # Case 1: Both are components (tail-to-tip configuration)
+        # Interior angle at junction = 180 - dir_diff
+        if not v1_is_resultant and not v2_is_resultant:
+            angle_C = half_rotation - dir_diff
+        # Case 2: One is resultant, one is component (share a vertex)
+        # Interior angle = dir_diff (the direct angle between them)
+        else:
+            angle_C = dir_diff
         # Set a proper LaTeX name for the angle (used in equation display)
         angle_C.name = f"\\angle(\\vec{{{self.vec_1.name}}}, \\vec{{{self.vec_2.name}}})"
 
@@ -339,3 +344,185 @@ def from_vectors(
         Triangle with sides and angles computed from the vectors
     """
     return Triangle(vec_1=vec_1, vec_2=vec_2, vec_r=vec_r)
+
+
+# =============================================================================
+# Dependency-Based Triangle Builder
+# =============================================================================
+
+
+@dataclass
+class VectorAnalysis:
+    """
+    Analysis of a single vector's known/unknown status.
+
+    Used by the dependency-based triangle builder to determine which
+    vectors can form a computable interior angle.
+    """
+
+    name: str
+    vector: Vector | VectorUnknown
+    is_resultant: bool
+    magnitude_known: bool
+    angle_known: bool
+
+    @property
+    def is_fully_known(self) -> bool:
+        """Check if both magnitude and angle are known."""
+        return self.magnitude_known and self.angle_known
+
+    def __repr__(self) -> str:
+        mag = "M" if self.magnitude_known else "m"
+        ang = "A" if self.angle_known else "a"
+        role = "R" if self.is_resultant else "C"
+        return f"{self.name}[{role}:{mag}{ang}]"
+
+
+@dataclass
+class TriangleAssignment:
+    """
+    Assignment of vectors to triangle roles based on dependency analysis.
+
+    The key insight is that we assign vectors based on which interior angle
+    is computable. The side OPPOSITE that computable angle becomes side_c,
+    and the two vectors that form the angle become vec_1 and vec_2.
+
+    This ensures that Triangle._compute_interior_angles() will always have
+    vectors with known angles to work with.
+    """
+
+    # The vector analysis objects for each triangle role
+    side_a_analysis: VectorAnalysis  # Vector whose magnitude is side_a
+    side_b_analysis: VectorAnalysis  # Vector whose magnitude is side_b
+    side_c_analysis: VectorAnalysis  # Vector opposite the computable angle
+
+    # The actual vectors in order for Triangle constructor
+    # vec_1 and vec_2 are the vectors that form the computable angle
+    vec_1: Vector | VectorUnknown  # Forms angle_C with vec_2
+    vec_2: Vector | VectorUnknown  # Forms angle_C with vec_1
+    vec_r: Vector | VectorUnknown  # Opposite angle_C (the "unknown" side)
+
+
+def _analyze_vector(name: str, vec: Vector | VectorUnknown) -> VectorAnalysis:
+    """
+    Analyze a vector for known/unknown status.
+
+    Args:
+        name: Name of the vector
+        vec: The Vector or VectorUnknown to analyze
+
+    Returns:
+        VectorAnalysis with known/unknown status for magnitude and angle
+    """
+    from ..linalg.vector2 import VectorUnknown
+
+    is_resultant = getattr(vec, "_is_resultant", False)
+
+    if isinstance(vec, VectorUnknown):
+        mag_known = vec.magnitude is not ...
+        angle_known = vec.angle is not ...
+    else:
+        mag_known = vec.magnitude.value is not None
+        angle_known = vec.angle.value is not None
+
+    return VectorAnalysis(name, vec, is_resultant, mag_known, angle_known)
+
+
+def _find_computable_interior_angle(
+    analyses: list[VectorAnalysis],
+) -> tuple[VectorAnalysis, tuple[VectorAnalysis, VectorAnalysis]] | None:
+    """
+    Find which vector is opposite a computable interior angle.
+
+    In a triangle, an interior angle can only be computed if BOTH vectors
+    that form it have known directions (angles). This function finds such
+    a pair and returns the vector opposite the computable angle.
+
+    Args:
+        analyses: List of VectorAnalysis for all 3 vectors
+
+    Returns:
+        Tuple of (opposite_vector_analysis, (forming_vec_1, forming_vec_2))
+        or None if no interior angle is computable
+    """
+    for i, opposite in enumerate(analyses):
+        # The other two vectors form the angle opposite this one
+        others = [a for j, a in enumerate(analyses) if j != i]
+        if len(others) == 2 and others[0].angle_known and others[1].angle_known:
+            return opposite, (others[0], others[1])
+    return None
+
+
+def from_vectors_dynamic(
+    vectors: dict[str, Vector | VectorUnknown],
+) -> Triangle:
+    """
+    Create a Triangle using dependency analysis to determine vector assignments.
+
+    This factory function analyzes the known/unknown status of each vector's
+    magnitude and angle to determine the optimal assignment of vectors to
+    triangle roles. The key insight is:
+
+    1. An interior angle can only be computed if BOTH vectors forming it
+       have known directions (angles)
+    2. The side OPPOSITE that computable angle is what we typically solve for
+    3. By assigning vectors dynamically, we can handle any combination of
+       knowns/unknowns
+
+    Args:
+        vectors: Dictionary mapping vector names to Vector/VectorUnknown objects.
+                 Must contain exactly 3 vectors.
+
+    Returns:
+        Triangle with vectors assigned based on dependency analysis
+
+    Raises:
+        ValueError: If not exactly 3 vectors, or if no interior angle is computable
+
+    Example:
+        >>> # Problem where F_1 is unknown, F_2 and F_R are known
+        >>> vectors = {"F_1": vec_unknown, "F_2": vec_known, "F_R": resultant}
+        >>> triangle = from_vectors_dynamic(vectors)
+        >>> # Triangle will be built with F_2 and F_R forming angle_C,
+        >>> # and F_1 opposite (as side_c)
+    """
+    from ..linalg.vector2 import Vector, VectorUnknown
+
+    # Analyze all vectors
+    analyses: list[VectorAnalysis] = []
+    for name, vec in vectors.items():
+        if isinstance(vec, (Vector, VectorUnknown)):
+            analyses.append(_analyze_vector(name, vec))
+
+    if len(analyses) != 3:
+        raise ValueError(f"Expected 3 vectors, got {len(analyses)}")
+
+    # Find which interior angle is computable
+    result = _find_computable_interior_angle(analyses)
+    if result is None:
+        raise ValueError(
+            "Cannot compute any interior angle - need at least 2 vectors with known angles. "
+            f"Vectors: {analyses}"
+        )
+
+    opposite_vec, forming_vecs = result
+
+    # Build the triangle assignment:
+    # - vec_1 and vec_2 are the vectors that form the computable angle
+    # - vec_r (side_c) is the vector opposite the computable angle
+    assignment = TriangleAssignment(
+        side_a_analysis=forming_vecs[0],
+        side_b_analysis=forming_vecs[1],
+        side_c_analysis=opposite_vec,
+        vec_1=forming_vecs[0].vector,
+        vec_2=forming_vecs[1].vector,
+        vec_r=opposite_vec.vector,
+    )
+
+    # Create triangle with the assigned vectors
+    # vec_1 and vec_2 form angle_C, vec_r is opposite angle_C
+    return Triangle(
+        vec_1=assignment.vec_1,
+        vec_2=assignment.vec_2,
+        vec_r=assignment.vec_r,
+    )

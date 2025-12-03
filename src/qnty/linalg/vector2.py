@@ -46,6 +46,7 @@ class Vector:
         wrt: The axis the angle is measured from (e.g., "+x", "-y")
         coordinate_system: The coordinate system the vector is defined in
         name: Optional name for the vector
+        _is_resultant: Internal flag indicating if this is a resultant vector
     """
 
     magnitude: Quantity
@@ -53,6 +54,12 @@ class Vector:
     wrt: str = "+x"
     coordinate_system: CoordinateSystem = field(default_factory=Cartesian)
     name: str | None = None
+    _is_resultant: bool = field(default=False, repr=False)
+
+    @property
+    def is_resultant(self) -> bool:
+        """Check if this vector is a resultant of other vectors."""
+        return self._is_resultant
 
     def __repr__(self) -> str:
         name_str = f"'{self.name}' " if self.name else ""
@@ -109,6 +116,7 @@ class VectorUnknown:
         wrt: The axis the angle is measured from (e.g., "+x", "-y")
         coordinate_system: The coordinate system the vector is defined in
         name: Optional name for the vector
+        _is_resultant: Internal flag indicating if this is a resultant vector
     """
 
     magnitude: Quantity | EllipsisType
@@ -116,6 +124,12 @@ class VectorUnknown:
     wrt: str = "+x"
     coordinate_system: CoordinateSystem = field(default_factory=Cartesian)
     name: str | None = None
+    _is_resultant: bool = field(default=False, repr=False)
+
+    @property
+    def is_resultant(self) -> bool:
+        """Check if this vector is a resultant of other vectors."""
+        return self._is_resultant
 
     @property
     def has_unknown_magnitude(self) -> bool:
