@@ -39,9 +39,12 @@ class Quantity(Generic[D]):
 
     name: str
     dim: Dimension
+    # TODO: Change to si_value
     value: float | None = None
+    # TODO: Change to spec_unit
     preferred: Unit[D] | None = None
     _symbol: str | None = None
+    # TODO: Change to display_unit
     _output_unit: Unit[D] | None = None
 
     def __post_init__(self):
