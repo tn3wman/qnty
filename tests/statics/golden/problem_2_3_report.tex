@@ -17,7 +17,7 @@
 % Magnitude notation: \magn{F} produces |F| with fixed-height bars
 \newcommand{\magn}[1]{|#1|}
 
-\title{Engineering Calculation Report: Problem 2-1}
+\title{Engineering Calculation Report: Problem 2-3}
 \date{{{GENERATED_DATE}}}
 
 \begin{document}
@@ -30,8 +30,8 @@
 Vector & {$\magn{\vv{F}}$ (N)} & {$\theta$ (deg)} & Reference \\
 \midrule
 \endhead
-$\vv{F_1}$ & 450.0 & 60.0 & +x \\
-$\vv{F_2}$ & 700.0 & 15.0 & -x \\
+$\vv{F_1}$ & 250.0 & -30.0 & +y \\
+$\vv{F_2}$ & 375.0 & -45.0 & +x \\
 \bottomrule
 \end{longtable}
 
@@ -62,8 +62,8 @@ $\vv{F_R}$ & ? & ? & +x \\
 \begin{adjustwidth}{2em}{}
 \vspace{-0.8em}
 \begin{flalign*}
-\quad \magn{\vv{F_R}} &= \sqrt{(700.0\ \text{N})^2 + (450.0\ \text{N})^2 - 2(700.0\ \text{N})(450.0\ \text{N})\cos(45.0^{\circ})} && \\
-\quad &= 497.0\ \text{N} &&
+\quad \magn{\vv{F_R}} &= \sqrt{(375.0\ \text{N})^2 + (250.0\ \text{N})^2 - 2(375.0\ \text{N})(250.0\ \text{N})\cos(75.0^{\circ})} && \\
+\quad &= 393.2\ \text{N} &&
 \end{flalign*}
 \vspace{-0.8em}
 \end{adjustwidth}
@@ -75,8 +75,8 @@ $\vv{F_R}$ & ? & ? & +x \\
 \begin{adjustwidth}{2em}{}
 \vspace{-0.8em}
 \begin{flalign*}
-\quad \angle(\vv{F_1}, \vv{F_R}) &= \sin^{-1}(700.0\ \text{N} \cdot \frac{\sin(45.0^{\circ})}{497.0\ \text{N}}) && \\
-\quad &= 95.2^{\circ} &&
+\quad \angle(\vv{F_1}, \vv{F_R}) &= \sin^{-1}(375.0\ \text{N} \cdot \frac{\sin(75.0^{\circ})}{393.2\ \text{N}}) && \\
+\quad &= 67.1^{\circ} &&
 \end{flalign*}
 \vspace{-0.8em}
 \end{adjustwidth}
@@ -88,9 +88,9 @@ $\vv{F_R}$ & ? & ? & +x \\
 \begin{adjustwidth}{2em}{}
 \vspace{-0.8em}
 \begin{flalign*}
-\quad \angle(\vv{x}, \vv{F_R}) &= \angle(\vv{x}, \vv{F_1}) + \angle(\vv{F_1}, \vv{F_R}) && \\
-\quad &= 60.0^{\circ} + 95.2^{\circ} && \\
-\quad &= 155.2^{\circ} &&
+\quad \angle(\vv{x}, \vv{F_R}) &= \angle(\vv{x}, \vv{F_1}) - \angle(\vv{F_1}, \vv{F_R}) && \\
+\quad &= 360^{\circ} + 60.0^{\circ} - 67.1^{\circ} && \\
+\quad &= 352.9^{\circ} &&
 \end{flalign*}
 \vspace{-0.8em}
 \end{adjustwidth}
@@ -102,7 +102,7 @@ $\vv{F_R}$ & ? & ? & +x \\
 Vector & {$\magn{\vv{F}}$ (N)} & {$\theta$ (deg)} & Reference \\
 \midrule
 \endhead
-$\vv{F_R}$ & 497.0 & 155.2 & +x \\
+$\vv{F_R}$ & 393.2 & 352.9 & +x \\
 \bottomrule
 \end{longtable}
 

@@ -224,7 +224,28 @@ def solve_sas(state: SolvingState) -> None:
                             adjacent_known_side = side
 
             if adjacent_known_side is not None and solved_angle is not None:
-                # AngleSum handles LaTeX formatting internally
+                # Determine operation: compare computed_dir with base + offset and base - offset
+                # to see which one matches the actual computed direction
+                base_dir = adjacent_known_side.direction
+                computed_dir_val = computed_dir.to_unit.degree.magnitude()
+                base_val = base_dir.to_unit.degree.magnitude()
+                offset_val = solved_angle.to_unit.degree.magnitude()
+
+                # Normalize angles to [0, 360) for comparison
+                def normalize(x: float) -> float:
+                    return x % 360
+
+                add_result = normalize(base_val + offset_val)
+                sub_result = normalize(base_val - offset_val)
+                computed_norm = normalize(computed_dir_val)
+
+                # Determine which operation was used (with tolerance for floating point)
+                add_diff = min(abs(add_result - computed_norm), abs(add_result - computed_norm + 360), abs(add_result - computed_norm - 360))
+                sub_diff = min(abs(sub_result - computed_norm), abs(sub_result - computed_norm + 360), abs(sub_result - computed_norm - 360))
+
+                operation = "-" if sub_diff < add_diff else "+"
+
+                # AngleSum handles LaTeX formatting internally and returns normalized angle
                 angle_sum = AngleSum(
                     base_angle=adjacent_known_side.direction,
                     offset_angle=solved_angle,
@@ -233,9 +254,12 @@ def solve_sas(state: SolvingState) -> None:
                     offset_vector_1=adjacent_known_side.name,
                     offset_vector_2=unknown_side.name,
                     result_ref="+x",
+                    operation=operation,
                 )
-                _, step = angle_sum.solve()
+                normalized_dir, step = angle_sum.solve()
                 state.solving_steps.append(step)
+                # Update dir_r with the normalized angle (0° to 360°)
+                state.dir_r = normalized_dir
             else:
                 # Fallback: simple step using SolutionStepBuilder directly
                 from ...equations.base import SolutionStepBuilder, latex_name
@@ -392,8 +416,12 @@ def solve_asa(state: SolvingState) -> None:
         raise ValueError("Cannot solve ASA: opposite angle is None")
 
     # Step 2: Use Law of Sines to find each unknown side
-    # sin(A)/a = sin(B)/b = sin(C)/c
+    # a/sin(A) = b/sin(B) = c/sin(C)
     # So: unknown_side = known_side * sin(unknown_opposite_angle) / sin(known_opposite_angle)
+
+    # The known angle (third_angle) is formed by the two unknown sides
+    # So known_angle_vectors = (unknown_side1.name, unknown_side2.name)
+    known_angle_vectors = (unknown_side1.name or "unknown1", unknown_side2.name or "unknown2")
 
     # Find unknown_side1 magnitude
     # unknown_side1 is opposite to its corresponding angle
@@ -403,44 +431,30 @@ def solve_asa(state: SolvingState) -> None:
     if unknown_side1_opposite.angle is None:
         raise ValueError(f"Cannot solve for {unknown_side1_attr}: opposite angle is None")
 
-    # Law of Sines: unknown_side1 / sin(unknown_side1_opposite) = known_side / sin(opposite_angle)
-    # unknown_side1 = known_side * sin(unknown_side1_opposite) / sin(opposite_angle)
+    # Use LawOfSines with solve_for="side"
+    # angle_vector_1 and angle_vector_2 specify the angle opposite to the unknown side (unknown_side1)
+    # This angle is formed by included_side and unknown_side2
     los1 = LawOfSines(
-        opposite_side=known_side_mag,  # This is used to compute the ratio
+        opposite_side=known_side_mag,  # Not used for side mode, but kept for API compatibility
         known_angle=opposite_angle,  # Angle opposite to known side
         known_side=known_side_mag,  # The known side
-        angle_vector_1=included_side.name or "known",
-        angle_vector_2=unknown_side1.name or "unknown1",
+        angle_vector_1=unknown_side2.name or "unknown2",
+        angle_vector_2=included_side.name or "known",
         equation_number=1,
+        solve_for="side",
+        unknown_angle=unknown_side1_opposite.angle,
+        result_vector_name=unknown_side1.name,
+        known_angle_vectors=known_angle_vectors,
     )
 
-    # Use qnty sin function for Quantity arithmetic
-    from ...algebra.functions import sin
-
-    sin_unknown_angle = sin(unknown_side1_opposite.angle)
-    sin_known_angle = sin(opposite_angle)
-
-    # Law of Sines: unknown_side / sin(unknown_angle) = known_side / sin(known_angle)
-    # unknown_side = known_side * sin(unknown_angle) / sin(known_angle)
-    unknown_side1_mag = known_side_mag * sin_unknown_angle / sin_known_angle
-    unknown_side1_mag.name = f"{unknown_side1.name}_mag"
+    unknown_side1_mag, step1 = los1.solve()
 
     # Update the triangle
     unknown_side1.magnitude = unknown_side1_mag
     unknown_side1.is_known = True
 
-    # Create solution step for first unknown side
-    unknown_side1_angle_deg = unknown_side1_opposite.angle.to_unit.degree
-    opposite_angle_deg = opposite_angle.to_unit.degree
-    step1 = SolutionStepBuilder(
-        target=f"|{unknown_side1.name}| using Law of Sines",
-        method="Law of Sines",
-        description=f"Calculate magnitude of {unknown_side1.name}",
-        equation_for_list=f"|{unknown_side1.name}|/sin({unknown_side1_opposite_attr}) = |{included_side.name}|/sin({third_angle_attr})",
-        substitution=f"|{unknown_side1.name}| = {known_side_mag} × sin({unknown_side1_angle_deg}) / sin({opposite_angle_deg}) = {unknown_side1_mag}",
-    ).build()
     state.solving_steps.append(step1)
-    state.equations_used.append(f"|{unknown_side1.name}|/sin({unknown_side1_opposite_attr}) = |{included_side.name}|/sin({third_angle_attr})")
+    state.equations_used.append(los1.equation_for_list())
 
     # Step 3: Find unknown_side2 magnitude
     unknown_side2_opposite_attr = opposite_angle_map[unknown_side2_attr]
@@ -449,25 +463,29 @@ def solve_asa(state: SolvingState) -> None:
     if unknown_side2_opposite.angle is None:
         raise ValueError(f"Cannot solve for {unknown_side2_attr}: opposite angle is None")
 
-    sin_unknown_angle2 = sin(unknown_side2_opposite.angle)
-    unknown_side2_mag = known_side_mag * sin_unknown_angle2 / sin_known_angle
-    unknown_side2_mag.name = f"{unknown_side2.name}_mag"
+    # angle_vector_1 and angle_vector_2 specify the angle opposite to the unknown side (unknown_side2)
+    # This angle is formed by included_side and unknown_side1
+    los2 = LawOfSines(
+        opposite_side=known_side_mag,
+        known_angle=opposite_angle,
+        known_side=known_side_mag,
+        angle_vector_1=unknown_side1.name or "unknown1",
+        angle_vector_2=included_side.name or "known",
+        equation_number=2,
+        solve_for="side",
+        unknown_angle=unknown_side2_opposite.angle,
+        result_vector_name=unknown_side2.name,
+        known_angle_vectors=known_angle_vectors,
+    )
+
+    unknown_side2_mag, step2 = los2.solve()
 
     # Update the triangle
     unknown_side2.magnitude = unknown_side2_mag
     unknown_side2.is_known = True
 
-    # Create solution step for second unknown side
-    unknown_side2_angle_deg = unknown_side2_opposite.angle.to_unit.degree
-    step2 = SolutionStepBuilder(
-        target=f"|{unknown_side2.name}| using Law of Sines",
-        method="Law of Sines",
-        description=f"Calculate magnitude of {unknown_side2.name}",
-        equation_for_list=f"|{unknown_side2.name}|/sin({unknown_side2_opposite_attr}) = |{included_side.name}|/sin({third_angle_attr})",
-        substitution=f"|{unknown_side2.name}| = {known_side_mag} × sin({unknown_side2_angle_deg}) / sin({opposite_angle_deg}) = {unknown_side2_mag}",
-    ).build()
     state.solving_steps.append(step2)
-    state.equations_used.append(f"|{unknown_side2.name}|/sin({unknown_side2_opposite_attr}) = |{included_side.name}|/sin({third_angle_attr})")
+    state.equations_used.append(los2.equation_for_list())
 
     # For ASA, the directions are already known from the input vectors, so we don't need to compute them
     # However, we need to set state.dir_r appropriately if any of the unknown sides is the resultant

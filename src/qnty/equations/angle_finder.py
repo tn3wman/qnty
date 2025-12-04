@@ -103,7 +103,7 @@ def get_relative_angle(
     reference axis, but expressed with the standard sign convention
     (CW = negative).
 
-    The result is normalized to the range (-180°, 180°].
+    The result is normalized to the range [0°, 360°).
 
     Args:
         absolute_angle: The absolute angle as a Quantity
@@ -116,9 +116,8 @@ def get_relative_angle(
         Relative angle as a Quantity
 
     Example:
-        >>> # Vector at 358.78° absolute, relative to +u axis (0°)
-        >>> # CCW: 358.78° - 0° = 358.78° -> normalized to -1.22°
-        >>> # CW: measure CW from +u = 1.22°, but CW is negative = -1.22°
+        >>> # Vector at 352.9° absolute, relative to +x axis (0°)
+        >>> # Result: 352.9° - 0° = 352.9° (already in [0°, 360°))
     """
     from ..geometry.triangle import _get_angle_constants
 
@@ -130,16 +129,11 @@ def get_relative_angle(
     # Compute CCW angle from axis to vector
     relative_angle = absolute_angle - axis_angle
 
-    # Normalize to range (-180, 180] degrees for better readability
-    # First normalize to [0, 360)
+    # Normalize to range [0, 360) degrees for counter-clockwise convention
     while relative_angle >= full_rotation:
         relative_angle = relative_angle - full_rotation
     while relative_angle < zero:
         relative_angle = relative_angle + full_rotation
-
-    # Then shift to (-180, 180]
-    if relative_angle > half_rotation:
-        relative_angle = relative_angle - full_rotation
 
     # Note: angle_dir indicates the measurement direction preference but
     # doesn't change the result since the standard convention (CCW=positive,
@@ -219,8 +213,8 @@ class AngleBetween:
             f"\\angle(\\vec{{{vec1_name}}}, \\vec{{{vec2_name}}}) &= "
             f"|\\angle(\\vec{{{vec1_ref_display}}}, \\vec{{{vec1_name}}}) - "
             f"\\angle(\\vec{{{vec2_ref_display}}}, \\vec{{{vec2_name}}})| \\\\\n"
-            f"&= |{format_angle(vec1_angle_display)} - {format_angle(vec2_angle_display)}| \\\\\n"
-            f"&= {format_angle(result)} \\\\"
+            f"&= |{format_angle(vec1_angle_display, precision=1)} - {format_angle(vec2_angle_display, precision=1)}| \\\\\n"
+            f"&= {format_angle(result, precision=1)} \\\\"
         )
 
         step = SolutionStepBuilder(
@@ -235,7 +229,7 @@ class AngleBetween:
 
 class AngleSum:
     """
-    Calculate a final angle as the sum of two angles.
+    Calculate a final angle as the sum or difference of two angles.
     Takes angle Quantities as input and returns an angle Quantity.
 
     The class handles LaTeX formatting internally - callers should pass
@@ -252,19 +246,21 @@ class AngleSum:
         offset_vector_2: str,
         result_ref: str = "+x",
         description: str = "",
+        operation: str = "+",
     ):
         """
-        Initialize angle sum calculation.
+        Initialize angle sum/difference calculation.
 
         Args:
-            base_angle: Base angle as a Quantity (e.g., angle from x-axis to F_1)
-            offset_angle: Offset angle as a Quantity (e.g., angle from F_1 to F_R)
-            result_vector_name: Name of the result vector (e.g., "F_R")
-            base_vector_name: Name of the base vector (e.g., "F_1")
-            offset_vector_1: First vector of the offset angle (e.g., "F_1")
-            offset_vector_2: Second vector of the offset angle (e.g., "F_R")
+            base_angle: Base angle as a Quantity (e.g., angle from x-axis to F_R)
+            offset_angle: Offset angle as a Quantity (e.g., angle from F_R to F_1)
+            result_vector_name: Name of the result vector (e.g., "F_1")
+            base_vector_name: Name of the base vector (e.g., "F_R")
+            offset_vector_1: First vector of the offset angle (e.g., "F_R")
+            offset_vector_2: Second vector of the offset angle (e.g., "F_1")
             result_ref: Reference axis for result (e.g., "+x")
             description: Description for the step
+            operation: "+" for addition, "-" for subtraction
         """
         self.base_angle = base_angle
         self.offset_angle = offset_angle
@@ -273,6 +269,7 @@ class AngleSum:
         self.offset_vector_1 = offset_vector_1
         self.offset_vector_2 = offset_vector_2
         self.result_ref = result_ref
+        self.operation = operation
         self.description = description or f"Compute direction relative to {result_ref} axis"
 
         # Generate LaTeX names
@@ -291,32 +288,72 @@ class AngleSum:
 
     def solve(self) -> tuple[Quantity, dict]:
         """
-        Calculate the sum of two angles.
+        Calculate the sum or difference of two angles.
 
         Returns:
             Tuple of (angle_quantity, solution_step_dict)
         """
-        # Use Quantity arithmetic for the sum (handles unit conversion automatically)
-        result = self.base_angle + self.offset_angle
+        from ..core import Q
+
+        # Use Quantity arithmetic (handles unit conversion automatically)
+        if self.operation == "-":
+            result = self.base_angle - self.offset_angle
+            op_symbol = "-"
+            method = "Angle Subtraction"
+        else:
+            result = self.base_angle + self.offset_angle
+            op_symbol = "+"
+            method = "Angle Addition"
+
         result.name = self.target_name
 
         # Get display values in degrees for the solution step
         base_deg = self.base_angle.to_unit.degree
         offset_deg = self.offset_angle.to_unit.degree
-        result_deg = result.to_unit.degree
+        intermediate_deg = result.to_unit.degree
 
-        # Format substitution with proper LaTeX notation
-        substitution = (
-            f"{self.target_name} &= {self.base_angle_name} + {self.offset_angle_name} \\\\\n"
-            f"&= {format_angle(base_deg, precision=1)} + {format_angle(offset_deg, precision=1)} \\\\\n"
-            f"&= {format_angle(result_deg, precision=1)} \\\\"
-        )
+        # Normalize result to [0°, 360°) for counter-clockwise convention
+        intermediate_val = intermediate_deg.magnitude()
+        normalized_val = intermediate_val % 360
+        if normalized_val < 0:
+            normalized_val += 360
+        result_normalized = Q(normalized_val, "degree")
+        result_normalized.name = self.target_name
+
+        # Check if normalization is needed
+        needs_normalization = abs(intermediate_val - normalized_val) > 0.01
+
+        # Build substitution
+        if needs_normalization and intermediate_val < 0:
+            # Negative result: show 360° + base - offset in a single line
+            base_val = base_deg.magnitude()
+            offset_val = offset_deg.magnitude()
+            substitution = (
+                f"{self.target_name} &= {self.base_angle_name} {op_symbol} {self.offset_angle_name} \\\\\n"
+                f"&= 360^{{\\circ}} + {base_val:.1f}^{{\\circ}} {op_symbol} {offset_val:.1f}^{{\\circ}} \\\\\n"
+                f"&= {format_angle(result_normalized, precision=1)} \\\\"
+            )
+        elif needs_normalization:
+            # Angle >= 360°: show base + offset - 360° in a single line
+            base_val = base_deg.magnitude()
+            offset_val = offset_deg.magnitude()
+            substitution = (
+                f"{self.target_name} &= {self.base_angle_name} {op_symbol} {self.offset_angle_name} \\\\\n"
+                f"&= {base_val:.1f}^{{\\circ}} {op_symbol} {offset_val:.1f}^{{\\circ}} - 360^{{\\circ}} \\\\\n"
+                f"&= {format_angle(result_normalized, precision=1)} \\\\"
+            )
+        else:
+            substitution = (
+                f"{self.target_name} &= {self.base_angle_name} {op_symbol} {self.offset_angle_name} \\\\\n"
+                f"&= {format_angle(base_deg, precision=1)} {op_symbol} {format_angle(offset_deg, precision=1)} \\\\\n"
+                f"&= {format_angle(result_normalized, precision=1)} \\\\"
+            )
 
         step = SolutionStepBuilder(
             target=self.target,
-            method="Angle Addition",
+            method=method,
             description=self.description,
             substitution=substitution,
         )
 
-        return result, step.build()
+        return result_normalized, step.build()

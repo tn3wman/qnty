@@ -468,6 +468,31 @@ class Quantity(Generic[D]):
     def __repr__(self) -> str:
         return self.__str__()
 
+    def to_latex(self, precision: int = 1) -> str:
+        """Format quantity for LaTeX math mode with proper spacing.
+
+        Returns a LaTeX string with the value and unit properly formatted:
+        - Uses '\\ ' for spacing between value and unit
+        - Wraps unit symbol in '\\text{}' for proper font rendering
+        - Uses 'f' format for fixed decimal places
+
+        Args:
+            precision: Number of decimal places (default 1)
+
+        Returns:
+            LaTeX-formatted string like '700.0\\ \\text{N}'
+        """
+        if self.value is None:
+            return f"{self.name}" if self.name else "?"
+
+        # Use output unit first, then preferred, then system defaults
+        unit = self._output_unit or self.preferred or ureg.preferred_for(self.dim) or ureg.si_unit_for(self.dim)
+        if unit is None:
+            return f"{self._require_value():.{precision}f}"
+
+        display_value = self._value_in_unit(unit)
+        return f"{display_value:.{precision}f}\\ \\text{{{unit.symbol}}}"
+
 
 # Compatibility function with automatic dimension detection and proper typing
 @overload

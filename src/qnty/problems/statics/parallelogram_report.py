@@ -18,6 +18,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
+from ...equations.base import latex_name
+
 if TYPE_CHECKING:
     from .parallelogram_solver import ParallelogramLawProblem
 
@@ -230,9 +232,10 @@ Vector & {{$\magn{{\vv{{F}}}}$ ({unit})}} & {{$\theta$ (deg)}} & Reference \\
 """
 
     def _format_vec_name(self, name: str) -> str:
-        """Format vector name: F_1 -> $\\vv{F_1}$"""
-        # Don't add extra braces around subscript - use F_1 directly
-        return f"$\\vv{{{name}}}$"
+        """Format vector name: F_1 -> $\\vv{F_1}$, F_AB -> $\\vv{F_{AB}}$"""
+        # Use latex_name to handle multi-character subscripts properly
+        formatted_name = latex_name(name)
+        return f"$\\vv{{{formatted_name}}}$"
 
     def _render_known_section(self, data: ReportData) -> str:
         """Render known variables section."""
@@ -449,8 +452,10 @@ class MarkdownRenderer:
         return "\n".join(lines)
 
     def _format_vec_name_md(self, name: str) -> str:
-        """Format vector name for Markdown: F_1 -> $\\vec{F_1}$"""
-        return f"$\\vec{{{name}}}$"
+        """Format vector name for Markdown: F_1 -> $\\vec{F_1}$, F_AB -> $\\vec{F_{AB}}$"""
+        # Use latex_name to handle multi-character subscripts properly
+        formatted_name = latex_name(name)
+        return f"$\\vec{{{formatted_name}}}$"
 
     def _render_known_section(self, data: ReportData) -> str:
         """Render known variables section."""

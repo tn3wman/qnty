@@ -18,9 +18,11 @@ Currently only Problem 2-1 is fully migrated. Other problems are commented out.
 import re
 from pathlib import Path
 
+from qnty.coordinates.oblique import Oblique
+
 # Import vector creation functions from new vectors2 module
 from qnty.linalg.vectors2 import create_resultant_polar, create_vector_resultant, create_vectors_polar
-from qnty.coordinates.oblique import Oblique
+
 # Import from the new parallelogram_solver module
 from qnty.problems.statics.parallelogram_solver import (
     solve_class,
@@ -75,7 +77,7 @@ def generate_debug_reports_for_problem(problem_class) -> None:
 
 class Chapter2Problem1:
     name = "Problem 2-1"
-    generate_debug_reports = True
+    generate_debug_reports = False
     F_1 = create_vectors_polar(450, "N", 60, wrt="+x", name="F_1")
     F_2 = create_vectors_polar(700, "N", 15, wrt="-x", name="F_2")
     F_R = create_vector_resultant(F_1, F_2)
@@ -289,7 +291,7 @@ class Chapter2Problem3:
 
 class Chapter2Problem4:
     name = "Problem 2-4"
-    generate_debug_reports = False
+    generate_debug_reports = True
     F_AB = create_vectors_polar(..., "N", -45, wrt="-y")
     F_AC = create_vectors_polar(..., "N", -30, wrt="+x")
     F_R = create_resultant_polar(
@@ -354,7 +356,7 @@ class Chapter2Problem4:
 
 class Chapter2Problem5:
     name = "Problem 2-5"
-    generate_debug_reports = False
+    generate_debug_reports = True
     F_AB = create_vectors_polar(..., "lbf", 225, wrt="+x")
     F_AC = create_vectors_polar(..., "lbf", 330, wrt="+x")
     F_R = create_resultant_polar(
@@ -817,21 +819,20 @@ class Chapter2Problem1MixedUnits:
 # =============================================================================
 # Problem 2-1 WRONG (for test validation)
 # =============================================================================
-
+"""
 class Chapter2Problem1_WRONG:
     name = "Problem 2-1 WRONG (expect failures)"
 
     # Input vectors - same as correct problem
-    F_1 = create_vectors_polar(magnitude=450, unit="N", angle=60, wrt="+x")
-    F_2 = create_vectors_polar(magnitude=700, unit="N", angle=15, wrt="-x")
-    F_R = pl.create_vector_resultant(F_1, F_2)
+    F_1 = create_vectors_polar(450, "N", 60, wrt="+x")
+    F_2 = create_vectors_polar(700, "N", 15, wrt="-x")
+    F_R = create_vector_resultant(F_1, F_2)
 
     # WRONG expected values
     class expected:
-        F_1 = create_vectors_polar(magnitude=450, unit="N", angle=60, wrt="+x")
-        F_2 = create_vectors_polar(magnitude=700, unit="N", angle=15, wrt="-x")
-        # WRONG: magnitude should be 497.014, angle should be 155.192
-        F_R = create_vectors_polar(magnitude=999.0, unit="N", angle=45.0, wrt="+x")
+        F_1 = create_vectors_polar(450, "N", 60, wrt="+x")
+        F_2 = create_vectors_polar(700, "N", 15, wrt="-x")
+        F_R = create_vectors_polar(999.0, "N", 45.0, wrt="+x")
 
     class report:
         # WRONG expected content for report generation tests.
@@ -909,8 +910,6 @@ class Chapter2Problem1_WRONG:
 # Problem lists for parameterized tests
 # =============================================================================
 
-"""
-
 # All problems for iteration (only includes fully migrated problems)
 PARALLELOGRAM_LAW_PROBLEMS = [
     Chapter2Problem1,
@@ -948,7 +947,7 @@ PARALLELOGRAM_LAW_PROBLEMS = [
 ]
 
 PROBLEMS_EXPECT_FAIL = [
-    # Chapter2Problem1_WRONG
+    Chapter2Problem1_WRONG
 ]
 
 # All problem classes (for debug report generation)
@@ -988,8 +987,8 @@ ALL_PROBLEM_CLASSES = [
 
 PROBLEMS_WITH_GOLDEN_FILES = [
     Chapter2Problem1,
-    # Chapter2Problem2,
-    # Chapter2Problem3,
+    Chapter2Problem2,
+    Chapter2Problem3,
     # Chapter2Problem4,
     # Chapter2Problem5,
     # Chapter2Problem6,
