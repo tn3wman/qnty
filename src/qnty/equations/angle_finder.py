@@ -129,16 +129,21 @@ def get_relative_angle(
     # Compute CCW angle from axis to vector
     relative_angle = absolute_angle - axis_angle
 
-    # Normalize to range [0, 360) degrees for counter-clockwise convention
+    # Normalize to range [0, 360) degrees first
     while relative_angle >= full_rotation:
         relative_angle = relative_angle - full_rotation
     while relative_angle < zero:
         relative_angle = relative_angle + full_rotation
 
-    # Note: angle_dir indicates the measurement direction preference but
-    # doesn't change the result since the standard convention (CCW=positive,
-    # CW=negative) already expresses angles correctly. A negative angle
-    # already indicates clockwise direction.
+    # Apply angle_dir preference:
+    # - CCW: keep in [0, 360) range (positive angles go counter-clockwise)
+    # - CW: convert to (-360, 0] range for angles > 180° (express as negative
+    #       clockwise angle), or keep small positive angles as-is if closer to 0
+    if angle_dir == AngleDirection.CLOCKWISE:
+        # For clockwise preference, express angles > 180° as negative
+        # This makes 358.8° become -1.2° (1.2° clockwise from reference)
+        if relative_angle > half_rotation:
+            relative_angle = relative_angle - full_rotation
 
     return relative_angle
 
@@ -247,6 +252,7 @@ class AngleSum:
         result_ref: str = "+x",
         description: str = "",
         operation: str = "+",
+        angle_dir: AngleDirection = AngleDirection.COUNTERCLOCKWISE,
     ):
         """
         Initialize angle sum/difference calculation.
@@ -261,6 +267,8 @@ class AngleSum:
             result_ref: Reference axis for result (e.g., "+x")
             description: Description for the step
             operation: "+" for addition, "-" for subtraction
+            angle_dir: Direction for measuring the result angle (CCW or CW).
+                When CW, angles > 180° are expressed as negative.
         """
         self.base_angle = base_angle
         self.offset_angle = offset_angle
@@ -270,6 +278,7 @@ class AngleSum:
         self.offset_vector_2 = offset_vector_2
         self.result_ref = result_ref
         self.operation = operation
+        self.angle_dir = angle_dir
         self.description = description or f"Compute direction relative to {result_ref} axis"
 
         # Generate LaTeX names
@@ -312,42 +321,94 @@ class AngleSum:
         offset_deg = self.offset_angle.to_unit.degree
         intermediate_deg = result.to_unit.degree
 
-        # Normalize result to [0°, 360°) for counter-clockwise convention
+        # Get intermediate result value
         intermediate_val = intermediate_deg.magnitude()
-        normalized_val = intermediate_val % 360
-        if normalized_val < 0:
-            normalized_val += 360
-        result_normalized = Q(normalized_val, "degree")
-        result_normalized.name = self.target_name
 
-        # Check if normalization is needed
-        needs_normalization = abs(intermediate_val - normalized_val) > 0.01
+        # Build substitution based on angle_dir preference
+        base_val = base_deg.magnitude()
+        offset_val = offset_deg.magnitude()
 
-        # Build substitution
-        if needs_normalization and intermediate_val < 0:
-            # Negative result: show 360° + base - offset in a single line
-            base_val = base_deg.magnitude()
-            offset_val = offset_deg.magnitude()
-            substitution = (
-                f"{self.target_name} &= {self.base_angle_name} {op_symbol} {self.offset_angle_name} \\\\\n"
-                f"&= 360^{{\\circ}} + {base_val:.1f}^{{\\circ}} {op_symbol} {offset_val:.1f}^{{\\circ}} \\\\\n"
-                f"&= {format_angle(result_normalized, precision=1)} \\\\"
-            )
-        elif needs_normalization:
-            # Angle >= 360°: show base + offset - 360° in a single line
-            base_val = base_deg.magnitude()
-            offset_val = offset_deg.magnitude()
-            substitution = (
-                f"{self.target_name} &= {self.base_angle_name} {op_symbol} {self.offset_angle_name} \\\\\n"
-                f"&= {base_val:.1f}^{{\\circ}} {op_symbol} {offset_val:.1f}^{{\\circ}} - 360^{{\\circ}} \\\\\n"
-                f"&= {format_angle(result_normalized, precision=1)} \\\\"
-            )
-        else:
+        # For clockwise direction preference with small negative results,
+        # keep the negative value directly without normalizing through [0, 360)
+        if self.angle_dir == AngleDirection.CLOCKWISE and -180 < intermediate_val < 0:
+            # Direct negative result - simplest case for CW angles
+            # e.g., 45° - 46.2° = -1.2° (no need for 360° + 45° - 46.2° = 358.8° - 360° = -1.2°)
+            final_val = intermediate_val
+            result_final = Q(final_val, "degree")
+            result_final.name = self.target_name
             substitution = (
                 f"{self.target_name} &= {self.base_angle_name} {op_symbol} {self.offset_angle_name} \\\\\n"
                 f"&= {format_angle(base_deg, precision=1)} {op_symbol} {format_angle(offset_deg, precision=1)} \\\\\n"
-                f"&= {format_angle(result_normalized, precision=1)} \\\\"
+                f"&= {format_angle(result_final, precision=1)} \\\\"
             )
+        else:
+            # Standard normalization logic for other cases
+            normalized_val = intermediate_val % 360
+            if normalized_val < 0:
+                normalized_val += 360
+
+            # Check if normalization to [0, 360) is needed
+            needs_normalization = abs(intermediate_val - normalized_val) > 0.01
+
+            # Apply angle_dir preference for final result
+            # For clockwise, express angles > 180° as negative
+            final_val = normalized_val
+            needs_cw_conversion = False
+            if self.angle_dir == AngleDirection.CLOCKWISE and normalized_val > 180:
+                final_val = normalized_val - 360
+                needs_cw_conversion = True
+
+            result_final = Q(final_val, "degree")
+            result_final.name = self.target_name
+
+            if needs_normalization and intermediate_val < 0:
+                # Negative result that needs normalization: show 360° + base - offset
+                if needs_cw_conversion:
+                    # Also show conversion to CW (negative) angle
+                    substitution = (
+                        f"{self.target_name} &= {self.base_angle_name} {op_symbol} {self.offset_angle_name} \\\\\n"
+                        f"&= 360^{{\\circ}} + {base_val:.1f}^{{\\circ}} {op_symbol} {offset_val:.1f}^{{\\circ}} \\\\\n"
+                        f"&= {normalized_val:.1f}^{{\\circ}} \\\\\n"
+                        f"&= {normalized_val:.1f}^{{\\circ}} - 360^{{\\circ}} \\\\\n"
+                        f"&= {format_angle(result_final, precision=1)} \\\\"
+                    )
+                else:
+                    substitution = (
+                        f"{self.target_name} &= {self.base_angle_name} {op_symbol} {self.offset_angle_name} \\\\\n"
+                        f"&= 360^{{\\circ}} + {base_val:.1f}^{{\\circ}} {op_symbol} {offset_val:.1f}^{{\\circ}} \\\\\n"
+                        f"&= {format_angle(result_final, precision=1)} \\\\"
+                    )
+            elif needs_normalization:
+                # Angle >= 360°: show base + offset - 360°
+                if needs_cw_conversion:
+                    substitution = (
+                        f"{self.target_name} &= {self.base_angle_name} {op_symbol} {self.offset_angle_name} \\\\\n"
+                        f"&= {base_val:.1f}^{{\\circ}} {op_symbol} {offset_val:.1f}^{{\\circ}} - 360^{{\\circ}} \\\\\n"
+                        f"&= {normalized_val:.1f}^{{\\circ}} \\\\\n"
+                        f"&= {normalized_val:.1f}^{{\\circ}} - 360^{{\\circ}} \\\\\n"
+                        f"&= {format_angle(result_final, precision=1)} \\\\"
+                    )
+                else:
+                    substitution = (
+                        f"{self.target_name} &= {self.base_angle_name} {op_symbol} {self.offset_angle_name} \\\\\n"
+                        f"&= {base_val:.1f}^{{\\circ}} {op_symbol} {offset_val:.1f}^{{\\circ}} - 360^{{\\circ}} \\\\\n"
+                        f"&= {format_angle(result_final, precision=1)} \\\\"
+                    )
+            elif needs_cw_conversion:
+                # No normalization needed but need CW conversion
+                substitution = (
+                    f"{self.target_name} &= {self.base_angle_name} {op_symbol} {self.offset_angle_name} \\\\\n"
+                    f"&= {format_angle(base_deg, precision=1)} {op_symbol} {format_angle(offset_deg, precision=1)} \\\\\n"
+                    f"&= {normalized_val:.1f}^{{\\circ}} \\\\\n"
+                    f"&= {normalized_val:.1f}^{{\\circ}} - 360^{{\\circ}} \\\\\n"
+                    f"&= {format_angle(result_final, precision=1)} \\\\"
+                )
+            else:
+                substitution = (
+                    f"{self.target_name} &= {self.base_angle_name} {op_symbol} {self.offset_angle_name} \\\\\n"
+                    f"&= {format_angle(base_deg, precision=1)} {op_symbol} {format_angle(offset_deg, precision=1)} \\\\\n"
+                    f"&= {format_angle(result_final, precision=1)} \\\\"
+                )
 
         step = SolutionStepBuilder(
             target=self.target,
@@ -356,4 +417,4 @@ class AngleSum:
             substitution=substitution,
         )
 
-        return result_normalized, step.build()
+        return result_final, step.build()

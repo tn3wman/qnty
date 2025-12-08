@@ -1,4 +1,4 @@
-# Engineering Calculation Report: Problem 2-4
+# Engineering Calculation Report: Problem 2-7
 
 **Generated:** {{GENERATED_DATETIME}}
 
@@ -8,7 +8,7 @@
 
 | Vector | $\|\vec{F}\|$ (N) | $\theta$ (deg) | Reference |
 | :--- | ---: | ---: | :--- |
-| $\vec{F_R}$ | 500.0 | 0.0 | -y |
+| $\vec{F_1}$ | 4000.0 | -30.0 | +v |
 
 </div>
 
@@ -18,34 +18,34 @@
 
 | Vector | $\|\vec{F}\|$ (N) | $\theta$ (deg) | Reference |
 | :--- | ---: | ---: | :--- |
-| $\vec{F_{AB}}$ | ? | ? | -y |
-| $\vec{F_{AC}}$ | ? | ? | +x |
+| $\vec{F_{1u}}$ | ? | 0.0 | +u |
+| $\vec{F_{1v}}$ | ? | 0.0 | +v |
 
 </div>
 
 ## 3. Equations Used
 
-1. $\frac{|\vec{F_{AC}}|}{\sin(\angle_{\vec{F_{AC}}})} = \frac{|\vec{F_R}|}{\sin(\angle(\vec{F_AB}, \vec{F_AC}))}$
+1. $\frac{|\vec{F_{1v}}|}{\sin(\angle(\vec{F_{1u}}, \vec{F_R}))} = \frac{|\vec{F_1}|}{\sin(\angle(\vec{F_{1v}}, \vec{F_{1u}}))}$
 
-2. $\frac{|\vec{F_{AB}}|}{\sin(\angle_{\vec{F_{AB}}})} = \frac{|\vec{F_R}|}{\sin(\angle(\vec{F_AB}, \vec{F_AC}))}$
+2. $\frac{|\vec{F_{1u}}|}{\sin(\angle(\vec{F_{1v}}, \vec{F_R}))} = \frac{|\vec{F_1}|}{\sin(\angle(\vec{F_{1v}}, \vec{F_{1u}}))}$
 
 ## 4. Step-by-Step Solution
 
-**Step 1: Solve for $|\vec{F_{AC}}|$ using Eq 1**
+**Step 1: Solve for $|\vec{F_{1v}}|$ using Eq 1**
 
 $$
 \begin{aligned}
-|\vec{F_{AC}}| &= 500.0\ \text{N} \cdot \frac{\sin(45.0^{\circ})}{\sin(75.0^{\circ})} \\
-&= 366.0\ \text{N} \\
+|\vec{F_{1v}}| &= 4000.0\ \text{N} \cdot \frac{\sin(45.0^{\circ})}{\sin(105.0^{\circ})} \\
+&= 2928.2\ \text{N} \\
 \end{aligned}
 $$
 
-**Step 2: Solve for $|\vec{F_{AB}}|$ using Eq 2**
+**Step 2: Solve for $|\vec{F_{1u}}|$ using Eq 2**
 
 $$
 \begin{aligned}
-|\vec{F_{AB}}| &= 500.0\ \text{N} \cdot \frac{\sin(60.0^{\circ})}{\sin(75.0^{\circ})} \\
-&= 448.3\ \text{N} \\
+|\vec{F_{1u}}| &= 4000.0\ \text{N} \cdot \frac{\sin(30.0^{\circ})}{\sin(105.0^{\circ})} \\
+&= 2070.6\ \text{N} \\
 \end{aligned}
 $$
 
@@ -55,8 +55,8 @@ $$
 
 | Vector | $\|\vec{F}\|$ (N) | $\theta$ (deg) | Reference |
 | :--- | ---: | ---: | :--- |
-| $\vec{F_{AB}}$ | 448.3 | -45.0 | -y |
-| $\vec{F_{AC}}$ | 366.0 | -30.0 | +x |
+| $\vec{F_{1u}}$ | 2070.6 | 0.0 | +u |
+| $\vec{F_{1v}}$ | 2928.2 | 0.0 | +v |
 
 </div>
 

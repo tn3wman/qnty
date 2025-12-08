@@ -233,12 +233,23 @@ class LawOfSines:
         if self.unknown_angle is None:
             raise ValueError("unknown_angle is required for solve_for='side'")
 
+        from ..core.quantity import Quantity
+
         # a = b · sin(A) / sin(B)
         sin_unknown = sin(self.unknown_angle)
         sin_known = sin(self.known_angle)
 
         result = self.known_side * sin_unknown / sin_known
+
+        # Ensure result is a Quantity (should always be true for concrete inputs)
+        if not isinstance(result, Quantity):
+            raise TypeError(f"Expected Quantity result from Law of Sines, got {type(result).__name__}")
+
         result.name = f"{self.result_vector_name}_mag"
+
+        # Preserve the unit from the known side for display
+        if hasattr(self.known_side, "preferred") and self.known_side.preferred is not None:
+            result.preferred = self.known_side.preferred
 
         # Get display values for substitution using LaTeX formatting
         result_name = latex_name(self.result_vector_name)

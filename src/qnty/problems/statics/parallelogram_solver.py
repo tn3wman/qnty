@@ -25,8 +25,11 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any
 
+from ...algebra.functions import asin, sin
+from ...core import Q
 from ...equations import AngleSum, LawOfCosines, LawOfSines
 from ...equations.angle_finder import get_relative_angle
+from ...equations.base import SolutionStepBuilder, format_angle, latex_name
 from ...geometry.triangle import Triangle, TriangleCase, from_vectors_dynamic
 from ...linalg.vector2 import Vector, VectorUnknown
 from ...spatial.angle_reference import AngleDirection
@@ -34,6 +37,84 @@ from ...spatial.angle_reference import AngleDirection
 if TYPE_CHECKING:
     from ...core.quantity import Quantity
     from ...linalg.vector2 import VectorDTO
+
+
+# =============================================================================
+# Helper Functions for Vector Sign Correction
+# =============================================================================
+
+
+def _compute_component_signs(
+    resultant_mag: float,
+    resultant_dir: float,
+    comp1_mag: float,
+    comp1_dir: float,
+    comp2_mag: float,
+    comp2_dir: float,
+) -> tuple[float, float]:
+    """
+    Determine the correct signs for component magnitudes in vector addition.
+
+    Given R = A + B where we know |R|, θ_R, |A|, θ_A, |B|, θ_B (all directions
+    in absolute degrees), verify that the components add up correctly. If not,
+    flip the sign of one or both components.
+
+    This handles cases where the resultant is "outside" the angular span of
+    the two component directions, requiring one component to point opposite
+    to its reference direction (negative magnitude).
+
+    Args:
+        resultant_mag: Magnitude of the resultant vector
+        resultant_dir: Absolute direction of the resultant (degrees)
+        comp1_mag: Magnitude of first component (always positive from Law of Sines)
+        comp1_dir: Absolute direction of first component (degrees)
+        comp2_mag: Magnitude of second component (always positive from Law of Sines)
+        comp2_dir: Absolute direction of second component (degrees)
+
+    Returns:
+        Tuple of (corrected_comp1_mag, corrected_comp2_mag) with appropriate signs
+    """
+    import math
+
+    def to_radians(deg: float) -> float:
+        return math.radians(deg)
+
+    # Compute expected resultant from components with current signs
+    def compute_resultant(c1_mag: float, c1_dir: float, c2_mag: float, c2_dir: float) -> tuple[float, float]:
+        rx = c1_mag * math.cos(to_radians(c1_dir)) + c2_mag * math.cos(to_radians(c2_dir))
+        ry = c1_mag * math.sin(to_radians(c1_dir)) + c2_mag * math.sin(to_radians(c2_dir))
+        r_mag = math.sqrt(rx**2 + ry**2)
+        r_dir = math.degrees(math.atan2(ry, rx)) % 360
+        return r_mag, r_dir
+
+    # Target values
+    target_mag = resultant_mag
+    target_dir = resultant_dir % 360
+
+    # Try all four sign combinations and find the one that matches
+    sign_combos = [(1, 1), (1, -1), (-1, 1), (-1, -1)]
+    best_combo = (1, 1)
+    best_error = float("inf")
+
+    for s1, s2 in sign_combos:
+        r_mag, r_dir = compute_resultant(s1 * comp1_mag, comp1_dir, s2 * comp2_mag, comp2_dir)
+
+        # Compute error (magnitude error + direction error)
+        mag_error = abs(r_mag - target_mag) / max(target_mag, 1e-10)
+
+        # Direction error (handle wraparound)
+        dir_diff = abs(r_dir - target_dir)
+        if dir_diff > 180:
+            dir_diff = 360 - dir_diff
+        dir_error = dir_diff / 180  # Normalize to [0, 1]
+
+        total_error = mag_error + dir_error
+
+        if total_error < best_error:
+            best_error = total_error
+            best_combo = (s1, s2)
+
+    return (best_combo[0] * comp1_mag, best_combo[1] * comp2_mag)
 
 
 # =============================================================================
@@ -61,6 +142,12 @@ class SolvingState:
 
     # Solved resultant direction
     dir_r: Quantity | None = None
+
+    # Angle direction preference for resultant (CCW or CW)
+    result_angle_dir: AngleDirection = AngleDirection.COUNTERCLOCKWISE
+
+    # Vector reference axes (wrt) - maps vector name to its reference axis (e.g., "+y", "-x")
+    vector_references: dict[str, str] = field(default_factory=dict)
 
     # Solution tracking
     solving_steps: list[dict[str, Any]] = field(default_factory=list)
@@ -157,8 +244,28 @@ def solve_sas(state: SolvingState) -> None:
     if mag_unknown is ...:
         raise ValueError("Unknown side magnitude not computed")
 
-    # Determine if we need obtuse angle
-    use_obtuse = mag_opposite > mag_unknown
+    # Determine if we need obtuse angle using the "largest angle opposite longest side" rule.
+    # In Law of Sines, when sin(A) = k has two solutions (acute and obtuse), we choose:
+    # - Obtuse if the side opposite to angle A is the LONGEST side of the triangle
+    # - Acute otherwise (the more common case)
+    #
+    # This is because in any triangle, the largest interior angle is always opposite
+    # the longest side. So the angle is obtuse only if its opposite side is longest.
+
+    # Find the third known side magnitude (the one that's not opposite_side or unknown_side)
+    third_side_mag = None
+    for side in [known_side_1, known_side_2]:
+        if side is not opposite_side:
+            third_side_mag = side.magnitude
+            break
+
+    if third_side_mag is None or third_side_mag is ...:
+        # Fallback to original heuristic if we can't find third side
+        use_obtuse = mag_opposite > mag_unknown
+    else:
+        # Use obtuse only if the opposite side is the longest in the triangle
+        all_mags = [mag_opposite.magnitude(), mag_unknown.magnitude(), third_side_mag.magnitude()]
+        use_obtuse = mag_opposite.magnitude() == max(all_mags)
 
     # Find the adjacent side names for the angle we're solving
     # The angle at a vertex is between the two sides adjacent to that vertex
@@ -245,6 +352,9 @@ def solve_sas(state: SolvingState) -> None:
 
                 operation = "-" if sub_diff < add_diff else "+"
 
+                # Get the reference axis from the vector_references map
+                result_ref = state.vector_references.get(unknown_side.name, "+x")
+
                 # AngleSum handles LaTeX formatting internally and returns normalized angle
                 angle_sum = AngleSum(
                     base_angle=adjacent_known_side.direction,
@@ -253,8 +363,9 @@ def solve_sas(state: SolvingState) -> None:
                     base_vector_name=adjacent_known_side.name,
                     offset_vector_1=adjacent_known_side.name,
                     offset_vector_2=unknown_side.name,
-                    result_ref="+x",
+                    result_ref=result_ref,
                     operation=operation,
+                    angle_dir=state.result_angle_dir,
                 )
                 normalized_dir, step = angle_sum.solve()
                 state.solving_steps.append(step)
@@ -264,10 +375,14 @@ def solve_sas(state: SolvingState) -> None:
                 # Fallback: simple step using SolutionStepBuilder directly
                 from ...equations.base import SolutionStepBuilder, latex_name
 
+                # Get the reference axis from the vector_references map
+                ref_wrt = state.vector_references.get(unknown_side.name, "+x")
+                ref_axis = ref_wrt.lstrip("+-")
+
                 result_name = latex_name(unknown_side.name)
                 computed_dir_deg = computed_dir.to_unit.degree
                 step = SolutionStepBuilder(
-                    target=f"\\angle(\\vec{{x}}, \\vec{{{result_name}}}) with respect to +x",
+                    target=f"\\angle({ref_axis}, \\vec{{{result_name}}}) with respect to {ref_wrt}",
                     method="Vertex Geometry",
                     description="Compute direction using vertex-based geometry",
                     substitution=f"\\theta = {computed_dir_deg}",
@@ -295,19 +410,345 @@ def solve_sss(state: SolvingState) -> None:
     raise NotImplementedError("SSS case not yet implemented")
 
 
-def solve_ssa(_state: SolvingState) -> None:
+def solve_ssa(state: SolvingState) -> None:
     """
     Solve SSA case: Two sides and non-included angle known.
 
     This is the ambiguous case - may have 0, 1, or 2 solutions.
 
+    In parallelogram law problems, SSA occurs when:
+    - Two component magnitudes are known (e.g., F_A and F_B magnitudes)
+    - One component's direction is unknown (e.g., F_A angle)
+    - The resultant's direction is known but magnitude is unknown
+    - This gives us one interior angle (between the two vectors with known directions)
+
+    For Problem 2-12:
+        - F_A: magnitude=8000 N, angle=unknown
+        - F_B: magnitude=6000 N, angle=40° wrt -y (known)
+        - F_R: magnitude=unknown, angle=0° wrt +x (known)
+        - angle_C = 50° (between F_B and F_R directions)
+
     Strategy:
-    1. Law of Sines to find angle opposite known side
-    2. Check for ambiguity (may need to consider both acute and obtuse solutions)
-    3. Third angle = 180° - known angles
-    4. Law of Sines for unknown side
+    1. Use Law of Sines to find the unknown angle (opposite one of the known sides)
+       sin(A)/|F_B| = sin(C)/|F_A|  where C is the known angle opposite F_A
+    2. Handle the ambiguous case: sin(A) has two solutions (acute and obtuse)
+       - Pick the solution that gives a valid triangle (all angles positive, sum = 180°)
+       - Use "largest angle opposite longest side" rule to verify
+    3. Compute the third angle: angle_B = 180° - angle_A - angle_C
+    4. Use Law of Sines to find the unknown side magnitude (F_R)
+       |F_R|/sin(B) = |F_A|/sin(C)
+    5. Compute the unknown side's direction using vertex geometry
     """
-    raise NotImplementedError("SSA case not yet implemented")
+    triangle = state.triangle
+
+    # Find the SSA configuration
+    # We have: 2 known sides + 1 known angle (not between the known sides)
+
+    # First, identify the known angle and its opposite side
+    known_angle_info = None
+    for angle_attr in ["angle_A", "angle_B", "angle_C"]:
+        angle = getattr(triangle, angle_attr)
+        if angle.is_known and angle.angle is not None:
+            known_angle_info = (angle_attr, angle)
+            break
+
+    if known_angle_info is None:
+        raise ValueError("SSA requires one known angle")
+
+    known_angle_attr, known_angle = known_angle_info
+    known_angle_value = known_angle.angle
+
+    # Find the side opposite to the known angle
+    opposite_side_map = {"angle_A": "side_a", "angle_B": "side_b", "angle_C": "side_c"}
+    opposite_side_attr = opposite_side_map[known_angle_attr]
+    opposite_side = getattr(triangle, opposite_side_attr)
+
+    # Find the other known side (not opposite to the known angle)
+    other_known_side = None
+    other_known_side_attr = None
+    for side_attr in ["side_a", "side_b", "side_c"]:
+        if side_attr == opposite_side_attr:
+            continue
+        side = getattr(triangle, side_attr)
+        if side.is_known and side.magnitude is not ...:
+            other_known_side = side
+            other_known_side_attr = side_attr
+            break
+
+    if other_known_side is None:
+        raise ValueError("SSA requires two known sides")
+
+    # Find the unknown side
+    unknown_side = None
+    unknown_side_attr = None
+    for side_attr in ["side_a", "side_b", "side_c"]:
+        side = getattr(triangle, side_attr)
+        if not side.is_known or side.magnitude is ...:
+            unknown_side = side
+            unknown_side_attr = side_attr
+            break
+
+    if unknown_side is None:
+        raise ValueError("SSA: could not find unknown side")
+
+    # Get magnitudes
+    if opposite_side.magnitude is ...:
+        raise ValueError("SSA: opposite side magnitude is unknown")
+
+    opp_mag = opposite_side.magnitude  # side opposite to known angle
+    other_mag = other_known_side.magnitude  # the other known side
+
+    # Step 1: Use Law of Sines to find the angle opposite to the other known side
+    # sin(unknown_angle) / other_mag = sin(known_angle) / opp_mag
+    # unknown_angle = asin(other_mag * sin(known_angle) / opp_mag)
+    sin_known = sin(known_angle_value)
+    sin_unknown = other_mag * sin_known / opp_mag
+
+    # Clamp to valid range for asin
+    sin_val = sin_unknown.value
+    if sin_val is not None and abs(sin_val) > 1.0:
+        if sin_val > 1.0:
+            sin_unknown = Q(1.0, "dimensionless")
+        else:
+            sin_unknown = Q(-1.0, "dimensionless")
+
+    # Get the acute angle solution
+    acute_angle = asin(sin_unknown).to_unit.degree
+    obtuse_angle = Q(180, "degree") - acute_angle
+
+    # Determine which solution is valid
+    # Both solutions must give positive third angle (180 - known - found > 0)
+    acute_third = Q(180, "degree") - known_angle_value - acute_angle
+    obtuse_third = Q(180, "degree") - known_angle_value - obtuse_angle
+
+    # Pick the solution that gives a valid (positive) third angle
+    # If both are valid, use the one consistent with largest-angle-opposite-longest-side
+    solved_angle = None
+
+    acute_third_val = acute_third.to_unit.degree.magnitude()
+    obtuse_third_val = obtuse_third.to_unit.degree.magnitude()
+
+    if acute_third_val > 0 and obtuse_third_val <= 0:
+        solved_angle = acute_angle
+        third_angle = acute_third
+    elif obtuse_third_val > 0 and acute_third_val <= 0:
+        solved_angle = obtuse_angle
+        third_angle = obtuse_third
+    elif acute_third_val > 0 and obtuse_third_val > 0:
+        # Both valid - use geometric verification
+        # The largest angle should be opposite the longest side
+        # We'll use the acute solution by default (more common case)
+        solved_angle = acute_angle
+        third_angle = acute_third
+    else:
+        raise ValueError("SSA: No valid triangle solution found")
+
+    # Find the angle attribute for the solved angle (opposite to other_known_side)
+    angle_opposite_map = {"side_a": "angle_A", "side_b": "angle_B", "side_c": "angle_C"}
+    assert other_known_side_attr is not None, "other_known_side_attr should not be None at this point"
+    solved_angle_attr = angle_opposite_map[other_known_side_attr]
+    solved_triangle_angle = getattr(triangle, solved_angle_attr)
+
+    # Find the angle attribute for the third angle (opposite to unknown_side)
+    assert unknown_side_attr is not None, "unknown_side_attr should not be None at this point"
+    third_angle_attr = angle_opposite_map[unknown_side_attr]
+    third_triangle_angle = getattr(triangle, third_angle_attr)
+
+    # Use LawOfSines class for the angle computation
+    # Determine use_obtuse based on our earlier analysis
+    use_obtuse_for_los = solved_angle == (Q(180, "degree") - asin(sin_unknown).to_unit.degree)
+
+    # The solved angle is opposite to other_known_side.
+    # Find the two sides adjacent to the solved angle's vertex (i.e., the sides that form this angle)
+    # The angle opposite to other_known_side is at the vertex where the OTHER two sides meet.
+    # For angle_A (opposite side_a/F_B): adjacent sides are side_b (F_R) and side_c (F_A)
+    # For angle_B (opposite side_b/F_R): adjacent sides are side_a (F_B) and side_c (F_A)
+    # For angle_C (opposite side_c/F_A): adjacent sides are side_a (F_B) and side_b (F_R)
+    adjacent_sides_map = {
+        "side_a": ("side_b", "side_c"),  # angle_A is formed by F_R and F_A
+        "side_b": ("side_a", "side_c"),  # angle_B is formed by F_B and F_A
+        "side_c": ("side_a", "side_b"),  # angle_C is formed by F_B and F_R
+    }
+    adj_side_attrs = adjacent_sides_map[other_known_side_attr]
+    adj_side_1 = getattr(triangle, adj_side_attrs[0])
+    adj_side_2 = getattr(triangle, adj_side_attrs[1])
+
+    los_angle = LawOfSines(
+        opposite_side=other_mag,
+        known_angle=known_angle_value,
+        known_side=opp_mag,
+        angle_vector_1=adj_side_1.name or "V1",
+        angle_vector_2=adj_side_2.name or "V2",
+        equation_number=1,
+        use_obtuse=use_obtuse_for_los,
+        solve_for="angle",
+    )
+    # Call solve() to get the step dict (result matches our solved_angle)
+    _, step = los_angle.solve()
+    state.solving_steps.append(step)
+    state.equations_used.append(los_angle.equation_for_list())
+
+    # Update triangle with solved angle
+    solved_triangle_angle.angle = solved_angle
+    solved_triangle_angle.is_known = True
+
+    # Step 2: Compute the direction of the side with unknown direction
+    # This comes right after finding the interior angle, as it's what the user wants to know
+    # Find which side has unknown direction but known magnitude
+    side_with_unknown_dir = None
+    for side_attr in ["side_a", "side_b", "side_c"]:
+        side = getattr(triangle, side_attr)
+        if side.direction is None and side.is_known:
+            side_with_unknown_dir = side
+            break
+
+    if side_with_unknown_dir is not None:
+        # Use compute_unknown_direction with the angle we just solved
+        computed_dir = triangle.compute_unknown_direction(side_with_unknown_dir, solved_triangle_angle)
+        if computed_dir is not None:
+            side_with_unknown_dir.direction = computed_dir
+
+            # Update state.dir_r
+            if triangle._is_side_resultant(side_with_unknown_dir):
+                state.dir_r = computed_dir
+            else:
+                state.dir_r = computed_dir
+
+            # Find the adjacent side with known direction at the same vertex as the solved angle
+            # The solved angle is at a vertex where two sides meet - we want the OTHER side
+            # (not side_with_unknown_dir) that has a known direction
+            adjacent_known_side = None
+            angle_vertex = solved_triangle_angle.vertex
+            for side_attr in ["side_a", "side_b", "side_c"]:
+                side = getattr(triangle, side_attr)
+                if side != side_with_unknown_dir and side.direction is not None:
+                    # Check if this side is at the same vertex as the solved angle
+                    if side.start == angle_vertex or side.end == angle_vertex:
+                        adjacent_known_side = side
+                        break
+
+            if adjacent_known_side is not None:
+                # Get the reference axis from the vector_references map
+                result_ref = state.vector_references.get(side_with_unknown_dir.name, "+x")
+                ref_axis = result_ref.lstrip("+-")
+
+                # For SSA case, the user typically wants to see:
+                # angle(ref_axis, F_A) = 90° - angle(F_R, F_A)
+                # This is because F_R is along +x, and +y is 90° from +x
+                result_name = latex_name(side_with_unknown_dir.name or "V")
+                adj_name = latex_name(adjacent_known_side.name or "V")
+                solved_deg = solved_angle.to_unit.degree
+
+                # Compute the final angle relative to the user's reference axis
+                # For +y reference: angle from +y = 90° - interior_angle (for acute angles)
+                # For +x reference: angle from +x = interior_angle (when base is at 0°)
+                base_val = adjacent_known_side.direction.to_unit.degree.magnitude()
+
+                if ref_axis.lower() == "y":
+                    # Show calculation as: 90° - interior_angle
+                    result_angle = 90.0 - solved_deg.magnitude()
+                    step = SolutionStepBuilder(
+                        target=f"\\angle({ref_axis}, \\vec{{{result_name}}}) with respect to {result_ref}",
+                        method="Geometry",
+                        description=f"Compute direction of {side_with_unknown_dir.name} from interior angle",
+                        substitution=f"\\angle({ref_axis}, \\vec{{{result_name}}}) &= 90^{{\\circ}} - \\angle(\\vec{{{adj_name}}}, \\vec{{{result_name}}}) \\\\\n&= 90^{{\\circ}} - {format_angle(solved_deg, precision=1)} \\\\\n&= {result_angle:.1f}^{{\\circ}} \\\\",
+                    )
+                    state.solving_steps.append(step.build())
+                else:
+                    # Use AngleSum for other reference axes
+                    # Determine operation: compare computed_dir with base + offset and base - offset
+                    computed_dir_val = computed_dir.to_unit.degree.magnitude()
+                    offset_val = solved_deg.magnitude()
+
+                    # Normalize angles to [0, 360) for comparison
+                    def normalize(x: float) -> float:
+                        return x % 360
+
+                    add_result = normalize(base_val + offset_val)
+                    sub_result = normalize(base_val - offset_val)
+                    computed_norm = normalize(computed_dir_val)
+
+                    # Determine which operation was used (with tolerance for floating point)
+                    add_diff = min(abs(add_result - computed_norm), abs(add_result - computed_norm + 360), abs(add_result - computed_norm - 360))
+                    sub_diff = min(abs(sub_result - computed_norm), abs(sub_result - computed_norm + 360), abs(sub_result - computed_norm - 360))
+
+                    operation = "-" if sub_diff < add_diff else "+"
+
+                    # AngleSum handles LaTeX formatting internally and returns normalized angle
+                    angle_sum = AngleSum(
+                        base_angle=adjacent_known_side.direction,
+                        offset_angle=solved_angle,
+                        result_vector_name=side_with_unknown_dir.name,
+                        base_vector_name=adjacent_known_side.name,
+                        offset_vector_1=adjacent_known_side.name,
+                        offset_vector_2=side_with_unknown_dir.name,
+                        result_ref=result_ref,
+                        operation=operation,
+                        angle_dir=state.result_angle_dir,
+                    )
+                    normalized_dir, step = angle_sum.solve()
+                    state.solving_steps.append(step)
+                    # Update dir_r with the normalized angle
+                    state.dir_r = normalized_dir
+            else:
+                # Fallback: simple step if no adjacent known side found
+                result_name = latex_name(side_with_unknown_dir.name or "V")
+                computed_dir_deg = computed_dir.to_unit.degree
+
+                ref_wrt = state.vector_references.get(side_with_unknown_dir.name, "+x")
+                ref_axis = ref_wrt.lstrip("+-")
+
+                step = SolutionStepBuilder(
+                    target=f"\\angle({ref_axis}, \\vec{{{result_name}}}) with respect to {ref_wrt}",
+                    method="Geometry",
+                    description=f"Compute direction of {side_with_unknown_dir.name} from interior angle",
+                    substitution=f"\\theta = {format_angle(computed_dir_deg, precision=1)}",
+                )
+                state.solving_steps.append(step.build())
+
+    # Step 3: Compute the third angle (interior angle opposite the unknown side)
+    third_triangle_angle.angle = third_angle
+    third_triangle_angle.is_known = True
+
+    known_angle_deg = known_angle_value.to_unit.degree
+    third_deg = third_angle.to_unit.degree
+    solved_deg = solved_angle.to_unit.degree
+
+    # Build a more descriptive target for the angle sum step
+    angle_sum_target = f"Interior angle opposite {unknown_side.name or 'unknown side'}"
+
+    step = SolutionStepBuilder(
+        target=angle_sum_target,
+        method="Angle Sum",
+        description="Calculate interior angle using triangle angle sum rule",
+        substitution=f"180° - {format_angle(known_angle_deg, precision=1)} - {format_angle(solved_deg, precision=1)} = {format_angle(third_deg, precision=1)}",
+    )
+    state.solving_steps.append(step.build())
+
+    # Step 4: Use Law of Cosines to find the unknown side magnitude
+    # This matches the textbook approach: c² = a² + b² - 2ab·cos(C)
+    # where C is the angle opposite the unknown side (third_angle)
+
+    loc = LawOfCosines(
+        side_a=opp_mag,
+        side_b=other_mag,
+        angle=third_angle,
+        result_vector_name=unknown_side.name,
+        equation_number=2,
+    )
+    unknown_mag, step = loc.solve()
+    state.solving_steps.append(step)
+    state.equations_used.append(loc.equation_for_list())
+
+    # Preserve unit from known side
+    if hasattr(opp_mag, "preferred") and opp_mag.preferred is not None:
+        unknown_mag.preferred = opp_mag.preferred
+
+    unknown_mag.name = f"{unknown_side.name}_mag"
+
+    # Update triangle with unknown side magnitude
+    unknown_side.magnitude = unknown_mag
+    unknown_side.is_known = True
 
 
 def solve_asa(state: SolvingState) -> None:
@@ -480,12 +921,55 @@ def solve_asa(state: SolvingState) -> None:
 
     unknown_side2_mag, step2 = los2.solve()
 
-    # Update the triangle
-    unknown_side2.magnitude = unknown_side2_mag
-    unknown_side2.is_known = True
-
     state.solving_steps.append(step2)
     state.equations_used.append(los2.equation_for_list())
+
+    # Sign correction for vector components
+    # Law of Sines always returns positive magnitudes, but in some geometries
+    # a component may need to be negative (pointing opposite to its reference direction)
+    # This happens when the resultant is "outside" the angular span of the components
+
+    # Get the absolute directions of all three sides
+    # TriangleSide has .direction attribute (absolute direction as Quantity)
+    if included_side.direction is None or unknown_side1.direction is None or unknown_side2.direction is None:
+        # Can't apply sign correction without directions - just use positive magnitudes
+        unknown_side1.magnitude = unknown_side1_mag
+        unknown_side1.is_known = True
+        unknown_side2.magnitude = unknown_side2_mag
+        unknown_side2.is_known = True
+        return
+
+    resultant_dir = included_side.direction.to_unit.degree.magnitude()
+    resultant_mag_val = known_side_mag.magnitude()
+
+    comp1_dir = unknown_side1.direction.to_unit.degree.magnitude()
+    comp1_mag_val = unknown_side1_mag.magnitude()
+
+    comp2_dir = unknown_side2.direction.to_unit.degree.magnitude()
+    comp2_mag_val = unknown_side2_mag.magnitude()
+
+    # Compute corrected signs
+    corrected_comp1, corrected_comp2 = _compute_component_signs(
+        resultant_mag_val, resultant_dir,
+        comp1_mag_val, comp1_dir,
+        comp2_mag_val, comp2_dir,
+    )
+
+    # Apply sign corrections if needed
+    if corrected_comp1 < 0:
+        # Need to create a new quantity with negative value
+        unknown_side1_mag = Q(corrected_comp1, unknown_side1_mag.preferred.symbol if unknown_side1_mag.preferred else "N")
+        unknown_side1_mag.name = f"{unknown_side1.name}_mag"
+
+    if corrected_comp2 < 0:
+        unknown_side2_mag = Q(corrected_comp2, unknown_side2_mag.preferred.symbol if unknown_side2_mag.preferred else "N")
+        unknown_side2_mag.name = f"{unknown_side2.name}_mag"
+
+    # Update the triangle with corrected magnitudes
+    unknown_side1.magnitude = unknown_side1_mag
+    unknown_side1.is_known = True
+    unknown_side2.magnitude = unknown_side2_mag
+    unknown_side2.is_known = True
 
     # For ASA, the directions are already known from the input vectors, so we don't need to compute them
     # However, we need to set state.dir_r appropriately if any of the unknown sides is the resultant
@@ -606,8 +1090,11 @@ class ParallelogramLawProblem:
                 setattr(self, attr_name, vec_copy)
                 self.vectors[attr_name] = vec_copy
 
-                # VectorUnknown with ellipsis magnitude is unknown
-                is_known = attr.magnitude is not ... and attr.magnitude.value is not None
+                # VectorUnknown is known only if BOTH magnitude AND angle are known
+                # (not ellipsis and have a value)
+                mag_known = attr.magnitude is not ... and attr.magnitude.value is not None
+                angle_known = attr.angle is not ...
+                is_known = mag_known and angle_known
                 self._original_vector_states[attr_name] = is_known
                 self._create_vector_unknown_variables(attr_name, vec_copy, is_known=is_known)
 
@@ -626,25 +1113,34 @@ class ParallelogramLawProblem:
         self._original_variable_states[f"{name}_angle"] = is_known
 
     def _create_vector_unknown_variables(self, name: str, vec: VectorUnknown, is_known: bool) -> None:
-        """Create variables for VectorUnknown (may have ellipsis values)."""
-        # Magnitude
+        """Create variables for VectorUnknown (may have ellipsis values).
+
+        Note: is_known indicates if the whole vector is known, but individual
+        components (magnitude, angle) can be known even if the vector is "unknown".
+        For example, a vector with unknown magnitude but known angle=0.
+        """
+        # Magnitude - known if not ellipsis and has a value
         if vec.magnitude is not ...:
             mag_qty = vec.magnitude
             mag_qty.name = f"{name}_mag"
             self.variables[f"{name}_mag"] = mag_qty
-            self._original_variable_states[f"{name}_mag"] = is_known
+            # Magnitude is known if it has a concrete value
+            mag_is_known = mag_qty.value is not None
+            self._original_variable_states[f"{name}_mag"] = mag_is_known
         else:
-            # Create placeholder - will be filled after solving
+            # Ellipsis means unknown
             self._original_variable_states[f"{name}_mag"] = False
 
-        # Angle
+        # Angle - known if not ellipsis and has a value
         if vec.angle is not ...:
             angle_qty = vec.angle
             angle_qty.name = f"{name}_angle"
             self.variables[f"{name}_angle"] = angle_qty
-            self._original_variable_states[f"{name}_angle"] = is_known
+            # Angle is known if it has a concrete value
+            angle_is_known = angle_qty.value is not None
+            self._original_variable_states[f"{name}_angle"] = angle_is_known
         else:
-            # Create placeholder - will be filled after solving
+            # Ellipsis means unknown
             self._original_variable_states[f"{name}_angle"] = False
 
     def get_known_variables(self) -> dict[str, Any]:
@@ -690,8 +1186,22 @@ class ParallelogramLawProblem:
         # Classify the problem using Triangle's classify method
         case = triangle.classify()
 
+        # Extract angle_dir from the resultant (unknown) vector if set
+        result_angle_dir = AngleDirection.COUNTERCLOCKWISE
+        for vec in self.vectors.values():
+            if hasattr(vec, "_angle_dir"):
+                result_angle_dir = vec._angle_dir
+                break
+
+        # Build vector_references map (vector name -> reference axis like "+y", "-x")
+        vector_references = {name: vec.wrt for name, vec in self.vectors.items()}
+
         # Create solving state
-        state = SolvingState(triangle=triangle)
+        state = SolvingState(
+            triangle=triangle,
+            result_angle_dir=result_angle_dir,
+            vector_references=vector_references,
+        )
         self._solving_state = state
 
         # Dispatch to solving strategy

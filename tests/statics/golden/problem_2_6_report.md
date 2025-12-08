@@ -1,4 +1,4 @@
-# Engineering Calculation Report: Problem 2-1
+# Engineering Calculation Report: Problem 2-6
 
 **Generated:** {{GENERATED_DATETIME}}
 
@@ -8,8 +8,8 @@
 
 | Vector | $\|\vec{F}\|$ (N) | $\theta$ (deg) | Reference |
 | :--- | ---: | ---: | :--- |
-| $\vec{F_1}$ | 450.0 | 60.0 | +x |
-| $\vec{F_2}$ | 700.0 | 15.0 | -x |
+| $\vec{F_1}$ | 4000.0 | -30.0 | +v |
+| $\vec{F_2}$ | 6000.0 | -30.0 | +u |
 
 </div>
 
@@ -19,7 +19,7 @@
 
 | Vector | $\|\vec{F}\|$ (N) | $\theta$ (deg) | Reference |
 | :--- | ---: | ---: | :--- |
-| $\vec{F_R}$ | ? | ? | +x |
+| $\vec{F_R}$ | ? | ? | +u |
 
 </div>
 
@@ -35,8 +35,8 @@
 
 $$
 \begin{aligned}
-|\vec{F_R}| &= \sqrt{(700.0\ \text{N})^2 + (450.0\ \text{N})^2 - 2(700.0\ \text{N})(450.0\ \text{N})\cos(45.0^{\circ})} \\
-&= 497.0\ \text{N} \\
+|\vec{F_R}| &= \sqrt{(6000.0\ \text{N})^2 + (4000.0\ \text{N})^2 - 2(6000.0\ \text{N})(4000.0\ \text{N})\cos(105.0^{\circ})} \\
+&= 8026.4\ \text{N} \\
 \end{aligned}
 $$
 
@@ -44,18 +44,18 @@ $$
 
 $$
 \begin{aligned}
-\angle(\vec{F_1}, \vec{F_R}) &= \sin^{-1}(700.0\ \text{N} \cdot \frac{\sin(45.0^{\circ})}{497.0\ \text{N}}) \\
-&= 95.2^{\circ} \\
+\angle(\vec{F_1}, \vec{F_R}) &= \sin^{-1}(6000.0\ \text{N} \cdot \frac{\sin(105.0^{\circ})}{8026.4\ \text{N}}) \\
+&= 46.2^{\circ} \\
 \end{aligned}
 $$
 
-**Step 3: Solve for $\angle(\vec{x}, \vec{F_R})$ with respect to +x**
+**Step 3: Solve for $\angle(\vec{x}, \vec{F_R})$ with respect to +u**
 
 $$
 \begin{aligned}
-\angle(\vec{x}, \vec{F_R}) &= \angle(\vec{x}, \vec{F_1}) + \angle(\vec{F_1}, \vec{F_R}) \\
-&= 60.0^{\circ} + 95.2^{\circ} \\
-&= 155.2^{\circ} \\
+\angle(\vec{x}, \vec{F_R}) &= \angle(\vec{x}, \vec{F_1}) - \angle(\vec{F_1}, \vec{F_R}) \\
+&= 45.0^{\circ} - 46.2^{\circ} \\
+&= -1.2^{\circ} \\
 \end{aligned}
 $$
 
@@ -65,7 +65,7 @@ $$
 
 | Vector | $\|\vec{F}\|$ (N) | $\theta$ (deg) | Reference |
 | :--- | ---: | ---: | :--- |
-| $\vec{F_R}$ | 497.0 | 155.2 | +x |
+| $\vec{F_R}$ | 8026.4 | -1.2 | +u |
 
 </div>
 

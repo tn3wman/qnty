@@ -1,0 +1,136 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{graphicx}
+\usepackage{siunitx}
+\usepackage{accents}
+\usepackage{changepage}
+
+% Vector notation: \vv{F} produces F with arrow over it
+\newcommand{\vv}[1]{\vec{#1}}
+% Magnitude notation: \magn{F} produces |F| with fixed-height bars
+\newcommand{\magn}[1]{|#1|}
+
+\title{Engineering Calculation Report: Problem 2-6}
+\date{{{GENERATED_DATE}}}
+
+\begin{document}
+\maketitle
+
+\section{Known Variables}
+
+\begin{longtable}{lSSl}
+\toprule
+Vector & {$\magn{\vv{F}}$ (N)} & {$\theta$ (deg)} & Reference \\
+\midrule
+\endhead
+$\vv{F_1}$ & 4000.0 & -30.0 & +v \\
+$\vv{F_2}$ & 6000.0 & -30.0 & +u \\
+\bottomrule
+\end{longtable}
+
+\section{Unknown Variables}
+
+\begin{longtable}{lSSl}
+\toprule
+Vector & {$\magn{\vv{F}}$ (N)} & {$\theta$ (deg)} & Reference \\
+\midrule
+\endhead
+$\vv{F_R}$ & ? & ? & +u \\
+\bottomrule
+\end{longtable}
+
+\section{Equations Used}
+
+\begin{enumerate}
+\item $\displaystyle \magn{\vv{F_R}}^2 = \magn{\vv{F_2}}^2 + \magn{\vv{F_1}}^2 - 2 \cdot \magn{\vv{F_2}} \cdot \magn{\vv{F_1}} \cdot \cos(\angle(\vv{F_2}, \vv{F_1}))$
+\item $\displaystyle \frac{\sin(\angle(\vv{F_1}, \vv{F_R}))}{\magn{\vv{F_2}}} = \frac{\sin(\angle(\vv{F_1}, \vv{F_2}))}{\magn{\vv{F_R}}}$
+\end{enumerate}
+
+\section{Step-by-Step Solution}
+
+\vspace{0.2em}
+\noindent\hspace{1em}\textbf{Step 1: Solve for $\magn{\vv{F_R}}$ using Eq 1}
+\vspace{0.1em}
+
+\begin{adjustwidth}{2em}{}
+\vspace{-0.8em}
+\begin{flalign*}
+\quad \magn{\vv{F_R}} &= \sqrt{(6000.0\ \text{N})^2 + (4000.0\ \text{N})^2 - 2(6000.0\ \text{N})(4000.0\ \text{N})\cos(105.0^{\circ})} && \\
+\quad &= 8026.4\ \text{N} &&
+\end{flalign*}
+\vspace{-0.8em}
+\end{adjustwidth}
+
+\vspace{0.2em}
+\noindent\hspace{1em}\textbf{Step 2: Solve for $\angle(\vv{F_1}, \vv{F_R})$ using Eq 2}
+\vspace{0.1em}
+
+\begin{adjustwidth}{2em}{}
+\vspace{-0.8em}
+\begin{flalign*}
+\quad \angle(\vv{F_1}, \vv{F_R}) &= \sin^{-1}(6000.0\ \text{N} \cdot \frac{\sin(105.0^{\circ})}{8026.4\ \text{N}}) && \\
+\quad &= 46.2^{\circ} &&
+\end{flalign*}
+\vspace{-0.8em}
+\end{adjustwidth}
+
+\vspace{0.2em}
+\noindent\hspace{1em}\textbf{Step 3: Solve for $\angle(\vv{x}, \vv{F_R})$ with respect to +u}
+\vspace{0.1em}
+
+\begin{adjustwidth}{2em}{}
+\vspace{-0.8em}
+\begin{flalign*}
+\quad \angle(\vv{x}, \vv{F_R}) &= \angle(\vv{x}, \vv{F_1}) - \angle(\vv{F_1}, \vv{F_R}) && \\
+\quad &= 45.0^{\circ} - 46.2^{\circ} && \\
+\quad &= -1.2^{\circ} &&
+\end{flalign*}
+\vspace{-0.8em}
+\end{adjustwidth}
+
+\section{Summary of Results}
+
+\begin{longtable}{lSSl}
+\toprule
+Vector & {$\magn{\vv{F}}$ (N)} & {$\theta$ (deg)} & Reference \\
+\midrule
+\endhead
+$\vv{F_R}$ & 8026.4 & -1.2 & +u \\
+\bottomrule
+\end{longtable}
+
+\section*{Disclaimer}
+\small
+While every effort has been made to ensure the accuracy and reliability of the calculations provided, we do not guarantee that the information is complete, up-to-date, or suitable for any specific purpose. Users must independently verify the results and assume full responsibility for any decisions or actions taken based on its output. Use of this calculator is entirely at your own risk, and we expressly disclaim any liability for errors or omissions in the information provided.
+
+\vspace{1em}
+\noindent\textbf{Report Details:}
+\begin{itemize}[nosep]
+\item \textbf{Generated Date:} {{GENERATED_DATE}}
+\item \textbf{Generated Using:} Qnty Library
+\item \textbf{Version:} Beta (Independent verification required for production use)
+\end{itemize}
+
+\vspace{1em}
+\noindent\textbf{Signatures:}
+\begin{longtable}{llll}
+\toprule
+Role & Name & Signature & Date \\
+\midrule
+Calculated By & \rule{3cm}{0.4pt} & \rule{3cm}{0.4pt} & \rule{2cm}{0.4pt} \\
+Reviewed By & \rule{3cm}{0.4pt} & \rule{3cm}{0.4pt} & \rule{2cm}{0.4pt} \\
+Approved By & \rule{3cm}{0.4pt} & \rule{3cm}{0.4pt} & \rule{2cm}{0.4pt} \\
+\bottomrule
+\end{longtable}
+
+\begin{center}
+\textit{Report generated using qnty library}
+\end{center}
+\end{document}

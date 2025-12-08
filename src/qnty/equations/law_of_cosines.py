@@ -102,6 +102,11 @@ class LawOfCosines:
         result_name = latex_name(self.result_vector_name)
         result.name = f"{self.result_vector_name}_mag"
 
+        # Preserve the unit from the input sides for display
+        # Use side_a's unit (they should be the same unit)
+        if hasattr(self.side_a, "preferred") and self.side_a.preferred is not None:
+            result.preferred = self.side_a.preferred
+
         # Get display values for step formatting - use LaTeX formatting for proper spacing
         angle_deg = self.angle.to_unit.degree
 

@@ -1,4 +1,4 @@
-# Engineering Calculation Report: Problem 2-3
+# Engineering Calculation Report: Problem 2-4
 
 **Generated:** {{GENERATED_DATETIME}}
 
@@ -8,8 +8,7 @@
 
 | Vector | $\|\vec{F}\|$ (N) | $\theta$ (deg) | Reference |
 | :--- | ---: | ---: | :--- |
-| $\vec{F_1}$ | 250.0 | -30.0 | +y |
-| $\vec{F_2}$ | 375.0 | -45.0 | +x |
+| $\vec{F_R}$ | 500.0 | 0.0 | -y |
 
 </div>
 
@@ -19,43 +18,34 @@
 
 | Vector | $\|\vec{F}\|$ (N) | $\theta$ (deg) | Reference |
 | :--- | ---: | ---: | :--- |
-| $\vec{F_R}$ | ? | ? | +x |
+| $\vec{F_{AB}}$ | ? | -45.0 | -y |
+| $\vec{F_{AC}}$ | ? | -30.0 | +x |
 
 </div>
 
 ## 3. Equations Used
 
-1. $|\vec{F_R}|^2 = |\vec{F_2}|^2 + |\vec{F_1}|^2 - 2 \cdot |\vec{F_2}| \cdot |\vec{F_1}| \cdot \cos(\angle(\vec{F_2}, \vec{F_1}))$
+1. $\frac{|\vec{F_{AC}}|}{\sin(\angle(\vec{F_{AB}}, \vec{F_R}))} = \frac{|\vec{F_R}|}{\sin(\angle(\vec{F_{AC}}, \vec{F_{AB}}))}$
 
-2. $\frac{\sin(\angle(\vec{F_1}, \vec{F_R}))}{|\vec{F_2}|} = \frac{\sin(\angle(\vec{F_1}, \vec{F_2}))}{|\vec{F_R}|}$
+2. $\frac{|\vec{F_{AB}}|}{\sin(\angle(\vec{F_{AC}}, \vec{F_R}))} = \frac{|\vec{F_R}|}{\sin(\angle(\vec{F_{AC}}, \vec{F_{AB}}))}$
 
 ## 4. Step-by-Step Solution
 
-**Step 1: Solve for $|\vec{F_R}|$ using Eq 1**
+**Step 1: Solve for $|\vec{F_{AC}}|$ using Eq 1**
 
 $$
 \begin{aligned}
-|\vec{F_R}| &= \sqrt{(375.0\ \text{N})^2 + (250.0\ \text{N})^2 - 2(375.0\ \text{N})(250.0\ \text{N})\cos(75.0^{\circ})} \\
-&= 393.2\ \text{N} \\
+|\vec{F_{AC}}| &= 500.0\ \text{N} \cdot \frac{\sin(45.0^{\circ})}{\sin(75.0^{\circ})} \\
+&= 366.0\ \text{N} \\
 \end{aligned}
 $$
 
-**Step 2: Solve for $\angle(\vec{F_1}, \vec{F_R})$ using Eq 2**
+**Step 2: Solve for $|\vec{F_{AB}}|$ using Eq 2**
 
 $$
 \begin{aligned}
-\angle(\vec{F_1}, \vec{F_R}) &= \sin^{-1}(375.0\ \text{N} \cdot \frac{\sin(75.0^{\circ})}{393.2\ \text{N}}) \\
-&= 67.1^{\circ} \\
-\end{aligned}
-$$
-
-**Step 3: Solve for $\angle(\vec{x}, \vec{F_R})$ with respect to +x**
-
-$$
-\begin{aligned}
-\angle(\vec{x}, \vec{F_R}) &= \angle(\vec{x}, \vec{F_1}) - \angle(\vec{F_1}, \vec{F_R}) \\
-&= 360^{\circ} + 60.0^{\circ} - 67.1^{\circ} \\
-&= 352.9^{\circ} \\
+|\vec{F_{AB}}| &= 500.0\ \text{N} \cdot \frac{\sin(60.0^{\circ})}{\sin(75.0^{\circ})} \\
+&= 448.3\ \text{N} \\
 \end{aligned}
 $$
 
@@ -65,7 +55,8 @@ $$
 
 | Vector | $\|\vec{F}\|$ (N) | $\theta$ (deg) | Reference |
 | :--- | ---: | ---: | :--- |
-| $\vec{F_R}$ | 393.2 | 352.9 | +x |
+| $\vec{F_{AB}}$ | 448.3 | -45.0 | -y |
+| $\vec{F_{AC}}$ | 366.0 | -30.0 | +x |
 
 </div>
 

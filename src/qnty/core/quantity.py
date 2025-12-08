@@ -250,7 +250,10 @@ class Quantity(Generic[D]):
             if self.value is None or other.value is None:
                 raise ValueError("Cannot perform arithmetic on unknown quantities")
             result_value = self.value + other.value
-            return Quantity(name=f"{result_value}", dim=self.dim, value=result_value)
+            result = Quantity(name=f"{result_value}", dim=self.dim, value=result_value)
+            # Propagate preferred unit: prefer self's, then other's
+            result.preferred = self.preferred if self.preferred is not None else other.preferred
+            return result
         # Handle numeric types - only for dimensionless quantities
         # TODO: ensure dimensionless angles are handled correctly later
         if not self.dim.is_dimensionless():
@@ -258,7 +261,9 @@ class Quantity(Generic[D]):
         if self.value is None:
             raise ValueError("Cannot perform arithmetic on unknown quantities")
         result_value = self.value + float(other)
-        return Quantity(name=f"{result_value}", dim=self.dim, value=result_value)
+        result = Quantity(name=f"{result_value}", dim=self.dim, value=result_value)
+        result.preferred = self.preferred
+        return result
 
     def __sub__(self, other: Quantity | float | int) -> Quantity:
         if isinstance(other, Quantity):
@@ -267,7 +272,10 @@ class Quantity(Generic[D]):
             if self.value is None or other.value is None:
                 raise ValueError("Cannot perform arithmetic on unknown quantities")
             result_value = self.value - other.value
-            return Quantity(name=f"{result_value}", dim=self.dim, value=result_value)
+            result = Quantity(name=f"{result_value}", dim=self.dim, value=result_value)
+            # Propagate preferred unit: prefer self's, then other's
+            result.preferred = self.preferred if self.preferred is not None else other.preferred
+            return result
         # Handle numeric types - only for dimensionless quantities
         # TODO: ensure dimensionless angles are handled correctly
         if not self.dim.is_dimensionless():
@@ -275,7 +283,9 @@ class Quantity(Generic[D]):
         if self.value is None:
             raise ValueError("Cannot perform arithmetic on unknown quantities")
         result_value = self.value - float(other)
-        return Quantity(name=f"{result_value}", dim=self.dim, value=result_value)
+        result = Quantity(name=f"{result_value}", dim=self.dim, value=result_value)
+        result.preferred = self.preferred
+        return result
 
     # Reverse arithmetic operations
     def __radd__(self, other: float | int) -> Quantity:

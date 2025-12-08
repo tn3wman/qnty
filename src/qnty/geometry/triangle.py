@@ -402,10 +402,15 @@ class Triangle:
         The interior angle at a vertex is the angle between the two sides
         meeting at that vertex, measured INSIDE the triangle.
 
-        We compute this by:
-        1. Get the outgoing directions from the vertex for both adjacent sides
-        2. Compute the absolute difference
-        3. Ensure we get the interior angle (not exterior)
+        For the parallelogram law triangle (R = V1 + V2):
+        - Vertex A: where V1 and R both START (origin)
+        - Vertex B: where V1 ENDS and V2 STARTS (junction)
+        - Vertex C: where V2 and R both END (tip)
+
+        The interior angle is computed by considering the "outgoing" direction
+        from the vertex along each edge, then finding the angle between them.
+        For edges that END at the vertex, the outgoing direction is the
+        reverse of the edge direction (direction + 180°).
 
         Args:
             vertex: The vertex to compute the angle at
@@ -419,37 +424,124 @@ class Triangle:
         if len(adjacent_sides) != 2:
             return None
 
-        # Get outgoing directions from this vertex (as Quantities)
-        dir1 = adjacent_sides[0].direction_from(vertex)
-        dir2 = adjacent_sides[1].direction_from(vertex)
+        side1, side2 = adjacent_sides
 
-        if dir1 is None or dir2 is None:
+        if side1.direction is None or side2.direction is None:
             return None
 
-        zero, _, _ = _get_angle_constants()
+        zero, half, full = _get_angle_constants()
 
-        # Compute angle between the outgoing directions using Quantity arithmetic
-        angle_diff = dir2 - dir1
+        # Get outgoing direction from this vertex for each side
+        # If the side starts at this vertex, outgoing = side.direction
+        # If the side ends at this vertex, outgoing = side.direction + 180°
+        if side1.start == vertex:
+            out1 = side1.direction
+        else:
+            out1 = side1.direction + half
 
-        # Make positive (absolute value)
-        if angle_diff < zero:
-            angle_diff = zero - angle_diff
+        if side2.start == vertex:
+            out2 = side2.direction
+        else:
+            out2 = side2.direction + half
 
-        # Normalize to [0, 360) and get interior angle (0-180°)
-        angle_diff = _normalize_angle(angle_diff)
-        return _get_interior_angle(angle_diff)
+        # Normalize both to [0, 360)
+        out1 = _normalize_angle(out1)
+        out2 = _normalize_angle(out2)
+
+        # Compute the signed angle from out1 to out2 (counterclockwise positive)
+        # This tells us which direction we turn when going around the triangle
+        signed_diff = out2 - out1
+
+        # Normalize to (-180, 180]
+        while signed_diff > half:
+            signed_diff = signed_diff - full
+        while signed_diff <= Q(-180, "degree"):
+            signed_diff = signed_diff + full
+
+        # The interior angle is the absolute value of the signed difference
+        # because interior angles are always positive and < 180°
+        if signed_diff < zero:
+            interior = zero - signed_diff
+        else:
+            interior = signed_diff
+
+        return interior
 
     def _compute_interior_angles(self):
         """
         Compute the interior angles using the vertex-based model.
 
-        This replaces the old approach that had special cases for
-        tail-to-tip vs shared-vertex configurations. The vertex model
-        handles all cases uniformly.
+        This method computes all three interior angles and ensures they
+        sum to 180°. If the initial computation yields angles that don't
+        sum to 180° (which can happen in certain parallelogram law configurations),
+        we adjust the angles to form a valid triangle.
+
+        The key insight is that for the parallelogram law triangle:
+        - The angle at A (origin) is always correct: |dir(V1) - dir(R)|
+        - The angles at B and C may need to be supplemented if they sum to > 180°
+
+        This is because the "outgoing directions" approach can compute the
+        exterior angle instead of the interior angle at junction vertices.
         """
+        # First pass: compute angles using the vertex-based model
+        computed_angles = {}
         for angle_attr, (vertex, opposite_side_attr) in ANGLE_VERTEX_MAP.items():
             angle_qty = self._compute_interior_angle_at_vertex(vertex)
+            computed_angles[angle_attr] = (angle_qty, vertex, opposite_side_attr)
 
+        # Check if angles sum to 180°
+        zero, half, _ = _get_angle_constants()
+        angle_sum = zero
+        all_known = True
+        for _angle_attr, (angle_qty, _, _) in computed_angles.items():
+            if angle_qty is not None:
+                angle_sum = angle_sum + angle_qty
+            else:
+                all_known = False
+
+        # If all angles are known and they don't sum to 180°, we need to correct them
+        # This happens when some angles are exterior angles instead of interior
+        if all_known:
+            tolerance = Q(1, "degree")  # Allow small floating point errors
+            expected_sum = Q(180, "degree")
+
+            # Check if we're significantly off from 180°
+            diff = angle_sum - expected_sum
+            if diff < zero:
+                diff = zero - diff
+
+            if diff > tolerance:
+                # Angles don't sum to 180° - need to correct
+                # The angle at A (origin) is always correct because both sides start there
+                # The angles at B and C may be exterior angles (should be supplemented)
+
+                angle_A_qty = computed_angles["angle_A"][0]
+
+                if angle_A_qty is not None:
+                    # The angles at B and C should be equal in many cases (isoceles)
+                    # or we can use the constraint that they must sum to (180 - A)
+                    angle_B_qty = computed_angles["angle_B"][0]
+                    angle_C_qty = computed_angles["angle_C"][0]
+
+                    if angle_B_qty is not None and angle_C_qty is not None:
+                        # Check if supplementing both B and C gives valid result
+                        supp_B = half - angle_B_qty
+                        supp_C = half - angle_C_qty
+
+                        new_sum = angle_A_qty + supp_B + supp_C
+
+                        # Check if supplemented angles sum correctly
+                        new_diff = new_sum - expected_sum
+                        if new_diff < zero:
+                            new_diff = zero - new_diff
+
+                        if new_diff < tolerance:
+                            # Supplementing B and C works
+                            computed_angles["angle_B"] = (supp_B, computed_angles["angle_B"][1], computed_angles["angle_B"][2])
+                            computed_angles["angle_C"] = (supp_C, computed_angles["angle_C"][1], computed_angles["angle_C"][2])
+
+        # Create TriangleAngle objects
+        for angle_attr, (angle_qty, vertex, opposite_side_attr) in computed_angles.items():
             # Special naming for angle_B (the junction angle)
             if angle_attr == "angle_B" and angle_qty is not None:
                 angle_qty.name = f"\\angle(\\vec{{{self.vec_1.name}}}, \\vec{{{self.vec_2.name}}})"
