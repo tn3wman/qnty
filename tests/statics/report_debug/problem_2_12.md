@@ -8,7 +8,7 @@
 
 | Vector | $\|\vec{F}\|$ (N) | $\theta$ (deg) | Reference |
 | :--- | ---: | ---: | :--- |
-| $\vec{F_B}$ | 6000.0 | 40.0 | -y |
+| $\vec{F_B}$ | 6000.0 | 40.0 | $-y$ |
 
 </div>
 
@@ -18,24 +18,24 @@
 
 | Vector | $\|\vec{F}\|$ (N) | $\theta$ (deg) | Reference |
 | :--- | ---: | ---: | :--- |
-| $\vec{F_A}$ | 8000.0 | ? | +y |
-| $\vec{F_R}$ | ? | 0.0 | +x |
+| $\vec{F_A}$ | 8000.0 | ? | $+y$ |
+| $\vec{F_R}$ | ? | 0.0 | $+x$ |
 
 </div>
 
 ## 3. Equations Used
 
-1. $\frac{\sin(\angle(\vec{F_R}, \vec{F_A}))}{|\vec{F_B}|} = \frac{\sin(\angle(\vec{F_B}, \vec{F_A}))}{|\vec{F_A}|}$
+1. $\frac{\sin(\angle(\vec{F_A}, \vec{F_R}))}{|\vec{F_B}|} = \frac{\sin(\angle(\vec{F_A}, \vec{F_B}))}{|\vec{F_A}|}$
 
 2. $|\vec{F_R}|^2 = |\vec{F_A}|^2 + |\vec{F_B}|^2 - 2 \cdot |\vec{F_A}| \cdot |\vec{F_B}| \cdot \cos(\angle(\vec{F_A}, \vec{F_B}))$
 
 ## 4. Step-by-Step Solution
 
-**Step 1: Solve for $\angle(\vec{F_R}, \vec{F_A})$ using Eq 1**
+**Step 1: Solve for $\angle(\vec{F_A}, \vec{F_R})$ using Eq 1**
 
 $$
 \begin{aligned}
-\angle(\vec{F_R}, \vec{F_A}) &= \sin^{-1}(6000.0\ \text{N} \cdot \frac{\sin(50.0^{\circ})}{8000.0\ \text{N}}) \\
+\angle(\vec{F_A}, \vec{F_R}) &= \sin^{-1}(6000.0\ \text{N} \cdot \frac{\sin(50.0^{\circ})}{8000.0\ \text{N}}) \\
 &= 35.1^{\circ} \\
 \end{aligned}
 $$
@@ -44,7 +44,7 @@ $$
 
 $$
 \begin{aligned}
-\angle(y, \vec{F_A}) &= 90^{\circ} - \angle(\vec{F_R}, \vec{F_A}) \\
+\angle(y, \vec{F_A}) &= 90^{\circ} - \angle(\vec{F_B}, \vec{F_A}) \\
 &= 90^{\circ} - 35.1^{\circ} \\
 &= 54.9^{\circ} \\
 \end{aligned}
@@ -73,8 +73,8 @@ $$
 
 | Vector | $\|\vec{F}\|$ (N) | $\theta$ (deg) | Reference |
 | :--- | ---: | ---: | :--- |
-| $\vec{F_A}$ | 8000.0 | 305.1 | +y |
-| $\vec{F_R}$ | 10404.6 | 0.0 | +x |
+| $\vec{F_A}$ | 8000.0 | 324.9 | $+y$ |
+| $\vec{F_R}$ | 10404.6 | 0.0 | $+x$ |
 
 </div>
 

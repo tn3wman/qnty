@@ -1,4 +1,4 @@
-# Engineering Calculation Report: Problem 2-6
+# Engineering Calculation Report: Problem 2-2
 
 **Generated:** {{GENERATED_DATETIME}}
 
@@ -8,8 +8,8 @@
 
 | Vector | $\|\vec{F}\|$ (N) | $\theta$ (deg) | Reference |
 | :--- | ---: | ---: | :--- |
-| $\vec{F_1}$ | 4000.0 | -30.0 | $+v$ |
-| $\vec{F_2}$ | 6000.0 | -30.0 | $+u$ |
+| $\vec{F_2}$ | 700.0 | 15.0 | $-x$ |
+| $\vec{F_R}$ | 500.0 | 0.0 | $+y$ |
 
 </div>
 
@@ -19,53 +19,41 @@
 
 | Vector | $\|\vec{F}\|$ (N) | $\theta$ (deg) | Reference |
 | :--- | ---: | ---: | :--- |
-| $\vec{F_R}$ | ? | ? | $+u$ |
+| $\vec{F_1}$ | ? | ? | $+x$ |
 
 </div>
 
 ## 3. Equations Used
 
-1. $|\vec{F_R}|^2 = |\vec{F_1}|^2 + |\vec{F_2}|^2 - 2 \cdot |\vec{F_1}| \cdot |\vec{F_2}| \cdot \cos(\angle(\vec{F_1}, \vec{F_2}))$
+1. $\frac{\sin(\angle(\vec{F_1}, \vec{F_2}))}{|\vec{F_R}|} = \frac{\sin(\angle(\vec{F_2}, \vec{F_R}))}{|\vec{F_2}|}$
 
-2. $\frac{\sin(\angle(\vec{F_1}, \vec{F_R}))}{|\vec{F_2}|} = \frac{\sin(\angle(\vec{F_1}, \vec{F_2}))}{|\vec{F_R}|}$
+2. $|\vec{F_1}|^2 = |\vec{F_2}|^2 + |\vec{F_R}|^2 - 2 \cdot |\vec{F_2}| \cdot |\vec{F_R}| \cdot \cos(\angle(\vec{F_2}, \vec{F_R}))$
 
 ## 4. Step-by-Step Solution
 
-**Step 1: Solve for $\angle(\vec{F_1}, \vec{F_2})$**
+**Step 1: Solve for $\angle(\vec{F_1}, \vec{F_2})$ using Eq 1**
 
 $$
 \begin{aligned}
-\angle(\vec{F_1}, \vec{F_2}) &= |\angle(+x, \vec{F_1}) - \angle(+x, \vec{F_2})| \\
-&= |45^{\circ} - -30^{\circ}| \\
-&= 105^{\circ} \\
+\angle(\vec{F_1}, \vec{F_2}) &= \sin^{-1}(500.0\ \text{N} \cdot \frac{\sin(105.0^{\circ})}{700.0\ \text{N}}) \\
+&= 43.6^{\circ} \\
 \end{aligned}
 $$
 
-**Step 2: Solve for $|\vec{F_R}|$ using Eq 1**
+**Step 2: Solve for $Interior angle opposite F_1$**
 
 $$
 \begin{aligned}
-|\vec{F_R}| &= \sqrt{(4000.0\ \text{N})^2 + (6000.0\ \text{N})^2 - 2(4000.0\ \text{N})(6000.0\ \text{N})\cos(105.0^{\circ})} \\
-&= 8026.4\ \text{N} \\
+180° - 105.0^{\circ} - 43.6^{\circ} = 31.4^{\circ} \\
 \end{aligned}
 $$
 
-**Step 3: Solve for $\angle(\vec{F_1}, \vec{F_R})$ using Eq 2**
+**Step 3: Solve for $|\vec{F_1}|$ using Eq 2**
 
 $$
 \begin{aligned}
-\angle(\vec{F_1}, \vec{F_R}) &= \sin^{-1}(6000.0\ \text{N} \cdot \frac{\sin(105.0^{\circ})}{8026.4\ \text{N}}) \\
-&= 46.2^{\circ} \\
-\end{aligned}
-$$
-
-**Step 4: Solve for $\angle(\vec{u}, \vec{F_R})$ with respect to +u**
-
-$$
-\begin{aligned}
-\angle(\vec{u}, \vec{F_R}) &= \angle(\vec{u}, \vec{F_1}) - \angle(\vec{F_1}, \vec{F_R}) \\
-&= 45.0^{\circ} - 46.2^{\circ} \\
-&= -1.2^{\circ} \\
+|\vec{F_1}| &= \sqrt{(700.0\ \text{N})^2 + (500.0\ \text{N})^2 - 2(700.0\ \text{N})(500.0\ \text{N})\cos(31.4^{\circ})} \\
+&= 377.3\ \text{N} \\
 \end{aligned}
 $$
 
@@ -75,7 +63,7 @@ $$
 
 | Vector | $\|\vec{F}\|$ (N) | $\theta$ (deg) | Reference |
 | :--- | ---: | ---: | :--- |
-| $\vec{F_R}$ | 8026.4 | -1.2 | $+u$ |
+| $\vec{F_1}$ | ? | ? | $+x$ |
 
 </div>
 

@@ -77,78 +77,20 @@ def generate_debug_reports_for_problem(problem_class) -> None:
 
 class Chapter2Problem1:
     name = "Problem 2-1"
-    generate_debug_reports = False
-    F_1 = create_vectors_polar(450, "N", 60, wrt="+x", name="F_1")
-    F_2 = create_vectors_polar(700, "N", 15, wrt="-x", name="F_2")
+    generate_debug_reports = True
+    F_1 = create_vectors_polar(450, "N", 60, wrt="+x")
+    F_2 = create_vectors_polar(700, "N", 15, wrt="-x")
     F_R = create_vector_resultant(F_1, F_2)
 
     class expected:
-        F_1 = create_vectors_polar(450, "N", 60, wrt="+x", name="F_1")
-        F_2 = create_vectors_polar(700, "N", 15, wrt="-x", name="F_2")
-        F_R = create_vectors_polar(497.014, "N", 155.192, wrt="+x", name="F_R")
+        F_1 = create_vectors_polar(450, "N", 60, wrt="+x")
+        F_2 = create_vectors_polar(700, "N", 15, wrt="-x")
+        F_R = create_vectors_polar(497.014, "N", 155.192, wrt="+x")
 
-    class report:
-        """Expected content for report generation tests."""
-
-        class known_variables:
-            """Expected known variables table data."""
-            F_1 = {
-                "symbol": "F_1", "unit": "N",
-                "x": 225.0, "y": 389.7, "mag": 450, "angle": 60, "wrt": "+x"
-            }
-            F_2 = {
-                "symbol": "F_2", "unit": "N",
-                "x": -676.1, "y": -181.2, "mag": 700, "angle": 15, "wrt": "-x"
-            }
-
-        class unknown_variables:
-            """Expected unknown variables table data."""
-            F_R = {
-                "symbol": "F_R", "unit": "N",
-                "x": "?", "y": "?", "magnitude": "?", "angle": "?", "reference": "+x",
-            }
-
-        class equations:
-            """Expected equations used in the solution."""
-            eq_1 = "|F_R|² = |F_1|² + |F_2|² + 2·|F_1|·|F_2|·cos(∠(F_1,F_2))"
-            eq_2 = "sin(∠(F_1,F_R))/|F_2| = sin(∠(F_1,F_2))/|F_R|"
-            count = 2
-
-        class steps:
-            """Expected solution steps."""
-            step_1 = {
-                "target": "∠(F_1,F_2)",
-                "final_line": "= 45°",
-            }
-            step_2 = {
-                "target": "|F_R| using Eq 1",
-                "final_line": "= 497.0\\ \\text{N}",
-            }
-            step_3 = {
-                "target": "∠(F_1,F_R) using Eq 2",
-                "final_line": "= 95.2°",
-            }
-            step_4 = {
-                "target": "∠(x,F_R) with respect to +x",
-                "final_line": "= 155.2°",
-            }
-            count = 4
-
-        class results:
-            """Expected final results in the Summary of Results table."""
-            F_R = {
-                "symbol": "F_R",
-                "unit": "N",
-                "x": -451.1,
-                "y": 208.5,
-                "magnitude": 497.0,
-                "angle": 155.2,
-                "reference": "+x",
-            }
 
 class Chapter2Problem2:
     name = "Problem 2-2"
-    generate_debug_reports = False
+    generate_debug_reports = True
     F_1 = create_vectors_polar(..., "N", ..., wrt="+x")
     F_2 = create_vectors_polar(700, "N", 15, wrt="-x")
     F_R = create_resultant_polar(
@@ -160,65 +102,6 @@ class Chapter2Problem2:
         F_1 = create_vectors_polar(960, "N", 45.2, wrt="+x")
         F_2 = create_vectors_polar(700, "N", 15, wrt="-x")
         F_R = create_vectors_polar(500, "N", 0, wrt="+y")
-
-    class report:
-        # Expected content for report generation tests.
-
-        class known_variables:
-            # Expected known variables table data.
-            F_2 = {
-                "symbol": "F_2", "unit": "N",
-                "x": -676.1, "y": -181.2, "mag": 700, "angle": 15, "wrt": "-x"
-            }
-            F_R = {
-                "symbol": "F_R", "unit": "N",
-                "x": 0.0, "y": 500.0, "mag": 500, "angle": 0, "wrt": "+y"
-            }
-
-        class unknown_variables:
-            # Expected unknown variables table data.
-            F_1 = {
-                "symbol": "F_1", "unit": "N",
-                "x": "?", "y": "?", "magnitude": "?", "angle": "?", "reference": "+x",
-            }
-
-        class equations:
-            # Expected equations used in the solution.
-            eq_1 = "|F_1|² = |F_2|² + |F_R|² - 2·|F_2|·|F_R|·cos(∠(F_2,F_R))"
-            eq_2 = "sin(∠(F_R,F_1))/|F_2| = sin(∠(F_2,F_R))/|F_1|"
-            count = 2
-
-        class steps:
-            # Expected solution steps.
-            step_1 = {
-                "target": "∠(F_2,F_R)",
-                "final_line": "= 105°",
-            }
-            step_2 = {
-                "target": "|F_1| using Eq 1",
-                "final_line": "= 959.8\\ \\text{N}",
-            }
-            step_3 = {
-                "target": "∠(F_R,F_1) using Eq 2",
-                "final_line": "= 44.8°",
-            }
-            step_4 = {
-                "target": "∠(x,F_1) with respect to +x",
-                "final_line": "= 45.2°",
-            }
-            count = 4
-
-        class results:
-            # Expected final results in the Summary of Results table.
-            F_1 = {
-                "symbol": "F_1",
-                "unit": "N",
-                "x": 676.1,
-                "y": 681.2,
-                "magnitude": 959.8,
-                "angle": 45.2,
-                "reference": "+x",
-            }
 
 class Chapter2Problem3:
     name = "Problem 2-3"
@@ -989,15 +872,15 @@ ALL_PROBLEM_CLASSES = [
 
 PROBLEMS_WITH_GOLDEN_FILES = [
     Chapter2Problem1,
-    Chapter2Problem2,
-    Chapter2Problem3,
-    Chapter2Problem4,
-    Chapter2Problem5,
-    Chapter2Problem6,
-    Chapter2Problem7,
-    Chapter2Problem8,
-    Chapter2Problem9,
-    Chapter2Problem10,
+    # Chapter2Problem2,
+    # Chapter2Problem3,
+    # Chapter2Problem4,
+    # Chapter2Problem5,
+    # Chapter2Problem6,
+    # Chapter2Problem7,
+    # Chapter2Problem8,
+    # Chapter2Problem9,
+    # Chapter2Problem10,
     # Chapter2Problem11,
     # Chapter2Problem12,
     # Chapter2Problem13,

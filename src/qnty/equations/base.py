@@ -110,6 +110,27 @@ def format_magnitude(value: float, unit: str = "", precision: int = 1) -> str:
     return f"{value:.{precision}f}"
 
 
+def angle_notation(name1: str, name2: str) -> str:
+    """
+    Create LaTeX angle notation with alphanumerically sorted vector names.
+
+    This ensures consistent output like ∠(F_1, F_2) instead of ∠(F_2, F_1)
+    regardless of the order the names are passed in.
+
+    Args:
+        name1: First vector name (will be converted to LaTeX)
+        name2: Second vector name (will be converted to LaTeX)
+
+    Returns:
+        LaTeX-formatted angle notation, e.g., "\\angle(\\vec{F_1}, \\vec{F_2})"
+    """
+    # Sort alphanumerically
+    if name1 > name2:
+        name1, name2 = name2, name1
+
+    return f"\\angle(\\vec{{{latex_name(name1)}}}, \\vec{{{latex_name(name2)}}})"
+
+
 class EquationBase(ABC):
     """
     Abstract base class for equations that generate solution steps.

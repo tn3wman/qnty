@@ -282,17 +282,20 @@ class AngleSum:
         self.description = description or f"Compute direction relative to {result_ref} axis"
 
         # Generate LaTeX names
-        from .base import latex_name
+        from .base import angle_notation, latex_name
 
         result_name = latex_name(result_vector_name)
         base_name = latex_name(base_vector_name)
-        off_v1 = latex_name(offset_vector_1)
-        off_v2 = latex_name(offset_vector_2)
+
+        # Extract the axis from result_ref (e.g., "+x" -> "x", "-y" -> "y")
+        ref_axis = result_ref.lstrip("+-")
 
         # Generate the angle names with LaTeX formatting
-        self.target_name = f"\\angle(\\vec{{x}}, \\vec{{{result_name}}})"
-        self.base_angle_name = f"\\angle(\\vec{{x}}, \\vec{{{base_name}}})"
-        self.offset_angle_name = f"\\angle(\\vec{{{off_v1}}}, \\vec{{{off_v2}}})"
+        # Use the actual reference axis, not hardcoded "x"
+        self.target_name = f"\\angle(\\vec{{{ref_axis}}}, \\vec{{{result_name}}})"
+        self.base_angle_name = f"\\angle(\\vec{{{ref_axis}}}, \\vec{{{base_name}}})"
+        # Use angle_notation for consistent alphanumeric sorting
+        self.offset_angle_name = angle_notation(offset_vector_1, offset_vector_2)
         self.target = f"{self.target_name} with respect to {result_ref}"
 
     def solve(self) -> tuple[Quantity, dict]:

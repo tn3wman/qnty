@@ -8,8 +8,8 @@
 
 | Vector | $\|\vec{F}\|$ (N) | $\theta$ (deg) | Reference |
 | :--- | ---: | ---: | :--- |
-| $\vec{F_1}$ | 450.0 | 60.0 | +x |
-| $\vec{F_2}$ | 700.0 | 15.0 | -x |
+| $\vec{F_1}$ | 450.0 | 60.0 | $+x$ |
+| $\vec{F_2}$ | 700.0 | 15.0 | $-x$ |
 
 </div>
 
@@ -19,28 +19,38 @@
 
 | Vector | $\|\vec{F}\|$ (N) | $\theta$ (deg) | Reference |
 | :--- | ---: | ---: | :--- |
-| $\vec{F_R}$ | ? | ? | +x |
+| $\vec{F_R}$ | ? | ? | $+x$ |
 
 </div>
 
 ## 3. Equations Used
 
-1. $|\vec{F_R}|^2 = |\vec{F_2}|^2 + |\vec{F_1}|^2 - 2 \cdot |\vec{F_2}| \cdot |\vec{F_1}| \cdot \cos(\angle(\vec{F_2}, \vec{F_1}))$
+1. $|\vec{F_R}|^2 = |\vec{F_1}|^2 + |\vec{F_2}|^2 - 2 \cdot |\vec{F_1}| \cdot |\vec{F_2}| \cdot \cos(\angle(\vec{F_1}, \vec{F_2}))$
 
 2. $\frac{\sin(\angle(\vec{F_1}, \vec{F_R}))}{|\vec{F_2}|} = \frac{\sin(\angle(\vec{F_1}, \vec{F_2}))}{|\vec{F_R}|}$
 
 ## 4. Step-by-Step Solution
 
-**Step 1: Solve for $|\vec{F_R}|$ using Eq 1**
+**Step 1: Solve for $\angle(\vec{F_1}, \vec{F_2})$**
 
 $$
 \begin{aligned}
-|\vec{F_R}| &= \sqrt{(700.0\ \text{N})^2 + (450.0\ \text{N})^2 - 2(700.0\ \text{N})(450.0\ \text{N})\cos(45.0^{\circ})} \\
+\angle(\vec{F_1}, \vec{F_2}) &= ||\angle(\vec{x}, \vec{F_1})| - |\angle(\vec{-x}, \vec{F_2})|| \\
+&= ||60^{\circ}| - |15^{\circ}|| \\
+&= 45^{\circ} \\
+\end{aligned}
+$$
+
+**Step 2: Solve for $|\vec{F_R}|$ using Eq 1**
+
+$$
+\begin{aligned}
+|\vec{F_R}| &= \sqrt{(450.0\ \text{N})^2 + (700.0\ \text{N})^2 - 2(450.0\ \text{N})(700.0\ \text{N})\cos(45.0^{\circ})} \\
 &= 497.0\ \text{N} \\
 \end{aligned}
 $$
 
-**Step 2: Solve for $\angle(\vec{F_1}, \vec{F_R})$ using Eq 2**
+**Step 3: Solve for $\angle(\vec{F_1}, \vec{F_R})$ using Eq 2**
 
 $$
 \begin{aligned}
@@ -49,7 +59,7 @@ $$
 \end{aligned}
 $$
 
-**Step 3: Solve for $\angle(\vec{x}, \vec{F_R})$ with respect to +x**
+**Step 4: Solve for $\angle(\vec{x}, \vec{F_R})$ with respect to +x**
 
 $$
 \begin{aligned}
@@ -65,7 +75,7 @@ $$
 
 | Vector | $\|\vec{F}\|$ (N) | $\theta$ (deg) | Reference |
 | :--- | ---: | ---: | :--- |
-| $\vec{F_R}$ | 497.0 | 155.2 | +x |
+| $\vec{F_R}$ | 497.0 | 155.2 | $+x$ |
 
 </div>
 

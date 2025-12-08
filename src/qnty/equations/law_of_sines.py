@@ -13,7 +13,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Literal
 
-from .base import SolutionStepBuilder, format_angle, latex_name
+from .base import SolutionStepBuilder, angle_notation, format_angle, latex_name
 
 if TYPE_CHECKING:
     from ..core.quantity import Quantity
@@ -84,10 +84,8 @@ class LawOfSines:
 
         if solve_for == "angle":
             self.description = description or "Calculate angle using Law of Sines"
-            # Generate the angle name with LaTeX formatting
-            v1 = latex_name(angle_vector_1)
-            v2 = latex_name(angle_vector_2)
-            self.angle_name = f"\\angle(\\vec{{{v1}}}, \\vec{{{v2}}})"
+            # Generate the angle name with LaTeX formatting (sorted alphanumerically)
+            self.angle_name = angle_notation(angle_vector_1, angle_vector_2)
             self.target = f"{self.angle_name} using Eq {equation_number}"
         else:
             self.description = description or f"Calculate magnitude of {result_vector_name}"
@@ -113,12 +111,18 @@ class LawOfSines:
         result_name = self._get_vector_name(self.known_side)
 
         # Use the generated angle_name for the angle being solved
-        # For the known angle, use a proper LaTeX representation
-        known_angle_name = getattr(self.known_angle, "name", None)
-        if known_angle_name and not known_angle_name.replace(".", "").replace("-", "").isdigit():
-            known_angle_repr = known_angle_name
+        # For the known angle, use known_angle_vectors if provided, otherwise fall back to name or inference
+        if self.known_angle_vectors:
+            known_angle_repr = angle_notation(self.known_angle_vectors[0], self.known_angle_vectors[1])
         else:
-            known_angle_repr = f"\\angle(\\vec{{{opp_name}}}, \\vec{{{result_name}}})"
+            known_angle_name = getattr(self.known_angle, "name", None)
+            if known_angle_name and not known_angle_name.replace(".", "").replace("-", "").isdigit():
+                known_angle_repr = known_angle_name
+            else:
+                # Fallback: Get raw names for angle_notation (strip _mag suffix and LaTeX formatting)
+                opp_raw = self.opposite_side.name[:-4] if self.opposite_side.name and self.opposite_side.name.endswith("_mag") else (self.opposite_side.name or "V")
+                result_raw = self.known_side.name[:-4] if self.known_side.name and self.known_side.name.endswith("_mag") else (self.known_side.name or "V")
+                known_angle_repr = angle_notation(opp_raw, result_raw)
 
         return f"\\frac{{\\sin({self.angle_name})}}{{|\\vec{{{opp_name}}}|}} = \\frac{{\\sin({known_angle_repr})}}{{|\\vec{{{result_name}}}|}}"
 
@@ -127,17 +131,12 @@ class LawOfSines:
         result_name = latex_name(self.result_vector_name)
         known_side_name = self._get_vector_name(self.known_side)
 
-        # Build unknown angle name using angle_vector_1 and angle_vector_2
-        # These specify the two vectors that form the angle opposite to the unknown side
-        v1 = latex_name(self.angle_vector_1)
-        v2 = latex_name(self.angle_vector_2)
-        unknown_angle_name = f"\\angle(\\vec{{{v1}}}, \\vec{{{v2}}})"
+        # Build unknown angle name using angle_vector_1 and angle_vector_2 (sorted alphanumerically)
+        unknown_angle_name = angle_notation(self.angle_vector_1, self.angle_vector_2)
 
-        # Build known angle name using known_angle_vectors if provided
+        # Build known angle name using known_angle_vectors if provided (sorted alphanumerically)
         if self.known_angle_vectors:
-            kv1 = latex_name(self.known_angle_vectors[0])
-            kv2 = latex_name(self.known_angle_vectors[1])
-            known_angle_name = f"\\angle(\\vec{{{kv1}}}, \\vec{{{kv2}}})"
+            known_angle_name = angle_notation(self.known_angle_vectors[0], self.known_angle_vectors[1])
         else:
             # Fallback: use opposite vectors to known side
             known_angle_name = f"\\angle(\\vec{{{known_side_name}}})"

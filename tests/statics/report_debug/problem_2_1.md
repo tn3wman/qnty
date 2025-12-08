@@ -1,4 +1,4 @@
-# Engineering Calculation Report: Problem 2-6
+# Engineering Calculation Report: Problem 2-1
 
 **Generated:** {{GENERATED_DATETIME}}
 
@@ -8,8 +8,8 @@
 
 | Vector | $\|\vec{F}\|$ (N) | $\theta$ (deg) | Reference |
 | :--- | ---: | ---: | :--- |
-| $\vec{F_1}$ | 4000.0 | -30.0 | $+v$ |
-| $\vec{F_2}$ | 6000.0 | -30.0 | $+u$ |
+| $\vec{F_1}$ | 450.0 | 60.0 | $+x$ |
+| $\vec{F_2}$ | 700.0 | 15.0 | $-x$ |
 
 </div>
 
@@ -19,7 +19,7 @@
 
 | Vector | $\|\vec{F}\|$ (N) | $\theta$ (deg) | Reference |
 | :--- | ---: | ---: | :--- |
-| $\vec{F_R}$ | ? | ? | $+u$ |
+| $\vec{F_R}$ | ? | ? | $+x$ |
 
 </div>
 
@@ -36,8 +36,8 @@
 $$
 \begin{aligned}
 \angle(\vec{F_1}, \vec{F_2}) &= |\angle(+x, \vec{F_1}) - \angle(+x, \vec{F_2})| \\
-&= |45^{\circ} - -30^{\circ}| \\
-&= 105^{\circ} \\
+&= |60^{\circ} - 195^{\circ}| \\
+&= 45^{\circ} \\
 \end{aligned}
 $$
 
@@ -45,8 +45,8 @@ $$
 
 $$
 \begin{aligned}
-|\vec{F_R}| &= \sqrt{(4000.0\ \text{N})^2 + (6000.0\ \text{N})^2 - 2(4000.0\ \text{N})(6000.0\ \text{N})\cos(105.0^{\circ})} \\
-&= 8026.4\ \text{N} \\
+|\vec{F_R}| &= \sqrt{(450.0\ \text{N})^2 + (700.0\ \text{N})^2 - 2(450.0\ \text{N})(700.0\ \text{N})\cos(45.0^{\circ})} \\
+&= 497.0\ \text{N} \\
 \end{aligned}
 $$
 
@@ -54,18 +54,18 @@ $$
 
 $$
 \begin{aligned}
-\angle(\vec{F_1}, \vec{F_R}) &= \sin^{-1}(6000.0\ \text{N} \cdot \frac{\sin(105.0^{\circ})}{8026.4\ \text{N}}) \\
-&= 46.2^{\circ} \\
+\angle(\vec{F_1}, \vec{F_R}) &= \sin^{-1}(700.0\ \text{N} \cdot \frac{\sin(45.0^{\circ})}{497.0\ \text{N}}) \\
+&= 95.2^{\circ} \\
 \end{aligned}
 $$
 
-**Step 4: Solve for $\angle(\vec{u}, \vec{F_R})$ with respect to +u**
+**Step 4: Solve for $\angle(\vec{x}, \vec{F_R})$ with respect to +x**
 
 $$
 \begin{aligned}
-\angle(\vec{u}, \vec{F_R}) &= \angle(\vec{u}, \vec{F_1}) - \angle(\vec{F_1}, \vec{F_R}) \\
-&= 45.0^{\circ} - 46.2^{\circ} \\
-&= -1.2^{\circ} \\
+\angle(\vec{x}, \vec{F_R}) &= \angle(\vec{x}, \vec{F_1}) + \angle(\vec{F_1}, \vec{F_R}) \\
+&= 60.0^{\circ} + 95.2^{\circ} \\
+&= 155.2^{\circ} \\
 \end{aligned}
 $$
 
@@ -75,7 +75,7 @@ $$
 
 | Vector | $\|\vec{F}\|$ (N) | $\theta$ (deg) | Reference |
 | :--- | ---: | ---: | :--- |
-| $\vec{F_R}$ | 8026.4 | -1.2 | $+u$ |
+| $\vec{F_R}$ | 497.0 | 155.2 | $+x$ |
 
 </div>
 

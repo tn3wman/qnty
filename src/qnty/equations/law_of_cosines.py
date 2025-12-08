@@ -13,7 +13,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from .base import SolutionStepBuilder, format_angle, latex_name
+from .base import SolutionStepBuilder, angle_notation, format_angle, latex_name
 
 if TYPE_CHECKING:
     from ..core.quantity import Quantity
@@ -74,10 +74,20 @@ class LawOfCosines:
         result_name = latex_name(self.result_vector_name)
         side_a_name = self._get_vector_name(self.side_a)
         side_b_name = self._get_vector_name(self.side_b)
+        # Get the raw names (without LaTeX formatting) for angle_notation
+        side_a_raw = self.side_a.name[:-4] if self.side_a.name and self.side_a.name.endswith("_mag") else (self.side_a.name or "V")
+        side_b_raw = self.side_b.name[:-4] if self.side_b.name and self.side_b.name.endswith("_mag") else (self.side_b.name or "V")
+
+        # Sort sides alphanumerically for consistent output (F_1 before F_2)
+        if side_a_name > side_b_name:
+            side_a_name, side_b_name = side_b_name, side_a_name
+            side_a_raw, side_b_raw = side_b_raw, side_a_raw
+
+        angle_str = angle_notation(side_a_raw, side_b_raw)
         return (
             f"|\\vec{{{result_name}}}|^2 = |\\vec{{{side_a_name}}}|^2 + |\\vec{{{side_b_name}}}|^2 "
             f"- 2 \\cdot |\\vec{{{side_a_name}}}| \\cdot |\\vec{{{side_b_name}}}| \\cdot "
-            f"\\cos(\\angle(\\vec{{{side_a_name}}}, \\vec{{{side_b_name}}}))"
+            f"\\cos({angle_str})"
         )
 
     def solve(self) -> tuple[Quantity, dict]:
@@ -114,6 +124,13 @@ class LawOfCosines:
         side_a_latex = self.side_a.to_latex(precision=1)
         side_b_latex = self.side_b.to_latex(precision=1)
         result_latex = result.to_latex(precision=1)
+
+        # Sort sides alphanumerically for consistent output (F_1 before F_2)
+        side_a_name_raw = self.side_a.name[:-4] if self.side_a.name and self.side_a.name.endswith("_mag") else (self.side_a.name or "V")
+        side_b_name_raw = self.side_b.name[:-4] if self.side_b.name and self.side_b.name.endswith("_mag") else (self.side_b.name or "V")
+        if side_a_name_raw > side_b_name_raw:
+            side_a_latex, side_b_latex = side_b_latex, side_a_latex
+
         substitution = f"|\\vec{{{result_name}}}| &= \\sqrt{{({side_a_latex})^2 + ({side_b_latex})^2 - 2({side_a_latex})({side_b_latex})\\cos({format_angle(angle_deg, precision=1)})}} \\\\\n&= {result_latex} \\\\"
 
         step = SolutionStepBuilder(

@@ -30,6 +30,21 @@ if TYPE_CHECKING:
 # Data Model
 # =============================================================================
 
+def _format_reference(ref: str) -> str:
+    """
+    Format reference axis for consistent display in LaTeX/Markdown.
+
+    Uses math mode with explicit + or - to ensure consistent sizing and alignment.
+    E.g., "+x" -> "$+x$", "-y" -> "$-y$"
+    """
+    if not ref:
+        return "$+x$"
+    # Ensure the sign is explicit
+    if ref[0] not in "+-":
+        ref = "+" + ref
+    return f"${ref}$"
+
+
 @dataclass
 class VectorRow:
     """Data for a vector table row."""
@@ -140,14 +155,15 @@ class ReportDataBuilder:
         else:
             angle_str = "?"
 
-        # Get reference (wrt attribute)
+        # Get reference (wrt attribute) and format it for consistent display
         ref = getattr(vec, "wrt", "+x")
+        ref_formatted = _format_reference(ref)
 
         return VectorRow(
             name=name,
             mag=mag_str,
             angle=angle_str,
-            ref=ref,
+            ref=ref_formatted,
         )
 
     def _build_known_vectors(self) -> list[VectorRow]:
