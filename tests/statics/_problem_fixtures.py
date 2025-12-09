@@ -226,7 +226,7 @@ class Chapter2Problem10:
 
 class Chapter2Problem11:
     name = "Problem 2-11"
-    generate_debug_reports = False
+    generate_debug_reports = True
     F_A = create_vectors_polar(8000, "N", -60, wrt="+y")
     F_B = create_vectors_polar(6000, "N", 40, wrt="-y")
     F_R = create_vector_resultant(F_A, F_B, angle_dir="cw")
@@ -303,7 +303,7 @@ class Chapter2Problem15:
 
 class Chapter2Problem16:
     name = "Problem 2-16"
-    generate_debug_reports = False
+    generate_debug_reports = True
     F_BA = create_vectors_polar(650, "lbf", ..., wrt="-x")
     F_BC = create_vectors_polar(..., "lbf", -45, wrt="+x")
     F_R = create_resultant_polar(
@@ -318,7 +318,7 @@ class Chapter2Problem16:
 
 class Chapter2Problem17:
     name = "Problem 2-17"
-    generate_debug_reports = False
+    generate_debug_reports = True
     # F_1 = create_vectors_polar(30, "N", -36.87, wrt="-x")
     F_1 = create_vector_from_ratio(30, "N", -4, 3)
     F_2 = create_vectors_polar(20, "N", -20, wrt="-y")
@@ -334,7 +334,7 @@ class Chapter2Problem17:
 class Chapter2Problem18:
     # Same as Problem 2-17 (Book solves in a different order than 2-17 but not doing that here)
     name = "Problem 2-18"
-    generate_debug_reports = False
+    generate_debug_reports = True
     F_1 = create_vectors_polar(30, "N", -36.87, wrt="-x")
     F_2 = create_vectors_polar(20, "N", -20, wrt="-y")
     F_3 = create_vectors_polar(50, "N", 0, wrt="+x")
@@ -363,7 +363,7 @@ class Chapter2Problem19:
 
 class Chapter2Problem20:
     name = "Problem 2-20"
-    generate_debug_reports = False
+    generate_debug_reports = True
     F_AB = create_vectors_polar(-600, "lbf", -30, wrt="+x")
     F_AC = create_vectors_polar(..., "lbf", ..., wrt=F_AB)
     F_R = create_resultant_polar(
@@ -378,8 +378,7 @@ class Chapter2Problem20:
 
 class Chapter2Problem21:
     name = "Problem 2-21"
-    generate_debug_reports = False
-
+    generate_debug_reports = True
     F_1 = create_vectors_polar(400, "N", 90, wrt="F_2")
     F_2 = create_vectors_polar(200, "N", 150, wrt="-y")
     F_3 = create_vectors_polar(300, "N", 0, wrt="-y")
@@ -393,7 +392,7 @@ class Chapter2Problem21:
 
 class Chapter2Problem22:
     name = "Problem 2-22"
-    generate_debug_reports = False
+    generate_debug_reports = True
     F_1 = create_vectors_polar(400, "N", 90, wrt="F_2")
     F_2 = create_vectors_polar(200, "N", 150, wrt="-y")
     F_3 = create_vectors_polar(300, "N", 0, wrt="-y")
@@ -407,7 +406,7 @@ class Chapter2Problem22:
 
 class Chapter2Problem23:
     name = "Problem 2-23"
-    generate_debug_reports = False
+    generate_debug_reports = True
     F_1 = create_vectors_polar(400, "N", ..., wrt="+x")
     F_2 = create_vectors_polar(600, "N", ..., wrt="+x")
     F_R = create_resultant_polar(
@@ -425,6 +424,7 @@ class Chapter2Problem24:
 
 class Chapter2Problem25:
     name = "Problem 2-25"
+    generate_debug_reports = True
     F_1 = create_vectors_polar(30, "lbf", ..., wrt="+x")
     F_2 = create_vectors_polar(40, "lbf", ..., wrt="+x")
     F_R = create_resultant_polar(
@@ -439,7 +439,7 @@ class Chapter2Problem25:
 
 class Chapter2Problem26:
     name = "Problem 2-26"
-
+    generate_debug_reports = True
     F_A = create_vectors_polar(..., "N", ..., wrt="+x")
     F_B = create_vectors_polar(800, "N", -30, wrt="+x")
     F_R = create_resultant_polar(
@@ -454,6 +454,7 @@ class Chapter2Problem26:
 
 class Chapter2Problem27:
     name = "Problem 2-27"
+    generate_debug_reports = True
     F_A = create_vectors_polar(750, "N", -45, wrt="+y")
     F_B = create_vectors_polar(800, "N", -30, wrt="+x")
     F_R = create_vector_resultant(F_A, F_B)
@@ -465,7 +466,7 @@ class Chapter2Problem27:
 
 class Chapter2Problem28:
     name = "Problem 2-28"
-    generate_debug_reports = False
+    generate_debug_reports = True
     F_1 = create_vectors_polar(8000, "N", 0, wrt="-y")
     F_2 = create_vectors_polar(6000, "N", 0, wrt="+x")
     F_3 = create_vectors_polar(..., "N", 30, wrt="-y")
@@ -482,6 +483,7 @@ class Chapter2Problem28:
 
 class Chapter2Problem29:
     name = "Problem 2-29"
+    generate_debug_reports = True
     F_A = create_vectors_polar(2000, "N", 30, wrt="+x")
     F_B = create_vectors_polar(..., "N", ..., wrt="+x")
     F_R = create_resultant_polar(
@@ -495,7 +497,7 @@ class Chapter2Problem29:
 
 class Chapter2Problem30:
     name = "Problem 2-30"
-
+    generate_debug_reports = True
     F_A = create_vectors_polar(2000, "N", 30, wrt="+x")
     F_B = create_vectors_polar(3000, "N", -45, wrt="+x")
     F_R = create_vector_resultant(F_A, F_B)
@@ -507,7 +509,7 @@ class Chapter2Problem30:
 
 class Chapter2Problem31:
     name = "Problem 2-31"
-    generate_debug_reports = False
+    generate_debug_reports = True
     F_A = create_vectors_polar(2000, "N", 30, wrt="+x")
     F_B = create_vectors_polar(..., "N", -90, wrt="F_R")
     F_R = create_resultant_polar(
@@ -691,12 +693,10 @@ class Chapter2Problem1_WRONG:
                 "reference": "+x",
             }
 
-
 # =============================================================================
 # Problem lists for parameterized tests
 # =============================================================================
 
-# All problems for iteration (only includes fully migrated problems)
 PARALLELOGRAM_LAW_PROBLEMS = [
     Chapter2Problem1,
     # Chapter2Problem1MixedUnits,
