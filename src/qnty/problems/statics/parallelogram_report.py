@@ -92,6 +92,7 @@ class DiagramVector:
     angle_ref: float  # Angle as defined in problem (relative to reference)
     angle_wrt: str  # Reference axis (e.g., "+x", "-x", "+y", "-y")
     unit: str = "N"
+    is_known: bool = True  # Whether this vector was known in the original problem
 
 
 @dataclass
@@ -179,12 +180,27 @@ class ReportDataBuilder:
 
         triangle = self.problem._triangle
 
-        # Build a Parallelogram from the triangle's vectors
+        # Build a Parallelogram using the SOLVED vectors from the problem
+        # The triangle's vectors may still have ellipsis for unknowns, so we use
+        # the problem's solved vectors which have computed values for all vectors.
         try:
+            # Get vector names from the triangle
+            v1_name = triangle.vec_1.name if triangle.vec_1 else "F_1"
+            v2_name = triangle.vec_2.name if triangle.vec_2 else "F_2"
+            vr_name = triangle.vec_r.name if triangle.vec_r else "F_R"
+
+            # Get solved vectors from problem.vectors
+            solved_vec_1 = self.problem.vectors.get(v1_name)
+            solved_vec_2 = self.problem.vectors.get(v2_name)
+            solved_vec_r = self.problem.vectors.get(vr_name)
+
+            if not all([solved_vec_1, solved_vec_2, solved_vec_r]):
+                return None
+
             parallelogram = Parallelogram(
-                vec_1=triangle.vec_1,
-                vec_2=triangle.vec_2,
-                vec_r=triangle.vec_r,
+                vec_1=solved_vec_1,
+                vec_2=solved_vec_2,
+                vec_r=solved_vec_r,
             )
         except Exception:
             return None
@@ -203,7 +219,7 @@ class ReportDataBuilder:
         # The triangle's vectors may still have ellipsis for unknowns,
         # so we use the problem's solved vectors instead
         vectors = []
-        for vec in self.problem.vectors.values():
+        for vec_name, vec in self.problem.vectors.items():
             if vec is None:
                 continue
             try:
@@ -224,6 +240,9 @@ class ReportDataBuilder:
                 if hasattr(vec, 'wrt') and vec.wrt:
                     angle_wrt = vec.wrt
 
+                # Check if this vector was originally known (before solving)
+                is_known = self.problem._original_vector_states.get(vec_name, True)
+
                 vectors.append(DiagramVector(
                     name=vec.name or "V",
                     magnitude=mag_val,
@@ -231,6 +250,7 @@ class ReportDataBuilder:
                     angle_ref=angle_ref,
                     angle_wrt=angle_wrt,
                     unit=self.unit,
+                    is_known=is_known,
                 ))
             except Exception:
                 continue

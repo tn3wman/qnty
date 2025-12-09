@@ -70,8 +70,9 @@ $\vv{F_R}$ & ? & ? & $+x$ \\
   \draw[vector_translated,vec_translated] (B) -- (D);
   \draw[vector_translated,vec_translated] (C) -- (D);
   % Draw main vectors
-  \draw[vector,vec_f1] (A) -- (B) node[below right,pos=1] {$\vv{F_1} = 450\,\text{N}$};
-  \draw[vector,vec_f2] (A) -- (C) node[above left,pos=1] {$\vv{F_2} = 700\,\text{N}$};
+  \draw[vector,vec_f1] (A) -- (B) node[above right,pos=1] {$\vv{F_1} = 450\,\text{N}$};
+  \draw[vector,vec_f2] (A) -- (C) node[below left,pos=1] {$\vv{F_2} = 700\,\text{N}$};
+  \draw[vector,vec_fr] (A) -- (D) node[above left,pos=1] {$\vv{F_R}$};
   \draw[vec_f1,thin] (0.000,0.000) ++(0:1.631) arc (0:59.99999999999999:1.631);
   \node[vec_f1,anchor=west] at (1.716,0.991) {$60^\circ$};
   \draw[vec_f2,thin] (0.000,0.000) ++(180:2.330) arc (180:195.0:2.330);
@@ -128,8 +129,8 @@ $\vv{F_R}$ & 497.0 & 155.2 & $+x$ \\
   \draw[->,gray] (0.000,0.000) -- (0.000,-4.661) node[below] {$-y$};
   \draw[vector_translated,vec_translated] (B) -- (D);
   \draw[vector_translated,vec_translated] (C) -- (D);
-  \draw[vector,vec_f1] (A) -- (B) node[below right,pos=1] {$\vv{F_1}$};
-  \draw[vector,vec_f2] (A) -- (C) node[above left,pos=1] {$\vv{F_2}$};
+  \draw[vector,vec_f1] (A) -- (B) node[above right,pos=1] {$\vv{F_1}$};
+  \draw[vector,vec_f2] (A) -- (C) node[below left,pos=1] {$\vv{F_2}$};
   \draw[vector,vec_fr] (A) -- (D) node[above left,pos=1] {$\vv{F_R} = 497\,\text{N}$};
   \draw[orange,thick] (0.000,0.000) ++(60.0:0.600) arc (60.0:155.2:0.600);
   \node[orange,font=\footnotesize] at (-0.333,1.049) {$95^\circ$};

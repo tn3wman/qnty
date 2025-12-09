@@ -77,7 +77,7 @@ def generate_debug_reports_for_problem(problem_class) -> None:
 
 class Chapter2Problem1:
     name = "Problem 2-1"
-    generate_debug_reports = True
+    generate_debug_reports = False
     F_1 = create_vectors_polar(450, "N", 60, wrt="+x")
     F_2 = create_vectors_polar(700, "N", 15, wrt="-x")
     F_R = create_vector_resultant(F_1, F_2)
@@ -89,7 +89,7 @@ class Chapter2Problem1:
 
 class Chapter2Problem2:
     name = "Problem 2-2"
-    generate_debug_reports = True
+    generate_debug_reports = False
     F_1 = create_vectors_polar(..., "N", ..., wrt="+x")
     F_2 = create_vectors_polar(700, "N", 15, wrt="-x")
     F_R = create_resultant_polar(

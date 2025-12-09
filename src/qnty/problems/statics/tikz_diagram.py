@@ -221,26 +221,84 @@ def get_label_anchor_for_angle(mid_angle: float) -> str:
         return "north"  # Arc on bottom, anchor on north (top of label)
 
 
-def get_vector_label_position(angle_deg: float) -> str:
-    """Get TikZ label position based on vector direction.
+def get_vector_label_position(angle_deg: float, angle_wrt: str = "+x") -> str:
+    """Get TikZ label position based on vector direction and reference axis.
 
-    For vectors pointing into different quadrants, we place the label
-    on the opposite side to avoid overlap with the parallelogram interior.
+    Places the label on the opposite side from the angle arc to avoid overlap.
+    The angle arc is drawn between the reference axis and the vector, so we
+    place the label on the other side of the vector.
 
     Args:
-        angle_deg: Vector angle in degrees from +x axis
+        angle_deg: Vector angle in degrees from +x axis (absolute angle)
+        angle_wrt: Reference axis for the angle (e.g., "+x", "-x", "+y", "-y")
 
     Returns:
         TikZ position string
     """
     angle = angle_deg % 360
-    if 0 <= angle < 90:
+
+    # Get the reference axis angle
+    ref_angles = {"+x": 0, "-x": 180, "+y": 90, "-y": 270}
+    ref_angle = ref_angles.get(angle_wrt, 0)
+
+    # The angle arc is drawn between ref_angle and angle_deg.
+    # We want to place the label on the opposite side from the arc.
+    # Calculate which side of the vector the arc is on.
+
+    # Normalize the difference to find the arc direction
+    diff = (angle - ref_angle) % 360
+    arc_is_ccw = diff <= 180  # Arc goes counter-clockwise from ref to vector
+
+    # For each quadrant, determine label position based on arc direction.
+    # The arc goes from ref_angle to angle. If arc_is_ccw (counter-clockwise),
+    # the arc sweeps in the CCW direction. We place the label on the opposite side.
+    #
+    # General principle: place label at the tip of the vector, away from the arc
+    # and in a natural reading position.
+
+    # Check for cardinal directions first (vectors along axes)
+    # Place labels to avoid covering the axis itself
+    if 85 <= angle < 95:
+        # Vector points straight up (+y axis or close to it)
+        # Place label to the left to avoid covering +y axis
+        return "above left"
+    elif 175 <= angle < 185:
+        # Vector points straight left (-x axis or close to it)
+        # Place label above to avoid covering -x axis
+        return "above left"
+    elif 265 <= angle < 275:
+        # Vector points straight down (-y axis or close to it)
+        # Place label to the right to avoid covering -y axis
         return "below right"
-    elif 90 <= angle < 180:
+    elif angle < 5 or angle >= 355:
+        # Vector points straight right (+x axis or close to it)
+        # Place label below to avoid covering +x axis
+        return "below right"
+
+    # Now check quadrants
+    if 0 <= angle < 45:
+        # Vector points right and slightly up (Q1, close to +x)
+        return "above right"
+    elif 45 <= angle < 90:
+        # Vector points up and slightly right (Q1)
+        return "above right"
+    elif 90 <= angle < 135:
+        # Vector points up and slightly left (Q2)
         return "above left"
-    elif 180 <= angle < 270:
+    elif 135 <= angle < 180:
+        # Vector points left and slightly up (Q2, close to -x)
         return "above left"
-    else:
+    elif 180 <= angle < 225:
+        # Vector points left and slightly down (Q3)
+        return "below left"
+    elif 225 <= angle < 270:
+        # Vector points down and slightly left (Q3/Q4 boundary)
+        return "below left"
+    elif 270 <= angle < 315:
+        # Vector points down and slightly right (Q4)
+        return "below right"
+    else:  # 315 <= angle < 360
+        # Vector points right and slightly down (Q4, close to +x)
         return "below right"
 
 
@@ -420,7 +478,8 @@ def build_coordinate_axes(origin: Point, axis_length: float) -> list[TikZAxis]:
 def build_problem_setup_diagram(data: DiagramData, scale: float = 0.55) -> TikZDiagram:
     """Build TikZ diagram data for the Problem Setup view.
 
-    Shows vectors F1 and F2 with their reference angle arcs.
+    Shows known vectors with their magnitudes. For standard problems, this is F1 and F2.
+    For inverse problems where F_R is known and F_1 is unknown, shows F_R with its magnitude.
 
     Args:
         data: Diagram data from ReportData
@@ -465,8 +524,10 @@ def build_problem_setup_diagram(data: DiagramData, scale: float = 0.55) -> TikZD
     # Get vector names and data
     f1_name = B.vector_name or "F_1"
     f2_name = C.vector_name or "F_2"
+    fr_name = D.vector_name or "F_R"
     f1_vec = vec_dict.get(f1_name)
     f2_vec = vec_dict.get(f2_name)
+    fr_vec = vec_dict.get(fr_name)
 
     # Compute axis length
     f1_len = math.sqrt(b_pt.x**2 + b_pt.y**2)
@@ -477,17 +538,28 @@ def build_problem_setup_diagram(data: DiagramData, scale: float = 0.55) -> TikZD
     # Build axes
     diagram.axes = build_coordinate_axes(origin, axis_len)
 
-    # Build magnitude labels
-    def mag_label(vec: DiagramVector | None) -> str:
+    # Build magnitude label only for known vectors
+    def mag_label(vec: DiagramVector | None, show_if_known: bool = True) -> str:
         if vec is None:
             return ""
-        return f"{vec.magnitude:.0f}\\,\\text{{{vec.unit}}}"
+        # Only show magnitude if vector was originally known
+        if show_if_known and vec.is_known:
+            return f"{vec.magnitude:.0f}\\,\\text{{{vec.unit}}}"
+        return ""
 
-    # Build vectors
-    f1_label = latex_name(f1_name)
-    f2_label = latex_name(f2_name)
-    f1_pos = get_vector_label_position(f1_vec.angle_deg) if f1_vec else "below right"
-    f2_pos = get_vector_label_position(f2_vec.angle_deg) if f2_vec else "above left"
+    # Build vector label (name only or name + magnitude)
+    def build_label(name: str, vec: DiagramVector | None) -> str:
+        latex = latex_name(name)
+        mag = mag_label(vec)
+        if mag:
+            return f"$\\vv{{{latex}}} = {mag}$"
+        return f"$\\vv{{{latex}}}$"
+
+    # Build vectors - pass angle_wrt to get proper label positioning relative to angle arc
+    f1_pos = get_vector_label_position(f1_vec.angle_deg, f1_vec.angle_wrt) if f1_vec else "below right"
+    f2_pos = get_vector_label_position(f2_vec.angle_deg, f2_vec.angle_wrt) if f2_vec else "above left"
+    fr_pos = get_vector_label_position(fr_vec.angle_deg, fr_vec.angle_wrt) if fr_vec else "above"
+
 
     diagram.vectors = [
         TikZVector(
@@ -496,7 +568,7 @@ def build_problem_setup_diagram(data: DiagramData, scale: float = 0.55) -> TikZD
             end=b_pt,
             color="vec_f1",
             style="vector",
-            label=f"$\\vv{{{f1_label}}} = {mag_label(f1_vec)}$",
+            label=build_label(f1_name, f1_vec),
             label_position=f1_pos,
             label_at=1,
         ),
@@ -506,7 +578,7 @@ def build_problem_setup_diagram(data: DiagramData, scale: float = 0.55) -> TikZD
             end=c_pt,
             color="vec_f2",
             style="vector",
-            label=f"$\\vv{{{f2_label}}} = {mag_label(f2_vec)}$",
+            label=build_label(f2_name, f2_vec),
             label_position=f2_pos,
             label_at=1,
         ),
@@ -531,14 +603,31 @@ def build_problem_setup_diagram(data: DiagramData, scale: float = 0.55) -> TikZD
             label_position="",
             label_at=0,
         ),
+        # F_R (resultant) - always show as the diagonal from origin to D
+        # The label will include magnitude only if F_R is known (inverse problems)
+        TikZVector(
+            name=fr_name,
+            start=origin,
+            end=d_pt,
+            color="vec_fr",
+            style="vector",
+            label=build_label(fr_name, fr_vec),
+            label_position=fr_pos,
+            label_at=1,
+        ),
     ]
 
-    # Build angle arcs
+    # Build angle arcs only for known vectors
     arc_radius_base = axis_len * 0.5
-    if f1_arc := build_reference_angle_arc(f1_vec, origin, arc_radius_base, 0.7, "vec_f1"):
-        diagram.angle_arcs.append(f1_arc)
-    if f2_arc := build_reference_angle_arc(f2_vec, origin, arc_radius_base, 1.0, "vec_f2"):
-        diagram.angle_arcs.append(f2_arc)
+    if f1_vec and f1_vec.is_known:
+        if f1_arc := build_reference_angle_arc(f1_vec, origin, arc_radius_base, 0.7, "vec_f1"):
+            diagram.angle_arcs.append(f1_arc)
+    if f2_vec and f2_vec.is_known:
+        if f2_arc := build_reference_angle_arc(f2_vec, origin, arc_radius_base, 1.0, "vec_f2"):
+            diagram.angle_arcs.append(f2_arc)
+    if fr_vec and fr_vec.is_known:
+        if fr_arc := build_reference_angle_arc(fr_vec, origin, arc_radius_base, 1.3, "vec_fr"):
+            diagram.angle_arcs.append(fr_arc)
 
     return diagram
 
@@ -703,14 +792,17 @@ def build_force_triangle_diagram(data: DiagramData, scale: float = 0.55) -> TikZ
 
     fr_mag = mag_label(fr_vec)
 
-    # Vector label positions
+    # Vector label positions - pass angle_wrt to get proper label positioning
     f1_angle = f1_vec.angle_deg if f1_vec else 60
     f2_angle = f2_vec.angle_deg if f2_vec else 195
     fr_angle = fr_vec.angle_deg if fr_vec else 155
+    f1_wrt = f1_vec.angle_wrt if f1_vec else "+x"
+    f2_wrt = f2_vec.angle_wrt if f2_vec else "+x"
+    fr_wrt = fr_vec.angle_wrt if fr_vec else "+x"
 
-    f1_pos = get_vector_label_position(f1_angle)
-    f2_pos = get_vector_label_position(f2_angle)
-    fr_pos = get_vector_label_position(fr_angle)
+    f1_pos = get_vector_label_position(f1_angle, f1_wrt)
+    f2_pos = get_vector_label_position(f2_angle, f2_wrt)
+    fr_pos = get_vector_label_position(fr_angle, fr_wrt)
 
     # LaTeX labels
     f1_label = latex_name(f1_name)
