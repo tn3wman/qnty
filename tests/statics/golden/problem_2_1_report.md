@@ -35,8 +35,8 @@
 
 $$
 \begin{aligned}
-\angle(\vec{F_1}, \vec{F_2}) &= ||\angle(\vec{x}, \vec{F_1})| - |\angle(\vec{-x}, \vec{F_2})|| \\
-&= ||60^{\circ}| - |15^{\circ}|| \\
+\angle(\vec{F_1}, \vec{F_2}) &= |\angle(\vec{x}, \vec{F_1}) - \angle(\vec{-x}, \vec{F_2})| \\
+&= |60^{\circ} - 15^{\circ}| \\
 &= 45^{\circ} \\
 \end{aligned}
 $$

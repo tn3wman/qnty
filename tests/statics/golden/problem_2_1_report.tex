@@ -11,17 +11,100 @@
 \usepackage{siunitx}
 \usepackage{accents}
 \usepackage{changepage}
+\usepackage{needspace}
+\usepackage{tikz}
+\usepackage{xcolor}
+\usetikzlibrary{calc,arrows.meta}
 
 % Vector notation: \vv{F} produces F with arrow over it
 \newcommand{\vv}[1]{\vec{#1}}
 % Magnitude notation: \magn{F} produces |F| with fixed-height bars
 \newcommand{\magn}[1]{|#1|}
 
+% TikZ styles for vector diagrams
+\colorlet{vec_f1}{blue!80!black}
+\colorlet{vec_f2}{red!80!black}
+\colorlet{vec_fr}{green!60!black}
+\colorlet{vec_translated}{gray!60}
+\tikzset{
+    vector/.style={-{Stealth[length=3mm,width=2mm]},very thick},
+    vector_translated/.style={-{Stealth[length=2mm,width=1.5mm]},dashed,thin},
+}
+
 \title{Engineering Calculation Report: Problem 2-1}
 \date{{{GENERATED_DATE}}}
 
 \begin{document}
 \maketitle
+
+\section{Vector Diagrams}
+
+\subsection*{Problem Setup}
+
+\begin{center}
+\begin{tikzpicture}[scale=1]
+  % Define coordinates
+  \coordinate (A) at (0.000,0.000);
+  \coordinate (B) at (1.498,2.595);
+  \coordinate (C) at (-4.502,-1.206);
+  \coordinate (D) at (-3.004,1.388);
+
+  % Draw all four coordinate axes (as long as the longest vector)
+  \draw[->,gray] (0.000,0.000) -- (4.661,0.000) node[right] {$+x$};
+  \draw[->,gray] (0.000,0.000) -- (-4.661,0.000) node[left] {$-x$};
+  \draw[->,gray] (0.000,0.000) -- (0.000,4.661) node[above] {$+y$};
+  \draw[->,gray] (0.000,0.000) -- (0.000,-4.661) node[below] {$-y$};
+
+  % Draw main vectors with arrows and magnitude labels (at tip)
+  \draw[vector,vec_f1] (A) -- (B) node[below right,pos=1] {$\vv{F_1} = 450\,\text{N}$};
+  \draw[vector,vec_f2] (A) -- (C) node[above left,pos=1] {$\vv{F_2} = 700\,\text{N}$};
+
+  % Draw angle arcs (from reference axis to vector)
+  \draw[vec_f1,thin] (0.000,0.000) ++(0:1.631) arc (0:59.99999999999999:1.631);
+  \node[vec_f1,anchor=west] at (1.716,0.991) {$60^\circ$};
+  \draw[vec_f2,thin] (0.000,0.000) ++(180:2.330) arc (180:195.0:2.330);
+  \node[vec_f2,anchor=east] at (-2.657,-0.350) {$15^\circ$};
+
+  % Draw origin point
+  \fill (A) circle (2pt) node[below left] {$O$};
+\end{tikzpicture}
+\end{center}
+
+
+\subsection*{Force Triangle (Parallelogram Law)}
+
+\begin{center}
+\begin{tikzpicture}[scale=1]
+  % Define coordinates
+  \coordinate (A) at (0.000,0.000);
+  \coordinate (B) at (1.498,2.595);
+  \coordinate (C) at (-4.502,-1.206);
+  \coordinate (D) at (-3.004,1.388);
+
+  % Draw all four coordinate axes (as long as the longest vector)
+  \draw[->,gray] (0.000,0.000) -- (4.661,0.000) node[right] {$+x$};
+  \draw[->,gray] (0.000,0.000) -- (-4.661,0.000) node[left] {$-x$};
+  \draw[->,gray] (0.000,0.000) -- (0.000,4.661) node[above] {$+y$};
+  \draw[->,gray] (0.000,0.000) -- (0.000,-4.661) node[below] {$-y$};
+
+  % Draw translated sides (parallelogram completion) - dashed
+  \draw[vector_translated,vec_translated] (B) -- (D);
+  \draw[vector_translated,vec_translated] (C) -- (D);
+
+  % Draw main vectors with arrows and magnitude labels
+  \draw[vector,vec_f1] (A) -- (B) node[pos=0.5,below right] {$\vv{F_1}$};
+  \draw[vector,vec_f2] (A) -- (C) node[pos=0.5,above left] {$\vv{F_2}$};
+  \draw[vector,vec_fr] (A) -- (D) node[pos=0.5,above right] {$\vv{F_R} = 497\,\text{N}$};
+
+  % Draw interior angle arc (angle between F1 and F2)
+  % The interior angle is 45°, drawn as an arc spanning that angle from F1.
+  \draw[orange,thick] (0.000,0.000) ++(60.0:1.398) arc (60.0:105.0:1.398) node[midway,above] {$45^\circ$};
+
+  % Draw origin point
+  \fill (A) circle (2pt) node[below left] {$O$};
+\end{tikzpicture}
+\end{center}
+
 
 \section{Known Variables}
 
@@ -55,6 +138,8 @@ $\vv{F_R}$ & ? & ? & $+x$ \\
 
 \section{Step-by-Step Solution}
 
+\needspace{4\baselineskip}
+\begin{samepage}
 \vspace{0.2em}
 \noindent\hspace{1em}\textbf{Step 1: Solve for $\angle(\vv{F_1}, \vv{F_2})$}
 \vspace{0.1em}
@@ -62,13 +147,16 @@ $\vv{F_R}$ & ? & ? & $+x$ \\
 \begin{adjustwidth}{2em}{}
 \vspace{-0.8em}
 \begin{flalign*}
-\quad \angle(\vv{F_1}, \vv{F_2}) &= \magn{}\angle(\vv{x}, \vv{F_1})\magn{ - }\angle(\vv{-x}, \vv{F_2})\magn{} && \\
-\quad &= \magn{}60^{\circ}\magn{ - }15^{\circ}\magn{} && \\
+\quad \angle(\vv{F_1}, \vv{F_2}) &= \magn{\angle(\vv{x}, \vv{F_1}) - \angle(\vv{-x}, \vv{F_2})} && \\
+\quad &= \magn{60^{\circ} - 15^{\circ}} && \\
 \quad &= 45^{\circ} &&
 \end{flalign*}
 \vspace{-0.8em}
 \end{adjustwidth}
+\end{samepage}
 
+\needspace{4\baselineskip}
+\begin{samepage}
 \vspace{0.2em}
 \noindent\hspace{1em}\textbf{Step 2: Solve for $\magn{\vv{F_R}}$ using Eq 1}
 \vspace{0.1em}
@@ -81,7 +169,10 @@ $\vv{F_R}$ & ? & ? & $+x$ \\
 \end{flalign*}
 \vspace{-0.8em}
 \end{adjustwidth}
+\end{samepage}
 
+\needspace{4\baselineskip}
+\begin{samepage}
 \vspace{0.2em}
 \noindent\hspace{1em}\textbf{Step 3: Solve for $\angle(\vv{F_1}, \vv{F_R})$ using Eq 2}
 \vspace{0.1em}
@@ -94,7 +185,10 @@ $\vv{F_R}$ & ? & ? & $+x$ \\
 \end{flalign*}
 \vspace{-0.8em}
 \end{adjustwidth}
+\end{samepage}
 
+\needspace{4\baselineskip}
+\begin{samepage}
 \vspace{0.2em}
 \noindent\hspace{1em}\textbf{Step 4: Solve for $\angle(\vv{x}, \vv{F_R})$ with respect to +x}
 \vspace{0.1em}
@@ -108,6 +202,7 @@ $\vv{F_R}$ & ? & ? & $+x$ \\
 \end{flalign*}
 \vspace{-0.8em}
 \end{adjustwidth}
+\end{samepage}
 
 \section{Summary of Results}
 

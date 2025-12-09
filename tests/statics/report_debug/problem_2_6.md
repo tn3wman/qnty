@@ -35,8 +35,9 @@
 
 $$
 \begin{aligned}
-\angle(\vec{F_1}, \vec{F_2}) &= |\angle(+x, \vec{F_1}) - \angle(+x, \vec{F_2})| \\
-&= |45^{\circ} - -30^{\circ}| \\
+\angle(\vec{F_1}, \vec{F_2}) &= |\angle(\vec{v}, \vec{F_1})| + |\angle(\vec{u}, \vec{F_2})| \\
+&= |(-30^{\circ})| + |(-30^{\circ})| \\
+&= 30^{\circ} + 30^{\circ} \\
 &= 105^{\circ} \\
 \end{aligned}
 $$

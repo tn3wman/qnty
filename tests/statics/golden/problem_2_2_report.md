@@ -8,8 +8,8 @@
 
 | Vector | $\|\vec{F}\|$ (N) | $\theta$ (deg) | Reference |
 | :--- | ---: | ---: | :--- |
-| $\vec{F_2}$ | 700.0 | 15.0 | -x |
-| $\vec{F_R}$ | 500.0 | 0.0 | +y |
+| $\vec{F_2}$ | 700.0 | 15.0 | $-x$ |
+| $\vec{F_R}$ | 500.0 | 0.0 | $+y$ |
 
 </div>
 
@@ -19,7 +19,7 @@
 
 | Vector | $\|\vec{F}\|$ (N) | $\theta$ (deg) | Reference |
 | :--- | ---: | ---: | :--- |
-| $\vec{F_1}$ | ? | ? | +x |
+| $\vec{F_1}$ | ? | ? | $+x$ |
 
 </div>
 
@@ -27,11 +27,21 @@
 
 1. $|\vec{F_1}|^2 = |\vec{F_2}|^2 + |\vec{F_R}|^2 - 2 \cdot |\vec{F_2}| \cdot |\vec{F_R}| \cdot \cos(\angle(\vec{F_2}, \vec{F_R}))$
 
-2. $\frac{\sin(\angle(\vec{F_R}, \vec{F_1}))}{|\vec{F_2}|} = \frac{\sin(\angle(\vec{F_2}, \vec{F_1}))}{|\vec{F_1}|}$
+2. $\frac{\sin(\angle(\vec{F_1}, \vec{F_R}))}{|\vec{F_2}|} = \frac{\sin(\angle(\vec{F_1}, \vec{F_2}))}{|\vec{F_1}|}$
 
 ## 4. Step-by-Step Solution
 
-**Step 1: Solve for $|\vec{F_1}|$ using Eq 1**
+**Step 1: Solve for $\angle(\vec{F_2}, \vec{F_R})$**
+
+$$
+\begin{aligned}
+\angle(\vec{F_2}, \vec{F_R}) &= |\angle(+x, \vec{F_2}) - \angle(+x, \vec{F_R})| \\
+&= |195^{\circ} - 90^{\circ}| \\
+&= 105^{\circ} \\
+\end{aligned}
+$$
+
+**Step 2: Solve for $|\vec{F_1}|$ using Eq 1**
 
 $$
 \begin{aligned}
@@ -40,20 +50,20 @@ $$
 \end{aligned}
 $$
 
-**Step 2: Solve for $\angle(\vec{F_R}, \vec{F_1})$ using Eq 2**
+**Step 3: Solve for $\angle(\vec{F_1}, \vec{F_R})$ using Eq 2**
 
 $$
 \begin{aligned}
-\angle(\vec{F_R}, \vec{F_1}) &= \sin^{-1}(700.0\ \text{N} \cdot \frac{\sin(105.0^{\circ})}{959.8\ \text{N}}) \\
+\angle(\vec{F_1}, \vec{F_R}) &= \sin^{-1}(700.0\ \text{N} \cdot \frac{\sin(105.0^{\circ})}{959.8\ \text{N}}) \\
 &= 44.8^{\circ} \\
 \end{aligned}
 $$
 
-**Step 3: Solve for $\angle(\vec{x}, \vec{F_1})$ with respect to +x**
+**Step 4: Solve for $\angle(\vec{x}, \vec{F_1})$ with respect to +x**
 
 $$
 \begin{aligned}
-\angle(\vec{x}, \vec{F_1}) &= \angle(\vec{x}, \vec{F_R}) - \angle(\vec{F_R}, \vec{F_1}) \\
+\angle(\vec{x}, \vec{F_1}) &= \angle(\vec{x}, \vec{F_R}) - \angle(\vec{F_1}, \vec{F_R}) \\
 &= 90.0^{\circ} - 44.8^{\circ} \\
 &= 45.2^{\circ} \\
 \end{aligned}
@@ -65,7 +75,7 @@ $$
 
 | Vector | $\|\vec{F}\|$ (N) | $\theta$ (deg) | Reference |
 | :--- | ---: | ---: | :--- |
-| $\vec{F_1}$ | 959.8 | 45.2 | +x |
+| $\vec{F_1}$ | 959.8 | 45.2 | $+x$ |
 
 </div>
 

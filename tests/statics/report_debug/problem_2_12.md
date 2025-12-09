@@ -44,7 +44,7 @@ $$
 
 $$
 \begin{aligned}
-\angle(y, \vec{F_A}) &= 90^{\circ} - \angle(\vec{F_B}, \vec{F_A}) \\
+\angle(y, \vec{F_A}) &= 90^{\circ} - \angle(\vec{F_R}, \vec{F_A}) \\
 &= 90^{\circ} - 35.1^{\circ} \\
 &= 54.9^{\circ} \\
 \end{aligned}
@@ -73,7 +73,7 @@ $$
 
 | Vector | $\|\vec{F}\|$ (N) | $\theta$ (deg) | Reference |
 | :--- | ---: | ---: | :--- |
-| $\vec{F_A}$ | 8000.0 | 324.9 | $+y$ |
+| $\vec{F_A}$ | 8000.0 | 305.1 | $+y$ |
 | $\vec{F_R}$ | 10404.6 | 0.0 | $+x$ |
 
 </div>

@@ -830,9 +830,10 @@ class Triangle:
             )
         elif abs(diff_rel - result_val) < tolerance:
             # Difference of relative angles formula
+            # Use single absolute value around the difference, not nested absolute values
             substitution = (
-                f"{target} &= ||{side1_expr}| - |{side2_expr}|| \\\\\n"
-                f"&= ||{fmt_angle_val(side1_angle_val)}| - |{fmt_angle_val(side2_angle_val)}|| \\\\\n"
+                f"{target} &= |{side1_expr} - {side2_expr}| \\\\\n"
+                f"&= |{fmt_angle_val(side1_angle_val)} - {fmt_angle_val(side2_angle_val)}| \\\\\n"
                 f"&= {format_angle(result_angle_deg, precision=0)} \\\\"
             )
         elif abs(abs_diff - result_val) < tolerance:

@@ -87,7 +87,6 @@ class Chapter2Problem1:
         F_2 = create_vectors_polar(700, "N", 15, wrt="-x")
         F_R = create_vectors_polar(497.014, "N", 155.192, wrt="+x")
 
-
 class Chapter2Problem2:
     name = "Problem 2-2"
     generate_debug_reports = True
@@ -872,7 +871,7 @@ ALL_PROBLEM_CLASSES = [
 
 PROBLEMS_WITH_GOLDEN_FILES = [
     Chapter2Problem1,
-    # Chapter2Problem2,
+    Chapter2Problem2,
     # Chapter2Problem3,
     # Chapter2Problem4,
     # Chapter2Problem5,

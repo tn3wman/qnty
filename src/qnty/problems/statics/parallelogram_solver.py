@@ -165,9 +165,10 @@ def solve_sas(state: SolvingState) -> None:
 
     Uses the vertex-based triangle model to handle all configurations uniformly:
     1. Get the SAS configuration from the triangle (which sides, which angle)
-    2. Law of Cosines to find the unknown side magnitude
-    3. Law of Sines to find an interior angle at a vertex adjacent to the unknown side
-    4. Use vertex geometry to compute the unknown side's direction
+    2. Generate step showing how the included angle was computed (from vector directions)
+    3. Law of Cosines to find the unknown side magnitude
+    4. Law of Sines to find an interior angle at a vertex adjacent to the unknown side
+    5. Use vertex geometry to compute the unknown side's direction
     """
     triangle = state.triangle
 
@@ -186,7 +187,13 @@ def solve_sas(state: SolvingState) -> None:
 
     angle_included = included_angle.angle
 
-    # Step 1: Use Law of Cosines to find unknown side magnitude
+    # Step 1: Generate step showing how the included angle was determined
+    # This shows the user that the angle comes from the vector directions
+    included_angle_step = triangle.get_included_angle_step(included_angle)
+    if included_angle_step is not None:
+        state.solving_steps.append(included_angle_step)
+
+    # Step 2: Use Law of Cosines to find unknown side magnitude
     if not unknown_side.is_known:
         if known_side_1.magnitude is ... or known_side_2.magnitude is ...:
             raise ValueError("SAS requires both known sides to have magnitudes")
