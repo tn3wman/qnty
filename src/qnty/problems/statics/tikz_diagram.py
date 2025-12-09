@@ -361,11 +361,7 @@ def render_tikz_angle_arc(arc: TikZAngleArc) -> list[str]:
     lines = []
     # Draw the arc
     center = f"({arc.center.x:.3f},{arc.center.y:.3f})"
-    lines.append(
-        f"  \\draw[{arc.color},{arc.style}] {center} "
-        f"++({arc.start_angle}:{arc.radius:.3f}) "
-        f"arc ({arc.start_angle}:{arc.end_angle}:{arc.radius:.3f});"
-    )
+    lines.append(f"  \\draw[{arc.color},{arc.style}] {center} ++({arc.start_angle}:{arc.radius:.3f}) arc ({arc.start_angle}:{arc.end_angle}:{arc.radius:.3f});")
     # Draw the label
     label_pos = f"({arc.label_position.x:.3f},{arc.label_position.y:.3f})"
     lines.append(f"  \\node[{arc.color},anchor={arc.label_anchor}] at {label_pos} {{{arc.label}}};")
@@ -384,11 +380,7 @@ def render_tikz_interior_angle_arc(arc: TikZInteriorAngleArc) -> list[str]:
     lines = []
     # Draw the arc
     center = f"({arc.center.x:.3f},{arc.center.y:.3f})"
-    lines.append(
-        f"  \\draw[{arc.color},thick] {center} "
-        f"++({arc.start_angle:.1f}:{arc.radius:.3f}) "
-        f"arc ({arc.start_angle:.1f}:{arc.end_angle:.1f}:{arc.radius:.3f});"
-    )
+    lines.append(f"  \\draw[{arc.color},thick] {center} ++({arc.start_angle:.1f}:{arc.radius:.3f}) arc ({arc.start_angle:.1f}:{arc.end_angle:.1f}:{arc.radius:.3f});")
     # Draw the label with font size
     label_pos = f"({arc.label_position.x:.3f},{arc.label_position.y:.3f})"
     lines.append(f"  \\node[{arc.color},font={arc.font_size}] at {label_pos} {{{arc.label}}};")
@@ -410,6 +402,18 @@ def render_tikz_axes(axes: list[TikZAxis]) -> list[str]:
         end = f"({axis.end.x:.3f},{axis.end.y:.3f})"
         lines.append(f"  \\draw[->,gray] {start} -- {end} node[{axis.label_position}] {{{axis.label}}};")
     return lines
+
+
+def render_tikz_vertices(vertices: list[TikZVertex]) -> list[str]:
+    """Render named vertex coordinates as TikZ code.
+
+    Args:
+        vertices: List of TikZ vertex data
+
+    Returns:
+        List of TikZ coordinate command strings
+    """
+    return [f"  \\coordinate ({v.name}) at ({v.point.x:.3f},{v.point.y:.3f});" for v in vertices]
 
 
 def build_vertex_map(vertices: list[TikZVertex]) -> dict[tuple[float, float], str]:
@@ -444,9 +448,7 @@ def get_vertex_name_or_coords(pt: Point, vertex_map: dict[tuple[float, float], s
     return f"({pt.x:.3f},{pt.y:.3f})"
 
 
-def render_tikz_vectors_with_vertex_map(
-    vectors: list[TikZVector], vertex_map: dict[tuple[float, float], str], include_labels: bool = True
-) -> list[str]:
+def render_tikz_vectors_with_vertex_map(vectors: list[TikZVector], vertex_map: dict[tuple[float, float], str], include_labels: bool = True) -> list[str]:
     """Render vectors as TikZ draw commands using vertex names where possible.
 
     Args:
@@ -617,7 +619,6 @@ def build_problem_setup_diagram(data: DiagramData, scale: float = 0.55) -> TikZD
     f2_pos = get_vector_label_position(f2_vec.angle_deg, f2_vec.angle_wrt) if f2_vec else "above left"
     fr_pos = get_vector_label_position(fr_vec.angle_deg, fr_vec.angle_wrt) if fr_vec else "above"
 
-
     diagram.vectors = [
         TikZVector(
             name=f1_name,
@@ -702,8 +703,7 @@ def render_problem_setup_tikz(diagram: TikZDiagram) -> str:
     lines = ["", f"\\begin{{tikzpicture}}[scale={diagram.scale},baseline=(current bounding box.north)]"]
 
     # Named coordinates (A, B, C, D)
-    for vertex in diagram.vertices:
-        lines.append(f"  \\coordinate ({vertex.name}) at ({vertex.point.x:.3f},{vertex.point.y:.3f});")
+    lines.extend(render_tikz_vertices(diagram.vertices))
 
     # Axes
     lines.extend(render_tikz_axes(diagram.axes))
@@ -991,8 +991,7 @@ def render_force_triangle_tikz(diagram: TikZDiagram) -> str:
     lines = ["", f"\\begin{{tikzpicture}}[scale={diagram.scale},baseline=(current bounding box.north)]"]
 
     # Named coordinates (A, B, C, D)
-    for vertex in diagram.vertices:
-        lines.append(f"  \\coordinate ({vertex.name}) at ({vertex.point.x:.3f},{vertex.point.y:.3f});")
+    lines.extend(render_tikz_vertices(diagram.vertices))
 
     # Axes
     lines.extend(render_tikz_axes(diagram.axes))

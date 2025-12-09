@@ -6,10 +6,15 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from types import EllipsisType
+from typing import TYPE_CHECKING, Union
 
 from ..coordinates import Cartesian, CoordinateSystem
 from ..core.quantity import Quantity
 from ..equations.angle_finder import angles_are_equivalent, get_absolute_angle
+
+if TYPE_CHECKING:
+    # Type alias for wrt parameter: can be axis string or another Vector/VectorUnknown
+    WrtType = Union[str, "Vector", "VectorUnknown"]
 
 
 @dataclass
@@ -44,7 +49,8 @@ class Vector:
     Attributes:
         magnitude: The magnitude of the vector as a Quantity (e.g., Force, Length)
         angle: The angle of the vector as a Quantity (must be angle dimension)
-        wrt: The axis the angle is measured from (e.g., "+x", "-y")
+        wrt: The reference for angle measurement - either an axis string (e.g., "+x", "-y")
+            or another Vector (for angles measured relative to another vector's direction)
         coordinate_system: The coordinate system the vector is defined in
         name: Optional name for the vector
         _is_resultant: Internal flag indicating if this is a resultant vector
@@ -52,7 +58,7 @@ class Vector:
 
     magnitude: Quantity
     angle: Quantity
-    wrt: str = "+x"
+    wrt: str | Vector | "VectorUnknown" = "+x"
     coordinate_system: CoordinateSystem = field(default_factory=Cartesian)
     name: str | None = None
     _is_resultant: bool = field(default=False, repr=False)
@@ -64,7 +70,12 @@ class Vector:
 
     def __repr__(self) -> str:
         name_str = f"'{self.name}' " if self.name else ""
-        return f"Vector({name_str}magnitude={self.magnitude}, angle={self.angle}, wrt='{self.wrt}')"
+        if isinstance(self.wrt, str):
+            wrt_str = f"'{self.wrt}'"
+        else:
+            # wrt is a Vector or VectorUnknown reference
+            wrt_str = f"Vector({self.wrt.name or 'unnamed'})"
+        return f"Vector({name_str}magnitude={self.magnitude}, angle={self.angle}, wrt={wrt_str})"
 
     def to_dto(
         self,
@@ -94,11 +105,18 @@ class Vector:
         angle_converted = self.angle.to_unit(angle_unit)
         angle_value = angle_converted.magnitude()
 
+        # Convert wrt to string for DTO (Vector/VectorUnknown references become their name)
+        if isinstance(self.wrt, str):
+            reference = self.wrt
+        else:
+            # wrt is a Vector or VectorUnknown reference
+            reference = self.wrt.name or "ref"
+
         return VectorDTO(
             name=self.name,
             magnitude=mag_value,
             angle=angle_value,
-            reference=self.wrt,
+            reference=reference,
         )
 
     def __eq__(self, other: object) -> bool:
@@ -148,7 +166,8 @@ class VectorUnknown:
     Attributes:
         magnitude: The magnitude as a Quantity, or ... if unknown
         angle: The angle as a Quantity, or ... if unknown
-        wrt: The axis the angle is measured from (e.g., "+x", "-y")
+        wrt: The reference for angle measurement - either an axis string (e.g., "+x", "-y")
+            or another Vector (for angles measured relative to another vector's direction)
         coordinate_system: The coordinate system the vector is defined in
         name: Optional name for the vector
         _is_resultant: Internal flag indicating if this is a resultant vector
@@ -156,7 +175,7 @@ class VectorUnknown:
 
     magnitude: Quantity | EllipsisType
     angle: Quantity | EllipsisType
-    wrt: str = "+x"
+    wrt: str | Vector | VectorUnknown = "+x"
     coordinate_system: CoordinateSystem = field(default_factory=Cartesian)
     name: str | None = None
     _is_resultant: bool = field(default=False, repr=False)
@@ -185,7 +204,12 @@ class VectorUnknown:
         name_str = f"'{self.name}' " if self.name else ""
         mag_str = "..." if self.magnitude is ... else str(self.magnitude)
         angle_str = "..." if self.angle is ... else str(self.angle)
-        return f"VectorUnknown({name_str}magnitude={mag_str}, angle={angle_str}, wrt='{self.wrt}')"
+        if isinstance(self.wrt, str):
+            wrt_str = f"'{self.wrt}'"
+        else:
+            # wrt is a Vector reference
+            wrt_str = f"Vector({self.wrt.name or 'unnamed'})"
+        return f"VectorUnknown({name_str}magnitude={mag_str}, angle={angle_str}, wrt={wrt_str})"
 
     def to_dto(
         self,
@@ -219,9 +243,16 @@ class VectorUnknown:
         angle_converted = self.angle.to_unit(angle_unit)
         angle_value = angle_converted.magnitude()
 
+        # Convert wrt to string for DTO (Vector/VectorUnknown references become their name)
+        if isinstance(self.wrt, str):
+            reference = self.wrt
+        else:
+            # wrt is a Vector or VectorUnknown reference
+            reference = self.wrt.name or "ref"
+
         return VectorDTO(
             name=self.name,
             magnitude=mag_value,
             angle=angle_value,
-            reference=self.wrt,
+            reference=reference,
         )

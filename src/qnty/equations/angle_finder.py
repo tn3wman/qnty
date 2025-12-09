@@ -18,6 +18,74 @@ if TYPE_CHECKING:
     from ..linalg.vector2 import Vector, VectorUnknown
 
 
+def angle_from_ratio(
+    u: float,
+    v: float,
+    axis1_label: str = "x",
+    axis2_label: str = "y",
+) -> tuple[Quantity, str]:
+    """
+    Compute angle and reference axis from direction ratios.
+
+    Given direction ratios (u, v), determine the angle measured from the
+    dominant axis. This is used for right-triangle style vector definitions
+    like 3-4-5 or 5-12-13 triangles.
+
+    The reference axis is chosen as the dominant direction (larger absolute value),
+    and the angle is measured from that axis toward the other component.
+
+    Args:
+        u: First component ratio (typically x-direction)
+        v: Second component ratio (typically y-direction)
+        axis1_label: Label for the first axis (default "x")
+        axis2_label: Label for the second axis (default "y")
+
+    Returns:
+        Tuple of (angle_quantity, wrt_string) where:
+        - angle_quantity: The angle as a Quantity in degrees
+        - wrt_string: The reference axis string (e.g., "+x", "-y")
+
+    Raises:
+        ValueError: If both ratios are zero
+
+    Examples:
+        >>> angle_from_ratio(5, 12)  # 5-12-13 triangle
+        (Quantity(67.38°), '+x')  # ~67.38° from +x axis
+        >>> angle_from_ratio(-3, 4)  # Pointing in -x, +y quadrant
+        (Quantity(53.13°), '-x')  # ~53.13° from -x axis toward +y
+    """
+    import math
+
+    from ..core.quantity import Q
+
+    if u == 0 and v == 0:
+        raise ValueError("Direction ratios cannot both be zero")
+
+    ru, rv = float(u), float(v)
+    abs_u, abs_v = abs(ru), abs(rv)
+
+    if abs_u >= abs_v:
+        # Dominant direction is along u (first axis)
+        wrt = f"+{axis1_label}" if ru >= 0 else f"-{axis1_label}"
+        if ru >= 0:
+            # Reference is +axis1, positive angle goes toward +axis2
+            angle_rad = math.atan2(rv, abs_u)
+        else:
+            # Reference is -axis1, positive angle goes toward -axis2
+            angle_rad = -math.atan2(rv, abs_u)
+    else:
+        # Dominant direction is along v (second axis)
+        wrt = f"+{axis2_label}" if rv >= 0 else f"-{axis2_label}"
+        if rv >= 0:
+            # Reference is +axis2, positive angle goes toward -axis1 (CCW)
+            angle_rad = -math.atan2(ru, abs_v)
+        else:
+            # Reference is -axis2, positive angle goes toward +axis1
+            angle_rad = math.atan2(ru, abs_v)
+
+    return Q(math.degrees(angle_rad), "degree"), wrt
+
+
 def angles_are_equivalent(angle1: Quantity, angle2: Quantity, rtol: float = 0.01) -> bool:
     """
     Check if two angles are equivalent within tolerance.
@@ -57,9 +125,11 @@ def get_absolute_angle(vec: Vector | VectorUnknown) -> Quantity:
     Get the absolute angle from the coordinate system's primary axis.
 
     The absolute angle is computed as:
-        absolute_angle = axis_angle(wrt) + vector.angle
+        absolute_angle = reference_angle + vector.angle
 
-    where axis_angle(wrt) is the angle of the reference axis in the coordinate system.
+    where reference_angle is either:
+        - axis_angle(wrt) if wrt is an axis string (e.g., "+x", "-y")
+        - get_absolute_angle(wrt) if wrt is another Vector (recursive)
 
     Args:
         vec: Vector with angle, wrt, and coordinate_system attributes
@@ -70,30 +140,37 @@ def get_absolute_angle(vec: Vector | VectorUnknown) -> Quantity:
     Raises:
         ValueError: If the vector's angle is unknown (ellipsis)
     """
+    from ..linalg.vector2 import Vector as VectorClass
+
     # Check that the angle is known (not ellipsis)
     angle = vec.angle
     if angle is ...:
         raise ValueError("Cannot compute absolute angle for vector with unknown angle")
 
-    # Get the angle of the reference axis from the coordinate system
-    axis_angle = vec.coordinate_system.get_axis_angle(vec.wrt)
+    # Get the reference angle based on wrt type
+    if isinstance(vec.wrt, VectorClass):
+        # wrt is a Vector reference - recursively get its absolute angle
+        reference_angle = get_absolute_angle(vec.wrt)
+    else:
+        # wrt is an axis string - get the angle of that axis from the coordinate system
+        reference_angle = vec.coordinate_system.get_axis_angle(vec.wrt)
 
-    # Add the vector's angle to get absolute angle
-    return axis_angle + angle
+    # Add the vector's angle to the reference to get absolute angle
+    return reference_angle + angle
 
 
 def get_relative_angle(
     absolute_angle: Quantity,
-    wrt: str,
+    wrt: str | "Vector",
     coordinate_system: CoordinateSystem,
     angle_dir: AngleDirection = AngleDirection.COUNTERCLOCKWISE,
 ) -> Quantity:
     """
-    Convert an absolute angle to a relative angle from a reference axis.
+    Convert an absolute angle to a relative angle from a reference.
 
     This is the inverse of get_absolute_angle. Given an absolute angle
     (measured CCW from the coordinate system's primary axis), compute
-    the relative angle from the specified reference axis.
+    the relative angle from the specified reference.
 
     Sign convention:
         - Counterclockwise (CCW) angles are positive
@@ -107,7 +184,8 @@ def get_relative_angle(
 
     Args:
         absolute_angle: The absolute angle as a Quantity
-        wrt: The reference axis (e.g., "+x", "+u", "-y")
+        wrt: The reference - either an axis string (e.g., "+x", "-y")
+            or a Vector (for angles measured relative to another vector)
         coordinate_system: The coordinate system defining axis angles
         angle_dir: Direction for measuring the angle (CCW or CW).
             Default: COUNTERCLOCKWISE
@@ -120,14 +198,20 @@ def get_relative_angle(
         >>> # Result: 352.9° - 0° = 352.9° (already in [0°, 360°))
     """
     from ..geometry.triangle import _get_angle_constants
+    from ..linalg.vector2 import Vector as VectorClass
 
     zero, half_rotation, full_rotation = _get_angle_constants()
 
-    # Get the angle of the reference axis from the coordinate system
-    axis_angle = coordinate_system.get_axis_angle(wrt)
+    # Get the reference angle based on wrt type
+    if isinstance(wrt, VectorClass):
+        # wrt is a Vector reference - get its absolute angle
+        reference_angle = get_absolute_angle(wrt)
+    else:
+        # wrt is an axis string - get the angle of that axis from the coordinate system
+        reference_angle = coordinate_system.get_axis_angle(wrt)
 
-    # Compute CCW angle from axis to vector
-    relative_angle = absolute_angle - axis_angle
+    # Compute CCW angle from reference to vector
+    relative_angle = absolute_angle - reference_angle
 
     # Normalize to range [0, 360) degrees first
     while relative_angle >= full_rotation:
@@ -207,8 +291,18 @@ class AngleBetween:
         vec1_ref = self.vec1.wrt
         vec2_ref = self.vec2.wrt
 
-        vec1_ref_display = vec1_ref.lstrip("+") if vec1_ref.startswith("+") else vec1_ref
-        vec2_ref_display = vec2_ref.lstrip("+") if vec2_ref.startswith("+") else vec2_ref
+        # Handle wrt being either a string or a Vector
+        from ..linalg.vector2 import Vector as VectorClass
+
+        if isinstance(vec1_ref, VectorClass):
+            vec1_ref_display = vec1_ref.name or "ref"
+        else:
+            vec1_ref_display = vec1_ref.lstrip("+") if vec1_ref.startswith("+") else vec1_ref
+
+        if isinstance(vec2_ref, VectorClass):
+            vec2_ref_display = vec2_ref.name or "ref"
+        else:
+            vec2_ref_display = vec2_ref.lstrip("+") if vec2_ref.startswith("+") else vec2_ref
 
         # Format angles for display (convert to degrees for readability)
         vec1_angle_display = self.vec1.angle.to_unit.degree
@@ -279,7 +373,20 @@ class AngleSum:
         self.result_ref = result_ref
         self.operation = operation
         self.angle_dir = angle_dir
-        self.description = description or f"Compute direction relative to {result_ref} axis"
+
+        # Handle result_ref being either a string or a Vector
+        from ..linalg.vector2 import Vector as VectorClass
+
+        if isinstance(result_ref, VectorClass):
+            # result_ref is a Vector - use its name for display
+            ref_display = result_ref.name or "ref"
+            ref_axis = ref_display
+        else:
+            # result_ref is a string axis like "+x" or "-y"
+            ref_display = result_ref
+            ref_axis = result_ref.lstrip("+-")
+
+        self.description = description or f"Compute direction relative to {ref_display} axis"
 
         # Generate LaTeX names
         from .base import angle_notation, latex_name
@@ -287,16 +394,13 @@ class AngleSum:
         result_name = latex_name(result_vector_name)
         base_name = latex_name(base_vector_name)
 
-        # Extract the axis from result_ref (e.g., "+x" -> "x", "-y" -> "y")
-        ref_axis = result_ref.lstrip("+-")
-
         # Generate the angle names with LaTeX formatting
         # Use the actual reference axis, not hardcoded "x"
         self.target_name = f"\\angle(\\vec{{{ref_axis}}}, \\vec{{{result_name}}})"
         self.base_angle_name = f"\\angle(\\vec{{{ref_axis}}}, \\vec{{{base_name}}})"
         # Use angle_notation for consistent alphanumeric sorting
         self.offset_angle_name = angle_notation(offset_vector_1, offset_vector_2)
-        self.target = f"{self.target_name} with respect to {result_ref}"
+        self.target = f"{self.target_name} with respect to {ref_display}"
 
     def solve(self) -> tuple[Quantity, dict]:
         """

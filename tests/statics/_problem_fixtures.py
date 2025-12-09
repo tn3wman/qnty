@@ -21,7 +21,7 @@ from pathlib import Path
 from qnty.coordinates.oblique import Oblique
 
 # Import vector creation functions from new vectors2 module
-from qnty.linalg.vectors2 import create_resultant_polar, create_vector_resultant, create_vectors_polar
+from qnty.linalg.vectors2 import create_resultant_polar, create_vector_from_ratio, create_vector_resultant, create_vectors_polar
 
 # Import from the new parallelogram_solver module
 from qnty.problems.statics.parallelogram_solver import (
@@ -254,10 +254,10 @@ class Chapter2Problem12:
 
 class Chapter2Problem13:
     name = "Problem 2-13"
-    generate_debug_reports = False
+    generate_debug_reports = True
     cs = Oblique.from_angle_between("a", "b", 0, 40)
     F_a = create_vectors_polar(..., "lbf", 0, wrt="+a", coordinate_system=cs)
-    F_b = create_vectors_polar(..., "lbf", 0, wrt="-b")
+    F_b = create_vectors_polar(..., "lbf", 0, wrt="-b", coordinate_system=cs)
     F = create_resultant_polar(
         F_a, F_b,
         magnitude=20, unit="lbf", angle=80, wrt="-b", coordinate_system=cs
@@ -272,33 +272,34 @@ class Chapter2Problem13:
 
 class Chapter2Problem14:
     name = "Problem 2-14"
-    generate_debug_reports = False
+    generate_debug_reports = True
     cs = Oblique.from_angle_between("a", "b", 0, 40)
     F_a = create_vectors_polar(30, "lbf", 0, wrt="+a", coordinate_system=cs)
-    F_b = create_vectors_polar(..., "lbf", 0, wrt="-b", coordinate_system=cs)
+    F_b = create_vectors_polar(..., "lbf", 0, wrt="b", coordinate_system=cs)
     F = create_resultant_polar(
         F_a, F_b,
-        magnitude=..., unit="lbf", angle=80, wrt="-b", coordinate_system=cs
+        magnitude=..., unit="lbf", angle=80, wrt="b", coordinate_system=cs
     )
 
     class expected:
         cs = Oblique.from_angle_between("a", "b", 0, 40)
         F_a = create_vectors_polar(30, "lbf", 0, wrt="+a", coordinate_system=cs)
-        F_b = create_vectors_polar(26.4, "lbf", 0, wrt="-b", coordinate_system=cs)
-        F = create_vectors_polar(19.6, "lbf", 80, wrt="-b", coordinate_system=cs)
+        F_b = create_vectors_polar(-26.4, "lbf", 0, wrt="b", coordinate_system=cs)
+        F = create_vectors_polar(-19.6, "lbf", 80, wrt="b", coordinate_system=cs)
 
-"""
+
 class Chapter2Problem15:
     name = "Problem 2-15"
-    generate_debug_reports = False
+    generate_debug_reports = True
     F_BA = create_vectors_polar(650, "lbf", 60, wrt="-x")
     F_BC = create_vectors_polar(500, "lbf", -45, wrt="+x")
-    F_R = create_vector_resultant(F_BA, F_BC)
+    F_R = create_vector_resultant(F_BA, F_BC, wrt=F_BA)
 
     class expected:
         F_BA = create_vectors_polar(650, "lbf", 60, wrt="-x")
         F_BC = create_vectors_polar(500, "lbf", -45, wrt="+x")
         F_R = create_vectors_polar(916.91, "lbf", 31.8, wrt=F_BA)
+
 
 class Chapter2Problem16:
     name = "Problem 2-16"
@@ -307,7 +308,7 @@ class Chapter2Problem16:
     F_BC = create_vectors_polar(..., "lbf", -45, wrt="+x")
     F_R = create_resultant_polar(
         F_BA, F_BC,
-        850, "lbf", 30, wrt=F_BA
+        magnitude=850, unit="lbf", angle=30, wrt=F_BA
     )
 
     class expected:
@@ -319,7 +320,7 @@ class Chapter2Problem17:
     name = "Problem 2-17"
     generate_debug_reports = False
     # F_1 = create_vectors_polar(30, "N", -36.87, wrt="-x")
-    F_1 = create_vector_from_ratio(30, "N", u=-4, v=3)
+    F_1 = create_vector_from_ratio(30, "N", -4, 3)
     F_2 = create_vectors_polar(20, "N", -20, wrt="-y")
     F_3 = create_vectors_polar(50, "N", 0, wrt="+x")
     F_R = create_vector_resultant(F_1, F_2, F_3, angle_dir="cw")
@@ -352,7 +353,7 @@ class Chapter2Problem19:
     F_AC = create_vectors_polar(500, "lbf", -40, wrt=F_AB)
     F_R = create_resultant_polar(
         F_AB, F_AC,
-        400, "lbf", 0, wrt="-x"
+        magnitude=400, unit="lbf", angle=0, wrt="-x"
     )
 
     class expected:
@@ -367,7 +368,7 @@ class Chapter2Problem20:
     F_AC = create_vectors_polar(..., "lbf", ..., wrt=F_AB)
     F_R = create_resultant_polar(
         F_AB, F_AC,
-        400, "lbf", 0, wrt="-x"
+        magnitude=400, unit="lbf", angle=0, wrt="-x"
     )
 
     class expected:
@@ -411,7 +412,7 @@ class Chapter2Problem23:
     F_2 = create_vectors_polar(600, "N", ..., wrt="+x")
     F_R = create_resultant_polar(
         F_1, F_2,
-        800, "N", ..., wrt="+x"
+        magnitude=800, unit="N", angle=..., wrt="+x"
     )
 
     class expected:
@@ -426,7 +427,10 @@ class Chapter2Problem25:
     name = "Problem 2-25"
     F_1 = create_vectors_polar(30, "lbf", ..., wrt="+x")
     F_2 = create_vectors_polar(40, "lbf", ..., wrt="+x")
-    F_R = create_resultant_polar(F_1, F_2, 60, "lbf", 0, wrt="+x")
+    F_R = create_resultant_polar(
+        F_1, F_2,
+        magnitude=60, unit="lbf", angle=0, wrt="+x"
+    )
 
     class expected:
         F_1 = create_vectors_polar(30, "lbf", 36.3, wrt="+x")
@@ -438,7 +442,10 @@ class Chapter2Problem26:
 
     F_A = create_vectors_polar(..., "N", ..., wrt="+x")
     F_B = create_vectors_polar(800, "N", -30, wrt="+x")
-    F_R = create_resultant_polar(F_A, F_B, 1250, "N", 0, wrt="+x")
+    F_R = create_resultant_polar(
+        F_A, F_B,
+        magnitude=1250, unit="N", angle=0, wrt="+x"
+    )
 
     class expected:
         F_A = create_vectors_polar(686, "N", -54.3, wrt="+y")
@@ -464,7 +471,7 @@ class Chapter2Problem28:
     F_3 = create_vectors_polar(..., "N", 30, wrt="-y")
     F_R = create_resultant_polar(
         F_1, F_2, F_3,
-        ..., "N", 90, wrt="F_3"
+        magnitude=..., unit="N", angle=90, wrt="F_3"
     )
 
     class expected:
@@ -477,7 +484,9 @@ class Chapter2Problem29:
     name = "Problem 2-29"
     F_A = create_vectors_polar(2000, "N", 30, wrt="+x")
     F_B = create_vectors_polar(..., "N", ..., wrt="+x")
-    F_R = create_resultant_polar(F_A, F_B, 3000, "N", 0, wrt="+x")
+    F_R = create_resultant_polar(
+        F_A, F_B,
+        magnitude=3000, unit="N", angle=0, wrt="+x")
 
     class expected:
         F_A = create_vectors_polar(2000, "N", 30, wrt="+x")
@@ -503,7 +512,7 @@ class Chapter2Problem31:
     F_B = create_vectors_polar(..., "N", -90, wrt="F_R")
     F_R = create_resultant_polar(
         F_A, F_B,
-        ..., "N", 0, wrt="+x"
+        magnitude=..., unit="N", angle=0, wrt="+x"
     )
 
     class expected:
@@ -582,12 +591,12 @@ class Chapter2Problem1MixedUnits:
 
     # Input vectors using unified API
     F_1 = create_vectors_polar(101.164, "lbf", 60, wrt="+x")
-    F_2 = create_vectors_polar(700, "N", 0.261799, angle_"radian", wrt="-x")
+    F_2 = create_vectors_polar(700, "N", 0.261799, "radian", wrt="-x")
     F_R = create_vector_resultant(F_1, F_2)
 
     # Expected values (from textbook)
     class expected:
-        F_1 = create_vectors_polar(450, "N", 1.0472, angle_"radian", wrt="+x")
+        F_1 = create_vectors_polar(450, "N", 1.0472, "radian", wrt="+x")
         F_2 = create_vectors_polar(700, "N", 15, wrt="-x")
         F_R = create_vectors_polar(111.733, "lbf", 155.192, wrt="+x")
 
@@ -595,7 +604,7 @@ class Chapter2Problem1MixedUnits:
 # =============================================================================
 # Problem 2-1 WRONG (for test validation)
 # =============================================================================
-"""
+
 
 class Chapter2Problem1_WRONG:
     name = "Problem 2-1 WRONG (expect failures)"
@@ -702,9 +711,9 @@ PARALLELOGRAM_LAW_PROBLEMS = [
     Chapter2Problem10,
     Chapter2Problem11,
     Chapter2Problem12,
-    # Chapter2Problem13,
-    # Chapter2Problem14,
-    # Chapter2Problem15,
+    Chapter2Problem13,
+    Chapter2Problem14,
+    Chapter2Problem15,
     # Chapter2Problem16,
     # Chapter2Problem17,
     # Chapter2Problem18,
@@ -742,9 +751,9 @@ ALL_PROBLEM_CLASSES = [
     Chapter2Problem10,
     Chapter2Problem11,
     Chapter2Problem12,
-    # Chapter2Problem13,
-    # Chapter2Problem14,
-    # Chapter2Problem15,
+    Chapter2Problem13,
+    Chapter2Problem14,
+    Chapter2Problem15,
     # Chapter2Problem16,
     # Chapter2Problem17,
     # Chapter2Problem18,

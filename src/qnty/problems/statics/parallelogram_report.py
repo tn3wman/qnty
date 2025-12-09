@@ -238,7 +238,12 @@ class ReportDataBuilder:
                 if vec.angle is not ... and vec.angle is not None:
                     angle_ref = vec.angle.to_unit.degree.magnitude()
                 if hasattr(vec, 'wrt') and vec.wrt:
-                    angle_wrt = vec.wrt
+                    # Handle wrt being either a string or a Vector
+                    from ...linalg.vector2 import Vector
+                    if isinstance(vec.wrt, Vector):
+                        angle_wrt = vec.wrt.name or "ref"
+                    else:
+                        angle_wrt = vec.wrt
 
                 # Check if this vector was originally known (before solving)
                 is_known = self.problem._original_vector_states.get(vec_name, True)

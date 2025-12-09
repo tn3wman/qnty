@@ -17,7 +17,7 @@ def create_vectors_polar(
     magnitude_unit: str,
     angle: float | EllipsisType,
     angle_unit: str = "degree",
-    wrt: str = "+x",
+    wrt: str | Vector | VectorUnknown = "+x",
     coordinate_system: CoordinateSystem | None = None,
     name: str | None = None,
 ) -> Vector | VectorUnknown:
@@ -29,7 +29,8 @@ def create_vectors_polar(
         magnitude_unit: The unit for magnitude (e.g., "N", "lbf", "m")
         angle: The angle value, or ... for unknown
         angle_unit: The unit for angle (default: "degree")
-        wrt: The axis the angle is measured from (default: "+x")
+        wrt: The reference for angle measurement - either an axis string (e.g., "+x", "-y")
+            or another Vector (for angles measured relative to another vector's direction)
         coordinate_system: The coordinate system (default: Cartesian)
         name: Optional name for the vector
 
@@ -50,6 +51,10 @@ def create_vectors_polar(
         >>>
         >>> # Vector with unknown angle
         >>> F4 = create_vectors_polar(100, "N", ..., name="F_4")
+        >>>
+        >>> # Vector measured relative to another vector
+        >>> F_ref = create_vectors_polar(200, "N", 45, name="F_ref")
+        >>> F5 = create_vectors_polar(100, "N", 30, wrt=F_ref, name="F_5")
     """
     if coordinate_system is None:
         coordinate_system = Cartesian()
@@ -78,7 +83,7 @@ def create_vectors_polar(
 
 def create_vector_resultant(
     *vectors: Vector | VectorUnknown,
-    wrt: str | None = None,
+    wrt: str | Vector | VectorUnknown | None = None,
     angle_dir: AngleDirection | str = AngleDirection.COUNTERCLOCKWISE,
     coordinate_system: CoordinateSystem | None = None,
     name: str = "F_R",
@@ -92,9 +97,9 @@ def create_vector_resultant(
 
     Args:
         *vectors: Variable number of vectors to sum
-        wrt: The axis the resultant angle is measured from (e.g., "+x", "+u").
-            If None, defaults to the first axis of the coordinate system (e.g., "+x" for
-            Cartesian, "+u" for Oblique with axis1_label="u").
+        wrt: The reference for angle measurement - either an axis string (e.g., "+x", "+u"),
+            another Vector, or None. If None, defaults to the first axis of the coordinate
+            system (e.g., "+x" for Cartesian, "+u" for Oblique with axis1_label="u").
         angle_dir: Direction for measuring the resultant angle - clockwise (CW) or
             counterclockwise (CCW) from the reference axis. Accepts AngleDirection enum
             or strings: "counterclockwise", "ccw", "clockwise", "cw".
@@ -167,7 +172,7 @@ def create_resultant_polar(
     unit: str,
     angle: float | EllipsisType,
     angle_unit: str = "degree",
-    wrt: str = "+x",
+    wrt: str | Vector | VectorUnknown = "+x",
     coordinate_system: CoordinateSystem | None = None,
     name: str = "F_R",
 ) -> Vector | VectorUnknown:
@@ -184,7 +189,8 @@ def create_resultant_polar(
         unit: The unit for magnitude (e.g., "N", "lbf", "m")
         angle: The angle value, or ... for unknown
         angle_unit: The unit for angle (default: "degree")
-        wrt: The axis the angle is measured from (default: "+x")
+        wrt: The reference for angle measurement - either an axis string (e.g., "+x", "-y")
+            or another Vector (for angles measured relative to another vector's direction)
         coordinate_system: The coordinate system (default: Cartesian)
         name: Name for the resultant vector (default "F_R")
 
@@ -242,3 +248,65 @@ def create_resultant_polar(
     resultant._component_vectors = list(vectors)  # type: ignore[attr-defined]
 
     return resultant
+
+
+def create_vector_from_ratio(
+    magnitude: float,
+    unit: str,
+    u: float,
+    v: float,
+    coordinate_system: CoordinateSystem | None = None,
+    name: str | None = None,
+) -> Vector:
+    """
+    Create a 2D vector using magnitude and direction ratios.
+
+    This factory function provides a convenient way to define vectors using direction
+    ratios, which are common in statics problems where directions are given
+    as integer ratios (like 3-4-5, 5-12-13, 8-15-17 right triangles).
+
+    The ratios define the relative proportions in each direction. The vector
+    has the specified magnitude along that direction.
+
+    Args:
+        magnitude: Vector magnitude
+        u: First component ratio (positive or negative, typically x-direction)
+        v: Second component ratio (positive or negative, typically y-direction)
+        unit: Unit for vector magnitude (e.g., "N", "lbf", "m")
+        coordinate_system: The coordinate system (default: Cartesian)
+        name: Optional vector name
+
+    Returns:
+        Vector object with computed angle and reference axis
+
+    Raises:
+        ValueError: If ratios are both zero
+
+    Examples:
+        >>> from qnty.linalg.vectors2 import create_vector_from_ratio
+        >>>
+        >>> # Vector with magnitude 130N in direction 5-12 (like a 5-12-13 triangle)
+        >>> F = create_vector_from_ratio(magnitude=130, u=5, v=12, unit="N")
+        >>> # Angle will be computed from the dominant axis
+        >>>
+        >>> # Vector pointing in negative x and positive y direction
+        >>> F2 = create_vector_from_ratio(magnitude=100, u=-3, v=4, unit="N")
+    """
+    from ..equations.angle_finder import angle_from_ratio
+
+    if coordinate_system is None:
+        coordinate_system = Cartesian()
+
+    angle, wrt = angle_from_ratio(
+        u, v,
+        axis1_label=coordinate_system.axis1_label,
+        axis2_label=coordinate_system.axis2_label,
+    )
+
+    return Vector(
+        magnitude=Q(magnitude, unit),
+        angle=angle,
+        wrt=wrt,
+        coordinate_system=coordinate_system,
+        name=name,
+    )

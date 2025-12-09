@@ -132,6 +132,7 @@ def _determine_angle_operation(base_val: float, offset_val: float, computed_val:
     Returns:
         "+" if addition is closer, "-" if subtraction is closer
     """
+
     def normalize(x: float) -> float:
         return x % 360
 
@@ -953,9 +954,12 @@ def solve_asa(state: SolvingState) -> None:
     # a component may need to be negative (pointing opposite to its reference direction)
     # This happens when the resultant is "outside" the angular span of the components
 
+    # Get all three sides for sign correction
+    # The resultant is ALWAYS side_b (vec_r) in our triangle convention
+    resultant_side = triangle.side_b  # Always the resultant
+
     # Get the absolute directions of all three sides
-    # TriangleSide has .direction attribute (absolute direction as Quantity)
-    if included_side.direction is None or unknown_side1.direction is None or unknown_side2.direction is None:
+    if resultant_side.direction is None or unknown_side1.direction is None or unknown_side2.direction is None:
         # Can't apply sign correction without directions - just use positive magnitudes
         unknown_side1.magnitude = unknown_side1_mag
         unknown_side1.is_known = True
@@ -963,30 +967,91 @@ def solve_asa(state: SolvingState) -> None:
         unknown_side2.is_known = True
         return
 
-    resultant_dir = included_side.direction.to_unit.degree.magnitude()
-    resultant_mag_val = known_side_mag.magnitude()
-
-    comp1_dir = unknown_side1.direction.to_unit.degree.magnitude()
-    comp1_mag_val = unknown_side1_mag.magnitude()
-
-    comp2_dir = unknown_side2.direction.to_unit.degree.magnitude()
-    comp2_mag_val = unknown_side2_mag.magnitude()
+    # Identify which unknown is the resultant and which are components
+    # The equation is: component1 + component2 = resultant
+    if unknown_side1 == resultant_side:
+        # unknown_side1 is the resultant, unknown_side2 and included_side are components
+        resultant_mag_val = unknown_side1_mag.magnitude()
+        resultant_dir = unknown_side1.direction.to_unit.degree.magnitude()
+        comp1_mag_val = unknown_side2_mag.magnitude()
+        comp1_dir = unknown_side2.direction.to_unit.degree.magnitude()
+        comp2_mag_val = known_side_mag.magnitude()
+        comp2_dir = included_side.direction.to_unit.degree.magnitude()
+        unknown_is_resultant = 1
+    elif unknown_side2 == resultant_side:
+        # unknown_side2 is the resultant, unknown_side1 and included_side are components
+        resultant_mag_val = unknown_side2_mag.magnitude()
+        resultant_dir = unknown_side2.direction.to_unit.degree.magnitude()
+        comp1_mag_val = unknown_side1_mag.magnitude()
+        comp1_dir = unknown_side1.direction.to_unit.degree.magnitude()
+        comp2_mag_val = known_side_mag.magnitude()
+        comp2_dir = included_side.direction.to_unit.degree.magnitude()
+        unknown_is_resultant = 2
+    else:
+        # included_side is the resultant, both unknowns are components
+        resultant_mag_val = known_side_mag.magnitude()
+        resultant_dir = included_side.direction.to_unit.degree.magnitude()
+        comp1_mag_val = unknown_side1_mag.magnitude()
+        comp1_dir = unknown_side1.direction.to_unit.degree.magnitude()
+        comp2_mag_val = unknown_side2_mag.magnitude()
+        comp2_dir = unknown_side2.direction.to_unit.degree.magnitude()
+        unknown_is_resultant = 0
 
     # Compute corrected signs
+    # For cases where an unknown is the resultant, we try both the nominal direction
+    # and the opposite direction (180° apart) to find which gives a valid solution
+    # where the known component doesn't need a sign flip
     corrected_comp1, corrected_comp2 = _compute_component_signs(
-        resultant_mag_val, resultant_dir,
-        comp1_mag_val, comp1_dir,
-        comp2_mag_val, comp2_dir,
+        resultant_mag_val,
+        resultant_dir,
+        comp1_mag_val,
+        comp1_dir,
+        comp2_mag_val,
+        comp2_dir,
     )
 
+    # If the known component (comp2) got a negative sign, try with opposite resultant direction
+    if unknown_is_resultant in (1, 2) and corrected_comp2 < 0:
+        # The opposite direction (180° apart) should give the correct signs
+        opposite_dir = (resultant_dir + 180) % 360
+        alt_comp1, alt_comp2 = _compute_component_signs(
+            resultant_mag_val,
+            opposite_dir,
+            comp1_mag_val,
+            comp1_dir,
+            comp2_mag_val,
+            comp2_dir,
+        )
+        # If the known component is now positive, use these signs
+        # but flip the resultant magnitude (since we used the opposite direction)
+        if alt_comp2 > 0:
+            corrected_comp1 = alt_comp1
+            corrected_comp2 = alt_comp2
+            resultant_mag_val = -resultant_mag_val  # Resultant points opposite to nominal
+
+    # Map the corrected values back to unknown_side1 and unknown_side2
+    if unknown_is_resultant == 1:
+        # comp1 -> unknown_side2, comp2 -> included (known, unchanged)
+        # unknown_side1 is the resultant
+        corrected_unknown2 = corrected_comp1
+        corrected_unknown1 = resultant_mag_val  # May be negative if we flipped direction
+    elif unknown_is_resultant == 2:
+        # comp1 -> unknown_side1, comp2 -> included (known, unchanged)
+        # unknown_side2 is the resultant
+        corrected_unknown1 = corrected_comp1
+        corrected_unknown2 = resultant_mag_val  # May be negative if we flipped direction
+    else:
+        # Both unknowns are components
+        corrected_unknown1 = corrected_comp1
+        corrected_unknown2 = corrected_comp2
+
     # Apply sign corrections if needed
-    if corrected_comp1 < 0:
-        # Need to create a new quantity with negative value
-        unknown_side1_mag = Q(corrected_comp1, unknown_side1_mag.preferred.symbol if unknown_side1_mag.preferred else "N")
+    if corrected_unknown1 < 0:
+        unknown_side1_mag = Q(corrected_unknown1, unknown_side1_mag.preferred.symbol if unknown_side1_mag.preferred else "N")
         unknown_side1_mag.name = f"{unknown_side1.name}_mag"
 
-    if corrected_comp2 < 0:
-        unknown_side2_mag = Q(corrected_comp2, unknown_side2_mag.preferred.symbol if unknown_side2_mag.preferred else "N")
+    if corrected_unknown2 < 0:
+        unknown_side2_mag = Q(corrected_unknown2, unknown_side2_mag.preferred.symbol if unknown_side2_mag.preferred else "N")
         unknown_side2_mag.name = f"{unknown_side2.name}_mag"
 
     # Update the triangle with corrected magnitudes
@@ -1014,6 +1079,26 @@ SOLVING_STRATEGIES = {
 }
 
 
+def _get_vector_kwargs(attr: Vector | VectorUnknown, attr_name: str) -> dict[str, Any]:
+    """Extract common keyword arguments from a Vector or VectorUnknown.
+
+    Args:
+        attr: The Vector or VectorUnknown to extract args from
+        attr_name: The attribute name to use as fallback for the vector name
+
+    Returns:
+        Dictionary of keyword arguments for constructing a copy
+    """
+    return {
+        "magnitude": attr.magnitude,
+        "angle": attr.angle,
+        "wrt": attr.wrt,
+        "coordinate_system": attr.coordinate_system,
+        "name": attr.name or attr_name,
+        "_is_resultant": attr._is_resultant,
+    }
+
+
 def _copy_vector(attr: Vector | VectorUnknown, attr_name: str) -> Vector | VectorUnknown:
     """Create a copy of a Vector or VectorUnknown for instance-level storage.
 
@@ -1024,27 +1109,13 @@ def _copy_vector(attr: Vector | VectorUnknown, attr_name: str) -> Vector | Vecto
     Returns:
         A copy of the vector with the same properties
     """
-    if isinstance(attr, VectorUnknown):
-        vec_copy = VectorUnknown(
-            magnitude=attr.magnitude,
-            angle=attr.angle,
-            wrt=attr.wrt,
-            coordinate_system=attr.coordinate_system,
-            name=attr.name or attr_name,
-            _is_resultant=attr._is_resultant,
-        )
-        # Copy angle direction if present
-        if hasattr(attr, "_angle_dir"):
-            vec_copy._angle_dir = attr._angle_dir  # type: ignore[attr-defined]
-    else:
-        vec_copy = Vector(
-            magnitude=attr.magnitude,
-            angle=attr.angle,
-            wrt=attr.wrt,
-            coordinate_system=attr.coordinate_system,
-            name=attr.name or attr_name,
-            _is_resultant=attr._is_resultant,
-        )
+    kwargs = _get_vector_kwargs(attr, attr_name)
+    vec_cls = VectorUnknown if isinstance(attr, VectorUnknown) else Vector
+    vec_copy = vec_cls(**kwargs)
+
+    # Copy angle direction if present (VectorUnknown only)
+    if hasattr(attr, "_angle_dir"):
+        vec_copy._angle_dir = attr._angle_dir  # type: ignore[attr-defined]
 
     # Copy component vectors if present (common to both types)
     if hasattr(attr, "_component_vectors"):
@@ -1262,25 +1333,31 @@ class ParallelogramLawProblem:
         """
         triangle = state.triangle
 
+        # Build a reverse mapping from vector .name to dict key
+        # This handles cases where the dict key ("F") differs from vector.name ("F_R")
+        name_to_key: dict[str, str] = {}
+        for key, vec in self.vectors.items():
+            if vec.name:
+                name_to_key[vec.name] = key
+            name_to_key[key] = key  # Also map key to itself for direct matches
+
         # Find ALL unknown sides that need to be updated
         # A side is unknown if it's a VectorUnknown in our vectors dict
         unknown_sides = []
         for side in [triangle.side_a, triangle.side_b, triangle.side_c]:
-            if side.name and side.name in self.vectors:
-                vec = self.vectors[side.name]
-                if isinstance(vec, VectorUnknown):
-                    unknown_sides.append(side)
+            if side.name:
+                key = name_to_key.get(side.name)
+                if key and key in self.vectors:
+                    vec = self.vectors[key]
+                    if isinstance(vec, VectorUnknown):
+                        unknown_sides.append((side, key))
 
         if not unknown_sides:
             return  # Nothing to update
 
         # Update each unknown side
-        for unknown_side in unknown_sides:
-            name = unknown_side.name
-            if name is None:
-                continue
-
-            vec = self.vectors.get(name)
+        for unknown_side, dict_key in unknown_sides:
+            vec = self.vectors.get(dict_key)
             if vec is None or not isinstance(vec, VectorUnknown):
                 continue
 
@@ -1318,14 +1395,14 @@ class ParallelogramLawProblem:
                 name=vec.name,
             )
             # Replace the VectorUnknown with the solved Vector
-            self.vectors[name] = solved_vector
-            setattr(self, name, solved_vector)
+            self.vectors[dict_key] = solved_vector
+            setattr(self, dict_key, solved_vector)
 
             # Update variables for reporting
-            solved_mag.name = f"{name}_mag"
-            self.variables[f"{name}_mag"] = solved_mag
-            solved_angle.name = f"{name}_angle"
-            self.variables[f"{name}_angle"] = solved_angle
+            solved_mag.name = f"{dict_key}_mag"
+            self.variables[f"{dict_key}_mag"] = solved_mag
+            solved_angle.name = f"{dict_key}_angle"
+            self.variables[f"{dict_key}_angle"] = solved_angle
 
     def generate_report(self, output_path: str, format: str = "markdown") -> None:
         """
