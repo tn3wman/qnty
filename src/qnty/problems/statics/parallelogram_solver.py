@@ -27,6 +27,7 @@ from typing import TYPE_CHECKING, Any
 
 from ...algebra.functions import asin, sin
 from ...core import Q
+from ...core.quantity import Quantity
 from ...equations import AngleSum, LawOfCosines, LawOfSines
 from ...equations.angle_finder import get_relative_angle
 from ...equations.base import SolutionStepBuilder, format_angle, latex_name
@@ -115,6 +116,75 @@ def _compute_component_signs(
             best_combo = (s1, s2)
 
     return (best_combo[0] * comp1_mag, best_combo[1] * comp2_mag)
+
+
+def _determine_angle_operation(base_val: float, offset_val: float, computed_val: float) -> str:
+    """Determine whether to add or subtract offset from base to get computed value.
+
+    Compares base + offset and base - offset to the computed value (all normalized
+    to [0, 360)) and returns the operation that produces a closer match.
+
+    Args:
+        base_val: Base angle in degrees
+        offset_val: Offset angle in degrees
+        computed_val: Target computed angle in degrees
+
+    Returns:
+        "+" if addition is closer, "-" if subtraction is closer
+    """
+    def normalize(x: float) -> float:
+        return x % 360
+
+    add_result = normalize(base_val + offset_val)
+    sub_result = normalize(base_val - offset_val)
+    computed_norm = normalize(computed_val)
+
+    # Compute differences accounting for wraparound
+    add_diff = min(abs(add_result - computed_norm), abs(add_result - computed_norm + 360), abs(add_result - computed_norm - 360))
+    sub_diff = min(abs(sub_result - computed_norm), abs(sub_result - computed_norm + 360), abs(sub_result - computed_norm - 360))
+
+    return "-" if sub_diff < add_diff else "+"
+
+
+def _create_angle_sum_step(
+    adjacent_known_side: Any,
+    solved_angle: Quantity,
+    target_side_name: str,
+    result_ref: str,
+    computed_dir: Quantity,
+    angle_dir: AngleDirection,
+) -> tuple[Quantity, Any]:
+    """Create an AngleSum step for computing direction from adjacent known vector.
+
+    Args:
+        adjacent_known_side: The known adjacent side with direction
+        solved_angle: The interior angle that was solved
+        target_side_name: Name of the side whose direction we're computing
+        result_ref: Reference axis string (e.g., "+x", "-y")
+        computed_dir: The computed direction value
+        angle_dir: Angle direction (CW or CCW)
+
+    Returns:
+        Tuple of (normalized_direction, solution_step)
+    """
+    base_val = adjacent_known_side.direction.to_unit.degree.magnitude()
+    offset_val = solved_angle.to_unit.degree.magnitude()
+    computed_val = computed_dir.to_unit.degree.magnitude()
+
+    operation = _determine_angle_operation(base_val, offset_val, computed_val)
+
+    angle_sum = AngleSum(
+        base_angle=adjacent_known_side.direction,
+        offset_angle=solved_angle,
+        result_vector_name=target_side_name,
+        base_vector_name=adjacent_known_side.name,
+        offset_vector_1=adjacent_known_side.name,
+        offset_vector_2=target_side_name,
+        result_ref=result_ref,
+        operation=operation,
+        angle_dir=angle_dir,
+    )
+    return angle_sum.solve()
 
 
 # =============================================================================
@@ -338,43 +408,18 @@ def solve_sas(state: SolvingState) -> None:
                             adjacent_known_side = side
 
             if adjacent_known_side is not None and solved_angle is not None:
-                # Determine operation: compare computed_dir with base + offset and base - offset
-                # to see which one matches the actual computed direction
-                base_dir = adjacent_known_side.direction
-                computed_dir_val = computed_dir.to_unit.degree.magnitude()
-                base_val = base_dir.to_unit.degree.magnitude()
-                offset_val = solved_angle.to_unit.degree.magnitude()
-
-                # Normalize angles to [0, 360) for comparison
-                def normalize(x: float) -> float:
-                    return x % 360
-
-                add_result = normalize(base_val + offset_val)
-                sub_result = normalize(base_val - offset_val)
-                computed_norm = normalize(computed_dir_val)
-
-                # Determine which operation was used (with tolerance for floating point)
-                add_diff = min(abs(add_result - computed_norm), abs(add_result - computed_norm + 360), abs(add_result - computed_norm - 360))
-                sub_diff = min(abs(sub_result - computed_norm), abs(sub_result - computed_norm + 360), abs(sub_result - computed_norm - 360))
-
-                operation = "-" if sub_diff < add_diff else "+"
-
                 # Get the reference axis from the vector_references map
                 result_ref = state.vector_references.get(unknown_side.name, "+x")
 
-                # AngleSum handles LaTeX formatting internally and returns normalized angle
-                angle_sum = AngleSum(
-                    base_angle=adjacent_known_side.direction,
-                    offset_angle=solved_angle,
-                    result_vector_name=unknown_side.name,
-                    base_vector_name=adjacent_known_side.name,
-                    offset_vector_1=adjacent_known_side.name,
-                    offset_vector_2=unknown_side.name,
+                # Use helper to create AngleSum step
+                normalized_dir, step = _create_angle_sum_step(
+                    adjacent_known_side=adjacent_known_side,
+                    solved_angle=solved_angle,
+                    target_side_name=unknown_side.name,
                     result_ref=result_ref,
-                    operation=operation,
+                    computed_dir=computed_dir,
                     angle_dir=state.result_angle_dir,
                 )
-                normalized_dir, step = angle_sum.solve()
                 state.solving_steps.append(step)
                 # Update dir_r with the normalized angle (0° to 360°)
                 state.dir_r = normalized_dir
@@ -646,11 +691,6 @@ def solve_ssa(state: SolvingState) -> None:
                 adj_name = latex_name(adjacent_known_side.name or "V")
                 solved_deg = solved_angle.to_unit.degree
 
-                # Compute the final angle relative to the user's reference axis
-                # For +y reference: angle from +y = 90° - interior_angle (for acute angles)
-                # For +x reference: angle from +x = interior_angle (when base is at 0°)
-                base_val = adjacent_known_side.direction.to_unit.degree.magnitude()
-
                 if ref_axis.lower() == "y":
                     # Show calculation as: 90° - interior_angle
                     result_angle = 90.0 - solved_deg.magnitude()
@@ -662,38 +702,15 @@ def solve_ssa(state: SolvingState) -> None:
                     )
                     state.solving_steps.append(step.build())
                 else:
-                    # Use AngleSum for other reference axes
-                    # Determine operation: compare computed_dir with base + offset and base - offset
-                    computed_dir_val = computed_dir.to_unit.degree.magnitude()
-                    offset_val = solved_deg.magnitude()
-
-                    # Normalize angles to [0, 360) for comparison
-                    def normalize(x: float) -> float:
-                        return x % 360
-
-                    add_result = normalize(base_val + offset_val)
-                    sub_result = normalize(base_val - offset_val)
-                    computed_norm = normalize(computed_dir_val)
-
-                    # Determine which operation was used (with tolerance for floating point)
-                    add_diff = min(abs(add_result - computed_norm), abs(add_result - computed_norm + 360), abs(add_result - computed_norm - 360))
-                    sub_diff = min(abs(sub_result - computed_norm), abs(sub_result - computed_norm + 360), abs(sub_result - computed_norm - 360))
-
-                    operation = "-" if sub_diff < add_diff else "+"
-
-                    # AngleSum handles LaTeX formatting internally and returns normalized angle
-                    angle_sum = AngleSum(
-                        base_angle=adjacent_known_side.direction,
-                        offset_angle=solved_angle,
-                        result_vector_name=side_with_unknown_dir.name,
-                        base_vector_name=adjacent_known_side.name,
-                        offset_vector_1=adjacent_known_side.name,
-                        offset_vector_2=side_with_unknown_dir.name,
+                    # Use helper to create AngleSum step
+                    normalized_dir, step = _create_angle_sum_step(
+                        adjacent_known_side=adjacent_known_side,
+                        solved_angle=solved_angle,
+                        target_side_name=side_with_unknown_dir.name,
                         result_ref=result_ref,
-                        operation=operation,
+                        computed_dir=computed_dir,
                         angle_dir=state.result_angle_dir,
                     )
-                    normalized_dir, step = angle_sum.solve()
                     state.solving_steps.append(step)
                     # Update dir_r with the normalized angle
                     state.dir_r = normalized_dir
@@ -997,6 +1014,45 @@ SOLVING_STRATEGIES = {
 }
 
 
+def _copy_vector(attr: Vector | VectorUnknown, attr_name: str) -> Vector | VectorUnknown:
+    """Create a copy of a Vector or VectorUnknown for instance-level storage.
+
+    Args:
+        attr: The Vector or VectorUnknown to copy
+        attr_name: The attribute name to use as fallback for the vector name
+
+    Returns:
+        A copy of the vector with the same properties
+    """
+    if isinstance(attr, VectorUnknown):
+        vec_copy = VectorUnknown(
+            magnitude=attr.magnitude,
+            angle=attr.angle,
+            wrt=attr.wrt,
+            coordinate_system=attr.coordinate_system,
+            name=attr.name or attr_name,
+            _is_resultant=attr._is_resultant,
+        )
+        # Copy angle direction if present
+        if hasattr(attr, "_angle_dir"):
+            vec_copy._angle_dir = attr._angle_dir  # type: ignore[attr-defined]
+    else:
+        vec_copy = Vector(
+            magnitude=attr.magnitude,
+            angle=attr.angle,
+            wrt=attr.wrt,
+            coordinate_system=attr.coordinate_system,
+            name=attr.name or attr_name,
+            _is_resultant=attr._is_resultant,
+        )
+
+    # Copy component vectors if present (common to both types)
+    if hasattr(attr, "_component_vectors"):
+        vec_copy._component_vectors = attr._component_vectors  # type: ignore[attr-defined]
+
+    return vec_copy
+
+
 # =============================================================================
 # Main Problem Class
 # =============================================================================
@@ -1057,53 +1113,24 @@ class ParallelogramLawProblem:
                 continue
             attr = getattr(self.__class__, attr_name)
 
-            if isinstance(attr, Vector):
+            if isinstance(attr, Vector | VectorUnknown):
                 # Create a copy of the vector for this instance
-                vec_copy = Vector(
-                    magnitude=attr.magnitude,
-                    angle=attr.angle,
-                    wrt=attr.wrt,
-                    coordinate_system=attr.coordinate_system,
-                    name=attr.name or attr_name,
-                    _is_resultant=attr._is_resultant,
-                )
-                # Copy component vectors if present
-                if hasattr(attr, "_component_vectors"):
-                    vec_copy._component_vectors = attr._component_vectors  # type: ignore[attr-defined]
+                vec_copy = _copy_vector(attr, attr_name)
                 setattr(self, attr_name, vec_copy)
                 self.vectors[attr_name] = vec_copy
 
-                # Determine if this is a known vector (has non-zero magnitude)
-                is_known = attr.magnitude.value is not None and attr.magnitude.value != 0
-                self._original_vector_states[attr_name] = is_known
-                self._create_vector_variables(attr_name, vec_copy, is_known=is_known)
-
-            elif isinstance(attr, VectorUnknown):
-                # Create a copy of the VectorUnknown for this instance
-                vec_copy = VectorUnknown(
-                    magnitude=attr.magnitude,
-                    angle=attr.angle,
-                    wrt=attr.wrt,
-                    coordinate_system=attr.coordinate_system,
-                    name=attr.name or attr_name,
-                    _is_resultant=attr._is_resultant,
-                )
-                # Copy component vectors if present
-                if hasattr(attr, "_component_vectors"):
-                    vec_copy._component_vectors = attr._component_vectors  # type: ignore[attr-defined]
-                # Copy angle direction if present
-                if hasattr(attr, "_angle_dir"):
-                    vec_copy._angle_dir = attr._angle_dir  # type: ignore[attr-defined]
-                setattr(self, attr_name, vec_copy)
-                self.vectors[attr_name] = vec_copy
-
-                # VectorUnknown is known only if BOTH magnitude AND angle are known
-                # (not ellipsis and have a value)
-                mag_known = attr.magnitude is not ... and attr.magnitude.value is not None
-                angle_known = attr.angle is not ...
-                is_known = mag_known and angle_known
-                self._original_vector_states[attr_name] = is_known
-                self._create_vector_unknown_variables(attr_name, vec_copy, is_known=is_known)
+                if isinstance(attr, VectorUnknown):
+                    # VectorUnknown is known only if BOTH magnitude AND angle are known
+                    mag_known = attr.magnitude is not ... and attr.magnitude.value is not None
+                    angle_known = attr.angle is not ...
+                    is_known = mag_known and angle_known
+                    self._original_vector_states[attr_name] = is_known
+                    self._create_vector_unknown_variables(attr_name, vec_copy, is_known=is_known)  # type: ignore[arg-type]
+                else:
+                    # Determine if this is a known vector (has non-zero magnitude)
+                    is_known = attr.magnitude.value is not None and attr.magnitude.value != 0
+                    self._original_vector_states[attr_name] = is_known
+                    self._create_vector_variables(attr_name, vec_copy, is_known=is_known)  # type: ignore[arg-type]
 
     def _create_vector_variables(self, name: str, vec: Vector, is_known: bool) -> None:
         """Create magnitude and angle Quantity variables for reporting compatibility."""

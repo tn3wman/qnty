@@ -412,6 +412,63 @@ def render_tikz_axes(axes: list[TikZAxis]) -> list[str]:
     return lines
 
 
+def build_vertex_map(vertices: list[TikZVertex]) -> dict[tuple[float, float], str]:
+    """Build a mapping from point coordinates to vertex names.
+
+    Args:
+        vertices: List of TikZ vertex data
+
+    Returns:
+        Dictionary mapping (x, y) tuples to vertex names
+    """
+    vertex_map: dict[tuple[float, float], str] = {}
+    for vertex in vertices:
+        key = (round(vertex.point.x, 3), round(vertex.point.y, 3))
+        vertex_map[key] = vertex.name
+    return vertex_map
+
+
+def get_vertex_name_or_coords(pt: Point, vertex_map: dict[tuple[float, float], str]) -> str:
+    """Get the vertex name for a point, or format coordinates if not a vertex.
+
+    Args:
+        pt: Point to look up
+        vertex_map: Mapping from coordinates to vertex names
+
+    Returns:
+        TikZ coordinate string like "(A)" or "(1.234,5.678)"
+    """
+    key = (round(pt.x, 3), round(pt.y, 3))
+    if key in vertex_map:
+        return f"({vertex_map[key]})"
+    return f"({pt.x:.3f},{pt.y:.3f})"
+
+
+def render_tikz_vectors_with_vertex_map(
+    vectors: list[TikZVector], vertex_map: dict[tuple[float, float], str], include_labels: bool = True
+) -> list[str]:
+    """Render vectors as TikZ draw commands using vertex names where possible.
+
+    Args:
+        vectors: List of TikZ vector data
+        vertex_map: Mapping from coordinates to vertex names
+        include_labels: Whether to include vector labels
+
+    Returns:
+        List of TikZ draw command strings
+    """
+    lines = []
+    for vec in vectors:
+        start = get_vertex_name_or_coords(vec.start, vertex_map)
+        end = get_vertex_name_or_coords(vec.end, vertex_map)
+        if include_labels:
+            label_part = f"node[{vec.label_position},pos={vec.label_at}] {{{vec.label}}}"
+            lines.append(f"  \\draw[{vec.style},{vec.color}] {start} -- {end} {label_part};")
+        else:
+            lines.append(f"  \\draw[{vec.style},{vec.color}] {start} -- {end};")
+    return lines
+
+
 # =============================================================================
 # Diagram Builders
 # =============================================================================
@@ -655,38 +712,21 @@ def render_problem_setup_tikz(diagram: TikZDiagram) -> str:
     translated = [v for v in diagram.vectors if "translated" in v.name]
     main = [v for v in diagram.vectors if "translated" not in v.name]
 
-    # Create a mapping from point coordinates to vertex names for symbolic references
-    vertex_map: dict[tuple[float, float], str] = {}
-    for vertex in diagram.vertices:
-        key = (round(vertex.point.x, 3), round(vertex.point.y, 3))
-        vertex_map[key] = vertex.name
-
-    def get_vertex_name(pt: Point) -> str:
-        """Get the vertex name for a point, or format coordinates if not a vertex."""
-        key = (round(pt.x, 3), round(pt.y, 3))
-        if key in vertex_map:
-            return f"({vertex_map[key]})"
-        return f"({pt.x:.3f},{pt.y:.3f})"
+    # Create vertex map for symbolic references
+    vertex_map = build_vertex_map(diagram.vertices)
 
     lines.append("  % Draw parallelogram sides (translated vectors - dashed)")
-    for vec in translated:
-        start = get_vertex_name(vec.start)
-        end = get_vertex_name(vec.end)
-        lines.append(f"  \\draw[{vec.style},{vec.color}] {start} -- {end};")
+    lines.extend(render_tikz_vectors_with_vertex_map(translated, vertex_map, include_labels=False))
 
     lines.append("  % Draw main vectors")
-    for vec in main:
-        start = get_vertex_name(vec.start)
-        end = get_vertex_name(vec.end)
-        label_part = f"node[{vec.label_position},pos={vec.label_at}] {{{vec.label}}}"
-        lines.append(f"  \\draw[{vec.style},{vec.color}] {start} -- {end} {label_part};")
+    lines.extend(render_tikz_vectors_with_vertex_map(main, vertex_map, include_labels=True))
 
     # Angle arcs
     for arc in diagram.angle_arcs:
         lines.extend(render_tikz_angle_arc(arc))
 
     # Origin point - use vertex name if available
-    origin_name = get_vertex_name(diagram.origin)
+    origin_name = get_vertex_name_or_coords(diagram.origin, vertex_map)
     lines.append(f"  \\fill {origin_name} circle (2pt) node[below left] {{$O$}};")
     lines.append("\\end{tikzpicture}")
 
@@ -957,42 +997,25 @@ def render_force_triangle_tikz(diagram: TikZDiagram) -> str:
     # Axes
     lines.extend(render_tikz_axes(diagram.axes))
 
-    # Create a mapping from point coordinates to vertex names for symbolic references
-    vertex_map: dict[tuple[float, float], str] = {}
-    for vertex in diagram.vertices:
-        key = (round(vertex.point.x, 3), round(vertex.point.y, 3))
-        vertex_map[key] = vertex.name
-
-    def get_vertex_name(pt: Point) -> str:
-        """Get the vertex name for a point, or format coordinates if not a vertex."""
-        key = (round(pt.x, 3), round(pt.y, 3))
-        if key in vertex_map:
-            return f"({vertex_map[key]})"
-        return f"({pt.x:.3f},{pt.y:.3f})"
+    # Create vertex map for symbolic references
+    vertex_map = build_vertex_map(diagram.vertices)
 
     # Vectors (translated ones first, then main ones)
     translated = [v for v in diagram.vectors if "translated" in v.name]
     main = [v for v in diagram.vectors if "translated" not in v.name]
 
-    # Translated vectors
-    for vec in translated:
-        start = get_vertex_name(vec.start)
-        end = get_vertex_name(vec.end)
-        lines.append(f"  \\draw[{vec.style},{vec.color}] {start} -- {end};")
+    # Translated vectors (no labels)
+    lines.extend(render_tikz_vectors_with_vertex_map(translated, vertex_map, include_labels=False))
 
-    # Main vectors
-    for vec in main:
-        start = get_vertex_name(vec.start)
-        end = get_vertex_name(vec.end)
-        label_part = f"node[{vec.label_position},pos={vec.label_at}] {{{vec.label}}}"
-        lines.append(f"  \\draw[{vec.style},{vec.color}] {start} -- {end} {label_part};")
+    # Main vectors (with labels)
+    lines.extend(render_tikz_vectors_with_vertex_map(main, vertex_map, include_labels=True))
 
     # Interior angle arcs
     for arc in diagram.interior_angle_arcs:
         lines.extend(render_tikz_interior_angle_arc(arc))
 
     # Origin point - use vertex name if available
-    origin_name = get_vertex_name(diagram.origin)
+    origin_name = get_vertex_name_or_coords(diagram.origin, vertex_map)
     lines.append(f"  \\fill {origin_name} circle (2pt) node[below left] {{$O$}};")
     lines.append("\\end{tikzpicture}")
 

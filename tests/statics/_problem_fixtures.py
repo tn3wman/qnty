@@ -104,7 +104,7 @@ class Chapter2Problem2:
 
 class Chapter2Problem3:
     name = "Problem 2-3"
-    generate_debug_reports = False
+    generate_debug_reports = True
     F_1 = create_vectors_polar(250, "N", -30, wrt="+y")
     F_2 = create_vectors_polar(375, "N", -45, wrt="+x")
     F_R = create_vector_resultant(F_1, F_2)
@@ -114,66 +114,9 @@ class Chapter2Problem3:
         F_2 = create_vectors_polar(375, "N", -45, wrt="+x")
         F_R = create_vectors_polar(393.2, "N", 352.9, wrt="+x")
 
-    class report:
-        class known_variables:
-            # Expected known variables table data.
-            F_1 = {
-                "symbol": "F_1", "unit": "N",
-                "x": 125.0, "y": 216.5, "mag": 250, "angle": -30, "wrt": "+y"
-            }
-            F_2 = {
-                "symbol": "F_2", "unit": "N",
-                "x": 265.2, "y": -265.2, "mag": 375, "angle": -45, "wrt": "+x"
-            }
-
-        class unknown_variables:
-            # Expected unknown variables table data.
-            F_R = {
-                "symbol": "F_R", "unit": "N",
-                "x": "?", "y": "?", "magnitude": "?", "angle": "?", "reference": "+x",
-            }
-
-        class equations:
-            # Expected equations used in the solution.
-            eq_1 = "|F_R|² = |F_1|² + |F_2|² + 2·|F_1|·|F_2|·cos(∠(F_1,F_2))"
-            eq_2 = "sin(∠(F_2,F_R))/|F_1| = sin(∠(F_1,F_2))/|F_R|"
-            count = 2
-
-        class steps:
-            # Expected solution steps.
-            step_1 = {
-                "target": "∠(F_1,F_2)",
-                "final_line": "= 75°",
-            }
-            step_2 = {
-                "target": "|F_R| using Eq 1",
-                "final_line": "= 393.2\\ \\text{N}",
-            }
-            step_3 = {
-                "target": "∠(F_2,F_R) using Eq 2",
-                "final_line": "= 37.9°",
-            }
-            step_4 = {
-                "target": "∠(x,F_R) with respect to +x",
-                "final_line": "= 352.9°",
-            }
-            count = 4
-
-        class results:
-            # Expected final results in the Summary of Results table.
-            F_R = {
-                "symbol": "F_R",
-                "unit": "N",
-                "x": 390.2,
-                "y": -48.7,
-                "magnitude": 393.2,
-                "angle": 352.9,
-                "reference": "+x",
-            }
-
 class Chapter2Problem4:
     name = "Problem 2-4"
-    generate_debug_reports = False
+    generate_debug_reports = True
     F_AB = create_vectors_polar(..., "N", -45, wrt="-y")
     F_AC = create_vectors_polar(..., "N", -30, wrt="+x")
     F_R = create_resultant_polar(
@@ -186,59 +129,9 @@ class Chapter2Problem4:
         F_AC = create_vectors_polar(366, "N", -30, wrt="+x")
         F_R = create_vectors_polar(500, "N", 0, wrt="-y")
 
-    class report:
-        # Expected content for report generation tests.
-
-        class known_variables:
-            # Expected known variables table data.
-            F_R = {
-                "symbol": "F_R", "unit": "N",
-                "x": 0.0, "y": -500.0, "mag": 500, "angle": 0, "wrt": "-y"
-            }
-
-        class unknown_variables:
-            # Expected unknown variables table data.
-            F_AB = {
-                "symbol": "F_AB", "unit": "N",
-                "x": "?", "y": "?", "magnitude": "?", "angle": -45, "reference": "-y",
-            }
-            F_AC = {
-                "symbol": "F_AC", "unit": "N",
-                "x": "?", "y": "?", "magnitude": "?", "angle": -30, "reference": "+x",
-            }
-
-        class equations:
-            # Expected equations used in the solution.
-            eq_1 = "|F_{AB}|/sin(∠(F_{AC},F_{R})) = |F_{R}|/sin(∠(F_{AB},F_{AC}))"
-            eq_2 = "|F_{AC}|/sin(∠(F_{AB},F_{R})) = |F_{R}|/sin(∠(F_{AB},F_{AC}))"
-            count = 2
-
-        class results:
-            # Expected final results in the Summary of Results table.
-            F_AB = {
-                "symbol": "F_AB",
-                "unit": "N",
-                "x": -316.2,
-                "y": -316.2,
-                "magnitude": 448.0,
-                "angle": -45,
-                "reference": "-y",
-            }
-            F_AC = {
-                "symbol": "F_AC",
-                "unit": "N",
-                "x": 317.0,
-                "y": -183.0,
-                "magnitude": 366.0,
-                "angle": -30,
-                "reference": "+x",
-            }
-
-        # Additional report sections (steps, results) can be added as needed
-
 class Chapter2Problem5:
     name = "Problem 2-5"
-    generate_debug_reports = False
+    generate_debug_reports = True
     F_AB = create_vectors_polar(..., "lbf", 225, wrt="+x")
     F_AC = create_vectors_polar(..., "lbf", 330, wrt="+x")
     F_R = create_resultant_polar(
@@ -272,7 +165,7 @@ class Chapter2Problem6:
 
 class Chapter2Problem7:
     name = "Problem 2-7"
-    generate_debug_reports = False
+    generate_debug_reports = True
     cs = Oblique.from_angle_between("u", "v", 0, 75)
     F_1u = create_vectors_polar(..., "N", 0, wrt="+u", coordinate_system=cs)
     F_1v = create_vectors_polar(..., "N", 0, wrt="+v", coordinate_system=cs)
@@ -289,7 +182,7 @@ class Chapter2Problem7:
 
 class Chapter2Problem8:
     name = "Problem 2-8"
-    generate_debug_reports = False
+    generate_debug_reports = True
     cs = Oblique.from_angle_between("u", "v", 0, 75)
     F_2u = create_vectors_polar(..., "N", 0, wrt="+u", coordinate_system=cs)
     F_2v = create_vectors_polar(..., "N", 0, wrt="+v", coordinate_system=cs)
@@ -306,7 +199,7 @@ class Chapter2Problem8:
 
 class Chapter2Problem9:
     name = "Problem 2-9"
-    generate_debug_reports = False
+    generate_debug_reports = True
     F_A = create_vectors_polar(..., "lbf", ..., wrt="+x")
     F_B = create_vectors_polar(900, "lbf", 60, wrt="-y")
     F_R = create_resultant_polar(
@@ -321,7 +214,7 @@ class Chapter2Problem9:
 
 class Chapter2Problem10:
     name = "Problem 2-10"
-    generate_debug_reports = False
+    generate_debug_reports = True
     F_1 = create_vectors_polar(800, "lbf", -40, wrt="+y")
     F_2 = create_vectors_polar(500, "lbf", -35, wrt="+x")
     F_R = create_vector_resultant(F_1, F_2)
@@ -358,43 +251,43 @@ class Chapter2Problem12:
         F_B = create_vectors_polar(6000, "N", 40, wrt="-y")
         F_R = create_vectors_polar(10400, "N", 0, wrt="+x")
 
-"""
+
 class Chapter2Problem13:
     name = "Problem 2-13"
     generate_debug_reports = False
-    coordinate_system = create_coord_angle_between(
-        "a", "b", angle_between=40
-    )
-    F_a = create_vectors_polar(..., "lbf", 0, wrt="+a")
+    cs = Oblique.from_angle_between("a", "b", 0, 40)
+    F_a = create_vectors_polar(..., "lbf", 0, wrt="+a", coordinate_system=cs)
     F_b = create_vectors_polar(..., "lbf", 0, wrt="-b")
     F = create_resultant_polar(
         F_a, F_b,
-        20, "lbf", 80, wrt="-b"
+        magnitude=20, unit="lbf", angle=80, wrt="-b", coordinate_system=cs
     )
 
     class expected:
-        F_a = create_vectors_polar(30.6, "lbf", 0, wrt="+a")
-        F_b = create_vectors_polar(26.9, "lbf", 0, wrt="-b")
-        F = create_vectors_polar(20, "lbf", 80, wrt="-b")
+        cs = Oblique.from_angle_between("a", "b", 0, 40)
+        F_a = create_vectors_polar(30.6, "lbf", 0, wrt="+a", coordinate_system=cs)
+        F_b = create_vectors_polar(26.9, "lbf", 0, wrt="-b", coordinate_system=cs)
+        F = create_vectors_polar(20, "lbf", 80, wrt="-b", coordinate_system=cs)
+
 
 class Chapter2Problem14:
     name = "Problem 2-14"
     generate_debug_reports = False
-    coordinate_system = create_coord_angle_between(
-        "a", "b", angle_between=40
-    )
-    F_a = create_vectors_polar(30, "lbf", 0, wrt="+a")
-    F_b = create_vectors_polar(..., "lbf", 0, wrt="-b")
+    cs = Oblique.from_angle_between("a", "b", 0, 40)
+    F_a = create_vectors_polar(30, "lbf", 0, wrt="+a", coordinate_system=cs)
+    F_b = create_vectors_polar(..., "lbf", 0, wrt="-b", coordinate_system=cs)
     F = create_resultant_polar(
         F_a, F_b,
-        ..., "lbf", 80, wrt="-b"
+        magnitude=..., unit="lbf", angle=80, wrt="-b", coordinate_system=cs
     )
 
     class expected:
-        F_a = create_vectors_polar(30, "lbf", 0, wrt="+a")
-        F_b = create_vectors_polar(26.4, "lbf", 0, wrt="-b")
-        F = create_vectors_polar(19.6, "lbf", 80, wrt="-b")
+        cs = Oblique.from_angle_between("a", "b", 0, 40)
+        F_a = create_vectors_polar(30, "lbf", 0, wrt="+a", coordinate_system=cs)
+        F_b = create_vectors_polar(26.4, "lbf", 0, wrt="-b", coordinate_system=cs)
+        F = create_vectors_polar(19.6, "lbf", 80, wrt="-b", coordinate_system=cs)
 
+"""
 class Chapter2Problem15:
     name = "Problem 2-15"
     generate_debug_reports = False
@@ -871,7 +764,7 @@ ALL_PROBLEM_CLASSES = [
 
 PROBLEMS_WITH_GOLDEN_FILES = [
     Chapter2Problem1,
-    # Chapter2Problem2,
+    Chapter2Problem2,
     # Chapter2Problem3,
     # Chapter2Problem4,
     # Chapter2Problem5,

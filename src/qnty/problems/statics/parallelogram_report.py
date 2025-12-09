@@ -575,16 +575,11 @@ class LaTeXRenderer:
 
     def _render_variables_table(self, data: ReportData) -> str:
         """Render compact variables table (known and unknown)."""
-        rows = []
-        for v in data.known_vectors:
-            name_latex = self._format_vec_name(v.name)
-            rows.append(f"{name_latex} & {v.mag} & {v.angle} & {v.ref} \\\\")
+        rows = self._format_vector_rows(data.known_vectors)
 
         if data.unknown_vectors:
             rows.append("\\midrule")
-            for v in data.unknown_vectors:
-                name_latex = self._format_vec_name(v.name)
-                rows.append(f"{name_latex} & {v.mag} & {v.angle} & {v.ref} \\\\")
+            rows.extend(self._format_vector_rows(data.unknown_vectors))
 
         # Table only - centering handled by parent minipage
         return rf"""\begin{{tabular}}{{lSSl}}
@@ -609,10 +604,7 @@ Vector & {{$\magn{{\vv{{F}}}}$ ({data.unit})}} & {{$\theta$ (deg)}} & Ref \\
 
     def _render_results_table(self, data: ReportData) -> str:
         """Render compact results table, centered."""
-        rows = []
-        for v in data.result_vectors:
-            name_latex = self._format_vec_name(v.name)
-            rows.append(f"{name_latex} & {v.mag} & {v.angle} & {v.ref} \\\\")
+        rows = self._format_vector_rows(data.result_vectors)
 
         return rf"""\begin{{tabular}}{{lSSl}}
 \toprule
@@ -628,10 +620,7 @@ Vector & {{$\magn{{\vv{{F}}}}$ ({data.unit})}} & {{$\theta$ (deg)}} & Ref \\
 
     def _render_vector_table(self, vectors: list[VectorRow], unit: str) -> str:
         """Render a vector table."""
-        rows = []
-        for v in vectors:
-            name_latex = self._format_vec_name(v.name)
-            rows.append(f"{name_latex} & {v.mag} & {v.angle} & {v.ref} \\\\")
+        rows = self._format_vector_rows(vectors)
 
         return rf"""\begin{{longtable}}{{lSSl}}
 \toprule
@@ -649,20 +638,29 @@ Vector & {{$\magn{{\vv{{F}}}}$ ({unit})}} & {{$\theta$ (deg)}} & Reference \\
         formatted_name = latex_name(name)
         return f"$\\vv{{{formatted_name}}}$"
 
-    def _render_known_section(self, data: ReportData) -> str:
-        """Render known and unknown variables in a compact combined format."""
-        # Build rows for known vectors
+    def _format_vector_rows(self, vectors: list[VectorRow]) -> list[str]:
+        """Format vector data into LaTeX table rows.
+
+        Args:
+            vectors: List of vector row data
+
+        Returns:
+            List of LaTeX table row strings
+        """
         rows = []
-        for v in data.known_vectors:
+        for v in vectors:
             name_latex = self._format_vec_name(v.name)
             rows.append(f"{name_latex} & {v.mag} & {v.angle} & {v.ref} \\\\")
+        return rows
+
+    def _render_known_section(self, data: ReportData) -> str:
+        """Render known and unknown variables in a compact combined format."""
+        rows = self._format_vector_rows(data.known_vectors)
 
         # Add separator and unknown vectors
         if data.unknown_vectors:
             rows.append("\\midrule")
-            for v in data.unknown_vectors:
-                name_latex = self._format_vec_name(v.name)
-                rows.append(f"{name_latex} & {v.mag} & {v.angle} & {v.ref} \\\\")
+            rows.extend(self._format_vector_rows(data.unknown_vectors))
 
         table = rf"""\begin{{tabular}}{{lSSl}}
 \toprule
@@ -823,10 +821,7 @@ Vector & {{$\magn{{\vv{{F}}}}$ ({data.unit})}} & {{$\theta$ (deg)}} & Ref \\
 
     def _render_results_section(self, data: ReportData) -> str:
         """Render results summary section."""
-        rows = []
-        for v in data.result_vectors:
-            name_latex = self._format_vec_name(v.name)
-            rows.append(f"{name_latex} & {v.mag} & {v.angle} & {v.ref} \\\\")
+        rows = self._format_vector_rows(data.result_vectors)
 
         table = rf"""\begin{{tabular}}{{lSSl}}
 \toprule
