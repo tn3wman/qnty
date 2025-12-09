@@ -22,7 +22,9 @@ from typing import TYPE_CHECKING, Any
 
 from ...equations.base import latex_name
 from .tikz_diagram import (
+    build_force_triangle_diagram,
     build_problem_setup_diagram,
+    render_force_triangle_tikz,
     render_problem_setup_tikz,
 )
 
@@ -539,194 +541,17 @@ class LaTeXRenderer:
 \vspace{{0.5em}}
 """
 
-    def _get_diagram_geometry(self, data: ReportData) -> dict | None:
-        """Extract common geometry data for diagrams."""
-        if data.diagram is None or not data.diagram.is_valid:
-            return None
-
-        vertices = data.diagram.vertices
-        vectors = data.diagram.vectors
-        scale = data.diagram.scale
-
-        # Find vertices by name
-        v_dict = {v.name: v for v in vertices}
-        A = v_dict.get("A")
-        B = v_dict.get("B")
-        C = v_dict.get("C")
-        D = v_dict.get("D")
-
-        if A is None or B is None or C is None or D is None:
-            return None
-
-        # Scale coordinates for display
-        def sc(v: DiagramVertex) -> tuple[float, float]:
-            return (v.x * scale, v.y * scale)
-
-        ax, ay = sc(A)
-        bx, by = sc(B)
-        cx, cy = sc(C)
-        dx, dy = sc(D)
-
-        # Get vector names for labels
-        f1_name = B.vector_name or "F_1"
-        f2_name = C.vector_name or "F_2"
-        fr_name = D.vector_name or "F_R"
-
-        # Format names for LaTeX
-        f1_label = latex_name(f1_name)
-        f2_label = latex_name(f2_name)
-        fr_label = latex_name(fr_name)
-
-        # Find vector data by name for magnitude/angle labels
-        vec_dict = {v.name: v for v in vectors}
-        f1_vec = vec_dict.get(f1_name)
-        f2_vec = vec_dict.get(f2_name)
-        fr_vec = vec_dict.get(fr_name)
-
-        # Compute axis length to match the longest vector
-        import math
-        f1_len = math.sqrt(bx**2 + by**2)
-        f2_len = math.sqrt(cx**2 + cy**2)
-        fr_len = math.sqrt(dx**2 + dy**2)
-        max_vec_len = max(f1_len, f2_len, fr_len, 1.0)
-        axis_len = max_vec_len
-
-        return {
-            "ax": ax, "ay": ay,
-            "bx": bx, "by": by,
-            "cx": cx, "cy": cy,
-            "dx": dx, "dy": dy,
-            "f1_name": f1_name, "f2_name": f2_name, "fr_name": fr_name,
-            "f1_label": f1_label, "f2_label": f2_label, "fr_label": fr_label,
-            "f1_vec": f1_vec, "f2_vec": f2_vec, "fr_vec": fr_vec,
-            "axis_len": axis_len,
-        }
-
     def _render_problem_setup_diagram(self, data: ReportData) -> str:
-        """Render the Problem Setup diagram with parallelogram."""
-        geom = self._get_diagram_geometry(data)
-        if geom is None:
+        """Render the Problem Setup diagram with parallelogram.
+
+        Uses the tikz_diagram module for diagram building and rendering.
+        """
+        if data.diagram is None or not data.diagram.is_valid:
             return ""
 
-        ax, ay = geom["ax"], geom["ay"]
-        bx, by = geom["bx"], geom["by"]
-        cx, cy = geom["cx"], geom["cy"]
-        dx, dy = geom["dx"], geom["dy"]
-        f1_label = geom["f1_label"]
-        f2_label = geom["f2_label"]
-        f1_vec = geom["f1_vec"]
-        f2_vec = geom["f2_vec"]
-        axis_len = geom["axis_len"]
-
-        import math
-
-        # Build magnitude labels
-        def mag_label(vec: DiagramVector | None) -> str:
-            if vec is None:
-                return ""
-            return f"{vec.magnitude:.0f}\\,\\text{{{vec.unit}}}"
-
-        f1_mag = mag_label(f1_vec)
-        f2_mag = mag_label(f2_vec)
-
-        # Calculate reference axis directions for angle arcs
-        def get_ref_axis_angle(wrt: str) -> float:
-            ref_angles = {"+x": 0, "-x": 180, "+y": 90, "-y": 270}
-            return ref_angles.get(wrt, 0)
-
-        def get_label_anchor_for_angle(mid_angle: float) -> str:
-            mid_angle = mid_angle % 360
-            if 315 <= mid_angle or mid_angle < 45:
-                return "west"
-            elif 45 <= mid_angle < 135:
-                return "south"
-            elif 135 <= mid_angle < 225:
-                return "east"
-            else:
-                return "north"
-
-        # Build angle arcs for F1 and F2
-        angle_arcs = []
-        arc_radius_base = axis_len * 0.5
-
-        if f1_vec is not None:
-            ref_angle = get_ref_axis_angle(f1_vec.angle_wrt)
-            if abs(f1_vec.angle_ref) > 0.5:
-                arc_start = ref_angle
-                arc_end = f1_vec.angle_deg
-                arc_radius = arc_radius_base * 0.7
-                mid_angle = (arc_start + arc_end) / 2
-                label_r = arc_radius + 0.35
-                label_x = ax + label_r * math.cos(math.radians(mid_angle))
-                label_y = ay + label_r * math.sin(math.radians(mid_angle))
-                label_anchor = get_label_anchor_for_angle(mid_angle)
-                angle_arcs.append(
-                    rf"  \draw[vec_f1,thin] ({ax:.3f},{ay:.3f}) ++({arc_start}:{arc_radius:.3f}) "
-                    rf"arc ({arc_start}:{arc_end}:{arc_radius:.3f});"
-                )
-                angle_arcs.append(
-                    rf"  \node[vec_f1,anchor={label_anchor}] at ({label_x:.3f},{label_y:.3f}) {{${f1_vec.angle_ref:.0f}^\circ$}};"
-                )
-
-        if f2_vec is not None:
-            ref_angle = get_ref_axis_angle(f2_vec.angle_wrt)
-            if abs(f2_vec.angle_ref) > 0.5:
-                arc_start = ref_angle
-                arc_end = f2_vec.angle_deg
-                arc_radius = arc_radius_base * 1.0
-                mid_angle = (arc_start + arc_end) / 2
-                label_r = arc_radius + 0.35
-                label_x = ax + label_r * math.cos(math.radians(mid_angle))
-                label_y = ay + label_r * math.sin(math.radians(mid_angle))
-                label_anchor = get_label_anchor_for_angle(mid_angle)
-                angle_arcs.append(
-                    rf"  \draw[vec_f2,thin] ({ax:.3f},{ay:.3f}) ++({arc_start}:{arc_radius:.3f}) "
-                    rf"arc ({arc_start}:{arc_end}:{arc_radius:.3f});"
-                )
-                angle_arcs.append(
-                    rf"  \node[vec_f2,anchor={label_anchor}] at ({label_x:.3f},{label_y:.3f}) {{${f2_vec.angle_ref:.0f}^\circ$}};"
-                )
-
-        angle_arcs_str = "\n".join(angle_arcs) if angle_arcs else "  % No angle arcs"
-
-        # Smart label positioning
-        def get_vector_label_position(angle_deg: float) -> str:
-            angle = angle_deg % 360
-            if 0 <= angle < 90:
-                return "below right"
-            elif 90 <= angle < 180:
-                return "below left"
-            elif 180 <= angle < 270:
-                return "above left"
-            else:
-                return "above right"
-
-        f1_pos = get_vector_label_position(f1_vec.angle_deg) if f1_vec else "below right"
-        f2_pos = get_vector_label_position(f2_vec.angle_deg) if f2_vec else "above left"
-
-        diag_scale = 0.55
-
-        # Draw Problem Setup with parallelogram completion (translated vectors shown)
-        # baseline=(current bounding box.north) aligns the top of the diagram with surrounding text
-        return rf"""
-\begin{{tikzpicture}}[scale={diag_scale},baseline=(current bounding box.north)]
-  \coordinate (A) at ({ax:.3f},{ay:.3f});
-  \coordinate (B) at ({bx:.3f},{by:.3f});
-  \coordinate (C) at ({cx:.3f},{cy:.3f});
-  \coordinate (D) at ({dx:.3f},{dy:.3f});
-  \draw[->,gray] ({ax:.3f},{ay:.3f}) -- ({ax + axis_len:.3f},{ay:.3f}) node[right] {{$+x$}};
-  \draw[->,gray] ({ax:.3f},{ay:.3f}) -- ({ax - axis_len:.3f},{ay:.3f}) node[left] {{$-x$}};
-  \draw[->,gray] ({ax:.3f},{ay:.3f}) -- ({ax:.3f},{ay + axis_len:.3f}) node[above] {{$+y$}};
-  \draw[->,gray] ({ax:.3f},{ay:.3f}) -- ({ax:.3f},{ay - axis_len:.3f}) node[below] {{$-y$}};
-  % Draw parallelogram sides (translated vectors - dashed)
-  \draw[vector_translated,vec_translated] (B) -- (D);
-  \draw[vector_translated,vec_translated] (C) -- (D);
-  % Draw main vectors
-  \draw[vector,vec_f1] (A) -- (B) node[{f1_pos},pos=1] {{$\vv{{{f1_label}}} = {f1_mag}$}};
-  \draw[vector,vec_f2] (A) -- (C) node[{f2_pos},pos=1] {{$\vv{{{f2_label}}} = {f2_mag}$}};
-{angle_arcs_str}
-  \fill (A) circle (2pt) node[below left] {{$O$}};
-\end{{tikzpicture}}"""
+        # Build diagram DTO and render to TikZ
+        diagram = build_problem_setup_diagram(data.diagram)
+        return render_problem_setup_tikz(diagram)
 
     def _render_variables_table(self, data: ReportData) -> str:
         """Render compact variables table (known and unknown)."""
@@ -751,167 +576,16 @@ Vector & {{$\magn{{\vv{{F}}}}$ ({data.unit})}} & {{$\theta$ (deg)}} & Ref \\
 \end{{tabular}}"""
 
     def _render_force_triangle_diagram(self, data: ReportData) -> str:
-        """Render the Force Triangle diagram with interior angles."""
-        geom = self._get_diagram_geometry(data)
-        if geom is None:
+        """Render the Force Triangle diagram with interior angles.
+
+        Uses the tikz_diagram module for diagram building and rendering.
+        """
+        if data.diagram is None or not data.diagram.is_valid:
             return ""
 
-        ax, ay = geom["ax"], geom["ay"]
-        bx, by = geom["bx"], geom["by"]
-        cx, cy = geom["cx"], geom["cy"]
-        dx, dy = geom["dx"], geom["dy"]
-        f1_label = geom["f1_label"]
-        f2_label = geom["f2_label"]
-        fr_label = geom["fr_label"]
-        f1_vec = geom["f1_vec"]
-        f2_vec = geom["f2_vec"]
-        fr_vec = geom["fr_vec"]
-        axis_len = geom["axis_len"]
-
-        import math
-
-        def mag_label(vec: DiagramVector | None) -> str:
-            if vec is None:
-                return ""
-            return f"{vec.magnitude:.0f}\\,\\text{{{vec.unit}}}"
-
-        fr_mag = mag_label(fr_vec)
-
-        # Vector label positions - place at tip of vector, away from the parallelogram
-        # Use a function to determine position based on vector angle
-        def get_label_position(angle_deg: float) -> str:
-            """Get TikZ label position based on vector direction.
-
-            For vectors pointing into different quadrants, we place the label
-            on the opposite side to avoid overlap with the parallelogram interior:
-            - Q1 (0-90°): vector points up-right → label "below right"
-            - Q2 (90-180°): vector points up-left → label "above left"
-            - Q3 (180-270°): vector points down-left → label "above left"
-            - Q4 (270-360°): vector points down-right → label "below right"
-            """
-            angle = angle_deg % 360
-            if 0 <= angle < 90:
-                return "below right"
-            elif 90 <= angle < 180:
-                return "above left"
-            elif 180 <= angle < 270:
-                return "above left"
-            else:
-                return "below right"
-
-        f1_angle = f1_vec.angle_deg if f1_vec else 60
-        f2_angle = f2_vec.angle_deg if f2_vec else 195
-        fr_angle = fr_vec.angle_deg if fr_vec else 155
-
-        f1_pos = get_label_position(f1_angle)
-        f2_pos = get_label_position(f2_angle)
-        fr_pos = get_label_position(fr_angle)
-
-        # Build interior angle arcs
-        triangle_angle_arcs = []
-
-        # Get interior angles (diagram is guaranteed non-None since geometry check passed)
-        diagram = data.diagram
-        assert diagram is not None  # Type guard
-        interior_angles = diagram.interior_angles
-        angle_at_origin = interior_angles[0].value_deg if len(interior_angles) > 0 else 0
-        angle_at_f1_tip = interior_angles[1].value_deg if len(interior_angles) > 1 else 0
-        angle_at_fr_tip = interior_angles[2].value_deg if len(interior_angles) > 2 else 0
-
-        def get_arc_angles(start_angle: float, end_angle: float) -> tuple[float, float]:
-            start = start_angle % 360
-            end = end_angle % 360
-            ccw_sweep = (end - start) % 360
-            if ccw_sweep == 0:
-                ccw_sweep = 360
-            cw_sweep = 360 - ccw_sweep
-            if ccw_sweep <= cw_sweep:
-                if end < start:
-                    end += 360
-                return start, end
-            else:
-                if start < end:
-                    start += 360
-                return end, start
-
-        # Draw small interior angle arcs with labels positioned to avoid overlap
-        # Use small arc radius and place labels at fixed offset from arc
-
-        arc_r_small = 0.6  # Small arc radius
-
-        # Arc at origin (A): angle between F1 and FR
-        if angle_at_origin > 0:
-            f1_angle = f1_vec.angle_deg if f1_vec else 0
-            fr_angle = fr_vec.angle_deg if fr_vec else 0
-            arc_start, arc_end = get_arc_angles(f1_angle, fr_angle)
-            arc_mid = (arc_start + arc_end) / 2
-            # Place label along the bisector, outside the arc
-            label_x = ax + (arc_r_small + 0.5) * math.cos(math.radians(arc_mid))
-            label_y = ay + (arc_r_small + 0.5) * math.sin(math.radians(arc_mid))
-            triangle_angle_arcs.append(
-                rf"  \draw[orange,thick] ({ax:.3f},{ay:.3f}) ++({arc_start:.1f}:{arc_r_small:.3f}) "
-                rf"arc ({arc_start:.1f}:{arc_end:.1f}:{arc_r_small:.3f});"
-            )
-            triangle_angle_arcs.append(
-                rf"  \node[orange,font=\footnotesize] at ({label_x:.3f},{label_y:.3f}) {{${angle_at_origin:.0f}^\circ$}};"
-            )
-
-        # Arc at B (F1 tip): angle between incoming F1 and outgoing to D
-        if angle_at_f1_tip > 0:
-            f1_incoming = ((f1_vec.angle_deg if f1_vec else 0) + 180) % 360
-            bd_angle = math.degrees(math.atan2(dy - by, dx - bx)) % 360
-            arc_start, arc_end = get_arc_angles(f1_incoming, bd_angle)
-            arc_mid = (arc_start + arc_end) / 2
-            label_x = bx + (arc_r_small + 0.5) * math.cos(math.radians(arc_mid))
-            label_y = by + (arc_r_small + 0.5) * math.sin(math.radians(arc_mid))
-            triangle_angle_arcs.append(
-                rf"  \draw[purple,thick] ({bx:.3f},{by:.3f}) ++({arc_start:.1f}:{arc_r_small:.3f}) "
-                rf"arc ({arc_start:.1f}:{arc_end:.1f}:{arc_r_small:.3f});"
-            )
-            triangle_angle_arcs.append(
-                rf"  \node[purple,font=\footnotesize] at ({label_x:.3f},{label_y:.3f}) {{${angle_at_f1_tip:.0f}^\circ$}};"
-            )
-
-        # Arc at D (FR tip): angle at the apex
-        if angle_at_fr_tip > 0:
-            # Angle between line from B to D and line from D back toward origin (along -FR)
-            bd_angle = math.degrees(math.atan2(by - dy, bx - dx)) % 360  # D to B direction
-            fr_back = ((fr_vec.angle_deg if fr_vec else 0) + 180) % 360  # D back to origin
-            arc_start, arc_end = get_arc_angles(bd_angle, fr_back)
-            arc_mid = (arc_start + arc_end) / 2
-            label_x = dx + (arc_r_small + 0.5) * math.cos(math.radians(arc_mid))
-            label_y = dy + (arc_r_small + 0.5) * math.sin(math.radians(arc_mid))
-            triangle_angle_arcs.append(
-                rf"  \draw[cyan,thick] ({dx:.3f},{dy:.3f}) ++({arc_start:.1f}:{arc_r_small:.3f}) "
-                rf"arc ({arc_start:.1f}:{arc_end:.1f}:{arc_r_small:.3f});"
-            )
-            triangle_angle_arcs.append(
-                rf"  \node[cyan,font=\footnotesize] at ({label_x:.3f},{label_y:.3f}) {{${angle_at_fr_tip:.0f}^\circ$}};"
-            )
-
-        triangle_angle_arcs_str = "\n".join(triangle_angle_arcs) if triangle_angle_arcs else "  % No interior angles"
-
-        diag_scale = 0.55
-
-        # baseline=(current bounding box.north) aligns the top of the diagram with surrounding text
-        return rf"""
-\begin{{tikzpicture}}[scale={diag_scale},baseline=(current bounding box.north)]
-  \coordinate (A) at ({ax:.3f},{ay:.3f});
-  \coordinate (B) at ({bx:.3f},{by:.3f});
-  \coordinate (C) at ({cx:.3f},{cy:.3f});
-  \coordinate (D) at ({dx:.3f},{dy:.3f});
-  \draw[->,gray] ({ax:.3f},{ay:.3f}) -- ({ax + axis_len:.3f},{ay:.3f}) node[right] {{$+x$}};
-  \draw[->,gray] ({ax:.3f},{ay:.3f}) -- ({ax - axis_len:.3f},{ay:.3f}) node[left] {{$-x$}};
-  \draw[->,gray] ({ax:.3f},{ay:.3f}) -- ({ax:.3f},{ay + axis_len:.3f}) node[above] {{$+y$}};
-  \draw[->,gray] ({ax:.3f},{ay:.3f}) -- ({ax:.3f},{ay - axis_len:.3f}) node[below] {{$-y$}};
-  \draw[vector_translated,vec_translated] (B) -- (D);
-  \draw[vector_translated,vec_translated] (C) -- (D);
-  \draw[vector,vec_f1] (A) -- (B) node[{f1_pos},pos=1] {{$\vv{{{f1_label}}}$}};
-  \draw[vector,vec_f2] (A) -- (C) node[{f2_pos},pos=1] {{$\vv{{{f2_label}}}$}};
-  \draw[vector,vec_fr] (A) -- (D) node[{fr_pos},pos=1] {{$\vv{{{fr_label}}} = {fr_mag}$}};
-{triangle_angle_arcs_str}
-  \fill (A) circle (2pt) node[below left] {{$O$}};
-\end{{tikzpicture}}"""
+        # Build diagram DTO and render to TikZ
+        diagram = build_force_triangle_diagram(data.diagram)
+        return render_force_triangle_tikz(diagram)
 
     def _render_results_table(self, data: ReportData) -> str:
         """Render compact results table, centered."""

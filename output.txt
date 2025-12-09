@@ -1,130 +1,902 @@
-Analyzing 3 Python files...
-2 repetitions of complexity 197
+repetition-hunter src/qnty/problems/statics --min-complexity=20 > output.txt
 
-Line 648 - src/qnty/problems/statics/parallelogram_report.py:
-if x_0 is not None:
-    x_1 = x_2(x_0.angle_wrt)
-    if abs(x_0.angle_ref) > 0.5:
-        x_1 = x_2
-        x_3 = x_0.angle_deg
-        x_4 = x_5 * 0.7
-        x_6 = (x_1 + x_3) / 2
-        x_7 = x_4 + 0.35
-        x_8 = x_9 + x_7 * x_10.cos(x_10.radians(x_6))
-        x_11 = x_12 + x_7 * x_10.sin(x_10.radians(x_6))
-        x_13 = x_14(x_6)
-        x_15.append(f'  \\draw[vec_f1,thin] ({x_9:.3f},{x_12:.3f}) ++({x_1}:{x_4:.3f}) arc ({x_1}:{x_3}:{x_4:.3f});')
-        x_15.append(f'  \\node[vec_f1,anchor={x_13}] at ({x_8:.3f},{x_11:.3f}) {{${x_0.angle_ref:.0f}^\\circ$}};')
+Analyzing 4 Python files...
+2 repetitions of complexity 80
 
-Line 1024 - src/qnty/problems/statics/parallelogram_report.py:
-if x_0 is not None:
-    x_1 = x_2(x_0.angle_wrt)
-    if abs(x_0.angle_ref) > 0.5:
-        x_1 = x_2
-        x_3 = x_0.angle_deg
-        x_4 = x_5 * 0.7
-        x_6 = (x_1 + x_3) / 2
-        x_7 = x_4 + 0.35
-        x_8 = x_9 + x_7 * x_10.cos(x_10.radians(x_6))
-        x_11 = x_12 + x_7 * x_10.sin(x_10.radians(x_6))
-        x_13 = x_14(x_6)
-        x_15.append(f'  \\draw[vec_f1,thin] ({x_9:.3f},{x_12:.3f}) ++({x_1}:{x_4:.3f}) arc ({x_1}:{x_3}:{x_4:.3f});')
-        x_15.append(f'  \\node[vec_f1,anchor={x_13}] at ({x_8:.3f},{x_11:.3f}) {{${x_0.angle_ref:.0f}^\\circ$}};')
+Line 589 - src/qnty/problems/statics/tikz_diagram.py:
+for x_0 in x_1:
+    x_2 = x_3(x_0.start)
+    x_4 = x_3(x_0.end)
+    x_0 = f'node[{x_0.label_position},pos={x_0.label_at}] {{{x_0.label}}}'
+    x_0.append(f'  \\draw[{x_0.style},{x_0.color}] {x_1} -- {x_2} {x_3};')
+
+Line 892 - src/qnty/problems/statics/tikz_diagram.py:
+for x_0 in x_1:
+    x_2 = x_3(x_0.start)
+    x_4 = x_3(x_0.end)
+    x_0 = f'node[{x_0.label_position},pos={x_0.label_at}] {{{x_0.label}}}'
+    x_0.append(f'  \\draw[{x_0.style},{x_0.color}] {x_1} -- {x_2} {x_3};')
 
 ======================================================================
 
-2 repetitions of complexity 197
+2 repetitions of complexity 67
 
-Line 667 - src/qnty/problems/statics/parallelogram_report.py:
-if x_0 is not None:
-    x_1 = x_2(x_0.angle_wrt)
-    if abs(x_0.angle_ref) > 0.5:
-        x_1 = x_2
-        x_3 = x_0.angle_deg
-        x_4 = x_5 * 1.0
-        x_6 = (x_1 + x_3) / 2
-        x_7 = x_4 + 0.35
-        x_8 = x_9 + x_7 * x_10.cos(x_10.radians(x_6))
-        x_11 = x_12 + x_7 * x_10.sin(x_10.radians(x_6))
-        x_13 = x_14(x_6)
-        x_15.append(f'  \\draw[vec_f2,thin] ({x_9:.3f},{x_12:.3f}) ++({x_1}:{x_4:.3f}) arc ({x_1}:{x_3}:{x_4:.3f});')
-        x_15.append(f'  \\node[vec_f2,anchor={x_13}] at ({x_8:.3f},{x_11:.3f}) {{${x_0.angle_ref:.0f}^\\circ$}};')
+Line 575 - src/qnty/problems/statics/tikz_diagram.py:
+def get_vertex_name(pt: x_0) -> str:
+    """Get the vertex name for a point, or format coordinates if not a vertex."""
+    x_0 = (round(x_1.x, 3), round(x_1.y, 3))
+    if x_1 in x_3:
+        return f'({x_3[x_1]})'
+    return f'({x_2.x:.3f},{x_2.y:.3f})'
 
-Line 1045 - src/qnty/problems/statics/parallelogram_report.py:
-if x_0 is not None:
-    x_1 = x_2(x_0.angle_wrt)
-    if abs(x_0.angle_ref) > 0.5:
-        x_1 = x_2
-        x_3 = x_0.angle_deg
-        x_4 = x_5 * 1.0
-        x_6 = (x_1 + x_3) / 2
-        x_7 = x_4 + 0.35
-        x_8 = x_9 + x_7 * x_10.cos(x_10.radians(x_6))
-        x_11 = x_12 + x_7 * x_10.sin(x_10.radians(x_6))
-        x_13 = x_14(x_6)
-        x_15.append(f'  \\draw[vec_f2,thin] ({x_9:.3f},{x_12:.3f}) ++({x_1}:{x_4:.3f}) arc ({x_1}:{x_3}:{x_4:.3f});')
-        x_15.append(f'  \\node[vec_f2,anchor={x_13}] at ({x_8:.3f},{x_11:.3f}) {{${x_0.angle_ref:.0f}^\\circ$}};')
+Line 874 - src/qnty/problems/statics/tikz_diagram.py:
+def get_vertex_name(pt: x_0) -> str:
+    """Get the vertex name for a point, or format coordinates if not a vertex."""
+    x_0 = (round(x_1.x, 3), round(x_1.y, 3))
+    if x_1 in x_3:
+        return f'({x_3[x_1]})'
+    return f'({x_2.x:.3f},{x_2.y:.3f})'
 
 ======================================================================
 
-2 repetitions of complexity 181
+2 repetitions of complexity 60
 
-Line 650 - src/qnty/problems/statics/parallelogram_report.py:
-if abs(x_0.angle_ref) > 0.5:
-    x_1 = x_2
-    x_3 = x_0.angle_deg
-    x_4 = x_5 * 0.7
-    x_6 = (x_1 + x_3) / 2
-    x_7 = x_4 + 0.35
-    x_8 = x_9 + x_7 * x_10.cos(x_10.radians(x_6))
-    x_11 = x_12 + x_7 * x_10.sin(x_10.radians(x_6))
-    x_13 = x_14(x_6)
-    x_15.append(f'  \\draw[vec_f1,thin] ({x_9:.3f},{x_12:.3f}) ++({x_1}:{x_4:.3f}) arc ({x_1}:{x_3}:{x_4:.3f});')
-    x_15.append(f'  \\node[vec_f1,anchor={x_13}] at ({x_8:.3f},{x_11:.3f}) {{${x_0.angle_ref:.0f}^\\circ$}};')
+Line 563 - src/qnty/problems/statics/parallelogram_report.py:
+if x_0.unknown_vectors:
+    x_1.append('\\midrule')
+    for x_0 in x_1.unknown_vectors:
+        x_2 = x_3._format_vec_name(x_0.name)
+        x_0.append(f'{x_0} & {x_1.mag} & {x_1.angle} & {x_1.ref} \\\\')
 
-Line 1026 - src/qnty/problems/statics/parallelogram_report.py:
-if abs(x_0.angle_ref) > 0.5:
-    x_1 = x_2
-    x_3 = x_0.angle_deg
-    x_4 = x_5 * 0.7
-    x_6 = (x_1 + x_3) / 2
-    x_7 = x_4 + 0.35
-    x_8 = x_9 + x_7 * x_10.cos(x_10.radians(x_6))
-    x_11 = x_12 + x_7 * x_10.sin(x_10.radians(x_6))
-    x_13 = x_14(x_6)
-    x_15.append(f'  \\draw[vec_f1,thin] ({x_9:.3f},{x_12:.3f}) ++({x_1}:{x_4:.3f}) arc ({x_1}:{x_3}:{x_4:.3f});')
-    x_15.append(f'  \\node[vec_f1,anchor={x_13}] at ({x_8:.3f},{x_11:.3f}) {{${x_0.angle_ref:.0f}^\\circ$}};')
+Line 641 - src/qnty/problems/statics/parallelogram_report.py:
+if x_0.unknown_vectors:
+    x_1.append('\\midrule')
+    for x_0 in x_1.unknown_vectors:
+        x_2 = x_3._format_vec_name(x_0.name)
+        x_0.append(f'{x_0} & {x_1.mag} & {x_1.angle} & {x_1.ref} \\\\')
 
 ======================================================================
 
-2 repetitions of complexity 181
+2 repetitions of complexity 53
 
-Line 669 - src/qnty/problems/statics/parallelogram_report.py:
-if abs(x_0.angle_ref) > 0.5:
-    x_1 = x_2
-    x_3 = x_0.angle_deg
-    x_4 = x_5 * 1.0
-    x_6 = (x_1 + x_3) / 2
-    x_7 = x_4 + 0.35
-    x_8 = x_9 + x_7 * x_10.cos(x_10.radians(x_6))
-    x_11 = x_12 + x_7 * x_10.sin(x_10.radians(x_6))
-    x_13 = x_14(x_6)
-    x_15.append(f'  \\draw[vec_f2,thin] ({x_9:.3f},{x_12:.3f}) ++({x_1}:{x_4:.3f}) arc ({x_1}:{x_3}:{x_4:.3f});')
-    x_15.append(f'  \\node[vec_f2,anchor={x_13}] at ({x_8:.3f},{x_11:.3f}) {{${x_0.angle_ref:.0f}^\\circ$}};')
+Line 583 - src/qnty/problems/statics/tikz_diagram.py:
+for x_0 in x_1:
+    x_2 = x_3(x_0.start)
+    x_4 = x_3(x_0.end)
+    x_0.append(f'  \\draw[{x_0.style},{x_0.color}] {x_1} -- {x_2};')
 
-Line 1047 - src/qnty/problems/statics/parallelogram_report.py:
-if abs(x_0.angle_ref) > 0.5:
-    x_1 = x_2
-    x_3 = x_0.angle_deg
-    x_4 = x_5 * 1.0
-    x_6 = (x_1 + x_3) / 2
-    x_7 = x_4 + 0.35
-    x_8 = x_9 + x_7 * x_10.cos(x_10.radians(x_6))
-    x_11 = x_12 + x_7 * x_10.sin(x_10.radians(x_6))
-    x_13 = x_14(x_6)
-    x_15.append(f'  \\draw[vec_f2,thin] ({x_9:.3f},{x_12:.3f}) ++({x_1}:{x_4:.3f}) arc ({x_1}:{x_3}:{x_4:.3f});')
-    x_15.append(f'  \\node[vec_f2,anchor={x_13}] at ({x_8:.3f},{x_11:.3f}) {{${x_0.angle_ref:.0f}^\\circ$}};')
+Line 886 - src/qnty/problems/statics/tikz_diagram.py:
+for x_0 in x_1:
+    x_2 = x_3(x_0.start)
+    x_4 = x_3(x_0.end)
+    x_0.append(f'  \\draw[{x_0.style},{x_0.color}] {x_1} -- {x_2};')
 
 ======================================================================
 
-Found 4 repeated patterns
+2 repetitions of complexity 48
+
+Line 559 - src/qnty/problems/statics/parallelogram_report.py:
+for x_0 in x_1.known_vectors:
+    x_2 = x_3._format_vec_name(x_0.name)
+    x_0.append(f'{x_0} & {x_1.mag} & {x_1.angle} & {x_1.ref} \\\\')
+
+Line 636 - src/qnty/problems/statics/parallelogram_report.py:
+for x_0 in x_1.known_vectors:
+    x_2 = x_3._format_vec_name(x_0.name)
+    x_0.append(f'{x_0} & {x_1.mag} & {x_1.angle} & {x_1.ref} \\\\')
+
+======================================================================
+
+2 repetitions of complexity 48
+
+Line 565 - src/qnty/problems/statics/parallelogram_report.py:
+for x_0 in x_1.unknown_vectors:
+    x_2 = x_3._format_vec_name(x_0.name)
+    x_0.append(f'{x_0} & {x_1.mag} & {x_1.angle} & {x_1.ref} \\\\')
+
+Line 643 - src/qnty/problems/statics/parallelogram_report.py:
+for x_0 in x_1.unknown_vectors:
+    x_2 = x_3._format_vec_name(x_0.name)
+    x_0.append(f'{x_0} & {x_1.mag} & {x_1.angle} & {x_1.ref} \\\\')
+
+======================================================================
+
+2 repetitions of complexity 48
+
+Line 593 - src/qnty/problems/statics/parallelogram_report.py:
+for x_0 in x_1.result_vectors:
+    x_2 = x_3._format_vec_name(x_0.name)
+    x_0.append(f'{x_0} & {x_1.mag} & {x_1.angle} & {x_1.ref} \\\\')
+
+Line 807 - src/qnty/problems/statics/parallelogram_report.py:
+for x_0 in x_1.result_vectors:
+    x_2 = x_3._format_vec_name(x_0.name)
+    x_0.append(f'{x_0} & {x_1.mag} & {x_1.angle} & {x_1.ref} \\\\')
+
+======================================================================
+
+2 repetitions of complexity 45
+
+Line 366 - src/qnty/problems/statics/parallelogram_solver.py:
+x_0 = x_0(base_angle=x_1.direction, offset_angle=x_2, result_vector_name=x_3.name, base_vector_name=x_1.name, offset_vector_1=x_1.name, offset_vector_2=x_3.name, result_ref=x_4, operation=x_5, angle_dir=x_6.result_angle_dir)
+
+Line 685 - src/qnty/problems/statics/parallelogram_solver.py:
+x_0 = x_0(base_angle=x_1.direction, offset_angle=x_2, result_vector_name=x_3.name, base_vector_name=x_1.name, offset_vector_1=x_1.name, offset_vector_2=x_3.name, result_ref=x_4, operation=x_5, angle_dir=x_6.result_angle_dir)
+
+======================================================================
+
+2 repetitions of complexity 43
+
+Line 571 - src/qnty/problems/statics/tikz_diagram.py:
+for x_0 in x_1.vertices:
+    x_0 = (round(x_0.point.x, 3), round(x_0.point.y, 3))
+    x_3[x_2] = x_0.name
+
+Line 870 - src/qnty/problems/statics/tikz_diagram.py:
+for x_0 in x_1.vertices:
+    x_0 = (round(x_0.point.x, 3), round(x_0.point.y, 3))
+    x_3[x_2] = x_0.name
+
+======================================================================
+
+2 repetitions of complexity 42
+
+Line 366 - src/qnty/problems/statics/parallelogram_solver.py:
+x_0(base_angle=x_1.direction, offset_angle=x_2, result_vector_name=x_3.name, base_vector_name=x_1.name, offset_vector_1=x_1.name, offset_vector_2=x_3.name, result_ref=x_4, operation=x_5, angle_dir=x_6.result_angle_dir)
+
+Line 685 - src/qnty/problems/statics/parallelogram_solver.py:
+x_0(base_angle=x_1.direction, offset_angle=x_2, result_vector_name=x_3.name, base_vector_name=x_1.name, offset_vector_1=x_1.name, offset_vector_2=x_3.name, result_ref=x_4, operation=x_5, angle_dir=x_6.result_angle_dir)
+
+======================================================================
+
+2 repetitions of complexity 41
+
+Line 559 - src/qnty/problems/statics/tikz_diagram.py:
+for x_0 in x_1.vertices:
+    x_0.append(f'  \\coordinate ({x_0.name}) at ({x_0.point.x:.3f},{x_0.point.y:.3f});')
+
+Line 862 - src/qnty/problems/statics/tikz_diagram.py:
+for x_0 in x_1.vertices:
+    x_0.append(f'  \\coordinate ({x_0.name}) at ({x_0.point.x:.3f},{x_0.point.y:.3f});')
+
+======================================================================
+
+2 repetitions of complexity 40
+
+Line 1062 - src/qnty/problems/statics/parallelogram_solver.py:
+x_0 = x_0(magnitude=x_1.magnitude, angle=x_1.angle, wrt=x_1.wrt, coordinate_system=x_1.coordinate_system, name=x_1.name or x_2, _is_resultant=x_1._is_resultant)
+
+Line 1083 - src/qnty/problems/statics/parallelogram_solver.py:
+x_0 = x_0(magnitude=x_1.magnitude, angle=x_1.angle, wrt=x_1.wrt, coordinate_system=x_1.coordinate_system, name=x_1.name or x_2, _is_resultant=x_1._is_resultant)
+
+======================================================================
+
+4 repetitions of complexity 39
+
+Line 357 - src/qnty/problems/statics/parallelogram_solver.py:
+x_0 = min(abs(x_0 - x_1), abs(x_0 - x_1 + 360), abs(x_0 - x_1 - 360))
+
+Line 358 - src/qnty/problems/statics/parallelogram_solver.py:
+x_0 = min(abs(x_0 - x_1), abs(x_0 - x_1 + 360), abs(x_0 - x_1 - 360))
+
+Line 679 - src/qnty/problems/statics/parallelogram_solver.py:
+x_0 = min(abs(x_0 - x_1), abs(x_0 - x_1 + 360), abs(x_0 - x_1 - 360))
+
+Line 680 - src/qnty/problems/statics/parallelogram_solver.py:
+x_0 = min(abs(x_0 - x_1), abs(x_0 - x_1 + 360), abs(x_0 - x_1 - 360))
+
+======================================================================
+
+2 repetitions of complexity 38
+
+Line 966 - src/qnty/problems/statics/parallelogram_solver.py:
+if x_0 < 0:
+    x_0 = x_1(x_2, x_0.preferred.symbol if x_0.preferred else 'N')
+    x_1.name = f'{x_3.name}_mag'
+
+Line 971 - src/qnty/problems/statics/parallelogram_solver.py:
+if x_0 < 0:
+    x_0 = x_1(x_2, x_0.preferred.symbol if x_0.preferred else 'N')
+    x_1.name = f'{x_3.name}_mag'
+
+======================================================================
+
+2 repetitions of complexity 37
+
+Line 1062 - src/qnty/problems/statics/parallelogram_solver.py:
+x_0(magnitude=x_1.magnitude, angle=x_1.angle, wrt=x_1.wrt, coordinate_system=x_1.coordinate_system, name=x_1.name or x_2, _is_resultant=x_1._is_resultant)
+
+Line 1083 - src/qnty/problems/statics/parallelogram_solver.py:
+x_0(magnitude=x_1.magnitude, angle=x_1.angle, wrt=x_1.wrt, coordinate_system=x_1.coordinate_system, name=x_1.name or x_2, _is_resultant=x_1._is_resultant)
+
+======================================================================
+
+4 repetitions of complexity 36
+
+Line 357 - src/qnty/problems/statics/parallelogram_solver.py:
+min(abs(x_0 - x_1), abs(x_0 - x_1 + 360), abs(x_0 - x_1 - 360))
+
+Line 358 - src/qnty/problems/statics/parallelogram_solver.py:
+min(abs(x_0 - x_1), abs(x_0 - x_1 + 360), abs(x_0 - x_1 - 360))
+
+Line 679 - src/qnty/problems/statics/parallelogram_solver.py:
+min(abs(x_0 - x_1), abs(x_0 - x_1 + 360), abs(x_0 - x_1 - 360))
+
+Line 680 - src/qnty/problems/statics/parallelogram_solver.py:
+min(abs(x_0 - x_1), abs(x_0 - x_1 + 360), abs(x_0 - x_1 - 360))
+
+======================================================================
+
+2 repetitions of complexity 36
+
+Line 809 - src/qnty/problems/statics/tikz_diagram.py:
+x_0 = x_0.degrees(x_0.atan2(x_1.y - x_2.y, x_1.x - x_2.x)) % 360
+
+Line 828 - src/qnty/problems/statics/tikz_diagram.py:
+x_0 = x_0.degrees(x_0.atan2(x_1.y - x_2.y, x_1.x - x_2.x)) % 360
+
+======================================================================
+
+2 repetitions of complexity 34
+
+Line 481 - src/qnty/problems/statics/tikz_diagram.py:
+def mag_label(vec: x_0 | None) -> str:
+    if x_1 is None:
+        return ''
+    return f'{x_1.magnitude:.0f}\\,\\text{{{x_1.unit}}}'
+
+Line 699 - src/qnty/problems/statics/tikz_diagram.py:
+def mag_label(vec: x_0 | None) -> str:
+    if x_1 is None:
+        return ''
+    return f'{x_1.magnitude:.0f}\\,\\text{{{x_1.unit}}}'
+
+======================================================================
+
+2 repetitions of complexity 34
+
+Line 560 - src/qnty/problems/statics/tikz_diagram.py:
+x_0.append(f'  \\coordinate ({x_0.name}) at ({x_0.point.x:.3f},{x_0.point.y:.3f});')
+
+Line 863 - src/qnty/problems/statics/tikz_diagram.py:
+x_0.append(f'  \\coordinate ({x_0.name}) at ({x_0.point.x:.3f},{x_0.point.y:.3f});')
+
+======================================================================
+
+2 repetitions of complexity 33
+
+Line 560 - src/qnty/problems/statics/tikz_diagram.py:
+x_0.append(f'  \\coordinate ({x_0.name}) at ({x_0.point.x:.3f},{x_0.point.y:.3f});')
+
+Line 863 - src/qnty/problems/statics/tikz_diagram.py:
+x_0.append(f'  \\coordinate ({x_0.name}) at ({x_0.point.x:.3f},{x_0.point.y:.3f});')
+
+======================================================================
+
+2 repetitions of complexity 33
+
+Line 809 - src/qnty/problems/statics/tikz_diagram.py:
+x_0.degrees(x_0.atan2(x_1.y - x_2.y, x_1.x - x_2.x)) % 360
+
+Line 828 - src/qnty/problems/statics/tikz_diagram.py:
+x_0.degrees(x_0.atan2(x_1.y - x_2.y, x_1.x - x_2.x)) % 360
+
+======================================================================
+
+2 repetitions of complexity 32
+
+Line 593 - src/qnty/problems/statics/tikz_diagram.py:
+x_0.append(f'  \\draw[{x_0.style},{x_0.color}] {x_1} -- {x_2} {x_3};')
+
+Line 896 - src/qnty/problems/statics/tikz_diagram.py:
+x_0.append(f'  \\draw[{x_0.style},{x_0.color}] {x_1} -- {x_2} {x_3};')
+
+======================================================================
+
+2 repetitions of complexity 31
+
+Line 458 - src/qnty/problems/statics/tikz_diagram.py:
+x_0.vertices = [x_0('A', x_1), x_0('B', x_2), x_0('C', x_3), x_0('D', x_4)]
+
+Line 674 - src/qnty/problems/statics/tikz_diagram.py:
+x_0.vertices = [x_0('A', x_1), x_0('B', x_2), x_0('C', x_3), x_0('D', x_4)]
+
+======================================================================
+
+2 repetitions of complexity 31
+
+Line 593 - src/qnty/problems/statics/tikz_diagram.py:
+x_0.append(f'  \\draw[{x_0.style},{x_0.color}] {x_1} -- {x_2} {x_3};')
+
+Line 896 - src/qnty/problems/statics/tikz_diagram.py:
+x_0.append(f'  \\draw[{x_0.style},{x_0.color}] {x_1} -- {x_2} {x_3};')
+
+======================================================================
+
+2 repetitions of complexity 30
+
+Line 809 - src/qnty/problems/statics/tikz_diagram.py:
+x_0.degrees(x_0.atan2(x_1.y - x_2.y, x_1.x - x_2.x))
+
+Line 828 - src/qnty/problems/statics/tikz_diagram.py:
+x_0.degrees(x_0.atan2(x_1.y - x_2.y, x_1.x - x_2.x))
+
+======================================================================
+
+7 repetitions of complexity 29
+
+Line 561 - src/qnty/problems/statics/parallelogram_report.py:
+x_0.append(f'{x_0} & {x_1.mag} & {x_1.angle} & {x_1.ref} \\\\')
+
+Line 567 - src/qnty/problems/statics/parallelogram_report.py:
+x_0.append(f'{x_0} & {x_1.mag} & {x_1.angle} & {x_1.ref} \\\\')
+
+Line 595 - src/qnty/problems/statics/parallelogram_report.py:
+x_0.append(f'{x_0} & {x_1.mag} & {x_1.angle} & {x_1.ref} \\\\')
+
+Line 614 - src/qnty/problems/statics/parallelogram_report.py:
+x_0.append(f'{x_0} & {x_1.mag} & {x_1.angle} & {x_1.ref} \\\\')
+
+Line 638 - src/qnty/problems/statics/parallelogram_report.py:
+x_0.append(f'{x_0} & {x_1.mag} & {x_1.angle} & {x_1.ref} \\\\')
+
+Line 645 - src/qnty/problems/statics/parallelogram_report.py:
+x_0.append(f'{x_0} & {x_1.mag} & {x_1.angle} & {x_1.ref} \\\\')
+
+Line 809 - src/qnty/problems/statics/parallelogram_report.py:
+x_0.append(f'{x_0} & {x_1.mag} & {x_1.angle} & {x_1.ref} \\\\')
+
+======================================================================
+
+3 repetitions of complexity 29
+
+Line 792 - src/qnty/problems/statics/tikz_diagram.py:
+x_0 = x_0.x + (x_0 + x_1) * x_2.cos(x_2.radians(x_3))
+
+Line 812 - src/qnty/problems/statics/tikz_diagram.py:
+x_0 = x_0.x + (x_0 + x_1) * x_2.cos(x_2.radians(x_3))
+
+Line 832 - src/qnty/problems/statics/tikz_diagram.py:
+x_0 = x_0.x + (x_0 + x_1) * x_2.cos(x_2.radians(x_3))
+
+======================================================================
+
+3 repetitions of complexity 29
+
+Line 793 - src/qnty/problems/statics/tikz_diagram.py:
+x_0 = x_0.y + (x_0 + x_1) * x_2.sin(x_2.radians(x_3))
+
+Line 813 - src/qnty/problems/statics/tikz_diagram.py:
+x_0 = x_0.y + (x_0 + x_1) * x_2.sin(x_2.radians(x_3))
+
+Line 833 - src/qnty/problems/statics/tikz_diagram.py:
+x_0 = x_0.y + (x_0 + x_1) * x_2.sin(x_2.radians(x_3))
+
+======================================================================
+
+7 repetitions of complexity 28
+
+Line 561 - src/qnty/problems/statics/parallelogram_report.py:
+x_0.append(f'{x_0} & {x_1.mag} & {x_1.angle} & {x_1.ref} \\\\')
+
+Line 567 - src/qnty/problems/statics/parallelogram_report.py:
+x_0.append(f'{x_0} & {x_1.mag} & {x_1.angle} & {x_1.ref} \\\\')
+
+Line 595 - src/qnty/problems/statics/parallelogram_report.py:
+x_0.append(f'{x_0} & {x_1.mag} & {x_1.angle} & {x_1.ref} \\\\')
+
+Line 614 - src/qnty/problems/statics/parallelogram_report.py:
+x_0.append(f'{x_0} & {x_1.mag} & {x_1.angle} & {x_1.ref} \\\\')
+
+Line 638 - src/qnty/problems/statics/parallelogram_report.py:
+x_0.append(f'{x_0} & {x_1.mag} & {x_1.angle} & {x_1.ref} \\\\')
+
+Line 645 - src/qnty/problems/statics/parallelogram_report.py:
+x_0.append(f'{x_0} & {x_1.mag} & {x_1.angle} & {x_1.ref} \\\\')
+
+Line 809 - src/qnty/problems/statics/parallelogram_report.py:
+x_0.append(f'{x_0} & {x_1.mag} & {x_1.angle} & {x_1.ref} \\\\')
+
+======================================================================
+
+2 repetitions of complexity 28
+
+Line 560 - src/qnty/problems/statics/tikz_diagram.py:
+f'  \\coordinate ({x_0.name}) at ({x_0.point.x:.3f},{x_0.point.y:.3f});'
+
+Line 863 - src/qnty/problems/statics/tikz_diagram.py:
+f'  \\coordinate ({x_0.name}) at ({x_0.point.x:.3f},{x_0.point.y:.3f});'
+
+======================================================================
+
+2 repetitions of complexity 28
+
+Line 586 - src/qnty/problems/statics/tikz_diagram.py:
+x_0.append(f'  \\draw[{x_0.style},{x_0.color}] {x_1} -- {x_2};')
+
+Line 889 - src/qnty/problems/statics/tikz_diagram.py:
+x_0.append(f'  \\draw[{x_0.style},{x_0.color}] {x_1} -- {x_2};')
+
+======================================================================
+
+2 repetitions of complexity 27
+
+Line 586 - src/qnty/problems/statics/tikz_diagram.py:
+x_0.append(f'  \\draw[{x_0.style},{x_0.color}] {x_1} -- {x_2};')
+
+Line 889 - src/qnty/problems/statics/tikz_diagram.py:
+x_0.append(f'  \\draw[{x_0.style},{x_0.color}] {x_1} -- {x_2};')
+
+======================================================================
+
+3 repetitions of complexity 26
+
+Line 291 - src/qnty/problems/statics/tikz_diagram.py:
+f'  \\draw[{x_0.style},{x_0.color}] {x_1} -- {x_2} {x_3};'
+
+Line 593 - src/qnty/problems/statics/tikz_diagram.py:
+f'  \\draw[{x_0.style},{x_0.color}] {x_1} -- {x_2} {x_3};'
+
+Line 896 - src/qnty/problems/statics/tikz_diagram.py:
+f'  \\draw[{x_0.style},{x_0.color}] {x_1} -- {x_2} {x_3};'
+
+======================================================================
+
+3 repetitions of complexity 26
+
+Line 792 - src/qnty/problems/statics/tikz_diagram.py:
+x_0.x + (x_0 + x_1) * x_2.cos(x_2.radians(x_3))
+
+Line 812 - src/qnty/problems/statics/tikz_diagram.py:
+x_0.x + (x_0 + x_1) * x_2.cos(x_2.radians(x_3))
+
+Line 832 - src/qnty/problems/statics/tikz_diagram.py:
+x_0.x + (x_0 + x_1) * x_2.cos(x_2.radians(x_3))
+
+======================================================================
+
+3 repetitions of complexity 26
+
+Line 793 - src/qnty/problems/statics/tikz_diagram.py:
+x_0.y + (x_0 + x_1) * x_2.sin(x_2.radians(x_3))
+
+Line 813 - src/qnty/problems/statics/tikz_diagram.py:
+x_0.y + (x_0 + x_1) * x_2.sin(x_2.radians(x_3))
+
+Line 833 - src/qnty/problems/statics/tikz_diagram.py:
+x_0.y + (x_0 + x_1) * x_2.sin(x_2.radians(x_3))
+
+======================================================================
+
+2 repetitions of complexity 26
+
+Line 445 - src/qnty/problems/statics/tikz_diagram.py:
+if x_0 is None or x_1 is None or x_2 is None or (x_3 is None):
+    return x_4
+
+Line 661 - src/qnty/problems/statics/tikz_diagram.py:
+if x_0 is None or x_1 is None or x_2 is None or (x_3 is None):
+    return x_4
+
+======================================================================
+
+2 repetitions of complexity 26
+
+Line 458 - src/qnty/problems/statics/tikz_diagram.py:
+[x_0('A', x_1), x_0('B', x_2), x_0('C', x_3), x_0('D', x_4)]
+
+Line 674 - src/qnty/problems/statics/tikz_diagram.py:
+[x_0('A', x_1), x_0('B', x_2), x_0('C', x_3), x_0('D', x_4)]
+
+======================================================================
+
+2 repetitions of complexity 26
+
+Line 232 - src/qnty/problems/statics/parallelogram_solver.py:
+for x_0 in [x_1, x_2]:
+    if x_0.name == x_3.opposite_side:
+        x_4 = x_0
+        break
+
+Line 240 - src/qnty/problems/statics/parallelogram_solver.py:
+for x_0 in [x_1, x_2]:
+    if x_0.name == x_3.opposite_side:
+        x_4 = x_0
+        break
+
+======================================================================
+
+4 repetitions of complexity 25
+
+Line 514 - src/qnty/problems/statics/tikz_diagram.py:
+x_0(name=f'{x_1}_translated', start=x_2, end=x_3, color='vec_translated', style='vector_translated', label='', label_position='', label_at=0)
+
+Line 524 - src/qnty/problems/statics/tikz_diagram.py:
+x_0(name=f'{x_1}_translated', start=x_2, end=x_3, color='vec_translated', style='vector_translated', label='', label_position='', label_at=0)
+
+Line 723 - src/qnty/problems/statics/tikz_diagram.py:
+x_0(name=f'{x_1}_translated', start=x_2, end=x_3, color='vec_translated', style='vector_translated', label='', label_position='', label_at=0)
+
+Line 733 - src/qnty/problems/statics/tikz_diagram.py:
+x_0(name=f'{x_1}_translated', start=x_2, end=x_3, color='vec_translated', style='vector_translated', label='', label_position='', label_at=0)
+
+======================================================================
+
+2 repetitions of complexity 25
+
+Line 288 - src/qnty/problems/statics/tikz_diagram.py:
+x_0 = f'({x_0.start.x:.3f},{x_0.start.y:.3f})'
+
+Line 351 - src/qnty/problems/statics/tikz_diagram.py:
+x_0 = f'({x_0.start.x:.3f},{x_0.start.y:.3f})'
+
+======================================================================
+
+2 repetitions of complexity 25
+
+Line 289 - src/qnty/problems/statics/tikz_diagram.py:
+x_0 = f'({x_0.end.x:.3f},{x_0.end.y:.3f})'
+
+Line 352 - src/qnty/problems/statics/tikz_diagram.py:
+x_0 = f'({x_0.end.x:.3f},{x_0.end.y:.3f})'
+
+======================================================================
+
+2 repetitions of complexity 25
+
+Line 305 - src/qnty/problems/statics/tikz_diagram.py:
+x_0 = f'({x_0.center.x:.3f},{x_0.center.y:.3f})'
+
+Line 328 - src/qnty/problems/statics/tikz_diagram.py:
+x_0 = f'({x_0.center.x:.3f},{x_0.center.y:.3f})'
+
+======================================================================
+
+2 repetitions of complexity 25
+
+Line 312 - src/qnty/problems/statics/tikz_diagram.py:
+x_0 = f'({x_0.label_position.x:.3f},{x_0.label_position.y:.3f})'
+
+Line 335 - src/qnty/problems/statics/tikz_diagram.py:
+x_0 = f'({x_0.label_position.x:.3f},{x_0.label_position.y:.3f})'
+
+======================================================================
+
+2 repetitions of complexity 25
+
+Line 572 - src/qnty/problems/statics/tikz_diagram.py:
+x_0 = (round(x_0.point.x, 3), round(x_0.point.y, 3))
+
+Line 871 - src/qnty/problems/statics/tikz_diagram.py:
+x_0 = (round(x_0.point.x, 3), round(x_0.point.y, 3))
+
+======================================================================
+
+2 repetitions of complexity 25
+
+Line 809 - src/qnty/problems/statics/tikz_diagram.py:
+x_0.atan2(x_1.y - x_2.y, x_1.x - x_2.x)
+
+Line 828 - src/qnty/problems/statics/tikz_diagram.py:
+x_0.atan2(x_1.y - x_2.y, x_1.x - x_2.x)
+
+======================================================================
+
+6 repetitions of complexity 24
+
+Line 472 - src/qnty/problems/statics/tikz_diagram.py:
+x_0 = x_0.sqrt(x_1.x ** 2 + x_1.y ** 2)
+
+Line 473 - src/qnty/problems/statics/tikz_diagram.py:
+x_0 = x_0.sqrt(x_1.x ** 2 + x_1.y ** 2)
+
+Line 474 - src/qnty/problems/statics/tikz_diagram.py:
+x_0 = x_0.sqrt(x_1.x ** 2 + x_1.y ** 2)
+
+Line 690 - src/qnty/problems/statics/tikz_diagram.py:
+x_0 = x_0.sqrt(x_1.x ** 2 + x_1.y ** 2)
+
+Line 691 - src/qnty/problems/statics/tikz_diagram.py:
+x_0 = x_0.sqrt(x_1.x ** 2 + x_1.y ** 2)
+
+Line 692 - src/qnty/problems/statics/tikz_diagram.py:
+x_0 = x_0.sqrt(x_1.x ** 2 + x_1.y ** 2)
+
+======================================================================
+
+7 repetitions of complexity 23
+
+Line 561 - src/qnty/problems/statics/parallelogram_report.py:
+f'{x_0} & {x_1.mag} & {x_1.angle} & {x_1.ref} \\\\'
+
+Line 567 - src/qnty/problems/statics/parallelogram_report.py:
+f'{x_0} & {x_1.mag} & {x_1.angle} & {x_1.ref} \\\\'
+
+Line 595 - src/qnty/problems/statics/parallelogram_report.py:
+f'{x_0} & {x_1.mag} & {x_1.angle} & {x_1.ref} \\\\'
+
+Line 614 - src/qnty/problems/statics/parallelogram_report.py:
+f'{x_0} & {x_1.mag} & {x_1.angle} & {x_1.ref} \\\\'
+
+Line 638 - src/qnty/problems/statics/parallelogram_report.py:
+f'{x_0} & {x_1.mag} & {x_1.angle} & {x_1.ref} \\\\'
+
+Line 645 - src/qnty/problems/statics/parallelogram_report.py:
+f'{x_0} & {x_1.mag} & {x_1.angle} & {x_1.ref} \\\\'
+
+Line 809 - src/qnty/problems/statics/parallelogram_report.py:
+f'{x_0} & {x_1.mag} & {x_1.angle} & {x_1.ref} \\\\'
+
+======================================================================
+
+3 repetitions of complexity 23
+
+Line 290 - src/qnty/problems/statics/tikz_diagram.py:
+x_0 = f'node[{x_0.label_position},pos={x_0.label_at}] {{{x_0.label}}}'
+
+Line 592 - src/qnty/problems/statics/tikz_diagram.py:
+x_0 = f'node[{x_0.label_position},pos={x_0.label_at}] {{{x_0.label}}}'
+
+Line 895 - src/qnty/problems/statics/tikz_diagram.py:
+x_0 = f'node[{x_0.label_position},pos={x_0.label_at}] {{{x_0.label}}}'
+
+======================================================================
+
+8 repetitions of complexity 22
+
+Line 450 - src/qnty/problems/statics/tikz_diagram.py:
+x_0 = x_1(x_2.x * x_3, x_2.y * x_3)
+
+Line 451 - src/qnty/problems/statics/tikz_diagram.py:
+x_0 = x_1(x_2.x * x_3, x_2.y * x_3)
+
+Line 452 - src/qnty/problems/statics/tikz_diagram.py:
+x_0 = x_1(x_2.x * x_3, x_2.y * x_3)
+
+Line 453 - src/qnty/problems/statics/tikz_diagram.py:
+x_0 = x_1(x_2.x * x_3, x_2.y * x_3)
+
+Line 666 - src/qnty/problems/statics/tikz_diagram.py:
+x_0 = x_1(x_2.x * x_3, x_2.y * x_3)
+
+Line 667 - src/qnty/problems/statics/tikz_diagram.py:
+x_0 = x_1(x_2.x * x_3, x_2.y * x_3)
+
+Line 668 - src/qnty/problems/statics/tikz_diagram.py:
+x_0 = x_1(x_2.x * x_3, x_2.y * x_3)
+
+Line 669 - src/qnty/problems/statics/tikz_diagram.py:
+x_0 = x_1(x_2.x * x_3, x_2.y * x_3)
+
+======================================================================
+
+2 repetitions of complexity 22
+
+Line 288 - src/qnty/problems/statics/tikz_diagram.py:
+f'({x_0.start.x:.3f},{x_0.start.y:.3f})'
+
+Line 351 - src/qnty/problems/statics/tikz_diagram.py:
+f'({x_0.start.x:.3f},{x_0.start.y:.3f})'
+
+======================================================================
+
+2 repetitions of complexity 22
+
+Line 289 - src/qnty/problems/statics/tikz_diagram.py:
+f'({x_0.end.x:.3f},{x_0.end.y:.3f})'
+
+Line 352 - src/qnty/problems/statics/tikz_diagram.py:
+f'({x_0.end.x:.3f},{x_0.end.y:.3f})'
+
+======================================================================
+
+2 repetitions of complexity 22
+
+Line 305 - src/qnty/problems/statics/tikz_diagram.py:
+f'({x_0.center.x:.3f},{x_0.center.y:.3f})'
+
+Line 328 - src/qnty/problems/statics/tikz_diagram.py:
+f'({x_0.center.x:.3f},{x_0.center.y:.3f})'
+
+======================================================================
+
+2 repetitions of complexity 22
+
+Line 312 - src/qnty/problems/statics/tikz_diagram.py:
+f'({x_0.label_position.x:.3f},{x_0.label_position.y:.3f})'
+
+Line 335 - src/qnty/problems/statics/tikz_diagram.py:
+f'({x_0.label_position.x:.3f},{x_0.label_position.y:.3f})'
+
+======================================================================
+
+2 repetitions of complexity 22
+
+Line 445 - src/qnty/problems/statics/tikz_diagram.py:
+x_0 is None or x_1 is None or x_2 is None or (x_3 is None)
+
+Line 661 - src/qnty/problems/statics/tikz_diagram.py:
+x_0 is None or x_1 is None or x_2 is None or (x_3 is None)
+
+======================================================================
+
+2 repetitions of complexity 22
+
+Line 570 - src/qnty/problems/statics/tikz_diagram.py:
+x_0: dict[tuple[float, float], str] = {}
+
+Line 869 - src/qnty/problems/statics/tikz_diagram.py:
+x_0: dict[tuple[float, float], str] = {}
+
+======================================================================
+
+2 repetitions of complexity 22
+
+Line 572 - src/qnty/problems/statics/tikz_diagram.py:
+(round(x_0.point.x, 3), round(x_0.point.y, 3))
+
+Line 871 - src/qnty/problems/statics/tikz_diagram.py:
+(round(x_0.point.x, 3), round(x_0.point.y, 3))
+
+======================================================================
+
+2 repetitions of complexity 22
+
+Line 586 - src/qnty/problems/statics/tikz_diagram.py:
+f'  \\draw[{x_0.style},{x_0.color}] {x_1} -- {x_2};'
+
+Line 889 - src/qnty/problems/statics/tikz_diagram.py:
+f'  \\draw[{x_0.style},{x_0.color}] {x_1} -- {x_2};'
+
+======================================================================
+
+2 repetitions of complexity 22
+
+Line 647 - src/qnty/problems/statics/parallelogram_report.py:
+x_0 = f'\\begin{{tabular}}{{lSSl}}\n\\toprule\nVector & {{$\\magn{{\\vv{{F}}}}$ ({x_1.unit})}} & {{$\\theta$ (deg)}} & Ref \\\\\n\\midrule\n{chr(10).join(x_2)}\n\\bottomrule\n\\end{{tabular}}'
+
+Line 811 - src/qnty/problems/statics/parallelogram_report.py:
+x_0 = f'\\begin{{tabular}}{{lSSl}}\n\\toprule\nVector & {{$\\magn{{\\vv{{F}}}}$ ({x_1.unit})}} & {{$\\theta$ (deg)}} & Ref \\\\\n\\midrule\n{chr(10).join(x_2)}\n\\bottomrule\n\\end{{tabular}}'
+
+======================================================================
+
+6 repetitions of complexity 21
+
+Line 472 - src/qnty/problems/statics/tikz_diagram.py:
+x_0.sqrt(x_1.x ** 2 + x_1.y ** 2)
+
+Line 473 - src/qnty/problems/statics/tikz_diagram.py:
+x_0.sqrt(x_1.x ** 2 + x_1.y ** 2)
+
+Line 474 - src/qnty/problems/statics/tikz_diagram.py:
+x_0.sqrt(x_1.x ** 2 + x_1.y ** 2)
+
+Line 690 - src/qnty/problems/statics/tikz_diagram.py:
+x_0.sqrt(x_1.x ** 2 + x_1.y ** 2)
+
+Line 691 - src/qnty/problems/statics/tikz_diagram.py:
+x_0.sqrt(x_1.x ** 2 + x_1.y ** 2)
+
+Line 692 - src/qnty/problems/statics/tikz_diagram.py:
+x_0.sqrt(x_1.x ** 2 + x_1.y ** 2)
+
+======================================================================
+
+3 repetitions of complexity 21
+
+Line 726 - src/qnty/problems/statics/parallelogram_report.py:
+if x_0.endswith('\\\\'):
+    x_0 = x_0[:-2].strip()
+
+Line 752 - src/qnty/problems/statics/parallelogram_report.py:
+if x_0.endswith('\\\\'):
+    x_0 = x_0[:-2].strip()
+
+Line 938 - src/qnty/problems/statics/parallelogram_report.py:
+if x_0.endswith('\\\\'):
+    x_0 = x_0[:-2].strip()
+
+======================================================================
+
+2 repetitions of complexity 21
+
+Line 577 - src/qnty/problems/statics/tikz_diagram.py:
+x_0 = (round(x_1.x, 3), round(x_1.y, 3))
+
+Line 876 - src/qnty/problems/statics/tikz_diagram.py:
+x_0 = (round(x_1.x, 3), round(x_1.y, 3))
+
+======================================================================
+
+3 repetitions of complexity 20
+
+Line 290 - src/qnty/problems/statics/tikz_diagram.py:
+f'node[{x_0.label_position},pos={x_0.label_at}] {{{x_0.label}}}'
+
+Line 592 - src/qnty/problems/statics/tikz_diagram.py:
+f'node[{x_0.label_position},pos={x_0.label_at}] {{{x_0.label}}}'
+
+Line 895 - src/qnty/problems/statics/tikz_diagram.py:
+f'node[{x_0.label_position},pos={x_0.label_at}] {{{x_0.label}}}'
+
+======================================================================
+
+3 repetitions of complexity 20
+
+Line 792 - src/qnty/problems/statics/tikz_diagram.py:
+(x_0 + x_1) * x_2.cos(x_2.radians(x_3))
+
+Line 812 - src/qnty/problems/statics/tikz_diagram.py:
+(x_0 + x_1) * x_2.cos(x_2.radians(x_3))
+
+Line 832 - src/qnty/problems/statics/tikz_diagram.py:
+(x_0 + x_1) * x_2.cos(x_2.radians(x_3))
+
+======================================================================
+
+3 repetitions of complexity 20
+
+Line 793 - src/qnty/problems/statics/tikz_diagram.py:
+(x_0 + x_1) * x_2.sin(x_2.radians(x_3))
+
+Line 813 - src/qnty/problems/statics/tikz_diagram.py:
+(x_0 + x_1) * x_2.sin(x_2.radians(x_3))
+
+Line 833 - src/qnty/problems/statics/tikz_diagram.py:
+(x_0 + x_1) * x_2.sin(x_2.radians(x_3))
+
+======================================================================
+
+2 repetitions of complexity 20
+
+Line 566 - src/qnty/problems/statics/tikz_diagram.py:
+x_0 = [x_1 for x_1 in x_2.vectors if 'translated' in x_1.name]
+
+Line 882 - src/qnty/problems/statics/tikz_diagram.py:
+x_0 = [x_1 for x_1 in x_2.vectors if 'translated' in x_1.name]
+
+======================================================================
+
+2 repetitions of complexity 20
+
+Line 567 - src/qnty/problems/statics/tikz_diagram.py:
+x_0 = [x_1 for x_1 in x_2.vectors if 'translated' not in x_1.name]
+
+Line 883 - src/qnty/problems/statics/tikz_diagram.py:
+x_0 = [x_1 for x_1 in x_2.vectors if 'translated' not in x_1.name]
+
+======================================================================
+
+2 repetitions of complexity 20
+
+Line 968 - src/qnty/problems/statics/parallelogram_solver.py:
+x_0 = x_1(x_2, x_0.preferred.symbol if x_0.preferred else 'N')
+
+Line 972 - src/qnty/problems/statics/parallelogram_solver.py:
+x_0 = x_1(x_2, x_0.preferred.symbol if x_0.preferred else 'N')
+
+======================================================================
+
+2 repetitions of complexity 20
+
+Line 549 - src/qnty/problems/statics/parallelogram_report.py:
+if x_0.diagram is None or not x_0.diagram.is_valid:
+    return ''
+
+Line 583 - src/qnty/problems/statics/parallelogram_report.py:
+if x_0.diagram is None or not x_0.diagram.is_valid:
+    return ''
+
+======================================================================
+
+2 repetitions of complexity 20
+
+Line 570 - src/qnty/problems/statics/parallelogram_report.py:
+return f'\\begin{{tabular}}{{lSSl}}\n\\toprule\nVector & {{$\\magn{{\\vv{{F}}}}$ ({x_0.unit})}} & {{$\\theta$ (deg)}} & Ref \\\\\n\\midrule\n{chr(10).join(x_1)}\n\\bottomrule\n\\end{{tabular}}'
+
+Line 597 - src/qnty/problems/statics/parallelogram_report.py:
+return f'\\begin{{tabular}}{{lSSl}}\n\\toprule\nVector & {{$\\magn{{\\vv{{F}}}}$ ({x_0.unit})}} & {{$\\theta$ (deg)}} & Ref \\\\\n\\midrule\n{chr(10).join(x_1)}\n\\bottomrule\n\\end{{tabular}}'
+
+======================================================================
+
+Found 69 repeated patterns
