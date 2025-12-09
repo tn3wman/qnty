@@ -436,42 +436,83 @@ class LaTeXRenderer:
     """Render ReportData to LaTeX."""
 
     def render(self, data: ReportData) -> str:
-        """Render the complete LaTeX document."""
-        parts = [
-            self._render_preamble(data),
-            self._render_diagram_section(data),
-            self._render_known_section(data),
-            self._render_unknown_section(data),
-            self._render_equations_section(data),
-            self._render_steps_section(data),
-            self._render_results_section(data),
-            self._render_disclaimer(),
-        ]
-        return "".join(parts)
+        """Render the complete LaTeX document in compact single-page layout."""
+        # Get individual components
+        preamble = self._render_preamble(data)
+
+        # Row 1: Problem Setup (with parallelogram) | Variables table
+        problem_setup = self._render_problem_setup_diagram(data)
+        variables_table = self._render_variables_table(data)
+
+        # Row 2: Equations and Solution
+        equations = self._render_equations_section(data)
+        solution = self._render_steps_section(data)
+
+        # Row 3: Force Triangle | Results
+        force_triangle = self._render_force_triangle_diagram(data)
+        results_table = self._render_results_table(data)
+
+        disclaimer = self._render_disclaimer()
+
+        # Combine with side-by-side layout (table 1/3, diagram 2/3)
+        # [c] centers content both horizontally and vertically within each minipage
+        return rf"""{preamble}
+\textbf{{\underline{{Problem Setup}}}}\\[0.5em]
+\noindent
+\begin{{minipage}}[c]{{0.32\textwidth}}
+\begin{{center}}
+{variables_table}
+\end{{center}}
+\end{{minipage}}%
+\hfill
+\begin{{minipage}}[c]{{0.66\textwidth}}
+\begin{{center}}
+{problem_setup}
+\end{{center}}
+\end{{minipage}}
+
+\vspace{{0.5em}}
+{equations}
+
+\vspace{{0.5em}}
+{solution}
+
+\vspace{{0.5em}}
+\textbf{{\underline{{Results}}}}\\[0.5em]
+\noindent
+\begin{{minipage}}[c]{{0.32\textwidth}}
+\begin{{center}}
+{results_table}
+\end{{center}}
+\end{{minipage}}%
+\hfill
+\begin{{minipage}}[c]{{0.66\textwidth}}
+\begin{{center}}
+{force_triangle}
+\end{{center}}
+\end{{minipage}}
+{disclaimer}"""
 
     def _render_preamble(self, data: ReportData) -> str:
         """Render LaTeX preamble."""
-        return rf"""\documentclass[11pt,a4paper]{{article}}
+        return rf"""\documentclass[10pt,a4paper]{{article}}
 \usepackage{{amsmath}}
 \usepackage{{amssymb}}
 \usepackage{{booktabs}}
-\usepackage{{longtable}}
+\usepackage{{tabularx}}
 \usepackage{{geometry}}
-\geometry{{margin=1in}}
-\usepackage{{hyperref}}
+\geometry{{margin=0.6in,top=0.5in,bottom=0.5in}}
 \usepackage{{enumitem}}
-\usepackage{{graphicx}}
 \usepackage{{siunitx}}
-\usepackage{{accents}}
-\usepackage{{changepage}}
-\usepackage{{needspace}}
 \usepackage{{tikz}}
 \usepackage{{xcolor}}
+\usepackage{{multicol}}
 \usetikzlibrary{{calc,arrows.meta}}
+\setlength{{\parindent}}{{0pt}}
+\setlength{{\parskip}}{{0.3em}}
 
-% Vector notation: \vv{{F}} produces F with arrow over it
+% Vector notation
 \newcommand{{\vv}}[1]{{\vec{{#1}}}}
-% Magnitude notation: \magn{{F}} produces |F| with fixed-height bars
 \newcommand{{\magn}}[1]{{|#1|}}
 
 % TikZ styles for vector diagrams
@@ -480,16 +521,392 @@ class LaTeXRenderer:
 \colorlet{{vec_fr}}{{green!60!black}}
 \colorlet{{vec_translated}}{{gray!60}}
 \tikzset{{
-    vector/.style={{-{{Stealth[length=3mm,width=2mm]}},very thick}},
-    vector_translated/.style={{-{{Stealth[length=2mm,width=1.5mm]}},dashed,thin}},
+    vector/.style={{-{{Stealth[length=2.5mm,width=1.5mm]}},thick}},
+    vector_translated/.style={{-{{Stealth[length=1.5mm,width=1mm]}},dashed,thin}},
 }}
 
-\title{{Engineering Calculation Report: {data.problem_name}}}
-\date{{{{{{GENERATED_DATE}}}}}}
-
 \begin{{document}}
-\maketitle
+\begin{{center}}
+\textbf{{\large Engineering Calculation Report: {data.problem_name}}}\\[0.3em]
+\small Generated: {{{{GENERATED_DATE}}}}
+\end{{center}}
+\vspace{{-0.5em}}
+\hrule
+\vspace{{0.5em}}
 """
+
+    def _get_diagram_geometry(self, data: ReportData) -> dict | None:
+        """Extract common geometry data for diagrams."""
+        if data.diagram is None or not data.diagram.is_valid:
+            return None
+
+        vertices = data.diagram.vertices
+        vectors = data.diagram.vectors
+        scale = data.diagram.scale
+
+        # Find vertices by name
+        v_dict = {v.name: v for v in vertices}
+        A = v_dict.get("A")
+        B = v_dict.get("B")
+        C = v_dict.get("C")
+        D = v_dict.get("D")
+
+        if A is None or B is None or C is None or D is None:
+            return None
+
+        # Scale coordinates for display
+        def sc(v: DiagramVertex) -> tuple[float, float]:
+            return (v.x * scale, v.y * scale)
+
+        ax, ay = sc(A)
+        bx, by = sc(B)
+        cx, cy = sc(C)
+        dx, dy = sc(D)
+
+        # Get vector names for labels
+        f1_name = B.vector_name or "F_1"
+        f2_name = C.vector_name or "F_2"
+        fr_name = D.vector_name or "F_R"
+
+        # Format names for LaTeX
+        f1_label = latex_name(f1_name)
+        f2_label = latex_name(f2_name)
+        fr_label = latex_name(fr_name)
+
+        # Find vector data by name for magnitude/angle labels
+        vec_dict = {v.name: v for v in vectors}
+        f1_vec = vec_dict.get(f1_name)
+        f2_vec = vec_dict.get(f2_name)
+        fr_vec = vec_dict.get(fr_name)
+
+        # Compute axis length to match the longest vector
+        import math
+        f1_len = math.sqrt(bx**2 + by**2)
+        f2_len = math.sqrt(cx**2 + cy**2)
+        fr_len = math.sqrt(dx**2 + dy**2)
+        max_vec_len = max(f1_len, f2_len, fr_len, 1.0)
+        axis_len = max_vec_len
+
+        return {
+            "ax": ax, "ay": ay,
+            "bx": bx, "by": by,
+            "cx": cx, "cy": cy,
+            "dx": dx, "dy": dy,
+            "f1_name": f1_name, "f2_name": f2_name, "fr_name": fr_name,
+            "f1_label": f1_label, "f2_label": f2_label, "fr_label": fr_label,
+            "f1_vec": f1_vec, "f2_vec": f2_vec, "fr_vec": fr_vec,
+            "axis_len": axis_len,
+        }
+
+    def _render_problem_setup_diagram(self, data: ReportData) -> str:
+        """Render the Problem Setup diagram with parallelogram."""
+        geom = self._get_diagram_geometry(data)
+        if geom is None:
+            return ""
+
+        ax, ay = geom["ax"], geom["ay"]
+        bx, by = geom["bx"], geom["by"]
+        cx, cy = geom["cx"], geom["cy"]
+        dx, dy = geom["dx"], geom["dy"]
+        f1_label = geom["f1_label"]
+        f2_label = geom["f2_label"]
+        f1_vec = geom["f1_vec"]
+        f2_vec = geom["f2_vec"]
+        axis_len = geom["axis_len"]
+
+        import math
+
+        # Build magnitude labels
+        def mag_label(vec: DiagramVector | None) -> str:
+            if vec is None:
+                return ""
+            return f"{vec.magnitude:.0f}\\,\\text{{{vec.unit}}}"
+
+        f1_mag = mag_label(f1_vec)
+        f2_mag = mag_label(f2_vec)
+
+        # Calculate reference axis directions for angle arcs
+        def get_ref_axis_angle(wrt: str) -> float:
+            ref_angles = {"+x": 0, "-x": 180, "+y": 90, "-y": 270}
+            return ref_angles.get(wrt, 0)
+
+        def get_label_anchor_for_angle(mid_angle: float) -> str:
+            mid_angle = mid_angle % 360
+            if 315 <= mid_angle or mid_angle < 45:
+                return "west"
+            elif 45 <= mid_angle < 135:
+                return "south"
+            elif 135 <= mid_angle < 225:
+                return "east"
+            else:
+                return "north"
+
+        # Build angle arcs for F1 and F2
+        angle_arcs = []
+        arc_radius_base = axis_len * 0.5
+
+        if f1_vec is not None:
+            ref_angle = get_ref_axis_angle(f1_vec.angle_wrt)
+            if abs(f1_vec.angle_ref) > 0.5:
+                arc_start = ref_angle
+                arc_end = f1_vec.angle_deg
+                arc_radius = arc_radius_base * 0.7
+                mid_angle = (arc_start + arc_end) / 2
+                label_r = arc_radius + 0.35
+                label_x = ax + label_r * math.cos(math.radians(mid_angle))
+                label_y = ay + label_r * math.sin(math.radians(mid_angle))
+                label_anchor = get_label_anchor_for_angle(mid_angle)
+                angle_arcs.append(
+                    rf"  \draw[vec_f1,thin] ({ax:.3f},{ay:.3f}) ++({arc_start}:{arc_radius:.3f}) "
+                    rf"arc ({arc_start}:{arc_end}:{arc_radius:.3f});"
+                )
+                angle_arcs.append(
+                    rf"  \node[vec_f1,anchor={label_anchor}] at ({label_x:.3f},{label_y:.3f}) {{${f1_vec.angle_ref:.0f}^\circ$}};"
+                )
+
+        if f2_vec is not None:
+            ref_angle = get_ref_axis_angle(f2_vec.angle_wrt)
+            if abs(f2_vec.angle_ref) > 0.5:
+                arc_start = ref_angle
+                arc_end = f2_vec.angle_deg
+                arc_radius = arc_radius_base * 1.0
+                mid_angle = (arc_start + arc_end) / 2
+                label_r = arc_radius + 0.35
+                label_x = ax + label_r * math.cos(math.radians(mid_angle))
+                label_y = ay + label_r * math.sin(math.radians(mid_angle))
+                label_anchor = get_label_anchor_for_angle(mid_angle)
+                angle_arcs.append(
+                    rf"  \draw[vec_f2,thin] ({ax:.3f},{ay:.3f}) ++({arc_start}:{arc_radius:.3f}) "
+                    rf"arc ({arc_start}:{arc_end}:{arc_radius:.3f});"
+                )
+                angle_arcs.append(
+                    rf"  \node[vec_f2,anchor={label_anchor}] at ({label_x:.3f},{label_y:.3f}) {{${f2_vec.angle_ref:.0f}^\circ$}};"
+                )
+
+        angle_arcs_str = "\n".join(angle_arcs) if angle_arcs else "  % No angle arcs"
+
+        # Smart label positioning
+        def get_vector_label_position(angle_deg: float) -> str:
+            angle = angle_deg % 360
+            if 0 <= angle < 90:
+                return "below right"
+            elif 90 <= angle < 180:
+                return "below left"
+            elif 180 <= angle < 270:
+                return "above left"
+            else:
+                return "above right"
+
+        f1_pos = get_vector_label_position(f1_vec.angle_deg) if f1_vec else "below right"
+        f2_pos = get_vector_label_position(f2_vec.angle_deg) if f2_vec else "above left"
+
+        diag_scale = 0.55
+
+        # Draw Problem Setup with parallelogram completion (translated vectors shown)
+        # baseline=(current bounding box.north) aligns the top of the diagram with surrounding text
+        return rf"""
+\begin{{tikzpicture}}[scale={diag_scale},baseline=(current bounding box.north)]
+  \coordinate (A) at ({ax:.3f},{ay:.3f});
+  \coordinate (B) at ({bx:.3f},{by:.3f});
+  \coordinate (C) at ({cx:.3f},{cy:.3f});
+  \coordinate (D) at ({dx:.3f},{dy:.3f});
+  \draw[->,gray] ({ax:.3f},{ay:.3f}) -- ({ax + axis_len:.3f},{ay:.3f}) node[right] {{$+x$}};
+  \draw[->,gray] ({ax:.3f},{ay:.3f}) -- ({ax - axis_len:.3f},{ay:.3f}) node[left] {{$-x$}};
+  \draw[->,gray] ({ax:.3f},{ay:.3f}) -- ({ax:.3f},{ay + axis_len:.3f}) node[above] {{$+y$}};
+  \draw[->,gray] ({ax:.3f},{ay:.3f}) -- ({ax:.3f},{ay - axis_len:.3f}) node[below] {{$-y$}};
+  % Draw parallelogram sides (translated vectors - dashed)
+  \draw[vector_translated,vec_translated] (B) -- (D);
+  \draw[vector_translated,vec_translated] (C) -- (D);
+  % Draw main vectors
+  \draw[vector,vec_f1] (A) -- (B) node[{f1_pos},pos=1] {{$\vv{{{f1_label}}} = {f1_mag}$}};
+  \draw[vector,vec_f2] (A) -- (C) node[{f2_pos},pos=1] {{$\vv{{{f2_label}}} = {f2_mag}$}};
+{angle_arcs_str}
+  \fill (A) circle (2pt) node[below left] {{$O$}};
+\end{{tikzpicture}}"""
+
+    def _render_variables_table(self, data: ReportData) -> str:
+        """Render compact variables table (known and unknown)."""
+        rows = []
+        for v in data.known_vectors:
+            name_latex = self._format_vec_name(v.name)
+            rows.append(f"{name_latex} & {v.mag} & {v.angle} & {v.ref} \\\\")
+
+        if data.unknown_vectors:
+            rows.append("\\midrule")
+            for v in data.unknown_vectors:
+                name_latex = self._format_vec_name(v.name)
+                rows.append(f"{name_latex} & {v.mag} & {v.angle} & {v.ref} \\\\")
+
+        # Table only - centering handled by parent minipage
+        return rf"""\begin{{tabular}}{{lSSl}}
+\toprule
+Vector & {{$\magn{{\vv{{F}}}}$ ({data.unit})}} & {{$\theta$ (deg)}} & Ref \\
+\midrule
+{chr(10).join(rows)}
+\bottomrule
+\end{{tabular}}"""
+
+    def _render_force_triangle_diagram(self, data: ReportData) -> str:
+        """Render the Force Triangle diagram with interior angles."""
+        geom = self._get_diagram_geometry(data)
+        if geom is None:
+            return ""
+
+        ax, ay = geom["ax"], geom["ay"]
+        bx, by = geom["bx"], geom["by"]
+        cx, cy = geom["cx"], geom["cy"]
+        dx, dy = geom["dx"], geom["dy"]
+        f1_label = geom["f1_label"]
+        f2_label = geom["f2_label"]
+        fr_label = geom["fr_label"]
+        f1_vec = geom["f1_vec"]
+        f2_vec = geom["f2_vec"]
+        fr_vec = geom["fr_vec"]
+        axis_len = geom["axis_len"]
+
+        import math
+
+        def mag_label(vec: DiagramVector | None) -> str:
+            if vec is None:
+                return ""
+            return f"{vec.magnitude:.0f}\\,\\text{{{vec.unit}}}"
+
+        fr_mag = mag_label(fr_vec)
+
+        # Vector label positions - place at tip of vector, away from other elements
+        # F1 is in Q1 (60°), F2 is in Q3 (195°), FR is in Q2 (155°)
+        f1_angle = f1_vec.angle_deg if f1_vec else 60
+        f2_angle = f2_vec.angle_deg if f2_vec else 195
+        fr_angle = fr_vec.angle_deg if fr_vec else 155
+
+        # Position labels perpendicular to vector, on the "outside" of the triangle
+        # F1 (60°): label goes below-right (away from F_R)
+        f1_pos = "below right"
+        # F2 (195°): label goes above-left (away from triangle interior)
+        f2_pos = "above left"
+        # F_R (155°): label goes above-right to avoid F2 label
+        fr_pos = "above right"
+
+        # Build interior angle arcs
+        triangle_angle_arcs = []
+
+        # Get interior angles (diagram is guaranteed non-None since geometry check passed)
+        diagram = data.diagram
+        assert diagram is not None  # Type guard
+        interior_angles = diagram.interior_angles
+        angle_at_origin = interior_angles[0].value_deg if len(interior_angles) > 0 else 0
+        angle_at_f1_tip = interior_angles[1].value_deg if len(interior_angles) > 1 else 0
+        angle_at_fr_tip = interior_angles[2].value_deg if len(interior_angles) > 2 else 0
+
+        def get_arc_angles(start_angle: float, end_angle: float) -> tuple[float, float]:
+            start = start_angle % 360
+            end = end_angle % 360
+            ccw_sweep = (end - start) % 360
+            if ccw_sweep == 0:
+                ccw_sweep = 360
+            cw_sweep = 360 - ccw_sweep
+            if ccw_sweep <= cw_sweep:
+                if end < start:
+                    end += 360
+                return start, end
+            else:
+                if start < end:
+                    start += 360
+                return end, start
+
+        # Draw small interior angle arcs with labels positioned to avoid overlap
+        # Use small arc radius and place labels at fixed offset from arc
+
+        arc_r_small = 0.6  # Small arc radius
+
+        # Arc at origin (A): angle between F1 and FR
+        if angle_at_origin > 0:
+            f1_angle = f1_vec.angle_deg if f1_vec else 0
+            fr_angle = fr_vec.angle_deg if fr_vec else 0
+            arc_start, arc_end = get_arc_angles(f1_angle, fr_angle)
+            arc_mid = (arc_start + arc_end) / 2
+            # Place label along the bisector, outside the arc
+            label_x = ax + (arc_r_small + 0.5) * math.cos(math.radians(arc_mid))
+            label_y = ay + (arc_r_small + 0.5) * math.sin(math.radians(arc_mid))
+            triangle_angle_arcs.append(
+                rf"  \draw[orange,thick] ({ax:.3f},{ay:.3f}) ++({arc_start:.1f}:{arc_r_small:.3f}) "
+                rf"arc ({arc_start:.1f}:{arc_end:.1f}:{arc_r_small:.3f});"
+            )
+            triangle_angle_arcs.append(
+                rf"  \node[orange,font=\footnotesize] at ({label_x:.3f},{label_y:.3f}) {{${angle_at_origin:.0f}^\circ$}};"
+            )
+
+        # Arc at B (F1 tip): angle between incoming F1 and outgoing to D
+        if angle_at_f1_tip > 0:
+            f1_incoming = ((f1_vec.angle_deg if f1_vec else 0) + 180) % 360
+            bd_angle = math.degrees(math.atan2(dy - by, dx - bx)) % 360
+            arc_start, arc_end = get_arc_angles(f1_incoming, bd_angle)
+            arc_mid = (arc_start + arc_end) / 2
+            label_x = bx + (arc_r_small + 0.5) * math.cos(math.radians(arc_mid))
+            label_y = by + (arc_r_small + 0.5) * math.sin(math.radians(arc_mid))
+            triangle_angle_arcs.append(
+                rf"  \draw[purple,thick] ({bx:.3f},{by:.3f}) ++({arc_start:.1f}:{arc_r_small:.3f}) "
+                rf"arc ({arc_start:.1f}:{arc_end:.1f}:{arc_r_small:.3f});"
+            )
+            triangle_angle_arcs.append(
+                rf"  \node[purple,font=\footnotesize] at ({label_x:.3f},{label_y:.3f}) {{${angle_at_f1_tip:.0f}^\circ$}};"
+            )
+
+        # Arc at D (FR tip): angle at the apex
+        if angle_at_fr_tip > 0:
+            # Angle between line from B to D and line from D back toward origin (along -FR)
+            bd_angle = math.degrees(math.atan2(by - dy, bx - dx)) % 360  # D to B direction
+            fr_back = ((fr_vec.angle_deg if fr_vec else 0) + 180) % 360  # D back to origin
+            arc_start, arc_end = get_arc_angles(bd_angle, fr_back)
+            arc_mid = (arc_start + arc_end) / 2
+            label_x = dx + (arc_r_small + 0.5) * math.cos(math.radians(arc_mid))
+            label_y = dy + (arc_r_small + 0.5) * math.sin(math.radians(arc_mid))
+            triangle_angle_arcs.append(
+                rf"  \draw[cyan,thick] ({dx:.3f},{dy:.3f}) ++({arc_start:.1f}:{arc_r_small:.3f}) "
+                rf"arc ({arc_start:.1f}:{arc_end:.1f}:{arc_r_small:.3f});"
+            )
+            triangle_angle_arcs.append(
+                rf"  \node[cyan,font=\footnotesize] at ({label_x:.3f},{label_y:.3f}) {{${angle_at_fr_tip:.0f}^\circ$}};"
+            )
+
+        triangle_angle_arcs_str = "\n".join(triangle_angle_arcs) if triangle_angle_arcs else "  % No interior angles"
+
+        diag_scale = 0.55
+
+        # baseline=(current bounding box.north) aligns the top of the diagram with surrounding text
+        return rf"""
+\begin{{tikzpicture}}[scale={diag_scale},baseline=(current bounding box.north)]
+  \coordinate (A) at ({ax:.3f},{ay:.3f});
+  \coordinate (B) at ({bx:.3f},{by:.3f});
+  \coordinate (C) at ({cx:.3f},{cy:.3f});
+  \coordinate (D) at ({dx:.3f},{dy:.3f});
+  \draw[->,gray] ({ax:.3f},{ay:.3f}) -- ({ax + axis_len:.3f},{ay:.3f}) node[right] {{$+x$}};
+  \draw[->,gray] ({ax:.3f},{ay:.3f}) -- ({ax - axis_len:.3f},{ay:.3f}) node[left] {{$-x$}};
+  \draw[->,gray] ({ax:.3f},{ay:.3f}) -- ({ax:.3f},{ay + axis_len:.3f}) node[above] {{$+y$}};
+  \draw[->,gray] ({ax:.3f},{ay:.3f}) -- ({ax:.3f},{ay - axis_len:.3f}) node[below] {{$-y$}};
+  \draw[vector_translated,vec_translated] (B) -- (D);
+  \draw[vector_translated,vec_translated] (C) -- (D);
+  \draw[vector,vec_f1] (A) -- (B) node[{f1_pos},pos=1] {{$\vv{{{f1_label}}}$}};
+  \draw[vector,vec_f2] (A) -- (C) node[{f2_pos},pos=1] {{$\vv{{{f2_label}}}$}};
+  \draw[vector,vec_fr] (A) -- (D) node[{fr_pos},pos=1] {{$\vv{{{fr_label}}} = {fr_mag}$}};
+{triangle_angle_arcs_str}
+  \fill (A) circle (2pt) node[below left] {{$O$}};
+\end{{tikzpicture}}"""
+
+    def _render_results_table(self, data: ReportData) -> str:
+        """Render compact results table, centered."""
+        rows = []
+        for v in data.result_vectors:
+            name_latex = self._format_vec_name(v.name)
+            rows.append(f"{name_latex} & {v.mag} & {v.angle} & {v.ref} \\\\")
+
+        return rf"""\begin{{tabular}}{{lSSl}}
+\toprule
+Vector & {{$\magn{{\vv{{F}}}}$ ({data.unit})}} & {{$\theta$ (deg)}} & Ref \\
+\midrule
+{chr(10).join(rows)}
+\bottomrule
+\end{{tabular}}"""
 
     def _render_diagram_section(self, data: ReportData) -> str:
         """Render the vector diagrams section using TikZ.
@@ -655,37 +1072,6 @@ class LaTeXRenderer:
         f1_pos = get_vector_label_position(f1_vec.angle_deg, at_tip=True) if f1_vec else "below right"
         f2_pos = get_vector_label_position(f2_vec.angle_deg, at_tip=True) if f2_vec else "above left"
 
-        # DIAGRAM 1: Problem Setup
-        diagram1 = rf"""
-\subsection*{{Problem Setup}}
-
-\begin{{center}}
-\begin{{tikzpicture}}[scale=1]
-  % Define coordinates
-  \coordinate (A) at ({ax:.3f},{ay:.3f});
-  \coordinate (B) at ({bx:.3f},{by:.3f});
-  \coordinate (C) at ({cx:.3f},{cy:.3f});
-  \coordinate (D) at ({dx:.3f},{dy:.3f});
-
-  % Draw all four coordinate axes (as long as the longest vector)
-  \draw[->,gray] ({ax:.3f},{ay:.3f}) -- ({ax + axis_len:.3f},{ay:.3f}) node[right] {{$+x$}};
-  \draw[->,gray] ({ax:.3f},{ay:.3f}) -- ({ax - axis_len:.3f},{ay:.3f}) node[left] {{$-x$}};
-  \draw[->,gray] ({ax:.3f},{ay:.3f}) -- ({ax:.3f},{ay + axis_len:.3f}) node[above] {{$+y$}};
-  \draw[->,gray] ({ax:.3f},{ay:.3f}) -- ({ax:.3f},{ay - axis_len:.3f}) node[below] {{$-y$}};
-
-  % Draw main vectors with arrows and magnitude labels (at tip)
-  \draw[vector,vec_f1] (A) -- (B) node[{f1_pos},pos=1] {{$\vv{{{f1_label}}} = {f1_mag}$}};
-  \draw[vector,vec_f2] (A) -- (C) node[{f2_pos},pos=1] {{$\vv{{{f2_label}}} = {f2_mag}$}};
-
-  % Draw angle arcs (from reference axis to vector)
-{angle_arcs_str}
-
-  % Draw origin point
-  \fill (A) circle (2pt) node[below left] {{$O$}};
-\end{{tikzpicture}}
-\end{{center}}
-"""
-
         # DIAGRAM 2: Force Triangle (Parallelogram with solution)
         # Compute smart label positions for vectors in force triangle
         fr_pos = get_vector_label_position(fr_vec.angle_deg, at_tip=True) if fr_vec else "above right"
@@ -782,45 +1168,55 @@ class LaTeXRenderer:
 
         triangle_angle_arcs_str = "\n".join(triangle_angle_arcs) if triangle_angle_arcs else "  % No interior angles"
 
-        diagram2 = rf"""
-\subsection*{{Force Triangle (Parallelogram Law)}}
+        # Scale factor for side-by-side diagrams (0.55 of original)
+        diag_scale = 0.55
 
-\begin{{center}}
-\begin{{tikzpicture}}[scale=1]
-  % Define coordinates
+        diagram2 = rf"""
+\begin{{tikzpicture}}[scale={diag_scale}]
   \coordinate (A) at ({ax:.3f},{ay:.3f});
   \coordinate (B) at ({bx:.3f},{by:.3f});
   \coordinate (C) at ({cx:.3f},{cy:.3f});
   \coordinate (D) at ({dx:.3f},{dy:.3f});
-
-  % Draw all four coordinate axes (as long as the longest vector)
   \draw[->,gray] ({ax:.3f},{ay:.3f}) -- ({ax + axis_len:.3f},{ay:.3f}) node[right] {{$+x$}};
   \draw[->,gray] ({ax:.3f},{ay:.3f}) -- ({ax - axis_len:.3f},{ay:.3f}) node[left] {{$-x$}};
   \draw[->,gray] ({ax:.3f},{ay:.3f}) -- ({ax:.3f},{ay + axis_len:.3f}) node[above] {{$+y$}};
   \draw[->,gray] ({ax:.3f},{ay:.3f}) -- ({ax:.3f},{ay - axis_len:.3f}) node[below] {{$-y$}};
-
-  % Draw translated sides (parallelogram completion) - dashed
   \draw[vector_translated,vec_translated] (B) -- (D);
   \draw[vector_translated,vec_translated] (C) -- (D);
-
-  % Draw main vectors with arrows and magnitude labels (using smart positioning)
   \draw[vector,vec_f1] (A) -- (B) node[{f1_pos},pos=0.5] {{$\vv{{{f1_label}}}$}};
   \draw[vector,vec_f2] (A) -- (C) node[{f2_pos},pos=0.5] {{$\vv{{{f2_label}}}$}};
   \draw[vector,vec_fr] (A) -- (D) node[{fr_pos},pos=0.5] {{$\vv{{{fr_label}}} = {fr_mag}$}};
-
-  % Draw interior angle arcs at each vertex of the force triangle
 {triangle_angle_arcs_str}
-
-  % Draw origin point
   \fill (A) circle (2pt) node[below left] {{$O$}};
-\end{{tikzpicture}}
-\end{{center}}
-"""
+\end{{tikzpicture}}"""
+
+        # Reformat diagram1 for side-by-side layout
+        diagram1_compact = rf"""
+\begin{{tikzpicture}}[scale={diag_scale}]
+  \coordinate (A) at ({ax:.3f},{ay:.3f});
+  \coordinate (B) at ({bx:.3f},{by:.3f});
+  \coordinate (C) at ({cx:.3f},{cy:.3f});
+  \coordinate (D) at ({dx:.3f},{dy:.3f});
+  \draw[->,gray] ({ax:.3f},{ay:.3f}) -- ({ax + axis_len:.3f},{ay:.3f}) node[right] {{$+x$}};
+  \draw[->,gray] ({ax:.3f},{ay:.3f}) -- ({ax - axis_len:.3f},{ay:.3f}) node[left] {{$-x$}};
+  \draw[->,gray] ({ax:.3f},{ay:.3f}) -- ({ax:.3f},{ay + axis_len:.3f}) node[above] {{$+y$}};
+  \draw[->,gray] ({ax:.3f},{ay:.3f}) -- ({ax:.3f},{ay - axis_len:.3f}) node[below] {{$-y$}};
+  \draw[vector,vec_f1] (A) -- (B) node[{f1_pos},pos=1] {{$\vv{{{f1_label}}} = {f1_mag}$}};
+  \draw[vector,vec_f2] (A) -- (C) node[{f2_pos},pos=1] {{$\vv{{{f2_label}}} = {f2_mag}$}};
+{angle_arcs_str}
+  \fill (A) circle (2pt) node[below left] {{$O$}};
+\end{{tikzpicture}}"""
 
         return rf"""
-\section{{Vector Diagrams}}
-{diagram1}
+\textbf{{Vector Diagrams}}\\[0.3em]
+\begin{{center}}
+\begin{{tabular}}{{@{{}}c@{{\hspace{{1.5em}}}}c@{{}}}}
+\textbf{{\small Problem Setup}} & \textbf{{\small Force Triangle}} \\[0.3em]
+{diagram1_compact}
+&
 {diagram2}
+\end{{tabular}}
+\end{{center}}
 """
 
     def _render_vector_table(self, vectors: list[VectorRow], unit: str) -> str:
@@ -847,29 +1243,46 @@ Vector & {{$\magn{{\vv{{F}}}}$ ({unit})}} & {{$\theta$ (deg)}} & Reference \\
         return f"$\\vv{{{formatted_name}}}$"
 
     def _render_known_section(self, data: ReportData) -> str:
-        """Render known variables section."""
-        table = self._render_vector_table(data.known_vectors, data.unit)
-        return f"\n\\section{{Known Variables}}\n\n{table}"
+        """Render known and unknown variables in a compact combined format."""
+        # Build rows for known vectors
+        rows = []
+        for v in data.known_vectors:
+            name_latex = self._format_vec_name(v.name)
+            rows.append(f"{name_latex} & {v.mag} & {v.angle} & {v.ref} \\\\")
 
-    def _render_unknown_section(self, data: ReportData) -> str:
-        """Render unknown variables section."""
-        table = self._render_vector_table(data.unknown_vectors, data.unit)
-        return f"\n\\section{{Unknown Variables}}\n\n{table}"
+        # Add separator and unknown vectors
+        if data.unknown_vectors:
+            rows.append("\\midrule")
+            for v in data.unknown_vectors:
+                name_latex = self._format_vec_name(v.name)
+                rows.append(f"{name_latex} & {v.mag} & {v.angle} & {v.ref} \\\\")
+
+        table = rf"""\begin{{tabular}}{{lSSl}}
+\toprule
+Vector & {{$\magn{{\vv{{F}}}}$ ({data.unit})}} & {{$\theta$ (deg)}} & Ref \\
+\midrule
+{chr(10).join(rows)}
+\bottomrule
+\end{{tabular}}"""
+
+        return f"\n\\textbf{{Variables}} (Known / Unknown)\n\\begin{{center}}\n{table}\n\\end{{center}}"
+
+    def _render_unknown_section(self, data: ReportData) -> str:  # noqa: ARG002
+        """Render unknown variables section - now combined with known."""
+        # Combined with known section, return empty
+        return ""
 
     def _render_equations_section(self, data: ReportData) -> str:
-        """Render equations used section."""
+        """Render equations used section with each equation on its own line."""
         items = []
-        for eq in data.equations:
-            # Convert to LaTeX macros
+        for i, eq in enumerate(data.equations, 1):
             latex = self._convert_to_latex_macros(eq.latex)
-            items.append(f"\\item $\\displaystyle {latex}$")
+            items.append(f"\\hspace*{{1em}}({i}) $\\displaystyle {latex}$")
 
+        equations_str = "\\\\\n".join(items)
         return rf"""
-\section{{Equations Used}}
-
-\begin{{enumerate}}
-{chr(10).join(items)}
-\end{{enumerate}}
+\textbf{{\underline{{Equations Used}}}}\\[0.3em]
+{equations_str}
 """
 
     def _convert_to_latex_macros(self, eq: str) -> str:
@@ -883,16 +1296,11 @@ Vector & {{$\magn{{\vv{{F}}}}$ ({unit})}} & {{$\theta$ (deg)}} & Reference \\
         return result
 
     def _render_steps_section(self, data: ReportData) -> str:
-        """Render step-by-step solution section.
-
-        Each step is wrapped in a samepage environment to prevent page breaks
-        within a step. We also use needspace to ensure there's enough room
-        for at least the step header before starting.
-        """
+        """Render step-by-step solution section in compact format."""
         steps_latex = []
         for step in data.steps:
             target_latex = self._convert_to_latex_macros(step.target)
-            sub_latex = self._format_substitution(step.substitution)
+            sub_latex = self._format_substitution_compact(step.substitution)
 
             # Separate math part from suffix (using Eq N, with respect to, etc.)
             if " using Eq " in target_latex:
@@ -904,28 +1312,41 @@ Vector & {{$\magn{{\vv{{F}}}}$ ({unit})}} & {{$\theta$ (deg)}} & Reference \\
             else:
                 title_content = f"${target_latex}$"
 
-            # Wrap each step in samepage to prevent page breaks within a step.
-            # Use needspace to check if we have at least 4 baselineskips of space;
-            # if not, LaTeX will start a new page before this step.
             step_latex = rf"""
-\needspace{{4\baselineskip}}
-\begin{{samepage}}
-\vspace{{0.2em}}
-\noindent\hspace{{1em}}\textbf{{Step {step.number}: Solve for {title_content}}}
-\vspace{{0.1em}}
-
-\begin{{adjustwidth}}{{2em}}{{}}
-\vspace{{-0.8em}}
-\begin{{flalign*}}
-{sub_latex}
-\end{{flalign*}}
-\vspace{{-0.8em}}
-\end{{adjustwidth}}
-\end{{samepage}}
+\hspace*{{1em}}\textbf{{Step {step.number}:}} {title_content}\\
+\hspace*{{2em}}${sub_latex}$
 """
             steps_latex.append(step_latex)
 
-        return f"\n\\section{{Step-by-Step Solution}}\n{''.join(steps_latex)}"
+        steps_str = ''.join(steps_latex).lstrip('\n')
+        return f"\\textbf{{\\underline{{Solution}}}}\\\\[0.2em]\n{steps_str}"
+
+    def _format_substitution_compact(self, sub: str) -> str:
+        """Format substitution in compact single-line format."""
+        if not sub:
+            return ""
+
+        # Convert to LaTeX macros first
+        sub = self._convert_substitution_to_latex_macros(sub)
+
+        # Extract just the final result (last line with =)
+        lines = sub.strip().split("\n")
+        result_parts = []
+        for line in lines:
+            line = line.strip()
+            if line.endswith("\\\\"):
+                line = line[:-2].strip()
+            # Remove alignment markers (&=, &)
+            line = line.replace("&=", "=").replace("& =", "=").replace("&", "")
+            # Remove leading = (which comes from the alignment)
+            line = line.strip()
+            if line.startswith("="):
+                line = line[1:].strip()
+            if line:
+                result_parts.append(line.strip())
+
+        # Return as aligned equations on one line
+        return " = ".join(result_parts)
 
     def _format_substitution(self, sub: str) -> str:
         """Format substitution for flalign environment."""
@@ -993,38 +1414,33 @@ Vector & {{$\magn{{\vv{{F}}}}$ ({unit})}} & {{$\theta$ (deg)}} & Reference \\
 
     def _render_results_section(self, data: ReportData) -> str:
         """Render results summary section."""
-        table = self._render_vector_table(data.result_vectors, data.unit)
-        return f"\n\\section{{Summary of Results}}\n\n{table}"
+        rows = []
+        for v in data.result_vectors:
+            name_latex = self._format_vec_name(v.name)
+            rows.append(f"{name_latex} & {v.mag} & {v.angle} & {v.ref} \\\\")
+
+        table = rf"""\begin{{tabular}}{{lSSl}}
+\toprule
+Vector & {{$\magn{{\vv{{F}}}}$ ({data.unit})}} & {{$\theta$ (deg)}} & Ref \\
+\midrule
+{chr(10).join(rows)}
+\bottomrule
+\end{{tabular}}"""
+
+        return f"\n\\textbf{{Results}}\n\\begin{{center}}\n{table}\n\\end{{center}}"
 
     def _render_disclaimer(self) -> str:
-        """Render disclaimer section."""
+        """Render compact disclaimer section."""
         return r"""
-\section*{Disclaimer}
-\small
-While every effort has been made to ensure the accuracy and reliability of the calculations provided, we do not guarantee that the information is complete, up-to-date, or suitable for any specific purpose. Users must independently verify the results and assume full responsibility for any decisions or actions taken based on its output. Use of this calculator is entirely at your own risk, and we expressly disclaim any liability for errors or omissions in the information provided.
-
-\vspace{1em}
-\noindent\textbf{Report Details:}
-\begin{itemize}[nosep]
-\item \textbf{Generated Date:} {{GENERATED_DATE}}
-\item \textbf{Generated Using:} Qnty Library
-\item \textbf{Version:} Beta (Independent verification required for production use)
-\end{itemize}
-
-\vspace{1em}
-\noindent\textbf{Signatures:}
-\begin{longtable}{llll}
-\toprule
-Role & Name & Signature & Date \\
-\midrule
-Calculated By & \rule{3cm}{0.4pt} & \rule{3cm}{0.4pt} & \rule{2cm}{0.4pt} \\
-Reviewed By & \rule{3cm}{0.4pt} & \rule{3cm}{0.4pt} & \rule{2cm}{0.4pt} \\
-Approved By & \rule{3cm}{0.4pt} & \rule{3cm}{0.4pt} & \rule{2cm}{0.4pt} \\
-\bottomrule
-\end{longtable}
-
+\vspace{0.5em}
+\hrule
+\vspace{0.3em}
 \begin{center}
-\textit{Report generated using qnty library}
+\footnotesize
+\textbf{Signatures:} Calc. By: \rule{2cm}{0.4pt} \quad Rev. By: \rule{2cm}{0.4pt} \quad Appr. By: \rule{2cm}{0.4pt}
+\vspace{0.3em}
+
+\scriptsize\textit{Generated by Qnty Library (Beta). Independent verification required. Users assume full responsibility.}
 \end{center}
 \end{document}"""
 
