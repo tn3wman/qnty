@@ -596,10 +596,22 @@ class VectorDiagramBase:
         # Format label with LaTeX and magnitude
         formatted_label = self._format_vector_label(force, label)
 
-        # Add label near the tip
+        # Add label near the tip with quadrant-aware horizontal alignment
+        # For Quadrant 2 and 3 (90-270°), place label to the left with right alignment
+        # so the right edge of the text is near the vector tip
         label_offset = 0.5
         label_x = x_end + label_offset * math.cos(angle)
         label_y = y_end + label_offset * math.sin(angle)
+
+        # Determine horizontal alignment based on vector direction
+        angle_deg = math.degrees(angle) % 360
+        if 90 < angle_deg < 270:
+            # Vector points left (Quadrant 2 or 3) - align text right edge near tip
+            h_align = "right"
+        else:
+            # Vector points right (Quadrant 1 or 4) - align text left edge near tip
+            h_align = "left"
+
         ax.text(
             label_x,
             label_y,
@@ -607,7 +619,7 @@ class VectorDiagramBase:
             fontsize=11,
             fontweight="bold",
             color=color,
-            ha="center",
+            ha=h_align,
             va="center",
             bbox={"boxstyle": "round,pad=0.4", "facecolor": "white", "edgecolor": color, "linewidth": 2, "alpha": 0.9},
         )
@@ -653,10 +665,22 @@ class VectorDiagramBase:
         # Format label with LaTeX and magnitude
         formatted_label = self._format_vector_label(force, label)
 
-        # Add label near the tip
+        # Add label near the tip with quadrant-aware horizontal alignment
+        # For Quadrant 2 and 3 (90-270°), place label to the left with right alignment
+        # so the right edge of the text is near the vector tip
         label_offset = 0.6
         label_x = x_end + label_offset * math.cos(angle)
         label_y = y_end + label_offset * math.sin(angle)
+
+        # Determine horizontal alignment based on vector direction
+        angle_deg = math.degrees(angle) % 360
+        if 90 < angle_deg < 270:
+            # Vector points left (Quadrant 2 or 3) - align text right edge near tip
+            h_align = "right"
+        else:
+            # Vector points right (Quadrant 1 or 4) - align text left edge near tip
+            h_align = "left"
+
         ax.text(
             label_x,
             label_y,
@@ -664,7 +688,7 @@ class VectorDiagramBase:
             fontsize=12,
             fontweight="bold",
             color=color,
-            ha="center",
+            ha=h_align,
             va="center",
             bbox={"boxstyle": "round,pad=0.5", "facecolor": "white", "edgecolor": color, "linewidth": 2.5, "alpha": 0.95},
         )

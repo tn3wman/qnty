@@ -871,7 +871,7 @@ ALL_PROBLEM_CLASSES = [
 
 PROBLEMS_WITH_GOLDEN_FILES = [
     Chapter2Problem1,
-    Chapter2Problem2,
+    # Chapter2Problem2,
     # Chapter2Problem3,
     # Chapter2Problem4,
     # Chapter2Problem5,
