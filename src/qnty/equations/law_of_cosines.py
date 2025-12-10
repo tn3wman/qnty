@@ -155,3 +155,126 @@ class LawOfCosines:
         )
 
         return result, step.build()
+
+
+class LawOfCosinesForAngle:
+    """
+    Law of Cosines equation for finding an angle: C = arccos((a² + b² - c²) / (2·a·b))
+
+    This is the inverse form used when all three sides are known and we need to find
+    the included angle between sides a and b (opposite to side c).
+    """
+
+    def __init__(
+        self,
+        side_a: Quantity,
+        side_b: Quantity,
+        side_c: Quantity,
+        side_a_name: str,
+        side_b_name: str,
+        equation_number: int = 1,
+        description: str = "",
+    ):
+        """
+        Initialize Law of Cosines for finding an angle.
+
+        The angle found is the one opposite to side_c (i.e., between sides a and b).
+
+        Args:
+            side_a: First side as a Quantity with magnitude value
+            side_b: Second side as a Quantity with magnitude value
+            side_c: Opposite side as a Quantity with magnitude value
+            side_a_name: Name of side a vector (e.g., "F_1")
+            side_b_name: Name of side b vector (e.g., "F_2")
+            equation_number: Equation number for reference (default 1)
+            description: Description for the step
+        """
+        self.side_a = side_a
+        self.side_b = side_b
+        self.side_c = side_c
+        self.side_a_name = side_a_name
+        self.side_b_name = side_b_name
+        self.equation_number = equation_number
+        self.description = description or "Calculate interior angle using Law of Cosines"
+
+        # Generate the target string with angle notation
+        self.target = f"{angle_notation(side_a_name, side_b_name)} using Eq {equation_number}"
+
+    def equation_for_list(self) -> str:
+        """Return the equation string for the 'Equations Used' section with proper LaTeX."""
+        side_a_latex = latex_name(self.side_a_name)
+        side_b_latex = latex_name(self.side_b_name)
+
+        # Sort sides alphanumerically for consistent output
+        if side_a_latex > side_b_latex:
+            side_a_latex, side_b_latex = side_b_latex, side_a_latex
+
+        angle_str = angle_notation(self.side_a_name, self.side_b_name)
+        return (
+            f"\\cos({angle_str}) = \\frac{{|\\vec{{{side_a_latex}}}|^2 + |\\vec{{{side_b_latex}}}|^2 - c^2}}"
+            f"{{2 \\cdot |\\vec{{{side_a_latex}}}| \\cdot |\\vec{{{side_b_latex}}}|}}"
+        )
+
+    def solve(self) -> tuple[Quantity, dict]:
+        """
+        Solve for the unknown angle using Law of Cosines.
+
+        Returns:
+            Tuple of (angle_quantity_in_degrees, solution_step_dict)
+        """
+        import math
+
+        from ..algebra.functions import acos
+        from ..core.quantity import Q, Quantity
+
+        # Get absolute values of sides (side lengths are always positive)
+        a = abs(self.side_a.magnitude())
+        b = abs(self.side_b.magnitude())
+        c = abs(self.side_c.magnitude())
+
+        # Law of Cosines inverse: cos(C) = (a² + b² - c²) / (2·a·b)
+        cos_C = (a**2 + b**2 - c**2) / (2 * a * b)
+
+        # Clamp to [-1, 1] to handle numerical errors
+        cos_C = max(-1.0, min(1.0, cos_C))
+
+        # arccos returns angle in radians
+        angle_rad = math.acos(cos_C)
+        angle_deg = math.degrees(angle_rad)
+
+        # Create result as a Quantity in degrees
+        result = Q(angle_deg, "degree")
+        result.name = angle_notation(self.side_a_name, self.side_b_name)
+
+        # Get display values for step formatting
+        unit_sym = self.side_a.preferred.symbol if self.side_a.preferred else "N"
+        side_a_latex = f"{a:.1f}\\,\\text{{{unit_sym}}}"
+        side_b_latex = f"{b:.1f}\\,\\text{{{unit_sym}}}"
+        side_c_latex = f"{c:.1f}\\,\\text{{{unit_sym}}}"
+
+        # Sort sides alphanumerically for consistent output
+        side_a_name = latex_name(self.side_a_name)
+        side_b_name = latex_name(self.side_b_name)
+        if side_a_name > side_b_name:
+            side_a_latex, side_b_latex = side_b_latex, side_a_latex
+
+        angle_str = angle_notation(self.side_a_name, self.side_b_name)
+
+        substitution = (
+            f"\\cos({angle_str}) &= \\frac{{({side_a_latex})^2 + ({side_b_latex})^2 - ({side_c_latex})^2}}"
+            f"{{2({side_a_latex})({side_b_latex})}} \\\\\n"
+            f"&= \\frac{{{a**2:.1f} + {b**2:.1f} - {c**2:.1f}}}{{{2*a*b:.1f}}} \\\\\n"
+            f"&= {cos_C:.4f} \\\\\n"
+            f"{angle_str} &= \\arccos({cos_C:.4f}) \\\\\n"
+            f"&= {format_angle(result, precision=2)} \\\\"
+        )
+
+        step = SolutionStepBuilder(
+            target=self.target,
+            method="Law of Cosines (Angle)",
+            description=self.description,
+            equation_for_list=self.equation_for_list(),
+            substitution=substitution,
+        )
+
+        return result, step.build()

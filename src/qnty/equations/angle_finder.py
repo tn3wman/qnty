@@ -120,7 +120,11 @@ def angles_are_equivalent(angle1: Quantity, angle2: Quantity, rtol: float = 0.01
     return False
 
 
-def get_absolute_angle(vec: Vector | VectorUnknown) -> Quantity:
+def get_absolute_angle(
+    vec: Vector | VectorUnknown,
+    context: dict | None = None,
+    _visited: set | None = None,
+) -> Quantity:
     """
     Get the absolute angle from the coordinate system's primary axis.
 
@@ -130,6 +134,7 @@ def get_absolute_angle(vec: Vector | VectorUnknown) -> Quantity:
     where reference_angle is either:
         - axis_angle(wrt) if wrt is an axis string (e.g., "+x", "-y")
         - get_absolute_angle(wrt) if wrt is another Vector (recursive)
+        - get_absolute_angle(context[wrt]) if wrt is a string name and context is provided
 
     If the vector has `_wrt_at_junction=True` and `wrt` is a Vector, the reference
     angle is the reversed direction of the wrt vector (i.e., wrt_angle + 180°).
@@ -138,39 +143,70 @@ def get_absolute_angle(vec: Vector | VectorUnknown) -> Quantity:
 
     Args:
         vec: Vector with angle, wrt, and coordinate_system attributes
+        context: Optional dictionary mapping vector names to Vector objects.
+            Used to resolve string name references like wrt="F_2".
+        _visited: Internal set to track visited vectors for circular reference detection.
 
     Returns:
         Absolute angle as a Quantity
 
     Raises:
-        ValueError: If the vector's angle is unknown (ellipsis)
+        ValueError: If the vector's angle is unknown (ellipsis) or if circular references detected
     """
     from ..core import Q
     from ..linalg.vector2 import Vector as VectorClass
+
+    # Track visited vectors to detect circular references
+    if _visited is None:
+        _visited = set()
+
+    vec_id = id(vec)
+    if vec_id in _visited:
+        # Circular reference detected - cannot compute absolute angle
+        # Fall back to the coordinate system's axis for the wrt
+        # This handles cases like F_1 wrt F_2 and F_2 wrt F_1
+        raise ValueError(
+            f"Circular reference detected when computing absolute angle for vector '{vec.name}'. "
+            "Cannot resolve wrt references that form a cycle."
+        )
+    _visited.add(vec_id)
 
     # Check that the angle is known (not ellipsis)
     angle = vec.angle
     if angle is ...:
         raise ValueError("Cannot compute absolute angle for vector with unknown angle")
 
+    from ..linalg.vector2 import VectorUnknown
+
     # Get the reference angle based on wrt type
-    if isinstance(vec.wrt, VectorClass):
-        # wrt is a Vector reference - recursively get its absolute angle
-        reference_angle = get_absolute_angle(vec.wrt)
+    wrt = vec.wrt
+    # Check if wrt is a Vector/VectorUnknown with a known angle
+    wrt_has_known_angle = isinstance(wrt, (VectorClass, VectorUnknown)) and wrt.angle is not ...
+    if wrt_has_known_angle:
+        # wrt is a Vector or VectorUnknown reference with known angle - recursively get its absolute angle
+        reference_angle = get_absolute_angle(wrt, context, _visited)
         # If _wrt_at_junction is True, add 180° to get the reversed direction at the junction.
         # However, if the reference vector has negative magnitude, its effective direction
         # is already opposite to its stored angle, so we need to account for that.
         if getattr(vec, "_wrt_at_junction", False):
             # Get the reference vector's magnitude to check its sign
-            ref_mag = vec.wrt.magnitude.magnitude() if hasattr(vec.wrt.magnitude, "magnitude") else vec.wrt.magnitude
+            ref_mag = wrt.magnitude.magnitude() if hasattr(wrt.magnitude, "magnitude") else wrt.magnitude
             if ref_mag >= 0:
                 # Positive magnitude: add 180° for junction reversal
                 reference_angle = reference_angle + Q(180, "degree")
             # For negative magnitude: the stored angle is already the "reversed" effective direction
             # so we don't add 180° - the junction reference is just the stored angle
+    elif isinstance(wrt, str) and context is not None and wrt in context:
+        # wrt is a string name that can be resolved via context
+        ref_vec = context[wrt]
+        if isinstance(ref_vec, VectorClass):
+            reference_angle = get_absolute_angle(ref_vec, context, _visited)
+            # String name references don't use junction reversal
+        else:
+            raise ValueError(f"Context reference '{wrt}' is not a Vector: {type(ref_vec)}")
     else:
         # wrt is an axis string - get the angle of that axis from the coordinate system
-        reference_angle = vec.coordinate_system.get_axis_angle(vec.wrt)
+        reference_angle = vec.coordinate_system.get_axis_angle(wrt)
 
     # Add the vector's angle to the reference to get absolute angle
     return reference_angle + angle
@@ -254,16 +290,24 @@ def get_relative_angle(
     """
     from ..geometry.triangle import _get_angle_constants
     from ..linalg.vector2 import Vector as VectorClass
+    from ..linalg.vector2 import VectorUnknown
 
     zero, half_rotation, full_rotation = _get_angle_constants()
 
     # Get the reference angle based on wrt type
-    if isinstance(wrt, VectorClass):
-        # wrt is a Vector reference - get its absolute angle
+    # Check if wrt is a Vector/VectorUnknown with a known angle
+    wrt_has_known_angle = isinstance(wrt, (VectorClass, VectorUnknown)) and wrt.angle is not ...
+    if wrt_has_known_angle:
+        # wrt is a Vector or VectorUnknown reference with known angle - get its absolute angle
         reference_angle = get_absolute_angle(wrt)
-    else:
+    elif isinstance(wrt, str):
         # wrt is an axis string - get the angle of that axis from the coordinate system
         reference_angle = coordinate_system.get_axis_angle(wrt)
+    elif isinstance(wrt, (VectorClass, VectorUnknown)):
+        # wrt is a Vector/VectorUnknown with unknown angle - cannot compute relative angle
+        raise ValueError(f"Cannot compute relative angle: reference vector has unknown angle")
+    else:
+        raise ValueError(f"Invalid wrt type: {type(wrt)}")
 
     # Compute CCW angle from reference to vector
     relative_angle = absolute_angle - reference_angle

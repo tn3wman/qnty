@@ -801,18 +801,164 @@ def solve_sss(state: SolvingState) -> None:
     """
     Solve SSS case: All three sides known, find angles.
 
+    In parallelogram law problems, this typically means:
+    - Two component magnitudes known (F_1, F_2)
+    - Resultant magnitude known (F_R)
+    - All directions unknown
+
     Strategy:
-    1. Law of Cosines to find largest angle (opposite longest side)
-    2. Law of Sines for second angle
-    3. Third angle = 180° - first - second
+    1. Use Law of Cosines to find the interior angle at the junction (angle_C)
+       This is the angle between F_1 and F_2 at vertex C where they meet.
+    2. Use Law of Cosines or Law of Sines for remaining angles if needed.
+    3. Express solution as relative angles between vectors.
+
+    Note: Without additional constraints, the absolute directions remain ambiguous
+    (the triangle can be rotated). The solution expresses vectors relative to each other.
     """
+    from ...core import Q
+    from ...equations.law_of_cosines import LawOfCosinesForAngle
+
     triangle = state.triangle
 
     if triangle.side_a.magnitude is ... or triangle.side_b.magnitude is ... or triangle.side_c.magnitude is ...:
         raise ValueError("SSS requires all three magnitudes to be known")
 
-    # TODO: Implement Law of Cosines for finding angles
-    raise NotImplementedError("SSS case not yet implemented")
+    # Get the three sides
+    # In parallelogram law geometry:
+    # - side_c = |F_1| (vec_1, component 1: A→B)
+    # - side_a = |F_2| (vec_2, component 2: B→C)
+    # - side_b = |F_R| (vec_r, resultant: A→C)
+    side_c = triangle.side_c  # F_1 magnitude
+    side_a = triangle.side_a  # F_2 magnitude
+    side_b = triangle.side_b  # F_R magnitude
+
+    # Get names for reporting
+    vec_1_name = triangle.vec_1.name or "F_1"
+    vec_2_name = triangle.vec_2.name or "F_2"
+    vec_r_name = triangle.vec_r.name or "F_R"
+
+    # Get magnitude quantities from TriangleSide objects
+    # TriangleSide.magnitude is the Quantity directly (not ellipsis in SSS case)
+    mag_a = side_a.magnitude  # |F_2|
+    mag_b = side_b.magnitude  # |F_R|
+    mag_c = side_c.magnitude  # |F_1|
+
+    if mag_a is ... or mag_b is ... or mag_c is ...:
+        raise ValueError("SSS case requires all three magnitudes to be known quantities")
+
+    # Step 1: Find angle_C (interior angle at vertex C, between F_1 and F_2)
+    # This is opposite to side_b (the resultant)
+    # Using Law of Cosines: cos(C) = (a² + c² - b²) / (2ac)
+    # where a=|F_2|, c=|F_1|, b=|F_R|
+    loc_angle_c = LawOfCosinesForAngle(
+        side_a=mag_a,  # |F_2|
+        side_b=mag_c,  # |F_1|
+        side_c=mag_b,  # |F_R| (opposite to angle we're finding)
+        side_a_name=vec_2_name,
+        side_b_name=vec_1_name,
+        equation_number=1,
+        description=f"Find interior angle between {vec_1_name} and {vec_2_name}",
+    )
+    interior_angle_c, step_c = loc_angle_c.solve()
+    state.solving_steps.append(step_c)
+    state.equations_used.append(loc_angle_c.equation_for_list())
+
+    # Update triangle with solved angle
+    triangle.angle_C.angle = interior_angle_c
+    triangle.angle_C.is_known = True
+
+    # Step 2: Find angle_A (angle at vertex A, opposite to side_a=|F_2|)
+    # Using Law of Cosines: cos(A) = (b² + c² - a²) / (2bc)
+    loc_angle_a = LawOfCosinesForAngle(
+        side_a=mag_b,  # |F_R|
+        side_b=mag_c,  # |F_1|
+        side_c=mag_a,  # |F_2| (opposite to angle we're finding)
+        side_a_name=vec_r_name,
+        side_b_name=vec_1_name,
+        equation_number=2,
+        description=f"Find angle at vertex A (between {vec_r_name} and {vec_1_name})",
+    )
+    interior_angle_a, step_a = loc_angle_a.solve()
+    state.solving_steps.append(step_a)
+    state.equations_used.append(loc_angle_a.equation_for_list())
+
+    # Update triangle
+    triangle.angle_A.angle = interior_angle_a
+    triangle.angle_A.is_known = True
+
+    # Step 3: Find angle_B using angle sum (180° - A - C)
+    interior_angle_b = Q(180, "degree") - interior_angle_a - interior_angle_c
+    triangle.angle_B.angle = interior_angle_b
+    triangle.angle_B.is_known = True
+
+    # Create angle sum step for reporting
+    from ...equations.base import SolutionStepBuilder
+
+    angle_sum_step = SolutionStepBuilder(
+        target=f"\\angle_B using angle sum",
+        method="Angle Sum",
+        description="Third angle from triangle angle sum property",
+        substitution=f"\\angle_B = 180° - {interior_angle_a.to_unit.degree.magnitude():.2f}° - {interior_angle_c.to_unit.degree.magnitude():.2f}° = {interior_angle_b.to_unit.degree.magnitude():.2f}°",
+    ).build()
+    state.solving_steps.append(angle_sum_step)
+
+    # For SSS problems, the absolute orientation is ambiguous (triangle can be rotated).
+    # The solution expresses the relative angle between components.
+
+    # The relative angle between F_1 and F_2 at their junction is:
+    # exterior angle = 180° - interior_angle_c
+    # This is how far F_1 "turns" from F_2's direction at vertex C.
+    relative_angle_f1_wrt_f2 = Q(180, "degree") - interior_angle_c
+    relative_angle_f2_wrt_f1 = Q(0, "degree") - relative_angle_f1_wrt_f2  # Symmetric (negation)
+
+    # Store the interior angle for reference
+    state.angle_ar = interior_angle_c
+
+    # For SSS, we express:
+    # - F_R along +x (convention for resultant)
+    # - F_1 relative to F_2 (exterior angle)
+    # - F_2 relative to F_1 (negative exterior angle)
+    resultant_direction = Q(0, "degree")
+    state.dir_r = resultant_direction
+
+    # Set the resultant's direction on the triangle side
+    triangle.side_b.direction = resultant_direction
+
+    # For F_1 and F_2, we need to compute absolute directions for _update_resultant_from_state
+    # to work, but the final output should express them relative to each other.
+
+    # Compute absolute directions based on interior angles:
+    # F_1 at vertex A makes angle_A with the resultant
+    f1_direction = resultant_direction + interior_angle_a
+    triangle.side_c.direction = f1_direction
+
+    # F_2 makes angle_B with the resultant (below x-axis)
+    f2_direction = resultant_direction - interior_angle_b
+    triangle.side_a.direction = f2_direction
+
+    # Store relative angles for SSS-specific vector updates
+    # These will be used to express the solution relative to each other
+    state.sss_relative_angle_f1_wrt_f2 = relative_angle_f1_wrt_f2  # type: ignore[attr-defined]
+    state.sss_relative_angle_f2_wrt_f1 = relative_angle_f2_wrt_f1  # type: ignore[attr-defined]
+    state.sss_vec_1_name = vec_1_name  # type: ignore[attr-defined]
+    state.sss_vec_2_name = vec_2_name  # type: ignore[attr-defined]
+
+    # Create reporting step for the relative angle calculation
+    angle_c_deg = interior_angle_c.to_unit.degree.magnitude()
+    rel_f1_deg = relative_angle_f1_wrt_f2.to_unit.degree.magnitude()
+
+    direction_step = SolutionStepBuilder(
+        target="Relative angles between components",
+        method="Exterior Angle",
+        description="The relative angle between components is the exterior angle at their junction",
+        substitution=(
+            f"\\text{{Interior angle at C}} = {angle_c_deg:.2f}^\\circ \\\\\n"
+            f"\\theta_{{{vec_1_name}}} \\text{{ wrt }} {vec_2_name} = 180^\\circ - {angle_c_deg:.2f}^\\circ = {rel_f1_deg:.2f}^\\circ \\\\\n"
+            f"\\theta_{{{vec_2_name}}} \\text{{ wrt }} {vec_1_name} = -{rel_f1_deg:.2f}^\\circ \\\\\n"
+            f"\\theta_{{F_R}} = 0^\\circ \\text{{ (along +x axis)}}"
+        ),
+    ).build()
+    state.solving_steps.append(direction_step)
 
 
 def solve_ssa(state: SolvingState) -> None:
@@ -1507,13 +1653,332 @@ def solve_asa(state: SolvingState) -> None:
             state.dir_r = unknown_side.direction
 
 
+def solve_aas(state: SolvingState) -> None:
+    """
+    Solve AAS case: Two angles and non-included side known.
+
+    In parallelogram law problems, this occurs when:
+    - Two vectors have known directions (angles) but potentially unknown magnitudes
+    - One vector has known magnitude
+    - The known side is NOT between the two known angles (non-included)
+
+    For Problem 2-28 step 2:
+        - F'_1 (intermediate): known magnitude & direction from step 1
+        - F_3: known direction (30° wrt -y), unknown magnitude
+        - F_R: known direction (90° wrt F_3), unknown magnitude
+        Triangle angles computed from these directions, F'_1 is non-included side.
+
+    Strategy:
+    1. Compute the third interior angle using angle sum (180° - A - B = C)
+    2. Use Law of Sines to find each unknown side magnitude
+       For AAS: known_side/sin(opposite_angle) = unknown_side/sin(its_opposite_angle)
+    3. Directions are already known from input vectors
+
+    The key difference from ASA:
+    - In ASA, the known side is between the two known angles (included)
+    - In AAS, the known side is opposite to one of the known angles (non-included)
+    """
+    from ...core import Q
+    from ...equations import LawOfSines
+    from ...equations.base import SolutionStepBuilder
+
+    triangle = state.triangle
+
+    # Find the AAS configuration
+    # In AAS, we have 2+ angles known and 1+ side known
+    # The known side is NOT between the two known angles (non-included)
+
+    # First, find all known angles and known sides
+    known_angles = []
+    for angle_attr in ["angle_A", "angle_B", "angle_C"]:
+        angle = getattr(triangle, angle_attr)
+        if angle.is_known and angle.angle is not None:
+            known_angles.append((angle_attr, angle))
+
+    known_sides = []
+    unknown_sides = []
+    for side_attr in ["side_a", "side_b", "side_c"]:
+        side = getattr(triangle, side_attr)
+        if side.is_known and side.magnitude is not ...:
+            known_sides.append((side_attr, side))
+        else:
+            unknown_sides.append((side_attr, side))
+
+    if len(known_angles) < 2:
+        raise ValueError("AAS requires at least 2 known angles")
+
+    if len(known_sides) < 1:
+        raise ValueError("AAS requires at least 1 known side")
+
+    # In AAS, the known side is NON-included (opposite to one of the known angles)
+    # Find which configuration we have
+    # Map: side_a -> angle_A, side_b -> angle_B, side_c -> angle_C
+    opposite_angle_map = {
+        "side_a": "angle_A",
+        "side_b": "angle_B",
+        "side_c": "angle_C",
+    }
+    opposite_side_map = {
+        "angle_A": "side_a",
+        "angle_B": "side_b",
+        "angle_C": "side_c",
+    }
+
+    # Find the known side and its opposite angle
+    known_side_attr, known_side = known_sides[0]
+    known_side_opposite_angle_attr = opposite_angle_map[known_side_attr]
+    known_side_opposite_angle = getattr(triangle, known_side_opposite_angle_attr)
+
+    # Find the third angle (the one that's not known yet, or verify it's computed)
+    all_angle_attrs = ["angle_A", "angle_B", "angle_C"]
+    unknown_angle_attr = None
+    for angle_attr in all_angle_attrs:
+        angle = getattr(triangle, angle_attr)
+        if not angle.is_known or angle.angle is None:
+            unknown_angle_attr = angle_attr
+            break
+
+    # Step 1: Compute the third angle if not already known
+    if unknown_angle_attr is not None:
+        unknown_angle = getattr(triangle, unknown_angle_attr)
+
+        # Sum the two known angles
+        angle1 = known_angles[0][1]
+        angle2 = known_angles[1][1]
+
+        if angle1.angle is None or angle2.angle is None:
+            raise ValueError("Cannot compute third angle: known angles have None values")
+
+        # Third angle = 180° - angle1 - angle2
+        angle_sum = angle1.angle + angle2.angle
+        third_angle_value = Q(180, "degree") - angle_sum
+
+        # Update the triangle angle
+        unknown_angle.angle = third_angle_value
+        unknown_angle.is_known = True
+
+        # Add a step for angle sum
+        angle1_deg = angle1.angle.to_unit.degree
+        angle2_deg = angle2.angle.to_unit.degree
+        third_angle_deg = third_angle_value.to_unit.degree
+        step = SolutionStepBuilder(
+            target=f"Third angle ({unknown_angle_attr})",
+            method="Angle Sum",
+            description="Calculate third angle using triangle angle sum rule",
+            substitution=f"180° - {angle1_deg} - {angle2_deg} = {third_angle_deg}",
+        ).build()
+        state.solving_steps.append(step)
+
+    # Now all three angles should be known
+    # Get the magnitude of the known side
+    if known_side.magnitude is ...:
+        raise ValueError("AAS requires the known side to have a magnitude")
+    known_side_mag = known_side.magnitude
+
+    # The angle opposite the known side
+    opposite_angle = known_side_opposite_angle.angle
+    if opposite_angle is None:
+        raise ValueError("Cannot solve AAS: opposite angle is None")
+
+    # Step 2: Use Law of Sines to find each unknown side
+    # a/sin(A) = b/sin(B) = c/sin(C)
+    # So: unknown_side = known_side * sin(unknown_opposite_angle) / sin(known_opposite_angle)
+
+    # Find the angle formed by the two unknown sides (for Law of Sines notation)
+    # This is the angle opposite the known side
+    unknown_side_names = [us[1].name or f"unknown_{i}" for i, us in enumerate(unknown_sides)]
+    known_angle_vectors = tuple(unknown_side_names) if len(unknown_side_names) >= 2 else (unknown_side_names[0], known_side.name or "known")
+
+    equation_num = 1
+    for unknown_side_attr, unknown_side in unknown_sides:
+        # Find the angle opposite to this unknown side
+        unknown_side_opposite_attr = opposite_angle_map[unknown_side_attr]
+        unknown_side_opposite = getattr(triangle, unknown_side_opposite_attr)
+        _check_opposite_angle(unknown_side_opposite, unknown_side_attr)
+
+        # Determine angle_vector_1 and angle_vector_2 for Law of Sines
+        # These are the two sides that form the angle opposite to unknown_side
+        # For angle_A (opposite side_a): formed by side_b and side_c
+        # For angle_B (opposite side_b): formed by side_a and side_c
+        # For angle_C (opposite side_c): formed by side_a and side_b
+        adjacent_sides_map = {
+            "side_a": ("side_b", "side_c"),
+            "side_b": ("side_a", "side_c"),
+            "side_c": ("side_a", "side_b"),
+        }
+        adj_attrs = adjacent_sides_map[unknown_side_attr]
+        adj_side_1 = getattr(triangle, adj_attrs[0])
+        adj_side_2 = getattr(triangle, adj_attrs[1])
+
+        # Use LawOfSines with solve_for="side"
+        los = LawOfSines(
+            opposite_side=known_side_mag,  # For API compatibility
+            known_angle=opposite_angle,  # Angle opposite to known side
+            known_side=known_side_mag,  # The known side
+            angle_vector_1=adj_side_1.name or "V1",
+            angle_vector_2=adj_side_2.name or "V2",
+            equation_number=equation_num,
+            solve_for="side",
+            unknown_angle=unknown_side_opposite.angle,  # Angle opposite to unknown side
+            result_vector_name=unknown_side.name,
+            known_angle_vectors=known_angle_vectors,
+        )
+
+        unknown_side_mag, step = los.solve()
+
+        # Update the triangle
+        unknown_side.magnitude = unknown_side_mag
+        unknown_side.is_known = True
+
+        state.solving_steps.append(step)
+        state.equations_used.append(los.equation_for_list())
+        equation_num += 1
+
+    # Sign correction for vector components
+    # Law of Sines always returns positive magnitudes, but in some geometries
+    # a component may need to be negative (pointing opposite to its reference direction)
+
+    # Get all three sides for sign correction
+    # The resultant is ALWAYS side_b (vec_r) in our triangle convention
+    resultant_side = triangle.side_b  # Always the resultant
+
+    # Get directions for sign correction
+    all_sides = [
+        ("side_a", triangle.side_a),
+        ("side_b", triangle.side_b),
+        ("side_c", triangle.side_c),
+    ]
+
+    # Check if we have all directions for sign correction
+    all_have_directions = all(side.direction is not None for _, side in all_sides)
+
+    if all_have_directions and len(unknown_sides) >= 2:
+        # Apply sign correction similar to ASA
+        unknown_side1_attr, unknown_side1 = unknown_sides[0]
+        unknown_side2_attr, unknown_side2 = unknown_sides[1]
+
+        # Get computed magnitudes
+        unknown_side1_mag = unknown_side1.magnitude
+        unknown_side2_mag = unknown_side2.magnitude
+
+        # Identify which is the resultant
+        if unknown_side1 == resultant_side:
+            resultant_mag_val = unknown_side1_mag.magnitude()
+            resultant_dir = _direction_to_degrees(unknown_side1)
+            comp1_mag_val = unknown_side2_mag.magnitude()
+            comp1_dir = _direction_to_degrees(unknown_side2)
+            comp2_mag_val = known_side_mag.magnitude()
+            comp2_dir = _direction_to_degrees(known_side)
+            unknown_is_resultant = 1
+        elif unknown_side2 == resultant_side:
+            resultant_mag_val = unknown_side2_mag.magnitude()
+            resultant_dir = _direction_to_degrees(unknown_side2)
+            comp1_mag_val = unknown_side1_mag.magnitude()
+            comp1_dir = _direction_to_degrees(unknown_side1)
+            comp2_mag_val = known_side_mag.magnitude()
+            comp2_dir = _direction_to_degrees(known_side)
+            unknown_is_resultant = 2
+        else:
+            # Known side is the resultant, both unknowns are components
+            resultant_mag_val = known_side_mag.magnitude()
+            resultant_dir = _direction_to_degrees(known_side)
+            comp1_mag_val = unknown_side1_mag.magnitude()
+            comp1_dir = _direction_to_degrees(unknown_side1)
+            comp2_mag_val = unknown_side2_mag.magnitude()
+            comp2_dir = _direction_to_degrees(unknown_side2)
+            unknown_is_resultant = 0
+
+        # Compute corrected signs
+        corrected_comp1, corrected_comp2 = _compute_component_signs(
+            resultant_mag_val,
+            resultant_dir,
+            comp1_mag_val,
+            comp1_dir,
+            comp2_mag_val,
+            comp2_dir,
+        )
+
+        # If the known component got a negative sign, try with opposite resultant direction
+        if unknown_is_resultant in (1, 2) and corrected_comp2 < 0:
+            opposite_dir = (resultant_dir + 180) % 360
+            alt_comp1, alt_comp2 = _compute_component_signs(
+                resultant_mag_val,
+                opposite_dir,
+                comp1_mag_val,
+                comp1_dir,
+                comp2_mag_val,
+                comp2_dir,
+            )
+            if alt_comp2 > 0:
+                corrected_comp1 = alt_comp1
+                corrected_comp2 = alt_comp2
+                resultant_mag_val = -resultant_mag_val
+
+        # Map corrected values back
+        if unknown_is_resultant == 1:
+            corrected_unknown2 = corrected_comp1
+            corrected_unknown1 = resultant_mag_val
+        elif unknown_is_resultant == 2:
+            corrected_unknown1 = corrected_comp1
+            corrected_unknown2 = resultant_mag_val
+        else:
+            corrected_unknown1 = corrected_comp1
+            corrected_unknown2 = corrected_comp2
+
+        # Apply sign corrections
+        unknown_side1.magnitude = _apply_negative_sign_correction(
+            unknown_side1_mag, corrected_unknown1, unknown_side1.name
+        )
+        unknown_side2.magnitude = _apply_negative_sign_correction(
+            unknown_side2_mag, corrected_unknown2, unknown_side2.name
+        )
+
+    # For AAS, directions are already known, so set dir_r if any unknown is the resultant
+    for unknown_side_attr, unknown_side in unknown_sides:
+        if triangle._is_side_resultant(unknown_side) and unknown_side.direction is not None:
+            state.dir_r = unknown_side.direction
+
+
 # Strategy dispatch table
 SOLVING_STRATEGIES = {
     TriangleCase.SAS: solve_sas,
     TriangleCase.SSS: solve_sss,
     TriangleCase.SSA: solve_ssa,
     TriangleCase.ASA: solve_asa,
+    TriangleCase.AAS: solve_aas,
 }
+
+
+def _is_axis_reference(wrt: str) -> bool:
+    """Check if a wrt string is an axis reference (like "+x", "-y") vs a vector name reference.
+
+    Axis references are strings like "+x", "-y", "x", "y", "+u", "-v", etc.
+    Vector name references are strings like "F_1", "F_2", "F_AB", etc.
+
+    Args:
+        wrt: The wrt string to check
+
+    Returns:
+        True if wrt is an axis reference, False if it's likely a vector name reference
+    """
+    # Normalize: remove leading + or -
+    normalized = wrt.lstrip("+-")
+
+    # Axis references are typically single characters (x, y, u, v) or short axis names
+    # Vector names typically contain underscores or are longer identifiers
+    if len(normalized) <= 1:
+        return True
+
+    # Check if it's a known axis pattern (could be multi-char like "u", "v")
+    # Axis references don't typically have underscores or numbers
+    if "_" in wrt or any(c.isdigit() for c in wrt):
+        return False
+
+    # If it starts with "F" or other common force/vector prefixes, it's likely a vector name
+    if normalized.upper().startswith(("F", "V", "R")):
+        return False
+
+    return True
 
 
 def _get_vector_kwargs(attr: Vector | VectorUnknown, attr_name: str) -> dict[str, Any]:
@@ -1565,21 +2030,29 @@ def _copy_vector_with_wrt(
     attr: Vector | VectorUnknown,
     attr_name: str,
     wrt_resolved: str | Vector | VectorUnknown,
+    original_wrt_was_string: bool = False,
 ) -> Vector | VectorUnknown:
     """Create a copy of a Vector or VectorUnknown with a specific wrt reference.
 
     This is used when copying vectors that have wrt references to other vectors,
     allowing the wrt to be resolved to the copied version of the referenced vector.
 
-    When wrt_resolved is a Vector (not a string), the _wrt_at_junction flag is set
+    When wrt_resolved is a Vector (not a string) and the ORIGINAL wrt was also
+    an object reference (not a string name), the _wrt_at_junction flag is set
     to True. This indicates that the relative angle is measured at a junction vertex
     where the reference vector ends and this vector begins - meaning the reference
     direction should be reversed (add 180°) when computing the absolute angle.
+
+    String name references (like wrt="F_2") are treated as simple directional
+    references and do NOT get the junction reversal.
 
     Args:
         attr: The Vector or VectorUnknown to copy
         attr_name: The attribute name to use as fallback for the vector name
         wrt_resolved: The resolved wrt reference (already-copied vector or string)
+        original_wrt_was_string: True if the original wrt was a string name reference
+            (like "F_2") that was resolved to a Vector. In this case, don't set
+            _wrt_at_junction since the user intended a simple directional reference.
 
     Returns:
         A copy of the vector with the resolved wrt reference
@@ -1590,9 +2063,15 @@ def _copy_vector_with_wrt(
     # Set _wrt_at_junction when:
     # 1. wrt is a Vector (not a string axis)
     # 2. This vector is NOT a resultant (component vectors at junctions need the 180° offset)
-    # Resultants expressed relative to a component don't need the offset - they share the same origin
+    # 3. The ORIGINAL wrt was an object reference (not a string name that was resolved)
+    # Resultants expressed relative to a component don't need the offset - they share the same origin.
+    # String name references (like wrt="F_2") are simple directional references, not junction angles.
     is_resultant = getattr(attr, "_is_resultant", False)
-    if isinstance(wrt_resolved, (Vector, VectorUnknown)) and not is_resultant:
+    if isinstance(wrt_resolved, (Vector, VectorUnknown)) and not is_resultant and not original_wrt_was_string:
+        kwargs["_wrt_at_junction"] = True
+
+    # Preserve the original _wrt_at_junction if it was explicitly set
+    if hasattr(attr, "_wrt_at_junction") and attr._wrt_at_junction:
         kwargs["_wrt_at_junction"] = True
 
     vec_cls = VectorUnknown if isinstance(attr, VectorUnknown) else Vector
@@ -1668,6 +2147,10 @@ class ParallelogramLawProblem:
         Uses a two-pass approach to properly handle wrt references that point to other vectors.
         Pass 1 copies vectors without wrt references, Pass 2 copies vectors with wrt references
         and resolves them to point to the already-copied vectors.
+
+        Supports both:
+        - Object references: wrt=F_2 (a Vector/VectorUnknown object)
+        - String name references: wrt="F_2" (a string naming another vector)
         """
         # Collect all vectors from class attributes
         original_vectors: dict[str, Vector | VectorUnknown] = {}
@@ -1681,43 +2164,99 @@ class ParallelogramLawProblem:
         # Build a mapping from original vector object id to attribute name
         original_id_to_name: dict[int, str] = {id(v): name for name, v in original_vectors.items()}
 
+        # Build a mapping from vector names to originals (for string references)
+        name_to_original: dict[str, Vector | VectorUnknown] = {}
+        for attr_name, attr in original_vectors.items():
+            name_to_original[attr_name] = attr
+            # Also register by vec.name if it's different
+            if attr.name and attr.name != attr_name:
+                name_to_original[attr.name] = attr
+
+        # Helper to check if wrt needs vector resolution
+        def _needs_vector_resolution(attr: Vector | VectorUnknown) -> bool:
+            """Check if a vector's wrt needs to be resolved to another vector."""
+            wrt = attr.wrt
+            # Object reference to a vector
+            if isinstance(wrt, (Vector, VectorUnknown)):
+                return True
+            # String that references a vector by name (not an axis)
+            if isinstance(wrt, str) and not _is_axis_reference(wrt):
+                return True
+            return False
+
         # Determine copy order: vectors without vector wrt first, then vectors with vector wrt
         vectors_without_wrt_ref: list[str] = []
         vectors_with_wrt_ref: list[str] = []
 
         for attr_name, attr in original_vectors.items():
-            if isinstance(attr.wrt, (Vector, VectorUnknown)):
+            if _needs_vector_resolution(attr):
                 vectors_with_wrt_ref.append(attr_name)
             else:
                 vectors_without_wrt_ref.append(attr_name)
 
         # Pass 1: Copy vectors without wrt references
         copied_vectors: dict[int, Vector | VectorUnknown] = {}  # original id -> copy
+        copied_by_name: dict[str, Vector | VectorUnknown] = {}  # name -> copy
         for attr_name in vectors_without_wrt_ref:
             attr = original_vectors[attr_name]
             vec_copy = _copy_vector(attr, attr_name)
             setattr(self, attr_name, vec_copy)
             self.vectors[attr_name] = vec_copy
             copied_vectors[id(attr)] = vec_copy
+            copied_by_name[attr_name] = vec_copy
+            if attr.name:
+                copied_by_name[attr.name] = vec_copy
             self._register_vector_variables(attr_name, attr, vec_copy)
 
         # Pass 2: Copy vectors with wrt references, resolving to copied vectors
         for attr_name in vectors_with_wrt_ref:
             attr = original_vectors[attr_name]
-            # Get the wrt reference - it should be one of the original vectors
             wrt_original = attr.wrt
-            wrt_id = id(wrt_original)
+            wrt_resolved: str | Vector | VectorUnknown
+            original_wrt_was_string = False  # Track if the original wrt was a string name
 
-            # Find the copied version of the wrt vector
-            if wrt_id in copied_vectors:
-                wrt_resolved = copied_vectors[wrt_id]
+            if isinstance(wrt_original, (Vector, VectorUnknown)):
+                # Object reference - resolve by id
+                wrt_id = id(wrt_original)
+                if wrt_id in copied_vectors:
+                    wrt_resolved = copied_vectors[wrt_id]
+                else:
+                    # wrt references a vector we haven't copied yet - use original
+                    wrt_resolved = wrt_original
+            elif isinstance(wrt_original, str) and not _is_axis_reference(wrt_original):
+                # String name reference - resolve by name
+                original_wrt_was_string = True  # Mark that original was a string name
+                if wrt_original in copied_by_name:
+                    wrt_resolved = copied_by_name[wrt_original]
+                elif wrt_original in name_to_original:
+                    # Vector exists but hasn't been copied yet (possible dependency issue)
+                    # This can happen with circular or complex dependencies
+                    # Copy the referenced vector first
+                    ref_attr = name_to_original[wrt_original]
+                    ref_attr_name = wrt_original
+                    # Find the actual attribute name
+                    for aname, avec in original_vectors.items():
+                        if avec is ref_attr or avec.name == wrt_original:
+                            ref_attr_name = aname
+                            break
+                    ref_copy = _copy_vector(ref_attr, ref_attr_name)
+                    setattr(self, ref_attr_name, ref_copy)
+                    self.vectors[ref_attr_name] = ref_copy
+                    copied_vectors[id(ref_attr)] = ref_copy
+                    copied_by_name[ref_attr_name] = ref_copy
+                    if ref_attr.name:
+                        copied_by_name[ref_attr.name] = ref_copy
+                    self._register_vector_variables(ref_attr_name, ref_attr, ref_copy)
+                    wrt_resolved = ref_copy
+                else:
+                    # Unknown vector name - leave as string (will fail later with clearer error)
+                    wrt_resolved = wrt_original
             else:
-                # wrt references a vector we haven't copied yet - use original
-                # This shouldn't happen with proper ordering, but handle it gracefully
+                # Axis reference - keep as string
                 wrt_resolved = wrt_original
 
             # Create a copy with the resolved wrt
-            vec_copy = _copy_vector_with_wrt(attr, attr_name, wrt_resolved)
+            vec_copy = _copy_vector_with_wrt(attr, attr_name, wrt_resolved, original_wrt_was_string)
             setattr(self, attr_name, vec_copy)
             self.vectors[attr_name] = vec_copy
             copied_vectors[id(attr)] = vec_copy
@@ -1907,14 +2446,27 @@ class ParallelogramLawProblem:
             # Create intermediate resultant VectorUnknown
             from ...linalg.vector2 import VectorUnknown as VU
 
-            intermediate_resultant = VU(
-                magnitude=...,
-                angle=...,
-                wrt=intermediate_wrt,
-                coordinate_system=resultant_vec.coordinate_system,
-                name=intermediate_name,
-                _is_resultant=True,
-            )
+            if is_final:
+                # Final step: use the original resultant's properties (may have known angle)
+                # This preserves constraints like "F_R is 90° wrt F_3"
+                intermediate_resultant = VU(
+                    magnitude=resultant_vec.magnitude,  # May be ... or known
+                    angle=resultant_vec.angle,  # May be ... or known (e.g., 90° wrt F_3)
+                    wrt=intermediate_wrt,
+                    coordinate_system=resultant_vec.coordinate_system,
+                    name=intermediate_name,
+                    _is_resultant=True,
+                )
+            else:
+                # Intermediate step: create with all unknowns
+                intermediate_resultant = VU(
+                    magnitude=...,
+                    angle=...,
+                    wrt=intermediate_wrt,
+                    coordinate_system=resultant_vec.coordinate_system,
+                    name=intermediate_name,
+                    _is_resultant=True,
+                )
             intermediate_resultant._angle_dir = angle_dir  # type: ignore[attr-defined]
             sub_vectors[intermediate_name] = intermediate_resultant
 
@@ -1978,9 +2530,20 @@ class ParallelogramLawProblem:
 
                         if is_final:
                             # Convert to relative angle for final resultant
+                            # Resolve wrt reference if it's a string name
+                            wrt_for_relative = resultant_vec.wrt
+                            if isinstance(wrt_for_relative, str) and not _is_axis_reference(wrt_for_relative):
+                                # It's a vector name reference - look it up
+                                if wrt_for_relative in self.vectors:
+                                    wrt_for_relative = self.vectors[wrt_for_relative]
+                                else:
+                                    # Try to find in sub_vectors
+                                    if wrt_for_relative in sub_vectors:
+                                        wrt_for_relative = sub_vectors[wrt_for_relative]
+
                             final_angle = get_relative_angle(
                                 absolute_angle=solved_dir,
-                                wrt=resultant_vec.wrt,
+                                wrt=wrt_for_relative,
                                 coordinate_system=resultant_vec.coordinate_system,
                                 angle_dir=angle_dir,
                             )
@@ -2004,6 +2567,58 @@ class ParallelogramLawProblem:
                             final_angle.name = f"{resultant_name}_angle"
                             self.variables[f"{resultant_name}_angle"] = final_angle
                     break
+
+            # Update any component vectors that were VectorUnknown and got solved
+            # (e.g., F_3 in Problem 2-28)
+            for side in [triangle.side_a, triangle.side_b, triangle.side_c]:
+                side_name = side.name
+                if side_name is None:
+                    continue
+                # Skip if this is the intermediate/resultant (already handled above)
+                if side_name == intermediate_name:
+                    continue
+                # Check if this side corresponds to a VectorUnknown in self.vectors
+                if side_name in self.vectors:
+                    original_vec = self.vectors[side_name]
+                    if isinstance(original_vec, VectorUnknown):
+                        # This was an unknown - check if it got solved
+                        if side.magnitude is not ... and side.magnitude is not None:
+                            # Get the solved magnitude
+                            component_solved_mag = side.magnitude
+
+                            # Get the direction
+                            if side.direction is not None:
+                                component_solved_dir = get_relative_angle(
+                                    absolute_angle=side.direction,
+                                    wrt=original_vec.wrt,
+                                    coordinate_system=original_vec.coordinate_system,
+                                    angle_dir=_get_angle_dir(original_vec),
+                                )
+                            elif original_vec.angle is not ...:
+                                # Angle was already known from input
+                                component_solved_dir = original_vec.angle
+                            else:
+                                # Fallback
+                                component_solved_dir = Q(0, "degree")
+
+                            # Create solved Vector
+                            solved_component = Vector(
+                                magnitude=component_solved_mag,
+                                angle=component_solved_dir,
+                                wrt=original_vec.wrt,
+                                coordinate_system=original_vec.coordinate_system,
+                                name=side_name,
+                            )
+
+                            # Update the instance
+                            self.vectors[side_name] = solved_component
+                            setattr(self, side_name, solved_component)
+
+                            # Update variables for reporting
+                            component_solved_mag.name = f"{side_name}_mag"
+                            self.variables[f"{side_name}_mag"] = component_solved_mag
+                            component_solved_dir.name = f"{side_name}_angle"
+                            self.variables[f"{side_name}_angle"] = component_solved_dir
 
         # Store all solving history
         self.solving_history = all_steps

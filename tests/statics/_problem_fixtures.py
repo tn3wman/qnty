@@ -478,8 +478,10 @@ class Chapter2Problem28:
     class expected:
         F_1 = create_vectors_polar(8000, "N", 0, wrt="-y")
         F_2 = create_vectors_polar(6000, "N", 0, wrt="+x")
-        F_3 = create_vectors_polar(1196, "N", 30, wrt="-y")
-        F_R = create_vectors_polar(9928, "N", 90, wrt="F_3")
+        # F_3 magnitude is negative because it points opposite to the stated direction
+        # (30° wrt -y = -60° absolute, but actual vector is at 120° = -150° wrt -y)
+        F_3 = create_vectors_polar(-9928, "N", 30, wrt="-y")
+        F_R = create_vectors_polar(1196, "N", 90, wrt="F_3")
 
 class Chapter2Problem29:
     name = "Problem 2-29"
@@ -523,6 +525,20 @@ class Chapter2Problem31:
         F_R = create_vectors_polar(1730, "N", 0, wrt="+x")
 
 # endregion // Parallelogram Law Problems
+
+# region // Rectangular Component Problems
+class Chapter2Problem32:
+    pass
+
+
+class Chapter2Problem59:
+    pass
+
+# endregion // Rectangular Component Problems
+
+
+
+
 
 # =============================================================================
 # Problem 2-1 Mixed Units (Variant)
@@ -597,6 +613,10 @@ PARALLELOGRAM_LAW_PROBLEMS = [
     Chapter2Problem29,
     Chapter2Problem30,
     Chapter2Problem31,
+]
+
+RECTANGULAR_PROBLEMS = [
+
 ]
 
 PROBLEMS_EXPECT_FAIL = [

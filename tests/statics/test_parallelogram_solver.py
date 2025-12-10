@@ -106,8 +106,17 @@ def test_problem(problem_class):
 
     assert problem.is_solved, "Solve failed"
 
-    # Compare each expected vector with actual result
+    # Build context from expected vectors for resolving string name references (like wrt="F_2")
     expected = problem_class.expected
+    expected_context = {}
+    for attr_name in dir(expected):
+        if attr_name.startswith('_'):
+            continue
+        attr = getattr(expected, attr_name)
+        if isinstance(attr, (Vector, VectorUnknown)):
+            expected_context[attr_name] = attr
+
+    # Compare each expected vector with actual result
     for attr_name in dir(expected):
         if attr_name.startswith('_'):
             continue
@@ -121,7 +130,8 @@ def test_problem(problem_class):
         assert actual_vec is not None, f"Expected vector '{attr_name}' not found in problem.vectors. Available: {list(problem.vectors.keys())}"
 
         # Compare using Vector.is_close which compares magnitude and absolute angle with tolerance
-        assert actual_vec.is_close(expected_vec, rtol=rtol), (
+        # Pass expected_context to resolve string name references in expected vectors
+        assert actual_vec.is_close(expected_vec, rtol=rtol, context=expected_context), (
             f"{attr_name}: vectors not close.\n"
             f"  Actual:   {actual_vec}\n"
             f"  Expected: {expected_vec}"

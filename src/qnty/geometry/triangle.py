@@ -909,8 +909,18 @@ class Triangle:
         result_angle_deg = included_angle.angle.to_unit.degree
 
         # Format reference axes (strip leading + for cleaner display)
-        side1_ref_display = side1_ref.lstrip("+") if side1_ref.startswith("+") else side1_ref
-        side2_ref_display = side2_ref.lstrip("+") if side2_ref.startswith("+") else side2_ref
+        # Handle wrt being either a string axis or a Vector object
+        from ..linalg.vector2 import Vector as VectorClass, VectorUnknown as VectorUnknownClass
+
+        def format_ref_display(ref: str | VectorClass | VectorUnknownClass) -> str:
+            """Format a wrt reference for display."""
+            if isinstance(ref, (VectorClass, VectorUnknownClass)):
+                return ref.name or "ref"
+            # String reference
+            return ref.lstrip("+") if ref.startswith("+") else ref
+
+        side1_ref_display = format_ref_display(side1_ref)
+        side2_ref_display = format_ref_display(side2_ref)
 
         # Build the target name using the vector names from the sides (already sorted)
         target = angle_notation(side1_name, side2_name)
@@ -1373,12 +1383,16 @@ def from_vectors_dynamic(
     if len(component_analyses) != 2:
         raise ValueError(f"Expected 2 component vectors, got {len(component_analyses)}")
 
-    # Verify that an interior angle can be computed
-    # We need at least 2 vectors with known directions
+    # Verify that the problem is solvable:
+    # Option 1: At least 2 vectors with known directions (can compute interior angle)
+    # Option 2: All 3 magnitudes known (SSS case - use Law of Cosines for angles)
     known_dir_count = sum(1 for a in analyses if a.angle_known)
-    if known_dir_count < 2:
+    known_mag_count = sum(1 for a in analyses if a.magnitude_known)
+
+    if known_dir_count < 2 and known_mag_count < 3:
         raise ValueError(
-            "Cannot compute any interior angle - need at least 2 vectors with known angles. "
+            "Cannot solve - need either at least 2 vectors with known angles, "
+            "or all 3 magnitudes known (SSS). "
             f"Vectors: {analyses}"
         )
 
