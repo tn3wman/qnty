@@ -62,6 +62,7 @@ class Vector:
     coordinate_system: CoordinateSystem = field(default_factory=Cartesian)
     name: str | None = None
     _is_resultant: bool = field(default=False, repr=False)
+    _wrt_at_junction: bool = field(default=False, repr=False)
 
     @property
     def is_resultant(self) -> bool:
@@ -135,8 +136,9 @@ class Vector:
         """
         Check if this vector is close to another within tolerance.
 
-        Handles angle equivalence properly - angles that differ by 360° are
-        considered equal (e.g., 352.9° and -7.1° are equivalent).
+        Handles equivalence properly:
+        - Angles that differ by 360° are considered equal (e.g., 352.9° and -7.1°)
+        - Negative magnitude with angle θ is equivalent to positive magnitude with angle θ+180°
 
         Args:
             other: Vector to compare against
@@ -148,10 +150,42 @@ class Vector:
         if not isinstance(other, Vector):
             return False
 
-        return (
-            self.magnitude.is_close(other.magnitude, rtol=rtol)
-            and angles_are_equivalent(get_absolute_angle(self), get_absolute_angle(other), rtol=rtol)
-        )
+        # Get magnitude values
+        self_mag = self.magnitude.magnitude()
+        other_mag = other.magnitude.magnitude()
+
+        # Get absolute angles
+        self_angle = get_absolute_angle(self)
+        other_angle = get_absolute_angle(other)
+
+        # Case 1: Both magnitudes same sign (including both positive or both negative)
+        if (self_mag >= 0) == (other_mag >= 0):
+            return (
+                self.magnitude.is_close(other.magnitude, rtol=rtol)
+                and angles_are_equivalent(self_angle, other_angle, rtol=rtol)
+            )
+
+        # Case 2: Different signs - check if one is the negated equivalent of the other
+        # A vector with -M at angle θ is equivalent to +M at angle θ+180°
+        from ..core import Q
+
+        # Flip the negative one to positive and add 180° to its angle
+        if self_mag < 0:
+            # self is negative, other is positive
+            flipped_mag = Q(-self_mag, self.magnitude.preferred.symbol if self.magnitude.preferred else "N")
+            flipped_angle = self_angle + Q(180, "degree")
+            return (
+                flipped_mag.is_close(other.magnitude, rtol=rtol)
+                and angles_are_equivalent(flipped_angle, other_angle, rtol=rtol)
+            )
+        else:
+            # other is negative, self is positive
+            flipped_mag = Q(-other_mag, other.magnitude.preferred.symbol if other.magnitude.preferred else "N")
+            flipped_angle = other_angle + Q(180, "degree")
+            return (
+                self.magnitude.is_close(flipped_mag, rtol=rtol)
+                and angles_are_equivalent(self_angle, flipped_angle, rtol=rtol)
+            )
 
 
 @dataclass
@@ -179,6 +213,7 @@ class VectorUnknown:
     coordinate_system: CoordinateSystem = field(default_factory=Cartesian)
     name: str | None = None
     _is_resultant: bool = field(default=False, repr=False)
+    _wrt_at_junction: bool = field(default=False, repr=False)
 
     @property
     def is_resultant(self) -> bool:

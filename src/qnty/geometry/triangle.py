@@ -395,6 +395,123 @@ class Triangle:
             end=end,
         )
 
+    def _get_vector_for_side(self, side: TriangleSide) -> Vector | VectorUnknown | None:
+        """Get the original vector corresponding to a triangle side."""
+        if side is self.side_a:
+            return self.vec_2  # side_a = C2 (vec_2)
+        elif side is self.side_b:
+            return self.vec_r  # side_b = R (vec_r)
+        elif side is self.side_c:
+            return self.vec_1  # side_c = C1 (vec_1)
+        return None
+
+    def _check_relative_angle_at_vertex(
+        self, vertex: Vertex, side1: TriangleSide, side2: TriangleSide
+    ) -> Quantity | None:
+        """
+        Check if the interior angle at a vertex is directly specified by a relative angle.
+
+        This handles the case where one vector's angle is defined relative to another
+        vector (wrt=another_vector). If both vectors meet at the same vertex and one
+        references the other as its wrt, the relative angle IS the interior angle.
+
+        For example:
+        - F_BA starts at vertex A, has unknown absolute direction
+        - F_R starts at vertex A, has angle=30° with wrt=F_BA
+        - The interior angle at A is 30° (the relative angle between them)
+
+        Args:
+            vertex: The vertex where we're computing the interior angle
+            side1: First side adjacent to the vertex
+            side2: Second side adjacent to the vertex
+
+        Returns:
+            The interior angle as a Quantity if found via relative reference, else None
+        """
+        # Get the original vectors for these sides
+        vec1 = self._get_vector_for_side(side1)
+        vec2 = self._get_vector_for_side(side2)
+
+        if vec1 is None or vec2 is None:
+            return None
+
+        # Check if vec1's wrt references vec2
+        # Note: We check both identity (is) and equivalence (same magnitude/name)
+        # because vectors may be copied with wrt pointing to original objects
+        if hasattr(vec1, 'wrt') and self._vectors_are_same(vec1.wrt, vec2):
+            # vec1's angle is relative to vec2
+            angle = vec1.angle
+            if angle is not ... and angle is not None:
+                # Return absolute value of the angle
+                zero, _, _ = _get_angle_constants()
+                if angle < zero:
+                    return zero - angle
+                return angle
+
+        # Check if vec2's wrt references vec1
+        if hasattr(vec2, 'wrt') and self._vectors_are_same(vec2.wrt, vec1):
+            # vec2's angle is relative to vec1
+            angle = vec2.angle
+            if angle is not ... and angle is not None:
+                # Return absolute value of the angle
+                zero, _, _ = _get_angle_constants()
+                if angle < zero:
+                    return zero - angle
+                return angle
+
+        return None
+
+    def _vectors_are_same(self, vec_a: Any, vec_b: Any) -> bool:
+        """
+        Check if two vectors refer to the same logical vector.
+
+        This handles the case where vectors are copied but wrt still points
+        to the original object. Two vectors are considered the same if:
+        1. They are the same object (identity), OR
+        2. They are both vectors with equal magnitudes
+
+        Args:
+            vec_a: First vector (or wrt value, could be string)
+            vec_b: Second vector
+
+        Returns:
+            True if they refer to the same logical vector
+        """
+        # Direct identity check
+        if vec_a is vec_b:
+            return True
+
+        # If vec_a is a string (axis reference), it's not the same as a vector
+        if isinstance(vec_a, str):
+            return False
+
+        # Both must be vector types
+        if not isinstance(vec_a, (Vector, VectorUnknown)):
+            return False
+        if not isinstance(vec_b, (Vector, VectorUnknown)):
+            return False
+
+        # Compare by magnitude - two vectors with the same magnitude
+        # and wrt pointing to each other are likely the same logical vector
+        # This handles the case where vectors are copied during problem setup
+        mag_a = vec_a.magnitude
+        mag_b = vec_b.magnitude
+
+        # Handle ellipsis
+        if mag_a is ... or mag_b is ...:
+            # If both have ellipsis magnitude, compare by other properties
+            if mag_a is ... and mag_b is ...:
+                # Both unknown magnitude - compare by name if available
+                return getattr(vec_a, 'name', None) == getattr(vec_b, 'name', None) and \
+                       getattr(vec_a, 'name', None) is not None
+            return False
+
+        # Compare magnitudes using Quantity equality
+        try:
+            return mag_a == mag_b
+        except (AttributeError, TypeError):
+            return False
+
     def _compute_interior_angle_at_vertex(self, vertex: Vertex) -> Quantity | None:
         """
         Compute interior angle at a vertex using the vertex-based model.
@@ -412,6 +529,10 @@ class Triangle:
         For edges that END at the vertex, the outgoing direction is the
         reverse of the edge direction (direction + 180°).
 
+        Special case: If one vector's wrt references the other vector at this
+        vertex (e.g., F_R measured 30° from F_BA), then the interior angle
+        is directly the relative angle between them.
+
         Args:
             vertex: The vertex to compute the angle at
 
@@ -425,6 +546,12 @@ class Triangle:
             return None
 
         side1, side2 = adjacent_sides
+
+        # Check for relative angle case: one vector references the other as wrt
+        # This happens when e.g., F_R is defined as "30° from F_BA"
+        relative_angle = self._check_relative_angle_at_vertex(vertex, side1, side2)
+        if relative_angle is not None:
+            return relative_angle
 
         if side1.direction is None or side2.direction is None:
             return None

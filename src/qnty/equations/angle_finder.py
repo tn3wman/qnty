@@ -131,6 +131,11 @@ def get_absolute_angle(vec: Vector | VectorUnknown) -> Quantity:
         - axis_angle(wrt) if wrt is an axis string (e.g., "+x", "-y")
         - get_absolute_angle(wrt) if wrt is another Vector (recursive)
 
+    If the vector has `_wrt_at_junction=True` and `wrt` is a Vector, the reference
+    angle is the reversed direction of the wrt vector (i.e., wrt_angle + 180°).
+    This is used in triangle/parallelogram contexts where the angle is measured
+    at a junction vertex where the reference vector ends and this vector begins.
+
     Args:
         vec: Vector with angle, wrt, and coordinate_system attributes
 
@@ -140,6 +145,7 @@ def get_absolute_angle(vec: Vector | VectorUnknown) -> Quantity:
     Raises:
         ValueError: If the vector's angle is unknown (ellipsis)
     """
+    from ..core import Q
     from ..linalg.vector2 import Vector as VectorClass
 
     # Check that the angle is known (not ellipsis)
@@ -151,6 +157,9 @@ def get_absolute_angle(vec: Vector | VectorUnknown) -> Quantity:
     if isinstance(vec.wrt, VectorClass):
         # wrt is a Vector reference - recursively get its absolute angle
         reference_angle = get_absolute_angle(vec.wrt)
+        # If _wrt_at_junction is True, add 180° to get the reversed direction
+        if getattr(vec, "_wrt_at_junction", False):
+            reference_angle = reference_angle + Q(180, "degree")
     else:
         # wrt is an axis string - get the angle of that axis from the coordinate system
         reference_angle = vec.coordinate_system.get_axis_angle(vec.wrt)
