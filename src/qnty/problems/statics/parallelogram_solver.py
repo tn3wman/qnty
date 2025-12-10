@@ -663,11 +663,12 @@ def solve_sas(state: SolvingState) -> None:
 
     if third_side_mag is None or third_side_mag is ...:
         # Fallback to original heuristic if we can't find third side
-        use_obtuse = mag_opposite > mag_unknown
+        use_obtuse = abs(mag_opposite.magnitude()) > abs(mag_unknown.magnitude())
     else:
         # Use obtuse only if the opposite side is the longest in the triangle
-        all_mags = [mag_opposite.magnitude(), mag_unknown.magnitude(), third_side_mag.magnitude()]
-        use_obtuse = mag_opposite.magnitude() == max(all_mags)
+        # Use absolute values since negative magnitudes represent direction, not length
+        all_mags = [abs(mag_opposite.magnitude()), abs(mag_unknown.magnitude()), abs(third_side_mag.magnitude())]
+        use_obtuse = abs(mag_opposite.magnitude()) == max(all_mags)
 
     # Find the adjacent side names for the angle we're solving
     # The angle at a vertex is between the two sides adjacent to that vertex
@@ -736,8 +737,11 @@ def solve_sas(state: SolvingState) -> None:
                 # Get the reference axis from the vector_references map
                 result_ref = _get_vector_reference(state, unknown_side.name)
 
-                # Use helper to create AngleSum step
-                normalized_dir, step = _create_angle_sum_step(
+                # Use helper to create AngleSum step (for reporting only)
+                # Note: We don't update state.dir_r from AngleSum because it doesn't
+                # properly account for vertex-based geometry (outgoing directions).
+                # The computed_dir from compute_unknown_direction is correct.
+                _, step = _create_angle_sum_step(
                     adjacent_known_side=adjacent_known_side,
                     solved_angle=solved_angle,
                     target_side_name=unknown_side.name,
@@ -746,8 +750,7 @@ def solve_sas(state: SolvingState) -> None:
                     angle_dir=state.result_angle_dir,
                 )
                 state.solving_steps.append(step)
-                # Update dir_r with the normalized angle (0° to 360°)
-                state.dir_r = normalized_dir
+                # Keep state.dir_r = computed_dir (already set above)
             else:
                 # Fallback: simple step using SolutionStepBuilder directly
                 from ...equations.base import SolutionStepBuilder, latex_name
@@ -2148,12 +2151,14 @@ class ParallelogramLawProblem:
             resolved_wrt = _resolve_vector_wrt_reference(vec.wrt, dict_key, self.vectors, self.__class__)
 
             # Create a proper Vector with solved values
+            # Preserve _wrt_at_junction flag from the original VectorUnknown
             solved_vector = Vector(
                 magnitude=solved_mag,
                 angle=solved_angle,
                 wrt=resolved_wrt,
                 coordinate_system=vec.coordinate_system,
                 name=vec.name,
+                _wrt_at_junction=getattr(vec, "_wrt_at_junction", False),
             )
             # Replace the VectorUnknown with the solved Vector
             self.vectors[dict_key] = solved_vector

@@ -347,7 +347,7 @@ class Triangle:
         Returns:
             A TriangleSide with appropriate vertices from SIDE_VERTEX_MAP
         """
-        from ..equations.angle_finder import get_absolute_angle
+        from ..equations.angle_finder import get_effective_direction
         from ..linalg.vector2 import VectorUnknown
 
         start, end = SIDE_VERTEX_MAP[side_attr]
@@ -378,11 +378,11 @@ class Triangle:
             else:
                 is_known = mag.value is not None and mag.value != 0
 
-        # Get direction
+        # Get direction (effective direction accounts for negative magnitude)
         direction: Quantity | None = None
         if not (isinstance(vec, VectorUnknown) and vec.angle is ...):
             try:
-                direction = get_absolute_angle(vec)
+                direction = get_effective_direction(vec)
             except (AttributeError, TypeError):
                 pass
 

@@ -157,15 +157,61 @@ def get_absolute_angle(vec: Vector | VectorUnknown) -> Quantity:
     if isinstance(vec.wrt, VectorClass):
         # wrt is a Vector reference - recursively get its absolute angle
         reference_angle = get_absolute_angle(vec.wrt)
-        # If _wrt_at_junction is True, add 180° to get the reversed direction
+        # If _wrt_at_junction is True, add 180° to get the reversed direction at the junction.
+        # However, if the reference vector has negative magnitude, its effective direction
+        # is already opposite to its stored angle, so we need to account for that.
         if getattr(vec, "_wrt_at_junction", False):
-            reference_angle = reference_angle + Q(180, "degree")
+            # Get the reference vector's magnitude to check its sign
+            ref_mag = vec.wrt.magnitude.magnitude() if hasattr(vec.wrt.magnitude, "magnitude") else vec.wrt.magnitude
+            if ref_mag >= 0:
+                # Positive magnitude: add 180° for junction reversal
+                reference_angle = reference_angle + Q(180, "degree")
+            # For negative magnitude: the stored angle is already the "reversed" effective direction
+            # so we don't add 180° - the junction reference is just the stored angle
     else:
         # wrt is an axis string - get the angle of that axis from the coordinate system
         reference_angle = vec.coordinate_system.get_axis_angle(vec.wrt)
 
     # Add the vector's angle to the reference to get absolute angle
     return reference_angle + angle
+
+
+def get_effective_direction(vec: Vector | VectorUnknown) -> Quantity:
+    """
+    Get the effective direction a vector points, accounting for negative magnitude.
+
+    When a vector has negative magnitude, it points in the opposite direction
+    to its stored angle. This function returns the actual direction the vector
+    points (stored angle + 180° for negative magnitudes).
+
+    This is different from get_absolute_angle which returns the stored angle
+    representation (used for comparison and converting between representations).
+
+    Args:
+        vec: Vector with magnitude, angle, and wrt attributes
+
+    Returns:
+        Effective direction as a Quantity (in degrees)
+
+    Raises:
+        ValueError: If the vector's angle is unknown (ellipsis)
+    """
+    from ..core import Q
+
+    # Get the stored absolute angle
+    absolute = get_absolute_angle(vec)
+
+    # Check magnitude sign
+    if vec.magnitude is ...:
+        return absolute
+
+    vec_mag = vec.magnitude.magnitude() if hasattr(vec.magnitude, "magnitude") else vec.magnitude
+
+    # For negative magnitude, add 180° to get effective direction
+    if vec_mag < 0:
+        absolute = absolute + Q(180, "degree")
+
+    return absolute
 
 
 def get_relative_angle(

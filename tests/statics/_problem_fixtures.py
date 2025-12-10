@@ -524,69 +524,9 @@ class Chapter2Problem31:
 
 # endregion // Parallelogram Law Problems
 
-# region // Rectangular Component Problems
-
-class Chapter2Problem32:
-    pass
-
-class Chapter2Problem33:
-    pass
-
-class Chapter2Problem34:
-    pass
-
-class Chapter2Problem35:
-    pass
-
-class Chapter2Problem36:
-    pass
-
-class Chapter2Problem37:
-    pass
-
-class Chapter2Problem38:
-    pass
-
-class Chapter2Problem39:
-    pass
-
-class Chapter2Problem40:
-    pass
-
-class Chapter2Problem41:
-    pass
-
-class Chapter2Problem42:
-    pass
-
-class Chapter2Problem43:
-    pass
-
-class Chapter2Problem44:
-    pass
-
-class Chapter2Problem45:
-    pass
-
-class Chapter2Problem46:
-    pass
-
-class Chapter2Problem47:
-    pass
-
-class Chapter2Problem48:
-    pass
-
-class Chapter2Problem49:
-    pass
-
-class Chapter2Problem50:
-    pass
-
 # =============================================================================
 # Problem 2-1 Mixed Units (Variant)
 # =============================================================================
-
 
 class Chapter2Problem1MixedUnits:
     name = "Problem 2-1 (Mixed Units)"
@@ -602,11 +542,9 @@ class Chapter2Problem1MixedUnits:
         F_2 = create_vectors_polar(700, "N", 15, wrt="-x")
         F_R = create_vectors_polar(111.733, "lbf", 155.192, wrt="+x")
 
-
 # =============================================================================
 # Problem 2-1 WRONG (for test validation)
 # =============================================================================
-
 
 class Chapter2Problem1_WRONG:
     name = "Problem 2-1 WRONG (expect failures)"
@@ -621,77 +559,6 @@ class Chapter2Problem1_WRONG:
         F_1 = create_vectors_polar(450, "N", 60, wrt="+x")
         F_2 = create_vectors_polar(700, "N", 15, wrt="-x")
         F_R = create_vectors_polar(999.0, "N", 45.0, wrt="+x")
-
-    class report:
-        # WRONG expected content for report generation tests.
-
-        class known_variables:
-            # WRONG known variables - wrong component values.
-            F_1 = {
-                "symbol": "F_1", "unit": "N",
-                # WRONG: x should be 225.0, y should be 389.7
-                "x": 999.0, "y": 999.0, "mag": 450, "angle": 60, "wrt": "+x"
-            }
-            F_2 = {
-                "symbol": "F_2", "unit": "N",
-                "x": -676.1, "y": -181.2, "mag": 700, "angle": 15, "wrt": "-x"
-            }
-
-        class unknown_variables:
-            # WRONG unknown variables - wrong reference.
-            F_R = {
-                "symbol": "F_R", "unit": "N",
-                "x": "?", "y": "?", "magnitude": "?", "angle": "?",
-                # WRONG: reference should be "+x"
-                "reference": "-y",
-            }
-
-        class equations:
-            # WRONG equations - wrong equation strings.
-            # WRONG: should be "|F_R|² = |F_1|² + |F_2|² + 2·|F_1|·|F_2|·cos(∠(F_1,F_2))"
-            eq_1 = "WRONG EQUATION ONE"
-            # WRONG: should be "sin(∠(F_1,F_R))/|F_2| = sin(∠(F_1,F_2))/|F_R|"
-            eq_2 = "WRONG EQUATION TWO"
-            count = 2
-
-        class steps:
-            # WRONG steps - wrong targets and final lines.
-            step_1 = {
-                # WRONG: target should be "∠(F_1,F_2)"
-                "target": "WRONG TARGET",
-                # WRONG: final_line should be "= 45°"
-                "final_line": "= 999°",
-            }
-            step_2 = {
-                "target": "|F_R| using Eq 1",
-                # WRONG: final_line should be "= 497.0 N"
-                "final_line": "= 999.0 N",
-            }
-            step_3 = {
-                "target": "∠(F_1,F_R) using Eq 2",
-                "final_line": "= 95.2°",
-            }
-            step_4 = {
-                "target": "θ_F_R with respect to +x",
-                "final_line": "= 155.2°",
-            }
-            count = 4
-
-        class results:
-            # WRONG results - wrong values.
-            F_R = {
-                "symbol": "F_R",
-                "unit": "N",
-                # WRONG: x should be -451.1
-                "x": 999.0,
-                # WRONG: y should be 208.5
-                "y": 999.0,
-                # WRONG: magnitude should be 497.0
-                "magnitude": 999.0,
-                # WRONG: angle should be 155.2
-                "angle": 999.0,
-                "reference": "+x",
-            }
 
 # =============================================================================
 # Problem lists for parameterized tests

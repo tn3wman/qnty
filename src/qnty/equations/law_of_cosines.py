@@ -98,10 +98,22 @@ class LawOfCosines:
             Tuple of (result_quantity, solution_step_dict)
         """
         from ..algebra.functions import cos, sqrt
-        from ..core.quantity import Quantity
+        from ..core.quantity import Q, Quantity
+
+        # Get absolute values of sides for the Law of Cosines calculation.
+        # In triangle geometry, side lengths are always positive. Negative magnitude
+        # vectors (e.g., -600 lbf at -30°) represent direction, not physical length.
+        # The negative sign affects direction via the effective_direction calculation,
+        # not the side length used in Law of Cosines.
+        side_a_mag = self.side_a.magnitude()
+        side_b_mag = self.side_b.magnitude()
+
+        # Use absolute values for the calculation
+        side_a_abs = Q(abs(side_a_mag), self.side_a.preferred.symbol if self.side_a.preferred else "N")
+        side_b_abs = Q(abs(side_b_mag), self.side_b.preferred.symbol if self.side_b.preferred else "N")
 
         # Law of Cosines using qnty math: c² = a² + b² - 2ab·cos(C)
-        c_squared = self.side_a**2 + self.side_b**2 - 2 * self.side_a * self.side_b * cos(self.angle)
+        c_squared = side_a_abs**2 + side_b_abs**2 - 2 * side_a_abs * side_b_abs * cos(self.angle)
         result = sqrt(c_squared)
 
         # Ensure result is a Quantity (should always be true for concrete inputs)
@@ -121,8 +133,9 @@ class LawOfCosines:
         angle_deg = self.angle.to_unit.degree
 
         # Format substitution with proper LaTeX notation using to_latex() for value+unit
-        side_a_latex = self.side_a.to_latex(precision=1)
-        side_b_latex = self.side_b.to_latex(precision=1)
+        # Use absolute values for display since side lengths are always positive
+        side_a_latex = side_a_abs.to_latex(precision=1)
+        side_b_latex = side_b_abs.to_latex(precision=1)
         result_latex = result.to_latex(precision=1)
 
         # Sort sides alphanumerically for consistent output (F_1 before F_2)
