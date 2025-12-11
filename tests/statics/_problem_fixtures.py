@@ -15,13 +15,17 @@ NOTE: This file is being migrated to use the new parallelogram_solver.py.
 Currently only Problem 2-1 is fully migrated. Other problems are commented out.
 """
 
+from os import name
 import re
 from pathlib import Path
+from venv import create
+
+from matplotlib.pyplot import cla
 
 from qnty.coordinates.oblique import Oblique
 
 # Import vector creation functions from new vectors2 module
-from qnty.linalg.vectors2 import create_resultant_polar, create_vector_from_ratio, create_vector_resultant, create_vectors_polar
+from qnty.linalg.vectors2 import create_resultant_polar, create_vector_from_ratio, create_vector_resultant, create_vectors_cartesian, create_vectors_polar
 
 # Import from the new parallelogram_solver module
 from qnty.problems.statics.parallelogram_solver import (
@@ -530,6 +534,18 @@ class Chapter2Problem31:
 class Chapter2Problem32:
     pass
 
+class Chapter2Problem33:
+    pass
+
+class Chapter2Problem34:
+    name = "Problem 2-34"
+    F_1 = create_vectors_polar(400, "N", -30, wrt="+y")
+    F_2 = create_vectors_polar(250, "N", -45, wrt="+x")
+
+    class expected:
+        F_1 = create_vectors_cartesian(200, 346.4, "N")
+        F_2 = create_vectors_cartesian(177, -177, "N")
+
 
 class Chapter2Problem59:
     pass
@@ -616,7 +632,7 @@ PARALLELOGRAM_LAW_PROBLEMS = [
 ]
 
 RECTANGULAR_PROBLEMS = [
-
+    Chapter2Problem34
 ]
 
 PROBLEMS_EXPECT_FAIL = [

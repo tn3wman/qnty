@@ -730,6 +730,59 @@ class UnaryFunction(Expression):
         return ExpressionFormatter.format_unary_function(self)  # type: ignore[arg-type]
 
 
+class BinaryFunction(Expression):
+    """Binary mathematical function expression (e.g., atan2)."""
+
+    __slots__ = ("function_name", "operand1", "operand2")
+
+    def __init__(self, function_name: str, operand1: Expression, operand2: Expression):
+        self.function_name = function_name
+        self.operand1 = operand1
+        self.operand2 = operand2
+
+    def evaluate(self, variable_values: dict[str, "FieldQuantity"]) -> "Quantity":
+        operand1_val = self.operand1.evaluate(variable_values)
+        operand2_val = self.operand2.evaluate(variable_values)
+
+        if self.function_name == "atan2":
+            # atan2(y, x) - returns angle in radians
+            y = self._extract_value(operand1_val)
+            x = self._extract_value(operand2_val)
+            result_radians = math.atan2(y, x)
+            return self._create_angle_quantity(result_radians)
+        else:
+            raise ValueError(f"Unknown binary function: {self.function_name}")
+
+    def _extract_value(self, quantity: "Quantity") -> float:
+        """Extract numeric value from a quantity."""
+        if _has_valid_value(quantity) and quantity.value is not None:
+            return quantity.value
+        raise ValueError("Quantity has no numeric value")
+
+    def _create_angle_quantity(self, radians: float) -> "Quantity":
+        """Create an angle quantity from a radian value."""
+        from ..core import Q
+        return Q(radians, "radian")
+
+    def get_variables(self) -> set[str]:
+        return self.operand1.get_variables() | self.operand2.get_variables()
+
+    def simplify(self) -> Expression:
+        simplified_op1 = self.operand1.simplify()
+        simplified_op2 = self.operand2.simplify()
+        if _is_constant_fast(simplified_op1) and _is_constant_fast(simplified_op2):
+            try:
+                dummy_vars = {}
+                result = BinaryFunction(self.function_name, simplified_op1, simplified_op2).evaluate(dummy_vars)
+                return Constant(result)
+            except (ValueError, TypeError, ArithmeticError):
+                pass
+        return BinaryFunction(self.function_name, simplified_op1, simplified_op2)
+
+    def __str__(self) -> str:
+        return f"{self.function_name}({self.operand1}, {self.operand2})"
+
+
 class ConditionalExpression(Expression):
     """Conditional expression: if condition then true_expr else false_expr."""
 

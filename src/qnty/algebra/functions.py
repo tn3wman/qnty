@@ -9,7 +9,7 @@ from collections.abc import Callable
 
 from ..core.quantity import FieldQuantity, Quantity
 from ..utils.shared_utilities import ContextDetectionHelper
-from .nodes import BinaryOperation, ConditionalExpression, Expression, UnaryFunction, wrap_operand
+from .nodes import BinaryFunction, BinaryOperation, ConditionalExpression, Expression, UnaryFunction, wrap_operand
 
 # Type aliases for better maintainability
 ExpressionOperand = Expression | FieldQuantity | Quantity | int | float
@@ -87,6 +87,45 @@ acos = _create_unary_function("acos", "Inverse cosine (arccosine) function. Retu
 atan = _create_unary_function("atan", "Inverse tangent (arctangent) function. Returns angle in radians.")
 sqrt = _create_unary_function("sqrt", "Square root function.")
 abs_expr = _create_unary_function("abs", "Absolute value function.")
+
+
+def atan2(y: ExpressionOperand, x: ExpressionOperand) -> Expression | Quantity | float:
+    """
+    Two-argument arctangent function.
+
+    Computes the angle (in radians) between the positive x-axis and the point (x, y).
+    Unlike atan(y/x), atan2 correctly handles all quadrants and the case where x=0.
+
+    Args:
+        y: The y-coordinate (or opposite side)
+        x: The x-coordinate (or adjacent side)
+
+    Returns:
+        Angle in radians as a Quantity, or an Expression if inputs are symbolic
+    """
+    # Check if we should preserve symbolic expressions (in class definition context)
+    if _should_preserve_symbolic_expression():
+        from ..problems.composition import DelayedFunction
+        return DelayedFunction("atan2", y, x)
+
+    wrapped_y = wrap_operand(y)
+    wrapped_x = wrap_operand(x)
+
+    # Check if both operands can be evaluated
+    y_can_eval = hasattr(y, "value") and getattr(y, "value", None) is not None
+    x_can_eval = hasattr(x, "value") and getattr(x, "value", None) is not None
+
+    if y_can_eval and x_can_eval:
+        try:
+            binary_func = BinaryFunction("atan2", wrapped_y, wrapped_x)
+            result = binary_func.evaluate({})
+            return result
+        except (ValueError, TypeError, AttributeError):
+            pass
+
+    return BinaryFunction("atan2", wrapped_y, wrapped_x)
+
+
 ln = _create_unary_function("ln", "Natural logarithm function.")
 log10 = _create_unary_function("log10", "Base-10 logarithm function.")
 exp = _create_unary_function("exp", "Exponential function.")

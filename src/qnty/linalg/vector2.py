@@ -1,5 +1,9 @@
 """
 Vector class for 2D vectors using Quantity objects for magnitude and angle.
+
+Supports both polar (magnitude/angle) and cartesian (x/y) representations.
+The vector can be created in either form, and the other representation
+is computed on demand via properties.
 """
 
 from __future__ import annotations
@@ -8,6 +12,7 @@ from dataclasses import dataclass, field
 from types import EllipsisType
 from typing import TYPE_CHECKING, Union
 
+from ..algebra.functions import atan2, cos, sin, sqrt
 from ..coordinates import Cartesian, CoordinateSystem
 from ..core.quantity import Quantity
 from ..equations.angle_finder import angles_are_equivalent, get_absolute_angle
@@ -68,6 +73,32 @@ class Vector:
     def is_resultant(self) -> bool:
         """Check if this vector is a resultant of other vectors."""
         return self._is_resultant
+
+    @property
+    def x(self) -> Quantity:
+        """
+        The x-component of the vector (Fx = |F| * cos(θ)).
+
+        Returns the x-component as a Quantity with the same units as magnitude.
+        The angle is first converted to absolute angle from +x axis before computing.
+        """
+        abs_angle = get_absolute_angle(self)
+        result = self.magnitude * cos(abs_angle)
+        # The multiplication of Quantity * cos(angle) returns a Quantity
+        return result  # type: ignore[return-value]
+
+    @property
+    def y(self) -> Quantity:
+        """
+        The y-component of the vector (Fy = |F| * sin(θ)).
+
+        Returns the y-component as a Quantity with the same units as magnitude.
+        The angle is first converted to absolute angle from +x axis before computing.
+        """
+        abs_angle = get_absolute_angle(self)
+        result = self.magnitude * sin(abs_angle)
+        # The multiplication of Quantity * sin(angle) returns a Quantity
+        return result  # type: ignore[return-value]
 
     def __repr__(self) -> str:
         name_str = f"'{self.name}' " if self.name else ""

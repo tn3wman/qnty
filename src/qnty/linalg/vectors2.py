@@ -1,11 +1,14 @@
 """
 Factory functions for creating Vector objects.
+
+Supports both polar (magnitude/angle) and cartesian (x/y) representations.
 """
 
 from __future__ import annotations
 
 from types import EllipsisType
 
+from ..algebra.functions import atan2, sqrt
 from ..coordinates import Cartesian, CoordinateSystem
 from ..core.quantity import Q
 from ..spatial.angle_reference import AngleDirection
@@ -248,6 +251,81 @@ def create_resultant_polar(
     resultant._component_vectors = list(vectors)  # type: ignore[attr-defined]
 
     return resultant
+
+
+def create_vectors_cartesian(
+    x: float,
+    y: float,
+    unit: str,
+    name: str | None = None,
+) -> Vector:
+    """
+    Create a vector using Cartesian (rectangular) components.
+
+    This factory function creates a Vector from x and y components,
+    computing the magnitude and angle automatically using:
+        magnitude = sqrt(x² + y²)
+        angle = atan2(y, x)
+
+    The resulting Vector stores magnitude and angle (polar form) internally,
+    but can be converted back to cartesian using the .x and .y properties.
+
+    Args:
+        x: The x-component value (coefficient of i unit vector)
+        y: The y-component value (coefficient of j unit vector)
+        unit: The unit for components (e.g., "N", "lbf", "m")
+        name: Optional name for the vector
+
+    Returns:
+        Vector with computed magnitude and angle from the components
+
+    Examples:
+        >>> from qnty.linalg.vectors2 import create_vectors_cartesian
+        >>>
+        >>> # Create vector {200i + 346j} N (like F_1 from problem 2-34)
+        >>> F_1 = create_vectors_cartesian(200, 346, "N", name="F_1")
+        >>> print(F_1.magnitude)  # ~400 N
+        >>> print(F_1.angle)      # ~60° from +x
+        >>>
+        >>> # Create vector {177i - 177j} N (like F_2 from problem 2-34)
+        >>> F_2 = create_vectors_cartesian(177, -177, "N", name="F_2")
+        >>> print(F_2.magnitude)  # ~250 N
+        >>> print(F_2.angle)      # -45° from +x
+        >>>
+        >>> # Access components back
+        >>> print(F_1.x)  # 200 N
+        >>> print(F_1.y)  # 346 N
+    """
+    # Create Quantities for the components
+    x_qty = Q(x, unit)
+    y_qty = Q(y, unit)
+
+    # Compute magnitude: sqrt(x² + y²)
+    mag_result = sqrt(x_qty * x_qty + y_qty * y_qty)
+
+    # Compute angle: atan2(y, x) returns radians
+    angle_result = atan2(y_qty, x_qty)
+
+    # Ensure we have Quantity objects (not Expressions)
+    # The sqrt and atan2 functions auto-evaluate when given concrete values
+    from ..algebra.nodes import Expression
+    if isinstance(mag_result, Expression):
+        mag_qty = mag_result.evaluate({})
+    else:
+        mag_qty = mag_result
+
+    if isinstance(angle_result, Expression):
+        angle_qty = angle_result.evaluate({})
+    else:
+        angle_qty = angle_result
+
+    return Vector(
+        magnitude=mag_qty,  # type: ignore[arg-type]
+        angle=angle_qty,  # type: ignore[arg-type]
+        wrt="+x",
+        coordinate_system=Cartesian(),
+        name=name,
+    )
 
 
 def create_vector_from_ratio(
