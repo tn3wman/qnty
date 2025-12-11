@@ -531,8 +531,31 @@ class Chapter2Problem31:
 # endregion // Parallelogram Law Problems
 
 # region // Rectangular Component Problems
+        # "forces": {
+        #     "F_1": _Vector(
+        #         magnitude=200, unit="N",
+        #         angle=-45, wrt="+y",
+        #         name="F_1", description="Force 1 at 45° from +x"
+        #     ),
+        #     "F_2": _Vector(
+        #         magnitude=-150, unit="N",
+        #         angle=-30, wrt="+x",
+        #         name="F_2", description="Force 2 at 30° from -x"
+        #     ),
+        #     "F_R": _Vector.unknown(
+        #         name="F_R", is_resultant=True, description="Resultant Force"
+        #     )
+        # },
 class Chapter2Problem32:
-    pass
+    name = "Problem 2-32"
+    F_1 = create_vectors_polar(200, "N", -45, wrt="+y")
+    F_2 = create_vectors_polar(150, "N", -30, wrt="+x")
+    F_R = create_vector_resultant(F_1, F_2)
+
+    class expected:
+        F_1 = create_vectors_cartesian(141.4, -141.4, "N")
+        F_2 = create_vectors_cartesian(129.9, -75.0, "N")
+        F_R = create_vectors_cartesian(271.3, -216.4, "N")
 
 class Chapter2Problem33:
     pass
@@ -632,6 +655,7 @@ PARALLELOGRAM_LAW_PROBLEMS = [
 ]
 
 RECTANGULAR_PROBLEMS = [
+    Chapter2Problem32,
     Chapter2Problem34
 ]
 

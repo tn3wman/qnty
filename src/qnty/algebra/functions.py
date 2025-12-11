@@ -20,38 +20,68 @@ ConditionalOperand = Expression | BinaryOperation
 _should_preserve_symbolic_expression = ContextDetectionHelper.should_preserve_symbolic_expression
 
 
+def _is_evaluable_quantity(expr) -> bool:
+    """
+    Check if an expression is a concrete Quantity that can be evaluated immediately.
+
+    Returns True for:
+    - Quantities created directly: Q(200, 'N') - has name='Q' or name is None
+    - Quantities from arithmetic: Q1 * Q2 - has name equal to str(value)
+    - int/float values
+
+    Returns False for:
+    - Named variables: Length('my_var') - has a user-given name
+    - Unknown variables: Length('x', is_known=False) - has value=None
+    """
+    if isinstance(expr, int | float):
+        return True
+
+    if not (hasattr(expr, "value") and getattr(expr, "value", None) is not None):
+        return False
+
+    # Check if it has a name that indicates it's a named variable (not just a computed value)
+    name = getattr(expr, "name", None)
+    if name is None:
+        return True
+    if name == "Q":
+        return True  # Directly created Q(value, unit)
+    # Check if name is the string representation of the value (result of arithmetic)
+    try:
+        float(name)
+        return True  # Name is a number, so it's a computed result
+    except (ValueError, TypeError):
+        pass
+
+    return False
+
+
 def _create_unary_function(name: str, docstring: str) -> "Callable[[ExpressionOperand], Expression | Quantity | float]":
     """Factory function for creating unary mathematical functions."""
 
     def func(expr: ExpressionOperand) -> Expression | Quantity | float:
         # Check if we should preserve symbolic expressions (in class definition context)
-        if _should_preserve_symbolic_expression():
+        # BUT only if the input is not an evaluable quantity
+        if not _is_evaluable_quantity(expr) and _should_preserve_symbolic_expression():
             from ..problems.composition import DelayedFunction
-
             return DelayedFunction(name, expr)
 
         wrapped_expr = wrap_operand(expr)
 
-        # For known quantities (FieldQnty with known values), check context before auto-evaluating
+        # For known quantities with values, auto-evaluate
         should_auto_evaluate = False
         if hasattr(expr, "quantity") and getattr(expr, "quantity", None) is not None:
             should_auto_evaluate = True
-        # Also auto-evaluate for Quantity objects with values
         elif hasattr(expr, "value") and hasattr(expr, "dim") and getattr(expr, "value", None) is not None:
             should_auto_evaluate = True
 
         if should_auto_evaluate:
-            # No Problem class context found, safe to auto-evaluate
             try:
                 unary_func = UnaryFunction(name, wrapped_expr)
-                # Use an empty variable dict since we have the quantity directly
                 result = unary_func.evaluate({})
                 return result
             except (ValueError, TypeError, AttributeError):
-                # Fall back to expression if evaluation fails
                 pass
 
-        # For unknown variables or expressions, return the UnaryFunction
         return UnaryFunction(name, wrapped_expr)
 
     func.__name__ = name
@@ -104,7 +134,8 @@ def atan2(y: ExpressionOperand, x: ExpressionOperand) -> Expression | Quantity |
         Angle in radians as a Quantity, or an Expression if inputs are symbolic
     """
     # Check if we should preserve symbolic expressions (in class definition context)
-    if _should_preserve_symbolic_expression():
+    # BUT only if inputs are not evaluable quantities
+    if not (_is_evaluable_quantity(y) and _is_evaluable_quantity(x)) and _should_preserve_symbolic_expression():
         from ..problems.composition import DelayedFunction
         return DelayedFunction("atan2", y, x)
 
