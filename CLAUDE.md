@@ -203,3 +203,4 @@ The `.pyi` stub files provide IDE autocomplete and type checking for dynamically
 1. Check if it exists in the corresponding `*_catalog.py` file
 2. Regenerate stubs using the appropriate generator script
 3. Restart your IDE's language server
+- The math module should not be used anywhere in C:\Projects\qnty\src\qnty\problems\statics. Only quantities should be used. Quantity can handle all arithmetic, trig, unit conversions, etc.

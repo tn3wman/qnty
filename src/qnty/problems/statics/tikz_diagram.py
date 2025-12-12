@@ -237,24 +237,8 @@ def get_vector_label_position(angle_deg: float, angle_wrt: str = "+x") -> str:
     """
     angle = angle_deg % 360
 
-    # Get the reference axis angle
-    ref_angles = {"+x": 0, "-x": 180, "+y": 90, "-y": 270}
-    ref_angle = ref_angles.get(angle_wrt, 0)
-
-    # The angle arc is drawn between ref_angle and angle_deg.
-    # We want to place the label on the opposite side from the arc.
-    # Calculate which side of the vector the arc is on.
-
-    # Normalize the difference to find the arc direction
-    diff = (angle - ref_angle) % 360
-    arc_is_ccw = diff <= 180  # Arc goes counter-clockwise from ref to vector
-
-    # For each quadrant, determine label position based on arc direction.
-    # The arc goes from ref_angle to angle. If arc_is_ccw (counter-clockwise),
-    # the arc sweeps in the CCW direction. We place the label on the opposite side.
-    #
-    # General principle: place label at the tip of the vector, away from the arc
-    # and in a natural reading position.
+    # Place label at the tip of the vector, based on which quadrant
+    # the vector is in, avoiding overlap with angle arcs.
 
     # Check for cardinal directions first (vectors along axes)
     # Place labels to avoid covering the axis itself
@@ -510,7 +494,7 @@ def build_reference_angle_arc(
         end_angle=vec.angle_deg,
         color=color,
         style="thin",
-        label=f"${vec.angle_ref:.0f}^\\circ$",
+        label=f"${abs(vec.angle_ref):.0f}^\\circ$",
         label_position=label_pos,
         label_anchor=anchor,
     )
@@ -1016,6 +1000,315 @@ def render_force_triangle_tikz(diagram: TikZDiagram) -> str:
     # Origin point - use vertex name if available
     origin_name = get_vertex_name_or_coords(diagram.origin, vertex_map)
     lines.append(f"  \\fill {origin_name} circle (2pt) node[below left] {{$O$}};")
+    lines.append("\\end{tikzpicture}")
+
+    return "\n".join(lines)
+
+
+# =============================================================================
+# Rectangular Method Diagram Builders
+# =============================================================================
+
+
+@dataclass
+class RectangularVectorData:
+    """Data for a vector in a rectangular method diagram."""
+
+    name: str  # e.g., "F_1"
+    magnitude: float  # Magnitude value (can be negative)
+    angle_deg: float  # Absolute angle from +x in degrees
+    angle_ref: float  # Angle as defined in problem (relative to reference)
+    angle_wrt: str  # Reference axis (e.g., "+x", "+y")
+
+
+def build_rectangular_setup_diagram(
+    vectors: list[RectangularVectorData],
+    unit: str = "N",
+    scale: float = 0.55,
+) -> TikZDiagram:
+    """Build TikZ diagram data for rectangular method Problem Setup view.
+
+    Shows input vectors (F_1, F_2, etc.) from origin. Does NOT show F_R.
+    For negative magnitude vectors, the tip is at the origin (arrow points inward).
+
+    Args:
+        vectors: List of RectangularVectorData for input vectors
+        unit: Unit string for labels
+        scale: TikZ scale factor
+
+    Returns:
+        TikZDiagram with vectors and angle arcs
+    """
+    from ...equations.base import latex_name
+
+    diagram = TikZDiagram(scale=scale)
+
+    if not vectors:
+        return diagram
+
+    origin = Point(0, 0)
+    diagram.origin = origin
+
+    # Calculate scale factor based on max magnitude
+    max_mag = max(abs(v.magnitude) for v in vectors)
+    if max_mag == 0:
+        max_mag = 1
+    vec_scale = 3.0 / max_mag  # Scale to fit in ~3cm
+
+    # Compute axis length
+    axis_len = 3.5
+
+    # Build axes
+    diagram.axes = build_coordinate_axes(origin, axis_len)
+
+    # Build vectors
+    colors = ["vec_f1", "vec_f2", "vec_f1!50!vec_f2", "orange!80!black"]
+
+    for i, vec in enumerate(vectors):
+        color = colors[i % len(colors)]
+        vec_latex = latex_name(vec.name)
+
+        # Compute the end point based on absolute angle from +x
+        angle_rad = math.radians(vec.angle_deg)
+        mag = abs(vec.magnitude)
+
+        end_x = mag * vec_scale * math.cos(angle_rad)
+        end_y = mag * vec_scale * math.sin(angle_rad)
+
+        if vec.magnitude >= 0:
+            # Positive magnitude: tail at origin, tip at (end_x, end_y)
+            start_pt = origin
+            end_pt = Point(end_x, end_y)
+            # Label at tip (pos=1), position based on vector direction
+            label_pos = get_vector_label_position(vec.angle_deg, vec.angle_wrt)
+            label_at = 1
+        else:
+            # Negative magnitude: tip at origin, tail at (end_x, end_y)
+            start_pt = Point(end_x, end_y)
+            end_pt = origin
+            # Label at tail (pos=0), position based on where the tail is
+            # The tail is at angle_deg from origin, so label should be on the outside
+            label_pos = get_vector_label_position(vec.angle_deg, vec.angle_wrt)
+            label_at = 0
+
+        # Build label with magnitude (always positive - direction shown by arrow)
+        label = f"$\\vv{{{vec_latex}}} = {abs(vec.magnitude):.0f}\\,\\text{{{unit}}}$"
+
+        diagram.vectors.append(
+            TikZVector(
+                name=vec.name,
+                start=start_pt,
+                end=end_pt,
+                color=color,
+                style="vector",
+                label=label,
+                label_position=label_pos,
+                label_at=label_at,
+            )
+        )
+
+        # Build angle arc from reference axis
+        arc_radius_base = 0.8 + i * 0.3  # Stagger arc radii
+        if arc := build_reference_angle_arc_rectangular(vec, origin, arc_radius_base, color):
+            diagram.angle_arcs.append(arc)
+
+    return diagram
+
+
+def build_reference_angle_arc_rectangular(
+    vec: RectangularVectorData,
+    origin: Point,
+    radius: float,
+    color: str,
+) -> TikZAngleArc | None:
+    """Build an angle arc for a rectangular method vector.
+
+    Args:
+        vec: Vector data with angle_ref, angle_wrt, angle_deg
+        origin: Origin point for the arc
+        radius: Arc radius
+        color: TikZ color for the arc
+
+    Returns:
+        TikZAngleArc or None if angle is negligible
+    """
+    if abs(vec.angle_ref) <= 0.5:
+        return None
+
+    ref_angle = get_ref_axis_angle(vec.angle_wrt)
+
+    # For the arc, we draw from the reference axis to the vector direction
+    # The vector direction depends on whether magnitude is positive or negative
+    if vec.magnitude >= 0:
+        # Vector points in angle_deg direction
+        vec_angle = vec.angle_deg
+    else:
+        # Vector points toward origin, so the "effective" direction for
+        # showing the angle is still the angle_deg direction
+        vec_angle = vec.angle_deg
+
+    label_pos, anchor = compute_arc_label_position(origin, ref_angle, vec_angle, radius)
+
+    return TikZAngleArc(
+        center=origin,
+        radius=radius,
+        start_angle=ref_angle,
+        end_angle=vec_angle,
+        color=color,
+        style="thin",
+        label=f"${abs(vec.angle_ref):.0f}^\\circ$",
+        label_position=label_pos,
+        label_anchor=anchor,
+    )
+
+
+def render_rectangular_setup_tikz(diagram: TikZDiagram) -> str:
+    """Render the Rectangular Method Problem Setup TikZ diagram code.
+
+    Args:
+        diagram: TikZ diagram data
+
+    Returns:
+        Complete TikZ picture code (with leading newline for LaTeX embedding)
+    """
+    # Leading newline for proper LaTeX spacing when embedded
+    lines = ["", f"\\begin{{tikzpicture}}[scale={diagram.scale},baseline=(current bounding box.north)]"]
+
+    # Axes
+    lines.extend(render_tikz_axes(diagram.axes))
+
+    # Vectors
+    for vec in diagram.vectors:
+        lines.append(render_tikz_vector(vec))
+
+    # Angle arcs
+    for arc in diagram.angle_arcs:
+        lines.extend(render_tikz_angle_arc(arc))
+
+    # Origin point
+    lines.append(f"  \\fill ({diagram.origin.x:.3f},{diagram.origin.y:.3f}) circle (2pt) node[below left] {{$O$}};")
+    lines.append("\\end{tikzpicture}")
+
+    return "\n".join(lines)
+
+
+@dataclass
+class ResultantVectorData:
+    """Data for the resultant vector in a results diagram."""
+
+    name: str  # e.g., "F_R"
+    x_comp: float  # x component value
+    y_comp: float  # y component value
+    magnitude: float  # Resultant magnitude
+    angle_deg: float  # Angle from +x axis in degrees
+
+
+def build_rectangular_result_diagram(
+    resultant: ResultantVectorData,
+    unit: str = "N",
+    scale: float = 0.55,
+) -> TikZDiagram:
+    """Build TikZ diagram data for rectangular method Results view.
+
+    Shows the resultant vector F_R from the origin with its angle from +x.
+
+    Args:
+        resultant: ResultantVectorData with magnitude and angle
+        unit: Unit string for labels
+        scale: TikZ scale factor
+
+    Returns:
+        TikZDiagram with resultant vector and angle arc
+    """
+    from ...equations.base import latex_name
+
+    diagram = TikZDiagram(scale=scale)
+
+    origin = Point(0, 0)
+    diagram.origin = origin
+
+    # Scale factor for vector length
+    vec_scale = 3.0 / resultant.magnitude if resultant.magnitude > 0 else 1.0
+
+    # Compute axis length
+    axis_len = 3.5
+
+    # Build axes
+    diagram.axes = build_coordinate_axes(origin, axis_len)
+
+    # Compute end point for resultant vector
+    angle_rad = math.radians(resultant.angle_deg)
+    end_x = resultant.magnitude * vec_scale * math.cos(angle_rad)
+    end_y = resultant.magnitude * vec_scale * math.sin(angle_rad)
+    end_pt = Point(end_x, end_y)
+
+    # Build vector label
+    vec_latex = latex_name(resultant.name)
+    label = f"$\\vv{{{vec_latex}}} = {resultant.magnitude:.1f}\\,\\text{{{unit}}}$"
+
+    # Determine label position based on quadrant
+    label_pos = get_vector_label_position(resultant.angle_deg, "+x")
+
+    diagram.vectors.append(
+        TikZVector(
+            name=resultant.name,
+            start=origin,
+            end=end_pt,
+            color="vec_fr",
+            style="vector",
+            label=label,
+            label_position=label_pos,
+            label_at=1,
+        )
+    )
+
+    # Add angle arc from +x axis if angle is significant
+    if abs(resultant.angle_deg) > 0.5:
+        arc_radius = 0.8
+        label_pos_arc, anchor = compute_arc_label_position(origin, 0, resultant.angle_deg, arc_radius)
+
+        diagram.angle_arcs.append(
+            TikZAngleArc(
+                center=origin,
+                radius=arc_radius,
+                start_angle=0,
+                end_angle=resultant.angle_deg,
+                color="vec_fr",
+                style="thin",
+                label=f"$\\angle(x, {vec_latex})$",
+                label_position=label_pos_arc,
+                label_anchor=anchor,
+            )
+        )
+
+    return diagram
+
+
+def render_rectangular_result_tikz(diagram: TikZDiagram) -> str:
+    """Render the Rectangular Method Results TikZ diagram code.
+
+    Args:
+        diagram: TikZ diagram data
+
+    Returns:
+        Complete TikZ picture code (with leading newline for LaTeX embedding)
+    """
+    # Leading newline for proper LaTeX spacing when embedded
+    lines = ["", f"\\begin{{tikzpicture}}[scale={diagram.scale},baseline=(current bounding box.north)]"]
+
+    # Axes
+    lines.extend(render_tikz_axes(diagram.axes))
+
+    # Vectors
+    for vec in diagram.vectors:
+        lines.append(render_tikz_vector(vec))
+
+    # Angle arcs
+    for arc in diagram.angle_arcs:
+        lines.extend(render_tikz_angle_arc(arc))
+
+    # Origin point
+    lines.append(f"  \\fill ({diagram.origin.x:.3f},{diagram.origin.y:.3f}) circle (2pt) node[below left] {{$O$}};")
     lines.append("\\end{tikzpicture}")
 
     return "\n".join(lines)

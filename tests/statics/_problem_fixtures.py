@@ -15,17 +15,18 @@ NOTE: This file is being migrated to use the new parallelogram_solver.py.
 Currently only Problem 2-1 is fully migrated. Other problems are commented out.
 """
 
-from os import name
 import re
 from pathlib import Path
-from venv import create
-
-from matplotlib.pyplot import cla
 
 from qnty.coordinates.oblique import Oblique
 
 # Import vector creation functions from new vectors2 module
 from qnty.linalg.vectors2 import create_resultant_polar, create_vector_from_ratio, create_vector_resultant, create_vectors_cartesian, create_vectors_polar
+
+# Import from the rectangular_solver module
+from qnty.problems.statics.cartesian_solver import (
+    solve_class as solve_rectangular_class,
+)
 
 # Import from the new parallelogram_solver module
 from qnty.problems.statics.parallelogram_solver import (
@@ -57,8 +58,24 @@ def generate_debug_reports_for_problem(problem_class) -> None:
     safe_name = problem_class.name.lower().replace(" ", "_").replace("-", "_")
     safe_name = "".join(c for c in safe_name if c.isalnum() or c == "_")
 
-    # Solve the problem using the new solver
-    problem = solve_class(problem_class, output_unit="N")
+    # Determine which solver to use based on problem type
+    # Check if problem name starts with "Problem 2-" and number is in rectangular range (32-59)
+    # This avoids circular dependency since RECTANGULAR_PROBLEMS is defined later
+    problem_name = getattr(problem_class, 'name', '')
+    is_rectangular = False
+    if problem_name.startswith("Problem 2-"):
+        try:
+            problem_num = int(problem_name.split("-")[1])
+            is_rectangular = 32 <= problem_num <= 59
+        except (ValueError, IndexError):
+            pass
+
+    if is_rectangular:
+        # Use rectangular solver for rectangular method problems
+        problem = solve_rectangular_class(problem_class, output_unit="N", compute_resultant=True)
+    else:
+        # Use parallelogram solver for parallelogram law problems
+        problem = solve_class(problem_class, output_unit="N")
 
     if not problem.is_solved:
         print(f"WARNING: {problem_class.name} failed to solve")
@@ -76,6 +93,14 @@ def generate_debug_reports_for_problem(problem_class) -> None:
         print(f"Generated: {pdf_path}")
     except Exception as e:
         print(f"WARNING: PDF generation failed for {problem_class.name}: {e}")
+
+
+class StepContent:
+    heading: str
+    lines: list[str]
+
+class ReportContent:
+    steps: list[StepContent]
 
 # region // Parallelogram Law Problems
 
@@ -531,37 +556,35 @@ class Chapter2Problem31:
 # endregion // Parallelogram Law Problems
 
 # region // Rectangular Component Problems
-        # "forces": {
-        #     "F_1": _Vector(
-        #         magnitude=200, unit="N",
-        #         angle=-45, wrt="+y",
-        #         name="F_1", description="Force 1 at 45° from +x"
-        #     ),
-        #     "F_2": _Vector(
-        #         magnitude=-150, unit="N",
-        #         angle=-30, wrt="+x",
-        #         name="F_2", description="Force 2 at 30° from -x"
-        #     ),
-        #     "F_R": _Vector.unknown(
-        #         name="F_R", is_resultant=True, description="Resultant Force"
-        #     )
-        # },
+
 class Chapter2Problem32:
     name = "Problem 2-32"
+    generate_debug_reports = True
     F_1 = create_vectors_polar(200, "N", -45, wrt="+y")
-    F_2 = create_vectors_polar(150, "N", -30, wrt="+x")
+    F_2 = create_vectors_polar(-150, "N", -30, wrt="+x")
     F_R = create_vector_resultant(F_1, F_2)
 
     class expected:
-        F_1 = create_vectors_cartesian(141.4, -141.4, "N")
-        F_2 = create_vectors_cartesian(129.9, -75.0, "N")
-        F_R = create_vectors_cartesian(271.3, -216.4, "N")
+        F_1 = create_vectors_cartesian(141.4, 141.4, "N")
+        F_2 = create_vectors_cartesian(-129.9, 75.0, "N")
+        F_R = create_vectors_cartesian(11.5, 216.4, "N")
 
 class Chapter2Problem33:
-    pass
+    name = "Problem 2-33"
+    generate_debug_reports = True
+    F_1 = create_vectors_polar(400, "N", 30, wrt="+x")
+    F_2 = create_vectors_polar(800, "N", 45, wrt="-y")
+    F_R = create_vector_resultant(F_1, F_2)
+
+    class expected:
+        F_1 = create_vectors_polar(400, "N", 30, wrt="+x")
+        F_2 = create_vectors_polar(800, "N", 45, wrt="-y")
+        F_R = create_vectors_polar(983, "N", -21.8, wrt="+x")
+
 
 class Chapter2Problem34:
     name = "Problem 2-34"
+    generate_debug_reports = True
     F_1 = create_vectors_polar(400, "N", -30, wrt="+y")
     F_2 = create_vectors_polar(250, "N", -45, wrt="+x")
 
@@ -570,8 +593,332 @@ class Chapter2Problem34:
         F_2 = create_vectors_cartesian(177, -177, "N")
 
 
+class Chapter2Problem35:
+    name = "Problem 2-35"
+    generate_debug_reports = True
+    F_1 = create_vectors_polar(400, "N", -30, wrt="+y")
+    F_2 = create_vectors_polar(250, "N", -45, wrt="+x")
+    F_R = create_vector_resultant(F_1, F_2)
+
+    class expected:
+        F_1 = create_vectors_cartesian(200, 346.4, "N")
+        F_2 = create_vectors_cartesian(177, -177, "N")
+        F_R = create_vectors_cartesian(377, 169.4, "N")
+
+
+class Chapter2Problem36:
+    name = "Problem 2-36"
+    generate_debug_reports = True
+    F_1 = create_vectors_polar(900, "N", 0, wrt="+x")
+    F_2 = create_vectors_polar(750, "N", 45, wrt="+x")
+    F_3 = create_vector_from_ratio(-650, "N", -4, 3)
+
+    class expected:
+        F_1 = create_vectors_cartesian(900, 0, "N")
+        F_2 = create_vectors_cartesian(530, 530, "N")
+        F_3 = create_vectors_cartesian(520, -390, "N")
+
+
+class Chapter2Problem37:
+    name = "Problem 2-37"
+    generate_debug_reports = True
+    F_1 = create_vectors_polar(900, "N", 0, wrt="+x")
+    F_2 = create_vectors_polar(750, "N", 45, wrt="+x")
+    F_3 = create_vector_from_ratio(-650, "N", -4, 3)
+    F_R = create_vector_resultant(F_1, F_2, F_3)
+
+    class expected:
+        F_1 = create_vectors_cartesian(900, 0, "N")
+        F_2 = create_vectors_cartesian(530, 530, "N")
+        F_3 = create_vectors_cartesian(520, -390, "N")
+        F_R = create_vectors_polar(1955, "N", 4.12, wrt="+x")
+
+
+class Chapter2Problem38:
+    name = "Problem 2-38"
+    generate_debug_reports = True
+    F_1 = create_vector_from_ratio(50, "N", 3, 4)
+    F_2 = create_vectors_polar(80, "N", -15, wrt="-y")
+    F_3 = create_vectors_polar(30, "N", 0, wrt="+x")
+    F_R = create_vector_resultant(F_1, F_2, F_3)
+
+    class expected:
+        F_1 = create_vectors_cartesian(30, 40, "N")
+        F_2 = create_vectors_cartesian(-20.71, -77.3, "N")
+        F_3 = create_vectors_cartesian(30, 0, "N")
+        F_R = create_vectors_polar(54.2, "N", -43.5, wrt="+x")
+
+
+class Chapter2Problem39:
+    name = "Problem 2-39"
+    generate_debug_reports = True
+    F_1 = create_vectors_polar(200, "N", -45, wrt="+y")
+    F_2 = create_vectors_polar(-150, "N", -30, wrt="+x")
+
+    class expected:
+        F_1 = create_vectors_cartesian(141, 141, "N")
+        F_2 = create_vectors_cartesian(-130, 75, "N")
+
+
+class Chapter2Problem40:
+    name = "Problem 2-40"
+    generate_debug_reports = True
+    F_1 = create_vectors_polar(200, "N", -45, wrt="+y")
+    F_2 = create_vectors_polar(-150, "N", -30, wrt="+x")
+    F_R = create_vector_resultant(F_1, F_2)
+
+    class expected:
+        F_1 = create_vectors_cartesian(141, 141, "N")
+        F_2 = create_vectors_cartesian(-130, 75, "N")
+        F_R = create_vectors_cartesian(11, 216, "N")
+
+
+class Chapter2Problem41:
+    name = "Problem 2-41"
+    generate_debug_reports = True
+    F_1 = create_vectors_polar(4000, "N", 0, wrt="+x")
+    F_2 = create_vectors_polar(5000, "N", 45, wrt="+x")
+    F_3 = create_vectors_polar(8000, "N", 60, wrt=F_2)
+    F_R = create_vector_resultant(F_1, F_2, F_3)
+
+    class expected:
+        F_1 = create_vectors_polar(4000, "N", 0, wrt="+x")
+        F_2 = create_vectors_polar(5000, "N", 45, wrt="+x")
+        F_3 = create_vectors_polar(8000, "N", 15, wrt="+y")
+        F_R = create_vectors_polar(12520, "N", 64.12, wrt="+x")
+
+
+class Chapter2Problem42:
+    name = "Problem 2-42"
+    generate_debug_reports = True
+    F_1 = create_vector_from_ratio(850, "N", 4, -3)
+    F_2 = create_vectors_polar(625, "N", -30, wrt="-y")
+    F_3 = create_vectors_polar(750, "N", 45, wrt="+y")
+
+    class expected:
+        F_1 = create_vectors_cartesian(680, -510, "N")
+        F_2 = create_vectors_cartesian(-312, -541, "N")
+        F_3 = create_vectors_cartesian(-530, 530.3, "N")
+
+
+class Chapter2Problem43:
+    name = "Problem 2-43"
+    generate_debug_reports = True
+    F_1 = create_vector_from_ratio(850, "N", 4, -3)
+    F_2 = create_vectors_polar(625, "N", -30, wrt="-y")
+    F_3 = create_vectors_polar(750, "N", 45, wrt="+y")
+    F_R = create_vector_resultant(F_1, F_2, F_3)
+
+    class expected:
+        F_1 = create_vectors_cartesian(680, -510, "N")
+        F_2 = create_vectors_cartesian(-312, -541, "N")
+        F_3 = create_vectors_cartesian(-530, 530.3, "N")
+        F_R = create_vectors_polar(546, "N", 253, wrt="+x")
+
+
+class Chapter2Problem44:
+    name = "Problem 2-44"
+    generate_debug_reports = True
+    F_1 = create_vector_from_ratio(40, "lbf", 3, 4)
+    F_2 = create_vector_from_ratio(91, "lbf", 5, -12)
+    F_3 = create_vectors_polar(30, "lbf", 0, wrt="+x")
+    F_R = create_vector_resultant(F_1, F_2, F_3)
+
+    class expected:
+        F_1 = create_vectors_cartesian(40*3/5, 40*4/5, "lbf")
+        F_2 = create_vectors_cartesian(91*5/13, -91*12/13, "lbf")
+        F_3 = create_vectors_cartesian(30, 0, "lbf")
+        F_R = create_vectors_polar(103, "lbf", -30.3, wrt="+x")
+
+
+# Problem 2-45: Symbolic solution only - skipped
+
+class Chapter2Problem46:
+    name = "Problem 2-46"
+    generate_debug_reports = True
+    F_A = create_vectors_polar(700, "N", -30, wrt="+y")
+    F_B = create_vectors_polar(..., "N", ..., wrt="-x")
+    F_R = create_resultant_polar(
+        F_A, F_B,
+        magnitude=1500, unit="N", angle=0, wrt="+y"
+    )
+
+    class expected:
+        F_A = create_vectors_polar(700, "N", -30, wrt="+y")
+        F_B = create_vectors_polar(960, "N", -68.6, wrt="-x")
+        F_R = create_vectors_polar(1500, "N", 0, wrt="+y")
+
+
+class Chapter2Problem47:
+    name = "Problem 2-47"
+    generate_debug_reports = True
+    F_A = create_vectors_polar(700, "N", -30, wrt="+y")
+    F_B = create_vectors_polar(600, "N", -20, wrt="-x")
+    F_R = create_vector_resultant(F_A, F_B)
+
+    class expected:
+        F_A = create_vectors_polar(700, "N", -30, wrt="+y")
+        F_B = create_vectors_polar(600, "N", -20, wrt="-x")
+        F_R = create_vectors_polar(839, "N", 14.8, wrt="+y")
+
+
+class Chapter2Problem48:
+    name = "Problem 2-48"
+    generate_debug_reports = True
+    F_1 = create_vectors_polar(..., "N", ..., wrt="F_R")
+    F_2 = create_vectors_polar(200, "N", 0, wrt="+y")
+    F_3 = create_vector_from_ratio(180, "N", -12, 5)
+    F_R = create_resultant_polar(
+        F_1, F_2, F_3,
+        magnitude=800, unit="N", angle=-60, wrt="+y"
+    )
+
+    class expected:
+        # Expected components computed from textbook solution:
+        # F_1: 869 N at -21.3° from F_R (F_R is at 30° from +x)
+        # F_1 absolute angle = 30 - 21.3 = 8.7° from +x
+        F_1 = create_vectors_cartesian(859, 131, "N")
+        F_2 = create_vectors_cartesian(0, 200, "N")
+        F_3 = create_vectors_cartesian(-166, 69, "N")
+        F_R = create_vectors_cartesian(693, 400, "N")
+
+
+class Chapter2Problem49:
+    name = "Problem 2-49"
+    generate_debug_reports = True
+    F_1 = create_vectors_polar(300, "N", -70, wrt="+y")
+    F_2 = create_vectors_polar(200, "N", 0, wrt="+y")
+    F_3 = create_vectors_polar(180, "N", -22.6, wrt="-x")
+    F_R = create_vector_resultant(F_1, F_2, F_3)
+
+    class expected:
+        F_1 = create_vectors_polar(300, "N", -70, wrt="+y")
+        F_2 = create_vectors_polar(200, "N", 0, wrt="+y")
+        F_3 = create_vectors_polar(180, "N", -22.6, wrt="-x")
+        F_R = create_vectors_polar(389, "N", 52.7, wrt="+F_1")
+
+
+class Chapter2Problem50:
+    name = "Problem 2-50"
+    generate_debug_reports = True
+    F_1 = create_vectors_polar(15000, "N", -40, wrt="+y")
+    F_2 = create_vectors_polar(26000, "N", -22.6, wrt="-x")
+    F_3 = create_vectors_polar(36000, "N", -30, wrt="+x")
+
+    class expected:
+        F_1 = create_vectors_cartesian(9642, 11491, "N")
+        F_2 = create_vectors_cartesian(-24003, 9992, "N")
+        F_3 = create_vectors_cartesian(31177, -18000, "N")
+
+
+class Chapter2Problem51:
+    name = "Problem 2-51"
+    generate_debug_reports = True
+    F_1 = create_vectors_polar(15000, "N", -40, wrt="+y")
+    F_2 = create_vectors_polar(26000, "N", -22.6, wrt="-x")
+    F_3 = create_vectors_polar(36000, "N", -30, wrt="+x")
+    F_R = create_vector_resultant(F_1, F_2, F_3)
+
+    class expected:
+        F_1 = create_vectors_cartesian(9642, 11491, "N")
+        F_2 = create_vectors_cartesian(-24003, 9992, "N")
+        F_3 = create_vectors_cartesian(31177, -18000, "N")
+        F_R = create_vectors_polar(17200, "N", 11.7, wrt="+x")
+
+
+class Chapter2Problem52:
+    name = "Problem 2-52"
+    generate_debug_reports = True
+    F_1 = create_vectors_polar(-8000, "N", 53.13, wrt="+y")
+    F_2 = create_vectors_polar(6000, "N", 53.13, wrt="+x")
+    F_3 = create_vectors_polar(4000, "N", 0, wrt="-x")
+    F_4 = create_vectors_polar(6000, "N", 0, wrt="-x")
+    F_R = create_vector_resultant(F_1, F_2, F_3, F_4)
+
+    class expected:
+        F_1 = create_vectors_cartesian(6400, -4800, "N")
+        F_2 = create_vectors_cartesian(3600, 4800, "N")
+        F_3 = create_vectors_cartesian(-4000, 0, "N")
+        F_4 = create_vectors_cartesian(-6000, 0, "N")
+        F_R = create_vectors_cartesian(0, 0, "N")
+
+
+class Chapter2Problem53:
+    name = "Problem 2-53"
+    generate_debug_reports = True
+    F_1 = create_vectors_polar(30000, "N", -30, wrt="-y")
+    F_2 = create_vectors_polar(26000, "N", -67.4, wrt="-x")
+
+    class expected:
+        F_1 = create_vectors_cartesian(-15000, -26000, "N")
+        F_2 = create_vectors_cartesian(-10000, 24000, "N")
+
+
+class Chapter2Problem54:
+    name = "Problem 2-54"
+    generate_debug_reports = True
+    F_1 = create_vectors_polar(30000, "N", -30, wrt="-y")
+    F_2 = create_vectors_polar(26000, "N", -67.4, wrt="-x")
+    F_R = create_vector_resultant(F_1, F_2)
+
+    class expected:
+        F_1 = create_vectors_cartesian(-15000, -26000, "N")
+        F_2 = create_vectors_cartesian(-10000, 24000, "N")
+        F_R = create_vectors_polar(25100, "N", 185, wrt="+x")
+
+
+class Chapter2Problem55:
+    name = "Problem 2-55"
+    generate_debug_reports = True
+    F_1 = create_vectors_polar(8000, "N", 0, wrt="+x")
+    F_2 = create_vectors_polar(..., "N", 45, wrt="-x")
+    F_3 = create_vectors_polar(14000, "N", -30, wrt="-x")
+    F_R = create_resultant_polar(
+        F_1, F_2, F_3,
+        magnitude=..., unit="N", angle=135, wrt="+x"
+    )
+
+    class expected:
+        F_1 = create_vectors_polar(8000, "N", 0, wrt="+x")
+        F_2 = create_vectors_polar(2030, "N", 45, wrt="-x")
+        F_3 = create_vectors_polar(14000, "N", -30, wrt="-x")
+        F_R = create_vectors_polar(7870, "N", 135, wrt="+x")
+
+
+class Chapter2Problem56:
+    name = "Problem 2-56"
+    generate_debug_reports = True
+    F_1 = create_vectors_polar(..., "N", ..., wrt="+y")
+    F_2 = create_vectors_polar(200, "N", 0, wrt="+x")
+    F_3 = create_vectors_polar(260, "N", 22.6, wrt="-y")
+    F_R = create_resultant_polar(
+        F_1, F_2, F_3,
+        magnitude=450, unit="N", angle=30, wrt="+x"
+    )
+
+    class expected:
+        F_1 = create_vectors_polar(474, "N", -10.9, wrt="+y")
+        F_2 = create_vectors_polar(200, "N", 0, wrt="+x")
+        F_3 = create_vectors_polar(260, "N", 22.6, wrt="-y")
+        F_R = create_vectors_polar(450, "N", 30, wrt="+x")
+
+
+# Problem 2-57: Requires derivative/minimization - skipped
+# Problem 2-58: Skipped
+
 class Chapter2Problem59:
-    pass
+    name = "Problem 2-59"
+    generate_debug_reports = True
+    F_1 = create_vectors_polar(6000, "N", 0, wrt="+x")
+    F_2 = create_vectors_polar(5000, "N", -30, wrt="+y")
+    F_3 = create_vectors_polar(4000, "N", 15, wrt="+y")
+    F_R = create_vector_resultant(F_1, F_2, F_3)
+
+    class expected:
+        F_1 = create_vectors_polar(6000, "N", 0, wrt="+x")
+        F_2 = create_vectors_polar(5000, "N", -30, wrt="+y")
+        F_3 = create_vectors_polar(4000, "N", 15, wrt="+y")
+        F_R = create_vectors_polar(11080, "N", 47.7, wrt="+x")
 
 # endregion // Rectangular Component Problems
 
@@ -656,7 +1003,30 @@ PARALLELOGRAM_LAW_PROBLEMS = [
 
 RECTANGULAR_PROBLEMS = [
     Chapter2Problem32,
-    Chapter2Problem34
+    Chapter2Problem33,
+    Chapter2Problem34,
+    Chapter2Problem35,
+    Chapter2Problem36,
+    Chapter2Problem37,
+    Chapter2Problem38,
+    Chapter2Problem39,
+    Chapter2Problem40,
+    Chapter2Problem41,
+    Chapter2Problem42,
+    Chapter2Problem43,
+    Chapter2Problem44,
+    Chapter2Problem46,
+    Chapter2Problem47,
+    Chapter2Problem48,
+    Chapter2Problem49,
+    Chapter2Problem50,
+    Chapter2Problem51,
+    Chapter2Problem52,
+    Chapter2Problem53,
+    Chapter2Problem54,
+    Chapter2Problem55,
+    Chapter2Problem56,
+    Chapter2Problem59,
 ]
 
 PROBLEMS_EXPECT_FAIL = [
@@ -696,6 +1066,7 @@ ALL_PROBLEM_CLASSES = [
     # Chapter2Problem29,
     # Chapter2Problem30,
     # Chapter2Problem31,
+    Chapter2Problem32,
 ]
 
 PROBLEMS_WITH_GOLDEN_FILES = [
@@ -716,6 +1087,7 @@ PROBLEMS_WITH_GOLDEN_FILES = [
     # Chapter2Problem15,
     # Chapter2Problem16,
     # Chapter2Problem17,
+    # Chapter2Problem32,
 ]
 
 

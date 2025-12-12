@@ -17,3 +17,4 @@
 {"timestamp": "2025-12-10T19:53:34-0600", "python_version": "3.13.8", "iterations": 20000, "ops_per_loop": 6, "time_s": 0.22641845798352733, "time_per_loop_ns": 11320.922899176367, "time_per_op_ns": 1886.820483196061, "quantity_calls": 240001}
 {"timestamp": "2025-12-10T20:04:13-0600", "python_version": "3.13.8", "iterations": 20000, "ops_per_loop": 6, "time_s": 0.22065154201118276, "time_per_loop_ns": 11032.577100559138, "time_per_op_ns": 1838.7628500931896, "quantity_calls": 240001}
 {"timestamp": "2025-12-10T20:04:20-0600", "python_version": "3.13.8", "iterations": 20000, "ops_per_loop": 6, "time_s": 0.2255963750067167, "time_per_loop_ns": 11279.818750335835, "time_per_op_ns": 1879.9697917226392, "quantity_calls": 240001}
+{"timestamp": "2025-12-11T11:45:02-0600", "python_version": "3.13.2", "iterations": 20000, "ops_per_loop": 6, "time_s": 0.34098889998858795, "time_per_loop_ns": 17049.444999429397, "time_per_op_ns": 2841.574166571566, "quantity_calls": 240001}
