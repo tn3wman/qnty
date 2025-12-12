@@ -21,6 +21,15 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 from ...equations.base import latex_name
+from .report_utils import (
+    clean_latex_alignment_markers,
+    compile_latex_to_pdf,
+    convert_to_latex_macros,
+    format_substitution_md,
+)
+from .report_utils import (
+    format_reference as _format_reference,
+)
 from .tikz_diagram import (
     build_force_triangle_diagram,
     build_problem_setup_diagram,
@@ -36,47 +45,37 @@ if TYPE_CHECKING:
 # Data Model
 # =============================================================================
 
-def _format_reference(ref: str) -> str:
-    """
-    Format reference axis for consistent display in LaTeX/Markdown.
-
-    Uses math mode with explicit + or - to ensure consistent sizing and alignment.
-    E.g., "+x" -> "$+x$", "-y" -> "$-y$"
-    """
-    if not ref:
-        return "$+x$"
-    # Ensure the sign is explicit
-    if ref[0] not in "+-":
-        ref = "+" + ref
-    return f"${ref}$"
-
 
 @dataclass
 class VectorRow:
     """Data for a vector table row."""
+
     name: str  # e.g., "F_1", "F_R"
-    mag: str   # formatted magnitude or "?"
-    angle: str # formatted angle or "?"
-    ref: str   # reference axis, e.g., "+x", "-x"
+    mag: str  # formatted magnitude or "?"
+    angle: str  # formatted angle or "?"
+    ref: str  # reference axis, e.g., "+x", "-x"
 
 
 @dataclass
 class EquationData:
     """Data for an equation in the equations list."""
+
     latex: str  # LaTeX representation
 
 
 @dataclass
 class SolutionStepData:
     """Data for a solution step."""
+
     number: int
-    target: str          # What we're solving for (LaTeX)
-    substitution: str    # The math steps (LaTeX)
+    target: str  # What we're solving for (LaTeX)
+    substitution: str  # The math steps (LaTeX)
 
 
 @dataclass
 class DiagramVertex:
     """A vertex in the parallelogram diagram."""
+
     name: str  # A, B, C, or D
     x: float
     y: float
@@ -86,6 +85,7 @@ class DiagramVertex:
 @dataclass
 class DiagramVector:
     """Data for a vector in the diagram."""
+
     name: str  # e.g., "F_1"
     magnitude: float  # Magnitude value
     angle_deg: float  # Angle in degrees (absolute, from +x)
@@ -98,6 +98,7 @@ class DiagramVector:
 @dataclass
 class DiagramAngle:
     """Data for an interior angle in the force triangle."""
+
     name: str  # e.g., "∠(F_1, F_2)"
     value_deg: float  # Angle value in degrees
     vec1_name: str  # First vector
@@ -107,6 +108,7 @@ class DiagramAngle:
 @dataclass
 class DiagramData:
     """Data for the parallelogram diagram."""
+
     vertices: list[DiagramVertex]
     vectors: list[DiagramVector]  # Vector data for labels
     interior_angles: list[DiagramAngle]  # Interior angles for force triangle
@@ -119,6 +121,7 @@ class DiagramData:
 @dataclass
 class ReportData:
     """Complete report data model."""
+
     problem_name: str
     known_vectors: list[VectorRow]
     unknown_vectors: list[VectorRow]
@@ -132,6 +135,7 @@ class ReportData:
 # =============================================================================
 # Report Data Builder
 # =============================================================================
+
 
 class ReportDataBuilder:
     """Build ReportData from a solved ParallelogramLawProblem."""
@@ -175,7 +179,7 @@ class ReportDataBuilder:
         from ...geometry.parallelogram import Parallelogram
 
         # Get the triangle from the problem (which we can use to build a Parallelogram)
-        if not hasattr(self.problem, '_triangle') or self.problem._triangle is None:
+        if not hasattr(self.problem, "_triangle") or self.problem._triangle is None:
             return None
 
         triangle = self.problem._triangle
@@ -208,12 +212,14 @@ class ReportDataBuilder:
         # Extract vertex coordinates
         vertices = []
         for v in parallelogram.vertices:
-            vertices.append(DiagramVertex(
-                name=v.name,
-                x=v.x,
-                y=v.y,
-                vector_name=v.vector_tip,
-            ))
+            vertices.append(
+                DiagramVertex(
+                    name=v.name,
+                    x=v.x,
+                    y=v.y,
+                    vector_name=v.vector_tip,
+                )
+            )
 
         # Extract vector data (magnitude and angle) from SOLVED problem vectors
         # The triangle's vectors may still have ellipsis for unknowns,
@@ -226,7 +232,7 @@ class ReportDataBuilder:
                 mag = vec.magnitude
                 if mag is ... or mag is None:
                     continue
-                mag_val = mag.magnitude() if hasattr(mag, 'magnitude') else float(mag)
+                mag_val = mag.magnitude() if hasattr(mag, "magnitude") else float(mag)
 
                 # Get absolute angle (from +x)
                 abs_angle = get_absolute_angle(vec)
@@ -237,9 +243,10 @@ class ReportDataBuilder:
                 angle_wrt = "+x"
                 if vec.angle is not ... and vec.angle is not None:
                     angle_ref = vec.angle.to_unit.degree.magnitude()
-                if hasattr(vec, 'wrt') and vec.wrt:
+                if hasattr(vec, "wrt") and vec.wrt:
                     # Handle wrt being either a string or a Vector
                     from ...linalg.vector2 import Vector
+
                     if isinstance(vec.wrt, Vector):
                         angle_wrt = vec.wrt.name or "ref"
                     else:
@@ -248,15 +255,17 @@ class ReportDataBuilder:
                 # Check if this vector was originally known (before solving)
                 is_known = self.problem._original_vector_states.get(vec_name, True)
 
-                vectors.append(DiagramVector(
-                    name=vec.name or "V",
-                    magnitude=mag_val,
-                    angle_deg=angle_deg,
-                    angle_ref=angle_ref,
-                    angle_wrt=angle_wrt,
-                    unit=self.unit,
-                    is_known=is_known,
-                ))
+                vectors.append(
+                    DiagramVector(
+                        name=vec.name or "V",
+                        magnitude=mag_val,
+                        angle_deg=angle_deg,
+                        angle_ref=angle_ref,
+                        angle_wrt=angle_wrt,
+                        unit=self.unit,
+                        is_known=is_known,
+                    )
+                )
             except Exception:
                 continue
 
@@ -274,7 +283,7 @@ class ReportDataBuilder:
             try:
                 if angle_obj is not None and angle_obj.angle is not None:
                     angle_val = angle_obj.angle
-                    if hasattr(angle_val, 'to_unit'):
+                    if hasattr(angle_val, "to_unit"):
                         return angle_val.to_unit.degree.magnitude()
                     return float(angle_val)
             except Exception:
@@ -316,28 +325,13 @@ class ReportDataBuilder:
 
         if "origin" in interior_angle_values:
             # Angle at origin (vertex A): between F1 and FR (both start from origin)
-            interior_angles.append(DiagramAngle(
-                name=f"∠({v1_name}, {vr_name})",
-                value_deg=interior_angle_values["origin"],
-                vec1_name=v1_name,
-                vec2_name=vr_name
-            ))
+            interior_angles.append(DiagramAngle(name=f"∠({v1_name}, {vr_name})", value_deg=interior_angle_values["origin"], vec1_name=v1_name, vec2_name=vr_name))
         if "f1_tip" in interior_angle_values:
             # Angle at F1 tip (vertex B): the junction angle between F1 and translated F2
-            interior_angles.append(DiagramAngle(
-                name=f"∠({v1_name}, {v2_name})",
-                value_deg=interior_angle_values["f1_tip"],
-                vec1_name=v1_name,
-                vec2_name=v2_name
-            ))
+            interior_angles.append(DiagramAngle(name=f"∠({v1_name}, {v2_name})", value_deg=interior_angle_values["f1_tip"], vec1_name=v1_name, vec2_name=v2_name))
         if "fr_tip" in interior_angle_values:
             # Angle at FR tip (vertex C/D): between translated F2 and FR
-            interior_angles.append(DiagramAngle(
-                name=f"∠({v2_name}, {vr_name})",
-                value_deg=interior_angle_values["fr_tip"],
-                vec1_name=v2_name,
-                vec2_name=vr_name
-            ))
+            interior_angles.append(DiagramAngle(name=f"∠({v2_name}, {vr_name})", value_deg=interior_angle_values["fr_tip"], vec1_name=v2_name, vec2_name=vr_name))
 
         # Check if we have valid coordinates (not all zeros or NaN)
         has_valid_coords = any(
@@ -451,17 +445,20 @@ class ReportDataBuilder:
         for i, step in enumerate(self.problem.solving_history, 1):
             target = step.get("target", "Unknown")
             substitution = step.get("substitution", "")
-            steps.append(SolutionStepData(
-                number=i,
-                target=target,
-                substitution=substitution,
-            ))
+            steps.append(
+                SolutionStepData(
+                    number=i,
+                    target=target,
+                    substitution=substitution,
+                )
+            )
         return steps
 
 
 # =============================================================================
 # LaTeX Renderer
 # =============================================================================
+
 
 class LaTeXRenderer:
     """Render ReportData to LaTeX."""
@@ -698,13 +695,7 @@ Vector & {{$\magn{{\vv{{F}}}}$ ({data.unit})}} & {{$\theta$ (deg)}} & Ref \\
 
     def _convert_to_latex_macros(self, eq: str) -> str:
         """Convert equation string to use LaTeX macros."""
-        import re
-        result = eq
-        # Convert |\vec{X}| to \magn{\vv{X}}
-        result = re.sub(r'\|\\vec\{([^}]+)\}\|', r'\\magn{\\vv{\1}}', result)
-        # Convert standalone \vec{X} to \vv{X}
-        result = re.sub(r'\\vec\{([^}]+)\}', r'\\vv{\1}', result)
-        return result
+        return convert_to_latex_macros(eq)
 
     def _render_steps_section(self, data: ReportData) -> str:
         """Render step-by-step solution section in compact format."""
@@ -730,7 +721,7 @@ Vector & {{$\magn{{\vv{{F}}}}$ ({data.unit})}} & {{$\theta$ (deg)}} & Ref \\
             steps_latex.append(step_latex)
 
         # Use \\[0.3em] as separator between steps for moderate spacing
-        steps_str = '\\\\[0.3em]\n'.join(s.strip() for s in steps_latex)
+        steps_str = "\\\\[0.3em]\n".join(s.strip() for s in steps_latex)
         return f"\\textbf{{\\underline{{Solution}}}}\\\\[0.5em]\n{steps_str}"
 
     def _format_substitution_compact(self, sub: str) -> str:
@@ -741,23 +732,9 @@ Vector & {{$\magn{{\vv{{F}}}}$ ({data.unit})}} & {{$\theta$ (deg)}} & Ref \\
         # Convert to LaTeX macros first
         sub = self._convert_substitution_to_latex_macros(sub)
 
-        # Extract just the final result (last line with =)
+        # Clean up alignment markers and return as aligned equations on one line
         lines = sub.strip().split("\n")
-        result_parts = []
-        for line in lines:
-            line = line.strip()
-            if line.endswith("\\\\"):
-                line = line[:-2].strip()
-            # Remove alignment markers (&=, &)
-            line = line.replace("&=", "=").replace("& =", "=").replace("&", "")
-            # Remove leading = (which comes from the alignment)
-            line = line.strip()
-            if line.startswith("="):
-                line = line[1:].strip()
-            if line:
-                result_parts.append(line.strip())
-
-        # Return as aligned equations on one line
+        result_parts = clean_latex_alignment_markers(lines)
         return " = ".join(result_parts)
 
     def _format_substitution(self, sub: str) -> str:
@@ -781,10 +758,11 @@ Vector & {{$\magn{{\vv{{F}}}}$ ({data.unit})}} & {{$\theta$ (deg)}} & Ref \\
     def _convert_substitution_to_latex_macros(self, sub: str) -> str:
         """Convert substitution text to use LaTeX macros."""
         import re
+
         result = sub
 
         # Convert |\vec{X}| patterns to \magn{\vv{X}}
-        result = re.sub(r'\|\\vec\{([^}]+)\}\|', r'\\magn{\\vv{\1}}', result)
+        result = re.sub(r"\|\\vec\{([^}]+)\}\|", r"\\magn{\\vv{\1}}", result)
 
         # Convert |...| patterns to \magn{...}
         # This needs to handle complex content like |\angle(...) - \angle(...)|
@@ -793,19 +771,19 @@ Vector & {{$\magn{{\vv{{F}}}}$ ({data.unit})}} & {{$\theta$ (deg)}} & Ref \\
             out = []
             i = 0
             while i < len(text):
-                if text[i] == '|' and (i == 0 or text[i-1] != '\\'):
+                if text[i] == "|" and (i == 0 or text[i - 1] != "\\"):
                     # Found opening |, look for closing |
                     j = i + 1
                     depth = 0
                     while j < len(text):
-                        if text[j] == '{':
+                        if text[j] == "{":
                             depth += 1
-                        elif text[j] == '}':
+                        elif text[j] == "}":
                             depth -= 1
-                        elif text[j] == '|' and depth == 0 and text[j-1] != '\\':
+                        elif text[j] == "|" and depth == 0 and text[j - 1] != "\\":
                             # Found closing |
-                            content = text[i+1:j]
-                            out.append(f'\\magn{{{content}}}')
+                            content = text[i + 1 : j]
+                            out.append(f"\\magn{{{content}}}")
                             i = j + 1
                             break
                         j += 1
@@ -816,12 +794,12 @@ Vector & {{$\magn{{\vv{{F}}}}$ ({data.unit})}} & {{$\theta$ (deg)}} & Ref \\
                 else:
                     out.append(text[i])
                     i += 1
-            return ''.join(out)
+            return "".join(out)
 
         result = convert_abs_to_magn(result)
 
         # Convert \vec{X} to \vv{X}
-        result = re.sub(r'\\vec\{([^}]+)\}', r'\\vv{\1}', result)
+        result = re.sub(r"\\vec\{([^}]+)\}", r"\\vv{\1}", result)
         return result
 
     def _render_results_section(self, data: ReportData) -> str:
@@ -858,6 +836,7 @@ Vector & {{$\magn{{\vv{{F}}}}$ ({data.unit})}} & {{$\theta$ (deg)}} & Ref \\
 # Markdown Renderer
 # =============================================================================
 
+
 class MarkdownRenderer:
     """Render ReportData to Markdown."""
 
@@ -885,7 +864,7 @@ class MarkdownRenderer:
         """Render a Markdown vector table."""
         # Use \| to escape pipes in markdown table header for magnitude column
         lines = [
-            "<div align=\"center\">",
+            '<div align="center">',
             "",
             f"| Vector | $\\|\\vec{{F}}\\|$ ({unit}) | $\\theta$ (deg) | Reference |",
             "| :--- | ---: | ---: | :--- |",
@@ -950,16 +929,7 @@ class MarkdownRenderer:
 
     def _format_substitution_md(self, sub: str) -> list[str]:
         """Format substitution for Markdown aligned environment."""
-        if not sub:
-            return []
-        result = []
-        for line in sub.strip().split("\n"):
-            line = line.strip()
-            if line.endswith("\\\\"):
-                line = line[:-2].strip()
-            if line:
-                result.append(f"{line} \\\\")
-        return result
+        return format_substitution_md(sub)
 
     def _render_results_section(self, data: ReportData) -> str:
         """Render results summary section."""
@@ -994,6 +964,7 @@ While every effort has been made to ensure the accuracy and reliability of the c
 # =============================================================================
 # Report Generator
 # =============================================================================
+
 
 class ParallelogramReportGenerator:
     """
@@ -1034,8 +1005,6 @@ class ParallelogramReportGenerator:
 
     def _generate_pdf(self, data: ReportData, output_path: Path) -> None:
         """Generate PDF by compiling LaTeX."""
-        import subprocess
-        import tempfile
         from datetime import datetime
 
         renderer = LaTeXRenderer()
@@ -1043,31 +1012,7 @@ class ParallelogramReportGenerator:
         # Replace date placeholder with actual date for PDF
         latex = latex.replace("{{GENERATED_DATE}}", datetime.now().strftime("%Y-%m-%d"))
 
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.tex', delete=False, encoding='utf-8') as f:
-            f.write(latex)
-            tex_path = Path(f.name)
-
-        try:
-            # Try tectonic first (use .exe on Windows)
-            import sys
-            tectonic_name = "tectonic.exe" if sys.platform == "win32" else "tectonic"
-            tectonic_path = Path(__file__).parent.parent.parent / "extensions" / "reporting" / tectonic_name
-            if tectonic_path.exists():
-                result = subprocess.run(
-                    [str(tectonic_path), str(tex_path), "-o", str(output_path.parent)],
-                    capture_output=True,
-                    timeout=60,
-                )
-                if result.returncode == 0:
-                    generated = output_path.parent / (tex_path.stem + ".pdf")
-                    if generated.exists() and generated != output_path:
-                        output_path.unlink(missing_ok=True)  # Remove existing file first
-                        generated.rename(output_path)
-                    return
-
-            raise RuntimeError("PDF generation requires tectonic. Install it or use latex format.")
-        finally:
-            tex_path.unlink(missing_ok=True)
+        compile_latex_to_pdf(latex, output_path)
 
 
 def generate_report(

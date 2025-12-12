@@ -9,15 +9,14 @@ These tests validate:
 - Resultant force calculation
 """
 
-from calendar import c
 import math
+from calendar import c
 
 import pytest
 
 from qnty.core.quantity import Q
 from qnty.problems.position_vector import PositionVectorProblem
 from qnty.spatial import (
-    _Vector,
     _Point,
     _Vector,
     create_point_cartesian,
@@ -30,7 +29,16 @@ from qnty.spatial import (
 )
 from qnty.spatial.plane import create_plane_rotated
 from qnty.spatial.points import create_point_along
-from qnty.spatial.vectors import create_point_at_midpoint, create_vector_direction_angles, create_vector_in_plane, create_vector_polar, create_vector_resultant, create_vector_resultant_cartesian, create_vector_spherical, create_vector_with_magnitude
+from qnty.spatial.vectors import (
+    create_point_at_midpoint,
+    create_vector_direction_angles,
+    create_vector_in_plane,
+    create_vector_polar,
+    create_vector_resultant,
+    create_vector_resultant_cartesian,
+    create_vector_spherical,
+    create_vector_with_magnitude,
+)
 
 # =============================================================================
 # Helper functions for assertions

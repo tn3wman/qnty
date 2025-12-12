@@ -28,9 +28,10 @@ from ...algebra.functions import atan2, cos, sin, sqrt
 from ...core import Q
 from ...core.quantity import Quantity
 from ...equations.angle_finder import get_absolute_angle, get_relative_angle
-from ...equations.base import SolutionStepBuilder, format_angle, latex_name
+from ...equations.angle_reference import AngleDirection
+from ...equations.base import SolutionStepBuilder, latex_name
 from ...linalg.vector2 import Vector, VectorUnknown
-from ...spatial.angle_reference import AngleDirection
+from .report_utils import format_component_terms
 
 if TYPE_CHECKING:
     pass
@@ -228,10 +229,7 @@ class RectangularMethodProblem:
         # The computed components
         components_result = _format_component_i_j(x_val, y_val, unit, precision=1)
 
-        substitution = (
-            f"\\vec{{{vec_latex}}} &= \\{{{x_expr} + {y_expr}\\}} \\text{{ {unit}}} \\\\\n"
-            f"&= {components_result}"
-        )
+        substitution = f"\\vec{{{vec_latex}}} &= \\{{{x_expr} + {y_expr}\\}} \\text{{ {unit}}} \\\\\n&= {components_result}"
 
         # Target string
         target = f"\\vec{{{vec_latex}}}"
@@ -278,21 +276,11 @@ class RectangularMethodProblem:
         y_vals = [c.y_component.magnitude() for c in components]
 
         # Format x-component sum: (200+177)i
-        x_terms = []
-        for val in x_vals:
-            if val >= 0:
-                x_terms.append(f"+{val:.1f}" if x_terms else f"{val:.1f}")
-            else:
-                x_terms.append(f"{val:.1f}")
+        x_terms = format_component_terms(x_vals, precision=1)
         x_sum_expr = f"({''.join(x_terms)})\\mathbf{{i}}"
 
         # Format y-component sum: (346-177)j
-        y_terms = []
-        for val in y_vals:
-            if val >= 0:
-                y_terms.append(f"+{val:.1f}" if y_terms else f"{val:.1f}")
-            else:
-                y_terms.append(f"{val:.1f}")
+        y_terms = format_component_terms(y_vals, precision=1)
         y_sum_expr = f"({''.join(y_terms)})\\mathbf{{j}}"
 
         # Final result
@@ -300,11 +288,7 @@ class RectangularMethodProblem:
         y_sum_val = y_sum.magnitude()
         result_expr = _format_component_i_j(x_sum_val, y_sum_val, unit, precision=1)
 
-        substitution = (
-            f"\\vec{{F_R}} &= {sum_expr} \\\\\n"
-            f"&= \\{{{x_sum_expr} + {y_sum_expr}\\}} \\text{{ {unit}}} \\\\\n"
-            f"&= {result_expr}"
-        )
+        substitution = f"\\vec{{F_R}} &= {sum_expr} \\\\\n&= \\{{{x_sum_expr} + {y_sum_expr}\\}} \\text{{ {unit}}} \\\\\n&= {result_expr}"
 
         step = SolutionStepBuilder(
             target="\\vec{F_R}",
@@ -343,11 +327,7 @@ class RectangularMethodProblem:
         y_val = y_sum.magnitude()
         mag_val = magnitude.magnitude()
 
-        substitution = (
-            f"|\\vec{{F_R}}| &= \\sqrt{{(F_R)_x^2 + (F_R)_y^2}} \\\\\n"
-            f"&= \\sqrt{{({x_val:.1f})^2 + ({y_val:.1f})^2}} \\text{{ {unit}}} \\\\\n"
-            f"&= {mag_val:.1f} \\text{{ {unit}}}"
-        )
+        substitution = f"|\\vec{{F_R}}| &= \\sqrt{{(F_R)_x^2 + (F_R)_y^2}} \\\\\n&= \\sqrt{{({x_val:.1f})^2 + ({y_val:.1f})^2}} \\text{{ {unit}}} \\\\\n&= {mag_val:.1f} \\text{{ {unit}}}"
 
         step = SolutionStepBuilder(
             target="|\\vec{F_R}|",
@@ -389,9 +369,7 @@ class RectangularMethodProblem:
         angle_deg = angle.to_unit.degree.magnitude()
 
         substitution = (
-            f"\\angle(x, F_R) &= \\arctan\\left(\\frac{{(F_R)_y}}{{(F_R)_x}}\\right) \\\\\n"
-            f"&= \\arctan\\left(\\frac{{{y_val:.1f}}}{{{x_val:.1f}}}\\right) \\\\\n"
-            f"&= {angle_deg:.2f}^{{\\circ}}"
+            f"\\angle(x, F_R) &= \\arctan\\left(\\frac{{(F_R)_y}}{{(F_R)_x}}\\right) \\\\\n&= \\arctan\\left(\\frac{{{y_val:.1f}}}{{{x_val:.1f}}}\\right) \\\\\n&= {angle_deg:.2f}^{{\\circ}}"
         )
 
         step = SolutionStepBuilder(
@@ -503,9 +481,9 @@ class RectangularMethodProblem:
 
         # Ensure we have Quantity objects
         if not isinstance(x_comp, Quantity):
-            x_comp = x_comp.evaluate({}) if hasattr(x_comp, 'evaluate') else Q(float(x_comp), output_unit)
+            x_comp = x_comp.evaluate({}) if hasattr(x_comp, "evaluate") else Q(float(x_comp), output_unit)
         if not isinstance(y_comp, Quantity):
-            y_comp = y_comp.evaluate({}) if hasattr(y_comp, 'evaluate') else Q(float(y_comp), output_unit)
+            y_comp = y_comp.evaluate({}) if hasattr(y_comp, "evaluate") else Q(float(y_comp), output_unit)
 
         return ComponentResult(
             vector_name=vec.name or "F",
@@ -565,10 +543,7 @@ class RectangularMethodProblem:
                 unknown_vectors.append(vec)
 
         # Check if we have a known resultant (constraint for solving unknowns)
-        resultant_is_known = (
-            self.resultant_vector is not None
-            and self._is_vector_fully_known(self.resultant_vector)
-        )
+        resultant_is_known = self.resultant_vector is not None and self._is_vector_fully_known(self.resultant_vector)
 
         # Phase 1: Resolve all known vectors
         for vec in known_vectors:
@@ -596,9 +571,7 @@ class RectangularMethodProblem:
         # Phase 2: If we have a known resultant, resolve it too
         resultant_components = None
         if resultant_is_known:
-            resultant_components = self._resolve_known_vector(
-                self.resultant_vector, context, output_unit
-            )
+            resultant_components = self._resolve_known_vector(self.resultant_vector, context, output_unit)
             # Add step for resultant resolution
             unit = self.resultant_vector.magnitude.preferred.symbol if self.resultant_vector.magnitude.preferred else output_unit
             step = self._build_component_resolution_step(
@@ -643,9 +616,9 @@ class RectangularMethodProblem:
 
                 # Ensure we have Quantity objects
                 if not isinstance(unknown_mag, Quantity):
-                    unknown_mag = unknown_mag.evaluate({}) if hasattr(unknown_mag, 'evaluate') else Q(float(unknown_mag), unit)
+                    unknown_mag = unknown_mag.evaluate({}) if hasattr(unknown_mag, "evaluate") else Q(float(unknown_mag), unit)
                 if not isinstance(unknown_angle, Quantity):
-                    unknown_angle = unknown_angle.evaluate({}) if hasattr(unknown_angle, 'evaluate') else Q(float(unknown_angle), "radian")
+                    unknown_angle = unknown_angle.evaluate({}) if hasattr(unknown_angle, "evaluate") else Q(float(unknown_angle), "radian")
 
                 # Get the reference axis for the unknown vector
                 wrt = unknown_vec.wrt if isinstance(unknown_vec.wrt, str) else "+x"
@@ -693,10 +666,7 @@ class RectangularMethodProblem:
                 self.solving_history.append(step)
                 equation_number += 1
             else:
-                raise ValueError(
-                    f"Cannot solve for {len(unknown_vectors)} unknown vectors. "
-                    "Currently only single unknown vector is supported."
-                )
+                raise ValueError(f"Cannot solve for {len(unknown_vectors)} unknown vectors. Currently only single unknown vector is supported.")
 
         # Compute resultant if requested
         resultant = None
@@ -728,9 +698,9 @@ class RectangularMethodProblem:
 
             # Ensure we have Quantity objects
             if not isinstance(r_mag, Quantity):
-                r_mag = r_mag.evaluate({}) if hasattr(r_mag, 'evaluate') else Q(float(r_mag), unit)
+                r_mag = r_mag.evaluate({}) if hasattr(r_mag, "evaluate") else Q(float(r_mag), unit)
             if not isinstance(r_angle, Quantity):
-                r_angle = r_angle.evaluate({}) if hasattr(r_angle, 'evaluate') else Q(float(r_angle), "radian")
+                r_angle = r_angle.evaluate({}) if hasattr(r_angle, "evaluate") else Q(float(r_angle), "radian")
 
             # Build step for magnitude calculation
             mag_step = self._build_magnitude_step(

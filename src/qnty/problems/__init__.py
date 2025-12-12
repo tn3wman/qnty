@@ -12,7 +12,6 @@ The system maintains full backward compatibility with the original Problem API.
 
 # Unified API modules (recommended for new code)
 from . import statics
-
 from .composition import (
     CompositionMixin,
     ConfigurableVariable,
@@ -30,7 +29,6 @@ from .composition import (
     delayed_min_expr,
     delayed_sin,
 )
-from .position_vector import PositionVectorProblem
 from .problem import EquationValidationError, SolverError, VariableNotFoundError
 from .problem import Problem as BaseProblem
 from .solving import (
@@ -119,7 +117,6 @@ __all__ = [
     # Main classes
     "Problem",
     "EngineeringProblem",
-    "PositionVectorProblem",
     # Mixins
     "ValidationMixin",
     "CompositionMixin",

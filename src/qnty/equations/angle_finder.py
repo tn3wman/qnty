@@ -10,7 +10,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from .base import SolutionStepBuilder, format_angle
-from ..spatial.angle_reference import AngleDirection
+from .angle_reference import AngleDirection
 
 if TYPE_CHECKING:
     from ..coordinates import CoordinateSystem

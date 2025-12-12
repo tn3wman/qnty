@@ -21,7 +21,7 @@ from pathlib import Path
 from qnty.coordinates.oblique import Oblique
 
 # Import vector creation functions from new vectors2 module
-from qnty.linalg.vectors2 import create_resultant_polar, create_vector_from_ratio, create_vector_resultant, create_vectors_cartesian, create_vectors_polar
+from qnty.linalg.vectors2 import create_resultant_polar, create_vector_from_ratio, create_vector_resultant, create_vectors_cartesian, create_vectors_polar, create_vectors_direction_angles
 
 # Import from the rectangular_solver module
 from qnty.problems.statics.cartesian_solver import (
@@ -565,9 +565,9 @@ class Chapter2Problem32:
     F_R = create_vector_resultant(F_1, F_2)
 
     class expected:
-        F_1 = create_vectors_cartesian(141.4, 141.4, "N")
-        F_2 = create_vectors_cartesian(-129.9, 75.0, "N")
-        F_R = create_vectors_cartesian(11.5, 216.4, "N")
+        F_1 = create_vectors_cartesian(141.4, 141.4)
+        F_2 = create_vectors_cartesian(-129.9, 75.0)
+        F_R = create_vectors_cartesian(11.5, 216.4)
 
 class Chapter2Problem33:
     name = "Problem 2-33"
@@ -589,8 +589,8 @@ class Chapter2Problem34:
     F_2 = create_vectors_polar(250, "N", -45, wrt="+x")
 
     class expected:
-        F_1 = create_vectors_cartesian(200, 346.4, "N")
-        F_2 = create_vectors_cartesian(177, -177, "N")
+        F_1 = create_vectors_cartesian(200, 346.4)
+        F_2 = create_vectors_cartesian(177, -177)
 
 
 class Chapter2Problem35:
@@ -601,9 +601,9 @@ class Chapter2Problem35:
     F_R = create_vector_resultant(F_1, F_2)
 
     class expected:
-        F_1 = create_vectors_cartesian(200, 346.4, "N")
-        F_2 = create_vectors_cartesian(177, -177, "N")
-        F_R = create_vectors_cartesian(377, 169.4, "N")
+        F_1 = create_vectors_cartesian(200, 346.4)
+        F_2 = create_vectors_cartesian(177, -177)
+        F_R = create_vectors_cartesian(377, 169.4)
 
 
 class Chapter2Problem36:
@@ -614,9 +614,9 @@ class Chapter2Problem36:
     F_3 = create_vector_from_ratio(-650, "N", -4, 3)
 
     class expected:
-        F_1 = create_vectors_cartesian(900, 0, "N")
-        F_2 = create_vectors_cartesian(530, 530, "N")
-        F_3 = create_vectors_cartesian(520, -390, "N")
+        F_1 = create_vectors_cartesian(900, 0)
+        F_2 = create_vectors_cartesian(530, 530)
+        F_3 = create_vectors_cartesian(520, -390)
 
 
 class Chapter2Problem37:
@@ -628,9 +628,9 @@ class Chapter2Problem37:
     F_R = create_vector_resultant(F_1, F_2, F_3)
 
     class expected:
-        F_1 = create_vectors_cartesian(900, 0, "N")
-        F_2 = create_vectors_cartesian(530, 530, "N")
-        F_3 = create_vectors_cartesian(520, -390, "N")
+        F_1 = create_vectors_cartesian(900, 0)
+        F_2 = create_vectors_cartesian(530, 530)
+        F_3 = create_vectors_cartesian(520, -390)
         F_R = create_vectors_polar(1955, "N", 4.12, wrt="+x")
 
 
@@ -643,9 +643,9 @@ class Chapter2Problem38:
     F_R = create_vector_resultant(F_1, F_2, F_3)
 
     class expected:
-        F_1 = create_vectors_cartesian(30, 40, "N")
-        F_2 = create_vectors_cartesian(-20.71, -77.3, "N")
-        F_3 = create_vectors_cartesian(30, 0, "N")
+        F_1 = create_vectors_cartesian(30, 40)
+        F_2 = create_vectors_cartesian(-20.71, -77.3)
+        F_3 = create_vectors_cartesian(30, 0)
         F_R = create_vectors_polar(54.2, "N", -43.5, wrt="+x")
 
 
@@ -656,8 +656,8 @@ class Chapter2Problem39:
     F_2 = create_vectors_polar(-150, "N", -30, wrt="+x")
 
     class expected:
-        F_1 = create_vectors_cartesian(141, 141, "N")
-        F_2 = create_vectors_cartesian(-130, 75, "N")
+        F_1 = create_vectors_cartesian(141, 141)
+        F_2 = create_vectors_cartesian(-130, 75)
 
 
 class Chapter2Problem40:
@@ -668,9 +668,9 @@ class Chapter2Problem40:
     F_R = create_vector_resultant(F_1, F_2)
 
     class expected:
-        F_1 = create_vectors_cartesian(141, 141, "N")
-        F_2 = create_vectors_cartesian(-130, 75, "N")
-        F_R = create_vectors_cartesian(11, 216, "N")
+        F_1 = create_vectors_cartesian(141, 141)
+        F_2 = create_vectors_cartesian(-130, 75)
+        F_R = create_vectors_cartesian(11, 216)
 
 
 class Chapter2Problem41:
@@ -696,9 +696,9 @@ class Chapter2Problem42:
     F_3 = create_vectors_polar(750, "N", 45, wrt="+y")
 
     class expected:
-        F_1 = create_vectors_cartesian(680, -510, "N")
-        F_2 = create_vectors_cartesian(-312, -541, "N")
-        F_3 = create_vectors_cartesian(-530, 530.3, "N")
+        F_1 = create_vectors_cartesian(680, -510)
+        F_2 = create_vectors_cartesian(-312, -541)
+        F_3 = create_vectors_cartesian(-530, 530.3)
 
 
 class Chapter2Problem43:
@@ -710,9 +710,9 @@ class Chapter2Problem43:
     F_R = create_vector_resultant(F_1, F_2, F_3)
 
     class expected:
-        F_1 = create_vectors_cartesian(680, -510, "N")
-        F_2 = create_vectors_cartesian(-312, -541, "N")
-        F_3 = create_vectors_cartesian(-530, 530.3, "N")
+        F_1 = create_vectors_cartesian(680, -510)
+        F_2 = create_vectors_cartesian(-312, -541)
+        F_3 = create_vectors_cartesian(-530, 530.3)
         F_R = create_vectors_polar(546, "N", 253, wrt="+x")
 
 
@@ -725,9 +725,9 @@ class Chapter2Problem44:
     F_R = create_vector_resultant(F_1, F_2, F_3)
 
     class expected:
-        F_1 = create_vectors_cartesian(40*3/5, 40*4/5, "lbf")
-        F_2 = create_vectors_cartesian(91*5/13, -91*12/13, "lbf")
-        F_3 = create_vectors_cartesian(30, 0, "lbf")
+        F_1 = create_vectors_cartesian(40*3/5, 40*4/5, unit="lbf")
+        F_2 = create_vectors_cartesian(91*5/13, -91*12/13, unit="lbf")
+        F_3 = create_vectors_cartesian(30, 0, unit="lbf")
         F_R = create_vectors_polar(103, "lbf", -30.3, wrt="+x")
 
 
@@ -777,10 +777,10 @@ class Chapter2Problem48:
         # Expected components computed from textbook solution:
         # F_1: 869 N at -21.3° from F_R (F_R is at 30° from +x)
         # F_1 absolute angle = 30 - 21.3 = 8.7° from +x
-        F_1 = create_vectors_cartesian(859, 131, "N")
-        F_2 = create_vectors_cartesian(0, 200, "N")
-        F_3 = create_vectors_cartesian(-166, 69, "N")
-        F_R = create_vectors_cartesian(693, 400, "N")
+        F_1 = create_vectors_cartesian(859, 131)
+        F_2 = create_vectors_cartesian(0, 200)
+        F_3 = create_vectors_cartesian(-166, 69)
+        F_R = create_vectors_cartesian(693, 400)
 
 
 class Chapter2Problem49:
@@ -806,9 +806,9 @@ class Chapter2Problem50:
     F_3 = create_vectors_polar(36000, "N", -30, wrt="+x")
 
     class expected:
-        F_1 = create_vectors_cartesian(9642, 11491, "N")
-        F_2 = create_vectors_cartesian(-24003, 9992, "N")
-        F_3 = create_vectors_cartesian(31177, -18000, "N")
+        F_1 = create_vectors_cartesian(9642, 11491)
+        F_2 = create_vectors_cartesian(-24003, 9992)
+        F_3 = create_vectors_cartesian(31177, -18000)
 
 
 class Chapter2Problem51:
@@ -820,9 +820,9 @@ class Chapter2Problem51:
     F_R = create_vector_resultant(F_1, F_2, F_3)
 
     class expected:
-        F_1 = create_vectors_cartesian(9642, 11491, "N")
-        F_2 = create_vectors_cartesian(-24003, 9992, "N")
-        F_3 = create_vectors_cartesian(31177, -18000, "N")
+        F_1 = create_vectors_cartesian(9642, 11491)
+        F_2 = create_vectors_cartesian(-24003, 9992)
+        F_3 = create_vectors_cartesian(31177, -18000)
         F_R = create_vectors_polar(17200, "N", 11.7, wrt="+x")
 
 
@@ -836,11 +836,11 @@ class Chapter2Problem52:
     F_R = create_vector_resultant(F_1, F_2, F_3, F_4)
 
     class expected:
-        F_1 = create_vectors_cartesian(6400, -4800, "N")
-        F_2 = create_vectors_cartesian(3600, 4800, "N")
-        F_3 = create_vectors_cartesian(-4000, 0, "N")
-        F_4 = create_vectors_cartesian(-6000, 0, "N")
-        F_R = create_vectors_cartesian(0, 0, "N")
+        F_1 = create_vectors_cartesian(6400, -4800)
+        F_2 = create_vectors_cartesian(3600, 4800)
+        F_3 = create_vectors_cartesian(-4000, 0)
+        F_4 = create_vectors_cartesian(-6000, 0)
+        F_R = create_vectors_cartesian(0, 0)
 
 
 class Chapter2Problem53:
@@ -850,8 +850,8 @@ class Chapter2Problem53:
     F_2 = create_vectors_polar(26000, "N", -67.4, wrt="-x")
 
     class expected:
-        F_1 = create_vectors_cartesian(-15000, -26000, "N")
-        F_2 = create_vectors_cartesian(-10000, 24000, "N")
+        F_1 = create_vectors_cartesian(-15000, -26000)
+        F_2 = create_vectors_cartesian(-10000, 24000)
 
 
 class Chapter2Problem54:
@@ -862,8 +862,8 @@ class Chapter2Problem54:
     F_R = create_vector_resultant(F_1, F_2)
 
     class expected:
-        F_1 = create_vectors_cartesian(-15000, -26000, "N")
-        F_2 = create_vectors_cartesian(-10000, 24000, "N")
+        F_1 = create_vectors_cartesian(-15000, -26000)
+        F_2 = create_vectors_cartesian(-10000, 24000)
         F_R = create_vectors_polar(25100, "N", 185, wrt="+x")
 
 
@@ -922,7 +922,17 @@ class Chapter2Problem59:
 
 # endregion // Rectangular Component Problems
 
+# region // Cartesian Component Problems
 
+class Chapter2Problem60:
+    name = "Problem 2-60"
+    generate_debug_reports = True
+    F_1 = create_vectors_direction_angles(80, "lbf", 60, 45)
+
+    class expected:
+        F_1 = create_vectors_cartesian(40, 56.6, 40, "lbf")
+
+# endregion // Cartesian Component Problems
 
 
 

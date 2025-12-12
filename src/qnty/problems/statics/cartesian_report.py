@@ -25,6 +25,15 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 from ...equations.base import latex_name
+from .report_utils import (
+    clean_latex_alignment_markers,
+    compile_latex_to_pdf,
+    convert_to_latex_macros,
+    format_substitution_md,
+)
+from .report_utils import (
+    format_reference as _format_reference,
+)
 
 if TYPE_CHECKING:
     from .cartesian_solver import RectangularMethodProblem
@@ -128,21 +137,6 @@ class RectangularReportModel:
 # =============================================================================
 
 
-def _format_reference(ref: str) -> str:
-    """
-    Format reference axis for consistent display in LaTeX/Markdown.
-
-    Uses math mode with explicit + or - to ensure consistent sizing and alignment.
-    E.g., "+x" -> "$+x$", "-y" -> "$-y$"
-    """
-    if not ref:
-        return "$+x$"
-    # Ensure the sign is explicit
-    if ref[0] not in "+-":
-        ref = "+" + ref
-    return f"${ref}$"
-
-
 def build_report_model(problem: RectangularMethodProblem, sig_figs: int = 1) -> RectangularReportModel:
     """
     Build the report data model from a solved problem.
@@ -207,11 +201,13 @@ def build_report_model(problem: RectangularMethodProblem, sig_figs: int = 1) -> 
     for i, step in enumerate(problem.solving_history, 1):
         target = step.get("target", "Unknown")
         substitution = step.get("substitution", "")
-        solution_steps.append(SolutionStepData(
-            number=i,
-            target=target,
-            substitution=substitution,
-        ))
+        solution_steps.append(
+            SolutionStepData(
+                number=i,
+                target=target,
+                substitution=substitution,
+            )
+        )
 
     # Build result row if present
     result = None
@@ -441,14 +437,7 @@ Vector & {{$F_x$ ({data.unit})}} & {{$F_y$ ({data.unit})}} & {{$\magn{{\vv{{F}}}
 
     def _convert_to_latex_macros(self, eq: str) -> str:
         """Convert equation string to use LaTeX macros."""
-        import re
-
-        result = eq
-        # Convert |\vec{X}| to \magn{\vv{X}}
-        result = re.sub(r'\|\\vec\{([^}]+)\}\|', r'\\magn{\\vv{\1}}', result)
-        # Convert standalone \vec{X} to \vv{X}
-        result = re.sub(r'\\vec\{([^}]+)\}', r'\\vv{\1}', result)
-        return result
+        return convert_to_latex_macros(eq)
 
     def _render_steps_section(self, data: RectangularReportModel) -> str:
         """Render step-by-step solution section in compact format."""
@@ -463,7 +452,7 @@ Vector & {{$F_x$ ({data.unit})}} & {{$F_y$ ({data.unit})}} & {{$\magn{{\vv{{F}}}
 """
             steps_latex.append(step_latex)
 
-        steps_str = '\\\\[0.3em]\n'.join(s.strip() for s in steps_latex)
+        steps_str = "\\\\[0.3em]\n".join(s.strip() for s in steps_latex)
         return f"\\textbf{{\\underline{{Solution}}}}\\\\[0.5em]\n{steps_str}"
 
     def _format_substitution_compact(self, sub: str) -> str:
@@ -474,23 +463,9 @@ Vector & {{$F_x$ ({data.unit})}} & {{$F_y$ ({data.unit})}} & {{$\magn{{\vv{{F}}}
         # Convert to LaTeX macros first
         sub = self._convert_to_latex_macros(sub)
 
-        # Extract just the final result (last line with =)
+        # Clean up alignment markers and return as aligned equations on one line
         lines = sub.strip().split("\n")
-        result_parts = []
-        for line in lines:
-            line = line.strip()
-            if line.endswith("\\\\"):
-                line = line[:-2].strip()
-            # Remove alignment markers (&=, &)
-            line = line.replace("&=", "=").replace("& =", "=").replace("&", "")
-            # Remove leading = (which comes from the alignment)
-            line = line.strip()
-            if line.startswith("="):
-                line = line[1:].strip()
-            if line:
-                result_parts.append(line.strip())
-
-        # Return as aligned equations on one line
+        result_parts = clean_latex_alignment_markers(lines)
         return " = ".join(result_parts)
 
     def _render_disclaimer(self) -> str:
@@ -539,7 +514,7 @@ class MarkdownRenderer:
     def _render_input_vector_table(self, vectors: list[InputVectorRow], unit: str) -> str:
         """Render a Markdown table for input vectors (given info only)."""
         lines = [
-            "<div align=\"center\">",
+            '<div align="center">',
             "",
             f"| Vector | $|\\vec{{F}}|$ ({unit}) | $\\theta$ (deg) | Reference |",
             "| :--- | ---: | ---: | :--- |",
@@ -590,16 +565,7 @@ class MarkdownRenderer:
 
     def _format_substitution_md(self, sub: str) -> list[str]:
         """Format substitution for Markdown aligned environment."""
-        if not sub:
-            return []
-        result = []
-        for line in sub.strip().split("\n"):
-            line = line.strip()
-            if line.endswith("\\\\"):
-                line = line[:-2].strip()
-            if line:
-                result.append(f"{line} \\\\")
-        return result
+        return format_substitution_md(sub)
 
     def _render_results_section(self, data: RectangularReportModel) -> str:
         """Render results summary section."""
@@ -612,7 +578,7 @@ class MarkdownRenderer:
         lines = [
             "## 4. Summary of Results",
             "",
-            "<div align=\"center\">",
+            '<div align="center">',
             "",
             f"| Vector | $F_x$ ({data.unit}) | $F_y$ ({data.unit}) | $|\\vec{{F}}|$ ({data.unit}) | $\\theta$ (deg) |",
             "| :--- | ---: | ---: | ---: | ---: |",
@@ -685,8 +651,6 @@ def generate_report(
 
 def _generate_pdf(data: RectangularReportModel, output_path: Path) -> None:
     """Generate PDF by compiling LaTeX."""
-    import subprocess
-    import tempfile
     from datetime import datetime
 
     renderer = LaTeXRenderer()
@@ -694,29 +658,4 @@ def _generate_pdf(data: RectangularReportModel, output_path: Path) -> None:
     # Replace date placeholder with actual date for PDF
     latex = latex.replace("{{GENERATED_DATE}}", datetime.now().strftime("%Y-%m-%d"))
 
-    with tempfile.NamedTemporaryFile(mode='w', suffix='.tex', delete=False, encoding='utf-8') as f:
-        f.write(latex)
-        tex_path = Path(f.name)
-
-    try:
-        # Try tectonic first (use .exe on Windows)
-        import sys
-
-        tectonic_name = "tectonic.exe" if sys.platform == "win32" else "tectonic"
-        tectonic_path = Path(__file__).parent.parent.parent / "extensions" / "reporting" / tectonic_name
-        if tectonic_path.exists():
-            result = subprocess.run(
-                [str(tectonic_path), str(tex_path), "-o", str(output_path.parent)],
-                capture_output=True,
-                timeout=60,
-            )
-            if result.returncode == 0:
-                generated = output_path.parent / (tex_path.stem + ".pdf")
-                if generated.exists() and generated != output_path:
-                    output_path.unlink(missing_ok=True)
-                    generated.rename(output_path)
-                return
-
-        raise RuntimeError("PDF generation requires tectonic. Install it or use latex format.")
-    finally:
-        tex_path.unlink(missing_ok=True)
+    compile_latex_to_pdf(latex, output_path)

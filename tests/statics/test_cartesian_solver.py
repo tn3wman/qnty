@@ -12,9 +12,7 @@ import pytest
 
 from qnty.linalg.vector2 import Vector, VectorUnknown
 from qnty.problems.statics.cartesian_solver import solve_class
-
 from tests.statics._problem_fixtures import RECTANGULAR_PROBLEMS
-
 
 # =============================================================================
 # Helper functions for assertions

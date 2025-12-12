@@ -30,10 +30,10 @@ from ...core import Q
 from ...core.quantity import Quantity
 from ...equations import AngleSum, LawOfCosines, LawOfSines
 from ...equations.angle_finder import get_relative_angle
+from ...equations.angle_reference import AngleDirection
 from ...equations.base import SolutionStepBuilder, format_angle, latex_name
 from ...geometry.triangle import Triangle, TriangleCase, from_vectors_dynamic
 from ...linalg.vector2 import Vector, VectorUnknown
-from ...spatial.angle_reference import AngleDirection
 
 if TYPE_CHECKING:
     from ...core.quantity import Quantity
@@ -199,6 +199,104 @@ def _apply_negative_sign_correction(mag: Quantity, corrected_value: float, side_
         result.name = f"{side_name}_mag"
         return result
     return mag
+
+
+def _identify_resultant_and_components(
+    unknown_side1,
+    unknown_side2,
+    known_side,
+    resultant_side,
+    unknown_side1_mag,
+    unknown_side2_mag,
+    known_side_mag,
+) -> tuple[float, float, float, float, float, float, int]:
+    """
+    Identify which side is the resultant and extract magnitudes/directions.
+
+    Returns:
+        Tuple of (resultant_mag_val, resultant_dir, comp1_mag_val, comp1_dir,
+                  comp2_mag_val, comp2_dir, unknown_is_resultant)
+        where unknown_is_resultant is: 1 if unknown_side1, 2 if unknown_side2, 0 if known_side
+    """
+    if unknown_side1 == resultant_side:
+        return (
+            unknown_side1_mag.magnitude(),
+            _direction_to_degrees(unknown_side1),
+            unknown_side2_mag.magnitude(),
+            _direction_to_degrees(unknown_side2),
+            known_side_mag.magnitude(),
+            _direction_to_degrees(known_side),
+            1,
+        )
+    elif unknown_side2 == resultant_side:
+        return (
+            unknown_side2_mag.magnitude(),
+            _direction_to_degrees(unknown_side2),
+            unknown_side1_mag.magnitude(),
+            _direction_to_degrees(unknown_side1),
+            known_side_mag.magnitude(),
+            _direction_to_degrees(known_side),
+            2,
+        )
+    else:
+        return (
+            known_side_mag.magnitude(),
+            _direction_to_degrees(known_side),
+            unknown_side1_mag.magnitude(),
+            _direction_to_degrees(unknown_side1),
+            unknown_side2_mag.magnitude(),
+            _direction_to_degrees(unknown_side2),
+            0,
+        )
+
+
+def _apply_sign_correction_with_retry(
+    resultant_mag_val: float,
+    resultant_dir: float,
+    comp1_mag_val: float,
+    comp1_dir: float,
+    comp2_mag_val: float,
+    comp2_dir: float,
+    unknown_is_resultant: int,
+) -> tuple[float, float, float]:
+    """
+    Compute sign corrections, retrying with opposite direction if needed.
+
+    Returns:
+        Tuple of (corrected_unknown1, corrected_unknown2, final_resultant_mag)
+    """
+    corrected_comp1, corrected_comp2 = _compute_component_signs(
+        resultant_mag_val,
+        resultant_dir,
+        comp1_mag_val,
+        comp1_dir,
+        comp2_mag_val,
+        comp2_dir,
+    )
+
+    # If the known component got a negative sign, try with opposite resultant direction
+    if unknown_is_resultant in (1, 2) and corrected_comp2 < 0:
+        opposite_dir = (resultant_dir + 180) % 360
+        alt_comp1, alt_comp2 = _compute_component_signs(
+            resultant_mag_val,
+            opposite_dir,
+            comp1_mag_val,
+            comp1_dir,
+            comp2_mag_val,
+            comp2_dir,
+        )
+        if alt_comp2 > 0:
+            corrected_comp1 = alt_comp1
+            corrected_comp2 = alt_comp2
+            resultant_mag_val = -resultant_mag_val
+
+    # Map corrected values back based on which is the resultant
+    if unknown_is_resultant == 1:
+        return (resultant_mag_val, corrected_comp1, resultant_mag_val)
+    elif unknown_is_resultant == 2:
+        return (corrected_comp1, resultant_mag_val, resultant_mag_val)
+    else:
+        return (corrected_comp1, corrected_comp2, resultant_mag_val)
 
 
 def _resolve_vector_wrt_reference(
@@ -489,7 +587,7 @@ def _compute_known_sides_from_unknown(
 
     # Try all 4 combinations: (acute/obtuse) x (+/-)
     best_candidate = None
-    best_error = float('inf')
+    best_error = float("inf")
 
     for angle_B in [angle_B_acute, angle_B_obtuse]:
         for sign in [1, -1]:
@@ -531,9 +629,9 @@ def _compute_known_sides_from_unknown(
                 expected_y = side_b_mag * sin(F_R_rad)
 
                 # Compute error (magnitude of difference vector)
-                error_qty = sqrt((sum_x - expected_x)**2 + (sum_y - expected_y)**2)
+                error_qty = sqrt((sum_x - expected_x) ** 2 + (sum_y - expected_y) ** 2)
                 # Extract the numeric value from the resulting Quantity
-                error = error_qty.value if hasattr(error_qty, 'value') else float(error_qty)
+                error = error_qty.value if hasattr(error_qty, "value") else float(error_qty)
 
                 if error < best_error:
                     best_error = error
@@ -895,7 +993,7 @@ def solve_sss(state: SolvingState) -> None:
     from ...equations.base import SolutionStepBuilder
 
     angle_sum_step = SolutionStepBuilder(
-        target=f"\\angle_B using angle sum",
+        target="\\angle_B using angle sum",
         method="Angle Sum",
         description="Third angle from triangle angle sum property",
         substitution=f"\\angle_B = 180° - {interior_angle_a.to_unit.degree.magnitude():.2f}° - {interior_angle_c.to_unit.degree.magnitude():.2f}° = {interior_angle_b.to_unit.degree.magnitude():.2f}°",
@@ -1555,83 +1653,27 @@ def solve_asa(state: SolvingState) -> None:
         unknown_side2.is_known = True
         return
 
-    # Identify which unknown is the resultant and which are components
-    # The equation is: component1 + component2 = resultant
-    if unknown_side1 == resultant_side:
-        # unknown_side1 is the resultant, unknown_side2 and included_side are components
-        resultant_mag_val = unknown_side1_mag.magnitude()
-        resultant_dir = _direction_to_degrees(unknown_side1)
-        comp1_mag_val = unknown_side2_mag.magnitude()
-        comp1_dir = _direction_to_degrees(unknown_side2)
-        comp2_mag_val = known_side_mag.magnitude()
-        comp2_dir = _direction_to_degrees(included_side)
-        unknown_is_resultant = 1
-    elif unknown_side2 == resultant_side:
-        # unknown_side2 is the resultant, unknown_side1 and included_side are components
-        resultant_mag_val = unknown_side2_mag.magnitude()
-        resultant_dir = _direction_to_degrees(unknown_side2)
-        comp1_mag_val = unknown_side1_mag.magnitude()
-        comp1_dir = _direction_to_degrees(unknown_side1)
-        comp2_mag_val = known_side_mag.magnitude()
-        comp2_dir = _direction_to_degrees(included_side)
-        unknown_is_resultant = 2
-    else:
-        # included_side is the resultant, both unknowns are components
-        resultant_mag_val = known_side_mag.magnitude()
-        resultant_dir = _direction_to_degrees(included_side)
-        comp1_mag_val = unknown_side1_mag.magnitude()
-        comp1_dir = _direction_to_degrees(unknown_side1)
-        comp2_mag_val = unknown_side2_mag.magnitude()
-        comp2_dir = _direction_to_degrees(unknown_side2)
-        unknown_is_resultant = 0
+    # Identify which unknown is the resultant and extract magnitudes/directions
+    (resultant_mag_val, resultant_dir, comp1_mag_val, comp1_dir, comp2_mag_val, comp2_dir, unknown_is_resultant) = _identify_resultant_and_components(
+        unknown_side1,
+        unknown_side2,
+        included_side,
+        resultant_side,
+        unknown_side1_mag,
+        unknown_side2_mag,
+        known_side_mag,
+    )
 
-    # Compute corrected signs
-    # For cases where an unknown is the resultant, we try both the nominal direction
-    # and the opposite direction (180° apart) to find which gives a valid solution
-    # where the known component doesn't need a sign flip
-    corrected_comp1, corrected_comp2 = _compute_component_signs(
+    # Compute sign corrections with retry for opposite direction if needed
+    corrected_unknown1, corrected_unknown2, _ = _apply_sign_correction_with_retry(
         resultant_mag_val,
         resultant_dir,
         comp1_mag_val,
         comp1_dir,
         comp2_mag_val,
         comp2_dir,
+        unknown_is_resultant,
     )
-
-    # If the known component (comp2) got a negative sign, try with opposite resultant direction
-    if unknown_is_resultant in (1, 2) and corrected_comp2 < 0:
-        # The opposite direction (180° apart) should give the correct signs
-        opposite_dir = (resultant_dir + 180) % 360
-        alt_comp1, alt_comp2 = _compute_component_signs(
-            resultant_mag_val,
-            opposite_dir,
-            comp1_mag_val,
-            comp1_dir,
-            comp2_mag_val,
-            comp2_dir,
-        )
-        # If the known component is now positive, use these signs
-        # but flip the resultant magnitude (since we used the opposite direction)
-        if alt_comp2 > 0:
-            corrected_comp1 = alt_comp1
-            corrected_comp2 = alt_comp2
-            resultant_mag_val = -resultant_mag_val  # Resultant points opposite to nominal
-
-    # Map the corrected values back to unknown_side1 and unknown_side2
-    if unknown_is_resultant == 1:
-        # comp1 -> unknown_side2, comp2 -> included (known, unchanged)
-        # unknown_side1 is the resultant
-        corrected_unknown2 = corrected_comp1
-        corrected_unknown1 = resultant_mag_val  # May be negative if we flipped direction
-    elif unknown_is_resultant == 2:
-        # comp1 -> unknown_side1, comp2 -> included (known, unchanged)
-        # unknown_side2 is the resultant
-        corrected_unknown1 = corrected_comp1
-        corrected_unknown2 = resultant_mag_val  # May be negative if we flipped direction
-    else:
-        # Both unknowns are components
-        corrected_unknown1 = corrected_comp1
-        corrected_unknown2 = corrected_comp2
 
     # Apply sign corrections if needed
     unknown_side1_mag = _apply_negative_sign_correction(unknown_side1_mag, corrected_unknown1, unknown_side1.name)
@@ -1861,77 +1903,31 @@ def solve_aas(state: SolvingState) -> None:
         unknown_side1_mag = unknown_side1.magnitude
         unknown_side2_mag = unknown_side2.magnitude
 
-        # Identify which is the resultant
-        if unknown_side1 == resultant_side:
-            resultant_mag_val = unknown_side1_mag.magnitude()
-            resultant_dir = _direction_to_degrees(unknown_side1)
-            comp1_mag_val = unknown_side2_mag.magnitude()
-            comp1_dir = _direction_to_degrees(unknown_side2)
-            comp2_mag_val = known_side_mag.magnitude()
-            comp2_dir = _direction_to_degrees(known_side)
-            unknown_is_resultant = 1
-        elif unknown_side2 == resultant_side:
-            resultant_mag_val = unknown_side2_mag.magnitude()
-            resultant_dir = _direction_to_degrees(unknown_side2)
-            comp1_mag_val = unknown_side1_mag.magnitude()
-            comp1_dir = _direction_to_degrees(unknown_side1)
-            comp2_mag_val = known_side_mag.magnitude()
-            comp2_dir = _direction_to_degrees(known_side)
-            unknown_is_resultant = 2
-        else:
-            # Known side is the resultant, both unknowns are components
-            resultant_mag_val = known_side_mag.magnitude()
-            resultant_dir = _direction_to_degrees(known_side)
-            comp1_mag_val = unknown_side1_mag.magnitude()
-            comp1_dir = _direction_to_degrees(unknown_side1)
-            comp2_mag_val = unknown_side2_mag.magnitude()
-            comp2_dir = _direction_to_degrees(unknown_side2)
-            unknown_is_resultant = 0
+        # Identify which is the resultant and extract magnitudes/directions
+        (resultant_mag_val, resultant_dir, comp1_mag_val, comp1_dir, comp2_mag_val, comp2_dir, unknown_is_resultant) = _identify_resultant_and_components(
+            unknown_side1,
+            unknown_side2,
+            known_side,
+            resultant_side,
+            unknown_side1_mag,
+            unknown_side2_mag,
+            known_side_mag,
+        )
 
-        # Compute corrected signs
-        corrected_comp1, corrected_comp2 = _compute_component_signs(
+        # Compute sign corrections with retry for opposite direction if needed
+        corrected_unknown1, corrected_unknown2, _ = _apply_sign_correction_with_retry(
             resultant_mag_val,
             resultant_dir,
             comp1_mag_val,
             comp1_dir,
             comp2_mag_val,
             comp2_dir,
+            unknown_is_resultant,
         )
-
-        # If the known component got a negative sign, try with opposite resultant direction
-        if unknown_is_resultant in (1, 2) and corrected_comp2 < 0:
-            opposite_dir = (resultant_dir + 180) % 360
-            alt_comp1, alt_comp2 = _compute_component_signs(
-                resultant_mag_val,
-                opposite_dir,
-                comp1_mag_val,
-                comp1_dir,
-                comp2_mag_val,
-                comp2_dir,
-            )
-            if alt_comp2 > 0:
-                corrected_comp1 = alt_comp1
-                corrected_comp2 = alt_comp2
-                resultant_mag_val = -resultant_mag_val
-
-        # Map corrected values back
-        if unknown_is_resultant == 1:
-            corrected_unknown2 = corrected_comp1
-            corrected_unknown1 = resultant_mag_val
-        elif unknown_is_resultant == 2:
-            corrected_unknown1 = corrected_comp1
-            corrected_unknown2 = resultant_mag_val
-        else:
-            corrected_unknown1 = corrected_comp1
-            corrected_unknown2 = corrected_comp2
 
         # Apply sign corrections
-        unknown_side1.magnitude = _apply_negative_sign_correction(
-            unknown_side1_mag, corrected_unknown1, unknown_side1.name
-        )
-        unknown_side2.magnitude = _apply_negative_sign_correction(
-            unknown_side2_mag, corrected_unknown2, unknown_side2.name
-        )
+        unknown_side1.magnitude = _apply_negative_sign_correction(unknown_side1_mag, corrected_unknown1, unknown_side1.name)
+        unknown_side2.magnitude = _apply_negative_sign_correction(unknown_side2_mag, corrected_unknown2, unknown_side2.name)
 
     # For AAS, directions are already known, so set dir_r if any unknown is the resultant
     for unknown_side_attr, unknown_side in unknown_sides:
@@ -1991,7 +1987,7 @@ def _get_vector_kwargs(attr: Vector | VectorUnknown, attr_name: str) -> dict[str
     Returns:
         Dictionary of keyword arguments for constructing a copy
     """
-    return {
+    kwargs = {
         "magnitude": attr.magnitude,
         "angle": attr.angle,
         "wrt": attr.wrt,
@@ -1999,6 +1995,12 @@ def _get_vector_kwargs(attr: Vector | VectorUnknown, attr_name: str) -> dict[str
         "name": attr.name or attr_name,
         "_is_resultant": attr._is_resultant,
     }
+    # Add x, y, z components for Vector (not VectorUnknown)
+    if isinstance(attr, Vector):
+        kwargs["_x"] = attr._x
+        kwargs["_y"] = attr._y
+        kwargs["_z"] = attr._z
+    return kwargs
 
 
 def _copy_vector(attr: Vector | VectorUnknown, attr_name: str) -> Vector | VectorUnknown:
@@ -2379,7 +2381,6 @@ class ParallelogramLawProblem:
 
         This generalizes to any number of vectors.
         """
-        from ...linalg.vectors2 import create_vectors_polar
 
         components = self._get_component_vectors()
         resultant_info = self._get_resultant_vector()
@@ -2419,7 +2420,7 @@ class ParallelogramLawProblem:
             vec_b = self.vectors[vec_b_name]
 
             # Is this the final step?
-            is_final = (i == len(components) - 2)
+            is_final = i == len(components) - 2
 
             if is_final:
                 # Final resultant - use the original resultant properties

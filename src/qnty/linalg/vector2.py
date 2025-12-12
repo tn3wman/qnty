@@ -1,9 +1,11 @@
 """
-Vector class for 2D vectors using Quantity objects for magnitude and angle.
+Vector class for 2D/3D vectors using Quantity objects.
 
-Supports both polar (magnitude/angle) and cartesian (x/y) representations.
-The vector can be created in either form, and the other representation
-is computed on demand via properties.
+Cartesian components (x, y, z) are the fundamental representation.
+Factory functions provide convenient ways to create vectors from:
+- Cartesian components (x, y) or (x, y, z)
+- Polar coordinates (magnitude, angle)
+- Direction angles (magnitude, α, β, γ)
 """
 
 from __future__ import annotations
@@ -12,7 +14,6 @@ from dataclasses import dataclass, field
 from types import EllipsisType
 from typing import TYPE_CHECKING, Union
 
-from ..algebra.functions import atan2, cos, sin, sqrt
 from ..coordinates import Cartesian, CoordinateSystem
 from ..core.quantity import Quantity
 from ..equations.angle_finder import angles_are_equivalent, get_absolute_angle
@@ -46,23 +47,31 @@ class VectorDTO:
 @dataclass
 class Vector:
     """
-    A 2D vector represented by magnitude and angle.
+    A 2D or 3D vector with Cartesian components as the fundamental representation.
 
-    Both magnitude and angle are stored as Quantity objects, providing
-    dimensional safety and unit conversion capabilities.
+    The x, y, z components are stored directly. For 2D vectors, z is None.
+    Magnitude and angle are also stored for backward compatibility with polar API.
 
     Attributes:
-        magnitude: The magnitude of the vector as a Quantity (e.g., Force, Length)
-        angle: The angle of the vector as a Quantity (must be angle dimension)
-        wrt: The reference for angle measurement - either an axis string (e.g., "+x", "-y")
-            or another Vector (for angles measured relative to another vector's direction)
+        _x: The x-component as a Quantity
+        _y: The y-component as a Quantity
+        _z: The z-component as a Quantity (None for 2D vectors)
+        magnitude: The magnitude of the vector as a Quantity
+        angle: The angle from reference axis (for 2D polar representation)
+        wrt: The reference for angle measurement (for 2D polar representation)
         coordinate_system: The coordinate system the vector is defined in
         name: Optional name for the vector
         _is_resultant: Internal flag indicating if this is a resultant vector
     """
 
-    magnitude: Quantity
-    angle: Quantity
+    # Cartesian components - the fundamental representation
+    # These can be None for legacy code that creates Vectors directly with polar coords
+    _x: Quantity | None = field(default=None)
+    _y: Quantity | None = field(default=None)
+    _z: Quantity | None = field(default=None)
+    # Polar representation (for backward compatibility with 2D API)
+    magnitude: Quantity = field(default=None)  # type: ignore[assignment]
+    angle: Quantity = field(default=None)  # type: ignore[assignment]
     wrt: str | Vector | "VectorUnknown" = "+x"
     coordinate_system: CoordinateSystem = field(default_factory=Cartesian)
     name: str | None = None
@@ -75,39 +84,92 @@ class Vector:
         return self._is_resultant
 
     @property
-    def x(self) -> Quantity:
-        """
-        The x-component of the vector (Fx = |F| * cos(θ)).
+    def is_3d(self) -> bool:
+        """Check if this is a 3D vector (has z-component)."""
+        return self._z is not None
 
-        Returns the x-component as a Quantity with the same units as magnitude.
-        The angle is first converted to absolute angle from +x axis before computing.
-        """
+    @property
+    def x(self) -> Quantity:
+        """The x-component of the vector."""
+        # If _x is stored and valid, return it
+        if self._x is not None and self._has_valid_components():
+            return self._x
+        # Otherwise compute from absolute angle
+        from ..algebra.functions import cos
         abs_angle = get_absolute_angle(self)
         result = self.magnitude * cos(abs_angle)
-        # The multiplication of Quantity * cos(angle) returns a Quantity
         return result  # type: ignore[return-value]
 
     @property
     def y(self) -> Quantity:
-        """
-        The y-component of the vector (Fy = |F| * sin(θ)).
-
-        Returns the y-component as a Quantity with the same units as magnitude.
-        The angle is first converted to absolute angle from +x axis before computing.
-        """
+        """The y-component of the vector."""
+        # If _y is stored and valid, return it
+        if self._y is not None and self._has_valid_components():
+            return self._y
+        # Otherwise compute from absolute angle
+        from ..algebra.functions import sin
         abs_angle = get_absolute_angle(self)
         result = self.magnitude * sin(abs_angle)
-        # The multiplication of Quantity * sin(angle) returns a Quantity
         return result  # type: ignore[return-value]
+
+    def _has_valid_components(self) -> bool:
+        """Check if _x and _y were properly computed (not placeholders)."""
+        # If _x or _y is None, components need to be computed from angle
+        if self._x is None or self._y is None:
+            return False
+        # For 3D vectors, always use stored components
+        if self.is_3d:
+            return True
+        # If wrt is a Vector/VectorUnknown reference, compute from angle
+        if isinstance(self.wrt, (Vector, VectorUnknown)):
+            return False
+        if isinstance(self.wrt, str):
+            # Check if it's an axis reference (like "+x", "-y") or a vector name
+            wrt_lower = self.wrt.lower()
+            if wrt_lower.startswith(("+", "-")):
+                axis = wrt_lower[1:]
+                # Valid axes in standard coordinate systems
+                if axis in ("x", "y", "u", "v"):
+                    return True
+            return False
+        return True
+
+    @property
+    def z(self) -> Quantity:
+        """
+        The z-component of the vector.
+
+        For 3D vectors: Returns the stored z-component.
+        For 2D vectors: Returns 0 with the same units as magnitude.
+        """
+        from ..core import Q
+
+        if self._z is not None:
+            return self._z
+        else:
+            # 2D: z-component is zero
+            # Get unit from magnitude or _x
+            if self.magnitude is not None and self.magnitude.preferred:
+                unit_symbol = self.magnitude.preferred.symbol
+            elif self._x is not None and self._x.preferred:
+                unit_symbol = self._x.preferred.symbol
+            else:
+                unit_symbol = "N"
+            return Q(0.0, unit_symbol)
 
     def __repr__(self) -> str:
         name_str = f"'{self.name}' " if self.name else ""
-        if isinstance(self.wrt, str):
-            wrt_str = f"'{self.wrt}'"
+        if self.is_3d:
+            # 3D vector representation with components
+            return f"Vector3D({name_str}x={self._x}, y={self._y}, z={self._z})"
         else:
-            # wrt is a Vector or VectorUnknown reference
-            wrt_str = f"Vector({self.wrt.name or 'unnamed'})"
-        return f"Vector({name_str}magnitude={self.magnitude}, angle={self.angle}, wrt={wrt_str})"
+            # 2D vector representation (show polar for backward compat)
+            if isinstance(self.wrt, str):
+                wrt_str = f"'{self.wrt}'"
+            else:
+                # wrt is a Vector or VectorUnknown reference
+                wrt_str = f"Vector({self.wrt.name or 'unnamed'})"
+            return f"Vector({name_str}magnitude={self.magnitude}, angle={self.angle}, wrt={wrt_str})"
 
     def to_dto(
         self,

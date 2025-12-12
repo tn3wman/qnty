@@ -746,6 +746,19 @@ def get_arc_angles(start_angle: float, end_angle: float) -> tuple[float, float]:
         return end, start
 
 
+def angle_between_points(from_pt: Point, to_pt: Point) -> float:
+    """Compute the angle from one point to another.
+
+    Args:
+        from_pt: Starting point
+        to_pt: Ending point
+
+    Returns:
+        Angle in degrees (0-360)
+    """
+    return math.degrees(math.atan2(to_pt.y - from_pt.y, to_pt.x - from_pt.x)) % 360
+
+
 def build_force_triangle_diagram(data: DiagramData, scale: float = 0.55) -> TikZDiagram:
     """Build TikZ diagram data for the Force Triangle (Results) view.
 
@@ -922,7 +935,7 @@ def build_force_triangle_diagram(data: DiagramData, scale: float = 0.55) -> TikZ
     # Arc at B (F1 tip): angle between incoming F1 and outgoing to D (purple)
     if angle_at_f1_tip > 0:
         f1_incoming = ((f1_vec.angle_deg if f1_vec else 0) + 180) % 360
-        bd_angle = math.degrees(math.atan2(d_pt.y - b_pt.y, d_pt.x - b_pt.x)) % 360
+        bd_angle = angle_between_points(b_pt, d_pt)
         arc_start, arc_end = get_arc_angles(f1_incoming, bd_angle)
         arc_mid = (arc_start + arc_end) / 2
         label_x = b_pt.x + (arc_r_small + arc_label_offset) * math.cos(math.radians(arc_mid))
@@ -941,7 +954,7 @@ def build_force_triangle_diagram(data: DiagramData, scale: float = 0.55) -> TikZ
 
     # Arc at D (FR tip): angle at the apex (cyan)
     if angle_at_fr_tip > 0:
-        bd_angle = math.degrees(math.atan2(b_pt.y - d_pt.y, b_pt.x - d_pt.x)) % 360
+        bd_angle = angle_between_points(d_pt, b_pt)
         fr_back = ((fr_vec.angle_deg if fr_vec else 0) + 180) % 360
         arc_start, arc_end = get_arc_angles(bd_angle, fr_back)
         arc_mid = (arc_start + arc_end) / 2
